@@ -4,11 +4,10 @@ import itertools
 from copy import copy
 from dataclasses import dataclass
 from functools import partial
-from typing import Awaitable, Callable, Iterable, List, Optional, Union
+from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, List, Optional, Union
 
 import discord
 from redbot.core import commands
-from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import (
     bold,
@@ -17,6 +16,9 @@ from redbot.core.utils.chat_formatting import (
     humanize_list,
     inline,
 )
+
+if TYPE_CHECKING:
+    from redbot.core.bot import Red
 
 _ = Translator("IssueDiagnoser", __file__)
 
