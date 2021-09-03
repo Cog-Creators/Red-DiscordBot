@@ -31,6 +31,8 @@ from datetime import datetime
 from collections import defaultdict
 from typing import Optional, List, Tuple, Union, Dict
 
+MAX_RETRY_COUNT = 10
+
 _ = Translator("Streams", __file__)
 log = logging.getLogger("red.core.cogs.Streams")
 
@@ -747,8 +749,14 @@ class Streams(commands.Cog):
                     else:
                         embed = await stream.is_online()
                 except StreamNotFound:
-                    log.info("Stream with name %s no longer exists. Removing...", stream.name)
-                    to_remove.append(stream)
+                    if stream.retry_count > MAX_RETRY_COUNT:
+                        log.info("Stream with name %s no longer exists. Removing...", stream.name)
+                        to_remove.append(stream)
+                    else:
+                        log.info(
+                            "Stream with name %s seems to not exist, will retry later", stream.name
+                        )
+                        stream.retry_count += 1
                     continue
                 except OfflineStream:
                     if not stream.messages:
