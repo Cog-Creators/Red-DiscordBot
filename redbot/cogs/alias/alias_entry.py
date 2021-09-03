@@ -235,6 +235,8 @@ class AliasCache:
     async def edit_alias(
         self, ctx: commands.Context, alias_name: str, command: str, global_: bool = False
     ) -> bool:
+        command = self.format_command_for_alias(command)
+
         if global_:
             settings = self.config
         else:
@@ -243,9 +245,8 @@ class AliasCache:
         async with settings.entries() as aliases:
             for index, alias in enumerate(aliases):
                 if alias["name"] == alias_name:
-
                     alias_edited = AliasEntry.from_json(alias)
-                    alias_edited.command = self.format_command_for_alias(command)
+                    alias_edited.command = command
                     aliases[index] = alias_edited.to_json()
 
                     if self._cache_enabled:
