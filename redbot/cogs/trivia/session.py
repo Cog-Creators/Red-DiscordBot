@@ -208,7 +208,7 @@ class TriviaSession:
             )
         except asyncio.TimeoutError:
             if time.time() - self._last_response >= timeout:
-                with contextlib.suppress(discord.NotFound, discord.Forbidden):
+                with contextlib.suppress(discord.HTTPException):
                     await self.ctx.send(_("Guys...? Well, I guess I'll stop then."))
                 self.stop()
                 return False
