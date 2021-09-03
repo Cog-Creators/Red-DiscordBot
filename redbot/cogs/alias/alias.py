@@ -338,7 +338,7 @@ class Alias(commands.Cog):
             )
         )
 
-    @checks.mod_or_permissions(manage_guild=True)
+    @commands.mod_or_permissions(manage_guild=True)
     @alias.command(name="edit")
     @commands.guild_only()
     async def _edit_alias(self, ctx: commands.Context, alias_name: str, *, command):
@@ -374,7 +374,7 @@ class Alias(commands.Cog):
         except ArgParseError as e:
             return await ctx.send(" ".join(e.args))
 
-    @checks.is_owner()
+    @commands.is_owner()
     @global_.command(name="edit")
     async def _edit_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Edit an existing global alias."""
