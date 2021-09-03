@@ -191,7 +191,6 @@ class AliasCache:
     def format_command_for_alias(command: str) -> str:
         # This was present in add_alias previously
         # Made this into a separate method so as to reuse the same code in edit_alias
-
         indices = findall(r"{(\d*)}", command)
         if indices:
             try:
@@ -213,7 +212,6 @@ class AliasCache:
     async def add_alias(
         self, ctx: commands.Context, alias_name: str, command: str, global_: bool = False
     ) -> AliasEntry:
-
         command = self.format_command_for_alias(command)
 
         if global_:

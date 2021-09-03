@@ -343,7 +343,7 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _edit_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Edit an existing alias in the present server."""
-
+        # region Alias Add Validity Checking
         alias = await self._aliases.get_alias(ctx.guild, alias_name)
         if not alias:
             await ctx.send(
@@ -355,11 +355,10 @@ class Alias(commands.Cog):
         if not given_command_exists:
             await ctx.send(_("You attempted to edit an alias to a command that doesn't exist."))
             return
-
         # endregion
+
         # So we figured it is a valid alias and the command exists
         # we can go ahead editing the command
-
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command):
                 await ctx.send(
@@ -368,7 +367,7 @@ class Alias(commands.Cog):
                     )
                 )
             else:
-                # This part should never be reached under normal circumstances
+                # This part should technically never be reached...
                 await ctx.send(
                     _("Alias with name `{name}` was not found.").format(name=alias_name)
                 )
@@ -379,7 +378,7 @@ class Alias(commands.Cog):
     @global_.command(name="edit")
     async def _edit_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Edit an existing global alias."""
-
+        # region Alias Add Validity Checking
         alias = await self._aliases.get_alias(None, alias_name)
         if not alias:
             await ctx.send(
@@ -401,10 +400,10 @@ class Alias(commands.Cog):
                     )
                 )
             else:
+                # This part should technically never be reached...
                 await ctx.send(
                     _("Alias with name `{name}` was not found.").format(name=alias_name)
                 )
-
         except ArgParseError as e:
             return await ctx.send(" ".join(e.args))
 
