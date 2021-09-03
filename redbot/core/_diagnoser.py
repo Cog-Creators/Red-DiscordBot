@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import string
 from copy import copy
 from dataclasses import dataclass
 from functools import partial
@@ -94,6 +95,12 @@ class IssueDiagnoserBase:
         if not isinstance(command, str):
             command = command.qualified_name
         return inline(f"{self._original_ctx.clean_prefix}{command}")
+
+    def _format_multiple_resolutions(self, resolutions: Iterable[str]) -> str:
+        parts = [_("To fix this issue, you need to do one of these:")]
+        for idx, resolution in enumerate(resolutions):
+            parts.append(f"{string.ascii_lowercase[idx]}) {resolution}")
+        return "\n".join(parts)
 
 
 class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
@@ -508,16 +515,22 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             (
                 partial(self._check_requires_bot_owner, cog_or_command),
                 partial(self._check_requires_permission_hooks, cog_or_command),
+                partial(self._check_requires_permission_rules, cog_or_command),
             ),
-            # TODO: Split the `final_check_result` into parts to be ran by this function
+            # unless there's some bug here, we should probably never run into this
             final_check_result=CheckResult(
                 False,
-                _("User's discord permissions, privilege level and rules from Permissions cog"),
-                _("One of the above is the issue."),
+                _("Other issues related to permissions."),
                 _(
-                    "To fix this issue, verify each of these"
-                    " and determine which part is the issue."
+                    "Fatal error: There's an issue related to the permissions for the"
+                    " {cog} cog but we're not able to determine the exact cause."
+                )
+                if cog_or_command is self.ctx.cog
+                else _(
+                    "Fatal error: There's an issue related to the permissions for the"
+                    " {command} command but we're not able to determine the exact cause."
                 ),
+                _("This is an unexpected error, please report it on Red's issue tracker."),
             ),
         )
 
@@ -557,6 +570,170 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             label,
             _("The access has been denied by one of the bot's permissions hooks."),
             _("To fix this issue, a manual review of the installed cogs is required."),
+        )
+
+    async def _check_requires_permission_rules(
+        self, cog_or_command: commands.CogCommandMixin
+    ) -> CheckResult:
+        label = _("User's discord permissions, privilege level and rules from Permissions cog")
+        should_invoke, next_state = cog_or_command.requires._get_transitioned_state(self.ctx)
+        if should_invoke is None:
+            return await self._check_requires_verify_user(label, cog_or_command)
+        elif isinstance(next_state, dict):
+            would_invoke = self._get_would_invoke(self.ctx)
+            if would_invoke is None:
+                return await self._check_requires_verify_user(label, cog_or_command)
+            next_state = next_state[would_invoke]
+        self.ctx.permission_state = next_state
+        if should_invoke:
+            return CheckResult(True, label)
+        return CheckResult(
+            False,
+            label,
+            _(
+                "The access has been denied due to the rules set for the {cog} cog"
+                " with Permissions cog."
+            ).format(cog=inline(cog_or_command.qualified_name))
+            if cog_or_command is self.ctx.cog
+            else _(
+                "The access has been denied due to the rules set for the {command} command"
+                " with Permissions cog."
+            ).format(command=self._format_command_name(cog_or_command)),
+            _("To fix the issue, a manual review of the rules is required."),
+        )
+
+    async def _check_requires_verify_user(
+        self, label: str, cog_or_command: commands.CogCommandMixin
+    ) -> CheckResult:
+        return await self._check_until_fail(
+            label,
+            (
+                partial(self._check_requires_permission_checks, cog_or_command),
+                partial(self._check_requires_user_perms_and_privilege_level, cog_or_command),
+            ),
+            final_check_result=CheckResult(
+                False,
+                _("Other issues related to permissions."),
+                _(
+                    "There's an issue related to the permissions of {cog} cog"
+                    " but we're not able to determine the exact cause."
+                ).format(cog=inline(cog_or_command.qualified_name))
+                if cog_or_command is self.ctx.cog
+                else _(
+                    "There's an issue related to the permissions of {command} command"
+                    " but we're not able to determine the exact cause."
+                ).format(command=self._format_command_name(cog_or_command)),
+                _("To fix this issue, a manual review of the command is required."),
+            ),
+        )
+
+    async def _check_requires_permission_checks(
+        self, cog_or_command: commands.CogCommandMixin
+    ) -> CheckResult:
+        label = _("Permission checks")
+        if cog_or_command.requires._verify_checks(self.ctx):
+            return CheckResult(True, label)
+        details = (
+            _("The access has been denied by one of the permissions checks of {cog} cog.").format(
+                cog=inline(cog_or_command.qualified_name)
+            )
+            if cog_or_command is self.ctx.cog
+            else _(
+                "The access has been denied by one of the permission checks of {command} command."
+            ).format(command=self._format_command_name(cog_or_command))
+        )
+        return CheckResult(
+            False,
+            label,
+            details,
+            _("To fix this issue, a manual review of the permission checks is required."),
+        )
+
+    async def _check_requires_user_perms_and_privilege_level(
+        self, cog_or_command: commands.CogCommandMixin
+    ) -> CheckResult:
+        label = _("User's discord permissions and privilege level")
+        requires = cog_or_command.requires
+        if requires._verify_checks(self.ctx):
+            return CheckResult(True, label)
+        resolutions = []
+        if requires.user_perms is not None:
+            permissions = format_perms_list(requires.user_perms)
+            resolutions.append(
+                _(
+                    "grant the required permissions to the user through role settings"
+                    " or channel overrides"
+                )
+            )
+            details = (
+                _(
+                    "The user is missing some of the channel permissions ({permissions})"
+                    " required by the {cog} cog."
+                ).format(permissions=permissions, cog=inline(cog_or_command.qualified_name))
+                if cog_or_command is self.ctx.cog
+                else _(
+                    "The user is missing some of the channel permissions ({permissions})"
+                    " required by the {command} command."
+                ).format(
+                    permissions=permissions, command=self._format_command_name(cog_or_command)
+                )
+            )
+        if requires.privilege_level is not None:
+            if requires.privilege_level is commands.PrivilegeLevel.GUILD_OWNER:
+                privilege_level = _("the guild owner")
+            else:
+                if requires.privilege_level is commands.PrivilegeLevel.MOD:
+                    privilege_level = _("the mod role")
+                elif requires.privilege_level is commands.PrivilegeLevel.ADMIN:
+                    privilege_level = _("the admin role")
+                else:
+                    raise RuntimeError("Ran into unexpected privilege level.")
+                resolutions.append(_("assign appropriate role to the user"))
+            details = (
+                _(
+                    "The user is missing the privilege level ({privilege_level})"
+                    " required by the {cog} cog."
+                ).format(permissions=permissions, cog=inline(cog_or_command.qualified_name))
+                if cog_or_command is self.ctx.cog
+                else _(
+                    "The user is missing the privilege level ({privilege_level})"
+                    " required by the {command} command."
+                ).format(
+                    permissions=permissions, command=self._format_command_name(cog_or_command)
+                )
+            )
+
+        if not resolutions:
+            # Neither `user_perms` nor `privilege_level` are responsible for the issue.
+            return CheckResult(True, label)
+
+        resolutions.append(_("add appropriate rule in the Permissions cog"))
+        if requires.user_perms is not None and requires.privilege_level is not None:
+            details = (
+                _(
+                    "The user has neither the channel permissions ({permissions}) nor"
+                    " the privilege level ({privilege_level}) required by the {cog} cog."
+                ).format(
+                    permissions=permissions,
+                    privilege_level=privilege_level,
+                    cog=inline(cog_or_command.qualified_name),
+                )
+                if cog_or_command is self.ctx.cog
+                else _(
+                    "The user has neither the channel permissions ({permissions}) nor"
+                    " the privilege level ({privilege_level}) required by the {command} command."
+                ).format(
+                    permissions=permissions,
+                    privilege_level=privilege_level,
+                    command=self._format_command_name(cog_or_command),
+                )
+            )
+
+        return CheckResult(
+            False,
+            label,
+            details,
+            self._format_multiple_resolutions(resolutions),
         )
 
     async def _check_dpy_checks_and_requires(self, command: commands.Command) -> CheckResult:
