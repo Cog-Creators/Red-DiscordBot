@@ -520,7 +520,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             # unless there's some bug here, we should probably never run into this
             final_check_result=CheckResult(
                 False,
-                _("Other issues related to permissions."),
+                _("Other issues related to the permissions."),
                 _(
                     "Fatal error: There's an issue related to the permissions for the"
                     " {cog} cog but we're not able to determine the exact cause."
@@ -613,7 +613,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             ),
             final_check_result=CheckResult(
                 False,
-                _("Other issues related to permissions."),
+                _("Other issues related to the permissions."),
                 _(
                     "There's an issue related to the permissions of {cog} cog"
                     " but we're not able to determine the exact cause."
@@ -631,7 +631,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         self, cog_or_command: commands.CogCommandMixin
     ) -> CheckResult:
         label = _("Permission checks")
-        if cog_or_command.requires._verify_checks(self.ctx):
+        if await cog_or_command.requires._verify_checks(self.ctx):
             return CheckResult(True, label)
         details = (
             _("The access has been denied by one of the permissions checks of {cog} cog.").format(
@@ -654,7 +654,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
     ) -> CheckResult:
         label = _("User's discord permissions and privilege level")
         requires = cog_or_command.requires
-        if requires._verify_checks(self.ctx):
+        if await requires._verify_user(self.ctx):
+            print("HI!")
             return CheckResult(True, label)
         resolutions = []
         if requires.user_perms is not None:
