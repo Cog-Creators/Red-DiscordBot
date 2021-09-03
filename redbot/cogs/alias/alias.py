@@ -369,7 +369,7 @@ class Alias(commands.Cog):
             else:
                 # This part should technically never be reached...
                 await ctx.send(
-                    _("Alias with name `{name}` was not found.").format(name=alias_name)
+                    _("Alias with the name `{name}` was not found.").format(name=alias_name)
                 )
         except ArgParseError as e:
             return await ctx.send(" ".join(e.args))
@@ -402,7 +402,7 @@ class Alias(commands.Cog):
             else:
                 # This part should technically never be reached...
                 await ctx.send(
-                    _("Alias with name `{name}` was not found.").format(name=alias_name)
+                    _("Alias with the name `{name}` was not found.").format(name=alias_name)
                 )
         except ArgParseError as e:
             return await ctx.send(" ".join(e.args))
