@@ -171,6 +171,7 @@ class Filter(commands.Cog):
             return
         if pred.result:
             await self.config.guild(guild).filter.clear()
+            self.invalidate_cache(guild)
             await ctx.send(_("Server filter cleared."))
         else:
             await ctx.send(_("No changes have been made."))
@@ -219,6 +220,7 @@ class Filter(commands.Cog):
             return
         if pred.result:
             await self.config.channel(channel).filter.clear()
+            self.invalidate_cache(ctx.guild, channel)
             await ctx.send(_("Channel filter cleared."))
         else:
             await ctx.send(_("No changes have been made."))
