@@ -1152,7 +1152,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]embedset showsettings "ignore list"` - Checking subcommands requires quotes.
 
         **Arguments:**
-            - `[command_name]` - Checks this command for command specific embed settings.
+            - `[command]` - Checks this command for command specific embed settings.
         """
         if command is not None:
             # qualified name might be different if alias was passed to this command
