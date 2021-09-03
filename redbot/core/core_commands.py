@@ -4069,7 +4069,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_manager.command(name="defaultenablecog")
-    async def command_default_enable_cog(self, ctx: commands.Context, *, cogname: CogConverter):
+    async def command_default_enable_cog(self, ctx: commands.Context, *, cog: CogConverter):
         """Set the default state for a cog as enabled.
 
         This will re-enable the cog for all servers by default.
