@@ -1,6 +1,5 @@
 """Module to manage trivia sessions."""
 import asyncio
-import contextlib
 import time
 import random
 from collections import Counter
@@ -208,8 +207,7 @@ class TriviaSession:
             )
         except asyncio.TimeoutError:
             if time.time() - self._last_response >= timeout:
-                with contextlib.suppress(discord.HTTPException):
-                    await self.ctx.send(_("Guys...? Well, I guess I'll stop then."))
+                await self.ctx.send(_("Guys...? Well, I guess I'll stop then."))
                 self.stop()
                 return False
             if self.settings["reveal_answer"]:
@@ -222,19 +220,11 @@ class TriviaSession:
             if self.settings["bot_plays"]:
                 reply += _(" **+1** for me!")
                 self.scores[self.ctx.guild.me] += 1
-            try:
-                await self.ctx.send(reply)
-            except (discord.NotFound, discord.Forbidden):
-                self.stop()
-                return False
+            await self.ctx.send(reply)
         else:
             self.scores[message.author] += 1
             reply = _("You got it {user}! **+1** to you!").format(user=message.author.display_name)
-            try:
-                await self.ctx.send(reply)
-            except (discord.NotFound, discord.Forbidden):
-                self.stop()
-                return False
+            await self.ctx.send(reply)
         return True
 
     def check_answer(self, answers):
