@@ -342,7 +342,7 @@ class Alias(commands.Cog):
     @alias.command(name="edit")
     @commands.guild_only()
     async def _edit_alias(self, ctx: commands.Context, alias_name: str, *, command):
-        """Edit an existing alias in the present server."""
+        """Edit an existing alias in this server."""
         # region Alias Add Validity Checking
         alias = await self._aliases.get_alias(ctx.guild, alias_name)
         if not alias:
