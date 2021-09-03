@@ -3696,7 +3696,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         *,
         command_name: str,
     ) -> None:
-        """Diagnose issues with command checks with ease!"""
+        """
+        Diagnose issues with the command checks with ease!
+
+        **Example:**
+            - `[p]diagnoseissues #general @Slime ban` - Diagnose why @Slime can't use `[p]ban` in #general channel.
+
+        **Arguments:**
+            - `<channel>` - The channel that the command should be tested for.
+            - `<member>` - The member that should be considered as the command caller.
+            - `<command_name>` - The name of the command to test.
+        """
         command = self.bot.get_command(command_name)
         if command is None:
             await ctx.send("Command not found!")
