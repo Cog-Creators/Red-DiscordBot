@@ -368,7 +368,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                 _(
                     "There's an issue related to the checks for {command}"
                     " but we're not able to determine the exact cause."
-                ),
+                ).format(command=self._format_command_name(command)),
                 _(
                     "To fix this issue, a manual review of"
                     " the global, cog and command checks is required."
