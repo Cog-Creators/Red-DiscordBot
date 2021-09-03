@@ -4313,7 +4313,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
 
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
-            if command not in disabled_commands:
+            if command.qualified_name not in disabled_commands:
                 disabled_commands.append(command.qualified_name)
 
         done = command.disable_in(ctx.guild)
