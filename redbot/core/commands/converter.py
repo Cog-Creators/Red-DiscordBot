@@ -426,9 +426,7 @@ if TYPE_CHECKING:
 else:
 
     class CommandConverter(dpy_commands.Converter):
-        """
-        Returns a `Command` object if the passed argument matches a command on the bot.
-        """
+        """Converts a command name to the matching `Command` object."""
 
         async def convert(self, ctx: "Context", argument: str):
             arg = argument.strip()
