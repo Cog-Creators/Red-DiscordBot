@@ -35,6 +35,7 @@ class ModInfo(MixinMeta):
     @checks.admin_or_permissions(manage_nicknames=True)
     async def rename(self, ctx: commands.Context, member: discord.Member, *, nickname: str = ""):
         """Change a member's nickname.
+
         Leaving the nickname empty will remove it.
         """
         nickname = nickname.strip()
@@ -172,8 +173,10 @@ class ModInfo(MixinMeta):
     @commands.bot_has_permissions(embed_links=True)
     async def userinfo(self, ctx, *, member: discord.Member = None):
         """Show information about a member.
+
         This includes fields for status, discord join date, server
         join date, voice state and previous names/nicknames.
+
         If the member has no roles, previous names or previous nicknames,
         these fields will be omitted.
         """
@@ -265,9 +268,7 @@ class ModInfo(MixinMeta):
         data.add_field(name=_("Joined this server on"), value=joined_on)
         if role_str is not None:
             data.add_field(
-                name=_("Roles") if len(roles) > 1 else _("Role"),
-                value=role_str,
-                inline=False,
+                name=_("Roles") if len(roles) > 1 else _("Role"), value=role_str, inline=False
             )
         if names:
             # May need sanitizing later, but mentions do not ping in embeds currently
