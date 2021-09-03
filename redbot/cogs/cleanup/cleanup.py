@@ -59,8 +59,9 @@ class Cleanup(commands.Cog):
         response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
         if response.content.lower().startswith("y"):
-            with contextlib.suppress(discord.HTTPException):
+            with contextlib.suppress(discord.NotFound):
                 await prompt.delete()
+            with contextlib.suppress(discord.HTTPException):
                 await response.delete()
             return True
         else:
