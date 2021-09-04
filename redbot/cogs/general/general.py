@@ -254,7 +254,7 @@ class General(commands.Cog):
         Default to False.
         """
         guild = ctx.guild
-        created_at = _("Created on <t:{0}:D>. That's <t:{0}:R>!").format(
+        created_at = _("Created on <t:{0}>. That's <t:{0}:R>!").format(
             int(guild.created_at.replace(tzinfo=datetime.timezone.utc).timestamp()),
         )
         online = humanize_number(
