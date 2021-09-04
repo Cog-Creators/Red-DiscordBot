@@ -115,6 +115,7 @@ class RedBase(
             help__verify_exists=False,
             help__tagline="",
             help__use_tick=False,
+            help__react_timeout=30,
             description="Red V3",
             invite_public=False,
             invite_perm=0,

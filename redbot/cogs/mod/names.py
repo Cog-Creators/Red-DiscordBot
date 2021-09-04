@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from typing import cast
 
 import discord
@@ -10,6 +10,7 @@ from redbot.core.utils.common_filters import (
 )
 from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
+from .utils import is_allowed_by_hierarchy
 
 _ = i18n.Translator("Mod", __file__)
 
@@ -53,6 +54,16 @@ class ModInfo(MixinMeta):
                 _(
                     "I do not have permission to rename that member. They may be higher than or "
                     "equal to me in the role hierarchy."
+                )
+            )
+        elif ctx.author != member and not await is_allowed_by_hierarchy(
+            self.bot, self.config, ctx.guild, ctx.author, member
+        ):
+            await ctx.send(
+                _(
+                    "I cannot let you do that. You are "
+                    "not higher than the user in the role "
+                    "hierarchy."
                 )
             )
         else:
@@ -176,21 +187,16 @@ class ModInfo(MixinMeta):
             member = author
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
+        special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000, datetime.timezone.utc)
         is_special = member.id == 96130341705637888 and guild.id == 133049272517001216
 
         roles = member.roles[-1:0:-1]
         names, nicks = await self.get_names_and_nicks(member)
 
-        joined_at = member.joined_at if not is_special else special_date
-        since_created = (ctx.message.created_at - member.created_at).days
-        if joined_at is not None:
-            since_joined = (ctx.message.created_at - joined_at).days
-            user_joined = joined_at.strftime("%d %b %Y %H:%M")
-        else:
-            since_joined = "?"
-            user_joined = _("Unknown")
-        user_created = member.created_at.strftime("%d %b %Y %H:%M")
+        joined_at = member.joined_at.replace(tzinfo=datetime.timezone.utc)
+        if is_special:
+            joined_at = special_date
+        user_created = int(member.created_at.replace(tzinfo=datetime.timezone.utc).timestamp())
         voice_state = member.voice
         member_number = (
             sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
@@ -199,8 +205,11 @@ class ModInfo(MixinMeta):
             + 1
         )
 
-        created_on = _("{}\n({} days ago)").format(user_created, since_created)
-        joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
+        created_on = "<t:{0}>\n(<t:{0}:R>)".format(user_created)
+        if joined_at is not None:
+            joined_on = "<t:{0}>\n(<t:{0}:R>)".format(int(joined_at.timestamp()))
+        else:
+            joined_on = _("Unknown")
 
         if any(a.type is discord.ActivityType.streaming for a in member.activities):
             statusemoji = "\N{LARGE PURPLE CIRCLE}"

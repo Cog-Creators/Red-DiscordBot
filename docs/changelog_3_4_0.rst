@@ -77,11 +77,11 @@ Admin
 *****
 
 - The cog will now log when it leaves a guild due to the serverlock (:issue:`5008`, :issue:`5073`)
-- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 
 Audio
 *****
 
+- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
 - The ``[p]audiostats`` command can now only be used by bot owners (:issue:`5017`)
 - Fixed an error with ``[p]audiostats`` caused by players not always having their connection time stored (:issue:`5046`)
