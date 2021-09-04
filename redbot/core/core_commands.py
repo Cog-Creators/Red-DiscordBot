@@ -3699,6 +3699,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Diagnose issues with the command checks with ease!
 
+        If you want to diagnose the command from a text channel in a different server,
+        you can do so by using the command in DMs.
+
         **Example:**
             - `[p]diagnoseissues #general @Slime ban` - Diagnose why @Slime can't use `[p]ban` in #general channel.
 
