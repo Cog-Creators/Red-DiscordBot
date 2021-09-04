@@ -205,9 +205,9 @@ class ModInfo(MixinMeta):
             + 1
         )
 
-        created_on = "<t:{0}:D>\n(<t:{0}:R>)".format(user_created)
+        created_on = "<t:{0}>\n(<t:{0}:R>)".format(user_created)
         if joined_at is not None:
-            joined_on = "<t:{0}:D>\n(<t:{0}:R>)".format(int(joined_at.timestamp()))
+            joined_on = "<t:{0}>\n(<t:{0}:R>)".format(int(joined_at.timestamp()))
         else:
             joined_on = _("Unknown")
 

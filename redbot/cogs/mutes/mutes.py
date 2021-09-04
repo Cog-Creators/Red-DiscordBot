@@ -527,7 +527,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if duration:
             duration_str = humanize_timedelta(timedelta=duration)
             until = datetime.now(timezone.utc) + duration
-            until_str = until.strftime("%Y-%m-%d %H:%M:%S UTC")
+            until_str = f"<t:{int(until.timestamp())}>"
 
         if moderator is None:
             moderator_str = _("Unknown")
