@@ -780,7 +780,7 @@ diagnoseissues
 
 .. code-block:: none
 
-    [p]diagnoseissues <channel> <member> <command_name>
+    [p]diagnoseissues [channel] <member> <command_name>
 
 **Description**
 
@@ -790,7 +790,7 @@ Diagnose issues with the command checks with ease!
     - ``[p]diagnoseissues #general @Slime ban`` - Diagnose why @Slime can't use ``[p]ban`` in #general channel.
 
 **Arguments:**
-    - ``<channel>`` - The channel that the command should be tested for.
+    - ``[channel]`` - The text channel that the command should be tested for. Defaults to the current channel.
     - ``<member>`` - The member that should be considered as the command caller.
     - ``<command_name>`` - The name of the command to test.
 

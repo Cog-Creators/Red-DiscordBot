@@ -3691,7 +3691,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def diagnoseissues(
         self,
         ctx: commands.Context,
-        channel: discord.TextChannel,
+        channel: Optional[discord.TextChannel],
         member: Union[discord.Member, discord.User],
         *,
         command_name: str,
@@ -3703,10 +3703,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]diagnoseissues #general @Slime ban` - Diagnose why @Slime can't use `[p]ban` in #general channel.
 
         **Arguments:**
-            - `<channel>` - The channel that the command should be tested for.
+            - `[channel]` - The text channel that the command should be tested for. Defaults to the current channel.
             - `<member>` - The member that should be considered as the command caller.
             - `<command_name>` - The name of the command to test.
         """
+        if channel is None:
+            channel = ctx.channel
+            if not isinstance(channel, discord.TextChannel):
+                await ctx.send(_("The channel needs to be passed when using this command in DMs."))
+                return
+
         command = self.bot.get_command(command_name)
         if command is None:
             await ctx.send("Command not found!")
