@@ -235,7 +235,7 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
     sudo apt -y install software-properties-common
     sudo add-apt-repository -y ppa:git-core/ppa
 
-We recommend adding the ``deadsnakes`` ppa to install Python 3.9 or greater:
+We recommend adding the ``deadsnakes`` ppa to install Python 3.9:
 
 .. prompt:: bash
 
