@@ -119,7 +119,7 @@ Complete the rest of the installation by `installing Python 3.9 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 32 and above has all required packages available in official repositories. Install
+Fedora Linux 33 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. prompt:: bash
