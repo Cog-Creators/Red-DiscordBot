@@ -36,6 +36,7 @@ from . import (
     errors,
     i18n,
 )
+from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter
 from .utils._internal_utils import fetch_latest_red_version_info
 from .utils.predicates import MessagePredicate
@@ -3679,6 +3680,66 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
         await ctx.send("".join(response))
+
+    # You may ask why this command is owner-only,
+    # cause after all it could be quite useful to guild owners!
+    # Truth to be told, that would require us to make some part of this
+    # more end-user friendly rather than just bot owner friendly - terms like
+    # 'global call once checks' are not of any use to someone who isn't bot owner.
+    @commands.is_owner()
+    @commands.command()
+    async def diagnoseissues(
+        self,
+        ctx: commands.Context,
+        channel: Optional[discord.TextChannel],
+        member: Union[discord.Member, discord.User],
+        *,
+        command_name: str,
+    ) -> None:
+        """
+        Diagnose issues with the command checks with ease!
+
+        If you want to diagnose the command from a text channel in a different server,
+        you can do so by using the command in DMs.
+
+        **Example:**
+            - `[p]diagnoseissues #general @Slime ban` - Diagnose why @Slime can't use `[p]ban` in #general channel.
+
+        **Arguments:**
+            - `[channel]` - The text channel that the command should be tested for. Defaults to the current channel.
+            - `<member>` - The member that should be considered as the command caller.
+            - `<command_name>` - The name of the command to test.
+        """
+        if channel is None:
+            channel = ctx.channel
+            if not isinstance(channel, discord.TextChannel):
+                await ctx.send(_("The channel needs to be passed when using this command in DMs."))
+                return
+
+        command = self.bot.get_command(command_name)
+        if command is None:
+            await ctx.send("Command not found!")
+            return
+
+        # This is done to allow the bot owner to diagnose a command
+        # while not being a part of the server.
+        if isinstance(member, discord.User):
+            maybe_member = channel.guild.get_member(member.id)
+            if maybe_member is None:
+                await ctx.send(_("The given user is not a member of the diagnosed server."))
+                return
+            member = maybe_member
+
+        if not channel.permissions_for(member).send_messages:
+            # Let's make Flame happy here
+            await ctx.send(
+                _(
+                    "Don't try to fool me, the given member can't access the {channel} channel!"
+                ).format(channel=channel.mention)
+            )
+            return
+        issue_diagnoser = IssueDiagnoser(self.bot, ctx, channel, member, command)
+        await ctx.send(await issue_diagnoser.diagnose())
 
     @commands.group(aliases=["whitelist"])
     @checks.is_owner()
