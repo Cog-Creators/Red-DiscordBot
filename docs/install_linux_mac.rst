@@ -193,11 +193,16 @@ Since Python is now installed to ``/opt/python``, we should add it to PATH. You 
     echo 'export PATH="/opt/python/bin:$PATH"' | sudo tee /etc/profile.d/opt-python.sh
     source /etc/profile.d/opt-python.sh
 
-Now, install pip with easy_install:
+Now, bootstrap pip with ensurepip:
 
 .. prompt:: bash
 
-    sudo /opt/python/bin/easy_install-3.9 pip
+    sudo /opt/python/bin/python3.9 -m ensurepip --altinstall
+
+.. note::
+
+    After this command, a warning about running pip as root might be printed.
+    For this specific command, this warning can be safely ignored.
 
 Continue by `creating-venv-linux`.
 
