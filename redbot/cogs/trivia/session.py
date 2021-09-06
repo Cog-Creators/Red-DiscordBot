@@ -114,6 +114,8 @@ class TriviaSession:
             fut.result()
         except asyncio.CancelledError:
             pass
+        except (discord.NotFound, discord.Forbidden):
+            self.stop()
         except Exception as exc:
             LOG.error("A trivia session has encountered an error.\n", exc_info=exc)
             asyncio.create_task(

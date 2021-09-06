@@ -11,7 +11,7 @@ Installing the pre-requirements
 Please install the pre-requirements by following instructions from one of the following subsections.
 
 The pre-requirements are:
- - Python 3.8.1 or greater; **Python 3.9 is currently not supported!**
+ - Python 3.8.1 or greater
  - Pip 18.1 or greater
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
@@ -40,7 +40,7 @@ Then run each of the following commands:
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2019-workload-vctools -y
-    choco upgrade python3 -y --version 3.8.10
+    choco upgrade python3 -y --version 3.9.7
 
 For Audio support, you should also run the following command before exiting:
 
@@ -64,7 +64,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_; **Python 3.9 is currently not supported!**
+* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -111,7 +111,7 @@ Then create your virtual environment with the following command
 
 .. prompt:: batch
 
-    py -3.8 -m venv "%userprofile%\redenv"
+    py -3.9 -m venv "%userprofile%\redenv"
 
 And activate it with the following command
 

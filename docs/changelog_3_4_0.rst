@@ -77,11 +77,11 @@ Admin
 *****
 
 - The cog will now log when it leaves a guild due to the serverlock (:issue:`5008`, :issue:`5073`)
-- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 
 Audio
 *****
 
+- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
 - The ``[p]audiostats`` command can now only be used by bot owners (:issue:`5017`)
 - Fixed an error with ``[p]audiostats`` caused by players not always having their connection time stored (:issue:`5046`)
@@ -1053,7 +1053,7 @@ Core Bot
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
 
-    - New special methods added to `commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
+    - New special methods added to `redbot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
