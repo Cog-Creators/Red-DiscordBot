@@ -38,9 +38,12 @@ __all__ = [
     "DictConverter",
     "UserInputOptional",
     "NoParseOptional",
+    "RelativedeltaConverter",
     "TimedeltaConverter",
     "get_dict_converter",
+    "get_relativedelta_converter",
     "get_timedelta_converter",
+    "parse_relativedelta",
     "parse_timedelta",
     "Literal",
 ]
