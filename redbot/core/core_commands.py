@@ -3765,9 +3765,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users...>` - The user or users to add to the allowlist.
         """
-        uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.add_to_whitelist(None, uids)
-        if len(uids) > 1:
+        await self.bot.add_to_whitelist(*users)
+        if len(users) > 1:
             await ctx.send(_("Users have been added to the allowlist."))
         else:
             await ctx.send(_("User has been added to the allowlist."))
@@ -3812,9 +3811,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users...>` - The user or users to remove from the allowlist.
         """
-        uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.remove_from_whitelist(None, uids)
-        if len(uids) > 1:
+        await self.bot.remove_from_whitelist(*users)
+        if len(users) > 1:
             await ctx.send(_("Users have been removed from the allowlist."))
         else:
             await ctx.send(_("User has been removed from the allowlist."))
@@ -3829,7 +3827,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]allowlist clear`
         """
-        await self.bot._whiteblacklist_cache.clear_whitelist()
+        await self.bot.clear_whitelist()
         await ctx.send(_("Allowlist has been cleared."))
 
     @commands.group(aliases=["blacklist", "denylist"])
@@ -3863,9 +3861,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(_("You cannot add an owner to the blocklist!"))
                 return
 
-        uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.add_to_blacklist(None, uids)
-        if len(uids) > 1:
+        await self.bot.add_to_blacklist(*users)
+        if len(users) > 1:
             await ctx.send(_("Users have been added to the blocklist."))
         else:
             await ctx.send(_("User has been added to the blocklist."))
@@ -3878,7 +3875,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]blocklist list`
         """
-        curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
+        curr_list = await self.bot.get_blacklist()
 
         if not curr_list:
             await ctx.send("Blocklist is empty.")
@@ -3908,9 +3905,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users...>` - The user or users to remove from the blocklist.
         """
-        uids = {getattr(user, "id", user) for user in users}
-        await self.bot._whiteblacklist_cache.remove_from_blacklist(None, uids)
-        if len(uids) > 1:
+        await self.bot.remove_from_blacklist(*users)
+        if len(users) > 1:
             await ctx.send(_("Users have been removed from the blocklist."))
         else:
             await ctx.send(_("User has been removed from the blocklist."))
@@ -3923,7 +3919,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]blocklist clear`
         """
-        await self.bot._whiteblacklist_cache.clear_blacklist()
+        await self.bot.clear_blacklist()
         await ctx.send(_("Blocklist has been cleared."))
 
     @commands.group(aliases=["localwhitelist"])
