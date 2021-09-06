@@ -1230,7 +1230,7 @@ class RedBase(
             The channel to check embed settings for.
         user : `discord.abc.User`
             The user to check embed settings for.
-        command : `commands.Command`, optional
+        command : `redbot.core.commands.Command`, optional
             The command ran.
 
         Returns
