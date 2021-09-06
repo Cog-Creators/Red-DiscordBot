@@ -1,9 +1,12 @@
 import inspect
+import datetime
+from dateutil.relativedelta import relativedelta
 
 import pytest
 from discord.ext import commands as dpy_commands
 
 from redbot.core import commands
+from redbot.core.commands import converter
 
 
 @pytest.fixture(scope="session")
@@ -49,3 +52,16 @@ def test_dpy_commands_reexports():
     missing_attrs = dpy_attrs - set(commands.__dict__.keys())
 
     assert not missing_attrs
+
+
+def test_converter_timedelta():
+    assert converter.parse_timedelta("1 day") == datetime.timedelta(days=1)
+    assert converter.parse_timedelta("1 minute") == datetime.timedelta(minutes=1)
+    assert converter.parse_timedelta("13 days 5 minutes") == datetime.timedelta(days=13, minutes=5)
+
+
+def test_converter_relativedelta():
+    assert converter.parse_relativedelta("1 year") == relativedelta(years=1)
+    assert converter.parse_relativedelta("1 year 10 days 3 seconds") == relativedelta(
+        years=1, days=10, seconds=3
+    )
