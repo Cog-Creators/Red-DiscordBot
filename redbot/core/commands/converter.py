@@ -154,9 +154,7 @@ def parse_timedelta(
 
 
 def parse_relativedelta(
-    argument: str,
-    *,
-    allowed_units: Optional[List[str]] = None,
+    argument: str, *, allowed_units: Optional[List[str]] = None
 ) -> Optional[relativedelta]:
     """
     This converts a user provided string into a datetime with offset from NOW
