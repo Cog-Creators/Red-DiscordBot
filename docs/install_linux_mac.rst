@@ -129,6 +129,7 @@ with apt:
 
 .. prompt:: bash
 
+    sudo apt update
     sudo apt -y install python3 python3-dev python3-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
 Continue by `creating-venv-linux`.
