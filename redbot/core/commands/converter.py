@@ -420,10 +420,10 @@ else:
 
 
 if TYPE_CHECKING:
-    RelativeDeltaConverter = relativedelta
+    RelativedeltaConverter = relativedelta
 else:
 
-    class RelativeDeltaConverter(dpy_commands.Converter):
+    class RelativedeltaConverter(dpy_commands.Converter):
         """
         This is a converter for relative deltas.
         The units should be in order from largest to smallest.
@@ -500,7 +500,7 @@ else:
         Returns
         -------
         type
-            The converter class, which will be a subclass of `RelativeDeltaConverter`
+            The converter class, which will be a subclass of `RelativedeltaConverter`
         """
 
         class PartialMeta(type):
@@ -510,7 +510,7 @@ else:
                 default_unit=default_unit,
             )
 
-        class ValidatedConverter(RelativeDeltaConverter, metaclass=PartialMeta):
+        class ValidatedConverter(RelativedeltaConverter, metaclass=PartialMeta):
             pass
 
         return ValidatedConverter
