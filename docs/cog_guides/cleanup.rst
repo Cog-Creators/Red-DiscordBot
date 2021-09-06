@@ -295,7 +295,6 @@ Examples:
 - ``<number>`` The max number of messages to cleanup. Must be a positive integer.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
 
-
 .. _cleanup-command-cleanupset:
 
 ^^^^^^^^^^
