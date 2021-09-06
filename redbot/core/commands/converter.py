@@ -100,9 +100,9 @@ def parse_timedelta(
     ----------
     argument : str
         The user provided input
-    maximum : Optional[timedelta]
+    maximum : Optional[datetime.timedelta]
         If provided, any parsed value higher than this will raise an exception
-    minimum : Optional[timedelta]
+    minimum : Optional[datetime.timedelta]
         If provided, any parsed value lower than this will raise an exception
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
@@ -111,7 +111,7 @@ def parse_timedelta(
 
     Returns
     -------
-    Optional[timedelta]
+    Optional[datetime.timedelta]
         If matched, the timedelta which was parsed. This can return `None`
 
     Raises
@@ -173,7 +173,7 @@ def parse_relativedelta(
 
     Returns
     -------
-    Optional[relativedelta]
+    Optional[dateutil.relativedelta.relativedelta]
         If matched, the relativedelta which was parsed. This can return `None`
 
     Raises
@@ -320,9 +320,9 @@ else:
 
         Attributes
         ----------
-        maximum : Optional[timedelta]
+        maximum : Optional[datetime.timedelta]
             If provided, any parsed value higher than this will raise an exception
-        minimum : Optional[timedelta]
+        minimum : Optional[datetime.timedelta]
             If provided, any parsed value lower than this will raise an exception
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
@@ -385,9 +385,9 @@ else:
 
         Parameters
         ----------
-        maximum : Optional[timedelta]
+        maximum : Optional[datetime.timedelta]
             If provided, any parsed value higher than this will raise an exception
-        minimum : Optional[timedelta]
+        minimum : Optional[datetime.timedelta]
             If provided, any parsed value lower than this will raise an exception
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
