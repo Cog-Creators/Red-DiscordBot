@@ -41,7 +41,6 @@ __all__ = [
     "RelativedeltaConverter",
     "TimedeltaConverter",
     "get_dict_converter",
-    "get_relativedelta_converter",
     "get_timedelta_converter",
     "parse_relativedelta",
     "parse_timedelta",
@@ -429,6 +428,7 @@ else:
     class RelativedeltaConverter(dpy_commands.Converter):
         """
         This is a converter for relative deltas.
+
         The units should be in order from largest to smallest.
         This works with or without whitespace.
 
@@ -462,61 +462,6 @@ else:
             if delta is not None:
                 return delta
             raise BadArgument()  # This allows this to be a required argument.
-
-
-if TYPE_CHECKING:
-
-    def get_relativedelta_converter(
-        *,
-        default_unit: Optional[str] = None,
-        maximum: Optional[relativedelta] = None,
-        minimum: Optional[relativedelta] = None,
-        allowed_units: Optional[List[str]] = None,
-    ) -> Type[relativedelta]:
-        ...
-
-
-else:
-
-    def get_relativedelta_converter(
-        *,
-        default_unit: Optional[str] = None,
-        allowed_units: Optional[List[str]] = None,
-    ) -> Type[relativedelta]:
-        """
-        This creates a type suitable for typechecking which works with discord.py's
-        commands.
-
-        See `parse_relativedelta` for more information about how this functions.
-
-        Parameters
-        ----------
-        allowed_units : Optional[List[str]]
-            If provided, you can constrain a user to expressing the amount of time
-            in specific units. The units you can choose to provide are the same as the
-            parser understands: (``years`, ``months``, ``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
-        default_unit : Optional[str]
-            If provided, it will additionally try to match integer-only input into
-            a timedelta, using the unit specified. Same units as in ``allowed_units``
-            apply.
-
-        Returns
-        -------
-        type
-            The converter class, which will be a subclass of `RelativedeltaConverter`
-        """
-
-        class PartialMeta(type):
-            __call__ = functools.partialmethod(
-                type(DictConverter).__call__,
-                allowed_units=allowed_units,
-                default_unit=default_unit,
-            )
-
-        class ValidatedConverter(RelativedeltaConverter, metaclass=PartialMeta):
-            pass
-
-        return ValidatedConverter
 
 
 if not TYPE_CHECKING:
