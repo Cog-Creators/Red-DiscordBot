@@ -166,7 +166,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
         )
 
     async def _get_detailed_global_whitelist_blacklist_result(self, label: str) -> CheckResult:
-        global_whitelist = await self.bot._whiteblacklist_cache.get_whitelist()
+        global_whitelist = await self.bot.get_whitelist()
         if global_whitelist:
             return CheckResult(
                 False,
@@ -206,7 +206,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
     async def _get_detailed_local_whitelist_blacklist_result(self, label: str) -> CheckResult:
         # this method skips guild owner check as the earlier checks wouldn't fail
         # if the user were guild owner
-        guild_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(self.guild)
+        guild_whitelist = await self.bot.get_whitelist(self.guild)
         if guild_whitelist:
             return CheckResult(
                 False,
@@ -227,7 +227,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
             )
 
         details = _("Local blocklist prevents the user from running this command.")
-        guild_blacklist = await self.bot._whiteblacklist_cache.get_blacklist(self.guild)
+        guild_blacklist = await self.bot.get_blacklist(self.guild)
         ids = {role.id for role in self.author.roles if not role.is_default()}
         ids.add(self.author.id)
         intersection = ids & guild_blacklist
