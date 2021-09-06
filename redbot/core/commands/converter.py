@@ -454,10 +454,7 @@ else:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
-            delta = parse_relativedelta(
-                argument,
-                allowed_units=self.allowed_units,
-            )
+            delta = parse_relativedelta(argument, allowed_units=self.allowed_units)
 
             if delta is not None:
                 return delta
