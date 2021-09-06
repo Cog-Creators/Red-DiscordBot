@@ -17,6 +17,7 @@ from typing import (
     Optional,
     Union,
     List,
+    Iterable,
     Dict,
     NoReturn,
     Set,
@@ -67,7 +68,7 @@ DataDeletionResults = namedtuple("DataDeletionResults", "failed_modules failed_c
 
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
-UserOrRoles = Union[int, discord.Role, discord.Member, discord.User]
+UserOrRole = Union[int, discord.Role, discord.Member, discord.User]
 
 
 def _is_submodule(parent, child):
@@ -526,7 +527,7 @@ class RedBase(
         return self._max_messages
 
     async def add_to_blacklist(
-        self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
     ):
         """Add users or roles to the blacklist.
 
@@ -534,7 +535,7 @@ class RedBase(
 
         Parameters
         ----------
-        users_or_roles : Union[int, discord.Role, discord.User, discord.Member]
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
             The users or roles to blacklist. If the 'guild' argument is passed it will be blocked on that guild.
         guild : Optional[discord.Guild]
             The guild for blacklisting the items. If no guild is passed, it will blacklist the items globally.
@@ -548,7 +549,7 @@ class RedBase(
         await self._whiteblacklist_cache.add_to_blacklist(guild, to_add)
 
     async def remove_from_blacklist(
-        self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
     ):
         """Remove users or roles from the blacklist.
 
@@ -556,7 +557,7 @@ class RedBase(
 
         Parameters
         ----------
-        users_or_roles : Union[int, discord.Role, discord.User, discord.Member]
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
             The users or roles to remove from the blacklist.
         guild : Optional[discord.Guild]
             The guild for removing the blacklisted items. If no guild is passed, it will remove the items from the global blacklist.
@@ -595,7 +596,7 @@ class RedBase(
         await self._whiteblacklist_cache.clear_blacklist(guild)
 
     async def add_to_whitelist(
-        self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
     ):
         """Add users or roles to the whitelist.
 
@@ -603,7 +604,7 @@ class RedBase(
 
         Parameters
         ----------
-        users_or_roles : Union[int, discord.Role, discord.Member, discord.User]
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
             The items to whitelist.
         guild : Optional[discord.Guild]
             The guild for whitelisting the items. If this is not passed in it will whitelist the items globally.
@@ -617,7 +618,7 @@ class RedBase(
         await self._whiteblacklist_cache.add_to_whitelist(guild, to_add)
 
     async def remove_from_whitelist(
-        self, *users_or_roles: UserOrRoles, guild: Optional[discord.Guild] = None
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
     ):
         """Remove users or roles from the whitelist.
 
@@ -625,7 +626,7 @@ class RedBase(
 
         Parameters
         ----------
-        users_or_roles : Union[int, discord.Role, discord.Member, discord.User]
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
             The items to remove from the whitelist
         guild : Optional[discord.Guild]
             The guild to remove the items from the whitelist.
