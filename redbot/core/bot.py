@@ -757,13 +757,13 @@ class RedBase(
         if await self.is_owner(who):
             return True
 
-        global_whitelist = await self._whiteblacklist_cache.get_whitelist()
+        global_whitelist = await self.get_whitelist()
         if global_whitelist:
             if who.id not in global_whitelist:
                 return False
         else:
             # blacklist is only used when whitelist doesn't exist.
-            global_blacklist = await self._whiteblacklist_cache.get_blacklist()
+            global_blacklist = await self.get_blacklist()
             if who.id in global_blacklist:
                 return False
 
@@ -791,12 +791,12 @@ class RedBase(
                 # there is a silent failure potential, and role blacklist/whitelists will break.
                 ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
-            guild_whitelist = await self._whiteblacklist_cache.get_whitelist(guild)
+            guild_whitelist = await self.get_whitelist(guild)
             if guild_whitelist:
                 if ids.isdisjoint(guild_whitelist):
                     return False
             else:
-                guild_blacklist = await self._whiteblacklist_cache.get_blacklist(guild)
+                guild_blacklist = await self.get_blacklist(guild)
                 if not ids.isdisjoint(guild_blacklist):
                     return False
 
