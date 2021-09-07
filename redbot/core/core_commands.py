@@ -4060,7 +4060,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cog>` - The name of the cog to make disabled by default. Must be title-case.
         """
-        cog = cogname
         cogname = cog.qualified_name
         if isinstance(cog, commands.commands._RuleDropper):
             return await ctx.send(_("You can't disable this cog by default."))
@@ -4084,7 +4083,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cog>` - The name of the cog to make enabled by default. Must be title-case.
         """
-        cog = cogname
         cogname = cog.qualified_name
         await self.bot._disabled_cog_cache.default_enable(cogname)
         await ctx.send(_("{cogname} has been set as enabled by default.").format(cogname=cogname))
