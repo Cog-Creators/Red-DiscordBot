@@ -875,7 +875,7 @@ embedset command
 
 .. code-block:: none
 
-    [p]embedset command <command_name> [enabled]
+    [p]embedset command <command> [enabled]
 
 **Description**
 
@@ -908,7 +908,7 @@ embedset command global
 
 .. code-block:: none
 
-    [p]embedset command global <command_name> [enabled]
+    [p]embedset command global <command> [enabled]
 
 **Description**
 
@@ -938,7 +938,7 @@ embedset command server
 
 .. code-block:: none
 
-    [p]embedset command server <command_name> [enabled]
+    [p]embedset command server <command> [enabled]
 
 .. tip:: Alias: ``embedset command guild``
 
@@ -1030,7 +1030,7 @@ embedset showsettings
 
 .. code-block:: none
 
-    [p]embedset showsettings [command_name]
+    [p]embedset showsettings [command]
 
 **Description**
 
@@ -1044,7 +1044,7 @@ Provide a command name to check for command specific embed settings.
     - ``[p]embedset showsettings "ignore list"`` - Checking subcommands requires quotes.
 
 **Arguments:**
-    - ``[command_name]`` - Checks this command for command specific embed settings.
+    - ``[command]`` - Checks this command for command specific embed settings.
 
 .. _core-command-embedset-user:
 
