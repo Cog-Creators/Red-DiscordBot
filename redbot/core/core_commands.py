@@ -4210,8 +4210,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @commands.guild_only()
-    @command_manager.command(name="enablecog")
-    async def command_enable_cog(self, ctx: commands.Context, *, cog: CogConverter):
+    @command_manager.command(name="enablecog", usage="<cog>")
+    async def command_enable_cog(self, ctx: commands.Context, *, cogname: str):
         """Enable a cog in this server.
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
@@ -4223,14 +4223,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cog>` - The name of the cog to enable on this server. Must be title-case.
         """
-        cogname = cog.qualified_name
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
         else:
             # putting this here allows enabling a cog that isn't loaded but was disabled.
             cog = self.bot.get_cog(cogname)
             if not cog:
-                return await ctx.send(_("Cog with the given name doesn't exist."))
+                return await ctx.send(_('Cog "{arg}" not found.').format(arg=cogname))
 
             await ctx.send(
                 _("{cogname} was not disabled (nothing to do).").format(cogname=cogname)
