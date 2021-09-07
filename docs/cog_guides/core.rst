@@ -383,7 +383,7 @@ command defaultdisablecog
 
 .. code-block:: none
 
-    [p]command defaultdisablecog <cogname>
+    [p]command defaultdisablecog <cog>
 
 **Description**
 
@@ -400,7 +400,7 @@ To override it, use ``[p]command enablecog`` on the servers you want to allow us
     - ``[p]command defaultdisablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to make disabled by default. Must be title-case.
+    - ``<cog>`` - The name of the cog to make disabled by default. Must be title-case.
 
 .. _core-command-command-defaultenablecog:
 
@@ -414,7 +414,7 @@ command defaultenablecog
 
 .. code-block:: none
 
-    [p]command defaultenablecog <cogname>
+    [p]command defaultenablecog <cog>
 
 **Description**
 
@@ -431,7 +431,7 @@ To override it, use ``[p]command disablecog`` on the servers you want to disallo
     - ``[p]command defaultenablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to make enabled by default. Must be title-case.
+    - ``<cog>`` - The name of the cog to make enabled by default. Must be title-case.
 
 .. _core-command-command-disable:
 
@@ -519,7 +519,7 @@ command disablecog
 
 .. code-block:: none
 
-    [p]command disablecog <cogname>
+    [p]command disablecog <cog>
 
 **Description**
 
@@ -533,7 +533,7 @@ Disable a cog in this server.
     - ``[p]command disablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to disable on this server. Must be title-case.
+    - ``<cog>`` - The name of the cog to disable on this server. Must be title-case.
 
 .. _core-command-command-disabledmsg:
 
@@ -651,7 +651,7 @@ command enablecog
 
 .. code-block:: none
 
-    [p]command enablecog <cogname>
+    [p]command enablecog <cog>
 
 **Description**
 
@@ -665,7 +665,7 @@ Enable a cog in this server.
     - ``[p]command enablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to enable on this server. Must be title-case.
+    - ``<cog>`` - The name of the cog to enable on this server. Must be title-case.
 
 .. _core-command-command-listdisabled:
 
@@ -902,7 +902,7 @@ embedset command
 
 .. code-block:: none
 
-    [p]embedset command <command_name> [enabled]
+    [p]embedset command <command> [enabled]
 
 **Description**
 
@@ -935,7 +935,7 @@ embedset command global
 
 .. code-block:: none
 
-    [p]embedset command global <command_name> [enabled]
+    [p]embedset command global <command> [enabled]
 
 **Description**
 
@@ -965,7 +965,7 @@ embedset command server
 
 .. code-block:: none
 
-    [p]embedset command server <command_name> [enabled]
+    [p]embedset command server <command> [enabled]
 
 .. tip:: Alias: ``embedset command guild``
 
@@ -1057,7 +1057,7 @@ embedset showsettings
 
 .. code-block:: none
 
-    [p]embedset showsettings [command_name]
+    [p]embedset showsettings [command]
 
 **Description**
 
@@ -1071,7 +1071,7 @@ Provide a command name to check for command specific embed settings.
     - ``[p]embedset showsettings "ignore list"`` - Checking subcommands requires quotes.
 
 **Arguments:**
-    - ``[command_name]`` - Checks this command for command specific embed settings.
+    - ``[command]`` - Checks this command for command specific embed settings.
 
 .. _core-command-embedset-user:
 
