@@ -1156,9 +1156,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[command]` - Checks this command for command specific embed settings.
         """
-        if command is not None:
-            # qualified name might be different if alias was passed to this command
-            command_name = command.qualified_name
+        # qualified name might be different if alias was passed to this command
+        command_name = command and command.qualified_name
 
         text = _("Embed settings:\n\n")
         global_default = await self.bot._config.embeds()
