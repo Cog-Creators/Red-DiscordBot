@@ -733,7 +733,11 @@ class Cleanup(commands.Cog):
 
     @cleanupset.command(name="notify")
     async def cleanupset_notify(self, ctx: commands.Context):
-        """Toggle clean up notification settings."""
+        """Toggle clean up notification settings.
+
+        When enabled, a message will be sent per cleanup, showing how many messages were deleted.
+        This message will be deleted after 5 seconds.
+        """
         toggle = await self.config.guild(ctx.guild).notify()
         if toggle:
             await self.config.guild(ctx.guild).notify.set(False)
