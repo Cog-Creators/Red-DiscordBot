@@ -150,7 +150,7 @@ selfroleset add
 
 **Description**
 
-Add a role to the list of selfroles.
+Add a role, or a selection of roles, to the list of available selfroles.
 
 .. warning:: Members will be able to assign themselves the role.
     Make sure it doesn't give extra perms or anything that can break
@@ -174,7 +174,7 @@ selfroleset remove
 
 **Description**
 
-Removes a role from the list of selfroles.
+Remove a role, or a selection of roles, from the list of available selfroles.
 
 **Arguments**
 
@@ -232,7 +232,7 @@ as yourself, the command author.
 * ``<role>``: The role to remove. |role-input-quotes|
 
 * ``[user]``: The member to remove the role from. |member-input| Defaults
-    to the command author.
+  to the command author.
 
 .. _admin-command-editrole:
 

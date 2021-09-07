@@ -770,6 +770,33 @@ This is limited to one message every 60 seconds per person.
 **Arguments:**
     - ``[message]`` - The message to send to the owner.
 
+.. _core-command-diagnoseissues:
+
+^^^^^^^^^^^^^^
+diagnoseissues
+^^^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]diagnoseissues [channel] <member> <command_name>
+
+**Description**
+
+Diagnose issues with the command checks with ease!
+
+If you want to diagnose the command from a text channel in a different server,
+you can do so by using the command in DMs.
+
+**Example:**
+    - ``[p]diagnoseissues #general @Slime ban`` - Diagnose why @Slime can't use ``[p]ban`` in #general channel.
+
+**Arguments:**
+    - ``[channel]`` - The text channel that the command should be tested for. Defaults to the current channel.
+    - ``<member>`` - The member that should be considered as the command caller.
+    - ``<command_name>`` - The name of the command to test.
+
 .. _core-command-dm:
 
 ^^
@@ -1189,6 +1216,34 @@ mean some pages will exceed this limit.
 
 **Arguments:**
     - ``<limit>`` - The max amount of characters to show per page in the help message.
+
+.. _core-command-helpset-reacttimeout:
+
+""""""""""""""""""""
+helpset reacttimeout
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]helpset reacttimeout <seconds>
+
+**Description**
+
+Set the timeout for reactions, if menus are enabled.
+
+The default is 30 seconds.
+The timeout has to be between 15 and 300 seconds.
+
+**Examples:**
+    - ``[p]helpset reacttimeout 30`` - The default timeout.
+    - ``[p]helpset reacttimeout 60`` - Timeout of 1 minute.
+    - ``[p]helpset reacttimeout 15`` - Minimum allowed timeout.
+    - ``[p]helpset reacttimeout 300`` - Max allowed timeout (5 mins).
+
+**Arguments:**
+    - ``<seconds>`` - The timeout, in seconds, of the reactions.
 
 .. _core-command-helpset-resetformatter:
 
