@@ -536,7 +536,7 @@ if TYPE_CHECKING:
 else:
 
     class CommandConverter(dpy_commands.Converter):
-        """Converts a command name to the matching `Command` object."""
+        """Converts a command name to the matching `~redbot.core.commands.Command` object."""
 
         async def convert(self, ctx: "Context", argument: str):
             arg = argument.strip()
@@ -546,7 +546,7 @@ else:
             return command
 
     class CogConverter(dpy_commands.Converter):
-        """Converts a cog name to the matching `Cog` object."""
+        """Converts a cog name to the matching `~redbot.core.commands.Cog` object."""
 
         async def convert(self, ctx: "Context", argument: str):
             arg = argument.strip()
