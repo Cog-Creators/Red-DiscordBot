@@ -327,5 +327,7 @@ cleanupset notify
 
 **Description**
 
-Toggle clean up notification settings. When enabled, a message will be sent
-per cleanup, showing how many messages were deleted. This message will be deleted after 5 seconds.
+Toggle clean up notification settings.
+
+When enabled, a message will be sent per cleanup, showing how many messages were deleted.
+This message will be deleted after 5 seconds.
