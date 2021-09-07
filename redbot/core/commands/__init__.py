@@ -30,6 +30,8 @@ from .converter import (
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
     Literal as Literal,
+    CogConverter as CogConverter,
+    CommandConverter as CommandConverter,
 )
 from .errors import (
     ConversionFailure as ConversionFailure,
