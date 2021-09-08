@@ -770,6 +770,33 @@ This is limited to one message every 60 seconds per person.
 **Arguments:**
     - ``[message]`` - The message to send to the owner.
 
+.. _core-command-diagnoseissues:
+
+^^^^^^^^^^^^^^
+diagnoseissues
+^^^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]diagnoseissues [channel] <member> <command_name>
+
+**Description**
+
+Diagnose issues with the command checks with ease!
+
+If you want to diagnose the command from a text channel in a different server,
+you can do so by using the command in DMs.
+
+**Example:**
+    - ``[p]diagnoseissues #general @Slime ban`` - Diagnose why @Slime can't use ``[p]ban`` in #general channel.
+
+**Arguments:**
+    - ``[channel]`` - The text channel that the command should be tested for. Defaults to the current channel.
+    - ``<member>`` - The member that should be considered as the command caller.
+    - ``<command_name>`` - The name of the command to test.
+
 .. _core-command-dm:
 
 ^^
