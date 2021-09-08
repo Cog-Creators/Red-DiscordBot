@@ -1,5 +1,36 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.13 (2021-09-09)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :: FIXME
+
+Read before updating
+--------------------
+
+
+
+End-user changelog
+------------------
+
+
+
+Developer changelog
+-------------------
+
+
+
+Documentation changes
+---------------------
+
+
+
+Miscellaneous
+-------------
+
+
+
 Redbot 3.4.12 (2021-06-17)
 ==========================
 
