@@ -1441,7 +1441,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nSome cogs with these names are already installed from different repos: ")
                 if len(name_already_used) > 1
-                else _("Cog with this name is already installed from a different repo.")
+                else _("\nCog with this name is already installed from a different repo.")
             ) + humanize_list(name_already_used)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
@@ -1486,7 +1486,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nThese cogs require higher python version than you have: ")
                 if len(outdated_python_version)
-                else _("This cog requires higher python version than you have: ")
+                else _("\nThis cog requires higher python version than you have: ")
             ) + humanize_list(outdated_python_version)
         if outdated_bot_version:
             message += (
@@ -1589,7 +1589,7 @@ class Downloader(commands.Cog):
                     )
                 else:
                     message += (
-                        _("End user data statement of this cog has changed:")
+                        _("\nEnd user data statement of this cog has changed:")
                         + inline(next(iter(cogs_with_changed_eud_statement)))
                         + _("\nYou can use {command} to see the updated statement.\n").format(
                             command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
