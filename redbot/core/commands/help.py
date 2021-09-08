@@ -78,6 +78,7 @@ class HelpSettings:
     tagline: str = ""
     delete_delay: int = 0
     use_tick: bool = False
+    react_timeout: int = 30
 
     # Contrib Note: This is intentional to not accept the bot object
     # There are plans to allow guild and user specific help settings
@@ -131,6 +132,7 @@ class HelpSettings:
             "\nHelp shows unusable commands when asked directly: {verify_exists}"
             "\nDelete delay: {delete_delay}"
             "\nReact with a checkmark when help is sent via DM: {use_tick}"
+            "\nReaction timeout (only used if menus are used): {react_timeout} seconds"
             "{tagline_info}"
         ).format_map(data)
 
@@ -857,7 +859,9 @@ class RedHelpFormatter(HelpFormatterABC):
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
-            asyncio.create_task(menus.menu(ctx, pages, c, message=m))
+            asyncio.create_task(
+                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+            )
             # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
 
