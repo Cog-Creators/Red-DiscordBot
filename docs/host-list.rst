@@ -145,6 +145,7 @@ Free Hosting
  Oracle Cloud and Google Cloud offer always free tiers with limited resources.
 
 | Additionally, new Google Cloud customers get a $300 credit which is valid for 3 months.
+ New Oracle Cloud customers also get $300 of free credit, but only valid for 30 days.
 
 | Excluding the above, there is no recommended free VPS host. Persuasion of
  another individual for hosting Red is an option, albeit low in success rate.
