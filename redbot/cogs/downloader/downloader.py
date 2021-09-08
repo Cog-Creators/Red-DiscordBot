@@ -1652,12 +1652,14 @@ class Downloader(commands.Cog):
             try:
                 await ctx.bot.wait_for(event, check=pred, timeout=30)
             except asyncio.TimeoutError:
-                await query.delete()
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
                 return
 
             if not pred.result:
                 if can_react:
-                    await query.delete()
+                    with contextlib.suppress(discord.NotFound):
+                        await query.delete()
                 else:
                     await ctx.send(_("OK then."))
                 return
