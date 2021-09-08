@@ -232,7 +232,7 @@ as yourself, the command author.
 * ``<role>``: The role to remove. |role-input-quotes|
 
 * ``[user]``: The member to remove the role from. |member-input| Defaults
-    to the command author.
+  to the command author.
 
 .. _admin-command-editrole:
 
