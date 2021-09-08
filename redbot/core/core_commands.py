@@ -3599,8 +3599,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             os_info = platform.mac_ver()
             osver = f"Mac OSX {os_info[0]} {os_info[2]}"
         elif IS_LINUX:
-            os_info = distro.linux_distribution()
-            osver = f"{os_info[0]} {os_info[1]}".strip()
+            osver = f"{distro.name()} {distro.version()}".strip()
         else:
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
