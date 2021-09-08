@@ -667,11 +667,16 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     and ctx.guild.me in ctx.author.voice.channel.members
                 ):
                     ctx.command.reset_cooldown(ctx)
-                    return
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Do This Action"),
+                        description=_("I am already in your channel."),
+                    )
                 await player.move_to(
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
+            await ctx.tick()
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
