@@ -34,7 +34,7 @@ class _TrackingFormatter(Formatter):
 class Alias(commands.Cog):
     """Create aliases for commands.
 
-    Aliases are alternative names shortcuts for commands. They
+    Aliases are alternative names/shortcuts for commands. They
     can act as both a lambda (storing arguments for repeated use)
     or as simply a shortcut to saying "x y z".
 
