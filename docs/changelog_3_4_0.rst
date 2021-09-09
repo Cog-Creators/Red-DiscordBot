@@ -36,6 +36,7 @@ Core Bot
 - Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
 - Upgraded all Red's dependencies (:issue:`5121`)
 - Fedora 32 is no longer supported as it has already reached end of life (:issue:`5121`)
+- Fixed a bunch of errors related to the missing permissions and channels/messages no longer existing (:issue:`5109`, :issue:`5163`, :issue:`5172`, :issue:`5191`)
 
 Admin
 *****
