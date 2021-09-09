@@ -21,6 +21,8 @@ Core Bot
 
     - More specifcally, added information about CPU and RAM, bot's instance name and owners
 
+- The formatting of Red's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
+
 Audio
 *****
 
