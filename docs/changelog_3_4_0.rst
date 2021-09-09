@@ -21,6 +21,11 @@ Core Bot
 
     - More specifcally, added information about CPU and RAM, bot's instance name and owners
 
+Warnings
+********
+
+- 0 point warnings are, once again, allowed. (:issue:`5177`, :issue:`5178`)
+
 
 Developer changelog
 -------------------
