@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-27 12:48+0000\n"
+"POT-Creation-Date: 2021-09-01 23:46+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -128,27 +128,31 @@ msgstr "Yeni bir depo ekle.\n\n"
 "        - `[branch]` cogların yükleneceği isteğe bağlı dal.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:545
-msgid "Repo names can only contain characters A-z, numbers, underscores, and hyphens."
-msgstr "Repo adları yalnızca A-z karakterleri, sayılar, alt çizgiler ve tire içerebilir."
+#: redbot/cogs/downloader/downloader.py:544
+msgid "Repo names cannot start or end with a dot."
+msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:554
+#: redbot/cogs/downloader/downloader.py:548
+msgid "Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots."
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:560
 msgid "The repo name you provided is already in use. Please choose another name."
 msgstr "Bu isim zaten kullanılıyor. Başka bir isim seçiniz."
 
-#: redbot/cogs/downloader/downloader.py:558
+#: redbot/cogs/downloader/downloader.py:564
 msgid "Something went wrong during the cloning process. See logs for more information."
 msgstr "Klonlama işlemi sırasında bir şeyler ters gitti. Daha fazla bilgi için loglara bakın."
 
-#: redbot/cogs/downloader/downloader.py:576
+#: redbot/cogs/downloader/downloader.py:582
 msgid "Something went wrong trying to add that repo. See logs for more information."
 msgstr "O repoyu eklemeye çalışırken bir şeyler ters gitti. Daha fazla bilgi için günlüklere bakın."
 
-#: redbot/cogs/downloader/downloader.py:582
+#: redbot/cogs/downloader/downloader.py:588
 msgid "Repo `{name}` successfully added."
 msgstr "Bu repo {name} başarıyla eklendi."
 
-#: redbot/cogs/downloader/downloader.py:588
+#: redbot/cogs/downloader/downloader.py:594
 #, docstring
 msgid "\n"
 "        Remove repos and their files.\n\n"
@@ -167,32 +171,32 @@ msgstr "\n"
 "        - `<depolar...>` Kaldırılacak depo veya depolar.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:604
+#: redbot/cogs/downloader/downloader.py:610
 msgid "Successfully deleted repos: "
 msgstr "Şu depolar başarıyla silindi: "
 
-#: redbot/cogs/downloader/downloader.py:606
+#: redbot/cogs/downloader/downloader.py:612
 msgid "Successfully deleted the repo: "
 msgstr "Şu depo başarıyla silindi: "
 
-#: redbot/cogs/downloader/downloader.py:613
+#: redbot/cogs/downloader/downloader.py:619
 #, docstring
 msgid "List all installed repos."
 msgstr "Tüm yüklü repos listelenmektedir."
 
-#: redbot/cogs/downloader/downloader.py:617
+#: redbot/cogs/downloader/downloader.py:623
 msgid "There are no repos installed."
 msgstr "Yüklü herhangi bir depo bulunmamakta."
 
-#: redbot/cogs/downloader/downloader.py:620
+#: redbot/cogs/downloader/downloader.py:626
 msgid "Installed Repos:\n\n"
 msgstr "Yüklü Repos:\n\n"
 
-#: redbot/cogs/downloader/downloader.py:622
+#: redbot/cogs/downloader/downloader.py:628
 msgid "Installed Repo:\n\n"
 msgstr "Yüklenen Depo:\n\n"
 
-#: redbot/cogs/downloader/downloader.py:631
+#: redbot/cogs/downloader/downloader.py:637
 #, docstring
 msgid "Show information about a repo.\n\n"
 "        Example:\n"
@@ -207,21 +211,21 @@ msgstr "Bir depo hakkında bilgi göster.\n\n"
 "        - `<repo>` Hakkında bilgi gösterilecek depo.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:640
-#: redbot/cogs/downloader/downloader.py:1363
-#: redbot/cogs/downloader/downloader.py:1718
+#: redbot/cogs/downloader/downloader.py:646
+#: redbot/cogs/downloader/downloader.py:1369
+#: redbot/cogs/downloader/downloader.py:1726
 msgid "Missing from info.json"
 msgstr "Burada eksik bilgiler var info.json"
 
-#: redbot/cogs/downloader/downloader.py:642
+#: redbot/cogs/downloader/downloader.py:648
 msgid "Repo url: {repo_url}\n"
 msgstr "Depo adresi: {repo_url}\n"
 
-#: redbot/cogs/downloader/downloader.py:644
+#: redbot/cogs/downloader/downloader.py:650
 msgid "Branch: {branch_name}\n"
 msgstr "Depo branşı: {branch_name}\n"
 
-#: redbot/cogs/downloader/downloader.py:645
+#: redbot/cogs/downloader/downloader.py:651
 msgid "Made by: {author}\n"
 "Description:\n"
 "{description}"
@@ -229,11 +233,11 @@ msgstr "Yapımcı: {author}\n"
 "Açıklama:\n"
 "{description}"
 
-#: redbot/cogs/downloader/downloader.py:649
+#: redbot/cogs/downloader/downloader.py:655
 msgid "Information on {repo_name} repo:{information}"
 msgstr "{repo_name} hakkında bilgi:{information}"
 
-#: redbot/cogs/downloader/downloader.py:657
+#: redbot/cogs/downloader/downloader.py:663
 #, docstring
 msgid "Update all repos, or ones of your choosing.\n\n"
 "        This will *not* update the cogs installed from those repos.\n\n"
@@ -254,35 +258,35 @@ msgstr "Seçtiğiniz depoları veya tüm depoları güncelle.\n\n"
 "        - `[repos...]` Güncellenecek depoların adı. Boş bırakılırsa, tüm depolar güncellenecektir.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:677
+#: redbot/cogs/downloader/downloader.py:683
 msgid "Repo update completed successfully."
 msgstr "Repo güncellemesi başarıyla tamamlandı."
 
-#: redbot/cogs/downloader/downloader.py:678
-#: redbot/cogs/downloader/downloader.py:1580
+#: redbot/cogs/downloader/downloader.py:684
+#: redbot/cogs/downloader/downloader.py:1586
 msgid "\n"
 "Updated: "
 msgstr "\n"
 "Güncellendi: "
 
-#: redbot/cogs/downloader/downloader.py:680
+#: redbot/cogs/downloader/downloader.py:686
 msgid "All installed repos are already up to date."
 msgstr "Yüklü tüm repolar zaten güncel."
 
-#: redbot/cogs/downloader/downloader.py:683
+#: redbot/cogs/downloader/downloader.py:689
 msgid "These repos are already up to date."
 msgstr "Bu repolar zaten güncel."
 
-#: redbot/cogs/downloader/downloader.py:685
+#: redbot/cogs/downloader/downloader.py:691
 msgid "This repo is already up to date."
 msgstr "Bu repo zaten güncel."
 
-#: redbot/cogs/downloader/downloader.py:695
+#: redbot/cogs/downloader/downloader.py:701
 #, docstring
 msgid "Base command for cog installation management commands."
 msgstr "Tüm cog kurulum yönetimi komutları için temel komut."
 
-#: redbot/cogs/downloader/downloader.py:700
+#: redbot/cogs/downloader/downloader.py:706
 #, docstring
 msgid "\n"
 "        This command should not be used unless Red specifically asks for it.\n\n"
@@ -297,39 +301,39 @@ msgstr "\n"
 "        gereğiyle sahipten lib klasörünü boşaltmasını isteyebilir.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:730
-#: redbot/cogs/downloader/downloader.py:1560
+#: redbot/cogs/downloader/downloader.py:736
+#: redbot/cogs/downloader/downloader.py:1566
 msgid "Failed to install requirements: "
 msgstr "Gereksinimleri yüklerken bir hata oldu: "
 
-#: redbot/cogs/downloader/downloader.py:732
-#: redbot/cogs/downloader/downloader.py:1562
+#: redbot/cogs/downloader/downloader.py:738
+#: redbot/cogs/downloader/downloader.py:1568
 msgid "Failed to install the requirement: "
 msgstr "Şu gereksinim yüklenirken hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:737
-#: redbot/cogs/downloader/downloader.py:1622
+#: redbot/cogs/downloader/downloader.py:743
+#: redbot/cogs/downloader/downloader.py:1628
 msgid "\n"
 "Failed to install shared libraries: "
 msgstr "\n"
 "Ortak kütüphaneler kurulurken hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:739
-#: redbot/cogs/downloader/downloader.py:1624
+#: redbot/cogs/downloader/downloader.py:745
+#: redbot/cogs/downloader/downloader.py:1630
 msgid "\n"
 "Failed to install shared library: "
 msgstr "\n"
 "Şu ortak kütüphane kurulurken hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:744
+#: redbot/cogs/downloader/downloader.py:750
 msgid "Cog requirements and shared libraries for all installed cogs have been reinstalled but there were some errors:\n"
 msgstr "Kurulu tüm coglar için gereksinimler ve ortak kütüphaneler yeniden kuruldu fakat bazı sorunlarla karşılaşıldı:\n"
 
-#: redbot/cogs/downloader/downloader.py:752
+#: redbot/cogs/downloader/downloader.py:758
 msgid "Cog requirements and shared libraries for all installed cogs have been reinstalled."
 msgstr "Kurulu tüm coglar için gereksinimler ve ortak kütüphaneler yeniden kuruldu."
 
-#: redbot/cogs/downloader/downloader.py:760
+#: redbot/cogs/downloader/downloader.py:766
 #, docstring
 msgid "Install a cog from the given repo.\n\n"
 "        Examples:\n"
@@ -348,7 +352,7 @@ msgstr "Belirtilen depodan bir cog kur.\n\n"
 "        - `<cogs...>` Kurulacak cog veya coglar.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:779
+#: redbot/cogs/downloader/downloader.py:785
 #, docstring
 msgid "Install a cog from the specified revision of given repo.\n\n"
 "        Revisions are \"commit ids\" that point to the point in the code when a specific change was made.\n"
@@ -373,73 +377,73 @@ msgstr "Bir deponun belirtilen revizyonundan bir cog kur.\n\n"
 "        - `<cogs...>` Kurulacak cog veya coglar.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:806
-#: redbot/cogs/downloader/downloader.py:1193
+#: redbot/cogs/downloader/downloader.py:812
+#: redbot/cogs/downloader/downloader.py:1199
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\n"
 msgstr "Hata: kısaltılmış sha1 `{rev}` belirsiz. Olası adaylar:\n"
 
-#: redbot/cogs/downloader/downloader.py:818
-#: redbot/cogs/downloader/downloader.py:1204
+#: redbot/cogs/downloader/downloader.py:824
+#: redbot/cogs/downloader/downloader.py:1210
 msgid "Error: there is no revision `{rev}` in repo `{repo.name}`"
 msgstr "Hata: `{repo.name}` deposunda `{rev}` sürümü bulunmamakta"
 
-#: redbot/cogs/downloader/downloader.py:833
+#: redbot/cogs/downloader/downloader.py:839
 msgid "\n"
 "Failed to install requirements: "
 msgstr "\n"
 "Gereksinimler yüklenirken sorunla karşılaşıldı: "
 
-#: redbot/cogs/downloader/downloader.py:835
+#: redbot/cogs/downloader/downloader.py:841
 msgid "\n"
 "Failed to install the requirement: "
 msgstr "\n"
 "Şu gereksinim yüklenirken hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:856
+#: redbot/cogs/downloader/downloader.py:862
 msgid "\n"
 "Failed to install shared libraries for `{repo.name}` repo: "
 msgstr "\n"
 "`{repo.name}` deposu için ortak kütüphaneler kurulurken hata ile karşılaşıldı: "
 
-#: redbot/cogs/downloader/downloader.py:858
+#: redbot/cogs/downloader/downloader.py:864
 msgid "\n"
 "Failed to install shared library for `{repo.name}` repo: "
 msgstr "\n"
 "`{repo.name}` deposu için ortak kütüphane kurulurken hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:867
+#: redbot/cogs/downloader/downloader.py:873
 msgid "\n"
 "Failed to install cogs: "
 msgstr "\n"
 "Bu cogu yüklerken bir hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:869
+#: redbot/cogs/downloader/downloader.py:875
 msgid "\n"
 "Failed to install the cog: "
 msgstr "\n"
 "Şu cog yüklenirken hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:878
+#: redbot/cogs/downloader/downloader.py:884
 msgid "Successfully installed cogs: "
 msgstr "Coglar başarıyla yüklendi: "
 
-#: redbot/cogs/downloader/downloader.py:880
+#: redbot/cogs/downloader/downloader.py:886
 msgid "Successfully installed the cog: "
 msgstr "Şu cog başarıyla kuruldu: "
 
-#: redbot/cogs/downloader/downloader.py:884
+#: redbot/cogs/downloader/downloader.py:890
 msgid "\n"
 "These cogs are now pinned and won't get updated automatically. To change this, use `{prefix}cog unpin <cog>`"
 msgstr "\n"
 "Bu coglar artık sabitlendi ve otomatik gücellenmiyecekler. Bunu değiştirmek için `{prefix}cog unpin <cog>` komutunu kullanın."
 
-#: redbot/cogs/downloader/downloader.py:891
+#: redbot/cogs/downloader/downloader.py:897
 msgid "\n"
 "You can load them using {command_1}. To see end user data statements, you can use {command_2}."
 msgstr "\n"
 " Onları {command_1} kullanarak yükleyebilirsiniz. Son kullanıcı veri ifadelerini okumak için {command_2} kullanabilirsiniz."
 
-#: redbot/cogs/downloader/downloader.py:908
+#: redbot/cogs/downloader/downloader.py:914
 #, docstring
 msgid "Uninstall cogs.\n\n"
 "        You may only uninstall cogs which were previously installed\n"
@@ -460,21 +464,21 @@ msgstr "Cog kaldır.\n\n"
 "        - `<coglar....>` Kaldırılacak cog veya coglar.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:941
+#: redbot/cogs/downloader/downloader.py:947
 msgid "Successfully uninstalled cogs: "
 msgstr "Coglar başarıyla kaldırıldı: "
 
-#: redbot/cogs/downloader/downloader.py:943
+#: redbot/cogs/downloader/downloader.py:949
 msgid "Successfully uninstalled the cog: "
 msgstr "Şu cog başarıyla kaldırıldı: "
 
-#: redbot/cogs/downloader/downloader.py:948
+#: redbot/cogs/downloader/downloader.py:954
 msgid "\n"
 "Downloader has removed these cogs from the installed cogs list but it wasn't able to find their files: "
 msgstr "\n"
 "Downloader bu cogları kurulmuş coglar listesinden çıkardı fakat dosyalarını bulamadı: "
 
-#: redbot/cogs/downloader/downloader.py:953
+#: redbot/cogs/downloader/downloader.py:959
 msgid "\n"
 "They were most likely removed without using {command_1}.\n"
 "You may need to remove those files manually if the cogs are still usable. If so, ensure the cogs have been unloaded with {command_2}."
@@ -482,13 +486,13 @@ msgstr "\n"
 "Muhtemelen `{command_1}` kullanılmadan kaldırılmışlardı.\n"
 "Cog hala kullanılabiliyorsa bu dosyaları elle silmeniz gerekebilir. Durum buysa önce cogların `{command_2} ` ile durdurulduğundan emin olun."
 
-#: redbot/cogs/downloader/downloader.py:964
+#: redbot/cogs/downloader/downloader.py:970
 msgid "\n"
 "Downloader has removed this cog from the installed cogs list but it wasn't able to find its files: "
 msgstr "\n"
 "Downloader bu cogları kurulmuş coglar listesinden çıkardı fakat dosyalarını bulamadı: "
 
-#: redbot/cogs/downloader/downloader.py:969
+#: redbot/cogs/downloader/downloader.py:975
 msgid "\n"
 "It was most likely removed without using {command_1}.\n"
 "You may need to remove those files manually if the cog is still usable. If so, ensure the cog has been unloaded with {command_2}."
@@ -496,7 +500,7 @@ msgstr "\n"
 "Muhtemelen `{command_1}` kullanılmadan kaldırılmışlardı.\n"
 "Cog hala kullanılabiliyorsa bu dosyaları elle silmeniz gerekebilir. Durum buysa önce cogların `{command_2} ` ile durdurulduğundan emin olun."
 
-#: redbot/cogs/downloader/downloader.py:982
+#: redbot/cogs/downloader/downloader.py:988
 #, docstring
 msgid "Pin cogs - this will lock cogs on their current version.\n\n"
 "        Examples:\n"
@@ -513,27 +517,27 @@ msgstr "Cog sabitle - bu cogları şu anki sürümlerine kilitler.\n\n"
 "        - `<cogs...>` Sabitlenecek cog veya coglar. Zaten kurulu olmaları gerekir.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1005
+#: redbot/cogs/downloader/downloader.py:1011
 msgid "Pinned cogs: "
 msgstr "Sabitlenmiş coglar: "
 
-#: redbot/cogs/downloader/downloader.py:1005
+#: redbot/cogs/downloader/downloader.py:1011
 msgid "Pinned cog: "
 msgstr "Sabitlenen cog: "
 
-#: redbot/cogs/downloader/downloader.py:1009
+#: redbot/cogs/downloader/downloader.py:1015
 msgid "\n"
 "These cogs were already pinned: "
 msgstr "\n"
 "Bu coglar zaten sabitlenmişti: "
 
-#: redbot/cogs/downloader/downloader.py:1011
+#: redbot/cogs/downloader/downloader.py:1017
 msgid "\n"
 "This cog was already pinned: "
 msgstr "\n"
 "Bu cog zaten sabitlenmişti: "
 
-#: redbot/cogs/downloader/downloader.py:1017
+#: redbot/cogs/downloader/downloader.py:1023
 #, docstring
 msgid "Unpin cogs - this will remove the update lock from those cogs.\n\n"
 "        Examples:\n"
@@ -548,48 +552,48 @@ msgstr "Cog sabitlemesini kaldır - bu seçilen cogların güncelleme kilidini a
 "        **Seçenekler**\n\n"
 "        - `<cogs...>` Sabitlemesi kaldırılacak cog veya coglar. Zaten kurulu ve sabitlenmiş olmaları gerekir."
 
-#: redbot/cogs/downloader/downloader.py:1039
+#: redbot/cogs/downloader/downloader.py:1045
 msgid "Unpinned cogs: "
 msgstr "Sabitlemesi kaldırılmış coglar: "
 
-#: redbot/cogs/downloader/downloader.py:1039
+#: redbot/cogs/downloader/downloader.py:1045
 msgid "Unpinned cog: "
 msgstr "Sabitlemesi kaldırılan cog: "
 
-#: redbot/cogs/downloader/downloader.py:1043
+#: redbot/cogs/downloader/downloader.py:1049
 msgid "\n"
 "These cogs weren't pinned: "
 msgstr "\n"
 "Bu coglar sabitlenmedi: "
 
-#: redbot/cogs/downloader/downloader.py:1045
+#: redbot/cogs/downloader/downloader.py:1051
 msgid "\n"
 "This cog was already not pinned: "
 msgstr "\n"
 "Bu cog zaten sabit değildi: "
 
-#: redbot/cogs/downloader/downloader.py:1051
+#: redbot/cogs/downloader/downloader.py:1057
 #, docstring
 msgid "List currently pinned cogs."
 msgstr "Şu anda sabitlenmiş olan cogları listeler."
 
-#: redbot/cogs/downloader/downloader.py:1057
+#: redbot/cogs/downloader/downloader.py:1063
 msgid "None."
 msgstr "Hiçbiri."
 
-#: redbot/cogs/downloader/downloader.py:1061
+#: redbot/cogs/downloader/downloader.py:1067
 msgid "(continued)"
 msgstr "(devam etmekte)"
 
-#: redbot/cogs/downloader/downloader.py:1061
+#: redbot/cogs/downloader/downloader.py:1067
 msgid "Pinned Cogs:"
 msgstr "Sabitlenmiş coglar:"
 
-#: redbot/cogs/downloader/downloader.py:1071
+#: redbot/cogs/downloader/downloader.py:1077
 msgid "Pinned Cogs: \n"
 msgstr "Sabitlenmiş coglar: \n"
 
-#: redbot/cogs/downloader/downloader.py:1076
+#: redbot/cogs/downloader/downloader.py:1082
 #, docstring
 msgid "\n"
 "        Check for available cog updates (including pinned cogs).\n\n"
@@ -602,35 +606,35 @@ msgstr "\n"
 "        Cogları güncellemek için `[p]cog update` kullanın.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1092
+#: redbot/cogs/downloader/downloader.py:1098
 msgid "These cogs can be updated: "
 msgstr "Bu coglar güncellenebilir: "
 
-#: redbot/cogs/downloader/downloader.py:1094
+#: redbot/cogs/downloader/downloader.py:1100
 msgid "This cog can be updated: "
 msgstr "Bu cog güncellenebilir: "
 
-#: redbot/cogs/downloader/downloader.py:1099
+#: redbot/cogs/downloader/downloader.py:1105
 msgid "\n"
 "These shared libraries can be updated: "
 msgstr "\n"
 "Bu ortak kütüphaneler güncellenebilir: "
 
-#: redbot/cogs/downloader/downloader.py:1101
+#: redbot/cogs/downloader/downloader.py:1107
 msgid "\n"
 "This shared library can be updated: "
 msgstr "\n"
 "Bu ortak kütüphane güncellenebilir: "
 
-#: redbot/cogs/downloader/downloader.py:1104
+#: redbot/cogs/downloader/downloader.py:1110
 msgid "No cogs can be updated."
 msgstr "Güncellenebilir cog bulunmamakta."
 
-#: redbot/cogs/downloader/downloader.py:1108
+#: redbot/cogs/downloader/downloader.py:1114
 msgid "All installed cogs are up to date."
 msgstr "Yüklü olan tüm coglar güncel."
 
-#: redbot/cogs/downloader/downloader.py:1117
+#: redbot/cogs/downloader/downloader.py:1123
 #, docstring
 msgid "Update all cogs, or ones of your choosing.\n\n"
 "        Examples:\n"
@@ -647,7 +651,7 @@ msgstr "Tüm veya seçtiğiniz cogları güncelle.\n\n"
 "        - `[cogs...]` Güncellenecek cog veya coglar. Boş bırakılırsa, tüm coglar güncellenecektir.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1131
+#: redbot/cogs/downloader/downloader.py:1137
 #, docstring
 msgid "Update all cogs from repos of your choosing.\n\n"
 "        Examples:\n"
@@ -664,7 +668,7 @@ msgstr "Seçtiğiniz depolardan kurulmuş tüm cogları güncelle.\n\n"
 "        - `<repos...>` İçinden kurulmuş tüm cogların güncelleneceği depo veya depolar.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1147
+#: redbot/cogs/downloader/downloader.py:1153
 #, docstring
 msgid "Update all cogs, or ones of your choosing to chosen revision of one repo.\n\n"
 "        Note that update doesn't mean downgrade and therefore `revision`\n"
@@ -691,45 +695,45 @@ msgstr "Tüm veya seçtiğiniz cogları bir deponun seçilen revizyonuna güncel
 "        - `[cogs...]` Güncellenecek cog veya coglar.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1225
+#: redbot/cogs/downloader/downloader.py:1231
 msgid "There were no cogs to check."
 msgstr "Denetlenecek cog yok."
 
-#: redbot/cogs/downloader/downloader.py:1229
-#: redbot/cogs/downloader/downloader.py:1265
+#: redbot/cogs/downloader/downloader.py:1235
+#: redbot/cogs/downloader/downloader.py:1271
 msgid "\n"
 "These cogs are pinned and therefore weren't checked: "
 msgstr "\n"
 "Bu coglar sabitlenmiştir ve denetlenemezler: "
 
-#: redbot/cogs/downloader/downloader.py:1231
-#: redbot/cogs/downloader/downloader.py:1267
+#: redbot/cogs/downloader/downloader.py:1237
+#: redbot/cogs/downloader/downloader.py:1273
 msgid "\n"
 "This cog is pinned and therefore wasn't checked: "
 msgstr "\n"
 "Bu cog sabitlenmiş olduğundan kontrol edilmedi: "
 
-#: redbot/cogs/downloader/downloader.py:1245
+#: redbot/cogs/downloader/downloader.py:1251
 msgid "Cogs from provided repos are already up to date."
 msgstr "Belirtilen depolardan kurulmuş coglar zaten güncel."
 
-#: redbot/cogs/downloader/downloader.py:1248
+#: redbot/cogs/downloader/downloader.py:1254
 msgid "Provided cogs are already up to date with this revision."
 msgstr "Belirtilen coglar zaten bu sürümde."
 
-#: redbot/cogs/downloader/downloader.py:1252
+#: redbot/cogs/downloader/downloader.py:1258
 msgid "Cogs from provided repo are already up to date with this revision."
 msgstr "Belirtilen depodan kurulmuş coglar zaten bu sürümde."
 
-#: redbot/cogs/downloader/downloader.py:1257
+#: redbot/cogs/downloader/downloader.py:1263
 msgid "Provided cogs are already up to date."
 msgstr "Belirtilen coglar zaten güncel."
 
-#: redbot/cogs/downloader/downloader.py:1259
+#: redbot/cogs/downloader/downloader.py:1265
 msgid "All installed cogs are already up to date."
 msgstr "Yüklü olan tüm coglar zaten güncel."
 
-#: redbot/cogs/downloader/downloader.py:1289
+#: redbot/cogs/downloader/downloader.py:1295
 #, docstring
 msgid "List all available cogs from a single repo.\n\n"
 "        Example:\n"
@@ -744,37 +748,37 @@ msgstr "Bir depodan kurulabilen tüm cogları listele.\n\n"
 "        - `<repo>` İçindeki coglar listelenecek depo.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1306
+#: redbot/cogs/downloader/downloader.py:1312
 msgid "Installed Cogs:\n"
 "{text}"
 msgstr "Yüklü Coglar:\n"
 "{text}"
 
-#: redbot/cogs/downloader/downloader.py:1308
+#: redbot/cogs/downloader/downloader.py:1314
 msgid "Installed Cog:\n"
 "{text}"
 msgstr "Yüklenen Cog:\n"
 "{text}"
 
-#: redbot/cogs/downloader/downloader.py:1319
+#: redbot/cogs/downloader/downloader.py:1325
 msgid "Available Cogs:\n"
 "No cogs are available."
 msgstr "Mevcut Coglar:\n"
 "Mevcut başka cog bulunmamakta."
 
-#: redbot/cogs/downloader/downloader.py:1321
+#: redbot/cogs/downloader/downloader.py:1327
 msgid "Available Cogs:\n"
 "{text}"
 msgstr "Mevcut Coglar:\n"
 "{text}"
 
-#: redbot/cogs/downloader/downloader.py:1323
+#: redbot/cogs/downloader/downloader.py:1329
 msgid "Available Cog:\n"
 "{text}"
 msgstr "Mevcut Cog:\n"
 "{text}"
 
-#: redbot/cogs/downloader/downloader.py:1330
+#: redbot/cogs/downloader/downloader.py:1336
 #, docstring
 msgid "List information about a single cog.\n\n"
 "        Example:\n"
@@ -791,11 +795,11 @@ msgstr "Tek bir cog hakkında bilgi listele.\n\n"
 "        - `<cog>` Hakkında bilgi alınacak cog.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1343
+#: redbot/cogs/downloader/downloader.py:1349
 msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"
 msgstr "Repo '{repo.name} ' hiçbir cog '{cog_name}' olduğunu"
 
-#: redbot/cogs/downloader/downloader.py:1349
+#: redbot/cogs/downloader/downloader.py:1355
 msgid "Information on {cog_name}:\n"
 "{description}\n\n"
 "End user data statement:\n"
@@ -809,147 +813,152 @@ msgstr "{cog_name} hakkında bilgi:\n"
 "Yapımcı: {author}\n"
 "Gereksinimler: {requirements}"
 
-#: redbot/cogs/downloader/downloader.py:1361
+#: redbot/cogs/downloader/downloader.py:1367
 msgid "Author of the cog didn't provide end user data statement."
 msgstr "Cogun yapımcısı son kullanıcı veri bildirgesi sunmamış."
 
-#: redbot/cogs/downloader/downloader.py:1430
+#: redbot/cogs/downloader/downloader.py:1436
 msgid "\n"
 "Couldn't find these cogs in {repo.name}: "
 msgstr "\n"
 "{repo.name} deposunda bu coglar bulunamadı: "
 
-#: redbot/cogs/downloader/downloader.py:1432
+#: redbot/cogs/downloader/downloader.py:1438
 msgid "\n"
 "Couldn't find this cog in {repo.name}: "
 msgstr "\n"
 "Bu cog {repo.name} deposunda bulunamadı: "
 
-#: redbot/cogs/downloader/downloader.py:1436
+#: redbot/cogs/downloader/downloader.py:1442
 msgid "\n"
 "These cogs were already installed: "
 msgstr "\n"
 "Bu coglar zaten kuruluydu: "
 
-#: redbot/cogs/downloader/downloader.py:1438
+#: redbot/cogs/downloader/downloader.py:1444
 msgid "\n"
 "This cog was already installed: "
 msgstr "\n"
 "Bu cog zaten kuruluydu: "
 
-#: redbot/cogs/downloader/downloader.py:1442
+#: redbot/cogs/downloader/downloader.py:1448
 msgid "\n"
 "Some cogs with these names are already installed from different repos: "
 msgstr "\n"
 "Bu isimlerdeki coglar zaten diğer depolardan kurulmuştu: "
 
-#: redbot/cogs/downloader/downloader.py:1444
-msgid "Cog with this name is already installed from a different repo."
-msgstr "Bu ada sahip bir cog başka bir depodan zaten kurulmuş."
+#: redbot/cogs/downloader/downloader.py:1450
+msgid "\n"
+"Cog with this name is already installed from a different repo."
+msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1461
+#: redbot/cogs/downloader/downloader.py:1467
 msgid " (Minimum: {min_version})"
 msgstr " (En az: {min_version})"
 
-#: redbot/cogs/downloader/downloader.py:1474
+#: redbot/cogs/downloader/downloader.py:1480
 msgid " (Minimum: {min_version}"
 msgstr " (En az: {min_version}"
 
-#: redbot/cogs/downloader/downloader.py:1478
+#: redbot/cogs/downloader/downloader.py:1484
 msgid ", at most: {max_version}"
 msgstr ", en fazla: {max_version}"
 
-#: redbot/cogs/downloader/downloader.py:1487
+#: redbot/cogs/downloader/downloader.py:1493
 msgid "\n"
 "These cogs require higher python version than you have: "
 msgstr "\n"
 "Bu coglar sizde bulunandan daha yüksek python sürümü gerektirmekte: "
 
-#: redbot/cogs/downloader/downloader.py:1489
-msgid "This cog requires higher python version than you have: "
-msgstr "Bu cog size bulunandan daha yeni python sürümüne ihtiyaç duyar: "
+#: redbot/cogs/downloader/downloader.py:1495
+msgid "\n"
+"This cog requires higher python version than you have: "
+msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1493
+#: redbot/cogs/downloader/downloader.py:1499
 msgid "\n"
 "These cogs require different Red version than you currently have ({current_version}): "
 msgstr "\n"
 "Bu coglar şu anda sizde olandan farklı bir Red sürümü gerektirmekte ({current_version}): "
 
-#: redbot/cogs/downloader/downloader.py:1498
-msgid "This cog requires different Red version than you currently have ({current_version}): "
-msgstr "Bu cog sizde bulunandan farklı Red sürümüne ihtiyaç duyar ({current_version}): "
+#: redbot/cogs/downloader/downloader.py:1504
+msgid "\n"
+"This cog requires different Red version than you currently have ({current_version}): "
+msgstr "\n"
+"Bu cog şu anda sizde olandan farklı bir Red sürümü gerektirmekte ({current_version}): "
 
-#: redbot/cogs/downloader/downloader.py:1569
+#: redbot/cogs/downloader/downloader.py:1575
 msgid "Cog update completed successfully."
 msgstr "Cog güncelleştirme başarıyla tamamlandı."
 
-#: redbot/cogs/downloader/downloader.py:1584
+#: redbot/cogs/downloader/downloader.py:1590
 msgid "\n"
 "End user data statements of these cogs have changed: "
 msgstr "\n"
 "Bu cogların son kullanıcı veri bildirgeleri değişti: "
 
-#: redbot/cogs/downloader/downloader.py:1586
+#: redbot/cogs/downloader/downloader.py:1592
 msgid "\n"
 "You can use {command} to see the updated statements.\n"
 msgstr "\n"
 "Güncellenmiş ifadeleri görmek için {command} kullanabilirsiniz.\n"
 
-#: redbot/cogs/downloader/downloader.py:1592
-msgid "End user data statement of this cog has changed:"
-msgstr "Bu cog için son kullanıcı veri bildirgesi değişti:"
+#: redbot/cogs/downloader/downloader.py:1598
+msgid "\n"
+"End user data statement of this cog has changed:"
+msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1594
+#: redbot/cogs/downloader/downloader.py:1600
 msgid "\n"
 "You can use {command} to see the updated statement.\n"
 msgstr "\n"
 "Yeni bildirgeyi okumak için {command} kullanabilirsiniz.\n"
 
-#: redbot/cogs/downloader/downloader.py:1601
+#: redbot/cogs/downloader/downloader.py:1607
 msgid "\n"
 "Failed to update cogs: "
 msgstr "\n"
 "Cogları güncellerken bir sorun oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:1603
+#: redbot/cogs/downloader/downloader.py:1609
 msgid "\n"
 "Failed to update cog: "
 msgstr "\n"
 "Bu cog güncellenirken hata oluştu: "
 
-#: redbot/cogs/downloader/downloader.py:1606
+#: redbot/cogs/downloader/downloader.py:1612
 msgid "No cogs were updated."
 msgstr "Hiçbir cog güncellenmedi."
 
-#: redbot/cogs/downloader/downloader.py:1609
+#: redbot/cogs/downloader/downloader.py:1615
 msgid "\n"
 "Some shared libraries were updated, you should restart the bot to bring the changes into effect."
 msgstr "\n"
 "Bazı ortak kütüphaneler güncellendi, değişikliklerin uygulanması için botu yeniden başlatmalısınız."
 
-#: redbot/cogs/downloader/downloader.py:1614
+#: redbot/cogs/downloader/downloader.py:1620
 msgid "\n"
 "A shared library was updated, you should restart the bot to bring the changes into effect."
 msgstr "\n"
 "Bir ortak kütüphane güncellendi, değişikliklerin uygulanması için botu yeniden başlatın."
 
-#: redbot/cogs/downloader/downloader.py:1631
+#: redbot/cogs/downloader/downloader.py:1637
 msgid "None of the updated cogs were previously loaded. Update complete."
 msgstr "Güncellenen çarkların hiçbiri daha önce yüklenmedi. Güncelleme tamamlandı."
 
-#: redbot/cogs/downloader/downloader.py:1636
+#: redbot/cogs/downloader/downloader.py:1642
 msgid "Would you like to reload the updated cogs?"
 msgstr "Veriyi yeniden göndermek istiyor musun?"
 
-#: redbot/cogs/downloader/downloader.py:1638
+#: redbot/cogs/downloader/downloader.py:1644
 msgid "Would you like to reload the updated cog?"
 msgstr "Güncellenen cogı yeniden başlatmak ister misiniz?"
 
-#: redbot/cogs/downloader/downloader.py:1662
+#: redbot/cogs/downloader/downloader.py:1670
 msgid "OK then."
 msgstr "Tamam o zaman."
 
-#: redbot/cogs/downloader/downloader.py:1692
+#: redbot/cogs/downloader/downloader.py:1700
 #, docstring
 msgid "Find which cog a command comes from.\n\n"
 "        This will only work with loaded cogs.\n\n"
@@ -966,47 +975,47 @@ msgstr "Bir komutun hangi cog tarafından sağlandığını bul.\n\n"
 "        - `<command_name>` Aranacak komut.\n"
 "        "
 
-#: redbot/cogs/downloader/downloader.py:1706
+#: redbot/cogs/downloader/downloader.py:1714
 msgid "That command doesn't seem to exist."
 msgstr "Bu komut var gibi görünmüyor."
 
-#: redbot/cogs/downloader/downloader.py:1721
+#: redbot/cogs/downloader/downloader.py:1729
 msgid "Missing from installed repos"
 msgstr "Kurulu depolardan eksik"
 
-#: redbot/cogs/downloader/downloader.py:1731
+#: redbot/cogs/downloader/downloader.py:1739
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
-#: redbot/cogs/downloader/downloader.py:1732
+#: redbot/cogs/downloader/downloader.py:1740
 msgid "None - this cog wasn't installed via downloader"
 msgstr "Not - bu cog downloader ile kurulmadı"
 
-#: redbot/cogs/downloader/downloader.py:1735
+#: redbot/cogs/downloader/downloader.py:1743
 msgid "This command is not provided by a cog."
 msgstr "Bu komut bir cog tarafından sağlanmamakta."
 
-#: redbot/cogs/downloader/downloader.py:1741
+#: redbot/cogs/downloader/downloader.py:1749
 msgid "Command:"
 msgstr "Komut:"
 
-#: redbot/cogs/downloader/downloader.py:1742
+#: redbot/cogs/downloader/downloader.py:1750
 msgid "Cog Name:"
 msgstr "Cog İsmi:"
 
-#: redbot/cogs/downloader/downloader.py:1743
+#: redbot/cogs/downloader/downloader.py:1751
 msgid "Made by:"
 msgstr "Yapımcı:"
 
-#: redbot/cogs/downloader/downloader.py:1744
+#: redbot/cogs/downloader/downloader.py:1752
 msgid "Repo URL:"
 msgstr "Depo Adresi:"
 
-#: redbot/cogs/downloader/downloader.py:1747
+#: redbot/cogs/downloader/downloader.py:1755
 msgid "Repo branch:"
 msgstr "Depo dalı:"
 
-#: redbot/cogs/downloader/downloader.py:1752
+#: redbot/cogs/downloader/downloader.py:1760
 msgid "Command: {command}\n"
 "Cog name: {cog}\n"
 "Made by: {author}\n"
@@ -1016,19 +1025,19 @@ msgstr "Komut: {command}\n"
 "Yapımcı: {author}\n"
 "Depo adresi: {repo_url}\n"
 
-#: redbot/cogs/downloader/downloader.py:1756
+#: redbot/cogs/downloader/downloader.py:1764
 msgid "Repo branch: {branch_name}\n"
 msgstr "Depo dalı: {branch_name}\n"
 
-#: redbot/cogs/downloader/downloader.py:1777
+#: redbot/cogs/downloader/downloader.py:1785
 msgid "Failed to update the following repositories:"
 msgstr "Bu repoları güncellerken bir sorun yaşadım:"
 
-#: redbot/cogs/downloader/downloader.py:1779
+#: redbot/cogs/downloader/downloader.py:1787
 msgid "Failed to update the following repository:"
 msgstr "Bu depo güncellenirken hata ile karşılaşıldı:"
 
-#: redbot/cogs/downloader/downloader.py:1782
+#: redbot/cogs/downloader/downloader.py:1790
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
 msgstr "Bu repolar silinmiş olabilir ya da Url'lere erişim kapalı. Daha fazla bilgi için logları kontrol edin."
 

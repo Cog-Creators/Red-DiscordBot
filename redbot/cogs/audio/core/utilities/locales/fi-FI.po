@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-06-17 03:05+0000\n"
+"POT-Creation-Date: 2021-08-13 00:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -402,7 +402,7 @@ msgstr "Soittolistoja ei voitu hakea"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:542
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "Minulla ei ole oikeutta yhdistää kanavallesi."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:573
 msgid "You must be in the voice channel to use the playlist command."

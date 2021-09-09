@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-06-17 03:05+0000\n"
+"POT-Creation-Date: 2021-08-13 00:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -38,12 +38,12 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:107
 #: redbot/cogs/audio/core/utilities/playlists.py:562
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "Primeiro você deve se juntar a um canal de voz."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:110
 #: redbot/cogs/audio/core/utilities/playlists.py:555
 msgid "Connection to Lavalink has not yet been established."
-msgstr ""
+msgstr "Conexão com Lavalink ainda não foi estabelecida."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:117
 #: redbot/cogs/audio/core/utilities/player.py:441
@@ -118,7 +118,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:327
 #: redbot/cogs/audio/core/utilities/player.py:650
 msgid "Invalid Environment"
-msgstr ""
+msgstr "Ambiente inválido"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:109
 msgid "No localtracks folder."
@@ -220,7 +220,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:627
 #: redbot/cogs/audio/core/utilities/playlists.py:656
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Não foi possível obter a faixa"
 
 #: redbot/cogs/audio/core/utilities/player.py:302
 #: redbot/cogs/audio/core/utilities/player.py:393
@@ -229,12 +229,13 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:628
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Não consigo fazer uma trilha de Lavalink no momento, tente novamente em alguns minutos."
 
 #: redbot/cogs/audio/core/utilities/player.py:328
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "A chave do Spotify API ou segredo do cliente não foram definidos corretamente. \n"
+"Use `{prefix}audioset spotifyapi` para mais instruções."
 
 #: redbot/cogs/audio/core/utilities/player.py:352
 msgid "Unable To Find Tracks"
@@ -402,7 +403,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:682
 msgid "Global"
-msgstr ""
+msgstr "Global"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "the Server"
@@ -410,7 +411,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "Server"
-msgstr ""
+msgstr "Servidor"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "the User"
@@ -418,7 +419,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "User"
-msgstr ""
+msgstr "Usuário"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\n\n"

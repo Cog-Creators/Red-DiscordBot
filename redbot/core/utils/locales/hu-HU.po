@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-14 15:51+0000\n"
+"POT-Creation-Date: 2021-09-01 00:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -15,51 +15,51 @@ msgstr ""
 "X-Crowdin-File-ID: 197\n"
 "Language: hu_HU\n"
 
-#: redbot/core/utils/chat_formatting.py:522
+#: redbot/core/utils/chat_formatting.py:542
 msgid "year"
 msgstr "év"
 
-#: redbot/core/utils/chat_formatting.py:522
+#: redbot/core/utils/chat_formatting.py:542
 msgid "years"
 msgstr "év"
 
-#: redbot/core/utils/chat_formatting.py:523
+#: redbot/core/utils/chat_formatting.py:543
 msgid "month"
 msgstr "hónap"
 
-#: redbot/core/utils/chat_formatting.py:523
+#: redbot/core/utils/chat_formatting.py:543
 msgid "months"
 msgstr "hónap"
 
-#: redbot/core/utils/chat_formatting.py:524
+#: redbot/core/utils/chat_formatting.py:544
 msgid "day"
 msgstr "nap"
 
-#: redbot/core/utils/chat_formatting.py:524
+#: redbot/core/utils/chat_formatting.py:544
 msgid "days"
 msgstr "nap"
 
-#: redbot/core/utils/chat_formatting.py:525
+#: redbot/core/utils/chat_formatting.py:545
 msgid "hour"
 msgstr "óra"
 
-#: redbot/core/utils/chat_formatting.py:525
+#: redbot/core/utils/chat_formatting.py:545
 msgid "hours"
 msgstr "óra"
 
-#: redbot/core/utils/chat_formatting.py:526
+#: redbot/core/utils/chat_formatting.py:546
 msgid "minute"
 msgstr "perc"
 
-#: redbot/core/utils/chat_formatting.py:526
+#: redbot/core/utils/chat_formatting.py:546
 msgid "minutes"
 msgstr "perc"
 
-#: redbot/core/utils/chat_formatting.py:527
+#: redbot/core/utils/chat_formatting.py:547
 msgid "second"
 msgstr "másodperc"
 
-#: redbot/core/utils/chat_formatting.py:527
+#: redbot/core/utils/chat_formatting.py:547
 msgid "seconds"
 msgstr "másodperc"
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-09-03 01:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
@@ -18,13 +18,13 @@ msgstr ""
 #: redbot/cogs/alias/alias.py:35
 #, docstring
 msgid "Create aliases for commands.\n\n"
-"    Aliases are alternative names shortcuts for commands. They\n"
+"    Aliases are alternative names/shortcuts for commands. They\n"
 "    can act as both a lambda (storing arguments for repeated use)\n"
 "    or as simply a shortcut to saying \"x y z\".\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr "إنشاء أسماء مستعارة للأوامر. \\ n \\ n الأسماء المستعارة هي اختصارات أسماء بديلة للأوامر. يمكنهم \\ n العمل كحمل لامدا (تخزين الوسائط للاستخدام المتكرر) \\ n أو ببساطة اختصار للقول \\ \"xyz \". \\ n \\ n عند التشغيل ، ستقبل الأسماء المستعارة أي وسيطات إضافية \\ n وتضيفها إلى الاسم المستعار المخزن. \\ n"
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
@@ -91,73 +91,99 @@ msgstr "لقد حاولت إنشاء اسم مستعار عالمي جديد ب�
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "تم إنشاء اسم مستعار عالمي جديد مع مشغل{name}`."
 
-#: redbot/cogs/alias/alias.py:343
+#: redbot/cogs/alias/alias.py:345
+#, docstring
+msgid "Edit an existing alias in this server."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:350 redbot/cogs/alias/alias.py:385
+msgid "The alias with the name {name} does not exist."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:356 redbot/cogs/alias/alias.py:391
+msgid "You attempted to edit an alias to a command that doesn't exist."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:365 redbot/cogs/alias/alias.py:398
+msgid "The alias with the trigger `{name}` has been edited sucessfully."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:372 redbot/cogs/alias/alias.py:405
+msgid "Alias with the name `{name}` was not found."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:380
+#, docstring
+msgid "Edit an existing global alias."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:412
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "حاول تنفيذ المساعدة للقيادة الأساسية للإسم المستعار."
 
-#: redbot/cogs/alias/alias.py:348
+#: redbot/cogs/alias/alias.py:417
 msgid "No such alias exists."
 msgstr "لا يوجد مثل هذا المستخدم"
 
-#: redbot/cogs/alias/alias.py:352
+#: redbot/cogs/alias/alias.py:421
 #, docstring
 msgid "Show what command the alias executes."
 msgstr "إظهار ما هو الأمر الذي ينفذه الاسم المستعار."
 
-#: redbot/cogs/alias/alias.py:357
+#: redbot/cogs/alias/alias.py:426
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr "`{alias_name}` الاسم المستعار سوف ينفذ الأمر `{command}`"
 
-#: redbot/cogs/alias/alias.py:362
+#: redbot/cogs/alias/alias.py:431
 msgid "There is no alias with the name `{name}`"
 msgstr "لا يوجد اسم مستعار باسم `{name}`"
 
-#: redbot/cogs/alias/alias.py:368
+#: redbot/cogs/alias/alias.py:437
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr "حذف اسم مستعار موجود على هذا السيرفر."
 
-#: redbot/cogs/alias/alias.py:370 redbot/cogs/alias/alias.py:402
+#: redbot/cogs/alias/alias.py:439 redbot/cogs/alias/alias.py:471
 msgid "There are no aliases on this server."
 msgstr "لا توجد أسماء مستعارة على هذا السيرفر."
 
-#: redbot/cogs/alias/alias.py:375 redbot/cogs/alias/alias.py:390
+#: redbot/cogs/alias/alias.py:444 redbot/cogs/alias/alias.py:459
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr "تم حذف الاسم المستعار باسم `{name}` بنجاح."
 
-#: redbot/cogs/alias/alias.py:378 redbot/cogs/alias/alias.py:393
+#: redbot/cogs/alias/alias.py:447 redbot/cogs/alias/alias.py:462
 msgid "Alias with name `{name}` was not found."
 msgstr "لم يتم العثور على الاسم المستعار `{name}`."
 
-#: redbot/cogs/alias/alias.py:383
+#: redbot/cogs/alias/alias.py:452
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "يحذف اسم مستعار عالمي قائم."
 
-#: redbot/cogs/alias/alias.py:385
+#: redbot/cogs/alias/alias.py:454
 msgid "There are no global aliases on this bot."
 msgstr ""
 
-#: redbot/cogs/alias/alias.py:399
+#: redbot/cogs/alias/alias.py:468
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "قائمة الأسماء المستعارة المتوفرة على هذا السيرفر."
 
-#: redbot/cogs/alias/alias.py:408
+#: redbot/cogs/alias/alias.py:477
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "قائمة الأسماء المستعارة العامة المتاحة على هذا البوت."
 
-#: redbot/cogs/alias/alias.py:411
+#: redbot/cogs/alias/alias.py:480
 msgid "There are no global aliases."
 msgstr ""
 
-#: redbot/cogs/alias/alias_entry.py:198
+#: redbot/cogs/alias/alias_entry.py:199
 msgid "Arguments must be specified with a number."
 msgstr "يجب أن يتم تحديد الحجج برقم."
 
-#: redbot/cogs/alias/alias_entry.py:205
+#: redbot/cogs/alias/alias_entry.py:206
 msgid "Arguments must be sequential. Missing arguments: "
 msgstr "يجب أن تكون الحجج متتابعة. الحجج المفقودة: "
 

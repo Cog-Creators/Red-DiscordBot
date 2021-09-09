@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-06-14 00:22+0000\n"
+"POT-Creation-Date: 2021-07-03 23:53+0000\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -271,7 +271,7 @@ msgid "That is not a registered reason!"
 msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:399
-msgid "You cannot apply 0 or less points."
+msgid "You cannot apply negative points."
 msgstr ""
 
 #: redbot/cogs/warnings/warnings.py:413

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-06-17 03:05+0000\n"
+"POT-Creation-Date: 2021-08-13 00:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr "Страница {page_num}/{total_pages}"
 #: redbot/cogs/audio/core/utilities/formatting.py:96
 #: redbot/cogs/audio/core/utilities/playlists.py:527
 msgid "Connection to Lavalink has failed"
-msgstr "Не удалось подключиться к Lavalink"
+msgstr "Не удалось подключиться к Lava_link"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:99
 #: redbot/cogs/audio/core/utilities/player.py:591
@@ -43,7 +43,7 @@ msgstr "Сначала подключитесь к голосовому кана
 #: redbot/cogs/audio/core/utilities/formatting.py:110
 #: redbot/cogs/audio/core/utilities/playlists.py:555
 msgid "Connection to Lavalink has not yet been established."
-msgstr "Соединение с Lavalink еще не установлено."
+msgstr "Соединение с Lava_link еще не установлено."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:117
 #: redbot/cogs/audio/core/utilities/player.py:441
@@ -235,7 +235,7 @@ msgstr "Не удается получить трек"
 #: redbot/cogs/audio/core/utilities/playlists.py:628
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr "На данный момент я не могу получить трек от Lavalink, попробуйте еще раз через несколько минут."
+msgstr "На данный момент я не могу получить трек от Lava_link, попробуйте еще раз через несколько минут."
 
 #: redbot/cogs/audio/core/utilities/player.py:328
 msgid "The Spotify API key or client secret has not been set properly. \n"
@@ -325,7 +325,7 @@ msgstr "У вас нет прав на управление плейлистом
 
 #: redbot/cogs/audio/core/utilities/playlists.py:113
 msgid "You do not have the permissions to manage playlists in {scope} scope."
-msgstr "У вас нет прав на управление плейлистами в {scope}области ."
+msgstr "У вас нет прав на управление плейлистами в {scope} области."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:117
 msgid "No access to playlist."
@@ -402,7 +402,7 @@ msgstr "Невозможно получить плейлисты"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:542
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "У меня нет разрешения подключаться и говорить на вашем канале."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:573
 msgid "You must be in the voice channel to use the playlist command."
@@ -410,15 +410,15 @@ msgstr "Вы должны быть в голосовом канале, чтоб�
 
 #: redbot/cogs/audio/core/utilities/playlists.py:682
 msgid "the Global"
-msgstr "Глобальный"
+msgstr "глобальный"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:682
 msgid "Global"
-msgstr "Глобал"
+msgstr "Глобально"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "the Server"
-msgstr "Сервер"
+msgstr "сервер"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "Server"
@@ -426,7 +426,7 @@ msgstr "Сервер"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "the User"
-msgstr "Пользователь"
+msgstr "пользователь"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "User"
@@ -463,7 +463,7 @@ msgstr "Страница {page_num}/{total_pages} | {num_tracks} треков, {
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
-msgstr "Автовоспроизведение"
+msgstr "Авто-воспроизведение"
 
 #: redbot/cogs/audio/core/utilities/queue.py:103
 msgid "Shuffle"

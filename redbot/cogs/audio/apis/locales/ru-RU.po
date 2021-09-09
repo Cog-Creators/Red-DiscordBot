@@ -65,13 +65,13 @@ msgid "Nothing found.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr "Ничего не найдено.\n"
 "Ключ YouTube API может быть недействительным или вы можете оценить его в поисковой службе YouTube.\n"
-"Проверьте YouTube API еще раз и следуйте инструкциям в `{prefix}audioset youtubeapi`."
+"Проверьте YouTube API еще раз и следуйте инструкциям в `{prefix}audio set you_tube API`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr "Ваш токен API YouTube Data недействителен.\n"
-"Проверьте ключ YouTube API снова и следуйте инструкциям в `{prefix}audioset youtubeapi`."
+msgstr "Ваш token API YouTube Data недействителен.\n"
+"Проверьте ключ YouTube API снова и следуйте инструкциям в `{prefix}audio set you_tube API`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"

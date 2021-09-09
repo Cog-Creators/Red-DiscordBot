@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-24 11:04+0000\n"
+"POT-Creation-Date: 2021-09-01 22:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr "Intenté hacer algo que Discord me ha negado el permiso. Su comando no s
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "No puedo dar el rol{role.name} a {member.display_name} porque ese rol es mayor o igual a mi rol más alto en la jerarquía de Discord."
+msgstr "No puedo dar el rol {role.name} a {member.display_name} porque ese rol es mayor o igual a mi rol más alto en la jerarquía de Discord."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
@@ -252,55 +252,57 @@ msgstr "Gestionar selfroles."
 #: redbot/cogs/admin/admin.py:454
 #, docstring
 msgid "\n"
-"        Add a role to the list of available selfroles.\n\n"
+"        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr "\n"
-"        Añade un rol a la lista de selfroles disponibles.\n\n"
-"        NOTA: ¡El rol es sensible a mayúsculas\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:461
+#: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "No puedo permitir que añadas {role.name} como selfrole porque ese rol es mayor o igual a tu rol más alto en la jerarquía de Discord."
 
-#: redbot/cogs/admin/admin.py:469
-msgid "Added."
-msgstr "Añadido."
+#: redbot/cogs/admin/admin.py:473
+msgid "The role \"{role.name}\" is already a selfrole."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:472
-msgid "That role is already a selfrole."
-msgstr "Ese rol ya es un selfrole."
+#: redbot/cogs/admin/admin.py:479
+msgid "Added {count} selfroles."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:476
+#: redbot/cogs/admin/admin.py:481
+msgid "Added 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:487
 #, docstring
 msgid "\n"
-"        Remove a role from the list of available selfroles.\n\n"
+"        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr "\n"
-"        Quita un rol de la lista de selfroles disponibles.\n\n"
-"        NOTA: El rol es sensible a mayúsculas\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:483
+#: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "No puedo permitir que elimines a {role.name} de ser un selfrole porque ese rol es mayor o igual a tu rol más alto en la jerarquía de Discord."
 
-#: redbot/cogs/admin/admin.py:491
-msgid "Removed."
-msgstr "Eliminado."
+#: redbot/cogs/admin/admin.py:506
+msgid "Removed {count} selfroles."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:496
+#: redbot/cogs/admin/admin.py:508
+msgid "Removed 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:515
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Bloquea el bot sólo a sus servidores actuales."
 
-#: redbot/cogs/admin/admin.py:501
+#: redbot/cogs/admin/admin.py:520
 msgid "The bot is no longer serverlocked."
 msgstr "El bot ya no está bloqueado por el servidor."
 
-#: redbot/cogs/admin/admin.py:503
+#: redbot/cogs/admin/admin.py:522
 msgid "The bot is now serverlocked."
 msgstr "El bot está bloqueado por el servidor."
 
@@ -316,7 +318,7 @@ msgstr "No pude anunciar en los siguientes servidores: "
 msgid "The Admin cog is not loaded."
 msgstr "El cog Admin no está cargado."
 
-#: redbot/cogs/admin/converters.py:20
-msgid "The provided role is not a valid selfrole."
-msgstr "El rol proporcionado no es un selfrole válido."
+#: redbot/cogs/admin/converters.py:21
+msgid "The role \"{role_name}\" is not a valid selfrole."
+msgstr ""
 

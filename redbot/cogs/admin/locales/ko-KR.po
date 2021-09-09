@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-24 11:04+0000\n"
+"POT-Creation-Date: 2021-09-01 22:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -17,60 +17,60 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr ""
+msgstr "제가 사용할 수 없는 기능이 포함되어 당신의 요청을 수행할 수 없었어요."
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{role.name} 역할을 {member.display_name}님에게 지급할 수 없었어요. 이 역할은 제 가장 높은 역할보다 높거나, 같아요."
 
 #: redbot/cogs/admin/admin.py:29
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{role.name} 역할을 {member.display_name}님에게서 뺏을 수 없었어요. 이 역할은 제 가장 높은 역할보다 높거나, 같아요."
 
 #: redbot/cogs/admin/admin.py:35
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr ""
+msgstr "{role.name} 역할을 수정할 수 없었어요. 이 역할은 제 가장 높은 역할보다 높거나, 같아요."
 
 #: redbot/cogs/admin/admin.py:41
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "당신은 {role.name} 역할을 {member.display_name}님에게 부여할 수 없어요. 이 역할은 제 가장 높은 역할보다 높거나, 같아요."
 
 #: redbot/cogs/admin/admin.py:47
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "당신은 {role.name} 역할을 {member.display_name}님에게서 뺏을 수 없어요. 이 역할은 제 가장 높은 역할보다 높거나, 같아요."
 
 #: redbot/cogs/admin/admin.py:53
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "당신은 {role.name} 역할을 수정할 수 없어요. 이 역할은 제 가장 높은 역할보다 높거나, 같아요."
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need the \"Manage Roles\" permission to do that."
-msgstr ""
+msgstr "이 작업을 수행하려면 \"역할 관리\" 권한이 필요해요."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
-msgstr ""
+msgstr "이미 공지하고 있어요. 다른 공지를 보내고 싶다면 `{prefix}announce cancel`을 사용해주세요."
 
 #: redbot/cogs/admin/admin.py:71
 #, docstring
 msgid "A collection of server administration utilities."
-msgstr ""
+msgstr "서버 관리를 위한 기능 모음"
 
 #: redbot/cogs/admin/admin.py:164
 msgid "{member.display_name} already has the role {role.name}."
-msgstr ""
+msgstr "{member.display_name}님은 이미 {role.name} 역할을 가지고 있어요."
 
 #: redbot/cogs/admin/admin.py:184
 msgid "I successfully added {role.name} to {member.display_name}"
-msgstr ""
+msgstr "{member.display_name}님에게 {role.name} 역할을 부여했어요."
 
 #: redbot/cogs/admin/admin.py:194
 msgid "{member.display_name} does not have the role {role.name}."
-msgstr ""
+msgstr "{member.display_name}님은 {role.name} 역할을 가지고 있지 않아요."
 
 #: redbot/cogs/admin/admin.py:214
 msgid "I successfully removed {role.name} from {member.display_name}"
-msgstr ""
+msgstr "{member.display_name}님에게서 {role.name} 역할을 삭제했어요."
 
 #: redbot/cogs/admin/admin.py:225
 #, docstring
@@ -79,7 +79,11 @@ msgid "\n"
 "        Use double quotes if the role contains spaces.\n"
 "        If user is left blank it defaults to the author of the command.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        유저에게 역할을 추가해요.\n\n"
+"        역할 이름에 띄어쓰기가 있으면 큰따옴표를 사용해주세요.\n"
+"        유저를 지정하지 않으면 명령어 실행자에게 역할을 지급해요.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:241
 #, docstring
@@ -88,7 +92,11 @@ msgid "\n"
 "        Use double quotes if the role contains spaces.\n"
 "        If user is left blank it defaults to the author of the command.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        유저에게서 역할을 삭제해요.\n\n"
+"        역할 이름에 띄어쓰기가 있으면 큰따옴표를 사용해주세요.\n"
+"        유저를 지정하지 않으면 명령어 실행자에게서 역할을 뺏어요.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:255
 #, docstring
@@ -213,49 +221,57 @@ msgstr ""
 #: redbot/cogs/admin/admin.py:454
 #, docstring
 msgid "\n"
-"        Add a role to the list of available selfroles.\n\n"
+"        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:461
+#: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:469
-msgid "Added."
-msgstr "추가됐어요."
-
-#: redbot/cogs/admin/admin.py:472
-msgid "That role is already a selfrole."
+#: redbot/cogs/admin/admin.py:473
+msgid "The role \"{role.name}\" is already a selfrole."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:476
+#: redbot/cogs/admin/admin.py:479
+msgid "Added {count} selfroles."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:481
+msgid "Added 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:487
 #, docstring
 msgid "\n"
-"        Remove a role from the list of available selfroles.\n\n"
+"        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:483
+#: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:491
-msgid "Removed."
-msgstr "제거됐어요."
+#: redbot/cogs/admin/admin.py:506
+msgid "Removed {count} selfroles."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:496
+#: redbot/cogs/admin/admin.py:508
+msgid "Removed 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:515
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:501
+#: redbot/cogs/admin/admin.py:520
 msgid "The bot is no longer serverlocked."
 msgstr ""
 
-#: redbot/cogs/admin/admin.py:503
+#: redbot/cogs/admin/admin.py:522
 msgid "The bot is now serverlocked."
 msgstr ""
 
@@ -271,7 +287,7 @@ msgstr "다음과 같은 서버에 알릴 수 없어요. : "
 msgid "The Admin cog is not loaded."
 msgstr "관리자 cog가 로드되지 않았어요."
 
-#: redbot/cogs/admin/converters.py:20
-msgid "The provided role is not a valid selfrole."
+#: redbot/cogs/admin/converters.py:21
+msgid "The role \"{role_name}\" is not a valid selfrole."
 msgstr ""
 

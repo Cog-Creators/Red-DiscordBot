@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-24 11:04+0000\n"
+"POT-Creation-Date: 2021-09-01 22:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:18
 msgid "I attempted to do something that Discord denied me permissions for. Your command failed to successfully complete."
-msgstr "Eu tentei fazer algo que o Discord me negou as permissões. Seu comando falhou em ser completado com sucesso."
+msgstr "Eu tentei fazer algo que o Discord me negou as permissões necessárias. Seu comando falhou em ser completado com sucesso."
 
 #: redbot/cogs/admin/admin.py:23
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
@@ -45,7 +45,7 @@ msgstr "Não posso deixar você alterar o cargo {role.name} porque este cargo é
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need the \"Manage Roles\" permission to do that."
-msgstr ""
+msgstr "Eu preciso da permissão \"Gerenciar Funções\" para fazer isso."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -176,7 +176,10 @@ msgid "\n"
 "        Change the channel where the bot will send announcements.\n\n"
 "        If channel is left blank it defaults to the current channel.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Altera o canal para onde o bot enviará os anúncios.\n\n"
+"        Se o canal for deixado em branco, por padrão será usado o canal atual.\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:368
 msgid "The announcement channel has been set to {channel.mention}"
@@ -185,7 +188,7 @@ msgstr "O canal de anúncios foi definido como {channel.mention}"
 #: redbot/cogs/admin/admin.py:373
 #, docstring
 msgid "Unsets the channel for announcements."
-msgstr ""
+msgstr "Desativa o canal para anúncios."
 
 #: redbot/cogs/admin/admin.py:398
 #, docstring
@@ -194,7 +197,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Adiciona ou remove um cargo auto-atribuído.\n\n"
+"        Os administradores do servidor precisarão configurar o cargo para que o usuário consiga definir a si mesmo.\n"
+"        NOTA: o nome do cargo diferencia as variações entre letras maiúsculas e minúsculas!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:411
 #, docstring
@@ -245,55 +252,63 @@ msgstr "Gerenciar cargos autoatribuíveis."
 #: redbot/cogs/admin/admin.py:454
 #, docstring
 msgid "\n"
-"        Add a role to the list of available selfroles.\n\n"
+"        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
 msgstr "\n"
 "        Adiciona um cargo à lista de cargos autoatribuíveis.\n\n"
-"        NOTA: o nome do cargo diferencia entre maiúsculas e minúsculas!\n"
+"        NOTA: o nome do cargo é sensivel á letras maiúsculas e minúsculas!\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:461
+#: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Não posso deixar você atribuir {role.name} como um cargo autoatribuível porque este cargo é mais alto ou igual ao seu mais alto cargo na hierarquia do Discord."
 
-#: redbot/cogs/admin/admin.py:469
-msgid "Added."
-msgstr "Adicionado."
+#: redbot/cogs/admin/admin.py:473
+msgid "The role \"{role.name}\" is already a selfrole."
+msgstr "O cargo \"{role.name}\" já é um cargo auto atribuível."
 
-#: redbot/cogs/admin/admin.py:472
-msgid "That role is already a selfrole."
-msgstr "Este cargo já é autoatribuível."
+#: redbot/cogs/admin/admin.py:479
+msgid "Added {count} selfroles."
+msgstr "Foram adicionados {count} cargos auto atribuíveis."
 
-#: redbot/cogs/admin/admin.py:476
+#: redbot/cogs/admin/admin.py:481
+msgid "Added 1 selfrole."
+msgstr "Adicionado um cargo auto atribuível."
+
+#: redbot/cogs/admin/admin.py:487
 #, docstring
 msgid "\n"
-"        Remove a role from the list of available selfroles.\n\n"
+"        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
 msgstr "\n"
-"        Remove um cargo da lista de cargos autoatribuíveis.\n\n"
-"        NOTA: o nome do cargo diferencia entre maiúsculas e minúsculas!\n"
+"        Remove um cargo, ou um conjunto de cargos, da lista de cargos autoatribuíveis disponíveis.\n\n"
+"        NOTA: o nome do cargo é sensível á letras maiúsculas e minúsculas!\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:483
+#: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Não posso deixar você remover o cargo {role.name} da lista de cargos autoatribuíveis porque este cargo é mais alto ou igual ao seu mais alto cargo na hierarquia do Discord."
 
-#: redbot/cogs/admin/admin.py:491
-msgid "Removed."
-msgstr "Removido."
+#: redbot/cogs/admin/admin.py:506
+msgid "Removed {count} selfroles."
+msgstr "Foram removidos {count} cargos auto atribuíveis."
 
-#: redbot/cogs/admin/admin.py:496
+#: redbot/cogs/admin/admin.py:508
+msgid "Removed 1 selfrole."
+msgstr "1 cargo autoatribuivel foi removido."
+
+#: redbot/cogs/admin/admin.py:515
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Restringe o bot somente aos servidores atuais."
 
-#: redbot/cogs/admin/admin.py:501
+#: redbot/cogs/admin/admin.py:520
 msgid "The bot is no longer serverlocked."
 msgstr "O bot não está mais restrito aos servidores atuais."
 
-#: redbot/cogs/admin/admin.py:503
+#: redbot/cogs/admin/admin.py:522
 msgid "The bot is now serverlocked."
 msgstr "O está restrito aos servidores atuais."
 
@@ -309,7 +324,7 @@ msgstr "Não pude anunciar nos seguintes servidores: "
 msgid "The Admin cog is not loaded."
 msgstr "O cog 'Admin' não está carregado."
 
-#: redbot/cogs/admin/converters.py:20
-msgid "The provided role is not a valid selfrole."
-msgstr "O cargo fornecido não é um cargo autoatribuível válido."
+#: redbot/cogs/admin/converters.py:21
+msgid "The role \"{role_name}\" is not a valid selfrole."
+msgstr "O cargo \"{role_name}\" não é um cargo autoatribuivel valido."
 
