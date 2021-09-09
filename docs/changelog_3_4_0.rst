@@ -75,6 +75,11 @@ Mod
 - The DM message from the ``[p]tempban`` command will now include the ban reason if ``[p]modset dm`` setting is enabled (:issue:`4836`, :issue:`4837`)
 - The ``[p]rename`` command will no longer permit to change nicknames of the members that are not lower in the role hierarchy from the command caller (:issue:`5187`, :issue:`5211`)
 
+Streams
+*******
+
+- Fixed an issue with some YouTube streamers getting removed from stream alerts after a while (:issue:`5195`, :issue:`5223`)
+
 Trivia
 ******
 
