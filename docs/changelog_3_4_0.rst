@@ -22,6 +22,7 @@ Core Bot
     - More specifcally, added information about CPU and RAM, bot's instance name and owners
 
 - The formatting of Red's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
+- Added the new native Discord timestamps in Modlog cases, ``[p]userinfo``, ``[p]serverinfo``, and ``[p]tempban`` (:issue:`5155`, :issue:`5241`)
 
 Audio
 *****
