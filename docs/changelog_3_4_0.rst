@@ -101,6 +101,7 @@ Documentation changes
 
 - Added a document about (privileged) intents and our stance regarding "public bots" (:issue:`5216`, :issue:`5221`)
 - Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
+- Updated the commands in install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
 - Fixed the examples of commands that are only available to people with the mod role (:issue:`5180`)
 
 
