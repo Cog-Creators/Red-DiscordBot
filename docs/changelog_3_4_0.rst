@@ -90,6 +90,7 @@ Streams
 *******
 
 - Fixed an issue with some YouTube streamers getting removed from stream alerts after a while (:issue:`5195`, :issue:`5223`)
+- Made small optimizations in regards to stream alerts (:issue:`4968`)
 
 Trivia
 ******
