@@ -46,6 +46,7 @@ Documentation changes
 ---------------------
 
 - Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
+- Fixed the examples of commands that are only available to people with the mod role (:issue:`5180`)
 
 
 Miscellaneous
