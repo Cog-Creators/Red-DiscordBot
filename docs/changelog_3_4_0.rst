@@ -42,6 +42,11 @@ Audio
 - Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
 - ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
 
+Cleanup
+*******
+
+- The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
+
 Mod
 ***
 
