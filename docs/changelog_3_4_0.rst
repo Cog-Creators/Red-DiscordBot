@@ -9,7 +9,7 @@ Redbot 3.4.13 (2021-09-09)
 Read before updating
 --------------------
 
-1. If you're hosting a public/big bot (>75 servers) or strive to scale your bot at that level, you should read our stance `about (privileged) intents and public bots <intents>`.
+1. If you're hosting a public/big bot (>75 servers) or strive to scale your bot at that level, you should read :doc:`our stance on (privileged) intents and public bots <intents>`.
 2. Fedora 32 is no longer supported as it has already reached end of life.
 3. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
@@ -30,13 +30,13 @@ Core Bot
 
 - Revamped the ``[p]debuginfo`` to make it more useful for... You guessed it, debugging! (:issue:`4997`, :issue:`5156`)
 
-    - More specifcally, added information about CPU and RAM, bot's instance name and owners
+    More specifically, added information about CPU and RAM, bot's instance name and owners
 
 - The formatting of Red's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
 - Added the new native Discord timestamps in Modlog cases, ``[p]userinfo``, ``[p]serverinfo``, and ``[p]tempban`` (:issue:`5155`, :issue:`5241`)
 - Added a setting for ``[p]help``'s reaction timeout (:issue:`5205`)
 
-    - This can be changed with ``[p]helpset reacttimeout`` command
+    This can be changed with ``[p]helpset reacttimeout`` command
 
 - Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
 - Upgraded all Red's dependencies (:issue:`5121`)
@@ -58,7 +58,7 @@ Audio
 
 - Added a per-guild max volume setting (:issue:`5165`)
 
-    - This can be changed with ``[p]audioset maxvolume`` command
+    This can be changed with ``[p]audioset maxvolume`` command
 
 - Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
 - Fixed fetching of age-restricted tracks (:issue:`5233`)
@@ -72,7 +72,7 @@ Cleanup
 - The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
 - All ``[p]cleanup`` command will now send a notification with number of the deleted messages that will get deleted automatically after 5 seconds (:issue:`5218`)
 
-    - This can be disabled with the ``[p]cleanupset notify`` command
+    This can be disabled with the ``[p]cleanupset notify`` command
 
 Downloader
 **********
