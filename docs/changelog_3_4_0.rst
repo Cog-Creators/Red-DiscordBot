@@ -28,6 +28,7 @@ Audio
 
     - This can be changed with ``[p]audioset maxvolume`` command
 
+- Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
 - ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
 
 Warnings
