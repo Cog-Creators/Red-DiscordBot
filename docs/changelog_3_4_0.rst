@@ -100,6 +100,10 @@ Warnings
 Developer changelog
 -------------------
 
+- Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
+
+    This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
+    In addition to regular timedelta arguments, it also accepts months and years!
 
 
 Documentation changes
