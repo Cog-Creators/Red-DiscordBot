@@ -40,6 +40,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- **Downloader** - Added few missing line breaks (:issue:`5185`, :issue:`5187`)
 
 
 Redbot 3.4.12 (2021-06-17)
