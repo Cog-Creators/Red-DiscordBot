@@ -96,9 +96,9 @@ Complete the rest of the installation by `installing Python 3.9 with pyenv <inst
 .. _install-debian:
 .. _install-raspbian:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Debian and Raspbian Buster
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Debian 10 Buster and Raspberry Pi OS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend installing pyenv as a method of installing non-native versions of python on
 Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
@@ -110,6 +110,24 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
     CXX=/usr/bin/g++
 
 Complete the rest of the installation by `installing Python 3.9 with pyenv <install-python-pyenv>`.
+
+---
+
+.. _install-debian11:
+
+~~~~~~~~~~~~~~~~~~~~
+Debian 11 Bullseye
+~~~~~~~~~~~~~~~~~~~~
+
+Debian 11 "Bullseye" has all required packages available in official repositories. Install them
+with apt:
+
+.. prompt:: bash
+
+    sudo apt update
+    sudo apt -y install python3 python3-dev python3-venv python3-pip git openjdk-11-jre-headless build-essential nano
+
+Continue by `creating-venv-linux`.
 
 ----
 

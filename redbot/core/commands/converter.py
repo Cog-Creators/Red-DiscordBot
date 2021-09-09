@@ -45,6 +45,8 @@ __all__ = [
     "parse_relativedelta",
     "parse_timedelta",
     "Literal",
+    "CommandConverter",
+    "CogConverter",
 ]
 
 _ = Translator("commands.converter", __file__)
@@ -526,3 +528,29 @@ if not TYPE_CHECKING:
                 return cls(k)
             else:
                 return cls((k,))
+
+
+if TYPE_CHECKING:
+    CommandConverter = dpy_commands.Command
+    CogConverter = dpy_commands.Cog
+else:
+
+    class CommandConverter(dpy_commands.Converter):
+        """Converts a command name to the matching `redbot.core.commands.Command` object."""
+
+        async def convert(self, ctx: "Context", argument: str):
+            arg = argument.strip()
+            command = ctx.bot.get_command(arg)
+            if not command:
+                raise BadArgument(_('Command "{arg}" not found.').format(arg=arg))
+            return command
+
+    class CogConverter(dpy_commands.Converter):
+        """Converts a cog name to the matching `redbot.core.commands.Cog` object."""
+
+        async def convert(self, ctx: "Context", argument: str):
+            arg = argument.strip()
+            cog = ctx.bot.get_cog(arg)
+            if not cog:
+                raise BadArgument(_('Cog "{arg}" not found.').format(arg=arg))
+            return cog
