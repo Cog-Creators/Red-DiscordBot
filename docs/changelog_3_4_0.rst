@@ -135,6 +135,7 @@ Documentation changes
 - Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
 - Updated the commands in install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
 - Fixed the examples of commands that are only available to people with the mod role (:issue:`5180`)
+- Fixed few other small issues with the documentation :) (:issue:`5048`, :issue:`5092`, :issue:`5149`, :issue:`5207`, :issue:`5209`, :issue:`5215`, :issue:`5219`, :issue:`5220`)
 
 
 Miscellaneous
