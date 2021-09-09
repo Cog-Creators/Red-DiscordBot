@@ -17,6 +17,12 @@ End-user changelog
 Core Bot
 ********
 
+- Added a new ``[p]diagnoseissues`` command to allow the bot owners to diagnose issues with various command checks with ease (:issue:`4717`, :issue:`5243`)
+
+    Since some of us are pretty excited about this feature, here's a very small teaser showing a part of what it can do:
+
+    .. figure:: https://user-images.githubusercontent.com/6032823/132610057-d6c65d67-c244-4f0b-9458-adfbe0c68cab.png
+
 - Revamped the ``[p]debuginfo`` to make it more useful for... You guessed it, debugging! (:issue:`4997`, :issue:`5156`)
 
     - More specifcally, added information about CPU and RAM, bot's instance name and owners
