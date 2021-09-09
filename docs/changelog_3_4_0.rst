@@ -105,6 +105,19 @@ Developer changelog
     This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
     In addition to regular timedelta arguments, it also accepts months and years!
 
+- Added more APIs for allowlists and blocklists (:issue:`5206`)
+
+    Here's the list of the methods that were added the ``bot`` object:
+
+        - `Red.add_to_blacklist() <RedBase.add_to_blacklist()>`
+        - `Red.remove_from_blacklist() <RedBase.remove_from_blacklist()>`
+        - `Red.get_blacklist() <RedBase.get_blacklist()>`
+        - `Red.clear_blacklist() <RedBase.clear_blacklist()>`
+        - `Red.add_to_whitelist() <RedBase.add_to_whitelist()>`
+        - `Red.remove_from_whitelist() <RedBase.remove_from_whitelist()>`
+        - `Red.get_whitelist() <RedBase.get_whitelist()>`
+        - `Red.clear_whitelist() <RedBase.clear_whitelist()>`
+
 
 Documentation changes
 ---------------------
