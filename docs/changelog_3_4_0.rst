@@ -24,6 +24,10 @@ Core Bot
 Audio
 *****
 
+- Added a per-guild max volume setting (:issue:`5165`)
+
+    - This can be changed with ``[p]audioset maxvolume`` command
+
 - ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
 
 Warnings
