@@ -122,6 +122,8 @@ Developer changelog
         - `Red.get_whitelist() <RedBase.get_whitelist()>`
         - `Red.clear_whitelist() <RedBase.clear_whitelist()>`
 
+- Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
+
 
 Documentation changes
 ---------------------
