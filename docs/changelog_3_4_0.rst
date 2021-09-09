@@ -33,6 +33,11 @@ Audio
 - Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
 - ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
 
+Trivia
+******
+
+- Added schema validation of the custom trivia files (:issue:`4571`, :issue:`4659`)
+
 Warnings
 ********
 
