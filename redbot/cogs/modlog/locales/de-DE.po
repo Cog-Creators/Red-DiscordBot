@@ -97,7 +97,7 @@ msgstr "Fälle wurden zurückgesetzt."
 
 #: redbot/cogs/modlog/modlog.py:120
 msgid "No changes have been made."
-msgstr ""
+msgstr "Keine Änderungen vorgenommen"
 
 #: redbot/cogs/modlog/modlog.py:125
 #, docstring

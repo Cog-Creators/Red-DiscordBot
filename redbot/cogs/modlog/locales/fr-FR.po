@@ -87,7 +87,7 @@ msgstr "Réinitialiser tous les arguments de modlog dans ce serveur."
 
 #: redbot/cogs/modlog/modlog.py:107
 msgid "Are you sure you would like to reset all modlog cases in this server?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir réinitialiser tous les cas de modlog de ce serveur?"
 
 #: redbot/cogs/modlog/modlog.py:114
 msgid "You took too long to respond."

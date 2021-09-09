@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-25 15:06+0000\n"
+"POT-Creation-Date: 2021-08-13 16:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -108,25 +108,25 @@ msgstr "Durée de la piste : {length} | Demandé par {user}"
 msgid "Queue ended."
 msgstr "File d’attente terminée."
 
-#: redbot/cogs/audio/core/events/lavalink.py:264
+#: redbot/cogs/audio/core/events/lavalink.py:266
 msgid "Multiple Errors Detected"
 msgstr "Multiples erreurs détectées"
 
-#: redbot/cogs/audio/core/events/lavalink.py:265
+#: redbot/cogs/audio/core/events/lavalink.py:267
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
 msgstr "Fermeture du lecteur audio suite à de multiples erreurs détectées. Si cela persiste, veuillez informer le propriétaire du bot car le cog Audio peut être temporairement indisponible."
 
-#: redbot/cogs/audio/core/events/lavalink.py:279
+#: redbot/cogs/audio/core/events/lavalink.py:281
 msgid "Track Stuck"
 msgstr "Piste Bloquée"
 
-#: redbot/cogs/audio/core/events/lavalink.py:280
+#: redbot/cogs/audio/core/events/lavalink.py:282
 msgid "Playback of the song has stopped due to an unexpected error.\n"
 "{error}"
 msgstr "La lecture de la musique s'est arrêtée en raison d'une erreur inattendue.\n"
 "{error}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:286
+#: redbot/cogs/audio/core/events/lavalink.py:288
 msgid "Track Error"
 msgstr "Erreur de la piste"
 

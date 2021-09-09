@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-18 21:11+0000\n"
+"POT-Creation-Date: 2021-09-03 01:09+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "MIME-Version: 1.0\n"
@@ -56,7 +56,7 @@ msgid "You must have the {perms} permission(s) in that user's channel to use thi
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:132 redbot/cogs/mod/kickban.py:464
-#: redbot/cogs/mod/kickban.py:631
+#: redbot/cogs/mod/kickban.py:633
 msgid "Invalid days. Must be between 0 and 7."
 msgstr ""
 
@@ -65,8 +65,8 @@ msgid "I cannot let you do that. Self-harm is bad {}"
 msgstr ""
 
 #: redbot/cogs/mod/kickban.py:143 redbot/cogs/mod/kickban.py:318
-#: redbot/cogs/mod/kickban.py:612 redbot/cogs/mod/kickban.py:691
-#: redbot/cogs/mod/kickban.py:771
+#: redbot/cogs/mod/kickban.py:612 redbot/cogs/mod/kickban.py:695
+#: redbot/cogs/mod/kickban.py:775 redbot/cogs/mod/names.py:63
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr ""
 
@@ -129,7 +129,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:311 redbot/cogs/mod/kickban.py:684
+#: redbot/cogs/mod/kickban.py:311 redbot/cogs/mod/kickban.py:688
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
 msgstr ""
 
@@ -205,84 +205,90 @@ msgid "Temporarily ban a user from this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:643
+#: redbot/cogs/mod/kickban.py:645
 msgid "You have been temporarily banned from {server_name} until {date}."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:647
-msgid " Here is an invite for when your ban expires: {invite_link}"
+#: redbot/cogs/mod/kickban.py:649
+msgid "\n\n"
+"**Reason:** {reason}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:657
+#: redbot/cogs/mod/kickban.py:651
+msgid "\n\n"
+"Here is an invite for when your ban expires: {invite_link}"
+msgstr ""
+
+#: redbot/cogs/mod/kickban.py:661
 msgid "I can't do that for some reason."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:659
+#: redbot/cogs/mod/kickban.py:663
 msgid "Something went wrong while banning."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:671
+#: redbot/cogs/mod/kickban.py:675
 msgid "Done. Enough chaos for now."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:678
+#: redbot/cogs/mod/kickban.py:682
 #, docstring
 msgid "Kick a user and delete 1 day's worth of their messages."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:707
+#: redbot/cogs/mod/kickban.py:711
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\n"
 "You can now join the server again. {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:718
+#: redbot/cogs/mod/kickban.py:722
 msgid "My role is not high enough to softban that user."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:754
+#: redbot/cogs/mod/kickban.py:758
 msgid "Done. Enough chaos."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:762
+#: redbot/cogs/mod/kickban.py:766
 #, docstring
 msgid "Kick a member from a voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:784
+#: redbot/cogs/mod/kickban.py:788
 msgid "I am unable to kick this member from the voice channel."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:787
+#: redbot/cogs/mod/kickban.py:791
 msgid "Something went wrong while attempting to kick that member."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:808
+#: redbot/cogs/mod/kickban.py:812
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:827
+#: redbot/cogs/mod/kickban.py:831
 msgid "That user isn't muted or deafened by the server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:843
+#: redbot/cogs/mod/kickban.py:847
 msgid "User is now allowed to speak and listen in voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:849
+#: redbot/cogs/mod/kickban.py:853
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:870
+#: redbot/cogs/mod/kickban.py:874
 msgid "That user is already muted and deafened server-wide."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:884
+#: redbot/cogs/mod/kickban.py:888
 msgid "User has been banned from speaking or listening in voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:891
+#: redbot/cogs/mod/kickban.py:895
 #, docstring
 msgid "Unban a user from this server.\n\n"
 "        Requires specifying the target user's ID. To find this, you may either:\n"
@@ -291,33 +297,33 @@ msgid "Unban a user from this server.\n\n"
 "        click the user and select 'Copy ID'."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:904
+#: redbot/cogs/mod/kickban.py:908
 msgid "It seems that user isn't banned!"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:909
+#: redbot/cogs/mod/kickban.py:913
 msgid "Something went wrong while attempting to unban that user."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:923
+#: redbot/cogs/mod/kickban.py:927
 msgid "Unbanned that user from this server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:929
+#: redbot/cogs/mod/kickban.py:933
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:937
+#: redbot/cogs/mod/kickban.py:941
 msgid "You've been unbanned from {server}.\n"
 "Here is an invite for that server: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:944
+#: redbot/cogs/mod/kickban.py:948
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:952
+#: redbot/cogs/mod/kickban.py:956
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
@@ -354,78 +360,78 @@ msgstr ""
 msgid "Delete delay settings restored."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:36
+#: redbot/cogs/mod/names.py:37
 #, docstring
 msgid "Change a member's nickname.\n\n"
 "        Leaving the nickname empty will remove it.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mod/names.py:45
+#: redbot/cogs/mod/names.py:46
 msgid "Nicknames must be between 2 and 32 characters long."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:53
+#: redbot/cogs/mod/names.py:54
 msgid "I do not have permission to rename that member. They may be higher than or equal to me in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:63
+#: redbot/cogs/mod/names.py:74
 msgid "I do not have permission to rename that member."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:66
+#: redbot/cogs/mod/names.py:77
 msgid "That nickname is invalid."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:68
+#: redbot/cogs/mod/names.py:79
 msgid "An unexpected error has occured."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:70
+#: redbot/cogs/mod/names.py:81
 msgid "Done."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:81
+#: redbot/cogs/mod/names.py:92
 msgid "Custom: {emoji} {name}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:83
+#: redbot/cogs/mod/names.py:94
 msgid "Custom: {emoji}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:85
+#: redbot/cogs/mod/names.py:96
 msgid "Custom: {name}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:93
+#: redbot/cogs/mod/names.py:104
 msgid "Playing: {name}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:102
+#: redbot/cogs/mod/names.py:113
 msgid "Streaming: [{name}{sep}{game}]({url})"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:109
+#: redbot/cogs/mod/names.py:120
 msgid "Streaming: {name}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:118
+#: redbot/cogs/mod/names.py:129
 msgid "Listening: [{title}{sep}{artist}]({url})"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:125
+#: redbot/cogs/mod/names.py:136
 msgid "Listening: {title}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:133
+#: redbot/cogs/mod/names.py:144
 msgid "Watching: {name}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:141
+#: redbot/cogs/mod/names.py:152
 msgid "Competing in: {competing}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:164
+#: redbot/cogs/mod/names.py:175
 #, docstring
 msgid "Show information about a member.\n\n"
 "        This includes fields for status, discord join date, server\n"
@@ -435,77 +441,72 @@ msgid "Show information about a member.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mod/names.py:192
+#: redbot/cogs/mod/names.py:212
 msgid "Unknown"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:202 redbot/cogs/mod/names.py:203
-msgid "{}\n"
-"({} days ago)"
-msgstr ""
-
-#: redbot/cogs/mod/names.py:215
+#: redbot/cogs/mod/names.py:224
 msgid "Chilling in {} status"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:229
+#: redbot/cogs/mod/names.py:238
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:256
+#: redbot/cogs/mod/names.py:265
 msgid "Joined Discord on"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:257
+#: redbot/cogs/mod/names.py:266
 msgid "Joined this server on"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:260
+#: redbot/cogs/mod/names.py:269
 msgid "Roles"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:260
+#: redbot/cogs/mod/names.py:269
 msgid "Role"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:266
+#: redbot/cogs/mod/names.py:275
 msgid "Previous Names"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:266
+#: redbot/cogs/mod/names.py:275
 msgid "Previous Name"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:274
+#: redbot/cogs/mod/names.py:283
 msgid "Previous Nicknames"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:274
+#: redbot/cogs/mod/names.py:283
 msgid "Previous Nickname"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:280
+#: redbot/cogs/mod/names.py:289
 msgid "Current voice channel"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:284
+#: redbot/cogs/mod/names.py:293
 msgid "Member #{} | User ID: {}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:298
+#: redbot/cogs/mod/names.py:307
 #, docstring
 msgid "Show previous names and nicknames of a member."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:302
+#: redbot/cogs/mod/names.py:311
 msgid "**Past 20 names**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:308
+#: redbot/cogs/mod/names.py:317
 msgid "**Past 20 nicknames**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:315
+#: redbot/cogs/mod/names.py:324
 msgid "That member doesn't have any recorded name or nickname change."
 msgstr ""
 

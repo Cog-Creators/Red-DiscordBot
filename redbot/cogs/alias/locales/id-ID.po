@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-09-03 01:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -18,19 +18,13 @@ msgstr ""
 #: redbot/cogs/alias/alias.py:35
 #, docstring
 msgid "Create aliases for commands.\n\n"
-"    Aliases are alternative names shortcuts for commands. They\n"
+"    Aliases are alternative names/shortcuts for commands. They\n"
 "    can act as both a lambda (storing arguments for repeated use)\n"
 "    or as simply a shortcut to saying \"x y z\".\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr "Buat alias untuk perintah.\n\n"
-"    Alias adalah pintasan nama alternatif untuk perintah. Mereka\n"
-"  dapat bertindak sebagai lambda (menyimpan argumen untuk penggunaan berulang)\n"
-"  atau hanya sebagai pintasan untuk mengatakan \"xyz\".\n\n"
-" Saat dijalankan, alias akan menerima argumen tambahan apa pun \n"
-" dan menambahkannya ke alias yang disimpan. \n"
-"    "
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
@@ -98,73 +92,99 @@ msgstr "Anda mencoba membuat alias global baru dengan nama {name} tetapi nama it
 msgid "A new global alias with the trigger `{name}` has been created."
 msgstr "Alias global baru dengan pemicu `{name}` telah dibuat."
 
-#: redbot/cogs/alias/alias.py:343
+#: redbot/cogs/alias/alias.py:345
+#, docstring
+msgid "Edit an existing alias in this server."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:350 redbot/cogs/alias/alias.py:385
+msgid "The alias with the name {name} does not exist."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:356 redbot/cogs/alias/alias.py:391
+msgid "You attempted to edit an alias to a command that doesn't exist."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:365 redbot/cogs/alias/alias.py:398
+msgid "The alias with the trigger `{name}` has been edited sucessfully."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:372 redbot/cogs/alias/alias.py:405
+msgid "Alias with the name `{name}` was not found."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:380
+#, docstring
+msgid "Edit an existing global alias."
+msgstr ""
+
+#: redbot/cogs/alias/alias.py:412
 #, docstring
 msgid "Try to execute help for the base command of the alias."
 msgstr "Cobalah untuk menjalankan bantuan untuk perintah dasar alias."
 
-#: redbot/cogs/alias/alias.py:348
+#: redbot/cogs/alias/alias.py:417
 msgid "No such alias exists."
 msgstr "Alias tersebut tidak ditemukan."
 
-#: redbot/cogs/alias/alias.py:352
+#: redbot/cogs/alias/alias.py:421
 #, docstring
 msgid "Show what command the alias executes."
 msgstr "Tunjukkan perintah apa yang dijalankan alias."
 
-#: redbot/cogs/alias/alias.py:357
+#: redbot/cogs/alias/alias.py:426
 msgid "The `{alias_name}` alias will execute the command `{command}`"
 msgstr "Alias `{alias_name}` akan menjalankan perintah `{command}`"
 
-#: redbot/cogs/alias/alias.py:362
+#: redbot/cogs/alias/alias.py:431
 msgid "There is no alias with the name `{name}`"
 msgstr "Tidak ada alias dengan nama `{name}`"
 
-#: redbot/cogs/alias/alias.py:368
+#: redbot/cogs/alias/alias.py:437
 #, docstring
 msgid "Delete an existing alias on this server."
 msgstr "Hapus alias yang ada di server ini."
 
-#: redbot/cogs/alias/alias.py:370 redbot/cogs/alias/alias.py:402
+#: redbot/cogs/alias/alias.py:439 redbot/cogs/alias/alias.py:471
 msgid "There are no aliases on this server."
 msgstr "Tidak ada alias pada server ini."
 
-#: redbot/cogs/alias/alias.py:375 redbot/cogs/alias/alias.py:390
+#: redbot/cogs/alias/alias.py:444 redbot/cogs/alias/alias.py:459
 msgid "Alias with the name `{name}` was successfully deleted."
 msgstr "Alias dengan nama `{name}` berhasil dihapus."
 
-#: redbot/cogs/alias/alias.py:378 redbot/cogs/alias/alias.py:393
+#: redbot/cogs/alias/alias.py:447 redbot/cogs/alias/alias.py:462
 msgid "Alias with name `{name}` was not found."
 msgstr "Alias dengan nama `{name}` tidak ditemukan."
 
-#: redbot/cogs/alias/alias.py:383
+#: redbot/cogs/alias/alias.py:452
 #, docstring
 msgid "Delete an existing global alias."
 msgstr "Hapus alias global yang ada."
 
-#: redbot/cogs/alias/alias.py:385
+#: redbot/cogs/alias/alias.py:454
 msgid "There are no global aliases on this bot."
 msgstr "Tidak ada alias global di bot ini."
 
-#: redbot/cogs/alias/alias.py:399
+#: redbot/cogs/alias/alias.py:468
 #, docstring
 msgid "List the available aliases on this server."
 msgstr "Buat daftar alias yang tersedia di server ini."
 
-#: redbot/cogs/alias/alias.py:408
+#: redbot/cogs/alias/alias.py:477
 #, docstring
 msgid "List the available global aliases on this bot."
 msgstr "Buat daftar alias global yang tersedia di bot ini."
 
-#: redbot/cogs/alias/alias.py:411
+#: redbot/cogs/alias/alias.py:480
 msgid "There are no global aliases."
 msgstr "Tidak ada alias global."
 
-#: redbot/cogs/alias/alias_entry.py:198
+#: redbot/cogs/alias/alias_entry.py:199
 msgid "Arguments must be specified with a number."
 msgstr "Argumen harus ditentukan dengan angka."
 
-#: redbot/cogs/alias/alias_entry.py:205
+#: redbot/cogs/alias/alias_entry.py:206
 msgid "Arguments must be sequential. Missing arguments: "
 msgstr "Argumen harus berurutan. Argumen yang hilang: "
 

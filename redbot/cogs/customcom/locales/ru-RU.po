@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-06-18 21:49+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 msgid "Welcome to the interactive random {cc} maker!\n"
 "Every message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
 msgstr "Добро пожаловать в интерактивный случайных {cc} созданий!\n"
-"Каждое отправленное тобой сообщение будет добавлено в качестве одного из ответов по выбору после срабатывания {cc} . Чтобы выйти из интерактивного меню, введите `{quit}`"
+"Каждое отправленное тобой сообщение будет добавлено в качестве одного из ответов по выбору после срабатывания {cc}. Чтобы выйти из интерактивного меню, введите `{quit}`"
 
 #: redbot/cogs/customcom/customcom.py:89
 msgid "Add a random response:"
@@ -49,12 +49,16 @@ msgid "This cog contains commands for creating and managing custom commands that
 "    Custom commands can be used by anyone by default, so be careful with pings.\n"
 "    Commands can only be lowercase, and will not respond to any uppercase letters.\n"
 "    "
-msgstr ""
+msgstr "Эта шестеренка содержит команды для создания и управления пользовательскими командами, отображающими текст.\n\n"
+"    Они полезны для хранения информации, которая может понадобиться пользователям, например, ответов на часто задаваемые вопросы или ссылок на приглашения.\n"
+"    По умолчанию пользовательские команды могут использоваться кем угодно, поэтому будьте осторожны с пингами.\n"
+"    Команды могут быть только строчными, и не будут отвечать на заглавные буквы.\n"
+"    "
 
 #: redbot/cogs/customcom/customcom.py:247
 #, docstring
 msgid "Base command for Custom Commands management."
-msgstr ""
+msgstr "Базовая команда для управления пользовательскими командами."
 
 #: redbot/cogs/customcom/customcom.py:252
 #, docstring
@@ -62,7 +66,10 @@ msgid "Get the raw response of a custom command, to get the proper markdown.\n\n
 "        This is helpful for copy and pasting.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The custom command to get the raw response of."
-msgstr ""
+msgstr "Получите необработанный ответ пользовательской команды, чтобы получить правильную разметку.\n\n"
+"        Это полезно для копирования и вставки.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<command>` Пользовательская команда для получения необработанного ответа."
 
 #: redbot/cogs/customcom/customcom.py:277
 msgid "Response #{num}/{total}"
@@ -82,7 +89,12 @@ msgid "\n"
 "        **Arguments:**\n\n"
 "        - `<query>` The query to search for. Can be multiple words.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Поиск по пользовательским командам в соответствии с запросом.\n\n"
+"        Использует нечеткий поиск для нахождения близких совпадений.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<query>` Запрос для поиска. Может состоять из нескольких слов.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:318
 msgid "No close matches were found."
@@ -94,7 +106,7 @@ msgstr "Результаты поиска"
 
 #: redbot/cogs/customcom/customcom.py:328
 msgid "The following matches have been found:"
-msgstr ""
+msgstr "Были найдены следующие совпадения:"
 
 #: redbot/cogs/customcom/customcom.py:333
 #, docstring
@@ -103,7 +115,11 @@ msgid "Create custom commands.\n\n"
 "        CCs can be enhanced with arguments, see the guide\n"
 "        [here](https://docs.discord.red/en/stable/cog_customcom.html).\n"
 "        "
-msgstr ""
+msgstr "Создание пользовательских команд.\n\n"
+"        Если тип не указан, будет создана простая КК.\n"
+"        КК могут быть дополнены аргументами, см. руководство\n"
+"        [here] (https://docs.discord.red/en/stable/cog_customcom.html).\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:344
 #, docstring
@@ -112,12 +128,16 @@ msgid "Create a CC where it will randomly choose a response!\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The command executed to return the text. Cast to lowercase.\n"
 "        "
-msgstr ""
+msgstr "Создайте КС, в котором он будет случайным образом выбирать ответ!\n\n"
+"        Примечание: Эта команда является интерактивной.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<command>` Команда, выполняемая для возврата текста. Приводится к нижнему регистру.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:354
 #: redbot/cogs/customcom/customcom.py:388
 msgid "Custom command names cannot have spaces in them."
-msgstr "Названия пользовательских комманд не могут срдержать пробелов."
+msgstr "Пользовательские имена команд не могут содержать пробелов."
 
 #: redbot/cogs/customcom/customcom.py:357
 #: redbot/cogs/customcom/customcom.py:391
@@ -126,7 +146,7 @@ msgstr "Уже существует команда бота с таким же �
 
 #: redbot/cogs/customcom/customcom.py:361
 msgid "Custom command process cancelled."
-msgstr "Процесс создание ползовательской комманды отменено."
+msgstr "Пользовательский процесс команды отменен."
 
 #: redbot/cogs/customcom/customcom.py:365
 #: redbot/cogs/customcom/customcom.py:395
@@ -147,7 +167,13 @@ msgid "Add a simple custom command.\n\n"
 "        - `<command>` The command executed to return the text. Cast to lowercase.\n"
 "        - `<text>` The text to return when executing the command. See guide for enhanced usage.\n"
 "        "
-msgstr ""
+msgstr "Добавьте простую пользовательскую команду.\n\n"
+"        Пример:\n"
+"            - `[p]customcom create simple yourcommand Text you want`.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<command>` Команда, выполняемая для возврата текста. Приводится к нижнему регистру.\n"
+"        - `<text>` Текст, возвращаемый при выполнении команды. См. руководство по расширенному использованию.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:410
 #, docstring
@@ -164,7 +190,19 @@ msgid "Set, edit, or view the cooldown for a custom command.\n\n"
 "        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.\n"
 "        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.\n"
 "        "
-msgstr ""
+msgstr "Установка, редактирование или просмотр времени ожидания для пользовательской команды.\n\n"
+"        Вы можете установить время ожидания для каждого участника, канала или гильдии. Можно установить несколько\n"
+"        можно установить несколько временных промежутков. Для вызова пользовательской команды должны быть выполнены все ограничения\n"
+"        пользовательской команды.\n\n"
+"        Примеры:\n"
+"            - `[p]customcom cooldown pingrole`.\n"
+"            - `[p]customcom cooldown yourcommand 30`\n"
+"            - `[p]cc cooldown mycommand 30 guild`\n\n"
+"        **Аргументы:**\n\n"
+"        - `<command>` Пользовательская команда для проверки или установки кулдауна.\n"
+"        - `<cooldown>` Количество секунд ожидания перед повторным вызовом команды. Если опущено, вместо этого будет возвращена текущая настройка охлаждения.\n"
+"        - `<per>` Группа, для которой будет применяться охлаждение. По умолчанию для каждого члена. Возможные варианты: сервер, гильдия, пользователь и член.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:431
 #: redbot/cogs/customcom/customcom.py:472
@@ -200,7 +238,12 @@ msgid "Delete a custom command.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The custom command to delete.\n"
 "        "
-msgstr ""
+msgstr "Удаление пользовательской команды.\n\n"
+"        Пример:\n"
+"            - `[p]customcom delete yourcommand`.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<command>` Пользовательская команда для удаления.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:470
 msgid "Custom command successfully deleted."
@@ -215,7 +258,13 @@ msgid "Edit a custom command.\n\n"
 "        - `<command>` The custom command to edit.\n"
 "        - `<text>` The new text to return when executing the command.\n"
 "        "
-msgstr ""
+msgstr "Редактирование пользовательской команды.\n\n"
+"        Пример:\n"
+"            - `[p]customcom edit yourcommand Text you want`.\n\n"
+"        **Аргументы:**\n\n"
+"        - `<command>` Пользовательская команда для редактирования.\n"
+"        - `<text>` Новый текст, возвращаемый при выполнении команды.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:489
 msgid "Custom command successfully edited."
@@ -227,7 +276,10 @@ msgid "List all available custom commands.\n\n"
 "        The list displays a preview of each command's response, with\n"
 "        markdown escaped and newlines replaced with spaces.\n"
 "        "
-msgstr ""
+msgstr "Список всех доступных пользовательских команд.\n\n"
+"        В списке отображается предварительный просмотр ответа каждой команды, при этом\n"
+"        разметки и новые строки заменены пробелами.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:513
 msgid "There are no custom commands in this server. Use `{command}` to start adding some."
@@ -245,11 +297,11 @@ msgstr "Страница {num}/{total}"
 #, docstring
 msgid "Shows a custom command's responses and its settings.\n\n"
 "        **Arguments:**\n\n"
-"        - `<command>` The custom command to show.\n"
+"        - `<command_name>` The custom command to show.\n"
 "        "
 msgstr "Показывает ответы пользовательской команды и ее настройки.\n\n"
 "        **Аргументы:**\n\n"
-"        - `<command>` Пользовательская команда для показа.\n"
+"        - `<command_name>` Пользовательская команда для отображения.\n"
 "        "
 
 #: redbot/cogs/customcom/customcom.py:553
@@ -280,7 +332,7 @@ msgstr "Команда: {command_name}\n"
 
 #: redbot/cogs/customcom/customcom.py:584
 msgid "Cooldowns:\n"
-msgstr "Кулдаун:\n"
+msgstr "Перезарядка:\n"
 
 #: redbot/cogs/customcom/customcom.py:586
 msgid "{num} seconds per {period}\n"

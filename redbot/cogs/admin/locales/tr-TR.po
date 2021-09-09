@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-24 11:04+0000\n"
+"POT-Creation-Date: 2021-09-01 22:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -250,55 +250,57 @@ msgstr "Kişisel rolleri düzenle."
 #: redbot/cogs/admin/admin.py:454
 #, docstring
 msgid "\n"
-"        Add a role to the list of available selfroles.\n\n"
+"        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr "\n"
-"        Kullanılabilir selfroleler listesine bir rol ekle.\n\n"
-"        NOT: Rol büyük küçük harf duyarlıdır!\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:461
+#: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "{role.name} kullanıcısına belirttiğin rolü vermene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek."
 
-#: redbot/cogs/admin/admin.py:469
-msgid "Added."
-msgstr "Eklendi."
+#: redbot/cogs/admin/admin.py:473
+msgid "The role \"{role.name}\" is already a selfrole."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:472
-msgid "That role is already a selfrole."
-msgstr "Bu rol zaten bir kişisel rol."
+#: redbot/cogs/admin/admin.py:479
+msgid "Added {count} selfroles."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:476
+#: redbot/cogs/admin/admin.py:481
+msgid "Added 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:487
 #, docstring
 msgid "\n"
-"        Remove a role from the list of available selfroles.\n\n"
+"        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr "\n"
-"        Kullanılabilir selfroleler listesinden rol siler.\n\n"
-"        NOT: Rol büyük küçük harf duyarlıdır!\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:483
+#: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "{role.name} kullanıcısından belirttiğin rolü silmene müsaade edemem çünkü bu rol mevcut rolünden daha yüksek."
 
-#: redbot/cogs/admin/admin.py:491
-msgid "Removed."
-msgstr "Kaldırıldı."
+#: redbot/cogs/admin/admin.py:506
+msgid "Removed {count} selfroles."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:496
+#: redbot/cogs/admin/admin.py:508
+msgid "Removed 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:515
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Botu şu an bulunduğu sunucularda kilitler."
 
-#: redbot/cogs/admin/admin.py:501
+#: redbot/cogs/admin/admin.py:520
 msgid "The bot is no longer serverlocked."
 msgstr "Botun sunucu kilidi aktif değil."
 
-#: redbot/cogs/admin/admin.py:503
+#: redbot/cogs/admin/admin.py:522
 msgid "The bot is now serverlocked."
 msgstr "Botun sunucu kilidi aktif."
 
@@ -314,7 +316,7 @@ msgstr "Bu sunuculara duyuru yapamıyorum: "
 msgid "The Admin cog is not loaded."
 msgstr "The Admin eklentisi yüklenmedi."
 
-#: redbot/cogs/admin/converters.py:20
-msgid "The provided role is not a valid selfrole."
-msgstr "Girilen kişisel rol geçerli bir kişisel rol değil."
+#: redbot/cogs/admin/converters.py:21
+msgid "The role \"{role_name}\" is not a valid selfrole."
+msgstr ""
 

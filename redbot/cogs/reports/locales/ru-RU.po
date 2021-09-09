@@ -22,7 +22,11 @@ msgid "Create user reports that server staff can respond to.\n\n"
 "    to a channel in the server for staff, and the report creator\n"
 "    gets a DM. Both can be used to communicate.\n"
 "    "
-msgstr ""
+msgstr "Создавайте пользовательские отчеты, на которые может отвечать персонал сервера.\n\n"
+"    Пользователи могут открывать отчеты с помощью команды `[p]report`. Затем они отправляются\n"
+"    в канал на сервере для персонала, а создатель отчета\n"
+"    получает ЛС. Оба канала можно использовать для общения.\n"
+"    "
 
 #: redbot/cogs/reports/reports.py:104
 #, docstring
@@ -41,7 +45,7 @@ msgstr "Канал отчетов был установлен."
 #: redbot/cogs/reports/reports.py:117
 #, docstring
 msgid "Enable or disable reporting for this server."
-msgstr ""
+msgstr "Включите или отключите отчетность для этого сервера."
 
 #: redbot/cogs/reports/reports.py:122
 msgid "Reporting is now enabled"
@@ -77,7 +81,10 @@ msgid "Send a report.\n\n"
 "        Use without arguments for interactive reporting, or do\n"
 "        `[p]report [text]` to use it non-interactively.\n"
 "        "
-msgstr ""
+msgstr "Отправить отчет.\n\n"
+"        Используйте без аргументов для интерактивной отправки отчета, или сделайте\n"
+"        `[p]report [text]` для неинтерактивного использования.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."
@@ -98,7 +105,8 @@ msgstr "Пожалуйста, закончите делать свой пред�
 #: redbot/cogs/reports/reports.py:286
 msgid "Please respond to this message with your Report.\n"
 "Your report should be a single message"
-msgstr ""
+msgstr "Пожалуйста, ответьте на это сообщение своим отчетом.\n"
+"Ваш отчет должен состоять из одного сообщения"
 
 #: redbot/cogs/reports/reports.py:292
 msgid "This requires DMs enabled."
@@ -110,7 +118,7 @@ msgstr "Слишком долго. Попробуйте позже."
 
 #: redbot/cogs/reports/reports.py:309
 msgid "This server has no reports channel set up. Please contact a server admin."
-msgstr ""
+msgstr "На этом сервере не настроен канал отчетов. Пожалуйста, свяжитесь с администратором сервера."
 
 #: redbot/cogs/reports/reports.py:315
 msgid "There was an error sending your report, please contact a server admin."
@@ -126,11 +134,11 @@ msgstr "{closer} закрыл переписку"
 
 #: redbot/cogs/reports/reports.py:371
 msgid "Re: ticket# {ticket_number} in {guild.name}"
-msgstr ""
+msgstr "Re: билет# {ticket_number} в {guild.name}"
 
 #: redbot/cogs/reports/reports.py:384
 msgid "Correspondence about ticket# {ticket_number} in {guild.name} has been ended due to reports being disabled in that server."
-msgstr ""
+msgstr "Переписка по билету# {ticket_number} в {guild.name} была прекращена из-за отключения отчетов на этом сервере."
 
 #: redbot/cogs/reports/reports.py:395
 #, docstring
@@ -139,7 +147,11 @@ msgid "Open a message tunnel.\n\n"
 "        to the ticket opener's direct messages.\n\n"
 "        Tunnels do not persist across bot restarts.\n"
 "        "
-msgstr ""
+msgstr "Откройте туннель сообщений.\n\n"
+"        Этот туннель будет пересылать сообщения, которые вы говорите в этом канале.\n"
+"        в прямые сообщения открывающего билет.\n\n"
+"        Туннели не сохраняются при перезагрузке бота.\n"
+"        "
 
 #: redbot/cogs/reports/reports.py:409
 msgid "That ticket doesn't seem to exist"
@@ -158,7 +170,10 @@ msgid " Anything you say or upload here (8MB file size limitation on uploads) wi
 "You can close a communication at any point by reacting with the ❎ to the last message received.\n"
 "Any message successfully forwarded will be marked with ✅.\n"
 "Tunnels are not persistent across bot restarts."
-msgstr ""
+msgstr " Все, что вы скажете или загрузите здесь (ограничение на размер загружаемых файлов 8 Мб), будет пересылаться им до тех пор, пока общение не будет закрыто.\n"
+"Вы можете закрыть общение в любой момент, отреагировав символом ❎ на последнее полученное сообщение.\n"
+"Любое успешно переданное сообщение будет помечено ✅.\n"
+"Туннели не сохраняются при перезагрузке бота."
 
 #: redbot/cogs/reports/reports.py:435
 msgid "A moderator in the server `{guild.name}` has opened a 2-way communication about ticket number {ticket_number}."

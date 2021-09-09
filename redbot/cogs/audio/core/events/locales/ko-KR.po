@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-25 15:06+0000\n"
+"POT-Creation-Date: 2021-08-13 16:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -68,7 +68,7 @@ msgstr "라바링크와 연결이 끊어졌어요"
 
 #: redbot/cogs/audio/core/events/dpy.py:184
 msgid "No Player Available"
-msgstr ""
+msgstr "사용가능한 플레이어가 없습니다."
 
 #: redbot/cogs/audio/core/events/dpy.py:185
 msgid "The bot is not connected to a voice channel."
@@ -108,24 +108,25 @@ msgstr "곡 길이: {length} | 신청자: {user}"
 msgid "Queue ended."
 msgstr "큐 끝남"
 
-#: redbot/cogs/audio/core/events/lavalink.py:264
+#: redbot/cogs/audio/core/events/lavalink.py:266
 msgid "Multiple Errors Detected"
 msgstr "여러가지 오류 검출됨"
 
-#: redbot/cogs/audio/core/events/lavalink.py:265
+#: redbot/cogs/audio/core/events/lavalink.py:267
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
 msgstr "오디오 플레이어를 오류로 중지합니다. 오디오 명령어가 작동되지 않을수 있습니다."
 
-#: redbot/cogs/audio/core/events/lavalink.py:279
+#: redbot/cogs/audio/core/events/lavalink.py:281
 msgid "Track Stuck"
 msgstr "트랙 걸림"
 
-#: redbot/cogs/audio/core/events/lavalink.py:280
+#: redbot/cogs/audio/core/events/lavalink.py:282
 msgid "Playback of the song has stopped due to an unexpected error.\n"
 "{error}"
-msgstr ""
+msgstr "예상치 못한 에러로 노래 재생이 중지되었습니다.\n"
+"{error}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:286
+#: redbot/cogs/audio/core/events/lavalink.py:288
 msgid "Track Error"
 msgstr "트랙 에러"
 

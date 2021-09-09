@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-24 11:04+0000\n"
+"POT-Creation-Date: 2021-09-01 22:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -252,55 +252,57 @@ msgstr "Gestiona selfroles."
 #: redbot/cogs/admin/admin.py:454
 #, docstring
 msgid "\n"
-"        Add a role to the list of available selfroles.\n\n"
+"        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr "\n"
-"        Afegeix un rol a la llista de selfroles disponibles.\n\n"
-"        NOTA: El rol és sensible a majúscules!\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:461
+#: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "No puc deixar-te afegir {role.name} com a selfrole perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
-#: redbot/cogs/admin/admin.py:469
-msgid "Added."
-msgstr "Afegit."
+#: redbot/cogs/admin/admin.py:473
+msgid "The role \"{role.name}\" is already a selfrole."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:472
-msgid "That role is already a selfrole."
-msgstr "Aquest rol ja és un selfrole."
+#: redbot/cogs/admin/admin.py:479
+msgid "Added {count} selfroles."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:476
+#: redbot/cogs/admin/admin.py:481
+msgid "Added 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:487
 #, docstring
 msgid "\n"
-"        Remove a role from the list of available selfroles.\n\n"
+"        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr "\n"
-"        Treu un rol de la llista de selfroles disponibles.\n\n"
-"        NOTA: El rol és sensible a majúscules!\n"
-"        "
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:483
+#: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "No puc deixar-te treure {role.name} de ser un selfrole perquè el rol està per sobre o igual que el meu rol més alt a la jerarquia de Discord."
 
-#: redbot/cogs/admin/admin.py:491
-msgid "Removed."
-msgstr "Esborrat."
+#: redbot/cogs/admin/admin.py:506
+msgid "Removed {count} selfroles."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:496
+#: redbot/cogs/admin/admin.py:508
+msgid "Removed 1 selfrole."
+msgstr ""
+
+#: redbot/cogs/admin/admin.py:515
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Bloqueja el bot només als seus servidors actuals."
 
-#: redbot/cogs/admin/admin.py:501
+#: redbot/cogs/admin/admin.py:520
 msgid "The bot is no longer serverlocked."
 msgstr "El bot ja no està bloquejat pel servidor."
 
-#: redbot/cogs/admin/admin.py:503
+#: redbot/cogs/admin/admin.py:522
 msgid "The bot is now serverlocked."
 msgstr "El bot està ara bloquejat pel servidor."
 
@@ -316,7 +318,7 @@ msgstr "No he pogut anunciar als servidor següents: "
 msgid "The Admin cog is not loaded."
 msgstr "El cog Admin no s'ha carregat."
 
-#: redbot/cogs/admin/converters.py:20
-msgid "The provided role is not a valid selfrole."
-msgstr "El rol proporcionat no és un selfrole vàlid."
+#: redbot/cogs/admin/converters.py:21
+msgid "The role \"{role_name}\" is not a valid selfrole."
+msgstr ""
 

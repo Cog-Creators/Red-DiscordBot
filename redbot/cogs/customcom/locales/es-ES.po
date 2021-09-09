@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-02-11 12:29+0000\n"
+"POT-Creation-Date: 2021-06-18 21:49+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -297,11 +297,11 @@ msgstr "Página {num}/{total}"
 #, docstring
 msgid "Shows a custom command's responses and its settings.\n\n"
 "        **Arguments:**\n\n"
-"        - `<command>` The custom command to show.\n"
+"        - `<command_name>` The custom command to show.\n"
 "        "
 msgstr "Muestra las respuestas de un comando personalizado y sus ajustes.\n\n"
 "        **Argumentos:**\n\n"
-"        - `<command>` El comando personalizado para mostrar.\n"
+"        - `<command_name>` El comando personalizado a mostrar.\n"
 "        "
 
 #: redbot/cogs/customcom/customcom.py:553
