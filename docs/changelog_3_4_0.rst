@@ -27,6 +27,11 @@ Core Bot
 
     - This can be changed with ``[p]helpset reacttimeout`` command
 
+Admin
+*****
+
+- The ``[p]selfroleset add`` and ``[p]selfroleset remove`` commands can now be used to add multiple selfroles at once (:issue:`5237`, :issue:`5238`)
+
 Audio
 *****
 
