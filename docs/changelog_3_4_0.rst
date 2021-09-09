@@ -14,6 +14,12 @@ Read before updating
 End-user changelog
 ------------------
 
+Core Bot
+********
+
+- Revamped the ``[p]debuginfo`` to make it more useful for... You guessed it, debugging! (:issue:`4997`, :issue:`5156`)
+
+    - More specifcally, added information about CPU and RAM, bot's instance name and owners
 
 
 Developer changelog
