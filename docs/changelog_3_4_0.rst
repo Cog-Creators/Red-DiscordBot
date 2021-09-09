@@ -47,6 +47,11 @@ Cleanup
 
 - The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
 
+Downloader
+**********
+
+- The dot character (``.``) can now be used for the repo name. No more issues with adding repositories using the commands provided by the Cog Index! (:issue:`5214`)
+
 Mod
 ***
 
