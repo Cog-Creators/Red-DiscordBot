@@ -68,6 +68,7 @@ Mod
 
 - Fixed an error with handling of temporary ban expirations while the guild is unavailable due to Discord outage (:issue:`5173`)
 - The DM message from the ``[p]tempban`` command will now include the ban reason if ``[p]modset dm`` setting is enabled (:issue:`4836`, :issue:`4837`)
+- The ``[p]rename`` command will no longer permit to change nicknames of the members that are not lower in the role hierarchy from the command caller (:issue:`5187`, :issue:`5211`)
 
 Trivia
 ******
