@@ -33,6 +33,10 @@ Core Bot
 
     - This can be changed with ``[p]helpset reacttimeout`` command
 
+- Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
+- Upgraded all Red's dependencies (:issue:`5121`)
+- Fedora 32 is no longer supported as it has already reached end of life (:issue:`5121`)
+
 Admin
 *****
 
