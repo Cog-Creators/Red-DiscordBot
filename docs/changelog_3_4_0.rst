@@ -32,6 +32,11 @@ Admin
 
 - The ``[p]selfroleset add`` and ``[p]selfroleset remove`` commands can now be used to add multiple selfroles at once (:issue:`5237`, :issue:`5238`)
 
+Alias
+*****
+
+- Added commands for editing existing aliases (:issue:`5108`)
+
 Audio
 *****
 
