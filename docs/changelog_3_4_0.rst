@@ -52,6 +52,11 @@ Downloader
 
 - The dot character (``.``) can now be used for the repo name. No more issues with adding repositories using the commands provided by the Cog Index! (:issue:`5214`)
 
+Filter
+******
+
+- Added ``[p]filter clear`` and ``[p]filter channel clear`` commands for clearing the server's/channel's filter list (:issue:`4841`, :issue:`4981`)
+
 Mod
 ***
 
