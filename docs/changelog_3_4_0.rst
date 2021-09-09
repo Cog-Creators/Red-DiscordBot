@@ -21,6 +21,11 @@ Core Bot
 
     - More specifcally, added information about CPU and RAM, bot's instance name and owners
 
+Audio
+*****
+
+- ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
+
 Warnings
 ********
 
