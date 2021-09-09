@@ -45,6 +45,7 @@ Developer changelog
 Documentation changes
 ---------------------
 
+- Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
 
 
 Miscellaneous
