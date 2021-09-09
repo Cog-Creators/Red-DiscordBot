@@ -58,7 +58,7 @@ Audio
 
 - Added a per-guild max volume setting (:issue:`5165`)
 
-    This can be changed with ``[p]audioset maxvolume`` command
+    This can be changed with the ``[p]audioset maxvolume`` command
 
 - Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
 - Fixed fetching of age-restricted tracks (:issue:`5233`)
@@ -70,14 +70,14 @@ Cleanup
 *******
 
 - The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
-- All ``[p]cleanup`` command will now send a notification with number of the deleted messages that will get deleted automatically after 5 seconds (:issue:`5218`)
+- All ``[p]cleanup`` commands will now send a notification with the number of deleted messages. The notification is deleted automatically after 5 seconds (:issue:`5218`)
 
     This can be disabled with the ``[p]cleanupset notify`` command
 
 Downloader
 **********
 
-- The dot character (``.``) can now be used for the repo name. No more issues with adding repositories using the commands provided by the Cog Index! (:issue:`5214`)
+- The dot character (``.``) can now be used in repo names. No more issues with adding repositories using the commands provided by the Cog Index! (:issue:`5214`)
 
 Filter
 ******
@@ -89,7 +89,7 @@ Mod
 
 - Fixed an error with handling of temporary ban expirations while the guild is unavailable due to Discord outage (:issue:`5173`)
 - The DM message from the ``[p]tempban`` command will now include the ban reason if ``[p]modset dm`` setting is enabled (:issue:`4836`, :issue:`4837`)
-- The ``[p]rename`` command will no longer permit to change nicknames of the members that are not lower in the role hierarchy from the command caller (:issue:`5187`, :issue:`5211`)
+- The ``[p]rename`` command will no longer permit changing nicknames of members that are not lower in the role hierarchy than the command caller (:issue:`5187`, :issue:`5211`)
 
 Streams
 *******
@@ -118,7 +118,7 @@ Developer changelog
 
 - Added more APIs for allowlists and blocklists (:issue:`5206`)
 
-    Here's the list of the methods that were added the ``bot`` object:
+    Here's the list of the methods that were added to the ``bot`` object:
 
         - `Red.add_to_blacklist() <RedBase.add_to_blacklist()>`
         - `Red.remove_from_blacklist() <RedBase.remove_from_blacklist()>`
@@ -138,7 +138,7 @@ Documentation changes
 - Added a document about (privileged) intents and our stance regarding "public bots" (:issue:`5216`, :issue:`5221`)
 - Added install instructions for Debian 11 Bullseye (:issue:`5213`, :issue:`5217`)
 - Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
-- Updated the commands in install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
+- Updated the commands in the install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
 - Fixed the examples of commands that are only available to people with the mod role (:issue:`5180`)
 - Fixed few other small issues with the documentation :) (:issue:`5048`, :issue:`5092`, :issue:`5149`, :issue:`5207`, :issue:`5209`, :issue:`5215`, :issue:`5219`, :issue:`5220`)
 
@@ -148,7 +148,7 @@ Miscellaneous
 
 - **Core Bot** - The console error about missing Privileged Intents stands out more now (:issue:`5184`)
 - **Core Bot** - The ``[p]invite`` command will now add a tick reaction after it DMs an invite link to the user (:issue:`5184`)
-- **Downloader** - Added few missing line breaks (:issue:`5185`, :issue:`5187`)
+- **Downloader** - Added a few missing line breaks (:issue:`5185`, :issue:`5187`)
 
 
 Redbot 3.4.12 (2021-06-17)
