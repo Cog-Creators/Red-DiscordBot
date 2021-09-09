@@ -40,6 +40,7 @@ Documentation changes
 Miscellaneous
 -------------
 
+- **Core Bot** - The console error about missing Privileged Intents stands out more now (:issue:`5184`)
 - **Downloader** - Added few missing line breaks (:issue:`5185`, :issue:`5187`)
 
 
