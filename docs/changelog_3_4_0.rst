@@ -46,6 +46,9 @@ Cleanup
 *******
 
 - The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
+- All ``[p]cleanup`` command will now send a notification with number of the deleted messages that will get deleted automatically after 5 seconds (:issue:`5218`)
+
+    - This can be disabled with the ``[p]cleanupset notify`` command
 
 Downloader
 **********
