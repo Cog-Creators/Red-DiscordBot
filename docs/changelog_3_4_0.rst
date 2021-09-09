@@ -40,6 +40,9 @@ Audio
     - This can be changed with ``[p]audioset maxvolume`` command
 
 - Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
+- Fixed fetching of age-restricted tracks (:issue:`5233`)
+- Fixed searching of YT Music (:issue:`5233`)
+- Fixed playback from SoundCloud (:issue:`5233`)
 - ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
 
 Cleanup
