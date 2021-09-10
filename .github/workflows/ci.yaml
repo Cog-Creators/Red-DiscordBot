@@ -69,4 +69,4 @@ jobs:
       - name: "Install in dev mode"
         run: "python -m pip install -e .[dev]"
       - name: "Import package"
-        run: "python -c 'import sausagebot; print(sausagebot.__version__)'"
+        run: "python -c 'import redbot; print(redbot.__version__)'"
