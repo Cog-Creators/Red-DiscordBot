@@ -80,6 +80,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
+      - name: Autobump version
+        run: |
+          # from refs/tags/v1.2.3 get 1.2.3
+          VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
+          PLACEHOLDER='__version__ = "develop"'
+          VERSION_FILE='redbot/__init__.py'
+
+          # Ensure the placeholder is there. If grap doesn't find the placeholder
+          # it exits with exit code 1 and github aborts the build
+          grep "$PLACEHOLDER" "$VERSION_FILE"
+          sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\"/g" "$VERSION_FILE"
+        shell: bash
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
