@@ -83,13 +83,13 @@ jobs:
       - name: Autobump version
         run: |
           # from refs/tags/v1.2.3 get 1.2.3
-          echo($GITHUB_REF)
+          echo $GITHUB_REF
           VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
-          echo($VERSION)
+          echo $VERSION
           PLACEHOLDER='__version__ = "develop"'
-          echo($PLACEHOLDER)
+          echo $PLACEHOLDER
           VERSION_FILE='redbot/__init__.py'
-          echo($VERSION_FILE)
+          echo $VERSION_FILE
 
           # Ensure the placeholder is there. If grap doesn't find the placeholder
           # it exits with exit code 1 and github aborts the build
