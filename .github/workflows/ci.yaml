@@ -70,3 +70,26 @@ jobs:
         run: "python -m pip install -e .[dev]"
       - name: "Import package"
         run: "python -c 'import redbot; print(redbot.__version__)'"
+
+  release_to_pypi:
+    needs: release_information
+    environment: Release
+    name: Release to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+      - name: Build and publish
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.pypi_token }}
+        run: |
+          python -m build
+          twine upload dist/*
