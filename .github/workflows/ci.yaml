@@ -72,8 +72,6 @@ jobs:
         run: "python -c 'import redbot; print(redbot.__version__)'"
 
   release_to_pypi:
-    needs: release_information
-    environment: Release
     name: Release to PyPI
     runs-on: ubuntu-latest
     steps:
