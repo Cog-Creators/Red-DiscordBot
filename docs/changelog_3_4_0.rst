@@ -1,5 +1,156 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.13 (2021-09-09)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Arman0334`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`fredster33`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`qenu`, :ghuser:`TheDataLeek`, :ghuser:`Twentysix26`, :ghuser:`TwinDragon`, :ghuser:`Vexed01`
+
+Read before updating
+--------------------
+
+1. If you're hosting a public/big bot (>75 servers) or strive to scale your bot at that level, you should read :doc:`our stance on (privileged) intents and public bots <intents>`.
+2. Fedora 32 is no longer supported as it has already reached end of life.
+3. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.13 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1238>`__.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Added a new ``[p]diagnoseissues`` command to allow the bot owners to diagnose issues with various command checks with ease (:issue:`4717`, :issue:`5243`)
+
+    Since some of us are pretty excited about this feature, here's a very small teaser showing a part of what it can do:
+
+    .. figure:: https://user-images.githubusercontent.com/6032823/132610057-d6c65d67-c244-4f0b-9458-adfbe0c68cab.png
+
+- Revamped the ``[p]debuginfo`` to make it more useful for... You guessed it, debugging! (:issue:`4997`, :issue:`5156`)
+
+    More specifically, added information about CPU and RAM, bot's instance name and owners
+
+- The formatting of Red's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
+- Added the new native Discord timestamps in Modlog cases, ``[p]userinfo``, ``[p]serverinfo``, and ``[p]tempban`` (:issue:`5155`, :issue:`5241`)
+- Added a setting for ``[p]help``'s reaction timeout (:issue:`5205`)
+
+    This can be changed with ``[p]helpset reacttimeout`` command
+
+- Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
+- Upgraded all Red's dependencies (:issue:`5121`)
+- Fedora 32 is no longer supported as it has already reached end of life (:issue:`5121`)
+- Fixed a bunch of errors related to the missing permissions and channels/messages no longer existing (:issue:`5109`, :issue:`5163`, :issue:`5172`, :issue:`5191`)
+
+Admin
+*****
+
+- The ``[p]selfroleset add`` and ``[p]selfroleset remove`` commands can now be used to add multiple selfroles at once (:issue:`5237`, :issue:`5238`)
+
+Alias
+*****
+
+- Added commands for editing existing aliases (:issue:`5108`)
+
+Audio
+*****
+
+- Added a per-guild max volume setting (:issue:`5165`)
+
+    This can be changed with the ``[p]audioset maxvolume`` command
+
+- Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
+- Fixed fetching of age-restricted tracks (:issue:`5233`)
+- Fixed searching of YT Music (:issue:`5233`)
+- Fixed playback from SoundCloud (:issue:`5233`)
+- ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
+
+Cleanup
+*******
+
+- The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
+- All ``[p]cleanup`` commands will now send a notification with the number of deleted messages. The notification is deleted automatically after 5 seconds (:issue:`5218`)
+
+    This can be disabled with the ``[p]cleanupset notify`` command
+
+Downloader
+**********
+
+- The dot character (``.``) can now be used in repo names. No more issues with adding repositories using the commands provided by the Cog Index! (:issue:`5214`)
+
+Filter
+******
+
+- Added ``[p]filter clear`` and ``[p]filter channel clear`` commands for clearing the server's/channel's filter list (:issue:`4841`, :issue:`4981`)
+
+Mod
+***
+
+- Fixed an error with handling of temporary ban expirations while the guild is unavailable due to Discord outage (:issue:`5173`)
+- The DM message from the ``[p]tempban`` command will now include the ban reason if ``[p]modset dm`` setting is enabled (:issue:`4836`, :issue:`4837`)
+- The ``[p]rename`` command will no longer permit changing nicknames of members that are not lower in the role hierarchy than the command caller (:issue:`5187`, :issue:`5211`)
+
+Streams
+*******
+
+- Fixed an issue with some YouTube streamers getting removed from stream alerts after a while (:issue:`5195`, :issue:`5223`)
+- Made small optimizations in regards to stream alerts (:issue:`4968`)
+
+Trivia
+******
+
+- Added schema validation of the custom trivia files (:issue:`4571`, :issue:`4659`)
+
+Warnings
+********
+
+- 0 point warnings are, once again, allowed. (:issue:`5177`, :issue:`5178`)
+
+
+Developer changelog
+-------------------
+
+- Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
+
+    This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
+    In addition to regular timedelta arguments, it also accepts months and years!
+
+- Added more APIs for allowlists and blocklists (:issue:`5206`)
+
+    Here's the list of the methods that were added to the ``bot`` object:
+
+        - `Red.add_to_blacklist() <RedBase.add_to_blacklist()>`
+        - `Red.remove_from_blacklist() <RedBase.remove_from_blacklist()>`
+        - `Red.get_blacklist() <RedBase.get_blacklist()>`
+        - `Red.clear_blacklist() <RedBase.clear_blacklist()>`
+        - `Red.add_to_whitelist() <RedBase.add_to_whitelist()>`
+        - `Red.remove_from_whitelist() <RedBase.remove_from_whitelist()>`
+        - `Red.get_whitelist() <RedBase.get_whitelist()>`
+        - `Red.clear_whitelist() <RedBase.clear_whitelist()>`
+
+- Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
+
+
+Documentation changes
+---------------------
+
+- Added a document about (privileged) intents and our stance regarding "public bots" (:issue:`5216`, :issue:`5221`)
+- Added install instructions for Debian 11 Bullseye (:issue:`5213`, :issue:`5217`)
+- Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
+- Updated the commands in the install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
+- Fixed the examples of commands that are only available to people with the mod role (:issue:`5180`)
+- Fixed few other small issues with the documentation :) (:issue:`5048`, :issue:`5092`, :issue:`5149`, :issue:`5207`, :issue:`5209`, :issue:`5215`, :issue:`5219`, :issue:`5220`)
+
+
+Miscellaneous
+-------------
+
+- **Core Bot** - The console error about missing Privileged Intents stands out more now (:issue:`5184`)
+- **Core Bot** - The ``[p]invite`` command will now add a tick reaction after it DMs an invite link to the user (:issue:`5184`)
+- **Downloader** - Added a few missing line breaks (:issue:`5185`, :issue:`5187`)
+
+
 Redbot 3.4.12 (2021-06-17)
 ==========================
 
@@ -77,11 +228,11 @@ Admin
 *****
 
 - The cog will now log when it leaves a guild due to the serverlock (:issue:`5008`, :issue:`5073`)
-- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 
 Audio
 *****
 
+- Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
 - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
 - The ``[p]audiostats`` command can now only be used by bot owners (:issue:`5017`)
 - Fixed an error with ``[p]audiostats`` caused by players not always having their connection time stored (:issue:`5046`)
@@ -1053,7 +1204,7 @@ Core Bot
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
 
-    - New special methods added to `commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
+    - New special methods added to `redbot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information

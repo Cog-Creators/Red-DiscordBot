@@ -1,3 +1,10 @@
+import importlib.metadata
+import pkg_resources
+import os
+import sys
+
+import pytest
+
 from redbot import core
 from redbot.core import VersionInfo
 
@@ -34,3 +41,33 @@ def test_version_info_lt():
 
 def test_version_info_gt():
     assert VersionInfo.from_str(version_tests[1]) > VersionInfo.from_str(version_tests[0])
+
+
+def test_python_version_has_lower_bound():
+    """
+    Due to constant issues in support with Red being installed on a Python version that was not
+    supported by any Red version, it is important that we have both an upper and lower bound set.
+    """
+    requires_python = importlib.metadata.metadata("Red-DiscordBot")["Requires-Python"]
+    assert requires_python is not None
+
+    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    req = pkg_resources.Requirement.parse(f"x{requires_python}")
+    assert any(op in (">", ">=") for op, version in req.specs)
+
+
+@pytest.mark.skipif(
+    os.getenv("TOX_RED", False) and sys.version_info >= (3, 10),
+    reason="Testing on yet to be supported Python version.",
+)
+def test_python_version_has_upper_bound():
+    """
+    Due to constant issues in support with Red being installed on a Python version that was not
+    supported by any Red version, it is important that we have both an upper and lower bound set.
+    """
+    requires_python = importlib.metadata.metadata("Red-DiscordBot")["Requires-Python"]
+    assert requires_python is not None
+
+    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    req = pkg_resources.Requirement.parse(f"x{requires_python}")
+    assert any(op in ("<", "<=") for op, version in req.specs)
