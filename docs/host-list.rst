@@ -8,7 +8,7 @@ Hosting Information
 
 .. note::
     This doc is written for the :ref:`hosting section <getting-started-hosting>`
-    of the :ref:`getting started <getting-started>` guide. Please take a look
+    of the :ref:`getting started guide <getting-started>`. Please take a look
     if you don't know how to host Red.
 
 

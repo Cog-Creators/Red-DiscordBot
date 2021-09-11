@@ -166,8 +166,7 @@ Once done setting up the instance, run the following command to run Red:
     redbot <your instance name>
 
 It will walk through the initial setup, asking for your token and a prefix.
-You can find out how to obtain a token with
-`this guide <../bot_application_guide>`.
+`See how to obtain a token. <../bot_application_guide>`
 
 .. tip::
    If it's the first time you're using Red, you should check our `getting-started` guide
