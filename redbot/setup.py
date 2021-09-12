@@ -264,7 +264,8 @@ async def remove_instance(
 
     backend = get_current_backend(instance)
     driver_cls = drivers.get_driver_class(backend)
-    await driver_cls.initialize(**data_manager.storage_details())
+    if delete_data is True:
+        await driver_cls.initialize(**data_manager.storage_details())
     try:
         if delete_data is True:
             await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
@@ -280,7 +281,8 @@ async def remove_instance(
 
         save_config(instance, {}, remove=True)
     finally:
-        await driver_cls.teardown()
+        if delete_data is True:
+            await driver_cls.teardown()
     print("The instance {} has been removed\n".format(instance))
 
 
