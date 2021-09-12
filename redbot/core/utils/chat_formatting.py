@@ -16,11 +16,6 @@ _ = Translator("UtilsChatFormatting", __file__)
 def error(text: str) -> str:
     """Get text prefixed with an error emoji.
 
-    Parameters
-    ----------
-    text : str
-        The text to be prefixed.
-
     Returns
     -------
     str
@@ -32,11 +27,6 @@ def error(text: str) -> str:
 
 def warning(text: str) -> str:
     """Get text prefixed with a warning emoji.
-
-    Parameters
-    ----------
-    text : str
-        The text to be prefixed.
 
     Returns
     -------
@@ -50,11 +40,6 @@ def warning(text: str) -> str:
 def info(text: str) -> str:
     """Get text prefixed with an info emoji.
 
-    Parameters
-    ----------
-    text : str
-        The text to be prefixed.
-
     Returns
     -------
     str
@@ -66,11 +51,6 @@ def info(text: str) -> str:
 
 def question(text: str) -> str:
     """Get text prefixed with a question emoji.
-
-    Parameters
-    ----------
-    text : str
-        The text to be prefixed.
 
     Returns
     -------

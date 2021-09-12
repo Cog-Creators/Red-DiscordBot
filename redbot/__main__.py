@@ -19,7 +19,6 @@ from typing import NoReturn
 from redbot import aiohttp
 
 import discord
-import rich
 
 # Set the event loop policies here so any subsequent `new_event_loop()`
 # calls, in particular those as a result of the following imports,
@@ -84,7 +83,8 @@ def debug_info():
         os_info = platform.mac_ver()
         osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
     else:
-        osver = f"{distro.name()} {distro.version()}".strip()
+        os_info = distro.linux_distribution()
+        osver = "{} {}".format(os_info[0], os_info[1]).strip()
     user_who_ran = getpass.getuser()
     info = (
         "Debug Info for Red\n\n"
@@ -394,12 +394,10 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
                 sys.exit(0)
         sys.exit(1)
     except discord.PrivilegedIntentsRequired:
-        console = rich.get_console()
-        console.print(
+        print(
             "Red requires all Privileged Intents to be enabled.\n"
             "You can find out how to enable Privileged Intents with this guide:\n"
-            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
-            style="red",
+            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents"
         )
         sys.exit(1)
 

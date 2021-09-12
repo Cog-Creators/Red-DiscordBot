@@ -132,7 +132,6 @@ class Audio(
             jukebox=False,
             jukebox_price=0,
             maxlength=0,
-            max_volume=150,
             notify=False,
             prefer_lyrics=False,
             repeat=False,

@@ -33,7 +33,6 @@ Welcome to Red - Discord Bot's documentation!
     :caption: User guides:
 
     getting_started
-    intents
     cog_guides/admin
     cog_guides/alias
     cog_guides/bank

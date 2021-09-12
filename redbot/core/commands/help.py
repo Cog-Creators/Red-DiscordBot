@@ -78,7 +78,6 @@ class HelpSettings:
     tagline: str = ""
     delete_delay: int = 0
     use_tick: bool = False
-    react_timeout: int = 30
 
     # Contrib Note: This is intentional to not accept the bot object
     # There are plans to allow guild and user specific help settings
@@ -132,7 +131,6 @@ class HelpSettings:
             "\nHelp shows unusable commands when asked directly: {verify_exists}"
             "\nDelete delay: {delete_delay}"
             "\nReact with a checkmark when help is sent via DM: {use_tick}"
-            "\nReaction timeout (only used if menus are used): {react_timeout} seconds"
             "{tagline_info}"
         ).format_map(data)
 

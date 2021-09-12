@@ -667,16 +667,11 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     and ctx.guild.me in ctx.author.voice.channel.members
                 ):
                     ctx.command.reset_cooldown(ctx)
-                    return await self.send_embed_msg(
-                        ctx,
-                        title=_("Unable To Do This Action"),
-                        description=_("I am already in your channel."),
-                    )
+                    return
                 await player.move_to(
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-            await ctx.tick()
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
@@ -701,8 +696,6 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        max_volume = await self.config.guild(ctx.guild).max_volume()
-
         if not vol:
             vol = await self.config.guild(ctx.guild).volume()
             embed = discord.Embed(title=_("Current Volume:"), description=f"{vol}%")
@@ -727,7 +720,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to change the volume."),
             )
 
-        vol = max(0, min(vol, max_volume))
+        vol = max(0, min(vol, 150))
         await self.config.guild(ctx.guild).volume.set(vol)
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)

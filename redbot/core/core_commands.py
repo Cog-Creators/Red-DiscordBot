@@ -14,12 +14,10 @@ import os
 import re
 import sys
 import platform
-import psutil
 import getpass
 import pip
 import traceback
 from pathlib import Path
-from redbot.core import data_manager
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.commands import GuildConverter
 from string import ascii_letters, digits
@@ -32,6 +30,7 @@ from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot import json
 from redbot.core import modlog, bank, Config
 from redbot.core.data_manager import storage_type
+from redbot.core.utils.chat_formatting import box, pagify
 
 from . import (
     __version__,
@@ -41,7 +40,7 @@ from . import (
     errors,
     i18n,
 )
-from ._diagnoser import IssueDiagnoser
+from .commands import UserInputOptional
 from .utils import AsyncIter
 from .utils._internal_utils import fetch_latest_red_version_info, is_sudo_enabled, timed_unsu
 from .utils.predicates import MessagePredicate
@@ -54,7 +53,6 @@ from .utils.chat_formatting import (
     inline,
     pagify,
 )
-from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
 
 _entities = {
@@ -1145,9 +1143,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
     @embedset.command(name="showsettings")
-    async def embedset_showsettings(
-        self, ctx: commands.Context, command: CommandConverter = None
-    ) -> None:
+    async def embedset_showsettings(self, ctx: commands.Context, command_name: str = None) -> None:
         """
         Show the current embed settings.
 
@@ -1159,10 +1155,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]embedset showsettings "ignore list"` - Checking subcommands requires quotes.
 
         **Arguments:**
-            - `[command]` - Checks this command for command specific embed settings.
+            - `[command_name]` - Checks this command for command specific embed settings.
         """
-        # qualified name might be different if alias was passed to this command
-        command_name = command and command.qualified_name
+        if command_name is not None:
+            command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+            if command_obj is None:
+                await ctx.send(
+                    _("I couldn't find that command. Please note that it is case sensitive.")
+                )
+                return
+            # qualified name might be different if alias was passed to this command
+            command_name = command_obj.qualified_name
 
         text = _("Embed settings:\n\n")
         global_default = await self.bot._config.embeds()
@@ -1252,7 +1255,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @embedset.group(name="command", invoke_without_command=True)
     async def embedset_command(
-        self, ctx: commands.Context, command: CommandConverter, enabled: bool = None
+        self, ctx: commands.Context, command_name: str, enabled: bool = None
     ) -> None:
         """
         Sets a command's embed setting.
@@ -1274,9 +1277,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         # Select the scope based on the author's privileges
         if await ctx.bot.is_owner(ctx.author):
-            await self.embedset_command_global(ctx, command, enabled)
+            await self.embedset_command_global(ctx, command_name, enabled)
         else:
-            await self.embedset_command_guild(ctx, command, enabled)
+            await self.embedset_command_guild(ctx, command_name, enabled)
 
     def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
         for command in itertools.chain((command_obj,), command_obj.parents):
@@ -1292,7 +1295,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.is_owner()
     @embedset_command.command(name="global")
     async def embedset_command_global(
-        self, ctx: commands.Context, command: CommandConverter, enabled: bool = None
+        self, ctx: commands.Context, command_name: str, enabled: bool = None
     ):
         """
         Sets a command's embed setting globally.
@@ -1311,9 +1314,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
-        self._check_if_command_requires_embed_links(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        self._check_if_command_requires_embed_links(command_obj)
         # qualified name might be different if alias was passed to this command
-        command_name = command.qualified_name
+        command_name = command_obj.qualified_name
 
         if enabled is None:
             await self.bot._config.custom("COMMAND", command_name, 0).embeds.clear()
@@ -1337,7 +1346,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.guild_only()
     @embedset_command.command(name="server", aliases=["guild"])
     async def embedset_command_guild(
-        self, ctx: commands.GuildContext, command: CommandConverter, enabled: bool = None
+        self, ctx: commands.GuildContext, command_name: str, enabled: bool = None
     ):
         """
         Sets a commmand's embed setting for the current server.
@@ -1356,9 +1365,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
-        self._check_if_command_requires_embed_links(command)
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command_name)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+        self._check_if_command_requires_embed_links(command_obj)
         # qualified name might be different if alias was passed to this command
-        command_name = command.qualified_name
+        command_name = command_obj.qualified_name
 
         if enabled is None:
             await self.bot._config.custom("COMMAND", command_name, ctx.guild.id).embeds.clear()
@@ -1491,7 +1506,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         try:
             await ctx.author.send(await self._invite_url())
-            await ctx.tick()
         except discord.errors.Forbidden:
             await ctx.send(
                 "I couldn't send the invite message to you in DM. "
@@ -3339,32 +3353,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
 
-    @helpset.command(name="reacttimeout")
-    async def helpset_reacttimeout(self, ctx: commands.Context, seconds: int):
-        """Set the timeout for reactions, if menus are enabled.
-
-        The default is 30 seconds.
-        The timeout has to be between 15 and 300 seconds.
-
-        **Examples:**
-            - `[p]helpset reacttimeout 30` - The default timeout.
-            - `[p]helpset reacttimeout 60` - Timeout of 1 minute.
-            - `[p]helpset reacttimeout 15` - Minimum allowed timeout.
-            - `[p]helpset reacttimeout 300` - Max allowed timeout (5 mins).
-
-        **Arguments:**
-            - `<seconds>` - The timeout, in seconds, of the reactions.
-        """
-        if seconds < 15:
-            await ctx.send(_("You must give a value of at least 15 seconds!"))
-            return
-        if seconds > 300:
-            await ctx.send(_("The timeout cannot be greater than 5 minutes!"))
-            return
-
-        await ctx.bot._config.help.react_timeout.set(seconds)
-        await ctx.send(_("Done. The reaction timeout has been set to {} seconds.").format(seconds))
-
     @helpset.command(name="tagline")
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """
@@ -3585,19 +3573,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         IS_MAC = sys.platform == "darwin"
         IS_LINUX = sys.platform == "linux"
 
-        python_version = ".".join(map(str, sys.version_info[:3]))
-        pyver = f"{python_version} ({platform.architecture()[0]})"
+        pyver = "{}.{}.{} ({})".format(*sys.version_info[:3], platform.architecture()[0])
         pipver = pip.__version__
         redver = red_version_info
         dpy_version = discord.__version__
         if IS_WINDOWS:
             os_info = platform.uname()
-            osver = f"{os_info.system} {os_info.release} (version {os_info.version})"
+            osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
         elif IS_MAC:
             os_info = platform.mac_ver()
-            osver = f"Mac OSX {os_info[0]} {os_info[2]}"
+            osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
         elif IS_LINUX:
-            osver = f"{distro.name()} {distro.version()}".strip()
+            os_info = distro.linux_distribution()
+            osver = "{} {}".format(os_info[0], os_info[1]).strip()
         else:
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
@@ -3614,129 +3602,51 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             or "None"
         )
-
-        def _datasize(num: int):
-            for unit in ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"]:
-                if abs(num) < 1024.0:
-                    return "{0:.1f}{1}".format(num, unit)
-                num /= 1024.0
-            return "{0:.1f}{1}".format(num, "YB")
-
-        memory_ram = psutil.virtual_memory()
-        ram_string = "{used}/{total} ({percent}%)".format(
-            used=_datasize(memory_ram.used),
-            total=_datasize(memory_ram.total),
-            percent=memory_ram.percent,
-        )
-
-        owners = []
-        for uid in self.bot.owner_ids:
-            try:
-                u = await self.bot.get_or_fetch_user(uid)
-                owners.append(f"{u.id} ({u})")
-            except discord.HTTPException:
-                owners.append(f"{uid} (Unresolvable)")
-        owners_string = ", ".join(owners) or "None"
-
-        resp_intro = "# Debug Info for Red:"
-        resp_system_intro = "## System Metadata:"
-        resp_system = (
-            f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\nRAM: {ram_string}\n"
-        )
-        resp_os_intro = "## OS Variables:"
-        resp_os = f"OS version: {osver}\nUser: {user_who_ran}\n"  # Ran where off to?!
-        resp_py_metadata = (
-            f"Python executable: {sys.executable}\n"
-            f"Python version: {pyver}\n"
-            f"Pip version: {pipver}\n"
-        )
-        resp_red_metadata = f"Red version: {redver}\nDiscord.py version: {dpy_version}\n"
-        resp_red_vars_intro = "## Red variables:"
-        resp_red_vars = (
-            f"Instance name: {data_manager.instance_name}\n"
-            f"Owner(s): {owners_string}\n"
-            f"Storage type: {driver}\n"
-            f"Disabled intents: {disabled_intents}\n"
-            f"Data path: {data_path}\n"
-            f"Metadata file: {config_file}"
-        )
-
-        response = (
-            box(resp_intro, lang="md"),
-            "\n",
-            box(resp_system_intro, lang="md"),
-            box(resp_system),
-            "\n",
-            box(resp_os_intro, lang="md"),
-            box(resp_os),
-            box(resp_py_metadata),
-            box(resp_red_metadata),
-            "\n",
-            box(resp_red_vars_intro, lang="md"),
-            box(resp_red_vars),
-        )
-
-        await ctx.send("".join(response))
-
-    # You may ask why this command is owner-only,
-    # cause after all it could be quite useful to guild owners!
-    # Truth to be told, that would require us to make some part of this
-    # more end-user friendly rather than just bot owner friendly - terms like
-    # 'global call once checks' are not of any use to someone who isn't bot owner.
-    @commands.is_owner()
-    @commands.command()
-    async def diagnoseissues(
-        self,
-        ctx: commands.Context,
-        channel: Optional[discord.TextChannel],
-        member: Union[discord.Member, discord.User],
-        *,
-        command_name: str,
-    ) -> None:
-        """
-        Diagnose issues with the command checks with ease!
-
-        If you want to diagnose the command from a text channel in a different server,
-        you can do so by using the command in DMs.
-
-        **Example:**
-            - `[p]diagnoseissues #general @Slime ban` - Diagnose why @Slime can't use `[p]ban` in #general channel.
-
-        **Arguments:**
-            - `[channel]` - The text channel that the command should be tested for. Defaults to the current channel.
-            - `<member>` - The member that should be considered as the command caller.
-            - `<command_name>` - The name of the command to test.
-        """
-        if channel is None:
-            channel = ctx.channel
-            if not isinstance(channel, discord.TextChannel):
-                await ctx.send(_("The channel needs to be passed when using this command in DMs."))
-                return
-
-        command = self.bot.get_command(command_name)
-        if command is None:
-            await ctx.send("Command not found!")
-            return
-
-        # This is done to allow the bot owner to diagnose a command
-        # while not being a part of the server.
-        if isinstance(member, discord.User):
-            maybe_member = channel.guild.get_member(member.id)
-            if maybe_member is None:
-                await ctx.send(_("The given user is not a member of the diagnosed server."))
-                return
-            member = maybe_member
-
-        if not channel.permissions_for(member).send_messages:
-            # Let's make Flame happy here
-            await ctx.send(
-                _(
-                    "Don't try to fool me, the given member can't access the {channel} channel!"
-                ).format(channel=channel.mention)
+        if await ctx.embed_requested():
+            e = discord.Embed(color=await ctx.embed_colour())
+            e.title = "Debug Info for Red"
+            e.add_field(name="Red version", value=redver, inline=True)
+            e.add_field(name="Python version", value=pyver, inline=True)
+            e.add_field(name="Discord.py version", value=dpy_version, inline=True)
+            e.add_field(name="Pip version", value=pipver, inline=True)
+            e.add_field(name="System arch", value=platform.machine(), inline=True)
+            e.add_field(name="User", value=user_who_ran, inline=True)
+            e.add_field(name="Storage type", value=driver, inline=True)
+            e.add_field(name="Disabled intents", value=disabled_intents, inline=True)
+            e.add_field(name="OS version", value=osver, inline=False)
+            e.add_field(
+                name="Python executable",
+                value=escape(sys.executable, formatting=True),
+                inline=False,
             )
-            return
-        issue_diagnoser = IssueDiagnoser(self.bot, ctx, channel, member, command)
-        await ctx.send(await issue_diagnoser.diagnose())
+            e.add_field(
+                name="Data path",
+                value=escape(str(data_path), formatting=True),
+                inline=False,
+            )
+            e.add_field(
+                name="Metadata file",
+                value=escape(str(config_file), formatting=True),
+                inline=False,
+            )
+            await ctx.send(embed=e)
+        else:
+            info = (
+                "Debug Info for Red\n\n"
+                + "Red version: {}\n".format(redver)
+                + "Python version: {}\n".format(pyver)
+                + "Discord.py version: {}\n".format(dpy_version)
+                + "Pip version: {}\n".format(pipver)
+                + "System arch: {}\n".format(platform.machine())
+                + "User: {}\n".format(user_who_ran)
+                + "OS version: {}\n".format(osver)
+                + "Storage type: {}\n".format(driver)
+                + "Disabled intents: {}\n".format(disabled_intents)
+                + "Python executable: {}\n".format(sys.executable)
+                + "Data path: {}\n".format(data_path)
+                + "Metadata file: {}\n".format(config_file)
+            )
+            await ctx.send(box(info))
 
     @commands.group(aliases=["whitelist"])
     @checks.is_owner()
@@ -3762,8 +3672,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users...>` - The user or users to add to the allowlist.
         """
-        await self.bot.add_to_whitelist(users)
-        if len(users) > 1:
+        uids = {getattr(user, "id", user) for user in users}
+        await self.bot.add_to_allowlist_raw(uids, None)
+        if len(uids) > 1:
             await ctx.send(_("Users have been added to the allowlist."))
         else:
             await ctx.send(_("User has been added to the allowlist."))
@@ -3808,8 +3719,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users...>` - The user or users to remove from the allowlist.
         """
-        await self.bot.remove_from_whitelist(users)
-        if len(users) > 1:
+        uids = {getattr(user, "id", user) for user in users}
+        await self.bot.remove_from_allowlist_raw(uids, None)
+        if len(uids) > 1:
             await ctx.send(_("Users have been removed from the allowlist."))
         else:
             await ctx.send(_("User has been removed from the allowlist."))
@@ -3824,7 +3736,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]allowlist clear`
         """
-        await self.bot.clear_whitelist()
+        await self.bot._whiteblacklist_cache.clear_whitelist()
         await ctx.send(_("Allowlist has been cleared."))
 
     @commands.group(aliases=["blacklist", "denylist"])
@@ -3858,8 +3770,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(_("You cannot add an owner to the blocklist!"))
                 return
 
-        await self.bot.add_to_blacklist(users)
-        if len(users) > 1:
+        uids = {getattr(user, "id", user) for user in users}
+        await self.bot.add_to_blocklist_raw(uids, None)
+        if len(uids) > 1:
             await ctx.send(_("Users have been added to the blocklist."))
         else:
             await ctx.send(_("User has been added to the blocklist."))
@@ -3872,7 +3785,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]blocklist list`
         """
-        curr_list = await self.bot.get_blacklist()
+        curr_list = await self.bot._whiteblacklist_cache.get_blacklist(None)
 
         if not curr_list:
             await ctx.send("Blocklist is empty.")
@@ -3902,8 +3815,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users...>` - The user or users to remove from the blocklist.
         """
-        await self.bot.remove_from_blacklist(users)
-        if len(users) > 1:
+        uids = {getattr(user, "id", user) for user in users}
+        await self.bot.remove_from_blocklist_raw(uids, None)
+        if len(uids) > 1:
             await ctx.send(_("Users have been removed from the blocklist."))
         else:
             await ctx.send(_("User has been removed from the blocklist."))
@@ -3916,7 +3830,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]blocklist clear`
         """
-        await self.bot.clear_blacklist()
+        await self.bot._whiteblacklist_cache.clear_blacklist()
         await ctx.send(_("Blocklist has been cleared."))
 
     @commands.group(aliases=["localwhitelist"])
@@ -3950,7 +3864,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
-            current_whitelist = await self.bot.get_whitelist(ctx.guild)
+            current_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
             theoretical_whitelist = current_whitelist.union(uids)
             ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
             if ids.isdisjoint(theoretical_whitelist):
@@ -3961,7 +3875,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "please ensure to add yourself to the allowlist first."
                     )
                 )
-        await self.bot.add_to_whitelist(uids, guild=ctx.guild)
+        await self.bot.add_to_allowlist_raw(uids, ctx.guild.id)
 
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been added to the allowlist."))
@@ -3976,7 +3890,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]localallowlist list`
         """
-        curr_list = await self.bot.get_whitelist(ctx.guild)
+        curr_list = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
 
         if not curr_list:
             await ctx.send("Server allowlist is empty.")
@@ -4013,7 +3927,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
-            current_whitelist = await self.bot.get_whitelist(ctx.guild)
+            current_whitelist = await self.bot._whiteblacklist_cache.get_whitelist(ctx.guild)
             theoretical_whitelist = current_whitelist - uids
             ids = {i for i in (ctx.author.id, *(getattr(ctx.author, "_roles", [])))}
             if theoretical_whitelist and ids.isdisjoint(theoretical_whitelist):
@@ -4023,7 +3937,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "remove your ability to run commands."
                     )
                 )
-        await self.bot.remove_from_whitelist(uids, guild=ctx.guild)
+        await self.bot.remove_from_allowlist_raw(uids, ctx.guild.id)
 
         if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been removed from the server allowlist."))
@@ -4040,7 +3954,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]localallowlist clear`
         """
-        await self.bot.clear_whitelist(ctx.guild)
+        await self.bot._whiteblacklist_cache.clear_whitelist(ctx.guild)
         await ctx.send(_("Server allowlist has been cleared."))
 
     @commands.group(aliases=["localblacklist"])
@@ -4080,9 +3994,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if await ctx.bot.is_owner(uid):
                 await ctx.send(_("You cannot add a bot owner to the blocklist!"))
                 return
-        await self.bot.add_to_blacklist(users_or_roles, guild=ctx.guild)
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
+        await self.bot.add_to_blocklist_raw(uids, ctx.guild.id)
 
-        if len(users_or_roles) > 1:
+        if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been added from the server blocklist."))
         else:
             await ctx.send(_("User or role has been added from the server blocklist."))
@@ -4095,7 +4011,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]localblocklist list`
         """
-        curr_list = await self.bot.get_blacklist(ctx.guild)
+        curr_list = await self.bot._whiteblacklist_cache.get_blacklist(ctx.guild)
 
         if not curr_list:
             await ctx.send("Server blocklist is empty.")
@@ -4128,9 +4044,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local blocklist.
         """
-        await self.bot.remove_from_blacklist(users_or_roles, guild=ctx.guild)
+        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
+        uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
+        await self.bot.remove_from_blocklist_raw(uids, ctx.guild.id)
 
-        if len(users_or_roles) > 1:
+        if len(uids) > 1:
             await ctx.send(_("Users and/or roles have been removed from the server blocklist."))
         else:
             await ctx.send(_("User or role has been removed from the server blocklist."))
@@ -4145,7 +4063,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]blocklist clear`
         """
-        await self.bot.clear_blacklist(ctx.guild)
+        await self.bot._whiteblacklist_cache.clear_blacklist(ctx.guild)
         await ctx.send(_("Server blocklist has been cleared."))
 
     @checks.guildowner_or_permissions(administrator=True)
@@ -4156,7 +4074,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_manager.command(name="defaultdisablecog")
-    async def command_default_disable_cog(self, ctx: commands.Context, *, cog: CogConverter):
+    async def command_default_disable_cog(self, ctx: commands.Context, *, cogname: str):
         """Set the default state for a cog as disabled.
 
         This will disable the cog for all servers by default.
@@ -4169,9 +4087,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command defaultdisablecog ModLog`
 
         **Arguments:**
-            - `<cog>` - The name of the cog to make disabled by default. Must be title-case.
+            - `<cogname>` - The name of the cog to make disabled by default. Must be title-case.
         """
-        cogname = cog.qualified_name
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("Cog with the given name doesn't exist."))
         if isinstance(cog, commands.commands._RuleDropper):
             return await ctx.send(_("You can't disable this cog by default."))
         await self.bot._disabled_cog_cache.default_disable(cogname)
@@ -4179,7 +4099,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_manager.command(name="defaultenablecog")
-    async def command_default_enable_cog(self, ctx: commands.Context, *, cog: CogConverter):
+    async def command_default_enable_cog(self, ctx: commands.Context, *, cogname: str):
         """Set the default state for a cog as enabled.
 
         This will re-enable the cog for all servers by default.
@@ -4192,15 +4112,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command defaultenablecog ModLog`
 
         **Arguments:**
-            - `<cog>` - The name of the cog to make enabled by default. Must be title-case.
+            - `<cogname>` - The name of the cog to make enabled by default. Must be title-case.
         """
-        cogname = cog.qualified_name
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("Cog with the given name doesn't exist."))
         await self.bot._disabled_cog_cache.default_enable(cogname)
         await ctx.send(_("{cogname} has been set as enabled by default.").format(cogname=cogname))
 
     @commands.guild_only()
     @command_manager.command(name="disablecog")
-    async def command_disable_cog(self, ctx: commands.Context, *, cog: CogConverter):
+    async def command_disable_cog(self, ctx: commands.Context, *, cogname: str):
         """Disable a cog in this server.
 
         Note: This will only work on loaded cogs, and must reference the title-case cog name.
@@ -4210,9 +4132,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command disablecog ModLog`
 
         **Arguments:**
-            - `<cog>` - The name of the cog to disable on this server. Must be title-case.
+            - `<cogname>` - The name of the cog to disable on this server. Must be title-case.
         """
-        cogname = cog.qualified_name
+        cog = self.bot.get_cog(cogname)
+        if not cog:
+            return await ctx.send(_("Cog with the given name doesn't exist."))
         if isinstance(cog, commands.commands._RuleDropper):
             return await ctx.send(_("You can't disable this cog as you would lock yourself out."))
         if await self.bot._disabled_cog_cache.disable_cog_in_guild(cogname, ctx.guild.id):
@@ -4223,7 +4147,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @commands.guild_only()
-    @command_manager.command(name="enablecog", usage="<cog>")
+    @command_manager.command(name="enablecog")
     async def command_enable_cog(self, ctx: commands.Context, *, cogname: str):
         """Enable a cog in this server.
 
@@ -4234,7 +4158,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]command enablecog ModLog`
 
         **Arguments:**
-            - `<cog>` - The name of the cog to enable on this server. Must be title-case.
+            - `<cogname>` - The name of the cog to enable on this server. Must be title-case.
         """
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
@@ -4242,7 +4166,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             # putting this here allows enabling a cog that isn't loaded but was disabled.
             cog = self.bot.get_cog(cogname)
             if not cog:
-                return await ctx.send(_('Cog "{arg}" not found.').format(arg=cogname))
+                return await ctx.send(_("Cog with the given name doesn't exist."))
 
             await ctx.send(
                 _("{cogname} was not disabled (nothing to do).").format(cogname=cogname)
@@ -4333,7 +4257,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send_interactive(paged)
 
     @command_manager.group(name="disable", invoke_without_command=True)
-    async def command_disable(self, ctx: commands.Context, *, command: CommandConverter):
+    async def command_disable(self, ctx: commands.Context, *, command: str):
         """
         Disable a command.
 
@@ -4355,7 +4279,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @command_disable.command(name="global")
-    async def command_disable_global(self, ctx: commands.Context, *, command: CommandConverter):
+    async def command_disable_global(self, ctx: commands.Context, *, command: str):
         """
         Disable a command globally.
 
@@ -4366,32 +4290,39 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable globally.
         """
-        if self.command_manager in command.parents or self.command_manager == command:
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
             )
             return
 
-        if isinstance(command, commands.commands._RuleDropper):
+        if isinstance(command_obj, commands.commands._RuleDropper):
             await ctx.send(
                 _("This command is designated as being always available and cannot be disabled.")
             )
             return
 
         async with ctx.bot._config.disabled_commands() as disabled_commands:
-            if command.qualified_name not in disabled_commands:
-                disabled_commands.append(command.qualified_name)
+            if command not in disabled_commands:
+                disabled_commands.append(command_obj.qualified_name)
 
-        if not command.enabled:
+        if not command_obj.enabled:
             await ctx.send(_("That command is already disabled globally."))
             return
-        command.enabled = False
+        command_obj.enabled = False
 
         await ctx.tick()
 
     @commands.guild_only()
     @command_disable.command(name="server", aliases=["guild"])
-    async def command_disable_guild(self, ctx: commands.Context, *, command: CommandConverter):
+    async def command_disable_guild(self, ctx: commands.Context, *, command: str):
         """
         Disable a command in this server only.
 
@@ -4402,27 +4333,34 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable for the current server.
         """
-        if self.command_manager in command.parents or self.command_manager == command:
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        if self.command_manager in command_obj.parents or self.command_manager == command_obj:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
             )
             return
 
-        if isinstance(command, commands.commands._RuleDropper):
+        if isinstance(command_obj, commands.commands._RuleDropper):
             await ctx.send(
                 _("This command is designated as being always available and cannot be disabled.")
             )
             return
 
-        if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
             await ctx.send(_("You are not allowed to disable that command."))
             return
 
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
-            if command.qualified_name not in disabled_commands:
-                disabled_commands.append(command.qualified_name)
+            if command not in disabled_commands:
+                disabled_commands.append(command_obj.qualified_name)
 
-        done = command.disable_in(ctx.guild)
+        done = command_obj.disable_in(ctx.guild)
 
         if not done:
             await ctx.send(_("That command is already disabled in this server."))
@@ -4430,7 +4368,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.tick()
 
     @command_manager.group(name="enable", invoke_without_command=True)
-    async def command_enable(self, ctx: commands.Context, *, command: CommandConverter):
+    async def command_enable(self, ctx: commands.Context, *, command: str):
         """Enable a command.
 
         If you're the bot owner, this will try to enable a globally disabled command by default.
@@ -4450,7 +4388,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.is_owner()
     @command_enable.command(name="global")
-    async def command_enable_global(self, ctx: commands.Context, *, command: CommandConverter):
+    async def command_enable_global(self, ctx: commands.Context, *, command: str):
         """
         Enable a command globally.
 
@@ -4461,20 +4399,27 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to enable globally.
         """
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
         async with ctx.bot._config.disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
-                disabled_commands.remove(command.qualified_name)
+                disabled_commands.remove(command_obj.qualified_name)
 
-        if command.enabled:
+        if command_obj.enabled:
             await ctx.send(_("That command is already enabled globally."))
             return
 
-        command.enabled = True
+        command_obj.enabled = True
         await ctx.tick()
 
     @commands.guild_only()
     @command_enable.command(name="server", aliases=["guild"])
-    async def command_enable_guild(self, ctx: commands.Context, *, command: CommandConverter):
+    async def command_enable_guild(self, ctx: commands.Context, *, command: str):
         """
             Enable a command in this server.
 
@@ -4485,15 +4430,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to enable for the current server.
         """
-        if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+        command_obj: Optional[commands.Command] = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        if command_obj.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
             await ctx.send(_("You are not allowed to enable that command."))
             return
 
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
-                disabled_commands.remove(command.qualified_name)
+                disabled_commands.remove(command_obj.qualified_name)
 
-        done = command.enable_in(ctx.guild)
+        done = command_obj.enable_in(ctx.guild)
 
         if not done:
             await ctx.send(_("That command is already enabled in this server."))

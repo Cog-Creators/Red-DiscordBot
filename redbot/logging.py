@@ -171,30 +171,43 @@ class RedLogRender(LogRender):
         link_path=None,
         logger_name=None,
     ):
-        output = Text()
+        output = Table.grid(padding=(0, 1))
+        output.expand = True
+        if self.show_time:
+            output.add_column(style="log.time")
+        if self.show_level:
+            output.add_column(style="log.level", width=self.level_width)
+        output.add_column(ratio=1, style="log.message", overflow="fold")
+        if self.show_path and path:
+            output.add_column(style="log.path")
+        if logger_name:
+            output.add_column()
+        row = []
         if self.show_time:
             log_time = log_time or console.get_datetime()
             log_time_display = log_time.strftime(time_format or self.time_format)
             if log_time_display == self._last_time:
-                output.append(" " * (len(log_time_display) + 1))
+                row.append(Text(" " * len(log_time_display)))
             else:
-                output.append(f"{log_time_display} ", style="log.time")
+                row.append(Text(log_time_display))
                 self._last_time = log_time_display
         if self.show_level:
-            # The space needs to be added separately so that log level is colored by
-            # Rich.
-            output.append(level)
-            output.append(" ")
-        if logger_name:
-            output.append(f"[{logger_name}] ", style="bright_black")
+            row.append(level)
 
-        output.append(*renderables)
+        row.append(Renderables(renderables))
         if self.show_path and path:
             path_text = Text()
             path_text.append(path, style=f"link file://{link_path}" if link_path else "")
             if line_no:
                 path_text.append(f":{line_no}")
-            output.append(path_text)
+            row.append(path_text)
+
+        if logger_name:
+            logger_name_text = Text()
+            logger_name_text.append(f"[{logger_name}]", style="bright_black")
+            row.append(logger_name_text)
+
+        output.add_row(*row)
         return output
 
 
@@ -273,8 +286,7 @@ class RedRichHandler(RichHandler):
                 line_no=record.lineno,
                 link_path=record.pathname if self.enable_link_path else None,
                 logger_name=record.name,
-            ),
-            soft_wrap=True,
+            )
         )
         if traceback:
             self.console.print(traceback)

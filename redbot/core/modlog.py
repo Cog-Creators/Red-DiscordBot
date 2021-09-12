@@ -433,9 +433,9 @@ class Case:
         until = None
         duration = None
         if self.until:
-            start = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
-            end = datetime.fromtimestamp(self.until, tz=timezone.utc)
-            end_fmt = f"<t:{int(end.timestamp())}>"
+            start = datetime.utcfromtimestamp(self.created_at)
+            end = datetime.utcfromtimestamp(self.until)
+            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S UTC")
             duration = end - start
             dur_fmt = _strfdelta(duration)
             until = end_fmt
@@ -455,7 +455,9 @@ class Case:
 
         last_modified = None
         if self.modified_at:
-            last_modified = f"<t:{self.modified_at}>"
+            last_modified = "{}".format(
+                datetime.utcfromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S UTC")
+            )
 
         if isinstance(self.user, int):
             if self.user == 0xDE1:
