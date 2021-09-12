@@ -8,7 +8,7 @@ Installing Red on Linux or Mac
 
     For safety reasons, DO NOT install Red with a root user. If you are unsure how to create
     a new user on Linux, see `this guide by DigitalOcean
-    <https://www.digitalocean.com/community/tutorials/how-to-create-a-sudo-user-on-ubuntu-quickstart>`_.
+    <https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu-20-04-quickstart>`_.
 
 -------------------------------
 Installing the pre-requirements
@@ -17,7 +17,7 @@ Installing the pre-requirements
 Please install the pre-requirements using the commands listed for your operating system.
 
 The pre-requirements are:
- - Python 3.8.1 or greater; **Python 3.9 is currently not supported!**
+ - Python 3.8.1 or greater
  - Pip 18.1 or greater
  - Git 2.11+
  - Java Runtime Environment 11 (for audio support)
@@ -39,11 +39,6 @@ Operating systems
 ~~~~~~~~~~
 Arch Linux
 ~~~~~~~~~~
-
-.. warning::
-
-    Latest Python packages for Arch Linux provide Python 3.9 which Red does not currently support.
-    To use Red on Arch Linux, you will need to install latest version of Python 3.8 on your own.
 
 .. prompt:: bash
 
@@ -76,7 +71,7 @@ In order to install Git 2.11 or greater, we recommend adding the IUS repository:
     sudo yum -y install https://repo.ius.io/ius-release-el7.rpm
     sudo yum -y swap git git224
 
-Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.9 with pyenv <install-python-pyenv>`.
 
 ----
 
@@ -94,16 +89,16 @@ CentOS and RHEL 8
     sudo yum -y groupinstall development
     sudo yum -y install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless nano
 
-Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.9 with pyenv <install-python-pyenv>`.
 
 ----
 
 .. _install-debian:
 .. _install-raspbian:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Debian and Raspbian Buster
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Debian 10 Buster and Raspberry Pi OS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We recommend installing pyenv as a method of installing non-native versions of python on
 Debian/Raspbian Buster. This guide will tell you how. First, run the following commands:
@@ -114,7 +109,25 @@ Debian/Raspbian Buster. This guide will tell you how. First, run the following c
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
     CXX=/usr/bin/g++
 
-Complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+Complete the rest of the installation by `installing Python 3.9 with pyenv <install-python-pyenv>`.
+
+---
+
+.. _install-debian11:
+
+~~~~~~~~~~~~~~~~~~~~
+Debian 11 Bullseye
+~~~~~~~~~~~~~~~~~~~~
+
+Debian 11 "Bullseye" has all required packages available in official repositories. Install them
+with apt:
+
+.. prompt:: bash
+
+    sudo apt update
+    sudo apt -y install python3 python3-dev python3-venv python3-pip git openjdk-11-jre-headless build-essential nano
+
+Continue by `creating-venv-linux`.
 
 ----
 
@@ -124,12 +137,12 @@ Complete the rest of the installation by `installing Python 3.8 with pyenv <inst
 Fedora Linux
 ~~~~~~~~~~~~
 
-Fedora Linux 32 and above has all required packages available in official repositories. Install
+Fedora Linux 33 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python38 git java-11-openjdk-headless @development-tools nano
+    sudo dnf -y install python39 git java-11-openjdk-headless @development-tools nano
 
 Continue by `creating-venv-linux`.
 
@@ -153,8 +166,8 @@ one-by-one:
 
 .. prompt:: bash
 
-    brew install python@3.8
-    echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"' >> ~/.profile
+    brew install python@3.9
+    echo 'export PATH="$(brew --prefix)/opt/python@3.9/bin:$PATH"' >> ~/.profile
     source ~/.profile
     brew install git
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
@@ -172,7 +185,7 @@ openSUSE
 openSUSE Leap 15.2+
 *******************
 
-We recommend installing a community package to get Python 3.8 on openSUSE Leap 15.2+. This package will
+We recommend installing a community package to get Python 3.9 on openSUSE Leap 15.2+. This package will
 be installed to the ``/opt`` directory.
 
 First, add the Opt-Python community repository:
@@ -187,7 +200,7 @@ Now install the pre-requirements with zypper:
 
 .. prompt:: bash
 
-    sudo zypper -n install opt-python38 opt-python38-setuptools git-core java-11-openjdk-headless nano
+    sudo zypper -n install opt-python39 opt-python39-setuptools git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in
@@ -198,11 +211,16 @@ Since Python is now installed to ``/opt/python``, we should add it to PATH. You 
     echo 'export PATH="/opt/python/bin:$PATH"' | sudo tee /etc/profile.d/opt-python.sh
     source /etc/profile.d/opt-python.sh
 
-Now, install pip with easy_install:
+Now, bootstrap pip with ensurepip:
 
 .. prompt:: bash
 
-    sudo /opt/python/bin/easy_install-3.8 pip
+    sudo /opt/python/bin/python3.9 -m ensurepip --altinstall
+
+.. note::
+
+    After this command, a warning about running pip as root might be printed.
+    For this specific command, this warning can be safely ignored.
 
 Continue by `creating-venv-linux`.
 
@@ -214,7 +232,7 @@ with zypper:
 
 .. prompt:: bash
 
-    sudo zypper -n install python38-base python38-pip git-core java-11-openjdk-headless nano
+    sudo zypper -n install python39-base python39-pip git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 Continue by `creating-venv-linux`.
@@ -235,7 +253,7 @@ We recommend adding the ``git-core`` ppa to install Git 2.11 or greater:
     sudo apt -y install software-properties-common
     sudo add-apt-repository -y ppa:git-core/ppa
 
-We recommend adding the ``deadsnakes`` ppa to install Python 3.8.1 or greater:
+We recommend adding the ``deadsnakes`` ppa to install Python 3.9:
 
 .. prompt:: bash
 
@@ -245,7 +263,7 @@ Now install the pre-requirements with apt:
 
 .. prompt:: bash
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential nano
+    sudo apt -y install python3.9 python3.9-dev python3.9-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
 Continue by `creating-venv-linux`.
 
@@ -269,7 +287,7 @@ Now install the pre-requirements with apt:
 
 .. prompt:: bash
 
-    sudo apt -y install python3.8 python3.8-dev python3.8-venv python3-pip git openjdk-11-jre-headless build-essential nano
+    sudo apt -y install python3.9 python3.9-dev python3.9-venv python3-pip git openjdk-11-jre-headless build-essential nano
 
 Continue by `creating-venv-linux`.
 
@@ -297,7 +315,7 @@ installing pyenv. To do this, first run the following commands:
     sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
     CXX=/usr/bin/g++
 
-And then complete the rest of the installation by `installing Python 3.8 with pyenv <install-python-pyenv>`.
+And then complete the rest of the installation by `installing Python 3.9 with pyenv <install-python-pyenv>`.
 
 ----
 
@@ -312,7 +330,7 @@ Installing Python with pyenv
     If you followed one of the sections above, and weren't linked here afterwards, you should skip
     this section.
 
-On distributions where Python 3.8 needs to be compiled from source, we recommend the use of pyenv.
+On distributions where Python 3.9 needs to be compiled from source, we recommend the use of pyenv.
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
@@ -327,7 +345,7 @@ Then run the following command:
 
 .. prompt:: bash
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.8.10 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.9.7 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -339,9 +357,9 @@ After that is finished, run:
 
 .. prompt:: bash
 
-    pyenv global 3.8.10
+    pyenv global 3.9.7
 
-Pyenv is now installed and your system should be configured to run Python 3.8.
+Pyenv is now installed and your system should be configured to run Python 3.9.
 
 Continue by `creating-venv-linux`.
 
@@ -381,7 +399,7 @@ Create your virtual environment with the following command:
 
 .. prompt:: bash
 
-    python3.8 -m venv ~/redenv
+    python3.9 -m venv ~/redenv
 
 And activate it with the following command:
 

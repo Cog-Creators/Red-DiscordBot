@@ -540,9 +540,15 @@ class Downloader(commands.Cog):
         agreed = await do_install_agreement(ctx)
         if not agreed:
             return
-        if re.match(r"^[a-zA-Z0-9_\-]*$", name) is None:
+        if name.startswith(".") or name.endswith("."):
+            await ctx.send(_("Repo names cannot start or end with a dot."))
+            return
+        if re.match(r"^[a-zA-Z0-9_\-\.]+$", name) is None:
             await ctx.send(
-                _("Repo names can only contain characters A-z, numbers, underscores, and hyphens.")
+                _(
+                    "Repo names can only contain characters A-z, numbers, underscores, hyphens,"
+                    " and dots."
+                )
             )
             return
         try:
@@ -1466,7 +1472,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nSome cogs with these names are already installed from different repos: ")
                 if len(name_already_used) > 1
-                else _("Cog with this name is already installed from a different repo.")
+                else _("\nCog with this name is already installed from a different repo.")
             ) + humanize_list(name_already_used)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
@@ -1511,7 +1517,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nThese cogs require higher python version than you have: ")
                 if len(outdated_python_version)
-                else _("This cog requires higher python version than you have: ")
+                else _("\nThis cog requires higher python version than you have: ")
             ) + humanize_list(outdated_python_version)
         if outdated_bot_version:
             message += (
@@ -1521,7 +1527,7 @@ class Downloader(commands.Cog):
                 )
                 if len(outdated_bot_version) > 1
                 else _(
-                    "This cog requires different Red version than you currently "
+                    "\nThis cog requires different Red version than you currently "
                     "have ({current_version}): "
                 )
             ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
@@ -1614,7 +1620,7 @@ class Downloader(commands.Cog):
                     )
                 else:
                     message += (
-                        _("End user data statement of this cog has changed:")
+                        _("\nEnd user data statement of this cog has changed:")
                         + inline(next(iter(cogs_with_changed_eud_statement)))
                         + _("\nYou can use {command} to see the updated statement.\n").format(
                             command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
@@ -1691,12 +1697,42 @@ class Downloader(commands.Cog):
             await ctx.send(_("None of the updated cogs were previously loaded. Update complete."))
             return
 
-        message = _("Would you like to reload the updated cogs?")
+        if not ctx.assume_yes:
+            message = (
+                _("Would you like to reload the updated cogs?")
+                if len(updated_cognames) > 1
+                else _("Would you like to reload the updated cog?")
+            )
+            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            if not can_react:
+                message += " (y/n)"
+            query: discord.Message = await ctx.send(message)
+            if can_react:
+                # noinspection PyAsyncCall
+                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
+                pred = ReactionPredicate.yes_or_no(query, ctx.author)
+                event = "reaction_add"
+            else:
+                pred = MessagePredicate.yes_or_no(ctx)
+                event = "message"
+            try:
+                await ctx.bot.wait_for(event, check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
+                return
 
-        confimed = await self._ask(ctx, message)
-
-        if not confimed:
-            return
+            if not pred.result:
+                if can_react:
+                    with contextlib.suppress(discord.NotFound):
+                        await query.delete()
+                else:
+                    await ctx.send(_("OK then."))
+                return
+            else:
+                if can_react:
+                    with contextlib.suppress(discord.Forbidden):
+                        await query.clear_reactions()
 
         await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 

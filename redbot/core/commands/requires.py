@@ -521,32 +521,40 @@ class Requires:
             raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
 
     async def _transition_state(self, ctx: "Context") -> bool:
-        prev_state = ctx.permission_state
-        cur_state = self._get_rule_from_ctx(ctx)
-        should_invoke, next_state = transition_permstate_to(prev_state, cur_state)
+        should_invoke, next_state = self._get_transitioned_state(ctx)
         if should_invoke is None:
             # NORMAL invocation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
             # We must check what would happen normally, if no explicit rules were set.
-            default_rule = PermState.NORMAL
-            if ctx.guild is not None:
-                default_rule = self.get_rule(self.DEFAULT, guild_id=ctx.guild.id)
-            if default_rule is PermState.NORMAL:
-                default_rule = self.get_rule(self.DEFAULT, self.GLOBAL)
-
-            if default_rule == PermState.ACTIVE_DENY:
-                would_invoke = False
-            elif default_rule == PermState.ACTIVE_ALLOW:
-                would_invoke = True
-            else:
+            would_invoke = self._get_would_invoke(ctx)
+            if would_invoke is None:
                 would_invoke = await self._verify_user(ctx)
             next_state = next_state[would_invoke]
 
         assert isinstance(next_state, PermState)
         ctx.permission_state = next_state
         return should_invoke
+
+    def _get_transitioned_state(self, ctx: "Context") -> TransitionResult:
+        prev_state = ctx.permission_state
+        cur_state = self._get_rule_from_ctx(ctx)
+        return transition_permstate_to(prev_state, cur_state)
+
+    def _get_would_invoke(self, ctx: "Context") -> Optional[bool]:
+        default_rule = PermState.NORMAL
+        if ctx.guild is not None:
+            default_rule = self.get_rule(self.DEFAULT, guild_id=ctx.guild.id)
+        if default_rule is PermState.NORMAL:
+            default_rule = self.get_rule(self.DEFAULT, self.GLOBAL)
+
+        if default_rule == PermState.ACTIVE_DENY:
+            return False
+        elif default_rule == PermState.ACTIVE_ALLOW:
+            return True
+        else:
+            return None
 
     async def _verify_user(self, ctx: "Context") -> bool:
         checks_pass = await self._verify_checks(ctx)
