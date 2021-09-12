@@ -243,7 +243,7 @@ class KickBanMixin(MixinMeta):
         async for guild_id, guild_data in AsyncIter(guilds_data.items(), steps=100):
             if not (guild := self.bot.get_guild(guild_id)):
                 continue
-            if not guild.me.guild_permissions.ban_members:
+            if guild.unavailable or not guild.me.guild_permissions.ban_members:
                 continue
             if await self.bot.cog_disabled_in_guild(self, guild):
                 continue
@@ -620,12 +620,14 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("I cannot do that due to Discord hierarchy rules."))
             return
 
+        guild_data = await self.config.guild(guild).all()
+
         if duration is None:
-            duration = timedelta(seconds=await self.config.guild(guild).default_tempban_duration())
+            duration = timedelta(seconds=guild_data["default_tempban_duration"])
         unban_time = datetime.now(timezone.utc) + duration
 
         if days is None:
-            days = await self.config.guild(guild).default_days()
+            days = guild_data["default_days"]
 
         if not (0 <= days <= 7):
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
@@ -641,10 +643,12 @@ class KickBanMixin(MixinMeta):
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning
             msg = _("You have been temporarily banned from {server_name} until {date}.").format(
-                server_name=guild.name, date=unban_time.strftime("%m-%d-%Y %H:%M:%S")
+                server_name=guild.name, date=f"<t:{int(unban_time.timestamp())}>"
             )
+            if guild_data["dm_on_kickban"] and reason:
+                msg += _("\n\n**Reason:** {reason}").format(reason=reason)
             if invite:
-                msg += _(" Here is an invite for when your ban expires: {invite_link}").format(
+                msg += _("\n\nHere is an invite for when your ban expires: {invite_link}").format(
                     invite_link=invite
                 )
             await member.send(msg)

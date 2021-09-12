@@ -21,13 +21,17 @@ from .commands import (
 from .context import Context as Context, GuildContext as GuildContext, DMContext as DMContext
 from .converter import (
     DictConverter as DictConverter,
+    RelativedeltaConverter as RelativedeltaConverter,
     TimedeltaConverter as TimedeltaConverter,
     get_dict_converter as get_dict_converter,
     get_timedelta_converter as get_timedelta_converter,
+    parse_relativedelta as parse_relativedelta,
     parse_timedelta as parse_timedelta,
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
     Literal as Literal,
+    CogConverter as CogConverter,
+    CommandConverter as CommandConverter,
 )
 from .errors import (
     ConversionFailure as ConversionFailure,
