@@ -251,7 +251,7 @@ async def remove_instance(
 
     if interactive is True and delete_data is None:
         delete_data = click.confirm(
-            "Would you like to delete this instance's data?", default=False
+            "Would you like to delete this instance's data? If you have not created the database, please select No.", default=False
         )
 
     if interactive is True and _create_backup is None:
