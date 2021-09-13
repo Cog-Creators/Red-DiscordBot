@@ -227,3 +227,12 @@ if "--debug" not in _sys.argv:
     # Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
     # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
     _warnings.filterwarnings("ignore", category=DeprecationWarning, module="importlib", lineno=219)
+    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10
+    #   stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr,
+    # this is a bug in CPython
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="asyncio",
+        message="The loop argument is deprecated since Python 3.8",
+    )

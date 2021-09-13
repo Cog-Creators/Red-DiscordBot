@@ -85,8 +85,7 @@ def debug_info():
         os_info = platform.mac_ver()
         osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
     else:
-        os_info = distro.linux_distribution()
-        osver = "{} {}".format(os_info[0], os_info[1]).strip()
+        osver = f"{distro.name()} {distro.version()}".strip()
     user_who_ran = getpass.getuser()
     info = (
         "Debug Info for Red\n\n"
