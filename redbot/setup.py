@@ -232,7 +232,10 @@ async def create_backup(instance: str, destination_folder: Path = Path.home()) -
     if backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
+    driver_cls = drivers.get_driver_class()
+    await driver_cls.initialize(**data_manager.storage_details())
     backup_fpath = await red_create_backup(destination_folder)
+    await driver_cls.teardown()
     if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")
     else:
