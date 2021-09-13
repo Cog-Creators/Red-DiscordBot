@@ -248,11 +248,17 @@ async def remove_instance(
     remove_datapath: Optional[bool] = None,
 ):
     data_manager.load_basic_configuration(instance)
+    backend = get_current_backend(instance)
 
     if interactive is True and delete_data is None:
-        delete_data = click.confirm(
-            "Would you like to delete this instance's data? If you have not created the database, please select No.", default=False
-        )
+        if backend != BackendType.JSON:
+            delete_data = click.confirm(
+                "Would you like to delete this instance's data? The database server must be running for this to work. If you do not have a database server, select No.", default=False
+            )
+        else:
+            delete_data = click.confirm(
+                "Would you like to delete this instance's data?", default=False
+            )
 
     if interactive is True and _create_backup is None:
         _create_backup = click.confirm(
@@ -262,7 +268,6 @@ async def remove_instance(
     if _create_backup is True:
         await create_backup(instance)
 
-    backend = get_current_backend(instance)
     driver_cls = drivers.get_driver_class(backend)  
     if delete_data is True:
         try:
