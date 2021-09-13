@@ -468,9 +468,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        ​ ​ ​ ​ ​ ​ ​ ​ `--scope <scope>`
+        ​ ​ ​ ​ ​ ​ ​ ​ `--author [user]`
+        ​ ​ ​ ​ ​ ​ ​ ​ `--guild [guild]` **Only the bot owner can use this**
 
         **Scope** is one of the following:
         ​ ​ ​ ​ Global
