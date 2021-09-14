@@ -67,7 +67,7 @@ jobs:
       - name: Build and publish
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.pypi_token }}
+          TWINE_PASSWORD: ${{ secrets.pypi_dev_token }}
         run: |
           python -m build
           twine upload dist/*
