@@ -214,7 +214,7 @@ def _early_init():
     _ensure_no_colorama()
 
 
-__version__ = "develop"
+__version__ = "0.0.0.dev"
 version_info = VersionInfo.from_str(__version__)
 
 # Filter fuzzywuzzy slow sequence matcher warning
