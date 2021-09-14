@@ -164,7 +164,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     ll_player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
                 ll_player.maybe_shuffle()
                 if not player.is_playing:
-                    await player.play()
+                    await ll_player.play()
                 log.info("Restored %r", ll_player)
             except Exception as err:
                 debug_exc_log(log, err, "Error restoring player in %d", guild_id)

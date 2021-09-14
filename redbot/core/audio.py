@@ -461,7 +461,7 @@ class Player():
 
         query = Query.process_input(query, local_folder)
         if query.is_spotify:
-            await self._enqueue_spotify_tracks(requester, query, local_folder)
+            return await self._enqueue_spotify_tracks(requester, query, bump, bump_and_skip)
 
         if not isinstance(query, list):
             if query.single_track:
@@ -591,7 +591,8 @@ class Player():
     async def _enqueue_spotify_tracks(self,
                                       requester: discord.Member,
                                       query: Query,
-                                      local_folder: Optional[pathlib.Path]):
+                                      bump: bool = False,
+                                      bump_and_skip: bool = False):
         if query.single_track:
             try:
                 res = await self._api_interface.spotify_query(
@@ -602,9 +603,10 @@ class Player():
             except Exception as e:
                 raise e
 
-            new_query = Query.process_input(res[0], local_folder)
+            new_query = Query.process_input(res[0], None)
             new_query.start_time = query.start_time
-            return await self._enqueue_tracks(requester, new_query)
+            return await self._enqueue_tracks(
+                requester, query=new_query, track=None, local_folder=None, bump=bump, bump_and_skip=bump_and_skip)
 
         elif query.is_album or query.is_playlist:
             #ToDo fetch spotify playlists: utilities/player.py L#336
@@ -726,7 +728,7 @@ class Player():
             The channel to move the player to
         """
         player = self.player
-        self.channel = channel
+        self._channel = channel
 
         await player.move_to(channel)
 

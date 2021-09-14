@@ -155,12 +155,15 @@ class AudioAPIInterface:
             try:
                 tasks: MutableMapping = {"update": [], "insert": [], "global": []}
                 async for k, task in AsyncIter(self._tasks.items()):
-                    async for t, args in AsyncIter(tasks.items()):
+                    async for t, args in AsyncIter(task.items()):
+                        if t == "insert" and isinstance(args, list):
+                            args = args[0]
                         tasks[t].append(args)
-                self._tasks = {}
-                tasks = [self._route_tasks(a, tasks[a]) for a in tasks]
 
-                await asyncio.gather(*tasks, return_exceptions=False)
+                self._tasks = {}
+                coro_tasks = [self._route_tasks(a, tasks[a]) for a in tasks]
+
+                await asyncio.gather(*coro_tasks, return_exceptions=False)
 
             except Exception as e:
                 debug_exc_log(log, e, "Failed database writes")
