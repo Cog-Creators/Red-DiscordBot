@@ -34,13 +34,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
-      - name: Get latest release version number
-        id: get_version
-        uses: battila7/get-version-action@v2
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
       - name: Autobump version
         run: |
           # from refs/tags/v1.2.3 get 1.2.3
-          GIT_TAG=${{ steps.get_version.outputs.version }}
+          GIT_TAG=${{ steps.previoustag.outputs.tag }}
           echo $GIT_TAG
           VERSION=$(echo $GIT_TAG | sed 's#.*/v##')
           echo $VERSION
