@@ -283,7 +283,7 @@ class Case:
         .. note::
             This attribute will be of type `int`
             if the Discord user can no longer be found.
-    modified_at: Optional[int]
+    modified_at: Optional[float]
         The UNIX time of the last change to the case.
         `None` if the case was never edited.
     message: Optional[discord.Message]
@@ -310,7 +310,7 @@ class Case:
         until: Optional[int] = None,
         channel: Optional[Union[discord.abc.GuildChannel, int]] = None,
         amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
-        modified_at: Optional[int] = None,  # Who ever said this was an int. You lied. -Kowlin
+        modified_at: Optional[float] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
     ):
