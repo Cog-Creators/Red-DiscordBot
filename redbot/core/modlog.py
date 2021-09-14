@@ -310,7 +310,7 @@ class Case:
         until: Optional[int] = None,
         channel: Optional[Union[discord.abc.GuildChannel, int]] = None,
         amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
-        modified_at: Optional[int] = None,
+        modified_at: Optional[int] = None,  # Who ever said this was an int. You lied. -Kowlin
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
     ):
@@ -454,7 +454,7 @@ class Case:
 
         last_modified = None
         if self.modified_at:
-            last_modified = f"<t:{self.modified_at}>"
+            last_modified = f"<t:{int(self.modified_at)}>"
 
         if isinstance(self.user, int):
             if self.user == 0xDE1:
