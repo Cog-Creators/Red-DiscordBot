@@ -39,7 +39,7 @@ jobs:
           echo $GITHUB_REF
           VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
           echo $VERSION
-          PLACEHOLDER='__version__ = "0.0.0.dev1"'
+          PLACEHOLDER='__version__ = "0.0.0"'
           echo $PLACEHOLDER
           VERSION_FILE='redbot/__init__.py'
           echo $VERSION_FILE
