@@ -28,6 +28,8 @@ from ...errors import (
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
+from commands import PlayerControllerCommands
+
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
 _ = Translator("Audio", Path(__file__))
 
@@ -37,6 +39,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_play(self, ctx: commands.Context, *, query: str):
+
+        # Manual summon the bot into the channel. Don't need to await this as we don't care if it doesn't work I suppose?
+        PlayerControllerCommands.command_summon(self, ctx)
+
         """Play the specified track or search for a close match.
 
         To play a local track, the query should be `<parentfolder>\\<filename>`.
