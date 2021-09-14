@@ -253,7 +253,9 @@ async def remove_instance(
     if interactive is True and delete_data is None:
         if backend != BackendType.JSON:
             delete_data = click.confirm(
-                "Would you like to delete this instance's data? The database server must be running for this to work. If you do not have a database server, select No.", default=False
+                "Would you like to delete this instance's data?"
+                " The database server must be running for this to work.",
+                default=False,
             )
         else:
             delete_data = click.confirm(
