@@ -33,9 +33,10 @@ jobs:
 
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: "python -m tox"
-        
+
   webhook:
-    name: "Build & verify package"
+    needs: tests
+    name: "Send webhook"
     runs-on: "ubuntu-latest"
     steps:
       - name: Webhook Action
