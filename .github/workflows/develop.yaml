@@ -1,0 +1,71 @@
+name: publish
+
+on:
+  push:
+    branches: ["develop"]
+
+jobs:
+
+  package:
+    name: "Build & verify package"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+        with:
+          python-version: "3.8"
+
+      - name: "Install pep517 and twine"
+        run: "python -m pip install pep517 twine"
+      - name: "Build package"
+        run: "python -m pep517.build --source --binary ."
+      - name: "List result"
+        run: "ls -l dist"
+      - name: "Check long_description"
+        run: "python -m twine check dist/*"
+
+  release_to_pypi:
+    name: Release to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Autobump version
+        run: |
+          # from refs/tags/v1.2.3 get 1.2.3
+          echo $GITHUB_REF
+          VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
+          echo $VERSION
+          RUN_NUMBER=$GITHUB_RUN_NUMBER
+          echo $RUN_NUMBER
+          PLACEHOLDER='__version__ = "develop"'
+          echo $PLACEHOLDER
+          VERSION_FILE='redbot/__init__.py'
+          echo $VERSION_FILE
+          # Ensure the placeholder is there. If grap doesn't find the placeholder
+          # it exits with exit code 1 and github aborts the build
+          grep "$PLACEHOLDER" "$VERSION_FILE"
+          sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\.dev${RUN_NUMBER}\"/g" "$VERSION_FILE"
+          # Replace the setup.cfg package name with the dev name
+          sed -i "s/sausage-bot/sausage-bot-dev/g" "$VERSION_FILE"
+        shell: bash
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+      - name: Build and publish
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.pypi_token }}
+        run: |
+          python -m build
+          twine upload dist/*
+      - name: Webhook Action
+        uses: joelwmale/webhook-action@2.1.0
+        with:
+          # The url to send the webhook event to
+          url: https://portainer.newlinkedlist.com/api/webhooks/${{ secrets.dev_webhook }}
