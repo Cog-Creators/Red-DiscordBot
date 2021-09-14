@@ -270,7 +270,7 @@ async def remove_instance(
     if _create_backup is True:
         await create_backup(instance)
 
-    driver_cls = drivers.get_driver_class(backend)  
+    driver_cls = drivers.get_driver_class(backend)
     if delete_data is True:
         try:
             await driver_cls.initialize(**data_manager.storage_details())
