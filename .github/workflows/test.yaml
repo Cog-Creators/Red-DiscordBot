@@ -1,8 +1,6 @@
-name: build-test
+name: test
 
 on:
-  push:
-    branches: ["develop"]
   pull_request:
     branches: ["master"]
   workflow_dispatch:
@@ -33,14 +31,3 @@ jobs:
 
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: "python -m tox"
-
-  webhook:
-    needs: tests
-    name: "Send webhook"
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Webhook Action
-        uses: joelwmale/webhook-action@2.1.0
-        with:
-          # The url to send the webhook event to
-          url: https://portainer.newlinkedlist.com/api/webhooks/${{ secrets.dev_webhook }}
