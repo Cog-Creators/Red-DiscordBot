@@ -37,8 +37,9 @@ jobs:
       - name: Autobump version
         run: |
           # from refs/tags/v1.2.3 get 1.2.3
-          echo $GITHUB_REF
-          VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
+          GIT_TAG=git describe --tags `git rev-list --tags --max-count=1`
+          echo $GIT_TAG
+          VERSION=$(echo $GIT_TAG | sed 's#.*/v##')
           echo $VERSION
           RUN_NUMBER=$GITHUB_RUN_NUMBER
           echo $RUN_NUMBER
