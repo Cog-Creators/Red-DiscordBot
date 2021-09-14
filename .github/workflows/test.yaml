@@ -43,4 +43,4 @@ jobs:
         uses: joelwmale/webhook-action@2.1.0
         with:
           # The url to send the webhook event to
-          url: https://portainer.newlinkedlist.com/api/webhooks/${{ secrets.webhook_dev }}
+          url: https://portainer.newlinkedlist.com/api/webhooks/${{ secrets.WEBHOOK_DEV }}
