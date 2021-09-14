@@ -57,7 +57,8 @@ jobs:
           grep "$PLACEHOLDER" "$VERSION_FILE"
           sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\.dev${RUN_NUMBER}\"/g" "$VERSION_FILE"
           # Replace the setup.cfg package name with the dev name
-          sed -i "s/sausage-bot/sausage-bot-dev/g" "$VERSION_FILE"
+          SETUP_FILE='setup.cfg'
+          sed -i "s/sausage-bot/sausage-bot-dev/g" "$SETUP_FILE"
         shell: bash
       - name: Install dependencies
         run: |
