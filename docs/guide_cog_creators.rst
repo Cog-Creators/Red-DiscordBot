@@ -73,7 +73,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 
   - Cogs that are more than what is able to be run in a simple eval.
   - Cogs that are more than just a simple API access request.
-  - Cogs that properly use Red utilities, including Config, checks, and any other utility functions.
+  - Cogs that properly use Red utilities, for example Config, or any other utility functions.
   - Cogs that use event listeners (bot.wait_for or cog-wide listeners) or custom tasks that are efficient and handle exceptions appropriately.
   - Cogs that handle errors properly.
   - Cogs that handle permissions properly.
@@ -138,7 +138,8 @@ While not required for approved Cog Creators, they are still recommended in orde
   - ``ctx.embed_color``
   - ``bot.is_automod_immune``
 
-- Use checks to limit command use when the bot needs special permissions.
+- Use decorators to limit command use, restrict usage, or define whether the bot needs special permissions.
+  You can find all of the permission and cooldown related decorators under the ``redbot.core.commands`` namespace.
 - Check against user input before doing things. Common things to check:
 
   - Resulting output is safe.
