@@ -559,7 +559,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def uptime(self, ctx: commands.Context):
         """Shows [botname]'s uptime."""
         delta = datetime.datetime.utcnow() - self.bot.uptime
-        uptime = self.bot.uptime.replace(tzinfo=timezone.utc)
+        uptime = self.bot.uptime.replace(tzinfo=datetime.timezone.utc)
         uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second.")
         await ctx.send(_(f"Been up for: **{uptime_str}** (since <t:{int(uptime.timestamp())}:f>)"))
 
