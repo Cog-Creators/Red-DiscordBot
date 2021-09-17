@@ -41,13 +41,21 @@ jobs:
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
       - name: Autobump version
         run: |
+          #Note: We absolutely don't care about versioning this properly, it's just used to ensure we are always atleast one above the last version
           # from v1.2.3 get 1.2.3
           GIT_TAG=${{ steps.previoustag.outputs.tag }}
           echo $GIT_TAG
-          VERSION=$(echo $GIT_TAG | sed 's#.*v##')
+          #Reduce this to 1.2, we will append the run number later
+          VERSION=$(echo $GIT_TAG | sed 's#.*v##' | sed 's#.[0-9]$##')
           echo $VERSION
+          #Get the patch number
+          PATCH=$(echo $GIT_TAG | sed 's#.*v##' | awk '{print substr($0,length,1)}')
+          echo $PATCH
           RUN_NUMBER=$GITHUB_RUN_NUMBER
           echo $RUN_NUMBER
+          #Add them together so our version is always bigger than the last
+          NEW_PATCH=$(($RUN_NUMBER+$PATCH))
+          echo $NEW_PATCH
           PLACEHOLDER='__version__ = "develop"'
           echo $PLACEHOLDER
           VERSION_FILE='redbot/__init__.py'
@@ -55,7 +63,7 @@ jobs:
           # Ensure the placeholder is there. If grap doesn't find the placeholder
           # it exits with exit code 1 and github aborts the build
           grep "$PLACEHOLDER" "$VERSION_FILE"
-          sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\.dev${RUN_NUMBER}\"/g" "$VERSION_FILE"
+          sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\.${NEW_PATCH}\"/g" "$VERSION_FILE"
           # Replace the setup.cfg package name with the dev name
           SETUP_FILE='setup.cfg'
           sed -i "s/sausage-bot/sausage-bot-dev/g" "$SETUP_FILE"
