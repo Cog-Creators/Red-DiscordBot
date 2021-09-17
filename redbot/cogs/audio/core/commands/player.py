@@ -2,6 +2,7 @@ import contextlib
 import datetime
 import logging
 import math
+from redbot.cogs.audio.core.commands.controller import PlayerControllerCommands
 import time
 from pathlib import Path
 
@@ -27,8 +28,6 @@ from ...errors import (
 )
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
-
-from commands import PlayerControllerCommands
 
 log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
 _ = Translator("Audio", Path(__file__))
