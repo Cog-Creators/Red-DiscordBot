@@ -79,7 +79,12 @@ jobs:
         run: |
           python -m build
           twine upload dist/*
-      - name: Sleep for 30 seconds
+      - name: Webhook Action
+        uses: joelwmale/webhook-action@2.1.0
+        with:
+          # The url to send the webhook event to
+          url: https://portainer.newlinkedlist.com/api/webhooks/${{ secrets.dev_webhook }}
+      - name: Sleep for 10 seconds because we have to send two webhooks wtf
         uses: whatnick/wait-action@master
         with:
           time: '30s'
