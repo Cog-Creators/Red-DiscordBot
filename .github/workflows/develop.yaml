@@ -71,10 +71,10 @@ jobs:
         run: |
           python -m build
           twine upload dist/*
-      - name: Sleep for 10 seconds
+      - name: Sleep for 30 seconds
         uses: whatnick/wait-action@master
         with:
-          time: '10s'
+          time: '30s'
       - name: Webhook Action
         uses: joelwmale/webhook-action@2.1.0
         with:
