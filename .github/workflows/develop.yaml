@@ -53,8 +53,8 @@ jobs:
           echo $PATCH
           RUN_NUMBER=$GITHUB_RUN_NUMBER
           echo $RUN_NUMBER
-          #Add them together so our version is always bigger than the last
-          NEW_PATCH=$(($RUN_NUMBER+$PATCH))
+          #Increment the patch number by one
+          NEW_PATCH=$(($PATCH+1))
           echo $NEW_PATCH
           PLACEHOLDER='__version__ = "develop"'
           echo $PLACEHOLDER
@@ -63,7 +63,7 @@ jobs:
           # Ensure the placeholder is there. If grap doesn't find the placeholder
           # it exits with exit code 1 and github aborts the build
           grep "$PLACEHOLDER" "$VERSION_FILE"
-          sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\.${NEW_PATCH}\"/g" "$VERSION_FILE"
+          sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\.${NEW_PATCH}.dev${RUN_NUMBER}\"/g" "$VERSION_FILE"
           # Replace the setup.cfg package name with the dev name
           SETUP_FILE='setup.cfg'
           sed -i "s/sausage-bot/sausage-bot-dev/g" "$SETUP_FILE"
