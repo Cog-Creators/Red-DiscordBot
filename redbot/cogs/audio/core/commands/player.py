@@ -39,10 +39,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(embed_links=True)
     async def command_play(self, ctx: commands.Context, *, query: str):
 
-
-        # THIS DOESN'T WORK BUT WAS MY ATTEMPT AT GETTING THE BOT TO CHANGE CHANNEL WTF...
         # Manual summon the bot into the channel. Don't need to await this as we don't care if it doesn't work I suppose?
-        # await PlayerControllerCommands.command_summon(self, ctx)
+        await PlayerControllerCommands.command_summon(self, ctx)
 
         """Play the specified track or search for a close match.
 
