@@ -40,7 +40,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_play(self, ctx: commands.Context, *, query: str):
 
         # Manual summon the bot into the channel. Don't need to await this as we don't care if it doesn't work I suppose?
-        PlayerControllerCommands.command_summon(self, ctx)
+        await PlayerControllerCommands.command_summon(self, ctx)
 
         """Play the specified track or search for a close match.
 
