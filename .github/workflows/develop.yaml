@@ -49,7 +49,7 @@ jobs:
           VERSION=$(echo $GIT_TAG | sed 's#.*v##' | sed 's#.[0-9]$##')
           echo $VERSION
           #Get the patch number
-          PATCH=$(echo $GIT_TAG | sed 's#.*v##' | awk '{print substr($0,length,1)}')
+          PATCH=$(echo $GIT_TAG | sed 's#.*v##' | grep -Eo '[0-9]+$')
           echo $PATCH
           RUN_NUMBER=$GITHUB_RUN_NUMBER
           echo $RUN_NUMBER
