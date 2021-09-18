@@ -311,10 +311,7 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         await group.name.set(member.display_name)
 
     payload = BankSetBalanceInformation(
-        member.id,
-        (0 if _cache_is_global else guild.id),
-        old_balance,
-        amount
+        member.id, (0 if _cache_is_global else guild.id), old_balance, amount
     )
 
     _bot_ref.dispatch("red_bank_set_balance", payload)
@@ -460,12 +457,7 @@ async def transfer_credits(
     recipient_new = await deposit_credits(to, amount)
 
     payload = BankTransferInformation(
-        amount,
-        from_.id ,
-        to.id,
-        (0 if _cache_is_global else guild.id),
-        sender_new,
-        recipient_new
+        amount, from_.id, to.id, (0 if _cache_is_global else guild.id), sender_new, recipient_new
     )
     _bot_ref.dispatch("red_bank_transfer_credits", payload)
 
@@ -513,11 +505,11 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
 
     print(f"{guild} | {user_id}")
     if guild is None and user_id is None:
-        scope = 1 # prune global
+        scope = 1  # prune global
     if guild is not None and user_id is None:
-        scope = 2 # prune server
+        scope = 2  # prune server
     else:
-        scope = 3 # prune user
+        scope = 3  # prune user
 
     global_bank = await is_global()
 
@@ -557,12 +549,9 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
             user_id = str(user_id)
             if user_id in bank_data:
                 del bank_data[user_id]
-    
-    payload = BankPruneInformation(
-        scope,
-        tmp
-    )
-    
+
+    payload = BankPruneInformation(scope, tmp)
+
     # _bot_ref.dispatch("red_bank_prune_accounts", payload)
 
 
@@ -728,7 +717,7 @@ async def set_global(global_: bool) -> bool:
         await _config.clear_all_users()
     else:
         await _config.clear_all_members()
-    
+
     _bot_ref.dispatch("red_bank_wipe", True)
 
     await _config.is_global.set(global_)
@@ -1091,6 +1080,7 @@ def cost(amount: int):
 
     return deco
 
+
 class BankTransferInformation:
     def __init__(
         self,
@@ -1108,6 +1098,7 @@ class BankTransferInformation:
         self.sender_new_balance = sender_new_balance
         self.recipient_new_balance = recipient_new_balance
 
+
 class BankSetBalanceInformation:
     def __init__(
         self,
@@ -1121,11 +1112,8 @@ class BankSetBalanceInformation:
         self.recipient_old_balance = recipient_old_balance
         self.recipient_new_balance = recipient_new_balance
 
+
 class BankPruneInformation:
-    def __init__(
-        self,
-        scope: int,
-        pruned_users: Union(List[int], Dict[str, List[int]])
-    ):
+    def __init__(self, scope: int, pruned_users: Union(List[int], Dict[str, List[int]])):
         self.scope = scope
         self.pruned_users = pruned_users
