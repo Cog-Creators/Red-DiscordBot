@@ -4,7 +4,7 @@
 Installing the pre-requirements
 -------------------------------
 
-CentOS 8.4+, CentOS Stream 8, RHEL 8.4+, and Oracle Linux 8.4+ have all required packages available in official repositories.
+Red Hat Enterprise Linux (RHEL) 8.4-8.x and its derivatives have all required packages available in official repositories.
 Install them with dnf:
 
 .. prompt:: bash
