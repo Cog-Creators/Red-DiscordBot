@@ -1,9 +1,8 @@
 .. _install-centos-7:
-.. _install-rhel-7:
 
-===================================
-Installing Red on CentOS and RHEL 7
-===================================
+==========================
+Installing Red on CentOS 7
+==========================
 
 .. include:: _includes/linux-preamble.rst
 
@@ -16,7 +15,12 @@ Install the pre-requirements with yum:
 .. prompt:: bash
 
     sudo yum -y groupinstall development
-    sudo yum -y install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel tk-devel libffi-devel findutils java-11-openjdk-headless nano
+    sudo yum -y install gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel java-11-openjdk-headless nano git
+
+In order to install gcc 8, we'll use SCL repository:
+
+.. prompt:: bash
+
     sudo yum -y install centos-release-scl
     sudo yum -y install devtoolset-8-gcc devtoolset-8-gcc-c++
     echo "source scl_source enable devtoolset-8" >> ~/.bashrc
