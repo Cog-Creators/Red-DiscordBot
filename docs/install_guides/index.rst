@@ -25,6 +25,7 @@ we recommend **Ubuntu 20.04 LTS**.
    oracle-linux-8
    raspberry-pi-os-10
    rhel-8
+   rocky-linux-8
    ubuntu-1804
    ubuntu-2004
    ubuntu-non-lts
