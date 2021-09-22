@@ -1,4 +1,4 @@
-.. _install-debian11:
+.. _install-debian-11:
 
 ====================================
 Installing Red on Debian 11 Bullseye

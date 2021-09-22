@@ -1,5 +1,5 @@
-.. _install-centos7:
-.. _install-rhel7:
+.. _install-centos-7:
+.. _install-rhel-7:
 
 ===================================
 Installing Red on CentOS and RHEL 7

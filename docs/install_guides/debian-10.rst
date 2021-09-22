@@ -1,4 +1,4 @@
-.. _install-debian10:
+.. _install-debian-10:
 
 ==================================
 Installing Red on Debian 10 Buster

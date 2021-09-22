@@ -1,4 +1,4 @@
-.. _install-raspbian10:
+.. _install-raspberry-pi-os-10:
 
 =================================
 Installing Red on Raspberry Pi OS

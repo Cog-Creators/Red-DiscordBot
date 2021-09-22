@@ -1,5 +1,5 @@
-.. _install-centos:
-.. _install-rhel:
+.. _install-centos-8:
+.. _install-rhel-8:
 
 ===================================
 Installing Red on CentOS and RHEL 8
