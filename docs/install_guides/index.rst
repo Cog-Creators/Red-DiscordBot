@@ -1,3 +1,5 @@
+.. _install-guides:
+
 Installing Red
 ==============
 
@@ -14,12 +16,15 @@ we recommend **Ubuntu 20.04 LTS**.
    arch
    centos-7
    centos-8
+   centos-stream-8
    debian-10
    debian-11
    fedora
    opensuse-leap-15
    opensuse-tumbleweed
+   oracle-linux-8
    raspberry-pi-os-10
+   rhel-8
    ubuntu-1804
    ubuntu-2004
    ubuntu-non-lts
