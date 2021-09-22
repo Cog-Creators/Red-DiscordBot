@@ -653,7 +653,7 @@ Documentation changes
 - Added information about the Red Index to `guide_publish_cogs` (:issue:`4778`)
 - Restructured the host list (:issue:`4710`)
 - Clarified how to use pm2 with ``pyenv virtualenv`` (:issue:`4709`)
-- Updated the pip command for Red with the postgres extra in `install_linux_mac` document to work on zsh shell (:issue:`4697`)
+- Updated the pip command for Red with the postgres extra in Linux/macOS install guide to work on zsh shell (:issue:`4697`)
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`4770`)
 
 
@@ -873,7 +873,7 @@ Documentation changes
 ---------------------
 
 - Added `cog guide for Cleanup cog <cleanup>` (:issue:`4488`)
-- Removed multi-line commands from `install_linux_mac` to avoid confusing readers (:issue:`4550`)
+- Removed multi-line commands from Linux install guides to avoid confusing readers (:issue:`4550`)
 
 
 Redbot 3.4.1 (2020-10-27)
