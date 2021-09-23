@@ -4,7 +4,7 @@ Redbot 3.4.14 (2021-09-23)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :: FIXME
+| :ghuser:`aikaterna`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`L33Tech`, :ghuser:`maxbooiii`, :ghuser:`RheingoldRiver`
 
 Read before updating
 --------------------
