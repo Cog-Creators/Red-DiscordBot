@@ -45,11 +45,11 @@ msgstr "Arasından biri beklenenler: {}"
 
 #: redbot/core/commands/converter.py:545
 msgid "Command \"{arg}\" not found."
-msgstr ""
+msgstr "\"{arg}\" komutu bulunamadı."
 
 #: redbot/core/commands/converter.py:555
 msgid "Cog \"{arg}\" not found."
-msgstr ""
+msgstr "\"{arg}\" cogu bulunamadı."
 
 #: redbot/core/commands/help.py:106
 msgid "No"
@@ -80,7 +80,16 @@ msgid "Maximum characters per page: {page_char_limit}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}\n"
 "Reaction timeout (only used if menus are used): {react_timeout} seconds{tagline_info}"
-msgstr ""
+msgstr "Sayfa başına en fazla karakter: {page_char_limit}\n"
+"Sunucu başına en fazla sayfa (sadece menü kullanılmıyorsa): {max_pages_in_guild}\n"
+"Yardım bir menüdür: {use_menus}\n"
+"Yardım gizli komutları gösterir: {show_hidden}\n"
+"Yardım komutların diğer adlarını gösterir: {show_aliases}\n"
+"Yardım sadece kullanılabilen komutları gösterir: {verify_checks}\n"
+"Yardım var olduğu sürece eğer direk sorulursa kullanılamayan komutları da gösterir:{verify_exists}\n"
+"Silme gecikmesi: {delete_delay}\n"
+"Yardım özel mesaj olarak gönderilirse tik işareti ile cevap ver: {use_tick}\n"
+"Tepki zaman aşımı (sadece menü kullanılmıyorsa): {react_timeout} saniye{tagline_info}"
 
 #: redbot/core/commands/help.py:276
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."

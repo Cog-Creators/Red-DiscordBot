@@ -116,7 +116,7 @@ msgstr ""
 #: redbot/cogs/alias/alias.py:380
 #, docstring
 msgid "Edit an existing global alias."
-msgstr ""
+msgstr "Édite un alias global existant."
 
 #: redbot/cogs/alias/alias.py:412
 #, docstring

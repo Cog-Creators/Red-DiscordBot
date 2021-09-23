@@ -181,7 +181,14 @@ msgid "Mass bans user(s) from the server.\n\n"
 "        User IDs need to be provided in order to ban\n"
 "        using this command.\n"
 "        "
-msgstr ""
+msgstr "Masseutestenger bruker(e) fra tjeneren.\n\n"
+"        `dager` er antall dager med meldinger å rydde opp i massbanen.\n\n"
+"        Example:\n"
+"           - `[p]massban 345628097929936898 57287406247743488 7 they broke all rules.`\n"
+"            Dette vil utestenge alle lagrede brukere, og slette 7 dager verdt av meldinger fra disse.\n\n"
+"        Bruker-ID-er må fremlegges for å utestenge\n"
+"        med denne kommandoen.\n"
+"        "
 
 #: redbot/cogs/mod/kickban.py:433
 msgid "Banned {num} users from the server."
@@ -243,12 +250,14 @@ msgstr "Du har blitt midlertidig utestengt fra {server_name} til {date}."
 #: redbot/cogs/mod/kickban.py:649
 msgid "\n\n"
 "**Reason:** {reason}"
-msgstr ""
+msgstr "\n\n"
+"**Årsak:** {reason}"
 
 #: redbot/cogs/mod/kickban.py:651
 msgid "\n\n"
 "Here is an invite for when your ban expires: {invite_link}"
-msgstr ""
+msgstr "\n\n"
+"Her er en invitasjon for når utestengelsen din utløper: {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:661
 msgid "I can't do that for some reason."
@@ -405,7 +414,9 @@ msgstr "Slett forsinkelsesinnstillinger gjenopprettet."
 msgid "Change a member's nickname.\n\n"
 "        Leaving the nickname empty will remove it.\n"
 "        "
-msgstr ""
+msgstr "Endre et medlem sitt kallenavn.\n\n"
+"        Med tomt kallenavn vil den fjernes.\n"
+"        "
 
 #: redbot/cogs/mod/names.py:46
 msgid "Nicknames must be between 2 and 32 characters long."
@@ -479,7 +490,12 @@ msgid "Show information about a member.\n\n"
 "        If the member has no roles, previous names or previous nicknames,\n"
 "        these fields will be omitted.\n"
 "        "
-msgstr ""
+msgstr "Vis informasjon om et medlem.\n\n"
+"        Dette inkluderer felt for status, discord påloggingsdato, server\n"
+"        bli med dato, stemmetilstand og tidligere navn/kallenavn.\n\n"
+"        Hvis medlemmet ikke har noen roller, tidligere navn eller tidligere kallenavn,\n"
+"        disse feltene vil bli utelatt.\n"
+"        "
 
 #: redbot/cogs/mod/names.py:212
 msgid "Unknown"
@@ -536,7 +552,7 @@ msgstr "Medlem #{} | Bruker ID: {}"
 #: redbot/cogs/mod/names.py:307
 #, docstring
 msgid "Show previous names and nicknames of a member."
-msgstr ""
+msgstr "Vis tidligere navn og kallenavn på et medlem."
 
 #: redbot/cogs/mod/names.py:311
 msgid "**Past 20 names**:"
@@ -548,7 +564,7 @@ msgstr "**Siste 20 kallenavn**:"
 
 #: redbot/cogs/mod/names.py:324
 msgid "That member doesn't have any recorded name or nickname change."
-msgstr ""
+msgstr "Det medlemmet har ikke noe registrert navn eller endring av kallenavn."
 
 #: redbot/cogs/mod/settings.py:23
 #, docstring

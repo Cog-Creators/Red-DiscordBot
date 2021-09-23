@@ -21,15 +21,16 @@ msgstr "\"{argument}\" не является числом."
 
 #: redbot/core/commands/converter.py:84
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr "`{unit}` не является допустимой единицей измерения для этой команды"
+msgstr "`{unit}` не является допустимой единицей времени для этой команды"
 
 #: redbot/core/commands/converter.py:140 redbot/core/commands/converter.py:202
 msgid "The time set is way too high, consider setting something reasonable."
-msgstr "Установка времени слишком высока, попробуйте установить что-нибудь разумное."
+msgstr "Установленное время слишком велико\n"
+"подумайте о том, чтобы установить что-то разумное."
 
 #: redbot/core/commands/converter.py:144
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr "Это количество времени слишком большое для этой команды. (Максимум: {maximum})"
+msgstr "Это количество времени слишком маленькое для этой команды. (Минимум: {minimum})"
 
 #: redbot/core/commands/converter.py:150
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"

@@ -104,15 +104,15 @@ msgstr "Sunucu filtresinden kelimeler çıkarmak veya eklemek için temel komut.
 #: redbot/cogs/filter/filter.py:157
 #, docstring
 msgid "Clears this server's filter list."
-msgstr ""
+msgstr "Bu sunucunun filtre listesini temizler."
 
 #: redbot/cogs/filter/filter.py:162
 msgid "The filter list for this server is empty."
-msgstr ""
+msgstr "Bu sunucunun filtre listesi boş."
 
 #: redbot/cogs/filter/filter.py:164
 msgid "Are you sure you want to clear this server's filter list?"
-msgstr ""
+msgstr "Bu sunucunun filtre listesini temizlemek istediğinize emin misiniz?"
 
 #: redbot/cogs/filter/filter.py:170 redbot/cogs/filter/filter.py:219
 msgid "You took too long to respond."
@@ -120,7 +120,7 @@ msgstr "Cevap vermeniz çok uzun sürdü."
 
 #: redbot/cogs/filter/filter.py:175
 msgid "Server filter cleared."
-msgstr ""
+msgstr "Sunucu filtresi temizlendi."
 
 #: redbot/cogs/filter/filter.py:177 redbot/cogs/filter/filter.py:226
 msgid "No changes have been made."
@@ -133,7 +133,7 @@ msgstr "Sunucunun yasaklı kelime listesini gönder."
 
 #: redbot/cogs/filter/filter.py:186
 msgid "There are no current words setup to be filtered in this server."
-msgstr ""
+msgstr "Şu anda bu sunucu için filtrelenmeye ayarlanmış sözcük bulunmamakta."
 
 #: redbot/cogs/filter/filter.py:189
 msgid "Filtered in this server:"
@@ -155,19 +155,19 @@ msgstr "Kanal filtresinden kelimeler ekleyip çıkarmak için temel komut.\n\n"
 #: redbot/cogs/filter/filter.py:206
 #, docstring
 msgid "Clears this channel's filter list."
-msgstr ""
+msgstr "Bu kanalın filtre listesini temizler."
 
 #: redbot/cogs/filter/filter.py:211
 msgid "The filter list for this channel is empty."
-msgstr ""
+msgstr "Bu kanalın filtre listesi boş."
 
 #: redbot/cogs/filter/filter.py:213
 msgid "Are you sure you want to clear this channel's filter list?"
-msgstr ""
+msgstr "Bu kanalın filtre listesini temizlemek istediğinize emin misiniz?"
 
 #: redbot/cogs/filter/filter.py:224
 msgid "Channel filter cleared."
-msgstr ""
+msgstr "Kanal filtresi temizlendi."
 
 #: redbot/cogs/filter/filter.py:230
 #, docstring
@@ -176,7 +176,7 @@ msgstr "Kanalda yasaklı olan kelimelerin listesini gönder."
 
 #: redbot/cogs/filter/filter.py:235
 msgid "There are no current words setup to be filtered in this channel."
-msgstr ""
+msgstr "Şu anda bu kanal için filtrelenmeye ayarlanmış sözcük bulunmamakta."
 
 #: redbot/cogs/filter/filter.py:238
 msgid "Filtered in this channel:"

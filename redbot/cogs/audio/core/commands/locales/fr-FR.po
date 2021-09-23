@@ -783,7 +783,7 @@ msgstr "Paramètres du serveur"
 
 #: redbot/cogs/audio/core/commands/audioset.py:999
 msgid "Auto-deafen:      [{auto_deafen}]\n"
-msgstr ""
+msgstr "Mise en sourdine automatique: [{auto_deafen}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1002
 msgid "Auto-disconnect:  [{dc}]\n"
@@ -1138,7 +1138,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1471
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1472
 msgid "Music without sound isn't music at all. Try setting the volume higher then 0%."
@@ -1147,15 +1147,15 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1480
 #: redbot/cogs/audio/core/commands/audioset.py:1488
 msgid "Setting changed"
-msgstr ""
+msgstr "Paramètre modifié"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1481
 msgid "The maximum volume has been limited to 150%, be easy on your ears."
-msgstr ""
+msgstr "Le volume maximum a été limité à 150%, soyez gentil avec vos oreilles."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1489
 msgid "The maximum volume has been limited to {max_volume}%."
-msgstr ""
+msgstr "Le volume maximum a été limité à {max_volume}%."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
@@ -1635,7 +1635,7 @@ msgstr "Enlever la piste de la liste de lecture"
 
 #: redbot/cogs/audio/core/commands/controller.py:833
 msgid "Removed {track} from the queue."
-msgstr "{track} a été retirer de la liste."
+msgstr "{track} a été retiré de la liste de lecture."
 
 #: redbot/cogs/audio/core/commands/controller.py:851
 msgid "Removed 0 tracks, nothing matches the URL provided."
@@ -1643,7 +1643,7 @@ msgstr "0 pistes supprimées, rien ne correspond à l'URL fournie."
 
 #: redbot/cogs/audio/core/commands/controller.py:857
 msgid "Removed {removed_tracks} tracks from queue which matched the URL provided."
-msgstr ""
+msgstr "{removed_tracks} pistes qui correspondait à l'url ont été retirées de la liste de lecture."
 
 #: redbot/cogs/audio/core/commands/controller.py:867
 #, docstring
@@ -1849,7 +1849,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:54
 msgid "`{java_path}` is not a valid executable"
-msgstr ""
+msgstr "`{java_path}` n'est pas un exécutable valide"
 
 #: redbot/cogs/audio/core/commands/llset.py:61
 msgid "Java Executable Changed"
@@ -1857,7 +1857,7 @@ msgstr "L'exécutable de Java a changé"
 
 #: redbot/cogs/audio/core/commands/llset.py:62
 msgid "Audio will now use `{exc}` to run your Lavalink.jar"
-msgstr ""
+msgstr "L'Audio va maintenant utiliser `{exc}` pour exécuter votre Lavalink.jar"
 
 #: redbot/cogs/audio/core/commands/llset.py:72
 #: redbot/cogs/audio/core/commands/llset.py:85
@@ -1879,7 +1879,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:185
 #: redbot/cogs/audio/core/commands/llset.py:210
 msgid "Please reload Audio (`{prefix}reload audio`)."
-msgstr ""
+msgstr "Veuillez recharger l'Audio (`{prefix}reload audio`)."
 
 #: redbot/cogs/audio/core/commands/llset.py:93
 #, docstring
@@ -2787,7 +2787,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1288
 msgid "The track has been removed from the playlist: {playlist_name} (`{id}`) [**{scope}**]."
-msgstr ""
+msgstr "La piste a été retirée de la playlist : {playlist_name} (`{id}`) [**{scope}**]."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1306
 #, docstring
@@ -3069,7 +3069,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/queue.py:278
 msgid "Removed {removed_tracks} tracks queued by {member.display_name}."
-msgstr ""
+msgstr "{removed_tracks} pistes mises par {member.display_name} ont été retirées de la liste de lecture."
 
 #: redbot/cogs/audio/core/commands/queue.py:285
 #, docstring

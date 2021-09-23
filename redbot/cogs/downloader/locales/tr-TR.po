@@ -130,11 +130,11 @@ msgstr "Yeni bir depo ekle.\n\n"
 
 #: redbot/cogs/downloader/downloader.py:544
 msgid "Repo names cannot start or end with a dot."
-msgstr ""
+msgstr "Repo adları nokta ile başlayamaz veya bitemez."
 
 #: redbot/cogs/downloader/downloader.py:548
 msgid "Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots."
-msgstr ""
+msgstr "Repo adları yalnızca A-z karakterleri, sayılar, alt çizgiler, tireler ve noktalar içerebilir."
 
 #: redbot/cogs/downloader/downloader.py:560
 msgid "The repo name you provided is already in use. Please choose another name."
@@ -850,7 +850,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1450
 msgid "\n"
 "Cog with this name is already installed from a different repo."
-msgstr ""
+msgstr "\n"
+"Bu ada sahip bir cog başka bir depodan zaten kurulmuş."
 
 #: redbot/cogs/downloader/downloader.py:1467
 msgid " (Minimum: {min_version})"
@@ -873,7 +874,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1495
 msgid "\n"
 "This cog requires higher python version than you have: "
-msgstr ""
+msgstr "\n"
+"Bu cog size bulunandan daha yeni python sürümüne ihtiyaç duyar: "
 
 #: redbot/cogs/downloader/downloader.py:1499
 msgid "\n"
@@ -906,7 +908,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1598
 msgid "\n"
 "End user data statement of this cog has changed:"
-msgstr ""
+msgstr "\n"
+"Bu cog için son kullanıcı veri bildirgesi değişti:"
 
 #: redbot/cogs/downloader/downloader.py:1600
 msgid "\n"

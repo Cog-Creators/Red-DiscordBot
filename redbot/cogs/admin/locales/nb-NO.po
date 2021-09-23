@@ -45,7 +45,7 @@ msgstr "Jeg kan ikke la deg redigere {role.name} fordi den rollen er høyere enn
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need the \"Manage Roles\" permission to do that."
-msgstr ""
+msgstr "Jeg trenger tillatelsen \"Administrer roller\" for å gjøre dette."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -258,7 +258,10 @@ msgid "\n"
 "        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Legg til en rolle, eller et utvalg av roller, til listen over tilgjengelige selvroller.\n\n"
+"        MERK: Rollen skilles mellom store og små bokstaver!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -266,15 +269,15 @@ msgstr "Jeg kan ikke la deg gi {role.name} til  fordi den rollen er høyere enn 
 
 #: redbot/cogs/admin/admin.py:473
 msgid "The role \"{role.name}\" is already a selfrole."
-msgstr ""
+msgstr "Rollen \"{role.name}\" er allerede en selv rolle."
 
 #: redbot/cogs/admin/admin.py:479
 msgid "Added {count} selfroles."
-msgstr ""
+msgstr "La til {count} selvroller."
 
 #: redbot/cogs/admin/admin.py:481
 msgid "Added 1 selfrole."
-msgstr ""
+msgstr "Lagt til 1 selvrolle."
 
 #: redbot/cogs/admin/admin.py:487
 #, docstring
@@ -282,7 +285,10 @@ msgid "\n"
 "        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Fjern en rolle, eller et utvalg av roller, fra listen over tilgjengelige selvroller.\n\n"
+"        MERK: Rollen skille mellom store og små bokstaver!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -290,11 +296,11 @@ msgstr "Jeg kan ikke la deg fjerne {role.name} fra fordi den rollen er høyere e
 
 #: redbot/cogs/admin/admin.py:506
 msgid "Removed {count} selfroles."
-msgstr ""
+msgstr "Fjernet {count} selvroller."
 
 #: redbot/cogs/admin/admin.py:508
 msgid "Removed 1 selfrole."
-msgstr ""
+msgstr "Fjernet 1 selvrolle."
 
 #: redbot/cogs/admin/admin.py:515
 #, docstring
@@ -323,5 +329,5 @@ msgstr "Admin cog er ikke lastet."
 
 #: redbot/cogs/admin/converters.py:21
 msgid "The role \"{role_name}\" is not a valid selfrole."
-msgstr ""
+msgstr "Rollen \"{role_name}\" er ikke en gyldig selvrolle."
 

@@ -253,7 +253,10 @@ msgid "\n"
 "        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Kullanılabilir selfroleler listesine bir veya daha fazla rol ekle.\n\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -261,15 +264,15 @@ msgstr "{role.name} kullanıcısına belirttiğin rolü vermene müsaade edemem 
 
 #: redbot/cogs/admin/admin.py:473
 msgid "The role \"{role.name}\" is already a selfrole."
-msgstr ""
+msgstr "\"{role.name}\" zaten bir selfrole."
 
 #: redbot/cogs/admin/admin.py:479
 msgid "Added {count} selfroles."
-msgstr ""
+msgstr "{count} selfrole eklendi."
 
 #: redbot/cogs/admin/admin.py:481
 msgid "Added 1 selfrole."
-msgstr ""
+msgstr "1 selfrole eklendi."
 
 #: redbot/cogs/admin/admin.py:487
 #, docstring
@@ -277,7 +280,10 @@ msgid "\n"
 "        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Kullanılabilir selfroleler listesinden bir veya daha fazla rol çıkar.\n\n"
+"        NOT: Rol büyük küçük harf duyarlıdır!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -285,11 +291,11 @@ msgstr "{role.name} kullanıcısından belirttiğin rolü silmene müsaade edeme
 
 #: redbot/cogs/admin/admin.py:506
 msgid "Removed {count} selfroles."
-msgstr ""
+msgstr "{count} selfrole kaldırıldı."
 
 #: redbot/cogs/admin/admin.py:508
 msgid "Removed 1 selfrole."
-msgstr ""
+msgstr "1 selfrole kaldırıldı."
 
 #: redbot/cogs/admin/admin.py:515
 #, docstring
@@ -318,5 +324,5 @@ msgstr "The Admin eklentisi yüklenmedi."
 
 #: redbot/cogs/admin/converters.py:21
 msgid "The role \"{role_name}\" is not a valid selfrole."
-msgstr ""
+msgstr "\"{role_name}\" geçerli bir selfrole değil."
 

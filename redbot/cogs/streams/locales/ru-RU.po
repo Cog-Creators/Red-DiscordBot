@@ -21,8 +21,8 @@ msgid "Various commands relating to streaming platforms.\n\n"
 "    You can check if a Twitch, YouTube or Picarto stream is\n"
 "    currently live.\n"
 "    "
-msgstr "Различные команды, относящиеся к платформам потокового вещания.\n\n"
-"    Вы можете проверить, идет ли поток на Twitch, YouTube или Picarto\n"
+msgstr "Различные команды, относящиеся к стриминговым площадкам.\n\n"
+"    Вы можете проверить, идет ли трансляция на Twitch, YouTube или Picarto\n"
 "    в данный момент.\n"
 "    "
 
@@ -154,12 +154,12 @@ msgstr "На этом сервере нет активных оповещени�
 #: redbot/cogs/streams/streams.py:457
 #, docstring
 msgid "Manage stream alert settings."
-msgstr "Управление настройками оповещения о потоке."
+msgstr "Управление настройками оповещения о трансляции."
 
 #: redbot/cogs/streams/streams.py:463
 #, docstring
 msgid "Set stream check refresh time."
-msgstr "Установка времени обновления проверки потока."
+msgstr "Установить время обновления проверки трансляции."
 
 #: redbot/cogs/streams/streams.py:465
 msgid "You cannot set the refresh timer to less than 60 seconds"
@@ -168,7 +168,7 @@ msgstr "Вы не можете установить таймер обновле�
 #: redbot/cogs/streams/streams.py:475
 #, docstring
 msgid "Explain how to set the twitch token."
-msgstr "Объясните, как установить твитч-токен."
+msgstr "Объясните, как установить Twitch токен."
 
 #: redbot/cogs/streams/streams.py:476
 msgid "To set the twitch API tokens, follow these steps:\n"
@@ -180,20 +180,20 @@ msgid "To set the twitch API tokens, follow these steps:\n"
 "{command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel\n"
 "or in DM with the bot.\n"
-msgstr "Чтобы установить токены API twitch, выполните следующие действия:\n"
+msgstr "Чтобы установить API токен twitch, выполните следующие действия:\n"
 "1. Перейдите на эту страницу: https://dev.twitch.tv/dashboard/apps.\n"
-"2. Нажмите *Регистрация вашего приложения*.\n"
+"2. Нажмите на *Регистрация вашего приложения*.\n"
 "3. Введите имя, установите OAuth Redirect URI на `http://localhost` и выберите категорию приложения по своему усмотрению.\n"
 "4. Нажмите *Регистрация*.\n"
 "5. Скопируйте ID клиента и секрет клиента в:\n"
 "{command}.\n\n"
 "Примечание: Эти токены являются конфиденциальными и должны использоваться только в приватном канале\n"
-"или в ЛС с ботом.\n"
+"или в личных сообщениях с ботом.\n"
 
 #: redbot/cogs/streams/streams.py:499
 #, docstring
 msgid "Explain how to set the YouTube token."
-msgstr "Объясните, как установить токен YouTube."
+msgstr "Объясните, как установить YouTube токен."
 
 #: redbot/cogs/streams/streams.py:501
 msgid "To get one, do the following:\n"
@@ -206,7 +206,7 @@ msgid "To get one, do the following:\n"
 "4. Copy your API key and run the command {command}\n\n"
 "Note: These tokens are sensitive and should only be used in a private channel\n"
 "or in DM with the bot.\n"
-msgstr "Чтобы получить его, сделайте следующее:\n"
+msgstr "Чтобы получить токен YouTube, сделайте следующее:\n"
 "1. Создайте проект\n"
 "(подробнее см. https://support.google.com/googleapi/answer/6251787)\n"
 "2. Включите YouTube Data API v3 \n"
@@ -215,7 +215,7 @@ msgstr "Чтобы получить его, сделайте следующее:
 "(инструкции см. на https://support.google.com/googleapi/answer/6158862)\n"
 "4. Скопируйте свой API-ключ и выполните команду {command}.\n\n"
 "Примечание: Эти токены являются конфиденциальными и должны использоваться только в приватном канале\n"
-"или в ЛС с ботом.\n"
+"или в личных сообщениях с ботом.\n"
 
 #: redbot/cogs/streams/streams.py:515
 msgid "<your_api_key_here>"
@@ -234,7 +234,7 @@ msgid "Set stream alert message when mentions are enabled.\n\n"
 "        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).\n\n"
 "        For example: `[p]streamset message mention {mention}, {stream.display_name} is live!`\n"
 "        "
-msgstr "Установить уведомление о стриме, когда упоминания включены.\n\n"
+msgstr "Установить уведомление о трансляции, когда упоминания включены.\n\n"
 "        Используйте `{mention}` в сообщении, чтобы вставить выбранные упоминания.\n"
 "        Используйте `{stream}` в сообщении, чтобы вставить канал или имя пользователя.\n"
 "        Используйте `{stream.display_name}` в сообщении, чтобы вставить отображаемое имя канала (на Twitch, это может отличаться от `{stream}`).\n\n"
@@ -243,7 +243,7 @@ msgstr "Установить уведомление о стриме, когда 
 
 #: redbot/cogs/streams/streams.py:540 redbot/cogs/streams/streams.py:554
 msgid "Stream alert message set!"
-msgstr "Сообщение уведомления о трансляции установлено!"
+msgstr "Уведомление о трансляции установлено!"
 
 #: redbot/cogs/streams/streams.py:545
 #, docstring
@@ -252,7 +252,7 @@ msgid "Set stream alert message when mentions are disabled.\n\n"
 "        Use `{stream.display_name}` in the message to insert the channel's display name (on Twitch, this may be different from `{stream}`).\n\n"
 "        For example: `[p]streamset message nomention {stream.display_name} is live!`\n"
 "        "
-msgstr "Установить оповещение об отключённом упоминании.\n\n"
+msgstr "Установите оповещение, когда упоминания отключены.\n\n"
 "        Используйте `{stream}` в сообщении, чтобы вставить канал или имя пользователя.\n"
 "        Используйте `{stream.display_name}` в сообщении, чтобы вставить отображаемое имя канала (на Twitch, это может отличаться от `{stream}`).\n\n"
 "        Например: `[p]streamset message nomention {stream.display_name} is live!`\n"
@@ -261,7 +261,7 @@ msgstr "Установить оповещение об отключённом у
 #: redbot/cogs/streams/streams.py:559
 #, docstring
 msgid "Reset the stream alert messages in this server."
-msgstr "Сброс сообщений уведомлений о трансляции в текущем сервере."
+msgstr "Сброс уведомлений о трансляциях в текущем сервере."
 
 #: redbot/cogs/streams/streams.py:563
 msgid "Stream alerts in this server will now use the default alert message."
@@ -331,7 +331,7 @@ msgstr "Уведомления больше не будут удаляться."
 #: redbot/cogs/streams/streams.py:636
 #, docstring
 msgid "Toggle excluding rerun streams from alerts."
-msgstr "Вкл/Выкл исключение перезапуска потоков из оповещений."
+msgstr "Включить/Выключить исключение перезапуска трансляций из оповещений."
 
 #: redbot/cogs/streams/streams.py:641
 msgid "Streams of type 'rerun' will be included in alerts."
@@ -339,12 +339,12 @@ msgstr "Потоки типа 'повторное выполнение' буду
 
 #: redbot/cogs/streams/streams.py:644
 msgid "Streams of type 'rerun' will no longer send an alert."
-msgstr "Потоки типа 'reerun' больше не будут отправлять предупреждение."
+msgstr "Потоки типа 'rerun' больше не будут отправлять уведомление."
 
 #: redbot/cogs/streams/streams.py:649
 #, docstring
 msgid "Toggle excluding YouTube streams schedules from alerts."
-msgstr "Вкл/Выкл исключение расписаний потоков YouTube из оповещений."
+msgstr "Включить/Выключить исключение расписаний трансляций YouTube из оповещений."
 
 #: redbot/cogs/streams/streams.py:654
 msgid "Streams schedules will be included in alerts."
@@ -352,7 +352,7 @@ msgstr "Графики трансляций будут включены в оп�
 
 #: redbot/cogs/streams/streams.py:657
 msgid "Streams schedules will no longer send an alert."
-msgstr "Графики вещания больше не будут отправлять оповещение."
+msgstr "Графики трансляций больше не будут отправлять оповещение."
 
 #: redbot/cogs/streams/streams.py:665
 msgid "I'll now send a notification in this channel when {stream.name} is live."
@@ -372,11 +372,11 @@ msgstr "{display_name} в прямом эфире!"
 
 #: redbot/cogs/streams/streamtypes.py:226
 msgid "This stream will start in {time}"
-msgstr "Этот поток начнется через {time}"
+msgstr "Трансляция начнется через {time}"
 
 #: redbot/cogs/streams/streamtypes.py:232
 msgid "This stream was scheduled for {min} minutes ago"
-msgstr "Этот поток был запланирован на {min} минут назад"
+msgstr "Эта трансляция была запланирована на {min} минут назад"
 
 #: redbot/cogs/streams/streamtypes.py:446
 msgid "Untitled broadcast"
@@ -402,7 +402,7 @@ msgstr "Воспроизводится: "
 
 #: redbot/cogs/streams/streamtypes.py:505
 msgid "None"
-msgstr "Нет"
+msgstr "Отсутствует"
 
 #: redbot/cogs/streams/streamtypes.py:508
 msgid "NSFW | "

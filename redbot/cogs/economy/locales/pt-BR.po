@@ -17,23 +17,23 @@ msgstr ""
 
 #: redbot/cogs/economy/converters.py:19
 msgid "{arg} is not an integer."
-msgstr ""
+msgstr "{arg} não é um número inteiro."
 
 #: redbot/cogs/economy/converters.py:21
 msgid "{arg} is not a positive integer."
-msgstr ""
+msgstr "{arg} não é um número positivo inteiro."
 
 #: redbot/cogs/economy/economy.py:48
 msgid "JACKPOT! 226! Your bid has been multiplied * 50!"
-msgstr ""
+msgstr "JACKPOT! 256! Sua aposta foi multiplicada * 50!"
 
 #: redbot/cogs/economy/economy.py:52
 msgid "4LC! Your bid has been multiplied * 25!"
-msgstr ""
+msgstr "4LC! Sua aposta foi multiplicada * 25!"
 
 #: redbot/cogs/economy/economy.py:56
 msgid "Three cherries! Your bid has been multiplied * 20!"
-msgstr ""
+msgstr "Três cerejas! Sua aposta foi multiplicada * 20!"
 
 #: redbot/cogs/economy/economy.py:60
 msgid "2 6! Your bid has been multiplied * 4!"
@@ -45,7 +45,7 @@ msgstr "Duas cerejas! Sua aposta foi multiplicada * 3!"
 
 #: redbot/cogs/economy/economy.py:68
 msgid "Three symbols! Your bid has been multiplied * 10!"
-msgstr ""
+msgstr "Três símbolos! Sua aposta foi multiplicada * 10!"
 
 #: redbot/cogs/economy/economy.py:72
 msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
@@ -60,20 +60,27 @@ msgid "Slot machine payouts:\n"
 "{cherries.value} {cherries.value} Bet * 3\n\n"
 "Three symbols: Bet * 10\n"
 "Two symbols: Bet * 2"
-msgstr ""
+msgstr "Pagamentos da máquina caça-níquel:\n"
+"{two.value} {two.value} {six.value} Aposta * 50\n"
+"{flc.value} {flc.value} {flc.value} Aposta * 25\n"
+"{cherries.value} {cherries.value} {cherries.value} Aposta * 20\n"
+"{two.value} {six.value} Aposta * 4\n"
+"{cherries.value} {cherries.value} Aposta * 3\n\n"
+"Três Símbolos: Aposta * 10\n"
+"Dois Símbolos: Aposta * 2"
 
 #: redbot/cogs/economy/economy.py:108
 msgid "Invalid value, the argument must be an integer, optionally preceded with a `+` or `-` sign."
-msgstr ""
+msgstr "Valor inválido, o argumento dever um número inteiro, opcionalmente precedido com um sinal de `+` ou `-`."
 
 #: redbot/cogs/economy/economy.py:120
 msgid "Invalid value, the amount of currency to increase or decrease must be an integer different from zero."
-msgstr ""
+msgstr "Valor inválido, a quantidade de moeda para aumentar ou diminuir deve ser um número inteiro diferente de zero."
 
 #: redbot/cogs/economy/economy.py:132
 #, docstring
 msgid "Get rich and have fun with imaginary currency!"
-msgstr ""
+msgstr "Fique rico e divirta-se com a moeda imaginária!"
 
 #: redbot/cogs/economy/economy.py:182
 #, docstring
@@ -339,11 +346,11 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:790
 msgid "Nothing!"
-msgstr ""
+msgstr "Nada!"
 
 #: redbot/cogs/economy/economy.py:794
 msgid "Your bid: {bid}"
-msgstr ""
+msgstr "Sua aposta: {bid}"
 
 #: redbot/cogs/economy/economy.py:795
 msgid "\n"
@@ -504,7 +511,7 @@ msgstr ""
 
 #: redbot/cogs/economy/economy.py:1069
 msgid "Registering an account will now give {num} {currency}."
-msgstr ""
+msgstr "Registrar uma conta dará agora {num} {currency}."
 
 #: redbot/cogs/economy/economy.py:1078
 msgid "weeks"

@@ -25,7 +25,7 @@ msgstr "Спам упоминаниями (Автобан)"
 
 #: redbot/cogs/mod/events.py:80
 msgid "Mention Spam (Autokick)"
-msgstr "Спам упоминаний (Автокик)"
+msgstr "Спам упоминаний (Авто-кик)"
 
 #: redbot/cogs/mod/events.py:95
 msgid "Mention spam (Autokick)"
@@ -89,7 +89,7 @@ msgstr "Причина не была названа."
 
 #: redbot/cogs/mod/kickban.py:179 redbot/cogs/mod/kickban.py:480
 msgid "User with ID {user_id} is already banned."
-msgstr "Пользователь с идентификатором {user_id} уже забанен."
+msgstr "Пользователь с ID {user_id} уже забанен."
 
 #: redbot/cogs/mod/kickban.py:192
 msgid "User with ID {user_id} was upgraded from a temporary to a permanent ban."

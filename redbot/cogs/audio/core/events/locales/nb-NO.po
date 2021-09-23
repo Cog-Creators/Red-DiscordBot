@@ -123,7 +123,8 @@ msgstr "Spor satt fast"
 #: redbot/cogs/audio/core/events/lavalink.py:282
 msgid "Playback of the song has stopped due to an unexpected error.\n"
 "{error}"
-msgstr ""
+msgstr "Avspilling av sangen har stoppet på grunn av uventet feil.\n"
+"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:288
 msgid "Track Error"

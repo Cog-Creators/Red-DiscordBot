@@ -1159,28 +1159,28 @@ msgstr "Pode levar alguns minutos para Lavalink iniciar completamente."
 #: redbot/cogs/audio/core/commands/audioset.py:1467
 #, docstring
 msgid "Set the maximum volume allowed in this server."
-msgstr ""
+msgstr "Defina o volume máximo permitido neste servidor."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1471
 msgid "Error"
-msgstr ""
+msgstr "Erro"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1472
 msgid "Music without sound isn't music at all. Try setting the volume higher then 0%."
-msgstr ""
+msgstr "Música sem nenhum volume não é música. Tente definir o volume maior que 0%."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1480
 #: redbot/cogs/audio/core/commands/audioset.py:1488
 msgid "Setting changed"
-msgstr ""
+msgstr "Configuração alterada"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1481
 msgid "The maximum volume has been limited to 150%, be easy on your ears."
-msgstr ""
+msgstr "Agora o volume máximo é 150%, cuidado para não prejudicar seus ouvidos."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1489
 msgid "The maximum volume has been limited to {max_volume}%."
-msgstr ""
+msgstr "O volume máximo é limitado a {max_volume}%."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
@@ -1241,17 +1241,18 @@ msgstr "Desconectando..."
 #: redbot/cogs/audio/core/commands/controller.py:86
 #, docstring
 msgid "Now playing."
-msgstr ""
+msgstr "Tocando."
 
 #: redbot/cogs/audio/core/commands/controller.py:110
 #: redbot/cogs/audio/core/commands/queue.py:77
 msgid "\n"
 " Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\n"
+" Solicitado por: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:113
 msgid "Nothing."
-msgstr ""
+msgstr "Nada."
 
 #: redbot/cogs/audio/core/commands/controller.py:118
 #: redbot/cogs/audio/core/commands/queue.py:79
@@ -1261,48 +1262,48 @@ msgstr "Reproduzindo agora"
 #: redbot/cogs/audio/core/commands/controller.py:128
 #: redbot/cogs/audio/core/commands/queue.py:89
 msgid "Auto-Play"
-msgstr ""
+msgstr "Auto-Reproduzir"
 
 #: redbot/cogs/audio/core/commands/controller.py:134
 #: redbot/cogs/audio/core/commands/queue.py:95
 msgid "Shuffle"
-msgstr ""
+msgstr "Aleatório"
 
 #: redbot/cogs/audio/core/commands/controller.py:140
 #: redbot/cogs/audio/core/commands/queue.py:101
 msgid "Repeat"
-msgstr ""
+msgstr "Repetir"
 
 #: redbot/cogs/audio/core/commands/controller.py:200
 #, docstring
 msgid "Pause or resume a playing track."
-msgstr ""
+msgstr "Pausa ou retoma uma música em reprodução."
 
 #: redbot/cogs/audio/core/commands/controller.py:211
 #: redbot/cogs/audio/core/commands/controller.py:217
 msgid "Unable To Manage Tracks"
-msgstr ""
+msgstr "Não foi possível gerenciar as músicas"
 
 #: redbot/cogs/audio/core/commands/controller.py:212
 msgid "You must be in the voice channel to pause or resume."
-msgstr ""
+msgstr "Você deve estar no canal de voz para alternar a reprodução."
 
 #: redbot/cogs/audio/core/commands/controller.py:218
 msgid "You need the DJ role to pause or resume tracks."
-msgstr ""
+msgstr "Você precisa do cargo de DJ para moderar as músicas."
 
 #: redbot/cogs/audio/core/commands/controller.py:229
 msgid "Track Paused"
-msgstr ""
+msgstr "Música Pausada"
 
 #: redbot/cogs/audio/core/commands/controller.py:233
 msgid "Track Resumed"
-msgstr ""
+msgstr "Música Resumida"
 
 #: redbot/cogs/audio/core/commands/controller.py:242
 #, docstring
 msgid "Skip to the start of the previously played track."
-msgstr ""
+msgstr "Pula para o começo da música anterior."
 
 #: redbot/cogs/audio/core/commands/controller.py:256
 #: redbot/cogs/audio/core/commands/controller.py:262
@@ -1312,15 +1313,15 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:511
 #: redbot/cogs/audio/core/commands/controller.py:520
 msgid "Unable To Skip Tracks"
-msgstr ""
+msgstr "Não foi possível pular a música"
 
 #: redbot/cogs/audio/core/commands/controller.py:257
 msgid "You must be in the voice channel to skip the track."
-msgstr ""
+msgstr "Você precisa estar num canal de voz para pular a música."
 
 #: redbot/cogs/audio/core/commands/controller.py:269
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
-msgstr ""
+msgstr "Você precisa do cargo de DJ ou ter solicitado a faixa para recolocar as as músicas anteriores."
 
 #: redbot/cogs/audio/core/commands/controller.py:277
 #: redbot/cogs/audio/core/commands/player.py:53
@@ -1363,22 +1364,23 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:806
 #: redbot/cogs/audio/core/commands/playlists.py:1481
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "Não foi possível tocar a música"
 
 #: redbot/cogs/audio/core/commands/controller.py:277
 msgid "No previous track."
-msgstr ""
+msgstr "Não há música anterior."
 
 #: redbot/cogs/audio/core/commands/controller.py:298
 msgid "Replaying Track"
-msgstr ""
+msgstr "Reproduzindo Música"
 
 #: redbot/cogs/audio/core/commands/controller.py:305
 #, docstring
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
-msgstr ""
+msgstr "Avançar ou retrocede a música por segundos ou para um tempo específico.\n\n"
+"        Aceita valor em segundos ou formatado como 00:00:00 (`hh:mm:ss`) ou 00:00 (`mm:ss`)."
 
 #: redbot/cogs/audio/core/commands/controller.py:323
 #: redbot/cogs/audio/core/commands/controller.py:330
@@ -1386,11 +1388,11 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:344
 #: redbot/cogs/audio/core/commands/controller.py:356
 msgid "Unable To Seek Tracks"
-msgstr ""
+msgstr "Não foi possível procurar esse tempo"
 
 #: redbot/cogs/audio/core/commands/controller.py:324
 msgid "You must be in the voice channel to use seek."
-msgstr ""
+msgstr "Você precisa estar num canal de voz para para usar *seek*."
 
 #: redbot/cogs/audio/core/commands/controller.py:338
 msgid "You need the DJ role or be the track requester to use seek."
@@ -1836,7 +1838,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/equalizer.py:366
 msgid "Invalid Band"
-msgstr ""
+msgstr "Banda Inválida"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:367
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
