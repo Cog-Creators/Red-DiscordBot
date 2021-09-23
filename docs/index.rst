@@ -12,8 +12,7 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 1
     :caption: Installation Guides:
 
-    install_windows
-    install_linux_mac
+    install_guides/index
     bot_application_guide
     update_red
     about_venv
