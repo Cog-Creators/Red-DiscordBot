@@ -13,7 +13,7 @@ This is a quick start guide for a general usage.
 .. note::
 
     If you haven't installed Red, please do it by following
-    the :ref:`installation guides <main>`.
+    one of the `installation guides <install_guides/index>`.
 
 Assuming you correctly installed Red, you should have a
 window like this:
@@ -307,8 +307,8 @@ If you want to do it, follow these steps.
 
 3. **Install and set up Red**
 
-  Follow one of the Linux installation guide. We provide guides for the
-  most used distributions. Check the :ref:`home page <main>` and search for
+  Follow one of the Linux installation guides. We provide guides for the
+  most used distributions. Check the `list of install guides <install_guides/index>` and search for
   your distribution.
 
 4. **Set up an auto-restart**
