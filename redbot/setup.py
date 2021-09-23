@@ -272,8 +272,8 @@ async def remove_instance(
 
     driver_cls = drivers.get_driver_class(backend)
     if delete_data is True:
+        await driver_cls.initialize(**data_manager.storage_details())
         try:
-            await driver_cls.initialize(**data_manager.storage_details())
             await driver_cls.delete_all_data(interactive=interactive, drop_db=drop_db)
         finally:
             await driver_cls.teardown()
