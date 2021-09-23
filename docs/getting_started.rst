@@ -13,7 +13,7 @@ This is a quick start guide for a general usage.
 .. note::
 
     If you haven't installed Red, please do it by following
-    the :ref:`installation guides <main>`.
+    one of the `installation guides <install_guides/index>`.
 
 Assuming you correctly installed Red, you should have a
 window like this:
@@ -266,14 +266,14 @@ If you want to do it, follow these steps.
     basics of the Unix commands, such as navigating the system files or use
     a terminal text editor.
 
-    You should follow `this guide
+    You should read `DigitalOcean's tutorial: An Introduction to Linux Basics
     <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
-    from DigitalOcean which will introduce you to the Linux basics.
+    if you have not used Linux before.
 
 1. **Find a host**
 
   You need to find a server to host Red. You can rent a VPS (it can be free)
-  on an online service. Please check :ref:`this page <host-list>` for
+  on an online service. Please check :ref:`this list of hosts <host-list>` for
   more information.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
@@ -307,8 +307,8 @@ If you want to do it, follow these steps.
 
 3. **Install and set up Red**
 
-  Just follow one of the Linux installation guide. We provide guides for the
-  most used distributions. Check the :ref:`home page <main>` and search for
+  Follow one of the Linux installation guides. We provide guides for the
+  most used distributions. Check the `list of install guides <install_guides/index>` and search for
   your distribution.
 
 4. **Set up an auto-restart**
@@ -318,7 +318,7 @@ If you want to do it, follow these steps.
   side task and handle fatal errors, so you can just leave your server running
   and enjoy Red!
 
-  For that, just follow :ref:`this guide <systemd-service-guide>`.
+  For that, follow :ref:`the systemd service guide <systemd-service-guide>`.
 
 .. _getting-started-userdocs:
 
