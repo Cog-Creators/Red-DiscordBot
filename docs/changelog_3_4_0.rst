@@ -1,5 +1,38 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.14 (2021-09-23)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`L33Tech`, :ghuser:`maxbooiii`, :ghuser:`RheingoldRiver`
+
+Read before updating
+--------------------
+
+#. Versions of RHEL older than 8.4 (including 7) and versions of CentOS older than 8.4 (excluding 7) are no longer supported.
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.14 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1239>`__.
+
+
+End-user changelog
+------------------
+
+- **Core Bot** - Added the new native Discord timestamp in the ``[p]uptime`` command (:issue:`5323`)
+- **Core Bot** - ``redbot-setup delete`` command no longer requires database connection if the data deletion was not requested (:issue:`5312`, :issue:`5313`)
+- **Audio** - Fixed intermittent 403 Forbidden errors (:issue:`5329`)
+- **Modlog** - Fixed formatting of **Last modified at** field in Modlog cases (:issue:`5317`)
+
+
+Documentation changes
+---------------------
+
+- Each operating system now has a dedicated install guide (:issue:`5328`)
+- Fixed Raspberry Pi OS install guide (:issue:`5314`, :issue:`5328`)
+- Added install guide for CentOS Stream 8, Oracle Linux 8.4-8.x, and Rocky Linux 8 (:issue:`5328`)
+- Install guides for RHEL derivatives no longer require the use of pyenv (:issue:`5328`)
+
+
 Redbot 3.4.13 (2021-09-09)
 ==========================
 
