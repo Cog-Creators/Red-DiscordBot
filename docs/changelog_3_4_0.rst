@@ -27,7 +27,7 @@ End-user changelog
 Documentation changes
 ---------------------
 
-- Install guides are now split into a document per each operating system (:issue:`5328`)
+- Each operating system now has a dedicated install guide (:issue:`5328`)
 - Fixed Raspberry Pi OS install guide (:issue:`5314`, :issue:`5328`)
 - Added install guide for CentOS Stream 8, Oracle Linux 8.4-8.x, and Rocky Linux 8 (:issue:`5328`)
 - Install guides for RHEL derivatives no longer require the use of pyenv (:issue:`5328`)
