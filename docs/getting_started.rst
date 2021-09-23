@@ -266,9 +266,9 @@ If you want to do it, follow these steps.
     basics of the Unix commands, such as navigating the system files or use
     a terminal text editor.
 
-    You should follow `DigitalOcean's Linux basics guide
+    You should read `DigitalOcean's tutorial: An Introduction to Linux Basics
     <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
-    as an introduction.
+    if you have not used Linux before.
 
 1. **Find a host**
 
