@@ -9,7 +9,7 @@ Redbot 3.4.14 (2021-09-23)
 Read before updating
 --------------------
 
-#. Versions of RHEL older than 8.4 (including 7) and version of CentOS older than 8.4 (excluding 7) are no longer supported.
+#. Versions of RHEL older than 8.4 (including 7) and versions of CentOS older than 8.4 (excluding 7) are no longer supported.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.14 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1239>`__.
