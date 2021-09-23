@@ -107,7 +107,11 @@ msgid "Choose between multiple options.\n\n"
 "        Options are separated by spaces.\n\n"
 "        To denote options which include whitespace, you should enclose the options in double quotes.\n"
 "        "
-msgstr ""
+msgstr "Velg mellom flere alternativer.\n\n"
+"        Det må være minst 2 alternativer å velge mellom.\n"
+"        Alternativer er separert med mellomrom.\n\n"
+"        For å avstemme alternativer som inkluderer «mellomrom», bør du legge ved alternativene i dobbelt tilbud.\n"
+"        "
 
 #: redbot/cogs/general/general.py:94
 msgid "Not enough options to pick from."
@@ -235,7 +239,7 @@ msgstr "\n"
 
 #: redbot/cogs/general/general.py:257
 msgid "Created on <t:{0}>. That's <t:{0}:R>!"
-msgstr ""
+msgstr "Opprettet den <t:{0}>. Det er <t:{0}:R>!"
 
 #: redbot/cogs/general/general.py:268
 msgid "Region"

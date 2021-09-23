@@ -40,11 +40,11 @@ msgstr "İptal."
 
 #: redbot/cogs/cleanup/cleanup.py:142
 msgid "1 message was deleted."
-msgstr ""
+msgstr "1 mesaj silindi."
 
 #: redbot/cogs/cleanup/cleanup.py:145
 msgid "{num} messages were deleted."
-msgstr ""
+msgstr "{num} mesaj silindi."
 
 #: redbot/cogs/cleanup/cleanup.py:168
 #, docstring
@@ -232,7 +232,7 @@ msgstr "Son X mesajdan aynı olanları siler ve sadece bir tanesini bırakır.\n
 #: redbot/cogs/cleanup/cleanup.py:731
 #, docstring
 msgid "Manage the settings for the cleanup command."
-msgstr ""
+msgstr "Temizlik komutu ayarlarını yönetin."
 
 #: redbot/cogs/cleanup/cleanup.py:736
 #, docstring
@@ -240,15 +240,18 @@ msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
 "        This message will be deleted after 5 seconds.\n"
 "        "
-msgstr ""
+msgstr "Temizlik bildirimlerini açıp kapatın.\n\n"
+"        Açık olduğunda, her temizlik sonrası kaç mesaj silindiğini yazan bir mesaj atılır.\n"
+"        Bu mesaj 5 saniye sonra silinir.\n"
+"        "
 
 #: redbot/cogs/cleanup/cleanup.py:744
 msgid "I will no longer notify of message deletions."
-msgstr ""
+msgstr "Artık mesajların silindiği haber verilmeyecek."
 
 #: redbot/cogs/cleanup/cleanup.py:747
 msgid "I will now notify of message deletions."
-msgstr ""
+msgstr "Mesajların silindiği artık haber verilecek."
 
 #: redbot/cogs/cleanup/converters.py:17
 msgid "{} doesn't look like a valid message ID."

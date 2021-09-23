@@ -239,7 +239,7 @@ msgstr "\n"
 
 #: redbot/cogs/general/general.py:257
 msgid "Created on <t:{0}>. That's <t:{0}:R>!"
-msgstr ""
+msgstr "<t:{0}> tarihinde oluşturuldu, bu <t:{0}:R> demek!"
 
 #: redbot/cogs/general/general.py:268
 msgid "Region"

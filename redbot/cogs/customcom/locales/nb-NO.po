@@ -299,7 +299,10 @@ msgid "Shows a custom command's responses and its settings.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command_name>` The custom command to show.\n"
 "        "
-msgstr ""
+msgstr "Viser en egendefinert kommandos svar og dens innstillinger.\n\n"
+"        **Argumenter:**\n\n"
+"        - `<command_name>` Den tilpassede kommandoen å vise.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:553
 msgid "I could not not find that custom command."

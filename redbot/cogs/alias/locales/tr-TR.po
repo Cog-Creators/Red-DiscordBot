@@ -24,7 +24,14 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Komutlar için takma adlar oluştur.\n\n"
+"    Takma adlar komutlar için kısa yol olarak kullanılabilen alternatif\n"
+"    isimlerdir. Hem bir komut için seçenekler depolamak\n"
+"    (daha sonra tekrar yazmadan kullanmak için) hem de \"x y z\" demek\n"
+"    gibi basit bir şey için kısa yol olarak kullanılabilirler.\n\n"
+"    Kullanıldıkları zaman takma adlar önlerine yazılanları alıp\n"
+"    depoladıkları komuta eklerler.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
@@ -95,28 +102,28 @@ msgstr "Yeni bir global kısaltma '{name}' ismi ile oluşturuldu."
 #: redbot/cogs/alias/alias.py:345
 #, docstring
 msgid "Edit an existing alias in this server."
-msgstr ""
+msgstr "Bu sunucuda var olan bir diğer adı düzenleyin."
 
 #: redbot/cogs/alias/alias.py:350 redbot/cogs/alias/alias.py:385
 msgid "The alias with the name {name} does not exist."
-msgstr ""
+msgstr "{name} şeklinde bir diğer ad yok."
 
 #: redbot/cogs/alias/alias.py:356 redbot/cogs/alias/alias.py:391
 msgid "You attempted to edit an alias to a command that doesn't exist."
-msgstr ""
+msgstr "Olmayan bir komutun kısa yolunu düzenlemeye çalıştınız."
 
 #: redbot/cogs/alias/alias.py:365 redbot/cogs/alias/alias.py:398
 msgid "The alias with the trigger `{name}` has been edited sucessfully."
-msgstr ""
+msgstr "`{name}` ile tetiklenen kısaltma başarıyla düzenlendi."
 
 #: redbot/cogs/alias/alias.py:372 redbot/cogs/alias/alias.py:405
 msgid "Alias with the name `{name}` was not found."
-msgstr ""
+msgstr "`{name}` adlı kısaltma bulunamadı."
 
 #: redbot/cogs/alias/alias.py:380
 #, docstring
 msgid "Edit an existing global alias."
-msgstr ""
+msgstr "Mevcut bir kısaltmayı düzenleyin."
 
 #: redbot/cogs/alias/alias.py:412
 #, docstring

@@ -764,7 +764,11 @@ msgid "Toggle the domain restriction on Audio.\n\n"
 "        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and\n"
 "        Bandcamp links.\n"
 "        "
-msgstr ""
+msgstr "Slå av/på domenestriksjoner for lyd.\n\n"
+"        Når vekslet av brukere vil kunne spille sanger fra ikke-kommersielle nettsider og lenker.\n"
+"        Når aktivert på en bruker er begrenset til YouTube, SoundCloud, Vimeo, Twitch, og\n"
+"        Bandcampin-lenker.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:934
 msgid "Commercial links only: {true_or_false}."
@@ -794,7 +798,7 @@ msgstr "Server Innstillinger"
 
 #: redbot/cogs/audio/core/commands/audioset.py:999
 msgid "Auto-deafen:      [{auto_deafen}]\n"
-msgstr ""
+msgstr "Auto-Deafen:      [{auto_deafen}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1002
 msgid "Auto-disconnect:  [{dc}]\n"
@@ -837,7 +841,14 @@ msgid "Max volume:       [{max_volume}%]\n"
 "Song notify msgs: [{notify}]\n"
 "Songs as status:  [{status}]\n"
 "Spotify search:   [{countrycode}]\n"
-msgstr ""
+msgstr "Maks volum: [{max_volume}%]\n"
+"Vedvarende kø: [{persist_queue}]\n"
+"Repeat: [{repeat}]\n"
+"Shuffle: [{shuffle}]\n"
+"Shuffle bumped: [{bumpped_shuffle}]\n"
+"Sang notifikasjoner: [{notify}]\n"
+"Sanger som status: [{status}]\n"
+"Spotify søk: [{countrycode}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1045
 msgid "Thumbnails:       [{0}]\n"
@@ -1147,28 +1158,28 @@ msgstr "Det kan ta et par minutter før Lavalink har startet opp."
 #: redbot/cogs/audio/core/commands/audioset.py:1467
 #, docstring
 msgid "Set the maximum volume allowed in this server."
-msgstr ""
+msgstr "Angi maksimalt volum tillatt på denne serveren."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1471
 msgid "Error"
-msgstr ""
+msgstr "Feil"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1472
 msgid "Music without sound isn't music at all. Try setting the volume higher then 0%."
-msgstr ""
+msgstr "Musikk uten lyd er ikke musikk i det hele tatt. Prøv å sette volumet høyere enn 0 %."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1480
 #: redbot/cogs/audio/core/commands/audioset.py:1488
 msgid "Setting changed"
-msgstr ""
+msgstr "Innstillingene er endret"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1481
 msgid "The maximum volume has been limited to 150%, be easy on your ears."
-msgstr ""
+msgstr "Maksimumsvolumet er begrenset til 150%, og være lett for ørene dine."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1489
 msgid "The maximum volume has been limited to {max_volume}%."
-msgstr ""
+msgstr "Maksimalt volum er begrenset til {max_volume}%."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
@@ -1537,15 +1548,15 @@ msgstr "Du trenger DJ-rollen for å tilkalle boten."
 #: redbot/cogs/audio/core/commands/player.py:695
 #: redbot/cogs/audio/core/commands/queue.py:339
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "Jeg har ikke tillatelse til å koble til og snakke i kanalen din."
 
 #: redbot/cogs/audio/core/commands/controller.py:672
 msgid "Unable To Do This Action"
-msgstr ""
+msgstr "Kan ikke utføre denne handlingen"
 
 #: redbot/cogs/audio/core/commands/controller.py:673
 msgid "I am already in your channel."
-msgstr ""
+msgstr "Jeg er allerede i kanalen din."
 
 #: redbot/cogs/audio/core/commands/controller.py:685
 #: redbot/cogs/audio/core/commands/player.py:95
@@ -2001,7 +2012,12 @@ msgid "Play all songs in a localtracks folder.\n\n"
 "        ​ ​ `[p]local folder folder_name`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Queues all of the tracks inside the folder_name folder.\n"
 "        "
-msgstr ""
+msgstr "Spill av alle sanger i en lokalspor mappe.\n\n"
+"        ​ ​ ​ ​ `[p]local folder`\n"
+"                Åpne en meny for å velge en mappe som skal stå i kø.\n\n"
+"        ​ ​ `[p]local folder folder_name`\n"
+"               Kjør alle sporene i mappen mappenavn.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:50
 msgid "Folder Not Found"
@@ -2023,7 +2039,15 @@ msgid "Play a local track.\n\n"
 "        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Use a direct link relative to the localtracks folder.\n"
 "        "
-msgstr ""
+msgstr "Spill av et lokalt spor.\n\n"
+"        For å spille et lokalt spor, enten bruk menyen til å velge et spor eller skrive inn i sporbanen direkte med spillkommandoen.\n"
+"        For å spille en hel mappe, bruk `[p]for å hjelpe lokal mappe` for instruksjoner.\n\n"
+"        **Usage**:\n"
+"        ​ ​ ​ ​ `[p]local play`\n"
+"                 Åpne en meny for å velge et spor.\n\n"
+"        ​ ​ ​ ​ `[p]play localtracks\\album_folder\\song_name.mp3`\n"
+"        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`        \n"
+"                 Bruk en direkte lenke i forhold til localtracks -mappen.        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:79
 #: redbot/cogs/audio/core/commands/localtracks.py:135
@@ -2081,7 +2105,10 @@ msgid "Play the specified track or search for a close match.\n\n"
 "        To play a local track, the query should be `<parentfolder>\\<filename>`.\n"
 "        If you are the bot owner, use `[p]audioset info` to display your localtracks path.\n"
 "        "
-msgstr ""
+msgstr "Spill av det angitte sporet eller søk etter en nærkamp.\n\n"
+"        For å spille et lokalt spor bør spørringen være `<parentfolder>\\<filename>`.\n"
+"        Hvis du er botens eier, bruk `[p]audioset info` for å vise localtracks banen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/player.py:54
 #: redbot/cogs/audio/core/commands/player.py:162

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-08-13 00:36+0000\n"
+"POT-Creation-Date: 2021-09-23 00:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -46,14 +46,14 @@ msgid "Connection to Lavalink has not yet been established."
 msgstr "Tilkoblingen til Lavalink er ikke etablert ennå."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:117
+msgid "Unable To Play Tracks"
+msgstr "Kan ikke spille spor"
+
+#: redbot/cogs/audio/core/utilities/formatting.py:117
 #: redbot/cogs/audio/core/utilities/player.py:441
 #: redbot/cogs/audio/core/utilities/player.py:523
 msgid "Queue size limit reached."
 msgstr "Grensen for kø er nådd."
-
-#: redbot/cogs/audio/core/utilities/formatting.py:117
-msgid "Unable To Play Tracks"
-msgstr "Kan ikke spille spor"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:155
 #: redbot/cogs/audio/core/utilities/player.py:599
@@ -402,7 +402,7 @@ msgstr "Kan ikke hente spillelister"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:542
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "Jeg har ikke tillatelse til å koble til og snakke i kanalen din."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:573
 msgid "You must be in the voice channel to use the playlist command."

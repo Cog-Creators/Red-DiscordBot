@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-07 21:44+0000\n"
+"POT-Creation-Date: 2021-09-23 14:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -17,430 +17,448 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:100
 msgid "To fix this issue, you need to do one of these:"
-msgstr ""
+msgstr "For å løse dette problemet må du gjøre en av disse:"
 
 #: redbot/core/_diagnoser.py:108
 msgid "Check if the command caller is not a bot"
-msgstr ""
+msgstr "Sjekk om kommandoinnringeren ikke er en bot"
 
 #: redbot/core/_diagnoser.py:114
 msgid "The user is a bot which prevents them from running any command."
-msgstr ""
+msgstr "Brukeren er en bot som hindrer dem i å kjøre en kommando."
 
 #: redbot/core/_diagnoser.py:115
 msgid "This cannot be fixed - bots should not be listening to other bots."
-msgstr ""
+msgstr "Dette kan ikke fikses - botter skal ikke lytte til andre botter."
 
 #: redbot/core/_diagnoser.py:119
 msgid "Check if the bot can send messages in the given channel"
-msgstr ""
+msgstr "Sjekk om boten kan sende meldinger i den oppgitte kanalen"
 
 #: redbot/core/_diagnoser.py:125
 msgid "Bot doesn't have permission to send messages in the given channel."
-msgstr ""
+msgstr "Bot har ikke tillatelse til å sende meldinger i den angitte kanalen."
 
 #: redbot/core/_diagnoser.py:126
 msgid "To fix this issue, ensure that the permissions setup allows the bot to send messages per Discord's role hierarchy:\n"
 "https://support.discord.com/hc/en-us/articles/206141927"
-msgstr ""
+msgstr "For å løse denne problemet, sørg for at rettighetene oppsettet tillater boten å sende meldinger per Discord rollehierarki:\n"
+"https://support.discord.com/hc/en-us/articles/206141927"
 
 #: redbot/core/_diagnoser.py:137
 msgid "Check if the channel and the server aren't set to be ignored"
-msgstr ""
+msgstr "Merk av om kanalen og serveren ikke er satt til å bli ignorert"
 
 #: redbot/core/_diagnoser.py:142
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {channel} channel and the server aren't a part of that list."
-msgstr ""
+msgstr "For å løse dette problemet, sjekker listen som returneres av kommandoen {command} og sikrer at kanalen {channel} og serveren ikke er en del av den listen."
 
 #: redbot/core/_diagnoser.py:150
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {channel} channel, the channel category it belongs to ({channel_category}), and the server aren't a part of that list."
-msgstr ""
+msgstr "For å løse dette problemet må du sjekke listen returnert av {command} kommandoen og forsikre deg om at {channel} kanalen. kanalkategorien den tilhører ({channel_category}), og serveren er ikke en del av den listen."
 
 #: redbot/core/_diagnoser.py:164
 msgid "The bot is set to ignore commands in the given channel or this server."
-msgstr ""
+msgstr "Boten er satt til å ignorere kommandoer i den angitte kanalen eller denne serveren."
 
 #: redbot/core/_diagnoser.py:174
 msgid "Global allowlist prevents the user from running this command."
-msgstr ""
+msgstr "Global tillatelsesliste hindrer brukeren i å kjøre denne kommandoen."
 
 #: redbot/core/_diagnoser.py:175
 msgid "To fix this issue, you can either add the user to the allowlist, or clear the allowlist.\n"
 "If you want to keep the allowlist, you can run {command_1} which will add {user} to the allowlist.\n"
 "If you instead want to clear the allowlist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "For å løse dette problemet kan du enten legge til brukeren til i tillatelseslisten, eller fjerne tillatelseslisten.\n"
+"Hvis du vil beholde tillatelseslisten, kan du kjøre {command_1} som vil legge {user} til tillatt listen.\n"
+"Hvis du i stedet ønsker å fjerne tillatelseslisten og la alle brukere kjøre kommandoer fritt, kan du kjøre {command_2} for å gjøre det."
 
 #: redbot/core/_diagnoser.py:191
 msgid "Global blocklist prevents the user from running this command."
-msgstr ""
+msgstr "Global blokkliste hindrer brukeren fra å kjøre denne kommandoen."
 
 #: redbot/core/_diagnoser.py:192
 msgid "To fix this issue, you can either remove the user from the blocklist, or clear the blocklist.\n"
 "If you want to keep the blocklist, you can run {command_1} which will remove {user} from the blocklist.\n"
 "If you instead want to clear the blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "For å løse dette problemet kan du enten fjerne brukeren fra blokklisten eller fjerne blokkelisten.\n"
+"Hvis du vil beholde blokklisten kan du kjøre {command_1} som vil fjerne {user} fra blokkeringslisten.\n"
+"Hvis du i stedet ønsker å fjerne blokklisten og la alle brukere kjøre kommandoer fritt, kan du kjøre {command_2} for å gjøre det."
 
 #: redbot/core/_diagnoser.py:214
 msgid "Local allowlist prevents the user from running this command."
-msgstr ""
+msgstr "Lokalt tillatt liste forhindrer brukeren i å kjøre denne kommandoen."
 
 #: redbot/core/_diagnoser.py:215
 msgid "To fix this issue, you can either add the user or one of their roles to the local allowlist, or clear the local allowlist.\n"
 "If you want to keep the local allowlist, you can run {command_1} which will add {user} to the local allowlist.\n"
 "If you instead want to clear the local allowlist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "For å løse denne feilen kan du enten legge til brukeren eller en av deres roller i den lokale tillatelseslisten, eller fjerne tillatelseslisten.\n"
+"Hvis du vil beholde den lokale tillatelsen, kan du kjøre {command_1} som vil legge {user} til den lokale tillatelseslisten.\n"
+"Hvis du i stedet ønsker å slette den lokale tillatelseslisten og la alle brukere kjøre kommandoer fritt, du kan kjøre {command_2} for å gjøre det."
 
 #: redbot/core/_diagnoser.py:229
 msgid "Local blocklist prevents the user from running this command."
-msgstr ""
+msgstr "Lokal blokkliste hindrer brukeren i å kjøre denne kommandoen."
 
 #: redbot/core/_diagnoser.py:244
 msgid "To fix this issue, you can either remove the user's roles from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove the user's roles ({roles}) from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "For å løse dette problemet, kan du enten fjerne brukerens roller fra den lokale blokklisten, eller fjerne den lokale blokklisten.\n"
+"Hvis du vil beholde den lokale blokklisten, du kan kjøre {command_1} som vil fjerne brukerens roller ({roles}) fra den lokale blokklisten.\n"
+"Hvis du i stedet ønsker å fjerne den lokale blokklisten, og la alle brukere kjøre kommandoer fritt, du kan kjøre {command_2} for å gjøre det."
 
 #: redbot/core/_diagnoser.py:269
 msgid "To fix this issue, you can either remove the user and their roles from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove {user} and their roles ({roles}) from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "For å løse dette problemet kan du enten fjerne brukeren og deres roller fra den lokale blokklisten, eller rydde den lokale blokklisten.\n"
+"Hvis du vil beholde den lokale blokklisten, du kan kjøre {command_1} som vil fjerne {user} og deres roller ({roles}) fra den lokale blokklisten.\n"
+"Hvis du i stedet ønsker å fjerne den lokale blokklisten, og la alle brukere kjøre kommandoer fritt, du kan kjøre {command_2} for å gjøre det."
 
 #: redbot/core/_diagnoser.py:291
 msgid "To fix this issue, you can either remove the user from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove {user} from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "For å løse dette problemet kan du enten fjerne brukeren fra den lokale blokklisten, eller fjerne den lokale blokklisten.\n"
+"Hvis du vil beholde den lokale blokklisten, kan du kjøre {command_1} som vil fjerne {user} fra den lokale blokklisten.\n"
+"Hvis du i stedet ønsker å fjerne den lokale blokklisten, og la alle brukere kjøre kommandoer fritt, du kan kjøre {command_2} for å gjøre det."
 
 #: redbot/core/_diagnoser.py:306
 msgid "Allowlist and blocklist checks"
-msgstr ""
+msgstr "Tillatte kontroller av liste og blokkeringslister"
 
 #: redbot/core/_diagnoser.py:338
 msgid "Global, cog and command checks"
-msgstr ""
+msgstr "Global, cog og kommando kontroller"
 
 #: redbot/core/_diagnoser.py:345
 msgid "The given command is disabled in this guild."
-msgstr ""
+msgstr "Den oppgitte kommandoen er deaktivert i denne serveren."
 
 #: redbot/core/_diagnoser.py:347 redbot/core/_diagnoser.py:824
 msgid "One of the parents of the given command is disabled globally."
-msgstr ""
+msgstr "En av foreldrene til den gitte kommandoen er deaktivert globalt."
 
 #: redbot/core/_diagnoser.py:353
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command in this guild."
-msgstr ""
+msgstr "Du kan kjøre {command} som vil aktivere kommandoen {affected_command} i denne guilden for å fikse dette problemet."
 
 #: redbot/core/_diagnoser.py:374
 msgid "Other issues related to the checks"
-msgstr ""
+msgstr "Andre spørsmål knyttet til kontrollen"
 
 #: redbot/core/_diagnoser.py:375
 msgid "There's an issue related to the checks for {command} but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Det finnes et problem relatert til kontrollene for {command}, men vi kan ikke fastslå den eksakte årsaken."
 
 #: redbot/core/_diagnoser.py:379
 msgid "To fix this issue, a manual review of the global, cog and command checks is required."
-msgstr ""
+msgstr "For å fikse dette problemet kreves en manuell gjennomgang av de globale, cog og kommandokontrollene."
 
 #: redbot/core/_diagnoser.py:387
 msgid "Global checks"
-msgstr ""
+msgstr "Globale kontroller"
 
 #: redbot/core/_diagnoser.py:397
 msgid "One of the global checks for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "En av de globale kontrollene for kommandoen {command} mislyktes med en melding:\n"
+"{message}"
 
 #: redbot/core/_diagnoser.py:401
 msgid "One of the global checks for the command {command} failed without a message."
-msgstr ""
+msgstr "En av de globale sjekker for kommandoen {command} mislyktes uten en melding."
 
 #: redbot/core/_diagnoser.py:405
 msgid "Cog check"
-msgstr ""
+msgstr "Cog sjekk"
 
 #: redbot/core/_diagnoser.py:422
 msgid "The cog check for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "Cog sjekk for kommandoen {command} mislyktes med en melding:\n"
+"{message}"
 
 #: redbot/core/_diagnoser.py:423
 msgid "The cog check for the command {command} failed without a message."
-msgstr ""
+msgstr "Cog sjekk for kommandoen {command} mislyktes uten en melding."
 
 #: redbot/core/_diagnoser.py:427
 msgid "Command checks"
-msgstr ""
+msgstr "Kommando sjekker"
 
 #: redbot/core/_diagnoser.py:441
 msgid "One of the command checks for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "En av kommando sjekker for kommandoen {command} mislyktes med en melding:\n"
+"{message}"
 
 #: redbot/core/_diagnoser.py:445
 msgid "One of the command checks for the command {command} failed without a message."
-msgstr ""
+msgstr "En av kommando kontroller for kommandoen {command} mislyktes uten en melding."
 
 #: redbot/core/_diagnoser.py:449
 msgid "Permissions verification"
-msgstr ""
+msgstr "Tillatelse verifikasjon"
 
 #: redbot/core/_diagnoser.py:452
 msgid "Permissions verification for {cog} cog"
-msgstr ""
+msgstr "Tillatelsesverifisering for {cog} cog"
 
 #: redbot/core/_diagnoser.py:469
 msgid "The cog of the given command is disabled in this guild."
-msgstr ""
+msgstr "Cog på den angitte kommandoen er deaktivert i denne guilden."
 
 #: redbot/core/_diagnoser.py:470
 msgid "To fix this issue, you can run {command} which will enable the {affected_cog} cog in this guild."
-msgstr ""
+msgstr "For å fikse dette problemet, kan du kjøre {command} som vil aktivere {affected_cog} cog i denne guilden."
 
 #: redbot/core/_diagnoser.py:484
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {cog} cog."
-msgstr ""
+msgstr "Bot mangler noen av kanaltillatelsene ({permissions}) som kreves av {cog} cog."
 
 #: redbot/core/_diagnoser.py:492
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {command} command."
-msgstr ""
+msgstr "Bot mangler noen av kanaltillatelsene ({permissions}) som kreves av kommandoen {command}."
 
 #: redbot/core/_diagnoser.py:504
 msgid "To fix this issue, grant the required permissions to the bot through role settings or channel overrides."
-msgstr ""
+msgstr "For å løse denne problemet, gi de nødvendige tillatelser til boten gjennom rolleinnstillinger eller kanal tillatelser."
 
 #: redbot/core/_diagnoser.py:523 redbot/core/_diagnoser.py:619
 msgid "Other issues related to the permissions."
-msgstr ""
+msgstr "Andre spørsmål knyttet til tillatelsene."
 
 #: redbot/core/_diagnoser.py:524
 msgid "Fatal error: There's an issue related to the permissions for the {cog} cog but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Feil: det finnes et problem knyttet til tillatelsene for {cog} cog men vi klarer ikke å finne den eksakte årsaken."
 
 #: redbot/core/_diagnoser.py:529
 msgid "Fatal error: There's an issue related to the permissions for the {command} command but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Feil: det er et problem knyttet til rettighetene for {command} kommandoen, men vi kan ikke finne den eksakte årsaken."
 
 #: redbot/core/_diagnoser.py:533
 msgid "This is an unexpected error, please report it on Red's issue tracker."
-msgstr ""
+msgstr "Dette er en uventet feil, vennligst rapporter detpå Rød's problem spor."
 
 #: redbot/core/_diagnoser.py:540
 msgid "Ensure that the command is not bot owner only"
-msgstr ""
+msgstr "Sørg for at kommandoen ikke bare er eieren av boten"
 
 #: redbot/core/_diagnoser.py:548
 msgid "The command is bot owner only and the given user is not a bot owner."
-msgstr ""
+msgstr "Kommandoen er kun bot eieren og den angitte brukeren er ikke en bot eier."
 
 #: redbot/core/_diagnoser.py:549
 msgid "This cannot be fixed - regular users cannot run bot owner only commands."
-msgstr ""
+msgstr "Dette kan ikke fikses - vanlige brukere kan ikke kjøre bot eieren av kommandoer."
 
 #: redbot/core/_diagnoser.py:555
 msgid "Permission hooks"
-msgstr ""
+msgstr "Tillatelse kroker"
 
 #: redbot/core/_diagnoser.py:565
 msgid "Fatal error: the result of permission hooks is inconsistent."
-msgstr ""
+msgstr "Feil: resultatet av tillatelseskroker er inkonsekvent."
 
 #: redbot/core/_diagnoser.py:566 redbot/core/_diagnoser.py:572
 #: redbot/core/_diagnoser.py:810
 msgid "To fix this issue, a manual review of the installed cogs is required."
-msgstr ""
+msgstr "For å løse dette problemet er det nødvendig med en manuell gjennomgang av de installerte cogs."
 
 #: redbot/core/_diagnoser.py:571
 msgid "The access has been denied by one of the bot's permissions hooks."
-msgstr ""
+msgstr "Tilgang er nektet av en av botens tillatelseskroker."
 
 #: redbot/core/_diagnoser.py:581
 msgid "User's discord permissions, privilege level and rules from Permissions cog"
-msgstr ""
+msgstr "Brukerens discord permisjoner, privilegienivå og regler fra Tillatelser-cog"
 
 #: redbot/core/_diagnoser.py:596
 msgid "The access has been denied due to the rules set for the {cog} cog with Permissions cog."
-msgstr ""
+msgstr "Tilgangen er nektet på grunn av reglene som er satt for {cog} tog med Permissions cog."
 
 #: redbot/core/_diagnoser.py:601
 msgid "The access has been denied due to the rules set for the {command} command with Permissions cog."
-msgstr ""
+msgstr "Tilgangen er nektet på grunn av reglene som er satt for {command} kommando i Permissions cog."
 
 #: redbot/core/_diagnoser.py:605
 msgid "To fix the issue, a manual review of the rules is required."
-msgstr ""
+msgstr "For å fikse problemet, er det påkrevd med en manuell gjennomgang av reglene."
 
 #: redbot/core/_diagnoser.py:620
 msgid "There's an issue related to the permissions of {cog} cog but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Det finnes en sak knyttet til tillatelser på {cog} cog men vi klarer ikke å fastslå den eksakte årsaken."
 
 #: redbot/core/_diagnoser.py:625
 msgid "There's an issue related to the permissions of {command} command but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Det finnes et problem knyttet til tillatelser for {command} kommando men vi klarer ikke å fastslå den eksakte årsaken."
 
 #: redbot/core/_diagnoser.py:629
 msgid "To fix this issue, a manual review of the command is required."
-msgstr ""
+msgstr "For å løse dette problemet er det nødvendig med en manuell gjennomgang av kommandoen."
 
 #: redbot/core/_diagnoser.py:636
 msgid "Permission checks"
-msgstr ""
+msgstr "Tillatelse kontroller"
 
 #: redbot/core/_diagnoser.py:640
 msgid "The access has been denied by one of the permissions checks of {cog} cog."
-msgstr ""
+msgstr "Tilgang har blitt nektet av en av tillatelsene sjekker for {cog} cog."
 
 #: redbot/core/_diagnoser.py:644
 msgid "The access has been denied by one of the permission checks of {command} command."
-msgstr ""
+msgstr "Tilgang har blitt nektet av en av tillatelsskontrollene til {command} kommando."
 
 #: redbot/core/_diagnoser.py:652
 msgid "To fix this issue, a manual review of the permission checks is required."
-msgstr ""
+msgstr "For å fikse dette problemet er en manuell gjennomgang av tillatelseskontrollene påkrevd."
 
 #: redbot/core/_diagnoser.py:658
 msgid "User's discord permissions and privilege level"
-msgstr ""
+msgstr "Brukerens discord tillatelser og rettighetsnivå"
 
 #: redbot/core/_diagnoser.py:667
 msgid "grant the required permissions to the user through role settings or channel overrides"
-msgstr ""
+msgstr "gi brukeren de nødvendige tillatelsene gjennom rolleinnstillinger eller kanal tillatelser"
 
 #: redbot/core/_diagnoser.py:673
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {cog} cog."
-msgstr ""
+msgstr "Brukeren mangler noen av kanaltillatelsene ({permissions}) som kreves av {cog} cog."
 
 #: redbot/core/_diagnoser.py:678
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {command} command."
-msgstr ""
+msgstr "Brukeren mangler noen av kanaltillatelsene ({permissions}) som kreves av kommandoen {command}."
 
 #: redbot/core/_diagnoser.py:687
 msgid "the guild owner"
-msgstr ""
+msgstr "server eieren"
 
 #: redbot/core/_diagnoser.py:690
 msgid "the mod role"
-msgstr ""
+msgstr "mod rollen"
 
 #: redbot/core/_diagnoser.py:692
 msgid "the admin role"
-msgstr ""
+msgstr "admin rollen"
 
 #: redbot/core/_diagnoser.py:695
 msgid "assign appropriate role to the user"
-msgstr ""
+msgstr "tilordne passende rolle til brukeren"
 
 #: redbot/core/_diagnoser.py:697
 msgid "The user is missing the privilege level ({privilege_level}) required by the {cog} cog."
-msgstr ""
+msgstr "Brukeren mangler rettighetsnivået ({privilege_level}) som kreves av {cog} cog."
 
 #: redbot/core/_diagnoser.py:704
 msgid "The user is missing the privilege level ({privilege_level}) required by the {command} command."
-msgstr ""
+msgstr "Brukeren mangler rettighetene nivået ({privilege_level}) som kreves av {command} kommandoen."
 
 #: redbot/core/_diagnoser.py:717
 msgid "add appropriate rule in the Permissions cog"
-msgstr ""
+msgstr "legg til passende regel i Permissions cog"
 
 #: redbot/core/_diagnoser.py:720
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {cog} cog."
-msgstr ""
+msgstr "Brukeren har verken kanaltillatelser ({permissions}) eller privilegienivået ({privilege_level}) som kreves av {cog} cog."
 
 #: redbot/core/_diagnoser.py:729
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {command} command."
-msgstr ""
+msgstr "Brukeren har verken kanaltillatelser ({permissions}) eller privilegienivået ({privilege_level}) som kreves av {command} kommandoen."
 
 #: redbot/core/_diagnoser.py:747
 msgid "Checks and permissions verification for the command {command}"
-msgstr ""
+msgstr "Sjekker og verifikasjon av tillatelser for kommandoen {command}"
 
 #: redbot/core/_diagnoser.py:770 redbot/core/_diagnoser.py:883
 msgid "Other command checks"
-msgstr ""
+msgstr "Andre kommandokontroller"
 
 #: redbot/core/_diagnoser.py:771 redbot/core/_diagnoser.py:884
 msgid "The given command is failing one of the required checks."
-msgstr ""
+msgstr "Tilgitt kommando mislykkes i å foreta en av de nødvendige sjekkene."
 
 #: redbot/core/_diagnoser.py:772 redbot/core/_diagnoser.py:885
 msgid "To fix this issue, a manual review of the command's checks is required."
-msgstr ""
+msgstr "For å fikse dette problemet kreves en manuell gjennomgang av kommandoens kontroller."
 
 #: redbot/core/_diagnoser.py:783
 msgid "Global 'call once' checks"
-msgstr ""
+msgstr "Globale «ring en gang» kontroller"
 
 #: redbot/core/_diagnoser.py:805
 msgid "Other global 'call once' checks"
-msgstr ""
+msgstr "Andre globale sjekk av «ring en gang»"
 
 #: redbot/core/_diagnoser.py:806
 msgid "One of the global 'call once' checks implemented by a 3rd-party cog prevents this command from being ran."
-msgstr ""
+msgstr "Ett av de globale 'ring en gang' kontrollene som iverksettes av en tredjeparts cog forhindrer at denne kommandoen blir kjørt."
 
 #: redbot/core/_diagnoser.py:815
 msgid "Check if the command is disabled"
-msgstr ""
+msgstr "Sjekk om kommandoen er deaktivert"
 
 #: redbot/core/_diagnoser.py:825 redbot/core/_diagnoser.py:839
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command globally."
-msgstr ""
+msgstr "For å fikse dette problemet, kan du kjøre {command} som vil aktivere kommandoen {affected_command} globalt."
 
 #: redbot/core/_diagnoser.py:838
 msgid "The given command is disabled globally."
-msgstr ""
+msgstr "Den oppgitte kommandoen er deaktivert globalt."
 
 #: redbot/core/_diagnoser.py:851
 msgid "Checks and permissions verification"
-msgstr ""
+msgstr "Kontroll og verifikasjon av tillatelser"
 
 #: redbot/core/_diagnoser.py:902
 msgid "Passed"
-msgstr ""
+msgstr "Bestått"
 
 #: redbot/core/_diagnoser.py:904
 msgid "Failed"
-msgstr ""
+msgstr "Mislykket"
 
 #: redbot/core/_diagnoser.py:933
 msgid "All checks passed and no issues were detected. Make sure that the given parameters correspond to the channel, user, and command name that have been problematic.\n\n"
 "If you still can't find the issue, it is likely that one of the 3rd-party cogs you're using adds a global or cog local before invoke hook that prevents the command from getting invoked as this can't be diagnosed with this tool."
-msgstr ""
+msgstr "Alle sjekker bestått og ingen saker ble oppdaget. Sørg for at de gitte parametrene samsvarer med kanalen, brukeren og kommandonavnet som har vært problematisk.\n\n"
+"Hvis du fortsatt ikke finner problemet, det er sannsynlig at en av tredjeparts cogs som du bruker legger til en global eller lokal cog før du benytter seg av en krok som hindrer kommandoen i å bli aktivert siden dette ikke kan diagnostiseres med dette verktøyet."
 
 #: redbot/core/_diagnoser.py:944
 msgid "The bot has been able to identify the issue."
-msgstr ""
+msgstr "Boten har vært i stand til å identifisere saken."
 
 #: redbot/core/_diagnoser.py:947
 msgid "Detected issue: "
-msgstr ""
+msgstr "Oppdaget sak: "
 
 #: redbot/core/_diagnoser.py:949
 msgid "Solution: "
-msgstr ""
+msgstr "Løsning: "
 
 #: redbot/core/_diagnoser.py:951
 msgid "\n"
 "Here's a detailed report in case you need it:"
-msgstr ""
+msgstr "\n"
+"Her er en detaljert rapport i tilfelle du trenger den:"
 
 #: redbot/core/_diagnoser.py:952
 msgid "Channel: "
-msgstr ""
+msgstr "Kanal: "
 
 #: redbot/core/_diagnoser.py:953
 msgid "Command caller: "
-msgstr ""
+msgstr "Kommando ringer: "
 
 #: redbot/core/_diagnoser.py:954
 msgid "Command: "
-msgstr ""
+msgstr "Kommando: "
 
 #: redbot/core/_diagnoser.py:955
 msgid "Tests that have been ran:"
-msgstr ""
+msgstr "Prøver som har vært utgitt:"
 
 #: redbot/core/bank.py:1019
 msgid "Can't pay for this command in DM without a global bank."
@@ -710,12 +728,12 @@ msgid "Shows [botname]'s uptime."
 msgstr "Viser [botname] sin oppetid."
 
 #: redbot/core/core_commands.py:563
-msgid "Less than one second"
-msgstr "Mindre enn ett sekund"
+msgid "Less than one second."
+msgstr ""
 
 #: redbot/core/core_commands.py:565
-msgid "Been up for: **{time_quantity}** (since {timestamp} UTC)"
-msgstr "Vært oppe for: **{time_quantity}** (siden {timestamp} UTC)"
+msgid "Been up for: **{time_quantity}** (since {timestamp})"
+msgstr ""
 
 #: redbot/core/core_commands.py:572
 #, docstring
@@ -1121,7 +1139,16 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[command]` - Checks this command for command specific embed settings.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Vis de nåværende innebygde innstillingene.\n\n"
+"        Skriv inn et kommandonavn for å sjekke for kommandospesifikke innebygde innstillinger.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]embedset showsettings` - Viser embed innstillingene.\n"
+"            - `[p]embedset showsettings info` - Viser også innebygd innstillinger for 'info' kommandoen.\n"
+"            - `[p]embedset showsettings \"ignore list\"` - Sjekker underkommandoer krever tilbud.\n\n"
+"        **Argumenter:**\n"
+"            - `[command]` - Sjekker denne kommandoen for spesifikke innstillinger for kommando innebygd.\n"
+"        "
 
 #: redbot/core/core_commands.py:1162
 msgid "Embed settings:\n\n"
@@ -1233,7 +1260,19 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Angir en kommandums innebygging.\n\n"
+"        Hvis du er robotens eier, dette vil prøve å endre kommandoens innebygde innstilling globalt som standard.\n"
+"        Ellers, dette vil prøve å endre embed innstillinger på gjeldende server.\n\n"
+"        Hvis aktivert er tom, vil innstillingen bli opphevet.\n\n"
+"        For å se full evalueringsrekkefølge med embed innstillinger, kjør `[p]help embedset`.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]embedset command info` - Clears command spesifikke embed innstillinger for 'info'.\n"
+"            - `[p]embedset command info False` - Deaktiverer for 'info'.\n"
+"            - `[p]embedset command \"ignore liste\" True` - Tilbud er nødvendige for underkommandoer.\n\n"
+"        **Argumenter:**\n"
+"            - `[enabled]` - Om du vil bruke embeds for denne kommandoen. La være blank for å tilbakestille standard.\n"
+"        "
 
 #: redbot/core/core_commands.py:1281
 msgid "The passed command requires Embed Links permission and therefore cannot be set to not use embeds."
@@ -1253,7 +1292,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Angir et kommando-innstilling globalt.\n\n"
+"        Hvis angitt, dette brukes i stedet for global standard for å bestemme om det skal brukes forankringer eller ikke.\n\n"
+"        Hvis aktivert er tom vil innstillingen bli opphevet.\n\n"
+"        For å se full evalueringsrekkefølge med embed innstillinger, kjør `[p]help embedset`.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]embedset command global info` - Clears command spesifikke embed innstillinger for 'info'.\n"
+"            - `[p]embedset command global info False` - Deaktiverer for 'info'.\n"
+"            - `[p]embedset command global \"ignore list\" True` - Tilbud er nødvendige for underkommandoer.\n\n"
+"        **Argumenter:**\n"
+"            - `[enabled]` - Om du vil bruke embeds for denne kommandoen. La være blank for å tilbakestille standard.\n"
+"        "
 
 #: redbot/core/core_commands.py:1321 redbot/core/core_commands.py:1366
 msgid "Embeds are now enabled for {command_name} command."
@@ -1277,7 +1327,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Angir en kommandes innebygd innstilling for gjeldende server.\n\n"
+"        Hvis angitt, dette brukes i stedet for serverstandarden for å avgjøre om du skal bruke embeds.\n\n"
+"        Hvis aktivert er tomt, Innstillingen vil bli benyttet hvis serveren ikke skal brukes i stedet.\n\n"
+"        For å se full evalueringsrekkefølge med embed innstillinger, kjør `[p]help embedset`.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]embedset command server info` - Clears command spesifikke embed innstillinger for 'info'.\n"
+"            - `[p]embedset command server info False` - Deaktiverer for 'info'.\n"
+"            - `[p]embedset command server \"ignore list\" True` - Tilbud er nødvendig for underkommandoer.\n\n"
+"        **Argumenter:**\n"
+"            - `[enabled]` - Om du vil bruke embeds for denne kommandoen. La være blank for å tilbakestille standard.\n"
+"        "
 
 #: redbot/core/core_commands.py:1360
 msgid "Embeds will now fall back to the server setting."
@@ -1297,7 +1358,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Satt en kanals innebyggingsinnstilling.\n\n"
+"        Hvis angitt, dette brukes i stedet for guild og kommando standardinnstillinger for å avgjøre om du skal bruke embeds.\n"
+"        Dette brukes til alle kommandoer gjort i en kanal.\n\n"
+"        Hvis aktivert er tom innstillingen vil bli brukt hvis serveren ikke standard brukes.\n\n"
+"        For å se full evalueringsrekkefølge med embed innstillinger, kjør `[p]help embedset`.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]embedset channel False` - Deaktiverer bygges inn i denne kanalen.\n"
+"            - `[p]embedset channel` - Nullstiller verdien for å bruke guild standard.\n\n"
+"        **Argumenter:**\n"
+"            - `[enabled]` - Om de skal brukes omgås i denne kanalen. La være blank for å tilbakestille standard.\n"
+"        "
 
 #: redbot/core/core_commands.py:1405
 msgid "Embeds are now {} for this channel."
@@ -1327,7 +1399,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds in your DMs. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Setter personlige innebygde innstillinger for direktemelding.\n\n"
+"        Hvis angitt, dette brukes i stedet for global standard for å bestemme om det skal brukes forankringer eller ikke.\n"
+"        Dette brukes for alle kommandoer utført i en DM med bot.\n\n"
+"        Hvis aktivert er tom Innstillingen vil bli valgt og den globale standarden vil bli brukt i stedet.\n\n"
+"        For å se full evalueringsrekkefølge med embed innstillinger, kjør `[p]help embedset`.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]embedset user False` - Deaktiverer i din direktør.\n"
+"            - `[p]embedset user` - Nullstiller verdi for å bruke global standard.\n\n"
+"        **Argumenter:**\n"
+"            - `[enabled]` - Om du vil bruke entall i din dusj. La være blank for å tilbakestille standard.\n"
+"        "
 
 #: redbot/core/core_commands.py:1436
 msgid "Embeds are now enabled for you in DMs."
@@ -1348,7 +1431,15 @@ msgid "Sends to the owner the last command exception that has occurred.\n\n"
 "        **Arguments:**\n"
 "            - `[public]` - Whether to send the traceback to the current context. Leave blank to send to your DMs.\n"
 "        "
-msgstr ""
+msgstr "Sender til eieren det siste kommandounntaket som har skjedd.\n\n"
+"        Hvis offentlig (ja er spesifisert), vil det bli sendt til chatten i stedet.\n\n"
+"        Advarsel: Sende sporet offentlig tilbake-modus kan gi en uheldig informasjon om din datamaskin eller konfigurasjon.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]traceback` - Sender sporet til din direkte melding.\n"
+"            - `[p]traceback True` - Sender den siste trakten i den gjeldende kanal.\n\n"
+"        **Argumenter:**\n"
+"            - `[public]` - Om du vil sende sporet tilbake til den nåværende konteksten. La stå tomt for å sende til din directe melding.\n"
+"        "
 
 #: redbot/core/core_commands.py:1473
 msgid "No exception has occurred yet."
@@ -1362,12 +1453,17 @@ msgid "Shows [botname]'s invite url.\n\n"
 "        **Example:**\n"
 "            - `[p]invite`\n"
 "        "
-msgstr ""
+msgstr "Viser [botname]sin invitasjonsadresse.\n\n"
+"        Denne vil alltid sende invitasjonen til direktemeldinger for å holde den privat.\n\n"
+"        Denne kommandoen er låst til eieren med mindre `[p]inviteset public` er satt til True.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]invite`\n"
+"        "
 
 #: redbot/core/core_commands.py:1499
 #, docstring
 msgid "Commands to setup [botname]'s invite settings."
-msgstr ""
+msgstr "Kommandoer for å sette opp [botname] sin invitasjonsinnstillinger."
 
 #: redbot/core/core_commands.py:1504
 #, docstring
@@ -1379,7 +1475,14 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[confirm]` - Required to set to public. Not required to toggle back to private.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Veksler hvis `[p]invite` skal være tilgjengelig for gjennomsnittlig bruker.\n\n"
+"        Boten må lages i en `Public bot` i utviklerens dashbord for offentlige invitasjoner som skal fungere.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]nviteset public yes` - Veksler offentlig invitasjonsinnstilling.\n\n"
+"        **Argumenter:**\n"
+"            - `[confirm]` - Kreves for å sette til offentlighet. Ikke nødvendig for å veksle tilbake til privat.\n"
+"        "
 
 #: redbot/core/core_commands.py:1541
 #, docstring
@@ -1394,7 +1497,16 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<level>` - The permission level to require for the bot in the generated invite.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Få boten til å lage sin egen rolle med tillatelser for å bli med.\n\n"
+"        Boten vil lage sin egen rolle med de ønskede tillatelsene når den blir med i en ny server. Dette er en spesiell rolle som ikke kan slettes eller fjernes fra boten.\n\n"
+"        For det må du oppgi et gyldig tillatelsesnivå.\n"
+"        Du kan generere en her: https://discordapi.com/permissions.html\n\n"
+"        Vær oppmerksom på at du kan trenge tofaktorautentisering for noen tillatelser.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]inviteset perms 134217728` - Legger til et\" Administrer kallenavn \"-tillatelseskrav til invitasjonen.\n\n"
+"        ** Argumenter: **\n"
+"            - `<level>` - Tillatelsesnivået som kreves for boten i den genererte invitasjonen.        "
 
 #: redbot/core/core_commands.py:1562
 #, docstring
@@ -1403,15 +1515,19 @@ msgid "\n"
 "        This allows the usage of slash commands on the servers that invited your bot with that scope.\n\n"
 "        Note that previous servers that invited the bot without the scope cannot have slash commands, they will have to invite the bot a second time.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Legg til `applications.commands` virkeområdet til invitasjonslenken din.\n\n"
+"        Dette tillater bruk av slash-kommandoer på serverne som inviterte din bot med det virkefeltet.\n\n"
+"        Merk at tidligere servere som inviterte boten uten virkeområde, kan ikke ha slash kommandoer, De må invitere botten enda en gang.\n"
+"        "
 
 #: redbot/core/core_commands.py:1573
 msgid "The `applications.commands` scope has been added to the invite URL."
-msgstr ""
+msgstr "«applications.commands» har blitt lagt til på invitasjonslenken."
 
 #: redbot/core/core_commands.py:1577
 msgid "The `applications.commands` scope has been removed from the invite URL."
-msgstr ""
+msgstr "Omfanget `applications.commands` har blitt fjernet fra invitasjons URL-en."
 
 #: redbot/core/core_commands.py:1583
 #, docstring
@@ -1426,7 +1542,17 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[servers...]` - The servers to leave. When blank, attempts to leave the current server.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Forlater servere.\n\n"
+"        Hvis ingen server-IDer blir bestått vil den lokale serveren bli liggende i stedet.\n\n"
+"        Merk: Denne kommandoen er interaktiv.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]leave` - La den gjeldende serveren.\n"
+"            - `[p]leave \"Red - Discord Bot\"` - Sitater er nødvendig når det er mellomrom i navnet.\n"
+"            - `[p]leave 133049272517001216 240154543684321280` - blader flere servere, ved bruk av ID-er.\n\n"
+"        **Argumenter:**\n"
+"            - `[servers...]- Serverne for å forlate. På blankt, forsøk å forlate gjeldende server.\n"
+"        "
 
 #: redbot/core/core_commands.py:1600
 msgid "You need to specify at least one server ID."
@@ -1486,7 +1612,15 @@ msgid "Loads cog packages from the local paths and installed cogs.\n\n"
 "        **Arguments:**\n"
 "            - `<cogs...>` - The cog packages to load.\n"
 "        "
-msgstr ""
+msgstr "Laster inn cog pakker fra lokale stier og installerte cogs.\n\n"
+"        Se tilgjengelige pakker for innlasting med `[p]cogs`.\n\n"
+"        Flere cogs kan legges til ved hjelp av Nedlasting, eller fra lokale baner ved hjelp av `[p]addpath`.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]load general` - Laster inn `general` cog.\n"
+"            - `[p]load admin mod mutes` - Laster inn flere cogs.\n\n"
+"        **Argumenter:**\n"
+"            - `<cogs...>` - cog pakker som skal lastes inn.\n"
+"        "
 
 #: redbot/core/core_commands.py:1700
 msgid "Loaded {packs}."
@@ -1566,7 +1700,14 @@ msgid "Unloads previously loaded cog packages.\n\n"
 "        **Arguments:**\n"
 "            - `<cogs...>` - The cog packages to unload.\n"
 "        "
-msgstr ""
+msgstr "Laster ut tidligere lastede cog pakker.\n\n"
+"        Se tilgjengelige pakker for å losse med `[p]cogs`.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]unload generel` - Avlaster `general` cog.\n"
+"            - `[p]unload admin mod mutes` - Avlaster flere cogs.\n\n"
+"        **Argumenter:**\n"
+"            - `<cogs...>` - Cog pakker som skal frigjøres.\n"
+"        "
 
 #: redbot/core/core_commands.py:1810
 msgid "The following package was unloaded: {pack}."
@@ -1595,11 +1736,19 @@ msgid "Reloads cog packages.\n\n"
 "        **Arguments:**\n"
 "            - `<cogs...>` - The cog packages to reload.\n"
 "        "
-msgstr ""
+msgstr "Last av i tillegg på nytt.\n\n"
+"        Dette vil laste ut og deretter laste inn de spesifiserte loggene.\n\n"
+"        Cogs som ikke ble lastet inn vil bare bli lastet.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]reload general` - Laster på nytt `generel` cog.\n"
+"            - `[p]reload admin mod mutes` - Laster flere cogs på nytt.\n\n"
+"        **Argumenter:**\n"
+"            - `<cogs...>` - Cog pakker for å laste inn på nytt.\n"
+"        "
 
 #: redbot/core/core_commands.py:1867
 msgid "Reloaded {packs}."
-msgstr "Oppdater {packs}."
+msgstr "Lastet på nytt {packs}."
 
 #: redbot/core/core_commands.py:1872
 msgid "Failed to reload the following package: {pack}.\n"
@@ -1642,7 +1791,15 @@ msgid "Shuts down the bot.\n\n"
 "        **Arguments:**\n"
 "            - `[silently]` - Whether to skip sending the shutdown message. Defaults to False.\n"
 "        "
-msgstr ""
+msgstr "Avslutter boten.\n\n"
+"        Tillater [botname] å stenge ned gracefully.\n\n"
+"        Dette er den anbefalte metoden for å stenge ned boten.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]shutdown`\n"
+"            - `[p]shutdown True` - slår av botten i stillhet.\n\n"
+"        **Argumenter:**\n"
+"            - `[silently]` - Om du kan hoppe over sending av avbestillingsmeldingen. Standardverdi er usant.\n"
+"        "
 
 #: redbot/core/core_commands.py:1961
 msgid "Shutting down... "
@@ -1659,7 +1816,15 @@ msgid "Attempts to restart [botname].\n\n"
 "        **Arguments:**\n"
 "            - `[silently]` - Whether to skip sending the restart message. Defaults to False.\n"
 "        "
-msgstr ""
+msgstr "Forsøker å starte [botname].\n\n"
+"        Gjør [botname] avslutning med exit kode 26.\n"
+"        Omstarten er ikke garantert: Den må behandles av prosessansvarlig i bruk.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]omstart`\n"
+"            - `[p]restart True` - Restarter botten i stillhet.\n\n"
+"        **Argumenter:**\n"
+"            - `[silently]` - Om du skal hoppe over å sende meldingen. Standard til False.\n"
+"        "
 
 #: redbot/core/core_commands.py:1981
 msgid "Restarting..."
@@ -1714,7 +1879,17 @@ msgid "Set the delay until the bot removes the command message.\n\n"
 "        **Arguments:**\n"
 "            - `[time]` - The seconds to wait before deleting the command message. Use -1 to disable.\n"
 "        "
-msgstr ""
+msgstr "Angi forsinkelse til boten fjerner kommando meldingen.\n\n"
+"        Må være mellom -1 og 60.\n\n"
+"        Sett til -1 for å deaktivere denne funksjonen.\n\n"
+"        Dette gjelder bare på den gjeldende serveren og ikke globalt.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set deletedelay` - Viser innstillingen for gjeldende forsinkelse for sletting.\n"
+"            - `[p]set deletedelay 60` - Setter forsinkelsen for sletting til maks 60 sekunder.\n"
+"            - `[p]set deletedelay -1` - Deaktiverer sletting av kommando meldinger.\n\n"
+"        **Argumenter:**\n"
+"            - `[time]- sekunder å vente før du sletter kommando meldingen. Bruk -1 for å deaktivere.\n"
+"        "
 
 #: redbot/core/core_commands.py:2072
 msgid "Command deleting disabled."
@@ -1746,7 +1921,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[description]` - The description to use for this bot. Leave blank to reset to the default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Angir boten sin beskrivelse.\n\n"
+"        Brukes uten beskrivelse for å tilbakestille.\n"
+"        Dette vises på noen få steder, inkludert hjelp-menyen.\n\n"
+"        Maksimal lengde på beskrivelse er 250 tegn for å sikre at den vises riktig.\n\n"
+"        Standard er \"Red V3\".\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set description`- Nullstiller beskrivelsen til standardinnstillingen.\n"
+"            - `[p]set description MyBot: A Red V3 Bot`\n\n"
+"        **Argumenter:**\n"
+"            - `[description]` - Beskrivelsen for denne boten. La være blank for å tilbakestille til standard.\n"
+"        "
 
 #: redbot/core/core_commands.py:2111
 msgid "Description reset."
@@ -1772,7 +1958,19 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<role>` - The role to add as an admin.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Legger til en administratorrolle for denne guilden.\n\n"
+"        Administratorer har samme tilgang som Mods, pluss flere kommandoer på administratornivå som:\n"
+"         - `[p]set serverprefix`\n"
+"         - `[p]addrole`\n"
+"         - `[p]ban`\n"
+"         - `[p]ignore guild`\n\n"
+"         Og mer.\n"
+"         **Eksempler:**\n"
+"            - `[p]set addadminrole @Admins`\n"
+"            - `[p]set addadminrole Super Admins`\n\n"
+"** Argumenter: **\n"
+"            - `<role>` - Rollen som skal legges til som administrator.        "
 
 #: redbot/core/core_commands.py:2148
 msgid "This role is already an admin role."
@@ -1797,7 +1995,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<role>` - The role to add as a moderator.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Legger til en moderatorrolle for denne lauget.\n\n"
+"        Dette gir tilgang til kommandoer på moderatornivå som:\n"
+"         - `[p]mute`\n"
+"         - `[p]cleanup`\n"
+"         - `[p]customcommand create`\n\n"
+"         Og mer.\n\n"
+"         **Eksempler:**\n"
+"            - `[p]set addmodrole @Mods`\n"
+"            - `[p]set addmodrole Loyal Helpers`\n\n"
+"** Argumenter: **\n"
+"            - `<role>` - Rollen som skal legges til som moderator.        "
 
 #: redbot/core/core_commands.py:2175
 msgid "This role is already a mod role."
@@ -1817,7 +2026,13 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<role>` - The role to remove from being an admin.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Fjerner en administratorrolle for denne serveren.\n\n"
+"        **Eksempler.**\n"
+"            - `[p]set removeadminrole @Admins`\n"
+"            - `[p]set removeadminrole Super Admins`\n\n"
+"        ** Argumenter: **\n"
+"            - `<role>` - Rollen som skal fjernes fra å være administrator.        "
 
 #: redbot/core/core_commands.py:2195
 msgid "That role was not an admin role to begin with."
@@ -1837,7 +2052,13 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<role>` - The role to remove from being a moderator.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Fjerner en moderator for denne serveren.\n\n"
+"        **Eksempler.**\n"
+"            - `[p]set removemodrole @Mods`\n"
+"            - `[p]set removemodrole Loyal Helpers`\n\n"
+"        ** Argumenter: **\n"
+"            - `<role>` - Rollen som skal fjernes fra å være moderator.        "
 
 #: redbot/core/core_commands.py:2215
 msgid "That role was not a mod role to begin with."
@@ -1856,7 +2077,13 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set usebotcolour`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Slå på om du vil bruke robotens eier-konfigurerte farge for embeder.\n\n"
+"        Standard er å bruke botens konfigurerte farge.\n"
+"        Ellers vil fargen som brukes, være fargen på botens øverste rolle.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]set usebotcolour`\n"
+"        "
 
 #: redbot/core/core_commands.py:2235
 msgid "The bot {} use its configured color for embeds."
@@ -1880,7 +2107,14 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set serverfuzzy`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Slå på om du vil aktivere fuzzy kommando søk på serveren.\n\n"
+"        Dette tillater boten å identifisere potensielle feilstavede kommandoer og tilby korreksjoner.\n\n"
+"        Merk: Dette kan være prosessorintensiv og kan være uegnet for større servere.\n\n"
+"        Standard er at fuzzy kommando søk er deaktivert.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]set serverfuzzy`\n"
+"        "
 
 #: redbot/core/core_commands.py:2259
 msgid "Fuzzy command search has been {} for this server."
@@ -1895,7 +2129,13 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set fuzzy`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Velge om du vil aktivere fuzzy kommando søk i DMer.\n\n"
+"        Dette tillater boten å identifisere potensielle feilstavede kommandoer og tilby korreksjoner.\n\n"
+"        Standard er at fuzzy kommando søk er deaktivert.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]set fuzzy`\n"
+"        "
 
 #: redbot/core/core_commands.py:2280
 msgid "Fuzzy command search has been {} in DMs."
@@ -1916,7 +2156,19 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[colour]` - The colour to use for embeds. Leave blank to set to the default value (red).\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Setter en standardfarge som skal brukes til botens innstøpe.\n\n"
+"        Akseptable verdier for fargeparameteren finnes på:\n\n"
+"        https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set colour dark red`\n"
+"            - `[p]set colour blurple`\n"
+"            - `[p]set colour 0x5DADE2`\n"
+"            - `[p]set color 0x#FDFEFE`\n"
+"            - `[p]set color #7F8C8D`\n\n"
+"        **Argumenter:**\n"
+"            - `[colour]` - Fargen som skal brukes for innebåring. La være blank for å sette til standardverdi (rød).\n"
+"        "
 
 #: redbot/core/core_commands.py:2308
 msgid "The color has been reset."
@@ -1937,7 +2189,15 @@ msgid "Sets [botname]'s avatar\n\n"
 "        **Arguments:**\n"
 "            - `[url]` - An image url to be used as an avatar. Leave blank when uploading an attachment.\n"
 "        "
-msgstr ""
+msgstr "Setter [botname]sitt avatar\n\n"
+"        støtter enten et vedlegg eller en bilde-URL.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set avatar` - Med et vedlegg dette vil bestemme avataren.\n"
+"            - `[p]set avatar` - uten vedlegg, dette vil vise kommando hjelp.\n"
+"            - `[p]set avatar https://links.faree.xyz/k95` - Angir avataren til den medfølgende URL-en.\n\n"
+"        **Argumenter:**\n"
+"            - `[url]` - Et bilde url som skal brukes som en avatar. La være tom når du laster opp et vedlegg.\n"
+"        "
 
 #: redbot/core/core_commands.py:2339
 msgid "That URL is invalid."
@@ -1967,7 +2227,11 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set avatar remove`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Fjerner [botname]sitt profilbilde.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]set avatar remove`\n"
+"        "
 
 #: redbot/core/core_commands.py:2373
 msgid "Avatar removed."
@@ -1984,7 +2248,15 @@ msgid "Sets [botname]'s playing status.\n\n"
 "        **Arguments:**\n"
 "            - `[game]` - The text to follow `Playing`. Leave blank to clear the current activity status.\n"
 "        "
-msgstr ""
+msgstr "Angir [botname]sin spillestatus.\n\n"
+"        Dette vises som `Playing <game>` eller `SPILLER ET SPILL: <game>` avhengig av konteksten.\n\n"
+"        Maksimumslengde for en avspillende status er 128 tegn.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set playing` - Fjern aktivitetsstatusen.\n"
+"            - `[p]set playing tastaturet i spillet`\n\n"
+"        **Argumenter:**\n"
+"            - `[game]- Teksten for å følge `Playing`. La den være blank for å fjerne aktiv status.\n"
+"        "
 
 #: redbot/core/core_commands.py:2395
 msgid "The maximum length of game descriptions is 128 characters."
@@ -2008,7 +2280,14 @@ msgid "Sets [botname]'s listening status.\n\n"
 "            - `[p]set listening jams`\n\n"
 "        **Arguments:**\n"
 "            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."
-msgstr ""
+msgstr "Angir [botname]sin spillestatus.\n"
+"        Dette vises som `Listening to <listening>`\n\n"
+"        Maksimumslengde for en avspillende status er 128 tegn.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set listening` - Fjern aktivitetsstatusen.\n"
+"            - `[p]set listening jams`\n\n"
+"        **Argumenter:**\n"
+"            - `[listening]- Teksten for å følge `listening to`. La den være blank for å fjerne aktiv status."
 
 #: redbot/core/core_commands.py:2428
 msgid "The maximum length of listening descriptions is 128 characters."
@@ -2032,7 +2311,14 @@ msgid "Sets [botname]'s watching status.\n\n"
 "            - `[p]set watching [p]help`\n\n"
 "        **Arguments:**\n"
 "            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."
-msgstr ""
+msgstr "Setter [botname]sin Watching status.\n\n"
+"        Dette vil vises som `Watching <watching>`.\n\n"
+"        Maksimum lengde for en visning er 128 tegn.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set watching` - Fjern aktivitetsstatusen.\n"
+"            - `[p]set watching [p]help`\n\n"
+"        **Arguments:**\n"
+"            - `[watching]` - Teksten for å følge `Watching`. La det være tomt for å fjerne aktiv status."
 
 #: redbot/core/core_commands.py:2462
 msgid "The maximum length of watching descriptions is 128 characters."
@@ -2056,7 +2342,14 @@ msgid "Sets [botname]'s competing status.\n\n"
 "            - `[p]set competing London 2012 Olympic Games`\n\n"
 "        **Arguments:**\n"
 "            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."
-msgstr ""
+msgstr "Setter [botname]sin konkurrerende status.\n\n"
+"        Dette vil vises som `Competing in <competing>`.\n\n"
+"        Maksimum lengde for en konkurrerende status er 128 tegn.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set competing` - Fjern aktivitetsstatusen.\n"
+"            - `[p]set competing om London 2012 Olympic Games`\n\n"
+"        **Argumenter:**\n"
+"            - `[competing]- Teksten for å følge `Competing in`. La det være tomt for å fjerne aktiv status."
 
 #: redbot/core/core_commands.py:2494
 msgid "The maximum length of competing descriptions is 128 characters."
@@ -2084,7 +2377,18 @@ msgid "Sets [botname]'s status.\n\n"
 "        **Arguments:**\n"
 "            - `<status>` - One of the available statuses.\n"
 "        "
-msgstr ""
+msgstr "Setter [botname]sin status.\n\n"
+"        Tilgjengelige statuser:\n"
+"            - `online`\n"
+"            - `idle`\n"
+"            - `dnd`\n"
+"            - `usvisible`\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set status online` - Fjerner statusen.\n"
+"            - `[p]set status invisible`\n\n"
+"        **Argumenter:**\n"
+"            - `<status>` - En av de tilgjengelige statusene.\n"
+"        "
 
 #: redbot/core/core_commands.py:2542
 msgid "Status changed to {}."
@@ -2104,7 +2408,18 @@ msgid "Sets [botname]'s streaming status to a twitch stream.\n\n"
 "        **Arguments:**\n"
 "            - `<streamer>` - The twitch streamer to provide a link to. This can be their twitch name or the entire URL.\n"
 "            - `<stream_title>` - The text to follow `Streaming` in the status."
-msgstr ""
+msgstr "Angir [botname]sin strømmestatus til en Twitch-strøm.\n\n"
+"        Dette vises som `Streaming <stream_title>` eller `LIVE ON TWITCH` avhengig av kontekst.\n"
+"        Den vil også inkludere en `Watch` knapp med en twitch.tv url for den medfølgende streamen.\n\n"
+"        Maksimum lengde for en kanaltittel er 128 tegn.\n\n"
+"        Med å forlate både streamer og stream_title vil tomme verdier tømmes.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set stream` - Fjern aktivitetsstatusen.\n"
+"            - `[p]set stream 26 Twentysix is streaming` - setter strømmingen til `https://www.twitch.tv/26`.\n"
+"            - `[p]set stream https://twitch.tv/26 Twentysix streaming` - Setter URL manuelt.\n\n"
+"        **Argumenter:**\n"
+"            - `<streamer>` - twitch streamer for å legge inn en lenke til. Dette kan være deres twitch navn eller hele URL-en.\n"
+"            - `<stream_title>- Teksten for å følge `strømming` i statusen."
 
 #: redbot/core/core_commands.py:2575
 msgid "The maximum length of the streamer url is 511 characters."
@@ -2125,7 +2440,15 @@ msgid "Sets [botname]'s username.\n\n"
 "        **Arguments:**\n"
 "            - `<username>` - The username to give the bot.\n"
 "        "
-msgstr ""
+msgstr "Setter [botname]sitt brukernavn.\n\n"
+"        Maksimal lengde på et brukernavn er 32 tegn.\n\n"
+"        Merk: Brukernavnet til en verifisert bot kan ikke skiftes ut manuelt.\n"
+"            Vennligst kontakt Discord-støtte for å endre den.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]set username BaguetteBot`\n\n"
+"        **Argumenter:**\n"
+"            - `<username>` - Brukernavnet for å gi boten.\n"
+"        "
 
 #: redbot/core/core_commands.py:2608
 msgid "The username of a verified bot cannot be manually changed. Please contact Discord support to change it."
@@ -2158,7 +2481,12 @@ msgid "Sets [botname]'s nickname for the current server.\n\n"
 "        **Arguments:**\n"
 "            - `[nickname]` - The nickname to give the bot. Leave blank to clear the current nickname.\n"
 "        "
-msgstr ""
+msgstr "Angir [botname] kallenavn for gjeldende server.\n\n"
+"        Maksimal lengde for et kallenavn er 32 tegn.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]set nickname 🎃 SpookyBot 🎃`\n\n"
+"        ** Argumenter: **  \n"
+"          - `[nickname]` - Kallenavnet for å gi boten. La det stå tomt for å fjerne det nåværende kallenavnet.        "
 
 #: redbot/core/core_commands.py:2661
 msgid "Failed to change nickname. Must be 32 characters or fewer."
@@ -2181,12 +2509,22 @@ msgid "Sets [botname]'s global prefix(es).\n\n"
 "        **Arguments:**\n"
 "            - `<prefixes...>` - The prefixes the bot will respond to globally.\n"
 "        "
-msgstr ""
+msgstr "Angir [botname] sitt globale prefik(er).\n\n"
+"        Advarsel: Dette er ikke tilsetningsstoff. Det vil erstatte alle nåværende prefikser.\n\n"
+"        Se også flagget `--mentionable` for å gjøre det mulig å nevne boten som prefiks.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set prefix !`\n"
+"            - `[p]set prefix \"! \"` - Sitater er nødvendig for å bruke mellomrom i prefikser.\n"
+"            - `[p]set prefix \"@[botname] \"` - Dette bruker en omtale som prefiks. Se også flagget `--mentionable`.\n"
+"            - `[p]set prefix ! ? .` - Angir flere prefikser\n\n"
+"        ** Argumenter: **\n"
+"            - `<prefixes...>` - prefikser som boten vil svare på globalt.        "
 
 #: redbot/core/core_commands.py:2689
 msgid "Warning: A prefix is above the recommended length (20 characters).\n"
 "Do you want to continue? (y/n)"
-msgstr ""
+msgstr "Advarsel: Et prefiks er over anbefalt lengde (20 tegn).\n"
+"Vil du fortsette? (y/n)"
 
 #: redbot/core/core_commands.py:2702
 msgid "Cancelled."
@@ -2215,7 +2553,19 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Setter [botname]'s server prefiks(es).\n\n"
+"        Advarsel: Dette vil overstyre globale prefikser boten vil ikke svare på noen globale prefikser i denne serveren.\n"
+"            Dette er ikke additiv. Det vil erstatte alle gjeldende serverprefikser.\n"
+"            Et prefiks kan ikke inneholde mer enn 20 tegn.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set serverprefix !\n"
+"            - `[p]set serverprefix \"! \"` - Tilbud er nødvendig for å bruke mellomrom i prefikser.\n"
+"            - `[p]set serverprefix \"@[botname] \"` - Dette bruker en omtale som prefiks.\n"
+"            - `[p]set serverprefix ! ? .` - Setter flere prefikser.\n\n"
+"        **Argumenter:**\n"
+"            - `[prefixes...]- Prefiksene botten vil svare på denne serveren. La stå tomt for å fjerne server prefikser.\n"
+"        "
 
 #: redbot/core/core_commands.py:2732
 msgid "Server prefixes have been reset."
@@ -2223,7 +2573,7 @@ msgstr "Prefikser for server er tilbakestilt."
 
 #: redbot/core/core_commands.py:2735
 msgid "You cannot have a prefix longer than 20 characters."
-msgstr ""
+msgstr "Du kan ikke ha et prefiks lengre enn 20 tegn."
 
 #: redbot/core/core_commands.py:2740
 msgid "Server prefix set."
@@ -2248,7 +2598,19 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Endrer botens standardspråk.\n\n"
+"        Dette brukes når en server ikke har angitt et locale, eller i direktemelding.\n\n"
+"        Gå til [Red's Crowdin-side](https://translate.discord.red) for å se språkvalg som er tilgjengelig med oversettelser.\n\n"
+"        For å resette til engelsk, bruk \"en-US\".\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set locale  en-US`\n"
+"            - `[p]set locale  de-DE`\n"
+"            - `[p]set locale  fr-FR`\n"
+"            - `[p]set locale  pl-PL`\n\n"
+"        **Argumenter:**\n"
+"            - `<language_code>` - Standardlocale som skal brukes for boten. Dette kan være hvilken som helst språkkode med landskode inkludert.\n"
+"        "
 
 #: redbot/core/core_commands.py:2768 redbot/core/core_commands.py:2812
 #: redbot/core/core_commands.py:2851 redbot/core/core_commands.py:2895
@@ -2280,7 +2642,20 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Endrer botens locale på denne serveren.\n\n"
+"        Gå til [Red's Crowdin-side](https://translate.discord.red) for å se språk/land som er tilgjengelige med oversettelser.\n\n"
+"        Bruk \"standard\" for å gå tilbake til botens standardspråk.\n"
+"        For å tilbakestille til engelsk, bruk \"nb-NO\".\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set locale  en-US`\n"
+"            - `[p]set locale  de-DE`\n"
+"            - `[p]set locale  fr-FR`\n"
+"            - `[p]set locale  pl-PL`\n"
+"            - `[p]set locale default` - Tilbakestiller til standard locale.\n\n"
+"        **Argumenter:**\n"
+"            - `<language_code>- Standard locale som skal brukes til boten. Dette kan være hvilken som helst språkkode med landskoden inkludert.\n"
+"        "
 
 #: redbot/core/core_commands.py:2807
 msgid "Locale has been set to the default."
@@ -2303,7 +2678,17 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[language_code]` - The default region format to use for the bot.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Endrer botens regionale format. Dette brukes til formatering av dato, tid og tall.\n\n"
+"        `language_code` kan være hvilken som helst språkkode som helst med landskoden inkludert.. `nb-NO`, `de-DE`, `fr-FR`, `pl-PL`, etc.\n"
+"        La `language_code` stå tom for å basere regional formatering på lokaliseringen til bot.\n\n"
+"        **Examples:**\n"
+"            - `[p]set globalregionalformat en-US`\n"
+"            - `[p]set globalregion de-DE`\n"
+"            - `[p]set globalregionalformat` - Resets to the locale.\n\n"
+"        **Argumenter:**\n"
+"            - `[language_code]- Standardformat som brukes til boten.\n"
+"        "
 
 #: redbot/core/core_commands.py:2845
 msgid "Global regional formatting will now be based on bot's locale."
@@ -2326,7 +2711,17 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[language_code]` - The region format to use for the bot in this server.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Endrer botens regionale format på denne serveren. Dette brukes til formateringsdato, klokkeslett og nummer.\n\n"
+"        `language_code` kan være hvilken som helst språkkode som helst med landskoden inkludert.. `nb-NO`, `de-DE`, `fr-FR`, `pl-PL`, osv.\n"
+"        Forlat `language_code` tom for å legge til grunn regional formatering på botens locale i denne serveren.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set regionalformat en-US`\n"
+"            - `[p]set region de-DE`\n"
+"            - `[p]set regionalformat` - Tilbakestiller til locale.\n\n"
+"        **Argumenter:**\n"
+"            - `[language_code]- Regionsformatet som skal brukes til denne serveren.\n"
+"        "
 
 #: redbot/core/core_commands.py:2888
 msgid "Regional formatting will now be based on bot's locale in this server."
@@ -2349,7 +2744,17 @@ msgid "Customizes a section of `[p]info`.\n\n"
 "        **Arguments:**\n"
 "            - `[text]` - The custom info text.\n"
 "        "
-msgstr ""
+msgstr "Tilpass en seksjon av `[p]info`.\n\n"
+"        Det maksimale antallet tillatte tegn er 1024.\n"
+"        Støtter marked, linker og \"nevner\".\n\n"
+"        Lenke: `[Min link](https://example.com)\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set custominfo >>> Jeg kan bruke **markdown** som for eksempel tilbud, ∙spoilers∙and og flere linjer.\n"
+"            - `[p]set custominfo Bli med i min [support server](discord.gg/discord)!`\n"
+"            - `[p]set custominfo` - Fjerner egendefinert informasjonstekst.\n\n"
+"        **Argumenter:**\n"
+"            - `[text]` - Den egendefinerte informasjonsteksten.\n"
+"        "
 
 #: redbot/core/core_commands.py:2931
 msgid "The custom text has been cleared."
@@ -2378,7 +2783,19 @@ msgid "\n"
 "            - `<service>` - The service you're adding tokens to.\n"
 "            - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Kommandoer å angitt, liste eller fjerne ulike eksterne API-token.\n\n"
+"        Denne innstillingen vil bli spurt av noen tredjeparts cogs og noen kjernetaker.\n\n"
+"        For å legge til nøkler tilbyr tjenestenavnet og tokenet som en kommadelt\n"
+"        liste med nøkkel, allerede omtalt som beskrevet av tog som ber om denne kommandoen.\n\n"
+"        Merk: API tokens er sensitive, så denne kommandoen skal bare brukes i en privat kanal eller i DM med boten.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set api Spotify redirect_uri localhost`\n"
+"            - `[p]set api github client_id,whoops client_secret,whoops`\n\n"
+"        **Argumenter:**\n"
+"            - `<service>- Tjenesten du legger til tokens til.\n"
+"            - `<tokens>` - Pairs of token Key og verdier. Nøkkelen og verdien bør separeres med en av `, `,`, eller `;`.\n"
+"        "
 
 #: redbot/core/core_commands.py:2964
 msgid "`{service}` API tokens have been set."
@@ -2392,7 +2809,12 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set api list``\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Vis alle eksterne API-tjenester sammen med deres nøkler som har blitt satt.\n\n"
+"        Hemmeligheter er ikke vist.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]set api list``\n"
+"        "
 
 #: redbot/core/core_commands.py:2979
 msgid "No API services have been set yet."
@@ -2415,7 +2837,13 @@ msgid "\n"
 "            - `[p]set api remove github audiodb`\n\n"
 "        **Arguments:**\n"
 "            - `<services...>` - The services to remove."
-msgstr ""
+msgstr "\n"
+"        Fjern tjenestene som ble gitt med alle nøklene og tokenene.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]set api remove Spotify`\n"
+"            - `[p]set api remove github audiodb`\n\n"
+"        **Arguments:**\n"
+"            - `<services...>` - Tjenestene som skal fjerne."
 
 #: redbot/core/core_commands.py:3009
 msgid "Services deleted successfully:\n"
@@ -2437,7 +2865,10 @@ msgid "\n"
 "        Commands to manage settings for the help command.\n\n"
 "        All help settings are applied globally.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Kommandoer for å administrere innstillinger for hjelp-kommandoen.\n\n"
+"        Alle hjelpeinnstillinger brukes globalt.\n"
+"        "
 
 #: redbot/core/core_commands.py:3032
 #, docstring
@@ -2447,7 +2878,12 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]helpset showsettings``\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Vis nåværende hjelpe-innstillinger.\n\n"
+"        Advarsel: Disse innstillingene er kanskje ikke nøyaktige hvis standard formatter ikke er i bruk.\n\n"
+"        **Eksempel:**\n"
+"            - `[p]helpset showsettings``\n"
+"        "
 
 #: redbot/core/core_commands.py:3046
 msgid "Warning: The default formatter is not in use, these settings may not apply."
@@ -2460,7 +2896,11 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]helpset resetformatter``\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Dette tilbakestiller [botname] hjelp formaterer til standard formatter.\n\n"
+"        **Eksempel:**\n"
+"            -[p]helpset resetformatter``\n"
+"        "
 
 #: redbot/core/core_commands.py:3065
 msgid "The help formatter has been reset. This will not prevent cogs from modifying help, you may need to remove a cog if this has been an issue."
@@ -2474,7 +2914,12 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]helpset resetsettings``\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Dette tilbakestiller [botname] sin hjelp innstillinger til standardverdiene.\n\n"
+"        Dette kan ha ingen innvirkning når du bruker egendefinerte formatere fra tredjeparts cogs\n\n"
+"        **Eksempel:**\n"
+"            - `[p]helpset resetsettings``\n"
+"        "
 
 #: redbot/core/core_commands.py:3084
 msgid "The help settings have been reset to their defaults. This may not have an impact when using 3rd party help formatters."
@@ -2494,7 +2939,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[use_menus]` - Whether to use menus. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Tillater oppstartskommandoen å bli sendt som en paginert meny i stedet for separate\n"
+"        meldinger.\n\n"
+"        Når aktivert, `[p]help` vil kun vise en side om gangen og vil bruke reaksjoner på å navigere mellom sider.\n\n"
+"        Standard settes til False.\n"
+"        Å bruke dette uten en innstilling vil veksle.\n\n"
+"         **Eksempler:**\n"
+"            - `[p]helpset usemenus True` - Aktiverer ved hjelp av menyer.\n"
+"            - `[p]helpset usemenus` - Veksler verdien.\n\n"
+"        **Argumenter:**\n"
+"            - `[use_menus]` - Om menyene skal brukes. La stå tomt for å veksle.\n"
+"        "
 
 #: redbot/core/core_commands.py:3112
 msgid "Help will use menus."
@@ -2516,7 +2972,16 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[show_hidden]` - Whether to use show hidden commands in help. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Dette lar hjelpekommandoen vise skjulte kommandoer.\n\n"
+"        Dette er som standard falskt.\n"
+"        Hvis du bruker dette uten en innstilling, vil det veksle.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]helpset showhidden True` - Gjør det mulig å vise skjulte kommandoer.\n"
+"            - `[p]helpset showhidden` - Slår på/av.\n"
+"        \n"
+"        ** Argumenter: **\n"
+"            - `[show_hidden]` - Om du vil bruke skjulte kommandoer som hjelp. La det stå tomt for å veksle.        "
 
 #: redbot/core/core_commands.py:3135
 msgid "Help will not filter hidden commands."
@@ -2538,7 +3003,16 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[show_aliases]` - Whether to include aliases in help. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Dette tillater kommandoen hjelp å vise eksisterende kommandoer aliaser hvis det er noen.\n\n"
+"        Denne standarden settes til «true».\n"
+"        Å bruke dette uten en innstilling vil veksle.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]helpset showaliases False` - Viser aliaser på denne serveren.\n"
+"            - `[p]helpset showaliases` - Slår på/av.\n\n"
+"        **Argumenter:**\n"
+"            - `[show_aliases]` - Om å inkludere aliaser i hjelp. La stå blank for å veksle.\n"
+"        "
 
 #: redbot/core/core_commands.py:3158
 msgid "Help will show commands aliases."
@@ -2562,7 +3036,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[use_tick]` - Whether to tick the help command when help is sent to DMs. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Dette lar deg sende direktemelding til deg om hjelp sendes til en DM.\n\n"
+"        Ticking reagerer på beskjeden med en ✅.\n\n"
+"        Standard til False.\n"
+"        Bruk dette uten en innstilling vil veksle.\n\n"
+"        Merk: Dette brukes bare når boten ikke bruker menyene.\n\n"
+"        **Eksempler:**\n"
+"            - `[p]helpset usetick False` - Slå av når hjelp sendes til direktør.\n"
+"            - `[p]helpset usetick` - Slår på/av.\n\n"
+"        **Argumenter:**\n"
+"            - `[use_tick]- Om du vil krysse av i kommandoen når du sender hjelpe til DMs. La være blank for veksle.\n"
+"        "
 
 #: redbot/core/core_commands.py:3185
 msgid "Help will now tick the command when sent in a DM."

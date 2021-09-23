@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-07 21:44+0000\n"
+"POT-Creation-Date: 2021-09-23 14:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -416,7 +416,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:947
 msgid "Detected issue: "
-msgstr ""
+msgstr "Problème détecté : "
 
 #: redbot/core/_diagnoser.py:949
 msgid "Solution: "
@@ -711,12 +711,12 @@ msgid "Shows [botname]'s uptime."
 msgstr "Affiche le temps de disponibilité de [botname]."
 
 #: redbot/core/core_commands.py:563
-msgid "Less than one second"
-msgstr "Moins d'une seconde"
+msgid "Less than one second."
+msgstr ""
 
 #: redbot/core/core_commands.py:565
-msgid "Been up for: **{time_quantity}** (since {timestamp} UTC)"
-msgstr "En ligne depuis : **{time_quantity}** (Depuis {timestamp} UTC)"
+msgid "Been up for: **{time_quantity}** (since {timestamp})"
+msgstr ""
 
 #: redbot/core/core_commands.py:572
 #, docstring
@@ -2252,7 +2252,7 @@ msgstr "Les préfixes du serveur ont été réinitialisées."
 
 #: redbot/core/core_commands.py:2735
 msgid "You cannot have a prefix longer than 20 characters."
-msgstr ""
+msgstr "Vous ne pouvez pas avoir un préfix de plus de 20 caractères."
 
 #: redbot/core/core_commands.py:2740
 msgid "Server prefix set."

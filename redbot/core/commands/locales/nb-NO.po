@@ -45,11 +45,11 @@ msgstr "Forventet én av: {}"
 
 #: redbot/core/commands/converter.py:545
 msgid "Command \"{arg}\" not found."
-msgstr ""
+msgstr "Kommandoen \"{arg}\" ble ikke funnet."
 
 #: redbot/core/commands/converter.py:555
 msgid "Cog \"{arg}\" not found."
-msgstr ""
+msgstr "Cog \"{arg}\" ikke funnet."
 
 #: redbot/core/commands/help.py:106
 msgid "No"
@@ -80,7 +80,16 @@ msgid "Maximum characters per page: {page_char_limit}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}\n"
 "Reaction timeout (only used if menus are used): {react_timeout} seconds{tagline_info}"
-msgstr ""
+msgstr "Maksimalt antall tegn per side: {page_char_limit}\n"
+"Maksimalt antall sider per server (bare brukt dersom menyer ikke er brukt): {max_pages_in_guild}\n"
+"Hjelp er et meny: {use_menus}\n"
+"Hjelp viser skjulte kommandoer: {show_hidden}\n"
+"Hjelpe viser kommandoer aliaser: {show_aliases}\n"
+"Hjelp kan bare vise kommandoer som kan brukes: {verify_checks}\n"
+"Hjelpe viser ubrukelige kommandoer når forespurt direkte: {verify_exists}\n"
+"Slett forsinkelse: {delete_delay}\n"
+"React med et sjekkmerke når hjelp sendes via DM: {use_tick}\n"
+"Reaction timeout (bare brukes hvis meny er brukt): {react_timeout} sekunder{tagline_info}"
 
 #: redbot/core/commands/help.py:276
 msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."

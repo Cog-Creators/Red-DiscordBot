@@ -29,15 +29,15 @@ msgstr "API ключ Spotify или секрет клиента были уст�
 
 #: redbot/cogs/audio/apis/interface.py:351
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr "Это не похоже на действительный адрес или код Spotify."
+msgstr "Это не похоже на действительный URL адрес или код плейлиста/альбома Spotify."
 
 #: redbot/cogs/audio/apis/interface.py:477
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr "Возможно, этот формат файла не поддерживается."
+msgstr "Это не похоже на поддерживаемую Spotify ссылку или код."
 
 #: redbot/cogs/audio/apis/interface.py:567
 msgid "The connection was reset while loading the playlist."
-msgstr "Соединение было сброшено при загрузке плейлиста."
+msgstr "Соединение было прервано при загрузке плейлиста."
 
 #: redbot/cogs/audio/apis/interface.py:578
 msgid "Player timeout, skipping remaining tracks."
@@ -53,7 +53,7 @@ msgstr "Плейлист добавлен в очередь"
 
 #: redbot/cogs/audio/apis/interface.py:681
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr "{num} треков добавлено в очередь.{maxlength_msg}"
+msgstr "Добавлено {num} треков в очередь.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:687
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
@@ -64,13 +64,13 @@ msgid "Nothing found.\n"
 "The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr "Ничего не найдено.\n"
-"Ключ YouTube API может быть недействительным или вы можете оценить его в поисковой службе YouTube.\n"
-"Проверьте YouTube API еще раз и следуйте инструкциям в `{prefix}audio set you_tube API`."
+"Ключ YouTube API может быть недействительным или вы можете быть ограничены в запросах в поисковом сервисе YouTube.\n"
+"Проверьте API ключ YouTube еще раз и следуйте инструкциям в `{prefix}audio set you_tube API`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr "Ваш token API YouTube Data недействителен.\n"
+msgstr "Ваш API токен от YouTube Data недействителен.\n"
 "Проверьте ключ YouTube API снова и следуйте инструкциям в `{prefix}audio set you_tube API`."
 
 #: redbot/cogs/audio/apis/youtube.py:74

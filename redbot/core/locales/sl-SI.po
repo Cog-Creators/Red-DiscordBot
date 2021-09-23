@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-07 21:44+0000\n"
+"POT-Creation-Date: 2021-09-23 14:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "MIME-Version: 1.0\n"
@@ -699,12 +699,12 @@ msgid "Shows [botname]'s uptime."
 msgstr "Pokaže čas delovanja [botname]."
 
 #: redbot/core/core_commands.py:563
-msgid "Less than one second"
-msgstr "Manj kot sekunda"
+msgid "Less than one second."
+msgstr ""
 
 #: redbot/core/core_commands.py:565
-msgid "Been up for: **{time_quantity}** (since {timestamp} UTC)"
-msgstr "Delujem že **{time_quantity}** (od {timestamp} UTC)"
+msgid "Been up for: **{time_quantity}** (since {timestamp})"
+msgstr ""
 
 #: redbot/core/core_commands.py:572
 #, docstring

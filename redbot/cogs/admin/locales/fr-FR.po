@@ -255,7 +255,10 @@ msgid "\n"
 "        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Ajouter un rôle, ou une sélection de rôles, à la liste des rôles personnels disponibles.\n\n"
+"        NOTE : Le nom du rôle est sensible aux majuscules et minuscules !\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:463
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -263,7 +266,7 @@ msgstr "Je ne peux pas vous laisser ajouter {role.name} comme auto-rôle car ce 
 
 #: redbot/cogs/admin/admin.py:473
 msgid "The role \"{role.name}\" is already a selfrole."
-msgstr ""
+msgstr "Le rôle \"{role.name}\" est déjà un rôle auto-attribué."
 
 #: redbot/cogs/admin/admin.py:479
 msgid "Added {count} selfroles."
@@ -271,7 +274,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:481
 msgid "Added 1 selfrole."
-msgstr ""
+msgstr "Ajout de 1 auto-rôle."
 
 #: redbot/cogs/admin/admin.py:487
 #, docstring
@@ -279,7 +282,10 @@ msgid "\n"
 "        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Ajouter un rôle, ou une sélection de rôles, à la liste des rôles personnels disponibles.\n\n"
+"        NOTE : Le nom du rôle est sensible aux majuscules et minuscules !\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:496
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -287,11 +293,11 @@ msgstr "Je ne peux pas vous laisser ajouter {role.name} comme auto-rôle car ce 
 
 #: redbot/cogs/admin/admin.py:506
 msgid "Removed {count} selfroles."
-msgstr ""
+msgstr "Suppression de {count} auto-rôles."
 
 #: redbot/cogs/admin/admin.py:508
 msgid "Removed 1 selfrole."
-msgstr ""
+msgstr "Suppression d'un auto-rôle."
 
 #: redbot/cogs/admin/admin.py:515
 #, docstring
@@ -320,5 +326,5 @@ msgstr "Le cog Admin n'est pas chargé."
 
 #: redbot/cogs/admin/converters.py:21
 msgid "The role \"{role_name}\" is not a valid selfrole."
-msgstr ""
+msgstr "Le rôle \"{role_name}\" n'est pas un auto-rôle valide."
 

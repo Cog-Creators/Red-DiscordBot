@@ -35,7 +35,9 @@ msgstr "Kommando for å fikse feilaktig i casetyper."
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `[channel]` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "Velg en kanal som modlog.\n\n"
+"        Omit `[channel]` for å deaktivere modlog.\n"
+"        "
 
 #: redbot/cogs/modlog/modlog.py:55
 msgid "Mod events will be sent to {channel}."
@@ -85,11 +87,11 @@ msgstr "Tilbakestill alle modlog tilfeller på denne serveren."
 
 #: redbot/cogs/modlog/modlog.py:107
 msgid "Are you sure you would like to reset all modlog cases in this server?"
-msgstr ""
+msgstr "Er du sikker på at du vil tilbakestille alle modlogg-tilfeller i denne serveren?"
 
 #: redbot/cogs/modlog/modlog.py:114
 msgid "You took too long to respond."
-msgstr ""
+msgstr "Du tok for lang tid å svare."
 
 #: redbot/cogs/modlog/modlog.py:118
 msgid "Cases have been reset."
@@ -97,7 +99,7 @@ msgstr "Tilfeller er tilbakestilt."
 
 #: redbot/cogs/modlog/modlog.py:120
 msgid "No changes have been made."
-msgstr ""
+msgstr "Ingen endringer er utført."
 
 #: redbot/cogs/modlog/modlog.py:125
 #, docstring

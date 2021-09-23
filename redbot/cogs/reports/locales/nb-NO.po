@@ -45,7 +45,7 @@ msgstr "Den rapporteringskanalen har blitt satt."
 #: redbot/cogs/reports/reports.py:117
 #, docstring
 msgid "Enable or disable reporting for this server."
-msgstr ""
+msgstr "Aktiver eller deaktiver rapportering for denne serveren."
 
 #: redbot/cogs/reports/reports.py:122
 msgid "Reporting is now enabled"

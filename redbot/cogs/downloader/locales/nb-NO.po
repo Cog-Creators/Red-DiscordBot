@@ -132,11 +132,11 @@ msgstr "Legg til ny repo.\n\n"
 
 #: redbot/cogs/downloader/downloader.py:544
 msgid "Repo names cannot start or end with a dot."
-msgstr ""
+msgstr "Repo navn kan ikke starte eller slutte med punktum."
 
 #: redbot/cogs/downloader/downloader.py:548
 msgid "Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots."
-msgstr ""
+msgstr "Repo navn kan bare inneholde tegnene A-z, tall, understrekingstall, bindestreker og prikker."
 
 #: redbot/cogs/downloader/downloader.py:560
 msgid "The repo name you provided is already in use. Please choose another name."
@@ -164,7 +164,14 @@ msgid "\n"
 "        **Arguments**\n\n"
 "        - `<repos...>` The repo or repos to remove.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Fjern repoer og deres filer.\n\n"
+"        Eksempler:\n"
+"            - `[p]repo delete 26-Cogs`\n"
+"            - `[p]repo delete 26-Cogs Laggrons-Dumb-Cogs`\n\n"
+"        **Argumenter**\n\n"
+"        - `<repos...>` Repos for å fjerne.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:610
 msgid "Successfully deleted repos: "
@@ -390,7 +397,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:841
 msgid "\n"
 "Failed to install the requirement: "
-msgstr ""
+msgstr "\n"
+"Kan ikke installere kravet: "
 
 #: redbot/cogs/downloader/downloader.py:862
 msgid "\n"
@@ -842,7 +850,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1450
 msgid "\n"
 "Cog with this name is already installed from a different repo."
-msgstr ""
+msgstr "\n"
+"Cog med dette navnet er allerede installert fra en annen repo."
 
 #: redbot/cogs/downloader/downloader.py:1467
 msgid " (Minimum: {min_version})"
@@ -865,7 +874,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1495
 msgid "\n"
 "This cog requires higher python version than you have: "
-msgstr ""
+msgstr "\n"
+"Denne cog krever høyere python-versjon enn du har: "
 
 #: redbot/cogs/downloader/downloader.py:1499
 msgid "\n"
@@ -876,7 +886,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1504
 msgid "\n"
 "This cog requires different Red version than you currently have ({current_version}): "
-msgstr ""
+msgstr "\n"
+"Denne cog krever en annen rød versjon enn du har ({current_version}): "
 
 #: redbot/cogs/downloader/downloader.py:1575
 msgid "Cog update completed successfully."
@@ -897,7 +908,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1598
 msgid "\n"
 "End user data statement of this cog has changed:"
-msgstr ""
+msgstr "\n"
+"Erklæring om sluttbrukerdata fra denne loggen har endret:"
 
 #: redbot/cogs/downloader/downloader.py:1600
 msgid "\n"

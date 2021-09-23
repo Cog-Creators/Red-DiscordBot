@@ -250,12 +250,14 @@ msgstr "Vous avez été banni temporairement de {server_name} jusqu'au {date}."
 #: redbot/cogs/mod/kickban.py:649
 msgid "\n\n"
 "**Reason:** {reason}"
-msgstr ""
+msgstr "\n\n"
+"**Raison :** {reason}"
 
 #: redbot/cogs/mod/kickban.py:651
 msgid "\n\n"
 "Here is an invite for when your ban expires: {invite_link}"
-msgstr ""
+msgstr "\n\n"
+"Voici l'invitation qui vous permettra de rejoindre le serveur après l'expiration de votre ban : {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:661
 msgid "I can't do that for some reason."

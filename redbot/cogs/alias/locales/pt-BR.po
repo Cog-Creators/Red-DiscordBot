@@ -24,7 +24,13 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Crie atalhos para comandos.\n\n"
+"    Atalhos são nomes simplificados para comandos. \n"
+"    Podem agir como uma lambda (armazenando argumentos para uso repetitivo)\n"
+"    ou simplesmente como um atalho para dizer \"x y z\".\n\n"
+"    Quando executado, os atalhos aceitam quaisquer argumentos adicionais\n"
+"    e junta-los com os já armazenados.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
@@ -39,7 +45,7 @@ msgstr "\n\n"
 #: redbot/cogs/alias/alias.py:215
 #, docstring
 msgid "Manage command aliases."
-msgstr "Gerenciar atalhos de comandos."
+msgstr "Gerenciar atalhos dos comandos."
 
 #: redbot/cogs/alias/alias.py:220
 #, docstring
@@ -95,28 +101,28 @@ msgstr "Um novo atalho global com o gatilho `{name}` foi criado."
 #: redbot/cogs/alias/alias.py:345
 #, docstring
 msgid "Edit an existing alias in this server."
-msgstr ""
+msgstr "Editar um atalho existente neste servidor."
 
 #: redbot/cogs/alias/alias.py:350 redbot/cogs/alias/alias.py:385
 msgid "The alias with the name {name} does not exist."
-msgstr ""
+msgstr "O atalho com o nome {name} não existe."
 
 #: redbot/cogs/alias/alias.py:356 redbot/cogs/alias/alias.py:391
 msgid "You attempted to edit an alias to a command that doesn't exist."
-msgstr ""
+msgstr "Você tentou editar um atalho para um comando que não existe."
 
 #: redbot/cogs/alias/alias.py:365 redbot/cogs/alias/alias.py:398
 msgid "The alias with the trigger `{name}` has been edited sucessfully."
-msgstr ""
+msgstr "O atalho com o gatilho `{name}` foi editado com sucesso."
 
 #: redbot/cogs/alias/alias.py:372 redbot/cogs/alias/alias.py:405
 msgid "Alias with the name `{name}` was not found."
-msgstr ""
+msgstr "O atalho com o nome `{name}` não foi encontrado."
 
 #: redbot/cogs/alias/alias.py:380
 #, docstring
 msgid "Edit an existing global alias."
-msgstr ""
+msgstr "Editar um atalho global."
 
 #: redbot/cogs/alias/alias.py:412
 #, docstring

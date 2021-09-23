@@ -250,12 +250,14 @@ msgstr "{server_name} sunucusundan {date} tarihine kadar yasaklandınız."
 #: redbot/cogs/mod/kickban.py:649
 msgid "\n\n"
 "**Reason:** {reason}"
-msgstr ""
+msgstr "\n\n"
+"**Sebep:** {reason}"
 
 #: redbot/cogs/mod/kickban.py:651
 msgid "\n\n"
 "Here is an invite for when your ban expires: {invite_link}"
-msgstr ""
+msgstr "\n\n"
+" Ban süreniz dolduğunda kullanabileceğiniz davet linki: {invite_link}"
 
 #: redbot/cogs/mod/kickban.py:661
 msgid "I can't do that for some reason."
