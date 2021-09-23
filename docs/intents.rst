@@ -123,14 +123,11 @@ The *bandaid fix* is for you to change your bot's prefix to a mention and a good
 still work. You will however lose many functions, namely anything that relies on seeing message content to act. |br|
 The more *proper fix* is also not easy. You will need to justify your need for the message intent to Discord and
 they will only accept "compelling use cases".
-`It is not known <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-what-usecases-will-be-valid>`_
-what those even entail at this point, but they have already stated that "parsing commands" is not a valid justification. |br|
-To make the matter worse, Discord is making a huge push for all bot developers to implement
-`slash commands <https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ>`_, which at the moment
+`It is not known what those even entail <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-what-usecases-will-be-valid>`_ at this point, but they have already stated that "parsing commands" is not a valid justification. |br|
+To make the matter worse, Discord is making `a huge push for all bot developers to implement slash commands <https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ>`_, which at the moment
 are rather lacking in features and cannot cover all the functionalities that standard commands offer. |br|
 Discord staff
-`stated <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-if-we-are-granted-this-intent-will-bots-be-sanctioned-if-they-use-it-for-their-own-use-case-but-also-to-continue-to-run-normal-non-slash-commands-or-do-we-assume-that-if-you-are-granted-the-intent-you-are-trusted-with-it-and-are-allowed-to-use-it-for-additional-uses>`_
-that they will want your bot to have slash commands when you ask for message intent. |br|
+`stated that they will want your bot to have slash commands when you ask for message intent <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-if-we-are-granted-this-intent-will-bots-be-sanctioned-if-they-use-it-for-their-own-use-case-but-also-to-continue-to-run-normal-non-slash-commands-or-do-we-assume-that-if-you-are-granted-the-intent-you-are-trusted-with-it-and-are-allowed-to-use-it-for-additional-uses>`_. |br|
 Slash commands might very well turn out to be a big undertaking for the Red team to implement, even more now that our
 underlying library, `discord.py <https://github.com/Rapptz/discord.py>`_, has been discontinued. |br|
 The time window that Discord is giving us to adapt is very narrow: **Red will likely not be able to support slash
