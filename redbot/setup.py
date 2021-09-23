@@ -251,21 +251,16 @@ async def remove_instance(
     backend = get_current_backend(instance)
 
     if interactive is True and delete_data is None:
+        msg = "Would you like to delete this instance's data?"
         if backend != BackendType.JSON:
-            delete_data = click.confirm(
-                "Would you like to delete this instance's data?"
-                " The database server must be running for this to work.",
-                default=False,
-            )
-        else:
-            delete_data = click.confirm(
-                "Would you like to delete this instance's data?", default=False
-            )
+            msg += " The database server must be running for this to work."
+        delete_data = click.confirm(msg, default=False)
 
     if interactive is True and _create_backup is None:
-        _create_backup = click.confirm(
-            "Would you like to make a backup of the data for this instance?", default=False
-        )
+        msg = "Would you like to make a backup of the data for this instance?"
+        if backend != BackendType.JSON:
+            msg += " The database server must be running for this to work."
+        _create_backup = click.confirm(msg, default=False)
 
     if _create_backup is True:
         await create_backup(instance)
