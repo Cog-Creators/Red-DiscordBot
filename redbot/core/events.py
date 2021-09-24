@@ -352,6 +352,7 @@ def init_events(bot, cli_flags):
         await set_contextual_locales_from_guild(bot, message.guild)
 
         await bot.process_commands(message)
+
         discord_now = message.created_at
         if (
             not bot._checked_time_accuracy
