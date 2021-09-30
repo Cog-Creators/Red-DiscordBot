@@ -30,7 +30,8 @@ class ModLog(commands.Cog):
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
-        """Manage modlog settings."""
+        """Manage modlog settings, such as setting the modlog channel, enabling log creation, resetting the cases, and more.
+        """
         pass
 
     @checks.is_owner()
