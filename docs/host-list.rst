@@ -21,7 +21,7 @@ First, we would like to make something clear:
 .. warning::
     Due to their inability to handle Red's data structure and meet the
     conditions of being a supported platform; platforms such as Heroku, 
-    Pterodactyl, repl.it, Termux, LXC and alike are **NOT** officially supported. 
+    Pterodactyl, repl.it, Termux and alike are **NOT** officially supported. 
     Docker support found in GitHub is also a work in progress and not ready
     for daily use. Workarounds for getting Red running on those platforms
     are imperfect due to Red's nature. You will not be able to receive
