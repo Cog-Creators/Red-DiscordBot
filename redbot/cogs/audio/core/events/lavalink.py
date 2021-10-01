@@ -143,6 +143,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and player.fetch("playing_song") is not None
                 and self.playlist_api is not None
                 and self.api_interface is not None
+                and player.state == lavalink.enums.PlayerState.READY
             ):
                 notify_channel_id = player.fetch("notify_channel")
                 try:
