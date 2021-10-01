@@ -1456,6 +1456,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if not public:
             destination = ctx.author
+            await ctx.tick()
         else:
             destination = ctx.channel
 
