@@ -357,7 +357,7 @@ class CogManagerUI(commands.Cog):
             await ctx.send(
                 _(
                     "That path does not exist or does not point to a valid directory. \nCheck that your path does not contain any {quotation_mark}, {apostrophe} or other invalid characters."
-                ).format(quotation_mark='``"``', apostrophe="``'``")
+                ).format(quotation_mark='`"`', apostrophe="`'`")
             )
             return
         try:
