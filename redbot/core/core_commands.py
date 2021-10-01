@@ -1456,7 +1456,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if not public:
             destination = ctx.author
-            await ctx.tick()
         else:
             destination = ctx.channel
 
@@ -1472,6 +1471,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     return
         else:
             await ctx.send(_("No exception has occurred yet."))
+        if not public:
+            await ctx.tick()
 
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
