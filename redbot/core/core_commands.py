@@ -1469,10 +1469,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "Either you blocked me or you disabled DMs in this server."
                     )
                     return
-        else:
-            await ctx.send(_("No exception has occurred yet."))
         if not public:
             await ctx.tick()
+        else:
+            await ctx.send(_("No exception has occurred yet."))
 
     @commands.command()
     @commands.check(CoreLogic._can_get_invite_url)
