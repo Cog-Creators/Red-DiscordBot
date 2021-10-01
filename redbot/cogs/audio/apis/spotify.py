@@ -126,7 +126,7 @@ class SpotifyWrapper:
             else "US"
         )
 
-    async def request_access_token(self) -> MutableMapping:
+    async def request_access_token(self) -> Optional[MutableMapping]:
         """Make a spotify call to get the auth token."""
         await self.get_token()
         payload = {"grant_type": "client_credentials"}
@@ -141,6 +141,7 @@ class SpotifyWrapper:
         token = await self.request_access_token()
         if token is None:
             log.debug("Requested a token from Spotify, did not end up getting one.")
+            return None
         try:
             token["expires_at"] = int(time.time()) + int(token["expires_in"])
         except KeyError:
@@ -151,12 +152,18 @@ class SpotifyWrapper:
 
     async def post(
         self, url: str, payload: MutableMapping, headers: MutableMapping = None
-    ) -> MutableMapping:
+    ) -> Optional[MutableMapping]:
         """Make a POST call to spotify."""
         async with self.session.post(url, data=payload, headers=headers) as r:
-            data = await r.json(loads=json.loads)
-            if r.status != 200:
-                log.debug("Issue making POST request to %r: [%d] %r", url, r.status, data)
+
+            # If the content-type is not JSON, we can safely assume that the request failed and return None irrespective of the status code.
+            if r.headers["Content-Type"] == "application/json":
+                data = await r.json(loads=json.loads)
+            else:
+                log.debug(
+                    "Issue making POST request to %r: [%d] %r", url, r.status, await r.text()
+                )
+                return None
             return data
 
     async def make_get_call(self, url: str, params: MutableMapping) -> MutableMapping:
