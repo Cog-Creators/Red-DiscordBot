@@ -81,7 +81,17 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             if guild_data["auto_play"]:
                 if guild_data["currently_auto_playing_in"]:
                     notify_channel, vc_id = guild_data["currently_auto_playing_in"]
-                    metadata[guild_id] = (notify_channel, vc_id)
+                    if guild_data["emptydc_enabled"]:
+                        guild = self.bot.get_guild(guild_id)
+                        if not guild:
+                            continue
+                        vc = guild.get_channel(vc_id)
+                        if len(vc.members) != 0:
+                            metadata[guild_id] = (notify_channel, vc_id)
+                        else:
+                            await self.config.guild(guild).currently_auto_playing_in.set([])
+                    else:
+                        metadata[guild_id] = (notify_channel, vc_id)
 
         for guild_id, track_data in itertools.groupby(tracks_to_restore, key=lambda x: x.guild_id):
             await asyncio.sleep(0)
