@@ -30,8 +30,7 @@ class ModLog(commands.Cog):
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
-        """Manage modlog settings, such as setting the modlog channel, enabling log creation, resetting the cases, and more.
-        """
+        """Manage modlog settings."""
         pass
 
     @checks.is_owner()
@@ -73,7 +72,7 @@ class ModLog(commands.Cog):
     @modlogset.command(name="cases")
     @commands.guild_only()
     async def set_cases(self, ctx: commands.Context, action: str = None):
-        """Enable or disable case creation for a mod action."""
+        """Enable or disable case creation for a mod action, like disabling warnings, enabling bans, etc."""
         guild = ctx.guild
 
         if action is None:  # No args given
