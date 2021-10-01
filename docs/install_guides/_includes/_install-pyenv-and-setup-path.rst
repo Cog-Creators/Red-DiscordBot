@@ -9,10 +9,11 @@ you should run these commands:
 
 .. prompt:: bash
 
-    profile=$([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile)
+    profile=$([ -n "$ZSH_VERSION" ] && [ -f ~/.zprofile ] && echo ~/.zprofile || [ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile)
+    rcfile=$([ -n "$ZSH_VERSION" ] && echo ~/.zshrc || echo ~/.bashrc)
     printf '%s\n%s\n%s\n' 'export PYENV_ROOT="$HOME/.pyenv"' 'export PATH="$PYENV_ROOT/bin:$PATH"' "$([ -f "$profile" ] && cat "$profile")" > "$profile"
     echo 'eval "$(pyenv init --path)"' >> "$profile"
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+    echo 'eval "$(pyenv init -)"' >> "$rcfile"
+    echo 'eval "$(pyenv virtualenv-init -)"' >> "$rcfile"
 
 Then **close and reopen to your shell** and run the following command:
