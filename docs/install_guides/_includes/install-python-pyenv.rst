@@ -6,7 +6,7 @@ On distributions where Python 3.9 needs to be compiled from source, we recommend
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
-.. include:: _install-pyenv-and-setup-path.rst
+.. include:: _includes/_install-pyenv-and-setup-path.rst
 
 .. prompt:: bash
 
