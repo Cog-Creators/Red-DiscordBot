@@ -450,45 +450,64 @@ class Admin(commands.Cog):
         pass
 
     @selfroleset.command(name="add")
-    async def selfroleset_add(self, ctx: commands.Context, *, role: discord.Role):
+    async def selfroleset_add(self, ctx: commands.Context, *roles: discord.Role):
         """
-        Add a role to the list of available selfroles.
+        Add a role, or a selection of roles, to the list of available selfroles.
 
         NOTE: The role is case sensitive!
         """
-        if not self.pass_user_hierarchy_check(ctx, role):
-            await ctx.send(
-                _(
-                    "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-                ).format(role=role)
-            )
-            return
-        async with self.config.guild(ctx.guild).selfroles() as curr_selfroles:
-            if role.id not in curr_selfroles:
-                curr_selfroles.append(role.id)
-                await ctx.send(_("Added."))
+        current_selfroles = await self.config.guild(ctx.guild).selfroles()
+        for role in roles:
+            if not self.pass_user_hierarchy_check(ctx, role):
+                await ctx.send(
+                    _(
+                        "I cannot let you add {role.name} as a selfrole because that role is"
+                        " higher than or equal to your highest role in the Discord hierarchy."
+                    ).format(role=role)
+                )
+                return
+            if role.id not in current_selfroles:
+                current_selfroles.append(role.id)
+            else:
+                await ctx.send(
+                    _('The role "{role.name}" is already a selfrole.').format(role=role)
+                )
                 return
 
-        await ctx.send(_("That role is already a selfrole."))
+        await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
+        if (count := len(roles)) > 1:
+            message = _("Added {count} selfroles.").format(count=count)
+        else:
+            message = _("Added 1 selfrole.")
+
+        await ctx.send(message)
 
     @selfroleset.command(name="remove")
-    async def selfroleset_remove(self, ctx: commands.Context, *, role: SelfRole):
+    async def selfroleset_remove(self, ctx: commands.Context, *roles: SelfRole):
         """
-        Remove a role from the list of available selfroles.
+        Remove a role, or a selection of roles, from the list of available selfroles.
 
         NOTE: The role is case sensitive!
         """
-        if not self.pass_user_hierarchy_check(ctx, role):
-            await ctx.send(
-                _(
-                    "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-                ).format(role=role)
-            )
-            return
-        async with self.config.guild(ctx.guild).selfroles() as curr_selfroles:
-            curr_selfroles.remove(role.id)
+        current_selfroles = await self.config.guild(ctx.guild).selfroles()
+        for role in roles:
+            if not self.pass_user_hierarchy_check(ctx, role):
+                await ctx.send(
+                    _(
+                        "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                    ).format(role=role)
+                )
+                return
+            current_selfroles.remove(role.id)
 
-        await ctx.send(_("Removed."))
+        await self.config.guild(ctx.guild).selfroles.set(current_selfroles)
+
+        if (count := len(roles)) > 1:
+            message = _("Removed {count} selfroles.").format(count=count)
+        else:
+            message = _("Removed 1 selfrole.")
+
+        await ctx.send(message)
 
     @commands.command()
     @checks.is_owner()

@@ -383,7 +383,7 @@ command defaultdisablecog
 
 .. code-block:: none
 
-    [p]command defaultdisablecog <cogname>
+    [p]command defaultdisablecog <cog>
 
 **Description**
 
@@ -400,7 +400,7 @@ To override it, use ``[p]command enablecog`` on the servers you want to allow us
     - ``[p]command defaultdisablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to make disabled by default. Must be title-case.
+    - ``<cog>`` - The name of the cog to make disabled by default. Must be title-case.
 
 .. _core-command-command-defaultenablecog:
 
@@ -414,7 +414,7 @@ command defaultenablecog
 
 .. code-block:: none
 
-    [p]command defaultenablecog <cogname>
+    [p]command defaultenablecog <cog>
 
 **Description**
 
@@ -431,7 +431,7 @@ To override it, use ``[p]command disablecog`` on the servers you want to disallo
     - ``[p]command defaultenablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to make enabled by default. Must be title-case.
+    - ``<cog>`` - The name of the cog to make enabled by default. Must be title-case.
 
 .. _core-command-command-disable:
 
@@ -519,7 +519,7 @@ command disablecog
 
 .. code-block:: none
 
-    [p]command disablecog <cogname>
+    [p]command disablecog <cog>
 
 **Description**
 
@@ -533,7 +533,7 @@ Disable a cog in this server.
     - ``[p]command disablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to disable on this server. Must be title-case.
+    - ``<cog>`` - The name of the cog to disable on this server. Must be title-case.
 
 .. _core-command-command-disabledmsg:
 
@@ -651,7 +651,7 @@ command enablecog
 
 .. code-block:: none
 
-    [p]command enablecog <cogname>
+    [p]command enablecog <cog>
 
 **Description**
 
@@ -665,7 +665,7 @@ Enable a cog in this server.
     - ``[p]command enablecog ModLog``
 
 **Arguments:**
-    - ``<cogname>`` - The name of the cog to enable on this server. Must be title-case.
+    - ``<cog>`` - The name of the cog to enable on this server. Must be title-case.
 
 .. _core-command-command-listdisabled:
 
@@ -769,6 +769,33 @@ This is limited to one message every 60 seconds per person.
 
 **Arguments:**
     - ``[message]`` - The message to send to the owner.
+
+.. _core-command-diagnoseissues:
+
+^^^^^^^^^^^^^^
+diagnoseissues
+^^^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]diagnoseissues [channel] <member> <command_name>
+
+**Description**
+
+Diagnose issues with the command checks with ease!
+
+If you want to diagnose the command from a text channel in a different server,
+you can do so by using the command in DMs.
+
+**Example:**
+    - ``[p]diagnoseissues #general @Slime ban`` - Diagnose why @Slime can't use ``[p]ban`` in #general channel.
+
+**Arguments:**
+    - ``[channel]`` - The text channel that the command should be tested for. Defaults to the current channel.
+    - ``<member>`` - The member that should be considered as the command caller.
+    - ``<command_name>`` - The name of the command to test.
 
 .. _core-command-dm:
 
@@ -875,7 +902,7 @@ embedset command
 
 .. code-block:: none
 
-    [p]embedset command <command_name> [enabled]
+    [p]embedset command <command> [enabled]
 
 **Description**
 
@@ -908,7 +935,7 @@ embedset command global
 
 .. code-block:: none
 
-    [p]embedset command global <command_name> [enabled]
+    [p]embedset command global <command> [enabled]
 
 **Description**
 
@@ -938,7 +965,7 @@ embedset command server
 
 .. code-block:: none
 
-    [p]embedset command server <command_name> [enabled]
+    [p]embedset command server <command> [enabled]
 
 .. tip:: Alias: ``embedset command guild``
 
@@ -1030,7 +1057,7 @@ embedset showsettings
 
 .. code-block:: none
 
-    [p]embedset showsettings [command_name]
+    [p]embedset showsettings [command]
 
 **Description**
 
@@ -1044,7 +1071,7 @@ Provide a command name to check for command specific embed settings.
     - ``[p]embedset showsettings "ignore list"`` - Checking subcommands requires quotes.
 
 **Arguments:**
-    - ``[command_name]`` - Checks this command for command specific embed settings.
+    - ``[command]`` - Checks this command for command specific embed settings.
 
 .. _core-command-embedset-user:
 
@@ -1189,6 +1216,34 @@ mean some pages will exceed this limit.
 
 **Arguments:**
     - ``<limit>`` - The max amount of characters to show per page in the help message.
+
+.. _core-command-helpset-reacttimeout:
+
+""""""""""""""""""""
+helpset reacttimeout
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]helpset reacttimeout <seconds>
+
+**Description**
+
+Set the timeout for reactions, if menus are enabled.
+
+The default is 30 seconds.
+The timeout has to be between 15 and 300 seconds.
+
+**Examples:**
+    - ``[p]helpset reacttimeout 30`` - The default timeout.
+    - ``[p]helpset reacttimeout 60`` - Timeout of 1 minute.
+    - ``[p]helpset reacttimeout 15`` - Minimum allowed timeout.
+    - ``[p]helpset reacttimeout 300`` - Max allowed timeout (5 mins).
+
+**Arguments:**
+    - ``<seconds>`` - The timeout, in seconds, of the reactions.
 
 .. _core-command-helpset-resetformatter:
 

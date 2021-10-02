@@ -527,7 +527,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if duration:
             duration_str = humanize_timedelta(timedelta=duration)
             until = datetime.now(timezone.utc) + duration
-            until_str = until.strftime("%Y-%m-%d %H:%M:%S UTC")
+            until_str = f"<t:{int(until.timestamp())}>"
 
         if moderator is None:
             moderator_str = _("Unknown")
@@ -1030,12 +1030,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             try:
                 await ctx.bot.wait_for(event, check=pred, timeout=30)
             except asyncio.TimeoutError:
-                await query.delete()
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
                 return False
 
             if not pred.result:
                 if can_react:
-                    await query.delete()
+                    with contextlib.suppress(discord.NotFound):
+                        await query.delete()
                 else:
                     await ctx.send(_("OK then."))
 
@@ -1242,12 +1244,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         try:
             await ctx.bot.wait_for(event, check=pred, timeout=30)
         except asyncio.TimeoutError:
-            await query.delete()
+            with contextlib.suppress(discord.NotFound):
+                await query.delete()
             return
 
         if not pred.result:
             if can_react:
-                await query.delete()
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
             else:
                 await ctx.send(_("OK then."))
             return

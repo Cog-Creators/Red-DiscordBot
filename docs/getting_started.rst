@@ -13,7 +13,7 @@ This is a quick start guide for a general usage.
 .. note::
 
     If you haven't installed Red, please do it by following
-    the :ref:`installation guides <main>`.
+    one of the `installation guides <install_guides/index>`.
 
 Assuming you correctly installed Red, you should have a
 window like this:
@@ -26,8 +26,8 @@ window like this:
 Invite Red to your server
 -------------------------
 
-When started, the console will show you ``Invite URL`` (here at
-the bottom of the screenshot).
+When started, the console will show you the ``Invite URL``
+(visible at the bottom of the screenshot above).
 Paste the link into your browser and select the server you want
 to invite the bot in, like any other bot.
 
@@ -63,7 +63,7 @@ example, if your prefix is ``!``, you will execute your command like this:
 The commands
 ~~~~~~~~~~~~
 
-The command you're going to use the most is help. That command will
+The command you're going to use the most is **help**. This command will
 show you **all of the available commands** of the bot with a small description.
 
 .. code-block:: none
@@ -106,8 +106,8 @@ parameters.
     the syntax ``cleanup messages <number> [delete_pinned=False]``, which means
     ``delete_pinned`` default will be false, unless you specify it as true.
 
-You can use help to show the **categories** too, generally called cogs.
-Just do something like this (notice the capitalization):
+You can use help to show the **categories** too, generally called cogs,
+by doing the following (notice the capitalization):
 
 .. code-block:: none
 
@@ -122,7 +122,7 @@ To get the description of a subcommand, type this:
 
 When using subcommands, you also need to specify the command group.
 As an example, ``cleanup`` has 6 subcommands. If you want
-to use one, do it like this: ``[p]cleanup messages 10``
+to use one of them, do: ``[p]cleanup messages 10``
 
 .. _getting-started-cogs:
 
@@ -217,7 +217,7 @@ Server owner
 ~~~~~~~~~~~~
 
 The server owner can access all commands on his guild, except the global
-ones or those who can interact with system files (available for the
+ones or those that can interact with system files (available for the
 bot owner).
 
 ~~~~~~~~~~~~~
@@ -237,12 +237,13 @@ Moderator
 A moderator is a step above the average users. You can set multiple moderator
 roles with the ``[p]set addmodrole`` and ``[p]set removemodrole`` commands.
 
-For example, in the mod cog (again), a mod will be able to mute, kick and ban;
-but he won't be able to modify the cog settings with the ``[p]modset`` command.
+For example, in the filter cog, a mod will be able to use the various commands 
+under ``[p]filter`` (such as adding and removing filtered words), but they will
+not be able to modify the cog settings with the ``[p]filterset`` command.
 
 .. tip::
     If you don't like the default permission settings for some commands or
-    if want to restrict a cog or a command to a channel/member, you can use
+    want to restrict a cog or a command to a channel/member, you can use
     the permissions cog.
 
 .. _getting-started-hosting:
@@ -265,14 +266,14 @@ If you want to do it, follow these steps.
     basics of the Unix commands, such as navigating the system files or use
     a terminal text editor.
 
-    You should follow `this guide
+    You should read `DigitalOcean's tutorial: An Introduction to Linux Basics
     <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
-    from DigitalOcean which will introduce you to the Linux basics.
+    if you have not used Linux before.
 
 1. **Find a host**
 
   You need to find a server to host Red. You can rent a VPS (it can be free)
-  on an online service. Please check :ref:`this page <host-list>` for
+  on an online service. Please check :ref:`this list of hosts <host-list>` for
   more information.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
@@ -306,8 +307,8 @@ If you want to do it, follow these steps.
 
 3. **Install and set up Red**
 
-  Just follow one of the Linux installation guide. We provide guides for the
-  most used distributions. Check the :ref:`home page <main>` and search for
+  Follow one of the Linux installation guides. We provide guides for the
+  most used distributions. Check the `list of install guides <install_guides/index>` and search for
   your distribution.
 
 4. **Set up an auto-restart**
@@ -317,7 +318,7 @@ If you want to do it, follow these steps.
   side task and handle fatal errors, so you can just leave your server running
   and enjoy Red!
 
-  For that, just follow :ref:`this guide <systemd-service-guide>`.
+  For that, follow :ref:`the systemd service guide <systemd-service-guide>`.
 
 .. _getting-started-userdocs:
 
@@ -343,9 +344,12 @@ The cog guides are formatted the same. They're divided into 3 sections:
 
     A line that will show how the command must be invoked, with the arguments.
 
-    .. tip:: If the command show something like ``[lavalinkset|llset]``, that means
-        you can invoke the command with ``lavalinkset`` or with ``llset``, this is
-        called an alias.
+  * **Aliases**
+  
+    Each command may have one or more aliases, which are alternative command names
+    you can use to invoke the same command. For example, ``[p]set colour`` can also
+    be invoked with ``[p]set color``. If there are aliases for a command, they will
+    appear just under the syntax.
 
   * **Description**
 

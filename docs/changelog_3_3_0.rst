@@ -650,7 +650,7 @@ Dev Cog
 Documentation changes
 ---------------------
 
-- Fixed install instructions for Mac in `install_linux_mac` (:issue:`3675`, :issue:`3436`)
+- Fixed install instructions for Mac (:issue:`3675`, :issue:`3436`)
 - Windows install instructions now use ``choco upgrade`` commands instead of ``choco install`` to ensure up-to-date packages (:issue:`3684`)
 
 

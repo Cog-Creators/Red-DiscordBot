@@ -34,7 +34,7 @@ class _TrackingFormatter(Formatter):
 class Alias(commands.Cog):
     """Create aliases for commands.
 
-    Aliases are alternative names shortcuts for commands. They
+    Aliases are alternative names/shortcuts for commands. They
     can act as both a lambda (storing arguments for repeated use)
     or as simply a shortcut to saying "x y z".
 
@@ -337,6 +337,75 @@ class Alias(commands.Cog):
                 name=alias_name
             )
         )
+
+    @checks.mod_or_permissions(manage_guild=True)
+    @alias.command(name="edit")
+    @commands.guild_only()
+    async def _edit_alias(self, ctx: commands.Context, alias_name: str, *, command):
+        """Edit an existing alias in this server."""
+        # region Alias Add Validity Checking
+        alias = await self._aliases.get_alias(ctx.guild, alias_name)
+        if not alias:
+            await ctx.send(
+                _("The alias with the name {name} does not exist.").format(name=alias_name)
+            )
+            return
+
+        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        if not given_command_exists:
+            await ctx.send(_("You attempted to edit an alias to a command that doesn't exist."))
+            return
+        # endregion
+
+        # So we figured it is a valid alias and the command exists
+        # we can go ahead editing the command
+        try:
+            if await self._aliases.edit_alias(ctx, alias_name, command):
+                await ctx.send(
+                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                        name=alias_name
+                    )
+                )
+            else:
+                # This part should technically never be reached...
+                await ctx.send(
+                    _("Alias with the name `{name}` was not found.").format(name=alias_name)
+                )
+        except ArgParseError as e:
+            return await ctx.send(" ".join(e.args))
+
+    @checks.is_owner()
+    @global_.command(name="edit")
+    async def _edit_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
+        """Edit an existing global alias."""
+        # region Alias Add Validity Checking
+        alias = await self._aliases.get_alias(None, alias_name)
+        if not alias:
+            await ctx.send(
+                _("The alias with the name {name} does not exist.").format(name=alias_name)
+            )
+            return
+
+        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        if not given_command_exists:
+            await ctx.send(_("You attempted to edit an alias to a command that doesn't exist."))
+            return
+        # endregion
+
+        try:
+            if await self._aliases.edit_alias(ctx, alias_name, command, global_=True):
+                await ctx.send(
+                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                        name=alias_name
+                    )
+                )
+            else:
+                # This part should technically never be reached...
+                await ctx.send(
+                    _("Alias with the name `{name}` was not found.").format(name=alias_name)
+                )
+        except ArgParseError as e:
+            return await ctx.send(" ".join(e.args))
 
     @alias.command(name="help")
     async def _help_alias(self, ctx: commands.Context, alias_name: str):

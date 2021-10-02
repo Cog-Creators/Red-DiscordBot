@@ -1,3 +1,4 @@
+import asyncio
 import discord
 import re
 from datetime import timezone
@@ -6,6 +7,7 @@ from typing import Union, Set, Literal
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
+from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, humanize_list
 
@@ -150,6 +152,30 @@ class Filter(commands.Cog):
         """
         pass
 
+    @_filter.command(name="clear")
+    async def _filter_clear(self, ctx: commands.Context):
+        """Clears this server's filter list."""
+        guild = ctx.guild
+        author = ctx.author
+        filter_list = await self.config.guild(guild).filter()
+        if not filter_list:
+            return await ctx.send(_("The filter list for this server is empty."))
+        await ctx.send(
+            _("Are you sure you want to clear this server's filter list?") + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=author)
+            await ctx.bot.wait_for("message", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            await self.config.guild(guild).filter.clear()
+            self.invalidate_cache(guild)
+            await ctx.send(_("Server filter cleared."))
+        else:
+            await ctx.send(_("No changes have been made."))
+
     @_filter.command(name="list")
     async def _global_list(self, ctx: commands.Context):
         """Send a list of this server's filtered words."""
@@ -157,7 +183,7 @@ class Filter(commands.Cog):
         author = ctx.author
         word_list = await self.config.guild(server).filter()
         if not word_list:
-            await ctx.send(_("There is no current words setup to be filtered in this server."))
+            await ctx.send(_("There are no current words setup to be filtered in this server."))
             return
         words = humanize_list(word_list)
         words = _("Filtered in this server:") + "\n\n" + words
@@ -175,6 +201,30 @@ class Filter(commands.Cog):
         """
         pass
 
+    @_filter_channel.command(name="clear")
+    async def _channel_clear(self, ctx: commands.Context):
+        """Clears this channel's filter list."""
+        channel = ctx.channel
+        author = ctx.author
+        filter_list = await self.config.channel(channel).filter()
+        if not filter_list:
+            return await ctx.send(_("The filter list for this channel is empty."))
+        await ctx.send(
+            _("Are you sure you want to clear this channel's filter list?") + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=author)
+            await ctx.bot.wait_for("message", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            await self.config.channel(channel).filter.clear()
+            self.invalidate_cache(ctx.guild, channel)
+            await ctx.send(_("Channel filter cleared."))
+        else:
+            await ctx.send(_("No changes have been made."))
+
     @_filter_channel.command(name="list")
     async def _channel_list(self, ctx: commands.Context):
         """Send a list of the channel's filtered words."""
@@ -182,7 +232,7 @@ class Filter(commands.Cog):
         author = ctx.author
         word_list = await self.config.channel(channel).filter()
         if not word_list:
-            await ctx.send(_("There is no current words setup to be filtered in this channel."))
+            await ctx.send(_("There are no current words setup to be filtered in this channel."))
             return
         words = humanize_list(word_list)
         words = _("Filtered in this channel:") + "\n\n" + words

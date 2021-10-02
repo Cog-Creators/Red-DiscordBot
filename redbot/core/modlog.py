@@ -283,7 +283,7 @@ class Case:
         .. note::
             This attribute will be of type `int`
             if the Discord user can no longer be found.
-    modified_at: Optional[int]
+    modified_at: Optional[float]
         The UNIX time of the last change to the case.
         `None` if the case was never edited.
     message: Optional[discord.Message]
@@ -310,7 +310,7 @@ class Case:
         until: Optional[int] = None,
         channel: Optional[Union[discord.abc.GuildChannel, int]] = None,
         amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
-        modified_at: Optional[int] = None,
+        modified_at: Optional[float] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
     ):
@@ -432,9 +432,9 @@ class Case:
         until = None
         duration = None
         if self.until:
-            start = datetime.utcfromtimestamp(self.created_at)
-            end = datetime.utcfromtimestamp(self.until)
-            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S UTC")
+            start = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
+            end = datetime.fromtimestamp(self.until, tz=timezone.utc)
+            end_fmt = f"<t:{int(end.timestamp())}>"
             duration = end - start
             dur_fmt = _strfdelta(duration)
             until = end_fmt
@@ -454,9 +454,7 @@ class Case:
 
         last_modified = None
         if self.modified_at:
-            last_modified = "{}".format(
-                datetime.utcfromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S UTC")
-            )
+            last_modified = f"<t:{int(self.modified_at)}>"
 
         if isinstance(self.user, int):
             if self.user == 0xDE1:
