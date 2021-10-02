@@ -130,7 +130,7 @@ class AudioAPIInterface:
         # elif action_type == "global" and isinstance(data, list): #no global api anymore
         #     await asyncio.gather(*[self.global_cache_api.update_global(**d) for d in data])
 
-    async def _run_tasks(self, lock_id: int) -> None:
+    async def run_tasks(self, lock_id: int) -> None:
         async with self._lock:
             if lock_id in self._tasks:
                 if IS_DEBUG:

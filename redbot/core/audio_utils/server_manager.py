@@ -23,7 +23,7 @@ from redbot.core import data_manager
 log = logging.getLogger("red.core.audio.server_manager")
 
 JAR_VERSION: Final[str] = "3.3.2.3"
-JAR_BUILD: Final[int] = 1237
+JAR_BUILD: Final[int] = 1239
 LAVALINK_DOWNLOAD_URL: Final[str] = (
     "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
     f"{JAR_VERSION}_{JAR_BUILD}/"

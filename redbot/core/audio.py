@@ -779,6 +779,7 @@ class Player():
         tracks, playlist_data = await self._enqueue_tracks(
             requester, query=query, track=track, local_folder=local_folder, bump=bump, bump_and_skip=bump_and_skip)
 
+        await self._api_interface.run_tasks(requester.id)
         return tracks, playlist_data
 
     async def resume(self) -> None:

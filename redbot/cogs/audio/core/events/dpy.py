@@ -223,7 +223,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         ):
             self.update_player_lock(ctx, False)
             if audio._api_interface is not None:
-                await audio._api_interface._run_tasks(ctx.author.id)
+                await audio._api_interface.run_tasks(ctx.author.id)
         if not handled:
             await self.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 

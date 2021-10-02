@@ -165,8 +165,6 @@ audio
 
 Player
 ^^^^^^
-.. attributetable:: redbot.core.audio.Player
-
 .. note:: This class wraps various lavalink.Player methods and meanwhile interacts with RED's
           inbuilt config and databases. This class shouldn't be instantiated manually. Use
           :py:meth:`audio.connect` to do so. The presence of this object guarantees that the

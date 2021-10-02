@@ -106,7 +106,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def maybe_run_pending_db_tasks(self, ctx: commands.Context) -> None:
         if self.api_interface is not None:
-            await audio._api_interface._run_tasks(ctx.author.id)
+            await audio._api_interface.run_tasks(ctx.author.id)
 
     async def _close_database(self) -> None:
         if self.api_interface is not None:

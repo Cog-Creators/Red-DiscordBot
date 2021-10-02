@@ -45,7 +45,6 @@ extensions = [
     "sphinxcontrib_trio",
     "sphinx-prompt",
     "deprecated_removed",
-    "attributetable"
 ]
 
 # Add any paths that contain templates here, relative to this directory.
