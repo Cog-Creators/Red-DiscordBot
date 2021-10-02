@@ -86,6 +86,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         if not guild:
                             continue
                         vc = guild.get_channel(vc_id)
+                        if not vc:
+                            continue
                         if len(vc.members) != 0:
                             metadata[guild_id] = (notify_channel, vc_id)
                         else:
