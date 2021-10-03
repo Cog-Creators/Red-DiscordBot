@@ -123,7 +123,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             await _usercount(req_username)
         except AttributeError:
-            return await self.send_embed_msg(ctx, title=_("There's  nothing in the queue."))
+            return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
         async for req_username in AsyncIter(requesters["users"]):
             percentage = float(requesters["users"][req_username]["songcount"]) / float(
