@@ -142,14 +142,16 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     text=_("Currently livestreaming {track}").format(track=player.current.title)
                 )
             else:
-                embed = discord.Embed(title=_("There's nothing in the queue."))
-                embed.set_footer(
-                    text=_("{time} left on {track}").format(
-                        time=time_remain, track=player.current.title
-                    )
+                embed = discord.Embed(
+                    title=_("Track Skipped"),
+                    description=await self.get_track_description(
+                        player.current, self.local_folder_current_path
+                    ),
                 )
-            await self.send_embed_msg(ctx, embed=embed)
-            return
+                await self.send_embed_msg(ctx, embed=embed)
+                await player.skip()
+                return
+
         elif autoplay and not player.queue:
             embed = discord.Embed(
                 title=_("Track Skipped"),
