@@ -382,7 +382,7 @@ class KickBanMixin(MixinMeta):
 
         Examples:
            - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
-            This will ban Twentysix and it will delete 7 days worth of messages.
+            This will ban the User ID 428675506947227648 and it will delete 7 days worth of messages.
            - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
             This will ban Twentysix and it will delete 7 days worth of messages.
 
