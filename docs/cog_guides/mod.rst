@@ -92,7 +92,7 @@ Kick a user.
 **Example Usage**
 
 * ``[p]kick 428675506947227648 wanted to be kicked.``
-    This will kick user with ID 428675506947227648 from the server.
+    This will kick the user with ID 428675506947227648 from the server.
 * ``[p]kick @Twentysix wanted to be kicked.``
     This will kick Twentysix from the server.
 
