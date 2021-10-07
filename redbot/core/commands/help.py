@@ -807,8 +807,6 @@ class RedHelpFormatter(HelpFormatterABC):
         # save on config calls
         channel_permissions = ctx.channel.permissions_for(ctx.me)
         max_pages_in_guild = help_settings.max_pages_in_guild
-        use_DMs = len(pages) > max_pages_in_guild or max_pages_in_guild == 0
-        destination = ctx.author if use_DMs else ctx.channel
 
         if not (
             channel_permissions.add_reactions
@@ -816,6 +814,8 @@ class RedHelpFormatter(HelpFormatterABC):
             and help_settings.use_menus
         ):
 
+            use_DMs = len(pages) > max_pages_in_guild
+            destination = ctx.author if use_DMs else ctx.channel
             delete_delay = help_settings.delete_delay
 
             messages: List[discord.Message] = []
@@ -855,6 +855,8 @@ class RedHelpFormatter(HelpFormatterABC):
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
+            use_DMs = max_pages_in_guild == 0
+            destination = ctx.author if use_DMs else ctx.channel
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (destination.send(embed=pages[0]) if embed else destination.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
