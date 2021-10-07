@@ -347,10 +347,19 @@ class CogManagerUI(commands.Cog):
         """
         Add a path to the list of available cog paths.
         """
-        if not path.is_dir():
-            await ctx.send(_("That path does not exist or does not point to a valid directory."))
+        try:
+            if not path.is_dir():
+                await ctx.send(
+                    _("That path does not exist or does not point to a valid directory.")
+                )
+                return
+        except OSError:
+            await ctx.send(
+                _(
+                    "That path does not exist or does not point to a valid directory. \nCheck that your path does not contain any {quotation_mark}, {apostrophe} or other invalid characters."
+                ).format(quotation_mark='`"`', apostrophe="`'`")
+            )
             return
-
         try:
             await ctx.bot._cog_mgr.add_path(path)
         except ValueError as e:

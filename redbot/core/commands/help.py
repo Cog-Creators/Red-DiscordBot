@@ -806,6 +806,9 @@ class RedHelpFormatter(HelpFormatterABC):
 
         # save on config calls
         channel_permissions = ctx.channel.permissions_for(ctx.me)
+        max_pages_in_guild = help_settings.max_pages_in_guild
+        use_DMs = len(pages) > max_pages_in_guild or max_pages_in_guild == 0
+        destination = ctx.author if use_DMs else ctx.channel
 
         if not (
             channel_permissions.add_reactions
@@ -813,9 +816,6 @@ class RedHelpFormatter(HelpFormatterABC):
             and help_settings.use_menus
         ):
 
-            max_pages_in_guild = help_settings.max_pages_in_guild
-            use_DMs = len(pages) > max_pages_in_guild
-            destination = ctx.author if use_DMs else ctx.channel
             delete_delay = help_settings.delete_delay
 
             messages: List[discord.Message] = []
@@ -856,11 +856,16 @@ class RedHelpFormatter(HelpFormatterABC):
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
             # Specifically ensuring the menu's message is sent prior to returning
-            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            m = await (destination.send(embed=pages[0]) if embed else destination.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
+            if use_DMs:
+                menu_ctx = await ctx.bot.get_context(m)
+            else:
+                menu_ctx = ctx
+
             asyncio.create_task(
-                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+                menus.menu(menu_ctx, pages, c, message=m, timeout=help_settings.react_timeout)
             )
             # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
