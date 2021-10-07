@@ -3155,9 +3155,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             show_aliases = not await ctx.bot._config.help.show_aliases()
         await ctx.bot._config.help.show_aliases.set(show_aliases)
         if show_aliases:
-            await ctx.send(_("Help will show commands aliases."))
+            await ctx.send(_("Help will now show command aliases."))
         else:
-            await ctx.send(_("Help will not show commands aliases."))
+            await ctx.send(_("Help will no longer show command aliases."))
 
     @helpset.command(name="usetick")
     async def helpset_usetick(self, ctx: commands.Context, use_tick: bool = None):
