@@ -46,7 +46,7 @@ Read before updating
 2. Fedora 32 is no longer supported as it has already reached end of life.
 3. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.13 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1238>`__.
+    Red 3.4.13 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1239>`__.
 
 
 End-user changelog
