@@ -60,7 +60,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
 
         if player.current and not player.queue:
             arrow = await self.draw_time(ctx)
@@ -163,7 +163,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             len_queue_pages = math.ceil(len(limited_queue) / 10)
             queue_page_list = []
             async for page_num in AsyncIter(range(1, len_queue_pages + 1)):
-                embed = await self._build_queue_page(ctx, limited_queue, player.player, page_num)
+                embed = await self._build_queue_page(ctx, limited_queue, player, page_num)
                 queue_page_list.append(embed)
             if page > len_queue_pages:
                 page = len_queue_pages
@@ -172,7 +172,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_queue.command(name="clear")
     async def command_queue_clear(self, ctx: commands.Context):
         """Clears the queue."""
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
         if not player:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         dj_enabled = self._dj_status_cache.setdefault(
@@ -194,7 +194,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.played(
                 ctx.guild.id, track.extras.get("enqueue_time")
             )
-        player.player.queue.clear()
+        player.queue.clear()
         await self.send_embed_msg(
             ctx, title=_("Queue Modified"), description=_("The queue has been cleared.")
         )
@@ -202,7 +202,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_queue.command(name="clean")
     async def command_queue_clean(self, ctx: commands.Context):
         """Removes songs from the queue if the requester is not in the voice channel."""
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
         if not player:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         dj_enabled = self._dj_status_cache.setdefault(
@@ -247,7 +247,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_queue.command(name="cleanself")
     async def command_queue_cleanself(self, ctx: commands.Context):
         """Removes all tracks you requested from the queue."""
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
         if not player:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if not self._player_check(ctx) or not player.queue:
@@ -278,7 +278,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_queue.command(name="search")
     async def command_queue_search(self, ctx: commands.Context, *, search_words: str):
         """Search the queue."""
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
         if not player:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if not self._player_check(ctx) or not player.queue:
@@ -337,7 +337,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx.author.voice.channel,
                 deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
             )
-            player.player.store("notify_channel", ctx.channel.id)
+            player.store("notify_channel", ctx.channel.id)
         except AttributeError:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
@@ -368,5 +368,5 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("There's nothing in the queue."),
             )
 
-        player.player.force_shuffle(0)
+        player._ll_player.force_shuffle(0)
         return await self.send_embed_msg(ctx, title=_("Queue has been shuffled."))

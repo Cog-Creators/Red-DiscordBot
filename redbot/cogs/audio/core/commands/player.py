@@ -64,6 +64,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to queue tracks."),
             )
         if not self._player_check(ctx):
+            print("No player")
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed")
                 desc = EmptyEmbed
@@ -101,8 +102,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connection to Lavalink has not yet been established."),
                 )
         player = audio.get_player(ctx.guild.id)
-        player.player.store("notify_channel", ctx.channel.id)
-        await self._eq_check(ctx, player.player)
+        player.store("notify_channel", ctx.channel.id)
+        await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
@@ -210,7 +211,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connection to Lavalink has not yet been established."),
                 )
         player = audio.get_player(ctx.guild.id)
-        player.player.store("notify_channel", ctx.channel.id)
+        player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
@@ -610,9 +611,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
             return
         try:
-            await self.api_interface.autoplay(player.player, self.playlist_api)
+            await self.api_interface.autoplay(player._ll_player, self.playlist_api)
         except DatabaseError:
-            notify_channel = player.player.fetch("notify_channel")
+            notify_channel = player.fetch("notify_channel")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
                 await self.send_embed_msg(notify_channel, title=_("Couldn't get a valid track."))
@@ -633,7 +634,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not guild_data["auto_play"]:
             await ctx.invoke(self.command_audioset_autoplay_toggle)
-        if not guild_data["notify"] and not player.player.fetch("autoplay_notified", False):
+        if not guild_data["notify"] and not player.fetch("autoplay_notified", False):
             pass
         elif player.current:
             await self.send_embed_msg(ctx, title=_("Adding a track to queue."))
@@ -752,7 +753,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if query.invoked_from == "search list" and not query.is_local:
                     try:
                         result, called_api = await self.api_interface.fetch_track(
-                            ctx, player, query
+                            ctx, player._ll_player, query
                         )
                     except TrackEnqueueError:
                         self.update_player_lock(ctx, False)
@@ -898,7 +899,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     tracks = await self.get_localtrack_folder_list(ctx, query)
             else:
                 try:
-                    result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+                    result, called_api = await self.api_interface.fetch_track(ctx, player._ll_player, query)
                 except TrackEnqueueError:
                     self.update_player_lock(ctx, False)
                     return await self.send_embed_msg(

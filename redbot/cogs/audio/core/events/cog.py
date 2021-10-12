@@ -96,8 +96,8 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.update_bot_presence(*player_check)
 
         if await self.bot.cog_disabled_in_guild(self, guild):
-            player = audio.get_player(guild)
-            player.player.store("autoplay_notified", False)
+            player = audio.get_player(guild.id)
+            player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
             await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set([])
@@ -219,7 +219,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         try:
-            player = audio.get_player(guild)
+            player = audio.get_player(guild.id)
         except NotConnectedToVoice:
             pass
 
@@ -229,16 +229,16 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             notify = guild_data["notify"]
             disconnect = guild_data["disconnect"]
             status = await self.config.status()
-            notify_channel_id = player.player.fetch("notify_channel")
-            if player.player.is_auto_playing or (
+            notify_channel_id = player.fetch("notify_channel")
+            if player._ll_player.is_auto_playing or (
                 autoplay
                 and not player.queue
-                and player.player.fetch("playing_song")
+                and player.fetch("playing_song")
                 and self.playlist_api
                 and self.api_interface
             ):
                 try:
-                    await self.api_interface.autoplay(player.player, self.playlist_api)
+                    await self.api_interface.autoplay(player._ll_player, self.playlist_api)
                 except DatabaseError:
                     notify_channel = self.bot.get_channel(notify_channel_id)
                     if notify_channel and self._has_notify_perms(notify_channel):

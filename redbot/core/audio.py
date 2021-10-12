@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import discord
 import lavalink
@@ -22,12 +24,12 @@ from redbot.core.audio_utils.utils import CacheLevel, PlaylistScope
 log = logging.getLogger("red.core.audio")
 log_player = logging.getLogger("red.core.audio.Player")
 
-_used_by = []
-_players = {}
-_api_interface = None
-_lavalink = None
-_server_manager = None
-_config = None
+_used_by: list = []
+_players: dict = {}
+_api_interface: Optional[AudioAPIInterface] = None
+_lavalink: Optional[Lavalink] = None
+_server_manager: Optional[ServerManager] = None
+_config: Optional[Config] = None
 
 async def initialize(
         bot,
@@ -174,7 +176,6 @@ async def shutdown(
     global _used_by
 
     if force_shutdown:
-        print("Called")
         if _lavalink.is_connected:
             await _lavalink.shutdown()
         if _server_manager.is_running:
@@ -234,7 +235,7 @@ async def connect(
     _players[channel.guild.id] = player
     return player
 
-def get_player(guild_id: int):
+def get_player(guild_id: int) -> Optional[Player]:
     """Get the Player object of the given guild
 
     Parameters
@@ -323,7 +324,7 @@ class Player():
     @property
     def current(self):
         """lavalink.Track: The current track"""
-        return self.player.current
+        return self._player.current
 
     @property
     def guild(self):
@@ -334,12 +335,12 @@ class Player():
     def is_playing(self):
         """Whether or not the player is playing
         :type: bool"""
-        return self.player.is_playing
+        return self._player.is_playing
 
     @property
     def paused(self):
         """bool: Whether or not the player is paused"""
-        return self.player.paused
+        return self._player.paused
 
     @property
     def _ll_player(self):
@@ -349,57 +350,57 @@ class Player():
     @property
     def position(self):
         """float: Position of the current song"""
-        return self.player.position
+        return self._player.position
 
     @property
     def queue(self):
         """list: The player's queue"""
-        return self.player.queue
+        return self._player.queue
 
     @queue.setter
     def queue(self, q: List):
-        self.player.queue = q
+        self._player.queue = q
 
     @property
     def repeat(self):
         """bool: Whether or not the queue repeats"""
-        return self.player.repeat
+        return self._player.repeat
 
     @repeat.setter
     def repeat(self, r: bool):
-        self.player.repeat = r
+        self._player.repeat = r
 
     @property
     def shuffle(self):
         """bool: Whether or not the queue is shuffled"""
-        return self.player.shuffle
+        return self._player.shuffle
 
     @shuffle.setter
     def shuffle(self, s: bool):
-        self.player.shuffle = s
+        self._player.shuffle = s
 
     @property
     def shuffle_bumped(self):
-        return self.player.shuffle_bumped
+        return self._player.shuffle_bumped
 
     @shuffle_bumped.setter
     def shuffle_bumped(self, sb: bool):
-        self.player.shuffle_bumped = sb
+        self._player.shuffle_bumped = sb
 
     @property
     def volume(self):
         """The player's volume
         :type: int"""
-        return self.player.volume
+        return self._player.volume
 
-    async def _set_player_settings(self, player: lavalink.Player) -> None:
+    async def _set_player_settings(self) -> None:
         guild_data = await self._config.guild(self._guild).all()
-        player.repeat = guild_data["repeat"]
-        player.shuffle = guild_data["shuffle"]
-        player.shuffle_bumped = guild_data["shuffle_bumped"]
+        self.repeat = guild_data["repeat"]
+        self.shuffle = guild_data["shuffle"]
+        self.shuffle_bumped = guild_data["shuffle_bumped"]
         volume = guild_data["volume"]
-        if player.volume != volume:
-            await player.set_volume(volume)
+        if self.volume != volume:
+            await self.set_volume(volume)
 
     async def _add_to_queue(
             self,
@@ -411,11 +412,11 @@ class Player():
 
         track.requester = requester
         if not bump and not bump_and_skip:
-            self.player.queue.append(track)
+            self.queue.append(track)
         elif bump or bump_and_skip:
-            self.player.queue.insert(0, track)
+            self.queue.insert(0, track)
             if bump_and_skip:
-                await self.player.skip()
+                await self.skip(requester)
 
     async def _enqueue_tracks(self,
                               requester: discord.Member,
@@ -433,7 +434,7 @@ class Player():
         seek = 0
 
         if track:
-            if len(self.player.queue) >= 10000:
+            if len(self.queue) >= 10000:
                 log_player.debug("Queue limit reached")
 
             if seek and seek > 0:
@@ -450,7 +451,7 @@ class Player():
                 track.extras.update(
                     {
                         "enqueue_time": int(time.time()),
-                        "vc": self.player.channel.id,
+                        "vc": self.channel.id,
                         "requester": requester.id
                     }
                 )
@@ -459,6 +460,8 @@ class Player():
                     "red_audio_track_enqueue", self._guild, track, requester
                 )
                 self.maybe_shuffle()
+                if not self.current:
+                    await self._player.play()
                 return track, None
 
         query = Query.process_input(query, local_folder)
@@ -474,7 +477,7 @@ class Player():
 
             try:
                 result, called_api = await self._api_interface.fetch_track(
-                    requester.id, self.player, query
+                    requester.id, self._player, query
                 )
             except KeyError:
                 raise NoMatchesFound("No matches could be found for the given query")
@@ -503,12 +506,12 @@ class Player():
             return
 
         if not first_track_only and len(tracks) > 1:
-            if len(self.player.queue) >= 10000:
+            if len(self.queue) >= 10000:
                 log_player.debug("Queue limit reached")
             track_len = 0
-            empty_queue = not self.player.queue
+            empty_queue = not self.queue
             async for track in AsyncIter(tracks):
-                if len(self.player.queue) >= 10000:
+                if len(self.queue) >= 10000:
                     log_player.debug("Queue limit reached")
                     break
 
@@ -517,7 +520,7 @@ class Player():
                     track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
-                            "vc": self.player.channel.id,
+                            "vc": self._channel.id,
                             "requester": requester.id
                         }
                     )
@@ -530,7 +533,7 @@ class Player():
                     track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
-                            "vc": self.player.channel.id,
+                            "vc": self.channel.id,
                             "requester": requester.id
                         }
                     )
@@ -543,13 +546,13 @@ class Player():
             if len(tracks) > track_len:
                 log_player.debug(f"{len(tracks) - track_len} tracks cannot be enqueued")
 
-            if not self.player.current:
-                await self.player.play()
+            if not self.current:
+                await self._player.play()
             return tracks, playlist_data
 
         else:
             try:
-                if len(self.player.queue) >= 10000:
+                if len(self.queue) >= 10000:
                     log_player.debug("Queue limit reached")
 
                 single_track = (
@@ -571,7 +574,7 @@ class Player():
                     single_track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
-                            "vc": self.player.channel.id,
+                            "vc": self.channel.id,
                             "requester": requester.id
                         }
                     )
@@ -585,9 +588,9 @@ class Player():
             except Exception as e:
                 raise e
 
-        if not self.player.current:
+        if not self.current:
             log_player.debug("Starting player")
-            await self.player.play()
+            await self._player.play()
         return single_track, None
 
     async def _enqueue_spotify_tracks(self,
@@ -644,19 +647,12 @@ class Player():
         """Disconnects the player"""
         global _players
 
-        player = self.player
-        channel = player.channel
-
-        player.queue = []
-        player.store("playing_song", None)
-        player.store("autoplay_notified", False)
-        await player.stop()
-        self._bot.dispatch("red_audio_audio_stop", self._guild)
-        await player.disconnect()
+        await self.stop()
+        await self._player.disconnect()
         self._bot.dispatch("red_audio_audio_disconnect", self._guild)
 
         if IS_DEBUG:
-            log_player.debug(f"Disconnected from {channel} in {self._guild}")
+            log_player.debug(f"Disconnected from {self._channel} in {self._guild}")
 
         del _players[self._guild.id]
         del self
@@ -679,11 +675,9 @@ class Player():
         if not query.valid:
             raise InvalidQuery(f"No results found for {query}")
 
-        player = self.player
-
         try:
             result, called_api = await self._api_interface.fetch_track(
-                self._guild.id, player, query
+                self._guild.id, self._player, query
             )
         except KeyError:
             raise NoMatchesFound("No matches could be found for the given query")
@@ -748,14 +742,14 @@ class Player():
         deafen: bool
             Whether or not the player deafens
         """
-        player = self.player
+        player = self._player
         self._channel = channel
 
         await player.move_to(channel)
 
     async def pause(self) -> None:
         """Pauses the player in a guild"""
-        player = self.player
+        player = self._player
 
         if not player.paused:
             await player.pause()
@@ -793,9 +787,7 @@ class Player():
         if not query and not track:
             raise AttributeError("Either a query string or a track object is required")
 
-        player = self.player
-
-        await self._set_player_settings(player)
+        await self._set_player_settings()
 
         tracks, playlist_data = await self._enqueue_tracks(
             requester, query=query, track=track, local_folder=local_folder, bump=bump, bump_and_skip=bump_and_skip)
@@ -805,10 +797,9 @@ class Player():
 
     async def resume(self) -> None:
         """Resumes the player in a guild"""
-        player = self.player
 
-        if player.paused:
-            await player.pause(False)
+        if self.paused:
+            await self._player.pause(False)
             self._bot.dispatch(
                 "red_audio_audio_paused", self._guild, False
             )
@@ -823,19 +814,19 @@ class Player():
         timestamp: str
             timestamp to skip to
             Expected format: hh:mm:ss -> 00:10:15 for example"""
-        if self.player.current:
-            if self.player.current.is_stream:
+        if self.current:
+            if self.current.is_stream:
                 raise AudioError("Cannot seek streams")
 
-            if not self.player.current.seekable:
+            if not self.current.seekable:
                 raise AudioError("Track is not seekable")
 
             if seconds:
-                if seconds * 1000 > self.player.current.length - self.player.position:
+                if seconds * 1000 > self.current.length - self.position:
                     raise ValueError("Cannot seek for more time than the current track has remaining")
 
-                seek = self.player.position + seconds * 1000
-                await self.player.seek(seek)
+                seek = self.position + seconds * 1000
+                await self._player.seek(seek)
                 return
 
             elif timestamp:
@@ -851,7 +842,7 @@ class Player():
                     except ValueError:
                         seek = 0
 
-                await self.player.seek(seek)
+                await self._player.seek(seek)
 
             else:
                 raise AttributeError("Either seconds or timestamp has to be given")
@@ -870,7 +861,7 @@ class Player():
             raise ValueError("Volume is not within the allowed range")
 
         await self._config.guild(self._guild).volume.set(vol)
-        await self.player.set_volume(vol)
+        await self._player.set_volume(vol)
 
     async def skip(self, requester: discord.Member,
                    skip_to_track: int = None) -> lavalink.Track:
@@ -887,20 +878,19 @@ class Player():
         lavalink.Track
             The current track
         """
-        player = self.player
+        player = self._player
 
         await self._skip(player, requester, skip_to_track)
 
     async def stop(self) -> None:
         """Stop the playback"""
-        player = self.player
-        player.queue = []
-        player.store("playing_song", None)
-        player.store("prev_requester", None)
-        player.store("prev_song", None)
-        player.store("requester", None)
-        player.store("autoplay_notified", False)
-        await player.stop()
+        self.queue = []
+        self.store("playing_song", None)
+        self.store("prev_requester", None)
+        self.store("prev_song", None)
+        self.store("requester", None)
+        self.store("autoplay_notified", False)
+        await self._player.stop()
 
         self._bot.dispatch("red_audio_audio_stop", self._guild)
 

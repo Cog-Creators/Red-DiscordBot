@@ -210,7 +210,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         if not player.current:
-            await player.player.play()
+            await player._ll_player.play()
         return await self.send_embed_msg(ctx, embed=songembed)
 
     async def _format_search_options(self, search_choice):

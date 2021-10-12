@@ -119,7 +119,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
-            player = lavalink.get_player(ctx.guild.id)
+            player = audio.get_player(ctx.guild.id)
             log.debug("Current requester is %s", player.current.requester)
             return player.current.requester.id == member.id
         except Exception as err:
@@ -127,7 +127,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return False
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         autoplay = await self.config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
@@ -158,7 +158,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
-            await player.skip()
+            await player.skip(ctx.author)
             return
 
         queue_to_append = []
@@ -206,11 +206,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     def _player_check(self, ctx: commands.Context) -> bool:
         if self.lavalink_connection_aborted:
             return False
-        try:
-            lavalink.get_player(ctx.guild.id)
-            return True
-        except (IndexError, KeyError):
-            return False
+
+        return not not audio.get_player(ctx.guild.id)
 
     async def self_deafen(self, player: lavalink.Player) -> None:
         guild_id = self.rgetattr(player, "channel.guild.id", None)
@@ -227,7 +224,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             enqueue_tracks = True
         else:
             enqueue_tracks = False
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
         if any([not api_data["spotify_client_id"], not api_data["spotify_client_secret"]]):
             return await self.send_embed_msg(
@@ -292,7 +289,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     query = Query.process_input(res[0], self.local_folder_current_path)
                     try:
                         result, called_api = await self.api_interface.fetch_track(
-                            ctx, player, query
+                            ctx, player._ll_player, query
                         )
                     except TrackEnqueueError:
                         self.update_player_lock(ctx, False)
@@ -368,7 +365,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             self.update_player_lock(ctx, True)
         guild_data = await self.config.guild(ctx.guild).all()
         first_track_only = False
-        single_track = None
         index = None
         playlist_data = None
         playlist_url = None
@@ -384,7 +380,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if query.start_time:
                     seek = query.start_time
             try:
-                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(ctx, player._ll_player, query)
+
             except TrackEnqueueError:
                 self.update_player_lock(ctx, False)
                 return await self.send_embed_msg(
@@ -457,13 +454,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_length_allowed(track, guild_data["maxlength"]):
                         track_len += 1
-                        track.extras.update(
-                            {
-                                "enqueue_time": int(time.time()),
-                                "vc": player.channel.id,
-                                "requester": ctx.author.id,
-                            }
-                        )
                         await player.play(
                             requester=ctx.author,
                             track=track
@@ -474,13 +464,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
                 else:
                     track_len += 1
-                    track.extras.update(
-                        {
-                            "enqueue_time": int(time.time()),
-                            "vc": player.channel.id,
-                            "requester": ctx.author.id,
-                        }
-                    )
                     await player.play(
                         requester=ctx.author,
                         track=track
@@ -554,13 +537,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
-                        single_track.extras.update(
-                            {
-                                "enqueue_time": int(time.time()),
-                                "vc": player.channel.id,
-                                "requester": ctx.author.id,
-                            }
-                        )
                         await player.play(
                             requester=ctx.author,
                             track=single_track
@@ -579,13 +555,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         )
 
                 else:
-                    single_track.extras.update(
-                        {
-                            "enqueue_time": int(time.time()),
-                            "vc": player.channel.id,
-                            "requester": ctx.author.id,
-                        }
-                    )
                     await player.play(
                         requester=ctx.author,
                         track=single_track
@@ -685,14 +654,14 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return track_list
 
     async def set_player_settings(self, ctx: commands.Context) -> None:
-        player = lavalink.get_player(ctx.guild.id)
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        volume = await self.config.guild(ctx.guild).volume()
-        shuffle_bumped = await self.config.guild(ctx.guild).shuffle_bumped()
-        player.repeat = repeat
-        player.shuffle = shuffle
-        player.shuffle_bumped = shuffle_bumped
+        player = audio.get_player(ctx.guild.id)
+        guild_data = await self.config.guild(ctx.guild).all()
+
+        player.repeat = guild_data["repeat"]
+        player.shuffle = guild_data["shuffle"]
+        player.shuffle_bumped = guild_data["shuffle_bumped"]
+
+        volume = guild_data["volume"]
         if player.volume != volume:
             await player.set_volume(volume)
 

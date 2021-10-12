@@ -46,9 +46,9 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     stop_times.pop(sid, None)
                     pause_times.pop(sid, None)
                     try:
-                        player = audio.get_player(server_obj)
+                        player = audio.get_player(server_obj.id)
                         await self.api_interface.persistent_queue_api.drop(sid)
-                        player.player.store("autoplay_notified", False)
+                        player.store("autoplay_notified", False)
                         await player.stop()
                         await player.disconnect()
                         await self.config.guild_from_id(
@@ -64,9 +64,9 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
-                            player = audio.get_player(server_obj)
+                            player = audio.get_player(server_obj.id)
                             await self.api_interface.persistent_queue_api.drop(sid)
-                            player.player.store("autoplay_notified", False)
+                            player.store("autoplay_notified", False)
                             await player.stop()
                             await player.disconnect()
                             await self.config.guild_from_id(
@@ -84,7 +84,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     emptypause_timer = await self.config.guild(server_obj).emptypause_timer()
                     if (time.time() - pause_times.get(sid, 0)) >= emptypause_timer:
                         try:
-                            await audio.get_player(server_obj).pause()
+                            await audio.get_player(server_obj.id).pause()
                         except Exception as err:
                             if "No such player for that guild" in str(err):
                                 pause_times.pop(sid, None)
