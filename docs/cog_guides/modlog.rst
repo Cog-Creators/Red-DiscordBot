@@ -120,7 +120,7 @@ modlogset cases
 
 **Description**
 
-Enable or disable case creation for a mod action.
+Enable or disable case creation for a mod action, like disabling warnings, enabling bans, etc.
 
 **Arguments**
 
