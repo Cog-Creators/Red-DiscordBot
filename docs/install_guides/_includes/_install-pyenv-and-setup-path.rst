@@ -16,4 +16,4 @@ you should run these commands:
     echo 'eval "$(pyenv init -)"' >> "$rcfile"
     echo 'eval "$(pyenv virtualenv-init -)"' >> "$rcfile"
 
-Then **close and reopen to your shell** and run the following command:
+Then **log out and log back in** and run the following command:
