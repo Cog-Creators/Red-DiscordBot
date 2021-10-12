@@ -940,10 +940,15 @@ async def create_case(
         The last known username of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
+
+    Raises
+    ------
+    ValueError
+        If the action type is not a valid action type
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
-        raise ValueError("That is not a valid case type.")
+        raise ValueError("That is not a valid action type.")
 
     if not await case_type.is_enabled():
         return
