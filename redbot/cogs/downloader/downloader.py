@@ -1730,11 +1730,10 @@ class Downloader(commands.Cog):
                     if cog_installable.repo is None
                     else cog_installable.repo.clean_url
                 )
-                cog_json = cog_installable.to_json()
                 repo_name = (
                     _("Missing from installed repos")
-                    if cog_json["repo_name"] is None
-                    else cog_json["repo_name"]
+                    if cog_installable.repo is None
+                    else cog_installable.repo.name
                 )
                 cog_name = cog_installable.name
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
