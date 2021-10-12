@@ -1756,8 +1756,8 @@ class Downloader(commands.Cog):
             embed.add_field(name=_("Command:"), value=command_name, inline=False)
             embed.add_field(name=_("Cog name:"), value=cog_name, inline=False)
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
-            embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
             embed.add_field(name=_("Repo name:"), value=repo_name, inline=False)
+            embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
             if installed and cog_installable.repo is not None and cog_installable.repo.branch:
                 embed.add_field(
                     name=_("Repo branch:"), value=cog_installable.repo.branch, inline=False
@@ -1766,7 +1766,7 @@ class Downloader(commands.Cog):
 
         else:
             msg = _(
-                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo URL: {repo_url}\nRepo name: {repo_name}\n"
+                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo name: {repo_name}\nRepo URL: {repo_url}\n"
             ).format(
                 command=command_name,
                 author=made_by,
