@@ -17,6 +17,7 @@ from typing import (
     Optional,
     Union,
     List,
+    Iterable,
     Dict,
     NoReturn,
     Set,
@@ -26,6 +27,7 @@ from typing import (
     Any,
     Literal,
     MutableMapping,
+    Set,
     overload,
 )
 from types import MappingProxyType
@@ -66,6 +68,7 @@ DataDeletionResults = namedtuple("DataDeletionResults", "failed_modules failed_c
 
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
+UserOrRole = Union[int, discord.Role, discord.Member, discord.User]
 
 
 def _is_submodule(parent, child):
@@ -115,6 +118,7 @@ class RedBase(
             help__verify_exists=False,
             help__tagline="",
             help__use_tick=False,
+            help__react_timeout=30,
             description="Red V3",
             invite_public=False,
             invite_perm=0,
@@ -348,7 +352,7 @@ class RedBase(
             "__name__",
             "__builtins__",
         ]:
-            raise RuntimeError(f"The name {name} is reserved for default environement.")
+            raise RuntimeError(f"The name {name} is reserved for default environment.")
         if name in dev.env_extensions:
             raise RuntimeError(f"The name {name} is already used.")
         dev.env_extensions[name] = value
@@ -522,6 +526,156 @@ class RedBase(
     def max_messages(self) -> Optional[int]:
         return self._max_messages
 
+    async def add_to_blacklist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Add users or roles to the global or local blocklist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to add to the blocklist.
+            Roles and role IDs should only be passed when updating a local blocklist.
+        guild : Optional[discord.Guild]
+            The guild, whose local blocklist should be modified.
+            If not passed, the global blocklist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The values passed were not of the proper type.
+        """
+        to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.add_to_blacklist(guild, to_add)
+
+    async def remove_from_blacklist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Remove users or roles from the global or local blocklist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to remove from the blocklist.
+            Roles and role IDs should only be passed when updating a local blocklist.
+        guild : Optional[discord.Guild]
+            The guild, whose local blocklist should be modified.
+            If not passed, the global blocklist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The values passed were not of the proper type.
+        """
+        to_remove: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.remove_from_blacklist(guild, to_remove)
+
+    async def get_blacklist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
+        """
+        Get the global or local blocklist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild to get the local blocklist for.
+            If this is not passed, the global blocklist will be returned.
+
+        Returns
+        -------
+        Set[int]
+            The IDs of the blocked users/roles.
+        """
+        return await self._whiteblacklist_cache.get_blacklist(guild)
+
+    async def clear_blacklist(self, guild: Optional[discord.Guild] = None):
+        """
+        Clears the global or local blocklist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild, whose local blocklist should be cleared.
+            If not passed, the global blocklist will be cleared.
+        """
+        await self._whiteblacklist_cache.clear_blacklist(guild)
+
+    async def add_to_whitelist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Add users or roles to the global or local allowlist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to add to the allowlist.
+            Roles and role IDs should only be passed when updating a local allowlist.
+        guild : Optional[discord.Guild]
+            The guild, whose local allowlist should be modified.
+            If not passed, the global allowlist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The passed values were not of the proper type.
+        """
+        to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.add_to_whitelist(guild, to_add)
+
+    async def remove_from_whitelist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Remove users or roles from the global or local allowlist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to remove from the allowlist.
+            Roles and role IDs should only be passed when updating a local allowlist.
+        guild : Optional[discord.Guild]
+            The guild, whose local allowlist should be modified.
+            If not passed, the global allowlist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The passed values were not of the proper type.
+        """
+        to_remove: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.remove_from_whitelist(guild, to_remove)
+
+    async def get_whitelist(self, guild: Optional[discord.Guild] = None):
+        """
+        Get the global or local allowlist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild to get the local allowlist for.
+            If this is not passed, the global allowlist will be returned.
+
+        Returns
+        -------
+        Set[int]
+            The IDs of the allowed users/roles.
+        """
+        return await self._whiteblacklist_cache.get_whitelist(guild)
+
+    async def clear_whitelist(self, guild: Optional[discord.Guild] = None):
+        """
+        Clears the global or local allowlist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild, whose local allowlist should be cleared.
+            If not passed, the global allowlist will be cleared.
+        """
+        await self._whiteblacklist_cache.clear_whitelist(guild)
+
     async def allowed_by_whitelist_blacklist(
         self,
         who: Optional[Union[discord.Member, discord.User]] = None,
@@ -533,7 +687,7 @@ class RedBase(
     ) -> bool:
         """
         This checks if a user or member is allowed to run things,
-        as considered by Red's whitelist and blacklist.
+        as considered by Red's allowlist and blocklist.
 
         If given a user object, this function will check the global lists
 
@@ -613,13 +767,13 @@ class RedBase(
         if await self.is_owner(who):
             return True
 
-        global_whitelist = await self._whiteblacklist_cache.get_whitelist()
+        global_whitelist = await self.get_whitelist()
         if global_whitelist:
             if who.id not in global_whitelist:
                 return False
         else:
             # blacklist is only used when whitelist doesn't exist.
-            global_blacklist = await self._whiteblacklist_cache.get_blacklist()
+            global_blacklist = await self.get_blacklist()
             if who.id in global_blacklist:
                 return False
 
@@ -647,12 +801,12 @@ class RedBase(
                 # there is a silent failure potential, and role blacklist/whitelists will break.
                 ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
-            guild_whitelist = await self._whiteblacklist_cache.get_whitelist(guild)
+            guild_whitelist = await self.get_whitelist(guild)
             if guild_whitelist:
                 if ids.isdisjoint(guild_whitelist):
                     return False
             else:
-                guild_blacklist = await self._whiteblacklist_cache.get_blacklist(guild)
+                guild_blacklist = await self.get_blacklist(guild)
                 if not ids.isdisjoint(guild_blacklist):
                     return False
 
@@ -1076,7 +1230,7 @@ class RedBase(
             The channel to check embed settings for.
         user : `discord.abc.User`
             The user to check embed settings for.
-        command : `commands.Command`, optional
+        command : `redbot.core.commands.Command`, optional
             The command ran.
 
         Returns

@@ -254,10 +254,8 @@ class General(commands.Cog):
         Default to False.
         """
         guild = ctx.guild
-        passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Created on {date}. That's over {num} days ago!").format(
-            date=guild.created_at.strftime("%d %b %Y %H:%M"),
-            num=humanize_number(passed),
+        created_at = _("Created on <t:{0}>. That's <t:{0}:R>!").format(
+            int(guild.created_at.replace(tzinfo=datetime.timezone.utc).timestamp()),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
