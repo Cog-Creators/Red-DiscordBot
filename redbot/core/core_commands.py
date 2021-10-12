@@ -5016,7 +5016,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             help_prefix = prefixes[0]
             plural = "es" if len(prefixes) > 1 else ""
             is_are = "are" if len(prefixes) > 1 else "is"
-            prefixes = ", ".join(f"`{prefix}`" for prefix in prefixes)
+            prefixes = humanize_list([f"`{prefix}`" for prefix in prefixes])
             return await msg.reply(
                 f"Hallo there! I'm Jojobot!\nMy prefix{plural} {is_are} {prefixes}!"
                 f"\nWhy don't you use `{help_prefix}help` to see what I can do?"
