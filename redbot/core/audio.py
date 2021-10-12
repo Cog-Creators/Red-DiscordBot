@@ -234,7 +234,7 @@ async def connect(
     _players[channel.guild.id] = player
     return player
 
-def get_player(guild: discord.Guild):
+def get_player(guild_id: int):
     """Get the Player object of the given guild
 
     Parameters
@@ -246,7 +246,7 @@ def get_player(guild: discord.Guild):
     Player: Optional[Player]
         The Player object of this guild"""
     try:
-        return _players[guild.id]
+        return _players[guild_id]
     except KeyError:
         return None
 
@@ -342,7 +342,7 @@ class Player():
         return self.player.paused
 
     @property
-    def player(self):
+    def _ll_player(self):
         """lavalink.Player: The lavalink.Player behind this object"""
         return self._player
 
@@ -401,11 +401,13 @@ class Player():
         if player.volume != volume:
             await player.set_volume(volume)
 
-    async def _add_to_queue(self,
-                      requester: discord.Member,
-                      track: lavalink.Track,
-                      bump: bool = False,
-                      bump_and_skip: bool = False):
+    async def _add_to_queue(
+            self,
+            requester: discord.Member,
+            track: lavalink.Track,
+            bump: bool = False,
+            bump_and_skip: bool = False
+    ):
 
         track.requester = requester
         if not bump and not bump_and_skip:
@@ -442,7 +444,7 @@ class Player():
                 self._bot.dispatch(
                     "red_audio_track_enqueue", self._guild, track, requester
                 )
-                self.player.maybe_shuffle()
+                self.maybe_shuffle()
 
             else:
                 track.extras.update(
@@ -456,7 +458,7 @@ class Player():
                 self._bot.dispatch(
                     "red_audio_track_enqueue", self._guild, track, requester
                 )
-                self.player.maybe_shuffle()
+                self.maybe_shuffle()
                 return track, None
 
         query = Query.process_input(query, local_folder)
@@ -536,7 +538,7 @@ class Player():
                     self._bot.dispatch(
                         "red_audio_track_enqueue", self._guild, track, requester
                     )
-            self.player.maybe_shuffle(0 if empty_queue else 1)
+            self.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
                 log_player.debug(f"{len(tracks) - track_len} tracks cannot be enqueued")
@@ -563,7 +565,7 @@ class Player():
                     self._bot.dispatch(
                         "red_audio_track_enqueue", self._guild, single_track, requester
                     )
-                    self.player.maybe_shuffle()
+                    self.maybe_shuffle()
 
                 else:
                     single_track.extras.update(
@@ -577,7 +579,7 @@ class Player():
                     self._bot.dispatch(
                         "red_audio_track_enqueue", self._guild, single_track, requester
                     )
-                    self.player.maybe_shuffle()
+                    self.maybe_shuffle()
             except IndexError:
                 raise InvalidQuery(f"No results found for {query}")
             except Exception as e:
@@ -703,7 +705,19 @@ class Player():
                 log_player.debug("Semi supported file extension: Track might not be fully playable")
         return tracks, playlist_data
 
-    async def is_requester(self, member: discord.Member):
+    def fetch(self, key, default=None):
+        """Returns a stored metadata value.
+
+        Parameters
+        ----------
+        key
+            Key used to store metadata.
+        default
+            Optional, used if the key doesn't exist.
+        """
+        return self._player._metadata.get(key, default)
+
+    async def is_requester(self, member: discord.Member) -> bool:
         """Whether a user is the requester of the current song
 
         Parameters
@@ -719,13 +733,20 @@ class Player():
                 return True
         return False
 
-    async def move_to(self, channel: discord.VoiceChannel) -> None:
+    def maybe_shuffle(self, sticky_songs: int = 1):
+        """Shuffles the queue if shuffle is True"""
+        if self.shuffle and self.queue:
+            self._player.force_shuffle(sticky_songs)
+
+    async def move_to(self, channel: discord.VoiceChannel, deafen: bool = True) -> None:
         """Move the player to another voice channel
 
         Parameters
         ----------
         channel: discord.VoiceChannel
             The channel to move the player to
+        deafen: bool
+            Whether or not the player deafens
         """
         player = self.player
         self._channel = channel
@@ -883,4 +904,6 @@ class Player():
 
         self._bot.dispatch("red_audio_audio_stop", self._guild)
 
-
+    def store(self, key, value) -> None:
+        """Stores a metadata value by key."""
+        self._player._metadata[key] = value

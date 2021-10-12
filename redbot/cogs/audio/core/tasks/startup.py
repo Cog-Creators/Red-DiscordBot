@@ -110,7 +110,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if self.lavalink_connection_aborted:
                     player = None
                 else:
-                    player = audio.get_player(guild)
+                    player = audio.get_player(guild.id)
 
                 vc = 0
                 guild_data = await self.config.guild_from_id(guild.id).all()
@@ -134,8 +134,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                                 vc = None
                                 break
                             player = await audio.connect(self.bot, vc, deafen=auto_deafen)
-                            ll_player = player.player
-                            ll_player.store("notify_channel", notify_channel_id)
+                            player.store("notify_channel", notify_channel_id)
                             break
                         except IndexError:
                             await asyncio.sleep(5)
@@ -150,22 +149,24 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             else:
                                 await asyncio.sleep(1)
 
-                if tries >= 5 or guild is None or vc is None or ll_player is None:
+                if tries >= 5 or guild is None or vc is None or player is None:
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
-                ll_player.repeat = repeat
-                ll_player.shuffle = shuffle
-                ll_player.shuffle_bumped = shuffle_bumped
+                player.repeat = repeat
+                player.shuffle = shuffle
+                player.shuffle_bumped = shuffle_bumped
                 if player.volume != volume:
                     await player.set_volume(volume)
                 for track in track_data:
                     track = track.track_object
-                    ll_player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
-                ll_player.maybe_shuffle()
-                if not player.is_playing:
-                    await ll_player.play()
-                log.info("Restored %r", ll_player)
+                    await player.play(
+                        requester=guild.get_member(track.extras.get("requester")) or guild.me,
+                        track=track
+                    )
+                player.maybe_shuffle()
+
+                log.info("Restored %r", player)
             except Exception as err:
                 debug_exc_log(log, err, "Error restoring player in %d", guild_id)
                 await self.api_interface.persistent_queue_api.drop(guild_id)
@@ -180,7 +181,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             if self.lavalink_connection_aborted:
                 player = None
             else:
-                player = audio.get_player(guild)
+                player = audio.get_player(guild.id)
             if player is None:
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
@@ -199,8 +200,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             vc = None
                             break
                         player = await audio.connect(self.bot, vc, deafen=auto_deafen)
-                        ll_player = player.player
-                        ll_player.store("notify_channel", notify_channel_id)
+                        player.store("notify_channel", notify_channel_id)
                         break
                     except IndexError:
                         await asyncio.sleep(5)
@@ -215,17 +215,17 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if tries >= 5 or guild is None or vc is None or player is None:
                     continue
 
-                ll_player.repeat = repeat
-                ll_player.shuffle = shuffle
-                ll_player.shuffle_bumped = shuffle_bumped
+                player.repeat = repeat
+                player.shuffle = shuffle
+                player.shuffle_bumped = shuffle_bumped
                 if player.volume != volume:
                     await player.set_volume(volume)
-                ll_player.maybe_shuffle()
-                log.info("Restored %r", ll_player)
+                player.maybe_shuffle()
+                log.info("Restored %r", player)
                 if not player.is_playing:
-                    notify_channel = ll_player.fetch("notify_channel")
+                    notify_channel = player.fetch("notify_channel")
                     try:
-                        await self.api_interface.autoplay(ll_player, self.playlist_api)
+                        await self.api_interface.autoplay(player, self.playlist_api)
                     except DatabaseError:
                         notify_channel = self.bot.get_channel(notify_channel)
                         if notify_channel:

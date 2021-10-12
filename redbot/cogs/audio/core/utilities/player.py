@@ -9,7 +9,7 @@ import discord
 import lavalink
 
 from discord.embeds import EmptyEmbed
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import bold, escape
@@ -356,7 +356,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _enqueue_tracks(
         self, ctx: commands.Context, query: Union[Query, list], enqueue: bool = True
     ) -> Union[discord.Message, List[lavalink.Track], lavalink.Track]:
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         try:
             if self.play_lock[ctx.guild.id]:
                 return await self.send_embed_msg(
@@ -464,7 +464,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                                 "requester": ctx.author.id,
                             }
                         )
-                        player.add(ctx.author, track)
+                        await player.play(
+                            requester=ctx.author,
+                            track=track
+                        )
                         self.bot.dispatch(
                             "red_audio_track_enqueue", player.guild, track, ctx.author
                         )
@@ -478,7 +481,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                             "requester": ctx.author.id,
                         }
                     )
-                    player.add(ctx.author, track)
+                    await player.play(
+                        requester=ctx.author,
+                        track=track
+                    )
                     self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
             player.maybe_shuffle(0 if empty_queue else 1)
 
@@ -508,8 +514,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "{time} until start of playlist playback: starts at #{position} in queue"
                     ).format(time=queue_total_duration, position=before_queue_length + 1)
                 )
-            if not player.current:
-                await player.play()
+
             self.update_player_lock(ctx, False)
             message = await self.send_embed_msg(ctx, embed=embed)
             return tracks or message
@@ -556,7 +561,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                                 "requester": ctx.author.id,
                             }
                         )
-                        player.add(ctx.author, single_track)
+                        await player.play(
+                            requester=ctx.author,
+                            track=single_track
+                        )
                         player.maybe_shuffle()
                         self.bot.dispatch(
                             "red_audio_track_enqueue",
@@ -578,7 +586,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                             "requester": ctx.author.id,
                         }
                     )
-                    player.add(ctx.author, single_track)
+                    await player.play(
+                        requester=ctx.author,
+                        track=single_track
+                    )
                     player.maybe_shuffle()
                     self.bot.dispatch(
                         "red_audio_track_enqueue", player.guild, single_track, ctx.author
@@ -604,8 +615,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 )
 
-        if not player.current:
-            await player.play()
         self.update_player_lock(ctx, False)
         message = await self.send_embed_msg(ctx, embed=embed)
         return single_track or message
@@ -618,7 +627,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         enqueue: bool = False,
         forced: bool = False,
     ):
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         try:
             embed1 = discord.Embed(title=_("Please wait, finding tracks..."))
             playlist_msg = await self.send_embed_msg(ctx, embed=embed1)
@@ -689,7 +698,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def maybe_move_player(self, ctx: commands.Context) -> bool:
         try:
-            player = lavalink.get_player(ctx.guild.id)
+            player = audio.get_player(ctx.guild.id)
         except KeyError:
             return False
         try:

@@ -37,7 +37,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
             )
             vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-            player = audio.get_player(ctx.guild)
+            player = audio.get_player(ctx.guild.id)
             can_skip = await self._can_instaskip(ctx, ctx.author)
             if (
                 (vote_enabled or (vote_enabled and dj_enabled))
@@ -94,7 +94,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "close": "\N{CROSS MARK}",
         }
         expected = tuple(emoji.values())
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
         player.player.store("notify_channel", ctx.channel.id)
         if player.current:
             arrow = await self.draw_time(ctx)
@@ -203,7 +203,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
@@ -661,7 +661,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 player.player.store("notify_channel", ctx.channel.id)
             else:
-                player = audio.get_player(ctx.guild)
+                player = audio.get_player(ctx.guild.id)
                 player.player.store("notify_channel", ctx.channel.id)
                 if (
                     ctx.author.voice.channel == player.channel

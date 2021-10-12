@@ -110,8 +110,8 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
-        player = audio.get_player(ctx.guild)
-        player.player.store("notify_channel", ctx.channel.id)
+        player = audio.get_player(ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
             return await self.send_embed_msg(
@@ -180,8 +180,11 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "requester": ctx.author.id,
                     }
                 )
-                player.player.add(ctx.author, search_choice)
-                player.player.maybe_shuffle()
+                await player.play(
+                    requester=ctx.author,
+                    track=search_choice
+                )
+                player.maybe_shuffle()
                 self.bot.dispatch(
                     "red_audio_track_enqueue", player.guild, search_choice, ctx.author
                 )
@@ -393,7 +396,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return box(line, lang="md")
 
     async def draw_time(self, ctx) -> str:
-        player = audio.get_player(ctx.guild)
+        player = audio.get_player(ctx.guild.id)
         paused = player.paused
         pos = player.position or 1
         dur = getattr(player.current, "length", player.position or 1)

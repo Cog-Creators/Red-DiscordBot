@@ -563,8 +563,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connect to a voice channel first."),
                 )
                 return False
-        player = audio.get_player(ctx.guild)
-        player.player.store("notify_channel", ctx.channel.id)
+        player = audio.get_player(ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
@@ -574,7 +574,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You must be in the voice channel to use the playlist command."),
             )
             return False
-        await self._eq_check(ctx, player.player)
+        await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
         return True
 

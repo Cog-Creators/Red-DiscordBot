@@ -40,14 +40,14 @@ Basic Usage
 
         @commands.command()
         async def connect(self, ctx, channel: discord.VoiceChannel):
-            player = audio.get_player(ctx.guild)
+            player = audio.get_player(ctx.guild.id)
             if not player: #not currently connected to a voice channel
                 player = await audio.connect(bot, ctx.author.voice.channel)
             await ctx.send(f"Successfully connected to {channel.mention"})
 
         @commands.command()
         async def play(self, ctx, query: str):
-            player = audio.get_player(ctx.guild)
+            player = audio.get_player(ctx.guild.id)
             if not player:
                 return #use audio.connect first
 
