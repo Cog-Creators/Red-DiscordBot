@@ -943,7 +943,7 @@ async def create_case(
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
-        return
+        raise ValueError("That is not a valid case type.")
 
     if not await case_type.is_enabled():
         return
