@@ -944,7 +944,9 @@ async def create_case(
     Raises
     ------
     ValueError
-        If the action type is not a valid action type
+        If the action type is not a valid action type.
+    RuntimeError
+        If user is the bot itself
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
@@ -953,8 +955,9 @@ async def create_case(
     if not await case_type.is_enabled():
         return
 
-    if user == bot.user:
-        return
+    user_id = user if type(user) == int else user.id
+    if user_id == bot.user.id:
+        raise RuntimeError("The bot itself can not be the target of a modlog entry.")
 
     async with _config.guild(guild).latest_case_number.get_lock():
         # We're getting the case number from config, incrementing it, awaiting something, then
