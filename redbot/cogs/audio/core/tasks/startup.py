@@ -39,7 +39,6 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
     async def initialize(self) -> None:
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
-        self.cog_ready_event.set()
         try:
             try:
                 await audio.initialize(self.bot, "Audio", 2711759130)
@@ -74,6 +73,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         except Exception as err:
             log.exception("Audio failed to start up, please report this issue.", exc_info=err)
             raise err
+
+        self.cog_ready_event.set()
 
     async def restore_players(self):
         tries = 0
