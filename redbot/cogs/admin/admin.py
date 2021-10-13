@@ -529,6 +529,9 @@ class Admin(commands.Cog):
             return
         if pred.result:
             for role in current_selfroles:
+                role = ctx.guild.get_role(role)
+                if role is None:
+                    continue
                 if not self.pass_user_hierarchy_check(ctx, role):
                     await ctx.send(
                         _(
