@@ -699,6 +699,26 @@ class Player():
                 log_player.debug("Semi supported file extension: Track might not be fully playable")
         return tracks, playlist_data
 
+    async def get_local_tracks(self, query: pathlib.Path):
+        """Converts a localtrack into a lavalink.Track object which can then be used in Player.play
+
+        Parameters
+        ----------
+        query: pathlib.Path
+            path to the music file
+        Returns
+        -------
+        List[lavalink.Track], playlist_data
+        """
+        load_result = await self._player.load_tracks(str(query))
+        if load_result.tracks:
+            return load_result.tracks, load_result.playlist_info
+        else:
+            if load_result.exception_message:
+                raise load_result.exception_message
+            else:
+                raise AudioError("Track lookup failed.")
+
     def fetch(self, key, default=None):
         """Returns a stored metadata value.
 

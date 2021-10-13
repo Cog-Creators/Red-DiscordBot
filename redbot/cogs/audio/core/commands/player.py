@@ -64,7 +64,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You need the DJ role to queue tracks."),
             )
         if not self._player_check(ctx):
-            print("No player")
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed")
                 desc = EmptyEmbed
