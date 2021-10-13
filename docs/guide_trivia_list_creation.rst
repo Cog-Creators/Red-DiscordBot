@@ -110,7 +110,7 @@ As you've added more questions, your file should look something like this:
     Who won the Premier League in 2015?:
     - Chelsea
     - chelsea f.c.
-    How much money is a US Olympic gold medalist awarded?:
+    How much money is a US Olympic gold medallist awarded?:
     - $25,000
     - 25,000
     - 25k
@@ -123,3 +123,57 @@ play your very own trivia! See :ref:`[p]triviaset custom <trivia-command-trivias
 Still stuck? Take a look at 
 `the core trivia lists <https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop/redbot/cogs/trivia/data/lists>`_
 for reference.
+
+--------------------------
+Optional: Custom Overrides
+--------------------------
+
+Once you've got the hang of the question-answer format,
+you might want to add some custom overrides with the CONFIG field - in a similar way to the AUTHOR field.
+These will override the settings set with :ref:`[p]triviaset <trivia-command-triviaset>`.
+Therefore, you could make a custom list with less time to answer and a higher score needed
+to win than all the other trivia lists.
+
+If you don't specify an override, then the default or what was set with
+:ref:`[p]triviaset <trivia-command-triviaset>` will be used instead.
+
+Here are all the overrides available:
+
+.. code-block:: yaml
+
+    CONFIG:
+        bot_plays: bool  # bot gains points, default true
+        delay: int  # answer time limit in seconds, default
+        timeout: int  # lack of response timeout in seconds, default 120
+        max_score: int  # points to win, default 10
+        reveal_answer: bool  # reveal answer on timeout, default true
+        payout_multiplier: int  # payout multiplier, default 0
+        use_spoilers: bool  # use spoilers in answers, default false
+
+So, your final file might look something like this:
+
+.. code-block:: yaml
+
+    AUTHOR: Red
+    CONFIG:
+        bot_plays: false
+        use_spoilers: true
+        delay: 20
+    How many days are there in a regular year?:
+    - 365
+    - three hundred and sixty five
+    "Who is the #1 followed user on Twitter?":
+    - Barack Obama
+    - Obama
+    What is the only sea without any coasts?:
+    - Sargasso
+    - Sargasso Sea
+    Who won the Premier League in 2015?:
+    - Chelsea
+    - chelsea f.c.
+    How much money is a US Olympic gold medallist awarded?:
+    - $25,000
+    - 25,000
+    - 25k
+    - 25000
+    - $25000
