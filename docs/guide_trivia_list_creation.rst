@@ -129,7 +129,7 @@ Optional: Custom Overrides
 --------------------------
 
 Once you've got the hang of the question-answer format,
-you might want to add some custom overrides with the CONFIG field - in a similar way to the AUTHOR field.
+you might want to add some custom overrides with the CONFIG key - in a similar way to the AUTHOR key.
 These will override the settings set with :ref:`[p]triviaset <trivia-command-triviaset>`.
 Therefore, you could make a custom list with less time to answer and a higher score needed
 to win than all the other trivia lists.
