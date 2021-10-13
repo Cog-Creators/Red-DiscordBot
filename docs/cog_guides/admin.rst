@@ -174,7 +174,7 @@ selfroleset clear
 
 **Description**
 
-Clears the list of available selfroles.
+Clear the list of available selfroles for this server.
 
 .. _admin-command-selfroleset-remove:
 

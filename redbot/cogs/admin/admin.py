@@ -512,7 +512,7 @@ class Admin(commands.Cog):
 
     @selfroleset.command(name="clear")
     async def selfroleset_clear(self, ctx: commands.Context):
-        """Clear the list of available selfroles."""
+        """Clear the list of available selfroles for this server."""
         current_selfroles = await self.config.guild(ctx.guild).selfroles()
         
         if not current_selfroles:
