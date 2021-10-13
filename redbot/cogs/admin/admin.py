@@ -509,6 +509,37 @@ class Admin(commands.Cog):
 
         await ctx.send(message)
 
+    @selfroleset.command(name="clear")
+    async def selfroleset_clear(self, ctx: commands.Context):
+        """Clear the list of available selfroles."""
+        current_selfroles = await self.config.guild(ctx.guild).selfroles()
+        
+        if not current_selfroles:
+            return await ctx.send(_("There are currently no selfroles."))
+
+        await ctx.send(
+            _("Are you sure you want to clear this server's selfrole list?") + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            await ctx.bot.wait_for("message", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            for role in current_selfroles:
+                if not self.pass_user_hierarchy_check(ctx, role):
+                    await ctx.send(
+                        _(
+                            "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                        ).format(role=role)
+                    )
+                    return
+            await self.config.guild(ctx.guild).selfroles.clear()
+            await ctx.send(_("Selfrole list cleared."))
+        else:
+            await ctx.send(_("No changes have been made."))
+
     @commands.command()
     @checks.is_owner()
     async def serverlock(self, ctx: commands.Context):
