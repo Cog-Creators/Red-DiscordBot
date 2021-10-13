@@ -3,11 +3,11 @@ import logging
 from typing import Tuple
 
 import discord
-
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.predicates import MessagePredicate
+
 from .announcer import Announcer
 from .converters import SelfRole
 
@@ -514,7 +514,7 @@ class Admin(commands.Cog):
     async def selfroleset_clear(self, ctx: commands.Context):
         """Clear the list of available selfroles for this server."""
         current_selfroles = await self.config.guild(ctx.guild).selfroles()
-        
+
         if not current_selfroles:
             return await ctx.send(_("There are currently no selfroles."))
 
