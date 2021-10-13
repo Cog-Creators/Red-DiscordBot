@@ -172,7 +172,7 @@ If you're looking to clear data for a single guild/member/channel/role/user,
 you want to use :py:meth:`Group.clear` as that will clear the data only for the
 specified thing.
 
-If using :py:meth:`Config.clear_all`, it will reset all data everywhere. 
+If using :py:meth:`Config.clear_all`, it will reset all data everywhere.
 
 There are other methods provided to reset data from a particular scope. For
 example, :py:meth:`Config.clear_all_guilds` resets all guild data. For member
@@ -474,7 +474,7 @@ Best practices and performance notes
 ************************************
 
 Config prioritizes being a safe data store without developers needing to
-know how end users have configured their bot. 
+know how end users have configured their bot.
 
 This does come with some performance costs, so keep the following in mind when choosing to
 develop using config
@@ -482,12 +482,12 @@ develop using config
 * Config use in events should be kept minimal and should only occur
   after confirming the event needs to interact with config
 
-* Caching frequently used things, especially things used by events, 
+* Caching frequently used things, especially things used by events,
   results in faster and less event loop blocking code.
 
 * Only use config's context managers when you intend to modify data.
 
-* While config is a great general use option, it may not always be the right one for you. 
+* While config is a great general use option, it may not always be the right one for you.
   As a cog developer, even though config doesn't require one,
   you can choose to require a database or store to something such as an sqlite
   database stored within your cog's datapath.
