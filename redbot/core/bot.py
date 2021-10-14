@@ -1074,15 +1074,15 @@ class RedBase(
 
     # end Config migrations
 
-    async def pre_flight(self, cli_flags):
+    async def _pre_login(self) -> None:
         """
-        This should only be run once, prior to connecting to discord.
+        This should only be run once, prior to logging in to Discord REST API.
         """
         await self._maybe_update_config()
         self.description = await self._config.description()
 
         init_global_checks(self)
-        init_events(self, cli_flags)
+        init_events(self, self._cli_flags)
 
         if self._owner_id_overwrite is None:
             self._owner_id_overwrite = await self._config.owner()
@@ -1094,9 +1094,13 @@ class RedBase(
         i18n_regional_format = await self._config.regional_format()
         i18n.set_regional_format(i18n_regional_format)
 
+    async def _pre_connect(self) -> None:
+        """
+        This should only be run once, prior to connecting to Discord gateway.
+        """
         self.add_cog(Core(self))
         self.add_cog(CogManagerUI())
-        if cli_flags.dev:
+        if self._cli_flags.dev:
             self.add_cog(Dev())
 
         await modlog._init(self)
@@ -1127,11 +1131,11 @@ class RedBase(
                 )
                 python_version_changed = True
         else:
-            if cli_flags.no_cogs is False:
+            if self._cli_flags.no_cogs is False:
                 packages.extend(await self._config.packages())
 
-            if cli_flags.load_cogs:
-                packages.extend(cli_flags.load_cogs)
+            if self._cli_flags.load_cogs:
+                packages.extend(self._cli_flags.load_cogs)
 
         system_changed = False
         machine = platform.machine()
@@ -1197,7 +1201,7 @@ class RedBase(
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
-    async def _fetch_owners(self) -> None:
+    async def _pre_fetch_owners(self) -> None:
         app_info = await self.application_info()
 
         if app_info.team:
@@ -1208,20 +1212,17 @@ class RedBase(
 
         self._app_info = app_info
 
-    async def _pre_fetch_owners(self) -> None:
-        await self._fetch_owners()
-
         if not self.owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
 
     async def start(self, *args, **kwargs):
         """
-        Overridden start which ensures cog load and other pre-connection tasks are handled
+        Overridden start which ensures that cog load and other pre-connection tasks are handled.
         """
-        cli_flags = kwargs.pop("cli_flags")
-        await self.pre_flight(cli_flags=cli_flags)
+        await self._pre_login()
         await self.login(*args)
         await self._pre_fetch_owners()
+        await self._pre_connect()
         await self.connect()
 
     async def send_help_for(
@@ -1306,14 +1307,7 @@ class RedBase(
         -------
         bool
         """
-        if user.id in self.owner_ids:
-            return True
-
-        if self._app_info is None:
-            await self._fetch_owners()
-            return user.id in self.owner_ids
-
-        return False
+        return user.id in self.owner_ids
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
