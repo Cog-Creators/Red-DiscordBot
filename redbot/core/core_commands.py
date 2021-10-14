@@ -2690,7 +2690,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Warning: A prefix is above the recommended length (20 characters).\n"
                     "Do you want to continue?"
                 )
-                + "(yes/no)"
+                + " (yes/no)"
             )
             pred = MessagePredicate.yes_or_no(ctx)
             try:

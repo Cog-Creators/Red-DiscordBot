@@ -990,7 +990,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         msg = _(
             "This server does not have a mute role setup. "
             " You can setup a mute role with {command_1} or"
-            "{command_2} if you just want a basic role created setup.\n\n"
+            " {command_2} if you just want a basic role created setup.\n\n"
         )
         mute_role_id = await self.config.guild(ctx.guild).mute_role()
         mute_role = ctx.guild.get_role(mute_role_id)
