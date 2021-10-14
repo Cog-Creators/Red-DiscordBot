@@ -1600,6 +1600,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return await ctx.send(_("You need to specify at least one server ID."))
 
         leaving_local_guild = not guilds
+        s = "s" if len(guilds) > 1 else ""
+        number = len(guilds)
+        t = "these" if len(guilds) > 1 else "this" 
+        th = "those" if len(guilds) > 1 else "that" 
 
         if leaving_local_guild:
             guilds = (ctx.guild,)
@@ -1609,7 +1613,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         else:
             msg = (
-                _("Are you sure you want me to leave these servers?")
+                _(f"Are you sure you want me to leave {t} server{s}?")
                 + " (y/n):\n"
                 + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
             )
@@ -1636,7 +1640,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     await ctx.send(_("Alright. Bye :wave:"))
                 else:
                     await ctx.send(
-                        _("Alright. Leaving {number} servers...").format(number=len(guilds))
+                        _(f"Alright. Leaving {number} server{s}...")
                     )
                 for guild in guilds:
                     log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
@@ -1645,7 +1649,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright, I'll stay then. :)"))
                 else:
-                    await ctx.send(_("Alright, I'm not leaving those servers."))
+                    await ctx.send(_(f"Alright, I'm not leaving {th} server{s}."))
 
     @commands.command()
     @checks.is_owner()
