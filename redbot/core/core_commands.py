@@ -1608,7 +1608,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("You haven't passed any server ID. Do you want me to leave this server?")
                 + " (y/n)"
             )
-        if len(guilds) > 1:
+        if number > 1:
             msg = (
                 _(f"Are you sure you want me to leave these servers?")
                 + " (y/n):\n"
@@ -1643,7 +1643,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright. Bye :wave:")
                     )
-                if len(guilds) > 1:
+                if number > 1:
                     await ctx.send(_(f"Alright. Leaving {number} servers...")
                     )   
                 else:
@@ -1657,10 +1657,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright, I'll stay then. :)"))
                 else:
-                    if len(guilds) > 1:
+                    if number > 1:
                         await ctx.send(_("Alright, I'm not leaving those servers."))
                     else:
-                        await ctx.send(_("Alright, I'm not leaving that server."))  
+                        await ctx.send(_("Alright, I'm not leaving that server."))    
 
     @commands.command()
     @checks.is_owner()
