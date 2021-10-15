@@ -802,6 +802,7 @@ class KickBanMixin(MixinMeta):
                 until=None,
                 channel=case_channel,
             )
+            await ctx.send(_("User has been kicked from the voice channel."))
 
     @commands.command()
     @commands.guild_only()
