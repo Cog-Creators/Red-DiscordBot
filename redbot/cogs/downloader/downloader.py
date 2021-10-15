@@ -1645,7 +1645,7 @@ class Downloader(commands.Cog):
             )
             can_react = ctx.channel.permissions_for(ctx.me).add_reactions
             if not can_react:
-                message += " (y/n)"
+                message += " (yes/no)"
             query: discord.Message = await ctx.send(message)
             if can_react:
                 # noinspection PyAsyncCall
