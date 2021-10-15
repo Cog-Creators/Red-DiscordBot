@@ -405,7 +405,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     """
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete (Core Config is handled in a bot method ) """
+        """Nothing to delete (Core Config is handled in a bot method )"""
         return
 
     @commands.command(hidden=True)
@@ -1617,7 +1617,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         else:
             msg = (
-                _("Are you sure you want me to leave this server")   
+                _("Are you sure you want me to leave this server")
                 + " (y/n):\n"
                 + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
             )
@@ -1641,15 +1641,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             if pred.result is True:
                 if leaving_local_guild is True:
-                    await ctx.send(_("Alright. Bye :wave:")
-                    )
+                    await ctx.send(_("Alright. Bye :wave:"))
                 if number > 1:
-                    await ctx.send(_(f"Alright. Leaving {number} servers...")
-                    )   
+                    await ctx.send(_(f"Alright. Leaving {number} servers..."))
                 else:
-                    await ctx.send(
-                        _(f"Alright. Leaving {number} server...")
-                    )
+                    await ctx.send(_(f"Alright. Leaving {number} server..."))
                 for guild in guilds:
                     log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
                     await guild.leave()
@@ -1660,7 +1656,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     if number > 1:
                         await ctx.send(_("Alright, I'm not leaving those servers."))
                     else:
-                        await ctx.send(_("Alright, I'm not leaving that server."))    
+                        await ctx.send(_("Alright, I'm not leaving that server."))
 
     @commands.command()
     @checks.is_owner()
