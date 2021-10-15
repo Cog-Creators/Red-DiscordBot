@@ -1469,6 +1469,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "Either you blocked me or you disabled DMs in this server."
                     )
                     return
+            if not public:
+                await ctx.tick()
         else:
             await ctx.send(_("No exception has occurred yet."))
 
