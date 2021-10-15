@@ -107,7 +107,8 @@ class PlaylistWrapper:
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                    debug_exc_log(log, exc, "Failed to complete playlist fetch from database")
+                    return None
             row = row_result.fetchone()
             if row:
                 row = PlaylistFetchResult(*row)
@@ -139,7 +140,7 @@ class PlaylistWrapper:
                     try:
                         row_result = future.result()
                     except Exception as exc:
-                        debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                        debug_exc_log(log, exc, "Failed to complete playlist fetch from database")
                         return []
             else:
                 for future in concurrent.futures.as_completed(
@@ -154,7 +155,7 @@ class PlaylistWrapper:
                     try:
                         row_result = future.result()
                     except Exception as exc:
-                        debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                        debug_exc_log(log, exc, "Failed to complete playlist fetch from database")
                         return []
         async for row in AsyncIter(row_result):
             output.append(PlaylistFetchResult(*row))
@@ -191,7 +192,8 @@ class PlaylistWrapper:
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+                    debug_exc_log(log, exc, "Failed to complete fetch from database")
+                    return []
 
             async for row in AsyncIter(row_result):
                 output.append(PlaylistFetchResult(*row))
