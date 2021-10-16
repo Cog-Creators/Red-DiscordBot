@@ -1608,19 +1608,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("You haven't passed any server ID. Do you want me to leave this server?")
                 + " (y/n)"
             )
-        if number > 1:
-            msg = (
-                _(f"Are you sure you want me to leave these servers?")
-                + " (y/n):\n"
-                + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
-            )
-
         else:
-            msg = (
-                _("Are you sure you want me to leave this server")
-                + " (y/n):\n"
-                + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
-            )
+            if number > 1:
+                msg = (
+                    _(f"Are you sure you want me to leave these servers?")
+                    + " (y/n):\n"
+                    + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
+                )
+            else:                
+                msg = (
+                    _("Are you sure you want me to leave this server?")
+                    + " (y/n):\n"
+                    + f"- {guilds[0].name} (`{guilds[0].id}`)"
+                )
 
         for guild in guilds:
             if guild.owner.id == ctx.me.id:
@@ -1643,9 +1643,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright. Bye :wave:"))
                 if number > 1:
-                    await ctx.send(_(f"Alright. Leaving {number} servers..."))
+                    await ctx.send(
+                        _("Alright. Leaving {number} servers...").format(number=len(guilds))
+                    )
                 else:
-                    await ctx.send(_(f"Alright. Leaving {number} server..."))
+                    await ctx.send(_("Alright. Leaving one server..."))
                 for guild in guilds:
                     log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
                     await guild.leave()
