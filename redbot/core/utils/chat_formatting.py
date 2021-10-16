@@ -559,6 +559,43 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
+def humanize_relativedelta(
+    relativedelta: Optional[dateutil.relativedelta]
+) -> str:
+    """
+    Get a human readable relativedelta representation.
+
+    Fractional values will be omitted, and values less than 1 second
+    an empty string.
+
+    Parameters
+    ----------
+    relativedelta: Optional[dateutil.relativedelta]
+        A relativedelta object
+
+    Returns
+    -------
+    str
+        A human readable representation of the relativedelta.
+    """
+    relativedelta = relativedelta.normalized()
+    periods = [
+        ("year", _("year"), _("years")),
+        ("month", _("month"), _("months")),
+        ("day", _("day"), _("days")),
+        ("hour", _("hour"), _("hours")),
+        ("minute", _("minute"), _("minutes")),
+        ("second", _("second"), _("seconds")),
+    ]
+    strings = []
+    for period_raw, period_name, plural_period_name in periods:
+        period_value = getattr(relative_delta, period_raw, 0)
+        unit = plural_period_name if period_value > 1 else period_name
+        strings.append(f"{period_value} {unit}")
+
+    return ", ".join(strings)
+
+
 def humanize_number(val: Union[int, float], override_locale=None) -> str:
     """
     Convert an int or float to a str with digit separators based on bot locale
