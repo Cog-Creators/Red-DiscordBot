@@ -579,12 +579,12 @@ def humanize_relativedelta(relativedelta) -> str:
     """
     relativedelta = relativedelta.normalized()
     periods = [
-        ("year", _("year"), _("years")),
-        ("month", _("month"), _("months")),
-        ("day", _("day"), _("days")),
-        ("hour", _("hour"), _("hours")),
-        ("minute", _("minute"), _("minutes")),
-        ("second", _("second"), _("seconds")),
+        ("years", _("year"), _("years")),
+        ("months", _("month"), _("months")),
+        ("days", _("day"), _("days")),
+        ("hours", _("hour"), _("hours")),
+        ("minutes", _("minute"), _("minutes")),
+        ("seconds", _("second"), _("seconds")),
     ]
     strings = []
     for period_raw, period_name, plural_period_name in periods:
