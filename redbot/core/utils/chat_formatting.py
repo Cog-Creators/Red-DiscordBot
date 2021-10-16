@@ -560,9 +560,7 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
-def humanize_relativedelta(
-    relativedelta: Optional[dateutil.relativedelta.relativedelta]
-) -> str:
+def humanize_relativedelta(relativedelta) -> str:
     """
     Get a human readable relativedelta representation.
 
