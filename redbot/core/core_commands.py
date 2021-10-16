@@ -1469,6 +1469,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "Either you blocked me or you disabled DMs in this server."
                     )
                     return
+            if not public:
+                await ctx.tick()
         else:
             await ctx.send(_("No exception has occurred yet."))
 
@@ -1605,12 +1607,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             guilds = (ctx.guild,)
             msg = (
                 _("You haven't passed any server ID. Do you want me to leave this server?")
-                + " (y/n)"
+                + " (yes/no)"
             )
         else:
             msg = (
                 _("Are you sure you want me to leave these servers?")
-                + " (y/n):\n"
+                + " (yes/no):\n"
                 + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
             )
 
@@ -2688,8 +2690,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(
                 _(
                     "Warning: A prefix is above the recommended length (20 characters).\n"
-                    "Do you want to continue? (y/n)"
+                    "Do you want to continue?"
                 )
+                + " (yes/no)"
             )
             pred = MessagePredicate.yes_or_no(ctx)
             try:
