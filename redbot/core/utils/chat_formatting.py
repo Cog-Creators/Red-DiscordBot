@@ -588,7 +588,9 @@ def humanize_relativedelta(relativedelta) -> str:
     ]
     strings = []
     for period_raw, period_name, plural_period_name in periods:
-        period_value = getattr(relativedelta, period_raw, 0)
+        period_value = getattr(relativedelta, period_raw, None)
+        if period_value is None:
+            continue
         unit = plural_period_name if period_value > 1 else period_name
         strings.append(f"{period_value} {unit}")
 
