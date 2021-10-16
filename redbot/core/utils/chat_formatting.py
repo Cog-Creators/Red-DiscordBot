@@ -561,7 +561,7 @@ def humanize_timedelta(
 
 
 def humanize_relativedelta(
-    relativedelta: Optional[dateutil.relativedelta]
+    relativedelta: Optional[dateutil.relativedelta.relativedelta]
 ) -> str:
     """
     Get a human readable relativedelta representation.
@@ -571,7 +571,7 @@ def humanize_relativedelta(
 
     Parameters
     ----------
-    relativedelta: Optional[dateutil.relativedelta]
+    relativedelta: Optional[dateutil.relativedelta.relativedelta]
         A relativedelta object
 
     Returns
