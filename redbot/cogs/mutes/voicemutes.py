@@ -7,6 +7,7 @@ from redbot.core import commands, checks, i18n, modlog
 from redbot.core.utils.chat_formatting import (
     bold,
     humanize_timedelta,
+    humanize_relativedelta,
     humanize_list,
     pagify,
     format_perms_list,
@@ -106,7 +107,7 @@ class VoiceMutes(MixinMeta):
                 if duration:
                     until = datetime.now(timezone.utc) + duration
                     time = _(" for {duration}").format(
-                        duration=humanize_timedelta(timedelta=duration)
+                        duration=humanize_relativedelta(duration)
                     )
                 else:
                     default_duration = await self.config.guild(ctx.guild).default_time()
