@@ -40,10 +40,14 @@ __all__ = [
     "NoParseOptional",
     "RelativedeltaConverter",
     "TimedeltaConverter",
+    "RelativedeltaReasonConverter",
+    "TimedeltaReasonConverter",
     "get_dict_converter",
     "get_timedelta_converter",
     "parse_relativedelta",
     "parse_timedelta",
+    "parse_relativedelta_with_reason",
+    "parse_timedelta_with_reason",
     "Literal",
     "CommandConverter",
     "CogConverter",
@@ -70,6 +74,20 @@ TIME_RE_STRING = r"\s?".join(
 
 TIME_RE = re.compile(TIME_RE_STRING, re.I)
 
+TIME_REASON_RE_STRING = r"|".join(
+    [
+        r"((?P<weeks>\d+?)\s?(weeks?|w)(?=$|\s|\d))",
+        r"((?P<days>\d+?)\s?(days?|d)(?=$|\s|\d))",
+        r"((?P<hours>\d+?)\s?(hours?|hrs|hr?)(?=$|\s|\d))",
+        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o))(?=$|\s|\d))",  # prevent matching "months"
+        r"((?P<seconds>\d+?)\s?(seconds?|secs?|s)(?=$|\s|\d))",
+    ]
+)
+
+TIME_REASON_RE = re.compile(TIME_REASON_RE_STRING, re.I)
+
+TIME_REASON_SPLIT = re.compile(r"t(?:ime)?=")
+
 
 def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional[Dict[str, int]]:
     """
@@ -86,6 +104,36 @@ def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional
         return params
     return None
 
+def _parse_and_match_with_reason(string_to_match: str, allowed_units: List[str]) -> Tuple[Optional[str], Optional[Dict[str, int]]]:
+    """
+    Local utility function to match TIME_REASON_RE string above to user input for both parse_timedelta_with_reason and parse_relativedelta_with_reason
+    """
+    time_split = TIME_REASON_SPLIT.split(string_to_match)
+    if time_split:
+        maybe_time = time_split[-1]
+    else:
+        maybe_time = string_to_match
+
+    time_data = {}
+    for time in TIME_REASON_RE.finditer(maybe_time):
+        # Remove all time information from the string, leaving behind the reason.
+        string_to_match = string_to_match.replace(time[0], "")
+        for k, v in time.groupdict().items():
+            if v is None:
+                continue
+            if k not in allowed_units:
+                raise BadArgument(
+                    _("`{unit}` is not a valid unit of time for this command").format(unit=k)
+                )
+            time_data[k] = int(v)
+    # We found no time data, so that part of the return value will be None.
+    if not time_data:
+        time_data = None
+    # If after removing time data there is no string left, the reason part of the return value will be None.
+    string_to_match = string_to_match.strip()
+    if not string_to_match:
+        string_to_match = None
+    return (string_to_match, time_data)
 
 def parse_timedelta(
     argument: str,
@@ -203,6 +251,128 @@ def parse_relativedelta(
             )
         return delta
     return None
+
+def parse_timedelta_with_reason(
+    argument: str,
+    *,
+    maximum: Optional[timedelta] = None,
+    minimum: Optional[timedelta] = None,
+    allowed_units: Optional[List[str]] = None,
+) -> Tuple[Optional[str], Optional[timedelta]]:
+    """
+    This converts a user provided string into a timedelta and reason
+
+    Any valid time information will be removed from the string and converted into a timedelta object.
+    The rest of the string will be returned for use as a "reason" parameter.
+    Time data can be entered with or without whitespace.
+
+    Parameters
+    ----------
+    argument : str
+        The user provided input
+    maximum : Optional[datetime.timedelta]
+        If provided, any parsed value higher than this will raise an exception
+    minimum : Optional[datetime.timedelta]
+        If provided, any parsed value lower than this will raise an exception
+    allowed_units : Optional[List[str]]
+        If provided, you can constrain a user to expressing the amount of time
+        in specific units. The units you can chose to provide are the same as the
+        parser understands. (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+
+    Returns
+    -------
+    Optional[str]
+        Any non-time text in the string. This can be `None`
+    Optional[datetime.timedelta]
+        If matched, the timedelta which was parsed. This can return `None`
+
+    Raises
+    ------
+    BadArgument
+        If the argument passed uses a unit not allowed, but understood
+        or if the value is out of bounds.
+    """
+    allowed_units = allowed_units or [
+        "weeks",
+        "days",
+        "hours",
+        "minutes",
+        "seconds",
+    ]
+    reason, params = _parse_and_match_with_reason(argument, allowed_units)
+    if not params:
+        return reason, None
+    try:
+        delta = timedelta(**params)
+    except OverflowError:
+        raise BadArgument(
+            _("The time set is way too high, consider setting something reasonable.")
+        )
+    if maximum and maximum < delta:
+        raise BadArgument(
+            _(
+                "This amount of time is too large for this command. (Maximum: {maximum})"
+            ).format(maximum=humanize_timedelta(timedelta=maximum))
+        )
+    if minimum and delta < minimum:
+        raise BadArgument(
+            _(
+                "This amount of time is too small for this command. (Minimum: {minimum})"
+            ).format(minimum=humanize_timedelta(timedelta=minimum))
+        )
+    return reason, delta
+    
+
+
+def parse_relativedelta_with_reason(
+    argument: str, *, allowed_units: Optional[List[str]] = None
+) -> Tuple[Optional[str], Optional[relativedelta]]:
+    """
+    This converts a user provided string into a datetime with offset from NOW and a reason
+
+    Any valid time information will be removed from the string and converted into a relativedelta object.
+    The rest of the string will be returned for use as a "reason" parameter.
+    Time data can be entered with or without whitespace.
+
+    Parameters
+    ----------
+    argument : str
+        The user provided input
+    allowed_units : Optional[List[str]]
+        If provided, you can constrain a user to expressing the amount of time
+        in specific units. The units you can chose to provide are the same as the
+        parser understands. (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+
+    Returns
+    -------
+    Optional[str]
+        Any non-time text in the string. This can be `None`
+    Optional[dateutil.relativedelta.relativedelta]
+        If matched, the relativedelta which was parsed. This can return `None`
+
+    Raises
+    ------
+    BadArgument
+        If the argument passed uses a unit not allowed, but understood
+        or if the value is out of bounds.
+    """
+    allowed_units = allowed_units or [
+        "weeks",
+        "days",
+        "hours",
+        "minutes",
+        "seconds",
+    ]
+    reason, params = _parse_and_match_with_reason(argument, allowed_units)
+    if not params:
+        return reason, None
+    try:
+        delta = relativedelta(**params)
+    except OverflowError:
+        raise BadArgument(
+            _("The time set is way too high, consider setting something reasonable.")
+        )
+    return reason, delta
 
 
 class _GuildConverter(discord.Guild):
@@ -442,7 +612,7 @@ else:
             parser understands: (``years``, ``months``, ``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
         default_unit : Optional[str]
             If provided, it will additionally try to match integer-only input into
-            a timedelta, using the unit specified. Same units as in ``allowed_units``
+            a relativedelta, using the unit specified. Same units as in ``allowed_units``
             apply.
         """
 
@@ -459,6 +629,91 @@ else:
             if delta is not None:
                 return delta
             raise BadArgument()  # This allows this to be a required argument.
+
+
+if TYPE_CHECKING:
+    TimedeltaReasonConverter = Tuple[Optional[str], Optional[timedelta]]
+else:
+
+    class TimedeltaReasonConverter(dpy_commands.Converter):
+        """
+        This is a converter for timedeltas and reasons.
+        
+        Any valid time information will be removed from the string and converted into a timedelta object.
+        The rest of the string will be returned for use as a "reason" parameter.
+        Time data can be entered with or without whitespace.
+
+        See `parse_timedelta_with_reason` for more information about how this functions.
+
+        Attributes
+        ----------
+        maximum : Optional[datetime.timedelta]
+            If provided, any parsed value higher than this will raise an exception
+        minimum : Optional[datetime.timedelta]
+            If provided, any parsed value lower than this will raise an exception
+        allowed_units : Optional[List[str]]
+            If provided, you can constrain a user to expressing the amount of time
+            in specific units. The units you can choose to provide are the same as the
+            parser understands: (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+        default_unit : Optional[str]
+            If provided, it will additionally try to match integer-only input into
+            a timedelta, using the unit specified. Same units as in ``allowed_units``
+            apply.
+        """
+
+        def __init__(self, *, minimum=None, maximum=None, allowed_units=None, default_unit=None):
+            self.allowed_units = allowed_units
+            self.default_unit = default_unit
+            self.minimum = minimum
+            self.maximum = maximum
+
+        async def convert(self, ctx: "Context", argument: str) -> Tuple[Optional[str], Optional[timedelta]]:
+            if self.default_unit and argument.isdecimal():
+                argument = argument + self.default_unit
+
+            return parse_timedelta_with_reason(
+                argument,
+                minimum=self.minimum,
+                maximum=self.maximum,
+                allowed_units=self.allowed_units,
+            )
+
+
+if TYPE_CHECKING:
+    RelativedeltaReasonConverter = relativedelta
+else:
+
+    class RelativedeltaReasonConverter(dpy_commands.Converter):
+        """
+        This is a converter for relative deltas and reasons.
+
+        Any valid time information will be removed from the string and converted into a relativedelta object.
+        The rest of the string will be returned for use as a "reason" parameter.
+        Time data can be entered with or without whitespace.
+
+        See `parse_relativedelta_with_reason` for more information about how this functions.
+
+        Attributes
+        ----------
+        allowed_units : Optional[List[str]]
+            If provided, you can constrain a user to expressing the amount of time
+            in specific units. The units you can choose to provide are the same as the
+            parser understands: (``weeks``, ``days``, ``hours``, ``minutes``, ``seconds``)
+        default_unit : Optional[str]
+            If provided, it will additionally try to match integer-only input into
+            a relativedelta, using the unit specified. Same units as in ``allowed_units``
+            apply.
+        """
+
+        def __init__(self, *, allowed_units=None, default_unit=None):
+            self.allowed_units = allowed_units
+            self.default_unit = default_unit
+
+        async def convert(self, ctx: "Context", argument: str) -> relativedelta:
+            if self.default_unit and argument.isdecimal():
+                argument = argument + self.default_unit
+
+            return parse_relativedelta_with_reason(argument, allowed_units=self.allowed_units)
 
 
 if not TYPE_CHECKING:
