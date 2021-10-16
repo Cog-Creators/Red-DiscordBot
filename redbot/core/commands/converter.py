@@ -58,13 +58,13 @@ ID_REGEX = re.compile(r"([0-9]{15,20})")
 # https://github.com/mikeshardmind/SinbadCogs/blob/816f3bc2ba860243f75112904b82009a8a9e1f99/scheduler/time_utils.py#L9-L19
 TIME_RE_STRING = r"\s?".join(
     [
-        r"((?P<years>\d+?)\s?(years?|y)($|\s))?",
-        r"((?P<months>\d+?)\s?(months?|mo)($|\s))?",
-        r"((?P<weeks>\d+?)\s?(weeks?|w)($|\s))?",
-        r"((?P<days>\d+?)\s?(days?|d)($|\s))?",
-        r"((?P<hours>\d+?)\s?(hours?|hrs|hr?)($|\s))?",
-        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o))($|\s))?",  # prevent matching "months"
-        r"((?P<seconds>\d+?)\s?(seconds?|secs?|s)($|\s))?",
+        r"((?P<years>\d+?)\s?(years?|y)(?=$|\s|\d))?",
+        r"((?P<months>\d+?)\s?(months?|mo)(?=$|\s|\d))?",
+        r"((?P<weeks>\d+?)\s?(weeks?|w)(?=$|\s|\d))?",
+        r"((?P<days>\d+?)\s?(days?|d)(?=$|\s|\d))?",
+        r"((?P<hours>\d+?)\s?(hours?|hrs|hr?)(?=$|\s|\d))?",
+        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o))(?=$|\s|\d))?",  # prevent matching "months"
+        r"((?P<seconds>\d+?)\s?(seconds?|secs?|s)(?=$|\s|\d))?",
     ]
 )
 
