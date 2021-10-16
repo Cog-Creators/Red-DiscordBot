@@ -15,6 +15,7 @@ from redbot.core.utils import AsyncIter, bounded_gather
 from redbot.core.utils.chat_formatting import (
     bold,
     humanize_timedelta,
+    humanize_relativedelta,
     humanize_list,
     inline,
     pagify,
@@ -530,7 +531,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         show_mod = await self.config.guild(guild).show_mod()
         title = bold(mute_type)
         if duration:
-            duration_str = humanize_timedelta(timedelta=duration)
+            if isinstance(duration, timedelta):
+                duration_str = humanize_timedelta(timedelta=duration)
+            else:
+                duration_str = humanize_relativedelta(duration)
             until = datetime.now(timezone.utc) + duration
             until_str = f"<t:{int(until.timestamp())}>"
 
@@ -1159,7 +1163,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
+                time = _(" for {duration}").format(duration=humanize_relativedelta(duration))
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
@@ -1307,7 +1311,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
+                time = _(" for {duration}").format(duration=humanize_relativedelta(duration))
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
