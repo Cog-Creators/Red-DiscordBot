@@ -7,7 +7,6 @@ from abc import ABC
 from typing import cast, Optional, Dict, List, Tuple, Literal, Union
 from datetime import datetime, timedelta, timezone
 
-from .converters import MuteTime
 from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
@@ -959,24 +958,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command(name="defaulttime", aliases=["time"])
     @checks.mod_or_permissions(manage_messages=True)
-    async def default_mute_time(self, ctx: commands.Context, *, time: Optional[MuteTime] = None):
+    async def default_mute_time(self, ctx: commands.Context, *, time: commands.converter.TimedeltaConverter = None):
         """
         Set the default mute time for the mute command.
 
         If no time interval is provided this will be cleared.
         """
 
-        if not time:
+        if time is None:
             await self.config.guild(ctx.guild).default_time.clear()
             await ctx.send(_("Default mute time removed."))
         else:
-            data = time.get("duration", {})
-            if not data:
-                return await ctx.send(_("Please provide a valid time format."))
-            await self.config.guild(ctx.guild).default_time.set(data.total_seconds())
+            await self.config.guild(ctx.guild).default_time.set(time.total_seconds())
             await ctx.send(
                 _("Default mute time set to {time}.").format(
-                    time=humanize_timedelta(timedelta=data)
+                    time=humanize_timedelta(timedelta=time)
                 )
             )
 
@@ -1133,7 +1129,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         ctx: commands.Context,
         users: commands.Greedy[discord.Member],
         *,
-        time_and_reason: MuteTime = {},
+        time_and_reason: commands.converter.RelativedeltaReasonConverter = (None, None),
     ):
         """Mute users.
 
@@ -1157,8 +1153,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not await self._check_for_mute_role(ctx):
             return
         async with ctx.typing():
-            duration = time_and_reason.get("duration", None)
-            reason = time_and_reason.get("reason", None)
+            reason = time_and_reason[0]
+            duration = time_and_reason[1]
             time = ""
             until = None
             if duration:
@@ -1285,7 +1281,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         ctx: commands.Context,
         users: commands.Greedy[discord.Member],
         *,
-        time_and_reason: MuteTime = {},
+        time_and_reason: commands.converter.RelativedeltaReasonConverter = (None, None),
     ):
         """Mute a user in the current text channel.
 
@@ -1305,8 +1301,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if ctx.author in users:
             return await ctx.send(_("You cannot mute yourself."))
         async with ctx.typing():
-            duration = time_and_reason.get("duration", None)
-            reason = time_and_reason.get("reason", None)
+            reason = time_and_reason[0]
+            duration = time_and_reason[1]
             time = ""
             until = None
             if duration:
