@@ -705,7 +705,7 @@ class Permissions(commands.Cog):
             finally:
                 await msg.delete()
         else:
-            await ctx.send(_("Are you sure? (y/n)"))
+            await ctx.send(_("Are you sure?") + " (yes/no)")
             pred = MessagePredicate.yes_or_no(ctx)
             try:
                 await ctx.bot.wait_for("message", check=pred, timeout=30)
