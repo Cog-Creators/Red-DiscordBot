@@ -1590,7 +1590,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This command is interactive.
 
         **Examples:**
-            - `[p]leave` - Leave the current server.
+            - `[p]leave` - Leaves the current server.
             - `[p]leave "Red - Discord Bot"` - Quotes are necessary when there are spaces in the name.
             - `[p]leave 133049272517001216 240154543684321280` - Leaves multiple servers, using IDs.
 
