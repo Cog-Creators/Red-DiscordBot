@@ -104,7 +104,10 @@ def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional
         return params
     return None
 
-def _parse_and_match_with_reason(string_to_match: str, allowed_units: List[str]) -> Tuple[Optional[str], Optional[Dict[str, int]]]:
+
+def _parse_and_match_with_reason(
+    string_to_match: str, allowed_units: List[str]
+) -> Tuple[Optional[str], Optional[Dict[str, int]]]:
     """
     Local utility function to match TIME_REASON_RE string above to user input for both parse_timedelta_with_reason and parse_relativedelta_with_reason
     """
@@ -134,6 +137,7 @@ def _parse_and_match_with_reason(string_to_match: str, allowed_units: List[str])
     if not string_to_match:
         string_to_match = None
     return (string_to_match, time_data)
+
 
 def parse_timedelta(
     argument: str,
@@ -252,6 +256,7 @@ def parse_relativedelta(
         return delta
     return None
 
+
 def parse_timedelta_with_reason(
     argument: str,
     *,
@@ -310,18 +315,17 @@ def parse_timedelta_with_reason(
         )
     if maximum and maximum < delta:
         raise BadArgument(
-            _(
-                "This amount of time is too large for this command. (Maximum: {maximum})"
-            ).format(maximum=humanize_timedelta(timedelta=maximum))
+            _("This amount of time is too large for this command. (Maximum: {maximum})").format(
+                maximum=humanize_timedelta(timedelta=maximum)
+            )
         )
     if minimum and delta < minimum:
         raise BadArgument(
-            _(
-                "This amount of time is too small for this command. (Minimum: {minimum})"
-            ).format(minimum=humanize_timedelta(timedelta=minimum))
+            _("This amount of time is too small for this command. (Minimum: {minimum})").format(
+                minimum=humanize_timedelta(timedelta=minimum)
+            )
         )
     return reason, delta
-    
 
 
 def parse_relativedelta_with_reason(
@@ -667,7 +671,9 @@ else:
             self.minimum = minimum
             self.maximum = maximum
 
-        async def convert(self, ctx: "Context", argument: str) -> Tuple[Optional[str], Optional[timedelta]]:
+        async def convert(
+            self, ctx: "Context", argument: str
+        ) -> Tuple[Optional[str], Optional[timedelta]]:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
