@@ -1644,12 +1644,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if pred.result is True:
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright. Bye :wave:"))
-                if number > 1:
-                    await ctx.send(
-                        _("Alright. Leaving {number} servers...").format(number=len(guilds))
-                    )
-                else:
-                    await ctx.send(_("Alright. Leaving one server..."))
+                else:    
+                    if number > 1:
+                        await ctx.send(
+                            _("Alright. Leaving {number} servers...").format(number=len(guilds))
+                        )
+                    else:
+                        await ctx.send(_("Alright. Leaving one server..."))
                 for guild in guilds:
                     log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
                     await guild.leave()
