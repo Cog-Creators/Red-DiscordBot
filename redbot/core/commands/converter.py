@@ -642,7 +642,7 @@ else:
     class TimedeltaReasonConverter(dpy_commands.Converter):
         """
         This is a converter for timedeltas and reasons.
-        
+
         Any valid time information will be removed from the string and converted into a timedelta object.
         The rest of the string will be returned for use as a "reason" parameter.
         Time data can be entered with or without whitespace.
