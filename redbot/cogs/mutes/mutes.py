@@ -430,8 +430,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
             for reason, channel_list in reasons.items():
                 error_msg += _("{reason} In the following channels: {channels}\n").format(
-                    reason=reason,
-                    channels=humanize_list([c.mention for c in channel_list]),
+                    reason=reason, channels=humanize_list([c.mention for c in channel_list]),
                 )
             chan_id = await self.config.guild(guild).notification_channel()
             notification_channel = guild.get_channel(chan_id)
@@ -549,9 +548,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         # okay, this is some poor API to require PrivateChannel here...
         if await self.bot.embed_requested(await user.create_dm(), user):
             em = discord.Embed(
-                title=title,
-                description=reason,
-                color=await self.bot.get_embed_color(user),
+                title=title, description=reason, color=await self.bot.get_embed_color(user),
             )
             em.timestamp = datetime.utcnow()
             if duration:
@@ -962,7 +959,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command(name="defaulttime", aliases=["time"])
     @checks.mod_or_permissions(manage_messages=True)
-    async def default_mute_time(self, ctx: commands.Context, *, time: commands.converter.TimedeltaConverter = None):
+    async def default_mute_time(
+        self, ctx: commands.Context, *, time: commands.converter.TimedeltaConverter = None
+    ):
         """
         Set the default mute time for the mute command.
 
@@ -1227,8 +1226,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
             for reason, channel_list in reasons.items():
                 channel_msg += _("- {reason} In the following channels: {channels}\n").format(
-                    reason=reason,
-                    channels=humanize_list([c.mention for c in channel_list]),
+                    reason=reason, channels=humanize_list([c.mention for c in channel_list]),
                 )
         error_msg += reason_msg or channel_msg
         return error_msg
