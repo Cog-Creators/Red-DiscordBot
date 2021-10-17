@@ -34,9 +34,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         else:
             guild_data = await self.config.guild(ctx.guild).all()
-            dj_enabled = self._dj_status_cache.setdefault(
-                ctx.guild.id, guild_data["dj_enabled"]
-            )
+            dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
             vote_enabled = guild_data["vote_enabled"]
             player = lavalink.get_player(ctx.guild.id)
             can_skip = await self._can_instaskip(ctx, ctx.author)
@@ -74,9 +72,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
             await player.disconnect()
-            await self.config.guild(ctx.guild).currently_auto_playing_in.set(
-                []
-            )
+            await self.config.guild(ctx.guild).currently_auto_playing_in.set([])
             self._ll_guild_updates.discard(ctx.guild.id)
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
@@ -147,9 +143,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         player.store("np_message", message)
 
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         vote_enabled = guild_data["vote_enabled"]
         if (
             (dj_enabled or vote_enabled)
@@ -244,9 +238,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         guild_data = await self.config.guild(ctx.guild).all()
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         vote_enabled = guild_data["vote_enabled"]
         is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
@@ -309,9 +301,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
         """
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         vote_enabled = guild_data["vote_enabled"]
         is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
@@ -393,9 +383,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle shuffle."""
         guild_data = await self.config.guild(ctx.guild).all()
         if ctx.invoked_subcommand is None:
-            dj_enabled = self._dj_status_cache.setdefault(
-                ctx.guild.id, guild_data["dj_enabled"]
-            )
+            dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
             can_skip = await self._can_instaskip(ctx, ctx.author)
             if dj_enabled and not can_skip:
                 return await self.send_embed_msg(
@@ -438,9 +426,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         over `[p]shuffle`.
         """
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if dj_enabled and not can_skip:
             return await self.send_embed_msg(
@@ -491,9 +477,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not player.current:
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         vote_enabled = guild_data["vote_enabled"]
         is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
@@ -570,9 +554,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_stop(self, ctx: commands.Context):
         """Stop playback and clear the queue."""
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         vote_enabled = guild_data["vote_enabled"]
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
@@ -614,9 +596,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("requester", None)
             player.store("autoplay_notified", False)
             await player.stop()
-            await self.config.guild(ctx.guild).currently_auto_playing_in.set(
-                []
-            )
+            await self.config.guild(ctx.guild).currently_auto_playing_in.set([])
             await self.send_embed_msg(ctx, title=_("Stopping..."))
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
@@ -627,9 +607,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_summon(self, ctx: commands.Context):
         """Summon the bot to a voice channel."""
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         vote_enabled = guild_data["vote_enabled"]
         is_alone = await self.is_requester_alone(ctx)
         is_requester = await self.is_requester(ctx, ctx.author)
@@ -706,9 +684,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_volume(self, ctx: commands.Context, vol: int = None):
         """Set the volume, 1% - 150%."""
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         can_skip = await self._can_instaskip(ctx, ctx.author)
         max_volume = guild_data["maxvolume"]
 
@@ -754,9 +730,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_repeat(self, ctx: commands.Context):
         """Toggle repeat."""
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if dj_enabled and not can_skip and not await self._has_dj_role(ctx, ctx.author):
             return await self.send_embed_msg(

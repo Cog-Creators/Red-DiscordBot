@@ -1473,9 +1473,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope, author, guild, specified_user = scope_data
 
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             ctx.command.reset_cooldown(ctx)
             await self.send_embed_msg(
