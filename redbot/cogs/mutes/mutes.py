@@ -110,6 +110,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         self._init_task = self.bot.loop.create_task(self._initialize())
 
+        # DEP-WARN: Remove when updating to Discord.py 2.0
+        self._create_public_threads: int = 1 << 35
+        self._create_private_threads: int = 1 << 36
+
     async def red_delete_data_for_user(
         self,
         *,
@@ -908,6 +912,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         async with ctx.typing():
             perms = discord.Permissions()
             perms.update(send_messages=False, speak=False, add_reactions=False)
+            perms.value &= ~(
+                self._create_public_threads ^ self._create_private_threads
+            )  # DEP-WARN Remove when updating to Discord.py 2.0
             try:
                 role = await ctx.guild.create_role(
                     name=name, permissions=perms, reason=_("Mute role setup")
@@ -1664,6 +1671,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         new_overs: dict = {}
         move_channel = False
         new_overs.update(send_messages=False, add_reactions=False, speak=False)
+        new_overs.value &= ~(
+            self._create_public_threads ^ self._create_private_threads
+        )  # DEP-WARN Remove when updating to Discord.py 2.0
         send_reason = None
         if user.voice and user.voice.channel:
             if channel.permissions_for(guild.me).move_members:
