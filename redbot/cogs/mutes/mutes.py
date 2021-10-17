@@ -1026,8 +1026,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "Saying {response_1} will continue "
                     "the mute with overwrites and stop this message from appearing again, "
                     "saying {response_2} will end the mute attempt."
-                )
-                msg = msg.format(
+                ).format(
                     response_1=inline("yes"),
                     response_2=inline("no"),
                 )
