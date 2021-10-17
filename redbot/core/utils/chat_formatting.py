@@ -1,5 +1,5 @@
 import datetime
-import dateutil
+import dateutil.relativedelta
 import itertools
 import textwrap
 from io import BytesIO
@@ -560,7 +560,7 @@ def humanize_timedelta(
     return ", ".join(strings)
 
 
-def humanize_relativedelta(relativedelta) -> str:
+def humanize_relativedelta(relativedelta: dateutil.relativedelta.relativedelta) -> str:
     """
     Get a human readable relativedelta representation.
 
@@ -569,7 +569,7 @@ def humanize_relativedelta(relativedelta) -> str:
 
     Parameters
     ----------
-    relativedelta: Optional[dateutil.relativedelta.relativedelta]
+    relativedelta: dateutil.relativedelta.relativedelta
         A relativedelta object
 
     Returns
