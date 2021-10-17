@@ -675,7 +675,7 @@ class Trivia(commands.Cog):
 
             can_react = ctx.channel.permissions_for(ctx.me).add_reactions
             if not can_react:
-                overwrite_message += " (y/n)"
+                overwrite_message += " (yes/no)"
 
             overwrite_message_object: discord.Message = await ctx.send(overwrite_message)
             if can_react:
