@@ -991,6 +991,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "This server does not have a mute role setup. "
             " You can setup a mute role with {command_1} or"
             " {command_2} if you just want a basic role created setup.\n\n"
+        ).format(
+            command_1=inline(command_1),
+            command_2=inline(command_2),
         )
         mute_role_id = await self.config.guild(ctx.guild).mute_role()
         mute_role = ctx.guild.get_role(mute_role_id)
@@ -1023,13 +1026,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     "Saying {response_1} will continue "
                     "the mute with overwrites and stop this message from appearing again, "
                     "saying {response_2} will end the mute attempt."
+                ).format(
+                    response_1=inline("yes"),
+                    response_2=inline("no"),
                 )
-            msg = msg.format(
-                command_1=inline(command_1),
-                command_2=inline(command_2),
-                response_1=inline("yes"),
-                response_2=inline("no"),
-            )
             query: discord.Message = await ctx.send(msg)
             if can_react:
                 # noinspection PyAsyncCall
