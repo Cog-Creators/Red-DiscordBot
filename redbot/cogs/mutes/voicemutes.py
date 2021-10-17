@@ -106,9 +106,7 @@ class VoiceMutes(MixinMeta):
                 until = None
                 if duration:
                     until = datetime.now(timezone.utc) + duration
-                    time = _(" for {duration}").format(
-                        duration=humanize_relativedelta(duration)
-                    )
+                    time = _(" for {duration}").format(duration=humanize_relativedelta(duration))
                 else:
                     default_duration = await self.config.guild(ctx.guild).default_time()
                     if default_duration:
