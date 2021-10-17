@@ -296,7 +296,7 @@ class KickBanMixin(MixinMeta):
 
         Examples:
            - `[p]kick 428675506947227648 wanted to be kicked.`
-            This will kick Twentysix from the server.
+            This will kick the user with ID 428675506947227648 from the server.
            - `[p]kick @Twentysix wanted to be kicked.`
             This will kick Twentysix from the server.
 
@@ -382,7 +382,7 @@ class KickBanMixin(MixinMeta):
 
         Examples:
            - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
-            This will ban Twentysix and it will delete 7 days worth of messages.
+            This will ban the user with ID 428675506947227648 and it will delete 7 days worth of messages.
            - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
             This will ban Twentysix and it will delete 7 days worth of messages.
 
@@ -597,7 +597,7 @@ class KickBanMixin(MixinMeta):
            - `[p]tempban @Twentysix 15m You need a timeout`
             This will ban Twentysix for 15 minutes.
            - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`
-            This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
+            This will ban the user with ID 428675506947227648 for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
         """
         guild = ctx.guild
         author = ctx.author
@@ -802,6 +802,7 @@ class KickBanMixin(MixinMeta):
                 until=None,
                 channel=case_channel,
             )
+            await ctx.send(_("User has been kicked from the voice channel."))
 
     @commands.command()
     @commands.guild_only()

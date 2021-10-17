@@ -55,9 +55,10 @@ class Cleanup(commands.Cog):
             return True
 
         prompt = await ctx.send(
-            _("Are you sure you want to delete {number} messages? (y/n)").format(
+            _("Are you sure you want to delete {number} messages?").format(
                 number=humanize_number(number)
             )
+            + " (yes/no)"
         )
         response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
