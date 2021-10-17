@@ -29,9 +29,10 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player: lavalink.player_manager.Player,
         page_num: int,
     ) -> discord.Embed:
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        autoplay = await self.config.guild(ctx.guild).auto_play()
+        guild_data = await self.config.guild(ctx.guild).all()
+        shuffle = guild_data["shuffle"]
+        repeat = guild_data["repeat"]
+        autoplay = guild_data["auto_play"]
 
         queue_num_pages = math.ceil(len(queue) / 10)
         queue_idx_start = (page_num - 1) * 10
