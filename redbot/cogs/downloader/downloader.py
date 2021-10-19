@@ -774,8 +774,9 @@ class Downloader(commands.Cog):
         - `<repo>` The name of the repo to install cogs from.
         - `<cogs...>` The cog or cogs to install.
         """
-        await self._cog_installrev(ctx, repo, None, cog_names)
-        if load_after:
+        went_through = await self._cog_installrev(ctx, repo, None, cog_names)
+        if load_after and went_through:
+            # This is hacky, I don't recommend lmfao
             await ctx.invoke(ctx.bot.get_command("load"), *cog_names)
 
     @cog.command(
@@ -800,6 +801,7 @@ class Downloader(commands.Cog):
         - `<revision>` The revision to install from.
         - `<cogs...>` The cog or cogs to install.
         """
+        # TODO(Jojo) load variable here as well.
         await self._cog_installrev(ctx, repo, revision, cog_names)
 
     async def _cog_installrev(
@@ -820,21 +822,21 @@ class Downloader(commands.Cog):
                             f" - {candidate.description}\n"
                         )
                     await self.send_pagified(ctx, msg)
-                    return
+                    return False
                 except errors.UnknownRevision:
                     await ctx.send(
                         _("Error: there is no revision `{rev}` in repo `{repo.name}`").format(
                             rev=rev, repo=repo
                         )
                     )
-                    return
+                    return False
             cog_names = set(cog_names)
 
             async with repo.checkout(commit, exit_to_rev=repo.branch):
                 cogs, message = await self._filter_incorrect_cogs_by_names(repo, cog_names)
                 if not cogs:
                     await self.send_pagified(ctx, message)
-                    return
+                    return False
                 failed_reqs = await self._install_requirements(cogs)
                 if failed_reqs:
                     message += (
@@ -843,7 +845,7 @@ class Downloader(commands.Cog):
                         else _("\nFailed to install the requirement: ")
                     ) + humanize_list(tuple(map(inline, failed_reqs)))
                     await self.send_pagified(ctx, message)
-                    return
+                    return False
 
                 installed_cogs, failed_cogs = await self._install_cogs(cogs)
 
@@ -857,6 +859,7 @@ class Downloader(commands.Cog):
                 for cog in installed_cogs:
                     cog.pinned = True
             await self._save_to_installed(installed_cogs + installed_libs)
+            ret = False
             if failed_libs:
                 libnames = [inline(lib.name) for lib in failed_libs]
                 message = (
@@ -905,11 +908,13 @@ class Downloader(commands.Cog):
                     )
                     + message
                 )
+                ret = True
         # "---" added to separate cog install messages from Downloader's message
         await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
                 await ctx.send(cog.install_msg.replace("[p]", ctx.clean_prefix))
+        return ret
 
     @cog.command(name="uninstall", require_var_positional=True)
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
