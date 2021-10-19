@@ -762,7 +762,7 @@ class Downloader(commands.Cog):
             )
 
     @cog.command(name="install", usage="<repo> <cogs...>", require_var_positional=True)
-    async def _cog_install(self, ctx: commands.Context, repo: Repo, *cog_names: str) -> None:
+    async def _cog_install(self, ctx: commands.Context, load_after: Optional[bool], repo: Repo, *cog_names: str) -> None:
         """Install a cog from the given repo.
 
         Examples:
@@ -775,6 +775,8 @@ class Downloader(commands.Cog):
         - `<cogs...>` The cog or cogs to install.
         """
         await self._cog_installrev(ctx, repo, None, cog_names)
+        if load_after:
+            await ctx.invoke(ctx.bot.get_command("load"), *cog_names)
 
     @cog.command(
         name="installversion", usage="<repo> <revision> <cogs...>", require_var_positional=True
