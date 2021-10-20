@@ -60,7 +60,7 @@ SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("red")
 
-__all__ = ["RedBase", "Red", "ExitCodes"]
+__all__ = ("Red", "ExitCodes")
 
 NotMessage = namedtuple("NotMessage", "guild")
 
@@ -79,14 +79,10 @@ def _is_submodule(parent, child):
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
 # and must include a call to super().__init__ unless they do not provide an init
-class RedBase(
+class Red(
     commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
 ):  # pylint: disable=no-member # barely spurious warning caused by shadowing
-    """
-    The historical reasons for this mixin no longer apply
-    and only remains temporarily to not break people
-    relying on the publicly exposed bases existing.
-    """
+    """Our subclass of discord.ext.commands.AutoShardedBot"""
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
@@ -2001,13 +1997,6 @@ class RedBase(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
-
-
-# This can be removed, and the parent class renamed as a breaking change
-class Red(RedBase):
-    """
-    Our subclass of discord.ext.commands.AutoShardedBot
-    """
 
 
 class ExitCodes(IntEnum):
