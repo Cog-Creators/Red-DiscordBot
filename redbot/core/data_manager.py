@@ -61,8 +61,11 @@ def create_temp_config():
     default_dirs["STORAGE_TYPE"] = "JSON"
     default_dirs["STORAGE_DETAILS"] = {}
 
-    with config_file.open("r", encoding="utf-8") as fs:
-        config = json.load(fs)
+    try:
+        with config_file.open("r", encoding="utf-8") as fs:
+            config = json.load(fs)
+    except FileNotFoundError:
+        config = {}
 
     config[name] = default_dirs
 
