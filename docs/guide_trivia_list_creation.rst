@@ -142,13 +142,13 @@ Here are all the overrides available:
 .. code-block:: yaml
 
     CONFIG:
-        bot_plays: bool  # bot gains points, default true
-        delay: int  # answer time limit in seconds, default
-        timeout: int  # lack of response timeout in seconds, default 120
-        max_score: int  # points to win, default 10
-        reveal_answer: bool  # reveal answer on timeout, default true
-        payout_multiplier: int  # payout multiplier, default 0
-        use_spoilers: bool  # use spoilers in answers, default false
+        bot_plays: true or false  # bot gains points, default true
+        delay: number  # answer time limit in seconds, default 15
+        timeout: number  # lack of response timeout in seconds, default 120
+        max_score: number  # points to win, default 10
+        reveal_answer: true or false  # reveal answer on timeout, default true
+        payout_multiplier: number  # payout multiplier, default 0
+        use_spoilers: number  # use spoilers in answers, default false
 
 So, your final file might look something like this:
 
