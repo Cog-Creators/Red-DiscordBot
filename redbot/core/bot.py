@@ -75,6 +75,10 @@ def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
+class _NoOwnerSet(RuntimeError):
+    """Raised when there is no owner set for the instance that is trying to start."""
+
+
 # Order of inheritance here matters.
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
@@ -217,8 +221,8 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info in `is_owner()`
-        self._app_owners_fetched = False
+        # to prevent multiple calls to app info during startup
+        self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -1066,15 +1070,15 @@ class Red(
 
     # end Config migrations
 
-    async def pre_flight(self, cli_flags):
+    async def _pre_login(self) -> None:
         """
-        This should only be run once, prior to connecting to discord.
+        This should only be run once, prior to logging in to Discord REST API.
         """
         await self._maybe_update_config()
         self.description = await self._config.description()
 
         init_global_checks(self)
-        init_events(self, cli_flags)
+        init_events(self, self._cli_flags)
 
         if self._owner_id_overwrite is None:
             self._owner_id_overwrite = await self._config.owner()
@@ -1086,9 +1090,13 @@ class Red(
         i18n_regional_format = await self._config.regional_format()
         i18n.set_regional_format(i18n_regional_format)
 
+    async def _pre_connect(self) -> None:
+        """
+        This should only be run once, prior to connecting to Discord gateway.
+        """
         self.add_cog(Core(self))
         self.add_cog(CogManagerUI())
-        if cli_flags.dev:
+        if self._cli_flags.dev:
             self.add_cog(Dev())
 
         await modlog._init(self)
@@ -1119,11 +1127,11 @@ class Red(
                 )
                 python_version_changed = True
         else:
-            if cli_flags.no_cogs is False:
+            if self._cli_flags.no_cogs is False:
                 packages.extend(await self._config.packages())
 
-            if cli_flags.load_cogs:
-                packages.extend(cli_flags.load_cogs)
+            if self._cli_flags.load_cogs:
+                packages.extend(self._cli_flags.load_cogs)
 
         system_changed = False
         machine = platform.machine()
@@ -1189,13 +1197,29 @@ class Red(
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
+    async def _pre_fetch_owners(self) -> None:
+        app_info = await self.application_info()
+
+        if app_info.team:
+            if self._use_team_features:
+                self.owner_ids.update(m.id for m in app_info.team.members)
+        elif self._owner_id_overwrite is None:
+            self.owner_ids.add(app_info.owner.id)
+
+        self._app_info = app_info
+
+        if not self.owner_ids:
+            raise _NoOwnerSet("Bot doesn't have any owner set!")
+
     async def start(self, *args, **kwargs):
         """
-        Overridden start which ensures cog load and other pre-connection tasks are handled
+        Overridden start which ensures that cog load and other pre-connection tasks are handled.
         """
-        cli_flags = kwargs.pop("cli_flags")
-        await self.pre_flight(cli_flags=cli_flags)
-        return await super().start(*args, **kwargs)
+        await self._pre_login()
+        await self.login(*args)
+        await self._pre_fetch_owners()
+        await self._pre_connect()
+        await self.connect()
 
     async def send_help_for(
         self,
@@ -1279,24 +1303,7 @@ class Red(
         -------
         bool
         """
-        if user.id in self.owner_ids:
-            return True
-
-        ret = False
-        if not self._app_owners_fetched:
-            app = await self.application_info()
-            if app.team:
-                if self._use_team_features:
-                    ids = {m.id for m in app.team.members}
-                    self.owner_ids.update(ids)
-                    ret = user.id in ids
-            elif self._owner_id_overwrite is None:
-                owner_id = app.owner.id
-                self.owner_ids.add(owner_id)
-                ret = user.id == owner_id
-            self._app_owners_fetched = True
-
-        return ret
+        return user.id in self.owner_ids
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
