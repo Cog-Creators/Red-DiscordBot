@@ -143,12 +143,12 @@ Here are all the overrides available:
 
     CONFIG:
         bot_plays: true or false  # bot gains points, default true
-        delay: number  # answer time limit in seconds, default 15
-        timeout: number  # lack of response timeout in seconds, default 120
-        max_score: number  # points to win, default 10
+        delay: number  # answer time limit in seconds, default 15.0
+        timeout: number  # lack of response timeout in seconds, default 120.0
+        max_score: whole number  # points to win, must be a whole number, default 10
         reveal_answer: true or false  # reveal answer on timeout, default true
-        payout_multiplier: number  # payout multiplier, default 0
-        use_spoilers: number  # use spoilers in answers, default false
+        payout_multiplier: number  # payout multiplier, default 0.0
+        use_spoilers: true or false  # use spoilers in answers, default false
 
 So, your final file might look something like this:
 
