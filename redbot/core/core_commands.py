@@ -405,7 +405,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     """
 
     async def red_delete_data_for_user(self, **kwargs):
-        """Nothing to delete (Core Config is handled in a bot method )"""
+        """Nothing to delete (Core Config is handled in a bot method)"""
         return
 
     @commands.command(hidden=True)
@@ -1590,7 +1590,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This command is interactive.
 
         **Examples:**
-            - `[p]leave` - Leaves the current server.
+            - `[p]leave` - Leave the current server.
             - `[p]leave "Red - Discord Bot"` - Quotes are necessary when there are spaces in the name.
             - `[p]leave 133049272517001216 240154543684321280` - Leaves multiple servers, using IDs.
 
@@ -1613,14 +1613,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             if number > 1:
                 msg = (
-                    _(f"Are you sure you want me to leave these servers?")
-                    + " (y/n):\n"
+                    _("Are you sure you want me to leave these servers?")
+                    + " (yes/no):\n"
                     + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
                 )
             else:
                 msg = (
                     _("Are you sure you want me to leave this server?")
-                    + " (y/n):\n"
+                    + " (yes/no):\n"
                     + f"- {guilds[0].name} (`{guilds[0].id}`)"
                 )
 
@@ -1647,7 +1647,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 else:
                     if number > 1:
                         await ctx.send(
-                            _("Alright. Leaving {number} servers...").format(number=len(guilds))
+                            _("Alright. Leaving {number} servers...").format(number=number)
                         )
                     else:
                         await ctx.send(_("Alright. Leaving one server..."))
