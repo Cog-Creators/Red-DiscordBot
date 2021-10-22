@@ -137,7 +137,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return
             time_remain = self.format_time(dur - pos)
             if player.current.is_stream:
-                embed = discord.Embed(title=_("There's something in the queue."))
+                embed = discord.Embed(title=_("There's nothing in the queue."))
                 embed.set_footer(
                     text=_("Currently livestreaming {track}").format(track=player.current.title)
                 )
