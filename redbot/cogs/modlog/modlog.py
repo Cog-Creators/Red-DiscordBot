@@ -134,9 +134,7 @@ class ModLog(commands.Cog):
             else:
                 message = _("{case}\n**Timestamp:** {timestamp}").format(
                     case=await case.message_content(embed=False),
-                    timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
-                        "%Y-%m-%d %H:%M:%S UTC"
-                    ),
+                    timestamp=f"<t:{int(case.created_at)}>",
                 )
                 await ctx.send(message)
 
@@ -167,14 +165,12 @@ class ModLog(commands.Cog):
             embed_requested = await ctx.embed_requested()
             if embed_requested:
                 rendered_cases = [await case.message_content(embed=True) for case in cases]
-            elif not embed_requested:
+            else:
                 rendered_cases = []
                 for case in cases:
                     message = _("{case}\n**Timestamp:** {timestamp}").format(
                         case=await case.message_content(embed=False),
-                        timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
-                            "%Y-%m-%d %H:%M:%S UTC"
-                        ),
+                        timestamp=f"<t:{int(case.created_at)}>",
                     )
                     rendered_cases.append(message)
 
@@ -208,9 +204,7 @@ class ModLog(commands.Cog):
             for case in cases:
                 message += _("{case}\n**Timestamp:** {timestamp}\n\n").format(
                     case=await case.message_content(embed=False),
-                    timestamp=datetime.utcfromtimestamp(case.created_at).strftime(
-                        "%Y-%m-%d %H:%M:%S UTC"
-                    ),
+                    timestamp=f"<t:{int(case.created_at)}>",
                 )
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)

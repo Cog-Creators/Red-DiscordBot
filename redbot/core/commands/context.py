@@ -99,8 +99,13 @@ class Context(DPYContext):
         command = command or self.command
         await self.bot.send_help_for(self, command)
 
-    async def tick(self) -> bool:
+    async def tick(self, *, message: Optional[str] = None) -> bool:
         """Add a tick reaction to the command message.
+
+        Keyword Arguments
+        -----------------
+        message : str, optional
+            The message to send if adding the reaction doesn't succeed.
 
         Returns
         -------
@@ -108,26 +113,38 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
 
         """
-        try:
-            await self.message.add_reaction(TICK)
-        except discord.HTTPException:
-            return False
-        else:
-            return True
+        return await self.react_quietly(TICK, message=message)
 
     async def react_quietly(
-        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+        self,
+        reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
+        *,
+        message: Optional[str] = None,
     ) -> bool:
         """Adds a reaction to the command message.
 
+        Parameters
+        ----------
+        reaction : Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+            The emoji to react with.
+
+        Keyword Arguments
+        -----------------
+        message : str, optional
+            The message to send if adding the reaction doesn't succeed.
+
         Returns
         -------
         bool
             :code:`True` if adding the reaction succeeded.
         """
         try:
+            if not self.channel.permissions_for(self.me).add_reactions:
+                raise RuntimeError
             await self.message.add_reaction(reaction)
-        except discord.HTTPException:
+        except (RuntimeError, discord.HTTPException):
+            if message is not None:
+                await self.send(message)
             return False
         else:
             return True

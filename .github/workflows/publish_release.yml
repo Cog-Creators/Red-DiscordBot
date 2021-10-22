@@ -128,7 +128,7 @@ jobs:
           branch: "automated/pr_bumps/${{ steps.bump_version_dev.outputs.new_version }}"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           milestone: ${{ steps.get_milestone_number.outputs.result }}
-          base: V3/develop
+          base: ${{ github.event.base_ref }}
 
       - name: Close and reopen the PR with different token to trigger CI
         uses: actions/github-script@v3

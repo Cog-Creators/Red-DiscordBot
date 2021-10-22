@@ -17,6 +17,7 @@ from typing import (
     Optional,
     Union,
     List,
+    Iterable,
     Dict,
     NoReturn,
     Set,
@@ -26,6 +27,7 @@ from typing import (
     Any,
     Literal,
     MutableMapping,
+    Set,
     overload,
 )
 from types import MappingProxyType
@@ -58,7 +60,7 @@ SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("red")
 
-__all__ = ["RedBase", "Red", "ExitCodes"]
+__all__ = ("Red", "ExitCodes")
 
 NotMessage = namedtuple("NotMessage", "guild")
 
@@ -66,24 +68,25 @@ DataDeletionResults = namedtuple("DataDeletionResults", "failed_modules failed_c
 
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
+UserOrRole = Union[int, discord.Role, discord.Member, discord.User]
 
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
 
 
+class _NoOwnerSet(RuntimeError):
+    """Raised when there is no owner set for the instance that is trying to start."""
+
+
 # Order of inheritance here matters.
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
 # and must include a call to super().__init__ unless they do not provide an init
-class RedBase(
+class Red(
     commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
 ):  # pylint: disable=no-member # barely spurious warning caused by shadowing
-    """
-    The historical reasons for this mixin no longer apply
-    and only remains temporarily to not break people
-    relying on the publicly exposed bases existing.
-    """
+    """Our subclass of discord.ext.commands.AutoShardedBot"""
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
@@ -218,8 +221,8 @@ class RedBase(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info in `is_owner()`
-        self._app_owners_fetched = False
+        # to prevent multiple calls to app info during startup
+        self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -523,6 +526,156 @@ class RedBase(
     def max_messages(self) -> Optional[int]:
         return self._max_messages
 
+    async def add_to_blacklist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Add users or roles to the global or local blocklist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to add to the blocklist.
+            Roles and role IDs should only be passed when updating a local blocklist.
+        guild : Optional[discord.Guild]
+            The guild, whose local blocklist should be modified.
+            If not passed, the global blocklist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The values passed were not of the proper type.
+        """
+        to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.add_to_blacklist(guild, to_add)
+
+    async def remove_from_blacklist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Remove users or roles from the global or local blocklist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to remove from the blocklist.
+            Roles and role IDs should only be passed when updating a local blocklist.
+        guild : Optional[discord.Guild]
+            The guild, whose local blocklist should be modified.
+            If not passed, the global blocklist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The values passed were not of the proper type.
+        """
+        to_remove: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.remove_from_blacklist(guild, to_remove)
+
+    async def get_blacklist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
+        """
+        Get the global or local blocklist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild to get the local blocklist for.
+            If this is not passed, the global blocklist will be returned.
+
+        Returns
+        -------
+        Set[int]
+            The IDs of the blocked users/roles.
+        """
+        return await self._whiteblacklist_cache.get_blacklist(guild)
+
+    async def clear_blacklist(self, guild: Optional[discord.Guild] = None):
+        """
+        Clears the global or local blocklist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild, whose local blocklist should be cleared.
+            If not passed, the global blocklist will be cleared.
+        """
+        await self._whiteblacklist_cache.clear_blacklist(guild)
+
+    async def add_to_whitelist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Add users or roles to the global or local allowlist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to add to the allowlist.
+            Roles and role IDs should only be passed when updating a local allowlist.
+        guild : Optional[discord.Guild]
+            The guild, whose local allowlist should be modified.
+            If not passed, the global allowlist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The passed values were not of the proper type.
+        """
+        to_add: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.add_to_whitelist(guild, to_add)
+
+    async def remove_from_whitelist(
+        self, users_or_roles: Iterable[UserOrRole], *, guild: Optional[discord.Guild] = None
+    ):
+        """
+        Remove users or roles from the global or local allowlist.
+
+        Parameters
+        ----------
+        users_or_roles : Iterable[Union[int, discord.Role, discord.Member, discord.User]]
+            The items to remove from the allowlist.
+            Roles and role IDs should only be passed when updating a local allowlist.
+        guild : Optional[discord.Guild]
+            The guild, whose local allowlist should be modified.
+            If not passed, the global allowlist will be modified.
+
+        Raises
+        ------
+        TypeError
+            The passed values were not of the proper type.
+        """
+        to_remove: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        await self._whiteblacklist_cache.remove_from_whitelist(guild, to_remove)
+
+    async def get_whitelist(self, guild: Optional[discord.Guild] = None):
+        """
+        Get the global or local allowlist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild to get the local allowlist for.
+            If this is not passed, the global allowlist will be returned.
+
+        Returns
+        -------
+        Set[int]
+            The IDs of the allowed users/roles.
+        """
+        return await self._whiteblacklist_cache.get_whitelist(guild)
+
+    async def clear_whitelist(self, guild: Optional[discord.Guild] = None):
+        """
+        Clears the global or local allowlist.
+
+        Parameters
+        ----------
+        guild : Optional[discord.Guild]
+            The guild, whose local allowlist should be cleared.
+            If not passed, the global allowlist will be cleared.
+        """
+        await self._whiteblacklist_cache.clear_whitelist(guild)
+
     async def allowed_by_whitelist_blacklist(
         self,
         who: Optional[Union[discord.Member, discord.User]] = None,
@@ -534,7 +687,7 @@ class RedBase(
     ) -> bool:
         """
         This checks if a user or member is allowed to run things,
-        as considered by Red's whitelist and blacklist.
+        as considered by Red's allowlist and blocklist.
 
         If given a user object, this function will check the global lists
 
@@ -614,13 +767,13 @@ class RedBase(
         if await self.is_owner(who):
             return True
 
-        global_whitelist = await self._whiteblacklist_cache.get_whitelist()
+        global_whitelist = await self.get_whitelist()
         if global_whitelist:
             if who.id not in global_whitelist:
                 return False
         else:
             # blacklist is only used when whitelist doesn't exist.
-            global_blacklist = await self._whiteblacklist_cache.get_blacklist()
+            global_blacklist = await self.get_blacklist()
             if who.id in global_blacklist:
                 return False
 
@@ -648,12 +801,12 @@ class RedBase(
                 # there is a silent failure potential, and role blacklist/whitelists will break.
                 ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
-            guild_whitelist = await self._whiteblacklist_cache.get_whitelist(guild)
+            guild_whitelist = await self.get_whitelist(guild)
             if guild_whitelist:
                 if ids.isdisjoint(guild_whitelist):
                     return False
             else:
-                guild_blacklist = await self._whiteblacklist_cache.get_blacklist(guild)
+                guild_blacklist = await self.get_blacklist(guild)
                 if not ids.isdisjoint(guild_blacklist):
                     return False
 
@@ -917,15 +1070,15 @@ class RedBase(
 
     # end Config migrations
 
-    async def pre_flight(self, cli_flags):
+    async def _pre_login(self) -> None:
         """
-        This should only be run once, prior to connecting to discord.
+        This should only be run once, prior to logging in to Discord REST API.
         """
         await self._maybe_update_config()
         self.description = await self._config.description()
 
         init_global_checks(self)
-        init_events(self, cli_flags)
+        init_events(self, self._cli_flags)
 
         if self._owner_id_overwrite is None:
             self._owner_id_overwrite = await self._config.owner()
@@ -937,9 +1090,13 @@ class RedBase(
         i18n_regional_format = await self._config.regional_format()
         i18n.set_regional_format(i18n_regional_format)
 
+    async def _pre_connect(self) -> None:
+        """
+        This should only be run once, prior to connecting to Discord gateway.
+        """
         self.add_cog(Core(self))
         self.add_cog(CogManagerUI())
-        if cli_flags.dev:
+        if self._cli_flags.dev:
             self.add_cog(Dev())
 
         await modlog._init(self)
@@ -970,11 +1127,11 @@ class RedBase(
                 )
                 python_version_changed = True
         else:
-            if cli_flags.no_cogs is False:
+            if self._cli_flags.no_cogs is False:
                 packages.extend(await self._config.packages())
 
-            if cli_flags.load_cogs:
-                packages.extend(cli_flags.load_cogs)
+            if self._cli_flags.load_cogs:
+                packages.extend(self._cli_flags.load_cogs)
 
         system_changed = False
         machine = platform.machine()
@@ -1040,13 +1197,29 @@ class RedBase(
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
+    async def _pre_fetch_owners(self) -> None:
+        app_info = await self.application_info()
+
+        if app_info.team:
+            if self._use_team_features:
+                self.owner_ids.update(m.id for m in app_info.team.members)
+        elif self._owner_id_overwrite is None:
+            self.owner_ids.add(app_info.owner.id)
+
+        self._app_info = app_info
+
+        if not self.owner_ids:
+            raise _NoOwnerSet("Bot doesn't have any owner set!")
+
     async def start(self, *args, **kwargs):
         """
-        Overridden start which ensures cog load and other pre-connection tasks are handled
+        Overridden start which ensures that cog load and other pre-connection tasks are handled.
         """
-        cli_flags = kwargs.pop("cli_flags")
-        await self.pre_flight(cli_flags=cli_flags)
-        return await super().start(*args, **kwargs)
+        await self._pre_login()
+        await self.login(*args)
+        await self._pre_fetch_owners()
+        await self._pre_connect()
+        await self.connect()
 
     async def send_help_for(
         self,
@@ -1077,7 +1250,7 @@ class RedBase(
             The channel to check embed settings for.
         user : `discord.abc.User`
             The user to check embed settings for.
-        command : `commands.Command`, optional
+        command : `redbot.core.commands.Command`, optional
             The command ran.
 
         Returns
@@ -1130,24 +1303,7 @@ class RedBase(
         -------
         bool
         """
-        if user.id in self.owner_ids:
-            return True
-
-        ret = False
-        if not self._app_owners_fetched:
-            app = await self.application_info()
-            if app.team:
-                if self._use_team_features:
-                    ids = {m.id for m in app.team.members}
-                    self.owner_ids.update(ids)
-                    ret = user.id in ids
-            elif self._owner_id_overwrite is None:
-                owner_id = app.owner.id
-                self.owner_ids.add(owner_id)
-                ret = user.id == owner_id
-            self._app_owners_fetched = True
-
-        return ret
+        return user.id in self.owner_ids
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
@@ -1848,13 +2004,6 @@ class RedBase(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
-
-
-# This can be removed, and the parent class renamed as a breaking change
-class Red(RedBase):
-    """
-    Our subclass of discord.ext.commands.AutoShardedBot
-    """
 
 
 class ExitCodes(IntEnum):

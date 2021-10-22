@@ -8,7 +8,7 @@ Hosting Information
 
 .. note::
     This doc is written for the :ref:`hosting section <getting-started-hosting>`
-    of the :ref:`getting started <getting-started>` guide. Please take a look
+    of the :ref:`getting started guide <getting-started>`. Please take a look
     if you don't know how to host Red.
 
 
@@ -21,7 +21,7 @@ First, we would like to make something clear:
 .. warning::
     Due to their inability to handle Red's data structure and meet the
     conditions of being a supported platform; platforms such as Heroku, 
-    Pterodactyl, repl.it, Termux, LXC and alike are **NOT** officially supported. 
+    Pterodactyl, repl.it, Termux and alike are **NOT** officially supported. 
     Docker support found in GitHub is also a work in progress and not ready
     for daily use. Workarounds for getting Red running on those platforms
     are imperfect due to Red's nature. You will not be able to receive
@@ -41,9 +41,9 @@ Hosting on a VPS or Dedicated Server
 
 .. warning::
     Please be aware that a Linux server is controlled through a command line.
-    If you don't know Unix basics, please take a look at `this guide
-    <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
-    from DigitalOcean which will introduce you to the Linux basics.
+    If you don't know Unix basics, please take a look at
+    `DigitalOcean's tutorial: An Introduction to Linux Basics
+    <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_.
 
 
 ------------

@@ -70,19 +70,7 @@ def init_events(bot, cli_flags):
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
-        app_info = await bot.application_info()
-
-        if app_info.team:
-            if bot._use_team_features:
-                bot.owner_ids.update(m.id for m in app_info.team.members)
-        elif bot._owner_id_overwrite is None:
-            bot.owner_ids.add(app_info.owner.id)
-        bot._app_owners_fetched = True
-
-        try:
-            invite_url = discord.utils.oauth_url(app_info.id)
-        except:
-            invite_url = "Could not fetch invite url"
+        invite_url = discord.utils.oauth_url(bot._app_info.id)
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
@@ -199,10 +187,6 @@ def init_events(bot, cli_flags):
             )
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)
-
-        if not bot.owner_ids:
-            # we could possibly exit here in future
-            log.warning("Bot doesn't have any owner set!")
 
         bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
