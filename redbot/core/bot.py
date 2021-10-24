@@ -270,7 +270,6 @@ class Red(
         This attribute is meant to be used for things
         that actually need to get a full list of owners for informational purposes.
         """
-        # XXX: rename to `all_owner_ids` perhaps?
         return self._all_owner_ids
 
     @property
