@@ -269,6 +269,11 @@ class Red(
         If you're doing privilege checks, use `owner_ids` instead.
         This attribute is meant to be used for things
         that actually need to get a full list of owners for informational purposes.
+
+        Example
+        -------
+        `send_to_owners()` uses this property to be able to send message to
+        all bot owners, not just the ones that are currently using elevated permissions.
         """
         return self._all_owner_ids
 
