@@ -548,13 +548,20 @@ class Repo(RepoJSONMixin):
         """
         env = os.environ.copy()
         env["GIT_TERMINAL_PROMPT"] = "0"
+        env["GIT_TRACE"] = "0"
+        # make sure we never enter an askpass routine
+        # https://github.com/git/git/blob/1424303/prompt.c#L56
         env.pop("GIT_ASKPASS", None)
+        env.pop("SSH_ASKPASS", None)
         # attempt to force all output to plain ascii english
         # some methods that parse output may expect it
         # according to gettext manual both variables have to be set:
         # https://www.gnu.org/software/gettext/manual/gettext.html#Locale-Environment-Variables
         env["LC_ALL"] = "C"
         env["LANGUAGE"] = "C"
+        # Make sure git does not consider us smart
+        # https://github.com/git/git/blob/a7312d1a2/editor.c#L11-L15
+        env["TERM"] = "dumb"
         kwargs["env"] = env
         async with self._repo_lock:
             p: CompletedProcess = await asyncio.get_running_loop().run_in_executor(
