@@ -28,7 +28,7 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if await self.bot.cog_disabled_in_guild(self, server):
                     continue
 
-                if [self.bot.user] == p.channel.members:
+                if not any(m for m in p.channel.members if not m.bot):
                     stop_times.setdefault(server.id, time.time())
                     pause_times.setdefault(server.id, time.time())
                 else:
