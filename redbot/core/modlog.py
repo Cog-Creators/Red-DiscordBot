@@ -955,7 +955,7 @@ async def create_case(
     if not await case_type.is_enabled():
         return
 
-    user_id = user if type(user) == int else user.id
+    user_id = user if isinstance(user, int) else user.id
     if user_id == bot.user.id:
         raise RuntimeError("The bot itself can not be the target of a modlog entry.")
 
