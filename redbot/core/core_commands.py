@@ -2028,7 +2028,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         locale = global_data["locale"]
         regional_format = global_data["regional_format"] or locale
         colour = discord.Colour(global_data["color"])
-        sudotime = (
+        sudo_settings = (
             _("SU Timeout: {delay}\n").format(
                 delay=humanize_timedelta(seconds=global_data["sudotime"])
             )
@@ -2044,7 +2044,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "Global locale: {locale}\n"
             "Global regional format: {regional_format}\n"
             "Default embed colour: {colour}\n"
-            "{sudotime}"
+            "{sudo_settings}"
         ).format(
             bot_name=ctx.bot.user.name,
             prefixes=prefix_string,
@@ -2052,7 +2052,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             locale=locale,
             regional_format=regional_format,
             colour=colour,
-            sudotime=sudotime,
+            sudo_settings=sudo_settings,
         )
         for page in pagify(settings):
             await ctx.send(box(page))
