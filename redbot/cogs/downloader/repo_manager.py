@@ -188,6 +188,17 @@ class Repo(RepoJSONMixin):
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
 
+    def _parse_git_error(self, git_command: str, stderr: str) -> errors.GitException:
+        stderr = stderr.lower()
+        # Expected to catch:
+        #   Could not read from remote repository
+        #   could not read X for 'URL': terminal prompts disabled
+        #   Authentication failed
+        if "could not read" in stderr or "authentication failed" in stderr:
+            return errors.AuthenticationError("Failed to Authenticate", git_command)
+
+        return errors.CloningError("Error when running git clone.", git_command)
+
     async def is_ancestor(self, maybe_ancestor_rev: str, descendant_rev: str) -> bool:
         """
         Check if the first is an ancestor of the second.
@@ -666,7 +677,7 @@ class Repo(RepoJSONMixin):
         if p.returncode:
             # Try cleaning up folder
             shutil.rmtree(str(self.folder_path), ignore_errors=True)
-            raise errors.CloningError("Error when running git clone.", git_command)
+            raise self._parse_git_error(git_command, p.stderr.decode(**DECODE_PARAMS))
 
         if self.branch is None:
             self.branch = await self.current_branch()
