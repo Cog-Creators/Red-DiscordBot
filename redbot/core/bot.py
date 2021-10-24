@@ -199,6 +199,8 @@ class Red(
         # This keeps track of owners with elevated privileges in the different contexts.
         # This is `None` if sudo functionality is disabled.
         self._sudo_ctx_var: Optional[ContextVar] = None
+        if cli_flags.enable_sudo:
+            self._sudo_ctx_var = ContextVar("SudoOwners")
 
         if "owner_id" in kwargs:
             raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
@@ -218,6 +220,7 @@ class Red(
         self._all_owner_ids = self._all_owner_ids.union(cli_flags.co_owner)
 
         # ensure that d.py doesn't run into AttributeError when trying to set `self.owner_ids`
+        # See documentation of `owner_ids`'s setter for more information.
         kwargs["owner_ids"] = self._all_owner_ids
 
         # to prevent multiple calls to app info during startup
@@ -244,11 +247,6 @@ class Red(
         self._use_team_features = cli_flags.use_team_features
 
         super().__init__(*args, help_command=None, **kwargs)
-        # This MUST happen *after* d.py's __init__ is called as otherwise,
-        # access to `self.owner_ids` property would have it set the value of
-        # ContextVar in current context (which is a global context as we're not in any async task)
-        if cli_flags.enable_sudo:
-            self._sudo_ctx_var = ContextVar("SudoOwners")
 
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
