@@ -2757,6 +2757,80 @@ Enhancements
 
 - Added trivia lists for Prince and Michael Jackson lyrics. (:issue:`12`)
 
+
+Redbot 3.1.2 (2019-05-31)
+=========================
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- ``[p]load``, ``[p]unload``, and ``[p]reload`` commands now strip commas from the passed cogs to aid with copy-pasting (:issue:`2693`)
+- Added a few new settings for bot's help (:issue:`2667`, :issue:`2681`, :issue:`2676`)
+
+    - ``[p]helpset usemenus`` - Allows the help command to be sent as a paginated menu.
+    - ``[p]helpset showhidden`` - Allows the help command to show hidden commands.
+    - ``[p]helpset verifychecks``  - Sets if commands which can't be run in the current context should be filtered from help.
+    - ``[p]helpset verifyexists`` - Allows the bot to respond indicating the existence of a specific help topic even if the user can't use it.
+
+    For more information, see help of each of the listed commands.
+
+- Added ``[p]debuginfo`` command (:issue:`2728`)
+- Improved naming consistency of subcommands that *delete* something (:issue:`2731`)
+- Added a generic system that can be used by cog creators to send notifications meant for bot owners (:issue:`2665`, :issue:`2738`, :issue:`2745`)
+
+    This comes with some commands that allow to manage the destinations for the owner notifications.
+    See the help of commands in ``[p]set ownernotifications`` command group for more information.
+
+- ``[p]set api`` command now allows the user to separate their keys and values with space in addition to commas and semicolons (:issue:`2692`)
+- Fixed update notification for bots that have co-owners (:issue:`2677`)
+- Fixed an issue where bad user input didn't result in the bot sending help for the command (:issue:`2707`)
+- Fixed an issue with incorrect subcommand descriptions being shown in non-embed help (:issue:`2678`)
+- Fixed few more issues with help command (:issue:`2676`)
+- Fixed ``redbot-setup delete`` command failing to delete data path (:issue:`2709`)
+- Fixed help for commands with no docstring (:issue:`2415`, :issue:`2722`)
+- Fixed error handling in ``[p]load`` command (:issue:`2686`, :issue:`2688`)
+- Help menu no longer blocks settings preview in command groups like ``[p]set`` (:issue:`2712`, :issue:`2725`)
+- Fixed an issue with long cog descriptions in help command (:issue:`2730`)
+
+Downloader
+**********
+
+- ``[p]pipinstall`` now indicates that it's doing something (:issue:`2700`)
+- Fixed problems with installing a cog again after uninstalling (:issue:`2685`, :issue:`2690`)
+
+General
+*******
+
+- Fixed ``[p]urban`` command failure for very long phrase definitions (:issue:`2683`, :issue:`2684`)
+- Fixed issues with ``[p]gif`` and ``[p]gifr`` commands. The bot owner now needs to provide an API key in order to use these commands (:issue:`2653`)
+
+Mod
+***
+
+- ``[p]names`` command no longer requires quoting usernames that contain spaces (:issue:`2675`)
+- ``[p]userinfo`` command now mentions the voice channel the user is in (:issue:`2680`)
+- Added ``[p]slowmode`` command (:issue:`2734`)
+
+Streams
+*******
+
+- Fixed an issue with stream commands not properly dealing with stream reruns (:issue:`2679`)
+- Fixed a regression that caused stream alerts for non-Twitch users to not work anymore (:issue:`2724`, :issue:`2699`)
+
+
+Developer changelog
+-------------------
+
+- Added `DictConverter` (:issue:`2692`)
+- Added `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` (:issue:`2665`, :issue:`2738`)
+- Added `TimedeltaConverter` and `parse_timedelta()` (:issue:`2736`)
+- Added ``assume_yes`` attribute to `redbot.core.commands.Context` (:issue:`2746`)
+- `menu()` now accepts `functools.partial` (:issue:`2718`, :issue:`2720`)
+
+
 Redbot 3.1.1 (2019-05-15)
 =========================
 
