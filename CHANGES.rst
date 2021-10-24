@@ -1,7 +1,7 @@
 .. Red changelogs
 
-3.4.14 (2021-09-23)
-===================
+Redbot 3.4.14 (2021-09-23)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`L33Tech`, :ghuser:`maxbooiii`, :ghuser:`RheingoldRiver`
@@ -33,8 +33,8 @@ Documentation changes
 - Install guides for RHEL derivatives no longer require the use of pyenv (:issue:`5328`)
 
 
-3.4.13 (2021-09-09)
-===================
+Redbot 3.4.13 (2021-09-09)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Arman0334`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`fredster33`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`qenu`, :ghuser:`TheDataLeek`, :ghuser:`Twentysix26`, :ghuser:`TwinDragon`, :ghuser:`Vexed01`
@@ -184,8 +184,8 @@ Miscellaneous
 - **Downloader** - Added a few missing line breaks (:issue:`5185`, :issue:`5187`)
 
 
-3.4.12 (2021-06-17)
-===================
+Redbot 3.4.12 (2021-06-17)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`npc203`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`
@@ -206,8 +206,8 @@ Full changelog
 - **Warnings** - Prevented users from applying 0 or less points in custom warning reasons (:issue:`5119`, :issue:`5120`)
 
 
-3.4.11 (2021-06-12)
-===================
+Redbot 3.4.11 (2021-06-12)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Onii-Chan-Discord`
@@ -221,8 +221,8 @@ Full changelog
 - Links to the CogBoard in Red's documentation have been updated to use the new domain (:issue:`5124`)
 
 
-3.4.10 (2021-05-28)
-===================
+Redbot 3.4.10 (2021-05-28)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`benno1237`, :ghuser:`bobloy`, :ghuser:`BoyDownTown`, :ghuser:`Danstr5544`, :ghuser:`DeltaXWizard`, :ghuser:`Drapersniper`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Lifeismana`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`plofts`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
@@ -359,8 +359,8 @@ Miscellaneous
 - Rephrased a few strings and fixed maaaaany grammar issues and typos (:issue:`4793`, :issue:`4832`, :issue:`4955`, :issue:`4966`, :issue:`5015`, :issue:`5019`, :issue:`5029`, :issue:`5038`, :issue:`5055`, :issue:`5080`, :issue:`5081`)
 
 
-3.4.9 (2021-04-06)
-==================
+Redbot 3.4.9 (2021-04-06)
+=========================
 
 This is a hotfix release fixing an issue with command error handling.
 
@@ -369,8 +369,8 @@ discord.py version has been bumped to 1.7.1.
 Thanks again to :ghuser:`Rapptz` for quick response on this issue.
 
 
-3.4.8 (2021-04-06)
-==================
+Redbot 3.4.8 (2021-04-06)
+=========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`6days9weeks`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kingslayer268`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`rijusougata13`, :ghuser:`TheDiscordHistorian`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
 
@@ -500,8 +500,8 @@ Documentation changes
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`, :issue:`4942`)
 
 
-3.4.7 (2021-02-26)
-==================
+Redbot 3.4.7 (2021-02-26)
+=========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
 
@@ -520,8 +520,8 @@ Documentation changes
 - Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
 
 
-3.4.6 (2021-02-16)
-==================
+Redbot 3.4.6 (2021-02-16)
+=========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Andeeeee`, :ghuser:`bobloy`, :ghuser:`BreezeQS`, :ghuser:`Danstr5544`, :ghuser:`Dav-Git`, :ghuser:`Elysweyr`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Strafee`, :ghuser:`TheWyn`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
 
@@ -697,8 +697,8 @@ Miscellaneous
 - Red's dependencies have been bumped (:issue:`4572`)
 
 
-3.4.5 (2020-12-24)
-==================
+Redbot 3.4.5 (2020-12-24)
+=========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
 
@@ -711,8 +711,8 @@ Streams
 - Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
 
 
-3.4.4 (2020-12-24)
-==================
+Redbot 3.4.4 (2020-12-24)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreus7`, :ghuser:`NeuroAssassin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
@@ -808,8 +808,8 @@ Documentation changes
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 
 
-3.4.3 (2020-11-16)
-==================
+Redbot 3.4.3 (2020-11-16)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`KianBral`, :ghuser:`maxbooiii`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`
@@ -878,8 +878,8 @@ Documentation changes
 - Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
 
 
-3.4.2 (2020-10-28)
-==================
+Redbot 3.4.2 (2020-10-28)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
@@ -909,8 +909,8 @@ Documentation changes
 - Removed multi-line commands from Linux install guides to avoid confusing readers (:issue:`4550`)
 
 
-3.4.1 (2020-10-27)
-==================
+Redbot 3.4.1 (2020-10-27)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`absj30`, :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`chloecormier`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`Stonedestroyer`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
@@ -1125,8 +1125,8 @@ Miscellaneous
 - Properly define supported Python versions to be lower than 3.9 (:issue:`4538`)
 
 
-3.4.0 (2020-08-17)
-==================
+Redbot 3.4.0 (2020-08-17)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kablekompany`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
@@ -1283,8 +1283,8 @@ Miscellaneous
 - `bordered()` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
 - Fixed timestamp storage in few places in Red (:issue:`4017`)
 
-3.3.12 (2020-08-18)
-===================
+Redbot 3.3.12 (2020-08-18)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`Dav-Git`, :ghuser:`douglas-cpp`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MeatyChunks`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
@@ -1322,8 +1322,8 @@ Miscellaneous
 - Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
 
 
-3.3.11 (2020-08-10)
-===================
+Redbot 3.3.11 (2020-08-10)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`Flame`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
@@ -1364,8 +1364,8 @@ Warnings
 - ``[p]warn`` now sends an error message (instead of no feedback) when an unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
 
 
-3.3.10 (2020-07-09)
-===================
+Redbot 3.3.10 (2020-07-09)
+==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
@@ -1463,8 +1463,8 @@ Miscellaneous
 - Fixed grammar errors and added full stopts in ``core_commands.py`` (:issue:`4023`)
 
 
-3.3.9 (2020-06-12)
-==================
+Redbot 3.3.9 (2020-06-12)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
@@ -1558,8 +1558,8 @@ Miscellaneous
 - **Mod** - Preemptive fix for d.py 1.4 (:issue:`3891`)
 
 
-3.3.8 (2020-05-29)
-===========================
+Redbot 3.3.8 (2020-05-29)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
@@ -1667,14 +1667,14 @@ Miscellaneous
 - **Downloader** - Downloader no longer removes the repo when it fails to load it (:issue:`3867`)
 
 
-3.3.7 (2020-04-28)
-==================
+Redbot 3.3.7 (2020-04-28)
+=========================
 
 This is a hotfix release fixing issue with generating messages for new cases in Modlog.
 
 
-3.3.6 (2020-04-27)
-==================
+Redbot 3.3.6 (2020-04-27)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
@@ -1762,8 +1762,8 @@ Miscellaneous
 - **Trivia** - Corrected spelling of Compact Disc in ``games`` list (:issue:`3759`, :issue:`3758`)
 
 
-3.3.5 (2020-04-09)
-==================
+Redbot 3.3.5 (2020-04-09)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`jack1142`, :ghuser:`Kowlin`
@@ -1782,8 +1782,8 @@ Alias
 - Fixed regression in ``[p]alias add`` that caused it to reject commands containing arguments (:issue:`3734`)
 
 
-3.3.4 (2020-04-05)
-==================
+Redbot 3.3.4 (2020-04-05)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`jack1142`, :ghuser:`kennnyshiwa`
@@ -1821,8 +1821,8 @@ Documentation changes
 - Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
 
 
-3.3.3 (2020-03-28)
-==================
+Redbot 3.3.3 (2020-03-28)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`AnonGuy`, :ghuser:`Dav-Git`, :ghuser:`FancyJesse`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
@@ -1951,8 +1951,8 @@ Miscellaneous
 - **Utility Functions** - `redbot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
 
 
-3.3.2 (2020-02-28)
-==================
+Redbot 3.3.2 (2020-02-28)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`chasehult`, :ghuser:`Dav-Git`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Hedlund01`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`trundleroo`, :ghuser:`TrustyJAID`, :ghuser:`zephyrkul`
@@ -2092,8 +2092,8 @@ Miscellaneous
 - Stop using deprecated code in core (:issue:`3610`)
 
 
-3.3.1 (2020-02-05)
-==================
+Redbot 3.3.1 (2020-02-05)
+=========================
 
 Core Bot
 --------
@@ -2125,8 +2125,8 @@ Documentation Changes
 - Added section to install docs for CentOS 8
 - Improve usage of apt update in docs
 
-3.3.0 (2020-01-26)
-==================
+Redbot 3.3.0 (2020-01-26)
+=========================
 
 Core Bot
 --------
@@ -2192,8 +2192,8 @@ Permissions
 
 - Now has stronger enforcement of prioritizing botwide settings.
 
-3.2.3 (2020-01-17)
-==================
+Redbot 3.2.3 (2020-01-17)
+=========================
 
 Core Bot Changes
 ----------------
@@ -2255,8 +2255,8 @@ Draper did things.
 - Bump play now shows the correct time till next track.
 - Multiple user facing messages have been made more correct.
 
-3.2.2 (2020-01-10)
-==================
+Redbot 3.2.2 (2020-01-10)
+=========================
 
 Hotfixes
 --------
@@ -2269,8 +2269,8 @@ Docs
 - Correct venv docs
 
 
-3.2.1 (2020-01-10)
-==================
+Redbot 3.2.1 (2020-01-10)
+=========================
 
 Hotfixes
 --------
@@ -2280,8 +2280,8 @@ Hotfixes
 - Log an error with creating case types rather than crash
 
 
-3.2.0 (2020-01-09)
-==================
+Redbot 3.2.0 (2020-01-09)
+=========================
 
 Core Bot Changes
 ----------------
@@ -2757,14 +2757,14 @@ Enhancements
 
 - Added trivia lists for Prince and Michael Jackson lyrics. (:issue:`12`)
 
-3.1.1 (2019-05-15)
-==================
+Redbot 3.1.1 (2019-05-15)
+=========================
 
 This is a hotfix release fixing issues related to fuzzy command search that were happening with the new help formatter.
 
 
-3.1.0 (2019-05-15)
-==================
+Redbot 3.1.0 (2019-05-15)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`EgonSpengler`, :ghuser:`entchen66`, :ghuser:`FixedThink`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lionirdeadman`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`NIXC`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Seputaes`, :ghuser:`Sitryk`, :ghuser:`tekulvw`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`zephyrkul`
@@ -2890,8 +2890,8 @@ Utility Functions
 - Improved error handling of empty lists in `chat_formatting.humanize_list()` (:issue:`2597`)
 
 
-3.0.2 (2019-02-24)
-==================
+Redbot 3.0.2 (2019-02-24)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`Tobotimus`, :ghuser:`ZeLarpMaster`
@@ -2903,8 +2903,8 @@ End-user changelog
 - **Trivia Lists** - Fixed a typo in ``cars`` trivia (:issue:`2475`)
 
 
-3.0.1 (2019-02-17)
-==================
+Redbot 3.0.1 (2019-02-17)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Redjumpman`, :ghuser:`Tobotimus`, :ghuser:`Twentysix26`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
@@ -2964,8 +2964,8 @@ Utility Functions
 - Added `escape_spoilers()` and `escape_spoilers_and_mass_mentions()` methods for escaping strings with spoiler markdown (:issue:`2401`)
 
 
-3.0.0 (2019-01-28)
-==================
+Redbot 3.0.0 (2019-01-28)
+=========================
 
 First stable release of Red V3.
 Changelogs for this and previous versions can be found on `our GitHub releases page <https://github.com/Cog-Creators/Red-DiscordBot/releases?after=3.0.1>`__.
