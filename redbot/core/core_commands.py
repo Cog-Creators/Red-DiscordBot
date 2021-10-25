@@ -7,6 +7,8 @@ import keyword
 import logging
 import io
 import random
+from copy import copy
+
 import markdown
 import os
 import re
@@ -38,7 +40,7 @@ from . import (
 )
 from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter
-from .utils._internal_utils import fetch_latest_red_version_info
+from .utils._internal_utils import fetch_latest_red_version_info, is_sudo_enabled, timed_unsu
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -1522,6 +1524,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         "Either you blocked me or you disabled DMs in this server."
                     )
                     return
+            if not public:
+                await ctx.tick()
         else:
             await ctx.send(_("No exception has occurred yet."))
 
@@ -1669,12 +1673,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             guilds = (ctx.guild,)
             msg = (
                 _("You haven't passed any server ID. Do you want me to leave this server?")
-                + " (y/n)"
+                + " (yes/no)"
             )
         else:
             msg = (
                 _("Are you sure you want me to leave these servers?")
-                + " (y/n):\n"
+                + " (yes/no):\n"
                 + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
             )
 
@@ -2088,6 +2092,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         locale = global_data["locale"]
         regional_format = global_data["regional_format"] or locale
         colour = discord.Colour(global_data["color"])
+        sudo_settings = (
+            _("SU Timeout: {delay}\n").format(
+                delay=humanize_timedelta(seconds=global_data["sudotime"])
+            )
+            if ctx.bot._sudo_ctx_var is not None
+            else ""
+        )
 
         prefix_string = " ".join(prefixes)
         settings = _(
@@ -2096,7 +2107,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "{guild_settings}"
             "Global locale: {locale}\n"
             "Global regional format: {regional_format}\n"
-            "Default embed colour: {colour}"
+            "Default embed colour: {colour}\n"
+            "{sudo_settings}"
         ).format(
             bot_name=ctx.bot.user.name,
             prefixes=prefix_string,
@@ -2104,6 +2116,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             locale=locale,
             regional_format=regional_format,
             colour=colour,
+            sudo_settings=sudo_settings,
         )
         for page in pagify(settings):
             await ctx.send(box(page))
@@ -2765,8 +2778,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(
                 _(
                     "Warning: A prefix is above the recommended length (20 characters).\n"
-                    "Do you want to continue? (y/n)"
+                    "Do you want to continue?"
                 )
+                + " (yes/no)"
             )
             pred = MessagePredicate.yes_or_no(ctx)
             try:
@@ -3232,9 +3246,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             show_aliases = not await ctx.bot._config.help.show_aliases()
         await ctx.bot._config.help.show_aliases.set(show_aliases)
         if show_aliases:
-            await ctx.send(_("Help will show commands aliases."))
+            await ctx.send(_("Help will now show command aliases."))
         else:
-            await ctx.send(_("Help will not show commands aliases."))
+            await ctx.send(_("Help will no longer show command aliases."))
 
     @helpset.command(name="usetick")
     async def helpset_usetick(self, ctx: commands.Context, use_tick: bool = None):
@@ -4974,6 +4988,75 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             categories=cat_str, channels=chan_str
         )
         return msg
+
+    @commands.command(
+        cls=commands.commands._IsTrueBotOwner,
+        name="su",
+    )
+    async def su(self, ctx: commands.Context):
+        """Enable your bot owner privileges.
+
+        SU permission is auto removed after interval set with `[p]set sutimeout` (Default to 15 minutes).
+        """
+        if ctx.author.id not in self.bot.owner_ids:
+            self.bot._elevated_owner_ids |= {ctx.author.id}
+            await ctx.send(_("Your bot owner privileges have been enabled."))
+            if ctx.author.id in self.bot._owner_sudo_tasks:
+                self.bot._owner_sudo_tasks[ctx.author.id].cancel()
+                del self.bot._owner_sudo_tasks[ctx.author.id]
+            self.bot._owner_sudo_tasks[ctx.author.id] = asyncio.create_task(
+                timed_unsu(ctx.author.id, self.bot)
+            )
+            return
+        await ctx.send(_("Your bot owner privileges are already enabled."))
+
+    @commands.command(
+        cls=commands.commands._IsTrueBotOwner,
+        name="unsu",
+    )
+    async def unsu(self, ctx: commands.Context):
+        """Disable your bot owner privileges."""
+        if ctx.author.id in self.bot.owner_ids:
+            self.bot._elevated_owner_ids -= {ctx.author.id}
+            await ctx.send(_("Your bot owner privileges have been disabled."))
+            return
+        await ctx.send(_("Your bot owner privileges are not currently enabled."))
+
+    @commands.command(
+        cls=commands.commands._IsTrueBotOwner,
+        name="sudo",
+    )
+    async def sudo(self, ctx: commands.Context, *, command: str):
+        """Runs the specified command with bot owner permissions
+
+        The prefix must not be entered.
+        """
+        ids = self.bot._elevated_owner_ids.union({ctx.author.id})
+        self.bot._sudo_ctx_var.set(ids)
+        msg = copy(ctx.message)
+        msg.content = ctx.prefix + command
+        ctx.bot.dispatch("message", msg)
+
+    @_set.command()
+    @is_sudo_enabled()
+    @checks.is_owner()
+    async def sutimeout(
+        self,
+        ctx: commands.Context,
+        *,
+        interval: commands.TimedeltaConverter(
+            minimum=datetime.timedelta(minutes=1),
+            maximum=datetime.timedelta(days=1),
+            default_unit="minutes",
+        ) = datetime.timedelta(minutes=15),
+    ):
+        """
+        Set the interval for SU permissions to auto expire.
+        """
+        await self.bot._config.sudotime.set(interval.total_seconds())
+        await ctx.send(
+            _("SU timer will expire after: {}.").format(humanize_timedelta(timedelta=interval))
+        )
 
     # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
     # Otherwise interfering with the ability for this command to be accessible is also a violation.

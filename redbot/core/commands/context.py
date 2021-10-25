@@ -123,9 +123,22 @@ class Context(DPYContext):
             return True
 
     async def react_quietly(
-        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+        self,
+        reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
+        *,
+        message: Optional[str] = None,
     ) -> bool:
         """Adds a reaction to the command message.
+
+        Parameters
+        ----------
+        reaction : Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+            The emoji to react with.
+
+        Keyword Arguments
+        -----------------
+        message : str, optional
+            The message to send if adding the reaction doesn't succeed.
 
         Returns
         -------
@@ -133,8 +146,12 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
         """
         try:
+            if not self.channel.permissions_for(self.me).add_reactions:
+                raise RuntimeError
             await self.message.add_reaction(reaction)
-        except discord.HTTPException:
+        except (RuntimeError, discord.HTTPException):
+            if message is not None:
+                await self.send(message)
             return False
         else:
             return True
