@@ -87,8 +87,8 @@ community of cog repositories.**
 **The following platforms are officially supported:** 
 
 - [Windows](https://red-discordbot.readthedocs.io/en/stable/install_windows.html)
-- [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [Most major linux distributions](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [MacOS](https://docs.discord.red/en/stable/install_guides/mac.html)
+- [Most major linux distributions](https://docs.discord.red/en/stable/install_guides/index.html)
 
 If after reading the guide you are still experiencing issues, feel free to join the
 [Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.
