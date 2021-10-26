@@ -96,7 +96,7 @@ If after reading the guide you are still experiencing issues, feel free to join 
 # Plugins
 
 Red is fully modular, allowing you to load and unload plugins of your choice, and install 3rd party
-plugins directly from Discord! A few things plugins offer are:
+plugins directly from Discord! Here some things you can do with plugins:
 
 - Cleverbot integration (talk to Red and she talks back)
 - Ban sync
