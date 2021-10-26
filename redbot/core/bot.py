@@ -1305,6 +1305,23 @@ class Red(
         """
         return user.id in self.owner_ids
 
+    async def get_invite_url(self) -> str:
+        """
+        Generates the invite URL for the bot.
+
+        Returns
+        -------
+        str
+            Invite URL.
+        """
+        app_info = await self.bot.application_info()
+        data = await self.bot._config.all()
+        commands_scope = data["invite_commands_scope"]
+        scopes = ("bot", "applications.commands") if commands_scope else None
+        perms_int = data["invite_perm"]
+        permissions = discord.Permissions(perms_int)
+        return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
+
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
         try:
