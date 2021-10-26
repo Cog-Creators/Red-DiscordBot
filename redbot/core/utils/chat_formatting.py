@@ -63,6 +63,7 @@ def info(text: str) -> str:
     """
     return f"\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16} {text}"
 
+
 def success(text: str) -> str:
     """Get text prefixed with a success emoji.
 
@@ -78,6 +79,7 @@ def success(text: str) -> str:
 
     """
     return f"\N{WHITE HEAVY CHECK MARK} {text}"
+
 
 def question(text: str) -> str:
     """Get text prefixed with a question emoji.
