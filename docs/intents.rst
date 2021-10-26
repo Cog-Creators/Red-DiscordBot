@@ -7,7 +7,7 @@
 About (privileged) intents and public bots
 ==========================================
 
-This page aims to explain Red's current intents requirements,
+This page aims to explain Red's current intent requirements,
 our stance regarding "public bots" and the impact of some announced
 Discord changes coming in April 2022.
 
