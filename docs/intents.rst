@@ -55,10 +55,10 @@ and customize to your needs, making it really *your* bot. **The target audience 
 owners with a few servers**, often with specific needs that can be covered by the vast cog ecosystem
 that the community has built over the years. |br| Red was never built with big bots in mind,
 bots with thousands upon thousands of servers: these bots face unique challenges.
-Such Red instances *do exist*, it is not impossible to adapt Red and meet those criteria,
+Such Red instances *do exist* so it isn't impossible to adapt Red and meet those criteria,
 but it requires work and bot owners with the technical knowledge to make it happen.
 It is **not** something that we support. |br|
-When your bot reaches the public bot scale and it is therefore required to be verified it
+When your bot reaches the scale of a public bot and it is therefore required to be verified it
 is *expected* that you know what's in your bot and how it works: that doesn't just mean on the
 surface level, it means coding knowledge and the ability to maintain it on your own.
 
