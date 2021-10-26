@@ -13,7 +13,13 @@ from .voicemutes import VoiceMutes
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
 from redbot.core.utils import AsyncIter, bounded_gather
-from redbot.core.utils.chat_formatting import bold, humanize_timedelta, humanize_list, pagify
+from redbot.core.utils.chat_formatting import (
+    bold,
+    humanize_timedelta,
+    humanize_list,
+    inline,
+    pagify,
+)
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -527,7 +533,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if duration:
             duration_str = humanize_timedelta(timedelta=duration)
             until = datetime.now(timezone.utc) + duration
-            until_str = until.strftime("%Y-%m-%d %H:%M:%S UTC")
+            until_str = f"<t:{int(until.timestamp())}>"
 
         if moderator is None:
             moderator_str = _("Unknown")
@@ -983,9 +989,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         command_2 = f"{ctx.clean_prefix}muteset makerole"
         msg = _(
             "This server does not have a mute role setup. "
-            " You can setup a mute role with `{command_1}` or"
-            "`{command_2}` if you just want a basic role created setup.\n\n"
-        ).format(command_1=command_1, command_2=command_2)
+            " You can setup a mute role with {command_1} or"
+            " {command_2} if you just want a basic role created setup.\n\n"
+        ).format(
+            command_1=inline(command_1),
+            command_2=inline(command_2),
+        )
         mute_role_id = await self.config.guild(ctx.guild).mute_role()
         mute_role = ctx.guild.get_role(mute_role_id)
         sent_instructions = await self.config.guild(ctx.guild).sent_instructions()
@@ -1014,9 +1023,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 )
             else:
                 msg += _(
-                    "Saying `yes` will continue "
+                    "Saying {response_1} will continue "
                     "the mute with overwrites and stop this message from appearing again, "
-                    "saying `no` will end the mute attempt."
+                    "saying {response_2} will end the mute attempt."
+                ).format(
+                    response_1=inline("yes"),
+                    response_2=inline("no"),
                 )
             query: discord.Message = await ctx.send(msg)
             if can_react:
@@ -1030,12 +1042,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             try:
                 await ctx.bot.wait_for(event, check=pred, timeout=30)
             except asyncio.TimeoutError:
-                await query.delete()
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
                 return False
 
             if not pred.result:
                 if can_react:
-                    await query.delete()
+                    with contextlib.suppress(discord.NotFound):
+                        await query.delete()
                 else:
                     await ctx.send(_("OK then."))
 
@@ -1242,12 +1256,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         try:
             await ctx.bot.wait_for(event, check=pred, timeout=30)
         except asyncio.TimeoutError:
-            await query.delete()
+            with contextlib.suppress(discord.NotFound):
+                await query.delete()
             return
 
         if not pred.result:
             if can_react:
-                await query.delete()
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
             else:
                 await ctx.send(_("OK then."))
             return

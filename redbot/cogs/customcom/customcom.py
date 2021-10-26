@@ -163,7 +163,7 @@ class CommandObj:
         author = ctx.message.author
 
         if ask_for and not response:
-            await ctx.send(_("Do you want to create a 'randomized' custom command? (y/n)"))
+            await ctx.send(_("Do you want to create a 'randomized' custom command?") + " (yes/no)")
 
             pred = MessagePredicate.yes_or_no(ctx)
             try:
@@ -544,7 +544,7 @@ class CustomCommands(commands.Cog):
 
         **Arguments:**
 
-        - `<command>` The custom command to show.
+        - `<command_name>` The custom command to show.
         """
 
         try:

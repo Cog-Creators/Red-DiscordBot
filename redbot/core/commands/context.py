@@ -99,8 +99,13 @@ class Context(DPYContext):
         command = command or self.command
         await self.bot.send_help_for(self, command)
 
-    async def tick(self) -> bool:
+    async def tick(self, *, message: Optional[str] = None) -> bool:
         """Add a tick reaction to the command message.
+
+        Keyword Arguments
+        -----------------
+        message : str, optional
+            The message to send if adding the reaction doesn't succeed.
 
         Returns
         -------
@@ -108,26 +113,38 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
 
         """
-        try:
-            await self.message.add_reaction(TICK)
-        except discord.HTTPException:
-            return False
-        else:
-            return True
+        return await self.react_quietly(TICK, message=message)
 
     async def react_quietly(
-        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+        self,
+        reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
+        *,
+        message: Optional[str] = None,
     ) -> bool:
         """Adds a reaction to the command message.
 
+        Parameters
+        ----------
+        reaction : Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+            The emoji to react with.
+
+        Keyword Arguments
+        -----------------
+        message : str, optional
+            The message to send if adding the reaction doesn't succeed.
+
         Returns
         -------
         bool
             :code:`True` if adding the reaction succeeded.
         """
         try:
+            if not self.channel.permissions_for(self.me).add_reactions:
+                raise RuntimeError
             await self.message.add_reaction(reaction)
-        except discord.HTTPException:
+        except (RuntimeError, discord.HTTPException):
+            if message is not None:
+                await self.send(message)
             return False
         else:
             return True
@@ -248,8 +265,11 @@ class Context(DPYContext):
             see `discord.abc.Messageable.send`
         discord.HTTPException
             see `discord.abc.Messageable.send`
+        ValueError
+            when the message's length is not between 1 and 2000 characters.
         """
-
+        if not message or len(message) > 2000:
+            raise ValueError("Message length must be between 1 and 2000")
         if await self.embed_requested():
             return await self.send(
                 embed=discord.Embed(description=message, color=(await self.embed_colour()))

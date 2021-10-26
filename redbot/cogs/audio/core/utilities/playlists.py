@@ -33,7 +33,7 @@ from ..cog_utils import CompositeMetaClass
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
 _ = Translator("Audio", Path(__file__))
 CURRATED_DATA = (
-    "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/json"
+    "https://gist.githubusercontent.com/aikaterna/4b5de6c420cd6f12b83cb895ca2de16a/raw/json"
 )
 
 

@@ -28,7 +28,7 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 
 _ = Translator("Dev", __file__)
 
-START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
+START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
 
 
 @cog_i18n(_)
@@ -158,6 +158,7 @@ class Dev(commands.Cog):
         self._last_result = result
         result = self.sanitize_output(ctx, str(result))
 
+        await ctx.tick()
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name="eval")
