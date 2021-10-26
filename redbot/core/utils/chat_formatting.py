@@ -27,7 +27,7 @@ def error(text: str) -> str:
         The new message.
 
     """
-    return "\N{NO ENTRY SIGN} {}".format(text)
+    return f"\N{NO ENTRY SIGN} {text}"
 
 
 def warning(text: str) -> str:
@@ -44,7 +44,7 @@ def warning(text: str) -> str:
         The new message.
 
     """
-    return "\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {}".format(text)
+    return f"\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {text}"
 
 
 def info(text: str) -> str:
@@ -61,7 +61,8 @@ def info(text: str) -> str:
         The new message.
 
     """
-    return "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16} {}".format(text)
+    return f"\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16} {text}"
+
 
 
 def question(text: str) -> str:
@@ -78,7 +79,7 @@ def question(text: str) -> str:
         The new message.
 
     """
-    return "\N{BLACK QUESTION MARK ORNAMENT}\N{VARIATION SELECTOR-16} {}".format(text)
+    return f"\N{BLACK QUESTION MARK ORNAMENT}\N{VARIATION SELECTOR-16} {text}"
 
 
 def bold(text: str, escape_formatting: bool = True) -> str:
@@ -99,8 +100,7 @@ def bold(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "**{}**".format(text)
+    return f"**{escape(text, formatting=escape_formatting)}**"
 
 
 def box(text: str, lang: str = "") -> str:
@@ -119,8 +119,7 @@ def box(text: str, lang: str = "") -> str:
         The marked up text.
 
     """
-    ret = "```{}\n{}\n```".format(lang, text)
-    return ret
+    return f"```{lang}\n{text}\n```"
 
 
 def inline(text: str) -> str:
@@ -138,9 +137,9 @@ def inline(text: str) -> str:
 
     """
     if "`" in text:
-        return "``{}``".format(text)
+        return f"``{text}``"
     else:
-        return "`{}`".format(text)
+        return f"`{text}`"
 
 
 def italics(text: str, escape_formatting: bool = True) -> str:
@@ -161,8 +160,7 @@ def italics(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "*{}*".format(text)
+    return f"*{escape(text, formatting=escape_formatting)}*"
 
 
 def spoiler(text: str, escape_formatting: bool = True) -> str:
@@ -183,8 +181,7 @@ def spoiler(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "||{}||".format(text)
+    return f"||{escape(text, formatting=escape_formatting)}||"
 
 
 def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
@@ -343,8 +340,7 @@ def strikethrough(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "~~{}~~".format(text)
+    return f"~~{escape(text, formatting=escape_formatting)}~~"
 
 
 def underline(text: str, escape_formatting: bool = True) -> str:
@@ -365,8 +361,7 @@ def underline(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "__{}__".format(text)
+    return f"__{escape(text, formatting=escape_formatting)}__"
 
 
 def quote(text: str) -> str:
