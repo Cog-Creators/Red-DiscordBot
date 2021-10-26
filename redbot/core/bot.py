@@ -1309,6 +1309,8 @@ class Red(
         """
         Generates the invite URL for the bot.
 
+        Does not check if invites are public.
+
         Returns
         -------
         str

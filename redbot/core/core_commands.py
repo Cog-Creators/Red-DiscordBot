@@ -112,7 +112,7 @@ class CoreLogic:
         self.bot.register_rpc_handler(self._name)
         self.bot.register_rpc_handler(self._prefixes)
         self.bot.register_rpc_handler(self._version_info)
-        self.bot.register_rpc_handler(self._invite_url)
+        self.bot.register_rpc_handler(bot.invite_url)
 
     async def _load(
         self, pkg_names: Iterable[str]
