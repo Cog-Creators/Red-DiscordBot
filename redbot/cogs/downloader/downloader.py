@@ -838,7 +838,7 @@ class Downloader(commands.Cog):
                     message += (
                         _("\nFailed to install requirements: ")
                         if len(failed_reqs) > 1
-                        else _("\nFailed to install requirement: ")
+                        else _("\nFailed to install the requirement: ")
                     ) + humanize_list(tuple(map(inline, failed_reqs)))
                     await self.send_pagified(ctx, message)
                     return
@@ -883,7 +883,7 @@ class Downloader(commands.Cog):
                     (
                         _("Successfully installed cogs: ")
                         if len(installed_cogs) > 1
-                        else _("Successfully installed the cog:")
+                        else _("Successfully installed the cog: ")
                     )
                     + humanize_list(cognames)
                     + (
@@ -1436,7 +1436,7 @@ class Downloader(commands.Cog):
                 _("\nCouldn't find these cogs in {repo.name}: ")
                 if len(unavailable_cogs) > 1
                 else _("\nCouldn't find this cog in {repo.name}: ")
-            ) + humanize_list(unavailable_cogs)
+            ).format(repo=repo) + humanize_list(unavailable_cogs)
         if already_installed:
             message += (
                 _("\nThese cogs were already installed: ")
@@ -1447,7 +1447,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nSome cogs with these names are already installed from different repos: ")
                 if len(name_already_used) > 1
-                else _("Cog with this is already installed from a different repo.")
+                else _("\nCog with this name is already installed from a different repo.")
             ) + humanize_list(name_already_used)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
@@ -1492,7 +1492,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nThese cogs require higher python version than you have: ")
                 if len(outdated_python_version)
-                else _("This cog requires higher python version than you have: ")
+                else _("\nThis cog requires higher python version than you have: ")
             ) + humanize_list(outdated_python_version)
         if outdated_bot_version:
             message += (
@@ -1502,7 +1502,7 @@ class Downloader(commands.Cog):
                 )
                 if len(outdated_bot_version) > 1
                 else _(
-                    "This cog requires different Red version than you currently "
+                    "\nThis cog requires different Red version than you currently "
                     "have ({current_version}): "
                 )
             ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
@@ -1595,7 +1595,7 @@ class Downloader(commands.Cog):
                     )
                 else:
                     message += (
-                        _("End user data statement of this cog has changed:")
+                        _("\nEnd user data statement of this cog has changed:")
                         + inline(next(iter(cogs_with_changed_eud_statement)))
                         + _("\nYou can use {command} to see the updated statement.\n").format(
                             command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
