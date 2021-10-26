@@ -372,7 +372,6 @@ class CoreLogic:
         """
         return {"redbot": __version__, "discordpy": discord.__version__}
 
-
     @staticmethod
     async def _can_get_invite_url(ctx):
         is_owner = await ctx.bot.is_owner(ctx.author)
