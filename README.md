@@ -73,11 +73,11 @@ from installing and updating, every part of the bot can be controlled from withi
 - Trivia (lists are included and can be easily added)
 - Music features (YouTube, SoundCloud, local files, playlists, queues)
 - Stream alerts (Twitch, Youtube, Picarto)
-- Bank (slot machine, user credits)
+- Bank (slot machine, user credits/currency)
 - Custom commands
-- Imgur/gif search
-- Admin automation (self-role assignment, cross-server announcements, mod-mail reports)
-- Customisable command permissions
+- Imgur/GIF search
+- Admin automation (self-role assignment, cross-server announcements, modmail reports)
+- Customizable command permissions
 
 **Additionally, other [plugins](#plugins) (cogs) can be easily found and added from our growing
 community of cog repositories.**
@@ -96,15 +96,15 @@ If after reading the guide you are still experiencing issues, feel free to join 
 # Plugins
 
 Red is fully modular, allowing you to load and unload plugins of your choice, and install 3rd party
-plugins directly from Discord! A few examples are:
+plugins directly from Discord! A few things plugins offer are:
 
 - Cleverbot integration (talk to Red and she talks back)
 - Ban sync
 - Welcome messages
 - Casino
 - Reaction roles
-- Slow Mode
-- AniList
+- Slow mode
+- AniList (get information about anime)
 - And much, much more!
 
 Feel free to take a [peek](https://index.discord.red) at a list of
