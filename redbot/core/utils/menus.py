@@ -151,7 +151,7 @@ async def prev_page(
     timeout: float,
     emoji: str,
 ):
-    if page == 0:
+    if page <= 0:
         page = len(pages) - 1  # Loop around to the last item
     else:
         page = page - 1
