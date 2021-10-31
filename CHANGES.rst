@@ -2758,6 +2758,48 @@ Enhancements
 - Added trivia lists for Prince and Michael Jackson lyrics. (:issue:`12`)
 
 
+Redbot 3.1.9 (2020-01-08)
+=========================
+
+This is a maintenance release patching a denial of service issue with Audio.
+
+
+Redbot 3.1.8 (2019-11-19)
+=========================
+
+This is a hotfix release updating discord.py to fix a full bot crash when emoji reaction is added/removed.
+This was caused by Discord API changes.
+
+
+Redbot 3.1.7 (2019-11-05)
+=========================
+
+End-user changelog
+------------------
+
+- Fixed issues with Soundcloud playback
+- Improved handling of user facing errors
+- Added partial mitigation for issues with running Red on Python 3.8
+
+
+Redbot 3.1.6 (2019-10-18)
+=========================
+
+This is a hotfix release updating discord.py for a critical issue related to voice connections.
+
+
+Redbot 3.1.5 (2019-07-31)
+=========================
+
+This is a maintenance release fixing issues with playback of YouTube tracks.
+
+
+Redbot 3.1.4 (2019-07-16)
+=========================
+
+This is a hotfix release fixing issues with broken custom commands and modlog cases.
+
+
 Redbot 3.1.2 (2019-05-31)
 =========================
 
