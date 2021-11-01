@@ -2800,6 +2800,92 @@ Redbot 3.1.4 (2019-07-16)
 This is a hotfix release fixing issues with broken custom commands and modlog cases.
 
 
+Redbot 3.1.3 (2019-07-14)
+=========================
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Added new settings for the invite returned by ``[p]invite`` command (:issue:`1847`)
+    
+    - ``[p]inviteset public`` - Defines if the command should be accessible for users that aren't bot owners.
+    - ``[p]inviteset perms`` - Sets permissions for bot's managed role that can get created automatically when bot is invited.
+
+    For more information, see help of each of the listed commands.
+
+- ``[p]command disable`` and its subcommands now ensure that the command to disable is not ``[p]command`` or any of its subcommands to prevent lockout (:issue:`2770`)
+- A server can now have multiple admin and mod roles (:issue:`2783`)
+- Improved overall performance on Linux and Mac systems by swapping asyncio loop implementation to uvloop (:issue:`2819`)
+- Fixed broken fuzzy help (:issue:`2768`)
+- Fixed an issue with error message being sent multiple times when help command was unable to DM the user (:issue:`2790`)
+- Fixed broken link in help of ``[p]set color`` (:issue:`2715`, :issue:`2803`)
+- Fixed user output and exception handling on cog load/reload (:issue:`2767`)
+- Fixed substitution of ``[p]`` in command descriptions in non-embedded help output (:issue:`2846`)
+- Fixed a race condition that could allow a user to run commands they are denied to run by Permissions cog for a short moment before the cog is loaded (:issue:`2857`)
+
+Audio
+*****
+
+- Added support for armv6l, aarch32, and aarch64 architectures (:issue:`2755`)
+- Improved error handling and added retrying to jar download and Lavalink connection (:issue:`2764`)
+- Internal Lavalink manager now accepts any jar with a build number greater than or equal to our release build (:issue:`2656`, :issue:`2785`)
+- Increased Lavalink connection timeout to 50 seconds to ensure Lavalink manages to start before the time runs out on lower-end devices (:issue:`2784`)
+- Added a ``[p]eq`` command group that allows to manage the Audio equalizer (:issue:`2787`, :issue:`2813`)
+- Added a ``[p]summon`` command that summons the bot to the voice channel (:issue:`2786`)
+- Added missing bot permission checks to commands in Audio cog (:issue:`2756`)
+- Fixed an issue with jar downloading on mixed-filesystem environments (:issue:`2682`, :issue:`2765`)
+- Fixed an issue with ``[p]playlist copy`` and ``[p]playlist queue`` failing when the prefix contains certain characters (:issue:`2788`, :issue:`2789`)
+- Fixed an issue that caused ``[p]shuffle`` and ``[p]repeat`` to send an error message when the user is not in the voice channel (:issue:`2811`, :issue:`2812`, :issue:`2842`)
+
+Filter
+******
+
+- Updated name filtering to be consistent with message content filtering (:issue:`2740`, :issue:`2794`)
+- Fixed caching issue that caused filter to use an old list of words to filter (:issue:`2810`)
+
+Mod
+***
+
+- ``[p]userinfo`` command now mentions the roles the user has (:issue:`2759`)
+
+Modlog
+******
+
+- Improved efficiency of case storage (:issue:`2766`)
+
+Permissions
+***********
+
+- Commands for adding/removing rules in ``[p]permissions`` command group now no longer ignore invalid arguments (:issue:`2851`, :issue:`2865`)
+
+Trivia Lists
+************
+
+- Fixed answers for Beethoven-related questions in ``entertainment`` trivia list (:issue:`2318`, :issue:`2823`)
+
+
+Developer changelog
+-------------------
+
+- Added (optional) ``default_unit`` keyword argument to `TimedeltaConverter` (:issue:`2753`)
+- Added `redbot.core.bank.cost()` (:issue:`2761`)
+- Added ``UserFeedbackCheckFailure`` (:issue:`2761`)
+- Added `Context.react_quietly()` (:issue:`2834`)
+- Fixed cache issues with Config when the developer accidentally tries to set an object that isn't JSON serializable (:issue:`2793`, :issue:`2796`)
+- Fixed an issue with identifiers that contain ``$`` or ``.`` which has caused a KeyError exception regardless of whether such key existed in the data (:issue:`2832`)
+
+
+Documentation changes
+---------------------
+
+- Fixed code examples in Bank, Config, and ModLog API documentation (:issue:`2775`, :issue:`2780`, :issue:`2860`)
+- Fixed the code example for the documentation of `Command.error` decorator and added a note with clarifications (:issue:`2760`)
+- Added a warning about the PATH changes to Windows install guide (:issue:`2791`)
+
+
 Redbot 3.1.2 (2019-05-31)
 =========================
 
