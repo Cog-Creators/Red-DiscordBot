@@ -2171,6 +2171,35 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
+    @_set_bot.command()
+    @checks.is_owner()
+    async def custominfo(self, ctx: commands.Context, *, text: str = None):
+        """Customizes a section of `[p]info`.
+
+        The maximum amount of allowed characters is 1024.
+        Supports markdown, links and "mentions".
+
+        Link example: `[My link](https://example.com)`
+
+        **Examples:**
+            - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
+            - `[p]set custominfo Join my [support server](discord.gg/discord)!`
+            - `[p]set custominfo` - Removes custom info text.
+
+        **Arguments:**
+            - `[text]` - The custom info text.
+        """
+        if not text:
+            await ctx.bot._config.custom_info.clear()
+            await ctx.send(_("The custom text has been cleared."))
+            return
+        if len(text) <= 1024:
+            await ctx.bot._config.custom_info.set(text)
+            await ctx.send(_("The custom text has been set."))
+            await ctx.invoke(self.info)
+        else:
+            await ctx.send(_("Text must be fewer than 1024 characters long."))
+
 # -- End Bot Metadata Commands -- ###
 # -- Bot Status Commands -- ###
 
@@ -2668,6 +2697,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
+# -- End Set Locale Commands -- ###
 
     @_set.command(name="showsettings")
     async def set_showsettings(self, ctx: commands.Context):
@@ -2938,35 +2968,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Server prefix set."))
         else:
             await ctx.send(_("Server prefixes set."))
-
-    @_set.command()
-    @checks.is_owner()
-    async def custominfo(self, ctx: commands.Context, *, text: str = None):
-        """Customizes a section of `[p]info`.
-
-        The maximum amount of allowed characters is 1024.
-        Supports markdown, links and "mentions".
-
-        Link example: `[My link](https://example.com)`
-
-        **Examples:**
-            - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
-            - `[p]set custominfo Join my [support server](discord.gg/discord)!`
-            - `[p]set custominfo` - Removes custom info text.
-
-        **Arguments:**
-            - `[text]` - The custom info text.
-        """
-        if not text:
-            await ctx.bot._config.custom_info.clear()
-            await ctx.send(_("The custom text has been cleared."))
-            return
-        if len(text) <= 1024:
-            await ctx.bot._config.custom_info.set(text)
-            await ctx.send(_("The custom text has been set."))
-            await ctx.invoke(self.info)
-        else:
-            await ctx.send(_("Text must be fewer than 1024 characters long."))
 
     @_set.group(invoke_without_command=True)
     @checks.is_owner()
