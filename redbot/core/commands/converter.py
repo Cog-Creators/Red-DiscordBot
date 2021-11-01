@@ -20,7 +20,6 @@ from typing import (
     Type,
     TypeVar,
     Literal as Literal,
-    Any,
     Union as UserInputOptional,
 )
 
@@ -203,48 +202,6 @@ def parse_relativedelta(
             )
         return delta
     return None
-
-
-class _GuildConverter(discord.Guild):
-    """Converts to a `discord.Guild` object.
-
-    The lookup strategy is as follows (in order):
-
-    1. Lookup by ID.
-    2. Lookup by name.
-
-    .. deprecated-removed:: 3.4.8 60
-        ``GuildConverter`` is now only provided within ``redbot.core.commands`` namespace.
-    """
-
-    @classmethod
-    async def convert(cls, ctx: "Context", argument: str) -> discord.Guild:
-        return await dpy_commands.GuildConverter().convert(ctx, argument)
-
-
-_GuildConverter.__name__ = "GuildConverter"
-
-
-def __getattr__(name: str, *, stacklevel: int = 2) -> Any:
-    # Let me just say it one more time... This is awesome! (PEP-562)
-    if name == "GuildConverter":
-        # let's not waste time on importing this when we don't need it
-        # (and let's not put in the public API)
-        from redbot.core.utils._internal_utils import deprecated_removed
-
-        deprecated_removed(
-            "`GuildConverter` from `redbot.core.commands.converter` namespace",
-            "3.4.8",
-            60,
-            "Use `GuildConverter` from `redbot.core.commands` namespace instead.",
-            stacklevel=2,
-        )
-        return globals()["_GuildConverter"]
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
-def __dir__() -> List[str]:
-    return [*globals().keys(), "GuildConverter"]
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when
