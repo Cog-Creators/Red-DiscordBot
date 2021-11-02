@@ -131,26 +131,19 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         autoplay = await self.config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
-                pos, dur = player.position, player.current.length
-            except AttributeError:
-                await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
-                return
-            time_remain = self.format_time(dur - pos)
-            if player.current.is_stream:
-                embed = discord.Embed(title=_("There's nothing in the queue."))
-                embed.set_footer(
-                    text=_("Currently livestreaming {track}").format(track=player.current.title)
-                )
-            else:
                 embed = discord.Embed(
                     title=_("Track Skipped"),
                     description=await self.get_track_description(
                         player.current, self.local_folder_current_path
                     ),
                 )
-            await self.send_embed_msg(ctx, embed=embed)
-            await player.skip()
-            return
+                await self.send_embed_msg(ctx, embed=embed)
+                await player.skip()
+                return
+            
+            except AttributeError:
+                await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
+                return
 
         elif autoplay and not player.queue:
             embed = discord.Embed(
