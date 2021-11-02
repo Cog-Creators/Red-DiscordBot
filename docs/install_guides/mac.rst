@@ -30,7 +30,7 @@ To fix this, you should run these commands:
 
 .. prompt:: bash
 
-    profile=$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || [ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile)
+    profile=$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))
     echo 'export PATH="$(brew --prefix)/opt/python@3.9/bin:$PATH"' >> "$profile"
     source "$profile"
 
