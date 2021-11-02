@@ -605,10 +605,18 @@ class Streams(commands.Cog):
         current_setting = await self.config.guild(guild).mention_here()
         if current_setting:
             await self.config.guild(guild).mention_here.set(False)
-            await ctx.send(_("{here} will no longer be mentioned for stream alerts.").format(here=inline("@\u200bhere")))
+            await ctx.send(
+                _("{here} will no longer be mentioned for stream alerts.").format(
+                    here=inline("@\u200bhere")
+                )
+            )
         else:
             await self.config.guild(guild).mention_here.set(True)
-            await ctx.send(_("When a stream is live, {here} will be mentioned.").format(here=inline("@\u200bhere")))
+            await ctx.send(
+                _("When a stream is live, {here} will be mentioned.").format(
+                    here=inline("@\u200bhere")
+                )
+            )
 
     @mention.command()
     @commands.guild_only()
@@ -624,9 +632,9 @@ class Streams(commands.Cog):
             )
         else:
             await self.config.role(role).mention.set(True)
-            msg = _(
-                "When a stream or community is live, {role} will be mentioned."
-            ).format(role=role=inline(f"@\u200b{role.name}"))
+            msg = _("When a stream or community is live, {role} will be mentioned.").format(
+                role=inline(f"@\u200b{role.name}")
+            )
             if not role.mentionable:
                 msg += " " + _(
                     "Since the role is not mentionable, it will be momentarily made mentionable "
