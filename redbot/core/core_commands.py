@@ -1987,7 +1987,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _set(self, ctx: commands.Context):
         """Commands for changing [botname]'s settings."""
 
-# -- Bot Metadata Commands -- ###
+    # -- Bot Metadata Commands -- ###
 
     @_set.group(name="bot", aliases=["metadata"])
     async def _set_bot(self, ctx: commands.Context):
@@ -2200,8 +2200,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
 
-# -- End Bot Metadata Commands -- ###
-# -- Bot Status Commands -- ###
+    # -- End Bot Metadata Commands -- ###
+    # -- Bot Status Commands -- ###
 
     async def _set_status(self, ctx: commands.Context, status: discord.Status):
         game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
@@ -2417,8 +2417,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Set [botname]'s status to invisible."""
         await self._set_status(ctx, discord.Status.invisible)
 
-# -- End Bot Status Commands -- ###
-# -- Bot Roles Commands -- ###
+    # -- End Bot Status Commands -- ###
+    # -- Bot Roles Commands -- ###
 
     @_set.group(name="roles")
     async def _set_roles(self, ctx: commands.Context):
@@ -2519,8 +2519,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             roles.remove(role.id)
         await ctx.send(_("That role is no longer considered a mod role."))
 
-# -- End Set Roles Commands -- ###
-# -- Set Locale Commands -- ###
+    # -- End Set Roles Commands -- ###
+    # -- Set Locale Commands -- ###
 
     @_set.group(name="locale")
     async def _set_locale_group(self, ctx: commands.Context):
@@ -2697,7 +2697,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-# -- End Set Locale Commands -- ###
+    # -- End Set Locale Commands -- ###
 
     @_set.command(name="showsettings")
     async def set_showsettings(self, ctx: commands.Context):
@@ -2893,7 +2893,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
-    @_set.command(aliases=["prefixes", "globalprefix", "globalprefixes"], require_var_positional=True)
+    @_set.command(
+        aliases=["prefixes", "globalprefix", "globalprefixes"], require_var_positional=True
+    )
     @checks.is_owner()
     async def prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es).
