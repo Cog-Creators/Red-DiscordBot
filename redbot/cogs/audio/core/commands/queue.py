@@ -37,6 +37,10 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
 
+        # Check to avoid an IndexError further down in the code.
+        if page < 1:
+            page = 1
+
         async def _queue_menu(
             ctx: commands.Context,
             pages: list,
