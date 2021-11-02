@@ -22,10 +22,17 @@ one-by-one:
 .. prompt:: bash
 
     brew install python@3.9
-    echo 'export PATH="$(brew --prefix)/opt/python@3.9/bin:$PATH"' >> ~/.profile
-    source ~/.profile
     brew install git
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
+
+By default, Python installed through Homebrew is not added to the load path.
+To fix this, you should run these commands:
+
+.. prompt:: bash
+
+    profile=$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))
+    echo 'export PATH="$(brew --prefix)/opt/python@3.9/bin:$PATH"' >> "$profile"
+    source "$profile"
 
 .. Include common instructions:
 

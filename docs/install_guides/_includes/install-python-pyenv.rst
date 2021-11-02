@@ -6,14 +6,7 @@ On distributions where Python 3.9 needs to be compiled from source, we recommend
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
-.. prompt:: bash
-
-    command -v pyenv && pyenv update || curl https://pyenv.run | bash
-
-**After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
-instructions given to fix that, then close and reopen your shell.**
-
-Then run the following command:
+.. include:: _includes/_install-pyenv-and-setup-path.rst
 
 .. prompt:: bash
 
