@@ -52,7 +52,7 @@ from .settings_caches import (
 )
 from .rpc import RPCMixin
 from .utils import common_filters, AsyncIter
-from .utils._internal_utils import deprecated_removed, send_to_owners_with_prefix_replaced
+from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
@@ -682,7 +682,6 @@ class Red(
         *,
         who_id: Optional[int] = None,
         guild: Optional[discord.Guild] = None,
-        guild_id: Optional[int] = None,
         role_ids: Optional[List[int]] = None,
     ) -> bool:
         """
@@ -695,7 +694,7 @@ class Red(
 
         If omiting a user or member, you must provide a value for ``who_id``
 
-        You may also provide a value for ``guild_id`` in this case
+        You may also provide a value for ``guild`` in this case
 
         If providing a member by guild and member ids,
         you should supply ``role_ids`` as well
@@ -714,18 +713,8 @@ class Red(
             When used in conjunction with a provided value for ``who_id``, checks
             the lists for the corresponding guild as well.
             This is ignored when ``who`` is passed.
-        guild_id : Optional[int]
-            When used in conjunction with a provided value for ``who_id``, checks
-            the lists for the corresponding guild as well. This should not be used
-            as it has unfixable bug that can cause it to raise an exception when
-            the guild with the given ID couldn't have been found.
-            This is ignored when ``who`` is passed.
-
-            .. deprecated-removed:: 3.4.8 30
-                Use ``guild`` parameter instead.
-
         role_ids : Optional[List[int]]
-            When used with both ``who_id`` and ``guild_id``, checks the role ids provided.
+            When used with both ``who_id`` and ``guild``, checks the role ids provided.
             This is required for accurate checking of members in a guild if providing ids.
             This is ignored when ``who`` is passed.
 
@@ -749,18 +738,6 @@ class Red(
                 raise TypeError("Must provide a value for either `who` or `who_id`")
             mocked = True
             who = discord.Object(id=who_id)
-            if guild_id:
-                deprecated_removed(
-                    "`guild_id` parameter",
-                    "3.4.8",
-                    30,
-                    "Use `guild` parameter instead.",
-                    stacklevel=2,
-                )
-                if guild:
-                    raise ValueError(
-                        "`guild_id` should not be passed when `guild` is already passed."
-                    )
         else:
             guild = getattr(who, "guild", None)
 
@@ -776,15 +753,6 @@ class Red(
             global_blacklist = await self.get_blacklist()
             if who.id in global_blacklist:
                 return False
-
-        if mocked and guild_id:
-            guild = self.get_guild(guild_id)
-            if guild is None:
-                # this is an AttributeError due to backwards-compatibility concerns
-                raise AttributeError(
-                    "Couldn't get the guild with the given ID. `guild` parameter needs to be used"
-                    " over the deprecated `guild_id` to resolve this."
-                )
 
         if guild:
             if guild.owner_id == who.id:
