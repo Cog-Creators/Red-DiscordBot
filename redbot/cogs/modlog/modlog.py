@@ -132,7 +132,7 @@ class ModLog(commands.Cog):
             if await ctx.embed_requested():
                 await ctx.send(embed=await case.message_content(embed=True))
             else:
-                message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp'))}: {datetime.utcfromtimestamp(case.created_at).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+                message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp'))}: <t:{int(case.created_at)}>"
                 await ctx.send(message)
 
     @commands.command()
@@ -162,10 +162,10 @@ class ModLog(commands.Cog):
             embed_requested = await ctx.embed_requested()
             if embed_requested:
                 rendered_cases = [await case.message_content(embed=True) for case in cases]
-            elif not embed_requested:
+            else:
                 rendered_cases = []
                 for case in cases:
-                    message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp'))}: {datetime.utcfromtimestamp(case.created_at).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+                    message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp'))}: <t:{int(case.created_at)}>"
                     rendered_cases.append(message)
 
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
@@ -196,7 +196,7 @@ class ModLog(commands.Cog):
             rendered_cases = []
             message = ""
             for case in cases:
-                message += f"{await case.message_content(embed=False)}\n{bold(_('Timestamp'))}: {datetime.utcfromtimestamp(case.created_at).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+                message += f"{await case.message_content(embed=False)}\n{bold(_('Timestamp'))}: <t:{int(case.created_at)}>"
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
