@@ -160,6 +160,22 @@ Add a role, or a selection of roles, to the list of available selfroles.
 
 * ``<role>``: The role to add to the list. |role-input|
 
+.. _admin-command-selfroleset-clear:
+
+"""""""""""""""""
+selfroleset clear
+"""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]selfroleset clear
+
+**Description**
+
+Clear the list of available selfroles for this server.
+
 .. _admin-command-selfroleset-remove:
 
 """"""""""""""""""

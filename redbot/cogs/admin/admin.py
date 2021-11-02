@@ -3,10 +3,11 @@ import logging
 from typing import Tuple
 
 import discord
-
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.predicates import MessagePredicate
+
 from .announcer import Announcer
 from .converters import SelfRole
 
@@ -508,6 +509,40 @@ class Admin(commands.Cog):
             message = _("Removed 1 selfrole.")
 
         await ctx.send(message)
+
+    @selfroleset.command(name="clear")
+    async def selfroleset_clear(self, ctx: commands.Context):
+        """Clear the list of available selfroles for this server."""
+        current_selfroles = await self.config.guild(ctx.guild).selfroles()
+
+        if not current_selfroles:
+            return await ctx.send(_("There are currently no selfroles."))
+
+        await ctx.send(
+            _("Are you sure you want to clear this server's selfrole list?") + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            await ctx.bot.wait_for("message", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            for role in current_selfroles:
+                role = ctx.guild.get_role(role)
+                if role is None:
+                    continue
+                if not self.pass_user_hierarchy_check(ctx, role):
+                    await ctx.send(
+                        _(
+                            "I cannot clear the selfroles because the selfrole '{role.name}' is higher than or equal to your highest role in the Discord hierarchy."
+                        ).format(role=role)
+                    )
+                    return
+            await self.config.guild(ctx.guild).selfroles.clear()
+            await ctx.send(_("Selfrole list cleared."))
+        else:
+            await ctx.send(_("No changes have been made."))
 
     @commands.command()
     @checks.is_owner()
