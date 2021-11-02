@@ -340,7 +340,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             player = await lavalink.connect(
                 ctx.author.voice.channel,
-                deafen=await self.config.guild(ctx.guild).auto_deafen(),
+                deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
             )
             player.store("notify_channel", ctx.channel.id)
         except AttributeError:
