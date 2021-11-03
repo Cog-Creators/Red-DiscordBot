@@ -140,11 +140,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(ctx, embed=embed)
                 await player.skip()
                 return
-            
             except AttributeError:
                 await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
                 return
-
         elif autoplay and not player.queue:
             embed = discord.Embed(
                 title=_("Track Skipped"),
@@ -721,4 +719,3 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if length > maxlength:
             return False
         return True
-        
