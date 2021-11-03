@@ -721,3 +721,4 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if length > maxlength:
             return False
         return True
+        
