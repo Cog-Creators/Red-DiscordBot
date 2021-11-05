@@ -117,7 +117,7 @@ Becomes:
 
 .. deprecated-removed:: 3.4.8 60
 
-Use `discord.Guild`/`redbot.core.commands.GuildConverter` instead.
+Use `discord.Guild`/``redbot.core.commands.GuildConverter`` instead.
 
 Example:
 
