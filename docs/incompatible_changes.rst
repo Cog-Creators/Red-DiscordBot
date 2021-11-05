@@ -48,6 +48,8 @@ Removed functionality
 Red now always requires to have at least one owner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. versionchanged:: 3.5.0
+
 There was never a reason to allow users to run the bot without having an owner set
 and it had been a point of confusion for new users that are trying to set up Red
 using a team application which, by default, doesn't have any owners set.
@@ -93,6 +95,8 @@ Behavior changes
 ``redbot.core.bot.RedBase`` has been merged into ``redbot.core.bot.Red``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. versionchanged:: 3.5.0
+
 Historically, ``RedBase`` existed to allow using Red for self/user bots back when
 it was not against Discord's Terms of Service. Since this is no longer a concern,
 everything from ``RedBase`` have been moved directly to `Red` and ``RedBase`` class
@@ -104,6 +108,8 @@ module, it should be a matter of simple find&replace.
 
 ``Context.maybe_send_embed()`` requires content with length of 1-2000 characters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionchanged:: 3.5.0
 
 `Context.maybe_send_embed()` now requires the message's length to be
 between 1 and 2000 characters.
@@ -119,6 +125,8 @@ You should make sure that your code properly handles message length limits.
 
 ``menu()`` listens to both reaction add and remove
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionchanged:: 3.5.0
 
 Listening only to reaction add results in bad user experience.
 If the bot had Manage Messages permission, it removed the user's reaction
