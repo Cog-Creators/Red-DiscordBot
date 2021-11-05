@@ -143,6 +143,24 @@ Becomes:
         async def command(self, ctx, server: discord.Guild):
             await ctx.send(f"You chose {server.name}!")
 
+``redbot.core.utils.mod.is_allowed_by_hierarchy()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. deprecated-removed:: 3.4.8 60
+
+This was an internal function that was never meant to be part of the public API.
+It was also not really possible to use it in a supported way as it required
+internal objects to be passed as parameters.
+
+If you have a use case for this function, you should be able to achieve the same result
+with this code:
+
+.. code:: python
+
+    async def is_allowed_by_hierarchy(guild, moderator, member):
+        is_special = moderator == guild.owner or await self.bot.is_owner(moderator)
+        return moderator.top_role > member.top_role or is_special
+
 
 Behavior changes
 ----------------
