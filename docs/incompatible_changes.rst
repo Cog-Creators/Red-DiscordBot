@@ -112,6 +112,37 @@ Becomes:
     if await bot.allowed_by_whitelist(who_id=user_id, guild=guild, role_ids=role_ids):
         ...
 
+``redbot.core.commands.converter.GuildConverter``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. deprecated-removed:: 3.4.8 60
+
+Use `discord.Guild`/`redbot.core.commands.GuildConverter` instead.
+
+Example:
+
+.. code:: python
+
+    from redbot.core import commands
+    from redbot.core.commands.converter import GuildConverter
+
+    class MyCog(commands.Cog):
+        @commands.command()
+        async def command(self, ctx, server: GuildConverter):
+            await ctx.send(f"You chose {server.name}!")
+
+Becomes:
+
+.. code:: python
+
+    import discord
+    from redbot.core import commands
+
+    class MyCog(commands.Cog):
+        @commands.command()
+        async def command(self, ctx, server: discord.Guild):
+            await ctx.send(f"You chose {server.name}!")
+
 
 Behavior changes
 ----------------
