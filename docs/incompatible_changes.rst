@@ -40,7 +40,7 @@ We plan to fully remove ``redbot-launcher`` once our documentation has informati
 how to set up auto-restart on all of the supported operating systems.
 
 Documentation for `autostart_systemd` and `autostart_mac` is already available,
-documentation for Windows is still in works.
+documentation for Windows is still in the works.
 
 Behavior changes
 ----------------
