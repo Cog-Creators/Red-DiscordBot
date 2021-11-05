@@ -2774,6 +2774,9 @@ This was caused by Discord API changes.
 Redbot 3.1.7 (2019-11-05)
 =========================
 
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`mikeshardmind`
+
 End-user changelog
 ------------------
 
@@ -2802,6 +2805,9 @@ This is a hotfix release fixing issues with broken custom commands and modlog ca
 
 Redbot 3.1.3 (2019-07-14)
 =========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lizzyd710`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`
 
 End-user changelog
 ------------------
@@ -2888,6 +2894,9 @@ Documentation changes
 
 Redbot 3.1.2 (2019-05-31)
 =========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`bren0xa`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`, :ghuser:`zephyrkul`
 
 End-user changelog
 ------------------
