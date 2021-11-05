@@ -72,6 +72,18 @@ TBD.
 Behavior changes
 ----------------
 
+``redbot.core.bot.RedBase`` has been merged into ``redbot.core.bot.Red``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Historically, ``RedBase`` existed to allow using Red for self/user bots back when
+it was not against Discord's Terms of Service. Since this is no longer a concern,
+everything from ``RedBase`` have been moved directly to `Red` and ``RedBase`` class
+has been removed.
+
+If you were using ``RedBase`` for runtime type checking or type annotations,
+you should now use `Red` instead. Since both of these classes resided in the same
+module, it should be a matter of simple find&replace.
+
 ``Context.maybe_send_embed()`` requires content with length of 1-2000 characters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
