@@ -86,7 +86,31 @@ through pip.
 Removed functionality
 ---------------------
 
-TBD.
+``guild_id`` parameter to ``Red.allowed_by_whitelist_blacklist()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. deprecated-removed:: 3.4.8 30
+
+``guild_id`` parameter to `Red.allowed_by_whitelist_blacklist()` has been removed as
+it is not possible to properly handle the local allowlist/blocklist logic with just
+the guild ID. Part of the local allowlist/blocklist handling is to check
+whether the provided user is a guild owner.
+
+Use the ``guild`` parameter instead.
+
+Example:
+
+.. code:: python
+
+    if await bot.allowed_by_whitelist(who_id=user_id, guild_id=guild.id, role_ids=role_ids):
+        ...
+
+Becomes:
+
+.. code:: python
+
+    if await bot.allowed_by_whitelist(who_id=user_id, guild=guild, role_ids=role_ids):
+        ...
 
 
 Behavior changes
