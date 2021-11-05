@@ -42,6 +42,24 @@ how to set up auto-restart on all of the supported operating systems.
 Documentation for `autostart_systemd` and `autostart_mac` is already available,
 documentation for Windows is still in works.
 
+Removed functionality
+---------------------
+
+Red now always requires to have at least one owner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There was never a reason to allow users to run the bot without having an owner set
+and it had been a point of confusion for new users that are trying to set up Red
+using a team application which, by default, doesn't have any owners set.
+
+If your instance does not have any owner set, Red will print an error message on startup
+and exit before connecting to Discord. This error message contains all
+the needed information on how to set a bot owner and the security implications of it.
+
+If, for some reason, you intentionally are running Red without any owner set,
+you may still be able to do that by setting an invalid user ID as owner
+but THIS IS NOT SUPPORTED.
+
 
 For Developers
 **************
