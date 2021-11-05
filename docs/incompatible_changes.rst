@@ -42,11 +42,11 @@ how to set up auto-restart on all of the supported operating systems.
 Documentation for `autostart_systemd` and `autostart_mac` is already available,
 documentation for Windows is still in works.
 
-Removed functionality
----------------------
+Behavior changes
+----------------
 
-Red now always requires to have at least one owner
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Red requires to have at least one owner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. versionchanged:: 3.5.0
 
