@@ -72,8 +72,23 @@ TBD.
 Behavior changes
 ----------------
 
-``menu()`` now listens to both reaction add and remove
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``Context.maybe_send_embed()`` requires content with length of 1-2000 characters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Context.maybe_send_embed()` now requires the message's length to be
+between 1 and 2000 characters.
+
+Since the length limits for regular message content and embed's description are
+different, it is easy to miss an issue with inappropriate handling of length limits
+during development. This change should aid with early detection of such issue by
+consistently rejecting message with length that can't be used with
+both embed and non-embed message.
+
+This change only affects code that is already not guaranteed to work.
+You should make sure that your code properly handles message length limits.
+
+``menu()`` listens to both reaction add and remove
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Listening only to reaction add results in bad user experience.
 If the bot had Manage Messages permission, it removed the user's reaction
