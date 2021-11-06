@@ -1166,3 +1166,22 @@ class _ForgetMeSpecialCommand(_RuleDropper, Command):
         return await ctx.bot._config.datarequests.allow_user_requests()
 
     can_see = can_run
+
+
+# This is intentionally left out of `__all__` as it is not intended for general use
+class _IsTrueBotOwner(_RuleDropper, Command):
+    """
+    These commands do not respect most forms of checks, and
+    should only be used with that in mind.
+
+    This particular class is not supported for 3rd party use
+    """
+
+    async def can_run(self, ctx, *args, **kwargs) -> bool:
+        return (
+            ctx.bot._sudo_ctx_var is not None
+            and not ctx.author.bot
+            and ctx.author.id in ctx.bot.all_owner_ids
+        )
+
+    can_see = can_run
