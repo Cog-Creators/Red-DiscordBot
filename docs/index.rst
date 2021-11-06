@@ -83,6 +83,8 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Changelogs:
 
     changelog
+    changelog_current_look
+    changelog_alt_1
     release_notes_3_2_0
     incompatible_changes
 
