@@ -59,8 +59,8 @@ and exit before connecting to Discord. This error message contains all
 the needed information on how to set a bot owner and the security implications of it.
 
 If, for some reason, you intentionally are running Red without any owner set,
-you may still be able to do that by setting an invalid user ID as owner
-but THIS IS NOT SUPPORTED.
+please make a feature request with your use case on
+`our issue tracker <https://github.com/Cog-Creators/Red-DiscordBot/issues/new/choose>`__.
 
 
 For Developers
