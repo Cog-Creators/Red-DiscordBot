@@ -44,7 +44,6 @@ CentOS 8.4+                 2021-12-31 (`end of Maintenance Updates <https://wik
 CentOS Stream 8             2024-05-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 Debian 10 Buster            2022-08-14 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Debian 11 Bullseye          ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
-Fedora Linux 33             2021-11-16 (`End of Life <https://fedoraproject.org/wiki/Fedora_Release_Life_Cycle#Maintenance_Schedule>`__)
 Fedora Linux 34             2022-05-17 (`End of Life <https://fedoraproject.org/wiki/Fedora_Release_Life_Cycle#Maintenance_Schedule>`__)
 Fedora Linux 35             ~2022-11 (`End of Life <https://fedoraproject.org/wiki/Fedora_Release_Life_Cycle#Maintenance_Schedule>`__)
 openSUSE Leap 15.2          2021-12-31 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
