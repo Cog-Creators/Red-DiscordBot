@@ -50,7 +50,7 @@ openSUSE Leap 15.2          2021-12-31 (`end of maintenance life cycle <https://
 openSUSE Leap 15.3          2022-11-30 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
 openSUSE Tumbleweed         forever (support is only provided for an up-to-date system)
 Oracle Linux 8              2029-07-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
-Raspberry Pi OS 10          **Unknown**
+Raspberry Pi OS 11          ~2023-12 (approximate date of release of Raspberry Pi OS 12)
 RHEL 8.4                    2023-05-30 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
 Rocky Linux 8               2029-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
 Ubuntu 18.04 LTS            2023-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
