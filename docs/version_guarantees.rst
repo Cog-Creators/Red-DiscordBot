@@ -10,9 +10,58 @@ While this is very similar to SemVer, we have our own set of guarantees.
 
 Major versions are for project wide rewrites and are not expected in the foreseeable future.
 
-==========
-Guarantees
-==========
+===================
+End-user Guarantees
+===================
+
+Red `provides support for wide variety of operating systems <install_guides/index>`.
+
+Support for an entire operating system may only be dropped in a minor or major version bump.
+
+Red will continue to, at the very least, support current latest stable version of
+each operating system that was supported by previous micro versions.
+
+In addition to that, we strive (but do not guarantee) to provide support for all versions that
+are currently supported by operating system's developers per the table below.
+We generally drop support for no longer supported OS versions as soon as they reached
+their end-of-life date.
+
+.. note::
+
+    We recommend to always use the latest OS version supported by Red.
+
+=========================   ============================================================
+Operating system version    Ideally supported until
+=========================   ============================================================
+Windows 10                  `End/Retirement Date <https://docs.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro>`__
+Windows 11                  `Retirement Date <https://docs.microsoft.com/en-us/lifecycle/products/windows-11-home-and-pro-version-21h2>`__
+macOS 10.15 (Catalina)      ~2022-10
+macOS 11 (Big Sur)          ~2023-10
+macOS 12 (Monterey)         ~2024-10
+Arch Linux                  forever (support is only provided for an up-to-date system)
+CentOS 7                    2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
+CentOS 8.4+                 2021-12-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
+CentOS Stream 8             2024-05-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
+Debian 10 Buster            2022-08-14 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
+Debian 11 Bullseye          ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
+Fedora Linux 33             2021-11-16 (`End of Life <https://fedoraproject.org/wiki/Fedora_Release_Life_Cycle#Maintenance_Schedule>`__)
+Fedora Linux 34             2022-05-17 (`End of Life <https://fedoraproject.org/wiki/Fedora_Release_Life_Cycle#Maintenance_Schedule>`__)
+Fedora Linux 35             ~2022-11 (`End of Life <https://fedoraproject.org/wiki/Fedora_Release_Life_Cycle#Maintenance_Schedule>`__)
+openSUSE Leap 15.2          2021-12-31 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
+openSUSE Leap 15.3          2022-11-30 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
+openSUSE Tumbleweed         forever (support is only provided for an up-to-date system)
+Oracle Linux 8              2029-07-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
+Raspberry Pi OS 10          **Unknown**
+RHEL 8.4                    2023-05-30 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
+Rocky Linux 8               2029-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
+Ubuntu 18.04 LTS            2023-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 20.04 LTS            2025-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 21.10                2022-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+=========================   ============================================================
+
+====================
+Developer Guarantees
+====================
 
 Anything in the ``redbot.core`` module or any of its submodules 
 which is not private (even if not documented) should not break without notice.
