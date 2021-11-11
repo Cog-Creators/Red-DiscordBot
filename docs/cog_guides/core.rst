@@ -2455,7 +2455,7 @@ list of key,values as described by the cog requesting this command.
 
 
 **Examples:**
-    - ``[p]set api Spotify redirect_uri localhost``
+    - ``[p]set api spotify redirect_uri localhost``
     - ``[p]set api github client_id,whoops client_secret,whoops``
 
 **Arguments:**
@@ -2500,7 +2500,7 @@ set api remove
 Remove the given services with all their keys and tokens.
 
 **Examples:**
-    - ``[p]set api remove Spotify``
+    - ``[p]set api remove spotify``
     - ``[p]set api remove github audiodb``
 
 **Arguments:**
