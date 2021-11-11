@@ -2116,301 +2116,30 @@ Redbot 3.2.0 (2020-01-09)
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Aurorum`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`DJtheRedstoner`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`jerbob`, :ghuser:`jonasbohmann`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`RealFriesi`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`Vexed01`, :ghuser:`wereii`, :ghuser:`yamikaitou`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
 
-Core Bot Changes
-----------------
+End-user changelog
+------------------
 
 Breaking Changes
 ****************
 
-- Modlog casetypes no longer have an attribute for auditlog action type. (:issue:`2897`)
-- Removed ``redbot.core.modlog.get_next_case_number()``. (:issue:`2908`)
-- Removed ``bank.MAX_BALANCE``, use ``bank.get_max_balance()`` from now on. (:issue:`2926`)
-- The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned.
-  New methods for this include
+- **Core Bot** - Removed the mongo driver (:issue:`3099`, :issue:`3108`)
+- **Core Bot** - Updated the required minimum Python version to 3.8.1, and the required minimum JRE version to Java 11 (:issue:`3245`)
 
-    - ``bot.get_shared_api_tokens``
-    - ``bot.set_shared_api_tokens``
-    - ``bot.get_embed_color``
-    - ``bot.get_embed_colour``
-    - ``bot.get_admin_roles``
-    - ``bot.get_admin_role_ids``
-    - ``bot.get_mod_roles``
-    - ``bot.get_mod_role_ids`` (:issue:`2967`)
-- Reserved some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES``. (:issue:`2973`)
-- Removed ``bot._counter``, Made a few more attrs private (``cog_mgr``, ``main_dir``). (:issue:`2976`)
-- Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord.
-  This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it. (:issue:`3073`)
-- Removed the mongo driver. (:issue:`3099`)
+New Functionality
+*****************
 
-
-Bug Fixes
-*********
-
-- Help now properly hides disabled commands. (:issue:`2863`)
-- Fixed ``bot.remove_command`` throwing an error when trying to remove a non-existent command. (:issue:`2888`)
-- ``Command.can_see`` now works as intended for disabled commands. (:issue:`2892`)
-- Modlog entries now show up properly without the mod cog loaded. (:issue:`2897`)
-- Fixed an error in ``[p]reason`` when setting the reason for a case without a moderator. (:issue:`2908`)
-- Bank functions now check the recipient balance before transferring and stop the transfer if the recipient's balance will go above the maximum allowed balance. (:issue:`2923`)
-- Removed potential for additional bad API calls per ban/unban. (:issue:`2945`)
-- The ``[p]invite`` command no longer errors when a user has the bot blocked or DMs disabled in the server. (:issue:`2948`)
-- Stopped using the ``:`` character in backup's filename - Windows doesn't accept it. (:issue:`2954`)
-- ``redbot-setup delete`` no longer errors with "unexpected keyword argument". (:issue:`2955`)
-- ``redbot-setup delete`` no longer prompts about backup when the user passes the option ``--no-prompt``. (:issue:`2956`)
-- Cleaned up the ``[p]inviteset public`` and ``[p]inviteset perms`` help strings.  (:issue:`2963`)
-- ```[p]embedset user`` now only affects DM's. (:issue:`2966`)
-- Fixed an unfriendly error when the provided instance name doesn't exist. (:issue:`2968`)
-- Fixed the help text and response of ``[p]set usebotcolor`` to accurately reflect what the command is doing. (:issue:`2974`)
-- Red no longer types infinitely when a command with a cooldown is called within the last second of a cooldown. (:issue:`2985`)
-- Removed f-string usage in the launcher to prevent our error handling from causing an error. (:issue:`3002`)
-- Fixed ``MessagePredicate.greater`` and ``MessagePredicate.less`` allowing any valid int instead of only valid ints/floats that are greater/less than the given value. (:issue:`3004`)
-- Fixed an error in ``[p]uptime`` when the uptime is under a second. (:issue:`3009`)
-- Added quotation marks to the response of ``[p]helpset tagline`` so that two consecutive full stops do not appear. (:issue:`3010`)
-- Fixed an issue with clearing rules in permissions. (:issue:`3014`)
-- Lavalink will now be restarted after an unexpected shutdown. (:issue:`3033`)
-- Added a 3rd-party lib folder to ``sys.path`` before loading cogs. This prevents issues with 3rd-party cogs failing to load when Downloader is not loaded to install requirements. (:issue:`3036`)
-- Escaped track descriptions so that they do not break markdown. (:issue:`3047`)
-- Red will now properly send a message when the invoked command is guild-only. (:issue:`3057`)
-- Arguments ``--co-owner`` and ``--load-cogs`` now properly require at least one argument to be passed. (:issue:`3060`)
-- Now always appends the 3rd-party lib folder to the end of ``sys.path`` to avoid shadowing Red's dependencies. (:issue:`3062`)
-- Fixed ``is_automod_immune``'s handling of the guild check and added support for checking webhooks. (:issue:`3100`)
-- Fixed the generation of the ``repos.json`` file in the backup process. (:issue:`3114`)
-- Fixed an issue where calling audio commands when not in a voice channel could result in a crash. (:issue:`3120`)
-- Added handling for invalid folder names in the data path gracefully in ``redbot-setup`` and ``redbot --edit``. (:issue:`3171`)
-- ``--owner`` and ``-p`` cli flags now work when added from launcher. (:issue:`3174`)
-- Red will now prevent users from locking themselves out with localblacklist. (:issue:`3207`)
-- Fixed help ending up a little too large for discord embed limits. (:issue:`3208`)
-- Fixed formatting issues in commands that list whitelisted/blacklisted users/roles when the list is empty. (:issue:`3219`)
-- Red will now prevent users from locking the guild owner out with localblacklist (unless the command caller is bot owner). (:issue:`3221`)
-- Guild owners are no longer affected by the local whitelist and blacklist. (:issue:`3221`)
-- Fixed an attribute error that can be raised in ``humanize_timedelta`` if ``seconds = 0``. (:issue:`3231`)
-- Fixed ``ctx.clean_prefix`` issues resulting from undocumented changes from discord. (:issue:`3249`)
-- ``redbot.core.bot.Bot.owner_id`` is now set in the post connection startup. (:issue:`3273`)
-- ``redbot.core.bot.Bot.send_to_owners()`` and ``redbot.core.bot.Bot.get_owner_notification_destinations()`` now wait until Red is done with post connection startup to ensure owner ID is available. (:issue:`3273`)
-
-
-Enhancements
-************
-
-- Added the option to modify the RPC port with the ``--rpc-port`` flag. (:issue:`2429`)
-- Slots now has a 62.5% expected payout and will not inflate economy when spammed. (:issue:`2875`)
-- Allowed passing ``cls`` in the ``redbot.core.commands.group()`` decorator. (:issue:`2881`)
-- Red's Help Formatter is now considered to have a stable API. (:issue:`2892`)
-- Modlog no longer generates cases without being told to for actions the bot did. (:issue:`2897`)
-- Some generic modlog casetypes are now pre-registered for cog creator use. (:issue:`2897`)
-- ModLog is now much faster at creating cases, especially in large servers. (:issue:`2908`)
-- JSON config files are now stored without indentation, this is to reduce the file size and increase the performance of write operations. (:issue:`2921`)
-- ``--[no-]backup``, ``--[no-]drop-db`` and ``--[no-]remove-datapath`` in the ``redbot-setup delete`` command are now on/off flags. (:issue:`2958`)
-- The confirmation prompts in ``redbot-setup`` now have default values for user convenience. (:issue:`2958`)
-- ``redbot-setup delete`` now has the option to leave Red's data untouched on database backends. (:issue:`2962`)
-- Red now takes less time to fetch cases, unban members, and list warnings. (:issue:`2964`)
-- Red now handles more things prior to connecting to discord to reduce issues during the initial load. (:issue:`3045`)
-- ``bot.send_filtered`` now returns the message that is sent. (:issue:`3052`)
-- Red will now send a message when the invoked command is DM-only. (:issue:`3057`)
-- All ``y/n`` confirmations in cli commands are now unified. (:issue:`3060`)
-- Changed ``[p]info`` to say "This bot is an..." instead of "This is an..." for clarity. (:issue:`3121`)
-- ``redbot-setup`` will now use the instance name in default data paths to avoid creating a second instance with the same data path. (:issue:`3171`)
-- Instance names can now only include characters A-z, numbers, underscores, and hyphens. Old instances are unaffected by this change. (:issue:`3171`)
-- Clarified that ``[p]backup`` saves the **bot's** data in the help text. (:issue:`3172`)
-- Added ``redbot --debuginfo`` flag which shows useful information for debugging. (:issue:`3183`)
-- Added the Python executable field to ``[p]debuginfo``. (:issue:`3184`)
-- When Red prompts for a token, it will now print a link to the guide explaining how to obtain a token. (:issue:`3204`)
-- ``redbot-setup`` will no longer log to disk. (:issue:`3269`)
-- ``redbot.core.bot.Bot.send_to_owners()`` and ``redbot.core.bot.Bot.get_owner_notification_destinations()`` now log when they are not able to find the owner notification destination. (:issue:`3273`)
-- The lib folder is now cleared on minor Python version changes. ``[p]cog reinstallreqs`` in Downloader can be used to regenerate the lib folder for a new Python version. (:issue:`3274`)
-- If Red detects operating system or architecture change, it will now warn the owner about possible problems with the lib folder. (:issue:`3274`)
-- ``[p]playlist download`` will now compress playlists larger than the server attachment limit and attempt to send that. (:issue:`3279`)
-
-
-New Features
-************
-
-- Added functions to acquire locks on Config groups and values. These locks are acquired by default when calling a value as a context manager. See ``Value.get_lock`` for details. (:issue:`2654`)
-- Added a config driver for PostgreSQL. (:issue:`2723`)
-- Added methods to Config for accessing things by id without mocked objects
-
-    - ``Config.guild_from_id``
-    - ``Config.user_from_id``
-    - ``Config.role_from_id``
-    - ``Config.channel_from_id``
-    - ``Config.member_from_ids``
-      - This one requires multiple ids, one for the guild, one for the user
-      - Consequence of discord's object model (:issue:`2804`)
-- New method ``humanize_number`` in ``redbot.core.utils.chat_formatting`` to convert numbers into text that respects the current locale. (:issue:`2836`)
-- Added new commands to Economy
-
-  - ``[p]bank prune user`` - This will delete a user's bank account.
-  - ``[p]bank prune local`` - This will prune the bank of accounts for users who are no longer in the server.
-  - ``[p]bank prune global`` - This will prune the global bank of accounts for users who do not share any servers with the bot. (:issue:`2845`)
-- Red now uses towncrier for changelog generation. (:issue:`2872`)
-- Added ``redbot.core.modlog.get_latest_case`` to fetch the case object for the most recent ModLog case. (:issue:`2908`)
-- Added ``[p]bankset maxbal`` to set the maximum bank balance. (:issue:`2926`)
-- Added a few methods and classes replacing direct config access (which is no longer supported)
-
-   - ``redbot.core.Red.allowed_by_whitelist_blacklist``
-   - ``redbot.core.Red.get_valid_prefixes``
-   - ``redbot.core.Red.clear_shared_api_tokens``
-   - ``redbot.core.commands.help.HelpSettings`` (:issue:`2976`)
-- Added the cli flag ``redbot --edit`` which is used to edit the instance name, token, owner, and datapath. (:issue:`3060`)
-- Added ``[p]licenseinfo``. (:issue:`3090`)
-- Ensured that people can migrate from MongoDB. (:issue:`3108`)
-- Added a command to list disabled commands globally or per guild. (:issue:`3118`)
-- New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for a service are updated. (:issue:`3134`)
-- Added ``redbot-setup backup``. (:issue:`3235`)
-- Added the method ``redbot.core.bot.Bot.wait_until_red_ready()`` that waits until Red's post connection startup is done. (:issue:`3273`)
-
-
-Removals
-********
-
-- ``[p]set owner`` and ``[p]set token`` have been removed in favor of managing server side. (:issue:`2928`)
-- Shared libraries are marked for removal in Red 3.4. (:issue:`3106`)
-- Removed ``[p]backup``. Use the cli command ``redbot-setup backup`` instead. (:issue:`3235`)
-- Removed the functions ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` from ``redbot.core.utils``. (:issue:`3240`)
-- Removed a lot of the launcher's handled behavior. (:issue:`3289`)
-
-
-Miscellaneous changes
-*********************
-
-- :issue:`2527`, :issue:`2571`, :issue:`2723`, :issue:`2836`, :issue:`2849`, :issue:`2861`, :issue:`2885`, :issue:`2890`, :issue:`2897`, :issue:`2904`, :issue:`2924`, :issue:`2939`, :issue:`2940`, :issue:`2941`, :issue:`2949`, :issue:`2953`, :issue:`2964`, :issue:`2986`, :issue:`2993`, :issue:`2997`, :issue:`3008`, :issue:`3017`, :issue:`3048`, :issue:`3059`, :issue:`3080`, :issue:`3089`, :issue:`3104`, :issue:`3106`, :issue:`3129`, :issue:`3152`, :issue:`3160`, :issue:`3168`, :issue:`3173`, :issue:`3176`, :issue:`3186`, :issue:`3192`, :issue:`3193`, :issue:`3195`, :issue:`3202`, :issue:`3214`, :issue:`3223`, :issue:`3229`, :issue:`3245`, :issue:`3247`, :issue:`3248`, :issue:`3250`, :issue:`3254`, :issue:`3255`, :issue:`3256`, :issue:`3258`, :issue:`3261`, :issue:`3275`, :issue:`3276`, :issue:`3293`, :issue:`3278`, :issue:`3285`, :issue:`3296`,
-
-
-Dependency changes
-***********************
-
-- Added ``pytest-mock`` requirement to ``tests`` extra. (:issue:`2571`)
-- Updated the python minimum requirement to 3.8.1, updated JRE to Java 11. (:issue:`3245`)
-- Bumped dependency versions. (:issue:`3288`)
-- Bumped red-lavalink version. (:issue:`3290`)
-
-
-Documentation Changes
-*********************
-
-- Started the user guides covering cogs and the user interface of the bot. This includes, for now, a "Getting started" guide. (:issue:`1734`)
-- Added documentation for PM2 support. (:issue:`2105`)
-- Updated linux install docs, adding sections for Fedora Linux, Debian/Raspbian Buster, and openSUSE. (:issue:`2558`)
-- Created documentation covering what we consider a developer facing breaking change and the guarantees regarding them. (:issue:`2882`)
-- Fixed the user parameter being labeled as ``discord.TextChannel`` instead of ``discord.abc.User`` in ``redbot.core.utils.predicates``. (:issue:`2914`)
-- Updated towncrier info in the contribution guidelines to explain how to create a changelog for a standalone PR. (:issue:`2915`)
-- Reworded the virtual environment guide to make it sound less scary. (:issue:`2920`)
-- Driver docs no longer show twice. (:issue:`2972`)
-- Added more information about ``redbot.core.utils.humanize_timedelta`` into the docs. (:issue:`2986`)
-- Added a direct link to the "Installing Red" section in "Installing using powershell and chocolatey". (:issue:`2995`)
-- Updated Git PATH install (Windows), capitalized some words, stopped mentioning the launcher. (:issue:`2998`)
-- Added autostart documentation for Red users who installed Red inside of a virtual environment. (:issue:`3005`)
-- Updated the Cog Creation guide with a note regarding the Develop version as well as the folder layout for local cogs. (:issue:`3021`)
-- Added links to the getting started guide at the end of installation guides. (:issue:`3025`)
-- Added proper docstrings to enums that show in drivers docs. (:issue:`3035`)
-- Discord.py doc links will now always use the docs for the currently used version of discord.py. (:issue:`3053`)
-- Added ``|DPY_VERSION|`` substitution that will automatically get replaced by the current discord.py version. (:issue:`3053`)
-- Added missing descriptions for function returns. (:issue:`3054`)
-- Stopped overwriting the ``docs/prolog.txt`` file in ``conf.py``. (:issue:`3082`)
-- Fixed some typos and wording, added MS Azure to the host list. (:issue:`3083`)
-- Updated the docs footer copyright to 2019. (:issue:`3105`)
-- Added a deprecation note about shared libraries in the Downloader Framework docs. (:issue:`3106`)
-- Updated the apikey framework documentation. Changed ``bot.get_shared_api_keys()`` to ``bot.get_shared_api_tokens()``. (:issue:`3110`)
-- Added information about ``info.json``'s ``min_python_version`` key in Downloader Framework docs. (:issue:`3124`)
-- Added an event reference for the ``on_red_api_tokens_update`` event in the Shared API Keys docs. (:issue:`3134`)
-- Added notes explaining the best practices with config. (:issue:`3149`)
-- Documented additional attributes in Context. (:issue:`3151`)
-- Updated Windows docs with up to date dependency instructions. (:issue:`3188`)
-- Added a "Publishing cogs for V3" document explaining how to make user's cogs work with Downloader. (:issue:`3234`)
-- Fixed broken docs for ``redbot.core.commands.Context.react_quietly``. (:issue:`3257`)
-- Updated copyright notices on License and RTD config to 2020. (:issue:`3259`)
-- Added a line about setuptools and wheel. (:issue:`3262`)
-- Ensured development builds are not advertised to the wrong audience. (:issue:`3292`)
-- Clarified the usage intent of some of the chat formatting functions. (:issue:`3292`)
-
-
-Admin
------
-
-Breaking Changes
-****************
-
-- Changed ``[p]announce ignore`` and ``[p]announce channel`` to ``[p]announceset ignore`` and ``[p]announceset channel``. (:issue:`3250`)
-- Changed ``[p]selfrole <role>`` to ``[p]selfrole add <role>``, changed ``[p]selfrole add`` to ``[p]selfroleset add`` , and changed ``[p]selfrole delete`` to ``[p]selfroleset remove``. (:issue:`3250`)
-
-
-Bug Fixes
-*********
-
-- Fixed ``[p]announce`` failing after encountering an error attempting to message the bot owner. (:issue:`3166`)
-- Improved the clarity of user facing messages when the user is not allowed to do something due to Discord hierarchy rules. (:issue:`3250`)
-- Fixed some role managing commands not properly checking if Red had ``manage_roles`` perms before attempting to manage roles. (:issue:`3250`)
-- Fixed ``[p]editrole`` commands not checking if roles to be edited are higher than Red's highest role before trying to edit them. (:issue:`3250`)
-- Fixed ``[p]announce ignore`` and ``[p]announce channel`` not being able to be used by guild owners and administrators. (:issue:`3250`)
-
-
-Enhancements
-************
-
-- Added custom issue messages for adding and removing roles, this makes it easier to create translations. (:issue:`3016`)
-
-
-Audio
------
-
-Bug Fixes
-*********
-
-- ``[p]playlist remove`` now removes the playlist url if the playlist was created through ``[p]playlist save``. (:issue:`2861`)
-- Users are no longer able to accidentally overwrite existing playlist if a new one with the same name is created/renamed. (:issue:`2861`)
-- ``[p]audioset settings`` no longer shows lavalink JAR version. (:issue:`2904`)
-- Fixed a ``KeyError: loadType`` when trying to play tracks. (:issue:`2904`)
-- ``[p]audioset settings`` now uses ``ctx.is_owner()`` to check if the context author is the bot owner. (:issue:`2904`)
-- Fixed track indexs being off by 1 in ``[p]search``. (:issue:`2940`)
-- Fixed an issue where updating your Spotify and YouTube Data API tokens did not refresh them. (:issue:`3047`)
-- Fixed an issue where the blacklist was not being applied correctly. (:issue:`3047`)
-- Fixed an issue in ``[p]audioset restrictions blacklist list`` where it would call the list a ``Whitelist``. (:issue:`3047`)
-- Red's status is now properly cleared on emptydisconnect. (:issue:`3050`)
-- Fixed a console spam caused sometimes when auto disconnect and auto pause are used. (:issue:`3123`)
-- Fixed an error that was thrown when running ``[p]audioset dj``. (:issue:`3165`)
-- Fixed a crash that could happen when the bot can't connect to the lavalink node. (:issue:`3238`)
-- Restricted the number of songs shown in the queue to first 500 to avoid heartbeats. (:issue:`3279`)
-- Added more cooldowns to playlist commands and restricted the queue and playlists to 10k songs to avoid bot errors. (:issue:`3286`)
-
-
-Enhancements
-************
-
-- ``[p]playlist upload`` will now load playlists generated via ``[p]playlist download`` much faster if the playlist uses the new scheme. (:issue:`2861`)
-- ``[p]playlist`` commands now can be used by everyone regardless of DJ settings, however it will respect DJ settings when creating/modifying playlists in the server scope. (:issue:`2861`)
-- Spotify, Youtube Data, and Lavalink API calls can be cached to avoid repeated calls in the future, see ``[p]audioset cache``. (:issue:`2890`)
-- Playlists will now start playing as soon as first track is loaded. (:issue:`2890`)
-- ``[p]audioset localpath`` can set a path anywhere in your machine now. Note: This path needs to be visible by ``Lavalink.jar``. (:issue:`2904`)
-- ``[p]queue`` now works when there are no tracks in the queue, showing the track currently playing. (:issue:`2904`)
-- ``[p]audioset settings`` now reports Red Lavalink version. (:issue:`2904`)
-- Adding and removing reactions in Audio is no longer a blocking action. (:issue:`2904`)
-- When shuffle is on, queue now shows the correct play order. (:issue:`2904`)
-- ``[p]seek`` and ``[p]skip`` can be used by user if they are the song requester while DJ mode is enabled and votes are disabled. (:issue:`2904`)
-- Adding a playlist and an album to a saved playlist skips tracks already in the playlist. (:issue:`2904`)
-- DJ mode is now turned off if the DJ role is deleted. (:issue:`2904`)
-- When playing a localtrack, ``[p]play`` and ``[p]bumpplay`` no longer require the use of the prefix "localtracks\\".
-
-  Before: ``[p]bumpplay localtracks\\ENM\\501 - Inside The Machine.mp3``
-  Now: ``[p]bumpplay ENM\\501 - Inside The Machine.mp3``
-  Now nested folders: ``[p]bumpplay Parent Folder\\Nested Folder\\track.mp3`` (:issue:`2904`)
-- Removed commas in explanations about how to set API keys. (:issue:`2905`)
-- Expanded local track support to all file formats (m3u, m4a, mp4, etc). (:issue:`2940`)
-- Cooldowns are now reset upon failure of commands that have a cooldown timer. (:issue:`2940`)
-- Improved the explanation in the help string for ``[p]audioset emptydisconnect``. (:issue:`3051`)
-- Added a typing indicator to playlist dedupe. (:issue:`3058`)
-- Exposed clearer errors to users in the play commands. (:issue:`3085`)
-- Better error handling when the player is unable to play multiple tracks in the sequence. (:issue:`3165`)
-
-
-New Features
-************
-
-- Added support for nested folders in the localtrack folder. (:issue:`270`)
-- Now auto pauses the queue when the voice channel is empty. (:issue:`721`)
-- All Playlist commands now accept optional arguments, use ``[p]help playlist <subcommand>`` for more details. (:issue:`2861`)
-- ``[p]playlist rename`` will now allow users to rename existing playlists. (:issue:`2861`)
-- ``[p]playlist update`` will now allow users to update non-custom Playlists to the latest available tracks. (:issue:`2861`)
-- There are now 3 different scopes of playlist. To define them, use the ``--scope`` argument.
+- **Core Bot** - Added a config driver for PostgreSQL (:issue:`2723`)
+- **Core Bot** - Added the cli flag ``redbot --edit`` which is used to edit the instance name, token, owner, and datapath. (:issue:`3060`)
+- **Core Bot** - Added ``[p]licenseinfo``. (:issue:`3090`)
+- **Core Bot** - Added a command to list disabled commands globally or per guild. (:issue:`3118`)
+- **Core Bot** - Added ``redbot-setup backup``. (:issue:`3235`)
+- **Core Bot** - Added ``redbot --debuginfo`` flag which shows useful information for debugging. (:issue:`3183`)
+- **Audio** - Added support for nested folders in the localtrack folder. (:issue:`270`)
+- **Audio** - Now auto pauses the queue when the voice channel is empty. (:issue:`721`)
+- **Audio** - All Playlist commands now accept optional arguments, use ``[p]help playlist <subcommand>`` for more details. (:issue:`2861`)
+- **Audio** - ``[p]playlist rename`` will now allow users to rename existing playlists. (:issue:`2861`)
+- **Audio** - ``[p]playlist update`` will now allow users to update non-custom Playlists to the latest available tracks. (:issue:`2861`)
+- **Audio** - There are now 3 different scopes of playlist. To define them, use the ``--scope`` argument.
 
       ``Global Playlist``
 
@@ -2426,11 +2155,11 @@ New Features
 
       - These playlists will be available in all servers both the bot and the creator are in.
       - These can be managed by the Bot Owner and Creator only. (:issue:`2861`)
-- ``[p]audioset cache`` can be used to set the cache level. **It's off by default**. (:issue:`2904`)
-- ``[p]genre`` can be used to play spotify playlists. (:issue:`2904`)
-- ``[p]audioset cacheage`` can be used to set the maximum age of an entry in the cache. **Default is 365 days**. (:issue:`2904`)
-- ``[p]audioset autoplay`` can be used to enable auto play once the queue runs out. (:issue:`2904`)
-- New events dispatched by Audio.
+- **Audio** - ``[p]audioset cache`` can be used to set the cache level. **It's off by default**. (:issue:`2904`)
+- **Audio** - ``[p]genre`` can be used to play spotify playlists. (:issue:`2904`)
+- **Audio** - ``[p]audioset cacheage`` can be used to set the maximum age of an entry in the cache. **Default is 365 days**. (:issue:`2904`)
+- **Audio** - ``[p]audioset autoplay`` can be used to enable auto play once the queue runs out. (:issue:`2904`)
+- **Audio** - New events dispatched by Audio.
 
    - ``on_red_audio_track_start(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
    - ``on_red_audio_track_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
@@ -2439,156 +2168,316 @@ New Features
    - ``on_red_audio_queue_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
    - ``on_red_audio_audio_disconnect(guild: discord.Guild)``
    - ``on_red_audio_skip_track(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`` (:issue:`2904`)
-- ``[p]queue shuffle`` can be used to shuffle the queue manually. (:issue:`2904`)
-- ``[p]queue clean self`` can be used to remove all songs you requested from the queue. (:issue:`2904`)
-- ``[p]audioset restrictions`` can be used to add or remove keywords which songs must have or are not allowed to have. (:issue:`2904`)
-- ``[p]playlist dedupe`` can be used to remove duplicated tracks from a playlist. (:issue:`2904`)
-- ``[p]autoplay`` can be used to play a random song. (:issue:`2904`)
-- ``[p]bumpplay`` can be used to add a song to the front of the queue. (:issue:`2940`)
-- ``[p]shuffle`` has an additional argument to tell the bot whether it should shuffle bumped tracks. (:issue:`2940`)
-- Added global whitelist/blacklist commands. (:issue:`3047`)
-- Added self-managed daily playlists in the GUILD scope, these are called "Daily playlist - YYYY-MM-DD" and auto delete after 7 days. (:issue:`3199`)
+- **Audio** - ``[p]queue shuffle`` can be used to shuffle the queue manually. (:issue:`2904`)
+- **Audio** - ``[p]queue clean self`` can be used to remove all songs you requested from the queue. (:issue:`2904`)
+- **Audio** - ``[p]audioset restrictions`` can be used to add or remove keywords which songs must have or are not allowed to have. (:issue:`2904`)
+- **Audio** - ``[p]playlist dedupe`` can be used to remove duplicated tracks from a playlist. (:issue:`2904`)
+- **Audio** - ``[p]autoplay`` can be used to play a random song. (:issue:`2904`)
+- **Audio** - ``[p]bumpplay`` can be used to add a song to the front of the queue. (:issue:`2940`)
+- **Audio** - ``[p]shuffle`` has an additional argument to tell the bot whether it should shuffle bumped tracks. (:issue:`2940`)
+- **Audio** - Added global whitelist/blacklist commands. (:issue:`3047`)
+- **Audio** - Added self-managed daily playlists in the GUILD scope, these are called "Daily playlist - YYYY-MM-DD" and auto delete after 7 days. (:issue:`3199`)
+- **Bank** - Added ``[p]bankset maxbal`` to set the maximum bank balance. (:issue:`2926`)
+- **Economy** - Added new commands for pruning bank accounts (:issue:`2845`)
 
-
-CustomCom
----------
-
-Enhancements
-************
-
-- The group command ``[p]cc create`` can now be used to create simple CCs without specifying "simple". (:issue:`1767`)
-- Added a query option for CC typehints for URL-based CCs. (:issue:`3228`)
-- Now uses the ``humanize_list`` utility for iterable parameter results, e.g. ``{#:Role.members}``. (:issue:`3277`)
-
-
-Downloader
-----------
-
-Bug Fixes
-*********
-
-- Made the regex for repo names use raw strings to stop causing a ``DeprecationWarning`` for invalid escape sequences. (:issue:`2571`)
-- Downloader will no longer attempt to install cogs that are already installed. (:issue:`2571`)
-- Repo names can now only contain the characters listed in the help text (A-Z, 0-9, underscores, and hyphens). (:issue:`2827`)
-- ``[p]findcog`` no longer attempts to find a cog for commands without a cog. (:issue:`2902`)
-- Downloader will no longer attempt to install a cog with same name as another cog that is already installed. (:issue:`2927`)
-- Added error handling for when a remote repository or branch is deleted, now notifies the which repository failed and continues to update the others. (:issue:`2936`)
-- ``[p]cog install`` will no longer error if a cog has an empty install message. (:issue:`3024`)
-- Made ``redbot.cogs.downloader.repo_manager.Repo.clean_url`` work with relative urls. This property is ``str`` type now. (:issue:`3141`)
-- Fixed an error on repo add from empty string values for the ``install_msg`` info.json field. (:issue:`3153`)
-- Disabled all git auth prompts when adding/updating a repo with Downloader. (:issue:`3159`)
-- ``[p]findcog`` now properly works for cogs with less typical folder structure. (:issue:`3177`)
-- ``[p]cog uninstall`` now fully unloads cog - the bot will not try to load it on next startup. (:issue:`3179`)
-
+  - ``[p]bank prune user`` - This will delete a user's bank account.
+  - ``[p]bank prune local`` - This will prune the bank of accounts for users who are no longer in the server.
+  - ``[p]bank prune global`` - This will prune the global bank of accounts for users who do not share any servers with the bot.
+- **Downloader** - Added ``[p]repo update [repos]`` which updates repos without updating the cogs from them. (:issue:`2527`)
+- **Downloader** - Added ``[p]cog installversion <repo_name> <revision> <cogs>`` which installs cogs from a specified revision (commit, tag) of the given repo. When using this command, the cog will automatically be pinned. (:issue:`2527`)
+- **Downloader** - Added ``[p]cog pin <cogs>`` and ``[p]cog unpin <cogs>`` for pinning cogs. Cogs that are pinned will not be updated when using update commands. (:issue:`2527`)
+- **Downloader** - Added ``[p]cog checkforupdates`` that lists which cogs can be updated (including pinned cog) without updating them. (:issue:`2527`)
+- **Downloader** - Added ``[p]cog updateallfromrepos <repos>`` that updates all cogs from the given repos. (:issue:`2527`)
+- **Downloader** - Added ``[p]cog updatetoversion <repo_name> <revision> [cogs]`` that updates all cogs or ones of user's choosing to chosen revision of the given repo. (:issue:`2527`)
+- **Downloader** - Added ``[p]cog reinstallreqs`` that reinstalls cog requirements and shared libraries for all installed cogs. (:issue:`3167`)
+- **Trivia Lists** - Added trivia lists for Prince and Michael Jackson lyrics. (:issue:`12`)
 
 Enhancements
 ************
 
-- Downloader will now check if the Python and bot versions match requirements in ``info.json`` during update. (:issue:`1866`)
-- ``[p]cog install`` now accepts multiple cog names. (:issue:`2527`)
-- When passing cogs to ``[p]cog update``, it will now only update those cogs, not all cogs from the repo those cogs are from. (:issue:`2527`)
-- Added error messages for failures when installing/reinstalling requirements and copying cogs and shared libraries. (:issue:`2571`)
-- ``[p]findcog`` now uses sanitized urls (without HTTP Basic Auth fragments). (:issue:`3129`)
-- ``[p]repo info`` will now show the repo's url, branch, and authors. (:issue:`3225`)
-- ``[p]cog info`` will now show cog authors. (:issue:`3225`)
-- ``[p]findcog`` will now show the repo's branch. (:issue:`3225`)
+- **Core Bot** - Added the option to modify the RPC port with the ``--rpc-port`` flag. (:issue:`2429`)
+- **Core Bot** - Modlog no longer generates cases without being told to for actions the bot did. (:issue:`2897`)
+- **Core Bot** - Modlog is now much faster at creating cases, especially in large servers. (:issue:`2908`)
+- **Core Bot** - JSON config files are now stored without indentation, this is to reduce the file size and increase the performance of write operations. (:issue:`2921`)
+- **Core Bot** - ``--[no-]backup``, ``--[no-]drop-db`` and ``--[no-]remove-datapath`` in the ``redbot-setup delete`` command are now on/off flags. (:issue:`2958`)
+- **Core Bot** - The confirmation prompts in ``redbot-setup`` now have default values for user convenience. (:issue:`2958`)
+- **Core Bot** - ``redbot-setup delete`` now has the option to leave Red's data untouched on database backends. (:issue:`2962`)
+- **Core Bot** - Red now takes less time to fetch cases, unban members, and list warnings. (:issue:`2964`)
+- **Core Bot** - Red now handles more things prior to connecting to discord to reduce issues during the initial load. (:issue:`3045`)
+- **Core Bot** - Red will now send a message when the invoked command is DM-only. (:issue:`3057`)
+- **Core Bot** - All ``y/n`` confirmations in cli commands are now unified. (:issue:`3060`)
+- **Core Bot** - Changed ``[p]info`` to say "This bot is an..." instead of "This is an..." for clarity. (:issue:`3121`)
+- **Core Bot** - ``redbot-setup`` will now use the instance name in default data paths to avoid creating a second instance with the same data path. (:issue:`3171`)
+- **Core Bot** - Instance names can now only include characters A-z, numbers, underscores, and hyphens. Old instances are unaffected by this change. (:issue:`3171`)
+- **Core Bot** - Added the Python executable field to ``[p]debuginfo``. (:issue:`3184`)
+- **Core Bot** - When Red prompts for a token, it will now print a link to the guide explaining how to obtain a token. (:issue:`3204`)
+- **Core Bot** - ``redbot-setup`` will no longer log to disk. (:issue:`3269`)
+- **Core Bot** - The lib folder is now cleared on minor Python version changes. ``[p]cog reinstallreqs`` in Downloader can be used to regenerate the lib folder for a new Python version. (:issue:`3274`)
+- **Core Bot** - If Red detects operating system or architecture change, it will now warn the owner about possible problems with the lib folder. (:issue:`3274`)
+- **Core Bot** - Bumped dependency versions. (:issue:`3288`)
+- **Core Bot** - Bumped Red-Lavalink version. (:issue:`3290`)
+- **Admin** - Changed ``[p]announce ignore`` and ``[p]announce channel`` to ``[p]announceset ignore`` and ``[p]announceset channel``. (:issue:`3250`)
+- **Admin** - Changed ``[p]selfrole <role>`` to ``[p]selfrole add <role>``, changed ``[p]selfrole add`` to ``[p]selfroleset add`` , and changed ``[p]selfrole delete`` to ``[p]selfroleset remove``. (:issue:`3250`)
+- **Admin** - Added custom issue messages for adding and removing roles, this makes it easier to create translations. (:issue:`3016`)
+- **Audio** - ``[p]playlist download`` will now compress playlists larger than the server attachment limit and attempt to send that. (:issue:`3279`)
+- **Audio** - ``[p]playlist upload`` will now load playlists generated via ``[p]playlist download`` much faster if the playlist uses the new scheme. (:issue:`2861`)
+- **Audio** - ``[p]playlist`` commands now can be used by everyone regardless of DJ settings, however it will respect DJ settings when creating/modifying playlists in the server scope. (:issue:`2861`)
+- **Audio** - Spotify, Youtube Data, and Lavalink API calls can be cached to avoid repeated calls in the future, see ``[p]audioset cache``. (:issue:`2890`)
+- **Audio** - Playlists will now start playing as soon as first track is loaded. (:issue:`2890`)
+- **Audio** - ``[p]audioset localpath`` can set a path anywhere in your machine now. Note: This path needs to be visible by ``Lavalink.jar``. (:issue:`2904`)
+- **Audio** - ``[p]queue`` now works when there are no tracks in the queue, showing the track currently playing. (:issue:`2904`)
+- **Audio** - ``[p]audioset settings`` now reports Red Lavalink version. (:issue:`2904`)
+- **Audio** - Adding and removing reactions in Audio is no longer a blocking action. (:issue:`2904`)
+- **Audio** - When shuffle is on, queue now shows the correct play order. (:issue:`2904`)
+- **Audio** - ``[p]seek`` and ``[p]skip`` can be used by user if they are the song requester while DJ mode is enabled and votes are disabled. (:issue:`2904`)
+- **Audio** - Adding a playlist and an album to a saved playlist skips tracks already in the playlist. (:issue:`2904`)
+- **Audio** - DJ mode is now turned off if the DJ role is deleted. (:issue:`2904`)
+- **Audio** - When playing a localtrack, ``[p]play`` and ``[p]bumpplay`` no longer require the use of the prefix "localtracks\\".
+
+  Before: ``[p]bumpplay localtracks\\ENM\\501 - Inside The Machine.mp3``
+  Now: ``[p]bumpplay ENM\\501 - Inside The Machine.mp3``
+  Now nested folders: ``[p]bumpplay Parent Folder\\Nested Folder\\track.mp3`` (:issue:`2904`)
+- **Audio** - Removed commas in explanations about how to set API keys. (:issue:`2905`)
+- **Audio** - Expanded local track support to all file formats (m3u, m4a, mp4, etc). (:issue:`2940`)
+- **Audio** - Cooldowns are now reset upon failure of commands that have a cooldown timer. (:issue:`2940`)
+- **Audio** - Improved the explanation in the help string for ``[p]audioset emptydisconnect``. (:issue:`3051`)
+- **Audio** - Added a typing indicator to playlist dedupe. (:issue:`3058`)
+- **Audio** - Exposed clearer errors to users in the play commands. (:issue:`3085`)
+- **Audio** - Better error handling when the player is unable to play multiple tracks in the sequence. (:issue:`3165`)
+- **CustomCommands** - The group command ``[p]cc create`` can now be used to create simple CCs without specifying "simple". (:issue:`1767`)
+- **CustomCommands** - Added a query option for CC typehints for URL-based CCs. (:issue:`3228`)
+- **CustomCommands** - Now uses the ``humanize_list`` utility for iterable parameter results, e.g. ``{#:Role.members}``. (:issue:`3277`)
+- **Downloader** - Downloader will now check if the Python and bot versions match requirements in ``info.json`` during update. (:issue:`1866`)
+- **Downloader** - ``[p]cog install`` now accepts multiple cog names. (:issue:`2527`)
+- **Downloader** - When passing cogs to ``[p]cog update``, it will now only update those cogs, not all cogs from the repo those cogs are from. (:issue:`2527`)
+- **Downloader** - Added error messages for failures when installing/reinstalling requirements and copying cogs and shared libraries. (:issue:`2571`)
+- **Downloader** - ``[p]findcog`` now uses sanitized urls (without HTTP Basic Auth fragments). (:issue:`3129`)
+- **Downloader** - ``[p]repo info`` will now show the repo's url, branch, and authors. (:issue:`3225`)
+- **Downloader** - ``[p]cog info`` will now show cog authors. (:issue:`3225`)
+- **Downloader** - ``[p]findcog`` will now show the repo's branch. (:issue:`3225`)
+- **Economy** - Slots now has a 62.5% expected payout and will not inflate economy when spammed. (:issue:`2875`)
+- **Image** - Updated the giphycreds command to match the formatting of the other API commands. (:issue:`2905`)
+- **Image** - Removed commas from explanations about how to set API keys. (:issue:`2905`)
+- **Mod** - Slowmode now accepts integer-only inputs as seconds. (:issue:`2884`)
+- **Permissions** - Better explained the usage of commands with the ``<who_or_what>`` argument. (:issue:`2991`)
+- **Streams** - Removed commas from explanations about how to set API keys. (:issue:`2905`)
+
+Removals
+********
+
+- **Core Bot** - ``[p]set owner`` and ``[p]set token`` have been removed in favor of ``redbot --edit`` (:issue:`2928`)
+- **Core Bot** - Shared libraries are marked for removal in Red 3.4. (:issue:`3106`)
+- **Core Bot** - Removed ``[p]backup``. Use the cli command ``redbot-setup backup`` instead. (:issue:`3235`)
+- **Core Bot** - Removed the functions ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` from ``redbot.core.utils``. (:issue:`3240`)
+- **Core Bot** - Removed a lot of the functionality of ``redbot-launcher`` and deprecated what's left (:issue:`3289`)
+
+Fixes
+*****
+
+- **Core Bot** - Help now properly hides disabled commands. (:issue:`2863`)
+- **Core Bot** - Modlog entries now show up properly without the mod cog loaded. (:issue:`2897`)
+- **Core Bot** - Fixed an error in ``[p]reason`` when setting the reason for a case without a moderator. (:issue:`2908`)
+- **Core Bot** - Removed potential for additional bad API calls per ban/unban. (:issue:`2945`)
+- **Core Bot** - The ``[p]invite`` command no longer errors when a user has the bot blocked or DMs disabled in the server. (:issue:`2948`)
+- **Core Bot** - Stopped using the ``:`` character in backup's filename - Windows doesn't accept it. (:issue:`2954`)
+- **Core Bot** - ``redbot-setup delete`` no longer errors with "unexpected keyword argument". (:issue:`2955`)
+- **Core Bot** - ``redbot-setup delete`` no longer prompts about backup when the user passes the option ``--no-prompt``. (:issue:`2956`)
+- **Core Bot** - Cleaned up the ``[p]inviteset public`` and ``[p]inviteset perms`` help strings.  (:issue:`2963`)
+- **Core Bot** - ```[p]embedset user`` now only affects DM's. (:issue:`2966`)
+- **Core Bot** - Fixed an unfriendly error when the provided instance name doesn't exist. (:issue:`2968`)
+- **Core Bot** - Fixed the help text and response of ``[p]set usebotcolor`` to accurately reflect what the command is doing. (:issue:`2974`)
+- **Core Bot** - Red no longer types infinitely when a command with a cooldown is called within the last second of a cooldown. (:issue:`2985`)
+- **Core Bot** - Removed f-string usage in the launcher to prevent our error handling from causing an error. (:issue:`3002`)
+- **Core Bot** - Fixed an error in ``[p]uptime`` when the uptime is under a second. (:issue:`3009`)
+- **Core Bot** - Added quotation marks to the response of ``[p]helpset tagline`` so that two consecutive full stops do not appear. (:issue:`3010`)
+- **Core Bot** - Fixed an issue with clearing rules in permissions. (:issue:`3014`)
+- **Core Bot** - Added a 3rd-party lib folder to ``sys.path`` before loading cogs. This prevents issues with 3rd-party cogs failing to load when Downloader is not loaded to install requirements. (:issue:`3036`)
+- **Core Bot** - Red will now properly send a message when the invoked command is guild-only. (:issue:`3057`)
+- **Core Bot** - Arguments ``--co-owner`` and ``--load-cogs`` now properly require at least one argument to be passed. (:issue:`3060`)
+- **Core Bot** - Now always appends the 3rd-party lib folder to the end of ``sys.path`` to avoid shadowing Red's dependencies. (:issue:`3062`)
+- **Core Bot** - Fixed the generation of the ``repos.json`` file in the backup process. (:issue:`3114`)
+- **Core Bot** - Added handling for invalid folder names in the data path gracefully in ``redbot-setup`` and ``redbot --edit``. (:issue:`3171`)
+- **Core Bot** - ``--owner`` and ``-p`` cli flags now work when added from launcher. (:issue:`3174`)
+- **Core Bot** - Red will now prevent users from locking themselves out with localblacklist. (:issue:`3207`)
+- **Core Bot** - Fixed help ending up a little too large for discord embed limits. (:issue:`3208`)
+- **Core Bot** - Fixed formatting issues in commands that list whitelisted/blacklisted users/roles when the list is empty. (:issue:`3219`)
+- **Core Bot** - Red will now prevent users from locking the guild owner out with localblacklist (unless the command caller is bot owner). (:issue:`3221`)
+- **Core Bot** - Guild owners are no longer affected by the local whitelist and blacklist. (:issue:`3221`)
+- **Admin** - Fixed ``[p]announce`` failing after encountering an error attempting to message the bot owner. (:issue:`3166`)
+- **Admin** - Improved the clarity of user facing messages when the user is not allowed to do something due to Discord hierarchy rules. (:issue:`3250`)
+- **Admin** - Fixed some role managing commands not properly checking if Red had ``manage_roles`` perms before attempting to manage roles. (:issue:`3250`)
+- **Admin** - Fixed ``[p]editrole`` commands not checking if roles to be edited are higher than Red's highest role before trying to edit them. (:issue:`3250`)
+- **Admin** - Fixed ``[p]announce ignore`` and ``[p]announce channel`` not being able to be used by guild owners and administrators. (:issue:`3250`)
+- **Audio** - ``[p]playlist remove`` now removes the playlist url if the playlist was created through ``[p]playlist save``. (:issue:`2861`)
+- **Audio** - Users are no longer able to accidentally overwrite existing playlist if a new one with the same name is created/renamed. (:issue:`2861`)
+- **Audio** - ``[p]audioset settings`` no longer shows lavalink JAR version. (:issue:`2904`)
+- **Audio** - Fixed a ``KeyError: loadType`` when trying to play tracks. (:issue:`2904`)
+- **Audio** - ``[p]audioset settings`` now uses ``ctx.is_owner()`` to check if the context author is the bot owner. (:issue:`2904`)
+- **Audio** - Fixed track indexs being off by 1 in ``[p]search``. (:issue:`2940`)
+- **Audio** - Fixed an issue where updating your Spotify and YouTube Data API tokens did not refresh them. (:issue:`3047`)
+- **Audio** - Fixed an issue where the blacklist was not being applied correctly. (:issue:`3047`)
+- **Audio** - Fixed an issue in ``[p]audioset restrictions blacklist list`` where it would call the list a ``Whitelist``. (:issue:`3047`)
+- **Audio** - Red's status is now properly cleared on emptydisconnect. (:issue:`3050`)
+- **Audio** - Fixed a console spam caused sometimes when auto disconnect and auto pause are used. (:issue:`3123`)
+- **Audio** - Fixed an error that was thrown when running ``[p]audioset dj``. (:issue:`3165`)
+- **Audio** - Fixed a crash that could happen when the bot can't connect to the lavalink node. (:issue:`3238`)
+- **Audio** - Restricted the number of songs shown in the queue to first 500 to avoid heartbeats. (:issue:`3279`)
+- **Audio** - Added more cooldowns to playlist commands and restricted the queue and playlists to 10k songs to avoid bot errors. (:issue:`3286`)
+- **Audio** - Lavalink will now be restarted after an unexpected shutdown. (:issue:`3033`)
+- **Audio** - Escaped track descriptions so that they do not break markdown. (:issue:`3047`)
+- **Audio** - Fixed an issue where calling audio commands when not in a voice channel could result in a crash. (:issue:`3120`)
+- **Audio** - Fixed an issue where some YouTube playlists were being recognised as single tracks. (:issue:`3104`)
+- **Downloader** - Made the regex for repo names use raw strings to stop causing a ``DeprecationWarning`` for invalid escape sequences. (:issue:`2571`)
+- **Downloader** - Downloader will no longer attempt to install cogs that are already installed. (:issue:`2571`)
+- **Downloader** - Repo names can now only contain the characters listed in the help text (A-Z, 0-9, underscores, and hyphens). (:issue:`2827`)
+- **Downloader** - ``[p]findcog`` no longer attempts to find a cog for commands without a cog. (:issue:`2902`)
+- **Downloader** - Downloader will no longer attempt to install a cog with same name as another cog that is already installed. (:issue:`2927`)
+- **Downloader** - Added error handling for when a remote repository or branch is deleted, now notifies the which repository failed and continues to update the others. (:issue:`2936`)
+- **Downloader** - ``[p]cog install`` will no longer error if a cog has an empty install message. (:issue:`3024`)
+- **Downloader** - Made ``redbot.cogs.downloader.repo_manager.Repo.clean_url`` work with relative urls. This property is ``str`` type now. (:issue:`3141`)
+- **Downloader** - Fixed an error on repo add from empty string values for the ``install_msg`` info.json field. (:issue:`3153`)
+- **Downloader** - Disabled all git auth prompts when adding/updating a repo with Downloader. (:issue:`3159`)
+- **Downloader** - ``[p]findcog`` now properly works for cogs with less typical folder structure. (:issue:`3177`)
+- **Downloader** - ``[p]cog uninstall`` now fully unloads cog - the bot will not try to load it on next startup. (:issue:`3179`)
+- **Economy** - Fixed a crash seen when calling economy commands in DM with a global bank. (:issue:`2997`)
+- **Mod** - ``[p]userinfo`` no longer breaks when a user has an absurd numbers of roles. (:issue:`2910`)
+- **Mod** - Fixed Mod cog not recording username changes for ``[p]names`` and ``[p]userinfo`` commands. (:issue:`2918`)
+- **Mod** - Fixed ``[p]modset deletedelay`` deleting non-command messages. (:issue:`2924`)
+- **Mod** - Fixed an error when reloading Mod. (:issue:`2932`)
+- **Permissions** - Defaults are now cleared properly when clearing all rules. (:issue:`3037`)
+- **Streams** - Fixed a ``TypeError`` in the ``TwitchStream`` class when calling Twitch client_id from Red shared APIs tokens. (:issue:`3042`)
+- **Streams** - Changed the ``stream_alert`` function for Twitch alerts to make it work with how the ``TwitchStream`` class works now. (:issue:`3042`)
+- **Trivia** - Fixed a bug where ``[p]trivia leaderboard`` failed to run. (:issue:`2911`)
+- **Trivia Lists** - Fixed a typo in Ahsoka Tano's name in the Starwars trivia list. (:issue:`2909`)
+- **Trivia Lists** - Fixed a typo in the Greek mythology trivia list regarding Hermes' staff. (:issue:`2994`)
+- **Trivia Lists** - Fixed a question in the Overwatch trivia list that accepted blank responses. (:issue:`2996`)
+- **Trivia Lists** - Fixed questions and answers that were incorrect in the Clash Royale trivia list. (:issue:`3236`)
 
 
-New Features
-************
+Developer changelog
+-------------------
 
-- Added ``[p]repo update [repos]`` which updates repos without updating the cogs from them. (:issue:`2527`)
-- Added ``[p]cog installversion <repo_name> <revision> <cogs>`` which installs cogs from a specified revision (commit, tag) of the given repo. When using this command, the cog will automatically be pinned. (:issue:`2527`)
-- Added ``[p]cog pin <cogs>`` and ``[p]cog unpin <cogs>`` for pinning cogs. Cogs that are pinned will not be updated when using update commands. (:issue:`2527`)
-- Added ``[p]cog checkforupdates`` that lists which cogs can be updated (including pinned cog) without updating them. (:issue:`2527`)
-- Added ``[p]cog updateallfromrepos <repos>`` that updates all cogs from the given repos. (:issue:`2527`)
-- Added ``[p]cog updatetoversion <repo_name> <revision> [cogs]`` that updates all cogs or ones of user's choosing to chosen revision of the given repo. (:issue:`2527`)
-- Added ``[p]cog reinstallreqs`` that reinstalls cog requirements and shared libraries for all installed cogs. (:issue:`3167`)
+Breaking Changes
+****************
 
+- Modlog casetypes no longer have an attribute for auditlog action type (:issue:`2897`)
+- Removed ``redbot.core.modlog.get_next_case_number()`` (:issue:`2908`)
+- Removed ``bank.MAX_BALANCE``, use `redbot.core.bank.get_max_balance()` from now on (:issue:`2926`)
+- The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned.  (:issue:`2967`)
 
-Documentation Changes
-*********************
+  New methods for this include:
 
-- Added ``redbot.cogs.downloader.installable.InstalledModule`` to Downloader's framework docs. (:issue:`2527`)
-- Removed API References for Downloader. (:issue:`3234`)
+    - `Red.get_shared_api_tokens()`
+    - `Red.set_shared_api_tokens()`
+    - `Red.get_embed_color()`
+    - `Red.get_embed_colour()`
+    - `Red.get_admin_roles()`
+    - `Red.get_admin_role_ids()`
+    - `Red.get_mod_roles()`
+    - `Red.get_mod_role_ids()`
+- Reserved some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES`` (:issue:`2973`)
+- Removed ``bot._counter``, Made a few more attributes private (``cog_mgr``, ``main_dir``) (:issue:`2976`)
+- Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord. (:issue:`3073`)
 
+    This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it
+- Qualified command names are limited to a maximum of 60 characters (:issue:`3223`)
 
-Image
------
+New Functionality
+*****************
+
+- Added functions to acquire locks on Config groups and values. These locks are acquired by default when calling a value as a context manager. See `Value.get_lock()` for details (:issue:`2654`)
+- Added methods to Config for accessing things by id without mocked objects (:issue:`2804`)
+
+    - `Config.guild_from_id()`
+    - `Config.user_from_id()`
+    - `Config.role_from_id()`
+    - `Config.channel_from_id()`
+    - `Config.member_from_ids()`
+      - This one requires multiple ids, one for the guild, one for the user
+      - Consequence of discord's object model
+- Added `redbot.core.utils.chat_formatting.humanize_number()` function to convert numbers into text that respects the current locale. (:issue:`2836`)
+- Added ``redbot.core.modlog.get_latest_case()`` to fetch the case object for the most recent ModLog case. (:issue:`2908`)
+- Added a few methods and classes replacing direct config access (which is no longer supported) (:issue:`2976`)
+
+   - `Red.allowed_by_whitelist_blacklist()`
+   - `Red.get_valid_prefixes()`
+   - `Red.remove_shared_api_tokens()`
+   - `redbot.core.commands.help.HelpSettings`
+- New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for a service are updated. (:issue:`3134`)
+- Added the method `Red.wait_until_red_ready()` that waits until Red's post connection startup is done. (:issue:`3273`)
+- Added the function `redbot.core.utils.chat_formatting.text_to_file()` to prepare a long text to be sent as a file (:issue:`2849`)
+- Added ``use_cached`` and ``images_only`` kwargs to `redbot.core.utils.tunnel.Tunnel.files_from_attach()` (:issue:`2885`)
 
 Enhancements
 ************
 
-- Updated the giphycreds command to match the formatting of the other API commands. (:issue:`2905`)
-- Removed commas from explanations about how to set API keys. (:issue:`2905`)
+- Allowed passing ``cls`` in the `redbot.core.commands.group()` decorator. (:issue:`2881`)
+- Some generic modlog casetypes are now pre-registered for cog creator use. (:issue:`2897`)
+- `Red.send_filtered()` now returns the message that is sent. (:issue:`3052`)
+- `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now log when they are not able to find the owner notification destination. (:issue:`3273`)
+
+Fixes
+*****
+
+- Fixed `Red.remove_command()` throwing an error when trying to remove a non-existent command. (:issue:`2888`)
+- `Command.can_see()` now works as intended for disabled commands. (:issue:`2892`)
+- Bank functions now check the recipient balance before transferring and stop the transfer if the recipient's balance will go above the maximum allowed balance. (:issue:`2923`)
+- Fixed `MessagePredicate.greater()` and `MessagePredicate.less()` allowing any valid int instead of only valid ints/floats that are greater/less than the given value. (:issue:`3004`)
+- Fixed ``is_automod_immune``'s handling of the guild check and added support for checking webhooks. (:issue:`3100`)
+- Fixed an attribute error that can be raised in `redbot.core.utils.chat_formatting.humanize_timedelta()` if ``seconds = 0``. (:issue:`3231`)
+- Fixed `Context.clean_prefix` issues resulting from undocumented changes from discord. (:issue:`3249`)
+- ``Red.owner_id`` is now set in the post connection startup. (:issue:`3273`)
+- `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now wait until Red is done with post connection startup to ensure owner ID is available. (:issue:`3273`)
 
 
-Mod
----
+Documentation changes
+---------------------
 
-Bug Fixes
-*********
+New Documentation
+*****************
 
-- ``[p]userinfo`` no longer breaks when a user has an absurd numbers of roles. (:issue:`2910`)
-- Fixed Mod cog not recording username changes for ``[p]names`` and ``[p]userinfo`` commands. (:issue:`2918`)
-- Fixed ``[p]modset deletedelay`` deleting non-command messages. (:issue:`2924`)
-- Fixed an error when reloading Mod. (:issue:`2932`)
-
-
-Enhancements
-************
-
-- Slowmode now accepts integer-only inputs as seconds. (:issue:`2884`)
-
-
-Permissions
------------
-
-Bug Fixes
-*********
-
-- Defaults are now cleared properly when clearing all rules. (:issue:`3037`)
-
-
-Enhancements
-************
-
-- Better explained the usage of commands with the ``<who_or_what>`` argument. (:issue:`2991`)
-
-
-Streams
--------
-
-Bug Fixes
-*********
-
-- Fixed a ``TypeError`` in the ``TwitchStream`` class when calling Twitch client_id from Red shared APIs tokens. (:issue:`3042`)
-- Changed the ``stream_alert`` function for Twitch alerts to make it work with how the ``TwitchStream`` class works now. (:issue:`3042`)
-
+- Started the user guides covering cogs and the user interface of the bot. This includes, for now, a "Getting started" guide. (:issue:`1734`)
+- Added documentation for PM2 support. (:issue:`2105`)
+- Updated linux install docs, adding sections for Fedora Linux, Debian/Raspbian Buster, and openSUSE. (:issue:`2558`)
+- Created documentation covering what we consider a developer facing breaking change and the guarantees regarding them. (:issue:`2882`)
+- Added notes explaining the best practices with config. (:issue:`3149`)
+- Added a "Publishing cogs for V3" document explaining how to make user's cogs work with Downloader. (:issue:`3234`)
 
 Enhancements
 ************
 
-- Removed commas from explanations about how to set API keys. (:issue:`2905`)
+- Reworded the virtual environment guide to make it sound less scary. (:issue:`2920`)
+- Added more information about `redbot.core.utils.chat_formatting.humanize_timedelta()` into the docs. (:issue:`2986`)
+- Added a direct link to the "Installing Red" section in "Installing using powershell and chocolatey". (:issue:`2995`)
+- Updated Git PATH install (Windows), capitalized some words, stopped mentioning the launcher. (:issue:`2998`)
+- Added autostart documentation for Red users who installed Red inside of a virtual environment. (:issue:`3005`)
+- Updated the Cog Creation guide with a note regarding the Develop version as well as the folder layout for local cogs. (:issue:`3021`)
+- Added links to the getting started guide at the end of installation guides. (:issue:`3025`)
+- Added proper docstrings to enums that show in drivers docs. (:issue:`3035`)
+- Discord.py doc links will now always use the docs for the currently used version of discord.py. (:issue:`3053`)
+- Added ``|DPY_VERSION|`` substitution that will automatically get replaced by the current discord.py version. (:issue:`3053`, :issue:`3082`)
+- Added MS Azure to the host list. (:issue:`3083`)
+- Added information about ``info.json``'s ``min_python_version`` key in Downloader Framework docs. (:issue:`3124`)
+- Documented additional attributes in Context. (:issue:`3151`)
+- Updated Windows docs with up to date dependency instructions. (:issue:`3188`)
+- Added a line about setuptools and wheel. (:issue:`3262`)
+- Ensured development builds are not advertised to the wrong audience. (:issue:`3292`)
+- Clarified the usage intent of some of the chat formatting functions. (:issue:`3292`)
 
+Removals
+********
 
-Trivia
-------
+- **Downloader** - Removed API References for Downloader. (:issue:`3234`)
 
-Bug Fixes
-*********
+Fixes
+*****
 
-- Fixed a typo in Ahsoka Tano's name in the Starwars trivia list. (:issue:`2909`)
-- Fixed a bug where ``[p]trivia leaderboard`` failed to run. (:issue:`2911`)
-- Fixed a typo in the Greek mythology trivia list regarding Hermes' staff. (:issue:`2994`)
-- Fixed a question in the Overwatch trivia list that accepted blank responses. (:issue:`2996`)
-- Fixed questions and answers that were incorrect in the Clash Royale trivia list. (:issue:`3236`)
-
-
-Enhancements
-************
-
-- Added trivia lists for Prince and Michael Jackson lyrics. (:issue:`12`)
+- Fixed the user parameter being labeled as ``discord.TextChannel`` instead of ``discord.abc.User`` in ``redbot.core.utils.predicates``. (:issue:`2914`)
+- Driver docs no longer show twice. (:issue:`2972`)
+- Added missing descriptions for function returns. (:issue:`3054`)
+- Fixed broken docs for ``redbot.core.commands.Context.react_quietly``. (:issue:`3257`)
+- Updated the docs footer copyright to 2018-2019. (:issue:`3105`)
+- Updated copyright notices on License and RTD config to 2020. (:issue:`3259`)
 
 
 Redbot 3.1.9 (2020-01-08)
