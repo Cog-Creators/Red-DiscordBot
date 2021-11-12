@@ -1,12 +1,12 @@
 .. _install-raspberry-pi-os-11:
 
-=================================
-Installing Red on Raspberry Pi OS
-=================================
+=============================================
+Installing Red on Raspberry Pi OS 11 Bullseye
+=============================================
 
 .. note::
 
-    This guide can only be used with Raspberry Pi OS 11 (Bullseye),
+    This guide can only be used with Raspberry Pi OS 11 Bullseye,
     it will not work with any older (e.g. Raspberry Pi OS 10 Buster)
     or newer (e.g. Raspberry Pi OS 12 Bookworm) releases.
     You can check your version of Raspberry Pi OS by running:
