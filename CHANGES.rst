@@ -477,7 +477,7 @@ Deprecations
 Fixes
 *****
 
-- **Core - API Tokens** - Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
+- **API Tokens** - Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
 
 
 Documentation changes
@@ -613,7 +613,7 @@ Changes
 - **Cogs - Modlog** - Added typing indicator to ``[p]casesfor`` command (:issue:`4426`)
 - **Cogs - Reports** - Reports now use the default embed color of the bot (:issue:`4800`)
 - **Cogs - Trivia** - Payout for trivia sessions ending in a tie now gets split between all the players with the highest score (:issue:`3931`, :issue:`4649`)
-- **Cogs - Trivia Lists** - Updated answers regarding some of the hero's health and abilities in the ``overwatch`` trivia list (:issue:`4805`)
+- **Cogs - Trivia - Lists** - Updated answers regarding some of the hero's health and abilities in the ``overwatch`` trivia list (:issue:`4805`)
 
 Fixes
 *****
@@ -916,7 +916,7 @@ Security
 
 **NOTE:** If you can't update immediately, we recommend globally disabling the affected command until you can.
 
-- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`__.
+- **Cogs - Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`__.
 
 Additions
 *********
@@ -2257,7 +2257,7 @@ Removals
 - **Core - Bot Commands** - ``[p]set owner`` and ``[p]set token`` have been removed in favor of ``redbot --edit`` (:issue:`2928`)
 - **Core - Bot Commands** - Removed ``[p]backup``. Use the cli command ``redbot-setup backup`` instead (:issue:`3235`)
 - **Core - Command-line Interfaces** - Removed a lot of the functionality of ``redbot-launcher`` and deprecated what's left (:issue:`3289`)
-- **Downloader** - Shared libraries are marked for removal in Red 3.4 (:issue:`3106`)
+- **Cogs - Downloader** - Shared libraries are marked for removal in Red 3.4 (:issue:`3106`)
 
 Fixes
 *****
