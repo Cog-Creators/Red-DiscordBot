@@ -18,13 +18,13 @@ Read before updating
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Bot Commands** - Added the new native Discord timestamp in the ``[p]uptime`` command (:issue:`5323`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Command-line Interfaces** - ``redbot-setup delete`` command no longer requires database connection if the data deletion was not requested (:issue:`5312`, :issue:`5313`)
 
@@ -38,13 +38,13 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added install guide for CentOS Stream 8, Oracle Linux 8.4-8.x, and Rocky Linux 8 (:issue:`5328`)
 
-Enhancements
-************
+Changes
+*******
 
 - Each operating system now has a dedicated install guide (:issue:`5328`)
 - Install guides for RHEL derivatives no longer require the use of pyenv (:issue:`5328`)
@@ -74,8 +74,8 @@ Read before updating
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
 - **Core - Bot Commands** - Added a new ``[p]diagnoseissues`` command to allow the bot owners to diagnose issues with various command checks with ease (:issue:`4717`, :issue:`5243`)
@@ -95,8 +95,8 @@ New Functionality
     This can be disabled with the ``[p]cleanupset notify`` command
 - **Cogs - Filter** - Added ``[p]filter clear`` and ``[p]filter channel clear`` commands for clearing the server's/channel's filter list (:issue:`4841`, :issue:`4981`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - Revamped the ``[p]debuginfo`` to make it more useful for... You guessed it, debugging! (:issue:`4997`, :issue:`5156`)
 
@@ -137,8 +137,8 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
 
@@ -162,15 +162,15 @@ New Functionality
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added a document about (privileged) intents and our stance regarding "public bots" (:issue:`5216`, :issue:`5221`)
 - Added install instructions for Debian 11 Bullseye (:issue:`5213`, :issue:`5217`)
 - Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
 
-Enhancements
-************
+Changes
+*******
 
 - Updated the commands in the install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
 
@@ -192,13 +192,13 @@ This is a hotfix release related to Red ceasing to use the Audio Global API serv
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Bot Commands** - ``applications.commands`` scope can now be included in the invite URL returned from ``[p]invite`` by enabling it with``[p]inviteset commandscope``
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - ``[p]set serverprefix`` command will now prevent the user from setting a prefix with length greater than 20 characters (:issue:`5091`, :issue:`5117`)
 - **Core - Bot Commands** - ``[p]set prefix`` command will now warn the user when trying to set a prefix with length greater than 20 characters (:issue:`5091`, :issue:`5117`)
@@ -229,8 +229,8 @@ This is a hotfix release fixing a crash involving guild uploaded stickers.
 End-user changelog
 ------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Dependencies** - discord.py version has been bumped to 1.7.3 (:issue:`5129`)
 
@@ -269,15 +269,15 @@ Read before updating
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Cogs - Streams** - In message template, ``{stream.display_name}`` can now be used to refer to streamer's display name (:issue:`5050`, :issue:`5066`)
 
     - This is not always the same as ``{stream}`` which refers to the streamer's channel or username
 
-Enhancements
-************
+Changes
+*******
 
 - Rephrased a few strings and fixed maaaaany grammar issues and typos (:issue:`4793`, :issue:`4832`, :issue:`4955`, :issue:`4966`, :issue:`5015`, :issue:`5019`, :issue:`5029`, :issue:`5038`, :issue:`5055`, :issue:`5080`, :issue:`5081`)
 - **Cogs - Admin** - The cog will now log when it leaves a guild due to the serverlock (:issue:`5008`, :issue:`5073`)
@@ -328,8 +328,8 @@ Fixes
 Developer changelog
 -------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Dependencies** - Bumped discord.py to 1.7.2 (:issue:`5066`)
 - **Cogs - Dev** - ``[p]eval``, ``[p]repl``, and ``[p]debug`` commands now, in addition to ``py``, support code blocks with ``python`` syntax (:issue:`5083`)
@@ -344,8 +344,8 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `a guide for making auto-restart service on Mac <autostart_mac>` (:issue:`4082`, :issue:`5020`)
 - Added `cog guide for core commands <cog_guides/core>` (:issue:`1734`, :issue:`4597`)
@@ -359,8 +359,8 @@ New Documentation
 - Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
 - Added information on how to set the bot not to start on boot anymore to auto-restart docs (:issue:`5020`)
 
-Enhancements
-************
+Changes
+*******
 
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`5025`)
 - Cog creation guide now includes the ``bot`` as an argument to the cog class (:issue:`4988`)
@@ -400,8 +400,8 @@ Read before updating
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added per-command embed settings (:issue:`4049`)
 
@@ -412,8 +412,8 @@ New Functionality
 
     - ``[p]triviaset usespoilers`` command can be used to enable/disable this option
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - The ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
 - **Core - Bot Commands** - Commands for listing global and local allowlists and blocklists will now, in addition to IDs, contain user/role names (:issue:`4839`)
@@ -459,8 +459,8 @@ Fixes
 Developer changelog
 -------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Dependencies** - Bumped discord.py version to 1.7.0 (:issue:`4928`)
 
@@ -483,13 +483,13 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `cog guide for Image cog <cog_guides/image>` (:issue:`4821`)
 
-Enhancements
-************
+Changes
+*******
 
 - Added a note about updating cogs in update message and documentation (:issue:`4910`)
 - `getting-started` now contains an explanation of parameters that can take an arbitrary number of arguments (:issue:`4888`, :issue:`4889`)
@@ -520,8 +520,8 @@ Security
 
 - **Cogs - Mutes** - Added proper permission checks to ``[p]muteset senddm`` and ``[p]muteset showmoderator`` (:issue:`4849`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - Updated the ``[p]info`` command to more clearly indicate that the instance is owned by a team (:issue:`4851`)
 
@@ -535,8 +535,8 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
 - Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
@@ -564,8 +564,8 @@ Security
 
 - **Cogs - Mutes** - Added more role hierarchy checks to ensure permission escalations cannot occur on servers with a careless configuration (:issue:`4741`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Help now includes command aliases in the command help (:issue:`3040`)
 
@@ -582,8 +582,8 @@ New Functionality
     - Added ``[p]muteset showmoderator`` to set whether the DM sent to the user should include the name of the moderator that muted the user (function disabled by default)
 - **Cogs - Trivia - Lists** - Added new Who's That Pokémon - Gen. VI trivia list (:issue:`4785`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with a command name that is already taken by a different cog (:issue:`3870`)
 - **Core - Command-line Interfaces** - Improvements and fixes for our new (colorful) logging (:issue:`4702`, :issue:`4726`)
@@ -638,8 +638,8 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
 - **Cogs - Dev** - Cogs can now add their own variables to the environment of ``[p]debug``, ``[p]eval``, and ``[p]repl`` commands (:issue:`4667`)
@@ -650,8 +650,8 @@ New Functionality
         - `bot.remove_dev_env_value() <Red.remove_dev_env_value()>`
 - **Utilities** - Added a function `redbot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Dependencies** - Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
 
@@ -659,13 +659,13 @@ Enhancements
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
 
-Enhancements
-************
+Changes
+*******
 
 - Added information about the Red Index to `guide_publish_cogs` (:issue:`4778`)
 - Restructured the host list (:issue:`4710`)
@@ -716,8 +716,8 @@ Read before updating
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Command-line Interfaces** - Red's logging will now shine in your terminal more than ever (:issue:`4577`)
 - **Cogs - Dev** - Added new ``[p]bypasscooldown`` command that allows owners to bypass command cooldowns (:issue:`4440`)
@@ -727,8 +727,8 @@ New Functionality
 - **Cogs - Trivia - Lists** - Added ``whosthatpokemon5`` trivia list containing Pokémon from the 5th generation (:issue:`4646`)
 - **Cogs - Trivia - Lists** - Added ``geography`` trivia list (:issue:`4618`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Added a friendly error when the duration provided to commands that use the ``commands.TimedeltaConverter`` converter is out of the maximum bounds allowed by Python interpreter (:issue:`4019`, :issue:`4628`, :issue:`4630`)
 - **Core - Bot Commands** - Improved consistency of command usage in the help messages within all commands in Core Red (:issue:`4589`)
@@ -753,13 +753,13 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Utilities** - `get_audit_reason()` can now be passed a ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - ``bot.remove_command()`` now returns the command object of the removed command as does the equivalent method from `discord.ext.commands.Bot` class (:issue:`4636`)
 
@@ -767,8 +767,8 @@ Enhancements
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `cog guide for Downloader cog <cog_guides/downloader>` (:issue:`4511`)
 - Added `cog guide for Economy cog <cog_guides/economy>` (:issue:`4519`)
@@ -797,14 +797,14 @@ Read before updating
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Bot Commands** - Added ``[p]set competing`` command that allows users to set the bot's competing status (:issue:`4607`, :issue:`4609`)
 - **Cogs - Audio** - Added support for SoundCloud HLS streams (:issue:`4608`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Cogs - Audio** - Improved AAC audio handling (:issue:`4608`)
 - **Cogs - Trivia** - ``[p]triviaset custom upload`` now ensures that the filename is lowercase when uploading (:issue:`4594`)
@@ -836,8 +836,8 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `guide for Cog Manager UI <cogmanagerui>` (:issue:`4152`)
 - Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
@@ -859,8 +859,8 @@ Read before updating
 End-user changelog
 ------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Command-line Interfaces** - Added info about the metadata file to ``redbot --debuginfo`` (:issue:`4557`)
 - **Cogs - Audio** - Commands in ``[p]llset`` group can now be used in DMs (:issue:`4562`)
@@ -878,8 +878,8 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `cog guide for Cleanup cog <cleanup>` (:issue:`4488`)
 
@@ -918,8 +918,8 @@ Security
 
 - **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`__.
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Locales and regional formats can now be set in individual guilds using ``[p]set locale`` and ``[p]set regionalformat`` (:issue:`3896`, :issue:`1970`)
 
@@ -944,8 +944,8 @@ New Functionality
 - **Cogs - Trivia - Lists** - Added new Who's That Pokémon - Gen. IV trivia list (:issue:`4434`)
 - **Cogs - Trivia - Lists** - Added new Hockey trivia list (:issue:`4384`)
 
-Enhancements
-************
+Changes
+*******
 
 - Replaced a few instances of Red with the bot name in command docstrings (:issue:`4470`)
 - **Core - Bot Commands** - Added a default color field to ``[p]set showsettings`` (:issue:`4498`, :issue:`4497`)
@@ -1007,12 +1007,12 @@ Developer changelog
 -------------------
 
 | **Important:**
-| #. Red now allows users to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `New Functionality changelog below <important-dev-341-1>` for more information.
+| #. Red now allows users to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Additions changelog below <important-dev-341-1>` for more information.
 
 .. _important-dev-341-1:
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added ``[all]`` and ``[dev]`` extras to the ``Red-DiscordBot`` package (:issue:`4443`)
 - **Core** - Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
@@ -1027,8 +1027,8 @@ New Functionality
 - **Utilities** - Added `redbot.core.utils.get_end_user_data_statement()` and `redbot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
 - **Utilities** - Added `redbot.core.utils.chat_formatting.quote()` to quote text in a message (:issue:`4425`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 - **Bank API** - Bank API methods now consistently throw TypeError if a non-integer amount is supplied (:issue:`4376`)
@@ -1048,14 +1048,14 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added custom group documentation and tutorial (:issue:`4416`, :issue:`2896`)
 - Added guide to creating a Bot Application in Discord Developer Portal, with enabling intents (:issue:`4502`)
 
-Enhancements
-************
+Changes
+*******
 
 - Clarified that naive ``datetime`` objects will be treated as local times for parameters ``created_at`` and ``until`` in `modlog.create_case()` (:issue:`4389`)
 - Replaced the link to the approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
@@ -1073,8 +1073,8 @@ Read before updating
 
 #. Red 3.4 comes with support for data deletion requests. Bot owners should read `red_core_data_statement` to ensure they know what information about their users is stored by the bot.
 #. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
-#. There's been a change in behavior of ``[p]tempban``. Look at `Enhancements changelog for Mod cog <important-340-1>` for full details.
-#. There's been a change in behavior of announcements in Admin cog. Look at `Enhancements changelog for Admin cog <important-340-1>` for full details.
+#. There's been a change in behavior of ``[p]tempban``. Look at `Changes changelog for Mod cog <important-340-1>` for full details.
+#. There's been a change in behavior of announcements in Admin cog. Look at `Changes changelog for Admin cog <important-340-1>` for full details.
 #. Red 3.4 comes with breaking changes for cog developers. Look at `Developer changelog <important-340-3>` for full details.
 
 End-user changelog
@@ -1085,8 +1085,8 @@ Security
 
 - **Cogs - Streams** - Fixed critical vulnerability that could allow remote code execution (CVE-2020-15147), see `security advisory GHSA-7257-96vg-qf6x <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-7257-96vg-qf6x>`__ for more information (:issue:`4183`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added per-guild cog disabling (:issue:`4043`, :issue:`3945`)
 
@@ -1101,8 +1101,8 @@ New Functionality
 
 .. _important-340-1:
 
-Enhancements
-************
+Changes
+*******
 
 - ``[p]set nickname``, ``[p]set serverprefix``, ``[p]streamalert``, and ``[p]streamset`` commands now can be run by users with permissions related to the actions they're making (:issue:`4109`)
 - Updated Red's emoji usage to ensure consistent rendering accross different devices (:issue:`4106`, :issue:`4105`, :issue:`4127`)
@@ -1139,8 +1139,8 @@ Developer changelog
 -------------------
 
 | **Important:**
-| #. Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the `Core Bot changelog below <important-dev-340-1>` for more information.
-| #. Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries in the `Core Bot changelog below <important-dev-340-1>` for more information.
+| #. Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the `Additions changelog below <important-dev-340-1>` for more information.
+| #. Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries in the `Additions changelog below <important-dev-340-1>` for more information.
 
 Breaking Changes
 ****************
@@ -1160,8 +1160,8 @@ Breaking Changes
 
 .. _important-dev-340-1:
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
@@ -1177,8 +1177,8 @@ New Functionality
 - **Commands Package** - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
 - **Commands Package** - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 - **Commands Package** - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
@@ -1198,8 +1198,8 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added admin user guide (:issue:`3081`)
 - Added alias user guide (:issue:`3084`)
@@ -1225,14 +1225,14 @@ Security
 
 - **Cogs - Streams** - Fixed critical vulnerability that could allow remote code execution (CVE-2020-15147), see `security advisory GHSA-7257-96vg-qf6x <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-7257-96vg-qf6x>`__ for more information (:issue:`4183`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Cogs - Trivia - Lists** - Added ``whosthatpokemon2`` trivia containing Pokémons from 2nd generation (:issue:`4102`)
 - **Cogs - Trivia - Lists** - Added ``whosthatpokemon3`` trivia containing Pokémons from 3rd generation (:issue:`4141`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Command-line Interfaces** - Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 - **Cogs - General** - Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4116`)
@@ -1278,16 +1278,16 @@ Redbot 3.3.10 (2020-07-09)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Cogs - Downloader** - Added ``[p]cog listpinned`` subcommand to see currently pinned cogs (:issue:`3974`)
 - **Cogs - Filter** - Added ``[p]filter list`` to show filtered words, and removed DMs when no subcommand was passed (:issue:`3973`)
 - **Cogs - Trivia - Lists** - Added new ``lotr`` trivia list (:issue:`3980`)
 - **Cogs - Trivia - Lists** - Added new ``r6seige`` trivia list (:issue:`4026`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - Added settings view commands for nearly all cogs. (:issue:`4041`)
 - **Core - Bot Commands** - Added more strings to be fully translatable by i18n. (:issue:`4044`)
@@ -1331,14 +1331,14 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Utilities** - Added the methods `map() <AsyncIter.map()>`, `find() <AsyncIter.find()>`, and `next() <AsyncIter.next()>` to `AsyncIter` (:issue:`3921`, :issue:`3887`)
 - **Vendored Packages** - Vendored the ``discord.ext.menus`` module (:issue:`4039`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Utilities** - Added new ``discord.com`` domain to ``INVITE_URL_RE`` common filter (:issue:`4012`)
 
@@ -1364,7 +1364,8 @@ Read before updating
 --------------------
 
 #. Bot owners can no longer restrict access to some commands in Permissions cog using global permissions rules. Look at `Security changelog <important-339-2>` for full details.
-#. There's been a change in behavior of warning messages. Look at `New Functionality changelog <important-339-1>` for full details.
+#. There's been a change in behavior of warning messages. Look at `Additions changelog <important-339-1>` for full details.
+
 
 End-user changelog
 ------------------
@@ -1393,13 +1394,13 @@ Security
 
 .. _important-339-1:
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Cogs - Warnings** - Warnings sent to users don't show the moderator who warned the user by default now. Newly added ``[p]warningset showmoderators`` command can be used to switch this behaviour (:issue:`3781`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - ``[p]info`` command can now be used when bot doesn't have Embed Links permission (:issue:`3907`, :issue:`3102`)
 - **Core - Bot Commands** - Improved instructions on obtaining user ID in help of ``[p]dm`` command (:issue:`3946`)
@@ -1425,8 +1426,8 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
@@ -1434,8 +1435,8 @@ New Functionality
 Documentation changes
 ---------------------
 
-Enhancements
-************
+Changes
+*******
 
 - Added Oracle Cloud to free hosting section in :ref:`host-list` (:issue:`3916`)
 
@@ -1449,15 +1450,15 @@ Redbot 3.3.8 (2020-05-29)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Cogs - Audio** - Added new option (settable with ``[p]audioset lyrics``) that makes Audio cog prefer (prioritize) tracks with lyrics (:issue:`3519`)
 - **Cogs - Audio** - Added global daily (historical) queues (:issue:`3518`)
 - **Cogs - Audio** - Added ``[p]audioset countrycode`` that allows to set the country code for spotify searches (:issue:`3528`)
 
-Enhancements
-************
+Changes
+*******
 
 - Few clarifications and typo fixes in few command help docstrings (:issue:`3817`, :issue:`3823`, :issue:`3837`, :issue:`3851`, :issue:`3861`)
 - **Core** - Red now includes information on how to update when sending information about being out of date (:issue:`3744`)
@@ -1500,8 +1501,8 @@ Developer changelog
 | If you're using RPC, please see the full annoucement about current state of RPC in main Red server
   `by clicking here <https://discord.com/channels/133049272517001216/411381123101491200/714560168465137694>`__.
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Red now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
 - **Core** - All bot owner IDs can now be found under ``bot.owner_ids`` attribute (:issue:`3793`)
@@ -1518,8 +1519,8 @@ Fixes
 Documentation changes
 ---------------------
 
-Enhancements
-************
+Changes
+*******
 
 - Added information about provisional status of RPC (:issue:`3862`)
 - Revised install instructions (:issue:`3847`)
@@ -1541,14 +1542,14 @@ Redbot 3.3.6 (2020-04-27)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Bot Commands** - Added ``[p]set avatar remove`` subcommand for removing bot's avatar (:issue:`3757`)
 - **Cogs - CustomCommands** - Added ``[p]cc raw`` command that gives you the raw response of a custom command for ease of copy pasting (:issue:`3795`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Various optimizations
 
@@ -1579,13 +1580,13 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Utilities** - Added `redbot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`, :issue:`3776`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Utilities** - `bold()`, `italics()`, `strikethrough()`, and `underline()` now accept ``escape_formatting`` argument that can be used to disable escaping of markdown formatting in passed text (:issue:`3742`)
 
@@ -1598,14 +1599,14 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added `document about updating Red <update_red>` (:issue:`3790`)
 - Updated install docs to include Ubuntu 20.04 (:issue:`3792`)
 
-Enhancements
-************
+Changes
+*******
 
 - ``pyenv`` instructions will now update ``pyenv`` if it's already installed (:issue:`3740`)
 - Updated Python version in ``pyenv`` instructions (:issue:`3740`)
@@ -1620,8 +1621,8 @@ Redbot 3.3.5 (2020-04-09)
 End-user changelog
 ------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - "Outdated" field no longer shows in ``[p]info`` when Red is up-to-date (:issue:`3730`)
 
@@ -1640,8 +1641,8 @@ Redbot 3.3.4 (2020-04-05)
 End-user changelog
 ------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Cogs - Alias** - ``[p]alias add`` now sends an error when command user tries to alias doesn't exist (:issue:`3710`, :issue:`3545`)
 
@@ -1654,8 +1655,8 @@ Fixes
 Developer changelog
 -------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Dependencies** - Bump dependencies, including update to discord.py 1.3.3 (:issue:`3723`)
 - **Utilities** - `redbot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
@@ -1669,8 +1670,8 @@ Fixes
 Documentation changes
 ---------------------
 
-Enhancements
-************
+Changes
+*******
 
 - Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
 
@@ -1689,8 +1690,8 @@ Security
 
 - **Cogs - Cleanup** - Removed regex support in ``[p]cleanup self`` (:issue:`3704`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
 - **Cogs - Cleanup** - Added ``[p]cleanup spam`` command that deletes duplicate messages from the last X messages and keeps only one copy (:issue:`3688`)
@@ -1700,8 +1701,8 @@ New Functionality
 - **Cogs - Warnings** - Added ``[p]warnset warnchannel`` command that allows to set a channel where warnings should be sent to instead of the channel command was called in (:issue:`2929`, :issue:`2800`)
 - **Cogs - Warnings** - Added ``[p]warnset togglechannel`` command that allows to disable sending warn message in guild channel (:issue:`2929`, :issue:`2800`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Delete delay for command messages has been moved from Mod cog to Core (:issue:`3638`, :issue:`3636`)
 - **Core** - Command errors (i.e. command on cooldown, dm-only and guild-only commands, etc) can now be translated (:issue:`3665`, :issue:`2988`)
@@ -1756,8 +1757,8 @@ Fixes
 Documentation changes
 ---------------------
 
-Enhancements
-************
+Changes
+*******
 
 - Windows install instructions now use ``choco upgrade`` commands instead of ``choco install`` to ensure up-to-date packages (:issue:`3684`)
 
@@ -1776,14 +1777,14 @@ Redbot 3.3.2 (2020-02-28)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Cogs - Dev** - Allow for top-level `await`, `async for` and `async with` in ``[p]debug`` and ``[p]repl`` commands (:issue:`3508`)
 - **Cogs - Streams** - Added ``[p]streamset timer`` command which can be used to control how often the cog checks for live streams (:issue:`3237`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Ignored guilds/channels and whitelist/blacklist are now cached for performance (:issue:`3472`)
 - **Core** - Ignored guilds/channels have been moved from Mod cog to Core (:issue:`3472`)
@@ -1822,8 +1823,8 @@ Security
 
 - **Commands Package** - Subcommands of command group with ``invoke_without_command=True`` will again inherit this group's checks (:issue:`3614`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Command-line Interfaces** - Added traceback logging to task exception handling (:issue:`3517`)
 - **Core - Command-line Interfaces** - Bot will now show deprecation warnings in logs (:issue:`3527`, :issue:`3615`)
@@ -1842,13 +1843,13 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added guidelines for Cog Creators in `guide_cog_creation` document (:issue:`3568`)
 
-Enhancements
-************
+Changes
+*******
 
 - Restructured virtual environment instructions to improve user experience (:issue:`3495`, :issue:`3411`, :issue:`3412`)
 - Getting started guide now explains use of quotes for arguments with spaces (:issue:`3555`, :issue:`3111`)
@@ -1870,13 +1871,13 @@ Redbot 3.3.1 (2020-02-05)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Command-line Interfaces** - Added a cli flag (``--message-cache-size``) for setting a max size of message cache (:issue:`3473`, :issue:`3474`)
 
-Enhancements
-************
+Changes
+*******
 
 - Some functions have been changed to no longer use deprecated asyncio functions (:issue:`3509`)
 - **Core - Command-line Interfaces** - Prefix can now be edited from command line using ``redbot --edit`` (:issue:`3481`, :issue:`3486`)
@@ -1901,13 +1902,13 @@ Deprecations
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added section to install docs for CentOS 8 (:issue:`3461`, :issue:`3463`)
 
-Enhancements
-************
+Changes
+*******
 
 - Added ``-e`` flag to ``journalctl`` command in systemd guide so that it takes the user to the end of logs automatically (:issue:`3483`)
 - Improved usage of apt update in docs (:issue:`3464`)
@@ -1921,8 +1922,8 @@ Redbot 3.3.0 (2020-01-26)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Team applications are now supported (:issue:`2781`, :issue:`3445`)
 
@@ -1931,8 +1932,8 @@ New Functionality
 - **Cogs - Mod** - You can set a default amount of days to clean up when banning with ``[p]ban`` and ``[p]tempban`` (:issue:`2441`, :issue:`2930`, :issue:`3437`)
 - **Cogs - Mod** - Users can now optionally be DMed their ban reason (:issue:`2649`, :issue:2990`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Help is now self consistent in the extra formatting used (:issue:`3451`)
 - **Cogs - Admin** - Role granting/removing commands will now notify when the user already has/doesn't have a role when attempting to add/remove it (:issue:`3010`, :issue:`3408`)
@@ -1962,8 +1963,8 @@ Breaking Changes
 - **Commands Package** - ``PermState.TRANSITIONS`` from ``redbot.core.commands.requires`` has been moved to a global variable called ``PermStateAllowedStates`` in the same module (:issue:`3410`)
 - **Commands Package** - Use of ``@asyncio.coroutine`` is no longer supported. Use ``async def`` instead (:issue:`3410`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Dependencies** - We now use discord.py 1.3.1 (:issue:`3445`)
 - **Commands Package** - The commands module has been slightly restructured to provide more useful data to developers (:issue:`3410`)
@@ -1979,7 +1980,7 @@ Fixes
 - **Commands Package** - Fixed an issue with default units in `TimedeltaConverter` (:issue:`3453`)
 
 
-Documentation Changes
+Documentation changes
 ---------------------
 
 Fixes
@@ -1997,13 +1998,13 @@ Redbot 3.2.3 (2020-01-17)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - The bot's description is now configurable through ``[p]set description`` (:issue:`3340`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Further improvements have been made to bot startup and shutdown (:issue:`3358`, :issue:`3392`)
 - **Core** - Prefixes are now cached for performance (:issue:`3148`, :issue:`3150`)
@@ -2029,8 +2030,8 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added the means for cog creators to use a global preinvoke hook (:issue:`3369`)
 - **Commands Package** - New features added for cog creators to further customize help behavior (:issue:`3339`)
@@ -2042,14 +2043,14 @@ New Functionality
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Added proper support for Ubuntu non-LTS (:issue:`3330`, :issue:`3336`)
 - Added link to our GitHub in the documentation (:issue:`3306`)
 
-Enhancements
-************
+Changes
+*******
 
 - Added a note about how to update Red to the install guides (:issue:`3400`)
 - Clarified some information about breaking changes in Red 3.2.0 changelog (:issue:`3367`)
@@ -2095,8 +2096,8 @@ Redbot 3.2.1 (2020-01-10)
 End-user changelog
 ------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Cogs - Modlog** - Modlog will now log an error with unexpected case type key (and any other keys) rather than crash (:issue:`3318`)
 
@@ -2122,8 +2123,8 @@ Breaking Changes
 - **Core** - Removed the mongo driver (:issue:`3099`, :issue:`3108`)
 - **Core - Dependencies** - Updated the required minimum Python version to 3.8.1, and the required minimum JRE version to Java 11 (:issue:`3245`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added a config driver for PostgreSQL (:issue:`2723`)
 - **Core - Bot Commands** - Added ``[p]licenseinfo`` (:issue:`3090`)
@@ -2180,8 +2181,8 @@ New Functionality
 - **Cogs - Downloader** - Added ``[p]cog reinstallreqs`` that reinstalls cog requirements and shared libraries for all installed cogs (:issue:`3167`)
 - **Cogs - Trivia - Lists** - Added trivia lists for Prince and Michael Jackson lyrics (:issue:`12`)
 
-Enhancements
-************
+Changes
+*******
 
 - Red now takes less time to fetch cases, unban members, and list warnings (:issue:`2964`)
 - **Core** - JSON config files are now stored without indentation, this is to reduce the file size and increase the performance of write operations (:issue:`2921`)
@@ -2368,8 +2369,8 @@ Breaking Changes
 - **Modlog API** - Modlog casetypes no longer have an attribute for auditlog action type (:issue:`2897`)
 - **Modlog API** - Removed ``redbot.core.modlog.get_next_case_number()`` (:issue:`2908`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - Added a few methods and classes replacing direct config access (which is no longer supported) (:issue:`2976`)
 
@@ -2403,8 +2404,8 @@ New Functionality
    - ``on_red_audio_audio_disconnect(guild: discord.Guild)``
    - ``on_red_audio_skip_track(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - `Red.send_filtered()` now returns the message that is sent (:issue:`3052`)
 - **Core** - `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now log when they are not able to find the owner notification destination (:issue:`3273`)
@@ -2433,8 +2434,8 @@ Fixes
 Documentation changes
 ---------------------
 
-New Documentation
-*****************
+Additions
+*********
 
 - Started the user guides covering cogs and the user interface of the bot. This includes, for now, a "Getting started" guide (:issue:`1734`)
 - Added documentation for PM2 support (:issue:`2105`)
@@ -2443,8 +2444,8 @@ New Documentation
 - Added notes explaining the best practices with config (:issue:`3149`)
 - Added a "Publishing cogs for V3" document explaining how to make user's cogs work with Downloader (:issue:`3234`)
 
-Enhancements
-************
+Changes
+*******
 
 - Reworded the virtual environment guide to make it sound less scary (:issue:`2920`)
 - Added more information about `redbot.core.utils.chat_formatting.humanize_timedelta()` into the docs (:issue:`2986`)
@@ -2502,8 +2503,8 @@ Redbot 3.1.7 (2019-11-05)
 End-user changelog
 ------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Cogs - Audio** - Improved handling of user facing errors (`989e16b <https://github.com/Cog-Creators/Red-DiscordBot/commit/989e16b20b814971e01a8657dedf4d9b45c23ed1>`__)
 
@@ -2541,8 +2542,8 @@ Redbot 3.1.3 (2019-07-14)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Bot Commands** - Added new settings for the invite returned by ``[p]invite`` command (:issue:`1847`)
     
@@ -2553,8 +2554,8 @@ New Functionality
 - **Cogs - Audio** - Added a ``[p]eq`` command group that allows to manage the Audio equalizer (:issue:`2787`, :issue:`2813`)
 - **Cogs - Audio** - Added a ``[p]summon`` command that summons the bot to the voice channel (:issue:`2786`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - A server can now have multiple admin and mod roles (:issue:`2783`)
 - **Core - Dependencies** - Improved overall performance on Linux and Mac systems by swapping asyncio loop implementation to uvloop (:issue:`2819`)
@@ -2588,8 +2589,8 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added ``UserFeedbackCheckFailure`` (:issue:`2761`)
 - **Bank API** - Added `redbot.core.bank.cost()` (:issue:`2761`)
@@ -2606,8 +2607,8 @@ Fixes
 Documentation changes
 ---------------------
 
-Enhancements
-************
+Changes
+*******
 
 - Added a warning about the PATH changes to Windows install guide (:issue:`2791`)
 
@@ -2627,8 +2628,8 @@ Redbot 3.1.2 (2019-05-31)
 End-user changelog
 ------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added a few new settings for bot's help (:issue:`2667`, :issue:`2681`, :issue:`2676`)
 
@@ -2645,8 +2646,8 @@ New Functionality
     See the help of commands in ``[p]set ownernotifications`` command group for more information.
 - **Cogs - Mod** - Added ``[p]slowmode`` command (:issue:`2734`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - ``[p]load``, ``[p]unload``, and ``[p]reload`` commands now strip commas from the passed cogs to aid with copy-pasting (:issue:`2693`)
 - **Core - Bot Commands** - Improved naming consistency of subcommands that *delete* something (:issue:`2731`)
@@ -2677,16 +2678,16 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` (:issue:`2665`, :issue:`2738`)
 - **Commands Package** - Added `DictConverter` (:issue:`2692`)
 - **Commands Package** - Added `TimedeltaConverter` and `parse_timedelta()` (:issue:`2736`)
 - **Commands Package** - Added ``assume_yes`` attribute to `redbot.core.commands.Context` (:issue:`2746`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Utilities** - `menu()` now accepts `functools.partial` (:issue:`2718`, :issue:`2720`)
 
@@ -2711,8 +2712,8 @@ Known Issues
 
 - **Core - Bot Commands** - Backup support for Mongo is currently broken (:issue:`2579`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core - Bot Commands** - Added new ``[p]datapath`` command that prints the bot's data path (:issue:`2652`)
 - **Core - Command-line Interfaces** - Added ``redbot-setup convert`` command which can be used to convert between data backends (:issue:`2579`)
@@ -2726,8 +2727,8 @@ New Functionality
 - **Cogs - Streams** - Added support for setting custom stream alert messages per server (:issue:`2600`)
 - **Cogs - Streams** - Added ability to exclude Twitch stream reruns (:issue:`2620`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Error messages about cooldowns will now show more friendly representation of cooldown's expiration time (:issue:`2412`)
 - **Core** - Cooldown messages are now auto-deleted after cooldown expiration expired (:issue:`2469`)
@@ -2782,16 +2783,16 @@ Breaking Changes
 - **Config** - We now record custom group primary key lengths in the core config object (:issue:`2550`)
 - **Downloader** - Cog Developers now have to use ``min_bot_version`` key instead of ``bot_version`` to specify minimum version of Red supported by the cog in ``info.json``, see more information in :ref:`info-json-format` (:issue:`2605`)
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Core** - Added a ``on_message_without_command`` event that is dispatched when bot gets an event for a message that doesn't contain a command (:issue:`2338`)
 - **Config** - Introduced `Config.init_custom()` method (:issue:`2545`)
 - **Downloader** - Added ``max_bot_version`` key to ``info.json`` that allows to specify maximum supported version of Red supported by the cog in ``info.json``, see more information in :ref:`info-json-format`. (:issue:`2605`)
 - **Utilities** - Added `chat_formatting.humanize_timedelta()` (:issue:`2412`)
 
-Enhancements
-************
+Changes
+*******
 
 - **Core** - Usage of ``yaml.load`` will now warn about its security issues (:issue:`2326`)
 - **Core - Dependencies** - Red is now no longer vendoring discord.py and installs it from PyPI (:issue:`2587`)
@@ -2831,8 +2832,8 @@ Redbot 3.0.1 (2019-02-17)
 End-user changelog
 ------------------
 
-Enhancements
-************
+Changes
+*******
 
 - **Core - Bot Commands** - Improve some of the core commands to not require double quotes for arguments with spaces, if they're the last argument required by the command (:issue:`2407`)
 - **Core - Bot Commands** - Using ``[p]load`` command now sends help message when it's used without arguments (:issue:`2432`)
@@ -2857,8 +2858,8 @@ Fixes
 Developer changelog
 -------------------
 
-New Functionality
-*****************
+Additions
+*********
 
 - **Utilities** - Added `escape_spoilers()` and `escape_spoilers_and_mass_mentions()` methods for escaping strings with spoiler markdown (:issue:`2401`)
 
