@@ -427,13 +427,13 @@ def convert(instance, backend):
 @click.argument(
     "destination_folder",
     type=click.Path(
-        exists=False, dir_okay=True, file_okay=False, resolve_path=True, writable=True
+        dir_okay=True, file_okay=False, resolve_path=True, writable=True, path_type=Path
     ),
     default=Path.home(),
 )
-def backup(instance: str, destination_folder: Union[str, Path]) -> None:
+def backup(instance: str, destination_folder: Path) -> None:
     """Backup instance's data."""
-    asyncio.run(create_backup(instance, Path(destination_folder)))
+    asyncio.run(create_backup(instance, destination_folder))
 
 
 def run_cli():
