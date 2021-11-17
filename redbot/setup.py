@@ -64,8 +64,12 @@ def save_config(name, data, remove=False):
         json.dump(_config, fs, indent=4)
 
 
-def get_data_dir(instance_name: str):
+def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: bool) -> str:
+    if data_path is not None:
+        return str(data_path.resolve())
     data_path = Path(appdir.user_data_dir) / "data" / instance_name
+    if not interactive:
+        return str(data_path.resolve())
 
     print(
         "We've attempted to figure out a sane default data location which is printed below."
@@ -107,8 +111,12 @@ def get_data_dir(instance_name: str):
     return str(data_path.resolve())
 
 
-def get_storage_type():
-    storage_dict = {1: "JSON", 2: "PostgreSQL"}
+def get_storage_type(backend: Optional[str], *, interactive: bool):
+    if backend:
+        return get_target_backend(backend)
+    if not interactive:
+        return BackendType.JSON
+    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
     storage = None
     while storage is None:
         print()
@@ -119,7 +127,7 @@ def get_storage_type():
 
         storage = input("> ")
         if not storage:
-            return 1
+            return BackendType.JSON
         try:
             storage = int(storage)
         except ValueError:
@@ -127,11 +135,20 @@ def get_storage_type():
         else:
             if storage not in storage_dict:
                 storage = None
-    return storage
+    return storage_dict[storage]
 
 
-def get_name() -> str:
-    name = ""
+def get_name(name: str) -> str:
+    INSTANCE_NAME_RE = re.compile(r"[A-Za-z0-9_\.\-]*")
+    if name:
+        if INSTANCE_NAME_RE.fullmatch(name) is None:
+            print(
+                "ERROR: Instance names can only include characters A-z, numbers, "
+                "underscores (_) and periods (.)."
+            )
+            sys.exit(1)
+        return name
+
     while len(name) == 0:
         print(
             "Please enter a name for your instance,"
@@ -140,7 +157,7 @@ def get_name() -> str:
             " A-z, numbers, underscores (_) and periods (.)."
         )
         name = input("> ")
-        if re.fullmatch(r"[A-Za-z0-9_\.\-]*", name) is None:
+        if INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
                 "ERROR: Instance names can only include characters A-z, numbers, "
                 "underscores (_) and periods (.)."
@@ -156,47 +173,77 @@ def get_name() -> str:
     return name
 
 
-def basic_setup():
+def basic_setup(
+    *,
+    name: str,
+    data_path: Optional[Path],
+    backend: Optional[str],
+    interactive: bool,
+    overwrite_existing_instance: bool,
+):
     """
     Creates the data storage folder.
     :return:
     """
+    if not interactive and not name:
+        print(
+            "Providing instance name through --instance-name is required"
+            " when using non-interactive mode."
+        )
+        sys.exit(1)
 
-    print(
-        "Hello! Before we begin, we need to gather some initial information for the new instance."
+    if interactive:
+        print(
+            "Hello! Before we begin, we need to gather some initial information"
+            " for the new instance."
+        )
+    name = get_name(name)
+
+    default_data_dir = get_data_dir(
+        instance_name=name, data_path=data_path, interactive=interactive
     )
-    name = get_name()
-
-    default_data_dir = get_data_dir(name)
 
     default_dirs = deepcopy(data_manager.basic_config_default)
     default_dirs["DATA_PATH"] = default_data_dir
 
-    storage = get_storage_type()
+    storage_type = get_storage_type(backend, interactive=interactive)
 
-    storage_dict = {1: BackendType.JSON, 2: BackendType.POSTGRES}
-    storage_type: BackendType = storage_dict.get(storage, BackendType.JSON)
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
     default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
 
     if name in instance_data:
-        print(
-            "WARNING: An instance already exists with this name. "
-            "Continuing will overwrite the existing instance config."
-        )
-        if not click.confirm("Are you absolutely certain you want to continue?", default=False):
-            print("Not continuing")
-            sys.exit(0)
+        if overwrite_existing_instance:
+            pass
+        elif interactive:
+            print(
+                "WARNING: An instance already exists with this name. "
+                "Continuing will overwrite the existing instance config."
+            )
+            if not click.confirm(
+                "Are you absolutely certain you want to continue?", default=False
+            ):
+                print("Not continuing")
+                sys.exit(0)
+        else:
+            print(
+                "An instance with this name already exists.\n"
+                "If you want to remove the existing instance and replace it with this one,"
+                " run this command with --overwrite-existing-instance flag."
+            )
+            sys.exit(1)
     save_config(name, default_dirs)
 
-    print()
-    print(
-        "Your basic configuration has been saved. Please run `redbot <name>` to"
-        " continue your setup process and to run the bot.\n\n"
-        "First time? Read the quickstart guide:\n"
-        "https://docs.discord.red/en/stable/getting_started.html"
-    )
+    if interactive:
+        print()
+        print(
+            f"Your basic configuration has been saved. Please run `redbot {name}` to"
+            " continue your setup process and to run the bot.\n\n"
+            "First time? Read the quickstart guide:\n"
+            "https://docs.discord.red/en/stable/getting_started.html"
+        )
+    else:
+        print("Your basic configuration has been saved.")
 
 
 def get_current_backend(instance: str) -> BackendType:
@@ -315,8 +362,54 @@ async def remove_instance_interaction() -> None:
 
 @click.group(invoke_without_command=True)
 @click.option("--debug", type=bool)
+@click.option(
+    "--no-prompt",
+    "interactive",
+    type=bool,
+    is_flag=True,
+    default=True,
+    help=(
+        "Don't ask for user input during the process (non-interactive mode)."
+        " This makes `--instance-name` required."
+    ),
+)
+@click.option(
+    "--instance-name",
+    type=str,
+    default="",
+    help="Name of the new instance. Required if --no-prompt is passed.",
+)
+@click.option(
+    "--data-path",
+    type=click.Path(exists=False, dir_okay=True, file_okay=False, writable=True, path_type=Path),
+    default=None,
+    help=(
+        "Data path of the new instance. If this option and --no-prompt are omitted,"
+        " you will be asked for this."
+    ),
+)
+@click.option(
+    "--backend",
+    type=click.Choice(["json", "postgres"]),
+    default=None,
+    help=(
+        "Choose a backend type for the new instance."
+        " If this option is omitted, you will be asked for this."
+        " Defaults to JSON in non-interactive mode.\n"
+        "Note: Choosing PostgreSQL will prevent the setup from being completely non-interactive."
+    ),
+)
+@click.option("--overwrite-existing-instance", type=bool, is_flag=True)
 @click.pass_context
-def cli(ctx, debug):
+def cli(
+    ctx: click.Context,
+    debug: bool,
+    interactive: bool,
+    instance_name: str,
+    data_path: Optional[Path],
+    backend: Optional[str],
+    overwrite_existing_instance: bool,
+) -> None:
     """Create a new instance."""
     level = logging.DEBUG if debug else logging.INFO
     base_logger = logging.getLogger("red")
@@ -329,7 +422,13 @@ def cli(ctx, debug):
     base_logger.addHandler(stdout_handler)
 
     if ctx.invoked_subcommand is None:
-        basic_setup()
+        basic_setup(
+            name=instance_name,
+            data_path=data_path,
+            backend=backend,
+            overwrite_existing_instance=overwrite_existing_instance,
+            interactive=interactive,
+        )
 
 
 @cli.command()
