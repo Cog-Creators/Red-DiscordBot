@@ -67,7 +67,6 @@ def save_config(name, data, remove=False):
 def get_data_dir(instance_name: str):
     data_path = Path(appdir.user_data_dir) / "data" / instance_name
 
-    print()
     print(
         "We've attempted to figure out a sane default data location which is printed below."
         " If you don't want to change this default please press [ENTER],"
@@ -286,7 +285,7 @@ async def remove_instance(
         safe_delete(data_path)
 
     save_config(instance, {}, remove=True)
-    print("The instance {} has been removed\n".format(instance))
+    print("The instance {} has been removed.".format(instance))
 
 
 async def remove_instance_interaction() -> None:
