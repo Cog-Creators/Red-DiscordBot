@@ -112,10 +112,14 @@ def get_storage_type():
     storage = None
     while storage is None:
         print()
-        print("Please choose your storage backend (if you're unsure, just choose 1).")
+        print("Please choose your storage backend.")
         print("1. JSON (file storage, requires no database).")
         print("2. PostgreSQL (Requires a database server)")
+        print("If you're unsure, press [ENTER] to use the recommended default - JSON.")
+
         storage = input("> ")
+        if not storage:
+            return 1
         try:
             storage = int(storage)
         except ValueError:
