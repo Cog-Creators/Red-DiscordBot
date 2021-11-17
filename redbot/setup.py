@@ -196,11 +196,11 @@ def basic_setup():
     )
 
 
-def get_current_backend(instance) -> BackendType:
+def get_current_backend(instance: str) -> BackendType:
     return BackendType(instance_data[instance]["STORAGE_TYPE"])
 
 
-def get_target_backend(backend) -> BackendType:
+def get_target_backend(backend: str) -> BackendType:
     if backend == "json":
         return BackendType.JSON
     elif backend == "postgres":
@@ -243,13 +243,13 @@ async def create_backup(instance: str, destination_folder: Path = Path.home()) -
 
 
 async def remove_instance(
-    instance,
+    instance: str,
     interactive: bool = False,
     delete_data: Optional[bool] = None,
     _create_backup: Optional[bool] = None,
     drop_db: Optional[bool] = None,
     remove_datapath: Optional[bool] = None,
-):
+) -> None:
     data_manager.load_basic_configuration(instance)
     backend = get_current_backend(instance)
 
@@ -289,7 +289,7 @@ async def remove_instance(
     print("The instance {} has been removed\n".format(instance))
 
 
-async def remove_instance_interaction():
+async def remove_instance_interaction() -> None:
     if not instance_list:
         print("No instances have been set up!")
         return
@@ -385,7 +385,7 @@ def delete(
     _create_backup: Optional[bool],
     drop_db: Optional[bool],
     remove_datapath: Optional[bool],
-):
+) -> None:
     """Removes an instance."""
     asyncio.run(
         remove_instance(
@@ -397,7 +397,7 @@ def delete(
 @cli.command()
 @click.argument("instance", type=click.Choice(instance_list), metavar="<INSTANCE_NAME>")
 @click.argument("backend", type=click.Choice(["json", "postgres"]))
-def convert(instance, backend):
+def convert(instance: str, backend: str) -> None:
     """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
     target = get_target_backend(backend)
