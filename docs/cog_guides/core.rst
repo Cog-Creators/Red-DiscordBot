@@ -2501,7 +2501,7 @@ Remove the given services with all their keys and tokens.
 
 **Examples:**
     - ``[p]set api remove spotify``
-    - ``[p]set api remove github audiodb``
+    - ``[p]set api remove github youtube``
 
 **Arguments:**
     - ``<services...>`` - The services to remove.

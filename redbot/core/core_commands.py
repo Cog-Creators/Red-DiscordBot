@@ -2999,7 +2999,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Examples:**
             - `[p]set api remove spotify`
-            - `[p]set api remove github audiodb`
+            - `[p]set api remove github youtube`
 
         **Arguments:**
             - `<services...>` - The services to remove."""
