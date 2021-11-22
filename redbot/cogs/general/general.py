@@ -404,7 +404,7 @@ class General(commands.Cog):
             data.add_field(
                 name=_("Utility:"),
                 value=_(
-                    "Owner: {owner}\nVoice region: {region}\nVerif. level: {verif}\nServer ID: {id}{shard_info}"
+                    "Owner: {owner}\nVerif. level: {verif}\nServer ID: {id}{shard_info}"
                 ).format(
                     owner=bold(str(guild.owner)),
                     verif=bold(verif[str(guild.verification_level)]),
