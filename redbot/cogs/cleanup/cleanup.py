@@ -71,6 +71,30 @@ class Cleanup(commands.Cog):
         else:
             await ctx.send(_("Cancelled."))
             return False
+        
+    @staticmethod
+    async def check_clear_channel(ctx: commands.Context, channel: discord.TextChannel) -> bool:
+        """
+        Called when trying to delete all messages in a channel.
+        """
+
+        if ctx.assume_yes:
+            return True
+
+        prompt = await ctx.send(
+            _(f"Are you sure you want to delete all messages in {channel.mention}? (y/n)")
+        )
+        response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
+
+        if response.content.lower().startswith("y"):
+            with contextlib.suppress(discord.NotFound):
+                await prompt.delete()
+            with contextlib.suppress(discord.HTTPException):
+                await response.delete()
+            return True
+        else:
+            await ctx.send(_("Cancelled."))
+            return False
 
     @staticmethod
     async def get_messages_for_deletion(
@@ -725,6 +749,35 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
         await mass_purge(to_delete, ctx.channel)
         await self.send_optional_notification(len(to_delete), ctx.channel, subtract_invoking=True)
+        
+    @cleanup.command(name="clearchannel", aliases=["channel"])
+    @commands.guild_only()
+    @checks.admin_or_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True)
+    async def cleanup_channel(
+        self, ctx: commands.Context
+    ):
+        """Delete ALL messages from the current channel by duplicating it and then deleting it.
+        """
+        cont = await self.check_clear_channel(ctx, ctx.channel)
+        if not cont:
+            return
+            
+        old_channel = ctx.channel
+        channel_position = old_channel.position
+        new_channel = await old_channel.clone(reason=f"Clear Channel requested by {ctx.author} ({ctx.author.id})")
+        await old_channel.delete(reason=f"Clear Channel requested by {ctx.author} ({ctx.author.id})")
+        await new_channel.edit(position=channel_position, reason=f"Clear Channel requested by {ctx.author} ({ctx.author.id})")
+
+        log.info(
+            "%s (%s) deleted %s spam messages in channel %s (%s).",
+            ctx.author,
+            ctx.author.id,
+            ctx.channel,
+            ctx.channel.id,
+        )
+        
+        await ctx.author.send(f"All messages in channel #{old_channel.name} ({old_channel.id}) have been deleted! You can find the new channel, with the same permissions: #{new_channel.name} ({new_channel.id}).")
 
     @commands.group()
     @commands.admin_or_permissions(manage_messages=True)
