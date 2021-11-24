@@ -770,11 +770,11 @@ class Cleanup(commands.Cog):
         await new_channel.edit(position=channel_position, reason=f"Clear Channel requested by {ctx.author} ({ctx.author.id})")
 
         log.info(
-            "%s (%s) deleted %s spam messages in channel %s (%s).",
+            "%s (%s) deleted all messages in channel %s (%s).",
             ctx.author,
             ctx.author.id,
-            ctx.channel,
-            ctx.channel.id,
+            new.channel.name,
+            new.channel.id,
         )
         
         await ctx.author.send(f"All messages in channel #{old_channel.name} ({old_channel.id}) have been deleted! You can find the new channel, with the same permissions: #{new_channel.name} ({new_channel.id}).")
