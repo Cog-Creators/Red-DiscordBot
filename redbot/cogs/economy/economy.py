@@ -683,16 +683,12 @@ class Economy(commands.Cog):
                     "Slot cooldown: {slot_time}\n"
                     "Payday amount: {payday_amount}\n"
                     "Payday cooldown: {payday_time}\n"
-                    "Amount given at account registration: {register_amount}\n"
-                    "Maximum allowed balance: {maximum_bal}"
                 ).format(
                     slot_min=humanize_number(await conf.SLOT_MIN()),
                     slot_max=humanize_number(await conf.SLOT_MAX()),
                     slot_time=humanize_number(await conf.SLOT_TIME()),
                     payday_time=humanize_number(await conf.PAYDAY_TIME()),
                     payday_amount=humanize_number(await conf.PAYDAY_CREDITS()),
-                    register_amount=humanize_number(await bank.get_default_balance(guild)),
-                    maximum_bal=humanize_number(await bank.get_max_balance(guild)),
                 )
             )
         )
