@@ -2079,8 +2079,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @bank.is_owner_if_bank_global()
     @checks.guildowner_or_permissions(administrator=True)
-    @bankset.command()
-    async def registeramount(self, ctx: commands.Context, creds: int):
+    @bankset.command(name="registeramount")
+    async def bankset_registeramount(self, ctx: commands.Context, creds: int):
         """Set the initial balance for new bank accounts.
 
         Example:
@@ -2109,8 +2109,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @bank.is_owner_if_bank_global()
     @checks.guildowner_or_permissions(administrator=True)
-    @bankset.command()
-    async def reset(self, ctx, confirmation: bool = False):
+    @bankset.command(name="reset")
+    async def bankset_reset(self, ctx, confirmation: bool = False):
         """Delete all bank accounts.
 
         Examples:
@@ -2142,14 +2142,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @bank.is_owner_if_bank_global()
     @checks.admin_or_permissions(manage_guild=True)
     @bankset.group(name="prune")
-    async def _prune(self, ctx):
+    async def bankset_prune(self, ctx):
         """Base command for pruning bank accounts."""
         pass
 
-    @_prune.command(name="server", aliases=["guild", "local"])
+    @bankset_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
     @checks.guildowner()
-    async def _local(self, ctx, confirmation: bool = False):
+    async def bankset_prune_local(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users no longer in the server.
 
         Cannot be used with a global bank. See `[p]bankset prune global`.
@@ -2180,9 +2180,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("Bank accounts for users no longer in this server have been deleted.")
             )
 
-    @_prune.command(name="global")
+    @bankset_prune.command(name="global")
     @checks.is_owner()
-    async def _global(self, ctx, confirmation: bool = False):
+    async def bankset_prune_global(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users who no longer share a server with the bot.
 
         Cannot be used without a global bank. See `[p]bankset prune server`.
@@ -2216,8 +2216,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             )
 
-    @_prune.command(usage="<user> [confirmation=False]")
-    async def user(
+    @bankset_prune.command(name="user", usage="<user> [confirmation=False]")
+    async def bankset_prune_user(
         self,
         ctx,
         member_or_id: Union[discord.Member, RawUserIdConverter],
@@ -2263,14 +2263,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @modlogset.command(hidden=True, name="fixcasetypes")
-    async def reapply_audittype_migration(self, ctx: commands.Context):
+    async def modlogset_fixcasetypes(self, ctx: commands.Context):
         """Command to fix misbehaving casetypes."""
         await modlog.handle_auditype_key()
         await ctx.tick()
 
-    @modlogset.command(aliases=["channel"])
+    @modlogset.command(aliases=["channel"], name="modlog")
     @commands.guild_only()
-    async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
+    async def modlogset_modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set a channel as the modlog.
 
         Omit `[channel]` to disable the modlog.
@@ -2299,7 +2299,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @modlogset.command(name="cases")
     @commands.guild_only()
-    async def set_cases(self, ctx: commands.Context, action: str = None):
+    async def modlogset_cases(self, ctx: commands.Context, action: str = None):
         """Enable or disable case creation for a mod action."""
         guild = ctx.guild
 
@@ -2326,9 +2326,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             )
 
-    @modlogset.command()
+    @modlogset.command(name="resetcases")
     @commands.guild_only()
-    async def resetcases(self, ctx: commands.Context):
+    async def modlogset_resetcases(self, ctx: commands.Context):
         """Reset all modlog cases in this server."""
         guild = ctx.guild
         await ctx.send(
