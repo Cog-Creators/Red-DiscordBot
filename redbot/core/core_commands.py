@@ -2125,7 +2125,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(
                 _(
                     "This will delete all bank accounts for {scope}.\nIf you're sure, type "
-                    "`{prefix}bank reset yes`"
+                    "`{prefix}bankset reset yes`"
                 ).format(
                     scope=self.bot.user.name if await bank.is_global() else _("this server"),
                     prefix=ctx.clean_prefix,
@@ -2171,7 +2171,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _(
                     "This will delete all bank accounts for users no longer in this server."
                     "\nIf you're sure, type "
-                    "`{prefix}bank prune local yes`"
+                    "`{prefix}bankset prune local yes`"
                 ).format(prefix=ctx.clean_prefix)
             )
         else:
@@ -2204,7 +2204,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _(
                     "This will delete all bank accounts for users "
                     "who no longer share a server with the bot."
-                    "\nIf you're sure, type `{prefix}bank prune global yes`"
+                    "\nIf you're sure, type `{prefix}bankset prune global yes`"
                 ).format(prefix=ctx.clean_prefix)
             )
         else:
@@ -2234,8 +2234,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.
         - `<confirmation>` This will default to false unless specified.
         """
-        if ctx.guild is None and not await bank.is_global():
-            return await ctx.send(_("This command cannot be used in DMs with a local bank."))
         try:
             name = member_or_id.display_name
             uid = member_or_id.id
@@ -2248,7 +2246,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _(
                     "This will delete {name}'s bank account."
                     "\nIf you're sure, type "
-                    "`{prefix}bank prune user {id} yes`"
+                    "`{prefix}bankset prune user {id} yes`"
                 ).format(prefix=ctx.clean_prefix, id=uid, name=name)
             )
         else:
