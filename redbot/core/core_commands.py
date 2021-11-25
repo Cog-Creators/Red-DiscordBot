@@ -2084,7 +2084,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Set the initial balance for new bank accounts.
 
         Example:
-            - `[p]economyset registeramount 5000`
+            - `[p]bankset registeramount 5000`
 
         **Arguments**
 
@@ -2111,7 +2111,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @bankset.command()
     async def reset(self, ctx, confirmation: bool = False):
-        """Delete all bank accounts."""
+        """Delete all bank accounts.
+
+        Examples:
+            - `[p]bankset reset` - Did not confirm. Shows the help message.
+            - `[p]bankset reset yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
         if confirmation is False:
             await ctx.send(
                 _(
@@ -2143,11 +2152,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _local(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users no longer in the server.
 
-        Cannot be used with a global bank. See `[p]bank prune global`.
+        Cannot be used with a global bank. See `[p]bankset prune global`.
 
         Examples:
-            - `[p]bank prune server` - Did not confirm. Shows the help message.
-            - `[p]bank prune server yes`
+            - `[p]bankset prune server` - Did not confirm. Shows the help message.
+            - `[p]bankset prune server yes`
 
         **Arguments**
 
@@ -2176,11 +2185,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _global(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users who no longer share a server with the bot.
 
-        Cannot be used without a global bank. See `[p]bank prune server`.
+        Cannot be used without a global bank. See `[p]bankset prune server`.
 
         Examples:
-            - `[p]bank prune global` - Did not confirm. Shows the help message.
-            - `[p]bank prune global yes`
+            - `[p]bankset prune global` - Did not confirm. Shows the help message.
+            - `[p]bankset prune global yes`
 
         **Arguments**
 
@@ -2217,8 +2226,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Delete the bank account of a specified user.
 
         Examples:
-            - `[p]bank prune user @TwentySix` - Did not confirm. Shows the help message.
-            - `[p]bank prune user @TwentySix yes`
+            - `[p]bankset prune user @Twentysix` - Did not confirm. Shows the help message.
+            - `[p]bankset prune user @Twentysix yes`
 
         **Arguments**
 
@@ -4900,7 +4909,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Makes a user or role immune from automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune add @TwentySix` - Adds a user.
+            - `[p]autoimmune add @Twentysix` - Adds a user.
             - `[p]autoimmune add @Mods` - Adds a role.
 
         **Arguments:**
@@ -4920,7 +4929,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Remove a user or role from being immune to automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune remove @TwentySix` - Removes a user.
+            - `[p]autoimmune remove @Twentysix` - Removes a user.
             - `[p]autoimmune remove @Mods` - Removes a role.
 
         **Arguments:**
@@ -4940,7 +4949,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Checks if a user or role would be considered immune from automated actions.
 
         **Examples:**
-            - `[p]autoimmune isimmune @TwentySix`
+            - `[p]autoimmune isimmune @Twentysix`
             - `[p]autoimmune isimmune @Mods`
 
         **Arguments:**
