@@ -30,7 +30,7 @@ from .converter import (
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
     Literal as Literal,
-    RawUserIds as RawUserIds,
+    RawUserIdConverter as RawUserIdConverter,
     CogConverter as CogConverter,
     CommandConverter as CommandConverter,
 )

@@ -19,7 +19,7 @@ import traceback
 from pathlib import Path
 from redbot.core import data_manager
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.commands import GuildConverter, RawUserIds
+from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
@@ -2209,7 +2209,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_prune.command(usage="<user> [confirmation=False]")
     async def user(
-        self, ctx, member_or_id: Union[discord.Member, RawUserIds], confirmation: bool = False
+        self,
+        ctx,
+        member_or_id: Union[discord.Member, RawUserIdConverter],
+        confirmation: bool = False,
     ):
         """Delete the bank account of a specified user.
 
