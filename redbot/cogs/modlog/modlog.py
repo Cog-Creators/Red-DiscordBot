@@ -17,7 +17,7 @@ _ = Translator("ModLog", __file__)
 
 @cog_i18n(_)
 class ModLog(commands.Cog):
-    """Manage log channels for moderation actions."""
+    """Browse and manage modlog cases."""
 
     def __init__(self, bot: Red):
         super().__init__()
