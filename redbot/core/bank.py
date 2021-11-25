@@ -163,7 +163,7 @@ def is_owner_if_bank_global():
 
     .. code-block:: python
 
-        @is_owner_if_bank_global()
+        @bank.is_owner_if_bank_global()
         @checks.guildowner()
         @commands.group()
         async def bankset(self, ctx: commands.Context):
