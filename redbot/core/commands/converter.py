@@ -52,7 +52,7 @@ __all__ = [
 _ = Translator("commands.converter", __file__)
 
 ID_REGEX = re.compile(r"([0-9]{15,20})")
-MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
+USER_MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 
 
 # Taken with permission from
@@ -226,7 +226,7 @@ class RawUserIdConverter(dpy_commands.Converter):
         # are most likely not in the guild.
         # Mentions are supported, but most likely won't ever be in cache.
 
-        if match := ID_REGEX.match(argument) or MENTION_REGEX.match(argument):
+        if match := ID_REGEX.match(argument) or USER_MENTION_REGEX.match(argument):
             return int(match.group(1))
 
         raise BadArgument(_("'{input}' doesn't look like a valid user ID.").format(input=argument))
