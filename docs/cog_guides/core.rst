@@ -176,7 +176,7 @@ autoimmune add
 Makes a user or role immune from automated moderation actions.
 
 **Examples:**
-    - ``[p]autoimmune add @TwentySix`` - Adds a user.
+    - ``[p]autoimmune add @Twentysix`` - Adds a user.
     - ``[p]autoimmune add @Mods`` - Adds a role.
 
 **Arguments:**
@@ -199,7 +199,7 @@ autoimmune isimmune
 Checks if a user or role would be considered immune from automated actions.
 
 **Examples:**
-    - ``[p]autoimmune isimmune @TwentySix``
+    - ``[p]autoimmune isimmune @Twentysix``
     - ``[p]autoimmune isimmune @Mods``
 
 **Arguments:**
@@ -241,11 +241,314 @@ autoimmune remove
 Remove a user or role from being immune to automated moderation actions.
 
 **Examples:**
-    - ``[p]autoimmune remove @TwentySix`` - Removes a user.
+    - ``[p]autoimmune remove @Twentysix`` - Removes a user.
     - ``[p]autoimmune remove @Mods`` - Removes a role.
 
 **Arguments:**
     - ``<user_or_role>`` - The user or role to remove immunity from.
+
+.. _core-command-bankset:
+
+^^^^^^^
+bankset
+^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset
+
+**Description**
+
+Base command for configuring bank settings.
+
+.. _core-command-bankset-bankname:
+
+""""""""""""""""
+bankset bankname
+""""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset bankname <name>
+
+**Description**
+
+Set bank's name.
+
+**Arguments**
+
+* ``<name>``: The new bank's name.
+
+.. _core-command-bankset-creditsname:
+
+"""""""""""""""""""
+bankset creditsname
+"""""""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset creditsname <name>
+
+**Description**
+
+Change the credits name of the bank. It is ``credits`` by default.
+
+For example, if you switch it to ``dollars``, the payday
+command will show this:
+
+.. TODO reference the payday command
+
+.. code-block:: none
+
+    Here, take some dollars. Enjoy! (+120 dollars!)
+
+    You currently have 220 dollars.
+
+**Arguments**
+
+* ``<name>``: The new credits name.
+
+.. _core-command-bankset-maxbal:
+
+""""""""""""""
+bankset maxbal
+""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset maxbal <amount>
+
+**Description**
+
+Defines the maximum amount of money a user can have with the bot.
+
+If an user reaches this limit, he will be unable to gain more money.
+
+**Arguments**
+
+*   ``<amount>``: The maximum amount of money for users.
+
+.. _core-command-bankset-prune:
+
+"""""""""""""
+bankset prune
+"""""""""""""
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune 
+
+**Description**
+
+Base command for pruning bank accounts.
+
+.. _core-command-bankset-prune-global:
+
+""""""""""""""""""""
+bankset prune global
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune global [confirmation=False]
+
+**Description**
+
+Prune bank accounts for users who no longer share a server with the bot.
+
+Cannot be used without a global bank. See ``[p]bankset prune server``.
+
+Examples:
+    - ``[p]bankset prune global`` - Did not confirm. Shows the help message.
+    - ``[p]bankset prune global yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-prune-server:
+
+""""""""""""""""""""
+bankset prune server
+""""""""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune server [confirmation=False]
+
+.. tip:: Aliases: ``bankset prune guild``, ``bankset prune local``
+
+**Description**
+
+Prune bank accounts for users no longer in the server.
+
+Cannot be used with a global bank. See ``[p]bankset prune global``.
+
+Examples:
+    - ``[p]bankset prune server`` - Did not confirm. Shows the help message.
+    - ``[p]bankset prune server yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-prune-user:
+
+""""""""""""""""""
+bankset prune user
+""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune user <user> [confirmation=False]
+
+**Description**
+
+Delete the bank account of a specified user.
+
+Examples:
+    - ``[p]bankset prune user @Twentysix`` - Did not confirm. Shows the help message.
+    - ``[p]bankset prune user @Twentysix yes``
+
+**Arguments**
+
+- ``<user>`` The user to delete the bank of. Takes mentions, names, and user ids.
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-registeramount:
+
+""""""""""""""""""""""
+bankset registeramount
+""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset registeramount <creds>
+
+**Description**
+
+Set the initial balance for new bank accounts.
+
+Example:
+    - ``[p]bankset registeramount 5000``
+
+**Arguments**
+
+- ``<creds>`` The new initial balance amount. Default is 0.
+
+.. _core-command-bankset-reset:
+
+"""""""""""""
+bankset reset
+"""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset reset [confirmation=False]
+
+**Description**
+
+Delete all bank accounts.
+
+Examples:
+    - ``[p]bankset reset`` - Did not confirm. Shows the help message.
+    - ``[p]bankset reset yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-showsettings:
+
+""""""""""""""""""""
+bankset showsettings
+""""""""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset showsettings
+
+**Description**
+
+Shows the current settings of your bank.
+
+This will display the following information:
+
+*   Name of the bank
+*   Scope of the bank (global or per server)
+*   Currency name
+*   Default balance
+*   Maximum allowed balance
+
+.. _core-command-bankset-toggleglobal:
+
+""""""""""""""""""""
+bankset toggleglobal
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset toggleglobal [confirm=False]
+
+**Description**
+
+Makes the bank global instead of server-wide. If it
+is already global, the command will switch it back
+to the server-wide bank.
+
+.. warning:: Using this command will reset **all** accounts.
+
+**Arguments**
+
+* ``[confirm=False]``: Put ``yes`` to confirm.
 
 .. _core-command-blocklist:
 
@@ -2014,6 +2317,82 @@ Removes user or role from blocklist.
 
 **Arguments:**
     - ``<users_or_roles...>`` - The users or roles to remove from the local blocklist.
+
+.. _core-command-modlogset:
+
+^^^^^^^^^
+modlogset
+^^^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset 
+
+**Description**
+
+Manage modlog settings.
+
+.. _core-command-modlogset-cases:
+
+"""""""""""""""
+modlogset cases
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset cases [action]
+
+**Description**
+
+Enable or disable case creation for a mod action.
+
+**Arguments**
+
+* ``[action]``: The action to enable or disable case creation for.
+
+.. _core-command-modlogset-modlog:
+
+""""""""""""""""
+modlogset modlog
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset modlog [channel]
+
+.. tip:: Alias: ``modlogset channel``
+
+**Description**
+
+Set a channel as the modlog.
+
+**Arguments**
+
+* ``[channel]``: The channel to set as the modlog. If omitted, the modlog will be disabled.
+
+.. _core-command-modlogset-resetcases:
+
+""""""""""""""""""""
+modlogset resetcases
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset resetcases 
+
+**Description**
+
+Reset all modlog cases in this server.
 
 .. _core-command-mydata:
 

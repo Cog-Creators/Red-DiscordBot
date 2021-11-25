@@ -19,7 +19,7 @@ import traceback
 from pathlib import Path
 from redbot.core import data_manager
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.commands import GuildConverter
+from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
@@ -35,6 +35,8 @@ from . import (
     commands,
     errors,
     i18n,
+    bank,
+    modlog,
 )
 from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter
@@ -1982,6 +1984,366 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if not silently:
                 await ctx.send(_("Restarting..."))
         await ctx.bot.shutdown(restart=True)
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.group()
+    async def bankset(self, ctx: commands.Context):
+        """Base command for bank settings."""
+
+    @bankset.command(name="showsettings")
+    async def bankset_showsettings(self, ctx: commands.Context):
+        """Show the current bank settings."""
+        cur_setting = await bank.is_global()
+        if cur_setting:
+            group = bank._config
+        else:
+            if not ctx.guild:
+                return
+            group = bank._config.guild(ctx.guild)
+        group_data = await group.all()
+        bank_name = group_data["bank_name"]
+        bank_scope = _("Global") if cur_setting else _("Server")
+        currency_name = group_data["currency"]
+        default_balance = group_data["default_balance"]
+        max_balance = group_data["max_balance"]
+
+        settings = _(
+            "Bank settings:\n\nBank name: {bank_name}\nBank scope: {bank_scope}\n"
+            "Currency: {currency_name}\nDefault balance: {default_balance}\n"
+            "Maximum allowed balance: {maximum_bal}\n"
+        ).format(
+            bank_name=bank_name,
+            bank_scope=bank_scope,
+            currency_name=currency_name,
+            default_balance=humanize_number(default_balance),
+            maximum_bal=humanize_number(max_balance),
+        )
+        await ctx.send(box(settings))
+
+    @bankset.command(name="toggleglobal")
+    @checks.is_owner()
+    async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
+        """Toggle whether the bank is global or not.
+
+        If the bank is global, it will become per-server.
+        If the bank is per-server, it will become global.
+        """
+        cur_setting = await bank.is_global()
+
+        word = _("per-server") if cur_setting else _("global")
+        if confirm is False:
+            await ctx.send(
+                _(
+                    "This will toggle the bank to be {banktype}, deleting all accounts "
+                    "in the process! If you're sure, type `{command}`"
+                ).format(banktype=word, command=f"{ctx.clean_prefix}bankset toggleglobal yes")
+            )
+        else:
+            await bank.set_global(not cur_setting)
+            await ctx.send(_("The bank is now {banktype}.").format(banktype=word))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="bankname")
+    async def bankset_bankname(self, ctx: commands.Context, *, name: str):
+        """Set the bank's name."""
+        await bank.set_bank_name(name, ctx.guild)
+        await ctx.send(_("Bank name has been set to: {name}").format(name=name))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="creditsname")
+    async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
+        """Set the name for the bank's currency."""
+        await bank.set_currency_name(name, ctx.guild)
+        await ctx.send(_("Currency name has been set to: {name}").format(name=name))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="maxbal")
+    async def bankset_maxbal(self, ctx: commands.Context, *, amount: int):
+        """Set the maximum balance a user can get."""
+        try:
+            await bank.set_max_balance(amount, ctx.guild)
+        except ValueError:
+            # noinspection PyProtectedMember
+            return await ctx.send(
+                _("Amount must be greater than zero and less than {max}.").format(
+                    max=humanize_number(bank._MAX_BALANCE)
+                )
+            )
+        await ctx.send(
+            _("Maximum balance has been set to: {amount}").format(amount=humanize_number(amount))
+        )
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="registeramount")
+    async def bankset_registeramount(self, ctx: commands.Context, creds: int):
+        """Set the initial balance for new bank accounts.
+
+        Example:
+            - `[p]bankset registeramount 5000`
+
+        **Arguments**
+
+        - `<creds>` The new initial balance amount. Default is 0.
+        """
+        guild = ctx.guild
+        max_balance = await bank.get_max_balance(ctx.guild)
+        credits_name = await bank.get_currency_name(guild)
+        try:
+            await bank.set_default_balance(creds, guild)
+        except ValueError:
+            return await ctx.send(
+                _("Amount must be greater than or equal to zero and less than {maxbal}.").format(
+                    maxbal=humanize_number(max_balance)
+                )
+            )
+        await ctx.send(
+            _("Registering an account will now give {num} {currency}.").format(
+                num=humanize_number(creds), currency=credits_name
+            )
+        )
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="reset")
+    async def bankset_reset(self, ctx, confirmation: bool = False):
+        """Delete all bank accounts.
+
+        Examples:
+            - `[p]bankset reset` - Did not confirm. Shows the help message.
+            - `[p]bankset reset yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
+                    "`{prefix}bankset reset yes`"
+                ).format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    prefix=ctx.clean_prefix,
+                )
+            )
+        else:
+            await bank.wipe_bank(guild=ctx.guild)
+            await ctx.send(
+                _("All bank accounts for {scope} have been deleted.").format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server")
+                )
+            )
+
+    @bank.is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
+    @bankset.group(name="prune")
+    async def bankset_prune(self, ctx):
+        """Base command for pruning bank accounts."""
+        pass
+
+    @bankset_prune.command(name="server", aliases=["guild", "local"])
+    @commands.guild_only()
+    @checks.guildowner()
+    async def bankset_prune_local(self, ctx, confirmation: bool = False):
+        """Prune bank accounts for users no longer in the server.
+
+        Cannot be used with a global bank. See `[p]bankset prune global`.
+
+        Examples:
+            - `[p]bankset prune server` - Did not confirm. Shows the help message.
+            - `[p]bankset prune server yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        global_bank = await bank.is_global()
+        if global_bank is True:
+            return await ctx.send(_("This command cannot be used with a global bank."))
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for users no longer in this server."
+                    "\nIf you're sure, type "
+                    "`{prefix}bankset prune local yes`"
+                ).format(prefix=ctx.clean_prefix)
+            )
+        else:
+            await bank.bank_prune(self.bot, guild=ctx.guild)
+            await ctx.send(
+                _("Bank accounts for users no longer in this server have been deleted.")
+            )
+
+    @bankset_prune.command(name="global")
+    @checks.is_owner()
+    async def bankset_prune_global(self, ctx, confirmation: bool = False):
+        """Prune bank accounts for users who no longer share a server with the bot.
+
+        Cannot be used without a global bank. See `[p]bankset prune server`.
+
+        Examples:
+            - `[p]bankset prune global` - Did not confirm. Shows the help message.
+            - `[p]bankset prune global yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        global_bank = await bank.is_global()
+        if global_bank is False:
+            return await ctx.send(_("This command cannot be used with a local bank."))
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for users "
+                    "who no longer share a server with the bot."
+                    "\nIf you're sure, type `{prefix}bankset prune global yes`"
+                ).format(prefix=ctx.clean_prefix)
+            )
+        else:
+            await bank.bank_prune(self.bot)
+            await ctx.send(
+                _(
+                    "Bank accounts for users who "
+                    "no longer share a server with the bot have been pruned."
+                )
+            )
+
+    @bankset_prune.command(name="user", usage="<user> [confirmation=False]")
+    async def bankset_prune_user(
+        self,
+        ctx,
+        member_or_id: Union[discord.Member, RawUserIdConverter],
+        confirmation: bool = False,
+    ):
+        """Delete the bank account of a specified user.
+
+        Examples:
+            - `[p]bankset prune user @Twentysix` - Did not confirm. Shows the help message.
+            - `[p]bankset prune user @Twentysix yes`
+
+        **Arguments**
+
+        - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.
+        - `<confirmation>` This will default to false unless specified.
+        """
+        try:
+            name = member_or_id.display_name
+            uid = member_or_id.id
+        except AttributeError:
+            name = member_or_id
+            uid = member_or_id
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete {name}'s bank account."
+                    "\nIf you're sure, type "
+                    "`{prefix}bankset prune user {id} yes`"
+                ).format(prefix=ctx.clean_prefix, id=uid, name=name)
+            )
+        else:
+            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
+            await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
+
+    @commands.group()
+    @checks.guildowner_or_permissions(administrator=True)
+    async def modlogset(self, ctx: commands.Context):
+        """Manage modlog settings."""
+        pass
+
+    @checks.is_owner()
+    @modlogset.command(hidden=True, name="fixcasetypes")
+    async def modlogset_fixcasetypes(self, ctx: commands.Context):
+        """Command to fix misbehaving casetypes."""
+        await modlog.handle_auditype_key()
+        await ctx.tick()
+
+    @modlogset.command(aliases=["channel"], name="modlog")
+    @commands.guild_only()
+    async def modlogset_modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
+        """Set a channel as the modlog.
+
+        Omit `[channel]` to disable the modlog.
+        """
+        guild = ctx.guild
+        if channel:
+            if channel.permissions_for(guild.me).send_messages:
+                await modlog.set_modlog_channel(guild, channel)
+                await ctx.send(
+                    _("Mod events will be sent to {channel}.").format(channel=channel.mention)
+                )
+            else:
+                await ctx.send(
+                    _("I do not have permissions to send messages in {channel}!").format(
+                        channel=channel.mention
+                    )
+                )
+        else:
+            try:
+                await modlog.get_modlog_channel(guild)
+            except RuntimeError:
+                await ctx.send(_("Mod log is already disabled."))
+            else:
+                await modlog.set_modlog_channel(guild, None)
+                await ctx.send(_("Mod log deactivated."))
+
+    @modlogset.command(name="cases")
+    @commands.guild_only()
+    async def modlogset_cases(self, ctx: commands.Context, action: str = None):
+        """Enable or disable case creation for a mod action."""
+        guild = ctx.guild
+
+        if action is None:  # No args given
+            casetypes = await modlog.get_all_casetypes(guild)
+            await ctx.send_help()
+            lines = []
+            for ct in casetypes:
+                enabled = _("enabled") if await ct.is_enabled() else _("disabled")
+                lines.append(f"{ct.name} : {enabled}")
+
+            await ctx.send(_("Current settings:\n") + box("\n".join(lines)))
+            return
+
+        casetype = await modlog.get_casetype(action, guild)
+        if not casetype:
+            await ctx.send(_("That action is not registered."))
+        else:
+            enabled = await casetype.is_enabled()
+            await casetype.set_enabled(not enabled)
+            await ctx.send(
+                _("Case creation for {action_name} actions is now {enabled}.").format(
+                    action_name=action, enabled=_("enabled") if not enabled else _("disabled")
+                )
+            )
+
+    @modlogset.command(name="resetcases")
+    @commands.guild_only()
+    async def modlogset_resetcases(self, ctx: commands.Context):
+        """Reset all modlog cases in this server."""
+        guild = ctx.guild
+        await ctx.send(
+            _("Are you sure you would like to reset all modlog cases in this server?")
+            + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            await modlog.reset_cases(guild)
+            await ctx.send(_("Cases have been reset."))
+        else:
+            await ctx.send(_("No changes have been made."))
 
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
@@ -4558,7 +4920,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Makes a user or role immune from automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune add @TwentySix` - Adds a user.
+            - `[p]autoimmune add @Twentysix` - Adds a user.
             - `[p]autoimmune add @Mods` - Adds a role.
 
         **Arguments:**
@@ -4578,7 +4940,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Remove a user or role from being immune to automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune remove @TwentySix` - Removes a user.
+            - `[p]autoimmune remove @Twentysix` - Removes a user.
             - `[p]autoimmune remove @Mods` - Removes a role.
 
         **Arguments:**
@@ -4598,7 +4960,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Checks if a user or role would be considered immune from automated actions.
 
         **Examples:**
-            - `[p]autoimmune isimmune @TwentySix`
+            - `[p]autoimmune isimmune @Twentysix`
             - `[p]autoimmune isimmune @Mods`
 
         **Arguments:**
