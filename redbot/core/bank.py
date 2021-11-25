@@ -150,12 +150,28 @@ async def _process_data_deletion(
 
 def is_owner_if_bank_global():
     """
-    Command decorator. If the bank is global, it checks if the author is
-    bot owner, otherwise it only checks
-    if command was used in guild - it DOES NOT check any permissions.
+    Restrict the command to the bot owner if the bank is global,
+    otherwise ensure it's used in guild (WITHOUT checking any user permissions).
 
     When used on the command, this should be combined
     with permissions check like `guildowner_or_permissions()`.
+
+    This is a `command check <discord.ext.commands.check>`.
+
+    Example
+    -------
+
+    .. code-block:: python
+
+        @is_owner_if_bank_global()
+        @checks.guildowner()
+        @commands.group()
+        async def bankset(self, ctx: commands.Context):
+            \"""Base command for bank settings.\"""
+
+    If the bank is global, the ``[p]bankset`` command can only be used by
+    the bot owners in both guilds and DMs.
+    If the bank is local, the command can only be used in guilds by guild and bot owners.
     """
 
     async def pred(ctx: commands.Context):
