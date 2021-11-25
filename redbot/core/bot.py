@@ -1208,18 +1208,27 @@ class Red(
         channel: Union[discord.abc.GuildChannel, discord.abc.PrivateChannel],
         user: discord.abc.User,
         command: Optional[commands.Command] = None,
+        *,
+        check_permissions: bool = False,
     ) -> bool:
         """
         Determine if an embed is requested for a response.
 
-        Parameters
-        ----------
+        Arguments
+        ---------
         channel : `discord.abc.GuildChannel` or `discord.abc.PrivateChannel`
             The channel to check embed settings for.
         user : `discord.abc.User`
             The user to check embed settings for.
         command : `redbot.core.commands.Command`, optional
             The command ran.
+
+        Keyword Arguments
+        -----------------
+        check_permissions : `bool`
+            If ``True``, this method will also check whether the bot can send embeds
+            in the given channel and if it can't, it will return ``False`` regardless of
+            the bot's embed settings.
 
         Returns
         -------
@@ -1237,6 +1246,9 @@ class Red(
             if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
         else:
+            if not channel.permissions_for(channel.guild.me).embed_links:
+                return False
+
             if (channel_setting := await self._config.channel(channel).embeds()) is not None:
                 return channel_setting
 
