@@ -2143,7 +2143,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.admin_or_permissions(manage_guild=True)
     @bankset.group(name="prune")
     async def _prune(self, ctx):
-        """Prune bank accounts."""
+        """Base command for pruning bank accounts."""
         pass
 
     @_prune.command(name="server", aliases=["guild", "local"])
