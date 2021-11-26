@@ -38,6 +38,7 @@ Windows 11                  `Retirement Date <https://docs.microsoft.com/en-us/l
 macOS 10.15 (Catalina)      ~2022-10
 macOS 11 (Big Sur)          ~2023-10
 macOS 12 (Monterey)         ~2024-10
+Alma Linux 8                2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-cloudlinux-support-almalinux>`__)
 Arch Linux                  forever (support is only provided for an up-to-date system)
 CentOS 7                    2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS 8.4+                 2021-12-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)

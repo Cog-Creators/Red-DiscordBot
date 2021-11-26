@@ -13,6 +13,7 @@ we recommend **Ubuntu 20.04 LTS**.
 
    windows
    mac
+   alma-linux-8
    arch
    centos-7
    centos-8
