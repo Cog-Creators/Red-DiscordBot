@@ -682,7 +682,7 @@ class Economy(commands.Cog):
         await ctx.send(
             box(
                 _(
-                    "----Economy Settings---\n"
+                    "---Economy Settings---\n"
                     "Minimum slot bid: {slot_min}\n"
                     "Maximum slot bid: {slot_max}\n"
                     "Slot cooldown: {slot_time}\n"
