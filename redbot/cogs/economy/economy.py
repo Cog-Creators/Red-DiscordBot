@@ -845,12 +845,7 @@ class Economy(commands.Cog):
             )
         )
         if roles:
-            await ctx.send(
-                box(
-                    f"---Role Payday Amounts---\n"
-                    f"{roles}"
-                )
-            )
+            await ctx.send(box(f"---Role Payday Amounts---\n{roles}"))
 
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: positive_int):
