@@ -3042,7 +3042,7 @@ set regionalformat global
 Changes the bot's regional format. This is used for formatting date, time and numbers.
 
 ``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
-Pass "reset" to `language_code` to base regional formatting on bot's locale.
+Pass "reset" to ``language_code`` to base regional formatting on bot's locale.
 
 **Examples:**
     - ``[p]set regionalformat global en-US``
@@ -3073,7 +3073,7 @@ set regionalformat server
 Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
 ``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
-Pass "reset" to `language_code` to base regional formatting on bot's locale in this server.
+Pass "reset" to ``language_code`` to base regional formatting on bot's locale in this server.
 
 **Examples:**
     - ``[p]set regionalformat server en-US``
