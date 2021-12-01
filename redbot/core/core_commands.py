@@ -415,10 +415,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     async def info(self, ctx: commands.Context):
-        """Shows info about [botname].
-
-        See `[p]set custominfo` to customize.
-        """
+        """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -2007,8 +2004,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         The default is "Red V3".
 
         **Examples:**
-            - `[p]set description` - Resets the description to the default setting.
-            - `[p]set description MyBot: A Red V3 Bot`
+            - `[p]set bot description` - Resets the description to the default setting.
+            - `[p]set bot description MyBot: A Red V3 Bot`
 
         **Arguments:**
             - `[description]` - The description to use for this bot. Leave blank to reset to the default.
@@ -2037,9 +2034,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Supports either an attachment or an image URL.
 
         **Examples:**
-            - `[p]set avatar` - With an image attachment, this will set the avatar.
-            - `[p]set avatar` - Without an attachment, this will show the command help.
-            - `[p]set avatar https://links.flaree.xyz/k95` - Sets the avatar to the provided url.
+            - `[p]set bot avatar` - With an image attachment, this will set the avatar.
+            - `[p]set bot avatar` - Without an attachment, this will show the command help.
+            - `[p]set bot avatar https://links.flaree.xyz/k95` - Sets the avatar to the provided url.
 
         **Arguments:**
             - `[url]` - An image url to be used as an avatar. Leave blank when uploading an attachment.
@@ -2085,7 +2082,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Removes [botname]'s avatar.
 
         **Example:**
-            - `[p]set avatar remove`
+            - `[p]set bot avatar remove`
         """
         async with ctx.typing():
             await ctx.bot.user.edit(avatar=None)
@@ -2102,7 +2099,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             Please contact Discord support to change it.
 
         **Example:**
-            - `[p]set username BaguetteBot`
+            - `[p]set bot username BaguetteBot`
 
         **Arguments:**
             - `<username>` - The username to give the bot.
@@ -2127,7 +2124,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Changing the username timed out. "
                     "Remember that you can only do it up to 2 times an hour."
                     " Use nicknames if you need frequent changes: {command}"
-                ).format(command=inline(f"{ctx.clean_prefix}set nickname"))
+                ).format(command=inline(f"{ctx.clean_prefix}set bot nickname"))
             )
         except discord.HTTPException as e:
             if e.code == 50035:
@@ -2156,7 +2153,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Maximum length for a nickname is 32 characters.
 
         **Example:**
-            - `[p]set nickname 🎃 SpookyBot 🎃`
+            - `[p]set bot nickname 🎃 SpookyBot 🎃`
 
         **Arguments:**
             - `[nickname]` - The nickname to give the bot. Leave blank to clear the current nickname.
@@ -2182,9 +2179,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Link example: `[My link](https://example.com)`
 
         **Examples:**
-            - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
-            - `[p]set custominfo Join my [support server](discord.gg/discord)!`
-            - `[p]set custominfo` - Removes custom info text.
+            - `[p]set bot custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
+            - `[p]set bot custominfo Join my [support server](discord.gg/discord)!`
+            - `[p]set bot custominfo` - Removes custom info text.
 
         **Arguments:**
             - `[text]` - The custom info text.
@@ -2223,9 +2220,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Leaving both streamer and stream_title empty will clear it.
 
         **Examples:**
-            - `[p]set stream` - Clears the activity status.
-            - `[p]set stream 26 Twentysix is streaming` - Sets the stream to `https://www.twitch.tv/26`.
-            - `[p]set stream https://twitch.tv/26 Twentysix is streaming` - Sets the URL manually.
+            - `[p]set status stream` - Clears the activity status.
+            - `[p]set status stream 26 Twentysix is streaming` - Sets the stream to `https://www.twitch.tv/26`.
+            - `[p]set status stream https://twitch.tv/26 Twentysix is streaming` - Sets the URL manually.
 
         **Arguments:**
             - `<streamer>` - The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
@@ -2262,8 +2259,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Maximum length for a playing status is 128 characters.
 
         **Examples:**
-            - `[p]set playing` - Clears the activity status.
-            - `[p]set playing the keyboard`
+            - `[p]set status playing` - Clears the activity status.
+            - `[p]set status playing the keyboard`
 
         **Arguments:**
             - `[game]` - The text to follow `Playing`. Leave blank to clear the current activity status.
@@ -2294,8 +2291,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Maximum length for a listening status is 128 characters.
 
         **Examples:**
-            - `[p]set listening` - Clears the activity status.
-            - `[p]set listening jams`
+            - `[p]set status listening` - Clears the activity status.
+            - `[p]set status listening jams`
 
         **Arguments:**
             - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."""
@@ -2329,8 +2326,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Maximum length for a watching status is 128 characters.
 
         **Examples:**
-            - `[p]set watching` - Clears the activity status.
-            - `[p]set watching [p]help`
+            - `[p]set status watching` - Clears the activity status.
+            - `[p]set status watching [p]help`
 
         **Arguments:**
             - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."""
@@ -2360,8 +2357,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Maximum length for a competing status is 128 characters.
 
         **Examples:**
-            - `[p]set competing` - Clears the activity status.
-            - `[p]set competing London 2012 Olympic Games`
+            - `[p]set status competing` - Clears the activity status.
+            - `[p]set status competing London 2012 Olympic Games`
 
         **Arguments:**
             - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."""
@@ -2440,8 +2437,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
          And more.
 
          **Examples:**
-            - `[p]set addadminrole @Admins`
-            - `[p]set addadminrole Super Admins`
+            - `[p]set roles addadminrole @Admins`
+            - `[p]set roles addadminrole Super Admins`
 
         **Arguments:**
             - `<role>` - The role to add as an admin.
@@ -2467,8 +2464,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
          And more.
 
          **Examples:**
-            - `[p]set addmodrole @Mods`
-            - `[p]set addmodrole Loyal Helpers`
+            - `[p]set roles addmodrole @Mods`
+            - `[p]set roles addmodrole Loyal Helpers`
 
         **Arguments:**
             - `<role>` - The role to add as a moderator.
@@ -2489,8 +2486,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Removes an admin role for this server.
 
         **Examples:**
-            - `[p]set removeadminrole @Admins`
-            - `[p]set removeadminrole Super Admins`
+            - `[p]set roles removeadminrole @Admins`
+            - `[p]set roles removeadminrole Super Admins`
 
         **Arguments:**
             - `<role>` - The role to remove from being an admin.
@@ -2511,8 +2508,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Removes a mod role for this server.
 
         **Examples:**
-            - `[p]set removemodrole @Mods`
-            - `[p]set removemodrole Loyal Helpers`
+            - `[p]set roles removemodrole @Mods`
+            - `[p]set roles removemodrole Loyal Helpers`
 
         **Arguments:**
             - `<role>` - The role to remove from being a moderator.
@@ -2644,9 +2641,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         If you want to change bot's global regional format, see `[p]set regionalformat global` command.
 
         **Examples:**
-            - `[p]set regionalformat server en-US`
-            - `[p]set region local de-DE`
-            - `[p]set regionalformat server reset` - Resets to the locale.
+            - `[p]set regionalformat en-US`
+            - `[p]set region de-DE`
+            - `[p]set regionalformat reset` - Resets to the locale.
 
         **Arguments:**
             - `[language_code]` - The region format to use for the bot in this server.
