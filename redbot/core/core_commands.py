@@ -2522,9 +2522,32 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- End Set Roles Commands -- ###
     # -- Set Locale Commands -- ###
 
-    @_set.group(name="locale")
-    async def _set_locale_group(self, ctx: commands.Context):
-        """Set [botname]'s locales."""
+    @_set.group(name="locale", invoke_without_command=True)
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def _set_locale_group(self, ctx: commands.Context, language_code: str):
+        """
+        Changes [botname]'s locale in this server.
+
+        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
+
+        Use "default" to return to the bot's default set language.
+
+        If you want to change bot's global locale, see `[p]set locale global` command.
+
+        **Examples:**
+            - `[p]set locale en-US`
+            - `[p]set locale de-DE`
+            - `[p]set locale fr-FR`
+            - `[p]set locale pl-PL`
+            - `[p]set locale default` - Resets to the global default locale.
+
+        **Arguments:**
+            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
+        """
+        if ctx.guild is None:
+            await ctx.send_help()
+            return
+        await ctx.invoke(self._set_locale_local, language_code)
 
     @_set_locale_group.command(name="global")
     @checks.is_owner()
@@ -2539,10 +2562,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         To reset to English, use "en-US".
 
         **Examples:**
-            - `[p]set locale en-US`
-            - `[p]set locale de-DE`
-            - `[p]set locale fr-FR`
-            - `[p]set locale pl-PL`
+            - `[p]set locale global en-US`
+            - `[p]set locale global de-DE`
+            - `[p]set locale global fr-FR`
+            - `[p]set locale global pl-PL`
 
         **Arguments:**
             - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
@@ -2563,7 +2586,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
         await ctx.send(_("Global locale has been set."))
 
-    @_set_locale_group.command(name="local")
+    @_set_locale_group.command(name="server", aliases=["local", "guild"])
     @commands.guild_only()
     @checks.guildowner_or_permissions(manage_guild=True)
     async def _set_locale_local(self, ctx: commands.Context, language_code: str):
@@ -2573,14 +2596,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
 
         Use "default" to return to the bot's default set language.
-        To reset to English, use "en-US".
 
         **Examples:**
-            - `[p]set locale en-US`
-            - `[p]set locale de-DE`
-            - `[p]set locale fr-FR`
-            - `[p]set locale pl-PL`
-            - `[p]set locale default` - Resets to the global default locale.
+            - `[p]set locale server en-US`
+            - `[p]set locale server de-DE`
+            - `[p]set locale server fr-FR`
+            - `[p]set locale server pl-PL`
+            - `[p]set locale server default` - Resets to the global default locale.
 
         **Arguments:**
             - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
@@ -2606,29 +2628,48 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot._i18n_cache.set_locale(ctx.guild, standardized_locale_name)
         await ctx.send(_("Locale has been set."))
 
-    @_set.group(name="regionalformat", aliases=["region"])
-    async def _set_regional_format_group(self, ctx: commands.Context):
-        """Set [botname]'s regional formats."""
+    @_set.group(name="regionalformat", aliases=["region"], invoke_without_command=True)
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def _set_regional_format_group(self, ctx: commands.Context, language_code: str):
+        """
+        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
+
+        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        Pass "reset" to `language_code` to base regional formatting on bot's locale in this server.
+
+        If you want to change bot's global regional format, see `[p]set regionalformat global` command.
+
+        **Examples:**
+            - `[p]set regionalformat server en-US`
+            - `[p]set region local de-DE`
+            - `[p]set regionalformat server reset` - Resets to the locale.
+
+        **Arguments:**
+            - `[language_code]` - The region format to use for the bot in this server.
+        """
+        if ctx.guild is None:
+            await ctx.send_help()
+            return
+        await ctx.invoke(self._set_regional_format_local, language_code)
 
     @_set_regional_format_group.command(name="global")
-    @commands.guild_only()
     @checks.is_owner()
-    async def _set_regional_format_global(self, ctx: commands.Context, language_code: str = None):
+    async def _set_regional_format_global(self, ctx: commands.Context, language_code: str):
         """
         Changes the bot's regional format. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
-        Leave `language_code` empty to base regional formatting on bot's locale.
+        Pass "reset" to `language_code` to base regional formatting on bot's locale.
 
         **Examples:**
-            - `[p]set globalregionalformat en-US`
-            - `[p]set globalregion de-DE`
-            - `[p]set globalregionalformat` - Resets to the locale.
+            - `[p]set regionalformat global en-US`
+            - `[p]set region global de-DE`
+            - `[p]set regionalformat global reset` - Resets to the locale.
 
         **Arguments:**
             - `[language_code]` - The default region format to use for the bot.
         """
-        if language_code is None:
+        if language_code.lower() == "reset":
             i18n.set_regional_format(None)
             await self.bot._i18n_cache.set_regional_format(None, None)
             await ctx.send(_("Global regional formatting will now be based on bot's locale."))
@@ -2653,24 +2694,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set_regional_format_group.command(name="local")
+    @_set_regional_format_group.command(name="server", aliases=["local", "guild"])
+    @commands.guild_only()
     @checks.guildowner_or_permissions(manage_guild=True)
-    async def _set_regional_format_local(self, ctx: commands.Context, language_code: str = None):
+    async def _set_regional_format_local(self, ctx: commands.Context, language_code: str):
         """
         Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
         `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
-        Leave `language_code` empty to base regional formatting on bot's locale in this server.
+        Pass "reset" to `language_code` to base regional formatting on bot's locale in this server.
 
         **Examples:**
-            - `[p]set regionalformat en-US`
-            - `[p]set region de-DE`
-            - `[p]set regionalformat` - Resets to the locale.
+            - `[p]set regionalformat server en-US`
+            - `[p]set region local de-DE`
+            - `[p]set regionalformat server reset` - Resets to the locale.
 
         **Arguments:**
             - `[language_code]` - The region format to use for the bot in this server.
         """
-        if language_code is None:
+        if language_code.lower() == "reset":
             i18n.set_contextual_regional_format(None)
             await self.bot._i18n_cache.set_regional_format(ctx.guild, None)
             await ctx.send(
