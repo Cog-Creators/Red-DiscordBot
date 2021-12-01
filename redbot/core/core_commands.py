@@ -2829,6 +2829,138 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("None of the services you provided had any keys set."))
 
     # -- End Set Api Commands -- ###
+    # -- Set Ownernotifications Commands -- ###
+
+    @checks.is_owner()
+    @_set.group(name="ownernotifications")
+    async def _set_ownernotifications(self, ctx: commands.Context):
+        """
+        Commands for configuring owner notifications.
+
+        Owner notifications include usage of `[p]contact` and available Red updates.
+        """
+        pass
+
+    @_set_ownernotifications.command(name="optin")
+    async def _set_ownernotifications_optin(self, ctx: commands.Context):
+        """
+        Opt-in on receiving owner notifications.
+
+        This is the default state.
+
+        Note: This will only resume sending owner notifications to your DMs.
+            Additional owners and destinations will not be affected.
+
+        **Example:**
+            - `[p]set ownernotifications optin`
+        """
+        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
+            if ctx.author.id in opt_outs:
+                opt_outs.remove(ctx.author.id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(name="optout")
+    async def _set_ownernotifications_optout(self, ctx: commands.Context):
+        """
+        Opt-out of receiving owner notifications.
+
+        Note: This will only stop sending owner notifications to your DMs.
+            Additional owners and destinations will still receive notifications.
+
+        **Example:**
+            - `[p]set ownernotifications optout`
+        """
+        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
+            if ctx.author.id not in opt_outs:
+                opt_outs.append(ctx.author.id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(name="adddestination")
+    async def _set_ownernotifications_adddestination(
+        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+    ):
+        """
+        Adds a destination text channel to receive owner notifications.
+
+        **Examples:**
+            - `[p]set ownernotifications adddestination #owner-notifications`
+            - `[p]set ownernotifications adddestination 168091848718417920` - Accepts channel IDs.
+
+        **Arguments:**
+            - `<channel>` - The channel to send owner notifications to.
+        """
+
+        try:
+            channel_id = channel.id
+        except AttributeError:
+            channel_id = channel
+
+        async with ctx.bot._config.extra_owner_destinations() as extras:
+            if channel_id not in extras:
+                extras.append(channel_id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(
+        name="removedestination", aliases=["remdestination", "deletedestination", "deldestination"]
+    )
+    async def _set_ownernotifications_removedestination(
+        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+    ):
+        """
+        Removes a destination text channel from receiving owner notifications.
+
+        **Examples:**
+            - `[p]set ownernotifications removedestination #owner-notifications`
+            - `[p]set ownernotifications deletedestination 168091848718417920` - Accepts channel IDs.
+
+        **Arguments:**
+            - `<channel>` - The channel to stop sending owner notifications to.
+        """
+
+        try:
+            channel_id = channel.id
+        except AttributeError:
+            channel_id = channel
+
+        async with ctx.bot._config.extra_owner_destinations() as extras:
+            if channel_id in extras:
+                extras.remove(channel_id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(name="listdestinations")
+    async def _set_ownernotifications_listdestinations(self, ctx: commands.Context):
+        """
+        Lists the configured extra destinations for owner notifications.
+
+        **Example:**
+            - `[p]set ownernotifications listdestinations`
+        """
+
+        channel_ids = await ctx.bot._config.extra_owner_destinations()
+
+        if not channel_ids:
+            await ctx.send(_("There are no extra channels being sent to."))
+            return
+
+        data = []
+
+        for channel_id in channel_ids:
+            channel = ctx.bot.get_channel(channel_id)
+            if channel:
+                # This includes the channel name in case the user can't see the channel.
+                data.append(f"{channel.mention} {channel} ({channel.id})")
+            else:
+                data.append(_("Unknown channel with id: {id}").format(id=channel_id))
+
+        output = "\n".join(data)
+        for page in pagify(output):
+            await ctx.send(page)
+
+    # -- End Set Ownernotifications Commands -- ###
 
     @_set.command(name="showsettings")
     async def _set_showsettings(self, ctx: commands.Context):
@@ -4693,133 +4825,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("They are immune."))
         else:
             await ctx.send(_("They are not immune."))
-
-    @checks.is_owner()
-    @_set.group()
-    async def ownernotifications(self, ctx: commands.Context):
-        """
-        Commands for configuring owner notifications.
-
-        Owner notifications include usage of `[p]contact` and available Red updates.
-        """
-        pass
-
-    @ownernotifications.command()
-    async def optin(self, ctx: commands.Context):
-        """
-        Opt-in on receiving owner notifications.
-
-        This is the default state.
-
-        Note: This will only resume sending owner notifications to your DMs.
-            Additional owners and destinations will not be affected.
-
-        **Example:**
-            - `[p]ownernotifications optin`
-        """
-        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
-            if ctx.author.id in opt_outs:
-                opt_outs.remove(ctx.author.id)
-
-        await ctx.tick()
-
-    @ownernotifications.command()
-    async def optout(self, ctx: commands.Context):
-        """
-        Opt-out of receiving owner notifications.
-
-        Note: This will only stop sending owner notifications to your DMs.
-            Additional owners and destinations will still receive notifications.
-
-        **Example:**
-            - `[p]ownernotifications optout`
-        """
-        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
-            if ctx.author.id not in opt_outs:
-                opt_outs.append(ctx.author.id)
-
-        await ctx.tick()
-
-    @ownernotifications.command()
-    async def adddestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
-    ):
-        """
-        Adds a destination text channel to receive owner notifications.
-
-        **Examples:**
-            - `[p]ownernotifications adddestination #owner-notifications`
-            - `[p]ownernotifications adddestination 168091848718417920` - Accepts channel IDs.
-
-        **Arguments:**
-            - `<channel>` - The channel to send owner notifications to.
-        """
-
-        try:
-            channel_id = channel.id
-        except AttributeError:
-            channel_id = channel
-
-        async with ctx.bot._config.extra_owner_destinations() as extras:
-            if channel_id not in extras:
-                extras.append(channel_id)
-
-        await ctx.tick()
-
-    @ownernotifications.command(aliases=["remdestination", "deletedestination", "deldestination"])
-    async def removedestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
-    ):
-        """
-        Removes a destination text channel from receiving owner notifications.
-
-        **Examples:**
-            - `[p]ownernotifications removedestination #owner-notifications`
-            - `[p]ownernotifications deletedestination 168091848718417920` - Accepts channel IDs.
-
-        **Arguments:**
-            - `<channel>` - The channel to stop sending owner notifications to.
-        """
-
-        try:
-            channel_id = channel.id
-        except AttributeError:
-            channel_id = channel
-
-        async with ctx.bot._config.extra_owner_destinations() as extras:
-            if channel_id in extras:
-                extras.remove(channel_id)
-
-        await ctx.tick()
-
-    @ownernotifications.command()
-    async def listdestinations(self, ctx: commands.Context):
-        """
-        Lists the configured extra destinations for owner notifications.
-
-        **Example:**
-            - `[p]ownernotifications listdestinations`
-        """
-
-        channel_ids = await ctx.bot._config.extra_owner_destinations()
-
-        if not channel_ids:
-            await ctx.send(_("There are no extra channels being sent to."))
-            return
-
-        data = []
-
-        for channel_id in channel_ids:
-            channel = ctx.bot.get_channel(channel_id)
-            if channel:
-                # This includes the channel name in case the user can't see the channel.
-                data.append(f"{channel.mention} {channel} ({channel.id})")
-            else:
-                data.append(_("Unknown channel with id: {id}").format(id=channel_id))
-
-        output = "\n".join(data)
-        for page in pagify(output):
-            await ctx.send(page)
 
     # RPC handlers
     async def rpc_load(self, request):

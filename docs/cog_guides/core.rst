@@ -2858,8 +2858,8 @@ set ownernotifications adddestination
 Adds a destination text channel to receive owner notifications.
 
 **Examples:**
-    - ``[p]ownernotifications adddestination #owner-notifications``
-    - ``[p]ownernotifications adddestination 168091848718417920`` - Accepts channel IDs.
+    - ``[p]set ownernotifications adddestination #owner-notifications``
+    - ``[p]set ownernotifications adddestination 168091848718417920`` - Accepts channel IDs.
 
 **Arguments:**
     - ``<channel>`` - The channel to send owner notifications to.
@@ -2881,7 +2881,7 @@ set ownernotifications listdestinations
 Lists the configured extra destinations for owner notifications.
 
 **Example:**
-    - ``[p]ownernotifications listdestinations``
+    - ``[p]set ownernotifications listdestinations``
 
 .. _core-command-set-ownernotifications-optin:
 
@@ -2906,7 +2906,7 @@ This is the default state.
     Additional owners and destinations will not be affected.
 
 **Example:**
-    - ``[p]ownernotifications optin``
+    - ``[p]set ownernotifications optin``
 
 .. _core-command-set-ownernotifications-optout:
 
@@ -2929,7 +2929,7 @@ Opt-out of receiving owner notifications.
     Additional owners and destinations will still receive notifications.
 
 **Example:**
-    - ``[p]ownernotifications optout``
+    - ``[p]set ownernotifications optout``
 
 .. _core-command-set-ownernotifications-removedestination:
 
@@ -2950,8 +2950,8 @@ set ownernotifications removedestination
 Removes a destination text channel from receiving owner notifications.
 
 **Examples:**
-    - ``[p]ownernotifications removedestination #owner-notifications``
-    - ``[p]ownernotifications deletedestination 168091848718417920`` - Accepts channel IDs.
+    - ``[p]set ownernotifications removedestination #owner-notifications``
+    - ``[p]set ownernotifications deletedestination 168091848718417920`` - Accepts channel IDs.
 
 **Arguments:**
     - ``<channel>`` - The channel to stop sending owner notifications to.
