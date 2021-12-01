@@ -1262,7 +1262,7 @@ helpset resetformatter
 This resets Red's help formatter to the default formatter.
 
 **Example:**
-    - ``[p]helpset resetformatter````
+    - ``[p]helpset resetformatter``
 
 .. _core-command-helpset-resetsettings:
 
@@ -1283,7 +1283,7 @@ This resets Red's help settings to their defaults.
 This may not have an impact when using custom formatters from 3rd party cogs
 
 **Example:**
-    - ``[p]helpset resetsettings````
+    - ``[p]helpset resetsettings``
 
 .. _core-command-helpset-showaliases:
 
@@ -1357,7 +1357,7 @@ Show the current help settings.
 
 
 **Example:**
-    - ``[p]helpset showsettings````
+    - ``[p]helpset showsettings``
 
 .. _core-command-helpset-tagline:
 
@@ -2481,7 +2481,7 @@ Show all external API services along with their keys that have been set.
 Secrets are not shown.
 
 **Example:**
-    - ``[p]set api list````
+    - ``[p]set api list``
 
 .. _core-command-set-api-remove:
 
