@@ -1995,7 +1995,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @checks.is_owner()
     @_set_bot.command(name="description")
-    async def setdescription(self, ctx: commands.Context, *, description: str = ""):
+    async def _set_bot_description(self, ctx: commands.Context, *, description: str = ""):
         """
         Sets the bot's description.
 
@@ -2029,9 +2029,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             ctx.bot.description = description
             await ctx.tick()
 
-    @_set_bot.group(invoke_without_command=True)
+    @_set_bot.group(name="avatar", invoke_without_command=True)
     @checks.is_owner()
-    async def avatar(self, ctx: commands.Context, url: str = None):
+    async def _set_bot_avatar(self, ctx: commands.Context, url: str = None):
         """Sets [botname]'s avatar
 
         Supports either an attachment or an image URL.
@@ -2078,9 +2078,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @avatar.command(name="remove", aliases=["clear"])
+    @_set_bot_avatar.command(name="remove", aliases=["clear"])
     @checks.is_owner()
-    async def avatar_remove(self, ctx: commands.Context):
+    async def _set_bot_avatar_remove(self, ctx: commands.Context):
         """
         Removes [botname]'s avatar.
 
@@ -2093,7 +2093,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set_bot.command(name="username", aliases=["name"])
     @checks.is_owner()
-    async def _username(self, ctx: commands.Context, *, username: str):
+    async def _set_bot_username(self, ctx: commands.Context, *, username: str):
         """Sets [botname]'s username.
 
         Maximum length for a username is 32 characters.
@@ -2150,7 +2150,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_bot.command(name="nickname")
     @checks.admin_or_permissions(manage_nicknames=True)
     @commands.guild_only()
-    async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
+    async def _set_bot_nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname for the current server.
 
         Maximum length for a nickname is 32 characters.
@@ -2171,9 +2171,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set_bot.command()
+    @_set_bot.command(name="custominfo")
     @checks.is_owner()
-    async def custominfo(self, ctx: commands.Context, *, text: str = None):
+    async def _set_bot_custominfo(self, ctx: commands.Context, *, text: str = None):
         """Customizes a section of `[p]info`.
 
         The maximum amount of allowed characters is 1024.
@@ -2203,21 +2203,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- End Bot Metadata Commands -- ###
     # -- Bot Status Commands -- ###
 
-    async def _set_status(self, ctx: commands.Context, status: discord.Status):
-        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
-        await ctx.bot.change_presence(status=status, activity=game)
-        return await ctx.send(_("Status changed to {}.").format(status))
-
     @_set.group(name="status")
-    async def _set_status_group(self, ctx: commands.Context):
+    async def _set_status(self, ctx: commands.Context):
         """Commands for setting [botname]'s status."""
 
-    @_set_status_group.command(
+    @_set_status.command(
         name="streaming", aliases=["stream", "twitch"], usage="[(<streamer> <stream_title>)]"
     )
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
+    async def _set_status_stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
         """Sets [botname]'s streaming status to a twitch stream.
 
         This will appear as `Streaming <stream_title>` or `LIVE ON TWITCH` depending on the context.
@@ -2256,10 +2251,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot.change_presence(activity=None, status=status)
         await ctx.send(_("Done."))
 
-    @_set_status_group.command(name="playing", aliases=["game"])
+    @_set_status.command(name="playing", aliases=["game"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _game(self, ctx: commands.Context, *, game: str = None):
+    async def _set_status_game(self, ctx: commands.Context, *, game: str = None):
         """Sets [botname]'s playing status.
 
         This will appear as `Playing <game>` or `PLAYING A GAME: <game>` depending on the context.
@@ -2288,10 +2283,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Game cleared."))
 
-    @_set_status_group.command(name="listening")
+    @_set_status.command(name="listening")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _listening(self, ctx: commands.Context, *, listening: str = None):
+    async def _set_status_listening(self, ctx: commands.Context, *, listening: str = None):
         """Sets [botname]'s listening status.
 
         This will appear as `Listening to <listening>`.
@@ -2323,10 +2318,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Listening cleared."))
 
-    @_set_status_group.command(name="watching")
+    @_set_status.command(name="watching")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _watching(self, ctx: commands.Context, *, watching: str = None):
+    async def _set_status_watching(self, ctx: commands.Context, *, watching: str = None):
         """Sets [botname]'s watching status.
 
         This will appear as `Watching <watching>`.
@@ -2354,10 +2349,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Watching cleared."))
 
-    @_set_status_group.command(name="competing")
+    @_set_status.command(name="competing")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _competing(self, ctx: commands.Context, *, competing: str = None):
+    async def _set_status_competing(self, ctx: commands.Context, *, competing: str = None):
         """Sets [botname]'s competing status.
 
         This will appear as `Competing in <competing>`.
@@ -2389,47 +2384,52 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Competing cleared."))
 
-    @_set_status_group.command(name="online")
+    async def _set_my_status(self, ctx: commands.Context, status: discord.Status):
+        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
+        await ctx.bot.change_presence(status=status, activity=game)
+        return await ctx.send(_("Status changed to {}.").format(status))
+
+    @_set_status.command(name="online")
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _set_status_online(self, ctx: commands.Context):
         """Set [botname]'s status to online."""
-        await self._set_status(ctx, discord.Status.online)
+        await self._set_my_status(ctx, discord.Status.online)
 
-    @_set_status_group.command(name="dnd", aliases=["donotdisturb", "busy"])
+    @_set_status.command(name="dnd", aliases=["donotdisturb", "busy"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _set_status_dnd(self, ctx: commands.Context):
         """Set [botname]'s status to do not disturb."""
-        await self._set_status(ctx, discord.Status.do_not_disturb)
+        await self._set_my_status(ctx, discord.Status.do_not_disturb)
 
-    @_set_status_group.command(name="idle", aliases=["away", "afk"])
+    @_set_status.command(name="idle", aliases=["away", "afk"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _set_status_idle(self, ctx: commands.Context):
         """Set [botname]'s status to idle."""
-        await self._set_status(ctx, discord.Status.idle)
+        await self._set_my_status(ctx, discord.Status.idle)
 
-    @_set_status_group.command(name="invisible", aliases=["offline"])
+    @_set_status.command(name="invisible", aliases=["offline"])
     @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _set_status_invisible(self, ctx: commands.Context):
         """Set [botname]'s status to invisible."""
-        await self._set_status(ctx, discord.Status.invisible)
+        await self._set_my_status(ctx, discord.Status.invisible)
 
     # -- End Bot Status Commands -- ###
     # -- Bot Roles Commands -- ###
 
     @_set.group(name="roles")
     async def _set_roles(self, ctx: commands.Context):
-        """Set various permission roles for [botname]."""
+        """Set server's admin and mod roles for [botname]."""
 
-    @_set_roles.command()
+    @_set_roles.command(name="addadminrole")
     @checks.guildowner()
     @commands.guild_only()
-    async def addadminrole(self, ctx: commands.Context, *, role: discord.Role):
+    async def _set_roles_addadminrole(self, ctx: commands.Context, *, role: discord.Role):
         """
-        Adds an admin role for this guild.
+        Adds an admin role for this server.
 
         Admins have the same access as Mods, plus additional admin level commands like:
          - `[p]set serverprefix`
@@ -2452,12 +2452,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             roles.append(role.id)
         await ctx.send(_("That role is now considered an admin role."))
 
-    @_set_roles.command()
+    @_set_roles.command(name="addmodrole")
     @checks.guildowner()
     @commands.guild_only()
-    async def addmodrole(self, ctx: commands.Context, *, role: discord.Role):
+    async def _set_roles_addmodrole(self, ctx: commands.Context, *, role: discord.Role):
         """
-        Adds a moderator role for this guild.
+        Adds a moderator role for this server.
 
         This grants access to moderator level commands like:
          - `[p]mute`
@@ -2479,12 +2479,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             roles.append(role.id)
         await ctx.send(_("That role is now considered a mod role."))
 
-    @_set_roles.command(aliases=["remadmindrole", "deladminrole", "deleteadminrole"])
+    @_set_roles.command(
+        name="removeadminrole", aliases=["remadmindrole", "deladminrole", "deleteadminrole"]
+    )
     @checks.guildowner()
     @commands.guild_only()
-    async def removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
+    async def _set_roles_removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
         """
-        Removes an admin role for this guild.
+        Removes an admin role for this server.
 
         **Examples:**
             - `[p]set removeadminrole @Admins`
@@ -2499,12 +2501,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             roles.remove(role.id)
         await ctx.send(_("That role is no longer considered an admin role."))
 
-    @_set_roles.command(aliases=["remmodrole", "delmodrole", "deletemodrole"])
+    @_set_roles.command(
+        name="removemodrole", aliases=["remmodrole", "delmodrole", "deletemodrole"]
+    )
     @checks.guildowner()
     @commands.guild_only()
-    async def removemodrole(self, ctx: commands.Context, *, role: discord.Role):
+    async def _set_roles_removemodrole(self, ctx: commands.Context, *, role: discord.Role):
         """
-        Removes a mod role for this guild.
+        Removes a mod role for this server.
 
         **Examples:**
             - `[p]set removemodrole @Mods`
@@ -2524,7 +2528,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.group(name="locale", invoke_without_command=True)
     @checks.guildowner_or_permissions(manage_guild=True)
-    async def _set_locale_group(self, ctx: commands.Context, language_code: str):
+    async def _set_locale(self, ctx: commands.Context, language_code: str):
         """
         Changes [botname]'s locale in this server.
 
@@ -2549,7 +2553,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         await ctx.invoke(self._set_locale_local, language_code)
 
-    @_set_locale_group.command(name="global")
+    @_set_locale.command(name="global")
     @checks.is_owner()
     async def _set_locale_global(self, ctx: commands.Context, language_code: str):
         """
@@ -2586,7 +2590,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
         await ctx.send(_("Global locale has been set."))
 
-    @_set_locale_group.command(name="server", aliases=["local", "guild"])
+    @_set_locale.command(name="server", aliases=["local", "guild"])
     @commands.guild_only()
     @checks.guildowner_or_permissions(manage_guild=True)
     async def _set_locale_local(self, ctx: commands.Context, language_code: str):
@@ -2630,7 +2634,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.group(name="regionalformat", aliases=["region"], invoke_without_command=True)
     @checks.guildowner_or_permissions(manage_guild=True)
-    async def _set_regional_format_group(self, ctx: commands.Context, language_code: str):
+    async def _set_regional_format(self, ctx: commands.Context, language_code: str):
         """
         Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
@@ -2652,7 +2656,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         await ctx.invoke(self._set_regional_format_local, language_code)
 
-    @_set_regional_format_group.command(name="global")
+    @_set_regional_format.command(name="global")
     @checks.is_owner()
     async def _set_regional_format_global(self, ctx: commands.Context, language_code: str):
         """
@@ -2694,7 +2698,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set_regional_format_group.command(name="server", aliases=["local", "guild"])
+    @_set_regional_format.command(name="server", aliases=["local", "guild"])
     @commands.guild_only()
     @checks.guildowner_or_permissions(manage_guild=True)
     async def _set_regional_format_local(self, ctx: commands.Context, language_code: str):
@@ -2742,7 +2746,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- End Set Locale Commands -- ###
 
     @_set.command(name="showsettings")
-    async def set_showsettings(self, ctx: commands.Context):
+    async def _set_showsettings(self, ctx: commands.Context):
         """
         Show the current settings for [botname].
         """
@@ -2803,7 +2807,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @_set.command(name="deletedelay")
     @commands.guild_only()
-    async def deletedelay(self, ctx: commands.Context, time: int = None):
+    async def _set_deletedelay(self, ctx: commands.Context, time: int = None):
         """Set the delay until the bot removes the command message.
 
         Must be between -1 and 60.
@@ -2841,10 +2845,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             else:
                 await ctx.send(_("I will not delete command messages."))
 
-    @_set.command(aliases=["usebotcolor"])
+    @_set.command(name="usebotcolour", aliases=["usebotcolor"])
     @checks.guildowner()
     @commands.guild_only()
-    async def usebotcolour(self, ctx: commands.Context):
+    async def _set_usebotcolour(self, ctx: commands.Context):
         """
         Toggle whether to use the bot owner-configured colour for embeds.
 
@@ -2862,10 +2866,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command()
+    @_set.command(name="serverfuzzy")
     @checks.guildowner()
     @commands.guild_only()
-    async def serverfuzzy(self, ctx: commands.Context):
+    async def _set_serverfuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search for the server.
 
@@ -2886,9 +2890,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command()
+    @_set.command(name="fuzzy")
     @checks.is_owner()
-    async def fuzzy(self, ctx: commands.Context):
+    async def _set_fuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search in DMs.
 
@@ -2907,9 +2911,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command(aliases=["color"])
+    @_set.command(name="colour", aliases=["color"])
     @checks.is_owner()
-    async def colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
+    async def _set_colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
         """
         Sets a default colour to be used for the bot's embeds.
 
@@ -2936,10 +2940,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("The color has been set."))
 
     @_set.command(
-        aliases=["prefixes", "globalprefix", "globalprefixes"], require_var_positional=True
+        name="prefix",
+        aliases=["prefixes", "globalprefix", "globalprefixes"],
+        require_var_positional=True,
     )
     @checks.is_owner()
-    async def prefix(self, ctx: commands.Context, *prefixes: str):
+    async def _set_prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es).
 
         Warning: This is not additive. It will replace all current prefixes.
@@ -2979,10 +2985,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Prefixes set."))
 
-    @_set.command(aliases=["serverprefixes"])
+    @_set.command(name="serverprefix", aliases=["serverprefixes"])
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
-    async def serverprefix(self, ctx: commands.Context, *prefixes: str):
+    async def _set_serverprefix(self, ctx: commands.Context, *prefixes: str):
         """
         Sets [botname]'s server prefix(es).
 
@@ -3013,9 +3019,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Server prefixes set."))
 
-    @_set.group(invoke_without_command=True)
+    @_set.group(name="api", invoke_without_command=True)
     @checks.is_owner()
-    async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
+    async def _set_api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
         """
         Commands to set, list or remove various external API tokens.
 
@@ -3039,8 +3045,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.set_shared_api_tokens(service, **tokens)
         await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
-    @api.command(name="list")
-    async def api_list(self, ctx: commands.Context):
+    @_set_api.command(name="list")
+    async def _set_api_list(self, ctx: commands.Context):
         """
         Show all external API services along with their keys that have been set.
 
@@ -3065,8 +3071,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
-    @api.command(name="remove", require_var_positional=True)
-    async def api_remove(self, ctx: commands.Context, *services: str):
+    @_set_api.command(name="remove", require_var_positional=True)
+    async def _set_api_remove(self, ctx: commands.Context, *services: str):
         """
         Remove the given services with all their keys and tokens.
 
