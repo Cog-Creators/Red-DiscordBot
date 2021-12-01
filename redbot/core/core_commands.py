@@ -1987,6 +1987,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Bot Metadata Commands -- ###
 
     @_set.group(name="bot", aliases=["metadata"])
+    @checks.admin_or_permissions(manage_nicknames=True)
     async def _set_bot(self, ctx: commands.Context):
         """Commands for changing [botname]'s metadata."""
 
@@ -2201,6 +2202,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Bot Status Commands -- ###
 
     @_set.group(name="status")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
     async def _set_status(self, ctx: commands.Context):
         """Commands for setting [botname]'s status."""
 
@@ -2418,6 +2421,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Bot Roles Commands -- ###
 
     @_set.group(name="roles")
+    @checks.guildowner()
+    @commands.guild_only()
     async def _set_roles(self, ctx: commands.Context):
         """Set server's admin and mod roles for [botname]."""
 
