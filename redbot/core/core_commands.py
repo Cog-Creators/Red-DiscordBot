@@ -2972,7 +2972,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             guild = ctx.guild
             admin_role_ids = guild_data["admin_role"]
             admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
-            admin_roles_str = humanize_list(admin_role_names) if admin_role_names else _("Not Set.")
+            admin_roles_str = (
+                humanize_list(admin_role_names) if admin_role_names else _("Not Set.")
+            )
             mod_role_ids = guild_data["mod_role"]
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else _("Not Set.")
