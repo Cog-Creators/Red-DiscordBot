@@ -20,7 +20,6 @@ from typing import (
     Type,
     TypeVar,
     Literal as Literal,
-    Any,
     Union as UserInputOptional,
 )
 
@@ -35,6 +34,7 @@ if TYPE_CHECKING:
     from .context import Context
 
 __all__ = [
+    "RawUserIdConverter",
     "DictConverter",
     "UserInputOptional",
     "NoParseOptional",
@@ -52,6 +52,7 @@ __all__ = [
 _ = Translator("commands.converter", __file__)
 
 ID_REGEX = re.compile(r"([0-9]{15,20})")
+USER_MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 
 
 # Taken with permission from
@@ -205,46 +206,30 @@ def parse_relativedelta(
     return None
 
 
-class _GuildConverter(discord.Guild):
-    """Converts to a `discord.Guild` object.
+class RawUserIdConverter(dpy_commands.Converter):
+    """
+    Converts ID or user mention to an `int`.
 
-    The lookup strategy is as follows (in order):
+    Useful for commands like ``[p]ban`` or ``[p]unban`` where the bot is not necessarily
+    going to share any servers with the user that a moderator wants to ban/unban.
 
-    1. Lookup by ID.
-    2. Lookup by name.
+    This converter doesn't check if the ID/mention points to an actual user
+    but it won't match IDs and mentions that couldn't possibly be valid.
 
-    .. deprecated-removed:: 3.4.8 60
-        ``GuildConverter`` is now only provided within ``redbot.core.commands`` namespace.
+    For example, the converter will not match on "123" because the number doesn't have
+    enough digits to be valid ID but, it will match on "12345678901234567" even though
+    there is no user with such ID.
     """
 
-    @classmethod
-    async def convert(cls, ctx: "Context", argument: str) -> discord.Guild:
-        return await dpy_commands.GuildConverter().convert(ctx, argument)
+    async def convert(self, ctx: "Context", argument: str) -> int:
+        # This is for the hackban and unban commands, where we receive IDs that
+        # are most likely not in the guild.
+        # Mentions are supported, but most likely won't ever be in cache.
 
+        if match := ID_REGEX.match(argument) or USER_MENTION_REGEX.match(argument):
+            return int(match.group(1))
 
-_GuildConverter.__name__ = "GuildConverter"
-
-
-def __getattr__(name: str, *, stacklevel: int = 2) -> Any:
-    # Let me just say it one more time... This is awesome! (PEP-562)
-    if name == "GuildConverter":
-        # let's not waste time on importing this when we don't need it
-        # (and let's not put in the public API)
-        from redbot.core.utils._internal_utils import deprecated_removed
-
-        deprecated_removed(
-            "`GuildConverter` from `redbot.core.commands.converter` namespace",
-            "3.4.8",
-            60,
-            "Use `GuildConverter` from `redbot.core.commands` namespace instead.",
-            stacklevel=2,
-        )
-        return globals()["_GuildConverter"]
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
-def __dir__() -> List[str]:
-    return [*globals().keys(), "GuildConverter"]
+        raise BadArgument(_("'{input}' doesn't look like a valid user ID.").format(input=argument))
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when
