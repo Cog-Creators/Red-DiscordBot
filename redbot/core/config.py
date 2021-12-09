@@ -957,6 +957,8 @@ class Config(metaclass=ConfigMeta):
             The guild's Group object.
 
         """
+        if not isinstance(guild_id, int):
+            raise TypeError(f"Guild id must be of type int, not `{type(guild_id)}`.")
         return self._get_base_group(self.GUILD, str(guild_id))
 
     def guild(self, guild: discord.Guild) -> Group:
@@ -991,6 +993,8 @@ class Config(metaclass=ConfigMeta):
             The channel's Group object.
 
         """
+        if not isinstance(channel_id, int):
+            raise TypeError(f"Channel id must be of type int, not `{type(channel_id)}`.")
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
     def channel(self, channel: discord.abc.GuildChannel) -> Group:
@@ -1025,6 +1029,8 @@ class Config(metaclass=ConfigMeta):
             The role's Group object.
 
         """
+        if not isinstance(role_id, int):
+            raise TypeError(f"Role id must be of type int, not `{type(role_id)}`.")
         return self._get_base_group(self.ROLE, str(role_id))
 
     def role(self, role: discord.Role) -> Group:
@@ -1057,6 +1063,8 @@ class Config(metaclass=ConfigMeta):
             The user's Group object.
 
         """
+        if not isinstance(user_id, int):
+            raise TypeError(f"User id must be of type int, not `{type(user_id)}`.")
         return self._get_base_group(self.USER, str(user_id))
 
     def user(self, user: discord.abc.User) -> Group:
@@ -1091,6 +1099,11 @@ class Config(metaclass=ConfigMeta):
             The member's Group object.
 
         """
+        if not isinstance(guild_id, int):
+            raise TypeError(f"Guild id must be of type int, not `{type(guild_id)}`.")
+        elif not isinstance(member_id, int):
+            raise TypeError(f"Member id must be of type int, not `{type(member_id)}`.") 
+        #raising errors separately to be clear and concise about which parameter is of wrong type
         return self._get_base_group(self.MEMBER, str(guild_id), str(member_id))
 
     def member(self, member: discord.Member) -> Group:
