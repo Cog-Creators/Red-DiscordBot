@@ -955,6 +955,11 @@ class Config(metaclass=ConfigMeta):
         -------
         `Group <redbot.core.config.Group>`
             The guild's Group object.
+            
+        Raises
+        ------
+        TypeError
+            If the given guild_id parameter is not of type int
 
         """
         if not isinstance(guild_id, int):
@@ -992,6 +997,11 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The channel's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given channel_id parameter is not of type int
+            
         """
         if not isinstance(channel_id, int):
             raise TypeError(f"Channel id must be of type int, not `{type(channel_id)}`.")
@@ -1028,6 +1038,11 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The role's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given role_id parameter is not of type int
+            
         """
         if not isinstance(role_id, int):
             raise TypeError(f"Role id must be of type int, not `{type(role_id)}`.")
@@ -1062,6 +1077,11 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The user's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given user_id parameter is not of type int
+            
         """
         if not isinstance(user_id, int):
             raise TypeError(f"User id must be of type int, not `{type(user_id)}`.")
@@ -1098,6 +1118,11 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The member's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given member_id/guild_id parameter is not of type int
+            
         """
         if not isinstance(guild_id, int):
             raise TypeError(f"Guild id must be of type int, not `{type(guild_id)}`.")
