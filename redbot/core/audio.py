@@ -416,7 +416,8 @@ class Player():
         elif bump or bump_and_skip:
             self.queue.insert(0, track)
             if bump_and_skip:
-                await self.skip(requester)
+                if self.queue:
+                    await self.skip(requester)
 
     async def _enqueue_tracks(self,
                               requester: discord.Member,

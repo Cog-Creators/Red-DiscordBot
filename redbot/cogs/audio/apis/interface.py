@@ -770,7 +770,7 @@ class AudioAPIInterface:
     async def fetch_track(
         self,
         ctx: commands.Context,
-        player: lavalink.Player,
+        player: audio.Player,
         query: Query,
         forced: bool = False,
         lazy: bool = False,
@@ -877,7 +877,7 @@ class AudioAPIInterface:
                 log.debug("Querying Lavalink api for %r", query_string)
             called_api = True
             try:
-                results = await player.load_tracks(query_string)
+                results = await player._ll_player.load_tracks(query_string)
             except KeyError:
                 results = None
             except RuntimeError:
@@ -932,7 +932,7 @@ class AudioAPIInterface:
                 )
         return results, called_api
 
-    async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
+    async def autoplay(self, player: audio.Player, playlist_api: PlaylistWrapper):
         """Enqueue a random track."""
         autoplaylist = await self.config.guild(player.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
@@ -1005,7 +1005,7 @@ class AudioAPIInterface:
                     "requester": player.guild.me.id,
                 }
             )
-            player.add(player.guild.me, track)
+            await player.play(player.guild.me, track=track)
             self.bot.dispatch(
                 "red_audio_track_auto_play",
                 player.guild,
@@ -1021,8 +1021,6 @@ class AudioAPIInterface:
                 await self.config.guild_from_id(
                     guild_id=player.guild.id
                 ).currently_auto_playing_in.set([])
-            if not player.current:
-                await player.play()
 
     async def fetch_all_contribute(self) -> List[LavalinkCacheFetchForGlobalResult]:
         return await self.local_cache_api.lavalink.fetch_all_for_global()

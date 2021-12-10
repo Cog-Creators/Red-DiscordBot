@@ -610,7 +610,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
             return
         try:
-            await self.api_interface.autoplay(player._ll_player, self.playlist_api)
+            await self.api_interface.autoplay(player, self.playlist_api)
         except DatabaseError:
             notify_channel = player.fetch("notify_channel")
             if notify_channel:

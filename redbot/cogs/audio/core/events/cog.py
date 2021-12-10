@@ -238,7 +238,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 and self.api_interface
             ):
                 try:
-                    await self.api_interface.autoplay(player._ll_player, self.playlist_api)
+                    await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
                     notify_channel = self.bot.get_channel(notify_channel_id)
                     if notify_channel and self._has_notify_perms(notify_channel):
