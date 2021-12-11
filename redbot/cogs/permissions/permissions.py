@@ -7,7 +7,7 @@ from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView,
 import discord
 import yaml
 from schema import And, Or, Schema, SchemaError, Optional as UseOptional
-from redbot.core import checks, commands, config
+from redbot.core import commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
@@ -270,7 +270,7 @@ class Permissions(commands.Cog):
             )
         await ctx.send(out)
 
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions.group(name="acl", aliases=["yaml"])
     async def permissions_acl(self, ctx: commands.Context):
         """Manage permissions with YAML files."""
@@ -298,7 +298,7 @@ class Permissions(commands.Cog):
             )
         )
 
-    @checks.is_owner()
+    @commands.is_owner()
     @permissions_acl.command(name="setglobal")
     async def permissions_acl_setglobal(self, ctx: commands.Context):
         """Set global rules with a YAML file.
@@ -312,7 +312,7 @@ class Permissions(commands.Cog):
         await self._permissions_acl_set(ctx, guild_id=GLOBAL, update=False)
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions_acl.command(name="setserver", aliases=["setguild"])
     async def permissions_acl_setguild(self, ctx: commands.Context):
         """Set rules for this server with a YAML file.
@@ -322,7 +322,7 @@ class Permissions(commands.Cog):
         """
         await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=False)
 
-    @checks.is_owner()
+    @commands.is_owner()
     @permissions_acl.command(name="getglobal")
     async def permissions_acl_getglobal(self, ctx: commands.Context):
         """Get a YAML file detailing all global rules."""
@@ -338,7 +338,7 @@ class Permissions(commands.Cog):
             file.close()
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions_acl.command(name="getserver", aliases=["getguild"])
     async def permissions_acl_getguild(self, ctx: commands.Context):
         """Get a YAML file detailing all rules in this server."""
@@ -352,7 +352,7 @@ class Permissions(commands.Cog):
         finally:
             file.close()
 
-    @checks.is_owner()
+    @commands.is_owner()
     @permissions_acl.command(name="updateglobal")
     async def permissions_acl_updateglobal(self, ctx: commands.Context):
         """Update global rules with a YAML file.
@@ -363,7 +363,7 @@ class Permissions(commands.Cog):
         await self._permissions_acl_set(ctx, guild_id=GLOBAL, update=True)
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions_acl.command(name="updateserver", aliases=["updateguild"])
     async def permissions_acl_updateguild(self, ctx: commands.Context):
         """Update rules for this server with a YAML file.
@@ -373,7 +373,7 @@ class Permissions(commands.Cog):
         """
         await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=True)
 
-    @checks.is_owner()
+    @commands.is_owner()
     @permissions.command(name="addglobalrule", require_var_positional=True)
     async def permissions_addglobalrule(
         self,
@@ -401,7 +401,7 @@ class Permissions(commands.Cog):
         await ctx.send(_("Rule added."))
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions.command(
         name="addserverrule", aliases=["addguildrule"], require_var_positional=True
     )
@@ -430,7 +430,7 @@ class Permissions(commands.Cog):
             )
         await ctx.send(_("Rule added."))
 
-    @checks.is_owner()
+    @commands.is_owner()
     @permissions.command(name="removeglobalrule", require_var_positional=True)
     async def permissions_removeglobalrule(
         self,
@@ -450,7 +450,7 @@ class Permissions(commands.Cog):
         await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions.command(
         name="removeserverrule", aliases=["removeguildrule"], require_var_positional=True
     )
@@ -474,7 +474,7 @@ class Permissions(commands.Cog):
         await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions.command(name="setdefaultserverrule", aliases=["setdefaultguildrule"])
     async def permissions_setdefaultguildrule(
         self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
@@ -497,7 +497,7 @@ class Permissions(commands.Cog):
         )
         await ctx.send(_("Default set."))
 
-    @checks.is_owner()
+    @commands.is_owner()
     @permissions.command(name="setdefaultglobalrule")
     async def permissions_setdefaultglobalrule(
         self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
@@ -518,7 +518,7 @@ class Permissions(commands.Cog):
         )
         await ctx.send(_("Default set."))
 
-    @checks.is_owner()
+    @commands.is_owner()
     @permissions.command(name="clearglobalrules")
     async def permissions_clearglobalrules(self, ctx: commands.Context):
         """Reset all global rules."""
@@ -528,7 +528,7 @@ class Permissions(commands.Cog):
             await ctx.tick()
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @permissions.command(name="clearserverrules", aliases=["clearguildrules"])
     async def permissions_clearguildrules(self, ctx: commands.Context):
         """Reset all rules in this server."""

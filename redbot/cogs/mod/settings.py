@@ -1,9 +1,8 @@
 import asyncio
 from collections import defaultdict, deque
-from typing import Optional
 from datetime import timedelta
 
-from redbot.core import commands, i18n, checks
+from redbot.core import commands, i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
 
@@ -18,7 +17,7 @@ class ModSettings(MixinMeta):
     """
 
     @commands.group()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
         """Manage server administration settings."""
 

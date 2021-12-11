@@ -19,7 +19,7 @@ import click
 from redbot.core.cli import confirm
 from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
 from redbot.core import config, data_manager, drivers
-from redbot.core.drivers import BackendType, IdentifierData
+from redbot.core.drivers import BackendType
 
 conversion_log = logging.getLogger("red.converter")
 

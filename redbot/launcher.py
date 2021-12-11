@@ -3,26 +3,16 @@
 # no new features will be added to this file
 # issues in this file are to be met with removal, not with fixes.
 
-import getpass
 import os
-import platform
 import subprocess
 import sys
 import argparse
-import asyncio
-import aiohttp
 
-import pkg_resources
 from redbot import MIN_PYTHON_VERSION
 from redbot.setup import (
-    basic_setup,
     load_existing_config,
-    remove_instance,
-    remove_instance_interaction,
-    create_backup,
 )
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
-from redbot.core.cli import confirm
+from redbot.core import __version__
 
 if sys.platform == "linux":
     import distro  # pylint: disable=import-error

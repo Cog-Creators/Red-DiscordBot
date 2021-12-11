@@ -8,7 +8,7 @@ from typing import cast, Iterable, Union, Literal
 
 import discord
 
-from redbot.core import Config, bank, commands, errors, checks
+from redbot.core import Config, bank, commands, errors
 from redbot.core.commands.converter import TimedeltaConverter
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
@@ -239,7 +239,7 @@ class Economy(commands.Cog):
         )
 
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Set the balance of a user's bank account.
@@ -659,7 +659,7 @@ class Economy(commands.Cog):
 
     @guild_only_check()
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Base command to manage Economy settings."""
