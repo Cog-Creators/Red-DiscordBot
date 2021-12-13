@@ -41,7 +41,6 @@ macOS 12 (Monterey)                ~2024-10
 Alma Linux 8                       2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-cloudlinux-support-almalinux>`__)
 Arch Linux                         forever (support is only provided for an up-to-date system)
 CentOS 7                           2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
-CentOS 8.4+                        2021-12-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 8                    2024-05-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 Debian 10 Buster                   2022-08-14 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Debian 11 Bullseye                 ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)

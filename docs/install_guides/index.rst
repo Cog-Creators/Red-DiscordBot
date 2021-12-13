@@ -16,7 +16,6 @@ we recommend **Ubuntu 20.04 LTS**.
    alma-linux-8
    arch
    centos-7
-   centos-8
    centos-stream-8
    debian-10
    debian-11
