@@ -1615,11 +1615,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["role_missing"])
                 return ret
 
-            if guild.id in self._server_mutes:
-                if user.id in self._server_mutes[guild.id]:
-                    del self._server_mutes[guild.id][user.id]
+            if guild.id in self._server_mutes and user.id in self._server_mutes[guild.id]:
+                del self._server_mutes[guild.id][user.id]
             if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["permissions_issue_role"])
+                return ret
+            if not role in user.roles:
+                ret["reason"] = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
                 return ret
             try:
                 await user.remove_roles(role, reason=reason)
