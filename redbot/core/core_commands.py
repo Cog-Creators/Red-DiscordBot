@@ -3575,7 +3575,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Warning: This will override global prefixes, the bot will not respond to any global prefixes in this server.
             This is not additive. It will replace all current server prefixes.
-            A prefix cannot have more than 20 characters.
+            A prefix cannot have more than 40 characters.
 
         **Examples:**
             - `[p]set serverprefix !`
@@ -3591,7 +3591,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Server prefixes have been reset."))
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
-            await ctx.send(_("You cannot have a prefix longer than 20 characters."))
+            await ctx.send(_("You cannot have a prefix longer than 40 characters."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
