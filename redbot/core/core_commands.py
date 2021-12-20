@@ -3545,7 +3545,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(
                 _(
-                    "Warning: A prefix is above the recommended length (20 characters).\n"
+                    "Warning: A prefix is above the recommended length (40 characters).\n"
                     "Do you want to continue?"
                 )
                 + " (yes/no)"
