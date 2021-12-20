@@ -102,7 +102,7 @@ _ = i18n.Translator("Core", __file__)
 
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
-MAX_PREFIX_LENGTH = 20
+MAX_PREFIX_LENGTH = 40
 
 
 class CoreLogic:
