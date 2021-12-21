@@ -93,7 +93,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         # enable channel overwrite mutes for their bot they can.
         # Channel overwrite logic still needs to be in place
         # for channel mutes methods.
-        self.config.register_global(force_role_mutes=True, schema_version=0)
+        self.config.register_global(force_role_mutes=False, schema_version=0)
         self.config.register_guild(**default_guild)
         self.config.register_member(perms_cache={})
         self.config.register_channel(muted_users={})
@@ -779,7 +779,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def senddm(self, ctx: commands.Context, true_or_false: bool):
         """Set whether mute notifications should be sent to users in DMs."""
         await self.config.guild(ctx.guild).dm.set(true_or_false)
@@ -790,7 +790,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def showmoderator(self, ctx, true_or_false: bool):
         """Decide whether the name of the moderator muting a user should be included in the DM to that user."""
         await self.config.guild(ctx.guild).show_mod.set(true_or_false)
@@ -820,7 +820,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await ctx.send(_("Okay I will allow channel overwrites for muting users."))
 
     @muteset.command(name="settings", aliases=["showsettings"])
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def show_mutes_settings(self, ctx: commands.Context):
         """
         Shows the current mute settings for this guild.
@@ -846,7 +846,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         await ctx.maybe_send_embed(msg)
 
     @muteset.command(name="notification")
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.admin_or_permissions(manage_channels=True)
     async def notification_channel_set(
         self, ctx: commands.Context, channel: Optional[discord.TextChannel] = None
     ):
@@ -866,7 +866,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
 
     @muteset.command(name="role")
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
     async def mute_role(self, ctx: commands.Context, *, role: discord.Role = None):
         """Sets the role to be applied when muting a user.
@@ -884,7 +884,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.guild(ctx.guild).sent_instructions.set(False)
             # reset this to warn users next time they may have accidentally
             # removed the mute role
-            await ctx.send(_("Channel overwrites will be used for mutes instead."))
+            await ctx.send(_("Discord Timeouts will be used for mutes instead."))
         else:
             if role >= ctx.author.top_role:
                 await ctx.send(
@@ -904,7 +904,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
 
     @muteset.command(name="makerole")
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.max_concurrency(1, commands.BucketType.guild)
     async def make_mute_role(self, ctx: commands.Context, *, name: str):
@@ -988,7 +988,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return channel.mention
 
     @muteset.command(name="defaulttime", aliases=["time"])
-    @checks.mod_or_permissions(manage_messages=True)
+    @commands.mod_or_permissions(manage_messages=True)
     async def default_mute_time(self, ctx: commands.Context, *, time: Optional[MuteTime] = None):
         """
         Set the default mute time for the mute command.
@@ -1027,73 +1027,16 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         )
         mute_role_id = await self.config.guild(ctx.guild).mute_role()
         mute_role = ctx.guild.get_role(mute_role_id)
-        sent_instructions = await self.config.guild(ctx.guild).sent_instructions()
         force_role_mutes = await self.config.force_role_mutes()
         if force_role_mutes and not mute_role:
             await ctx.send(msg)
             return False
 
-        if mute_role or sent_instructions:
-            return True
-        else:
-            msg += _(
-                "Channel overwrites for muting users can get expensive on Discord's API "
-                "as such we recommend that you have an admin setup a mute role instead. "
-                "Channel overwrites will also not re-apply on guild join, so a user "
-                "who has been muted may leave and re-join and no longer be muted. "
-                "Role mutes do not have this issue.\n\n"
-                "Are you sure you want to continue with channel overwrites? "
-            )
-            can_react = can_user_react_in(ctx.me, ctx.channel)
-            if can_react:
-                msg += _(
-                    "Reacting with \N{WHITE HEAVY CHECK MARK} will continue "
-                    "the mute with overwrites and stop this message from appearing again, "
-                    "Reacting with \N{NEGATIVE SQUARED CROSS MARK} will end the mute attempt."
-                )
-            else:
-                msg += _(
-                    "Saying {response_1} will continue "
-                    "the mute with overwrites and stop this message from appearing again, "
-                    "saying {response_2} will end the mute attempt."
-                ).format(
-                    response_1=inline("yes"),
-                    response_2=inline("no"),
-                )
-            query: discord.Message = await ctx.send(msg)
-            if can_react:
-                # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
-                pred = ReactionPredicate.yes_or_no(query, ctx.author)
-                event = "reaction_add"
-            else:
-                pred = MessagePredicate.yes_or_no(ctx)
-                event = "message"
-            try:
-                await ctx.bot.wait_for(event, check=pred, timeout=30)
-            except asyncio.TimeoutError:
-                with contextlib.suppress(discord.NotFound):
-                    await query.delete()
-                return False
-
-            if not pred.result:
-                if can_react:
-                    with contextlib.suppress(discord.NotFound):
-                        await query.delete()
-                else:
-                    await ctx.send(_("OK then."))
-
-                return False
-            else:
-                if can_react:
-                    with contextlib.suppress(discord.Forbidden):
-                        await query.clear_reactions()
-                await self.config.guild(ctx.guild).sent_instructions.set(True)
-                return True
+        return True
 
     @commands.command()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     async def activemutes(self, ctx: commands.Context):
         """
         Displays active mutes on this server.
@@ -1112,17 +1055,24 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     else:
                         user_str = user.mention
                     if mutes["until"]:
-                        time_left = timedelta(
-                            seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
-                        )
-                        time_str = humanize_timedelta(timedelta=time_left)
+                        timestamp = int(mutes["until"])
+                        time_str = f"<t:{timestamp}>"
                     else:
                         time_str = ""
                     msg += f"{user_str} "
                     if time_str:
-                        msg += _("__Remaining__: {time_left}\n").format(time_left=time_str)
+                        msg += _("__Until__: {time_left}\n").format(time_left=time_str)
                     else:
                         msg += "\n"
+        added_timeouts = False
+        for member in ctx.guild.members:
+            if member.is_timed_out():
+                if not added_timeouts:
+                    msg += _("__Server Timeouts__\n")
+                    added_timeouts = True
+                msg += f"{member.mention}"
+                time_str = f"<t:{int(member.communication_disabled_until.timestamp())}>"
+                msg += _("__Until__: {time_left}\n").format(time_left=time_str)
         for channel_id, mutes_data in self._channel_mutes.items():
             if not mutes_data:
                 continue
@@ -1137,17 +1087,16 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     else:
                         user_str = user.mention
                     if mutes["until"]:
-                        time_left = timedelta(
-                            seconds=mutes["until"] - datetime.now(timezone.utc).timestamp()
-                        )
-                        time_str = humanize_timedelta(timedelta=time_left)
+                        timestamp = int(mutes["until"])
+                        time_str = f"<t:{timestamp}>"
                     else:
                         time_str = ""
                     msg += f"{user_str} "
                     if time_str:
-                        msg += _("__Remaining__: {time_left}\n").format(time_left=time_str)
+                        msg += _("__Until__: {time_left}\n").format(time_left=time_str)
                     else:
                         msg += "\n"
+
         if msg:
             for page in pagify(msg):
                 await ctx.maybe_send_embed(page)
@@ -1156,7 +1105,67 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @commands.command(usage="<users...> [time_and_reason]")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(moderate_members=True)
+    @commands.bot_has_permissions(moderate_members=True)
+    async def timeout(
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[discord.Member],
+        *,
+        time_and_reason: MuteTime = {},
+    ):
+        """Timeout users.
+
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
+        `[time_and_reason]` is the time to mute for and reason. Time is
+        any valid time length such as `30 minutes` or `2 days`. If nothing
+        is provided the mute will use the set default time or indefinite if not set.
+
+        Examples:
+        `[p]mute @member1 @member2 spam 5 hours`
+        `[p]mute @member1 3 days`
+
+        """
+        if not users:
+            return await ctx.send_help()
+        if ctx.me in users:
+            return await ctx.send(_("You cannot mute me."))
+        if ctx.author in users:
+            return await ctx.send(_("You cannot mute yourself."))
+        duration = time_and_reason.get("duration", None)
+        reason = time_and_reason.get("reason", None)
+        time = ""
+        until = None
+        if duration:
+            until = datetime.now(timezone.utc) + duration
+            time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
+        else:
+            default_duration = await self.config.guild(ctx.guild).default_time()
+            if default_duration:
+                until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
+                time = _(" for {duration}").format(
+                    duration=humanize_timedelta(timedelta=timedelta(seconds=default_duration))
+                )
+        success_list = []
+        for member in users:
+            try:
+                await member.timeout(until, reason=reason)
+                success_list.append(member)
+            except Exception:
+                pass
+        if success_list:
+            msg = _("{users} has been muted in this server{time}.")
+            if len(success_list) > 1:
+                msg = _("{users} have been muted in this server{time}.")
+            await ctx.send(
+                msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
+            )
+        else:
+            await ctx.send(_("None of the users provided could be muted properly."))
+
+    @commands.command(usage="<users...> [time_and_reason]")
+    @commands.guild_only()
+    @commands.mod_or_permissions(manage_roles=True, moderate_members=True)
     async def mute(
         self,
         ctx: commands.Context,
@@ -1192,14 +1201,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
+                time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
+
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" for {duration}").format(
-                        duration=humanize_timedelta(timedelta=timedelta(seconds=default_duration))
-                    )
+                    time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
+
             author = ctx.message.author
             guild = ctx.guild
             audit_reason = get_audit_reason(author, reason, shorten=True)
@@ -1307,7 +1316,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.command(
         name="mutechannel", aliases=["channelmute"], usage="<users...> [time_and_reason]"
     )
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_permissions=True)
     async def channel_mute(
         self,
@@ -1340,14 +1349,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
+                time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" for {duration}").format(
-                        duration=humanize_timedelta(timedelta=timedelta(seconds=default_duration))
-                    )
+                    time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
             author = ctx.message.author
             channel = ctx.message.channel
             if isinstance(channel, discord.Thread):
@@ -1397,7 +1404,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @commands.command(usage="<users...> [reason]")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     async def unmute(
         self,
         ctx: commands.Context,
@@ -1464,7 +1471,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if issue_list:
             await self.handle_issues(ctx, issue_list)
 
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     @commands.command(name="unmutechannel", aliases=["channelunmute"], usage="<users...> [reason]")
     @commands.bot_has_guild_permissions(manage_permissions=True)
     async def unmute_channel(
@@ -1599,19 +1606,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             ret["success"] = True
             return ret
         else:
-            perms_cache = {}
-            tasks = []
-            for channel in guild.channels:
-                tasks.append(self.channel_mute_user(guild, channel, author, user, until, reason))
-            task_result = await bounded_gather(*tasks)
-            for task in task_result:
-                if not task["success"]:
-                    ret["channels"].append((task["channel"], task["reason"]))
-                else:
-                    chan_id = task["channel"].id
-                    perms_cache[str(chan_id)] = task.get("old_overs")
+            if guild.me.guild_permissions.moderate_members:
+                try:
+                    await user.timeout(until, reason=reason)
                     ret["success"] = True
-            await self.config.member(user).perms_cache.set(perms_cache)
+                except Exception:
+                    pass
+            else:
+                ret["reason"] = _("I lack the moderate members permission.")
             return ret
 
     async def unmute_user(
@@ -1661,16 +1663,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             ret["success"] = True
             return ret
         else:
-            tasks = []
-            for channel in guild.channels:
-                tasks.append(self.channel_unmute_user(guild, channel, author, user, reason))
-            results = await bounded_gather(*tasks)
-            for task in results:
-                if not task["success"]:
-                    ret["channels"].append((task["channel"], task["reason"]))
-                else:
+            if guild.me.guild_permissions.moderate_members:
+                try:
+                    await user.timeout(None, reason=reason)
                     ret["success"] = True
-            await self.config.member(user).clear()
+                except Exception:
+                    pass
+            else:
+                ret["reason"] = _("I lack the moderate members permission.")
             return ret
 
     async def channel_mute_user(
