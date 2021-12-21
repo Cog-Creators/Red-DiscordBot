@@ -1201,13 +1201,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
+                time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
 
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
+                    time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
 
             author = ctx.message.author
             guild = ctx.guild
@@ -1349,12 +1349,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
+                time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" until {time}").format(time=f"<t:{int(until.timestamp())}>")
+                    time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
             author = ctx.message.author
             channel = ctx.message.channel
             if isinstance(channel, discord.Thread):
