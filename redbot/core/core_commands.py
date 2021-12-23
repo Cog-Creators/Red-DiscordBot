@@ -128,7 +128,15 @@ class CoreLogic:
         Returns
         -------
         dict
-            Dictionary of load outcomes.
+            Dictionary with keys:
+              `loaded_packages`: List of names of packages that loaded successfully
+              `failed_packages`: List of names of packages that failed to load without specified reason
+              `invalid_pkg_names`: List of names of packages that don't have a valid package name
+              `notfound_packages`: List of names of packages that weren't found in any cog path
+              `alreadyloaded_packages`: List of names of packages that are already loaded
+              `failed_with_reason_packages`: Dictionary of packages that failed to load with
+              a specified reason with mapping of package names -> failure reason
+              `repos_with_shared_libs`: List of repo names that use deprecated shared libraries
         """
         failed_packages = []
         loaded_packages = []
@@ -255,7 +263,9 @@ class CoreLogic:
         Returns
         -------
         dict
-            Dictionary of unload outcomes.
+            Dictionary with keys:
+              `unloaded_packages`: List of names of packages that unloaded successfully
+              `failed_packages`: List of names of packages that failed to unload
         """
         failed_packages = []
         unloaded_packages = []
@@ -286,7 +296,7 @@ class CoreLogic:
         Returns
         -------
         dict
-            dict as returned by `CoreLogic._load()`
+            Dictionary with keys as returned by `CoreLogic._load()`
         """
         await self._unload(pkg_names)
 
@@ -1659,12 +1669,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         output = []
 
-        if loaded := outcomes.get("loaded_packages"):
+        if loaded := outcomes["loaded_packages"]:
             loaded_packages = humanize_list([inline(package) for package in loaded])
             formed = _("Loaded {packs}.").format(packs=loaded_packages)
             output.append(formed)
 
-        if already_loaded := outcomes.get("alreadyloaded_packages"):
+        if already_loaded := outcomes["alreadyloaded_packages"]:
             if len(already_loaded) == 1:
                 formed = _("The following package is already loaded: {pack}").format(
                     pack=inline(already_loaded[0])
@@ -1675,7 +1685,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             output.append(formed)
 
-        if failed := outcomes.get("failed_packages"):
+        if failed := outcomes["failed_packages"]:
             if len(failed) == 1:
                 formed = _(
                     "Failed to load the following package: {pack}."
@@ -1688,7 +1698,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in failed]))
             output.append(formed)
 
-        if invalid_pkg_names := outcomes.get("invalid_pkg_names"):
+        if invalid_pkg_names := outcomes["invalid_pkg_names"]:
             if len(invalid_pkg_names) == 1:
                 formed = _(
                     "The following name is not a valid package name: {pack}\n"
@@ -1703,7 +1713,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
-        if not_found := outcomes.get("notfound_packages"):
+        if not_found := outcomes["notfound_packages"]:
             if len(not_found) == 1:
                 formed = _("The following package was not found in any cog path: {pack}.").format(
                     pack=inline(not_found[0])
@@ -1714,7 +1724,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in not_found]))
             output.append(formed)
 
-        if failed_with_reason := outcomes.get("failed_with_reason_packages"):
+        if failed_with_reason := outcomes["failed_with_reason_packages"]:
             reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason.items()])
             if len(failed_with_reason) == 1:
                 formed = _(
@@ -1726,7 +1736,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(reasons=reasons)
             output.append(formed)
 
-        if repos_with_shared_libs := outcomes.get("repos_with_shared_libs"):
+        if repos_with_shared_libs := outcomes["repos_with_shared_libs"]:
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
@@ -1769,7 +1779,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         output = []
 
-        if unloaded := outcomes.get("unloaded_packages"):
+        if unloaded := outcomes["unloaded_packages"]:
             if len(unloaded) == 1:
                 formed = _("The following package was unloaded: {pack}.").format(
                     pack=inline(unloaded[0])
@@ -1780,7 +1790,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             output.append(formed)
 
-        if failed := outcomes.get("failed_packages"):
+        if failed := outcomes["failed_packages"]:
             if len(failed) == 1:
                 formed = _("The following package was not loaded: {pack}.").format(
                     pack=inline(failed[0])
@@ -1818,12 +1828,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         output = []
 
-        if loaded := outcomes.get("loaded_packages"):
+        if loaded := outcomes["loaded_packages"]:
             loaded_packages = humanize_list([inline(package) for package in loaded])
             formed = _("Reloaded {packs}.").format(packs=loaded_packages)
             output.append(formed)
 
-        if failed := outcomes.get("failed_packages"):
+        if failed := outcomes["failed_packages"]:
             if len(failed) == 1:
                 formed = _(
                     "Failed to reload the following package: {pack}."
@@ -1836,7 +1846,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in failed]))
             output.append(formed)
 
-        if invalid_pkg_names := outcomes.get("invalid_pkg_names"):
+        if invalid_pkg_names := outcomes["invalid_pkg_names"]:
             if len(invalid_pkg_names) == 1:
                 formed = _(
                     "The following name is not a valid package name: {pack}\n"
@@ -1851,7 +1861,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
-        if not_found := outcomes.get("notfound_packages"):
+        if not_found := outcomes["notfound_packages"]:
             if len(not_found) == 1:
                 formed = _("The following package was not found in any cog path: {pack}.").format(
                     pack=inline(not_found[0])
@@ -1862,7 +1872,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in not_found]))
             output.append(formed)
 
-        if failed_with_reason := outcomes.get("failed_with_reason_packages"):
+        if failed_with_reason := outcomes["failed_with_reason_packages"]:
             reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason.items()])
             if len(failed_with_reason) == 1:
                 formed = _(
@@ -1874,7 +1884,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(reasons=reasons)
             output.append(formed)
 
-        if repos_with_shared_libs := outcomes.get("repos_with_shared_libs"):
+        if repos_with_shared_libs := outcomes["repos_with_shared_libs"]:
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
