@@ -10,8 +10,7 @@ import io
 import yaml
 import discord
 
-from redbot.core import Config, commands, checks
-from redbot.cogs.bank import is_owner_if_bank_global
+from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
@@ -206,7 +205,7 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
-    @is_owner_if_bank_global()
+    @bank.is_owner_if_bank_global()
     @checks.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
