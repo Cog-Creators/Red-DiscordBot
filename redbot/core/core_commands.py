@@ -112,7 +112,7 @@ class CoreLogic:
         self.bot.register_rpc_handler(self._name)
         self.bot.register_rpc_handler(self._prefixes)
         self.bot.register_rpc_handler(self._version_info)
-        self.bot.register_rpc_handler(bot.invite_url)
+        self.bot.register_rpc_handler(self._invite_url)
 
     async def _load(
         self, pkg_names: Iterable[str]
@@ -371,6 +371,17 @@ class CoreLogic:
             `redbot` and `discordpy` keys containing version information for both.
         """
         return {"redbot": __version__, "discordpy": discord.__version__}
+
+    async def _invite_url(self) -> str:
+        """
+        Generates the invite URL for the bot.
+
+        Returns
+        -------
+        str
+            Invite URL.
+        """
+        return self.bot.get_invite_url()
 
     @staticmethod
     async def _can_get_invite_url(ctx):
