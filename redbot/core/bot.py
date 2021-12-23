@@ -1310,8 +1310,7 @@ class Red(
         Generates the invite URL for the bot.
 
         Does not check if invites are public.
-        To check if invites are public, use `Bot.is_invite_url_public()`.
-        To check if invites are public, use `is_invite_url_public()`.
+        To check if invites are public, use `Red.is_invite_url_public()`.
 
         Returns
         -------
