@@ -381,7 +381,7 @@ class CoreLogic:
         str
             Invite URL.
         """
-        return self.bot.get_invite_url()
+        return await self.bot.get_invite_url()
 
     @staticmethod
     async def _can_get_invite_url(ctx):
