@@ -1470,7 +1470,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]invite`
         """
         try:
-            await ctx.author.send(await self.bot.get_invite_url)
+            await ctx.author.send(await self.bot.get_invite_url())
             await ctx.tick()
         except discord.errors.Forbidden:
             await ctx.send(
