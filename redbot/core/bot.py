@@ -1317,7 +1317,7 @@ class Red(
             Invite URL.
         """
         app_info = await self.bot.application_info()
-        data = await self.bot._config.all()
+        data = await self._config.all()
         commands_scope = data["invite_commands_scope"]
         scopes = ("bot", "applications.commands") if commands_scope else None
         perms_int = data["invite_perm"]
