@@ -1318,7 +1318,7 @@ class Red(
         str
             Invite URL.
         """
-        app_info = await self._app_info
+        app_info = self._app_info
         data = await self._config.all()
         commands_scope = data["invite_commands_scope"]
         scopes = ("bot", "applications.commands") if commands_scope else None
