@@ -102,7 +102,7 @@ _ = i18n.Translator("Core", __file__)
 
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
-MAX_PREFIX_LENGTH = 40
+MAX_PREFIX_LENGTH = 25
 
 
 class CoreLogic:
@@ -3545,7 +3545,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(
                 _(
-                    "Warning: A prefix is above the recommended length (40 characters).\n"
+                    "Warning: A prefix is above the recommended length (25 characters).\n"
                     "Do you want to continue?"
                 )
                 + " (yes/no)"
@@ -3591,7 +3591,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Server prefixes have been reset."))
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
-            await ctx.send(_("You cannot have a prefix longer than 40 characters."))
+            await ctx.send(_("You cannot have a prefix longer than 25 characters."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
