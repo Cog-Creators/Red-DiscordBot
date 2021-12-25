@@ -464,6 +464,7 @@ class Case:
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
             else:
+                # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
                 name = self.last_known_username[:-5]
                 discriminator = self.last_known_username[-4:]
                 user = (
@@ -472,6 +473,7 @@ class Case:
                 )
         else:
             # isolate the name so that the direction of the discriminator and ID do not get changed
+            # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
             user = escape_spoilers(
                 filter_invites(
                     f"\N{FIRST STRONG ISOLATE}{self.user.name}"
