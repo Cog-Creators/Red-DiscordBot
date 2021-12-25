@@ -129,14 +129,14 @@ class CoreLogic:
         -------
         dict
             Dictionary with keys:
-              `loaded_packages`: List of names of packages that loaded successfully
-              `failed_packages`: List of names of packages that failed to load without specified reason
-              `invalid_pkg_names`: List of names of packages that don't have a valid package name
-              `notfound_packages`: List of names of packages that weren't found in any cog path
-              `alreadyloaded_packages`: List of names of packages that are already loaded
-              `failed_with_reason_packages`: Dictionary of packages that failed to load with
+              ``loaded_packages``: List of names of packages that loaded successfully
+              ``failed_packages``: List of names of packages that failed to load without specified reason
+              ``invalid_pkg_names``: List of names of packages that don't have a valid package name
+              ``notfound_packages``: List of names of packages that weren't found in any cog path
+              ``alreadyloaded_packages``: List of names of packages that are already loaded
+              ``failed_with_reason_packages``: Dictionary of packages that failed to load with
               a specified reason with mapping of package names -> failure reason
-              `repos_with_shared_libs`: List of repo names that use deprecated shared libraries
+              ``repos_with_shared_libs``: List of repo names that use deprecated shared libraries
         """
         failed_packages = []
         loaded_packages = []
@@ -264,10 +264,11 @@ class CoreLogic:
         -------
         dict
             Dictionary with keys:
-              `unloaded_packages`: List of names of packages that unloaded successfully
-              `failed_packages`: List of names of packages that failed to unload
+              ``unloaded_packages``: List of names of packages that unloaded successfully.
+              ``notloaded_packages``: List of names of packages that weren't unloaded
+              because they weren't loaded.
         """
-        failed_packages = []
+        notloaded_packages = []
         unloaded_packages = []
 
         bot = self.bot
@@ -278,9 +279,9 @@ class CoreLogic:
                 await bot.remove_loaded_package(name)
                 unloaded_packages.append(name)
             else:
-                failed_packages.append(name)
+                notloaded_packages.append(name)
 
-        return {"unloaded_packages": unloaded_packages, "failed_packages": failed_packages}
+        return {"unloaded_packages": unloaded_packages, "notloaded_packages": notloaded_packages}
 
     async def _reload(
         self, pkg_names: Sequence[str]
@@ -1790,7 +1791,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             output.append(formed)
 
-        if failed := outcomes["failed_packages"]:
+        if failed := outcomes["notloaded_packages"]:
             if len(failed) == 1:
                 formed = _("The following package was not loaded: {pack}.").format(
                     pack=inline(failed[0])
