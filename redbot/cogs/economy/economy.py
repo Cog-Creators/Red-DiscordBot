@@ -669,7 +669,7 @@ class Economy(commands.Cog):
         """
         Shows the current economy settings
         """
-        roles = ""
+        role_paydays = []
         guild = ctx.guild
         if await bank.is_global():
             conf = self.config
@@ -678,7 +678,7 @@ class Economy(commands.Cog):
             for role in guild.roles:
                 rolepayday = await self.config.role(role).PAYDAY_CREDITS()
                 if rolepayday:
-                    roles += f"{role}: {rolepayday}\n"
+                    role_paydays.append(f"{role}: {rolepayday}")
         await ctx.send(
             box(
                 _(
@@ -697,8 +697,8 @@ class Economy(commands.Cog):
                 )
             )
         )
-        if roles:
-            await ctx.send(box(f"---Role Payday Amounts---\n{roles}"))
+        if role_paydays:
+            await ctx.send(box(f"---Role Payday Amounts---\n{'\n'.join(role_paydays)}"))
 
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: positive_int):
