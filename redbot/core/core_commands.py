@@ -4998,9 +4998,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             return
 
-        if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
-            await ctx.send(_("You are not allowed to disable that command."))
-            return
+        if command.requires.privilege_level is not None:
+            if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+                await ctx.send(_("You are not allowed to disable that command."))
+                return
 
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
             if command.qualified_name not in disabled_commands:
@@ -5069,9 +5070,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to enable for the current server.
         """
-        if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
-            await ctx.send(_("You are not allowed to enable that command."))
-            return
+        if command.requires.privilege_level is not None:
+            if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+                await ctx.send(_("You are not allowed to enable that command."))
+                return
 
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
