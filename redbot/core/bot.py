@@ -1309,8 +1309,9 @@ class Red(
         """
         Generates the invite URL for the bot.
 
-        Does not check if invites are public.
-        To check if invites are public, use `Red.is_invite_url_public()`.
+        Does not check if the invite URL is configured to be public
+        with ``[p]inviteset public``. To check if invites are public,
+        use `Red.is_invite_url_public()`.
 
         Returns
         -------
@@ -1327,15 +1328,12 @@ class Red(
 
     async def is_invite_url_public(self) -> bool:
         """
-        Determines if invites are set to public.
-
-        This is determined by if bot owner has toggled
-        [p]inviteset public.
+        Determines if invite URL is configured to be public with ``[p]inviteset public``.
 
         Returns
         -------
         bool
-            :code:`True` if invite url is public.
+            :code:`True` if the invite URL is public.
         """
         return await self._config.invite_public()
 
