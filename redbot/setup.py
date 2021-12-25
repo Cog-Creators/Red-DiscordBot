@@ -37,16 +37,7 @@ except PermissionError:
     sys.exit(1)
 config_file = config_dir / "config.json"
 
-
-def load_existing_config():
-    if not config_file.exists():
-        return {}
-
-    with config_file.open(encoding="utf-8") as fs:
-        return json.load(fs)
-
-
-instance_data = load_existing_config()
+instance_data = data_manager.load_existing_config()
 if instance_data is None:
     instance_list = []
 else:
@@ -54,7 +45,7 @@ else:
 
 
 def save_config(name, data, remove=False):
-    _config = load_existing_config()
+    _config = data_manager.load_existing_config()
     if remove and name in _config:
         _config.pop(name)
     else:
