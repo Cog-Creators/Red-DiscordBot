@@ -3138,7 +3138,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.
 
         **Examples:**
-            - `[p]set api Spotify redirect_uri localhost`
+            - `[p]set api spotify redirect_uri localhost`
             - `[p]set api github client_id,whoops client_secret,whoops`
 
         **Arguments:**
@@ -3182,8 +3182,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Remove the given services with all their keys and tokens.
 
         **Examples:**
-            - `[p]set api remove Spotify`
-            - `[p]set api remove github audiodb`
+            - `[p]set api remove spotify`
+            - `[p]set api remove github youtube`
 
         **Arguments:**
             - `<services...>` - The services to remove."""
