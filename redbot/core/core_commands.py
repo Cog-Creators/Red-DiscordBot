@@ -362,13 +362,7 @@ class CoreLogic:
         str
             Invite URL.
         """
-        app_info = await self.bot.application_info()
-        data = await self.bot._config.all()
-        commands_scope = data["invite_commands_scope"]
-        scopes = ("bot", "applications.commands") if commands_scope else None
-        perms_int = data["invite_perm"]
-        permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
+        return await self.bot.get_invite_url()
 
     @staticmethod
     async def _can_get_invite_url(ctx):
@@ -1465,7 +1459,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]invite`
         """
         try:
-            await ctx.author.send(await self._invite_url())
+            await ctx.author.send(await self.bot.get_invite_url())
             await ctx.tick()
         except discord.errors.Forbidden:
             await ctx.send(

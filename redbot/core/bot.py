@@ -1273,6 +1273,37 @@ class Red(
         """
         return user.id in self.owner_ids
 
+    async def get_invite_url(self) -> str:
+        """
+        Generates the invite URL for the bot.
+
+        Does not check if the invite URL is configured to be public
+        with ``[p]inviteset public``. To check if invites are public,
+        use `Red.is_invite_url_public()`.
+
+        Returns
+        -------
+        str
+            Invite URL.
+        """
+        data = await self._config.all()
+        commands_scope = data["invite_commands_scope"]
+        scopes = ("bot", "applications.commands") if commands_scope else None
+        perms_int = data["invite_perm"]
+        permissions = discord.Permissions(perms_int)
+        return discord.utils.oauth_url(self._app_info.id, permissions, scopes=scopes)
+
+    async def is_invite_url_public(self) -> bool:
+        """
+        Determines if invite URL is configured to be public with ``[p]inviteset public``.
+
+        Returns
+        -------
+        bool
+            :code:`True` if the invite URL is public.
+        """
+        return await self._config.invite_public()
+
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
         try:
