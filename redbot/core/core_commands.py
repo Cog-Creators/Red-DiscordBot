@@ -3575,7 +3575,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Warning: This will override global prefixes, the bot will not respond to any global prefixes in this server.
             This is not additive. It will replace all current server prefixes.
-            A prefix cannot have more than 40 characters.
+            A prefix cannot have more than 25 characters.
 
         **Examples:**
             - `[p]set serverprefix !`
