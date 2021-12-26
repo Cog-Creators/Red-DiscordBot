@@ -1308,7 +1308,7 @@ class RedBase(
 
         Does not check if the invite URL is configured to be public
         with ``[p]inviteset public``. To check if invites are public,
-        use `Red.is_invite_url_public()`.
+        use `RedBase.is_invite_url_public()`.
 
         Returns
         -------
