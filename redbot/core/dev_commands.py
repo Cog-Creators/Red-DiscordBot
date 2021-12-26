@@ -340,13 +340,21 @@ class Dev(commands.Cog):
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.Member, *, content: str):
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str = None):
         """Dispatch a message event as if it were sent by a different user.
 
         Current message is used as a base (including attachments, embeds, etc.),
         the content and author of the message are replaced with the given arguments.
+
+        Note: If `content` isn't passed, the message needs to contain embeds, attachments,
+        or anything else that makes the message non-empty.
         """
-        msg = copy(ctx.message)
+        msg = ctx.message
+        if content is None and not msg.embeds and not msg.attachments:
+            # DEP-WARN: add `msg.stickers` when adding d.py 2.0
+            await ctx.send_help()
+            return
+        msg = copy(msg)
         msg.author = user
         msg.content = content
 
