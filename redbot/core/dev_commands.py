@@ -340,24 +340,25 @@ class Dev(commands.Cog):
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.Member, *, content: str):
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
         """Dispatch a message event as if it were sent by a different user.
 
-        Only reads the raw content of the message. Attachments, embeds etc. are
-        ignored.
+        Current message is used as a base (including attachments, embeds, etc.),
+        the content and author of the message are replaced with the given arguments.
+
+        Note: If `content` isn't passed, the message needs to contain embeds, attachments,
+        or anything else that makes the message non-empty.
         """
-        old_author = ctx.author
-        old_content = ctx.message.content
-        ctx.message.author = user
-        ctx.message.content = content
+        msg = ctx.message
+        if not content and not msg.embeds and not msg.attachments:
+            # DEP-WARN: add `msg.stickers` when adding d.py 2.0
+            await ctx.send_help()
+            return
+        msg = copy(msg)
+        msg.author = user
+        msg.content = content
 
-        ctx.bot.dispatch("message", ctx.message)
-
-        # If we change the author and content back too quickly,
-        # the bot won't process the mocked message in time.
-        await asyncio.sleep(2)
-        ctx.message.author = old_author
-        ctx.message.content = old_content
+        ctx.bot.dispatch("message", msg)
 
     @commands.command()
     @checks.is_owner()
