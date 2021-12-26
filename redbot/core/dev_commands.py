@@ -340,7 +340,7 @@ class Dev(commands.Cog):
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.Member, *, content: str = None):
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
         """Dispatch a message event as if it were sent by a different user.
 
         Current message is used as a base (including attachments, embeds, etc.),
@@ -350,7 +350,7 @@ class Dev(commands.Cog):
         or anything else that makes the message non-empty.
         """
         msg = ctx.message
-        if content is None and not msg.embeds and not msg.attachments:
+        if not content and not msg.embeds and not msg.attachments:
             # DEP-WARN: add `msg.stickers` when adding d.py 2.0
             await ctx.send_help()
             return
