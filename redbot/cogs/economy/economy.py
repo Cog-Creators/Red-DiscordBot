@@ -853,6 +853,7 @@ class Economy(commands.Cog):
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
         """Set the amount earned each payday for a role.
+
         Set to `0` to remove the payday amount you set for that role.
 
         Only available when not using a global bank.
