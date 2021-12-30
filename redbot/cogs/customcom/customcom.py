@@ -95,6 +95,14 @@ class CommandObj:
 
             if msg.content.lower() == "exit()":
                 break
+            elif len(msg.content) > 2000:
+                await ctx.send(
+                    _(
+                        "The text response you're trying to create has more than 2000 characters.\n"
+                        "I cannot send messages that are longer than 2000 characters, please try again."
+                    )
+                )
+                continue
             else:
                 try:
                     this_args = ctx.cog.prepare_args(msg.content)
@@ -197,6 +205,8 @@ class CommandObj:
 
         if response:
             # test to raise
+            if len(response) > 2000:
+                raise ResponseTooLong()
             ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
             ccinfo["response"] = response
 
@@ -380,7 +390,7 @@ class CustomCommands(commands.Cog):
                     command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
-        except ResponseTooLong:
+        except ResponseTooLong:  # This isn't needed, however may be a good idea to keep this.
             await ctx.send(
                 _(
                     "The text response you're trying to create has more than 2000 characters.\n"
@@ -522,6 +532,13 @@ class CustomCommands(commands.Cog):
             await ctx.send(e.args[0])
         except CommandNotEdited:
             pass
+        except ResponseTooLong:
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @customcom.command(name="list")
     @checks.bot_has_permissions(add_reactions=True)
