@@ -12,7 +12,7 @@ Read before updating
 #. Fedora 33 and CentOS 8 are no longer supported as they have already reached end of life.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.15 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1275>`__.
+    Red 3.4.15 uses a new Lavalink jar that you MUST manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1275>`__ to be able to continue using Audio.
 
 
 End-user changelog
