@@ -130,7 +130,9 @@ class CommandObj:
         else:
             raise NotFound()
 
-    async def create(self, ctx: commands.Context, command: str, *, response: Union[str, List[str]]):
+    async def create(
+        self, ctx: commands.Context, command: str, *, response: Union[str, List[str]]
+    ):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
@@ -379,10 +381,12 @@ class CustomCommands(commands.Cog):
                 )
             )
         except ResponseTooLong:
-            await ctx.send(_(
-                "The text response you're trying to create has more than 2000 characters.\n"
-                "I cannot send messages that are longer than 2000 characters."
-            ))
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @cc_create.command(name="simple")
     @checks.mod_or_permissions(administrator=True)
@@ -416,10 +420,12 @@ class CustomCommands(commands.Cog):
         except ArgParseError as e:
             await ctx.send(e.args[0])
         except ResponseTooLong:
-            await ctx.send(_(
-                "The text response you're trying to create has more than 2000 characters.\n"
-                "I cannot send messages that are longer than 2000 characters."
-            ))
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @customcom.command(name="cooldown")
     @checks.mod_or_permissions(administrator=True)
