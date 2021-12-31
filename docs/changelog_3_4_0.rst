@@ -21,6 +21,7 @@ End-user changelog
 Core Bot
 ********
 
+- Changed embed setting for ``[p]help`` command with ``[p]embedset command`` will now affect all help messages, not just the ones sent when invoking ``[p]help`` command directly (:issue:`5452`)
 - ``[p]traceback`` command now indicates that it DMed the command caller with a tick reaction (:issue:`5353`)
 - Improved ``[p]helpset showaliases`` responses (:issue:`5376`)
 - Added plural forms to the responses of ``[p]leave`` command (:issue:`5391`)
@@ -104,6 +105,7 @@ Developer changelog
 -------------------
 
 - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
+- Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
 - Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
 - Changed the output of ``CORE__LOAD``, ``CORE__RELOAD``, and ``CORE__UNLOAD`` RPC methods to a dictionary (:issue:`5451`, :issue:`5453`)
 
