@@ -1,5 +1,32 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.16 (2021-12-31)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`jack1142`, :ghuser:`PredaaA`
+
+This is a hotfix release fixing issues with invite URL API that caused
+``[p]invite`` command and ``CORE__INVITE_URL`` RPC method to not work.
+
+End-user changelog
+------------------
+
+- **Core Bot** - Fixed ``[p]invite`` command (:issue:`5517`)
+
+
+Developer changelog
+-------------------
+
+- Fixed ``CORE__INVITE_URL`` RPC method (:issue:`5517`)
+
+
+Documentation changes
+---------------------
+
+- Changed Arch install guide to temporarily use ``python39`` AUR package instead of ``python`` package as Red does not currently support Python 3.10 (:issue:`5518`)
+
+
 Redbot 3.4.15 (2021-12-31)
 ==========================
 
