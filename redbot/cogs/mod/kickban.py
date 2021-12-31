@@ -40,7 +40,12 @@ class KickBanMixin(MixinMeta):
             if "VANITY_URL" in guild.features:
                 # guild has a vanity url so use it as the one to send
                 try:
-                    return await guild.vanity_invite()
+                    invite = await guild.vanity_invite()
+                    # `if` is needed to work around
+                    # https://github.com/Rapptz/discord.py/issues/7103
+                    # until we can use a version with the fix
+                    if invite.code is not None:
+                        return invite
                 except discord.NotFound:
                     # If a guild has the vanity url feature,
                     # but does not have it set up,
