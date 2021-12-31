@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-07-16 21:46+0000\n"
+"POT-Creation-Date: 2021-11-02 18:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -1186,7 +1186,7 @@ msgid "Now playing."
 msgstr "Aktuelle Wiedergabe."
 
 #: redbot/cogs/audio/core/commands/controller.py:110
-#: redbot/cogs/audio/core/commands/queue.py:77
+#: redbot/cogs/audio/core/commands/queue.py:81
 msgid "\n"
 " Requested by: **{track.requester}**"
 msgstr "\n"
@@ -1197,22 +1197,22 @@ msgid "Nothing."
 msgstr "Nichts."
 
 #: redbot/cogs/audio/core/commands/controller.py:118
-#: redbot/cogs/audio/core/commands/queue.py:79
+#: redbot/cogs/audio/core/commands/queue.py:83
 msgid "Now Playing"
 msgstr "Jetzt läuft"
 
 #: redbot/cogs/audio/core/commands/controller.py:128
-#: redbot/cogs/audio/core/commands/queue.py:89
+#: redbot/cogs/audio/core/commands/queue.py:93
 msgid "Auto-Play"
 msgstr "Auto-Play"
 
 #: redbot/cogs/audio/core/commands/controller.py:134
-#: redbot/cogs/audio/core/commands/queue.py:95
+#: redbot/cogs/audio/core/commands/queue.py:99
 msgid "Shuffle"
 msgstr "Zufällige Wiedergabe"
 
 #: redbot/cogs/audio/core/commands/controller.py:140
-#: redbot/cogs/audio/core/commands/queue.py:101
+#: redbot/cogs/audio/core/commands/queue.py:105
 msgid "Repeat"
 msgstr "Wiederholen"
 
@@ -1485,7 +1485,7 @@ msgstr "Sie benötigen die DJ-Rolle, um den Bot zu beschwören."
 #: redbot/cogs/audio/core/commands/player.py:455
 #: redbot/cogs/audio/core/commands/player.py:571
 #: redbot/cogs/audio/core/commands/player.py:695
-#: redbot/cogs/audio/core/commands/queue.py:339
+#: redbot/cogs/audio/core/commands/queue.py:343
 msgid "I don't have permission to connect and speak in your channel."
 msgstr ""
 
@@ -1503,7 +1503,7 @@ msgstr "Ich bin bereits in deinem Kanal."
 #: redbot/cogs/audio/core/commands/player.py:467
 #: redbot/cogs/audio/core/commands/player.py:583
 #: redbot/cogs/audio/core/commands/player.py:707
-#: redbot/cogs/audio/core/commands/queue.py:351
+#: redbot/cogs/audio/core/commands/queue.py:355
 msgid "Connect to a voice channel first."
 msgstr "Verbinde dich zuerst mit einem Sprachkanal."
 
@@ -1513,7 +1513,7 @@ msgstr "Verbinde dich zuerst mit einem Sprachkanal."
 #: redbot/cogs/audio/core/commands/player.py:473
 #: redbot/cogs/audio/core/commands/player.py:589
 #: redbot/cogs/audio/core/commands/player.py:713
-#: redbot/cogs/audio/core/commands/queue.py:358
+#: redbot/cogs/audio/core/commands/queue.py:362
 msgid "Connection to Lavalink has not yet been established."
 msgstr "Verbindung zu Lavalink wurde noch nicht hergestellt."
 
@@ -1978,7 +1978,7 @@ msgid "Search for songs across all localtracks folders."
 msgstr "Sucht nach Tracks in allen lokalen Ordnern."
 
 #: redbot/cogs/audio/core/commands/localtracks.py:139
-#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:299
 msgid "No matches."
 msgstr "Keine Treffer."
 
@@ -2010,8 +2010,22 @@ msgid "Queue percentage."
 msgstr "Position in Warteschlange (in Prozent)."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:126
-msgid "There's  nothing in the queue."
-msgstr "Es ist nichts in der Warteschlange."
+#: redbot/cogs/audio/core/commands/playlists.py:1147
+#: redbot/cogs/audio/core/commands/queue.py:67
+#: redbot/cogs/audio/core/commands/queue.py:164
+#: redbot/cogs/audio/core/commands/queue.py:183
+#: redbot/cogs/audio/core/commands/queue.py:188
+#: redbot/cogs/audio/core/commands/queue.py:214
+#: redbot/cogs/audio/core/commands/queue.py:219
+#: redbot/cogs/audio/core/commands/queue.py:261
+#: redbot/cogs/audio/core/commands/queue.py:263
+#: redbot/cogs/audio/core/commands/queue.py:293
+#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:331
+#: redbot/cogs/audio/core/commands/queue.py:369
+#: redbot/cogs/audio/core/commands/queue.py:377
+msgid "There's nothing in the queue."
+msgstr "Die Warteschlange ist leer."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:147
 msgid "Queued and playing tracks:"
@@ -2692,23 +2706,6 @@ msgid "Save the queue to a playlist.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/playlists.py:1147
-#: redbot/cogs/audio/core/commands/queue.py:63
-#: redbot/cogs/audio/core/commands/queue.py:160
-#: redbot/cogs/audio/core/commands/queue.py:179
-#: redbot/cogs/audio/core/commands/queue.py:184
-#: redbot/cogs/audio/core/commands/queue.py:210
-#: redbot/cogs/audio/core/commands/queue.py:215
-#: redbot/cogs/audio/core/commands/queue.py:257
-#: redbot/cogs/audio/core/commands/queue.py:259
-#: redbot/cogs/audio/core/commands/queue.py:289
-#: redbot/cogs/audio/core/commands/queue.py:291
-#: redbot/cogs/audio/core/commands/queue.py:327
-#: redbot/cogs/audio/core/commands/queue.py:365
-#: redbot/cogs/audio/core/commands/queue.py:373
-msgid "There's nothing in the queue."
-msgstr "Die Warteschlange ist leer."
-
 #: redbot/cogs/audio/core/commands/playlists.py:1168
 msgid "Playlist {name} (`{id}`) [**{scope}**] saved from current queue: {num} tracks added."
 msgstr ""
@@ -2987,88 +2984,88 @@ msgstr "'{old}' Playlist wurde umbenannt in '{new}' (`{id}`) [**{scope}**]"
 msgid "List the songs in the queue."
 msgstr "Listet die Lieder in der Playlist auf."
 
-#: redbot/cogs/audio/core/commands/queue.py:175
+#: redbot/cogs/audio/core/commands/queue.py:179
 #, docstring
 msgid "Clears the queue."
 msgstr "Leert die Playlist."
 
-#: redbot/cogs/audio/core/commands/queue.py:192
+#: redbot/cogs/audio/core/commands/queue.py:196
 msgid "Unable To Clear Queue"
 msgstr "Warteschlange kann nicht gelöscht werden"
 
-#: redbot/cogs/audio/core/commands/queue.py:193
+#: redbot/cogs/audio/core/commands/queue.py:197
 msgid "You need the DJ role to clear the queue."
 msgstr "Du brauchst die DJ Rolle um die Playlist zu leeren."
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "Queue Modified"
 msgstr "Warteschlange geändert"
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "The queue has been cleared."
 msgstr "Die Playlist wurde geleert."
 
-#: redbot/cogs/audio/core/commands/queue.py:206
+#: redbot/cogs/audio/core/commands/queue.py:210
 #, docstring
 msgid "Removes songs from the queue if the requester is not in the voice channel."
 msgstr "Entfernt Lieder von der Playlist, wenn der Autor nicht im Voice Channel ist."
 
-#: redbot/cogs/audio/core/commands/queue.py:223
+#: redbot/cogs/audio/core/commands/queue.py:227
 msgid "Unable To Clean Queue"
 msgstr "Warteschlange kann nicht gelöscht werden"
 
-#: redbot/cogs/audio/core/commands/queue.py:224
+#: redbot/cogs/audio/core/commands/queue.py:228
 msgid "You need the DJ role to clean the queue."
 msgstr "Du brauchst die DJ Rolle um die Playlist zu leeren."
 
-#: redbot/cogs/audio/core/commands/queue.py:239
-#: redbot/cogs/audio/core/commands/queue.py:273
+#: redbot/cogs/audio/core/commands/queue.py:243
+#: redbot/cogs/audio/core/commands/queue.py:277
 msgid "Removed 0 tracks."
 msgstr "0 Lieder entfernt."
 
-#: redbot/cogs/audio/core/commands/queue.py:243
-#: redbot/cogs/audio/core/commands/queue.py:277
+#: redbot/cogs/audio/core/commands/queue.py:247
+#: redbot/cogs/audio/core/commands/queue.py:281
 msgid "Removed Tracks From The Queue"
 msgstr "Titel aus der Warteschlange entfernt"
 
-#: redbot/cogs/audio/core/commands/queue.py:244
+#: redbot/cogs/audio/core/commands/queue.py:248
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."
 msgstr "Es wurden Lieder entfernt die von Leuten außerhalb des Voice Channels angefordert wurden: {removed_tracks}."
 
-#: redbot/cogs/audio/core/commands/queue.py:252
+#: redbot/cogs/audio/core/commands/queue.py:256
 #, docstring
 msgid "Removes all tracks you requested from the queue."
 msgstr "Entfernt alle von dir angeforderten Titel aus der Warteschlange."
 
-#: redbot/cogs/audio/core/commands/queue.py:278
+#: redbot/cogs/audio/core/commands/queue.py:282
 msgid "Removed {removed_tracks} tracks queued by {member.display_name}."
 msgstr "{removed_tracks} Titel in der Warteschlange von {member.display_name} entfernt."
 
-#: redbot/cogs/audio/core/commands/queue.py:285
+#: redbot/cogs/audio/core/commands/queue.py:289
 #, docstring
 msgid "Search the queue."
 msgstr "Durchsuche die Warteschlange."
 
-#: redbot/cogs/audio/core/commands/queue.py:307
+#: redbot/cogs/audio/core/commands/queue.py:311
 #, docstring
 msgid "Shuffles the queue."
 msgstr "Mischt die Warteschlange."
 
-#: redbot/cogs/audio/core/commands/queue.py:319
-#: redbot/cogs/audio/core/commands/queue.py:326
-#: redbot/cogs/audio/core/commands/queue.py:338
-#: redbot/cogs/audio/core/commands/queue.py:350
-#: redbot/cogs/audio/core/commands/queue.py:357
-#: redbot/cogs/audio/core/commands/queue.py:364
-#: redbot/cogs/audio/core/commands/queue.py:372
+#: redbot/cogs/audio/core/commands/queue.py:323
+#: redbot/cogs/audio/core/commands/queue.py:330
+#: redbot/cogs/audio/core/commands/queue.py:342
+#: redbot/cogs/audio/core/commands/queue.py:354
+#: redbot/cogs/audio/core/commands/queue.py:361
+#: redbot/cogs/audio/core/commands/queue.py:368
+#: redbot/cogs/audio/core/commands/queue.py:376
 msgid "Unable To Shuffle Queue"
 msgstr "Kann Warteschlange nicht mischen"
 
-#: redbot/cogs/audio/core/commands/queue.py:320
+#: redbot/cogs/audio/core/commands/queue.py:324
 msgid "You need the DJ role to shuffle the queue."
 msgstr "Du brauchst die DJ-Rolle, um die Warteschlange zu mischen."
 
-#: redbot/cogs/audio/core/commands/queue.py:377
+#: redbot/cogs/audio/core/commands/queue.py:381
 msgid "Queue has been shuffled."
 msgstr "Die Warteschlange wurde gemischt."
 

@@ -24,7 +24,13 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Crear alias para comandos.\n\n"
+"    Los alias son nombres alternativos/atajos para comandos. \n"
+"    Pueden actuar como un lambda (almacenando argumentos para uso repetido)\n"
+"    o simplemente como un atajo para decir \"x y z\".\n\n"
+"    Cuando son ejecutados, los alias aceptarán cualquier argumento adicional\n"
+"    y los agregarán al alias almacenado.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:203
 msgid "Aliases:\n"
@@ -95,28 +101,28 @@ msgstr "Un nuevo alias global con el trigger `{name}` ha sido creado."
 #: redbot/cogs/alias/alias.py:345
 #, docstring
 msgid "Edit an existing alias in this server."
-msgstr ""
+msgstr "Edita un alias existente en este servidor."
 
 #: redbot/cogs/alias/alias.py:350 redbot/cogs/alias/alias.py:385
 msgid "The alias with the name {name} does not exist."
-msgstr ""
+msgstr "El alias con el nombre {name} no existe."
 
 #: redbot/cogs/alias/alias.py:356 redbot/cogs/alias/alias.py:391
 msgid "You attempted to edit an alias to a command that doesn't exist."
-msgstr ""
+msgstr "Intentaste editar un alias a un comando que no existe."
 
 #: redbot/cogs/alias/alias.py:365 redbot/cogs/alias/alias.py:398
 msgid "The alias with the trigger `{name}` has been edited sucessfully."
-msgstr ""
+msgstr "El alias con el activador `{name}` se ha editado correctamente."
 
 #: redbot/cogs/alias/alias.py:372 redbot/cogs/alias/alias.py:405
 msgid "Alias with the name `{name}` was not found."
-msgstr ""
+msgstr "No se encontró el alias con el nombre `{name}`."
 
 #: redbot/cogs/alias/alias.py:380
 #, docstring
 msgid "Edit an existing global alias."
-msgstr ""
+msgstr "Edita un alias global existente."
 
 #: redbot/cogs/alias/alias.py:412
 #, docstring

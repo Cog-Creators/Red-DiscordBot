@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-07-16 21:46+0000\n"
+"POT-Creation-Date: 2021-11-02 18:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -1222,7 +1222,7 @@ msgid "Now playing."
 msgstr "Nyt soi."
 
 #: redbot/cogs/audio/core/commands/controller.py:110
-#: redbot/cogs/audio/core/commands/queue.py:77
+#: redbot/cogs/audio/core/commands/queue.py:81
 msgid "\n"
 " Requested by: **{track.requester}**"
 msgstr "\n"
@@ -1233,22 +1233,22 @@ msgid "Nothing."
 msgstr "Ei mitään."
 
 #: redbot/cogs/audio/core/commands/controller.py:118
-#: redbot/cogs/audio/core/commands/queue.py:79
+#: redbot/cogs/audio/core/commands/queue.py:83
 msgid "Now Playing"
 msgstr "Nyt soi"
 
 #: redbot/cogs/audio/core/commands/controller.py:128
-#: redbot/cogs/audio/core/commands/queue.py:89
+#: redbot/cogs/audio/core/commands/queue.py:93
 msgid "Auto-Play"
 msgstr "Automaattinen toisto"
 
 #: redbot/cogs/audio/core/commands/controller.py:134
-#: redbot/cogs/audio/core/commands/queue.py:95
+#: redbot/cogs/audio/core/commands/queue.py:99
 msgid "Shuffle"
 msgstr "Sekoitus"
 
 #: redbot/cogs/audio/core/commands/controller.py:140
-#: redbot/cogs/audio/core/commands/queue.py:101
+#: redbot/cogs/audio/core/commands/queue.py:105
 msgid "Repeat"
 msgstr "Uudelleentoisto"
 
@@ -1525,7 +1525,7 @@ msgstr "Tarvitset DJ-roolin kutsuaksesi botin."
 #: redbot/cogs/audio/core/commands/player.py:455
 #: redbot/cogs/audio/core/commands/player.py:571
 #: redbot/cogs/audio/core/commands/player.py:695
-#: redbot/cogs/audio/core/commands/queue.py:339
+#: redbot/cogs/audio/core/commands/queue.py:343
 msgid "I don't have permission to connect and speak in your channel."
 msgstr "Minulla ei ole oikeutta yhdistää kanavallesi."
 
@@ -1543,7 +1543,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:467
 #: redbot/cogs/audio/core/commands/player.py:583
 #: redbot/cogs/audio/core/commands/player.py:707
-#: redbot/cogs/audio/core/commands/queue.py:351
+#: redbot/cogs/audio/core/commands/queue.py:355
 msgid "Connect to a voice channel first."
 msgstr "Yhdistä ensin puhekanavalle."
 
@@ -1553,7 +1553,7 @@ msgstr "Yhdistä ensin puhekanavalle."
 #: redbot/cogs/audio/core/commands/player.py:473
 #: redbot/cogs/audio/core/commands/player.py:589
 #: redbot/cogs/audio/core/commands/player.py:713
-#: redbot/cogs/audio/core/commands/queue.py:358
+#: redbot/cogs/audio/core/commands/queue.py:362
 msgid "Connection to Lavalink has not yet been established."
 msgstr "Yhteyttä Lavalinkkiin ei ole vielä muodostettu."
 
@@ -2021,7 +2021,7 @@ msgid "Search for songs across all localtracks folders."
 msgstr "Etsi kappaleita kaikista paikallisten kappaleiden kansioista."
 
 #: redbot/cogs/audio/core/commands/localtracks.py:139
-#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:299
 msgid "No matches."
 msgstr "Ei tuloksia."
 
@@ -2053,7 +2053,21 @@ msgid "Queue percentage."
 msgstr "Jonon prosenttiosuus."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:126
-msgid "There's  nothing in the queue."
+#: redbot/cogs/audio/core/commands/playlists.py:1147
+#: redbot/cogs/audio/core/commands/queue.py:67
+#: redbot/cogs/audio/core/commands/queue.py:164
+#: redbot/cogs/audio/core/commands/queue.py:183
+#: redbot/cogs/audio/core/commands/queue.py:188
+#: redbot/cogs/audio/core/commands/queue.py:214
+#: redbot/cogs/audio/core/commands/queue.py:219
+#: redbot/cogs/audio/core/commands/queue.py:261
+#: redbot/cogs/audio/core/commands/queue.py:263
+#: redbot/cogs/audio/core/commands/queue.py:293
+#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:331
+#: redbot/cogs/audio/core/commands/queue.py:369
+#: redbot/cogs/audio/core/commands/queue.py:377
+msgid "There's nothing in the queue."
 msgstr "Jonossa ei ole mitään."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:147
@@ -2736,23 +2750,6 @@ msgid "Save the queue to a playlist.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/playlists.py:1147
-#: redbot/cogs/audio/core/commands/queue.py:63
-#: redbot/cogs/audio/core/commands/queue.py:160
-#: redbot/cogs/audio/core/commands/queue.py:179
-#: redbot/cogs/audio/core/commands/queue.py:184
-#: redbot/cogs/audio/core/commands/queue.py:210
-#: redbot/cogs/audio/core/commands/queue.py:215
-#: redbot/cogs/audio/core/commands/queue.py:257
-#: redbot/cogs/audio/core/commands/queue.py:259
-#: redbot/cogs/audio/core/commands/queue.py:289
-#: redbot/cogs/audio/core/commands/queue.py:291
-#: redbot/cogs/audio/core/commands/queue.py:327
-#: redbot/cogs/audio/core/commands/queue.py:365
-#: redbot/cogs/audio/core/commands/queue.py:373
-msgid "There's nothing in the queue."
-msgstr "Jonossa ei ole mitään."
-
 #: redbot/cogs/audio/core/commands/playlists.py:1168
 msgid "Playlist {name} (`{id}`) [**{scope}**] saved from current queue: {num} tracks added."
 msgstr "Soittolista {name} (`{id}`) [**{scope}**] tallennettu nykyisestä jonosta: {num} kappaletta lisättiin."
@@ -3032,88 +3029,88 @@ msgstr "'{old}' soittolistan uusi nimi on nyt '{new}' (`{id}`) [**{scope}**]"
 msgid "List the songs in the queue."
 msgstr "Listaa jonossa olevat kappaleet."
 
-#: redbot/cogs/audio/core/commands/queue.py:175
+#: redbot/cogs/audio/core/commands/queue.py:179
 #, docstring
 msgid "Clears the queue."
 msgstr "Tyhjentää jonon."
 
-#: redbot/cogs/audio/core/commands/queue.py:192
+#: redbot/cogs/audio/core/commands/queue.py:196
 msgid "Unable To Clear Queue"
 msgstr "Jonoa ei voitu tyhjentää"
 
-#: redbot/cogs/audio/core/commands/queue.py:193
+#: redbot/cogs/audio/core/commands/queue.py:197
 msgid "You need the DJ role to clear the queue."
 msgstr "Tarvitset DJ-roolin tyhjentääksesi jonon."
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "Queue Modified"
 msgstr "Jonoa muokattu"
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "The queue has been cleared."
 msgstr "Jono on tyhjennetty."
 
-#: redbot/cogs/audio/core/commands/queue.py:206
+#: redbot/cogs/audio/core/commands/queue.py:210
 #, docstring
 msgid "Removes songs from the queue if the requester is not in the voice channel."
 msgstr "Poistaa kappaleita jonosta jos niiden lisääjä ei ole puhekanavalla."
 
-#: redbot/cogs/audio/core/commands/queue.py:223
+#: redbot/cogs/audio/core/commands/queue.py:227
 msgid "Unable To Clean Queue"
 msgstr "Jonoa ei voitu putsata"
 
-#: redbot/cogs/audio/core/commands/queue.py:224
+#: redbot/cogs/audio/core/commands/queue.py:228
 msgid "You need the DJ role to clean the queue."
 msgstr "Tarvitset DJ-roolin putsataksesi jonon."
 
-#: redbot/cogs/audio/core/commands/queue.py:239
-#: redbot/cogs/audio/core/commands/queue.py:273
+#: redbot/cogs/audio/core/commands/queue.py:243
+#: redbot/cogs/audio/core/commands/queue.py:277
 msgid "Removed 0 tracks."
 msgstr "Nolla kappaletta poistettiin."
 
-#: redbot/cogs/audio/core/commands/queue.py:243
-#: redbot/cogs/audio/core/commands/queue.py:277
+#: redbot/cogs/audio/core/commands/queue.py:247
+#: redbot/cogs/audio/core/commands/queue.py:281
 msgid "Removed Tracks From The Queue"
 msgstr "Kappaleita poistettiin jonosta"
 
-#: redbot/cogs/audio/core/commands/queue.py:244
+#: redbot/cogs/audio/core/commands/queue.py:248
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."
 msgstr "Poistettiin {removed_tracks} kappaletta, jotka lisäsivät muut kuin tällä puhekanavalla olevat."
 
-#: redbot/cogs/audio/core/commands/queue.py:252
+#: redbot/cogs/audio/core/commands/queue.py:256
 #, docstring
 msgid "Removes all tracks you requested from the queue."
 msgstr "Poistaa kaikki lisäämäsi kappaleet jonosta."
 
-#: redbot/cogs/audio/core/commands/queue.py:278
+#: redbot/cogs/audio/core/commands/queue.py:282
 msgid "Removed {removed_tracks} tracks queued by {member.display_name}."
 msgstr "Poistettiin {removed_tracks} kappaletta, jotka lisäsi {member.display_name}."
 
-#: redbot/cogs/audio/core/commands/queue.py:285
+#: redbot/cogs/audio/core/commands/queue.py:289
 #, docstring
 msgid "Search the queue."
 msgstr "Etsi jonosta."
 
-#: redbot/cogs/audio/core/commands/queue.py:307
+#: redbot/cogs/audio/core/commands/queue.py:311
 #, docstring
 msgid "Shuffles the queue."
 msgstr "Sekoittaa jonon."
 
-#: redbot/cogs/audio/core/commands/queue.py:319
-#: redbot/cogs/audio/core/commands/queue.py:326
-#: redbot/cogs/audio/core/commands/queue.py:338
-#: redbot/cogs/audio/core/commands/queue.py:350
-#: redbot/cogs/audio/core/commands/queue.py:357
-#: redbot/cogs/audio/core/commands/queue.py:364
-#: redbot/cogs/audio/core/commands/queue.py:372
+#: redbot/cogs/audio/core/commands/queue.py:323
+#: redbot/cogs/audio/core/commands/queue.py:330
+#: redbot/cogs/audio/core/commands/queue.py:342
+#: redbot/cogs/audio/core/commands/queue.py:354
+#: redbot/cogs/audio/core/commands/queue.py:361
+#: redbot/cogs/audio/core/commands/queue.py:368
+#: redbot/cogs/audio/core/commands/queue.py:376
 msgid "Unable To Shuffle Queue"
 msgstr "Jonoa ei voida sekoittaa"
 
-#: redbot/cogs/audio/core/commands/queue.py:320
+#: redbot/cogs/audio/core/commands/queue.py:324
 msgid "You need the DJ role to shuffle the queue."
 msgstr "Tarvitset DJ-roolin sekoittaaksesi jonon."
 
-#: redbot/cogs/audio/core/commands/queue.py:377
+#: redbot/cogs/audio/core/commands/queue.py:381
 msgid "Queue has been shuffled."
 msgstr "Jono on sekoitettu."
 

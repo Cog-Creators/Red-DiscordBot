@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-03 22:37+0000\n"
+"POT-Creation-Date: 2021-11-25 09:07+0000\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 45\n"
 "Language: bg_BG\n"
 
-#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:378
+#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:377
 msgid "There is no ongoing trivia session in this channel."
 msgstr ""
 
@@ -108,22 +108,22 @@ msgstr ""
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:56
+#: redbot/cogs/trivia/trivia.py:55
 #, docstring
 msgid "Play trivia with friends!"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:95
+#: redbot/cogs/trivia/trivia.py:94
 #, docstring
 msgid "Manage Trivia settings."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:99
+#: redbot/cogs/trivia/trivia.py:98
 #, docstring
 msgid "Show the current trivia settings."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:103
+#: redbot/cogs/trivia/trivia.py:102
 msgid "Current settings\n"
 "Bot gains points: {bot_plays}\n"
 "Answer time limit: {delay} seconds\n"
@@ -135,89 +135,89 @@ msgid "Current settings\n"
 "Use Spoilers in answers: {use_spoilers}"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:120
+#: redbot/cogs/trivia/trivia.py:119
 #, docstring
 msgid "Set the total points required to win."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:122
+#: redbot/cogs/trivia/trivia.py:121
 msgid "Score must be greater than 0."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:126
+#: redbot/cogs/trivia/trivia.py:125
 msgid "Done. Points required to win set to {num}."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:130
+#: redbot/cogs/trivia/trivia.py:129
 #, docstring
 msgid "Set the maximum seconds permitted to answer a question."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:132
+#: redbot/cogs/trivia/trivia.py:131
 msgid "Must be at least 4 seconds."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:136
+#: redbot/cogs/trivia/trivia.py:135
 msgid "Done. Maximum seconds to answer set to {num}."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:140
+#: redbot/cogs/trivia/trivia.py:139
 #, docstring
 msgid "Set how long until trivia stops due to no response."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:143
+#: redbot/cogs/trivia/trivia.py:142
 msgid "Must be larger than the answer time limit."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:147
+#: redbot/cogs/trivia/trivia.py:146
 msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:154
+#: redbot/cogs/trivia/trivia.py:153
 #, docstring
 msgid "Allow/disallow trivia lists to override settings."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:159
+#: redbot/cogs/trivia/trivia.py:158
 msgid "Done. Trivia lists can now override the trivia settings for this server."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:163
+#: redbot/cogs/trivia/trivia.py:162
 msgid "Done. Trivia lists can no longer override the trivia settings for this server."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:171
+#: redbot/cogs/trivia/trivia.py:170
 #, docstring
 msgid "Set if bot will display the answers in spoilers.\n\n"
 "        If enabled, the bot will use spoilers to hide answers.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:178
+#: redbot/cogs/trivia/trivia.py:177
 msgid "Done. I'll put the answers in spoilers next time."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:180
+#: redbot/cogs/trivia/trivia.py:179
 msgid "Alright, I won't use spoilers to hide answers anymore."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:184
+#: redbot/cogs/trivia/trivia.py:183
 #, docstring
 msgid "Set whether or not the bot gains points.\n\n"
 "        If enabled, the bot will gain a point if no one guesses correctly.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:191
+#: redbot/cogs/trivia/trivia.py:190
 msgid "Done. I'll now gain a point if users don't answer in time."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:193
+#: redbot/cogs/trivia/trivia.py:192
 msgid "Alright, I won't embarrass you at trivia anymore."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:197
+#: redbot/cogs/trivia/trivia.py:196
 #, docstring
 msgid "Set whether or not the answer is revealed.\n\n"
 "        If enabled, the bot will reveal the answer if no one guesses correctly\n"
@@ -225,15 +225,15 @@ msgid "Set whether or not the answer is revealed.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:205
+#: redbot/cogs/trivia/trivia.py:204
 msgid "Done. I'll reveal the answer if no one knows it."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:207
+#: redbot/cogs/trivia/trivia.py:206
 msgid "Alright, I won't reveal the answer to the questions anymore."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:213
+#: redbot/cogs/trivia/trivia.py:212
 #, docstring
 msgid "Set the payout multiplier.\n\n"
 "        This can be any positive decimal number. If a user wins trivia when at\n"
@@ -244,80 +244,80 @@ msgid "Set the payout multiplier.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:224
+#: redbot/cogs/trivia/trivia.py:223
 msgid "Multiplier must be at least 0."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:228
+#: redbot/cogs/trivia/trivia.py:227
 msgid "Done. Payout multiplier set to {num}."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:230
+#: redbot/cogs/trivia/trivia.py:229
 msgid "Done. I will no longer reward the winner with a payout."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:235
+#: redbot/cogs/trivia/trivia.py:234
 #, docstring
 msgid "Manage Custom Trivia lists."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:240
+#: redbot/cogs/trivia/trivia.py:239
 #, docstring
 msgid "List uploaded custom trivia."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:242
+#: redbot/cogs/trivia/trivia.py:241
 msgid "No custom Trivia lists uploaded."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:258 redbot/cogs/trivia/trivia.py:265
+#: redbot/cogs/trivia/trivia.py:257 redbot/cogs/trivia/trivia.py:264
 msgid "Uploaded trivia lists"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:275
+#: redbot/cogs/trivia/trivia.py:274
 #, docstring
 msgid "Upload a trivia file."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:277
+#: redbot/cogs/trivia/trivia.py:276
 msgid "Supply a file with next message or type anything to cancel."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:283
+#: redbot/cogs/trivia/trivia.py:282
 msgid "You took too long to upload a list."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:286
+#: redbot/cogs/trivia/trivia.py:285
 msgid "You have cancelled the upload process."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:294
+#: redbot/cogs/trivia/trivia.py:293
 msgid "Invalid syntax: "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:297
+#: redbot/cogs/trivia/trivia.py:296
 msgid "There was an error parsing the trivia list. See logs for more info."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:302
+#: redbot/cogs/trivia/trivia.py:301
 msgid "The custom trivia list was not saved. The file does not follow the proper data format.\n"
 "{schema_error}"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:311
+#: redbot/cogs/trivia/trivia.py:310
 #, docstring
 msgid "Delete a trivia file."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:315
+#: redbot/cogs/trivia/trivia.py:314
 msgid "Trivia {filename} was deleted."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:317
+#: redbot/cogs/trivia/trivia.py:316
 msgid "Trivia file was not found."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:322
+#: redbot/cogs/trivia/trivia.py:321
 #, docstring
 msgid "Start trivia session on the specified category.\n\n"
 "        You may list multiple categories, in which case the trivia will involve\n"
@@ -325,41 +325,41 @@ msgid "Start trivia session on the specified category.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:330
+#: redbot/cogs/trivia/trivia.py:329
 msgid "There is already an ongoing trivia session in this channel."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:341
+#: redbot/cogs/trivia/trivia.py:340
 msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:348
+#: redbot/cogs/trivia/trivia.py:347
 msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:360
+#: redbot/cogs/trivia/trivia.py:359
 msgid "The trivia list was parsed successfully, however it appears to be empty!"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:375
+#: redbot/cogs/trivia/trivia.py:374
 #, docstring
 msgid "Stop an ongoing trivia session."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:382
+#: redbot/cogs/trivia/trivia.py:381
 msgid "Trivia stopped."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:386
+#: redbot/cogs/trivia/trivia.py:385
 #, docstring
 msgid "List available trivia categories."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:391 redbot/cogs/trivia/trivia.py:397
+#: redbot/cogs/trivia/trivia.py:390 redbot/cogs/trivia/trivia.py:396
 msgid "Available trivia lists"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:407
+#: redbot/cogs/trivia/trivia.py:406
 #, docstring
 msgid "Leaderboard for trivia.\n\n"
 "        Defaults to the top 10 of this server, sorted by total wins. Use\n"
@@ -367,7 +367,7 @@ msgid "Leaderboard for trivia.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:422
+#: redbot/cogs/trivia/trivia.py:421
 #, docstring
 msgid "Leaderboard for this server.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -379,11 +379,11 @@ msgid "Leaderboard for this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:435 redbot/cogs/trivia/trivia.py:464
+#: redbot/cogs/trivia/trivia.py:434 redbot/cogs/trivia/trivia.py:463
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:451
+#: redbot/cogs/trivia/trivia.py:450
 #, docstring
 msgid "Global trivia leaderboard.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -395,52 +395,52 @@ msgid "Global trivia leaderboard.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:519
+#: redbot/cogs/trivia/trivia.py:518
 msgid "There are no scores on record!"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:549
+#: redbot/cogs/trivia/trivia.py:548
 msgid "Rank"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:550
+#: redbot/cogs/trivia/trivia.py:549
 msgid "Member"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:551
+#: redbot/cogs/trivia/trivia.py:550
 msgid "Wins"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:552
+#: redbot/cogs/trivia/trivia.py:551
 msgid "Games Played"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:553
+#: redbot/cogs/trivia/trivia.py:552
 msgid "Total Score"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:554
+#: redbot/cogs/trivia/trivia.py:553
 msgid "Average Score"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:663
+#: redbot/cogs/trivia/trivia.py:662
 msgid "{filename} is a reserved trivia name and cannot be replaced.\n"
 "Choose another name."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:672
+#: redbot/cogs/trivia/trivia.py:671
 msgid "{filename} already exists. Do you wish to overwrite?"
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:694
+#: redbot/cogs/trivia/trivia.py:693
 msgid "You took too long answering."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:698
+#: redbot/cogs/trivia/trivia.py:697
 msgid "I am not replacing the existing file."
 msgstr ""
 
-#: redbot/cogs/trivia/trivia.py:708
+#: redbot/cogs/trivia/trivia.py:707
 msgid "Saved Trivia list as {filename}."
 msgstr ""
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-08-31 18:48+0000\n"
+"POT-Creation-Date: 2021-10-17 00:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
 "MIME-Version: 1.0\n"
@@ -15,216 +15,216 @@ msgstr ""
 "X-Crowdin-File-ID: 704\n"
 "Language: sk_SK\n"
 
-#: redbot/cogs/mutes/mutes.py:26
+#: redbot/cogs/mutes/mutes.py:32
 msgid "That user is already muted in this channel."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:27
+#: redbot/cogs/mutes/mutes.py:33
 msgid "That user is not muted in this channel."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:28
+#: redbot/cogs/mutes/mutes.py:34
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:31
+#: redbot/cogs/mutes/mutes.py:37
 msgid "I cannot let you do that. You are not higher than the mute role in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:34
+#: redbot/cogs/mutes/mutes.py:40
 msgid "That user cannot be (un)muted, as they have the Administrator permission."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:35
+#: redbot/cogs/mutes/mutes.py:41
 msgid "Failed to mute or unmute user. I need the Manage Roles permission and the user I'm muting must be lower than myself in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:40
+#: redbot/cogs/mutes/mutes.py:46
 msgid "Failed to mute or unmute user. I need the Manage Permissions permission."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:43
+#: redbot/cogs/mutes/mutes.py:49
 msgid "The user has left the server while applying an overwrite."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:44
+#: redbot/cogs/mutes/mutes.py:50
 msgid "The channel I tried to mute or unmute the user in isn't found."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:45
+#: redbot/cogs/mutes/mutes.py:51
 msgid "The mute role no longer exists."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:46
+#: redbot/cogs/mutes/mutes.py:52
 msgid "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:68
+#: redbot/cogs/mutes/mutes.py:74
 #, docstring
 msgid "\n"
 "    Mute users temporarily or indefinitely.\n"
 "    "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:286 redbot/cogs/mutes/mutes.py:298
-#: redbot/cogs/mutes/mutes.py:302 redbot/cogs/mutes/mutes.py:392
-#: redbot/cogs/mutes/mutes.py:409 redbot/cogs/mutes/mutes.py:463
-#: redbot/cogs/mutes/mutes.py:483 redbot/cogs/mutes/mutes.py:488
+#: redbot/cogs/mutes/mutes.py:292 redbot/cogs/mutes/mutes.py:304
+#: redbot/cogs/mutes/mutes.py:308 redbot/cogs/mutes/mutes.py:398
+#: redbot/cogs/mutes/mutes.py:415 redbot/cogs/mutes/mutes.py:469
+#: redbot/cogs/mutes/mutes.py:489 redbot/cogs/mutes/mutes.py:494
 msgid "Automatic unmute"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:302 redbot/cogs/mutes/mutes.py:409
-#: redbot/cogs/mutes/mutes.py:617 redbot/cogs/mutes/mutes.py:1404
+#: redbot/cogs/mutes/mutes.py:308 redbot/cogs/mutes/mutes.py:415
+#: redbot/cogs/mutes/mutes.py:623 redbot/cogs/mutes/mutes.py:1416
 msgid "Server unmute"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:311
+#: redbot/cogs/mutes/mutes.py:317
 msgid "I am unable to unmute {user} for the following reason:\n"
 "{reason}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:396
+#: redbot/cogs/mutes/mutes.py:402
 msgid "\n"
 "Unmuted in channels: "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:422
+#: redbot/cogs/mutes/mutes.py:428
 msgid "{member} could not be unmuted for the following reasons:\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:426
+#: redbot/cogs/mutes/mutes.py:432
 msgid "{reason} In the following channels: {channels}\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:472 redbot/cogs/mutes/mutes.py:692
+#: redbot/cogs/mutes/mutes.py:478 redbot/cogs/mutes/mutes.py:698
 #: redbot/cogs/mutes/voicemutes.py:224
 msgid "Voice unmute"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:475 redbot/cogs/mutes/mutes.py:695
-#: redbot/cogs/mutes/mutes.py:1471
+#: redbot/cogs/mutes/mutes.py:481 redbot/cogs/mutes/mutes.py:701
+#: redbot/cogs/mutes/mutes.py:1483
 msgid "Channel unmute"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:492
+#: redbot/cogs/mutes/mutes.py:498
 msgid "I am unable to unmute {user} in {channel} for the following reason:\n"
 "{reason}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:533
+#: redbot/cogs/mutes/mutes.py:539
 msgid "Unknown"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:538
+#: redbot/cogs/mutes/mutes.py:544
 msgid "No reason provided."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:549
+#: redbot/cogs/mutes/mutes.py:555
 msgid "Until"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:550
+#: redbot/cogs/mutes/mutes.py:556
 msgid "Duration"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:551
+#: redbot/cogs/mutes/mutes.py:557
 msgid "Guild"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:553
+#: redbot/cogs/mutes/mutes.py:559
 msgid "Moderator"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:562
+#: redbot/cogs/mutes/mutes.py:568
 msgid "\n"
 "**Moderator**: {moderator}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:567
+#: redbot/cogs/mutes/mutes.py:573
 msgid "\n"
 "**Until**: {until}\n"
 "**Duration**: {duration}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:573
+#: redbot/cogs/mutes/mutes.py:579
 msgid "\n"
 "**Guild**: {guild_name}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:612 redbot/cogs/mutes/mutes.py:617
+#: redbot/cogs/mutes/mutes.py:618 redbot/cogs/mutes/mutes.py:623
 msgid "Manually removed mute role"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:632 redbot/cogs/mutes/mutes.py:641
+#: redbot/cogs/mutes/mutes.py:638 redbot/cogs/mutes/mutes.py:647
 msgid "Manually applied mute role"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:641 redbot/cogs/mutes/mutes.py:1186
+#: redbot/cogs/mutes/mutes.py:647 redbot/cogs/mutes/mutes.py:1198
 msgid "Server mute"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:702 redbot/cogs/mutes/mutes.py:711
+#: redbot/cogs/mutes/mutes.py:708 redbot/cogs/mutes/mutes.py:717
 msgid "Manually removed channel overwrites"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:745
+#: redbot/cogs/mutes/mutes.py:751
 msgid "Previously muted in this server."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:751
+#: redbot/cogs/mutes/mutes.py:757
 #, docstring
 msgid "Mute settings."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:758
+#: redbot/cogs/mutes/mutes.py:764
 #, docstring
 msgid "Set whether mute notifications should be sent to users in DMs."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:761
+#: redbot/cogs/mutes/mutes.py:767
 msgid "I will now try to send mute notifications to users DMs."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:763
+#: redbot/cogs/mutes/mutes.py:769
 msgid "Mute notifications will no longer be sent to users DMs."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:769
+#: redbot/cogs/mutes/mutes.py:775
 #, docstring
 msgid "Decide whether the name of the moderator muting a user should be included in the DM to that user."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:773
+#: redbot/cogs/mutes/mutes.py:779
 msgid "I will include the name of the moderator who issued the mute when sending a DM to a user."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:779
+#: redbot/cogs/mutes/mutes.py:785
 msgid "I will not include the name of the moderator who issued the mute when sending a DM to a user."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:787
+#: redbot/cogs/mutes/mutes.py:793
 #, docstring
 msgid "\n"
 "        Whether or not to force role only mutes on the bot\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:792
+#: redbot/cogs/mutes/mutes.py:798
 msgid "Okay I will enforce role mutes before muting users."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:794
+#: redbot/cogs/mutes/mutes.py:800
 msgid "Okay I will allow channel overwrites for muting users."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:799
+#: redbot/cogs/mutes/mutes.py:805
 #, docstring
 msgid "\n"
 "        Shows the current mute settings for this guild.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:807
+#: redbot/cogs/mutes/mutes.py:813
 msgid "Mute Role: {role}\n"
 "Notification Channel: {channel}\n"
 "Default Time: {time}\n"
@@ -232,12 +232,12 @@ msgid "Mute Role: {role}\n"
 "Show moderator: {show_mod}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:814 redbot/cogs/mutes/mutes.py:815
-#: redbot/cogs/mutes/mutes.py:816
+#: redbot/cogs/mutes/mutes.py:820 redbot/cogs/mutes/mutes.py:821
+#: redbot/cogs/mutes/mutes.py:822
 msgid "None"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:827
+#: redbot/cogs/mutes/mutes.py:833
 #, docstring
 msgid "\n"
 "        Set the notification channel for automatic unmute issues.\n\n"
@@ -246,15 +246,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:835
+#: redbot/cogs/mutes/mutes.py:841
 msgid "Notification channel for unmute issues has been cleared."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:839
+#: redbot/cogs/mutes/mutes.py:845
 msgid "I will post unmute issues in {channel}."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:846
+#: redbot/cogs/mutes/mutes.py:852
 #, docstring
 msgid "Sets the role to be applied when muting a user.\n\n"
 "        If no role is setup the bot will attempt to mute a user by setting\n"
@@ -264,23 +264,23 @@ msgid "Sets the role to be applied when muting a user.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:861
+#: redbot/cogs/mutes/mutes.py:867
 msgid "Channel overwrites will be used for mutes instead."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:865
+#: redbot/cogs/mutes/mutes.py:871
 msgid "You can't set this role as it is not lower than you in the role hierarchy."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:870 redbot/cogs/mutes/mutes.py:925
+#: redbot/cogs/mutes/mutes.py:876 redbot/cogs/mutes/mutes.py:931
 msgid "Mute role set to {role}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:874 redbot/cogs/mutes/mutes.py:929
+#: redbot/cogs/mutes/mutes.py:880 redbot/cogs/mutes/mutes.py:935
 msgid "No notification channel has been setup, use {command_1} to be updated when there's an issue in automatic unmutes."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:885
+#: redbot/cogs/mutes/mutes.py:891
 #, docstring
 msgid "Create a Muted role.\n\n"
 "        This will create a role and apply overwrites to all available channels\n"
@@ -290,23 +290,23 @@ msgid "Create a Muted role.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:896
+#: redbot/cogs/mutes/mutes.py:902
 msgid "There is already a mute role setup in this server. Please remove it with {command} before trying to create a new one."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:907 redbot/cogs/mutes/mutes.py:949
+#: redbot/cogs/mutes/mutes.py:913 redbot/cogs/mutes/mutes.py:955
 msgid "Mute role setup"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:912
+#: redbot/cogs/mutes/mutes.py:918
 msgid "I could not create a muted role in this server."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:919
+#: redbot/cogs/mutes/mutes.py:925
 msgid "I could not set overwrites for the following channels: {channels}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:957
+#: redbot/cogs/mutes/mutes.py:963
 #, docstring
 msgid "\n"
 "        Set the default mute time for the mute command.\n\n"
@@ -314,63 +314,63 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:965
+#: redbot/cogs/mutes/mutes.py:971
 msgid "Default mute time removed."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:969
+#: redbot/cogs/mutes/mutes.py:975
 msgid "Please provide a valid time format."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:972
+#: redbot/cogs/mutes/mutes.py:978
 msgid "Default mute time set to {time}."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:984
-msgid "This server does not have a mute role setup.  You can setup a mute role with `{command_1}` or`{command_2}` if you just want a basic role created setup.\n\n"
+#: redbot/cogs/mutes/mutes.py:990
+msgid "This server does not have a mute role setup.  You can setup a mute role with {command_1} or {command_2} if you just want a basic role created setup.\n\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1000
+#: redbot/cogs/mutes/mutes.py:1009
 msgid "Channel overwrites for muting users can get expensive on Discord's API as such we recommend that you have an admin setup a mute role instead. Channel overwrites will also not re-apply on guild join, so a user who has been muted may leave and re-join and no longer be muted. Role mutes do not have this issue.\n\n"
 "Are you sure you want to continue with channel overwrites? "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1010
+#: redbot/cogs/mutes/mutes.py:1019
 msgid "Reacting with ✅ will continue the mute with overwrites and stop this message from appearing again, Reacting with ❎ will end the mute attempt."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1016
-msgid "Saying `yes` will continue the mute with overwrites and stop this message from appearing again, saying `no` will end the mute attempt."
+#: redbot/cogs/mutes/mutes.py:1025
+msgid "Saying {response_1} will continue the mute with overwrites and stop this message from appearing again, saying {response_2} will end the mute attempt."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1042 redbot/cogs/mutes/mutes.py:1256
+#: redbot/cogs/mutes/mutes.py:1054 redbot/cogs/mutes/mutes.py:1268
 msgid "OK then."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1056
+#: redbot/cogs/mutes/mutes.py:1068
 #, docstring
 msgid "\n"
 "        Displays active mutes on this server.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1064
+#: redbot/cogs/mutes/mutes.py:1076
 msgid "__Server Mutes__\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1082 redbot/cogs/mutes/mutes.py:1107
+#: redbot/cogs/mutes/mutes.py:1094 redbot/cogs/mutes/mutes.py:1119
 msgid "__Remaining__: {time_left}\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1089
+#: redbot/cogs/mutes/mutes.py:1101
 msgid "__<#{channel_id}> Mutes__\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1114
+#: redbot/cogs/mutes/mutes.py:1126
 msgid "There are no mutes on this server right now."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1126
+#: redbot/cogs/mutes/mutes.py:1138
 #, docstring
 msgid "Mute users.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
@@ -383,43 +383,43 @@ msgid "Mute users.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1141 redbot/cogs/mutes/mutes.py:1292
+#: redbot/cogs/mutes/mutes.py:1153 redbot/cogs/mutes/mutes.py:1304
 #: redbot/cogs/mutes/voicemutes.py:90
 msgid "You cannot mute me."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1143 redbot/cogs/mutes/mutes.py:1294
+#: redbot/cogs/mutes/mutes.py:1155 redbot/cogs/mutes/mutes.py:1306
 #: redbot/cogs/mutes/voicemutes.py:92
 msgid "You cannot mute yourself."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1154 redbot/cogs/mutes/mutes.py:1159
-#: redbot/cogs/mutes/mutes.py:1302 redbot/cogs/mutes/mutes.py:1307
+#: redbot/cogs/mutes/mutes.py:1166 redbot/cogs/mutes/mutes.py:1171
+#: redbot/cogs/mutes/mutes.py:1314 redbot/cogs/mutes/mutes.py:1319
 #: redbot/cogs/mutes/voicemutes.py:110 redbot/cogs/mutes/voicemutes.py:117
 msgid " for {duration}"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1193
+#: redbot/cogs/mutes/mutes.py:1205
 msgid "{users} has been muted in this server{time}."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1195
+#: redbot/cogs/mutes/mutes.py:1207
 msgid "{users} have been muted in this server{time}."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1206
+#: redbot/cogs/mutes/mutes.py:1218
 msgid "{member} could not be (un)muted for the following reasons:\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1217
+#: redbot/cogs/mutes/mutes.py:1229
 msgid "- {reason} In the following channels: {channels}\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1228
+#: redbot/cogs/mutes/mutes.py:1240
 msgid "Some users could not be properly muted. Would you like to see who, where, and why?"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1278
+#: redbot/cogs/mutes/mutes.py:1290
 #, docstring
 msgid "Mute a user in the current text channel.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
@@ -432,23 +432,23 @@ msgid "Mute a user in the current text channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1335
+#: redbot/cogs/mutes/mutes.py:1347
 msgid "Channel mute"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1343 redbot/cogs/mutes/voicemutes.py:156
+#: redbot/cogs/mutes/mutes.py:1355 redbot/cogs/mutes/voicemutes.py:156
 msgid "{users} has been muted in this channel{time}."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1345 redbot/cogs/mutes/voicemutes.py:158
+#: redbot/cogs/mutes/mutes.py:1357 redbot/cogs/mutes/voicemutes.py:158
 msgid "{users} have been muted in this channel{time}."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1350 redbot/cogs/mutes/voicemutes.py:163
+#: redbot/cogs/mutes/mutes.py:1362 redbot/cogs/mutes/voicemutes.py:163
 msgid "The following users could not be muted\n"
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1365
+#: redbot/cogs/mutes/mutes.py:1377
 #, docstring
 msgid "Unmute users.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
@@ -456,21 +456,21 @@ msgid "Unmute users.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1373 redbot/cogs/mutes/mutes.py:1442
+#: redbot/cogs/mutes/mutes.py:1385 redbot/cogs/mutes/mutes.py:1454
 #: redbot/cogs/mutes/voicemutes.py:184
 msgid "You cannot unmute me."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1375 redbot/cogs/mutes/mutes.py:1444
+#: redbot/cogs/mutes/mutes.py:1387 redbot/cogs/mutes/mutes.py:1456
 #: redbot/cogs/mutes/voicemutes.py:186
 msgid "You cannot unmute yourself."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1417
+#: redbot/cogs/mutes/mutes.py:1429
 msgid "{users} unmuted in this server."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1434
+#: redbot/cogs/mutes/mutes.py:1446
 #, docstring
 msgid "Unmute a user in this channel.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
@@ -478,11 +478,11 @@ msgid "Unmute a user in this channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1481 redbot/cogs/mutes/voicemutes.py:234
+#: redbot/cogs/mutes/mutes.py:1493 redbot/cogs/mutes/voicemutes.py:234
 msgid "{users} unmuted in this channel."
 msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1486 redbot/cogs/mutes/voicemutes.py:239
+#: redbot/cogs/mutes/mutes.py:1498 redbot/cogs/mutes/voicemutes.py:239
 msgid "The following users could not be unmuted\n"
 msgstr ""
 

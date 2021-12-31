@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-28 17:07+0000\n"
+"POT-Creation-Date: 2021-10-15 22:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -346,6 +346,7 @@ msgid "Rules set."
 msgstr "Kurallar ayarlandı."
 
 #: redbot/cogs/permissions/permissions.py:693
+#: redbot/cogs/permissions/permissions.py:708
 msgid "Are you sure?"
 msgstr "Emin misiniz?"
 
@@ -353,10 +354,6 @@ msgstr "Emin misiniz?"
 #: redbot/cogs/permissions/permissions.py:713
 msgid "Response timed out."
 msgstr "Yanıt yok, zaman aşımı oluştu."
-
-#: redbot/cogs/permissions/permissions.py:708
-msgid "Are you sure? (y/n)"
-msgstr "Emin misiniz? (y/n)"
 
 #: redbot/cogs/permissions/permissions.py:719
 msgid "Action cancelled."

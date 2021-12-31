@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-07-16 21:46+0000\n"
+"POT-Creation-Date: 2021-11-02 18:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -18,22 +18,22 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:36
 #, docstring
 msgid "Music configuration options."
-msgstr ""
+msgstr "Tùy chọn cấu hình về âm nhạc."
 
 #: redbot/cogs/audio/core/commands/audioset.py:41
 #, docstring
 msgid "Manages the keyword whitelist and blacklist."
-msgstr ""
+msgstr "Quản lý danh sách từ khóa cho phép và danh sách đen."
 
 #: redbot/cogs/audio/core/commands/audioset.py:46
 #, docstring
 msgid "Manages the global keyword whitelist/blacklist."
-msgstr ""
+msgstr "Quản lý danh sách trắng / danh sách đen từ khóa toàn cầu."
 
 #: redbot/cogs/audio/core/commands/audioset.py:50
 #, docstring
 msgid "Manages the global keyword whitelist."
-msgstr ""
+msgstr "Quản lý danh sách trắng cho từ khóa dùng chung."
 
 #: redbot/cogs/audio/core/commands/audioset.py:56
 #: redbot/cogs/audio/core/commands/audioset.py:246
@@ -62,7 +62,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:75
 #: redbot/cogs/audio/core/commands/audioset.py:265
 msgid "Added `{whitelisted}` to the whitelist."
-msgstr ""
+msgstr "Đã thêm `{whitelisted}` vào danh sách trắng."
 
 #: redbot/cogs/audio/core/commands/audioset.py:83
 #: redbot/cogs/audio/core/commands/audioset.py:273
@@ -75,7 +75,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:276
 #: redbot/cogs/audio/core/commands/audioset.py:302
 msgid "Nothing in the whitelist."
-msgstr ""
+msgstr "Không có gì trong danh sách trắng."
 
 #: redbot/cogs/audio/core/commands/audioset.py:102
 msgid "Global Whitelist"
@@ -184,7 +184,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:292
 msgid "Whitelist"
-msgstr ""
+msgstr "Danh sách trắng"
 
 #: redbot/cogs/audio/core/commands/audioset.py:338
 #, docstring
@@ -193,21 +193,21 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:385
 msgid "Blacklist"
-msgstr ""
+msgstr "Danh sách đen"
 
 #: redbot/cogs/audio/core/commands/audioset.py:432
 #, docstring
 msgid "Change auto-play setting."
-msgstr ""
+msgstr "Thay đổi cài đặt tự động phát."
 
 #: redbot/cogs/audio/core/commands/audioset.py:436
 #, docstring
 msgid "Toggle auto-play when there no songs in queue."
-msgstr ""
+msgstr "Chuyển đổi tự động phát khi không có bài hát nào trong hàng đợi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:440
 msgid "Auto-play when queue ends: {true_or_false}."
-msgstr ""
+msgstr "Tự động phát nhạc khi hàng đợi hết thúc: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
 #: redbot/cogs/audio/core/commands/audioset.py:591
@@ -249,7 +249,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Enabled"
-msgstr ""
+msgstr "Đã bật"
 
 #: redbot/cogs/audio/core/commands/audioset.py:441
 #: redbot/cogs/audio/core/commands/audioset.py:591
@@ -291,17 +291,19 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:118
 #: redbot/cogs/audio/core/commands/llset.py:127
 msgid "Disabled"
-msgstr ""
+msgstr "Đã tắt"
 
 #: redbot/cogs/audio/core/commands/audioset.py:445
 msgid "\n"
 "Repeat has been disabled."
-msgstr ""
+msgstr "\n"
+"Chế độ lặp lại đã bị tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:448
 msgid "\n"
 "Auto-disconnecting at queue end has been disabled."
-msgstr ""
+msgstr "\n"
+"Tự động ngắt kết nối khi hết hàng đợi đã bị tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:451
 #: redbot/cogs/audio/core/commands/audioset.py:546
@@ -341,7 +343,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:174
 #: redbot/cogs/audio/core/commands/llset.py:199
 msgid "Setting Changed"
-msgstr ""
+msgstr "Thiết lập đã được thay đổi"
 
 #: redbot/cogs/audio/core/commands/audioset.py:464
 #, docstring
@@ -369,7 +371,30 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
 "        "
-msgstr ""
+msgstr "Đặt danh sách phát để tự động phát các bài hát từ đó.\n\n"
+"        **Cách dùng**:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay tên_ds_phát_HOẶC_id [args]`\n\n"
+"        **Cú pháp**:\n"
+"        ​ ​ ​ ​ Những lựa chọn sau đây đều là tùy ý:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Chỉ dành cho chủ sở hữu bot**\n\n"
+"        **Scope** is one of the following:\n"
+"            ​Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** can be one of the following:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** can be one of the following:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Ví dụ:\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:104
@@ -388,7 +413,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1817
 #: redbot/cogs/audio/core/commands/playlists.py:1983
 msgid "Playlists Are Not Available"
-msgstr ""
+msgstr "Danh sách phát không có sẵn"
 
 #: redbot/cogs/audio/core/commands/audioset.py:498
 #: redbot/cogs/audio/core/commands/playlists.py:105
@@ -407,7 +432,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1818
 #: redbot/cogs/audio/core/commands/playlists.py:1984
 msgid "The playlist section of Audio is currently unavailable"
-msgstr ""
+msgstr "Phần danh sách phát của Âm thanh hiện không khả dụng"
 
 #: redbot/cogs/audio/core/commands/audioset.py:501
 #: redbot/cogs/audio/core/commands/playlists.py:106
@@ -426,39 +451,39 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:1821
 #: redbot/cogs/audio/core/commands/playlists.py:1987
 msgid "Check your logs."
-msgstr ""
+msgstr "Vui lòng kiểm tra bản ghi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:516
 #: redbot/cogs/audio/core/commands/audioset.py:532
 msgid "No Playlist Found"
-msgstr ""
+msgstr "Tôi không tìm thấy danh sách phát nào"
 
 #: redbot/cogs/audio/core/commands/audioset.py:517
 #: redbot/cogs/audio/core/commands/playlists.py:124
 #: redbot/cogs/audio/core/commands/playlists.py:1498
 msgid "Could not match '{arg}' to a playlist"
-msgstr ""
+msgstr "Không thể ghép '{arg}' với một danh sách phát"
 
 #: redbot/cogs/audio/core/commands/audioset.py:524
 msgid "No Tracks Found"
-msgstr ""
+msgstr "Hmm Không tìm thấy bài nhạc nào"
 
 #: redbot/cogs/audio/core/commands/audioset.py:525
 msgid "Playlist {name} has no tracks."
-msgstr ""
+msgstr "Danh sách phát {name} không có bài hát nào."
 
 #: redbot/cogs/audio/core/commands/audioset.py:533
 #: redbot/cogs/audio/core/commands/playlists.py:1587
 #: redbot/cogs/audio/core/commands/playlists.py:1700
 msgid "Playlist {id} does not exist in {scope} scope."
-msgstr ""
+msgstr "Danh sách phát {id} không tồn tại trong {scope} scope."
 
 #: redbot/cogs/audio/core/commands/audioset.py:540
 #: redbot/cogs/audio/core/commands/playlists.py:1016
 #: redbot/cogs/audio/core/commands/playlists.py:1595
 #: redbot/cogs/audio/core/commands/playlists.py:1707
 msgid "Missing Arguments"
-msgstr ""
+msgstr "Thiếu cú pháp"
 
 #: redbot/cogs/audio/core/commands/audioset.py:541
 #: redbot/cogs/audio/core/commands/playlists.py:1017
@@ -469,16 +494,16 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:547
 msgid "Playlist {name} (`{id}`) [**{scope}**] will be used for autoplay."
-msgstr ""
+msgstr "Danh sách phát {name} (`{id}`) [**{scope}**] sẽ được sử dụng để tự động phát."
 
 #: redbot/cogs/audio/core/commands/audioset.py:560
 #, docstring
 msgid "Resets auto-play to the default playlist."
-msgstr ""
+msgstr "Khôi phục tự động phát về danh sách phát mặc định."
 
 #: redbot/cogs/audio/core/commands/audioset.py:572
 msgid "Set auto-play playlist to play recently played tracks."
-msgstr ""
+msgstr "Đặt auto-play playlist để phát bài nhạc đã nghe gần đây."
 
 #: redbot/cogs/audio/core/commands/audioset.py:578
 #, docstring
@@ -511,13 +536,14 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:628
 msgid "Auto-disconnection at queue end: {true_or_false}."
-msgstr ""
+msgstr "Tự rời đi khi hết hàng đợi: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:632
 #: redbot/cogs/audio/core/commands/controller.py:778
 msgid "\n"
 "Auto-play has been disabled."
-msgstr ""
+msgstr "\n"
+"Tự động phát đã bị tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:643
 #, docstring
@@ -528,7 +554,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:654
 msgid "Missing DJ Role"
-msgstr ""
+msgstr "Thiếu Role DJ"
 
 #: redbot/cogs/audio/core/commands/audioset.py:655
 msgid "Please set a role to use with DJ mode. Enter the role name or ID now."
@@ -559,28 +585,28 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:720
 #: redbot/cogs/audio/core/commands/audioset.py:1219
 msgid "Seconds can't be less than zero."
-msgstr ""
+msgstr "Số giây không thể nhỏ hơn 0."
 
 #: redbot/cogs/audio/core/commands/audioset.py:698
 msgid "Empty disconnect disabled."
-msgstr ""
+msgstr "Ngắt kết nối khi không có người đã tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:705
 msgid "Empty disconnect timer set to {num_seconds}."
-msgstr ""
+msgstr "Ngắt kết nối khi không có người sau khi {num_seconds} trôi qua."
 
 #: redbot/cogs/audio/core/commands/audioset.py:717
 #, docstring
 msgid "Auto-pause after x seconds when room is empty, 0 to disable."
-msgstr ""
+msgstr "Tự động tạm dừng phát nhạc sau khi phòng trống x giây, 0 tức là tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:727
 msgid "Empty pause disabled."
-msgstr ""
+msgstr "Tự động tạm dừng khi kênh thoại trống đã bị tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:734
 msgid "Empty pause timer set to {num_seconds}."
-msgstr ""
+msgstr "Tự động tạm dừng sau {num_seconds} khi kênh thoại trống."
 
 #: redbot/cogs/audio/core/commands/audioset.py:745
 #, docstring
@@ -606,7 +632,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:768
 msgid "Jukebox mode disabled."
-msgstr ""
+msgstr "Đã tắt chế độ Jukebox."
 
 #: redbot/cogs/audio/core/commands/audioset.py:775
 msgid "Track queueing command price set to {price} {currency}."
@@ -668,23 +694,26 @@ msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\n"
 "        input will turn the max length setting off.\n"
 "        "
-msgstr ""
+msgstr "Độ dài tối đa của một bài nhạc trong hàng đợi, tính bằng giây, chọn 0 để tắt\n\n"
+"        Cho phép số giây hoặc giá trị thời gian với định dạng như 00:00:00 (`hh:mm:ss`) hoặc 00:00 (`mm:ss`). Invalid\n"
+"        input will turn the max length setting off.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:873
 msgid "Invalid length"
-msgstr ""
+msgstr "Độ dài không hợp lệ"
 
 #: redbot/cogs/audio/core/commands/audioset.py:873
 msgid "Length can't be less than zero."
-msgstr ""
+msgstr "Độ dài không thể nhỏ hơn 0."
 
 #: redbot/cogs/audio/core/commands/audioset.py:877
 msgid "Track max length disabled."
-msgstr ""
+msgstr "Độ dài bài hát tối đa đã bị tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:883
 msgid "Track max length set to {seconds}."
-msgstr ""
+msgstr "Đặt độ dài tối đa của bài hát thành {seconds}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:893
 #, docstring
@@ -724,7 +753,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:952
 msgid "Settings Changed"
-msgstr ""
+msgstr "Thiết lập đã được thay đổi"
 
 #: redbot/cogs/audio/core/commands/audioset.py:953
 msgid "DJ role set to: {role.name}."
@@ -797,22 +826,22 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1062
 msgid "Server"
-msgstr ""
+msgstr "Máy chủ"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1064
 msgid "User"
-msgstr ""
+msgstr "Người dùng"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1066
 #: redbot/cogs/audio/core/commands/playlists.py:1025
 msgid "Global"
-msgstr ""
+msgstr "Chung"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "Cached"
-msgstr ""
+msgstr "Đã lưu trong Cache"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1072
 #: redbot/cogs/audio/core/commands/audioset.py:1073
@@ -822,29 +851,29 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1077
 msgid "Auto-play Settings"
-msgstr ""
+msgstr "Cài đặt Tự động phát"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
 msgid "Playlist name:    [{pname}]\n"
-msgstr ""
+msgstr "Tên danh sách phát:    [{pname}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1080
 msgid "Playlist ID:      [{pid}]\n"
-msgstr ""
+msgstr "ID danh sách phát:      [{pid}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1081
 msgid "Playlist scope:   [{pscope}]\n"
-msgstr ""
+msgstr "Phạm vi danh sách phát  [{pscope}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1087
 #: redbot/cogs/audio/core/commands/audioset.py:1358
 #: redbot/cogs/audio/core/commands/audioset.py:1403
 msgid "Cache Settings"
-msgstr ""
+msgstr "Cài đặt bộ nhớ đệm"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1089
 msgid "Max age:                [{max_age}]\n"
-msgstr ""
+msgstr "Tuổi cao nhất:                [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1090
 msgid "Local Spotify cache:    [{spotify_status}]\n"
@@ -922,43 +951,43 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1186
 #, docstring
 msgid "Enable/disable tracks' titles as status."
-msgstr ""
+msgstr "Bật/tắt tiêu đề của bản nhạc dưới dạng trạng thái."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1192
 msgid "Song titles as status: {true_or_false}."
-msgstr ""
+msgstr "Tên bài hát dưới dạng trạng thái: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1201
 #, docstring
 msgid "Toggle displaying a thumbnail on audio messages."
-msgstr ""
+msgstr "Thiết lập hiển thị hình thu nhỏ trên tin nhắn đính kèm."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1207
 msgid "Thumbnail display: {true_or_false}."
-msgstr ""
+msgstr "Hiển thị hình thu nhỏ: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1216
 #, docstring
 msgid "Percentage needed for non-mods to skip tracks, 0 to disable."
-msgstr ""
+msgstr "Tỷ lệ phần trăm cần thiết để người không phải mod skip bản nhạc, 0 để tắt."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1228
 msgid "Voting disabled. All users can use queue management commands."
-msgstr ""
+msgstr "Bỏ phiếu bị vô hiệu hóa. Tất cả người dùng đều có thể sử dụng các lệnh quản lý hàng đợi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1235
 msgid "Vote percentage set to {percent}%."
-msgstr ""
+msgstr "Phần trăm bỏ phiếu được đặt thành {percent}%."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1244
 #, docstring
 msgid "Instructions to set the YouTube API key."
-msgstr ""
+msgstr "Hướng dẫn lấy YouTube API key."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1263
 #, docstring
 msgid "Instructions to set the Spotify API tokens."
-msgstr ""
+msgstr "Hướng dẫn lấy Spotify API tokens."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1264
 msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
@@ -1008,7 +1037,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1347
 #: redbot/cogs/audio/core/commands/audioset.py:1392
 msgid "Max age:          [{max_age}]\n"
-msgstr ""
+msgstr "Tuổi tối đa:                [{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1348
 #: redbot/cogs/audio/core/commands/audioset.py:1393
@@ -1072,29 +1101,29 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1471
 msgid "Error"
-msgstr ""
+msgstr "Lỗi"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1472
 msgid "Music without sound isn't music at all. Try setting the volume higher then 0%."
-msgstr ""
+msgstr "Âm nhạc không có âm thanh không phải là âm nhạc. Hãy thử đặt âm lượng cao hơn rồi đến 0%."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1480
 #: redbot/cogs/audio/core/commands/audioset.py:1488
 msgid "Setting changed"
-msgstr ""
+msgstr "Thiết lập đã được thay đổi"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1481
 msgid "The maximum volume has been limited to 150%, be easy on your ears."
-msgstr ""
+msgstr "Âm lượng tối đa được giới hạn tới 150, hãy từ từ thôi."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1489
 msgid "The maximum volume has been limited to {max_volume}%."
-msgstr ""
+msgstr "Âm lượng cao nhất bị hạn ở {max_volume}%."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
 msgid "Disconnect from the voice channel."
-msgstr ""
+msgstr "Ngắt kết nối khỏi kênh thoại."
 
 #: redbot/cogs/audio/core/commands/controller.py:34
 #: redbot/cogs/audio/core/commands/controller.py:88
@@ -1120,81 +1149,82 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/miscellaneous.py:102
 #: redbot/cogs/audio/core/commands/playlists.py:1142
 msgid "Nothing playing."
-msgstr ""
+msgstr "Trình phát nhạc trống rỗng,."
 
 #: redbot/cogs/audio/core/commands/controller.py:49
 #: redbot/cogs/audio/core/commands/controller.py:55
 msgid "Unable To Disconnect"
-msgstr ""
+msgstr "Không thể ngắt kết nối"
 
 #: redbot/cogs/audio/core/commands/controller.py:50
 #: redbot/cogs/audio/core/commands/controller.py:263
 #: redbot/cogs/audio/core/commands/controller.py:331
 #: redbot/cogs/audio/core/commands/controller.py:585
 msgid "There are other people listening - vote to skip instead."
-msgstr ""
+msgstr "Có những người khác đang nghe - hãy vote để bỏ qua."
 
 #: redbot/cogs/audio/core/commands/controller.py:56
 #: redbot/cogs/audio/core/commands/controller.py:62
 msgid "You need the DJ role to disconnect."
-msgstr ""
+msgstr "Phải có Rele DJ đã"
 
 #: redbot/cogs/audio/core/commands/controller.py:61
 msgid "Unable to Disconnect"
-msgstr ""
+msgstr "Không thể ngắt kết nối"
 
 #: redbot/cogs/audio/core/commands/controller.py:65
 msgid "Disconnecting..."
-msgstr ""
+msgstr "Đang ngắt kết nối..."
 
 #: redbot/cogs/audio/core/commands/controller.py:86
 #, docstring
 msgid "Now playing."
-msgstr ""
+msgstr "Đang Phát."
 
 #: redbot/cogs/audio/core/commands/controller.py:110
-#: redbot/cogs/audio/core/commands/queue.py:77
+#: redbot/cogs/audio/core/commands/queue.py:81
 msgid "\n"
 " Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\n"
+"Yêu cầu bởi: **{track.requester}**"
 
 #: redbot/cogs/audio/core/commands/controller.py:113
 msgid "Nothing."
-msgstr ""
+msgstr "Không có gì."
 
 #: redbot/cogs/audio/core/commands/controller.py:118
-#: redbot/cogs/audio/core/commands/queue.py:79
+#: redbot/cogs/audio/core/commands/queue.py:83
 msgid "Now Playing"
-msgstr ""
+msgstr "Đang Phát"
 
 #: redbot/cogs/audio/core/commands/controller.py:128
-#: redbot/cogs/audio/core/commands/queue.py:89
+#: redbot/cogs/audio/core/commands/queue.py:93
 msgid "Auto-Play"
-msgstr ""
+msgstr "Tự động phát"
 
 #: redbot/cogs/audio/core/commands/controller.py:134
-#: redbot/cogs/audio/core/commands/queue.py:95
+#: redbot/cogs/audio/core/commands/queue.py:99
 msgid "Shuffle"
-msgstr ""
+msgstr "Phát trộn"
 
 #: redbot/cogs/audio/core/commands/controller.py:140
-#: redbot/cogs/audio/core/commands/queue.py:101
+#: redbot/cogs/audio/core/commands/queue.py:105
 msgid "Repeat"
-msgstr ""
+msgstr "Phát lặp lại"
 
 #: redbot/cogs/audio/core/commands/controller.py:200
 #, docstring
 msgid "Pause or resume a playing track."
-msgstr ""
+msgstr "Tạm dừng hoặc riếp tục một bài hát."
 
 #: redbot/cogs/audio/core/commands/controller.py:211
 #: redbot/cogs/audio/core/commands/controller.py:217
 msgid "Unable To Manage Tracks"
-msgstr ""
+msgstr "Không thể quản lý các bài hát"
 
 #: redbot/cogs/audio/core/commands/controller.py:212
 msgid "You must be in the voice channel to pause or resume."
-msgstr ""
+msgstr "Cần phải ở trong kênh thoại mới có thể dùng lệnh."
 
 #: redbot/cogs/audio/core/commands/controller.py:218
 msgid "You need the DJ role to pause or resume tracks."
@@ -1202,11 +1232,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:229
 msgid "Track Paused"
-msgstr ""
+msgstr "Tạm dừng rồi"
 
 #: redbot/cogs/audio/core/commands/controller.py:233
 msgid "Track Resumed"
-msgstr ""
+msgstr "Đã tiếp tục phát nhạc"
 
 #: redbot/cogs/audio/core/commands/controller.py:242
 #, docstring
@@ -1221,11 +1251,11 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:511
 #: redbot/cogs/audio/core/commands/controller.py:520
 msgid "Unable To Skip Tracks"
-msgstr ""
+msgstr "Không thể bỏ qua các bài hát"
 
 #: redbot/cogs/audio/core/commands/controller.py:257
 msgid "You must be in the voice channel to skip the track."
-msgstr ""
+msgstr "Cần phải ở trong một kênh thoại mới có thể bỏ qua một bài nhạc."
 
 #: redbot/cogs/audio/core/commands/controller.py:269
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
@@ -1272,22 +1302,24 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:806
 #: redbot/cogs/audio/core/commands/playlists.py:1481
 msgid "Unable To Play Tracks"
-msgstr ""
+msgstr "Không thể phát bài nhạc"
 
 #: redbot/cogs/audio/core/commands/controller.py:277
 msgid "No previous track."
-msgstr ""
+msgstr "Bài hát trước đó không tồn tại."
 
 #: redbot/cogs/audio/core/commands/controller.py:298
 msgid "Replaying Track"
-msgstr ""
+msgstr "Đang phát lặp lại bài hát"
 
 #: redbot/cogs/audio/core/commands/controller.py:305
 #, docstring
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
-msgstr ""
+msgstr "Tua bài hát về trước hoặc sau bằng số giây hoặc từ/đến một khoảng thời gian cụ thể.\n\n"
+"        Cho phép nhập số giây hoặc giá trị thời gian như 00:00:00 (`hh:mm:ss`) hoặc 00:00 (`mm:ss`).\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:323
 #: redbot/cogs/audio/core/commands/controller.py:330
@@ -1295,15 +1327,15 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:344
 #: redbot/cogs/audio/core/commands/controller.py:356
 msgid "Unable To Seek Tracks"
-msgstr ""
+msgstr "Không thể tua bài hát"
 
 #: redbot/cogs/audio/core/commands/controller.py:324
 msgid "You must be in the voice channel to use seek."
-msgstr ""
+msgstr "Cần phải ở trong kênh thoại mới có thể dùng lệnh."
 
 #: redbot/cogs/audio/core/commands/controller.py:338
 msgid "You need the DJ role or be the track requester to use seek."
-msgstr ""
+msgstr "Bạn cần role DJ."
 
 #: redbot/cogs/audio/core/commands/controller.py:344
 msgid "Can't seek on a stream."
@@ -1311,45 +1343,45 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:357
 msgid "Invalid input for the time to seek."
-msgstr ""
+msgstr "Sai số thời gian để tua."
 
 #: redbot/cogs/audio/core/commands/controller.py:365
 msgid "Moved {num_seconds}s to 00:00:00"
-msgstr ""
+msgstr "Đã chuyển từ {num_seconds}s đến 00:00:00"
 
 #: redbot/cogs/audio/core/commands/controller.py:372
 msgid "Moved {num_seconds}s to {time}"
-msgstr ""
+msgstr "Đã chuyển từ {num_seconds}s đến {time}"
 
 #: redbot/cogs/audio/core/commands/controller.py:380
 msgid "Moved to {time}"
-msgstr ""
+msgstr "Đã chuyển đến {time}"
 
 #: redbot/cogs/audio/core/commands/controller.py:390
 #, docstring
 msgid "Toggle shuffle."
-msgstr ""
+msgstr "Chuyển đổi phát ngẫu nhiên."
 
 #: redbot/cogs/audio/core/commands/controller.py:399
 #: redbot/cogs/audio/core/commands/controller.py:410
 #: redbot/cogs/audio/core/commands/controller.py:443
 #: redbot/cogs/audio/core/commands/controller.py:454
 msgid "Unable To Toggle Shuffle"
-msgstr ""
+msgstr "Không thể chuyển đổi phát ngẫu nhiên"
 
 #: redbot/cogs/audio/core/commands/controller.py:400
 #: redbot/cogs/audio/core/commands/controller.py:444
 msgid "You need the DJ role to toggle shuffle."
-msgstr ""
+msgstr "Bạn cần role DJ."
 
 #: redbot/cogs/audio/core/commands/controller.py:411
 #: redbot/cogs/audio/core/commands/controller.py:455
 msgid "You must be in the voice channel to toggle shuffle."
-msgstr ""
+msgstr "Cần phải ở trong kênh thoại mới có thể dùng lệnh phát ngẫu nhiên."
 
 #: redbot/cogs/audio/core/commands/controller.py:420
 msgid "Shuffle tracks: {true_or_false}."
-msgstr ""
+msgstr "Phát ngẫu nhiên bài hát: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/controller.py:431
 #, docstring
@@ -1366,19 +1398,19 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:475
 #, docstring
 msgid "Skip to the next track, or to a given track number."
-msgstr ""
+msgstr "Bỏ qua bài hát hiện tại, hoặc chuyển sang bài hát với số thứ tự bạn chọn."
 
 #: redbot/cogs/audio/core/commands/controller.py:484
 msgid "You must be in the voice channel to skip the music."
-msgstr ""
+msgstr "Cần phải ở trong một kênh thoại để có thể skip nhạc."
 
 #: redbot/cogs/audio/core/commands/controller.py:499
 msgid "You need the DJ role or be the track requester to skip tracks."
-msgstr ""
+msgstr "Bạn cần role DJ."
 
 #: redbot/cogs/audio/core/commands/controller.py:512
 msgid "You can only skip the current track."
-msgstr ""
+msgstr "Bạn chỉ có thể bỏ qua bài hát hiện tại."
 
 #: redbot/cogs/audio/core/commands/controller.py:521
 msgid "Can't skip to a specific track in vote mode without the DJ role."
@@ -1386,47 +1418,47 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:527
 msgid "I removed your vote to skip."
-msgstr ""
+msgstr "Tôi đã loại bỏ lượt bình chọn skip của bạn."
 
 #: redbot/cogs/audio/core/commands/controller.py:530
 msgid "You voted to skip."
-msgstr ""
+msgstr "Bạn đã bình chọn để bỏ qua."
 
 #: redbot/cogs/audio/core/commands/controller.py:543
 msgid "Vote threshold met."
-msgstr ""
+msgstr "Bình chọn hoàn tất."
 
 #: redbot/cogs/audio/core/commands/controller.py:546
 msgid " Votes: {num_votes}/{num_members} ({cur_percent}% out of {required_percent}% needed)"
-msgstr ""
+msgstr " Bình chọn: {num_votes}/{num_members} ({cur_percent}% trên {required_percent}% yêu cầu)"
 
 #: redbot/cogs/audio/core/commands/controller.py:565
 #, docstring
 msgid "Stop playback and clear the queue."
-msgstr ""
+msgstr "Dừng trình phát và xóa hàng đợi."
 
 #: redbot/cogs/audio/core/commands/controller.py:578
 #: redbot/cogs/audio/core/commands/controller.py:584
 #: redbot/cogs/audio/core/commands/controller.py:590
 msgid "Unable To Stop Player"
-msgstr ""
+msgstr "Không thể dừng hàng đợi"
 
 #: redbot/cogs/audio/core/commands/controller.py:579
 msgid "You must be in the voice channel to stop the music."
-msgstr ""
+msgstr "Cần phải ở trong một kênh thoại để có thể dừng bot nhạc."
 
 #: redbot/cogs/audio/core/commands/controller.py:591
 msgid "You need the DJ role to stop the music."
-msgstr ""
+msgstr "Bạn cần role DJ."
 
 #: redbot/cogs/audio/core/commands/controller.py:613
 msgid "Stopping..."
-msgstr ""
+msgstr "Đang dừng lại..."
 
 #: redbot/cogs/audio/core/commands/controller.py:621
 #, docstring
 msgid "Summon the bot to a voice channel."
-msgstr ""
+msgstr "Triệu hồi bot vào một kênh voice chat."
 
 #: redbot/cogs/audio/core/commands/controller.py:633
 #: redbot/cogs/audio/core/commands/controller.py:640
@@ -1434,15 +1466,15 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:684
 #: redbot/cogs/audio/core/commands/controller.py:691
 msgid "Unable To Join Voice Channel"
-msgstr ""
+msgstr "Không thể tham gia kênh thoại"
 
 #: redbot/cogs/audio/core/commands/controller.py:634
 msgid "There are other people listening."
-msgstr ""
+msgstr "Vẫn còn người nghe mà."
 
 #: redbot/cogs/audio/core/commands/controller.py:641
 msgid "You need the DJ role to summon the bot."
-msgstr ""
+msgstr "Phải có Role DJ đã."
 
 #: redbot/cogs/audio/core/commands/controller.py:654
 #: redbot/cogs/audio/core/commands/player.py:83
@@ -1450,17 +1482,17 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:455
 #: redbot/cogs/audio/core/commands/player.py:571
 #: redbot/cogs/audio/core/commands/player.py:695
-#: redbot/cogs/audio/core/commands/queue.py:339
+#: redbot/cogs/audio/core/commands/queue.py:343
 msgid "I don't have permission to connect and speak in your channel."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:672
 msgid "Unable To Do This Action"
-msgstr ""
+msgstr "Không thể thực hiện hành động này"
 
 #: redbot/cogs/audio/core/commands/controller.py:673
 msgid "I am already in your channel."
-msgstr ""
+msgstr "Tôi đang ở đây rồi."
 
 #: redbot/cogs/audio/core/commands/controller.py:685
 #: redbot/cogs/audio/core/commands/player.py:95
@@ -1468,9 +1500,9 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:467
 #: redbot/cogs/audio/core/commands/player.py:583
 #: redbot/cogs/audio/core/commands/player.py:707
-#: redbot/cogs/audio/core/commands/queue.py:351
+#: redbot/cogs/audio/core/commands/queue.py:355
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "Kết nối với một kênh thoại trước."
 
 #: redbot/cogs/audio/core/commands/controller.py:692
 #: redbot/cogs/audio/core/commands/player.py:101
@@ -1478,40 +1510,40 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:473
 #: redbot/cogs/audio/core/commands/player.py:589
 #: redbot/cogs/audio/core/commands/player.py:713
-#: redbot/cogs/audio/core/commands/queue.py:358
+#: redbot/cogs/audio/core/commands/queue.py:362
 msgid "Connection to Lavalink has not yet been established."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:699
 #, docstring
 msgid "Set the volume, 1% - 150%."
-msgstr ""
+msgstr "Điều chỉnh âm lượng, 1% - 150%."
 
 #: redbot/cogs/audio/core/commands/controller.py:708
 msgid "Current Volume:"
-msgstr ""
+msgstr "Âm lượng hiện tại:"
 
 #: redbot/cogs/audio/core/commands/controller.py:719
 #: redbot/cogs/audio/core/commands/controller.py:726
 msgid "Unable To Change Volume"
-msgstr ""
+msgstr "Không thể đổi âm lượng"
 
 #: redbot/cogs/audio/core/commands/controller.py:720
 msgid "You must be in the voice channel to change the volume."
-msgstr ""
+msgstr "Cần phải ở trong kênh thoại mới có thể đổi volume."
 
 #: redbot/cogs/audio/core/commands/controller.py:727
 msgid "You need the DJ role to change the volume."
-msgstr ""
+msgstr "Phải có Role DJ đã."
 
 #: redbot/cogs/audio/core/commands/controller.py:737
 msgid "Volume:"
-msgstr ""
+msgstr "Âm lượng:"
 
 #: redbot/cogs/audio/core/commands/controller.py:746
 #, docstring
 msgid "Toggle repeat."
-msgstr ""
+msgstr "Bật/Tắt lặp lại."
 
 #: redbot/cogs/audio/core/commands/controller.py:754
 #: redbot/cogs/audio/core/commands/controller.py:765
@@ -1633,7 +1665,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/equalizer.py:114
 msgid "No saved equalizer presets."
-msgstr ""
+msgstr "Không có thiết lập Eq nào được đặt."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:117
 msgid "Preset Name"
@@ -1938,9 +1970,9 @@ msgid "Search for songs across all localtracks folders."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/localtracks.py:139
-#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:299
 msgid "No matches."
-msgstr ""
+msgstr "Không tìm thấy kết quả phù hợp."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:29
 #, docstring
@@ -1954,7 +1986,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:75
 msgid "Not connected anywhere."
-msgstr ""
+msgstr "Chưa kết nối đến bất kì đâu."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:81
 msgid "Playing in {num}/{total} servers:"
@@ -1962,20 +1994,34 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:87
 msgid "Page {}/{}"
-msgstr ""
+msgstr "Trang {}/{}"
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:100
 #, docstring
 msgid "Queue percentage."
-msgstr ""
+msgstr "Phần trăm hàng đợi."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:126
-msgid "There's  nothing in the queue."
-msgstr ""
+#: redbot/cogs/audio/core/commands/playlists.py:1147
+#: redbot/cogs/audio/core/commands/queue.py:67
+#: redbot/cogs/audio/core/commands/queue.py:164
+#: redbot/cogs/audio/core/commands/queue.py:183
+#: redbot/cogs/audio/core/commands/queue.py:188
+#: redbot/cogs/audio/core/commands/queue.py:214
+#: redbot/cogs/audio/core/commands/queue.py:219
+#: redbot/cogs/audio/core/commands/queue.py:261
+#: redbot/cogs/audio/core/commands/queue.py:263
+#: redbot/cogs/audio/core/commands/queue.py:293
+#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:331
+#: redbot/cogs/audio/core/commands/queue.py:369
+#: redbot/cogs/audio/core/commands/queue.py:377
+msgid "There's nothing in the queue."
+msgstr "Không có gì trong hàng đợi."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:147
 msgid "Queued and playing tracks:"
-msgstr ""
+msgstr "Các bài hát Đã xếp hàng và đang phát:"
 
 #: redbot/cogs/audio/core/commands/player.py:40
 #, docstring
@@ -1983,19 +2029,22 @@ msgid "Play the specified track or search for a close match.\n\n"
 "        To play a local track, the query should be `<parentfolder>\\<filename>`.\n"
 "        If you are the bot owner, use `[p]audioset info` to display your localtracks path.\n"
 "        "
-msgstr ""
+msgstr "Phát một bài hát hoặc tìm kiếm một bài hát.\n\n"
+"        Để phát một bài hát, sử dụng `[p]play tên_bài_hát`.\n"
+"        Để tìm kiếm 1 bài bát, sử dụng `[p]search từ_khóa` để tìm kiếm 1 bài hát.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/player.py:54
 #: redbot/cogs/audio/core/commands/player.py:162
 #: redbot/cogs/audio/core/commands/player.py:739
 msgid "That URL is not allowed."
-msgstr ""
+msgstr "Tôi không chấp nhận link đó."
 
 #: redbot/cogs/audio/core/commands/player.py:58
 #: redbot/cogs/audio/core/commands/player.py:166
 #: redbot/cogs/audio/core/commands/player.py:745
 msgid "That track is not allowed."
-msgstr ""
+msgstr "Tôi không chấp nhận bài hát đó."
 
 #: redbot/cogs/audio/core/commands/player.py:65
 #: redbot/cogs/audio/core/commands/player.py:173
@@ -2003,7 +2052,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:553
 #: redbot/cogs/audio/core/commands/player.py:807
 msgid "You need the DJ role to queue tracks."
-msgstr ""
+msgstr "Phải có Rele DJ đã."
 
 #: redbot/cogs/audio/core/commands/player.py:69
 #: redbot/cogs/audio/core/commands/player.py:177
@@ -2030,19 +2079,19 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:225
 #: redbot/cogs/audio/core/commands/player.py:253
 msgid "No tracks found for `{query}`."
-msgstr ""
+msgstr "Không tìm thấy bài hát nào cho `{query}`."
 
 #: redbot/cogs/audio/core/commands/player.py:123
 #: redbot/cogs/audio/core/commands/player.py:231
 #: redbot/cogs/audio/core/commands/player.py:532
 #: redbot/cogs/audio/core/commands/player.py:605
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "Số lượng hàng đợi đã đạt đến giới hạn."
 
 #: redbot/cogs/audio/core/commands/player.py:146
 #, docstring
 msgid "Force play a URL or search for a track."
-msgstr ""
+msgstr "Phát nhạc từ link hoặc tìm một bài hát."
 
 #: redbot/cogs/audio/core/commands/player.py:152
 msgid "Only single tracks work with bump play."
@@ -2059,7 +2108,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:795
 #: redbot/cogs/audio/core/commands/player.py:917
 msgid "Track is not playable."
-msgstr ""
+msgstr "Bài hát không thể phát được."
 
 #: redbot/cogs/audio/core/commands/player.py:265
 #: redbot/cogs/audio/core/commands/player.py:796
@@ -2073,7 +2122,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:318
 msgid "Track exceeds maximum length."
-msgstr ""
+msgstr "Độ dài bài hát vượt quá giá trị tối đa."
 
 #: redbot/cogs/audio/core/commands/player.py:339
 msgid "{time} until track playback: #1 in queue"
@@ -2081,7 +2130,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:343
 msgid "Track Enqueued"
-msgstr ""
+msgstr "Đã thêm vào hàng đợi"
 
 #: redbot/cogs/audio/core/commands/player.py:357
 #, docstring
@@ -2104,7 +2153,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:492
 msgid "No categories found"
-msgstr ""
+msgstr "Không tìm thấy danh mục"
 
 #: redbot/cogs/audio/core/commands/player.py:496
 #: redbot/cogs/audio/core/commands/player.py:514
@@ -2113,7 +2162,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:501
 msgid "Categories"
-msgstr ""
+msgstr "Hạng mục"
 
 #: redbot/cogs/audio/core/commands/player.py:507
 msgid "No categories selected, try again later."
@@ -2121,28 +2170,28 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:522
 msgid "Playlists for {friendly_name}"
-msgstr ""
+msgstr "Danh sách phát cho {friendly_name}"
 
 #: redbot/cogs/audio/core/commands/player.py:529
 msgid "No tracks to play."
-msgstr ""
+msgstr "Không có bài hát nào để phát."
 
 #: redbot/cogs/audio/core/commands/player.py:539
 msgid "Couldn't find tracks for the selected playlist."
-msgstr ""
+msgstr "Không tìm thấy bài hát trong danh sách phát đã chọn."
 
 #: redbot/cogs/audio/core/commands/player.py:547
 #, docstring
 msgid "Starts auto play."
-msgstr ""
+msgstr "Bắt đầu tự động phát."
 
 #: redbot/cogs/audio/core/commands/player.py:601
 msgid "You must be in the voice channel to use the autoplay command."
-msgstr ""
+msgstr "Cần phải ở trong một kênh thoại để có thể dùng câu lệnh tự động phát nhạc."
 
 #: redbot/cogs/audio/core/commands/player.py:615
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "Tôi không tìm thấy bài nhạc hợp lệ nào."
 
 #: redbot/cogs/audio/core/commands/player.py:621
 #: redbot/cogs/audio/core/commands/player.py:757
@@ -2150,7 +2199,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:897
 #: redbot/cogs/audio/core/commands/playlists.py:1928
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Tôi không lấy được nhạc. Thử lại lần nữa đi"
 
 #: redbot/cogs/audio/core/commands/player.py:622
 #: redbot/cogs/audio/core/commands/player.py:758
@@ -2158,11 +2207,11 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:898
 #: redbot/cogs/audio/core/commands/playlists.py:1929
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Bây giờ tôi chưa thể tìm nhạc được, đợi một lát nữa rùi thử lại."
 
 #: redbot/cogs/audio/core/commands/player.py:636
 msgid "Adding a track to queue."
-msgstr ""
+msgstr "Đang thêm bài hát vào hàng đợi."
 
 #: redbot/cogs/audio/core/commands/player.py:642
 #, docstring
@@ -2177,29 +2226,29 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:712
 #: redbot/cogs/audio/core/commands/player.py:722
 msgid "Unable To Search For Tracks"
-msgstr ""
+msgstr "Không thể tìm bài hát"
 
 #: redbot/cogs/audio/core/commands/player.py:723
 msgid "You must be in the voice channel to enqueue tracks."
-msgstr ""
+msgstr "Cần phải ở trong một kênh thoại."
 
 #: redbot/cogs/audio/core/commands/player.py:786
 #: redbot/cogs/audio/core/commands/player.py:908
 msgid "Nothing found."
-msgstr ""
+msgstr "Không tìm thấy gì cả."
 
 #: redbot/cogs/audio/core/commands/player.py:857
 #: redbot/cogs/audio/core/commands/playlists.py:1553
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} sorry Tôi không thể nhét mấy bài này vào hàng đợi."
 
 #: redbot/cogs/audio/core/commands/player.py:863
 msgid "Queued {num} track(s).{maxlength_msg}"
-msgstr ""
+msgstr "Hàng đợi đang có {num} bài hát.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/commands/player.py:869
 msgid "folder"
-msgstr ""
+msgstr "thư mục"
 
 #: redbot/cogs/audio/core/commands/player.py:871
 msgid "search"
@@ -2469,7 +2518,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:640
 #: redbot/cogs/audio/core/commands/playlists.py:1768
 msgid "Playlist Has Not Been Modified"
-msgstr ""
+msgstr "Danh sách phát chưa được chỉnh sửa"
 
 #: redbot/cogs/audio/core/commands/playlists.py:641
 msgid "{name} (`{id}`) [**{scope}**] playlist has no duplicate tracks."
@@ -2508,7 +2557,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:731
 msgid "That playlist has no tracks."
-msgstr ""
+msgstr "Danh sách phát đó không có bài hát nào."
 
 #: redbot/cogs/audio/core/commands/playlists.py:774
 msgid "This playlist is too large to be send in this server."
@@ -2558,11 +2607,11 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/playlists.py:908
 #: redbot/cogs/audio/core/commands/playlists.py:1056
 msgid "Unknown"
-msgstr ""
+msgstr "Không rõ"
 
 #: redbot/cogs/audio/core/commands/playlists.py:910
 msgid "Page {page}/{pages} | Author: {author_name} | {num} track(s)"
-msgstr ""
+msgstr "Trang {page}/{pages} | Tác giả: {author_name} | {num} bài hát"
 
 #: redbot/cogs/audio/core/commands/playlists.py:922
 #, docstring
@@ -2610,11 +2659,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1052
 msgid "Tracks: {num}"
-msgstr ""
+msgstr "Bài hát: {num}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1053
 msgid "Author: {name}"
-msgstr ""
+msgstr "Tác giả: {name}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1058
 msgid "Scope: {scope}\n"
@@ -2646,23 +2695,6 @@ msgid "Save the queue to a playlist.\n\n"
 "        ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`\n"
 "        "
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/playlists.py:1147
-#: redbot/cogs/audio/core/commands/queue.py:63
-#: redbot/cogs/audio/core/commands/queue.py:160
-#: redbot/cogs/audio/core/commands/queue.py:179
-#: redbot/cogs/audio/core/commands/queue.py:184
-#: redbot/cogs/audio/core/commands/queue.py:210
-#: redbot/cogs/audio/core/commands/queue.py:215
-#: redbot/cogs/audio/core/commands/queue.py:257
-#: redbot/cogs/audio/core/commands/queue.py:259
-#: redbot/cogs/audio/core/commands/queue.py:289
-#: redbot/cogs/audio/core/commands/queue.py:291
-#: redbot/cogs/audio/core/commands/queue.py:327
-#: redbot/cogs/audio/core/commands/queue.py:365
-#: redbot/cogs/audio/core/commands/queue.py:373
-msgid "There's nothing in the queue."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1168
@@ -2752,11 +2784,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1414
 msgid "Playlist Couldn't be created"
-msgstr ""
+msgstr "Danh sách không thể tạo"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1415
 msgid "Unable to create your playlist."
-msgstr ""
+msgstr "Không thể tạo danh sách của bạn."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1432
 #, docstring
@@ -2788,11 +2820,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1482
 msgid "You need the DJ role to start playing playlists."
-msgstr ""
+msgstr "DJ role where."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1566
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Danh sách đã thêm vào hàng đợi"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1567
 msgid "{name} - (`{id}`) [**{scope}**]\n"
@@ -2829,7 +2861,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1692
 msgid "Invalid Playlist"
-msgstr ""
+msgstr "Ds phát không hợp lệ"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1693
 msgid "Custom playlists cannot be updated."
@@ -2837,16 +2869,16 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/playlists.py:1734
 msgid "Tracks removed"
-msgstr ""
+msgstr "Đã xóa bài hát"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1738
 #: redbot/cogs/audio/core/commands/playlists.py:1758
 msgid "Page {page_num}/{total_pages}"
-msgstr ""
+msgstr "Trang {page_num}/{total_pages}"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1756
 msgid "Tracks added"
-msgstr ""
+msgstr "Bài hát đã đc thêm vào"
 
 #: redbot/cogs/audio/core/commands/playlists.py:1769
 msgid "No changes for {name} (`{id}`) [**{scope}**]."
@@ -2943,88 +2975,88 @@ msgstr ""
 msgid "List the songs in the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:175
+#: redbot/cogs/audio/core/commands/queue.py:179
 #, docstring
 msgid "Clears the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:192
+#: redbot/cogs/audio/core/commands/queue.py:196
 msgid "Unable To Clear Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:193
+#: redbot/cogs/audio/core/commands/queue.py:197
 msgid "You need the DJ role to clear the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "Queue Modified"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "The queue has been cleared."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:206
+#: redbot/cogs/audio/core/commands/queue.py:210
 #, docstring
 msgid "Removes songs from the queue if the requester is not in the voice channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:223
+#: redbot/cogs/audio/core/commands/queue.py:227
 msgid "Unable To Clean Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:224
+#: redbot/cogs/audio/core/commands/queue.py:228
 msgid "You need the DJ role to clean the queue."
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/queue.py:239
-#: redbot/cogs/audio/core/commands/queue.py:273
-msgid "Removed 0 tracks."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/queue.py:243
 #: redbot/cogs/audio/core/commands/queue.py:277
+msgid "Removed 0 tracks."
+msgstr ""
+
+#: redbot/cogs/audio/core/commands/queue.py:247
+#: redbot/cogs/audio/core/commands/queue.py:281
 msgid "Removed Tracks From The Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:244
+#: redbot/cogs/audio/core/commands/queue.py:248
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:252
+#: redbot/cogs/audio/core/commands/queue.py:256
 #, docstring
 msgid "Removes all tracks you requested from the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:278
+#: redbot/cogs/audio/core/commands/queue.py:282
 msgid "Removed {removed_tracks} tracks queued by {member.display_name}."
-msgstr ""
+msgstr "Đã loại bỏ {removed_tracks}bài hát được yêu cầu bởi {member.display_name}."
 
-#: redbot/cogs/audio/core/commands/queue.py:285
+#: redbot/cogs/audio/core/commands/queue.py:289
 #, docstring
 msgid "Search the queue."
-msgstr ""
+msgstr "Tìm hàng đợi."
 
-#: redbot/cogs/audio/core/commands/queue.py:307
+#: redbot/cogs/audio/core/commands/queue.py:311
 #, docstring
 msgid "Shuffles the queue."
-msgstr ""
+msgstr "Xáo trộn hàng đợi."
 
-#: redbot/cogs/audio/core/commands/queue.py:319
-#: redbot/cogs/audio/core/commands/queue.py:326
-#: redbot/cogs/audio/core/commands/queue.py:338
-#: redbot/cogs/audio/core/commands/queue.py:350
-#: redbot/cogs/audio/core/commands/queue.py:357
-#: redbot/cogs/audio/core/commands/queue.py:364
-#: redbot/cogs/audio/core/commands/queue.py:372
+#: redbot/cogs/audio/core/commands/queue.py:323
+#: redbot/cogs/audio/core/commands/queue.py:330
+#: redbot/cogs/audio/core/commands/queue.py:342
+#: redbot/cogs/audio/core/commands/queue.py:354
+#: redbot/cogs/audio/core/commands/queue.py:361
+#: redbot/cogs/audio/core/commands/queue.py:368
+#: redbot/cogs/audio/core/commands/queue.py:376
 msgid "Unable To Shuffle Queue"
-msgstr ""
+msgstr "Không thể xáo trộn hàng đợi"
 
-#: redbot/cogs/audio/core/commands/queue.py:320
+#: redbot/cogs/audio/core/commands/queue.py:324
 msgid "You need the DJ role to shuffle the queue."
-msgstr ""
+msgstr "Phải có Role DJ đã."
 
-#: redbot/cogs/audio/core/commands/queue.py:377
+#: redbot/cogs/audio/core/commands/queue.py:381
 msgid "Queue has been shuffled."
-msgstr ""
+msgstr "Hàng đợi đã bị xáo trộn hêh."
 

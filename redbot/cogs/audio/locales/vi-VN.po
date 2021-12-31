@@ -21,7 +21,11 @@ msgid "\n"
 "​ ​ ​ ​ Global\n"
 "​ ​ ​ ​ Guild\n"
 "​ ​ ​ ​ User\n"
-msgstr ""
+msgstr "\n"
+"Phạm vi phải là phiên bản hợp lệ của một trong những điều sau:\n"
+"​ ​ ​ ​ Toàn cầu\n"
+"​ ​ ​ ​ Guild\n"
+"​ ​ ​ ​ Người dùng\n"
 
 #: redbot/cogs/audio/converters.py:43
 msgid "\n"
@@ -29,30 +33,37 @@ msgid "\n"
 "​ ​ ​ ​ User ID\n"
 "​ ​ ​ ​ User Mention\n"
 "​ ​ ​ ​ User Name#123\n"
-msgstr ""
+msgstr "\n"
+"Tác giả phải là phiên bản hợp lệ của một trong những điều sau:\n"
+"​ ​ ​ ​ ID người dùng\n"
+"​ ​ ​ ​ Đề cập của Người dùng\n"
+"​ ​ ​ ​ Tên người dùng#123\n"
 
 #: redbot/cogs/audio/converters.py:51
 msgid "\n"
 "Guild must be a valid version of one of the following:\n"
 "​ ​ ​ ​ Guild ID\n"
 "​ ​ ​ ​ Exact guild name\n"
-msgstr ""
+msgstr "\n"
+"Hội phải là phiên bản hợp lệ của một trong những điều sau:\n"
+"​ ​ ​ ​ ID Hội\n"
+"​ ​ ​ ​ Tên hội chính xác\n"
 
 #: redbot/cogs/audio/converters.py:87
 msgid "\"{arg}\" was not found. It must be the ID or complete name of a server which the bot can see."
-msgstr ""
+msgstr "\"{arg}\" không được tìm thấy. Nó phải là ID hoặc tên đầy đủ của máy chủ mà bot có thể nhìn thấy."
 
 #: redbot/cogs/audio/converters.py:96 redbot/cogs/audio/converters.py:136
 msgid "\"{arg}\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\"{arg}\" không tham chiếu đến một máy chủ duy nhất. Vui lòng sử dụng ID cho máy chủ mà bạn đang cố gắng chỉ định."
 
 #: redbot/cogs/audio/converters.py:127
 msgid "\"{arg}\" was not found. It must be the ID or name or mention a user which the bot can see."
-msgstr ""
+msgstr "\"{arg}\" không tìm thấy. Nó phải là ID hoặc tên hoặc đề cập đến người dùng mà bot có thể nhìn thấy."
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."
-msgstr ""
+msgstr "Không thể ghép '{}' với một danh sách phát."
 
 #: redbot/cogs/audio/converters.py:241 redbot/cogs/audio/converters.py:263
 #: redbot/cogs/audio/converters.py:283 redbot/cogs/audio/converters.py:368
@@ -60,17 +71,17 @@ msgstr ""
 #: redbot/cogs/audio/converters.py:431 redbot/cogs/audio/converters.py:453
 #: redbot/cogs/audio/converters.py:480
 msgid "Nothing"
-msgstr ""
+msgstr "Không có gì"
 
 #: redbot/cogs/audio/converters.py:261
 msgid "You cannot use `--guild`"
-msgstr ""
+msgstr "Bạn không thể dùng `--guild`"
 
 #: redbot/cogs/audio/converters.py:402
 msgid "You cannot use `--to-server`"
-msgstr ""
+msgstr "Bạn không thể dùng `--to-server`"
 
 #: redbot/cogs/audio/converters.py:428
 msgid "You cannot use `--from-server`"
-msgstr ""
+msgstr "Bạn không thể dùng `--from-server`"
 

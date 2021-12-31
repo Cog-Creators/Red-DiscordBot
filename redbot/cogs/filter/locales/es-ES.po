@@ -105,15 +105,15 @@ msgstr "Comando base para agregar o eliminar palabras del filtro del servidor.\n
 #: redbot/cogs/filter/filter.py:157
 #, docstring
 msgid "Clears this server's filter list."
-msgstr ""
+msgstr "Limpia la lista de filtros de este servidor."
 
 #: redbot/cogs/filter/filter.py:162
 msgid "The filter list for this server is empty."
-msgstr ""
+msgstr "La lista de filtros de este servidor está vacía."
 
 #: redbot/cogs/filter/filter.py:164
 msgid "Are you sure you want to clear this server's filter list?"
-msgstr ""
+msgstr "¿Estás seguro de querer borrar la lista de filtros de este servidor?"
 
 #: redbot/cogs/filter/filter.py:170 redbot/cogs/filter/filter.py:219
 msgid "You took too long to respond."
@@ -121,7 +121,7 @@ msgstr "Has tardado demasiado en responder."
 
 #: redbot/cogs/filter/filter.py:175
 msgid "Server filter cleared."
-msgstr ""
+msgstr "Filtro de servidor borrado."
 
 #: redbot/cogs/filter/filter.py:177 redbot/cogs/filter/filter.py:226
 msgid "No changes have been made."
@@ -134,7 +134,7 @@ msgstr "Enviar la lista de las palabras filtradas de este servidor."
 
 #: redbot/cogs/filter/filter.py:186
 msgid "There are no current words setup to be filtered in this server."
-msgstr ""
+msgstr "No hay ninguna configuración actual de palabras para filtrar en este servidor."
 
 #: redbot/cogs/filter/filter.py:189
 msgid "Filtered in this server:"
@@ -156,19 +156,19 @@ msgstr "Comando base para añadir o eliminar palabras del filtro del canal.\n\n"
 #: redbot/cogs/filter/filter.py:206
 #, docstring
 msgid "Clears this channel's filter list."
-msgstr ""
+msgstr "Borra la lista de filtros de este servidor."
 
 #: redbot/cogs/filter/filter.py:211
 msgid "The filter list for this channel is empty."
-msgstr ""
+msgstr "La lista de filtros para este canal está vacía."
 
 #: redbot/cogs/filter/filter.py:213
 msgid "Are you sure you want to clear this channel's filter list?"
-msgstr ""
+msgstr "¿Estás seguro de querer borrar la lista de filtros de este canal?"
 
 #: redbot/cogs/filter/filter.py:224
 msgid "Channel filter cleared."
-msgstr ""
+msgstr "Filtro de canal borrado."
 
 #: redbot/cogs/filter/filter.py:230
 #, docstring
@@ -177,7 +177,7 @@ msgstr "Enviar una lista de las palabras filtradas del canal."
 
 #: redbot/cogs/filter/filter.py:235
 msgid "There are no current words setup to be filtered in this channel."
-msgstr ""
+msgstr "No hay ninguna configuración actual de palabras para filtrar en este canal."
 
 #: redbot/cogs/filter/filter.py:238
 msgid "Filtered in this channel:"

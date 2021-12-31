@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/cog.py:215
 msgid "Auto Play started."
-msgstr ""
+msgstr "Tự động phát đã bắt đầu."
 
 #: redbot/cogs/audio/core/events/dpy.py:40
 msgid "You have attempted to run Audio's Lavalink server on an unsupported architecture. Only settings related commands will be available."
@@ -26,19 +26,20 @@ msgstr ""
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "I'm missing permissions in this server, Please address this as soon as possible.\n\n"
 "Expected Permissions:\n"
-msgstr ""
+msgstr "Tôi bị thiếu quyền trong máy chủ này.\n\n"
+"Những quyền cần thiết:\n"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Enabled"
-msgstr ""
+msgstr "Đã bật"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Disabled"
-msgstr ""
+msgstr "Đã tắt"
 
 #: redbot/cogs/audio/core/events/dpy.py:124
 msgid "No DJ role found. Disabling DJ mode."
-msgstr ""
+msgstr "Tôi không thấy role DJ nào cả, đang tắt chế độ DJ."
 
 #: redbot/cogs/audio/core/events/dpy.py:134
 msgid "`{user_input}` is not a valid value for `{command}`"
@@ -46,16 +47,16 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:142
 msgid "Unable To Parse Argument"
-msgstr ""
+msgstr "Không thể đối chiếu cú pháp"
 
 #: redbot/cogs/audio/core/events/dpy.py:154
 #: redbot/cogs/audio/core/events/dpy.py:163
 msgid "Invalid Argument"
-msgstr ""
+msgstr "Giá trị không hợp lệ"
 
 #: redbot/cogs/audio/core/events/dpy.py:155
 msgid "The argument you gave for `{}` is not valid: I was expecting a `{}`."
-msgstr ""
+msgstr "Có gì đó không đúng với `{}`: Tôi tưởng bạn muốn `{}`."
 
 #: redbot/cogs/audio/core/events/dpy.py:175
 msgid "Invalid Environment"
@@ -63,68 +64,69 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:176
 msgid "Connection to Lavalink has been lost."
-msgstr ""
+msgstr "Kết nối với Lavalink đã bị mất."
 
 #: redbot/cogs/audio/core/events/dpy.py:184
 msgid "No Player Available"
-msgstr ""
+msgstr "Tôi chưa bật trình phát nhạc"
 
 #: redbot/cogs/audio/core/events/dpy.py:185
 msgid "The bot is not connected to a voice channel."
-msgstr ""
+msgstr "Nhưng mà Tôi chưa vào kênh thoại nào."
 
 #: redbot/cogs/audio/core/events/dpy.py:193
 #: redbot/cogs/audio/core/events/lavalink.py:162
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Tôi không lấy được nhạc. Thử lại lần nữa đi"
 
 #: redbot/cogs/audio/core/events/dpy.py:194
 #: redbot/cogs/audio/core/events/lavalink.py:163
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Bây giờ tôi chưa thể tìm nhạc được, đợi một lát nữa rùi thử lại."
 
 #: redbot/cogs/audio/core/events/dpy.py:205
 msgid "There was an issue communicating with Discord."
-msgstr ""
+msgstr "Hmm hình như có vấn đề khi kết nối với Discord."
 
 #: redbot/cogs/audio/core/events/dpy.py:206
 msgid "This error has been reported to the bot owner."
-msgstr ""
+msgstr "Lỗi này Tôi đã báo cáo với chủ sở hữu."
 
 #: redbot/cogs/audio/core/events/lavalink.py:154
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "Tôi không tìm thấy bài nhạc hợp lệ nào."
 
 #: redbot/cogs/audio/core/events/lavalink.py:189
 msgid "Now Playing"
-msgstr ""
+msgstr "Đang Phát"
 
 #: redbot/cogs/audio/core/events/lavalink.py:191
 msgid "Track length: {length} | Requested by: {user}"
-msgstr ""
+msgstr "Độ dài: {length} | Bởi: {user}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:212
 msgid "Queue ended."
-msgstr ""
+msgstr "Hết hàng đợi, sủi đây."
 
 #: redbot/cogs/audio/core/events/lavalink.py:266
 msgid "Multiple Errors Detected"
-msgstr ""
+msgstr "Oops Đã xảy ra nhiều lỗi hệ thống"
 
 #: redbot/cogs/audio/core/events/lavalink.py:267
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
-msgstr ""
+msgstr "Uhhh Tôi sẽ tạm dừng do gặp phải quá nhiều lỗi. Nếu vấn đề này còn tiếp diễn, hãy report vấn đề với chủ sở hữu. Đồng thời tính năng stream nhạc sẽ tạm thời dừng hoạt động. Sorry lul."
 
 #: redbot/cogs/audio/core/events/lavalink.py:281
 msgid "Track Stuck"
-msgstr ""
+msgstr "Ah.. bị nghẽn rồi. Hay là thử lại"
 
 #: redbot/cogs/audio/core/events/lavalink.py:282
 msgid "Playback of the song has stopped due to an unexpected error.\n"
 "{error}"
-msgstr ""
+msgstr "Đợi đã.. Vừa xảy ra một lỗi không xác định.\\n\"\n"
+"\"{error}"
 
 #: redbot/cogs/audio/core/events/lavalink.py:288
 msgid "Track Error"
-msgstr ""
+msgstr "Bài đó bị lỗi. Thử lại đi"
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-07-16 21:46+0000\n"
+"POT-Creation-Date: 2021-11-02 18:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -601,11 +601,11 @@ msgstr "秒数不能小于零"
 
 #: redbot/cogs/audio/core/commands/audioset.py:698
 msgid "Empty disconnect disabled."
-msgstr ""
+msgstr "已禁频道内无人时断开连接。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:705
 msgid "Empty disconnect timer set to {num_seconds}."
-msgstr ""
+msgstr "已启用频道内无人 {num_seconds} 秒后断开连接。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:717
 #, docstring
@@ -614,52 +614,54 @@ msgstr "当房间为空时x 秒后自动暂停, 0则禁用"
 
 #: redbot/cogs/audio/core/commands/audioset.py:727
 msgid "Empty pause disabled."
-msgstr ""
+msgstr "已禁用频道内无人时自动暂停播放。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:734
 msgid "Empty pause timer set to {num_seconds}."
-msgstr ""
+msgstr "已启用频道内无人 {num_seconds} 秒后暂停播放。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:745
 #, docstring
 msgid "Prioritise tracks with lyrics."
-msgstr ""
+msgstr "优先选择有歌词的音乐。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:751
 msgid "Prefer tracks with lyrics: {true_or_false}."
-msgstr ""
+msgstr "优选选择有歌词的音乐： {true_or_false}。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:760
 #, docstring
 msgid "Set a price for queueing tracks for non-mods, 0 to disable."
-msgstr ""
+msgstr "为非管理员点歌设置价格，0为禁用。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:763
 msgid "Invalid Price"
-msgstr ""
+msgstr "无效的价格。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:763
 msgid "Price can't be less than zero."
-msgstr ""
+msgstr "价格不能小于零。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:768
 msgid "Jukebox mode disabled."
-msgstr ""
+msgstr "音乐盒模式已禁用。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:775
 msgid "Track queueing command price set to {price} {currency}."
-msgstr ""
+msgstr "点歌价格设置为 {price} {currency}。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:787
 #, docstring
 msgid "Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.\n\n"
 "        Leave the path blank to reset the path to the default, the Audio data directory.\n"
 "        "
-msgstr ""
+msgstr "如果Lavalink.jar不在音频数据文件夹中运行，请设置本地曲目路径。\n\n"
+"        将路径留空将路径重置为默认的音频数据目录。\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:798
 msgid "The localtracks path location has been reset to {localpath}"
-msgstr ""
+msgstr "本地曲目路径位置已重置为 {localpath}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:803
 msgid "This setting is only for bot owners to set a localtracks folder location In the example below, the full path for 'ParentDirectory' must be passed to this command.\n"
@@ -674,19 +676,30 @@ msgid "This setting is only for bot owners to set a localtracks folder location 
 "**This folder and files need to be visible to the user where `Lavalink.jar` is being run from.**\n"
 "Use this command with no path given to reset it to the default, the Audio data directory for this bot.\n"
 "Do you want to continue to set the provided path for local tracks?"
-msgstr ""
+msgstr "此设置仅适用于机器人所有者设置本地轨道文件夹位置。在下面的示例中 'ParentDirectory'的完整路径必须传递到此命令。\n"
+"```\n"
+"ParentDirectdirectory\n"
+"  |_localtracks (文件夹)\n"
+"  | |__ 专辑名字 (文件夹)\n"
+"  | |__01 音乐文件1.mp3\n"
+"  | |__02 音乐文件2.mp3\n"
+"```\n"
+"给此命令的文件夹路径必须包含localtrack文件夹。\n"
+"**这个文件夹和文件需要对正在运行`Lavalink.jar`的用户可见。 *\n"
+"使用没有指定路径的此命令将其重置为默认值，即此机器人的音频数据目录。\n"
+"您想要继续为本地轨道设置所提供的路径吗？"
 
 #: redbot/cogs/audio/core/commands/audioset.py:835
 msgid "Invalid Path"
-msgstr ""
+msgstr "无效路径"
 
 #: redbot/cogs/audio/core/commands/audioset.py:836
 msgid "{local_path} does not seem like a valid path."
-msgstr ""
+msgstr "{local_path} 似乎不是一个有效的路径。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:842
 msgid "`{localtracks}` does not exist. The path will still be saved, but please check the path and create a localtracks folder in `{localfolder}` before attempting to play local tracks."
-msgstr ""
+msgstr "{localtracks} 不存在。 路径仍将被保存， 但在尝试播放本地歌曲之前，请检查路径并在`{localfolder}`中创建一个本地歌曲文件夹。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:848
 #: redbot/cogs/audio/core/commands/llset.py:34
@@ -694,11 +707,11 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:416
 #: redbot/cogs/audio/core/commands/player.py:426
 msgid "Invalid Environment"
-msgstr ""
+msgstr "无效的环境"
 
 #: redbot/cogs/audio/core/commands/audioset.py:855
 msgid "The localtracks path location has been set to {localpath}"
-msgstr ""
+msgstr "本地曲目路径位置已重置为 {localpath}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:864
 #, docstring
@@ -706,41 +719,44 @@ msgid "Max length of a track to queue in seconds, 0 to disable.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid\n"
 "        input will turn the max length setting off.\n"
 "        "
-msgstr ""
+msgstr "曲目队列的最长时间限制，单位为秒，0表示禁用。\n\n"
+"        接受秒数或格式为 00:00:00 (`hh:mm:ss`) 或 00:00 (`mm:ss`)。 \n"
+"        无效的输入将会禁用最大长度限制。\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:873
 msgid "Invalid length"
-msgstr ""
+msgstr "长度无效"
 
 #: redbot/cogs/audio/core/commands/audioset.py:873
 msgid "Length can't be less than zero."
-msgstr ""
+msgstr "秒数不能小于零"
 
 #: redbot/cogs/audio/core/commands/audioset.py:877
 msgid "Track max length disabled."
-msgstr ""
+msgstr "音轨最大长度已禁用。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:883
 msgid "Track max length set to {seconds}."
-msgstr ""
+msgstr "音轨最大长度设置为 {seconds}。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:893
 #, docstring
 msgid "Toggle track announcement and other bot messages."
-msgstr ""
+msgstr "切换音轨通知和其他机器人消息。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:899
 msgid "Notify mode: {true_or_false}."
-msgstr ""
+msgstr "通知模式： {true_or_false}"
 
 #: redbot/cogs/audio/core/commands/audioset.py:908
 #, docstring
 msgid "Toggle whether the bot will be auto deafened upon joining the voice channel."
-msgstr ""
+msgstr "如果选中的话，在加入语音频道时，机器人是否会自聋。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:914
 msgid "Auto Deafen: {true_or_false}."
-msgstr ""
+msgstr "自聋： {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:923
 #, docstring
@@ -783,7 +799,7 @@ msgstr "服务器设置"
 
 #: redbot/cogs/audio/core/commands/audioset.py:999
 msgid "Auto-deafen:      [{auto_deafen}]\n"
-msgstr ""
+msgstr "自聋：[{auto_deafen}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1002
 msgid "Auto-disconnect:  [{dc}]\n"
@@ -811,11 +827,11 @@ msgstr "唱片机：[{jukebox_name}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1018
 msgid "Command price:    [{jukebox_price}]\n"
-msgstr ""
+msgstr "命令价格：[{jukebox_price}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1022
 msgid "Max track length: [{tracklength}]\n"
-msgstr ""
+msgstr "最大音轨长度：[{tracklength}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1025
 msgid "Max volume:       [{max_volume}%]\n"
@@ -826,79 +842,87 @@ msgid "Max volume:       [{max_volume}%]\n"
 "Song notify msgs: [{notify}]\n"
 "Songs as status:  [{status}]\n"
 "Spotify search:   [{countrycode}]\n"
-msgstr ""
+msgstr "最大音量：[{max_volume}%]\n"
+"固定队列：[{persist_queue}]\n"
+"重复播放：[{repeat}]\n"
+"随机播放：[{shuffle}]\n"
+"随即置顶：[{bumpped_shuffle}]\n"
+"歌曲通知：[{notify}]\n"
+"状态歌曲：[{status}]\n"
+"Spotify搜索：[{countrycode}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1045
 msgid "Thumbnails:       [{0}]\n"
-msgstr ""
+msgstr "缩略图：[{0}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1049
 msgid "Vote skip:        [{vote_enabled}]\n"
 "Skip percentage:  [{vote_percent}%]\n"
-msgstr ""
+msgstr "投票跳过：[{vote_enabled}]\n"
+"跳过百分比：[{vote_percent}%]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1062
 msgid "Server"
-msgstr ""
+msgstr "服务器"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1064
 msgid "User"
-msgstr ""
+msgstr "用户"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1066
 #: redbot/cogs/audio/core/commands/playlists.py:1025
 msgid "Global"
-msgstr ""
+msgstr "全局"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1068
 #: redbot/cogs/audio/core/commands/audioset.py:1069
 #: redbot/cogs/audio/core/commands/audioset.py:1070
 msgid "Cached"
-msgstr ""
+msgstr "已缓存"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1072
 #: redbot/cogs/audio/core/commands/audioset.py:1073
 #: redbot/cogs/audio/core/commands/audioset.py:1074
 msgid "US Top 100"
-msgstr ""
+msgstr "美国前100"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1077
 msgid "Auto-play Settings"
-msgstr ""
+msgstr "自动播放设置"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1079
 msgid "Playlist name:    [{pname}]\n"
-msgstr ""
+msgstr "播放列表名称：[{pname}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1080
 msgid "Playlist ID:      [{pid}]\n"
-msgstr ""
+msgstr "播放列表 ID：[{pid}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1081
 msgid "Playlist scope:   [{pscope}]\n"
-msgstr ""
+msgstr "播放列表类型：[{pscope}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1087
 #: redbot/cogs/audio/core/commands/audioset.py:1358
 #: redbot/cogs/audio/core/commands/audioset.py:1403
 msgid "Cache Settings"
-msgstr ""
+msgstr "缓存设置"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1089
 msgid "Max age:                [{max_age}]\n"
-msgstr ""
+msgstr "最长时间：[{max_age}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1090
 msgid "Local Spotify cache:    [{spotify_status}]\n"
-msgstr ""
+msgstr "本地 Spotify 缓存：[{spotify_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1091
 msgid "Local Youtube cache:    [{youtube_status}]\n"
-msgstr ""
+msgstr "本地Youtube 缓存：[{youtube_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1092
 msgid "Local Lavalink cache:   [{lavalink_status}]\n"
-msgstr ""
+msgstr "本地Lavalink 缓存：[{lavalink_status}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1094
 #: redbot/cogs/audio/core/commands/audioset.py:1352
@@ -908,11 +932,11 @@ msgstr "天"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1101
 msgid "User Settings"
-msgstr ""
+msgstr "用户设置"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1103
 msgid "Spotify search:   [{country_code}]\n"
-msgstr ""
+msgstr "Spotify搜索：[{country_code}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1108
 msgid "Lavalink Settings"
@@ -1200,7 +1224,7 @@ msgid "Now playing."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:110
-#: redbot/cogs/audio/core/commands/queue.py:77
+#: redbot/cogs/audio/core/commands/queue.py:81
 msgid "\n"
 " Requested by: **{track.requester}**"
 msgstr ""
@@ -1210,22 +1234,22 @@ msgid "Nothing."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:118
-#: redbot/cogs/audio/core/commands/queue.py:79
+#: redbot/cogs/audio/core/commands/queue.py:83
 msgid "Now Playing"
 msgstr "正在播放"
 
 #: redbot/cogs/audio/core/commands/controller.py:128
-#: redbot/cogs/audio/core/commands/queue.py:89
+#: redbot/cogs/audio/core/commands/queue.py:93
 msgid "Auto-Play"
 msgstr "自动播放"
 
 #: redbot/cogs/audio/core/commands/controller.py:134
-#: redbot/cogs/audio/core/commands/queue.py:95
+#: redbot/cogs/audio/core/commands/queue.py:99
 msgid "Shuffle"
 msgstr "随机播放"
 
 #: redbot/cogs/audio/core/commands/controller.py:140
-#: redbot/cogs/audio/core/commands/queue.py:101
+#: redbot/cogs/audio/core/commands/queue.py:105
 msgid "Repeat"
 msgstr "重复"
 
@@ -1272,11 +1296,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:257
 msgid "You must be in the voice channel to skip the track."
-msgstr ""
+msgstr "您必须在语音频道中跳过音轨。"
 
 #: redbot/cogs/audio/core/commands/controller.py:269
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
-msgstr ""
+msgstr "您需要 DJ 角色或作为点歌员来点歌。"
 
 #: redbot/cogs/audio/core/commands/controller.py:277
 #: redbot/cogs/audio/core/commands/player.py:53
@@ -1334,7 +1358,9 @@ msgstr "重新播放曲目"
 msgid "Seek ahead or behind on a track by seconds or a to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
-msgstr ""
+msgstr "按秒或到特定时间向前或向后寻轨。\n\n"
+"        接受秒数或格式为 00:00:00 (`hh:mm:ss`) 或 00:00 (`mm:ss`)。\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:323
 #: redbot/cogs/audio/core/commands/controller.py:330
@@ -1346,57 +1372,57 @@ msgstr "无法查找曲目"
 
 #: redbot/cogs/audio/core/commands/controller.py:324
 msgid "You must be in the voice channel to use seek."
-msgstr ""
+msgstr "您必须在语音频道中寻轨。"
 
 #: redbot/cogs/audio/core/commands/controller.py:338
 msgid "You need the DJ role or be the track requester to use seek."
-msgstr ""
+msgstr "您需要 DJ 角色或是点歌员来使用寻轨。"
 
 #: redbot/cogs/audio/core/commands/controller.py:344
 msgid "Can't seek on a stream."
-msgstr ""
+msgstr "无法在该流媒体中寻轨。"
 
 #: redbot/cogs/audio/core/commands/controller.py:357
 msgid "Invalid input for the time to seek."
-msgstr ""
+msgstr "要寻轨的时间输入无效。"
 
 #: redbot/cogs/audio/core/commands/controller.py:365
 msgid "Moved {num_seconds}s to 00:00:00"
-msgstr ""
+msgstr "移动 {num_seconds} 秒 到 00:00:00"
 
 #: redbot/cogs/audio/core/commands/controller.py:372
 msgid "Moved {num_seconds}s to {time}"
-msgstr ""
+msgstr "已移动 {num_seconds} 秒 到 {time}"
 
 #: redbot/cogs/audio/core/commands/controller.py:380
 msgid "Moved to {time}"
-msgstr ""
+msgstr "已移动到 {time}"
 
 #: redbot/cogs/audio/core/commands/controller.py:390
 #, docstring
 msgid "Toggle shuffle."
-msgstr ""
+msgstr "切换随机播放模式"
 
 #: redbot/cogs/audio/core/commands/controller.py:399
 #: redbot/cogs/audio/core/commands/controller.py:410
 #: redbot/cogs/audio/core/commands/controller.py:443
 #: redbot/cogs/audio/core/commands/controller.py:454
 msgid "Unable To Toggle Shuffle"
-msgstr ""
+msgstr "无法切换随机播放"
 
 #: redbot/cogs/audio/core/commands/controller.py:400
 #: redbot/cogs/audio/core/commands/controller.py:444
 msgid "You need the DJ role to toggle shuffle."
-msgstr ""
+msgstr "你需要 DJ 角色来切换随机播放。"
 
 #: redbot/cogs/audio/core/commands/controller.py:411
 #: redbot/cogs/audio/core/commands/controller.py:455
 msgid "You must be in the voice channel to toggle shuffle."
-msgstr ""
+msgstr "您必须在语音频道中切换随机播放。"
 
 #: redbot/cogs/audio/core/commands/controller.py:420
 msgid "Shuffle tracks: {true_or_false}."
-msgstr ""
+msgstr "随机曲目：{true_or_false}。"
 
 #: redbot/cogs/audio/core/commands/controller.py:431
 #, docstring
@@ -1404,67 +1430,70 @@ msgid "Toggle bumped track shuffle.\n\n"
 "        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\n"
 "        over `[p]shuffle`.\n"
 "        "
-msgstr ""
+msgstr "切换置顶随机播放。\n\n"
+"        如果您想避免置顶曲目被打乱，请将其设置为禁用。 \n"
+"        这将覆盖 `[p]shuffle。`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:464
 msgid "Shuffle bumped tracks: {true_or_false}."
-msgstr ""
+msgstr "置顶随机：{true_or_false}。"
 
 #: redbot/cogs/audio/core/commands/controller.py:475
 #, docstring
 msgid "Skip to the next track, or to a given track number."
-msgstr ""
+msgstr "跳至下一曲目或指定曲目号码。"
 
 #: redbot/cogs/audio/core/commands/controller.py:484
 msgid "You must be in the voice channel to skip the music."
-msgstr ""
+msgstr "您必须在语音频道中跳过音轨。"
 
 #: redbot/cogs/audio/core/commands/controller.py:499
 msgid "You need the DJ role or be the track requester to skip tracks."
-msgstr ""
+msgstr "您需要 DJ 角色或是点歌员来跳过曲目。"
 
 #: redbot/cogs/audio/core/commands/controller.py:512
 msgid "You can only skip the current track."
-msgstr ""
+msgstr "您只能跳过当前曲目。"
 
 #: redbot/cogs/audio/core/commands/controller.py:521
 msgid "Can't skip to a specific track in vote mode without the DJ role."
-msgstr ""
+msgstr "在没有DJ角色的情况下，无法跳转到特定的音轨。"
 
 #: redbot/cogs/audio/core/commands/controller.py:527
 msgid "I removed your vote to skip."
-msgstr ""
+msgstr "我已取消你的跳过曲目投票。"
 
 #: redbot/cogs/audio/core/commands/controller.py:530
 msgid "You voted to skip."
-msgstr ""
+msgstr "你投票跳过。"
 
 #: redbot/cogs/audio/core/commands/controller.py:543
 msgid "Vote threshold met."
-msgstr ""
+msgstr "已达到投票阈值。"
 
 #: redbot/cogs/audio/core/commands/controller.py:546
 msgid " Votes: {num_votes}/{num_members} ({cur_percent}% out of {required_percent}% needed)"
-msgstr ""
+msgstr " 投票：{num_votes}/{num_members} (需要 {required_percent}%中的{cur_percent}%)"
 
 #: redbot/cogs/audio/core/commands/controller.py:565
 #, docstring
 msgid "Stop playback and clear the queue."
-msgstr ""
+msgstr "停止播放并清除队列。"
 
 #: redbot/cogs/audio/core/commands/controller.py:578
 #: redbot/cogs/audio/core/commands/controller.py:584
 #: redbot/cogs/audio/core/commands/controller.py:590
 msgid "Unable To Stop Player"
-msgstr ""
+msgstr "无法停止播放器"
 
 #: redbot/cogs/audio/core/commands/controller.py:579
 msgid "You must be in the voice channel to stop the music."
-msgstr ""
+msgstr "您必须在语音频道中停止音乐。"
 
 #: redbot/cogs/audio/core/commands/controller.py:591
 msgid "You need the DJ role to stop the music."
-msgstr ""
+msgstr "你需要DJ角色来停止音乐。"
 
 #: redbot/cogs/audio/core/commands/controller.py:613
 msgid "Stopping..."
@@ -1485,11 +1514,11 @@ msgstr "无法加入语音频道"
 
 #: redbot/cogs/audio/core/commands/controller.py:634
 msgid "There are other people listening."
-msgstr ""
+msgstr "还有其他人在聆听。"
 
 #: redbot/cogs/audio/core/commands/controller.py:641
 msgid "You need the DJ role to summon the bot."
-msgstr ""
+msgstr "你需要 DJ 角色来召唤机器人。"
 
 #: redbot/cogs/audio/core/commands/controller.py:654
 #: redbot/cogs/audio/core/commands/player.py:83
@@ -1497,17 +1526,17 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:455
 #: redbot/cogs/audio/core/commands/player.py:571
 #: redbot/cogs/audio/core/commands/player.py:695
-#: redbot/cogs/audio/core/commands/queue.py:339
+#: redbot/cogs/audio/core/commands/queue.py:343
 msgid "I don't have permission to connect and speak in your channel."
-msgstr ""
+msgstr "我没有在您的频道上连接和说话的权限。"
 
 #: redbot/cogs/audio/core/commands/controller.py:672
 msgid "Unable To Do This Action"
-msgstr ""
+msgstr "无法执行此操作"
 
 #: redbot/cogs/audio/core/commands/controller.py:673
 msgid "I am already in your channel."
-msgstr ""
+msgstr "我已经在您的频道中。"
 
 #: redbot/cogs/audio/core/commands/controller.py:685
 #: redbot/cogs/audio/core/commands/player.py:95
@@ -1515,9 +1544,9 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:467
 #: redbot/cogs/audio/core/commands/player.py:583
 #: redbot/cogs/audio/core/commands/player.py:707
-#: redbot/cogs/audio/core/commands/queue.py:351
+#: redbot/cogs/audio/core/commands/queue.py:355
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "您必须先加入一个语音频道。"
 
 #: redbot/cogs/audio/core/commands/controller.py:692
 #: redbot/cogs/audio/core/commands/player.py:101
@@ -1525,9 +1554,9 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:473
 #: redbot/cogs/audio/core/commands/player.py:589
 #: redbot/cogs/audio/core/commands/player.py:713
-#: redbot/cogs/audio/core/commands/queue.py:358
+#: redbot/cogs/audio/core/commands/queue.py:362
 msgid "Connection to Lavalink has not yet been established."
-msgstr ""
+msgstr "尚未建立到 Lavalink 的连接。"
 
 #: redbot/cogs/audio/core/commands/controller.py:699
 #, docstring
@@ -1545,61 +1574,61 @@ msgstr "无法更改音量"
 
 #: redbot/cogs/audio/core/commands/controller.py:720
 msgid "You must be in the voice channel to change the volume."
-msgstr ""
+msgstr "您必须在语音频道才能更改音量。"
 
 #: redbot/cogs/audio/core/commands/controller.py:727
 msgid "You need the DJ role to change the volume."
-msgstr ""
+msgstr "你需要DJ角色来改变音量。"
 
 #: redbot/cogs/audio/core/commands/controller.py:737
 msgid "Volume:"
-msgstr ""
+msgstr "音量："
 
 #: redbot/cogs/audio/core/commands/controller.py:746
 #, docstring
 msgid "Toggle repeat."
-msgstr ""
+msgstr "切换重复播放。"
 
 #: redbot/cogs/audio/core/commands/controller.py:754
 #: redbot/cogs/audio/core/commands/controller.py:765
 msgid "Unable To Toggle Repeat"
-msgstr ""
+msgstr "无法切换重复播放"
 
 #: redbot/cogs/audio/core/commands/controller.py:755
 msgid "You need the DJ role to toggle repeat."
-msgstr ""
+msgstr "你需要 DJ 角色来切换重复播放。"
 
 #: redbot/cogs/audio/core/commands/controller.py:766
 msgid "You must be in the voice channel to toggle repeat."
-msgstr ""
+msgstr "您必须在语音频道才能切换重复。"
 
 #: redbot/cogs/audio/core/commands/controller.py:773
 msgid "Repeat tracks: {true_or_false}."
-msgstr ""
+msgstr "重复曲目： {true_or_false}"
 
 #: redbot/cogs/audio/core/commands/controller.py:790
 #, docstring
 msgid "Remove a specific track number from the queue."
-msgstr ""
+msgstr "从队列中删除特定的音轨号码。"
 
 #: redbot/cogs/audio/core/commands/controller.py:799
 msgid "Nothing queued."
-msgstr ""
+msgstr "队列为空。"
 
 #: redbot/cogs/audio/core/commands/controller.py:803
 #: redbot/cogs/audio/core/commands/controller.py:809
 #: redbot/cogs/audio/core/commands/controller.py:817
 #: redbot/cogs/audio/core/commands/controller.py:850
 msgid "Unable To Modify Queue"
-msgstr ""
+msgstr "无法修改队列"
 
 #: redbot/cogs/audio/core/commands/controller.py:804
 msgid "You need the DJ role to remove tracks."
-msgstr ""
+msgstr "您需要 DJ 角色来删除曲目。"
 
 #: redbot/cogs/audio/core/commands/controller.py:810
 msgid "You must be in the voice channel to manage the queue."
-msgstr ""
+msgstr "您必须在语音频道管理队列。"
 
 #: redbot/cogs/audio/core/commands/controller.py:818
 #: redbot/cogs/audio/core/commands/controller.py:891
@@ -1985,7 +2014,7 @@ msgid "Search for songs across all localtracks folders."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/localtracks.py:139
-#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:299
 msgid "No matches."
 msgstr ""
 
@@ -2017,7 +2046,21 @@ msgid "Queue percentage."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:126
-msgid "There's  nothing in the queue."
+#: redbot/cogs/audio/core/commands/playlists.py:1147
+#: redbot/cogs/audio/core/commands/queue.py:67
+#: redbot/cogs/audio/core/commands/queue.py:164
+#: redbot/cogs/audio/core/commands/queue.py:183
+#: redbot/cogs/audio/core/commands/queue.py:188
+#: redbot/cogs/audio/core/commands/queue.py:214
+#: redbot/cogs/audio/core/commands/queue.py:219
+#: redbot/cogs/audio/core/commands/queue.py:261
+#: redbot/cogs/audio/core/commands/queue.py:263
+#: redbot/cogs/audio/core/commands/queue.py:293
+#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:331
+#: redbot/cogs/audio/core/commands/queue.py:369
+#: redbot/cogs/audio/core/commands/queue.py:377
+msgid "There's nothing in the queue."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:147
@@ -2695,23 +2738,6 @@ msgid "Save the queue to a playlist.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/playlists.py:1147
-#: redbot/cogs/audio/core/commands/queue.py:63
-#: redbot/cogs/audio/core/commands/queue.py:160
-#: redbot/cogs/audio/core/commands/queue.py:179
-#: redbot/cogs/audio/core/commands/queue.py:184
-#: redbot/cogs/audio/core/commands/queue.py:210
-#: redbot/cogs/audio/core/commands/queue.py:215
-#: redbot/cogs/audio/core/commands/queue.py:257
-#: redbot/cogs/audio/core/commands/queue.py:259
-#: redbot/cogs/audio/core/commands/queue.py:289
-#: redbot/cogs/audio/core/commands/queue.py:291
-#: redbot/cogs/audio/core/commands/queue.py:327
-#: redbot/cogs/audio/core/commands/queue.py:365
-#: redbot/cogs/audio/core/commands/queue.py:373
-msgid "There's nothing in the queue."
-msgstr ""
-
 #: redbot/cogs/audio/core/commands/playlists.py:1168
 msgid "Playlist {name} (`{id}`) [**{scope}**] saved from current queue: {num} tracks added."
 msgstr ""
@@ -2990,88 +3016,88 @@ msgstr ""
 msgid "List the songs in the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:175
+#: redbot/cogs/audio/core/commands/queue.py:179
 #, docstring
 msgid "Clears the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:192
+#: redbot/cogs/audio/core/commands/queue.py:196
 msgid "Unable To Clear Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:193
+#: redbot/cogs/audio/core/commands/queue.py:197
 msgid "You need the DJ role to clear the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "Queue Modified"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "The queue has been cleared."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:206
+#: redbot/cogs/audio/core/commands/queue.py:210
 #, docstring
 msgid "Removes songs from the queue if the requester is not in the voice channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:223
+#: redbot/cogs/audio/core/commands/queue.py:227
 msgid "Unable To Clean Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:224
+#: redbot/cogs/audio/core/commands/queue.py:228
 msgid "You need the DJ role to clean the queue."
-msgstr ""
-
-#: redbot/cogs/audio/core/commands/queue.py:239
-#: redbot/cogs/audio/core/commands/queue.py:273
-msgid "Removed 0 tracks."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/queue.py:243
 #: redbot/cogs/audio/core/commands/queue.py:277
+msgid "Removed 0 tracks."
+msgstr ""
+
+#: redbot/cogs/audio/core/commands/queue.py:247
+#: redbot/cogs/audio/core/commands/queue.py:281
 msgid "Removed Tracks From The Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:244
+#: redbot/cogs/audio/core/commands/queue.py:248
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:252
+#: redbot/cogs/audio/core/commands/queue.py:256
 #, docstring
 msgid "Removes all tracks you requested from the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:278
+#: redbot/cogs/audio/core/commands/queue.py:282
 msgid "Removed {removed_tracks} tracks queued by {member.display_name}."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:285
+#: redbot/cogs/audio/core/commands/queue.py:289
 #, docstring
 msgid "Search the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:307
+#: redbot/cogs/audio/core/commands/queue.py:311
 #, docstring
 msgid "Shuffles the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:319
-#: redbot/cogs/audio/core/commands/queue.py:326
-#: redbot/cogs/audio/core/commands/queue.py:338
-#: redbot/cogs/audio/core/commands/queue.py:350
-#: redbot/cogs/audio/core/commands/queue.py:357
-#: redbot/cogs/audio/core/commands/queue.py:364
-#: redbot/cogs/audio/core/commands/queue.py:372
+#: redbot/cogs/audio/core/commands/queue.py:323
+#: redbot/cogs/audio/core/commands/queue.py:330
+#: redbot/cogs/audio/core/commands/queue.py:342
+#: redbot/cogs/audio/core/commands/queue.py:354
+#: redbot/cogs/audio/core/commands/queue.py:361
+#: redbot/cogs/audio/core/commands/queue.py:368
+#: redbot/cogs/audio/core/commands/queue.py:376
 msgid "Unable To Shuffle Queue"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:320
+#: redbot/cogs/audio/core/commands/queue.py:324
 msgid "You need the DJ role to shuffle the queue."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/queue.py:377
+#: redbot/cogs/audio/core/commands/queue.py:381
 msgid "Queue has been shuffled."
 msgstr ""
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-23 00:50+0000\n"
+"POT-Creation-Date: 2021-11-02 12:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -17,17 +17,17 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/formatting.py:75
 msgid "tracks"
-msgstr ""
+msgstr "bài hát"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:85
 #: redbot/cogs/audio/core/utilities/formatting.py:275
 msgid "Page {page_num}/{total_pages}"
-msgstr ""
+msgstr "Trang {page_num} trên tổng số {total_pages}"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:96
 #: redbot/cogs/audio/core/utilities/playlists.py:527
 msgid "Connection to Lavalink has failed"
-msgstr ""
+msgstr "Kết nối với Lavalink đã bị mất"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:99
 #: redbot/cogs/audio/core/utilities/player.py:591
@@ -38,7 +38,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:107
 #: redbot/cogs/audio/core/utilities/playlists.py:562
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "Kết nối với một kênh thoại trước."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:110
 #: redbot/cogs/audio/core/utilities/playlists.py:555
@@ -46,46 +46,46 @@ msgid "Connection to Lavalink has not yet been established."
 msgstr ""
 
 #: redbot/cogs/audio/core/utilities/formatting.py:117
-msgid "Unable To Play Tracks"
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/formatting.py:117
 #: redbot/cogs/audio/core/utilities/player.py:441
 #: redbot/cogs/audio/core/utilities/player.py:523
 msgid "Queue size limit reached."
-msgstr ""
+msgstr "Đạt đến số lượng hàng đợi giới hạn."
+
+#: redbot/cogs/audio/core/utilities/formatting.py:117
+msgid "Unable To Play Tracks"
+msgstr "Không thể phát các bài hát"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:155
 #: redbot/cogs/audio/core/utilities/player.py:599
 msgid "Track Enqueued"
-msgstr ""
+msgstr "Đã thêm bài hát vào hàng đợi"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:170
 #: redbot/cogs/audio/core/utilities/player.py:548
 msgid "This track is not allowed in this server."
-msgstr ""
+msgstr "Bài hát này không được cho phép trên máy chủ này."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:188
 #: redbot/cogs/audio/core/utilities/player.py:570
 msgid "Track exceeds maximum length."
-msgstr ""
+msgstr "Độ dài bài hát vượt quá giá trị tối đa."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:203
 #: redbot/cogs/audio/core/utilities/player.py:602
 msgid "{time} until track playback: #{position} in queue"
-msgstr ""
+msgstr "Còn {time} cho đến khi phát lại: thứ #{position} trong hàng đợi"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:263
 msgid "Tracks Found:"
-msgstr ""
+msgstr "Đã tìm thấy bài hát:"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:264
 msgid "search results"
-msgstr ""
+msgstr "kết quả tìm kiếm"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:266
 msgid "Folders Found:"
-msgstr ""
+msgstr "Đã tìm thấy thư mục:"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:267
 msgid "local folders"
@@ -93,7 +93,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/formatting.py:269
 msgid "Files Found:"
-msgstr ""
+msgstr "Đã tìm thấy tập tin:"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:270
 msgid "local tracks"
@@ -102,7 +102,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:382
 #: redbot/cogs/audio/core/utilities/playlists.py:241
 msgid "Unknown"
-msgstr ""
+msgstr "Không rõ"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:383
 msgid " - Name:   <{pname}>\n"
@@ -110,7 +110,11 @@ msgid " - Name:   <{pname}>\n"
 " - ID:     < {pid} >\n"
 " - Tracks: < {ptracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr " - Tên:   <{pname}>\n"
+" - Khoảng cách:  < {scope} >\n"
+" - ID:     < {pid} >\n"
+" - Bài hát: < {ptracks} >\n"
+" - Tác giả: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:109
 #: redbot/cogs/audio/core/utilities/player.py:235
@@ -140,7 +144,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:140
 #: redbot/cogs/audio/core/utilities/player.py:145
 msgid "There's nothing in the queue."
-msgstr ""
+msgstr "Đã hết hàng đợi."
 
 #: redbot/cogs/audio/core/utilities/player.py:142
 msgid "Currently livestreaming {track}"
@@ -153,19 +157,19 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:155
 #: redbot/cogs/audio/core/utilities/player.py:190
 msgid "Track Skipped"
-msgstr ""
+msgstr "Đã bỏ qua"
 
 #: redbot/cogs/audio/core/utilities/player.py:168
 msgid "Track number must be equal to or greater than 1."
-msgstr ""
+msgstr "Số bài hát phải lớn hơn hoặc bằng 1."
 
 #: redbot/cogs/audio/core/utilities/player.py:174
 msgid "There are only {queuelen} songs currently queued."
-msgstr ""
+msgstr "Hiện tại chỉ có {queuelen} bài hát đang trong hàng đợi."
 
 #: redbot/cogs/audio/core/utilities/player.py:180
 msgid "{skip_to_track} Tracks Skipped"
-msgstr ""
+msgstr "{skip_to_track} Bài hát đã bỏ qua"
 
 #: redbot/cogs/audio/core/utilities/player.py:236
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
@@ -181,13 +185,13 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/player.py:364
 #: redbot/cogs/audio/core/utilities/playlists.py:595
 msgid "Unable To Get Tracks"
-msgstr ""
+msgstr "Tôi không lấy được nhạc. Thử lại lần nữa đi"
 
 #: redbot/cogs/audio/core/utilities/player.py:256
 #: redbot/cogs/audio/core/utilities/player.py:365
 #: redbot/cogs/audio/core/utilities/playlists.py:596
 msgid "Wait until the playlist has finished loading."
-msgstr ""
+msgstr "Đợi tôi load danh sách phát."
 
 #: redbot/cogs/audio/core/utilities/player.py:267
 #: redbot/cogs/audio/core/utilities/player.py:309
@@ -195,7 +199,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:606
 #: redbot/cogs/audio/core/utilities/playlists.py:639
 msgid "Nothing found."
-msgstr ""
+msgstr "Không tìm thấy gì cả."
 
 #: redbot/cogs/audio/core/utilities/player.py:270
 #: redbot/cogs/audio/core/utilities/player.py:311
@@ -203,7 +207,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:608
 #: redbot/cogs/audio/core/utilities/playlists.py:641
 msgid "Track is not playable."
-msgstr ""
+msgstr "Bài hát không thể phát được."
 
 #: redbot/cogs/audio/core/utilities/player.py:271
 #: redbot/cogs/audio/core/utilities/player.py:312
@@ -220,7 +224,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:627
 #: redbot/cogs/audio/core/utilities/playlists.py:656
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Tôi không lấy được nhạc. Thử lại lần nữa đi"
 
 #: redbot/cogs/audio/core/utilities/player.py:302
 #: redbot/cogs/audio/core/utilities/player.py:393
@@ -229,7 +233,7 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:628
 #: redbot/cogs/audio/core/utilities/playlists.py:657
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Bây giờ tôi chưa thể tìm nhạc được, đợi một lát nữa rùi thử lại."
 
 #: redbot/cogs/audio/core/utilities/player.py:328
 msgid "The Spotify API key or client secret has not been set properly. \n"
@@ -238,15 +242,15 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:352
 msgid "Unable To Find Tracks"
-msgstr ""
+msgstr "Tôi không lấy được nhạc"
 
 #: redbot/cogs/audio/core/utilities/player.py:353
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Hình như tôi không hỗ trợ link/code đó, hay là thử lại."
 
 #: redbot/cogs/audio/core/utilities/player.py:379
 msgid "{query} is not an allowed query."
-msgstr ""
+msgstr "{query} không phải là một từ khóa cho phép."
 
 #: redbot/cogs/audio/core/utilities/player.py:415
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
@@ -255,35 +259,35 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/player.py:486
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} sorry Tôi không thể nhét mấy bài này vào hàng đợi."
 
 #: redbot/cogs/audio/core/utilities/player.py:492
 msgid "No Title"
-msgstr ""
+msgstr "Không có tiêu đề"
 
 #: redbot/cogs/audio/core/utilities/player.py:498
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Danh sách đã được thêm vào hàng đợi"
 
 #: redbot/cogs/audio/core/utilities/player.py:501
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Đã thêm {num} bài hát vào hàng đợi.{maxlength_msg}"
 
 #: redbot/cogs/audio/core/utilities/player.py:507
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} cho đến khi bắt đầu danh sách phát lại: bắt đầu từ #{position} trong hàng đợi"
 
 #: redbot/cogs/audio/core/utilities/player.py:588
 msgid "Nothing found"
-msgstr ""
+msgstr "Không tìm thấy gì cả"
 
 #: redbot/cogs/audio/core/utilities/player.py:623
 msgid "Please wait, finding tracks..."
-msgstr ""
+msgstr "Đợi tý, đang tìm bài hát..."
 
 #: redbot/cogs/audio/core/utilities/player.py:629
 msgid "Getting track {num}/{total}..."
-msgstr ""
+msgstr "Đang lấy bài hát {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:630
 msgid "Matching track {num}/{total}..."
@@ -293,15 +297,15 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:342
 #: redbot/cogs/audio/core/utilities/playlists.py:415
 msgid "Loading track {num}/{total}..."
-msgstr ""
+msgstr "Đang tải bài hát {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:632
 msgid "Approximate time remaining: {seconds}"
-msgstr ""
+msgstr "Dự đoán thời gian còn lại: {seconds}"
 
 #: redbot/cogs/audio/core/utilities/player.py:667
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "Uhh Kết nối đã bị reset khi tôi đang lấy danh sách nhạc."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:84
 msgid "You do not have the permissions to manage {name} (`{id}`) [**{scope}**]."
@@ -333,16 +337,20 @@ msgid "{number}.    <{playlist.name}>\n"
 " - ID:     < {playlist.id} >\n"
 " - Tracks: < {tracks} >\n"
 " - Author: < {author} >\n\n"
-msgstr ""
+msgstr "{number}.    <{playlist.name}>\n"
+" - Scope:  < {scope} >\n"
+" - ID:     < {playlist.id} >\n"
+" - Bài hát: < {tracks} >\n"
+" - Tác giả: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:259
 msgid "{playlists} playlists found, which one would you like?"
-msgstr ""
+msgstr "{playlists} danh sách phát đã tìm thấy, nghe bài nào?"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:278
 #: redbot/cogs/audio/core/utilities/playlists.py:284
 msgid "Too many matches found and you did not select which one you wanted."
-msgstr ""
+msgstr "Tôi tìm thấy quá nhiều thứ và bạn chưa chọn bất kì bài nào cả."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:309
 msgid "Playlists you can access in this server:"
@@ -350,16 +358,16 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:315
 msgid "Playlists for {scope}:"
-msgstr ""
+msgstr "Danh sách phát cho {scope}:"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:319
 msgid "Page {page_num}/{total_pages} | {num} playlists."
-msgstr ""
+msgstr "Trang {page_num}/{total_pages} | {num} danh sách phát."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:335
 #: redbot/cogs/audio/core/utilities/playlists.py:413
 msgid "Please wait, adding tracks..."
-msgstr ""
+msgstr "Đợi tý, đang thêm bài hát..."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:362
 #: redbot/cogs/audio/core/utilities/playlists.py:465
@@ -379,14 +387,14 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/playlists.py:376
 #: redbot/cogs/audio/core/utilities/playlists.py:479
 msgid "Playlist Saved"
-msgstr ""
+msgstr "Đã lưu danh sách nhạc"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:541
 #: redbot/cogs/audio/core/utilities/playlists.py:554
 #: redbot/cogs/audio/core/utilities/playlists.py:561
 #: redbot/cogs/audio/core/utilities/playlists.py:572
 msgid "Unable To Get Playlists"
-msgstr ""
+msgstr "Lấy danh sách phát thất bại"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:542
 msgid "I don't have permission to connect and speak in your channel."
@@ -394,7 +402,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:573
 msgid "You must be in the voice channel to use the playlist command."
-msgstr ""
+msgstr "Cần phải ở trong một kênh thoại để có thể dùng câu lệnh danh sách phát."
 
 #: redbot/cogs/audio/core/utilities/playlists.py:682
 msgid "the Global"
@@ -402,7 +410,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:682
 msgid "Global"
-msgstr ""
+msgstr "Chung"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "the Server"
@@ -410,7 +418,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "Server"
-msgstr ""
+msgstr "Máy chủ"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "the User"
@@ -418,11 +426,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "User"
-msgstr ""
+msgstr "Người dùng"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\n\n"
-msgstr ""
+msgstr "__Nhiều hàng đợi quá nên tôi chỉ hiển thị 500 cái đầu__.\n\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:57
 msgid "**Currently livestreaming:**\n"
@@ -431,41 +439,41 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/queue.py:59
 #: redbot/cogs/audio/core/utilities/queue.py:64
 msgid "Requested by: **{user}**"
-msgstr ""
+msgstr "Được yêu cầu bởi **{user}**"
 
 #: redbot/cogs/audio/core/utilities/queue.py:62
 msgid "Playing: "
-msgstr ""
+msgstr "Đang phát: "
 
 #: redbot/cogs/audio/core/utilities/queue.py:76
 msgid "requested by **{user}**\n"
-msgstr ""
+msgstr "được yêu cầu bởi **{user}**\n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:80
 msgid "Queue for __{guild_name}__"
-msgstr ""
+msgstr "Hàng đợi cho __{guild_name}__"
 
 #: redbot/cogs/audio/core/utilities/queue.py:88
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n"
-msgstr ""
+msgstr "Trang {page_num}/{total_pages} | {num_tracks} bài hát, còn lại {num_remaining} \n"
 
 #: redbot/cogs/audio/core/utilities/queue.py:97
 msgid "Auto-Play"
-msgstr ""
+msgstr "Tự động phát"
 
 #: redbot/cogs/audio/core/utilities/queue.py:103
 msgid "Shuffle"
-msgstr ""
+msgstr "Phát trộn"
 
 #: redbot/cogs/audio/core/utilities/queue.py:109
 msgid "Repeat"
-msgstr ""
+msgstr "Phát lặp lại"
 
 #: redbot/cogs/audio/core/utilities/queue.py:161
 msgid "Matching Tracks:"
-msgstr ""
+msgstr "Các bài hát phù hợp:"
 
 #: redbot/cogs/audio/core/utilities/queue.py:164
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks"
-msgstr ""
+msgstr "Trang {page_num}/{total_pages} | {num_tracks} bài hát"
 
