@@ -29,9 +29,9 @@ Core Bot
 - Updated prefix length limit to ``25`` to allow setting bot mention as a prefix (:issue:`5476`)
 - Confirmation prompts (accepting "yes/no" or "I agree" as the answer) no longer wrongfully translate the answer that needs to be sent when only English answers are accepted by the bot (:issue:`5363`, :issue:`5364`, :issue:`5404`)
 - Fixed short help for some of the commands in Core Red (:issue:`5502`)
-- Fixed issues with rendering of modlog cases with usernames written in right-to-left language (:issue:`5422`)
+- Fixed issues with rendering of modlog cases with usernames written in a right-to-left language (:issue:`5422`)
 - Fixed an issue with instance backup failing for non-JSON storage backends (:issue:`5315`)
-- Running Red with ``--no-instance`` cli flag no longer fails when no instance was ever created by the user (:issue:`5415`, :issue:`5416`)
+- Running Red with ``--no-instance`` CLI flag no longer fails when no instance was ever created by the user (:issue:`5415`, :issue:`5416`)
 - ``[p]command enable guild`` and ``[p]command disable guild`` commands no longer error out for commands that *only* check for user permissions, not caller's roles (:issue:`5477`)
 
 Admin
@@ -44,12 +44,12 @@ Audio
 
 - Added native Mac M1 support for Java runtimes supporting Mac M1 (:issue:`5474`)
 - Enabled JDA-NAS on all system architectures which should limit stuttering/buffering issues on some machines (:issue:`5474`)
-- The bot will now disconnect from the voice channel when all members are bots if auto-disconnect setting is enabled (:issue:`5421`)
+- The bot will now disconnect from the voice channel when all members are bots if the auto-disconnect setting is enabled (:issue:`5421`)
 - Fixed an issue with resuming playback after changing voice channels (:issue:`5170`)
 - Fixed issues with Soundcloud private playlists and mobile links (:issue:`5474`)
 - Fixed searching music with some of the queries containing quotes or backslashes (:issue:`5474`)
 - Fixed an exception caused by unavailable YT tracks in Mix playlists (:issue:`5474`)
-- Fixed ``IndexError`` in ``[p]queue`` command which occurred when the user provided negative integer as page number (:issue:`5429`)
+- Fixed ``IndexError`` in ``[p]queue`` command which occurred when the user provides negative integer as the page number (:issue:`5429`)
 
 Cleanup
 *******
