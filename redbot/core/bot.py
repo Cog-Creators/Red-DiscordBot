@@ -1246,7 +1246,7 @@ class Red(
             if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
         else:
-            if not channel.permissions_for(channel.guild.me).embed_links:
+            if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
                 return False
 
             if (channel_setting := await self._config.channel(channel).embeds()) is not None:
