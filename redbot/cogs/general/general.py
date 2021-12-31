@@ -353,7 +353,7 @@ class General(commands.Cog):
                 "DISCOVERABLE": _("Server Discovery"),
                 "FEATURABLE": _("Featurable"),
                 "INVITE_SPLASH": _("Splash Invite"),
-                "MEMBER_VERIFICATION_GATE_ENABLED": _("Member verification gate enabled"),
+                "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
                 "MEMBER_PROFILES": _("Member Profiles"),
                 "MORE_EMOJI": _("More Emojis"),
