@@ -351,7 +351,6 @@ class General(commands.Cog):
                 "COMMUNITY": _("Community"),
                 "COMMERCE": _("Commerce"),
                 "DISCOVERABLE": _("Server Discovery"),
-                "ENABLED_DISCOVERABLE_BEFORE": _("Server Discovery Before"),
                 "FEATURABLE": _("Featurable"),
                 "INVITE_SPLASH": _("Splash Invite"),
                 "MEMBER_VERIFICATION_GATE_ENABLED": _("Member verification gate enabled"),
