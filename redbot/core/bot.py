@@ -1327,12 +1327,13 @@ class RedBase(
         str
             Invite URL.
         """
+        app_info = await self.application_info()
         data = await self._config.all()
         commands_scope = data["invite_commands_scope"]
         scopes = ("bot", "applications.commands") if commands_scope else None
         perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(self._app_info.id, permissions, scopes=scopes)
+        return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
 
     async def is_invite_url_public(self) -> bool:
         """
