@@ -19,6 +19,7 @@
 #
 import os
 import sys
+import time
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("_ext"))
@@ -61,7 +62,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018-2021, Cog Creators"
+copyright = f"2018-{time.strftime('%Y')}, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
