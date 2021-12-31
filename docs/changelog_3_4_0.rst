@@ -42,7 +42,13 @@ Admin
 Audio
 *****
 
+- Added native Mac M1 support for Java runtimes supporting Mac M1 (:issue:`5474`)
+- Enabled JDA-NAS on all system architectures which should limit stuttering/buffering issues on some machines (:issue:`5474`)
 - The bot will now disconnect from the voice channel when all members are bots if auto-disconnect setting is enabled (:issue:`5421`)
+- Fixed an issue with resuming playback after changing voice channels (:issue:`5170`)
+- Fixed issues with Soundcloud private playlists and mobile links (:issue:`5474`)
+- Fixed searching music with some of the queries containing quotes or backslashes (:issue:`5474`)
+- Fixed an exception caused by unavailable YT tracks in Mix playlists (:issue:`5474`)
 - Fixed ``IndexError`` in ``[p]queue`` command which occurred when the user provided negative integer as page number (:issue:`5429`)
 
 Cleanup
