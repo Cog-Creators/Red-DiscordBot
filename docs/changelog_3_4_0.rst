@@ -21,6 +21,11 @@ End-user changelog
 Core Bot
 ********
 
+- Added new CLI options for non-interactive usage of ``redbot-setup`` (:issue:`2396`, :issue:`5448`)
+
+    See output of ``redbot-setup --help`` for more information.
+
+- JSON is now the recommended default storage backend for new instances in ``redbot-setup`` (:issue:`5448`)
 - Changed embed setting for ``[p]help`` command with ``[p]embedset command`` will now affect all help messages, not just the ones sent when invoking ``[p]help`` command directly (:issue:`5452`)
 - ``[p]traceback`` command now indicates that it DMed the command caller with a tick reaction (:issue:`5353`)
 - Improved ``[p]helpset showaliases`` responses (:issue:`5376`)
