@@ -25,7 +25,7 @@ Core Bot
 
     See output of ``redbot-setup --help`` for more information.
 
-- JSON is now the recommended default storage backend for new instances in ``redbot-setup`` (:issue:`5448`)
+- JSON is now more strongly recommended and is used by default for new instances in ``redbot-setup`` (:issue:`5448`)
 - The embed setting for ``[p]help`` command set with ``[p]embedset command`` will now affect all help messages, not just the ones sent when invoking ``[p]help`` command directly (:issue:`5452`)
 - ``[p]traceback`` command now indicates that it DMed the command caller with a tick reaction (:issue:`5353`)
 - Improved ``[p]helpset showaliases`` responses (:issue:`5376`)
