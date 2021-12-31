@@ -3,6 +3,9 @@
 Redbot 3.4.16 (2021-12-31)
 ==========================
 
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`jack1142`, :ghuser:`PredaaA`
+
 This is a hotfix release fixing issues with invite URL API that caused
 ``[p]invite`` command and ``CORE__INVITE_URL`` RPC method to not work.
 
