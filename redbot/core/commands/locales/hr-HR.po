@@ -1,0 +1,195 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2021-12-31 01:01+0000\n"
+"Last-Translator: \n"
+"Language-Team: Croatian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.3\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
+"X-Crowdin-Language: hr\n"
+"X-Crowdin-File-ID: 188\n"
+"Language: hr_HR\n"
+
+#: redbot/core/commands/commands.py:532
+msgid "\"{argument}\" is not a number."
+msgstr "\"{argument}\" nije broj."
+
+#: redbot/core/commands/converter.py:85
+msgid "`{unit}` is not a valid unit of time for this command"
+msgstr "`{unit}` nije važeća jedinica vremena za ovu naredbu"
+
+#: redbot/core/commands/converter.py:141 redbot/core/commands/converter.py:203
+msgid "The time set is way too high, consider setting something reasonable."
+msgstr "Postavljeno vrijeme je previsoko, razmislite o postavljanju nečeg razumnog."
+
+#: redbot/core/commands/converter.py:145
+msgid "This amount of time is too large for this command. (Maximum: {maximum})"
+msgstr "Ovo vrijeme je preveliko za ovu naredbu. (Maksimum: {maximum})"
+
+#: redbot/core/commands/converter.py:151
+msgid "This amount of time is too small for this command. (Minimum: {minimum})"
+msgstr "Ovo vrijeme je premalo za ovu naredbu. (Minimum: {minimum})"
+
+#: redbot/core/commands/converter.py:232
+msgid "'{input}' doesn't look like a valid user ID."
+msgstr "'{input}' ne izgleda kao valjani korisnički ID."
+
+#: redbot/core/commands/converter.py:265
+msgid "Unexpected key {key}"
+msgstr "Neočekivan ključ {key}"
+
+#: redbot/core/commands/converter.py:507
+msgid "Expected one of: {}"
+msgstr "Očekivano jedno od: {}"
+
+#: redbot/core/commands/converter.py:530
+msgid "Command \"{arg}\" not found."
+msgstr "Naredba \"{arg}\" nije pronađena."
+
+#: redbot/core/commands/converter.py:540
+msgid "Cog \"{arg}\" not found."
+msgstr "Modul \"{arg}\" nije pronađen."
+
+#: redbot/core/commands/help.py:106
+msgid "No"
+msgstr "Ne"
+
+#: redbot/core/commands/help.py:108
+msgid "Yes"
+msgstr "Da"
+
+#: redbot/core/commands/help.py:114
+msgid "Disabled"
+msgstr "Deaktivirano"
+
+#: redbot/core/commands/help.py:119
+msgid "\n"
+"Custom Tagline: {tag}"
+msgstr "\n"
+"Prilagođeni slogan: {tag}"
+
+#: redbot/core/commands/help.py:125
+msgid "Maximum characters per page: {page_char_limit}\n"
+"Maximum pages per guild (only used if menus are not used): {max_pages_in_guild}\n"
+"Help is a menu: {use_menus}\n"
+"Help shows hidden commands: {show_hidden}\n"
+"Help shows commands aliases: {show_aliases}\n"
+"Help only shows commands which can be used: {verify_checks}\n"
+"Help shows unusable commands when asked directly: {verify_exists}\n"
+"Delete delay: {delete_delay}\n"
+"React with a checkmark when help is sent via DM: {use_tick}\n"
+"Reaction timeout (only used if menus are used): {react_timeout} seconds{tagline_info}"
+msgstr "Maksimalan broj zankova po stranici: {page_char_limit}\n"
+"Maksimalan broj stranica po serveru (koristi se samo ako se izbornici ne koriste): {max_pages_in_guild}\n"
+"Pomoć je izbornik: {use_menus}\n"
+"Pomoć prikazuje skrivene naredbe: {show_hidden}\n"
+"Pomoć prikazuje nadimke naredbi: {show_aliases}\n"
+"Pomoć prikazuje samo naredbe koje se mogu koristiti: {verify_checks}\n"
+"Pomoć prikazuje neupotrebljive naredbe kada se izravno pita: {verify_exists}\n"
+"Odgoda brisanja: {delete_delay}\n"
+"Reagiraj kvačicom kada se pomoć pošalje putem direktne poruke: {use_tick}\n"
+"Vremensko ograničenje reakcije (koristi se samo ako se koriste izbornici): {react_timeout} sekundi{tagline_info}"
+
+#: redbot/core/commands/help.py:276
+msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
+msgstr "Upiši {ctx.clean_prefix}help <naredba> za više informacija o naredbi. Možeš upisat i {ctx.clean_prefix}help <kategorija> za više informacija o kategoriji."
+
+#: redbot/core/commands/help.py:320
+msgid "Syntax: {command_signature}"
+msgstr "Sintaksa: {command_signature}"
+
+#: redbot/core/commands/help.py:326
+msgid "Aliases"
+msgstr "Nadimci"
+
+#: redbot/core/commands/help.py:326
+msgid "Alias"
+msgstr "Nadimak"
+
+#: redbot/core/commands/help.py:347
+msgid "{aliases} and {number} more aliases."
+msgstr "{aliases} i još {number} nadimaka."
+
+#: redbot/core/commands/help.py:351
+msgid "{aliases} and one more alias."
+msgstr "{aliases} i još jedan nadimak."
+
+#: redbot/core/commands/help.py:393
+msgid "**__Subcommands:__**"
+msgstr "**__Podnaredbe:__**"
+
+#: redbot/core/commands/help.py:395
+msgid "**__Subcommands:__** (continued)"
+msgstr "**__Podnaredbe:__** (nastavljeno)"
+
+#: redbot/core/commands/help.py:406
+msgid "Subcommands:"
+msgstr "Podnaredbe:"
+
+#: redbot/core/commands/help.py:470 redbot/core/commands/help.py:730
+#: redbot/core/commands/help.py:743 redbot/core/commands/help.py:762
+msgid "{ctx.me.display_name} Help Menu"
+msgstr "{ctx.me.display_name} Izbornik za pomoć"
+
+#: redbot/core/commands/help.py:517
+msgid "*Page {page_num} of {page_count}*\n"
+"{content_description}"
+msgstr "*Stranica {page_num} od {page_count}*\n"
+"{content_description}"
+
+#: redbot/core/commands/help.py:568
+msgid "**__Commands:__**"
+msgstr "**__Naredbe:__**"
+
+#: redbot/core/commands/help.py:570
+msgid "**__Commands:__** (continued)"
+msgstr "**__Naredbe:__** (nastavljeno)"
+
+#: redbot/core/commands/help.py:580
+msgid "Commands:"
+msgstr "Naredbe:"
+
+#: redbot/core/commands/help.py:622
+msgid "**__No Category:__**"
+msgstr "**__Bez kategorije:__**"
+
+#: redbot/core/commands/help.py:635
+msgid "{title} (continued)"
+msgstr "{title} (nastavljeno)"
+
+#: redbot/core/commands/help.py:651 redbot/core/commands/help.py:665
+msgid "No Category:"
+msgstr "Bez kategorije:"
+
+#: redbot/core/commands/help.py:739
+msgid "Help topic for *{command_name}* not found."
+msgstr "Tema pomoći za *{command_name}* nije pronađena."
+
+#: redbot/core/commands/help.py:756
+msgid "Command *{command_name}* has no subcommand named *{not_found}*."
+msgstr "Naredba *{command_name}* nema podnaredbu pod nazivom *{not_found}*."
+
+#: redbot/core/commands/help.py:835
+msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
+msgstr "Nisam vam mogao poslati poruku pomoći u direktne poruke. Ili ste me blokirali ili ste onemogućili direktne poruke u ovom serveru."
+
+#: redbot/core/commands/help.py:876
+#, docstring
+msgid "\n"
+"    I need somebody\n"
+"    (Help) not just anybody\n"
+"    (Help) you know I need someone\n"
+"    (Help!)\n"
+"    "
+msgstr "\n"
+"    I need somebody\n"
+"    (Help) not just anybody\n"
+"    (Help) you know I need someone\n"
+"    (Help!)\n"
+"    "
+

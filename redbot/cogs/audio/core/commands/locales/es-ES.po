@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-07-16 21:46+0000\n"
+"POT-Creation-Date: 2021-11-02 18:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -799,7 +799,7 @@ msgstr "Ajustes del servidor"
 
 #: redbot/cogs/audio/core/commands/audioset.py:999
 msgid "Auto-deafen:      [{auto_deafen}]\n"
-msgstr ""
+msgstr "Auto-ensordecer:      [{auto_deafen}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1002
 msgid "Auto-disconnect:  [{dc}]\n"
@@ -842,7 +842,14 @@ msgid "Max volume:       [{max_volume}%]\n"
 "Song notify msgs: [{notify}]\n"
 "Songs as status:  [{status}]\n"
 "Spotify search:   [{countrycode}]\n"
-msgstr ""
+msgstr "Volumen máximo: [{max_volume}%]\n"
+"Persistir en cola: [{persist_queue}]\n"
+"Repetir: [{repeat}]\n"
+"Mezclado: [{shuffle}]\n"
+"Mezclado en la cola: [{bumpped_shuffle}]\n"
+"Notificaciones de canción: [{notify}]\n"
+"Establecer canciones como estado: [{status}]\n"
+"Búsqueda de Spotify: [{countrycode}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1045
 msgid "Thumbnails:       [{0}]\n"
@@ -1152,28 +1159,28 @@ msgstr "Lavalink puede tardar un par de minutos en ponerse en marcha completamen
 #: redbot/cogs/audio/core/commands/audioset.py:1467
 #, docstring
 msgid "Set the maximum volume allowed in this server."
-msgstr ""
+msgstr "Establece el volumen máximo permitido en este servidor."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1471
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1472
 msgid "Music without sound isn't music at all. Try setting the volume higher then 0%."
-msgstr ""
+msgstr "La música sin sonido no es música en absoluto. Intenta ajustar el volumen a un valor mayor que 0%."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1480
 #: redbot/cogs/audio/core/commands/audioset.py:1488
 msgid "Setting changed"
-msgstr ""
+msgstr "Ajustes modificados"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1481
 msgid "The maximum volume has been limited to 150%, be easy on your ears."
-msgstr ""
+msgstr "El volumen máximo se ha limitado a 150%, tenga cuidado con sus oídos."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1489
 msgid "The maximum volume has been limited to {max_volume}%."
-msgstr ""
+msgstr "El volumen máximo ha sido limitado a {max_volume}%."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
@@ -1237,7 +1244,7 @@ msgid "Now playing."
 msgstr "Reproduciendo."
 
 #: redbot/cogs/audio/core/commands/controller.py:110
-#: redbot/cogs/audio/core/commands/queue.py:77
+#: redbot/cogs/audio/core/commands/queue.py:81
 msgid "\n"
 " Requested by: **{track.requester}**"
 msgstr "\n"
@@ -1248,22 +1255,22 @@ msgid "Nothing."
 msgstr "Nada."
 
 #: redbot/cogs/audio/core/commands/controller.py:118
-#: redbot/cogs/audio/core/commands/queue.py:79
+#: redbot/cogs/audio/core/commands/queue.py:83
 msgid "Now Playing"
 msgstr "Escuchando"
 
 #: redbot/cogs/audio/core/commands/controller.py:128
-#: redbot/cogs/audio/core/commands/queue.py:89
+#: redbot/cogs/audio/core/commands/queue.py:93
 msgid "Auto-Play"
 msgstr "Auto-Jugar"
 
 #: redbot/cogs/audio/core/commands/controller.py:134
-#: redbot/cogs/audio/core/commands/queue.py:95
+#: redbot/cogs/audio/core/commands/queue.py:99
 msgid "Shuffle"
 msgstr "Aleatorio"
 
 #: redbot/cogs/audio/core/commands/controller.py:140
-#: redbot/cogs/audio/core/commands/queue.py:101
+#: redbot/cogs/audio/core/commands/queue.py:105
 msgid "Repeat"
 msgstr "Repetir"
 
@@ -1540,17 +1547,17 @@ msgstr "Necesitas el rol del DJ para invocar al bot."
 #: redbot/cogs/audio/core/commands/player.py:455
 #: redbot/cogs/audio/core/commands/player.py:571
 #: redbot/cogs/audio/core/commands/player.py:695
-#: redbot/cogs/audio/core/commands/queue.py:339
+#: redbot/cogs/audio/core/commands/queue.py:343
 msgid "I don't have permission to connect and speak in your channel."
 msgstr "No tengo permisos para conectarme o hablar en tu canal."
 
 #: redbot/cogs/audio/core/commands/controller.py:672
 msgid "Unable To Do This Action"
-msgstr ""
+msgstr "No puedo hacer esta acción"
 
 #: redbot/cogs/audio/core/commands/controller.py:673
 msgid "I am already in your channel."
-msgstr ""
+msgstr "Ya estoy en tu canal de voz"
 
 #: redbot/cogs/audio/core/commands/controller.py:685
 #: redbot/cogs/audio/core/commands/player.py:95
@@ -1558,7 +1565,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:467
 #: redbot/cogs/audio/core/commands/player.py:583
 #: redbot/cogs/audio/core/commands/player.py:707
-#: redbot/cogs/audio/core/commands/queue.py:351
+#: redbot/cogs/audio/core/commands/queue.py:355
 msgid "Connect to a voice channel first."
 msgstr "Conéctate a un canal de voz primero."
 
@@ -1568,7 +1575,7 @@ msgstr "Conéctate a un canal de voz primero."
 #: redbot/cogs/audio/core/commands/player.py:473
 #: redbot/cogs/audio/core/commands/player.py:589
 #: redbot/cogs/audio/core/commands/player.py:713
-#: redbot/cogs/audio/core/commands/queue.py:358
+#: redbot/cogs/audio/core/commands/queue.py:362
 msgid "Connection to Lavalink has not yet been established."
 msgstr "Aún no se ha establecido la conexión con Lavalink."
 
@@ -2056,7 +2063,7 @@ msgid "Search for songs across all localtracks folders."
 msgstr "Buscar canciones en todas las carpetas de las pistas locales."
 
 #: redbot/cogs/audio/core/commands/localtracks.py:139
-#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:299
 msgid "No matches."
 msgstr "No hay coincidencias."
 
@@ -2088,7 +2095,21 @@ msgid "Queue percentage."
 msgstr "Porcentaje de cola."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:126
-msgid "There's  nothing in the queue."
+#: redbot/cogs/audio/core/commands/playlists.py:1147
+#: redbot/cogs/audio/core/commands/queue.py:67
+#: redbot/cogs/audio/core/commands/queue.py:164
+#: redbot/cogs/audio/core/commands/queue.py:183
+#: redbot/cogs/audio/core/commands/queue.py:188
+#: redbot/cogs/audio/core/commands/queue.py:214
+#: redbot/cogs/audio/core/commands/queue.py:219
+#: redbot/cogs/audio/core/commands/queue.py:261
+#: redbot/cogs/audio/core/commands/queue.py:263
+#: redbot/cogs/audio/core/commands/queue.py:293
+#: redbot/cogs/audio/core/commands/queue.py:295
+#: redbot/cogs/audio/core/commands/queue.py:331
+#: redbot/cogs/audio/core/commands/queue.py:369
+#: redbot/cogs/audio/core/commands/queue.py:377
+msgid "There's nothing in the queue."
 msgstr "No hay nada en la cola."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:147
@@ -2972,23 +2993,6 @@ msgstr "Configure una lista de reproducción para reproducir canciones automáti
 "` [p]audioset autoplay PersonalPlaylist --scope Usuario --autor Draper` \n"
 "        "
 
-#: redbot/cogs/audio/core/commands/playlists.py:1147
-#: redbot/cogs/audio/core/commands/queue.py:63
-#: redbot/cogs/audio/core/commands/queue.py:160
-#: redbot/cogs/audio/core/commands/queue.py:179
-#: redbot/cogs/audio/core/commands/queue.py:184
-#: redbot/cogs/audio/core/commands/queue.py:210
-#: redbot/cogs/audio/core/commands/queue.py:215
-#: redbot/cogs/audio/core/commands/queue.py:257
-#: redbot/cogs/audio/core/commands/queue.py:259
-#: redbot/cogs/audio/core/commands/queue.py:289
-#: redbot/cogs/audio/core/commands/queue.py:291
-#: redbot/cogs/audio/core/commands/queue.py:327
-#: redbot/cogs/audio/core/commands/queue.py:365
-#: redbot/cogs/audio/core/commands/queue.py:373
-msgid "There's nothing in the queue."
-msgstr "No hay nada en la cola."
-
 #: redbot/cogs/audio/core/commands/playlists.py:1168
 msgid "Playlist {name} (`{id}`) [**{scope}**] saved from current queue: {num} tracks added."
 msgstr "Lista de reproducción {name} (`{id}`) [**{scope}**] guardada de la cola actual: {num} pistas añadidas."
@@ -3406,88 +3410,88 @@ msgstr "'{old}' lista de reproducción ha sido renombrada a '{new}' (`{id}`) [**
 msgid "List the songs in the queue."
 msgstr "Listar las canciones en cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:175
+#: redbot/cogs/audio/core/commands/queue.py:179
 #, docstring
 msgid "Clears the queue."
 msgstr "Limpia la cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:192
+#: redbot/cogs/audio/core/commands/queue.py:196
 msgid "Unable To Clear Queue"
 msgstr "No se puede borrar la cola"
 
-#: redbot/cogs/audio/core/commands/queue.py:193
+#: redbot/cogs/audio/core/commands/queue.py:197
 msgid "You need the DJ role to clear the queue."
 msgstr "Necesitas el rol de DJ para borrar la cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "Queue Modified"
 msgstr "Cola modificada"
 
-#: redbot/cogs/audio/core/commands/queue.py:201
+#: redbot/cogs/audio/core/commands/queue.py:205
 msgid "The queue has been cleared."
 msgstr "La cola ha sido limpiada."
 
-#: redbot/cogs/audio/core/commands/queue.py:206
+#: redbot/cogs/audio/core/commands/queue.py:210
 #, docstring
 msgid "Removes songs from the queue if the requester is not in the voice channel."
 msgstr "Elimina canciones de la cola si el solicitante no está en el canal de voz."
 
-#: redbot/cogs/audio/core/commands/queue.py:223
+#: redbot/cogs/audio/core/commands/queue.py:227
 msgid "Unable To Clean Queue"
 msgstr "No se puede limpiar la cola"
 
-#: redbot/cogs/audio/core/commands/queue.py:224
+#: redbot/cogs/audio/core/commands/queue.py:228
 msgid "You need the DJ role to clean the queue."
 msgstr "Necesitas el rol de DJ para limpiar la cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:239
-#: redbot/cogs/audio/core/commands/queue.py:273
+#: redbot/cogs/audio/core/commands/queue.py:243
+#: redbot/cogs/audio/core/commands/queue.py:277
 msgid "Removed 0 tracks."
 msgstr "0 pistas eliminadas."
 
-#: redbot/cogs/audio/core/commands/queue.py:243
-#: redbot/cogs/audio/core/commands/queue.py:277
+#: redbot/cogs/audio/core/commands/queue.py:247
+#: redbot/cogs/audio/core/commands/queue.py:281
 msgid "Removed Tracks From The Queue"
 msgstr "Pistas eliminadas de la cola"
 
-#: redbot/cogs/audio/core/commands/queue.py:244
+#: redbot/cogs/audio/core/commands/queue.py:248
 msgid "Removed {removed_tracks} tracks queued by members outside of the voice channel."
 msgstr "Se eliminaron {removed_tracks} pistas en cola por miembros fuera del canal de voz."
 
-#: redbot/cogs/audio/core/commands/queue.py:252
+#: redbot/cogs/audio/core/commands/queue.py:256
 #, docstring
 msgid "Removes all tracks you requested from the queue."
 msgstr "Elimina todas las pistas solicitadas de la cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:278
+#: redbot/cogs/audio/core/commands/queue.py:282
 msgid "Removed {removed_tracks} tracks queued by {member.display_name}."
 msgstr "Se han eliminado {removed_tracks} pistas en cola por {member.display_name}."
 
-#: redbot/cogs/audio/core/commands/queue.py:285
+#: redbot/cogs/audio/core/commands/queue.py:289
 #, docstring
 msgid "Search the queue."
 msgstr "Buscar en la cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:307
+#: redbot/cogs/audio/core/commands/queue.py:311
 #, docstring
 msgid "Shuffles the queue."
 msgstr "Mezclar la cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:319
-#: redbot/cogs/audio/core/commands/queue.py:326
-#: redbot/cogs/audio/core/commands/queue.py:338
-#: redbot/cogs/audio/core/commands/queue.py:350
-#: redbot/cogs/audio/core/commands/queue.py:357
-#: redbot/cogs/audio/core/commands/queue.py:364
-#: redbot/cogs/audio/core/commands/queue.py:372
+#: redbot/cogs/audio/core/commands/queue.py:323
+#: redbot/cogs/audio/core/commands/queue.py:330
+#: redbot/cogs/audio/core/commands/queue.py:342
+#: redbot/cogs/audio/core/commands/queue.py:354
+#: redbot/cogs/audio/core/commands/queue.py:361
+#: redbot/cogs/audio/core/commands/queue.py:368
+#: redbot/cogs/audio/core/commands/queue.py:376
 msgid "Unable To Shuffle Queue"
 msgstr "No se puede mezclar la cola"
 
-#: redbot/cogs/audio/core/commands/queue.py:320
+#: redbot/cogs/audio/core/commands/queue.py:324
 msgid "You need the DJ role to shuffle the queue."
 msgstr "Necesitas el rol del DJ para barrer la cola."
 
-#: redbot/cogs/audio/core/commands/queue.py:377
+#: redbot/cogs/audio/core/commands/queue.py:381
 msgid "Queue has been shuffled."
 msgstr "Reproducción aleatoria activada."
 

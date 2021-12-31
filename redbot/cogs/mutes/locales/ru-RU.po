@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-08-31 18:48+0000\n"
+"POT-Creation-Date: 2021-10-17 00:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -15,138 +15,138 @@ msgstr ""
 "X-Crowdin-File-ID: 704\n"
 "Language: ru_RU\n"
 
-#: redbot/cogs/mutes/mutes.py:26
+#: redbot/cogs/mutes/mutes.py:32
 msgid "That user is already muted in this channel."
 msgstr "Этот пользователь уже заглушен в этом канале."
 
-#: redbot/cogs/mutes/mutes.py:27
+#: redbot/cogs/mutes/mutes.py:33
 msgid "That user is not muted in this channel."
 msgstr "Этот пользователь не заглушен в этом канале."
 
-#: redbot/cogs/mutes/mutes.py:28
+#: redbot/cogs/mutes/mutes.py:34
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr "Я не могу позволить вам сделать это. Ваша роль ниже роли пользователя в иерархии."
 
-#: redbot/cogs/mutes/mutes.py:31
+#: redbot/cogs/mutes/mutes.py:37
 msgid "I cannot let you do that. You are not higher than the mute role in the role hierarchy."
 msgstr "Я не могу позволить вам сделать это. Вы не выше роли mute в иерархии ролей."
 
-#: redbot/cogs/mutes/mutes.py:34
+#: redbot/cogs/mutes/mutes.py:40
 msgid "That user cannot be (un)muted, as they have the Administrator permission."
 msgstr "Этот пользователь не может быть (не)заглушен, так как у него есть права администратора."
 
-#: redbot/cogs/mutes/mutes.py:35
+#: redbot/cogs/mutes/mutes.py:41
 msgid "Failed to mute or unmute user. I need the Manage Roles permission and the user I'm muting must be lower than myself in the role hierarchy."
 msgstr "Не удалось отключить или включить звук пользователя. Мне нужно разрешение Управление ролями, а пользователь, которого я отключаю, должен быть ниже меня в иерархии ролей."
 
-#: redbot/cogs/mutes/mutes.py:40
+#: redbot/cogs/mutes/mutes.py:46
 msgid "Failed to mute or unmute user. I need the Manage Permissions permission."
-msgstr "Не удалось отключить или включить звук с пользователя. Мне нужно разрешение Управление ролями."
+msgstr "Не удалось заглушить или снять заглушку с пользователя. Мне нужно разрешение \"Управление ролями\"."
 
-#: redbot/cogs/mutes/mutes.py:43
+#: redbot/cogs/mutes/mutes.py:49
 msgid "The user has left the server while applying an overwrite."
 msgstr "Пользователь покинул сервер во время применения перезаписи."
 
-#: redbot/cogs/mutes/mutes.py:44
+#: redbot/cogs/mutes/mutes.py:50
 msgid "The channel I tried to mute or unmute the user in isn't found."
-msgstr "Канал, на котором я пытался отключить или включить звук пользователя, не найден."
+msgstr "Канал, на котором я пытался заглушить или снять заглушку с пользователя, не найден."
 
-#: redbot/cogs/mutes/mutes.py:45
+#: redbot/cogs/mutes/mutes.py:51
 msgid "The mute role no longer exists."
-msgstr "Роль отключения звука больше не существует."
+msgstr "Роль \"mute\" больше не существует."
 
-#: redbot/cogs/mutes/mutes.py:46
+#: redbot/cogs/mutes/mutes.py:52
 msgid "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
-msgstr "Поскольку у меня нет разрешения Переместить Участников, оно вступит в силу, когда пользователь снова присоединится."
+msgstr "Поскольку у меня нет разрешения \"Переместить Участников\", оно вступит в силу, когда пользователь снова присоединится."
 
-#: redbot/cogs/mutes/mutes.py:68
+#: redbot/cogs/mutes/mutes.py:74
 #, docstring
 msgid "\n"
 "    Mute users temporarily or indefinitely.\n"
 "    "
 msgstr "\n"
-"    Временно или бессрочно отключать пользователей.\n"
+"    Временно или бессрочно заглушить пользователей.\n"
 "    "
 
-#: redbot/cogs/mutes/mutes.py:286 redbot/cogs/mutes/mutes.py:298
-#: redbot/cogs/mutes/mutes.py:302 redbot/cogs/mutes/mutes.py:392
-#: redbot/cogs/mutes/mutes.py:409 redbot/cogs/mutes/mutes.py:463
-#: redbot/cogs/mutes/mutes.py:483 redbot/cogs/mutes/mutes.py:488
+#: redbot/cogs/mutes/mutes.py:292 redbot/cogs/mutes/mutes.py:304
+#: redbot/cogs/mutes/mutes.py:308 redbot/cogs/mutes/mutes.py:398
+#: redbot/cogs/mutes/mutes.py:415 redbot/cogs/mutes/mutes.py:469
+#: redbot/cogs/mutes/mutes.py:489 redbot/cogs/mutes/mutes.py:494
 msgid "Automatic unmute"
-msgstr "Автовключение звука"
+msgstr "Автоматическое снятие заглушки"
 
-#: redbot/cogs/mutes/mutes.py:302 redbot/cogs/mutes/mutes.py:409
-#: redbot/cogs/mutes/mutes.py:617 redbot/cogs/mutes/mutes.py:1404
+#: redbot/cogs/mutes/mutes.py:308 redbot/cogs/mutes/mutes.py:415
+#: redbot/cogs/mutes/mutes.py:623 redbot/cogs/mutes/mutes.py:1416
 msgid "Server unmute"
-msgstr "Включение звука сервера"
+msgstr "Снять заглушку с сервера"
 
-#: redbot/cogs/mutes/mutes.py:311
+#: redbot/cogs/mutes/mutes.py:317
 msgid "I am unable to unmute {user} for the following reason:\n"
 "{reason}"
-msgstr "Я не могу включить звук {user} по следующей причине:\n"
+msgstr "Я не могу снять заглушку {user} по следующей причине:\n"
 "{reason}"
 
-#: redbot/cogs/mutes/mutes.py:396
+#: redbot/cogs/mutes/mutes.py:402
 msgid "\n"
 "Unmuted in channels: "
 msgstr "\n"
-"Неприглушенные каналы: "
+"Снята заглушка в каналах: "
 
-#: redbot/cogs/mutes/mutes.py:422
+#: redbot/cogs/mutes/mutes.py:428
 msgid "{member} could not be unmuted for the following reasons:\n"
 msgstr "{member} не может быть отключен по следующим причинам:\n"
 
-#: redbot/cogs/mutes/mutes.py:426
+#: redbot/cogs/mutes/mutes.py:432
 msgid "{reason} In the following channels: {channels}\n"
 msgstr "{reason} В следующих каналах: {channels}\n"
 
-#: redbot/cogs/mutes/mutes.py:472 redbot/cogs/mutes/mutes.py:692
+#: redbot/cogs/mutes/mutes.py:478 redbot/cogs/mutes/mutes.py:698
 #: redbot/cogs/mutes/voicemutes.py:224
 msgid "Voice unmute"
-msgstr "Включить звук голоса"
+msgstr "Снять заглушку голоса"
 
-#: redbot/cogs/mutes/mutes.py:475 redbot/cogs/mutes/mutes.py:695
-#: redbot/cogs/mutes/mutes.py:1471
+#: redbot/cogs/mutes/mutes.py:481 redbot/cogs/mutes/mutes.py:701
+#: redbot/cogs/mutes/mutes.py:1483
 msgid "Channel unmute"
-msgstr "Включить звук канала"
+msgstr "Снять заглушку с канала"
 
-#: redbot/cogs/mutes/mutes.py:492
+#: redbot/cogs/mutes/mutes.py:498
 msgid "I am unable to unmute {user} in {channel} for the following reason:\n"
 "{reason}"
-msgstr "Я не могу включить звук {user} в {channel} по следующей причине:\n"
+msgstr "Я не могу снять заглушку {user} в {channel} по следующей причине:\n"
 "{reason}"
 
-#: redbot/cogs/mutes/mutes.py:533
+#: redbot/cogs/mutes/mutes.py:539
 msgid "Unknown"
 msgstr "Неизвестный"
 
-#: redbot/cogs/mutes/mutes.py:538
+#: redbot/cogs/mutes/mutes.py:544
 msgid "No reason provided."
 msgstr "Причина не указана."
 
-#: redbot/cogs/mutes/mutes.py:549
+#: redbot/cogs/mutes/mutes.py:555
 msgid "Until"
 msgstr "До"
 
-#: redbot/cogs/mutes/mutes.py:550
+#: redbot/cogs/mutes/mutes.py:556
 msgid "Duration"
 msgstr "Длительность"
 
-#: redbot/cogs/mutes/mutes.py:551
+#: redbot/cogs/mutes/mutes.py:557
 msgid "Guild"
-msgstr "Гильдия"
+msgstr "Сервер"
 
-#: redbot/cogs/mutes/mutes.py:553
+#: redbot/cogs/mutes/mutes.py:559
 msgid "Moderator"
 msgstr "Модератор"
 
-#: redbot/cogs/mutes/mutes.py:562
+#: redbot/cogs/mutes/mutes.py:568
 msgid "\n"
 "**Moderator**: {moderator}"
 msgstr "\n"
 "**Модератор**: {moderator}"
 
-#: redbot/cogs/mutes/mutes.py:567
+#: redbot/cogs/mutes/mutes.py:573
 msgid "\n"
 "**Until**: {until}\n"
 "**Duration**: {duration}"
@@ -154,64 +154,64 @@ msgstr "\n"
 "**До**: {until}\n"
 "**Продолжительность**: {duration}"
 
-#: redbot/cogs/mutes/mutes.py:573
+#: redbot/cogs/mutes/mutes.py:579
 msgid "\n"
 "**Guild**: {guild_name}"
 msgstr "\n"
-"**Гильдия**: {guild_name}"
+"**Сервер**: {guild_name}"
 
-#: redbot/cogs/mutes/mutes.py:612 redbot/cogs/mutes/mutes.py:617
+#: redbot/cogs/mutes/mutes.py:618 redbot/cogs/mutes/mutes.py:623
 msgid "Manually removed mute role"
-msgstr "Ручное удаление роли отключения звука"
+msgstr "Ручное удаление роли заглушки"
 
-#: redbot/cogs/mutes/mutes.py:632 redbot/cogs/mutes/mutes.py:641
+#: redbot/cogs/mutes/mutes.py:638 redbot/cogs/mutes/mutes.py:647
 msgid "Manually applied mute role"
-msgstr "Роль отключения звука, применяемая вручную"
+msgstr "Роль заглушки, применяемая вручную"
 
-#: redbot/cogs/mutes/mutes.py:641 redbot/cogs/mutes/mutes.py:1186
+#: redbot/cogs/mutes/mutes.py:647 redbot/cogs/mutes/mutes.py:1198
 msgid "Server mute"
-msgstr "Отключение звука на сервере"
+msgstr "Заглушка сервера"
 
-#: redbot/cogs/mutes/mutes.py:702 redbot/cogs/mutes/mutes.py:711
+#: redbot/cogs/mutes/mutes.py:708 redbot/cogs/mutes/mutes.py:717
 msgid "Manually removed channel overwrites"
 msgstr "Перезапись каналов, удаленных вручную"
 
-#: redbot/cogs/mutes/mutes.py:745
-msgid "Previously muted in this server."
-msgstr "Ранее отключенный звук на этом сервере."
-
 #: redbot/cogs/mutes/mutes.py:751
+msgid "Previously muted in this server."
+msgstr "Ранее заглушенный на этом сервере."
+
+#: redbot/cogs/mutes/mutes.py:757
 #, docstring
 msgid "Mute settings."
-msgstr "Настройки отключения звука."
+msgstr "Настройки заглушки."
 
-#: redbot/cogs/mutes/mutes.py:758
+#: redbot/cogs/mutes/mutes.py:764
 #, docstring
 msgid "Set whether mute notifications should be sent to users in DMs."
-msgstr "Установите, следует ли отправлять уведомления о выключении звука пользователям в ЛС-сообщениях."
+msgstr "Установите, следует ли отправлять уведомления о заглушке пользователям в личные сообщения."
 
-#: redbot/cogs/mutes/mutes.py:761
+#: redbot/cogs/mutes/mutes.py:767
 msgid "I will now try to send mute notifications to users DMs."
-msgstr "Теперь я постараюсь отправлять уведомления о выключении звука в ЛС пользователей."
-
-#: redbot/cogs/mutes/mutes.py:763
-msgid "Mute notifications will no longer be sent to users DMs."
-msgstr "Уведомления о выключении звука больше не будут отправляться в ЛС пользователей."
+msgstr "Теперь я постараюсь отправлять уведомления о заглушке в личные сообщения пользователей."
 
 #: redbot/cogs/mutes/mutes.py:769
+msgid "Mute notifications will no longer be sent to users DMs."
+msgstr "Уведомления о заглушке больше не будут отправляться в личные сообщения пользователей."
+
+#: redbot/cogs/mutes/mutes.py:775
 #, docstring
 msgid "Decide whether the name of the moderator muting a user should be included in the DM to that user."
-msgstr "Определяет, должно ли имя модератора, отключившего пользователя, быть включено в сообщение ЛС этому пользователю."
-
-#: redbot/cogs/mutes/mutes.py:773
-msgid "I will include the name of the moderator who issued the mute when sending a DM to a user."
-msgstr "Я буду указывать имя модератора, который отключил звук, при отправке ЛС пользователю."
+msgstr "Определяет, должно ли имя модератора, заглушившего пользователя, быть отображено в сообщении этому пользователю."
 
 #: redbot/cogs/mutes/mutes.py:779
-msgid "I will not include the name of the moderator who issued the mute when sending a DM to a user."
-msgstr "Я не буду указывать имя модератора, который отключил звук, при отправке ЛС пользователю."
+msgid "I will include the name of the moderator who issued the mute when sending a DM to a user."
+msgstr "Я буду указывать имя модератора, который заглушил пользователя, при отправке сообщения."
 
-#: redbot/cogs/mutes/mutes.py:787
+#: redbot/cogs/mutes/mutes.py:785
+msgid "I will not include the name of the moderator who issued the mute when sending a DM to a user."
+msgstr "Я не буду указывать имя модератора, который заглушил пользователя, при отправке сообщения."
+
+#: redbot/cogs/mutes/mutes.py:793
 #, docstring
 msgid "\n"
 "        Whether or not to force role only mutes on the bot\n"
@@ -220,41 +220,41 @@ msgstr "\n"
 "        Должно ли принудительно заглушать роль только на бота\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:792
+#: redbot/cogs/mutes/mutes.py:798
 msgid "Okay I will enforce role mutes before muting users."
-msgstr "Хорошо, я буду принудительно отключать роли, прежде чем отключать пользователей."
+msgstr "Хорошо, я буду принудительно отключать роли, прежде чем заглушить пользователей."
 
-#: redbot/cogs/mutes/mutes.py:794
+#: redbot/cogs/mutes/mutes.py:800
 msgid "Okay I will allow channel overwrites for muting users."
 msgstr "Хорошо, я разрешу перезаписывать канал для заглушенных пользователей."
 
-#: redbot/cogs/mutes/mutes.py:799
+#: redbot/cogs/mutes/mutes.py:805
 #, docstring
 msgid "\n"
 "        Shows the current mute settings for this guild.\n"
 "        "
 msgstr "\n"
-"        Показывает текущие настройки отключения звука для этой гильдии.\n"
+"        Показывает текущие настройки заглушки для этого сервера.\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:807
+#: redbot/cogs/mutes/mutes.py:813
 msgid "Mute Role: {role}\n"
 "Notification Channel: {channel}\n"
 "Default Time: {time}\n"
 "Send DM: {dm}\n"
 "Show moderator: {show_mod}"
-msgstr "Роль отключения звука: {role}\n"
+msgstr "Роль заглушки: {role}\n"
 "Канал уведомления: {channel}\n"
 "Время по умолчанию: {time}\n"
 "Отправить в ЛС: {dm}\n"
 "Показать модератора: {show_mod}"
 
-#: redbot/cogs/mutes/mutes.py:814 redbot/cogs/mutes/mutes.py:815
-#: redbot/cogs/mutes/mutes.py:816
+#: redbot/cogs/mutes/mutes.py:820 redbot/cogs/mutes/mutes.py:821
+#: redbot/cogs/mutes/mutes.py:822
 msgid "None"
 msgstr "Нет"
 
-#: redbot/cogs/mutes/mutes.py:827
+#: redbot/cogs/mutes/mutes.py:833
 #, docstring
 msgid "\n"
 "        Set the notification channel for automatic unmute issues.\n\n"
@@ -262,20 +262,20 @@ msgid "\n"
 "        about issues when unmuting users will not be sent anywhere.\n"
 "        "
 msgstr "\n"
-"        Установите канал уведомления для автоматической разблокировки звука.\n\n"
+"        Установите канал уведомления для автоматического снятия заглушки.\n\n"
 "        Если канал не указан, он будет очищен, и уведомления\n"
-"        о проблемах с отключением звука пользователей не будут отправляться никуда.\n"
+"        о проблемах со снятием заглушек с пользователей никуда не будут отправляться.\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:835
+#: redbot/cogs/mutes/mutes.py:841
 msgid "Notification channel for unmute issues has been cleared."
-msgstr "Канал уведомлений о проблемах, связанных с отключением звука, был очищен."
+msgstr "Канал уведомлений о проблемах, связанных с заглушками, был очищен."
 
-#: redbot/cogs/mutes/mutes.py:839
+#: redbot/cogs/mutes/mutes.py:845
 msgid "I will post unmute issues in {channel}."
-msgstr "Я буду публиковать сообщения о включении звука на {channel}."
+msgstr "Я буду публиковать сообщения о снятии заглушек на {channel}."
 
-#: redbot/cogs/mutes/mutes.py:846
+#: redbot/cogs/mutes/mutes.py:852
 #, docstring
 msgid "Sets the role to be applied when muting a user.\n\n"
 "        If no role is setup the bot will attempt to mute a user by setting\n"
@@ -283,30 +283,30 @@ msgid "Sets the role to be applied when muting a user.\n\n"
 "        Note: If no role is setup a user may be able to leave the server\n"
 "        and rejoin no longer being muted.\n"
 "        "
-msgstr "Устанавливает роль, которая будет применяться при отключении звука у пользователя.\n\n"
-"        Если роль не задана, бот попытается отключить пользователя, установив\n"
-"        перезапись каналов во всех каналах, чтобы пользователь не мог отправлять сообщения.\n\n"
+msgstr "Устанавливает роль, которая будет применяться при заглушке пользователя.\n\n"
+"        Если роль не задана, бот попытается заглушить пользователя, установив\n"
+"        перезапись каналов во всех каналах, чтобы пользователь не смог отправлять сообщения.\n\n"
 "        Примечание: Если роль не установлена, пользователь может покинуть сервер\n"
-"        и снова зайти на сервер без отключения звука.\n"
+"        и снова зайти на сервер без заглушки.\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:861
+#: redbot/cogs/mutes/mutes.py:867
 msgid "Channel overwrites will be used for mutes instead."
-msgstr "Перезапись каналов будет использоваться для отключения звука."
+msgstr "Вместо роли заглушки теперь будет использоваться перезапись каналов."
 
-#: redbot/cogs/mutes/mutes.py:865
+#: redbot/cogs/mutes/mutes.py:871
 msgid "You can't set this role as it is not lower than you in the role hierarchy."
 msgstr "Вы не можете установить эту роль, поскольку она не ниже вас в иерархии ролей."
 
-#: redbot/cogs/mutes/mutes.py:870 redbot/cogs/mutes/mutes.py:925
+#: redbot/cogs/mutes/mutes.py:876 redbot/cogs/mutes/mutes.py:931
 msgid "Mute role set to {role}"
-msgstr "Роль отключения звука установлена на {role}"
+msgstr "Роль заглушки установлена на {role}"
 
-#: redbot/cogs/mutes/mutes.py:874 redbot/cogs/mutes/mutes.py:929
+#: redbot/cogs/mutes/mutes.py:880 redbot/cogs/mutes/mutes.py:935
 msgid "No notification channel has been setup, use {command_1} to be updated when there's an issue in automatic unmutes."
-msgstr "Канал уведомления не настроен, используйте {command_1} для получения обновлений при возникновении проблем с автоматическим включением звука."
+msgstr "Канал уведомления не настроен, используйте {command_1} для получения обновлений при возникновении проблем с автоматическим снятием заглушки."
 
-#: redbot/cogs/mutes/mutes.py:885
+#: redbot/cogs/mutes/mutes.py:891
 #, docstring
 msgid "Create a Muted role.\n\n"
 "        This will create a role and apply overwrites to all available channels\n"
@@ -314,100 +314,100 @@ msgid "Create a Muted role.\n\n"
 "        If you already have a muted role created on the server use\n"
 "        `[p]muteset role ROLE_NAME_HERE`\n"
 "        "
-msgstr "Создайте роль с приглушенным звуком.\n\n"
+msgstr "Создайте роль заглушки.\n\n"
 "        Это позволит создать роль и применить перезапись ко всем доступным каналам\n"
-"        для более простой настройки отключения звука для пользователя.\n\n"
-"        Если у вас уже есть роль отключения звука, созданная на сервере, используйте\n"
+"        для более простой настройки заглушки для пользователя.\n\n"
+"        Если у вас уже есть роль для заглушки, созданная на сервере, используйте\n"
 "        `[p]muteset role ROLE_NAME_HERE`\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:896
+#: redbot/cogs/mutes/mutes.py:902
 msgid "There is already a mute role setup in this server. Please remove it with {command} before trying to create a new one."
-msgstr "На этом сервере уже установлена роль mute. Пожалуйста, удалите ее с помощью {command}, прежде чем пытаться создать новую."
+msgstr "На этом сервере уже установлена роль для заглушки. Пожалуйста, удалите ее с помощью {command}, прежде чем пытаться создать новую."
 
-#: redbot/cogs/mutes/mutes.py:907 redbot/cogs/mutes/mutes.py:949
+#: redbot/cogs/mutes/mutes.py:913 redbot/cogs/mutes/mutes.py:955
 msgid "Mute role setup"
-msgstr "Настройка роли отключения звука"
+msgstr "Настройка роли для заглушки"
 
-#: redbot/cogs/mutes/mutes.py:912
+#: redbot/cogs/mutes/mutes.py:918
 msgid "I could not create a muted role in this server."
-msgstr "Я не смог создать заглушенную роль на этом сервере."
+msgstr "Я не смог создать роль заглушки на этом сервере."
 
-#: redbot/cogs/mutes/mutes.py:919
+#: redbot/cogs/mutes/mutes.py:925
 msgid "I could not set overwrites for the following channels: {channels}"
-msgstr "Я не смог установить перезапись для следующих каналов: {channels}"
+msgstr "Не удалось установить перезапись для следующих каналов: {channels}"
 
-#: redbot/cogs/mutes/mutes.py:957
+#: redbot/cogs/mutes/mutes.py:963
 #, docstring
 msgid "\n"
 "        Set the default mute time for the mute command.\n\n"
 "        If no time interval is provided this will be cleared.\n"
 "        "
 msgstr "\n"
-"        Установите время отключения звука по умолчанию для команды отключения звука.\n\n"
+"        Установите время заглушки по умолчанию для команды заглушки.\n\n"
 "        Если временной интервал не указан, он будет очищен.\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:965
+#: redbot/cogs/mutes/mutes.py:971
 msgid "Default mute time removed."
-msgstr "Время отключения звука по умолчанию удалено."
+msgstr "Стандартное время заглушки удалено."
 
-#: redbot/cogs/mutes/mutes.py:969
+#: redbot/cogs/mutes/mutes.py:975
 msgid "Please provide a valid time format."
 msgstr "Пожалуйста, укажите правильный формат времени."
 
-#: redbot/cogs/mutes/mutes.py:972
+#: redbot/cogs/mutes/mutes.py:978
 msgid "Default mute time set to {time}."
-msgstr "Время отключения звука по умолчанию установлено на {time}."
+msgstr "Время заглушки по умолчанию установлено на {time}."
 
-#: redbot/cogs/mutes/mutes.py:984
-msgid "This server does not have a mute role setup.  You can setup a mute role with `{command_1}` or`{command_2}` if you just want a basic role created setup.\n\n"
-msgstr "На этом сервере не настроена роль отключения звука.  Вы можете настроить роль отключения звука с помощью `{command_1}` или `{command_2}`, если вам нужна только базовая настройка роли.\n\n"
+#: redbot/cogs/mutes/mutes.py:990
+msgid "This server does not have a mute role setup.  You can setup a mute role with {command_1} or {command_2} if you just want a basic role created setup.\n\n"
+msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1000
+#: redbot/cogs/mutes/mutes.py:1009
 msgid "Channel overwrites for muting users can get expensive on Discord's API as such we recommend that you have an admin setup a mute role instead. Channel overwrites will also not re-apply on guild join, so a user who has been muted may leave and re-join and no longer be muted. Role mutes do not have this issue.\n\n"
 "Are you sure you want to continue with channel overwrites? "
-msgstr "Перезапись канала для отключения пользователей может быть дорогостоящей для API Discord, поэтому мы рекомендуем, чтобы администратор установил роль отключения вместо этого. Перезапись канала также не будет повторно применяться при вступлении в гильдию, поэтому пользователь, который был отключен, может уйти и снова вступить в гильдию и больше не будет отключен. Роль отключения звука не имеет такой проблемы.\n\n"
+msgstr "Перезапись канала для отключения пользователей может быть дорогостоящей для API Discord, поэтому мы рекомендуем, чтобы администратор установил роль заглушки вместо этого. Перезапись канала также не будет повторно применяться при вступлении в сервер, поэтому пользователь, который был заглушен, может уйти и снова зайти на сервер и больше не будет заглушен. Роль заглушки не имеет такой проблемы.\n\n"
 "Вы уверены, что хотите продолжать использовать перезапись каналов? "
 
-#: redbot/cogs/mutes/mutes.py:1010
+#: redbot/cogs/mutes/mutes.py:1019
 msgid "Reacting with ✅ will continue the mute with overwrites and stop this message from appearing again, Reacting with ❎ will end the mute attempt."
-msgstr "Реакция ✅ продолжит отключение звука с перезаписью и остановит повторное появление этого сообщения, Реакция ❎ завершит попытку отключения звука."
+msgstr "Реакция ✅ продолжит заглушку с перезаписью и остановит повторное появление этого сообщения, Реакция ❎ завершит попытку заглушки."
 
-#: redbot/cogs/mutes/mutes.py:1016
-msgid "Saying `yes` will continue the mute with overwrites and stop this message from appearing again, saying `no` will end the mute attempt."
-msgstr "Если сказать `да`, вы продолжите отключение звука с перезаписью и остановите повторное появление этого сообщения, если сказать `нет`, попытка отключения звука будет прекращена."
+#: redbot/cogs/mutes/mutes.py:1025
+msgid "Saying {response_1} will continue the mute with overwrites and stop this message from appearing again, saying {response_2} will end the mute attempt."
+msgstr ""
 
-#: redbot/cogs/mutes/mutes.py:1042 redbot/cogs/mutes/mutes.py:1256
+#: redbot/cogs/mutes/mutes.py:1054 redbot/cogs/mutes/mutes.py:1268
 msgid "OK then."
-msgstr "Хорошо, тогда."
+msgstr "Хорошо."
 
-#: redbot/cogs/mutes/mutes.py:1056
+#: redbot/cogs/mutes/mutes.py:1068
 #, docstring
 msgid "\n"
 "        Displays active mutes on this server.\n"
 "        "
 msgstr "\n"
-"        Отображает активные отключения звука на этом сервере.\n"
+"        Отображает активные заглушки на этом сервере.\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:1064
+#: redbot/cogs/mutes/mutes.py:1076
 msgid "__Server Mutes__\n"
-msgstr "__Сервер отключает звук__\n"
+msgstr "__Заглушки сервера__\n"
 
-#: redbot/cogs/mutes/mutes.py:1082 redbot/cogs/mutes/mutes.py:1107
+#: redbot/cogs/mutes/mutes.py:1094 redbot/cogs/mutes/mutes.py:1119
 msgid "__Remaining__: {time_left}\n"
 msgstr "__Remaining__: {time_left}\n"
 
-#: redbot/cogs/mutes/mutes.py:1089
+#: redbot/cogs/mutes/mutes.py:1101
 msgid "__<#{channel_id}> Mutes__\n"
-msgstr "__<#{channel_id}> Приглушает звук__\n"
-
-#: redbot/cogs/mutes/mutes.py:1114
-msgid "There are no mutes on this server right now."
-msgstr "На этом сервере пока нет заглушений."
+msgstr "__Заглушки <#{channel_id}>__\n"
 
 #: redbot/cogs/mutes/mutes.py:1126
+msgid "There are no mutes on this server right now."
+msgstr "На этом сервере пока нет заглушек."
+
+#: redbot/cogs/mutes/mutes.py:1138
 #, docstring
 msgid "Mute users.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
@@ -418,53 +418,53 @@ msgid "Mute users.\n\n"
 "        `[p]mute @member1 @member2 spam 5 hours`\n"
 "        `[p]mute @member1 3 days`\n\n"
 "        "
-msgstr "Отключить пользователей.\n\n"
+msgstr "Заглушить пользователей.\n\n"
 "        `<users...>` - это список имен пользователей, ID или упоминаний, разделенных пробелами.\n"
-"        `[time_and_reason]` - время отключения звука и причина. Время - это\n"
+"        `[time_and_reason]` - время заглушки и причина. Время - это\n"
 "        любой допустимый отрезок времени, например, `30 минут` или `2 дня`. Если ничего не\n"
-"        не указано, отключение звука будет происходить на время, установленное по умолчанию, или на неопределенное время, если оно не установлено.\n\n"
+"        не указано, заглушка будет действовать на время, установленное по умолчанию, или на неопределенное количество времени, если оно не установлено.\n\n"
 "        Примеры:\n"
 "        `[p]mute @member1 @member2 spam 5 hours`\n"
 "        `[p]mute @member1 3 дня`\n\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:1141 redbot/cogs/mutes/mutes.py:1292
+#: redbot/cogs/mutes/mutes.py:1153 redbot/cogs/mutes/mutes.py:1304
 #: redbot/cogs/mutes/voicemutes.py:90
 msgid "You cannot mute me."
-msgstr "Вы не можете отключить мне звук."
+msgstr "Вы не можете заглушить меня."
 
-#: redbot/cogs/mutes/mutes.py:1143 redbot/cogs/mutes/mutes.py:1294
+#: redbot/cogs/mutes/mutes.py:1155 redbot/cogs/mutes/mutes.py:1306
 #: redbot/cogs/mutes/voicemutes.py:92
 msgid "You cannot mute yourself."
-msgstr "Вы не можете отключить себе звук."
+msgstr "Вы не можете заглушить себя."
 
-#: redbot/cogs/mutes/mutes.py:1154 redbot/cogs/mutes/mutes.py:1159
-#: redbot/cogs/mutes/mutes.py:1302 redbot/cogs/mutes/mutes.py:1307
+#: redbot/cogs/mutes/mutes.py:1166 redbot/cogs/mutes/mutes.py:1171
+#: redbot/cogs/mutes/mutes.py:1314 redbot/cogs/mutes/mutes.py:1319
 #: redbot/cogs/mutes/voicemutes.py:110 redbot/cogs/mutes/voicemutes.py:117
 msgid " for {duration}"
-msgstr " для {duration}"
+msgstr " на {duration}"
 
-#: redbot/cogs/mutes/mutes.py:1193
+#: redbot/cogs/mutes/mutes.py:1205
 msgid "{users} has been muted in this server{time}."
 msgstr "{users} был заглушен на этом сервере{time}."
 
-#: redbot/cogs/mutes/mutes.py:1195
+#: redbot/cogs/mutes/mutes.py:1207
 msgid "{users} have been muted in this server{time}."
-msgstr "{users} были отключены на этом сервере{time}."
+msgstr "{users} были заглушены на этом сервере{time}."
 
-#: redbot/cogs/mutes/mutes.py:1206
+#: redbot/cogs/mutes/mutes.py:1218
 msgid "{member} could not be (un)muted for the following reasons:\n"
-msgstr "{member} не может быть (не)отключен по следующим причинам:\n"
+msgstr "{member} не может быть заглушен (или разглушен) по следующим причинам:\n"
 
-#: redbot/cogs/mutes/mutes.py:1217
+#: redbot/cogs/mutes/mutes.py:1229
 msgid "- {reason} In the following channels: {channels}\n"
 msgstr "- {reason} в следующих каналах: {channels}\n"
 
-#: redbot/cogs/mutes/mutes.py:1228
+#: redbot/cogs/mutes/mutes.py:1240
 msgid "Some users could not be properly muted. Would you like to see who, where, and why?"
-msgstr "Некоторым пользователям не удалось правильно отключить звук. Вы хотите увидеть, кто, где и почему?"
+msgstr "Некоторых пользователей не удалось правильно заглушить. Вы хотите увидеть, кто, где и почему?"
 
-#: redbot/cogs/mutes/mutes.py:1278
+#: redbot/cogs/mutes/mutes.py:1290
 #, docstring
 msgid "Mute a user in the current text channel.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
@@ -475,75 +475,75 @@ msgid "Mute a user in the current text channel.\n\n"
 "        `[p]mutechannel @member1 @member2 spam 5 hours`\n"
 "        `[p]mutechannel @member1 3 days`\n"
 "        "
-msgstr "Отключить звук пользователя в текущем текстовом канале.\n\n"
+msgstr "Заглушить пользователя в этом текстовом канале.\n\n"
 "        `<users...>` - список имен пользователей, идентификаторов или упоминаний, разделенных пробелами.\n"
-"        `[time_and_reason]` - время отключения звука и причина. Время - это\n"
+"        `[time_and_reason]` - время заглушки и причина. Время - это\n"
 "        любой допустимый отрезок времени, например, `30 минут` или `2 дня`. Если ничего не\n"
-"        не указано, отключение звука будет происходить на время, установленное по умолчанию, или на неопределенное время, если оно не установлено.\n\n"
+"        не указано, заглушка будет активна на время, установленное по умолчанию, или на неопределенное время, если оно не установлено.\n\n"
 "        Примеры:\n"
 "        `[p]mutechannel @member1 @member2 spam 5 hours`\n"
 "        `[p]mutechannel @member1 3 дня`\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:1335
+#: redbot/cogs/mutes/mutes.py:1347
 msgid "Channel mute"
 msgstr "Канал заглушен"
 
-#: redbot/cogs/mutes/mutes.py:1343 redbot/cogs/mutes/voicemutes.py:156
+#: redbot/cogs/mutes/mutes.py:1355 redbot/cogs/mutes/voicemutes.py:156
 msgid "{users} has been muted in this channel{time}."
 msgstr "{users} был заглушен в этом канале{time}."
 
-#: redbot/cogs/mutes/mutes.py:1345 redbot/cogs/mutes/voicemutes.py:158
+#: redbot/cogs/mutes/mutes.py:1357 redbot/cogs/mutes/voicemutes.py:158
 msgid "{users} have been muted in this channel{time}."
 msgstr "{users} были заглушены в этом канале{time}."
 
-#: redbot/cogs/mutes/mutes.py:1350 redbot/cogs/mutes/voicemutes.py:163
+#: redbot/cogs/mutes/mutes.py:1362 redbot/cogs/mutes/voicemutes.py:163
 msgid "The following users could not be muted\n"
 msgstr "Следующие пользователи не могут быть заглушены\n"
 
-#: redbot/cogs/mutes/mutes.py:1365
+#: redbot/cogs/mutes/mutes.py:1377
 #, docstring
 msgid "Unmute users.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
 "        `[reason]` is the reason for the unmute.\n"
 "        "
-msgstr "Включить пользователей.\n\n"
+msgstr "Снять заглушку с пользователей.\n\n"
 "        `<users...>` - это список имен пользователей, идентификаторов или упоминаний, разделенных пробелами.\n"
-"        `[reason]` - причина отключения звука.\n"
+"        `[reason]` - причина для снятия заглушки.\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:1373 redbot/cogs/mutes/mutes.py:1442
+#: redbot/cogs/mutes/mutes.py:1385 redbot/cogs/mutes/mutes.py:1454
 #: redbot/cogs/mutes/voicemutes.py:184
 msgid "You cannot unmute me."
-msgstr "Вы не можете включить мне звук."
+msgstr "Вы не можете снять заглушку с меня."
 
-#: redbot/cogs/mutes/mutes.py:1375 redbot/cogs/mutes/mutes.py:1444
+#: redbot/cogs/mutes/mutes.py:1387 redbot/cogs/mutes/mutes.py:1456
 #: redbot/cogs/mutes/voicemutes.py:186
 msgid "You cannot unmute yourself."
-msgstr "Вы не можете включить себе звук."
+msgstr "Вы не можете снять заглушку с себя."
 
-#: redbot/cogs/mutes/mutes.py:1417
+#: redbot/cogs/mutes/mutes.py:1429
 msgid "{users} unmuted in this server."
-msgstr "{users} включены на этом сервере."
+msgstr "с {users} была снята заглушка на этом сервере."
 
-#: redbot/cogs/mutes/mutes.py:1434
+#: redbot/cogs/mutes/mutes.py:1446
 #, docstring
 msgid "Unmute a user in this channel.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
 "        `[reason]` is the reason for the unmute.\n"
 "        "
-msgstr "Включите пользователя в этом канале.\n\n"
+msgstr "Снять заглушку с пользователя в этом канале.\n\n"
 "        `<users...>` - список имен пользователей, идентификаторов или упоминаний, разделенных пробелами.\n"
-"        `[reason]` - причина включения звука.\n"
+"        `[reason]` - причина снятия заглушки.\n"
 "        "
 
-#: redbot/cogs/mutes/mutes.py:1481 redbot/cogs/mutes/voicemutes.py:234
+#: redbot/cogs/mutes/mutes.py:1493 redbot/cogs/mutes/voicemutes.py:234
 msgid "{users} unmuted in this channel."
 msgstr "{users} включены на этом канале."
 
-#: redbot/cogs/mutes/mutes.py:1486 redbot/cogs/mutes/voicemutes.py:239
+#: redbot/cogs/mutes/mutes.py:1498 redbot/cogs/mutes/voicemutes.py:239
 msgid "The following users could not be unmuted\n"
-msgstr "Следующие пользователи не могут быть размучены\n"
+msgstr "Со следующих пользователей невозможно снятие заглушки\n"
 
 #: redbot/cogs/mutes/voicemutes.py:43
 msgid "That user is not in a voice channel."
@@ -551,11 +551,11 @@ msgstr "Этот пользователь не в голосовом канал�
 
 #: redbot/cogs/mutes/voicemutes.py:50
 msgid "I require the {perms} permission(s) in that user's channel to do that."
-msgstr "Мне требуется право(а) {perms} в канале пользователя чтобы сделать это."
+msgstr "Мне требуется право(а) {perms} в этом пользовательском канале чтобы сделать это."
 
 #: redbot/cogs/mutes/voicemutes.py:61
 msgid "You must have the {perms} permission(s) in that user's channel to use this command."
-msgstr "Вы должны иметь право(а) {perms} в канале пользователя для выполнения этой команды."
+msgstr "Вы должны иметь право(а) {perms} в этом пользовательском канале для выполнения этой команды."
 
 #: redbot/cogs/mutes/voicemutes.py:77
 #, docstring
@@ -567,25 +567,25 @@ msgid "Mute a user in their current voice channel.\n\n"
 "        Examples:\n"
 "        `[p]voicemute @member1 @member2 spam 5 hours`\n"
 "        `[p]voicemute @member1 3 days`"
-msgstr "Отключить звук пользователя в его текущем голосовом канале.\n\n"
+msgstr "Заглушить пользователя в его текущем голосовом канале.\n\n"
 "        `<users...>` - это список имен пользователей, идентификаторов или упоминаний, разделенных пробелами.\n"
-"        `[time_and_reason]` - время отключения звука и причина. Время - это\n"
+"        `[time_and_reason]` - время заглушки и причина. Время - это\n"
 "        любой допустимый отрезок времени, например, `30 минут` или `2 дня`. Если ничего не\n"
-"        не указано, отключение звука будет происходить на время, установленное по умолчанию, или на неопределенное время, если оно не установлено.\n\n"
+"        не указано, заглушка будет действовать то время, которое установлено по умолчанию, или на неопределенное время, если оно не установлено.\n\n"
 "        Примеры:\n"
 "        `[p]voicemute @member1 @member2 spam 5 hours`\n"
 "        `[p]voicemute @member1 3 дня`"
 
 #: redbot/cogs/mutes/voicemutes.py:148
 msgid "Voice mute"
-msgstr "Отключение звука голоса"
+msgstr "Заглушка голоса"
 
 #: redbot/cogs/mutes/voicemutes.py:177
 #, docstring
 msgid "Unmute a user in their current voice channel.\n\n"
 "        `<users...>` is a space separated list of usernames, ID's, or mentions.\n"
 "        `[reason]` is the reason for the unmute."
-msgstr "Включить пользователя в его текущем голосовом канале.\n\n"
+msgstr "Снять заглушку с пользователя в его текущем голосовом канале.\n\n"
 "        `<users...>` - список имен пользователей, идентификаторов или упоминаний, разделенных пробелами.\n"
-"        `[reason]` - причина включение звука."
+"        `[reason]` - причина снятия заглушки."
 

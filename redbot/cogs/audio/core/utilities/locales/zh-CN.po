@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-23 00:50+0000\n"
+"POT-Creation-Date: 2021-11-02 12:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -38,22 +38,22 @@ msgstr ""
 #: redbot/cogs/audio/core/utilities/formatting.py:107
 #: redbot/cogs/audio/core/utilities/playlists.py:562
 msgid "Connect to a voice channel first."
-msgstr ""
+msgstr "您必须先加入一个语音频道。"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:110
 #: redbot/cogs/audio/core/utilities/playlists.py:555
 msgid "Connection to Lavalink has not yet been established."
-msgstr ""
-
-#: redbot/cogs/audio/core/utilities/formatting.py:117
-msgid "Unable To Play Tracks"
-msgstr "无法播放曲目"
+msgstr "尚未建立到 Lavalink 的连接。"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:117
 #: redbot/cogs/audio/core/utilities/player.py:441
 #: redbot/cogs/audio/core/utilities/player.py:523
 msgid "Queue size limit reached."
 msgstr ""
+
+#: redbot/cogs/audio/core/utilities/formatting.py:117
+msgid "Unable To Play Tracks"
+msgstr "无法播放曲目"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:155
 #: redbot/cogs/audio/core/utilities/player.py:599
@@ -403,7 +403,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:682
 msgid "Global"
-msgstr ""
+msgstr "全局"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "the Server"
@@ -411,7 +411,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:684
 msgid "Server"
-msgstr ""
+msgstr "服务器"
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "the User"
@@ -419,7 +419,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/utilities/playlists.py:686
 msgid "User"
-msgstr ""
+msgstr "用户"
 
 #: redbot/cogs/audio/core/utilities/queue.py:40
 msgid "__Too many songs in the queue, only showing the first 500__.\n\n"

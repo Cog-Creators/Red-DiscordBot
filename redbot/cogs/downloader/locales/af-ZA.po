@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-01 23:46+0000\n"
+"POT-Creation-Date: 2021-10-16 00:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "MIME-Version: 1.0\n"
@@ -15,13 +15,13 @@ msgstr ""
 "X-Crowdin-File-ID: 20\n"
 "Language: af_ZA\n"
 
-#: redbot/cogs/downloader/checks.py:12
+#: redbot/cogs/downloader/checks.py:20
 msgid "You're about to add a 3rd party repository. The creator of Red and its community have no responsibility for any potential damage that the content of 3rd party repositories might cause.\n\n"
-"By typing '**I agree**' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\n\n"
+"By typing '{confirmation_message}' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\n\n"
 "You have **30** seconds to reply to this message."
 msgstr ""
 
-#: redbot/cogs/downloader/checks.py:36
+#: redbot/cogs/downloader/checks.py:38
 msgid "Your response has timed out, please try again."
 msgstr ""
 
@@ -796,61 +796,68 @@ msgid "That command doesn't seem to exist."
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1729
+#: redbot/cogs/downloader/downloader.py:1734
 msgid "Missing from installed repos"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1739
+#: redbot/cogs/downloader/downloader.py:1745
+#: redbot/cogs/downloader/downloader.py:1748
 msgid "Unknown"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1740
+#: redbot/cogs/downloader/downloader.py:1746
 msgid "None - this cog wasn't installed via downloader"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1743
+#: redbot/cogs/downloader/downloader.py:1750
 msgid "This command is not provided by a cog."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1749
+#: redbot/cogs/downloader/downloader.py:1756
 msgid "Command:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1750
-msgid "Cog Name:"
+#: redbot/cogs/downloader/downloader.py:1757
+msgid "Cog name:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1751
+#: redbot/cogs/downloader/downloader.py:1758
 msgid "Made by:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1752
-msgid "Repo URL:"
-msgstr ""
-
-#: redbot/cogs/downloader/downloader.py:1755
-msgid "Repo branch:"
+#: redbot/cogs/downloader/downloader.py:1759
+msgid "Repo name:"
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1760
+msgid "Repo URL:"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:1763
+msgid "Repo branch:"
+msgstr ""
+
+#: redbot/cogs/downloader/downloader.py:1768
 msgid "Command: {command}\n"
 "Cog name: {cog}\n"
 "Made by: {author}\n"
+"Repo name: {repo_name}\n"
 "Repo URL: {repo_url}\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1764
+#: redbot/cogs/downloader/downloader.py:1778
 msgid "Repo branch: {branch_name}\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1785
+#: redbot/cogs/downloader/downloader.py:1799
 msgid "Failed to update the following repositories:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1787
+#: redbot/cogs/downloader/downloader.py:1801
 msgid "Failed to update the following repository:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1790
+#: redbot/cogs/downloader/downloader.py:1804
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
 msgstr ""
 

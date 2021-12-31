@@ -18,7 +18,7 @@ msgstr ""
 #: redbot/cogs/audio/apis/interface.py:276
 #: redbot/cogs/audio/apis/interface.py:606
 msgid "Failing to get tracks, skipping remaining."
-msgstr ""
+msgstr "Tôi không lấy được mấy bài nhạc đó, nên tôi sẽ bỏ qua."
 
 #: redbot/cogs/audio/apis/interface.py:309
 #: redbot/cogs/audio/apis/spotify.py:175
@@ -28,35 +28,35 @@ msgstr ""
 
 #: redbot/cogs/audio/apis/interface.py:351
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr ""
+msgstr "Hmm.. nhìn không giống một liên kết hay playlist/album của Spotify. Thử lại đi."
 
 #: redbot/cogs/audio/apis/interface.py:477
 msgid "This doesn't seem to be a supported Spotify URL or code."
-msgstr ""
+msgstr "Hình như tôi không hỗ trợ link/code đó, hay là thử lại."
 
 #: redbot/cogs/audio/apis/interface.py:567
 msgid "The connection was reset while loading the playlist."
-msgstr ""
+msgstr "Uhh Kết nối đã bị reset khi tôi đang lấy danh sách nhạc."
 
 #: redbot/cogs/audio/apis/interface.py:578
 msgid "Player timeout, skipping remaining tracks."
-msgstr ""
+msgstr "Hết thời gian chờ, tôi skip đây."
 
 #: redbot/cogs/audio/apis/interface.py:672
 msgid " {bad_tracks} tracks cannot be queued."
-msgstr ""
+msgstr " {bad_tracks} sorry Tôi không thể nhét mấy bài này vào hàng đợi."
 
 #: redbot/cogs/audio/apis/interface.py:680
 msgid "Playlist Enqueued"
-msgstr ""
+msgstr "Danh sách đã được thêm vào hàng đợi"
 
 #: redbot/cogs/audio/apis/interface.py:681
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr ""
+msgstr "Đã thêm {num} bài hát vào hàng đợi.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:687
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
-msgstr ""
+msgstr "{time} cho đến khi bắt đầu danh sách phát lại: bắt đầu từ #{position} trong hàng đợi"
 
 #: redbot/cogs/audio/apis/interface.py:698
 msgid "Nothing found.\n"

@@ -51,15 +51,15 @@ msgstr "\n"
 
 #: redbot/cogs/audio/converters.py:87
 msgid "\"{arg}\" was not found. It must be the ID or complete name of a server which the bot can see."
-msgstr ""
+msgstr "\"{arg}\" n'a pas été trouvé. Il doit s'agir de l'ID ou du nom complet d'un serveur que le bot peut voir."
 
 #: redbot/cogs/audio/converters.py:96 redbot/cogs/audio/converters.py:136
 msgid "\"{arg}\" does not refer to a unique server. Please use the ID for the server you're trying to specify."
-msgstr ""
+msgstr "\"{arg}\" ne fait pas référence à un serveur unique. Veuillez utiliser l'ID du serveur que vous essayez de spécifier."
 
 #: redbot/cogs/audio/converters.py:127
 msgid "\"{arg}\" was not found. It must be the ID or name or mention a user which the bot can see."
-msgstr ""
+msgstr "\"{arg}\" n'a pas été trouvé. Il doit s'agir de l'ID ou du nom ou de la mention d'un utilisateur que le bot peut voir."
 
 #: redbot/cogs/audio/converters.py:176
 msgid "Could not match '{}' to a playlist."

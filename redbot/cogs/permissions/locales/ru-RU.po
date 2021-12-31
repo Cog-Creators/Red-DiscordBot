@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-28 17:07+0000\n"
+"POT-Creation-Date: 2021-10-15 22:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -345,6 +345,7 @@ msgid "Rules set."
 msgstr "Правила установлены."
 
 #: redbot/cogs/permissions/permissions.py:693
+#: redbot/cogs/permissions/permissions.py:708
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
@@ -352,10 +353,6 @@ msgstr "Вы уверены?"
 #: redbot/cogs/permissions/permissions.py:713
 msgid "Response timed out."
 msgstr "Время ответа истекло."
-
-#: redbot/cogs/permissions/permissions.py:708
-msgid "Are you sure? (y/n)"
-msgstr "Вы уверены? (y/n)"
 
 #: redbot/cogs/permissions/permissions.py:719
 msgid "Action cancelled."

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-04 07:14+0000\n"
+"POT-Creation-Date: 2021-12-25 00:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -125,7 +125,7 @@ msgid "Roll a random number.\n\n"
 "        "
 msgstr "Бросьте случайное число.\n\n"
 "        Результат будет между 1 и `<number>`.\n\n"
-"        `<number>` по умолчанию до 100.\n"
+"        `<number>` по умолчанию 100.\n"
 "        "
 
 #: redbot/cogs/general/general.py:115
@@ -141,7 +141,7 @@ msgstr "Максимально допустимое число {author.mention} 
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
-msgstr "Перевернуть монету... или пользователя.\n\n"
+msgstr "Подкинуть монету... или пользователя.\n\n"
 "        По умолчанию монета.\n"
 "        "
 
@@ -149,7 +149,7 @@ msgstr "Перевернуть монету... или пользователя.\
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
 msgstr "Хорошая попытка. Вы думаете, что это весело?\n"
-" Насколько насчет *этого* этого:\n\n"
+" Насколько насчет *этого*:\n\n"
 
 #: redbot/cogs/general/general.py:144
 msgid "*flips a coin and... "
@@ -242,276 +242,176 @@ msgid "Created on <t:{0}>. That's <t:{0}:R>!"
 msgstr "Создано на <t:{0}>. Это <t:{0}:R>!"
 
 #: redbot/cogs/general/general.py:268
-msgid "Region"
-msgstr "Регион"
-
-#: redbot/cogs/general/general.py:269
 msgid "Users online"
 msgstr "Пользователи онлайн"
 
-#: redbot/cogs/general/general.py:270
+#: redbot/cogs/general/general.py:269
 msgid "Text Channels"
 msgstr "Текстовые каналы"
 
-#: redbot/cogs/general/general.py:271
+#: redbot/cogs/general/general.py:270
 msgid "Voice Channels"
 msgstr "Голосовые каналы"
 
-#: redbot/cogs/general/general.py:272
+#: redbot/cogs/general/general.py:271
 msgid "Roles"
 msgstr "Роли"
 
-#: redbot/cogs/general/general.py:273
+#: redbot/cogs/general/general.py:272
 msgid "Owner"
 msgstr "Владелец"
 
-#: redbot/cogs/general/general.py:275
+#: redbot/cogs/general/general.py:274
 msgid "Server ID: "
 msgstr "ID сервера: "
 
-#: redbot/cogs/general/general.py:277
+#: redbot/cogs/general/general.py:276
 msgid "  •  Use {command} for more info on the server."
 msgstr "  • Используйте {command} для дополнительной информации на сервере."
 
-#: redbot/cogs/general/general.py:303
+#: redbot/cogs/general/general.py:302
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
 msgstr "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
 
-#: redbot/cogs/general/general.py:312
+#: redbot/cogs/general/general.py:311
 msgid "Humans: "
 msgstr "Люди: "
 
-#: redbot/cogs/general/general.py:313
+#: redbot/cogs/general/general.py:312
 msgid " • Bots: "
 msgstr " • Боты: "
 
-#: redbot/cogs/general/general.py:325
+#: redbot/cogs/general/general.py:324
 msgid "Users online: **{online}/{total_users}**\n"
-msgstr "Пользователи в сети: **{online}/{total_users}**\n"
+msgstr "Пользователей в сети: **{online}/{total_users}**\n"
 
-#: redbot/cogs/general/general.py:342
-msgid "__VIP__ US East "
-msgstr "__VIP__ Восток США "
-
-#: redbot/cogs/general/general.py:343
-msgid "__VIP__ US West "
-msgstr "__VIP__ Запад США "
-
-#: redbot/cogs/general/general.py:344
-msgid "__VIP__ Amsterdam "
-msgstr "__VIP__ Амстердам "
-
-#: redbot/cogs/general/general.py:345
-msgid "EU West "
-msgstr "Запад ЕС "
-
-#: redbot/cogs/general/general.py:346
-msgid "EU Central "
-msgstr "Центральный ЕС "
-
-#: redbot/cogs/general/general.py:347
-msgid "Europe "
-msgstr "Европа "
-
-#: redbot/cogs/general/general.py:348
-msgid "London "
-msgstr "Лондон "
-
-#: redbot/cogs/general/general.py:349
-msgid "Frankfurt "
-msgstr "Франкфурт "
-
-#: redbot/cogs/general/general.py:350
-msgid "Amsterdam "
-msgstr "Амстердам "
-
-#: redbot/cogs/general/general.py:351
-msgid "US West "
-msgstr "Запад США "
-
-#: redbot/cogs/general/general.py:352
-msgid "US East "
-msgstr "Восток США "
-
-#: redbot/cogs/general/general.py:353
-msgid "US South "
-msgstr "Южный США "
-
-#: redbot/cogs/general/general.py:354
-msgid "US Central "
-msgstr "Центральный США "
-
-#: redbot/cogs/general/general.py:355
-msgid "Singapore "
-msgstr "Сингапур "
-
-#: redbot/cogs/general/general.py:356
-msgid "Sydney "
-msgstr "Сидней "
-
-#: redbot/cogs/general/general.py:357
-msgid "Brazil "
-msgstr "Бразилия "
-
-#: redbot/cogs/general/general.py:358
-msgid "Hong Kong "
-msgstr "Гонконг "
-
-#: redbot/cogs/general/general.py:359
-msgid "Russia "
-msgstr "Россия "
-
-#: redbot/cogs/general/general.py:360
-msgid "Japan "
-msgstr "Япония "
-
-#: redbot/cogs/general/general.py:361
-msgid "South Africa "
-msgstr "Южная Африка "
-
-#: redbot/cogs/general/general.py:362
-msgid "India "
-msgstr "Индия "
-
-#: redbot/cogs/general/general.py:363
-msgid "Dubai "
-msgstr "Дубай "
-
-#: redbot/cogs/general/general.py:364
-msgid "South Korea "
-msgstr "Южная Корея "
-
-#: redbot/cogs/general/general.py:367
+#: redbot/cogs/general/general.py:341
 msgid "0 - None"
 msgstr "0 - нет"
 
-#: redbot/cogs/general/general.py:368
+#: redbot/cogs/general/general.py:342
 msgid "1 - Low"
 msgstr "1 - Низкий"
 
-#: redbot/cogs/general/general.py:369
+#: redbot/cogs/general/general.py:343
 msgid "2 - Medium"
 msgstr "2 - Средний"
 
-#: redbot/cogs/general/general.py:370
+#: redbot/cogs/general/general.py:344
 msgid "3 - High"
 msgstr "3 - Высокий"
 
-#: redbot/cogs/general/general.py:371
+#: redbot/cogs/general/general.py:345
 msgid "4 - Extreme"
 msgstr "4 - Экстрим"
 
-#: redbot/cogs/general/general.py:375
+#: redbot/cogs/general/general.py:349
 msgid "Animated Icon"
 msgstr "Анимированная иконка"
 
-#: redbot/cogs/general/general.py:376
+#: redbot/cogs/general/general.py:350
 msgid "Banner Image"
 msgstr "Изображение баннера"
 
-#: redbot/cogs/general/general.py:377
+#: redbot/cogs/general/general.py:351
 msgid "Commerce"
 msgstr "Коммерция"
 
-#: redbot/cogs/general/general.py:378
+#: redbot/cogs/general/general.py:352
 msgid "Community"
 msgstr "Сообщество"
 
-#: redbot/cogs/general/general.py:379
+#: redbot/cogs/general/general.py:353
 msgid "Server Discovery"
 msgstr "Обнаружение сервера"
 
-#: redbot/cogs/general/general.py:380
+#: redbot/cogs/general/general.py:354
 msgid "Featurable"
 msgstr "Чувствительный"
 
-#: redbot/cogs/general/general.py:381
+#: redbot/cogs/general/general.py:355
 msgid "Splash Invite"
 msgstr "Взрывное приглашение"
 
-#: redbot/cogs/general/general.py:382
+#: redbot/cogs/general/general.py:356
 msgid "Member list disabled"
 msgstr "Список участников отключен"
 
-#: redbot/cogs/general/general.py:383
+#: redbot/cogs/general/general.py:357
 msgid "Membership Screening enabled"
 msgstr "Членство отбора включен"
 
-#: redbot/cogs/general/general.py:384
+#: redbot/cogs/general/general.py:358
 msgid "More Emojis"
 msgstr "Больше эмодзи"
 
-#: redbot/cogs/general/general.py:385
+#: redbot/cogs/general/general.py:359
 msgid "News Channels"
 msgstr "Каналы новостей"
 
-#: redbot/cogs/general/general.py:386
+#: redbot/cogs/general/general.py:360
 msgid "Partnered"
 msgstr "Партнёр"
 
-#: redbot/cogs/general/general.py:387
+#: redbot/cogs/general/general.py:361
 msgid "Preview enabled"
 msgstr "Предварительный просмотр включен"
 
-#: redbot/cogs/general/general.py:388
+#: redbot/cogs/general/general.py:362
 msgid "Public disabled"
-msgstr "Публичный отключён"
+msgstr "Публичный сервер отключён"
 
-#: redbot/cogs/general/general.py:389
+#: redbot/cogs/general/general.py:363
 msgid "Vanity URL"
 msgstr "Персональный URL"
 
-#: redbot/cogs/general/general.py:390
+#: redbot/cogs/general/general.py:364
 msgid "Verified"
-msgstr "Подтверждено"
+msgstr "Верифицированный"
 
-#: redbot/cogs/general/general.py:391
+#: redbot/cogs/general/general.py:365
 msgid "VIP Voice Servers"
 msgstr "VIP голосовые серверы"
 
-#: redbot/cogs/general/general.py:392
+#: redbot/cogs/general/general.py:366
 msgid "Welcome Screen enabled"
 msgstr "Экран приветствия включен"
 
-#: redbot/cogs/general/general.py:400
+#: redbot/cogs/general/general.py:374
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr "{bot_name} присоединился к этому серверу на {bot_join}. Это более {since_join} дней назад!"
 
-#: redbot/cogs/general/general.py:422
+#: redbot/cogs/general/general.py:396
 msgid "Members:"
-msgstr "Члены:"
+msgstr "Участники:"
 
-#: redbot/cogs/general/general.py:424
+#: redbot/cogs/general/general.py:398
 msgid "Channels:"
 msgstr "Каналы:"
 
-#: redbot/cogs/general/general.py:425
+#: redbot/cogs/general/general.py:399
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}"
 msgstr "💬 Текст: {text}\n"
 "🔊 Голос: {voice}"
 
-#: redbot/cogs/general/general.py:431
+#: redbot/cogs/general/general.py:405
 msgid "Utility:"
-msgstr "Утилита:"
+msgstr "Инструменты:"
 
-#: redbot/cogs/general/general.py:432
+#: redbot/cogs/general/general.py:406
 msgid "Owner: {owner}\n"
-"Voice region: {region}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
-msgstr "Владелец: {owner}\n"
-"регион голоса: {region}\n"
-"Уровень проверки: {verif}\n"
-"ID сервера: {id}{shard_info}"
+msgstr ""
 
-#: redbot/cogs/general/general.py:444
+#: redbot/cogs/general/general.py:417
 msgid "Misc:"
 msgstr "Прочее:"
 
-#: redbot/cogs/general/general.py:445
+#: redbot/cogs/general/general.py:418
 msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
@@ -521,15 +421,15 @@ msgstr "AFK канал: {afk_chan}\n"
 "Пользовательские смайлы: {emoji_count}\n"
 "Роли: {role_count}"
 
-#: redbot/cogs/general/general.py:450
+#: redbot/cogs/general/general.py:423
 msgid "Not set"
 msgstr "Не задано"
 
-#: redbot/cogs/general/general.py:458
+#: redbot/cogs/general/general.py:431
 msgid "Server features:"
 msgstr "Функции сервера:"
 
-#: redbot/cogs/general/general.py:460
+#: redbot/cogs/general/general.py:433
 msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
@@ -539,11 +439,11 @@ msgstr "Уровень {boostlevel} с {nitroboosters} повышает\n"
 "Ограничение смайлов: {emojis_limit}\n"
 "Максимальный битрейт VC: {bitrate}"
 
-#: redbot/cogs/general/general.py:472
+#: redbot/cogs/general/general.py:445
 msgid "Nitro Boost:"
 msgstr "Ускорение Nitro:"
 
-#: redbot/cogs/general/general.py:481
+#: redbot/cogs/general/general.py:454
 #, docstring
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
@@ -552,29 +452,29 @@ msgstr "Поиск городского словаря.\n\n"
 "        Использует неофициальный API городского словаря.\n"
 "        "
 
-#: redbot/cogs/general/general.py:499 redbot/cogs/general/general.py:568
+#: redbot/cogs/general/general.py:472 redbot/cogs/general/general.py:541
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr "Записи Urban Dictionary не найдены, или в процессе произошла ошибка."
 
-#: redbot/cogs/general/general.py:505
+#: redbot/cogs/general/general.py:478
 msgid "No Urban Dictionary entries were found."
 msgstr "Записи Urban Dictionary не найдены."
 
-#: redbot/cogs/general/general.py:511
+#: redbot/cogs/general/general.py:484
 msgid "{word} by {author}"
 msgstr "{word} от {author}"
 
-#: redbot/cogs/general/general.py:519 redbot/cogs/general/general.py:550
+#: redbot/cogs/general/general.py:492 redbot/cogs/general/general.py:523
 msgid "{definition}\n\n"
 "**Example:** {example}"
 msgstr "{definition}\n\n"
 "**Пример:** {example}"
 
-#: redbot/cogs/general/general.py:525
+#: redbot/cogs/general/general.py:498
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr "{thumbs_down} Вниз / {thumbs_up} Вверх, Powered by Urban Dictionary."
 
-#: redbot/cogs/general/general.py:544
+#: redbot/cogs/general/general.py:517
 msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"

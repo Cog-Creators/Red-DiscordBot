@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-09-07 21:44+0000\n"
+"POT-Creation-Date: 2021-12-31 01:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "MIME-Version: 1.0\n"
@@ -19,35 +19,39 @@ msgstr ""
 msgid "\"{argument}\" is not a number."
 msgstr "\"{argument}\" ni število."
 
-#: redbot/core/commands/converter.py:84
+#: redbot/core/commands/converter.py:85
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr "`{unit}` ni veljavna časovna enota za ta ukaz"
 
-#: redbot/core/commands/converter.py:140 redbot/core/commands/converter.py:202
+#: redbot/core/commands/converter.py:141 redbot/core/commands/converter.py:203
 msgid "The time set is way too high, consider setting something reasonable."
 msgstr "Nastavljeni čas je previsok, razmislite o nastavitvi nečesa razumnega."
 
-#: redbot/core/commands/converter.py:144
+#: redbot/core/commands/converter.py:145
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr "Ta čas je prevelik za ta ukaz. (Maksimalno: {maximum})"
 
-#: redbot/core/commands/converter.py:150
+#: redbot/core/commands/converter.py:151
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr "Ta čas je prenizek za ta ukaz. (Minimalno: {minimum})"
 
-#: redbot/core/commands/converter.py:280
+#: redbot/core/commands/converter.py:232
+msgid "'{input}' doesn't look like a valid user ID."
+msgstr ""
+
+#: redbot/core/commands/converter.py:265
 msgid "Unexpected key {key}"
 msgstr "Neveljaven ključ {key}"
 
-#: redbot/core/commands/converter.py:522
+#: redbot/core/commands/converter.py:507
 msgid "Expected one of: {}"
 msgstr "Pričakoval sem nekaj izmed {}"
 
-#: redbot/core/commands/converter.py:545
+#: redbot/core/commands/converter.py:530
 msgid "Command \"{arg}\" not found."
 msgstr ""
 
-#: redbot/core/commands/converter.py:555
+#: redbot/core/commands/converter.py:540
 msgid "Cog \"{arg}\" not found."
 msgstr ""
 
@@ -118,8 +122,8 @@ msgstr "**__Pod ukazi__** (continued)"
 msgid "Subcommands:"
 msgstr "Podukazi:"
 
-#: redbot/core/commands/help.py:470 redbot/core/commands/help.py:725
-#: redbot/core/commands/help.py:738 redbot/core/commands/help.py:757
+#: redbot/core/commands/help.py:470 redbot/core/commands/help.py:730
+#: redbot/core/commands/help.py:743 redbot/core/commands/help.py:762
 msgid "{ctx.me.display_name} Help Menu"
 msgstr "{ctx.me.display_name} Meni pomoči"
 
@@ -153,19 +157,19 @@ msgstr "{title} (continued)"
 msgid "No Category:"
 msgstr "Brez kategorije:"
 
-#: redbot/core/commands/help.py:734
+#: redbot/core/commands/help.py:739
 msgid "Help topic for *{command_name}* not found."
 msgstr "Tema pomoči za *{command_name}* ne obstaja."
 
-#: redbot/core/commands/help.py:751
+#: redbot/core/commands/help.py:756
 msgid "Command *{command_name}* has no subcommand named *{not_found}*."
 msgstr "Ukaz *{command_name}* nima pod ukazov z imenom *{not_found}*."
 
-#: redbot/core/commands/help.py:830
+#: redbot/core/commands/help.py:835
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
 msgstr "Sporočila o pomoči vam nisem mogel poslati v DM. Ali ste me blokirali ali ste onemogočili DM na tem strežniku."
 
-#: redbot/core/commands/help.py:871
+#: redbot/core/commands/help.py:876
 #, docstring
 msgid "\n"
 "    I need somebody\n"
