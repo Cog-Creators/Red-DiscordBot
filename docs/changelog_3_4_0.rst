@@ -56,6 +56,11 @@ Cleanup
 
 - Restricted ``[p]cleanupset notify`` to only be invokable in server channels (:issue:`5466`)
 
+Custom Commands
+***************
+
+- Added 2000 character limit for custom command responses to prevent Nitro users from adding longer responses than a Discord bot can send (:issue:`5499`)
+
 Dev Cog
 *******
 
