@@ -3308,15 +3308,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4498
 msgid "I cannot allow you to do this, as it would remove your ability to run commands, please ensure to add yourself to the allowlist first."
-msgstr ""
+msgstr "Ne mogu vam to dopustiti jer bi ste uklonili svoju mogućnost pokretanja naredbi. Prvo se dodajte na popis dopuštenih."
 
 #: redbot/core/core_commands.py:4507
 msgid "Users and/or roles have been added to the allowlist."
-msgstr ""
+msgstr "Korisnici i/ili uloge dodani su na popis dopuštenih."
 
 #: redbot/core/core_commands.py:4509
 msgid "User or role has been added to the allowlist."
-msgstr ""
+msgstr "Korisnik ili uloga dodani su na popis dopuštenih."
 
 #: redbot/core/core_commands.py:4513
 #, docstring
@@ -3325,19 +3325,23 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]localallowlist list`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Ispiši korisnike i uloge na serverovom popisu dopuštenih.\n\n"
+"        **Example:**\n"
+"            - `[p]localallowlist list`\n"
+"        "
 
 #: redbot/core/core_commands.py:4525
 msgid "Allowed users and/or roles:"
-msgstr ""
+msgstr "Dopušteni korisnici i/ili uloge:"
 
 #: redbot/core/core_commands.py:4527
 msgid "Allowed user or role:"
-msgstr ""
+msgstr "Dopušten korisnik ili uloga:"
 
 #: redbot/core/core_commands.py:4531 redbot/core/core_commands.py:4651
 msgid "Unknown or Deleted User/Role"
-msgstr ""
+msgstr "Nepoznat ili izbrisan korisnik/uloga"
 
 #: redbot/core/core_commands.py:4541
 #, docstring
@@ -3351,19 +3355,28 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users_or_roles...>` - The users or roles to remove from the local allowlist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Uklanja korisnika ili ulogu s popisa dopuštenih.\n\n"
+"        Lokalni popis dopuštenih bit će onemogućen ako se uklone svi korisnici.\n\n"
+"        **Primjeri:**\n"
+"            - `[p]localallowlist remove @26 @Will` - Uklanja dva korisnika s lokalnog popisa dopuštenih.\n"
+"            - `[p]localallowlist remove 262626262626262626` - Uklanja korisnika prema ID-u.\n"
+"            - `[p]localallowlist remove \"Super Admins\"` - Uklanja ulogu s razmakom u imenu bez spominjanja.\n\n"
+"        **Argumenti:**\n"
+"            - `<users_or_roles...>` - Korisnici ili uloge koje treba ukloniti s lokalnog popisa dopuštenih.\n"
+"        "
 
 #: redbot/core/core_commands.py:4562
 msgid "I cannot allow you to do this, as it would remove your ability to run commands."
-msgstr ""
+msgstr "Ne mogu ti dozvoliti da to učiniš jer bi to uklonilo tvoju sposobnost pokretanja naredbi."
 
 #: redbot/core/core_commands.py:4570
 msgid "Users and/or roles have been removed from the server allowlist."
-msgstr ""
+msgstr "Korisnici i/ili uloge uklonjeni su sa serverovog popisa dopuštenih."
 
 #: redbot/core/core_commands.py:4572
 msgid "User or role has been removed from the server allowlist."
-msgstr ""
+msgstr "Korisnik ili uloga uklonjeni su sa serverovog popisa dopuštenih."
 
 #: redbot/core/core_commands.py:4576
 #, docstring
@@ -3373,11 +3386,16 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]localallowlist clear`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Briše popis dopuštenih.\n\n"
+"        Ovo onemogućuje lokalni popis dopuštenih i briše sve unose.\n\n"
+"        **Primjeri:**\n"
+"            - `[p]localallowlist clear`\n"
+"        "
 
 #: redbot/core/core_commands.py:4585
 msgid "Server allowlist has been cleared."
-msgstr ""
+msgstr "Serverov popis dopuštenih je izbrisan."
 
 #: redbot/core/core_commands.py:4591
 #, docstring
@@ -3385,7 +3403,10 @@ msgid "\n"
 "        Commands to manage the server specific blocklist.\n\n"
 "        Use `[p]localblocklist clear` to disable the blocklist\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Naredbe za upravljanje serverovim popisom blokiranih.\n\n"
+"        Upotrijebite `[p]localblocklist clear` da biste onemogućili popis blokiranih\n"
+"        "
 
 #: redbot/core/core_commands.py:4602
 #, docstring
@@ -3398,27 +3419,35 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users_or_roles...>` - The users or roles to add to the local blocklist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Dodaje korisnika ili uloga na lokalni popis blokiranih.\n\n"
+"        **Primjeri:**\n"
+"            - `[p]localblocklist add @26 @Will` - Dodaje dva korisnika na lokalni popis blokiranih.\n"
+"            - `[p]localblocklist add 262626262626262626` - Blokira korisnika prema ID-u.\n"
+"            - `[p]localblocklist add \"Bad Apples\"` - Blokira ulogu s razmakom u imenu bez spominjanja.\n\n"
+"        **Argumenti:**\n"
+"            - `<users_or_roles...>` - Korisnici ili uloge koje dodajete na lokalni popis blokiranih.\n"
+"        "
 
 #: redbot/core/core_commands.py:4616
 msgid "You cannot add yourself to the blocklist!"
-msgstr ""
+msgstr "Ne možete dodati sebe na popis blokiranih!"
 
 #: redbot/core/core_commands.py:4619
 msgid "You cannot add the guild owner to the blocklist!"
-msgstr ""
+msgstr "Ne možete dodati vlasnika servera na popis blokiranih!"
 
 #: redbot/core/core_commands.py:4622
 msgid "You cannot add a bot owner to the blocklist!"
-msgstr ""
+msgstr "Ne možete dodati vlasnika bota na popis blokiranih!"
 
 #: redbot/core/core_commands.py:4627
 msgid "Users and/or roles have been added from the server blocklist."
-msgstr ""
+msgstr "Korisnici i/ili uloge dodani su sa serverovog popisa blokiranih."
 
 #: redbot/core/core_commands.py:4629
 msgid "User or role has been added from the server blocklist."
-msgstr ""
+msgstr "Korisnik ili uloga dodani su sa serverovog popisa blokiranih."
 
 #: redbot/core/core_commands.py:4633
 #, docstring
@@ -3427,15 +3456,19 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]localblocklist list`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Navedite korisnike i uloge na serverovom popisu blokiranih.\n\n"
+"        **Primjer:**\n"
+"            - `[p]localblocklist list`\n"
+"        "
 
 #: redbot/core/core_commands.py:4645
 msgid "Blocked users and/or roles:"
-msgstr ""
+msgstr "Blokirani korisnici i/ili uloge:"
 
 #: redbot/core/core_commands.py:4647
 msgid "Blocked user or role:"
-msgstr ""
+msgstr "Blokiran korisnik ili uloga:"
 
 #: redbot/core/core_commands.py:4661
 #, docstring
@@ -3448,15 +3481,23 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users_or_roles...>` - The users or roles to remove from the local blocklist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Uklanja korisnika ili ulogu s lokalnog popisa blokiranih.\n\n"
+"        **Primjeri:**\n"
+"            - `[p]localblocklist remove @26 @Will` - Uklanja dva korisnika s lokalnog popisa blokiranih.\n"
+"            - `[p]localblocklist remove 262626262626262626` - Odblokira korisnika prema ID-u.\n"
+"            - `[p]localblocklist remove \"Bad Apples\"` - Odblokira ulogu s razmakom u imenu bez spominjanja.\n\n"
+"        **Argumenti:**\n"
+"            - `<users_or_roles...>` - Korisnici ili uloge koje treba ukloniti s lokalnog popisa blokiranih.\n"
+"        "
 
 #: redbot/core/core_commands.py:4675
 msgid "Users and/or roles have been removed from the server blocklist."
-msgstr ""
+msgstr "Korisnici i/ili uloge uklonjeni su sa serverovog popisa blokiranih."
 
 #: redbot/core/core_commands.py:4677
 msgid "User or role has been removed from the server blocklist."
-msgstr ""
+msgstr "Korisnik ili uloga uklonjeni su sa serverovog popisa blokiranih."
 
 #: redbot/core/core_commands.py:4681
 #, docstring
@@ -3467,15 +3508,15 @@ msgid "\n"
 "            - `[p]blocklist clear`\n"
 "        "
 msgstr "\n"
-"        Briše popis blokiranih servera.\n\n"
-"        Ovo onemogućuje popis blokiranih servera i briše sve unose.\n\n"
+"        Briše serverov popis blokiranih.\n\n"
+"        Ovo onemogućuje serverov popis blokiranih i briše sve unose.\n\n"
 "        **Primjer:**\n"
 "            - `[p]blocklist clear`\n"
 "        "
 
 #: redbot/core/core_commands.py:4690
 msgid "Server blocklist has been cleared."
-msgstr "Popis blokiranih servera je izbrisan."
+msgstr "Serverov popis blokiranih je izbrisan."
 
 #: redbot/core/core_commands.py:4695
 #, docstring
