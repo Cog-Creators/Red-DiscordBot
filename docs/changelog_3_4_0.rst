@@ -85,6 +85,7 @@ Mod
 ***
 
 - ``[p]voicekick`` now sends a response when the action succeeds (:issue:`5367`)
+- Fixed an error with ``[p]tempban`` failing to send an invite link when a server has an unset vanity URL (:issue:`5472`)
 - Fixed explanations of example usage for ``[p]ban``, ``[p]kick``, and ``[p]tempban`` commands (:issue:`5372`)
 - Fixed a typo in one of ``[p]unban``'s error messages (:issue:`5470`)
 
