@@ -370,9 +370,7 @@ class General(commands.Cog):
                 "SEVEN_DAY_THREAD_ARCHIVE": _("7 day thread archive"),
                 "THREE_DAY_THREAD_ARCHIVE": _("3 day thread archive"),
                 "THERADS_ENABLED": _("Threads"),
-                "VANITY_URL": _("Vanity URL"),
                 "VERIFIED": _("Verified"),
-                "VIP_REGIONS": _("VIP Voice Servers"),
                 "WELCOME_SCREEN_ENABLED": _("Welcome Screen enabled"),
             }
             guild_features_list = [
