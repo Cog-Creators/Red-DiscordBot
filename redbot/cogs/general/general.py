@@ -361,6 +361,7 @@ class General(commands.Cog):
                 "NEW_THREAD_PERMISSIONS": _("New thread permissions"),
                 "VIP_REGIONS": _("VIP Voice Servers"),
                 "VANITY_URL": _("Vanity URL"),
+                "VERIFIED": _("Verified"),
                 "PARTNERED": _("Partnered"),
                 "PREVIEW_ENABLED": _("Preview enabled"),
                 "PUBLIC_DISABLED": _("Public disabled"),
@@ -370,7 +371,6 @@ class General(commands.Cog):
                 "SEVEN_DAY_THREAD_ARCHIVE": _("7 day thread archive"),
                 "THREE_DAY_THREAD_ARCHIVE": _("3 day thread archive"),
                 "THERADS_ENABLED": _("Threads"),
-                "VERIFIED": _("Verified"),
                 "WELCOME_SCREEN_ENABLED": _("Welcome Screen enabled"),
             }
             guild_features_list = [
