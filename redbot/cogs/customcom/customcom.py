@@ -4,7 +4,7 @@ import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal
+from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
 from urllib.parse import quote_plus
 
 import discord
@@ -40,6 +40,10 @@ class OnCooldown(CCError):
 
 
 class CommandNotEdited(CCError):
+    pass
+
+
+class ResponseTooLong(CCError):
     pass
 
 
@@ -91,6 +95,14 @@ class CommandObj:
 
             if msg.content.lower() == "exit()":
                 break
+            elif len(msg.content) > 2000:
+                await ctx.send(
+                    _(
+                        "The text response you're trying to create has more than 2000 characters.\n"
+                        "I cannot send messages that are longer than 2000 characters, please try again."
+                    )
+                )
+                continue
             else:
                 try:
                     this_args = ctx.cog.prepare_args(msg.content)
@@ -126,11 +138,18 @@ class CommandObj:
         else:
             raise NotFound()
 
-    async def create(self, ctx: commands.Context, command: str, *, response):
+    async def create(
+        self, ctx: commands.Context, command: str, *, response: Union[str, List[str]]
+    ):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
+        # Check against those pesky nitro users!
+        if isinstance(response, str) and len(response) > 2000:
+            raise ResponseTooLong()
+        elif isinstance(response, list) and any([len(i) > 2000 for i in response]):
+            raise ResponseTooLong()
         # test to raise
         ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
         author = ctx.message.author
@@ -186,6 +205,8 @@ class CommandObj:
 
         if response:
             # test to raise
+            if len(response) > 2000:
+                raise ResponseTooLong()
             ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
             ccinfo["response"] = response
 
@@ -369,6 +390,13 @@ class CustomCommands(commands.Cog):
                     command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
+        except ResponseTooLong:  # This isn't needed, however may be a good idea to keep this.
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @cc_create.command(name="simple")
     @checks.mod_or_permissions(administrator=True)
@@ -401,6 +429,13 @@ class CustomCommands(commands.Cog):
             )
         except ArgParseError as e:
             await ctx.send(e.args[0])
+        except ResponseTooLong:
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @customcom.command(name="cooldown")
     @checks.mod_or_permissions(administrator=True)
@@ -497,6 +532,13 @@ class CustomCommands(commands.Cog):
             await ctx.send(e.args[0])
         except CommandNotEdited:
             pass
+        except ResponseTooLong:
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @customcom.command(name="list")
     @checks.bot_has_permissions(add_reactions=True)
