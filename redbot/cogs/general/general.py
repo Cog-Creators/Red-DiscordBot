@@ -360,7 +360,6 @@ class General(commands.Cog):
                 "MORE_EMOJI": _("More Emojis"),
                 "NEWS": _("News Channels"),
                 "NEW_THREAD_PERMISSIONS": _("New thread permissions"),
-                "PARTNERED": _("Partnered"),
                 "PREVIEW_ENABLED": _("Preview enabled"),
                 "PUBLIC_DISABLED": _("Public disabled"),
                 "VIP_REGIONS": _("VIP Voice Servers"),
