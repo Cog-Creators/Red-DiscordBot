@@ -110,8 +110,8 @@ Developer changelog
 -------------------
 
 - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
-- Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
-- Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
+- Added optional ``check_permissions`` keyword-only argument to `RedBase.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
+- Added `RedBase.get_invite_url()` and `RedBase.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
 - Changed the output of ``CORE__LOAD``, ``CORE__RELOAD``, and ``CORE__UNLOAD`` RPC methods to a dictionary (:issue:`5451`, :issue:`5453`)
 
 
