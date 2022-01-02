@@ -11,7 +11,6 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from typing import (
     TYPE_CHECKING,
-    Generic,
     Optional,
     Optional as NoParseOptional,
     Tuple,
@@ -23,7 +22,6 @@ from typing import (
     Union as UserInputOptional,
 )
 
-import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import BadArgument
 

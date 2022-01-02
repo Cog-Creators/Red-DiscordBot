@@ -11,7 +11,6 @@ import re
 import functools
 import weakref
 from typing import (
-    Any,
     Awaitable,
     Callable,
     Dict,
@@ -22,7 +21,6 @@ from typing import (
     Union,
     MutableMapping,
     TYPE_CHECKING,
-    cast,
 )
 
 import discord
