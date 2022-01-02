@@ -302,7 +302,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_seek(self, ctx: commands.Context, seconds: Union[int, str]):
-        """Seek ahead or behind on a track by seconds or a to a specific time.
+        """Seek ahead or behind on a track by seconds or to a specific time.
 
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).
         """
