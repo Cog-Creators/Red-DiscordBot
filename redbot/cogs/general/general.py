@@ -356,7 +356,6 @@ class General(commands.Cog):
                 "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
                 "MEMBER_LIST_DISABLED": _("Member list disabled"),
                 "MEMBER_PROFILES": _("Member Profiles"),
-                "MORE_EMOJI": _("More Emojis"),
                 "NEWS": _("News Channels"),
                 "NEW_THREAD_PERMISSIONS": _("New thread permissions"),
                 "VIP_REGIONS": _("VIP Voice Servers"),
