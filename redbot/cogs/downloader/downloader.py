@@ -1735,7 +1735,7 @@ class Downloader(commands.Cog):
                     if cog_installable.repo is None
                     else cog_installable.repo.name
                 )
-                cog_name = "{} ({})".format(cog_installable.name, cog.__class__.__name__)
+                cog_name = f"{cog_installable.name} ({cog.__class__.__name__})"
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
