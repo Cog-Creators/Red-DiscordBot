@@ -956,7 +956,7 @@ class KickBanMixin(MixinMeta):
                 except discord.HTTPException:
                     await ctx.send(
                         _(
-                            "Something went wrong when attempting to send that user"
+                            "Something went wrong when attempting to send that user "
                             "an invite. Here's the link so you can try: {invite_link}"
                         ).format(invite_link=invite.url)
                     )

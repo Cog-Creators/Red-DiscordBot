@@ -155,6 +155,7 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Set the channel where warnings should be sent to.
+
         Leave empty to use the channel `[p]warn` command was called in.
         """
         guild = ctx.guild
@@ -190,6 +191,7 @@ class Warnings(commands.Cog):
     @commands.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
         """Manage automated actions for Warnings.
+
         Actions are essentially command macros. Any command can be run
         when the action is initially triggered, and/or when the action
         is lifted.
@@ -203,6 +205,7 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     async def action_add(self, ctx: commands.Context, name: str, points: int):
         """Create an automated action.
+
         Duplicate action names are not allowed.
         """
         guild = ctx.guild
@@ -254,6 +257,7 @@ class Warnings(commands.Cog):
     @commands.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):
         """Manage warning reasons.
+
         Reasons must be given a name, description and points value. The
         name of the reason must be given when a user is warned.
         """
@@ -368,6 +372,7 @@ class Warnings(commands.Cog):
         reason: str,
     ):
         """Warn the user for the specified reason.
+
         `<points>` number of points the warning should be for. If no number is supplied
         1 point will be given. Pre-set warnings disregard this.
         `<reason>` is reason for the warning. This can be a registered reason,

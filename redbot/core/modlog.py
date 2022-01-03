@@ -467,10 +467,21 @@ class Case:
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
             else:
-                user = f"{self.last_known_username} ({self.user})"
+                # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
+                name = self.last_known_username[:-5]
+                discriminator = self.last_known_username[-4:]
+                user = (
+                    f"\N{FIRST STRONG ISOLATE}{name}"
+                    f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
+                )
         else:
+            # isolate the name so that the direction of the discriminator and ID do not get changed
+            # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
             user = escape_spoilers(
-                filter_invites(f"{self.user} ({self.user.id})")
+                filter_invites(
+                    f"\N{FIRST STRONG ISOLATE}{self.user.name}"
+                    f"\N{POP DIRECTIONAL ISOLATE}#{self.user.discriminator} ({self.user.id})"
+                )
             )  # Invites and spoilers get rendered even in embeds.
 
         if embed:

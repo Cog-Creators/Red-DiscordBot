@@ -2767,7 +2767,7 @@ list of key,values as described by the cog requesting this command.
 
 
 **Examples:**
-    - ``[p]set api Spotify redirect_uri localhost``
+    - ``[p]set api spotify redirect_uri localhost``
     - ``[p]set api github client_id,whoops client_secret,whoops``
 
 **Arguments:**
@@ -2812,8 +2812,8 @@ set api remove
 Remove the given services with all their keys and tokens.
 
 **Examples:**
-    - ``[p]set api remove Spotify``
-    - ``[p]set api remove github audiodb``
+    - ``[p]set api remove spotify``
+    - ``[p]set api remove github youtube``
 
 **Arguments:**
     - ``<services...>`` - The services to remove.
@@ -3651,7 +3651,7 @@ Sets Red's server prefix(es).
 
     This is not additive. It will replace all current server prefixes.
 
-    You cannot have a prefix with more than 20 characters.
+    You cannot have a prefix with more than 25 characters.
 
 **Examples:**
     - ``[p]set serverprefix !``

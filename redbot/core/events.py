@@ -380,7 +380,7 @@ def init_events(bot, cli_flags):
         await _guild_added(guild)
 
     @bot.event
-    async def on_guild_leave(guild: discord.Guild):
+    async def on_guild_remove(guild: discord.Guild):
         # Clean up any unneeded checks
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:

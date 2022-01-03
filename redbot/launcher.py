@@ -10,9 +10,14 @@ import argparse
 
 from redbot import MIN_PYTHON_VERSION
 from redbot.setup import (
-    load_existing_config,
+    basic_setup,
+    remove_instance,
+    remove_instance_interaction,
+    create_backup,
 )
-from redbot.core import __version__
+from redbot.core import __version__, version_info as red_version_info, VersionInfo
+from redbot.core.cli import confirm
+from redbot.core.data_manager import load_existing_config
 
 if sys.platform == "linux":
     import distro  # pylint: disable=import-error
