@@ -4,6 +4,13 @@
 /redbot/cogs/streams/* @palmtree5
 /redbot/cogs/mutes/* @TrustyJAID
 
+# Docs - Install and update guides
+/docs/install_guides/** @jack1142
+/docs/update_red.rst @jack1142
+
+# Docs - Version guarantees
+/docs/version_guarantees.rst @jack1142
+
 # Trivia Lists
 /redbot/cogs/trivia/data/lists/whosthatpokemon*.yaml @aikaterna
 
