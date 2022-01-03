@@ -300,17 +300,28 @@ def _get_ll_player(guild: discord.Guild) -> lavalink.Player:
 def all_players():
     return list(_players.values())
 
-class Player():
+
+class Player:
     def __init__(self, bot, channel):
         self._bot = bot
         self._player = lavalink.get_player(channel.guild.id)
         self._guild = channel.guild
-        self._channel = channel
         self._config = _config
         self._local_folder_current_path = None
         self._lavalink = _lavalink
         self._api_interface = _api_interface
         self._server_manager = _server_manager
+
+    def __repr__(self):
+        return (
+            "<Player: "
+            f"guild={self.guild.name!r} ({self.guild.id}), "
+            f"channel={self.channel.name!r} ({self.channel.id}), "
+            f"playing={self.is_playing}, paused={self.paused}, volume={self.volume}, "
+            f"queue_size={len(self.queue)}, current={self.current!r}, "
+            f"position={self.position}, "
+            f"length={self.current.length if self.current else 0}>"
+        )
 
     @property
     def bot(self):
@@ -319,7 +330,7 @@ class Player():
     @property
     def channel(self):
         """discord.VoiceChannel: The current voice channel"""
-        return self._channel
+        return self._player.channel
 
     @property
     def current(self):
@@ -416,7 +427,7 @@ class Player():
         elif bump or bump_and_skip:
             self.queue.insert(0, track)
             if bump_and_skip:
-                if self.queue:
+                if self.current:
                     await self.skip(requester)
 
     async def _enqueue_tracks(self,
@@ -521,7 +532,7 @@ class Player():
                     track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
-                            "vc": self._channel.id,
+                            "vc": self.channel.id,
                             "requester": requester.id
                         }
                     )
@@ -623,8 +634,8 @@ class Player():
                     requester: discord.Member,
                     skip_to_track: int = None) -> None:
         autoplay = await self._config.guild(self._guild).auto_play()
-        if not player.current or (not player.queue and not autoplay):
-            raise AudioError("Nothing in the queue")
+        if not player.current:
+            raise AudioError("Nothing playing")
 
         elif autoplay and not player.queue:
             await player.skip()
@@ -638,7 +649,7 @@ class Player():
             if player.repeat:
                 queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
             player.queue = player.queue[
-                min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
+                min(skip_to_track - 1, len(player.queue) - 1): len(player.queue)
             ]
         self._bot.dispatch("red_audio_track_skip", self._guild, player.current, requester)
         await player.play()
@@ -653,7 +664,7 @@ class Player():
         self._bot.dispatch("red_audio_audio_disconnect", self._guild)
 
         if IS_DEBUG:
-            log_player.debug(f"Disconnected from {self._channel} in {self._guild}")
+            log_player.debug(f"Disconnected from {self.channel} in {self._guild}")
 
         del _players[self._guild.id]
         del self
@@ -716,7 +727,7 @@ class Player():
             return load_result.tracks, load_result.playlist_info
         else:
             if load_result.exception_message:
-                raise load_result.exception_message
+                log.exception(load_result.exception_message)
             else:
                 raise AudioError("Track lookup failed.")
 
@@ -763,10 +774,15 @@ class Player():
         deafen: bool
             Whether or not the player deafens
         """
-        player = self._player
-        self._channel = channel
+        if channel != self.channel:
+            player = self._player
 
-        await player.move_to(channel)
+            await player.move_to(channel)
+
+            # player._last_channel_id = self.channel.id
+            # player.channel = channel
+            #
+            # await player.connect(True)
 
     async def pause(self) -> None:
         """Pauses the player in a guild"""
