@@ -740,7 +740,7 @@ class AudioAPIInterface:
                 log.debug(f"Querying Lavalink api for {query_string}")
             called_api = True
             try:
-                results = await player.load_tracks(query_string)
+                results = await player._ll_player.load_tracks(query_string)
             except KeyError:
                 results = None
             except RuntimeError:

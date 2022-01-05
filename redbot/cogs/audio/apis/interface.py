@@ -1011,7 +1011,7 @@ class AudioAPIInterface:
                 player.guild,
                 track,
                 player.guild.me,
-                player,
+                player._ll_player,
             )
             if notify_channel_id:
                 await self.config.guild_from_id(
