@@ -441,6 +441,69 @@ class ModSettings(MixinMeta):
         await ctx.send(msg)
 
     @modset.command()
+    @commands.guild_only()
+    async def kickmessage(self, ctx: commands.Context, *, message: str):
+        """Set the message sent when a user is kicked.
+
+        Available placeholders:
+            {user} - member that was banned.
+            {moderator} - moderator that banned the member.
+            {reason} - reason for the ban.
+            {guild} - server name.
+        """
+        guild = ctx.guild
+        await self.config.guild(guild).kick_message.set(message)
+        await ctx.send(_("Kick message updated."))
+
+    @modset.command()
+    @commands.guild_only()
+    async def banmessage(self, ctx: commands.Context, *, message: str):
+        """Set the message sent when a user is banned.
+
+        Available placeholders:
+            {user} - member that was banned.
+            {moderator} - moderator that banned the member.
+            {reason} - reason for the ban.
+            {guild} - server name.
+            {days} - number of days of messages deleted.
+        """
+        guild = ctx.guild
+        await self.config.guild(guild).kick_message.set(message)
+        await ctx.send(_("Ban message updated."))
+
+    @modset.command()
+    @commands.guild_only()
+    async def tempbanmessage(self, ctx: commands.Context, *, message: str):
+        """Set the message sent when a user is tempbanned.
+
+        Available placeholders:
+            {user} - member that was banned.
+            {moderator} - moderator that banned the member.
+            {reason} - reason for the ban.
+            {guild} - server name.
+            {days} - number of days of messages deleted.
+            {duration} - duration timedelta of the tempban.
+        """
+        guild = ctx.guild
+        await self.config.guild(guild).tempban_message.set(message)
+        await ctx.send(_("Tempban message updated."))
+
+    @modset.command()
+    @commands.guild_only()
+    async def unbanmessage(self, ctx: commands.Context, *, message: str):
+        """Set the message sent when a user is unbanned.
+
+        Available placeholders:
+            {user} - member that was banned.
+            {moderator} - moderator that banned the member.
+            {reason} - reason for the ban.
+            {guild} - server name.
+        """
+        guild = ctx.guild
+        await self.config.guild(guild).unban_message.set(message)
+        await ctx.send(_("Unban message updated."))
+
+    @modset.command()
     @commands.is_owner()
     async def trackallnames(self, ctx: commands.Context, enabled: bool = None):
         """

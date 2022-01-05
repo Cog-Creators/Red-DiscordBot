@@ -61,6 +61,10 @@ class Mod(
         "default_days": 0,
         "default_tempban_duration": 60 * 60 * 24,
         "track_nicknames": True,
+        "kick_message": _("Done. That felt good."),
+        "ban_message": _("Done. That felt good."),
+        "tempban_message": _("Done. Enough chaos for now."),
+        "unban_message": _("Unbanned that user from this server."),
     }
 
     default_channel_settings = {"ignored": False}
