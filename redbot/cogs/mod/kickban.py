@@ -31,7 +31,7 @@ class KickBanMixin(MixinMeta):
 
     # https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/redbot/cogs/customcom/customcom.py#L824
     @staticmethod
-    def transform_parameter(result, message, objects) -> str:
+    def transform_parameter(result, objects) -> str:
         """
         For security reasons only specific objects are allowed
         Internals are ignored
@@ -221,8 +221,7 @@ class KickBanMixin(MixinMeta):
                         author.name, author.id, ban_type, username, user.id, str(days)
                     )
                 )
-                success_message = await self.config.guild(ctx.guild).kick_message()
-                results = re.findall(r"{([^}]+)\}", success_message)
+                message = await self.config.guild(ctx.guild).ban_message()
                 objects = {
                     "user": user,
                     "moderator": author,
@@ -230,9 +229,7 @@ class KickBanMixin(MixinMeta):
                     "guild": guild,
                     "days": days,
                 }
-                for result in results:
-                    param = self.transform_parameter(result, ctx.message, objects)
-                    success_message = success_message.replace("{" + result + "}", param)
+                success_message = self.transform_message(message, objects)
             except discord.Forbidden:
                 return False, _("I'm not allowed to do that.")
             except discord.NotFound:
@@ -285,6 +282,12 @@ class KickBanMixin(MixinMeta):
             async with self.config.guild(guild).current_tempbans.get_lock():
                 if await self._check_guild_tempban_expirations(guild, guild_tempbans):
                     await self.config.guild(guild).current_tempbans.set(guild_tempbans)
+
+    def transform_message(self, message, objects):
+        results = re.findall(r"{([^}]+)\}", message)
+        for result in results:
+            param = self.transform_parameter(result, objects)
+            message = message.replace("{" + result + "}", param)
 
     async def _check_guild_tempban_expirations(
         self, guild: discord.Guild, guild_tempbans: List[int]
@@ -394,16 +397,13 @@ class KickBanMixin(MixinMeta):
                 channel=None,
             )
             message = await self.config.guild(ctx.guild).kick_message()
-            results = re.findall(r"{([^}]+)\}", message)
             objects = {
                 "user": member,
                 "moderator": author,
                 "reason": reason,
                 "guild": guild,
             }
-            for result in results:
-                param = self.transform_parameter(result, ctx.message, objects)
-                message = message.replace("{" + result + "}", param)
+            message = self.transform_message(message, objects)
             await ctx.send(message)
 
     @commands.command()
@@ -714,8 +714,7 @@ class KickBanMixin(MixinMeta):
                 reason,
                 unban_time,
             )
-            message = await self.config.guild(ctx.guild).kick_message()
-            results = re.findall(r"{([^}]+)\}", message)
+            message = await self.config.guild(ctx.guild).tempban_message()
             objects = {
                 "user": member,
                 "moderator": author,
@@ -724,9 +723,7 @@ class KickBanMixin(MixinMeta):
                 "duration": duration,
                 "days": days,
             }
-            for result in results:
-                param = self.transform_parameter(result, ctx.message, objects)
-                message = message.replace("{" + result + "}", param)
+            message = self.transform_message(message, objects)
             await ctx.send(message)
 
     @commands.command()
@@ -811,16 +808,13 @@ class KickBanMixin(MixinMeta):
                 channel=None,
             )
             message = await self.config.guild(ctx.guild).kick_message()
-            results = re.findall(r"{([^}]+)\}", message)
             objects = {
                 "user": member,
                 "moderator": author,
                 "reason": reason,
                 "guild": guild,
             }
-            for result in results:
-                param = self.transform_parameter(result, ctx.message, objects)
-                message = message.replace("{" + result + "}", param)
+            message = self.transform_message(message, objects)
             await ctx.send(message)
 
     @commands.command()
@@ -994,16 +988,13 @@ class KickBanMixin(MixinMeta):
                 channel=None,
             )
             message = await self.config.guild(ctx.guild).unban_message()
-            results = re.findall(r"{([^}]+)\}", message)
             objects = {
                 "user": user,
                 "moderator": author,
                 "reason": reason,
                 "guild": guild,
             }
-            for result in results:
-                param = self.transform_parameter(result, ctx.message, objects)
-                message = message.replace("{" + result + "}", param)
+            message = self.transform_message(message, objects)
             await ctx.send(message)
 
         if await self.config.guild(guild).reinvite_on_unban():
