@@ -16,7 +16,7 @@ default_config = {
     "java_exc_path": "java"
 }
 
-class Lavalink():
+class Lavalink:
     def __init__(self, bot, config, server_manager, api_interface):
         self._lavalink_connection_aborted: bool = False
         self._lavalink_running: bool = False

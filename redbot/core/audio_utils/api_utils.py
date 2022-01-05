@@ -1,11 +1,11 @@
 import asyncio
 import contextlib
-import logging
 import lavalink
+import logging
 import functools
 
 from abc import ABC
-from typing import Any, AsyncContextManager, Awaitable, TypeVar, List
+from typing import Any
 
 from redbot.core import commands
 from redbot.core.utils import AsyncIter

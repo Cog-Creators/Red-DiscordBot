@@ -289,7 +289,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     query = Query.process_input(res[0], self.local_folder_current_path)
                     try:
                         result, called_api = await self.api_interface.fetch_track(
-                            ctx, player._ll_player, query
+                            ctx, player, query
                         )
                     except TrackEnqueueError:
                         self.update_player_lock(ctx, False)
@@ -380,7 +380,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if query.start_time:
                     seek = query.start_time
             try:
-                result, called_api = await self.api_interface.fetch_track(ctx, player._ll_player, query)
+                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
 
             except TrackEnqueueError:
                 self.update_player_lock(ctx, False)

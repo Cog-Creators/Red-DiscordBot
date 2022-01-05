@@ -26,24 +26,25 @@ Basic Usage
     class MyAudioCog(commands.Cog):
         def __init__(self, bot):
             self.bot = bot
-            self.bot.loop.create_task(initialize())
+            self.bot.loop.create_task(self.initialize())
             #This function starts the lavalink server and established a lavalink and database connection
 
         async def initialize(self):
+            await self.bot.wait_until_red_ready() #needed to ensure `bot` is fully initialized
             await audio.initialize(self.bot, "MyAudioCog", 365911945565569036)
 
         async def shutdown(self):
             await audio.shutdown("MyAudioCog", 365911945565569036)
 
         def cog_unload(self):
-            self.bot.loop.create_task(shutdown())
+            self.bot.loop.create_task(self.shutdown())
 
         @commands.command()
         async def connect(self, ctx, channel: discord.VoiceChannel):
             player = audio.get_player(ctx.guild.id)
             if not player: #not currently connected to a voice channel
-                player = await audio.connect(bot, ctx.author.voice.channel)
-            await ctx.send(f"Successfully connected to {channel.mention"})
+                player = await audio.connect(self.bot, ctx.author.voice.channel)
+            await ctx.send(f"Successfully connected to {channel.mention}")
 
         @commands.command()
         async def play(self, ctx, query: str):

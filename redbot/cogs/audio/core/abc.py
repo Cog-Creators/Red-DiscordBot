@@ -12,7 +12,7 @@ import aiohttp
 import discord
 import lavalink
 
-from redbot.core import Config, commands
+from redbot.core import Config, commands, audio
 from redbot.core.bot import Red
 from redbot.core.commands import Context
 from redbot.core.utils.dbtools import APSWConnectionWrapper
@@ -76,7 +76,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def maybe_reset_error_counter(self, player: lavalink.Player) -> None:
+    async def maybe_reset_error_counter(self, player: audio.Player) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -88,7 +88,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def increase_error_counter(self, player: lavalink.Player) -> bool:
+    async def increase_error_counter(self, player: audio.Player) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
@@ -125,13 +125,13 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def lavalink_event_handler(
-        self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
+        self, player: audio.Player, event_type: lavalink.LavalinkEvents, extra
     ) -> None:
         raise NotImplementedError()
 
     @abstractmethod
     async def lavalink_update_handler(
-        self, player: lavalink.Player, event_type: lavalink.enums.PlayerState, extra
+        self, player: audio.Player, event_type: lavalink.enums.PlayerState, extra
     ) -> None:
         raise NotImplementedError()
 
@@ -242,7 +242,7 @@ class MixinMeta(ABC):
     @abstractmethod
     def get_track_json(
         self,
-        player: lavalink.Player,
+        player: audio.Player,
         position: Union[int, str] = None,
         other_track: lavalink.Track = None,
     ) -> MutableMapping:
@@ -334,7 +334,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: "Playlist"
+        self, ctx: commands.Context, player: audio.Player, playlist: "Playlist"
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], "Playlist"]:
         raise NotImplementedError()
 
@@ -356,7 +356,7 @@ class MixinMeta(ABC):
     async def _eq_interact(
         self,
         ctx: commands.Context,
-        player: lavalink.Player,
+        player: audio.Player,
         eq: "Equalizer",
         message: discord.Message,
         selected: int,
@@ -406,7 +406,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def get_localtrack_folder_tracks(
-        self, ctx, player: lavalink.player_manager.Player, query: "Query"
+        self, ctx, player: audio.Player, query: "Query"
     ) -> List[lavalink.rest_api.Track]:
         raise NotImplementedError()
 
@@ -457,7 +457,7 @@ class MixinMeta(ABC):
         self,
         ctx: commands.Context,
         queue: list,
-        player: lavalink.player_manager.Player,
+        player: audio.Player,
         page_num: int,
     ) -> discord.Embed:
         raise NotImplementedError()
@@ -482,7 +482,7 @@ class MixinMeta(ABC):
     async def fetch_playlist_tracks(
         self,
         ctx: commands.Context,
-        player: lavalink.player_manager.Player,
+        player: audio.Player,
         query: "Query",
         skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
@@ -516,7 +516,7 @@ class MixinMeta(ABC):
         self,
         ctx: commands.Context,
         uploaded_track_list,
-        player: lavalink.player_manager.Player,
+        player: audio.Player,
         playlist_url: str,
         uploaded_playlist_name: str,
         scope: str,
@@ -550,7 +550,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def self_deafen(self, player: lavalink.Player) -> None:
+    async def self_deafen(self, player: audio.Player) -> None:
         raise NotImplementedError()
 
     @abstractmethod

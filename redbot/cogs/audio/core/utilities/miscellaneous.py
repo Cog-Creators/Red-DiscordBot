@@ -165,7 +165,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     def get_track_json(
         self,
-        player: lavalink.Player,
+        player: audio.Player,
         position: Union[int, str] = None,
         other_track: lavalink.Track = None,
     ) -> MutableMapping:

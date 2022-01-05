@@ -8,7 +8,7 @@ import discord
 import lavalink
 
 from fuzzywuzzy import process
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
@@ -26,7 +26,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         queue: list,
-        player: lavalink.player_manager.Player,
+        player: audio.Player,
         page_num: int,
     ) -> discord.Embed:
         shuffle = await self.config.guild(ctx.guild).shuffle()

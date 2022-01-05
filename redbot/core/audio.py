@@ -689,7 +689,7 @@ class Player:
 
         try:
             result, called_api = await self._api_interface.fetch_track(
-                self._guild.id, self._player, query
+                self._guild.id, self, query
             )
         except KeyError:
             raise NoMatchesFound("No matches could be found for the given query")
