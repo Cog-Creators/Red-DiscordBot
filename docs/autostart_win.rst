@@ -24,7 +24,7 @@ Now this may have seemed completely useless but heres where we we setup the auto
 Setting Redbot to autostart
 -------------------------------
 
-To start the bot and set it to start on boot, press the windows key + R and type in shell:startup 
+To start the bot and set it to start on boot, press the windows key + R and type in **shell:startup** 
 create a shortcut of the exe file we create earlier and place it in this new foolder that popped up.
 your all set redbot will auto start whenever u reboot or turn on your pc.
 if u wanna start it like normal you can just run the exe file like you would a standard program.
