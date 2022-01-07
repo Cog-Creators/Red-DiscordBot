@@ -1,109 +1,36 @@
 .. launchd guide
 
-==============================
-Setting up auto-restart on Mac
-==============================
+==================================
+Setting up auto-restart on Windows
+==================================
 
 -----------------------
-Creating the plist file
+Creating the bat file
 -----------------------
 
-Start by activating your venv. Then run the following command:
+Create a .bat script and paste the following into it
 
 .. code-block:: none
 
-    which python
+    cd %userprofile%\redenv\Scripts && CALL activate.bat && cd %userprofile%\redenv\Scripts && cls && redbot <name of your instance>
 
-Copy the output of that command.
-
-Now run :code:`sudo nano /Library/LaunchDaemons/red.plist`
-
-Paste the following and replace the following: 
-
-- all instances of :code:`username` with your Mac username 
-- :code:`path` with the path you copied earlier
-- :code:`instance-name` with your instance name:
-
-.. code-block:: none
-
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
-        <dict>
-            <key>Label</key>
-            <string>red</string>
-            <key>ProgramArguments</key>
-            <array>
-                <string>path</string>
-                <string>-O</string>
-                <string>-m</string>
-                <string>redbot</string>
-                <string>instance-name</string>
-                <string>--no-prompt</string>
-            </array>
-            <key>RunAtLoad</key>
-            <true/>
-            <key>KeepAlive</key>
-            <dict>
-                <key>SuccessfulExit</key>
-                <false/>
-            </dict>
-            <key>StandardOutPath</key>
-            <string>/tmp/red_out.log</string>
-            <key>StandardErrorPath</key>
-            <string>/tmp/red_err.log</string>
-            <key>UserName</key>
-            <string>username</string>
-            <key>InitGroups</key>
-            <true/>
-        </dict>
-    </plist>
-
-.. note::
-
-    You may add any additional arguments you need to add to the :code:`redbot` command by 
-    adding them to the end of the array under :code:`ProgramArguments`
-
-.. note::
-
-    Should you need to set up auto-restart for additional bots, create a :code:`.plist` file for
-    each bot under a different file name, and use the respective file names for the commands below.
-
-Save and exit :code:`ctrl + O; enter; ctrl + x`
+Next you will need to create an .exe file from this .bat script.
+To do this I used https://www.battoexeconverter.com/ just download and install it.
+After that's done, right click the .bat file and click Compile with Advanced BAT to EXE
+This will create an .exe file that does the same thing as the .bat file.
+Now this may have seemed completely useless but heres where we we setup the autostart feature.
 
 -------------------------------
-Starting and loading the plist
+Setting Redbot to autostart
 -------------------------------
-
-To start the bot and set it to start on boot, you must run the following command:
-
-.. prompt:: bash
-
-    sudo launchctl load -w /Library/LaunchDaemons/red.plist
-
-If you need to shutdown the bot, you can use the ``[p]shutdown`` command or
-type the following command in the terminal:
-
-.. prompt:: bash
-
-    sudo launchctl stop red
-
-To start the bot again after a shutdown, run the following:
-
-.. prompt:: bash
-
-    sudo launchctl start red
-
-To stop the bot and set it to not start on boot anymore, run the following:
-
-.. prompt:: bash
-
-    sudo launchctl unload -w /Library/LaunchDaemons/red.plist
-
-To view Red's log, run the following (:code:`red_out.log` is for the console output, and
-:code:`red_err.log` for the error logs):
-
-.. prompt:: bash
-
-    nano /tmp/red_out.log
-    nano /tmp/red_err.log
+To start the bot and set it to start on boot, press the windows key + R and type in shell:startup
+create a shortcut of the exe file we create earlier and place it in this new foolder that popped up.
+your all set redbot will auto start whenever u reboot or turn on your pc.
+if u wanna start it like normal you can just run the exe file like you would a standard program.
+--------------------------------------
+Disabling Redbot's autostart function
+--------------------------------------
+To do this all you have to do is
+1: Delete the shortcut we place in the autostart folder.
+OR
+2: you can press windows and type startup app and hit enter. then turn off the exe.
