@@ -617,7 +617,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
-    async def command_summon(self, ctx: commands.Context):
+    async def command_summon(self, ctx: commands.Context, channel: Optional[discord.VoiceChannel]):
         """Summon the bot to a voice channel."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -642,10 +642,11 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         try:
+            channel = channel or ctx.author.voice.channel
             if (
-                not self.can_join_and_speak(ctx.author.voice.channel)
-                or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and self.is_vc_full(ctx.author.voice.channel)
+                not self.can_join_and_speak(channel)
+                or not channel.permissions_for(ctx.me).move_members
+                and self.is_vc_full(channel)
             ):
                 ctx.command.reset_cooldown(ctx)
                 return await self.send_embed_msg(
@@ -655,7 +656,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             if not self._player_check(ctx):
                 player = await lavalink.connect(
-                    ctx.author.voice.channel,
+                    channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
                 player.store("notify_channel", ctx.channel.id)
@@ -663,8 +664,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("notify_channel", ctx.channel.id)
                 if (
-                    ctx.author.voice.channel == player.channel
-                    and ctx.guild.me in ctx.author.voice.channel.members
+                    channel == player.channel
+                    and ctx.guild.me in channel.members
                 ):
                     ctx.command.reset_cooldown(ctx)
                     return await self.send_embed_msg(
@@ -673,7 +674,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         description=_("I am already in your channel."),
                     )
                 await player.move_to(
-                    ctx.author.voice.channel,
+                    channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             await ctx.tick()
