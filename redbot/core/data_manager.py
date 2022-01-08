@@ -46,6 +46,21 @@ if not config_dir:
 config_file = config_dir / "config.json"
 
 
+def load_existing_config():
+    """Get the contents of the config file, or an empty dictionary if it does not exist.
+
+    Returns
+    -------
+    dict
+        The config data.
+    """
+    if not config_file.exists():
+        return {}
+
+    with config_file.open(encoding="utf-8") as fs:
+        return json.load(fs)
+
+
 def create_temp_config():
     """
     Creates a default instance for Red, so it can be ran
@@ -61,8 +76,7 @@ def create_temp_config():
     default_dirs["STORAGE_TYPE"] = "JSON"
     default_dirs["STORAGE_DETAILS"] = {}
 
-    with config_file.open("r", encoding="utf-8") as fs:
-        config = json.load(fs)
+    config = load_existing_config()
 
     config[name] = default_dirs
 

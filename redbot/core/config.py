@@ -89,10 +89,10 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disab
         self.__acquire_lock = acquire_lock
         self.__lock = self.value_obj.get_lock()
 
-    def __await__(self):
+    def __await__(self) -> _T:
         return self.coro.__await__()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> _T:
         if self.__acquire_lock is True:
             await self.__lock.acquire()
         self.raw_value = await self

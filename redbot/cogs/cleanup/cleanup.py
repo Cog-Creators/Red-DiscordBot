@@ -732,6 +732,7 @@ class Cleanup(commands.Cog):
         """Manage the settings for the cleanup command."""
         pass
 
+    @commands.guild_only()
     @cleanupset.command(name="notify")
     async def cleanupset_notify(self, ctx: commands.Context):
         """Toggle clean up notification settings.
