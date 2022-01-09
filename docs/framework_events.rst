@@ -66,12 +66,12 @@ Audio
 
     Dispatched when the audio cog starts it's unloading task
 
-    :param cog: Audio cog instance: similar to :py:func:`redbot.core.bot.RedBase.get_cog()`
+    :param cog: Audio cog instance: similar to :py:func:`redbot.core.bot.Red.get_cog()`
 
 Filter
 ^^^^^^
 
-.. py:method:: Red.filter_message_delete(message, hits)
+.. py:method:: Red.on_filter_message_delete(message, hits)
 
     Dispatched when a message is deleted by the filter cog
 
@@ -85,13 +85,13 @@ Modlog
 
     Dispatched when a new modlog case is created
 
-    :param redbot.core.modlog.Case case: The modlog case associated to this event
+    :param redbot.core.modlog.Case case: The modlog case associated with this event.
 
 .. py:method:: Red.on_modlog_case_edit(case)
 
     Dispatched when a modlog case is edited
 
-    :param redbot.core.modlog.Case case: The modlog case associated to this event
+    :param redbot.core.modlog.Case case: The modlog case associated with this event.
 
 RPC Server
 ^^^^^^^^^^
