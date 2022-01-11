@@ -1,8 +1,8 @@
 import datetime
 import itertools
 import textwrap
-from io import BytesIO
-from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
+from io import BytesIO, StringIO
+from typing import Any, Iterator, List, Optional, Sequence, SupportsInt, Union
 
 import discord
 from babel.lists import format_list as babel_list
@@ -617,31 +617,64 @@ def text_to_file(
     return discord.File(file, filename, spoiler=spoiler)
 
 
-def ansi_markup(
-    text: str
+def rich_markup(
+    *objects: Any,
+    crop: Optional[bool] = True,
+    emoji: Optional[bool] = True,
+    highlight: Optional[bool] = True,
+    justify: Optional[str] = None,
+    markup: Optional[bool] = True,
+    no_wrap: Optional[bool] = None,
+    overflow: Optional[str] = None,
+    width: Optional[int] = None,
 ):
     """Returns a codeblock with ANSI formatting for colour support.
 
-    This supports a limited set of Rich markup. (https://rich.readthedocs.io/en/stable/markup.html)
+    This supports a limited set of Rich markup, and rich helper functions. (https://rich.readthedocs.io/en/stable/index.html)
 
     Parameters
     ----------
-    text: str
+    *objects: Any
         The text to convert to ANSI formatting.
+    crop: Optional[bool]
+        Crop output to width of virtual terminal. Defaults to ``True``.
+    emoji: Optional[bool]
+        Enable emoji code. Defaults to ``True``.
+    highlight: Optional[bool]
+        Enable automated highlighting. Defaults to ``True``.
+    justify: Optional[str]
+        Justify method: "default", "left", "right", "center", or "full". Defaults to ``None``.
+    markup: Optional[bool]
+        Boolean to enable Console Markup. Defaults to ``True``.
+    no_wrap: Optional[bool]
+        Disables word wrapping. Defaults to ``None``.
+    overflow: Optional[str]
+        Overflow method: “ignore”, “crop”, “fold”, or “ellipsis”. Defaults to None.
+    width: Optional[int]
+        The width of the virtual terminal. Defaults to ``80`` characters long.
+
 
     Returns
     -------
     str:
         The ANSI formatted text in a codeblock.
     """
-    # TODO Evaluate StringIO vs console.capture,
-    # StringIO seems favourable here considering we're not a real terminal, and neither are unit tests
     temp_console = Console(  # Prevent messing with STDOUT's console
         color_system="standard",  # Discord only supports 8-bit in colors
+        emoji=emoji,
+        file=StringIO(),
         force_terminal=True,
-        force_interactive=False
+        force_interactive=False,
+        highlight=highlight,
+        markup=markup,
+        width=width if width is not None else 80,
     )
 
-    with temp_console.capture() as output:
-        temp_console.print(text)
-    return box(output.get(), lang="ansi")
+    temp_console.print(
+        *objects,
+        crop=crop,
+        justify=justify,
+        no_wrap=no_wrap,
+        overflow=overflow,
+    )
+    return box(temp_console.file.getvalue(), lang="ansi")
