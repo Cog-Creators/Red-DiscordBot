@@ -7,6 +7,7 @@ from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
 import discord
 from babel.lists import format_list as babel_list
 from babel.numbers import format_decimal
+from rich.console import Console
 
 from redbot.core.i18n import Translator, get_babel_locale, get_babel_regional_format
 
@@ -614,3 +615,33 @@ def text_to_file(
     """
     file = BytesIO(text.encode(encoding))
     return discord.File(file, filename, spoiler=spoiler)
+
+
+def ansi_markup(
+    text: str
+):
+    """Returns a codeblock with ANSI formatting for colour support.
+
+    This supports a limited set of Rich markup. (https://rich.readthedocs.io/en/stable/markup.html)
+
+    Parameters
+    ----------
+    text: str
+        The text to convert to ANSI formatting.
+
+    Returns
+    -------
+    str:
+        The ANSI formatted text in a codeblock.
+    """
+    # TODO Evaluate StringIO vs console.capture,
+    # StringIO seems favourable here considering we're not a real terminal, and neither are unit tests
+    temp_console = Console(  # Prevent messing with STDOUT's console
+        color_system="standard",  # Discord only supports 8-bit in colors
+        force_terminal=True,
+        force_interactive=False
+    )
+
+    with temp_console.capture() as output:
+        temp_console.print(text)
+    return box(output.get(), lang="ansi")
