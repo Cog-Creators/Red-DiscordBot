@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import logging
 import sys
+import re
 from typing import Optional
 
 import discord
@@ -95,6 +96,20 @@ def message_cache_size_int(arg: str) -> int:
             "Message cache size has to be greater than or equal to 1000."
         )
     return x
+
+
+def java_heap_size(arg: str) -> str:
+    match = re.match(
+        r"(\d+)([KMG]?)",
+        arg,
+        flags=re.IGNORECASE
+    )
+    if match:
+        return arg
+    else:
+        raise argparse.ArgumentTypeError(
+            "The heap size has to be a number followed by K, M, or G."
+        )
 
 
 def parse_cli_flags(args):
@@ -288,7 +303,7 @@ def parse_cli_flags(args):
         "--lavalink-min-heap",
         action="store",
         default=None,
-        type=str,
+        type=java_heap_size,
         help="Set the minimum heap size for the internal LavaLink audio server.\n"
         "Has no effect if Audio isn't loaded or if an external LavaLink server is used.\n"
         "Example: --lavalink-min-heap 512m",
@@ -297,7 +312,7 @@ def parse_cli_flags(args):
         "--lavalink-max-heap",
         action="store",
         default=None,
-        type=str,
+        type=java_heap_size,
         help="Set the maximum heap size for the internal Lavalink audio server.\n"
         "Has no effect if Audio isn't loaded or if an external LavaLink server is used.\n"
         "Example: --lavalink-max-heap 4G",
