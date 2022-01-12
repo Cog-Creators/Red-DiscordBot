@@ -184,7 +184,6 @@ class ServerManager:
         if cli_flags.get("lavalink_max_heap") is not None:
             jar_args.append(f"-Xmx{cli_flags['lavalink_max_heap']}")
 
-        log.debug(jar_args)
         jar_args.append("-jar")
         jar_args.append(str(LAVALINK_JAR_FILE))
 
