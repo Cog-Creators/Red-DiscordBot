@@ -99,11 +99,7 @@ def message_cache_size_int(arg: str) -> int:
 
 
 def java_heap_size(arg: str) -> str:
-    match = re.match(
-        r"(\d+)([KMG]?)",
-        arg,
-        flags=re.IGNORECASE
-    )
+    match = re.match(r"(\d+)([KMG]?)", arg, flags=re.IGNORECASE)
     if match:
         return arg
     else:
