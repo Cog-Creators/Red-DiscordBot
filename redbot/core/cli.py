@@ -291,7 +291,7 @@ def parse_cli_flags(args):
         type=str,
         help="Set the minimum heap size for the internal LavaLink audio server.\n"
         "Has no effect if Audio isn't loaded or if an external LavaLink server is used.\n"
-        "Example: --lavalink-min-heap 512m"
+        "Example: --lavalink-min-heap 512m",
     )
     parser.add_argument(
         "--lavalink-max-heap",
@@ -300,7 +300,7 @@ def parse_cli_flags(args):
         type=str,
         help="Set the maximum heap size for the internal Lavalink audio server.\n"
         "Has no effect if Audio isn't loaded or if an external LavaLink server is used.\n"
-        "Example: --lavalink-max-heap 4G"
+        "Example: --lavalink-max-heap 4G",
     )
 
     args = parser.parse_args(args)
