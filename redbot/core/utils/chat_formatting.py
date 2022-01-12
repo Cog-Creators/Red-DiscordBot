@@ -649,7 +649,7 @@ def rich_markup(
     no_wrap: Optional[bool]
         Disables word wrapping. Defaults to ``None``.
     overflow: Optional[str]
-        Overflow method: “ignore”, “crop”, “fold”, or “ellipsis”. Defaults to None.
+        Overflow method: "ignore", "crop", "fold", or "ellipsis". Defaults to None.
     width: Optional[int]
         The width of the virtual terminal. Defaults to ``80`` characters long.
 
