@@ -84,7 +84,7 @@ class PlaylistWrapper:
             table = 2
         return table
 
-    async def fetch(self, scope: str, playlist_id: int, scope_id: int) -> PlaylistFetchResult:
+    async def fetch(self, scope: str, playlist_id: int, scope_id: int) -> Optional[PlaylistFetchResult]:
         """Fetch a single playlist."""
         scope_type = self.get_scope_type(scope)
 
