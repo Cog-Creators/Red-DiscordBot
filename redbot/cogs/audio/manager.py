@@ -99,12 +99,13 @@ class ServerManager:
     _buildtime: ClassVar[Optional[str]] = None
     _java_exc: ClassVar[str] = "java"
 
-    def __init__(self) -> None:
+    def __init__(self, cli_flags) -> None:
         self.ready: asyncio.Event = asyncio.Event()
 
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
         self._shutdown: bool = False
+        self._cli_flags = cli_flags
 
     @property
     def path(self) -> Optional[str]:
@@ -175,12 +176,19 @@ class ServerManager:
         if not java_available:
             raise RuntimeError("You must install Java 11 for Lavalink to run.")
 
-        return [
-            self._java_exc,
-            "-Djdk.tls.client.protocols=TLSv1.2",
-            "-jar",
-            str(LAVALINK_JAR_FILE),
-        ]
+        jar_args = [self._java_exc, "-Djdk.tls.client.protocols=TLSv1.2"]
+
+        cli_flags = vars(self._cli_flags)
+        if cli_flags.get("lavalink_min_heap") is not None:
+            jar_args.append(f"-Xms{cli_flags['lavalink_min_heap']}")
+        if cli_flags.get("lavalink_max_heap") is not None:
+            jar_args.append(f"-Xmx{cli_flags['lavalink_max_heap']}")
+
+        log.debug(jar_args)
+        jar_args.append("-jar")
+        jar_args.append(str(LAVALINK_JAR_FILE))
+
+        return jar_args
 
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
         if self._java_available is not None:
