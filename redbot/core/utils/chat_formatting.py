@@ -627,7 +627,7 @@ def rich_markup(
     no_wrap: Optional[bool] = None,
     overflow: Optional[str] = None,
     width: Optional[int] = None,
-):
+) -> str:
     """Returns a codeblock with ANSI formatting for colour support.
 
     This supports a limited set of Rich markup, and rich helper functions. (https://rich.readthedocs.io/en/stable/index.html)
