@@ -899,7 +899,7 @@ class IssueDiagnoser(RootDiagnosersMixin, IssueDiagnoserBase):
 
         for idx, subresult in enumerate(result.details, start=1):
             status = (
-                _("Passed") + " \N{WHITE HEAVY CHECK MARK}"
+                _("Passed") + " \N{WHITE HEAVY CHECK MARK}\N{VARIATION SELECTOR-16}"
                 if subresult.success
                 else _("Failed") + " \N{NO ENTRY}\N{VARIATION SELECTOR-16}"
             )
