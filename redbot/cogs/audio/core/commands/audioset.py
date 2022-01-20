@@ -1117,7 +1117,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
-        if is_owner and not global_data["use_external_lavalink"] and audio._server_manager.ll_build:
+        if (
+            is_owner
+            and not global_data["use_external_lavalink"]
+            and audio._server_manager.ll_build
+        ):
             msg += _(
                 "Lavalink build:         [{llbuild}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
@@ -1452,7 +1456,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             Warning: If this is set to True, the Lavalink connection
             will be force closed and all cogs using the api will get disconnected"""
         async with ctx.typing():
-            await audio.shutdown("Audio", 2711759130, force_shutdown = force_shutdown)
+            await audio.shutdown("Audio", 2711759130, force_shutdown=force_shutdown)
 
             await audio.initialize(self.bot, "Audio", 2711759130)
 

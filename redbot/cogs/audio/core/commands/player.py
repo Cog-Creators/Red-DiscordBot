@@ -837,10 +837,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                     "requester": ctx.author.id,
                                 }
                             )
-                            await player.play(
-                                requester=ctx.author,
-                                track=track
-                            )
+                            await player.play(requester=ctx.author, track=track)
                             self.bot.dispatch(
                                 "red_audio_track_enqueue", player.guild, track, ctx.author
                             )
@@ -853,10 +850,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 "requester": ctx.author.id,
                             }
                         )
-                        await player.play(
-                            requester=ctx.author,
-                            track=track
-                        )
+                        await player.play(requester=ctx.author, track=track)
                         self.bot.dispatch(
                             "red_audio_track_enqueue", player.guild, track, ctx.author
                         )

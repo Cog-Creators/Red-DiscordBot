@@ -180,10 +180,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "requester": ctx.author.id,
                     }
                 )
-                await player.play(
-                    requester=ctx.author,
-                    track=search_choice
-                )
+                await player.play(requester=ctx.author, track=search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
                     "red_audio_track_enqueue", player.guild, search_choice, ctx.author

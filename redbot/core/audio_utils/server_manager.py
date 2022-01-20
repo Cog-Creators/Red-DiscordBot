@@ -52,25 +52,26 @@ LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
 LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavaplayer>\d+[.\d+]*)")
 LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
 
+
 class ServerManager:
     def __init__(self, bot, config):
         self._lavalink_download_dir: Optional[pathlib.Path] = None
         self._lavalink_jar_file: Optional[pathlib.Path] = None
         self._bundled_app_yml: Optional[pathlib.Path] = None
         self._lavalink_app_yml: Optional[pathlib.Path] = None
-    
+
         self._java_available: Optional[bool] = None
         self._java_version: Optional[Tuple[int, int]] = None
         self._up_to_date: Optional[bool] = None
         self._blacklisted_archs: List[str] = []
-    
+
         self._lavaplayer: Optional[str] = None
         self._lavalink_build: Optional[int] = None
         self._jvm: Optional[str] = None
         self._lavalink_branch: Optional[str] = None
         self._buildtime: Optional[str] = None
         self._java_exc: str = "java"
-    
+
         self._ready: asyncio.Event = asyncio.Event()
         self._proc: Optional[asyncio.subprocess.Process] = None
         self._monitor_task: Optional[asyncio.Task] = None
@@ -115,7 +116,7 @@ class ServerManager:
         if self._shutdown or not self._proc:
             return False
         return True
-    
+
     async def start_ll_server(self, java_path: str):
         """Starts the internal lavalink server and handles jar downloading
 
@@ -128,7 +129,13 @@ class ServerManager:
         """
         self._lavalink_download_dir = data_manager.cog_data_path(raw_name="Audio")
         self._lavalink_jar_file = self._lavalink_download_dir / "Lavalink.jar"
-        self._bundled_app_yml = pathlib.Path(sys.modules["redbot"].__file__).parent / "cogs" / "audio" / "data" / "application.yml"
+        self._bundled_app_yml = (
+            pathlib.Path(sys.modules["redbot"].__file__).parent
+            / "cogs"
+            / "audio"
+            / "data"
+            / "application.yml"
+        )
         self._lavalink_app_yml = self._lavalink_download_dir / "application.yml"
 
         self._shutdown = False
@@ -152,22 +159,22 @@ class ServerManager:
             *args,
             cwd=str(self._lavalink_download_dir),
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT
+            stderr=asyncio.subprocess.STDOUT,
         )
 
         log.info(f"Internal Lavalink server started. Pid: {self._proc.pid}")
 
         try:
             await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
-            self._bot.dispatch(
-                "red_lavalink_server_started", java_path
-            )
+            self._bot.dispatch("red_lavalink_server_started", java_path)
         except asyncio.TimeoutError:
-            log.warning("Timeout occured whilst waiting for internal Lavalink server to become ready")
+            log.warning(
+                "Timeout occured whilst waiting for internal Lavalink server to become ready"
+            )
 
         self._monitor_task = asyncio.create_task(self._monitor())
         self._monitor_task.add_done_callback(task_callback)
-    
+
     async def shutdown_ll_server(self) -> None:
         """Stops the internal lavalink server"""
         if self._shutdown or not self._proc:
@@ -180,9 +187,9 @@ class ServerManager:
 
         self._proc.terminate()
         await self._proc.wait()
-        #self._bot.dispatch("lavalink_server_stopped")
+        # self._bot.dispatch("lavalink_server_stopped")
         self._shutdown = True
-    
+
     async def _monitor(self) -> None:
         try:
             while self._proc.returncode is None:
@@ -201,7 +208,7 @@ class ServerManager:
                 )
         except asyncio.CancelledError:
             self._bot.dispatch("red_lavalink_server_stopped")
-    
+
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
         lastmessage = 0
@@ -222,11 +229,11 @@ class ServerManager:
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
-    
+
     def _has_java_error(self) -> bool:
         poss_error_file = self._lavalink_download_dir / "hs_err_pid{}.log".format(self._proc.pid)
         return poss_error_file.exists()
-    
+
     async def _get_java_version(self) -> Tuple[int, int]:
         """This assumes we've already checked that java exists."""
         _proc: asyncio.subprocess.Process = (
@@ -256,7 +263,7 @@ class ServerManager:
             return major, minor
 
         raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
-    
+
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
         java_exc = shutil.which(self._java_exc)
         java_available = java_exc is not None
@@ -265,10 +272,12 @@ class ServerManager:
             self._java_version = None
         else:
             self._java_version = version = await self._get_java_version()
-            self._java_available = ((11, 0) <= version < (12, 0))  # or ((13, 0) <= version < (14, 0))
+            self._java_available = (
+                (11, 0) <= version < (12, 0)
+            )  # or ((13, 0) <= version < (14, 0))
             self._java_exc = java_exc
         return self._java_available, self._java_version
-    
+
     async def _get_jar_args(self) -> List[str]:
         java_available, java_version = await self._has_java()
 
@@ -281,7 +290,7 @@ class ServerManager:
             "-jar",
             str(self._lavalink_jar_file),
         ]
-    
+
     async def _is_up_to_date(self) -> None:
         args = await self._get_jar_args()
         args.append("--version")
@@ -320,7 +329,7 @@ class ServerManager:
         self._up_to_date = build >= JAR_BUILD
 
         return self._up_to_date
-    
+
     async def _download_jar(self) -> None:
         log.info("Downloading Lavalink.jar...")
         async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
@@ -366,7 +375,7 @@ class ServerManager:
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         await self._is_up_to_date()
-    
+
     async def maybe_download_jar(self) -> None:
         """Checks jar version and redownloads if outdated"""
         if not (self._lavalink_jar_file.exists() and await self._is_up_to_date()):

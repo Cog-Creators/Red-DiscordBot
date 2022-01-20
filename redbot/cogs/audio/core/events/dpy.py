@@ -248,7 +248,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._restore_task.cancel()
 
             await audio.shutdown("Audio", 2711759130)
-            #lavalink.unregister_event_listener(audio.Lavalink.lavalink_event_handler)
+            # lavalink.unregister_event_listener(audio.Lavalink.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
 
             self.cog_cleaned_up = True

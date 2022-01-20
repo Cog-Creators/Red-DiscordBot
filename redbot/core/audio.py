@@ -10,7 +10,15 @@ import asyncio
 
 from typing import Optional, Mapping, List
 
-from .audio_utils.errors import AudioError, LavalinkNotReady, NotConnectedToVoice, InvalidQuery, NoMatchesFound, TrackFetchError, SpotifyFetchError
+from .audio_utils.errors import (
+    AudioError,
+    LavalinkNotReady,
+    NotConnectedToVoice,
+    InvalidQuery,
+    NoMatchesFound,
+    TrackFetchError,
+    SpotifyFetchError,
+)
 from .audio_utils.audio_dataclasses import Query, _PARTIALLY_SUPPORTED_MUSIC_EXT
 
 from redbot.core import Config
@@ -31,12 +39,13 @@ _lavalink: Optional[Lavalink] = None
 _server_manager: Optional[ServerManager] = None
 _config: Optional[Config] = None
 
+
 async def initialize(
-        bot,
-        cog_name: str,
-        identifier: int,
-        force_restart_ll_server: bool = False,
-        force_reset_db_conn: bool = False
+    bot,
+    cog_name: str,
+    identifier: int,
+    force_restart_ll_server: bool = False,
+    force_reset_db_conn: bool = False,
 ):
     """Initializes the api and establishes all connections
 
@@ -57,7 +66,9 @@ async def initialize(
     if not _used_by:
         global _config, _lavalink, _server_manager, _api_interface
 
-        _config = Config.get_conf(None, identifier=2711759130, cog_name="Audio", force_registration=True)
+        _config = Config.get_conf(
+            None, identifier=2711759130, cog_name="Audio", force_registration=True
+        )
 
         _default_lavalink_settings = {
             "host": "localhost",
@@ -157,11 +168,8 @@ async def initialize(
 
     _used_by.append((cog_name, identifier))
 
-async def shutdown(
-        cog_name: str,
-        identifier: int,
-        force_shutdown: bool = False
-):
+
+async def shutdown(cog_name: str, identifier: int, force_shutdown: bool = False):
     """Closes the api connection
 
     Parameters
@@ -199,17 +207,15 @@ async def shutdown(
                 await _api_interface.run_all_pending_tasks()
                 await _api_interface.close()
 
+
 async def wait_until_api_ready():
     while True:
         if _used_by:
             break
         await asyncio.sleep(0.1)
 
-async def connect(
-        bot,
-        channel: discord.VoiceChannel,
-        deafen: bool = False
-):
+
+async def connect(bot, channel: discord.VoiceChannel, deafen: bool = False):
     """Connects to a voice channel
 
     Parameters
@@ -235,6 +241,7 @@ async def connect(
     _players[channel.guild.id] = player
     return player
 
+
 def get_player(guild_id: int) -> Optional[Player]:
     """Get the Player object of the given guild
 
@@ -250,6 +257,7 @@ def get_player(guild_id: int) -> Optional[Player]:
         return _players[guild_id]
     except KeyError:
         return None
+
 
 async def dj_enabled(guild: discord.Guild):
     """Whether or not DJ controls are enabled
@@ -267,6 +275,7 @@ async def dj_enabled(guild: discord.Guild):
         return True
 
     return False
+
 
 async def is_dj(user: discord.Member):
     """Whether ot not a user has the DJ role
@@ -291,11 +300,13 @@ async def is_dj(user: discord.Member):
 
     return False
 
+
 def _get_ll_player(guild: discord.Guild) -> lavalink.Player:
     try:
         return lavalink.get_player(guild.id)
     except (KeyError, IndexError):
         raise NotConnectedToVoice("Bot is not currently connected to a voice channel")
+
 
 def all_players():
     return list(_players.values())
@@ -414,11 +425,11 @@ class Player:
             await self.set_volume(volume)
 
     async def _add_to_queue(
-            self,
-            requester: discord.Member,
-            track: lavalink.Track,
-            bump: bool = False,
-            bump_and_skip: bool = False
+        self,
+        requester: discord.Member,
+        track: lavalink.Track,
+        bump: bool = False,
+        bump_and_skip: bool = False,
     ):
 
         track.requester = requester
@@ -430,14 +441,16 @@ class Player:
                 if self.current:
                     await self.skip(requester)
 
-    async def _enqueue_tracks(self,
-                              requester: discord.Member,
-                              query: Optional[str],
-                              track: Optional[lavalink.Track],
-                              local_folder: Optional[pathlib.Path],
-                              bump: bool = False,
-                              bump_and_skip: bool = False,
-                              enqueue: bool = True):
+    async def _enqueue_tracks(
+        self,
+        requester: discord.Member,
+        query: Optional[str],
+        track: Optional[lavalink.Track],
+        local_folder: Optional[pathlib.Path],
+        bump: bool = False,
+        bump_and_skip: bool = False,
+        enqueue: bool = True,
+    ):
         settings = await self._config.guild(self._guild).all()
         settings["maxlength"] = 0 if not "maxlength" in settings.keys() else settings["maxlength"]
 
@@ -454,9 +467,7 @@ class Player:
 
             if settings["maxlength"] > 0:
                 await self._add_to_queue(requester, track, bump, bump_and_skip)
-                self._bot.dispatch(
-                    "red_audio_track_enqueue", self._guild, track, requester
-                )
+                self._bot.dispatch("red_audio_track_enqueue", self._guild, track, requester)
                 self.maybe_shuffle()
 
             else:
@@ -464,13 +475,11 @@ class Player:
                     {
                         "enqueue_time": int(time.time()),
                         "vc": self.channel.id,
-                        "requester": requester.id
+                        "requester": requester.id,
                     }
                 )
                 await self._add_to_queue(requester, track, bump, bump_and_skip)
-                self._bot.dispatch(
-                    "red_audio_track_enqueue", self._guild, track, requester
-                )
+                self._bot.dispatch("red_audio_track_enqueue", self._guild, track, requester)
                 self.maybe_shuffle()
                 if not self.current:
                     await self._player.play()
@@ -508,7 +517,9 @@ class Player:
                 if await self._config.use_external_lavalink() and query.is_local:
                     log_player.debug("Local track")
                 elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
-                    log_player.debug("Semi supported file extension: Track might not be fully playable")
+                    log_player.debug(
+                        "Semi supported file extension: Track might not be fully playable"
+                    )
                 raise TrackFetchError("Fetching tracks failed")
 
         else:
@@ -533,26 +544,22 @@ class Player:
                         {
                             "enqueue_time": int(time.time()),
                             "vc": self.channel.id,
-                            "requester": requester.id
+                            "requester": requester.id,
                         }
                     )
                     await self._add_to_queue(requester, track, bump, bump_and_skip)
-                    self._bot.dispatch(
-                        "red_audio_track_enqueue", self._guild, track, requester
-                    )
+                    self._bot.dispatch("red_audio_track_enqueue", self._guild, track, requester)
                 else:
                     track_len += 1
                     track.extras.update(
                         {
                             "enqueue_time": int(time.time()),
                             "vc": self.channel.id,
-                            "requester": requester.id
+                            "requester": requester.id,
                         }
                     )
                     await self._add_to_queue(requester, track, bump, bump_and_skip)
-                    self._bot.dispatch(
-                        "red_audio_track_enqueue", self._guild, track, requester
-                    )
+                    self._bot.dispatch("red_audio_track_enqueue", self._guild, track, requester)
             self.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
@@ -568,8 +575,11 @@ class Player:
                     log_player.debug("Queue limit reached")
 
                 single_track = (
-                    tracks if isinstance(tracks, lavalink.rest_api.Track)
-                    else tracks[index] if index else tracks[0]
+                    tracks
+                    if isinstance(tracks, lavalink.rest_api.Track)
+                    else tracks[index]
+                    if index
+                    else tracks[0]
                 )
 
                 if seek and seek > 0:
@@ -587,7 +597,7 @@ class Player:
                         {
                             "enqueue_time": int(time.time()),
                             "vc": self.channel.id,
-                            "requester": requester.id
+                            "requester": requester.id,
                         }
                     )
                     await self._add_to_queue(requester, single_track, bump, bump_and_skip)
@@ -605,11 +615,13 @@ class Player:
             await self._player.play()
         return single_track, None
 
-    async def _enqueue_spotify_tracks(self,
-                                      requester: discord.Member,
-                                      query: Query,
-                                      bump: bool = False,
-                                      bump_and_skip: bool = False):
+    async def _enqueue_spotify_tracks(
+        self,
+        requester: discord.Member,
+        query: Query,
+        bump: bool = False,
+        bump_and_skip: bool = False,
+    ):
         if query.single_track:
             try:
                 res = await self._api_interface.spotify_query(
@@ -623,16 +635,21 @@ class Player:
             new_query = Query.process_input(res[0], None)
             new_query.start_time = query.start_time
             return await self._enqueue_tracks(
-                requester, query=new_query, track=None, local_folder=None, bump=bump, bump_and_skip=bump_and_skip)
+                requester,
+                query=new_query,
+                track=None,
+                local_folder=None,
+                bump=bump,
+                bump_and_skip=bump_and_skip,
+            )
 
         elif query.is_album or query.is_playlist:
-            #ToDo fetch spotify playlists: utilities/player.py L#336
+            # ToDo fetch spotify playlists: utilities/player.py L#336
             pass
 
-    async def _skip(self,
-                    player: lavalink.Player,
-                    requester: discord.Member,
-                    skip_to_track: int = None) -> None:
+    async def _skip(
+        self, player: lavalink.Player, requester: discord.Member, skip_to_track: int = None
+    ) -> None:
         autoplay = await self._config.guild(self._guild).auto_play()
         if not player.current:
             raise AudioError("Nothing playing")
@@ -649,7 +666,7 @@ class Player:
             if player.repeat:
                 queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
             player.queue = player.queue[
-                min(skip_to_track - 1, len(player.queue) - 1): len(player.queue)
+                min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
             ]
         self._bot.dispatch("red_audio_track_skip", self._guild, player.current, requester)
         await player.play()
@@ -688,9 +705,7 @@ class Player:
             raise InvalidQuery(f"No results found for {query}")
 
         try:
-            result, called_api = await self._api_interface.fetch_track(
-                self._guild.id, self, query
-            )
+            result, called_api = await self._api_interface.fetch_track(self._guild.id, self, query)
         except KeyError:
             raise NoMatchesFound("No matches could be found for the given query")
 
@@ -708,7 +723,9 @@ class Player:
             if await self._config.use_external_lavalink() and query.is_local:
                 log_player.debug("Local track")
             elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
-                log_player.debug("Semi supported file extension: Track might not be fully playable")
+                log_player.debug(
+                    "Semi supported file extension: Track might not be fully playable"
+                )
         return tracks, playlist_data
 
     async def get_local_tracks(self, query: pathlib.Path):
@@ -790,17 +807,17 @@ class Player:
 
         if not player.paused:
             await player.pause()
-            self._bot.dispatch(
-                "red_audio_audio_paused", self._guild, True
-            )
+            self._bot.dispatch("red_audio_audio_paused", self._guild, True)
 
-    async def play(self,
-                   requester: discord.Member,
-                   query: Optional[str] = None,
-                   track: Optional[lavalink.Track] = None,
-                   local_folder: pathlib.Path = None,
-                   bump: bool = False,
-                   bump_and_skip: bool = False):
+    async def play(
+        self,
+        requester: discord.Member,
+        query: Optional[str] = None,
+        track: Optional[lavalink.Track] = None,
+        local_folder: pathlib.Path = None,
+        bump: bool = False,
+        bump_and_skip: bool = False,
+    ):
         """Plays a track
 
         Parameters
@@ -827,7 +844,13 @@ class Player:
         await self._set_player_settings()
 
         tracks, playlist_data = await self._enqueue_tracks(
-            requester, query=query, track=track, local_folder=local_folder, bump=bump, bump_and_skip=bump_and_skip)
+            requester,
+            query=query,
+            track=track,
+            local_folder=local_folder,
+            bump=bump,
+            bump_and_skip=bump_and_skip,
+        )
 
         await self._api_interface.run_tasks(requester.id)
         return tracks, playlist_data
@@ -837,9 +860,7 @@ class Player:
 
         if self.paused:
             await self._player.pause(False)
-            self._bot.dispatch(
-                "red_audio_audio_paused", self._guild, False
-            )
+            self._bot.dispatch("red_audio_audio_paused", self._guild, False)
 
     async def seek(self, seconds: int = None, timestamp: str = None):
         """Skip to a given position or skips a given amount of seconds
@@ -860,7 +881,9 @@ class Player:
 
             if seconds:
                 if seconds * 1000 > self.current.length - self.position:
-                    raise ValueError("Cannot seek for more time than the current track has remaining")
+                    raise ValueError(
+                        "Cannot seek for more time than the current track has remaining"
+                    )
 
                 seek = self.position + seconds * 1000
                 await self._player.seek(seek)
@@ -900,8 +923,7 @@ class Player:
         await self._config.guild(self._guild).volume.set(vol)
         await self._player.set_volume(vol)
 
-    async def skip(self, requester: discord.Member,
-                   skip_to_track: int = None) -> lavalink.Track:
+    async def skip(self, requester: discord.Member, skip_to_track: int = None) -> lavalink.Track:
         """Skips a track
 
         Parameters

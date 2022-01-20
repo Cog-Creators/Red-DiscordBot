@@ -1546,7 +1546,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         }
                     )
                     await player.play(author_obj, track=track)
-                    #self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
+                    # self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
                     track_len += 1
                 player.maybe_shuffle(0 if empty_queue else 1)
                 if len(tracks) > track_len:

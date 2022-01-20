@@ -82,4 +82,3 @@ class Audio(
         self._ll_guild_updates = set()
         self._diconnected_shard = set()
         self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
-

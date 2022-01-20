@@ -44,6 +44,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 await audio.initialize(self.bot, "Audio", 2711759130)
             except Exception as e:
                 self.config = audio._config
+                self.cog_ready_event.set()
                 raise e
 
             self.config = audio._config
@@ -163,7 +164,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     track = track.track_object
                     await player.play(
                         requester=guild.get_member(track.extras.get("requester")) or guild.me,
-                        track=track
+                        track=track,
                     )
                 player.maybe_shuffle()
 

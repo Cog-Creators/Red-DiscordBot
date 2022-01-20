@@ -11,10 +11,8 @@ from .api_utils import rgetattr
 
 log = logging.getLogger("red.core.audio.lavalink")
 
-default_config = {
-    "use_external_lavalink": False,
-    "java_exc_path": "java"
-}
+default_config = {"use_external_lavalink": False, "java_exc_path": "java"}
+
 
 class Lavalink:
     def __init__(self, bot, config, server_manager, api_interface):
@@ -46,8 +44,10 @@ class Lavalink:
                         await self._server_manager.start_ll_server(java_exc)
                         self._lavalink_running = True
                     except PortAlreadyInUse:
-                        log.warning("The default lavalink port seems to be in use already. "
-                                    "Attempting to connect to an existing server...")
+                        log.warning(
+                            "The default lavalink port seems to be in use already. "
+                            "Attempting to connect to an existing server..."
+                        )
                     except LavalinkDownloadFailed as exc:
                         await asyncio.sleep(1)
                         if exc.should_retry:
@@ -102,7 +102,7 @@ class Lavalink:
                     password=password,
                     ws_port=ws_port,
                     timeout=timeout,
-                    resume_key=f"Red-Core-Audio-{self._bot.user.id}-{data_manager.instance_name}"
+                    resume_key=f"Red-Core-Audio-{self._bot.user.id}-{data_manager.instance_name}",
                 )
                 if IS_DEBUG:
                     log.debug("Lavalink connection established")
@@ -110,7 +110,7 @@ class Lavalink:
                 log.error("Connecting to Lavalink server timed out, retrying...")
                 if not external and self._server_manager.is_running:
                     await self._server_manager.shutdown_ll_server()
-                await asyncio.sleep()
+                await asyncio.sleep(1)
             except Exception as exc:
                 log.exception(
                     "Unhandled exception whilst connecting to Lavalink, aborting...", exc_info=exc
@@ -131,9 +131,7 @@ class Lavalink:
 
         lavalink.register_event_listener(self.lavalink_event_handler)
 
-        self._bot.dispatch(
-            "red_lavalink_connection_established", host, password, ws_port
-        )
+        self._bot.dispatch("red_lavalink_connection_established", host, password, ws_port)
 
     async def shutdown(self):
         lavalink.unregister_event_listener(self.lavalink_event_handler)
@@ -154,10 +152,7 @@ class Lavalink:
         await player.skip()
 
     async def lavalink_event_handler(
-        self,
-        player: lavalink.Player,
-        event_type: lavalink.LavalinkEvents,
-        extra
+        self, player: lavalink.Player, event_type: lavalink.LavalinkEvents, extra
     ) -> None:
         current_track = player.current
         current_channel = player.channel
@@ -178,7 +173,7 @@ class Lavalink:
         prev_song: lavalink.Track = player.fetch("prev_song")
 
         if event_type == lavalink.LavalinkEvents.TRACK_START:
-            #extra being a lavalink.Track object
+            # extra being a lavalink.Track object
             playing_song = player.fetch("playing_song")
             requester = player.fetch("requester")
             player.store("prev_song", playing_song)
@@ -194,7 +189,7 @@ class Lavalink:
                 )
 
         if event_type == lavalink.LavalinkEvents.TRACK_END:
-            #extra being a lavalink.TrackEndReason object
+            # extra being a lavalink.TrackEndReason object
             prev_requester = player.fetch("prev_requester")
             self._bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester, extra)
             player.store("resume_attempts", 0)
@@ -207,7 +202,7 @@ class Lavalink:
                 await self._api_interface._persistent_queue_api.delete_scheduled()
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
-            #extra being None
+            # extra being None
             prev_requester = player.fetch("prev_requester")
             self._bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
 
@@ -219,13 +214,15 @@ class Lavalink:
                 await self._api_interface._persistent_queue_api.delete_scheduled()
 
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
-            #extra being an error string
+            # extra being an error string
             prev_requester = player.fetch("prev_requester")
             await self.cleanup_after_error(player, current_track)
-            self._bot.dispatch("red_audio_track_exception", guild, prev_song, prev_requester, extra)
+            self._bot.dispatch(
+                "red_audio_track_exception", guild, prev_song, prev_requester, extra
+            )
 
         if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
-            #extra being the threshold in ms that the track has been stuck for
+            # extra being the threshold in ms that the track has been stuck for
             prev_requester = player.fetch("prev_requester")
             await self.cleanup_after_error(player, current_track)
             self._bot.dispatch("red_audio_track_stuck", guild, prev_song, prev_requester, extra)

@@ -26,7 +26,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             self._restore_task.cancel()
 
         self._restore_task = None
-        #lavalink.register_event_listener(self.lavalink_event_handler)
+        # lavalink.register_event_listener(self.lavalink_event_handler)
         lavalink.register_update_listener(self.lavalink_update_handler)
         self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
 

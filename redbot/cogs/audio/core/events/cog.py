@@ -23,6 +23,7 @@ from ..cog_utils import CompositeMetaClass
 log = logging.getLogger("red.cogs.Audio.cog.Events.audio")
 _ = Translator("Audio", Path(__file__))
 
+
 class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     @commands.Cog.listener()
     async def on_red_audio_track_start(
@@ -50,9 +51,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
         else:
             if guild_data["currently_auto_playing_in"]:
-                await self.config.guild(guild).currently_auto_playing_in.set(
-                    []
-                )
+                await self.config.guild(guild).currently_auto_playing_in.set([])
 
         if not (track or requester):
             return
@@ -203,9 +202,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 debug_exc_log(
                     log, err, "Failed to delete global daily playlist ID: %d", too_old_id
                 )
-        persist_cache = self._persist_queue_cache.setdefault(
-            guild.id, guild_data["persist_queue"]
-        )
+        persist_cache = self._persist_queue_cache.setdefault(guild.id, guild_data["persist_queue"])
         if persist_cache:
             await self.api_interface.persistent_queue_api.played(
                 guild_id=guild.id, track_id=track_identifier

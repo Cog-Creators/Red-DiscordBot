@@ -454,20 +454,14 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_length_allowed(track, guild_data["maxlength"]):
                         track_len += 1
-                        await player.play(
-                            requester=ctx.author,
-                            track=track
-                        )
+                        await player.play(requester=ctx.author, track=track)
                         self.bot.dispatch(
                             "red_audio_track_enqueue", player.guild, track, ctx.author
                         )
 
                 else:
                     track_len += 1
-                    await player.play(
-                        requester=ctx.author,
-                        track=track
-                    )
+                    await player.play(requester=ctx.author, track=track)
                     self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
             player.maybe_shuffle(0 if empty_queue else 1)
 
@@ -537,10 +531,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
-                        await player.play(
-                            requester=ctx.author,
-                            track=single_track
-                        )
+                        await player.play(requester=ctx.author, track=single_track)
                         player.maybe_shuffle()
                         self.bot.dispatch(
                             "red_audio_track_enqueue",
@@ -555,10 +546,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         )
 
                 else:
-                    await player.play(
-                        requester=ctx.author,
-                        track=single_track
-                    )
+                    await player.play(requester=ctx.author, track=single_track)
                     player.maybe_shuffle()
                     self.bot.dispatch(
                         "red_audio_track_enqueue", player.guild, single_track, ctx.author

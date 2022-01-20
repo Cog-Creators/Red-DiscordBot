@@ -104,7 +104,9 @@ class BaseWrapper:
     async def clean_up_old_entries(self) -> None:
         """Delete entries older than x in the local cache tables"""
         max_age = await self.config.cache_age()
-        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age if max_age else 365)
+        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
+            days=max_age if max_age else 365
+        )
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
@@ -161,7 +163,9 @@ class BaseWrapper:
     ]:
         """Get an entry from the local cache"""
         max_age = await self.config.cache_age()
-        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age if max_age else 365)
+        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(
+            days=max_age if max_age else 365
+        )
         maxage_int = int(time.mktime(maxage.timetuple()))
         values.update({"maxage": maxage_int})
         row = None

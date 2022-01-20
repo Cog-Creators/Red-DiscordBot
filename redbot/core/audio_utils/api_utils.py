@@ -12,6 +12,7 @@ from redbot.core.utils import AsyncIter
 
 log = logging.getLogger("red.core.audio_api.server_manager.callback")
 
+
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
     """
     This allows the metaclass used for proper type detection to
@@ -20,10 +21,12 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
 
     pass
 
+
 def task_callback(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.InvalidStateError, asyncio.CancelledError):
         if exc := task.exception():
             log.exception("%s raised an Exception", task.get_name(), exc_info=exc)
+
 
 def has_internal_server():
     async def pred(ctx: commands.Context):
@@ -32,10 +35,10 @@ def has_internal_server():
 
     return commands.check(pred)
 
+
 async def get_queue_duration(player: lavalink.Player) -> int:
     dur = [
-        i.length
-        async for i in AsyncIter(player.queue, steps=50).filter(lambda x: not x.is_stream)
+        i.length async for i in AsyncIter(player.queue, steps=50).filter(lambda x: not x.is_stream)
     ]
     queue_dur = sum(dur)
     if not player.queue:
@@ -50,9 +53,9 @@ async def get_queue_duration(player: lavalink.Player) -> int:
     queue_total_duration = remain + queue_dur
     return queue_total_duration
 
+
 def rgetattr(obj, attr, *args) -> Any:
     def _getattr(obj2, attr2):
         return getattr(obj2, attr2, *args)
 
     return functools.reduce(_getattr, [obj] + attr.split("."))
-

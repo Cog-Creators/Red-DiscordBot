@@ -1,5 +1,6 @@
 import aiohttp
 
+
 class AudioError(Exception):
     """Base exception for errors in the Audio cog."""
 
@@ -78,8 +79,10 @@ class ApiError(AudioError):
 class SpotifyApiError(ApiError):
     """Base exception for Spotify API errors."""
 
+
 class TrackFetchError(ApiError):
     """Fetching track data failed"""
+
 
 class SpotifyFetchError(SpotifyApiError):
     """Fetching Spotify data failed."""
