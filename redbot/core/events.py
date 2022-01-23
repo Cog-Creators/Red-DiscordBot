@@ -353,7 +353,7 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_add(command: commands.Command):
-        if command.cog is None:
+        if command.cog is not None:
             return
 
         await _disable_command_no_cog(command)
