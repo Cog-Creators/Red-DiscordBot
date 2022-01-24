@@ -68,7 +68,6 @@ RESERVED_COMMAND_NAMES = (
 )
 
 _ = Translator("commands.commands", __file__)
-DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
 
 
 class RedUnhandledAPI(Exception):
@@ -295,6 +294,7 @@ class Command(CogCommandMixin, DPYCommand):
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
         super().__init__(*args, **kwargs)
+        self._disabled_in: discord.utils.SnowflakeList = discord.utils.SnowflakeList([])
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
         if self.parent is None:
@@ -476,10 +476,22 @@ class Command(CogCommandMixin, DPYCommand):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
+    def is_enabled(self, ctx) -> bool:
+        if not self.enabled:
+            return False
+        if ctx.guild:
+            if self._disabled_in.has(ctx.guild.id):
+                return False
+            if self._disabled_in.has(ctx.channel.id):
+                return False
+
+        return True
+
     async def prepare(self, ctx):
         ctx.command = self
 
-        if not self.enabled:
+        cmd_enabled = self.is_enabled(ctx)
+        if not cmd_enabled:
             raise DisabledCommand(f"{self.name} command is disabled")
 
         if not await self.can_run(ctx, change_permission_state=True):
@@ -581,12 +593,11 @@ class Command(CogCommandMixin, DPYCommand):
             ``True`` if the command wasn't already disabled.
 
         """
-        disabler = get_command_disabler(guild)
-        if disabler in self.checks:
+        if self._disabled_in.has(guild.id):
             return False
-        else:
-            self.checks.append(disabler)
-            return True
+
+        self._disabled_in.add(guild.id)
+        return True
 
     def enable_in(self, guild: discord.Guild) -> bool:
         """Enable this command in the given guild.
@@ -602,13 +613,11 @@ class Command(CogCommandMixin, DPYCommand):
             ``True`` if the command wasn't already enabled.
 
         """
-        disabler = get_command_disabler(guild)
-        try:
-            self.checks.remove(disabler)
-        except ValueError:
+        if self._disabled_in.has(guild.id):
             return False
-        else:
-            return True
+
+        self._disabled_in.remove(guild.id)
+        return True
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
@@ -1073,28 +1082,6 @@ def group(name=None, cls=Group, **attrs):
     Same interface as `discord.ext.commands.group`.
     """
     return dpy_command_deco(name, cls, **attrs)
-
-
-__command_disablers: DisablerDictType = weakref.WeakValueDictionary()
-
-
-def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
-    """Get the command disabler for a guild.
-
-    A command disabler is a simple check predicate which returns
-    ``False`` if the context is within the given guild.
-    """
-    try:
-        return __command_disablers[guild.id]
-    except KeyError:
-
-        async def disabler(ctx: "Context") -> bool:
-            if ctx.guild is not None and ctx.guild.id == guild.id:
-                raise DisabledCommand()
-            return True
-
-        __command_disablers[guild.id] = disabler
-        return disabler
 
 
 # The below are intentionally left out of `__all__`
