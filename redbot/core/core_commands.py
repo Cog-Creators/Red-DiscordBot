@@ -5051,10 +5051,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Leave blank to send nothing.
 
         To include the command name in the message, include the `{command}` placeholder.
+        To include where the command is disabled, include the `{origin}` placeholder.
 
         **Examples:**
             - `[p]command disabledmsg This command is disabled`
-            - `[p]command disabledmsg {command} is disabled`
+            - `[p]command disabledmsg {command} is disabled {origin}`
             - `[p]command disabledmsg` - Sends nothing when a disabled command is attempted.
 
         **Arguments:**

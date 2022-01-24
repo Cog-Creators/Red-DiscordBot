@@ -229,9 +229,8 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.UserInputError):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
-            disabled_message = await bot._config.disabled_command_msg()
-            if disabled_message:
-                await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
+            if error.args:
+                await ctx.send(error.args[0])
         elif isinstance(error, commands.CommandInvokeError):
             log.exception(
                 "Exception in command '{}'".format(ctx.command.qualified_name),
