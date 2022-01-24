@@ -613,7 +613,9 @@ class Command(CogCommandMixin, DPYCommand):
             ``True`` if the command wasn't already enabled.
 
         """
-        if self._disabled_in.has(guild.id):
+        try:
+            self._disabled_in.remove(destination.id)
+        except ValueError:
             return False
 
         self._disabled_in.remove(guild.id)
