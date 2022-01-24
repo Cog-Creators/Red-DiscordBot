@@ -518,10 +518,11 @@ class Requires:
             cog = ctx.cog
             if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
                 disabled_msg = await ctx.bot._config.disabled_command_msg()
-                disabled_msg = disabled_msg.replace("{command}", ctx.invoked_with).replace(
-                    "{origin}", _("in this server")
+                raise discord.ext.commands.DisabledCommand(
+                    disabled_msg.replace("{command}", ctx.invoked_with).replace(
+                        "{origin}", _("in this server")
+                    )
                 )
-                raise discord.ext.commands.DisabledCommand(disabled_msg)
 
         bot_perms = ctx.channel.permissions_for(bot_user)
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):

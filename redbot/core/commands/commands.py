@@ -481,10 +481,11 @@ class Command(CogCommandMixin, DPYCommand):
 
         if not self.enabled:
             disabled_message = await ctx.bot._config.disabled_command_msg()
-            disabled_message.replace("{command}", ctx.invoked_with).replace(
-                "{origin}", _("globally")
+            raise DisabledCommand(
+                disabled_message.replace("{command}", ctx.invoked_with).replace(
+                    "{origin}", _("globally")
+                )
             )
-            raise DisabledCommand(disabled_message)
 
         if not await self.can_run(ctx, change_permission_state=True):
             raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
@@ -1095,10 +1096,11 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
         async def disabler(ctx: "Context") -> bool:
             if ctx.guild is not None and ctx.guild.id == guild.id:
                 disabled_msg = await ctx.bot._config.disabled_command_msg()
-                disabled_msg.replace("{command}", ctx.invoked_with).replace(
-                    "{origin}", _("in this server")
+                raise DisabledCommand(
+                    disabled_msg.replace("{command}", ctx.invoked_with).replace(
+                        "{origin}", _("in this server")
+                    )
                 )
-                raise DisabledCommand(disabled_msg)
             return True
 
         __command_disablers[guild.id] = disabler
