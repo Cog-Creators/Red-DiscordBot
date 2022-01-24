@@ -614,11 +614,10 @@ class Command(CogCommandMixin, DPYCommand):
 
         """
         try:
-            self._disabled_in.remove(destination.id)
+            self._disabled_in.remove(guild.id)
         except ValueError:
             return False
 
-        self._disabled_in.remove(guild.id)
         return True
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
