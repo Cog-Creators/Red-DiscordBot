@@ -129,12 +129,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
         autoplay = await self.config.guild(player.guild).auto_play()
-        if not player.current: 
+        if not player.current:
             await self.send_embed_msg(ctx, title=_("There's nothing being played."))
             return
-        elif not player.queue and not autoplay: 
-        	await ctx.invoke(self.command_stop)
+        elif not player.queue and not autoplay:
+            await ctx.invoke(self.command_stop)  # Thank you Draper and Zephyrkul
             return
+
         elif autoplay and not player.queue:
             embed = discord.Embed(
                 title=_("Track Skipped"),
