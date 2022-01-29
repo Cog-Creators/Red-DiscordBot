@@ -118,6 +118,12 @@ rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 #
 html_theme = "sphinx_rtd_theme"
 
+# Add any extra paths that contain custom files (such as robots.txt or
+# .htaccess) here, relative to this directory. These files are copied
+# directly to the root of the documentation.
+#
+html_extra_path = ["_html"]
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
