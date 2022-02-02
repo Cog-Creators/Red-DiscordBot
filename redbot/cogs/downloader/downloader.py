@@ -1056,26 +1056,26 @@ class Downloader(commands.Cog):
     async def _cog_listpinned(self, ctx: commands.Context):
         """List currently pinned cogs."""
         installed = await self.installed_cogs()
-        pinned_list = sorted([cog.name for cog in installed if cog.pinned], key=str.lower)
+        pinned_list = sorted([cog for cog in installed if cog.pinned], key=lambda cog: cog.name)
         if pinned_list:
-            message = humanize_list(pinned_list)
+            message = "\n".join(f"(`{cog.commit[:7]}`) {cog.name}" for cog in pinned_list)
         else:
             message = _("None.")
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            for page in pagify(message, delims=[", "], page_length=900):
-                name = _("(continued)") if page.startswith(", ") else _("Pinned Cogs:")
-                if page.startswith(", "):
+            for page in pagify(message, page_length=900):
+                name = _("(continued)") if page.startswith("\n") else _("Pinned Cogs:")
+                if page.startswith("\n"):
                     page = page[2:]
                 embed.add_field(name=name, value=page, inline=False)
             await ctx.send(embed=embed)
         else:
-            for page in pagify(message, delims=[", "], page_length=1900):
-                if page.startswith(", "):
+            for page in pagify(message, page_length=1900):
+                if page.startswith("\n"):
                     page = page[2:]
                 else:
                     page = _("Pinned Cogs: \n") + page
-                await ctx.send(box(page))
+                await ctx.send(page)
 
     @cog.command(name="checkforupdates")
     async def _cog_checkforupdates(self, ctx: commands.Context) -> None:
