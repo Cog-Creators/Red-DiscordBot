@@ -10,7 +10,7 @@
         },
         "CONFIG": {
             "type": "object",
-            "description": "The configuration settings for a trivia session.",
+            "description": "The configuration for a trivia session.",
             "required": [],
             "properties": {
                 "bot_plays": {
