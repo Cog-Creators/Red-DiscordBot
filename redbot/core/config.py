@@ -963,7 +963,7 @@ class Config(metaclass=ConfigMeta):
         """
         if type(guild_id) is not int:
             raise TypeError(
-                f"`guild_id` should be of type `int`, not {guild_id.__class__.__name__}"
+                f"guild_id should be of type int, not {guild_id.__class__.__name__}"
             )
         return self._get_base_group(self.GUILD, str(guild_id))
 
@@ -1005,7 +1005,7 @@ class Config(metaclass=ConfigMeta):
         """
         if type(channel_id) is not int:
             raise TypeError(
-                f"`channel_id` should be of type `int`, not {channel_id.__class__.__name__}"
+                f"channel_id should be of type int, not {channel_id.__class__.__name__}"
             )
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
@@ -1046,7 +1046,7 @@ class Config(metaclass=ConfigMeta):
             If the given role_id parameter is not of type int
         """
         if type(role_id) is not int:
-            raise TypeError(f"`role_id` should be of type `int`, not {role_id.__class__.__name__}")
+            raise TypeError(f"role_id should be of type int, not {role_id.__class__.__name__}")
         return self._get_base_group(self.ROLE, str(role_id))
 
     def role(self, role: discord.Role) -> Group:
@@ -1084,7 +1084,7 @@ class Config(metaclass=ConfigMeta):
             If the given user_id parameter is not of type int
         """
         if type(user_id) is not int:
-            raise TypeError(f"`user_id` should be of type `int`, not {user_id.__class__.__name__}")
+            raise TypeError(f"user_id should be of type int, not {user_id.__class__.__name__}")
         return self._get_base_group(self.USER, str(user_id))
 
     def user(self, user: discord.abc.User) -> Group:
@@ -1125,12 +1125,12 @@ class Config(metaclass=ConfigMeta):
         """
         if type(guild_id) is not int:
             raise TypeError(
-                f"`guild_id` should be of type `int`, not {guild_id.__class__.__name__}"
+                f"guild_id should be of type int, not {guild_id.__class__.__name__}"
             )
 
         if type(member_id) is not int:
             raise TypeError(
-                f"`member_id` should be of type `int`, not {member_id.__class__.__name__}"
+                f"member_id should be of type int, not {member_id.__class__.__name__}"
             )
 
         return self._get_base_group(self.MEMBER, str(guild_id), str(member_id))
