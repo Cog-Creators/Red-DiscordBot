@@ -19,8 +19,8 @@
                     "default": true
                 },
                 "delay": {
-                    "type": "number",
-                    "description": "Answer time limit in seconds, must be positive float greater than 0.0. Defaults to 15.0.",
+                    "type": ["integer", "number"],
+                    "description": "Answer time limit in seconds, must be positive number greater than 0.0. Defaults to 15.0.",
                     "default": 15.0
                 },
                 "max_score": {
@@ -29,8 +29,8 @@
                     "default": 10
                 },
                 "payout_multiplier": {
-                    "type": "number",
-                    "description": "The payout multiplier, must be positive float. Defaults to 0.0.",
+                    "type": ["integer", "number"]
+                    "description": "The payout multiplier, must be positive number. Defaults to 0.0.",
                     "default": 0.0
                 },
                 "reveal_answer": {
@@ -39,8 +39,8 @@
                     "default": true
                 },
                 "timeout": {
-                    "type": "number",
-                    "description": "Timeout per question in seconds, must be positive float greater than 0.0. Defaults to 120.0.",
+                    "type": ["integer", "number"],
+                    "description": "Timeout per question in seconds, must be positive number greater than 0.0. Defaults to 120.0.",
                     "default": 120.0
                 },
                 "use_spoilers": {
