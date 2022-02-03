@@ -36,6 +36,7 @@ TRIVIA_LIST_SCHEMA = Schema(
             Optional("bot_plays"): bool,
             Optional("reveal_answer"): bool,
             Optional("payout_multiplier"): Or(int, float),
+            Optional("use_spoilers"): bool,
         },
         str: [str, int, bool, float],
     }
