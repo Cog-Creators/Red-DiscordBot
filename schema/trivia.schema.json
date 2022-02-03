@@ -29,7 +29,7 @@
                     "default": 10
                 },
                 "payout_multiplier": {
-                    "type": ["integer", "number"]
+                    "type": ["integer", "number"],
                     "description": "The payout multiplier, must be positive number. Defaults to 0.0.",
                     "default": 0.0
                 },
