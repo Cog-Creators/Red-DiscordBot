@@ -956,7 +956,15 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The guild's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given guild_id parameter is not of type int
         """
+        if not isinstance(guild_id, int):
+            raise TypeError(
+                f"`guild_id` should be of type `int`, not {guild_id.__class__.__name__}"
+            )
         return self._get_base_group(self.GUILD, str(guild_id))
 
     def guild(self, guild: discord.Guild) -> Group:
@@ -990,7 +998,15 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The channel's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given channel_id parameter is not of type int
         """
+        if not isinstance(channel_id, int):
+            raise TypeError(
+                f"`channel_id` should be of type `int`, not {channel_id.__class__.__name__}"
+            )
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
     def channel(self, channel: discord.abc.GuildChannel) -> Group:
@@ -1024,7 +1040,13 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The role's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given role_id parameter is not of type int
         """
+        if not isinstance(role_id, int):
+            raise TypeError(f"`role_id` should be of type `int`, not {role_id.__class__.__name__}")
         return self._get_base_group(self.ROLE, str(role_id))
 
     def role(self, role: discord.Role) -> Group:
@@ -1056,7 +1078,13 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The user's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given user_id parameter is not of type int
         """
+        if not isinstance(user_id, int):
+            raise TypeError(f"`user_id` should be of type `int`, not {user_id.__class__.__name__}")
         return self._get_base_group(self.USER, str(user_id))
 
     def user(self, user: discord.abc.User) -> Group:
@@ -1090,7 +1118,21 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The member's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given guild_id or member_id parameter is not of type int
         """
+        if not isinstance(guild_id, int):
+            raise TypeError(
+                f"`guild_id` should be of type `int`, not {guild_id.__class__.__name__}"
+            )
+
+        if not isinstance(member_id, int):
+            raise TypeError(
+                f"`member_id` should be of type `int`, not {member_id.__class__.__name__}"
+            )
+
         return self._get_base_group(self.MEMBER, str(guild_id), str(member_id))
 
     def member(self, member: discord.Member) -> Group:
