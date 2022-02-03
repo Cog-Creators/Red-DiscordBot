@@ -961,7 +961,7 @@ class Config(metaclass=ConfigMeta):
         TypeError
             If the given guild_id parameter is not of type int
         """
-        if not isinstance(guild_id, int):
+        if type(guild_id) is not int:
             raise TypeError(
                 f"`guild_id` should be of type `int`, not {guild_id.__class__.__name__}"
             )
@@ -1003,7 +1003,7 @@ class Config(metaclass=ConfigMeta):
         TypeError
             If the given channel_id parameter is not of type int
         """
-        if not isinstance(channel_id, int):
+        if type(channel_id) is not int:
             raise TypeError(
                 f"`channel_id` should be of type `int`, not {channel_id.__class__.__name__}"
             )
@@ -1045,7 +1045,7 @@ class Config(metaclass=ConfigMeta):
         TypeError
             If the given role_id parameter is not of type int
         """
-        if not isinstance(role_id, int):
+        if type(role_id) is not int:
             raise TypeError(f"`role_id` should be of type `int`, not {role_id.__class__.__name__}")
         return self._get_base_group(self.ROLE, str(role_id))
 
@@ -1083,7 +1083,7 @@ class Config(metaclass=ConfigMeta):
         TypeError
             If the given user_id parameter is not of type int
         """
-        if not isinstance(user_id, int):
+        if type(user_id) is not int:
             raise TypeError(f"`user_id` should be of type `int`, not {user_id.__class__.__name__}")
         return self._get_base_group(self.USER, str(user_id))
 
@@ -1123,12 +1123,12 @@ class Config(metaclass=ConfigMeta):
         TypeError
             If the given guild_id or member_id parameter is not of type int
         """
-        if not isinstance(guild_id, int):
+        if type(guild_id) is not int:
             raise TypeError(
                 f"`guild_id` should be of type `int`, not {guild_id.__class__.__name__}"
             )
 
-        if not isinstance(member_id, int):
+        if type(member_id) is not int:
             raise TypeError(
                 f"`member_id` should be of type `int`, not {member_id.__class__.__name__}"
             )
