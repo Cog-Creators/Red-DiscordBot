@@ -962,9 +962,7 @@ class Config(metaclass=ConfigMeta):
             If the given guild_id parameter is not of type int
         """
         if type(guild_id) is not int:
-            raise TypeError(
-                f"guild_id should be of type int, not {guild_id.__class__.__name__}"
-            )
+            raise TypeError(f"guild_id should be of type int, not {guild_id.__class__.__name__}")
         return self._get_base_group(self.GUILD, str(guild_id))
 
     def guild(self, guild: discord.Guild) -> Group:
@@ -1124,14 +1122,10 @@ class Config(metaclass=ConfigMeta):
             If the given guild_id or member_id parameter is not of type int
         """
         if type(guild_id) is not int:
-            raise TypeError(
-                f"guild_id should be of type int, not {guild_id.__class__.__name__}"
-            )
+            raise TypeError(f"guild_id should be of type int, not {guild_id.__class__.__name__}")
 
         if type(member_id) is not int:
-            raise TypeError(
-                f"member_id should be of type int, not {member_id.__class__.__name__}"
-            )
+            raise TypeError(f"member_id should be of type int, not {member_id.__class__.__name__}")
 
         return self._get_base_group(self.MEMBER, str(guild_id), str(member_id))
 
