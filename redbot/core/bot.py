@@ -692,7 +692,7 @@ class Red(
 
         If given a member, this will additionally check guild lists
 
-        If omiting a user or member, you must provide a value for ``who_id``
+        If omitting a user or member, you must provide a value for ``who_id``
 
         You may also provide a value for ``guild`` in this case
 
