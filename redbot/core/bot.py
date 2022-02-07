@@ -1208,18 +1208,27 @@ class Red(
         channel: Union[discord.abc.GuildChannel, discord.abc.PrivateChannel],
         user: discord.abc.User,
         command: Optional[commands.Command] = None,
+        *,
+        check_permissions: bool = False,
     ) -> bool:
         """
         Determine if an embed is requested for a response.
 
-        Parameters
-        ----------
+        Arguments
+        ---------
         channel : `discord.abc.GuildChannel` or `discord.abc.PrivateChannel`
             The channel to check embed settings for.
         user : `discord.abc.User`
             The user to check embed settings for.
         command : `redbot.core.commands.Command`, optional
             The command ran.
+
+        Keyword Arguments
+        -----------------
+        check_permissions : `bool`
+            If ``True``, this method will also check whether the bot can send embeds
+            in the given channel and if it can't, it will return ``False`` regardless of
+            the bot's embed settings.
 
         Returns
         -------
@@ -1237,6 +1246,9 @@ class Red(
             if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
         else:
+            if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
+                return False
+
             if (channel_setting := await self._config.channel(channel).embeds()) is not None:
                 return channel_setting
 
@@ -1272,6 +1284,37 @@ class Red(
         bool
         """
         return user.id in self.owner_ids
+
+    async def get_invite_url(self) -> str:
+        """
+        Generates the invite URL for the bot.
+
+        Does not check if the invite URL is configured to be public
+        with ``[p]inviteset public``. To check if invites are public,
+        use `Red.is_invite_url_public()`.
+
+        Returns
+        -------
+        str
+            Invite URL.
+        """
+        data = await self._config.all()
+        commands_scope = data["invite_commands_scope"]
+        scopes = ("bot", "applications.commands") if commands_scope else None
+        perms_int = data["invite_perm"]
+        permissions = discord.Permissions(perms_int)
+        return discord.utils.oauth_url(self._app_info.id, permissions, scopes=scopes)
+
+    async def is_invite_url_public(self) -> bool:
+        """
+        Determines if invite URL is configured to be public with ``[p]inviteset public``.
+
+        Returns
+        -------
+        bool
+            :code:`True` if the invite URL is public.
+        """
+        return await self._config.invite_public()
 
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""

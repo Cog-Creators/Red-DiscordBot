@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional
+from redbot.core.commands import UserInputOptional, RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
     pagify,
@@ -17,7 +17,6 @@ from redbot.core.utils.chat_formatting import (
 )
 from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
-from .converters import RawUserIds
 from .utils import is_allowed_by_hierarchy
 
 log = logging.getLogger("red.mod")
@@ -371,7 +370,7 @@ class KickBanMixin(MixinMeta):
     async def ban(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, RawUserIds],
+        user: Union[discord.Member, RawUserIdConverter],
         days: Optional[int] = None,
         *,
         reason: str = None,
@@ -409,7 +408,7 @@ class KickBanMixin(MixinMeta):
     async def massban(
         self,
         ctx: commands.Context,
-        user_ids: commands.Greedy[RawUserIds],
+        user_ids: commands.Greedy[RawUserIdConverter],
         days: Optional[int] = None,
         *,
         reason: str = None,
@@ -892,7 +891,9 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def unban(self, ctx: commands.Context, user_id: RawUserIds, *, reason: str = None):
+    async def unban(
+        self, ctx: commands.Context, user_id: RawUserIdConverter, *, reason: str = None
+    ):
         """Unban a user from this server.
 
         Requires specifying the target user's ID. To find this, you may either:
@@ -955,7 +956,7 @@ class KickBanMixin(MixinMeta):
                 except discord.HTTPException:
                     await ctx.send(
                         _(
-                            "Something went wrong when attempting to send that user"
+                            "Something went wrong when attempting to send that user "
                             "an invite. Here's the link so you can try: {invite_link}"
                         ).format(invite_link=invite.url)
                     )

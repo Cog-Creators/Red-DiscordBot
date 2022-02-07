@@ -369,7 +369,7 @@ class RedHelpFormatter(HelpFormatterABC):
             grp = cast(commands.Group, command)
             subcommands = await self.get_group_help_mapping(ctx, grp, help_settings=help_settings)
 
-        if await ctx.embed_requested():
+        if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             if description:
@@ -550,7 +550,7 @@ class RedHelpFormatter(HelpFormatterABC):
         description = obj.format_help_for_context(ctx)
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
 
-        if await ctx.embed_requested():
+        if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
@@ -617,7 +617,7 @@ class RedHelpFormatter(HelpFormatterABC):
         description = ctx.bot.description or ""
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
 
-        if await ctx.embed_requested():
+        if await self.embed_requested(ctx):
 
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
@@ -716,6 +716,11 @@ class RedHelpFormatter(HelpFormatterABC):
             else:
                 yield obj
 
+    async def embed_requested(self, ctx: Context) -> bool:
+        return await ctx.bot.embed_requested(
+            channel=ctx.channel, user=ctx.author, command=red_help, check_permissions=True
+        )
+
     async def command_not_found(self, ctx, help_for, help_settings: HelpSettings):
         """
         Sends an error, fuzzy help, or stays quiet based on settings
@@ -728,7 +733,7 @@ class RedHelpFormatter(HelpFormatterABC):
             ),
             min_score=75,
         )
-        use_embeds = await ctx.embed_requested()
+        use_embeds = await self.embed_requested(ctx)
         if fuzzy_commands:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
@@ -762,7 +767,7 @@ class RedHelpFormatter(HelpFormatterABC):
         ret = _("Command {command_name} has no subcommand named {not_found}.").format(
             command_name=bold(command.qualified_name), not_found=bold(not_found[0])
         )
-        if await ctx.embed_requested():
+        if await self.embed_requested(ctx):
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
