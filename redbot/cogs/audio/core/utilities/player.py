@@ -383,6 +383,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 index = query.track_index
                 if query.start_time:
                     seek = query.start_time
+            if query.is_url:
+                playlist_url = query.uri
             try:
                 result, called_api = await self.api_interface.fetch_track(ctx, player, query)
             except TrackEnqueueError:
@@ -444,12 +446,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             async for track in AsyncIter(tracks):
                 if len(player.queue) >= 10000:
                     continue
-                query = Query.process_input(track, self.local_folder_current_path)
+                track_query = Query.process_input(track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
                     self.config,
                     ctx,
-                    f"{track.title} {track.author} {track.uri} " f"{str(query)}",
-                    query_obj=query,
+                    f"{track.title} {track.author} {track.uri} " f"{str(track_query)}",
+                    query_obj=track_query,
                 ):
                     if IS_DEBUG:
                         log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
@@ -491,11 +493,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             playlist_name = escape(
                 playlist_data.name if playlist_data else _("No Title"), formatting=True
             )
+            title = _("Album Enqueued") if query.is_album else _("Playlist Enqueued")
             embed = discord.Embed(
-                description=bold(f"[{playlist_name}]({playlist_url})")
+                description=f"[{playlist_name}]({playlist_url})"
                 if playlist_url
                 else playlist_name,
-                title=_("Playlist Enqueued"),
+                title=title,
             )
             embed.set_footer(
                 text=_("Added {num} tracks to the queue.{maxlength_msg}").format(
