@@ -2299,6 +2299,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Enable or disable case creation for a mod action.
 
         An action can be enabling or disabling specific cases. (Ban, kick, mute, etc.)
+        
+        Example: `[p]modlogset cases kick enabled`
         """
         guild = ctx.guild
 
