@@ -21,7 +21,7 @@ First, we would like to make something clear:
 .. warning::
     Due to their inability to handle Red's data structure and meet the
     conditions of being a supported platform; platforms such as Heroku, 
-    Pterodactyl, repl.it, Termux, LXC and alike are **NOT** officially supported. 
+    Pterodactyl, repl.it, Termux and alike are **NOT** officially supported. 
     Docker support found in GitHub is also a work in progress and not ready
     for daily use. Workarounds for getting Red running on those platforms
     are imperfect due to Red's nature. You will not be able to receive
@@ -103,10 +103,10 @@ Average Providers
  with locations available worldwide.
 
 | `Hetzner Online <https://www.hetzner.com/>`_ is a German VPS and dedicated server
- provider with locations in Germany and Finland.
+ provider with locations in Germany, US and Finland.
 
 | `Contabo <https://contabo.com/>`_ is also a German VPS and dedicated server provider
- with locations in Germany and the United States.
+ with locations in Germany, Asia and the United States.
 
 | `Ramnode <https://www.ramnode.com/>`_ is a US based VPS provider focused on
  low to middle end VPS with locations in the US and Netherlands.

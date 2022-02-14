@@ -5,9 +5,9 @@ from typing import Callable, List, Optional, Set, Union
 
 import discord
 
-from redbot.cogs.mod.converters import RawUserIds
 from redbot.core import checks, commands, Config
 from redbot.core.bot import Red
+from redbot.core.commands import RawUserIdConverter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import slow_deletion, mass_purge
@@ -55,9 +55,10 @@ class Cleanup(commands.Cog):
             return True
 
         prompt = await ctx.send(
-            _("Are you sure you want to delete {number} messages? (y/n)").format(
+            _("Are you sure you want to delete {number} messages?").format(
                 number=humanize_number(number)
             )
+            + " (yes/no)"
         )
         response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
@@ -231,7 +232,7 @@ class Cleanup(commands.Cog):
     async def user(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, RawUserIds],
+        user: Union[discord.Member, RawUserIdConverter],
         number: positive_int,
         delete_pinned: bool = False,
     ):
@@ -731,6 +732,7 @@ class Cleanup(commands.Cog):
         """Manage the settings for the cleanup command."""
         pass
 
+    @commands.guild_only()
     @cleanupset.command(name="notify")
     async def cleanupset_notify(self, ctx: commands.Context):
         """Toggle clean up notification settings.

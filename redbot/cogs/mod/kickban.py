@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional
+from redbot.core.commands import UserInputOptional, RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
     pagify,
@@ -17,7 +17,6 @@ from redbot.core.utils.chat_formatting import (
 )
 from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
-from .converters import RawUserIds
 from .utils import is_allowed_by_hierarchy
 
 log = logging.getLogger("red.mod")
@@ -296,7 +295,7 @@ class KickBanMixin(MixinMeta):
 
         Examples:
            - `[p]kick 428675506947227648 wanted to be kicked.`
-            This will kick Twentysix from the server.
+            This will kick the user with ID 428675506947227648 from the server.
            - `[p]kick @Twentysix wanted to be kicked.`
             This will kick Twentysix from the server.
 
@@ -371,7 +370,7 @@ class KickBanMixin(MixinMeta):
     async def ban(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, RawUserIds],
+        user: Union[discord.Member, RawUserIdConverter],
         days: Optional[int] = None,
         *,
         reason: str = None,
@@ -382,7 +381,7 @@ class KickBanMixin(MixinMeta):
 
         Examples:
            - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
-            This will ban Twentysix and it will delete 7 days worth of messages.
+            This will ban the user with ID 428675506947227648 and it will delete 7 days worth of messages.
            - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
             This will ban Twentysix and it will delete 7 days worth of messages.
 
@@ -409,7 +408,7 @@ class KickBanMixin(MixinMeta):
     async def massban(
         self,
         ctx: commands.Context,
-        user_ids: commands.Greedy[RawUserIds],
+        user_ids: commands.Greedy[RawUserIdConverter],
         days: Optional[int] = None,
         *,
         reason: str = None,
@@ -597,7 +596,7 @@ class KickBanMixin(MixinMeta):
            - `[p]tempban @Twentysix 15m You need a timeout`
             This will ban Twentysix for 15 minutes.
            - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`
-            This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
+            This will ban the user with ID 428675506947227648 for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
         """
         guild = ctx.guild
         author = ctx.author
@@ -802,6 +801,7 @@ class KickBanMixin(MixinMeta):
                 until=None,
                 channel=case_channel,
             )
+            await ctx.send(_("User has been kicked from the voice channel."))
 
     @commands.command()
     @commands.guild_only()
@@ -891,7 +891,9 @@ class KickBanMixin(MixinMeta):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def unban(self, ctx: commands.Context, user_id: RawUserIds, *, reason: str = None):
+    async def unban(
+        self, ctx: commands.Context, user_id: RawUserIdConverter, *, reason: str = None
+    ):
         """Unban a user from this server.
 
         Requires specifying the target user's ID. To find this, you may either:
@@ -954,7 +956,7 @@ class KickBanMixin(MixinMeta):
                 except discord.HTTPException:
                     await ctx.send(
                         _(
-                            "Something went wrong when attempting to send that user"
+                            "Something went wrong when attempting to send that user "
                             "an invite. Here's the link so you can try: {invite_link}"
                         ).format(invite_link=invite.url)
                     )
