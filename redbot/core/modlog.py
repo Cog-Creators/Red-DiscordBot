@@ -543,7 +543,7 @@ class Case:
                 case_text += f"{bold(_('Until:'))} {until}\n{bold(_('Duration:'))} {duration}\n"
             if self.channel:
                 if isinstance(self.channel, int):
-                    case_text += f"{bold(_('Channel: '))}: {self.channel} {_('(Deleted)')}\n"
+                    case_text += f"{bold(_('Channel:'))} {self.channel} {_('(Deleted)')}\n"
                 else:
                     case_text += f"{bold(_('Channel:'))} {self.channel.name}\n"
             if amended_by:
