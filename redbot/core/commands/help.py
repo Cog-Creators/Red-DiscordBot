@@ -401,9 +401,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = f"{bold(underline(_('Subcommands:')))}"
+                        title = bold(underline(_("Subcommands:")))
                     else:
-                        title = f"{bold(underline(_('Subcommands: (continued)')))}"
+                        title = bold(underline(_("Subcommands: (continued)")))
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
