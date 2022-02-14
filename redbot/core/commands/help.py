@@ -403,7 +403,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     if i == 0:
                         title = f"{bold(underline(_('Subcommands:')))}"
                     else:
-                        title = f"{bold(underline(_('Subcommands:')))} (continued)"
+                        title = f"{bold(underline(_('Subcommands: (continued)')))}"
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -578,7 +578,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     if i == 0:
                         title = f"{underline(bold(_('Commands:')))}"
                     else:
-                        title = f"{underline(bold(_('Commands:')))} (continued)"
+                        title = f"{underline(bold(_('Commands: (continued)')))}"
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
