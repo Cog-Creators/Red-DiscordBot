@@ -39,6 +39,7 @@ Then create the new service file:
 Paste the following in the file, and replace all instances of :code:`username` with the Linux username you retrieved above, and :code:`path` with the python path you retrieved above.
 
 .. code-block:: none
+    :emphasize-lines: 8-10
 
     [Unit]
     Description=%I redbot
