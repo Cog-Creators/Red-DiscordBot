@@ -2350,6 +2350,12 @@ modlogset cases
 
 Enable or disable case creation for a mod action, like disabling warnings, enabling bans, etc.
 
+Example: 
+
+.. code-block:: none
+
+    [p]modlogset cases kick enabled
+
 **Arguments**
 
 * ``[action]``: The action to enable or disable case creation for.
