@@ -18,15 +18,11 @@
   - redbot/core/bank.py
   # Docs
   - docs/framework_bank.rst
-"Category: Bank Cog":
-  # Source
-  - redbot/cogs/bank/*
-  # Docs
-  - docs/cog_guides/bank.rst
 "Category: Bot Core":
   # Source
   - redbot/*
   - redbot/core/__init__.py
+  - redbot/core/_diagnoser.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/bot.py
   - redbot/core/checks.py
