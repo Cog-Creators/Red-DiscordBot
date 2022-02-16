@@ -2612,7 +2612,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         await ctx.bot.change_presence(status=status, activity=game)
         if game:
-            await ctx.send(_("Status set to ``Playing {game.name}``.").format(game=game))
+            await ctx.send(_("Status set to `Playing {game.name}`.").format(game=game))
         else:
             await ctx.send(_("Game cleared."))
 
@@ -2646,7 +2646,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
             await ctx.send(
-                _("Status set to ``Listening to {listening}``.").format(listening=listening)
+                _("Status set to `Listening to {listening}`.").format(listening=listening)
             )
         else:
             await ctx.send(_("Listening cleared."))
@@ -2678,7 +2678,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
-            await ctx.send(_("Status set to ``Watching {watching}``.").format(watching=watching))
+            await ctx.send(_("Status set to `Watching {watching}`.").format(watching=watching))
         else:
             await ctx.send(_("Watching cleared."))
 
@@ -2712,7 +2712,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
             await ctx.send(
-                _("Status set to ``Competing in {competing}``.").format(competing=competing)
+                _("Status set to `Competing in {competing}`.").format(competing=competing)
             )
         else:
             await ctx.send(_("Competing cleared."))
@@ -3115,7 +3115,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Secrets are not shown.
 
         **Example:**
-            - `[p]set api list``
+            - `[p]set api list`
         """
 
         services: dict = await ctx.bot.get_shared_api_tokens()
@@ -3589,7 +3589,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Warning: These settings may not be accurate if the default formatter is not in use.
 
         **Example:**
-            - `[p]helpset showsettings``
+            - `[p]helpset showsettings`
         """
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
@@ -3611,7 +3611,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This resets [botname]'s help formatter to the default formatter.
 
         **Example:**
-            - `[p]helpset resetformatter``
+            - `[p]helpset resetformatter`
         """
 
         ctx.bot.reset_help_formatter()
@@ -3631,7 +3631,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This may not have an impact when using custom formatters from 3rd party cogs
 
         **Example:**
-            - `[p]helpset resetsettings``
+            - `[p]helpset resetsettings`
         """
         await ctx.bot._config.help.clear()
         await ctx.send(

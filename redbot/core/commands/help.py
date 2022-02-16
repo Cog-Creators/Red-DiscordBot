@@ -42,7 +42,15 @@ from ..i18n import Translator
 from ..utils import menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, humanize_list, humanize_number, humanize_timedelta, pagify
+from ..utils.chat_formatting import (
+    bold,
+    box,
+    humanize_list,
+    humanize_number,
+    humanize_timedelta,
+    pagify,
+    underline,
+)
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
@@ -274,9 +282,12 @@ class RedHelpFormatter(HelpFormatterABC):
     @staticmethod
     def get_default_tagline(ctx: Context):
         return _(
-            "Type {ctx.clean_prefix}help <command> for more info on a command. "
-            "You can also type {ctx.clean_prefix}help <category> for more info on a category."
-        ).format(ctx=ctx)
+            "Type {command1} for more info on a command. "
+            "You can also type {command2} for more info on a category."
+        ).format(
+            command1=f"{ctx.clean_prefix}help <command>",
+            command2=f"{ctx.clean_prefix}help <category>",
+        )
 
     @staticmethod
     def get_command_signature(ctx: Context, command: commands.Command) -> str:
@@ -390,9 +401,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = _("**__Subcommands:__**")
+                        title = bold(underline(_("Subcommands:")))
                     else:
-                        title = _("**__Subcommands:__** (continued)")
+                        title = bold(underline(_("Subcommands: (continued)")))
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -560,14 +571,14 @@ class RedHelpFormatter(HelpFormatterABC):
                     return a_line[:67].rstrip() + "..."
 
                 command_text = "\n".join(
-                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
+                    shorten_line(f"{bold(name)} {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(coms.items())
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = _("**__Commands:__**")
+                        title = f"{underline(bold(_('Commands:')))}"
                     else:
-                        title = _("**__Commands:__** (continued)")
+                        title = f"{underline(bold(_('Commands: (continued)')))}"
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -617,9 +628,9 @@ class RedHelpFormatter(HelpFormatterABC):
             for cog_name, data in coms:
 
                 if cog_name:
-                    title = f"**__{cog_name}:__**"
+                    title = f"{underline(bold(cog_name))}:"
                 else:
-                    title = _("**__No Category:__**")
+                    title = f"{underline(bold(_('No Category:')))}"
 
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
@@ -736,7 +747,7 @@ class RedHelpFormatter(HelpFormatterABC):
             else:
                 await ctx.send(ret)
         elif help_settings.verify_exists:
-            ret = _("Help topic for *{command_name}* not found.").format(command_name=help_for)
+            ret = _("Help topic for {command_name} not found.").format(command_name=bold(help_for))
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
@@ -753,8 +764,8 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends an error
         """
-        ret = _("Command *{command_name}* has no subcommand named *{not_found}*.").format(
-            command_name=command.qualified_name, not_found=not_found[0]
+        ret = _("Command {command_name} has no subcommand named {not_found}.").format(
+            command_name=bold(command.qualified_name), not_found=bold(not_found[0])
         )
         if await self.embed_requested(ctx):
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
