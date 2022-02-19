@@ -57,8 +57,8 @@ class KickBanMixin(MixinMeta):
                 # (i.e. they won't be kicked on disconnect)
                 return inv
         else:  # No existing invite found that is valid
-            channels_and_perms = zip(
-                guild.text_channels, map(guild.me.permissions_in, guild.text_channels)
+            channels_and_perms = (
+                (channel, channel.permissions_for(guild.me)) for channel in guild.text_channels
             )
             channel = next(
                 (channel for channel, perms in channels_and_perms if perms.create_instant_invite),

@@ -686,7 +686,7 @@ class Permissions(commands.Cog):
     @staticmethod
     async def _confirm(ctx: commands.Context) -> bool:
         """Ask "Are you sure?" and get the response as a bool."""
-        if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
             task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
