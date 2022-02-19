@@ -29,7 +29,6 @@ from .converter import (
     parse_timedelta as parse_timedelta,
     NoParseOptional as NoParseOptional,
     UserInputOptional as UserInputOptional,
-    Literal as Literal,
     RawUserIdConverter as RawUserIdConverter,
     CogConverter as CogConverter,
     CommandConverter as CommandConverter,

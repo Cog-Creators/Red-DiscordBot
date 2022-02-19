@@ -19,7 +19,6 @@ from typing import (
     Dict,
     Type,
     TypeVar,
-    Literal as Literal,
     Union as UserInputOptional,
 )
 
@@ -44,7 +43,6 @@ __all__ = [
     "get_timedelta_converter",
     "parse_relativedelta",
     "parse_timedelta",
-    "Literal",
     "CommandConverter",
     "CogConverter",
 ]
@@ -474,44 +472,6 @@ if not TYPE_CHECKING:
     #: .. warning::
     #:    This converter class is still provisional.
     UserInputOptional = Optional
-
-
-if not TYPE_CHECKING:
-
-    class Literal(dpy_commands.Converter):
-        """
-        This can be used as a converter for `typing.Literal`.
-
-        In a type checking context it is `typing.Literal`.
-        In a runtime context, it's a converter which only matches the literals it was given.
-
-
-        .. warning::
-            This converter class is still provisional.
-        """
-
-        def __init__(self, valid_names: Tuple[str]):
-            self.valid_names = valid_names
-
-        def __call__(self, ctx, arg):
-            # Callable's are treated as valid types:
-            # https://github.com/python/cpython/blob/3.8/Lib/typing.py#L148
-            # Without this, ``typing.Union[Literal["clear"], bool]`` would fail
-            return self.convert(ctx, arg)
-
-        async def convert(self, ctx, arg):
-            if arg in self.valid_names:
-                return arg
-            raise BadArgument(_("Expected one of: {}").format(humanize_list(self.valid_names)))
-
-        def __class_getitem__(cls, k):
-            if not k:
-                raise ValueError("Need at least one value for Literal")
-            if isinstance(k, tuple):
-                return cls(k)
-            else:
-                return cls((k,))
-
 
 if TYPE_CHECKING:
     CommandConverter = dpy_commands.Command
