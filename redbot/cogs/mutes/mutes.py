@@ -550,7 +550,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 description=reason,
                 color=await self.bot.get_embed_color(user),
             )
-            em.timestamp = datetime.utcnow()
+            em.timestamp = datetime.now(timezone.utc)
             if duration:
                 em.add_field(name=_("Until"), value=until_str)
                 em.add_field(name=_("Duration"), value=duration_str)
@@ -1180,7 +1180,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "smute",
                         user,
                         author,
@@ -1329,7 +1329,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "cmute",
                         user,
                         author,
@@ -1399,7 +1399,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "sunmute",
                         user,
                         author,
@@ -1465,7 +1465,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "cunmute",
                         user,
                         author,

@@ -136,7 +136,7 @@ class VoiceMutes(MixinMeta):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "vmute",
                         user,
                         author,
@@ -212,7 +212,7 @@ class VoiceMutes(MixinMeta):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "vunmute",
                         user,
                         author,
