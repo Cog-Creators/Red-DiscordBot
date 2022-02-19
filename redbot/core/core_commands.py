@@ -318,7 +318,7 @@ class CoreLogic:
             The current (or new) username of the bot.
         """
         if name is not None:
-            await self.bot.user.edit(username=name)
+            return (await self.bot.user.edit(username=name)).name
 
         return self.bot.user.name
 
