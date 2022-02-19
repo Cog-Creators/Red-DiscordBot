@@ -1366,6 +1366,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.
         """
+        if isinstance(ctx.channel, discord.Thread):
+            await ctx.send(
+                _(
+                    "This setting cannot be set for threads. If you want to set this for"
+                    " the parent channel, send the command in that channel."
+                )
+            )
+            return
+
         if enabled is None:
             await self.bot._config.channel(ctx.channel).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
@@ -3211,7 +3220,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set_ownernotifications.command(name="adddestination")
     async def _set_ownernotifications_adddestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+        self, ctx: commands.Context, *, channel: discord.TextChannel
     ):
         """
         Adds a destination text channel to receive owner notifications.
@@ -3223,15 +3232,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<channel>` - The channel to send owner notifications to.
         """
-
-        try:
-            channel_id = channel.id
-        except AttributeError:
-            channel_id = channel
-
         async with ctx.bot._config.extra_owner_destinations() as extras:
-            if channel_id not in extras:
-                extras.append(channel_id)
+            if channel.id not in extras:
+                extras.append(channel.id)
 
         await ctx.tick()
 

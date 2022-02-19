@@ -354,14 +354,8 @@ class Admin(commands.Cog):
         pass
 
     @announceset.command(name="channel")
-    async def announceset_channel(self, ctx, *, channel: discord.TextChannel = None):
-        """
-        Change the channel where the bot will send announcements.
-
-        If channel is left blank it defaults to the current channel.
-        """
-        if channel is None:
-            channel = ctx.channel
+    async def announceset_channel(self, ctx, *, channel: discord.TextChannel):
+        """Change the channel where the bot will send announcements."""
         await self.config.guild(ctx.guild).announce_channel.set(channel.id)
         await ctx.send(
             _("The announcement channel has been set to {channel.mention}").format(channel=channel)

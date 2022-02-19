@@ -391,6 +391,9 @@ class Streams(commands.Cog):
             await ctx.send(page)
 
     async def stream_alert(self, ctx: commands.Context, _class, channel_name):
+        if isinstance(ctx.channel, discord.Thread):
+            await ctx.send("Stream alerts cannot be set up in threads.")
+            return
         stream = self.get_stream(_class, channel_name)
         if not stream:
             token = await self.bot.get_shared_api_tokens(_class.token_name)
