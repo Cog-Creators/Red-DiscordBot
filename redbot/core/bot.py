@@ -1179,12 +1179,12 @@ class Red(
         if not self.owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
 
-    async def start(self, *args, **kwargs):
+    async def start(self, token: str) -> None:
         """
         Overridden start which ensures that cog load and other pre-connection tasks are handled.
         """
         await self._pre_login()
-        await self.login(*args)
+        await self.login(token)
         await self._pre_fetch_owners()
         await self._pre_connect()
         await self.connect()

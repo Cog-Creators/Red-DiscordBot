@@ -381,7 +381,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         await red.http.close()
         sys.exit(0)
     try:
-        await red.start(token, bot=True)
+        await red.start(token)
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
         db_token = await red._config.token()
