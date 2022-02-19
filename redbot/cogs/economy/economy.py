@@ -434,11 +434,11 @@ class Economy(commands.Cog):
         if show_global and await bank.is_global():
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
-            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar)
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
             if guild:
-                base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
+                base_embed.set_author(name=guild.name, icon_url=guild.icon)
 
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
