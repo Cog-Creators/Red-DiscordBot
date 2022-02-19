@@ -236,7 +236,7 @@ class Filter(commands.Cog):
     @_filter_channel.command(name="list")
     async def _channel_list(self, ctx: commands.Context):
         """Send a list of the channel's filtered words."""
-        channel = ctx.channel
+        channel = ctx.channel.parent if isinstance(ctx.channel, discord.Thread) else ctx.channel
         author = ctx.author
         word_list = await self.config.channel(channel).filter()
         if not word_list:
@@ -421,14 +421,19 @@ class Filter(commands.Cog):
         return removed
 
     async def filter_hits(
-        self, text: str, server_or_channel: Union[discord.Guild, discord.TextChannel]
+        self,
+        text: str,
+        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.Thread],
     ) -> Set[str]:
-        try:
-            guild = server_or_channel.guild
-            channel = server_or_channel
-        except AttributeError:
+        if isinstance(server_or_channel, discord.Guild):
             guild = server_or_channel
             channel = None
+        else:
+            guild = server_or_channel.guild
+            if isinstance(server_or_channel, discord.Thread):
+                channel = server_or_channel.parent
+            else:
+                channel = server_or_channel
 
         hits: Set[str] = set()
 
