@@ -18,6 +18,7 @@ _OWNER_NOTIFICATION: Final[int] = 1
 
 LazyGreedyConverter = get_lazy_converter("--")
 PlaylistConverter = get_playlist_converter()
+# DEP-WARN
 HUMANIZED_PERM = {
     "create_instant_invite": "Create Instant Invite",
     "kick_members": "Kick Members",
@@ -50,6 +51,16 @@ HUMANIZED_PERM = {
     "manage_roles": "Manage Roles",
     "manage_webhooks": "Manage Webhooks",
     "manage_emojis": "Manage Emojis",
+    "use_slash_commands": "Use Slash Commands",
+    "request_to_speak": "Request to Speak",
+    "manage_events": "Manage Events",
+    "manage_threads": "Manage Threads",
+    "create_public_threads": "Create Public Threads",
+    "create_private_threads": "Create Private Threads",
+    "external_stickers": "Use External Stickers",
+    "send_messages_in_threads": "Send Messages in Threads",
+    "start_embedded_activities": "Start Activities",
+    "moderate_members": "Moderate Member",
 }
 
 
