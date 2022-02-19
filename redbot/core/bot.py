@@ -1328,9 +1328,8 @@ class Red(
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
         try:
-            member_snowflakes = member._roles  # DEP-WARN
             for snowflake in await self._config.guild(member.guild).admin_role():
-                if member_snowflakes.has(snowflake):  # Dep-WARN
+                if member.get_role(snowflake):
                     return True
         except AttributeError:  # someone passed a webhook to this
             pass
@@ -1339,12 +1338,11 @@ class Red(
     async def is_mod(self, member: discord.Member) -> bool:
         """Checks if a member is a mod or admin of their guild."""
         try:
-            member_snowflakes = member._roles  # DEP-WARN
             for snowflake in await self._config.guild(member.guild).admin_role():
-                if member_snowflakes.has(snowflake):  # DEP-WARN
+                if member.get_role(snowflake):
                     return True
             for snowflake in await self._config.guild(member.guild).mod_role():
-                if member_snowflakes.has(snowflake):  # DEP-WARN
+                if member.get_role(snowflake):
                     return True
         except AttributeError:  # someone passed a webhook to this
             pass
