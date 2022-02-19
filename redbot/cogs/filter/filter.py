@@ -348,10 +348,10 @@ class Filter(commands.Cog):
 
     def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
         """ Invalidate a cached pattern"""
-        self.pattern_cache.pop((guild, channel), None)
+        self.pattern_cache.pop((guild.id, channel.id), None)
         if channel is None:
             for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
-                if guild in keyset:
+                if guild.id == keyset[0]:
                     self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
@@ -408,7 +408,7 @@ class Filter(commands.Cog):
         hits: Set[str] = set()
 
         try:
-            pattern = self.pattern_cache[(guild, channel)]
+            pattern = self.pattern_cache[(guild.id, channel.id)]
         except KeyError:
             word_list = set(await self.config.guild(guild).filter())
             if channel:
@@ -421,7 +421,7 @@ class Filter(commands.Cog):
             else:
                 pattern = None
 
-            self.pattern_cache[(guild, channel)] = pattern
+            self.pattern_cache[(guild.id, channel.id)] = pattern
 
         if pattern:
             hits |= set(pattern.findall(text))
