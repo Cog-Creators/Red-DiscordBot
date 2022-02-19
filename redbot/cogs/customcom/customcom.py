@@ -636,7 +636,7 @@ class CustomCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message):
-        is_private = isinstance(message.channel, discord.abc.PrivateChannel)
+        is_private = message.guild is None
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
         # something similar once it's added
