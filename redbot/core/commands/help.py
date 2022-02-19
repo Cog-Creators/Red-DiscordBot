@@ -854,9 +854,11 @@ class RedHelpFormatter(HelpFormatterABC):
                 and channel_permissions.manage_messages  # we can manage messages here
             ):
                 # We need to wrap this in a task to not block after-sending-help interactions.
-                # The channel has to be TextChannel as we can't bulk-delete from DMs
+                # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs
                 async def _delete_delay_help(
-                    channel: discord.TextChannel, messages: List[discord.Message], delay: int
+                    channel: Union[discord.TextChannel, discord.Thread],
+                    messages: List[discord.Message],
+                    delay: int,
                 ):
                     await asyncio.sleep(delay)
                     await mass_purge(messages, channel)

@@ -24,7 +24,7 @@ class Slowmode(MixinMeta):
             minimum=timedelta(seconds=0), maximum=timedelta(hours=6), default_unit="seconds"
         ) = timedelta(seconds=0),
     ):
-        """Changes channel's slowmode setting.
+        """Changes thread's or channel's slowmode setting.
 
         Interval can be anything from 0 seconds to 6 hours.
         Use without parameters to disable.

@@ -3,7 +3,7 @@ import asyncio
 import math
 import pathlib
 from collections import Counter
-from typing import Any, Dict, List, Literal
+from typing import Any, Dict, List, Literal, Union
 from schema import Schema, Optional, Or, SchemaError
 
 import io
@@ -706,7 +706,9 @@ class Trivia(commands.Cog):
             fp.write(buffer.read())
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
-    def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
+    def _get_trivia_session(
+        self, channel: Union[discord.TextChannel, discord.Thread]
+    ) -> TriviaSession:
         return next(
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None
         )

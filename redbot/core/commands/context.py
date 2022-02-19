@@ -349,7 +349,7 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
             ...
 
         @property
-        def channel(self) -> discord.TextChannel:
+        def channel(self) -> Union[discord.TextChannel, discord.Thread]:
             ...
 
         @property

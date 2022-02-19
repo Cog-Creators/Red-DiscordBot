@@ -391,7 +391,7 @@ class Reports(commands.Cog):
     async def response(self, ctx, ticket_number: int):
         """Open a message tunnel.
 
-        This tunnel will forward things you say in this channel
+        This tunnel will forward things you say in this channel or thread
         to the ticket opener's direct messages.
 
         Tunnels do not persist across bot restarts.

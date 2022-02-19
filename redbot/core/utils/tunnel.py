@@ -4,7 +4,7 @@ from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
 import weakref
-from typing import List, Optional
+from typing import List, Optional, Union
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -57,14 +57,18 @@ class Tunnel(metaclass=TunnelMeta):
     ----------
     sender: `discord.Member`
         The person who opened the tunnel
-    origin: `discord.TextChannel`
+    origin: `discord.TextChannel` or `discord.Thread`
         The channel in which it was opened
     recipient: `discord.User`
         The user on the other end of the tunnel
     """
 
     def __init__(
-        self, *, sender: discord.Member, origin: discord.TextChannel, recipient: discord.User
+        self,
+        *,
+        sender: discord.Member,
+        origin: Union[discord.TextChannel, discord.Thread],
+        recipient: discord.User,
     ):
         self.sender = sender
         self.origin = origin
