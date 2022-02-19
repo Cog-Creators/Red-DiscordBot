@@ -1205,7 +1205,9 @@ class Red(
 
     async def embed_requested(
         self,
-        channel: Union[discord.TextChannel, commands.Context, discord.User, discord.Member],
+        channel: Union[
+            discord.TextChannel, commands.Context, discord.User, discord.Member, discord.Thread
+        ],
         *,
         command: Optional[commands.Command] = None,
         check_permissions: bool = True,
@@ -1215,7 +1217,7 @@ class Red(
 
         Arguments
         ---------
-        channel : `discord.abc.Messageable`
+        channel : Union[`discord.TextChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
             The target messageable object to check embed settings for.
 
         Keyword Arguments
@@ -1259,11 +1261,14 @@ class Red(
                 else channel.channel
             )
 
-        if isinstance(channel, discord.TextChannel):
+        if isinstance(channel, (discord.TextChannel, discord.Thread)):
+            channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
+
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
                 return False
 
-            if (channel_setting := await self._config.channel(channel).embeds()) is not None:
+            channel_setting = await self._config.channel_from_id(channel_id).embeds()
+            if channel_setting is not None:
                 return channel_setting
 
             if (command_setting := await get_command_setting(channel.guild.id)) is not None:
