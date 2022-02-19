@@ -282,7 +282,7 @@ else:
         Returns a typechecking safe `DictConverter` suitable for use with discord.py
         """
 
-        class PartialMeta(type):
+        class PartialMeta(type(DictConverter)):
             __call__ = functools.partialmethod(
                 type(DictConverter).__call__, *expected_keys, delims=delims
             )
@@ -391,7 +391,7 @@ else:
             The converter class, which will be a subclass of `TimedeltaConverter`
         """
 
-        class PartialMeta(type):
+        class PartialMeta(type(DictConverter)):
             __call__ = functools.partialmethod(
                 type(DictConverter).__call__,
                 allowed_units=allowed_units,
