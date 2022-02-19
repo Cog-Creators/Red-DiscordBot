@@ -205,6 +205,14 @@ class Filter(commands.Cog):
     async def _channel_clear(self, ctx: commands.Context):
         """Clears this channel's filter list."""
         channel = ctx.channel
+        if isinstance(channel, discord.Thread):
+            await ctx.send(
+                _(
+                    "Threads can't have a filter list set up. If you want to clear this list for"
+                    " the parent channel, send the command in that channel."
+                )
+            )
+            return
         author = ctx.author
         filter_list = await self.config.channel(channel).filter()
         if not filter_list:
@@ -228,7 +236,7 @@ class Filter(commands.Cog):
     @_filter_channel.command(name="list")
     async def _channel_list(self, ctx: commands.Context):
         """Send a list of the channel's filtered words."""
-        channel = ctx.channel
+        channel = ctx.channel.parent if isinstance(ctx.channel, discord.Thread) else ctx.channel
         author = ctx.author
         word_list = await self.config.channel(channel).filter()
         if not word_list:
@@ -257,6 +265,14 @@ class Filter(commands.Cog):
         - `[words...]` The words or sentences to filter.
         """
         channel = ctx.channel
+        if isinstance(channel, discord.Thread):
+            await ctx.send(
+                _(
+                    "Threads can't have a filter list set up. If you want to add words to"
+                    " the list of the parent channel, send the command in that channel."
+                )
+            )
+            return
         added = await self.add_to_filter(channel, words)
         if added:
             self.invalidate_cache(ctx.guild, ctx.channel)
@@ -279,6 +295,14 @@ class Filter(commands.Cog):
         - `[words...]` The words or sentences to no longer filter.
         """
         channel = ctx.channel
+        if isinstance(channel, discord.Thread):
+            await ctx.send(
+                _(
+                    "Threads can't have a filter list set up. If you want to remove words from"
+                    " the list of the parent channel, send the command in that channel."
+                )
+            )
+            return
         removed = await self.remove_from_filter(channel, words)
         if removed:
             await ctx.send(_("Words removed from filter."))
@@ -397,15 +421,19 @@ class Filter(commands.Cog):
         return removed
 
     async def filter_hits(
-        self, text: str, server_or_channel: Union[discord.Guild, discord.TextChannel]
+        self,
+        text: str,
+        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.Thread],
     ) -> Set[str]:
-
-        try:
-            guild = server_or_channel.guild
-            channel = server_or_channel
-        except AttributeError:
+        if isinstance(server_or_channel, discord.Guild):
             guild = server_or_channel
             channel = None
+        else:
+            guild = server_or_channel.guild
+            if isinstance(server_or_channel, discord.Thread):
+                channel = server_or_channel.parent
+            else:
+                channel = server_or_channel
 
         hits: Set[str] = set()
 
@@ -528,7 +556,6 @@ class Filter(commands.Cog):
         await self.maybe_filter_name(member)
 
     async def maybe_filter_name(self, member: discord.Member):
-
         guild = member.guild
         if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
             return
