@@ -81,7 +81,7 @@ Showing your own avatar
 
 .. code-block:: none
 
-    [p]customcom add simple avatar {author.avatar}
+    [p]customcom add simple avatar {author.display_avatar}
     [p]avatar
         https://cdn.discordapp.com/avatars/133801473317404673/be4c4a4fe47cb3e74c31a0504e7a295e.webp?size=1024
 

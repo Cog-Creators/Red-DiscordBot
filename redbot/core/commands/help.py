@@ -478,7 +478,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         author_info = {
             "name": _("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-            "icon_url": ctx.me.avatar,
+            "icon_url": ctx.me.display_avatar,
         }
 
         # Offset calculation here is for total embed size limit
@@ -733,7 +733,7 @@ class RedHelpFormatter(HelpFormatterABC):
             if use_embeds:
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -746,7 +746,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -765,7 +765,7 @@ class RedHelpFormatter(HelpFormatterABC):
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                icon_url=ctx.me.avatar,
+                icon_url=ctx.me.display_avatar,
             )
             tagline = help_settings.tagline or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
