@@ -1279,7 +1279,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         *,
         time_and_reason: MuteTime = {},
     ):
-        """Mute a user in the current text channel.
+        """Mute a user in the current text channel (or in the parent of the current thread).
 
         `<users...>` is a space separated list of usernames, ID's, or mentions.
         `[time_and_reason]` is the time to mute for and reason. Time is
@@ -1313,6 +1313,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     )
             author = ctx.message.author
             channel = ctx.message.channel
+            if isinstance(channel, discord.Thread):
+                channel = channel.parent
             guild = ctx.guild
             audit_reason = get_audit_reason(author, reason, shorten=True)
             issue_list = []
@@ -1347,7 +1349,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             msg = _("{users} has been muted in this channel{time}.")
             if len(success_list) > 1:
                 msg = _("{users} have been muted in this channel{time}.")
-            await channel.send(
+            await ctx.send(
                 msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
             )
         if issue_list:
@@ -1435,7 +1437,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         *,
         reason: Optional[str] = None,
     ):
-        """Unmute a user in this channel.
+        """Unmute a user in this channel (or in the parent of this thread).
 
         `<users...>` is a space separated list of usernames, ID's, or mentions.
         `[reason]` is the reason for the unmute.
@@ -1448,6 +1450,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return await ctx.send(_("You cannot unmute yourself."))
         async with ctx.typing():
             channel = ctx.channel
+            if isinstance(channel, discord.Thread):
+                channel = channel.parent
             author = ctx.author
             guild = ctx.guild
             audit_reason = get_audit_reason(author, reason, shorten=True)
