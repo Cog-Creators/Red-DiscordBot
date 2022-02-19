@@ -38,14 +38,13 @@ class KickBanMixin(MixinMeta):
         if my_perms.manage_guild or my_perms.administrator:
             if "VANITY_URL" in guild.features:
                 # guild has a vanity url so use it as the one to send
-                try:
-                    return await guild.vanity_invite()
-                except discord.NotFound:
-                    # If a guild has the vanity url feature,
-                    # but does not have it set up,
-                    # this prevents the command from failing
-                    # and defaults back to another regular invite.
-                    pass
+                vanity_url = await guild.vanity_invite()
+                # If a guild has the vanity url feature,
+                # but does not have it set up,
+                # this prevents the command from failing
+                # and defaults back to another regular invite.
+                if vanity_url is not None:
+                    return vanity_url
             invites = await guild.invites()
         else:
             invites = []
