@@ -323,60 +323,27 @@ class Command(CogCommandMixin, DPYCommand):
 
     @callback.setter
     def callback(self, function):
-        """
-        Below should be mostly the same as discord.py
+        # Below should be mostly the same as discord.py
+        #
+        # Here's the list of cases where the behavior differs:
+        #   - `typing.Optional` behavior is changed
+        #      when `ignore_optional_for_conversion` option is used
+        super(Command, Command).callback.__set__(self, function)
 
-        Currently, we modify behavior for
+        if not self.ignore_optional_for_conversion:
+            return
 
-          - functools.partial support
-          - typing.Optional behavior change as an option
-        """
-        self._callback = function
-        if isinstance(function, functools.partial):
-            self.module = function.func.__module__
-            globals_ = function.func.__globals__
-        else:
-            self.module = function.__module__
-            globals_ = function.__globals__
-
-        signature = inspect.signature(function)
-        self.params = signature.parameters.copy()
-
-        # PEP-563 allows postponing evaluation of annotations with a __future__
-        # import. When postponed, Parameter.annotation will be a string and must
-        # be replaced with the real value for the converters to work later on
+        _NoneType = type(None)
         for key, value in self.params.items():
-            if isinstance(value.annotation, str):
-                self.params[key] = value = value.replace(
-                    annotation=eval(value.annotation, globals_)
-                )
-
-            # fail early for when someone passes an unparameterized Greedy type
-            if value.annotation is Greedy:
-                raise TypeError("Unparameterized Greedy[...] is disallowed in signature.")
-
-            if not self.ignore_optional_for_conversion:
-                continue  # reduces indentation compared to alternative
-
-            try:
-                vtype = value.annotation.__origin__
-                if vtype is Union:
-                    _NoneType = type if TYPE_CHECKING else type(None)
-                    args = value.annotation.__args__
-                    if _NoneType in args:
-                        args = tuple(a for a in args if a is not _NoneType)
-                        if len(args) == 1:
-                            # can't have a union of 1 or 0 items
-                            # 1 prevents this from becoming 0
-                            # we need to prevent 2 become 1
-                            # (Don't change that to becoming, it's intentional :musical_note:)
-                            self.params[key] = value = value.replace(annotation=args[0])
-                        else:
-                            # and mypy wretches at the correct Union[args]
-                            temp_type = type if TYPE_CHECKING else Union[args]
-                            self.params[key] = value = value.replace(annotation=temp_type)
-            except AttributeError:
+            origin = getattr(value.annotation, "__origin__", None)
+            if origin is not Union:
                 continue
+            args = value.annotation.__args__
+            if _NoneType in args:
+                args = tuple(a for a in args if a is not _NoneType)
+                # typing.Union is automatically deduplicated and flattened
+                # so we don't need to anything else here
+                self.params[key] = value = value.replace(annotation=Union[args])
 
     @property
     def help(self):
