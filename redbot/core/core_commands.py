@@ -4002,8 +4002,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     color = ctx.bot._color
 
                 e = discord.Embed(colour=color, description=message)
-                if author.avatar_url:
-                    e.set_author(name=description, icon_url=author.avatar_url)
+                if author.avatar:
+                    e.set_author(name=description, icon_url=author.avatar)
                 else:
                     e.set_author(name=description)
 
@@ -4079,8 +4079,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             e = discord.Embed(colour=discord.Colour.red(), description=message)
 
             e.set_footer(text=content)
-            if ctx.bot.user.avatar_url:
-                e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
+            if ctx.bot.user.avatar:
+                e.set_author(name=description, icon_url=ctx.bot.user.avatar)
             else:
                 e.set_author(name=description)
 

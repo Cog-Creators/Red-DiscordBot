@@ -277,9 +277,9 @@ class General(commands.Cog):
                     command=f"{ctx.clean_prefix}serverinfo 1"
                 )
             )
-            if guild.icon_url:
-                data.set_author(name=guild.name, url=guild.icon_url)
-                data.set_thumbnail(url=guild.icon_url)
+            if guild.icon:
+                data.set_author(name=guild.name, url=guild.icon)
+                data.set_thumbnail(url=guild.icon)
             else:
                 data.set_author(name=guild.name)
         else:
@@ -391,8 +391,8 @@ class General(commands.Cog):
                 if "PARTNERED" in guild.features
                 else discord.Embed.Empty,
             )
-            if guild.icon_url:
-                data.set_thumbnail(url=guild.icon_url)
+            if guild.icon:
+                data.set_thumbnail(url=guild.icon)
             data.add_field(name=_("Members:"), value=member_msg)
             data.add_field(
                 name=_("Channels:"),
@@ -444,7 +444,7 @@ class General(commands.Cog):
                 )
                 data.add_field(name=_("Nitro Boost:"), value=nitro_boost)
             if guild.splash:
-                data.set_image(url=guild.splash_url_as(format="png"))
+                data.set_image(url=guild.splash.replace(format="png"))
             data.set_footer(text=joined_on)
 
         await ctx.send(embed=data)
