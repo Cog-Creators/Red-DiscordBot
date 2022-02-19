@@ -267,14 +267,14 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     try:
                         await self.api_interface.autoplay(player, self.playlist_api)
                     except DatabaseError:
-                        notify_channel = guild.get_channel(notify_channel)
+                        notify_channel = guild.get_channel_or_thread(notify_channel)
                         if notify_channel:
                             await self.send_embed_msg(
                                 notify_channel, title=_("Couldn't get a valid track.")
                             )
                         return
                     except TrackEnqueueError:
-                        notify_channel = guild.get_channel(notify_channel)
+                        notify_channel = guild.get_channel_or_thread(notify_channel)
                         if notify_channel:
                             await self.send_embed_msg(
                                 notify_channel,

@@ -100,7 +100,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 embed.set_author(name=name)
         return await ctx.send(embed=embed)
 
-    def _has_notify_perms(self, channel: discord.TextChannel) -> bool:
+    def _has_notify_perms(self, channel: Union[discord.TextChannel, discord.Thread]) -> bool:
         perms = channel.permissions_for(channel.guild.me)
         return all((perms.send_messages, perms.embed_links))
 

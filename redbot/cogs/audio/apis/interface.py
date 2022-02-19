@@ -973,7 +973,7 @@ class AudioAPIInterface:
                     and not query.local_track_path.exists()
                 ):
                     continue
-                notify_channel = player.guild.get_channel(notify_channel_id)
+                notify_channel = player.guild.get_channel_or_thread(notify_channel_id)
                 if not await self.cog.is_query_allowed(
                     self.config,
                     notify_channel,
