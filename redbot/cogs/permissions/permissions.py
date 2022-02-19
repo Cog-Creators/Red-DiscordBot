@@ -221,7 +221,7 @@ class Permissions(commands.Cog):
             "multiple global or server rules apply to the case, the order they are checked in is:\n"
             "  1. Rules about a user.\n"
             "  2. Rules about the voice channel a user is in.\n"
-            "  3. Rules about the text channel a command was issued in.\n"
+            "  3. Rules about the text channel or a parent of the thread a command was issued in.\n"
             "  4. Rules about a role the user has (The highest role they have with a rule will be "
             "used).\n"
             "  5. Rules about the server a user is in (Global rules only).\n\n"
