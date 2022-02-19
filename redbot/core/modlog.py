@@ -268,13 +268,16 @@ class Case:
     until: Optional[int]
         The UNIX time the action is in effect until.
         `None` if the action is permanent.
-    channel: Optional[Union[discord.abc.GuildChannel, int]]
+    channel: Optional[Union[discord.abc.GuildChannel, discord.Thread, int]]
         The channel the action was taken in.
         `None` if the action was not related to a channel.
 
         .. note::
             This attribute will be of type `int`
             if the channel seems to no longer exist.
+    parent_channel_id: Optional[int]
+        The parent channel ID of the thread in ``channel``.
+        `None` if the action was not done in a thread.
     amended_by: Optional[Union[discord.abc.User, int]]
         The moderator who made the last change to the case.
         `None` if the case was never edited.
@@ -310,7 +313,8 @@ class Case:
         case_number: int,
         reason: Optional[str] = None,
         until: Optional[int] = None,
-        channel: Optional[Union[discord.abc.GuildChannel, int]] = None,
+        channel: Optional[Union[discord.abc.GuildChannel, discord.Thread, int]] = None,
+        parent_channel_id: Optional[int] = None,
         amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
         modified_at: Optional[float] = None,
         message: Optional[Union[discord.PartialMessage, discord.Message]] = None,
@@ -330,12 +334,25 @@ class Case:
         self.reason = reason
         self.until = until
         self.channel = channel
+        self.parent_channel_id = parent_channel_id
         self.amended_by = amended_by
         if isinstance(amended_by, discord.Object):
             self.amended_by = amended_by.id
         self.modified_at = modified_at
         self.case_number = case_number
         self.message = message
+
+    @property
+    def parent_channel(self) -> Optional[discord.TextChannel]:
+        """
+        The parent text channel of the thread in `channel`.
+
+        This will be `None` if `channel` is not a thread
+        and when the parent text channel is not in cache (probably due to removal).
+        """
+        if self.parent_channel_id is None:
+            return None
+        return self.guild.get_channel(self.parent_channel_id)
 
     async def _set_message(self, message: discord.Message, /) -> None:
         # This should only be used for setting the message right after case creation
@@ -368,6 +385,9 @@ class Case:
         # update last known username
         if not isinstance(self.user, int):
             self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
+
+        if isinstance(self.channel, discord.Thread):
+            self.parent_channel_id = self.channel.parent_id
 
         await _config.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
         self.bot.dispatch("modlog_case_edit", self)
@@ -490,6 +510,31 @@ class Case:
                 )
             )  # Invites and spoilers get rendered even in embeds.
 
+        channel_value = None
+        if isinstance(self.channel, int):
+            if self.parent_channel_id is not None:
+                if (parent_channel := self.parent_channel) is not None:
+                    channel_value = _(
+                        "Deleted or archived thread ({thread_id}) in {channel_name}"
+                    ).format(thread_id=self.channel, channel_name=parent_channel)
+                else:
+                    channel_value = _("Thread {thread_id} in {channel_id} (deleted)").format(
+                        thread_id=self.channel, channel_id=self.parent_channel_id
+                    )
+            else:
+                channel_value = _("{channel_id} (deleted)").format(channel_id=self.channel)
+        elif self.channel is not None:
+            channel_value = self.channel.name
+            if self.parent_channel_id is not None:
+                if (parent_channel := self.parent_channel) is not None:
+                    channel_value = _("Thread {thread_name} in {channel_name}").format(
+                        thread_name=self.channel, channel_name=parent_channel
+                    )
+                else:
+                    channel_value = _("Thread {thread_name} in {channel_id} (deleted)").format(
+                        thread_name=self.channel, channel_id=self.parent_channel_id
+                    )
+
         if embed:
             if self.reason:
                 reason = f"{bold(_('Reason:'))} {self.reason}"
@@ -510,15 +555,8 @@ class Case:
             if until and duration:
                 emb.add_field(name=_("Until"), value=until)
                 emb.add_field(name=_("Duration"), value=duration)
-
-            if isinstance(self.channel, int):
-                emb.add_field(
-                    name=_("Channel"),
-                    value=_("{channel} (deleted)").format(channel=self.channel),
-                    inline=False,
-                )
-            elif self.channel is not None:
-                emb.add_field(name=_("Channel"), value=self.channel.name, inline=False)
+            if channel_value:
+                emb.add_field(name=_("Channel"), value=channel_value, inline=False)
             if amended_by:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
@@ -549,9 +587,9 @@ class Case:
                 case_text += f"{bold(_('Until:'))} {until}\n{bold(_('Duration:'))} {duration}\n"
             if self.channel:
                 if isinstance(self.channel, int):
-                    case_text += f"{bold(_('Channel:'))} {self.channel} {_('(Deleted)')}\n"
+                    case_text += f"{bold(_('Channel:'))} {channel_value}\n"
                 else:
-                    case_text += f"{bold(_('Channel:'))} {self.channel.name}\n"
+                    case_text += f"{bold(_('Channel:'))} {channel_value}\n"
             if amended_by:
                 case_text += f"{bold(_('Amended by:'))} {amended_by}\n"
             if last_modified:
@@ -590,6 +628,7 @@ class Case:
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
+            "parent_channel": self.parent_channel_id,
             "amended_by": amended_by,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
@@ -650,7 +689,11 @@ class Case:
                     user_object = bot.get_user(user_id) or user_id
             user_objects[user_key] = user_object
 
-        channel = kwargs.get("channel") or guild.get_channel(data["channel"]) or data["channel"]
+        channel = (
+            kwargs.get("channel")
+            or guild.get_channel_or_thread(data["channel"])
+            or data["channel"]
+        )
         case_guild = kwargs.get("guild") or bot.get_guild(data["guild"])
         return cls(
             bot=bot,
@@ -661,6 +704,7 @@ class Case:
             reason=data["reason"],
             until=data["until"],
             channel=channel,
+            parent_channel_id=data.get("parent_channel_id"),
             modified_at=data["modified_at"],
             message=message,
             last_known_username=data.get("last_known_username"),
@@ -917,7 +961,7 @@ async def create_case(
     moderator: Optional[Union[discord.Object, discord.abc.User, int]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
-    channel: Optional[discord.abc.GuildChannel] = None,
+    channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]] = None,
     last_known_username: Optional[str] = None,
 ) -> Optional[Case]:
     """
@@ -947,7 +991,7 @@ async def create_case(
         The time the action is in effect until.
         If naive `datetime` object is passed, it's treated as a local time
         (similarly to how Python treats naive `datetime` objects).
-    channel: Optional[discord.abc.GuildChannel]
+    channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]]
         The channel the action was taken in
     last_known_username: Optional[str]
         The last known username of the user
@@ -963,6 +1007,8 @@ async def create_case(
 
     if user == bot.user:
         return
+
+    parent_channel_id = channel.parent_id if isinstance(channel, discord.Thread) else None
 
     async with _config.guild(guild).latest_case_number.get_lock():
         # We're getting the case number from config, incrementing it, awaiting something, then
@@ -980,6 +1026,7 @@ async def create_case(
             reason,
             int(until.timestamp()) if until else None,
             channel,
+            parent_channel_id,
             amended_by=None,
             modified_at=None,
             message=None,
