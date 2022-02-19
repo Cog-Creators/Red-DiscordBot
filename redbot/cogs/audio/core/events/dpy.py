@@ -61,6 +61,16 @@ HUMANIZED_PERM = {
     "manage_roles": _("Manage Roles"),
     "manage_webhooks": _("Manage Webhooks"),
     "manage_emojis": _("Manage Emojis"),
+    "use_slash_commands": _("Use Slash Commands"),
+    "request_to_speak": _("Request to Speak"),
+    "manage_events": _("Manage Events"),
+    "manage_threads": _("Manage Threads"),
+    "create_public_threads": _("Create Public Threads"),
+    "create_private_threads": _("Create Private Threads"),
+    "external_stickers": _("Use External Stickers"),
+    "send_messages_in_threads": _("Send Messages in Threads"),
+    "start_embedded_activities": _("Start Activities"),
+    "moderate_members": _("Moderate Member"),
 }
 
 DANGEROUS_COMMANDS = {
