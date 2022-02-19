@@ -1648,15 +1648,19 @@ class Red(
 
         return await destination.send(content=content, **kwargs)
 
-    def add_cog(self, cog: commands.Cog):
+    def add_cog(self, cog: commands.Cog, *, override: bool = False) -> None:
         if not isinstance(cog, commands.Cog):
             raise RuntimeError(
                 f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
                 f"not inherit from the commands.Cog base class. The cog author must update "
                 f"the cog to adhere to this requirement."
             )
-        if cog.__cog_name__ in self.cogs:
-            raise RuntimeError(f"There is already a cog named {cog.__cog_name__} loaded.")
+        cog_name = cog.__cog_name__
+        if cog_name in self.cogs:
+            if not override:
+                raise discord.ClientException(f"Cog named {cog_name!r} already loaded")
+            self.remove_cog(cog_name)
+
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
 
