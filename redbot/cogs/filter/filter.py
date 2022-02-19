@@ -437,7 +437,7 @@ class Filter(commands.Cog):
         filter_time = guild_data["filterban_time"]
         user_count = member_data["filter_count"]
         next_reset_time = member_data["next_reset_time"]
-        created_at = message.created_at.replace(tzinfo=timezone.utc)
+        created_at = message.created_at
 
         if filter_count > 0 and filter_time > 0:
             if created_at.timestamp() >= next_reset_time:
@@ -454,7 +454,7 @@ class Filter(commands.Cog):
             await modlog.create_case(
                 bot=self.bot,
                 guild=guild,
-                created_at=message.created_at.replace(tzinfo=timezone.utc),
+                created_at=created_at,
                 action_type="filterhit",
                 user=author,
                 moderator=guild.me,
@@ -484,7 +484,7 @@ class Filter(commands.Cog):
                             await modlog.create_case(
                                 self.bot,
                                 guild,
-                                message.created_at.replace(tzinfo=timezone.utc),
+                                message.created_at,
                                 "filterban",
                                 author,
                                 guild.me,

@@ -5,7 +5,7 @@ import sys
 import codecs
 import logging
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import aiohttp
 import discord
@@ -339,7 +339,7 @@ def init_events(bot, cli_flags):
             not bot._checked_time_accuracy
             or (discord_now - timedelta(minutes=60)) > bot._checked_time_accuracy
         ):
-            system_now = datetime.utcnow()
+            system_now = datetime.now(timezone.utc)
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warning(

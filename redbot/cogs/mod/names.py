@@ -195,9 +195,9 @@ class ModInfo(MixinMeta):
 
         if is_special:
             joined_at = special_date
-        elif joined_at := member.joined_at:
-            joined_at = joined_at.replace(tzinfo=datetime.timezone.utc)
-        user_created = int(member.created_at.replace(tzinfo=datetime.timezone.utc).timestamp())
+        else:
+            joined_at = member.joined_at
+        user_created = int(member.created_at.timestamp())
         voice_state = member.voice
         member_number = (
             sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(

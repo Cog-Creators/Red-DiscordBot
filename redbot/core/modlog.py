@@ -106,7 +106,7 @@ async def _init(bot: Red):
         except RuntimeError:
             return  # No modlog channel so no point in continuing
 
-        when = datetime.utcnow()
+        when = datetime.now(timezone.utc)
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
@@ -128,7 +128,7 @@ async def _init(bot: Red):
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
                         mod, reason = entry.user, entry.reason
-                        date = entry.created_at.replace(tzinfo=timezone.utc)
+                        date = entry.created_at
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
                     return
 
@@ -143,7 +143,7 @@ async def _init(bot: Red):
         except RuntimeError:
             return  # No modlog channel so no point in continuing
 
-        when = datetime.utcnow()
+        when = datetime.now(timezone.utc)
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
@@ -165,7 +165,7 @@ async def _init(bot: Red):
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
                         mod, reason = entry.user, entry.reason
-                        date = entry.created_at.replace(tzinfo=timezone.utc)
+                        date = entry.created_at
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
                     return
 
@@ -523,7 +523,7 @@ class Case:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
                 emb.add_field(name=_("Last modified at"), value=last_modified)
-            emb.timestamp = datetime.utcfromtimestamp(self.created_at)
+            emb.timestamp = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
             return emb
         else:
             if self.reason:

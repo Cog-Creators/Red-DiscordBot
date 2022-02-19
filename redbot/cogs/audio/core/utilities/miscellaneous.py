@@ -84,7 +84,6 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         embed = discord.Embed.from_dict(contents)
         embed.color = colour
         if timestamp and isinstance(timestamp, datetime.datetime):
-            timestamp = timestamp.replace(tzinfo=datetime.timezone.utc)
             embed.timestamp = timestamp
         else:
             embed.timestamp = datetime.datetime.now(tz=datetime.timezone.utc)
