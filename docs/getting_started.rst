@@ -134,7 +134,7 @@ Red is built with cogs, a fancy term for plugins. They are
 modules that add functionality to Red. They contain
 commands to use.
 
-Red comes with 19 cogs containing the basic features, such
+Red comes with 18 cogs containing the basic features, such
 as moderation, utility, music, streams...
 
 You can see your loaded and unloaded cogs with the ``[p]cogs``
