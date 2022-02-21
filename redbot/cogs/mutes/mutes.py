@@ -564,19 +564,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             message = f"{title}\n>>> "
             message += reason
+            message += (f"\n{bold(_('Moderator:'))} {moderator_str}") if show_mod else ""
             message += (
-                _("\n**Moderator**: {moderator}").format(moderator=moderator_str)
-                if show_mod
-                else ""
-            )
-            message += (
-                _("\n**Until**: {until}\n**Duration**: {duration}").format(
-                    until=until_str, duration=duration_str
-                )
+                (f"\n{bold(_('Until:'))} {until_str}\n{bold(_('Duration:'))} {duration_str}")
                 if duration
                 else ""
             )
-            message += _("\n**Guild**: {guild_name}").format(guild_name=guild.name)
+            message += f"\n{bold(_('Guild:'))} {guild.name}"
             try:
                 await user.send(message)
             except discord.Forbidden:
