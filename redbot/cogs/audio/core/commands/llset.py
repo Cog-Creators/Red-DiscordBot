@@ -20,6 +20,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(embed_links=True)
     async def command_llsetup(self, ctx: commands.Context):
         """Lavalink server configuration options.
+        
         These commands are intended for advanced usage only, not for the normal setup of the bot. Do not modify any of the settings here unless you know what you are doing.
         """
 
