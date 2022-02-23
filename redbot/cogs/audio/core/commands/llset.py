@@ -15,11 +15,13 @@ _ = Translator("Audio", Path(__file__))
 
 
 class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
-    @commands.group(name="llsetup", aliases=["llset"])
+    @commands.group(name="llsetup", aliases=["llset"], hidden=True)
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
     async def command_llsetup(self, ctx: commands.Context):
-        """Lavalink server configuration options."""
+        """Lavalink server configuration options.
+        These commands are intended for advanced usage only, not for the normal setup of the bot. Do not modify any of the settings here unless you know what you are doing.
+        """
 
     @command_llsetup.command(name="java")
     async def command_llsetup_java(self, ctx: commands.Context, *, java_path: str = None):
