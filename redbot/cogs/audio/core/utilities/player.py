@@ -135,7 +135,6 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         elif not player.queue and not autoplay:
             await ctx.invoke(self.command_stop)  # Thank you Draper and Zephyrkul
             return
-
         elif autoplay and not player.queue:
             embed = discord.Embed(
                 title=_("Track Skipped"),
