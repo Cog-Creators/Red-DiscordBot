@@ -12,9 +12,10 @@ from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
 import rich.progress
+import yaml
 from red_commons.logging import getLogger
 
-from redbot.core import data_manager
+from redbot.core import data_manager, Config
 from redbot.core.i18n import Translator
 
 from .errors import LavalinkDownloadFailed
@@ -98,9 +99,12 @@ class ServerManager:
     _buildtime: ClassVar[Optional[str]] = None
     _java_exc: ClassVar[str] = "java"
 
-    def __init__(self) -> None:
+    def __init__(self, host: str, password: str, port: int, config: Config) -> None:
         self.ready: asyncio.Event = asyncio.Event()
-
+        self._port = port
+        self._host = host
+        self._password = password
+        self._config = config
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
         self._shutdown: bool = False
@@ -145,11 +149,7 @@ class ServerManager:
 
         await self.maybe_download_jar()
 
-        # Copy the application.yml across.
-        # For people to customise their Lavalink server configuration they need to run it
-        # externally
-        shutil.copyfile(BUNDLED_APP_YML, LAVALINK_APP_YML)
-
+        await self.process_settings()
         args = await self._get_jar_args()
         self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
@@ -168,15 +168,23 @@ class ServerManager:
         self._monitor_task = asyncio.create_task(self._monitor())
         self._monitor_task.add_done_callback(task_callback_exception)
 
+    async def process_settings(self):
+        data = self._config.yaml.all()
+        with open(LAVALINK_APP_YML, "w") as f:
+            yaml.safe_dump(data, f)
+
     async def _get_jar_args(self) -> List[str]:
         (java_available, java_version) = await self._has_java()
 
         if not java_available:
             raise RuntimeError("You must install Java 11 for Lavalink to run.")
+        java_xms, java_xmx = list((await self._config.java.all()).values)
 
         return [
             self._java_exc,
             "-Djdk.tls.client.protocols=TLSv1.2",
+            f"-Xms{java_xms}",
+            f"-Xmx{java_xmx}",
             "-jar",
             str(LAVALINK_JAR_FILE),
         ]

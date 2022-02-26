@@ -75,6 +75,11 @@ class MixinMeta(ABC):
     async def command_llsetup(self, ctx: commands.Context):
         raise NotImplementedError()
 
+    @commands.command()
+    @abstractmethod
+    async def command_audioset_restart(self, ctx: commands.Context):
+        raise NotImplementedError()
+
     @abstractmethod
     async def maybe_reset_error_counter(self, player: lavalink.Player) -> None:
         raise NotImplementedError()

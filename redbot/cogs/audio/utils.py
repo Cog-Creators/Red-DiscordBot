@@ -1,12 +1,14 @@
 import asyncio
 import contextlib
+import math
 import time
 
 from enum import Enum, unique
 from pathlib import Path
-from typing import MutableMapping
+from typing import MutableMapping, Tuple
 
 import discord
+import psutil
 from red_commons.logging import getLogger
 
 from redbot.core import commands
@@ -14,6 +16,27 @@ from redbot.core.i18n import Translator
 
 log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
+
+
+def get_jar_ram_defaults(max_heap=None) -> Tuple[str, str]:
+    available = psutil.virtual_memory().available
+    min_ram = 256 * 1024 ** 2
+    max_ram = max(min_ram, max_heap or available * 0.5)
+    size_name = ("", "K", "M", "G")
+    i = int(math.floor(math.log(min_ram, 1024)))
+    p = math.pow(1024, i)
+    s = int(min_ram // p)
+    min_ram = f"{s}{size_name[i]}"
+
+    i = int(math.floor(math.log(max_ram, 1024)))
+    p = math.pow(1024, i)
+    s = int(max_ram // p)
+    max_ram = f"{s}{size_name[i]}"
+
+    return min_ram, max_ram
+
+
+MIN_JAVA_RAM, MAX_JAVA_RAM = get_jar_ram_defaults()
 
 
 class CacheLevel:

@@ -15,7 +15,7 @@ from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 
-from ..utils import CacheLevel, PlaylistScope
+from ..utils import CacheLevel, PlaylistScope, MIN_JAVA_RAM, MAX_JAVA_RAM
 from . import abc, cog_utils, commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
 
@@ -38,6 +38,38 @@ class Audio(
         "rest_port": 2333,
         "ws_port": 2333,
         "password": "youshallnotpass",
+        "java__Xms": MIN_JAVA_RAM,
+        "java__Xmx": MAX_JAVA_RAM,
+    }
+
+    _default_yaml_settings = {
+        # The nesting structure of this dict is very import, it's a 1:1 mirror of application.yaml in JSON
+        "yaml__server__address": "0.0.0.0",
+        "yaml__server__port": 2333,
+        "yaml__lavalink__server__password": "youshallnotpass",
+        "yaml__lavalink__server__sources__http": True,
+        "yaml__lavalink__server__sources__bandcamp": True,
+        "yaml__lavalink__server__sources__local": True,
+        "yaml__lavalink__server__sources__soundcloud": True,
+        "yaml__lavalink__server__sources__youtube": True,
+        "yaml__lavalink__server__sources__twitch": True,
+        "yaml__lavalink__server__sources__vimeo": True,
+        "yaml__lavalink__server__bufferDurationMs": 400,
+        "yaml__lavalink__server__frameBufferDurationMs": 1000,
+        "yaml__lavalink__server__youtubePlaylistLoadLimit": 10000,
+        "yaml__lavalink__server__playerUpdateInterval": 1,
+        "yaml__lavalink__server__youtubeSearchEnabled": True,
+        "yaml__lavalink__server__soundcloudSearchEnabled": True,
+        "yaml__lavalink__server__gc-warnings": True,
+        "yaml__metrics__prometheus__enabled": False,
+        "yaml__metrics__prometheus__endpoint": "/metrics",
+        "yaml__sentry__dsn": "",
+        "yaml__sentry__environment": "",
+        "yaml__logging__file__max-history": 7,
+        "yaml__logging__file__max-size": "1GB",
+        "yaml__logging__path": "./logs/",
+        "yaml__level__root": "INFO",
+        "yaml__level__lavalink": "INFO",
     }
 
     def __init__(self, bot: Red):
@@ -107,6 +139,7 @@ class Audio(
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
             java_exc_path="java",
+            **self._default_yaml_settings,
             **self._default_lavalink_settings,
         )
 
