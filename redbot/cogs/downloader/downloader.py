@@ -1509,7 +1509,7 @@ class Downloader(commands.Cog):
                 if len(newer_python_version)
                 else _("\nThis cog requires a lower python version than you have: ")
             ) + humanize_list(newer_python_version)
-            
+
         if outdated_bot_version:
             message += (
                 _(
