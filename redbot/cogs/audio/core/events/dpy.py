@@ -104,9 +104,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if self.local_folder_current_path is None:
             self.local_folder_current_path = Path(await self.config.localpath())
 
-        if (
-            await ctx.bot.is_owner(ctx.author)
-            and ctx.command.callback.__name__ in DANGEROUS_COMMANDS
+        if ctx.command.callback.__name__ in DANGEROUS_COMMANDS and await ctx.bot.is_owner(
+            ctx.author
         ):
             if ctx.author.id not in self.antispam:
                 self.antispam[ctx.author.id] = AntiSpam(self._intervals)
