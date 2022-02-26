@@ -95,32 +95,37 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
 
     @command_llsetup.command(name="heapsize")
-    async def command_llsetup_heapsize(self, ctx: commands.Context, *, bytes: int = MAX_JAVA_RAM):
-        """Set the Lavalink max heapsize."""
+    async def command_llsetup_heapsize(self, ctx: commands.Context, *, size: int = MAX_JAVA_RAM):
+        """Set the Lavalink max heap-size."""
 
         def validate_input(arg):
-            match = re.match(r"(\d+)([KMG]?)", arg, flags=re.IGNORECASE)
+            match = re.match(r"(\d+)([MG])", arg, flags=re.IGNORECASE)
             if not match:
+                raise BadArgument("Heap-size must be a valid measure of size, e.g. 256M, 256G")
+            if (
+                int(match.group(0)) * 1024 ** (2 if match.group(1).lower() == "m" else 3)
+                < 64 * 1024 ** 2
+            ):
                 raise BadArgument(
-                    "Heapsize must be a valid measure of size, e.g. 256, 256K, 256M, 256G"
+                    "Heap-size must be at least 64M, however it is recommended to have it set to at least 1G"
                 )
 
-        validate_input(bytes)
+        validate_input(size)
         if await self.config.use_external_lavalink():
             return await self.send_embed_msg(
                 ctx,
                 title=_("Setting Not Changed"),
                 description=_("You are only able to set this if you are running a managed node."),
             )
-        await self.config.java.Xmx.set(bytes)
+        await self.config.java.Xmx.set(size)
         footer = None
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "Managed node's heapsize set to {bytes}.\n\n"
+                "Managed node's heap-size set to {bytes}.\n\n"
                 "Run `{p}{cmd}` for it to take effect."
-            ).format(bytes=bytes, p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
+            ).format(bytes=size, p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
         )
 
     @command_llsetup.command(name="external")
@@ -349,6 +354,13 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Not Changed"),
                 description=_("You are only able to set this if you are running a managed node."),
+            )
+
+        if 1024 > port or port > 49151:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("The the port must be between 1024 and 49151."),
             )
 
         await self.config.yaml.server.port.set(set_to=port)
@@ -597,6 +609,12 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Setting Not Changed"),
                 description=_("You are only able to set this if you are running a managed node."),
             )
+        if milliseconds < 100:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("The lowest value the framebuffer may be is 100ms."),
+            )
         await self.config.yaml.lavalink.frameBufferDurationMs.set(set_to=milliseconds)
         port = await self.config.yaml.server.lavalink.frameBufferDurationMs()
         await self.send_embed_msg(
@@ -621,6 +639,12 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Not Changed"),
                 description=_("You are only able to set this if you are running a managed node."),
+            )
+        if milliseconds < 100:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("The lowest value the buffer may be is 100ms."),
             )
         await self.config.yaml.lavalink.bufferDurationMs.set(set_to=milliseconds)
         port = await self.config.yaml.server.lavalink.bufferDurationMs()
