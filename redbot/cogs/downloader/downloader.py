@@ -1459,6 +1459,7 @@ class Downloader(commands.Cog):
     ) -> Tuple[Tuple[Installable, ...], str]:
         correct_cogs: List[Installable] = []
         outdated_python_version: List[str] = []
+        newer_python_version: List[str] = []
         outdated_bot_version: List[str] = []
         for cog in cogs:
             if cog.min_python_version > sys.version_info:
@@ -1466,6 +1467,14 @@ class Downloader(commands.Cog):
                     inline(cog.name)
                     + _(" (Minimum: {min_version})").format(
                         min_version=".".join([str(n) for n in cog.min_python_version])
+                    )
+                )
+                continue
+            if cog.max_python_version < sys.version_info:
+                newer_python_version.append(
+                    inline(cog.name)
+                    + _(" (Maximum: {max_version})").format(
+                        max_version=".".join([str(n) for n in cog.max_python_version])
                     )
                 )
                 continue
@@ -1490,10 +1499,17 @@ class Downloader(commands.Cog):
         message = ""
         if outdated_python_version:
             message += (
-                _("\nThese cogs require higher python version than you have: ")
+                _("\nThese cogs require a higher python version than you have: ")
                 if len(outdated_python_version)
-                else _("\nThis cog requires higher python version than you have: ")
+                else _("\nThis cog requires a higher python version than you have: ")
             ) + humanize_list(outdated_python_version)
+        if newer_python_version:
+            message += (
+                _("\nThese cogs require a lower python version than you have: ")
+                if len(newer_python_version)
+                else _("\nThis cog requires a lower python version than you have: ")
+            ) + humanize_list(newer_python_version)
+            
         if outdated_bot_version:
             message += (
                 _(
