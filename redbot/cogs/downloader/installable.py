@@ -91,6 +91,7 @@ class Installable(RepoJSONMixin):
         self.min_bot_version: VersionInfo
         self.max_bot_version: VersionInfo
         self.min_python_version: Tuple[int, int, int]
+        self.max_python_version: Tuple[int, int, int]
         self.hidden: bool
         self.disabled: bool
         self.required_cogs: Dict[str, str]  # Cog name -> repo URL
