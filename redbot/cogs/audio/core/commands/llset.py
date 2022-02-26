@@ -175,7 +175,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_llsetup.command(name="host")
-    async def command_llsetup_host(self, ctx: commands.Context, *, host: str = "localhost"):
+    async def command_llsetup_host(self, ctx: commands.Context, host: str = "localhost"):
         """Set the Lavalink server host."""
         await self.config.host.set(host)
         footer = None
@@ -226,16 +226,16 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_llsetup.command(name="port")
-    async def command_llsetup_wsport(self, ctx: commands.Context, *, ws_port: int = 2333):
+    async def command_llsetup_wsport(self, ctx: commands.Context, port: int = 2333):
         """Set the Lavalink websocket server port."""
-        await self.config.ws_port.set(ws_port)
+        await self.config.ws_port.set(port)
         footer = None
         if await self.update_external_status():
             footer = _("External Lavalink server set to True.")
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Websocket port set to {port}.").format(port=ws_port),
+            description=_("Websocket port set to {port}.").format(port=port),
             footer=footer,
         )
 
