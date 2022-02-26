@@ -11,14 +11,13 @@ from redbot.core.utils.chat_formatting import box
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
-from ...utils import MAX_JAVA_RAM
+from ...utils import MAX_JAVA_RAM, DEFAULT_YAML_VALUES, DEFAULT_LAVALINK_SETTINGS
 
 log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
 _ = Translator("Audio", Path(__file__))
 
 # TODO: Docstrings
-# TODO: Captcha
-# TODO: Add a command to reset every single setting back to default
+# TODO: Add new configurable values to llset info
 
 
 class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -175,7 +174,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_llsetup.command(name="host")
-    async def command_llsetup_host(self, ctx: commands.Context, host: str = "localhost"):
+    async def command_llsetup_host(
+        self, ctx: commands.Context, host: str = DEFAULT_LAVALINK_SETTINGS["host"]
+    ):
         """Set the Lavalink server host."""
         await self.config.host.set(host)
         footer = None
@@ -200,7 +201,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_llsetup.command(name="password", aliases=["pass", "token"])
     async def command_llsetup_password(
-        self, ctx: commands.Context, *, password: str = "youshallnotpass"
+        self, ctx: commands.Context, *, password: str = DEFAULT_LAVALINK_SETTINGS["password"]
     ):
         """Set the Lavalink server password."""
         await self.config.password.set(str(password))
@@ -226,7 +227,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_llsetup.command(name="port")
-    async def command_llsetup_wsport(self, ctx: commands.Context, port: int = 2333):
+    async def command_llsetup_wsport(
+        self, ctx: commands.Context, port: int = DEFAULT_LAVALINK_SETTINGS["ws_port"]
+    ):
         """Set the Lavalink websocket server port."""
         await self.config.ws_port.set(port)
         footer = None
@@ -251,9 +254,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_llsetup.command(name="info", aliases=["settings"])
-    async def command_llsetup_info(
-        self, ctx: commands.Context
-    ):  # TODO: Add new configurable values to this
+    async def command_llsetup_info(self, ctx: commands.Context):
         """Display Lavalink connection settings."""
         configs = await self.config.all()
         host = configs["host"]
@@ -281,7 +282,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_llsetup_config_server.command(name="bind", aliases=["host", "address"])
     async def command_llsetup_config_server_host(
-        self, ctx: commands.Context, *, host: str = "0.0.0.0"
+        self, ctx: commands.Context, *, host: str = DEFAULT_YAML_VALUES["yaml__server__address"]
     ):
         """Set the server host address.
         Default is: "0.0.0.0"
@@ -306,7 +307,10 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_llsetup_config_server.command(name="token", aliases=["password", "pass"])
     async def command_llsetup_config_server_token(
-        self, ctx: commands.Context, *, password: str = "youshallnotpass"
+        self,
+        ctx: commands.Context,
+        *,
+        password: str = DEFAULT_YAML_VALUES["yaml__lavalink__server__password"],
     ):
         """Set the server authorization token.
         Default is: "youshallnotpass"
@@ -334,7 +338,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     @command_llsetup_config_server.command(name="port")
-    async def command_llsetup_config_server_port(self, ctx: commands.Context, *, port: int = 2333):
+    async def command_llsetup_config_server_port(
+        self, ctx: commands.Context, *, port: int = DEFAULT_YAML_VALUES["yaml__server__port"]
+    ):
         """Set the server connection port.
         Default is: "2333"
         """
@@ -345,8 +351,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("You are only able to set this if you are running a managed node."),
             )
 
-        await self.config.yaml.server.port.set_server_port(set_to=port)
-        port = await self.config.yaml.server.port.get_server_port()
+        await self.config.yaml.server.port.set(set_to=port)
+        port = await self.config.yaml.server.port()
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -547,7 +553,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_llsetup_config_source.command(name="vimeo")
-    async def command_llsetup_config_source_twitch(self, ctx: commands.Context):
+    async def command_llsetup_config_source_vimeo(self, ctx: commands.Context):
         """Toggle Vimeo source on or off."""
         if await self.config.use_external_lavalink():
             return await self.send_embed_msg(
@@ -578,8 +584,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_llsetup_config_server.command(name="framebuffer", aliases=["fb", "frame"])
-    async def command_llsetup_config_framebuffer(
-        self, ctx: commands.Context, *, milliseconds: int = 400
+    async def command_llsetup_config_server_framebuffer(
+        self,
+        ctx: commands.Context,
+        *,
+        milliseconds: int = DEFAULT_YAML_VALUES["yaml__lavalink__server__frameBufferDurationMs"],
     ):
         """Set the server framebuffer"""
         if await self.config.use_external_lavalink():
@@ -600,10 +609,13 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     @command_llsetup_config_server.command(name="buffer", aliases=["b"])
-    async def command_llsetup_config_framebuffer(
-        self, ctx: commands.Context, *, milliseconds: int = 1000
+    async def command_llsetup_config_server_buffer(
+        self,
+        ctx: commands.Context,
+        *,
+        milliseconds: int = DEFAULT_YAML_VALUES["yaml__lavalink__server__bufferDurationMs"],
     ):
-        """Set the server framebuffer"""
+        """Set the server NAS buffer"""
         if await self.config.use_external_lavalink():
             return await self.send_embed_msg(
                 ctx,
@@ -620,3 +632,38 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Run `{p}{cmd}` for it to take effect."
             ).format(port=port, p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
         )
+
+    @command_llsetup.command(name="reset")
+    async def command_llsetup_reset(self, ctx: commands.Context):
+        """Reset all `llset` changes back to their default values."""
+
+        async with await self.config.all() as global_data:
+            global_data.update(DEFAULT_LAVALINK_SETTINGS)
+            global_data.update(DEFAULT_YAML_VALUES)
+            del global_data["java_exc_path"]
+            global_data["use_external_lavalink"] = False
+
+        try:
+            if self.player_manager is not None:
+                await self.player_manager.shutdown()
+        except ProcessLookupError:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Failed To Shutdown Lavalink"),
+                description=_(
+                    "For it to take effect please reload Audio (`{prefix}reload audio`)."
+                ).format(
+                    prefix=ctx.prefix,
+                ),
+            )
+        else:
+            try:
+                self.lavalink_restart_connect()
+            except ProcessLookupError:
+                await self.send_embed_msg(
+                    ctx,
+                    title=_("Failed To Shutdown Lavalink"),
+                    description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                        prefix=ctx.prefix
+                    ),
+                )

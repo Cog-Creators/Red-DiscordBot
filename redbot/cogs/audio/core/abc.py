@@ -6,7 +6,18 @@ import datetime
 from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Set, TYPE_CHECKING, Any, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Set,
+    TYPE_CHECKING,
+    Any,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+    Dict,
+)
 
 import aiohttp
 import discord
@@ -15,6 +26,7 @@ import lavalink
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Context
+from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 if TYPE_CHECKING:
@@ -40,6 +52,8 @@ class MixinMeta(ABC):
     local_folder_current_path: Optional[Path]
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
+    antispam: Dict[int, AntiSpam]
+    _intervals: List[Tuple[datetime.timedelta, int]]
 
     skip_votes: MutableMapping[int, Set[int]]
     play_lock: MutableMapping[int, bool]

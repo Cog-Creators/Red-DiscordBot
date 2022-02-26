@@ -40,13 +40,13 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             external = configs["use_external_lavalink"]
             java_exec = configs["java_exc_path"]
             if external is False:
-                settings = self._default_lavalink_settings
-                host = settings["host"]
-                password = settings["password"]
-                ws_port = settings["ws_port"]
+                # Change these values to use whatever is set on the YAML
+                host = configs["yaml"]["server"]["address"]
+                port = configs["yaml"]["server"]["port"]
+                password = configs["yaml"]["server"]["lavalink"]["password"]
                 if self.player_manager is not None:
                     await self.player_manager.shutdown()
-                self.player_manager = ServerManager(host, password, ws_port, self.config)
+                self.player_manager = ServerManager(host, password, port, self.config)
                 try:
                     await self.player_manager.start(java_exec)
                 except LavalinkDownloadFailed as exc:

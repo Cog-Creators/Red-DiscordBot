@@ -1,9 +1,11 @@
 import asyncio
 import contextlib
+import random
 import re
 
 from collections import OrderedDict
 from pathlib import Path
+from string import ascii_letters, digits
 from typing import Final, Pattern
 
 import discord
@@ -15,11 +17,12 @@ from discord.ext.commands import CheckFailure
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, humanize_list
+from redbot.core.utils.antispam import AntiSpam
+from redbot.core.utils.chat_formatting import box, humanize_list, underline, bold
 
 from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
-from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
+from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass, DANGEROUS_COMMANDS
 from ...utils import task_callback_trace
 
 log = getLogger("red.cogs.Audio.cog.Events.dpy")
@@ -100,22 +103,44 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         )
         if self.local_folder_current_path is None:
             self.local_folder_current_path = Path(await self.config.localpath())
+
+        if (
+            await ctx.bot.is_owner(ctx.author)
+            and ctx.command.callback.__name__ in DANGEROUS_COMMANDS
+        ):
+            if ctx.author.id not in self.antispam:
+                self.antispam[ctx.author.id] = AntiSpam(self._intervals)
+            if not self.antispam[ctx.author.id].spammy:
+                name = ctx.command.callback.__name__
+                token = random.choices((*ascii_letters, *digits), k=4)
+                confirm_token = " ".join(i for i in token)
+                message = bold(underline(_("You should not be running this command.")))
+                message += "\n"
+                message += _(
+                    "If you wish to continue, enter this case sensitive token without spaces as your next message."
+                    "\n\n{confirm_token}"
+                ).format(confirm_token=confirm_token)
+                try:
+                    message = await ctx.bot.wait_for(
+                        "message",
+                        check=lambda m: m.channel.id == ctx.channel.id
+                        and m.author.id == ctx.author.id,
+                        timeout=120,
+                    )
+                except asyncio.TimeoutError:
+                    raise commands.CheckFailure
+                else:
+                    if message.content.strip() != token:
+                        raise commands.CheckFailure
+
         if not guild:
             return
         guild_data = await self.config.guild(ctx.guild).all()
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, guild_data["dj_enabled"]
-        )
-        self._daily_playlist_cache.setdefault(
-            ctx.guild.id, guild_data["daily_playlists"]
-        )
-        self._persist_queue_cache.setdefault(
-            ctx.guild.id, guild_data["persist_queue"]
-        )
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
+        self._daily_playlist_cache.setdefault(ctx.guild.id, guild_data["daily_playlists"])
+        self._persist_queue_cache.setdefault(ctx.guild.id, guild_data["persist_queue"])
         if dj_enabled:
-            dj_role = self._dj_role_cache.setdefault(
-                ctx.guild.id, guild_data["dj_role"]
-            )
+            dj_role = self._dj_role_cache.setdefault(ctx.guild.id, guild_data["dj_role"])
             dj_role_obj = ctx.guild.get_role(dj_role)
             if not dj_role_obj:
                 async with await self.config.guild(ctx.guild).all() as write_guild_data:
