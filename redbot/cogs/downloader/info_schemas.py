@@ -132,6 +132,7 @@ def ensure_python_version_info(
             return default
     return cast(Tuple[int, int, int], tuple(value))
 
+
 def ensure_max_python_version_info(
     info_file: Path, key_name: str, value: Union[Any, UseDefault]
 ) -> Tuple[int, int, int]:
@@ -168,6 +169,7 @@ def ensure_max_python_version_info(
             )
             return default
     return cast(Tuple[int, int, int], tuple(value))
+
 
 def ensure_bool(
     info_file: Path, key_name: str, value: Union[Any, UseDefault], *, default: bool = False
