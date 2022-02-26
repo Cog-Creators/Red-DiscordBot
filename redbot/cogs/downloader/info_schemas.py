@@ -132,6 +132,42 @@ def ensure_python_version_info(
             return default
     return cast(Tuple[int, int, int], tuple(value))
 
+def ensure_max_python_version_info(
+    info_file: Path, key_name: str, value: Union[Any, UseDefault]
+) -> Tuple[int, int, int]:
+    default = (3, 10, 2)
+    if value is USE_DEFAULT:
+        return default
+    if not isinstance(value, list):
+        log.warning(
+            "Invalid value of '%s' key (expected list, got %s)"
+            " in JSON information file at path: %s",
+            key_name,
+            type(value).__name__,
+            info_file,
+        )
+        return default
+    count = len(value)
+    if count != 3:
+        log.warning(
+            "Invalid value of '%s' key (expected list with 3 items, got %s items)"
+            " in JSON information file at path: %s",
+            key_name,
+            count,
+            info_file,
+        )
+        return default
+    for item in value:
+        if not isinstance(item, int):
+            log.warning(
+                "Invalid item in '%s' list (expected int, got %s)"
+                " in JSON information file at path: %s",
+                key_name,
+                type(item).__name__,
+                info_file,
+            )
+            return default
+    return cast(Tuple[int, int, int], tuple(value))
 
 def ensure_bool(
     info_file: Path, key_name: str, value: Union[Any, UseDefault], *, default: bool = False
@@ -214,6 +250,7 @@ INSTALLABLE_SCHEMA: SchemaType = {
     "min_bot_version": ensure_red_version_info,
     "max_bot_version": ensure_red_version_info,
     "min_python_version": ensure_python_version_info,
+    "max_python_version": ensure_max_python_version_info,
     "hidden": ensure_bool,
     "disabled": ensure_bool,
     "required_cogs": ensure_required_cogs_mapping,
