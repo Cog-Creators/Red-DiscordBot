@@ -114,11 +114,14 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 token = random.choices((*ascii_letters, *digits), k=4)
                 confirm_token = " ".join(i for i in token)
                 message = bold(underline(_("You should not be running this command.")))
-                message += "\n"
                 message += _(
+                    "\n{template}\n"
                     "If you wish to continue, enter this case sensitive token without spaces as your next message."
                     "\n\n{confirm_token}"
-                ).format(confirm_token=confirm_token)
+                ).format(
+                    template=DANGEROUS_COMMANDS[ctx.command.callback.__name__],
+                    confirm_token=confirm_token,
+                )
                 try:
                     message = await ctx.bot.wait_for(
                         "message",

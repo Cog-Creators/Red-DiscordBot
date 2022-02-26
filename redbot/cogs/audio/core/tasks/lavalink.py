@@ -46,7 +46,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 password = configs["yaml"]["server"]["lavalink"]["password"]
                 if self.player_manager is not None:
                     await self.player_manager.shutdown()
-                self.player_manager = ServerManager(host, password, port, self.config)
+                self.player_manager = ServerManager(self.config)
                 try:
                     await self.player_manager.start(java_exec)
                 except LavalinkDownloadFailed as exc:
@@ -82,7 +82,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 host = configs["host"]
                 password = configs["password"]
-                ws_port = configs["ws_port"]
+                port = configs["ws_port"]
                 break
         else:
             log.critical(
@@ -101,7 +101,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                     host=host,
                     password=password,
-                    ws_port=ws_port,
+                    ws_port=port,
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                 )

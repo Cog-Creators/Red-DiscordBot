@@ -1125,6 +1125,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Lavaplayer version:     [{lavaplayer}]\n"
                 "Java version:           [{jvm}]\n"
                 "Java Executable:        [{jv_exec}]\n"
+                "Xms:                    [{xms}]\n"
+                "Xmx:                    [{xmx}]\n"
             ).format(
                 build_time=self.player_manager.build_time,
                 llbuild=self.player_manager.ll_build,
@@ -1132,6 +1134,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 lavaplayer=self.player_manager.lavaplayer,
                 jvm=self.player_manager.jvm,
                 jv_exec=self.player_manager.path,
+                xms=global_data["java"]["Xms"],
+                xmx=global_data["java"]["Xmx"],
             )
         if is_owner:
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)

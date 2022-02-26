@@ -19,10 +19,10 @@ _ = Translator("Audio", Path(__file__))
 
 
 def get_jar_ram_defaults(max_heap=None) -> Tuple[str, str]:
-    available = psutil.virtual_memory().available
+    available = psutil.virtual_memory().total
     min_ram = 64 * 1024 ** 2
     max_ram = max(min_ram, max_heap or available * 0.5)
-    size_name = ("", "K", "M", "G")
+    size_name = ("", "K", "M", "G", "T")
     i = int(math.floor(math.log(min_ram, 1024)))
     p = math.pow(1024, i)
     s = int(min_ram // p)
