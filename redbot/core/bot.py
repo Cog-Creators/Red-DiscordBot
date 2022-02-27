@@ -814,6 +814,8 @@ class Red(
             assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))  # nosec
             if not channel.permissions_for(guild.me).send_messages:
                 return False
+            if guild.me.is_timed_out():
+                return False
             if not (await self.ignored_channel_or_guild(message)):
                 return False
 
