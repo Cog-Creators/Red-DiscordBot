@@ -2355,7 +2355,7 @@ Enable or disable case creation for a mod action, like disabling warnings, enabl
     - ``[p]modlogset cases ban`` - Enables/disables modlog messages for bans.
 
 **Arguments:**
-    - ``[action]`` - The type of mod action to be enabled/disabled for case creation. modlogset cases
+    - ``[action]`` - The type of mod action to be enabled/disabled for case creation.
 
 
 .. _core-command-modlogset-modlog:
