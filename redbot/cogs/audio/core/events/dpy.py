@@ -322,7 +322,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             )
             if error.send_cmd_help:
                 await ctx.send_help()
-        elif isinstance(error, commands.ConversionFailure):
+        elif isinstance(error, commands.BadArgument):
             handled = True
             if error.args:
                 if match := RE_CONVERSION.search(error.args[0]):

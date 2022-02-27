@@ -219,7 +219,7 @@ def init_events(bot, cli_flags):
             await ctx.send(msg)
             if error.send_cmd_help:
                 await ctx.send_help()
-        elif isinstance(error, commands.ConversionFailure):
+        elif isinstance(error, commands.BadArgument):
             if error.args:
                 await ctx.send(error.args[0])
             else:
