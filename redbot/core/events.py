@@ -30,6 +30,7 @@ from .utils._internal_utils import (
     expected_version,
     fetch_latest_red_version_info,
     send_to_owners_with_prefix_replaced,
+    get_converter,
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
@@ -222,6 +223,15 @@ def init_events(bot, cli_flags):
             if error.send_cmd_help:
                 await ctx.send_help()
         elif isinstance(error, commands.BadArgument):
+            if isinstance(error.__cause__, ValueError):
+                converter = get_converter(ctx.current_parameter)
+                param_name = ctx.current_parameter.name
+                if converter is int:
+                    await ctx.send(_('"{name}" is not an integer.').format(name=param_name))
+                    return
+                if converter is float:
+                    await ctx.send(_('"{name}" is not a number.').format(name=param_name))
+                    return
             if error.args:
                 await ctx.send(error.args[0])
             else:
