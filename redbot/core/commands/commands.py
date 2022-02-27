@@ -493,14 +493,6 @@ class Command(CogCommandMixin, DPYCommand):
             return await super().do_conversion(ctx, converter, argument, param)
         except BadArgument as exc:
             raise ConversionFailure(converter, argument, param, *exc.args) from exc
-        except ValueError as exc:
-            # Some common converters need special treatment...
-            if converter in (int, float):
-                message = _('"{argument}" is not a number.').format(argument=argument)
-                raise ConversionFailure(converter, argument, param, message) from exc
-
-            # We should expose anything which might be a bug in the converter
-            raise exc
 
     async def can_see(self, ctx: "Context"):
         """Check if this command is visible in the given context.
