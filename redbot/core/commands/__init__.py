@@ -66,22 +66,6 @@ from .requires import (
     mod_or_permissions as mod_or_permissions,
 )
 
-from ._dpy_reimplements import (
-    check as check,
-    guild_only as guild_only,
-    cooldown as cooldown,
-    dm_only as dm_only,
-    is_nsfw as is_nsfw,
-    has_role as has_role,
-    has_any_role as has_any_role,
-    bot_has_role as bot_has_role,
-    when_mentioned_or as when_mentioned_or,
-    when_mentioned as when_mentioned,
-    bot_has_any_role as bot_has_any_role,
-    before_invoke as before_invoke,
-    after_invoke as after_invoke,
-)
-
 ### DEP-WARN: Check this *every* discord.py update
 from discord.ext.commands import (
     BadArgument as BadArgument,
@@ -187,4 +171,17 @@ from discord.ext.commands import (
     MissingFlagArgument as MissingFlagArgument,
     ScheduledEventConverter as ScheduledEventConverter,
     ScheduledEventNotFound as ScheduledEventNotFound,
+    check as check,
+    guild_only as guild_only,
+    cooldown as cooldown,
+    dm_only as dm_only,
+    is_nsfw as is_nsfw,
+    has_role as has_role,
+    has_any_role as has_any_role,
+    bot_has_role as bot_has_role,
+    when_mentioned_or as when_mentioned_or,
+    when_mentioned as when_mentioned,
+    bot_has_any_role as bot_has_any_role,
+    before_invoke as before_invoke,
+    after_invoke as after_invoke,
 )
