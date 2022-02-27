@@ -469,31 +469,6 @@ class Command(CogCommandMixin, DPYCommand):
                 await self._max_concurrency.release(ctx)
             raise
 
-    async def do_conversion(
-        self, ctx: "Context", converter, argument: str, param: inspect.Parameter
-    ):
-        """Convert an argument according to its type annotation.
-
-        Raises
-        ------
-        ConversionFailure
-            If doing the conversion failed.
-
-        Returns
-        -------
-        Any
-            The converted argument.
-
-        """
-        # Let's not worry about all of this junk if it's just a str converter
-        if converter is str:
-            return argument
-
-        try:
-            return await super().do_conversion(ctx, converter, argument, param)
-        except BadArgument as exc:
-            raise ConversionFailure(converter, argument, param, *exc.args) from exc
-
     async def can_see(self, ctx: "Context"):
         """Check if this command is visible in the given context.
 

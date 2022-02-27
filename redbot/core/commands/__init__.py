@@ -34,7 +34,6 @@ from .converter import (
     CommandConverter as CommandConverter,
 )
 from .errors import (
-    ConversionFailure as ConversionFailure,
     BotMissingPermissions as BotMissingPermissions,
     UserFeedbackCheckFailure as UserFeedbackCheckFailure,
     ArgParserFailure as ArgParserFailure,
