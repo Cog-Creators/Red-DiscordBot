@@ -285,13 +285,6 @@ class Command(CogCommandMixin, DPYCommand):
         (type used will be of the inner type instead)
     """
 
-    def __call__(self, *args, **kwargs):
-        if self.cog:
-            # We need to inject cog as self here
-            return self.callback(self.cog, *args, **kwargs)
-        else:
-            return self.callback(*args, **kwargs)
-
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
         super().__init__(*args, **kwargs)
