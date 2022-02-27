@@ -59,6 +59,7 @@ class IssueDiagnoserBase:
         self.message.channel = self.channel
         self.message.content = self._original_ctx.prefix + self.command.qualified_name
         # clear the cached properties
+        # DEP-WARN
         for attr in self.message._CACHED_SLOTS:  # type: ignore[attr-defined]
             try:
                 delattr(self.message, attr)

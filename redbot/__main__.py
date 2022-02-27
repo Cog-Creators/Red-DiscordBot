@@ -381,6 +381,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             sys.exit(1)
 
     if cli_flags.dry_run:
+        # DEP-WARN
         await red.http.close()
         sys.exit(0)
     try:
