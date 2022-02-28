@@ -1545,7 +1545,7 @@ class Red(
         else:
             self._BotBase__extensions[name] = lib
 
-    def remove_cog(self, cogname: str):
+    def remove_cog(self, cogname: str) -> Optional[commands.Cog]:
         cog = self.get_cog(cogname)
         if cog is None:
             return
@@ -1564,6 +1564,8 @@ class Red(
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
+
+        return cog
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
