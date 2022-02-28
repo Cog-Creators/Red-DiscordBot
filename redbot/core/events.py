@@ -340,7 +340,7 @@ def init_events(bot, cli_flags):
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
-    async def on_message(message):
+    async def on_message(message, /):
         await set_contextual_locales_from_guild(bot, message.guild)
 
         await bot.process_commands(message)

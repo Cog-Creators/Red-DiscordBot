@@ -380,6 +380,7 @@ class Command(CogCommandMixin, DPYCommand):
     async def can_run(
         self,
         ctx: "Context",
+        /,
         *,
         check_all_parents: bool = False,
         change_permission_state: bool = False,
@@ -436,7 +437,7 @@ class Command(CogCommandMixin, DPYCommand):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
-    async def prepare(self, ctx):
+    async def prepare(self, ctx, /):
         ctx.command = self
 
         if not self.enabled:
@@ -563,7 +564,7 @@ class Command(CogCommandMixin, DPYCommand):
                     break
         return old_rule, new_rule
 
-    def error(self, coro):
+    def error(self, coro, /):
         """
         A decorator that registers a coroutine as a local error handler.
 
@@ -723,7 +724,7 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
         self.autohelp = kwargs.pop("autohelp", True)
         super().__init__(*args, **kwargs)
 
-    async def invoke(self, ctx: "Context"):
+    async def invoke(self, ctx: "Context", /):
         # we skip prepare in some cases to avoid some things
         # We still always want this part of the behavior though
         ctx.command = self
@@ -898,7 +899,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         raise RedUnhandledAPI()
 
-    async def can_run(self, ctx: "Context", **kwargs) -> bool:
+    async def can_run(self, ctx: "Context", /, **kwargs) -> bool:
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
@@ -926,7 +927,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         return can_run
 
-    async def can_see(self, ctx: "Context") -> bool:
+    async def can_see(self, ctx: "Context", /) -> bool:
         """Check if this cog is visible in the given context.
 
         In short, this will verify whether
@@ -1039,7 +1040,7 @@ class _AlwaysAvailableMixin:
     This particular class is not supported for 3rd party use
     """
 
-    async def can_run(self, ctx, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
         return not ctx.author.bot
 
     can_see = can_run
@@ -1088,7 +1089,7 @@ class _ForgetMeSpecialCommand(_RuleDropper, Command):
     We need special can_run behavior here
     """
 
-    async def can_run(self, ctx, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
         return await ctx.bot._config.datarequests.allow_user_requests()
 
     can_see = can_run

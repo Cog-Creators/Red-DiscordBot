@@ -375,12 +375,12 @@ class Red(
             return
         del dev.env_extensions[name]
 
-    def get_command(self, name: str) -> Optional[commands.Command]:
+    def get_command(self, name: str, /) -> Optional[commands.Command]:
         com = super().get_command(name)
         assert com is None or isinstance(com, commands.Command)
         return com
 
-    def get_cog(self, name: str) -> Optional[commands.Cog]:
+    def get_cog(self, name: str, /) -> Optional[commands.Cog]:
         cog = super().get_cog(name)
         assert cog is None or isinstance(cog, commands.Cog)
         return cog
@@ -444,7 +444,7 @@ class Red(
         """
         self._red_before_invoke_objs.discard(coro)
 
-    def before_invoke(self, coro: T_BIC) -> T_BIC:
+    def before_invoke(self, coro: T_BIC, /) -> T_BIC:
         """
         Overridden decorator method for Red's ``before_invoke`` behavior.
 
@@ -1287,7 +1287,7 @@ class Red(
         global_setting = await self._config.embeds()
         return global_setting
 
-    async def is_owner(self, user: Union[discord.User, discord.Member]) -> bool:
+    async def is_owner(self, user: Union[discord.User, discord.Member], /) -> bool:
         """
         Determines if the user should be considered a bot owner.
 
@@ -1498,10 +1498,10 @@ class Red(
         for service in service_names:
             self.dispatch("red_api_tokens_update", service, MappingProxyType({}))
 
-    async def get_context(self, message, *, cls=commands.Context):
+    async def get_context(self, message, /, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
-    async def process_commands(self, message: discord.Message):
+    async def process_commands(self, message: discord.Message, /):
         """
         Same as base method, but dispatches an additional event for cogs
         which want to handle normal messages differently to command
@@ -1558,7 +1558,7 @@ class Red(
         else:
             self._BotBase__extensions[name] = lib
 
-    def remove_cog(self, cogname: str) -> Optional[commands.Cog]:
+    def remove_cog(self, cogname: str, /) -> Optional[commands.Cog]:
         cog = self.get_cog(cogname)
         if cog is None:
             return
@@ -1661,7 +1661,7 @@ class Red(
 
         return await destination.send(content=content, **kwargs)
 
-    def add_cog(self, cog: commands.Cog, *, override: bool = False) -> None:
+    def add_cog(self, cog: commands.Cog, /, *, override: bool = False) -> None:
         if not isinstance(cog, commands.Cog):
             raise RuntimeError(
                 f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
@@ -1706,7 +1706,7 @@ class Red(
             del cog
             raise
 
-    def add_command(self, command: commands.Command) -> None:
+    def add_command(self, command: commands.Command, /) -> None:
         if not isinstance(command, commands.Command):
             raise RuntimeError("Commands must be instances of `redbot.core.commands.Command`")
 
@@ -1722,7 +1722,7 @@ class Red(
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
 
-    def remove_command(self, name: str) -> Optional[commands.Command]:
+    def remove_command(self, name: str, /) -> Optional[commands.Command]:
         command = super().remove_command(name)
         if command is None:
             return None
