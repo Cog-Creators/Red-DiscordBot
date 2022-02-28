@@ -2412,7 +2412,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "must be a valid image in either JPG or PNG format."
                 )
             )
-        except discord.InvalidArgument:
+        except ValueError:
             await ctx.send(_("JPG / PNG format only."))
         else:
             await ctx.send(_("Done."))
