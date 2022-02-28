@@ -116,9 +116,12 @@ async def _init(bot: Red):
         while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
-                entry = await guild.audit_logs(
-                    action=discord.AuditLogAction.ban, before=before, after=after
-                ).find(lambda e: e.target.id == member.id and after < e.created_at < before)
+                entry = await discord.utils.find(
+                    lambda e: e.target.id == member.id and after < e.created_at < before,
+                    guild.audit_logs(
+                        action=discord.AuditLogAction.ban, before=before, after=after
+                    ),
+                )
             except discord.Forbidden:
                 break
             except discord.HTTPException:
@@ -153,9 +156,12 @@ async def _init(bot: Red):
         while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
-                entry = await guild.audit_logs(
-                    action=discord.AuditLogAction.unban, before=before, after=after
-                ).find(lambda e: e.target.id == user.id and after < e.created_at < before)
+                entry = await discord.utils.find(
+                    lambda e: e.target.id == user.id and after < e.created_at < before,
+                    guild.audit_logs(
+                        action=discord.AuditLogAction.unban, before=before, after=after
+                    ),
+                )
             except discord.Forbidden:
                 break
             except discord.HTTPException:
