@@ -241,7 +241,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "External Lavalink node port set to {port}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
-                port=inline(port), p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name
+                port=inline(str(port)),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
             ),
         )
 
@@ -358,7 +360,6 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
 
         await self.config.yaml.server.address.set(host)
-        host = await self.config.yaml.server.address()
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -383,7 +384,6 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         The value by default is `youshallnotpass`.
         """
         await self.config.yaml.lavalink.server.password.set(password)
-        password = await self.config.yaml.lavalink.server.password()
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -415,7 +415,6 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         await self.config.yaml.server.port.set(port)
-        port = await self.config.yaml.server.port()
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
@@ -423,7 +422,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Managed node will now accept connections on {port}.\n\n"
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
-                port=inline(port), p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name
+                port=inline(str(port)),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
             ),
         )
 
@@ -648,7 +649,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Managed node's bufferDurationMs set to {milliseconds}.\n\n"
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
-                milliseconds=inline(milliseconds),
+                milliseconds=inline(str(milliseconds)),
                 p=ctx.prefix,
                 cmd=self.command_audioset_restart.qualified_name,
             ),
@@ -679,7 +680,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Managed node's bufferDurationMs set to {milliseconds}.\n\n"
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
-                milliseconds=inline(milliseconds),
+                milliseconds=inline(str(milliseconds)),
                 p=ctx.prefix,
                 cmd=self.command_audioset_restart.qualified_name,
             ),
