@@ -688,7 +688,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Join Voice Channel"),
-                description=_("Connection to Lavalink has not yet been established."),
+                description=_("Connection to Lavalink node has not yet been established."),
             )
 
     @commands.command(name="volume")

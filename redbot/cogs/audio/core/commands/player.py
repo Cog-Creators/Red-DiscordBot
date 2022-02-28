@@ -64,7 +64,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
+                msg = _("Connection to Lavalink node has failed")
                 desc = EmptyEmbed
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
@@ -96,7 +96,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_("Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink node has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -172,7 +172,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
+                msg = _("Connection to Lavalink node has failed")
                 desc = EmptyEmbed
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
@@ -204,7 +204,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_("Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink node has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -253,9 +253,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             if await self.config.use_external_lavalink() and query.is_local:
                 embed.description = _(
                     "Local tracks will not work "
-                    "if the `Lavalink.jar` cannot see the track.\n"
-                    "This may be due to permissions or because Lavalink.jar is being run "
-                    "in a different machine than the local tracks."
+                    "if the managed Lavalink node cannot see the track.\n"
+                    "This may be due to permissions or you are using an external Lavalink node "
+                    "in a different machine than the bot and the local tracks."
                 )
             elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                 title = _("Track is not playable.")

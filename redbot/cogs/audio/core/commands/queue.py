@@ -358,7 +358,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
-                description=_("Connection to Lavalink has not yet been established."),
+                description=_("Connection to Lavalink node has not yet been established."),
             )
         except KeyError:
             ctx.command.reset_cooldown(ctx)

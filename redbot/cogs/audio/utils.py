@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import math
+import re
 import time
 
 from enum import Enum, unique
@@ -38,7 +39,7 @@ def get_jar_ram_defaults(max_heap=None) -> Tuple[str, str]:
 
 MIN_JAVA_RAM, MAX_JAVA_RAM = get_jar_ram_defaults()
 
-DEFAULT_YAML_VALUES = {
+DEFAULT_LAVALINK_YAML = {
     # The nesting structure of this dict is very important, it's a 1:1 mirror of application.yaml in JSON
     "yaml__server__address": "0.0.0.0",
     "yaml__server__port": 2333,
@@ -56,26 +57,46 @@ DEFAULT_YAML_VALUES = {
     "yaml__lavalink__server__playerUpdateInterval": 1,
     "yaml__lavalink__server__youtubeSearchEnabled": True,
     "yaml__lavalink__server__soundcloudSearchEnabled": True,
-    "yaml__lavalink__server__gc-warnings": True,
+    "yaml__lavalink__server__gc_warnings": True,
     "yaml__metrics__prometheus__enabled": False,
     "yaml__metrics__prometheus__endpoint": "/metrics",
     "yaml__sentry__dsn": "",
     "yaml__sentry__environment": "",
-    "yaml__logging__file__max-history": 7,
-    "yaml__logging__file__max-size": "1GB",
+    "yaml__logging__file__max_history": 7,
+    "yaml__logging__file__max_size": "1GB",
     "yaml__logging__path": "./logs/",
     "yaml__level__root": "INFO",
     "yaml__level__lavalink": "INFO",
 }
 
 DEFAULT_LAVALINK_SETTINGS = {
-    "host": DEFAULT_YAML_VALUES["yaml__server__address"],
-    "rest_port": DEFAULT_YAML_VALUES["yaml__server__port"],
-    "ws_port": DEFAULT_YAML_VALUES["yaml__server__port"],
-    "password": DEFAULT_YAML_VALUES["yaml__lavalink__server__password"],
+    "host": DEFAULT_LAVALINK_YAML["yaml__server__address"],
+    "rest_port": DEFAULT_LAVALINK_YAML["yaml__server__port"],
+    "ws_port": DEFAULT_LAVALINK_YAML["yaml__server__port"],
+    "password": DEFAULT_LAVALINK_YAML["yaml__lavalink__server__password"],
+    "secured_ws": False,
     "java__Xms": MIN_JAVA_RAM,
     "java__Xmx": MAX_JAVA_RAM,
 }
+
+
+# This assumes all keys with `_` should be converted from `part1_part2` to `part1-part2`
+def convert_function(key: str) -> str:
+    return key.replace("_", "-")
+
+
+def change_dict_naming_convention(data) -> dict:
+    new = {}
+    for k, v in data.items():
+        new_v = v
+        if isinstance(v, dict):
+            new_v = change_dict_naming_convention(v)
+        elif isinstance(v, list):
+            new_v = list()
+            for x in v:
+                new_v.append(change_dict_naming_convention(x))
+        new[convert_function(k)] = new_v
+    return new
 
 
 class CacheLevel:
@@ -302,9 +323,21 @@ def task_callback_trace(task: asyncio.Task) -> None:
             log.trace("%s raised an Exception", task.get_name(), exc_info=exc)
 
 
-def has_internal_server():
+def has_managed_server():
     async def pred(ctx: commands.Context):
+        if ctx.cog is None:
+            return True
         external = await ctx.cog.config.use_external_lavalink()
         return not external
+
+    return commands.check(pred)
+
+
+def has_unmanaged_server():
+    async def pred(ctx: commands.Context):
+        if ctx.cog is None:
+            return True
+        external = await ctx.cog.config.use_external_lavalink()
+        return external
 
     return commands.check(pred)

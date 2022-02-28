@@ -19,7 +19,7 @@ from redbot.core import data_manager, Config
 from redbot.core.i18n import Translator
 
 from .errors import LavalinkDownloadFailed
-from .utils import task_callback_exception
+from .utils import task_callback_exception, change_dict_naming_convention
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = getLogger("red.Audio.manager")
@@ -31,8 +31,8 @@ LAVALINK_DOWNLOAD_URL: Final[str] = (
     "Lavalink.jar"
 )
 LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
+LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
@@ -99,11 +99,8 @@ class ServerManager:
     _buildtime: ClassVar[Optional[str]] = None
     _java_exc: ClassVar[str] = "java"
 
-    def __init__(self, host: str, password: str, port: int, config: Config) -> None:
+    def __init__(self, config: Config) -> None:
         self.ready: asyncio.Event = asyncio.Event()
-        self._port = port
-        self._host = host
-        self._password = password
         self._config = config
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._monitor_task: Optional[asyncio.Task] = None
@@ -138,18 +135,16 @@ class ServerManager:
         self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
             raise asyncio.CancelledError(
-                "You are attempting to run Lavalink audio on an unsupported machine architecture."
+                "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
             )
 
         if self._proc is not None:
             if self._proc.returncode is None:
-                raise RuntimeError("Internal Lavalink server is already running")
+                raise RuntimeError("Managed Lavalink node is already running")
             elif self._shutdown:
                 raise RuntimeError("Server manager has already been used - create another one")
-
-        await self.maybe_download_jar()
-
         await self.process_settings()
+        await self.maybe_download_jar()
         args = await self._get_jar_args()
         self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
@@ -158,18 +153,18 @@ class ServerManager:
             stderr=asyncio.subprocess.STDOUT,
         )
 
-        log.info("Internal Lavalink server started. PID: %s", self._proc.pid)
+        log.info("Managed Lavalink node started. PID: %s", self._proc.pid)
 
         try:
             await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
         except asyncio.TimeoutError:
-            log.warning("Timeout occurred whilst waiting for internal Lavalink server to be ready")
+            log.warning("Timeout occurred whilst waiting for managed Lavalink node to be ready")
 
         self._monitor_task = asyncio.create_task(self._monitor())
         self._monitor_task.add_done_callback(task_callback_exception)
 
     async def process_settings(self):
-        data = self._config.yaml.all()
+        data = change_dict_naming_convention(await self._config.yaml.all())
         with open(LAVALINK_APP_YML, "w") as f:
             yaml.safe_dump(data, f)
 
@@ -177,7 +172,13 @@ class ServerManager:
         (java_available, java_version) = await self._has_java()
 
         if not java_available:
-            raise RuntimeError("You must install Java 11 for Lavalink to run.")
+            raise RuntimeError(
+                "The managed Lavalink node requires Java 11 to run; "
+                "Either install it and restart the bot or connect to an external Lavalink node "
+                "(https://docs.discord.red/en/stable/install_guides/index.html)\n\n"
+                "If you already have it installed then then default Java executable is not version 11, "
+                "in this case use '[p]llset java' to set the correct Java executable."  # TODO: Replace with Audio docs when they are out
+            )
         java_xms, java_xmx = list((await self._config.java.all()).values)
 
         return [
@@ -235,20 +236,20 @@ class ServerManager:
         raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
 
     async def _wait_for_launcher(self) -> None:
-        log.debug("Waiting for Lavalink server to be ready")
+        log.debug("Waiting for Managed Lavalink node to be ready")
         lastmessage = 0
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
-                log.info("Internal Lavalink server is ready to receive requests.")
+                log.info("Managed Lavalink node is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
-                log.critical("Internal lavalink server exited early")
+                log.critical("Managed Lavalink node server exited early")
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
@@ -258,9 +259,9 @@ class ServerManager:
             await asyncio.sleep(0.5)
 
         # This task hasn't been cancelled - Lavalink was shut down by something else
-        log.warning("Internal Lavalink jar shutdown unexpectedly")
+        log.warning("Managed Lavalink node shutdown unexpectedly")
         if not self._has_java_error():
-            log.info("Restarting internal Lavalink server")
+            log.info("Restarting managed Lavalink node")
             await self.start(self._java_exc)
         else:
             log.critical(
@@ -278,7 +279,7 @@ class ServerManager:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
             return
-        log.info("Shutting down internal Lavalink server")
+        log.info("Shutting down managed Lavalink node")
         if self._monitor_task is not None:
             self._monitor_task.cancel()
         self._proc.terminate()

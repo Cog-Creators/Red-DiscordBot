@@ -42,12 +42,12 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         elif self.lavalink_connect_task and self.lavalink_connect_task.cancelled():
             await ctx.send(
                 _(
-                    "You have attempted to run Audio's Lavalink server on an unsupported"
+                    "You have attempted to run Audio's managed Lavalink node on an unsupported"
                     " architecture. Only settings related commands will be available."
                 )
             )
             raise RuntimeError(
-                "Not running audio command due to invalid machine architecture for Lavalink."
+                "Not running audio command due to invalid machine architecture for the managed Lavalink node."
             )
 
         current_perms = ctx.channel.permissions_for(ctx.me)
@@ -107,12 +107,14 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if ctx.command.callback.__name__ in DANGEROUS_COMMANDS and await ctx.bot.is_owner(
             ctx.author
         ):
-            if ctx.author.id not in self.antispam:
-                self.antispam[ctx.author.id] = AntiSpam(self._intervals)
-            if not self.antispam[ctx.author.id].spammy:
-                name = ctx.command.callback.__name__
+            if ctx.command.callback.__name__ not in self.antispam[ctx.author.id]:
+                self.antispam[ctx.author.id][ctx.command.callback.__name__] = AntiSpam(
+                    self.llset_captcha_intervals
+                )
+            if not self.antispam[ctx.author.id][ctx.command.callback.__name__].spammy:
                 token = random.choices((*ascii_letters, *digits), k=4)
                 confirm_token = " ".join(i for i in token)
+                token = confirm_token.replace(" ", "")
                 message = bold(underline(_("You should not be running this command.")))
                 message += _(
                     "\n{template}\n"
@@ -122,6 +124,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     template=DANGEROUS_COMMANDS[ctx.command.callback.__name__],
                     confirm_token=confirm_token,
                 )
+                sent = await ctx.send(message)
                 try:
                     message = await ctx.bot.wait_for(
                         "message",
@@ -130,10 +133,17 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                         timeout=120,
                     )
                 except asyncio.TimeoutError:
+                    with contextlib.suppress(discord.HTTPException):
+                        await sent.add_reaction("\N{CROSS MARK}")
                     raise commands.CheckFailure
                 else:
                     if message.content.strip() != token:
+                        with contextlib.suppress(discord.HTTPException):
+                            await sent.add_reaction("\N{CROSS MARK}")
                         raise commands.CheckFailure
+                    with contextlib.suppress(discord.HTTPException):
+                        await sent.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+                    self.antispam[ctx.author.id][ctx.command.callback.__name__].stamp()
 
         if not guild:
             return
@@ -202,7 +212,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Environment"),
-                description=_("Connection to Lavalink has been lost."),
+                description=_("Connection to Lavalink node has been lost."),
                 error=True,
             )
             log.trace("This is a handled error", exc_info=error)
@@ -221,7 +231,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Unable to Get Track"),
                 description=_(
-                    "I'm unable to get a track from Lavalink at the moment, "
+                    "I'm unable to get a track from the Lavalink node at the moment, "
                     "try again in a few minutes."
                 ),
                 error=True,
@@ -278,8 +288,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             self.bot.loop.create_task(lavalink.close(self.bot)).add_done_callback(
                 task_callback_trace
             )
-            if self.player_manager is not None:
-                self.bot.loop.create_task(self.player_manager.shutdown()).add_done_callback(
+            if self.managed_node_controller is not None:
+                self.bot.loop.create_task(self.managed_node_controller.shutdown()).add_done_callback(
                     task_callback_trace
                 )
 
@@ -315,12 +325,12 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.Cog.listener()
     async def on_shard_disconnect(self, shard_id):
-        self._diconnected_shard.add(shard_id)
+        self._disconnected_shard.add(shard_id)
 
     @commands.Cog.listener()
     async def on_shard_ready(self, shard_id):
-        self._diconnected_shard.discard(shard_id)
+        self._disconnected_shard.discard(shard_id)
 
     @commands.Cog.listener()
     async def on_shard_resumed(self, shard_id):
-        self._diconnected_shard.discard(shard_id)
+        self._disconnected_shard.discard(shard_id)

@@ -20,7 +20,7 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from ...audio_dataclasses import LocalPath
 from ...converters import ScopeParser
 from ...errors import MissingGuild, TooManyMatches
-from ...utils import CacheLevel, PlaylistScope, has_internal_server
+from ...utils import CacheLevel, PlaylistScope, has_managed_server
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, PlaylistConverter, __version__
 
@@ -1117,7 +1117,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
-        if is_owner and not global_data["use_external_lavalink"] and self.player_manager.ll_build:
+        if (
+            is_owner
+            and not global_data["use_external_lavalink"]
+            and self.managed_node_controller.ll_build
+        ):
             msg += _(
                 "Lavalink build:         [{llbuild}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
@@ -1128,12 +1132,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Xms:                    [{xms}]\n"
                 "Xmx:                    [{xmx}]\n"
             ).format(
-                build_time=self.player_manager.build_time,
-                llbuild=self.player_manager.ll_build,
-                llbranch=self.player_manager.ll_branch,
-                lavaplayer=self.player_manager.lavaplayer,
-                jvm=self.player_manager.jvm,
-                jv_exec=self.player_manager.path,
+                build_time=self.managed_node_controller.build_time,
+                llbuild=self.managed_node_controller.ll_build,
+                llbranch=self.managed_node_controller.ll_branch,
+                lavaplayer=self.managed_node_controller.lavaplayer,
+                jvm=self.managed_node_controller.jvm,
+                jv_exec=self.managed_node_controller.path,
                 xms=global_data["java"]["Xms"],
                 xmx=global_data["java"]["Xmx"],
             )
@@ -1144,10 +1148,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="logs")
     @commands.is_owner()
-    @has_internal_server()
+    @has_managed_server()
     @commands.guild_only()
     async def command_audioset_logs(self, ctx: commands.Context):
-        """Sends the Lavalink server logs to your DMs."""
+        """Sends the managed Lavalink node logs to your DMs."""
         datapath = cog_data_path(raw_name="Audio")
         logs = datapath / "logs" / "spring.log"
         zip_name = None
@@ -1453,8 +1457,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Restarts the lavalink connection."""
         async with ctx.typing():
             await lavalink.close(self.bot)
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
+            if self.managed_node_controller is not None:
+                await self.managed_node_controller.shutdown()
 
             self.lavalink_restart_connect()
 

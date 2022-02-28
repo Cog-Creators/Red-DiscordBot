@@ -47,13 +47,13 @@ class MixinMeta(ABC):
     bot: Red
     config: Config
     api_interface: Optional["AudioAPIInterface"]
-    player_manager: Optional["ServerManager"]
+    managed_node_controller: Optional["ServerManager"]
     playlist_api: Optional["PlaylistWrapper"]
     local_folder_current_path: Optional[Path]
     db_conn: Optional[APSWConnectionWrapper]
     session: aiohttp.ClientSession
-    antispam: Dict[int, AntiSpam]
-    _intervals: List[Tuple[datetime.timedelta, int]]
+    antispam: Dict[int, Dict[str, AntiSpam]]
+    llset_captcha_intervals: List[Tuple[datetime.timedelta, int]]
 
     skip_votes: MutableMapping[int, Set[int]]
     play_lock: MutableMapping[int, bool]
@@ -78,12 +78,11 @@ class MixinMeta(ABC):
     cog_ready_event: asyncio.Event
     _ws_resume: defaultdict[Any, asyncio.Event]
     _ws_op_codes: defaultdict[int, asyncio.LifoQueue]
-    _default_lavalink_settings: Mapping
     permission_cache = discord.Permissions
 
     _last_ll_update: datetime.datetime
     _ll_guild_updates: Set[int]
-    _diconnected_shard: Set[int]
+    _disconnected_shard: Set[int]
 
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):

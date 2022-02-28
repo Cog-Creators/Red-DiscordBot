@@ -63,32 +63,32 @@ DANGEROUS_COMMANDS = {
         "The default and supported version is currently Java 11."
     ),
     "command_llsetup_heapsize": _(
-        "This command will change the maximum RAM allocation for the Lavalink webserver, "
+        "This command will change the maximum RAM allocation for the managed Lavalink node, "
         "usually you will never have to change this, "
         "before considering changing it please consult our support team."
     ),
     "command_llsetup_external": _(
         "This command will disable the managed Lavalink node, "
-        "if you toggle this command you must specify an external Lavalink webserver to connect to, "
+        "if you toggle this command you must specify an external Lavalink node to connect to, "
         "if you do not do so Audio will stop working."
     ),
     "command_llsetup_host": _(
-        "This command is used to specify the IP which will be used by Red to connect to an external Lavalink server, "
-        "this should only be changed if you have an external Lavalink server ready to be connected to."
+        "This command is used to specify the IP which will be used by Red to connect to an external Lavalink node. "
     ),
     "command_llsetup_password": _(
         "This command is used to specify the authentication password used by Red to connect to an "
-        "external Lavalink server."
-        "This should only be changed if you have an external Lavalink server ready to be connected to."
+        "external Lavalink node."
+    ),
+    "command_llsetup_secured": _(
+        "This command is used toggle between secured and unsecured connections to the Lavalink node."
     ),
     "command_llsetup_wsport": _(
-        "This command is used to specify the connection port used by Red to connect to an external Lavalink server."
-        "This should only be changed if you have an external Lavalink server ready to be connected to."
+        "This command is used to specify the connection port used by Red to connect to an external Lavalink node."
     ),
     "command_llsetup_config_server_host": _(
-        "This command specifies which network interface and IP the lavalink web server will bind to, "
+        "This command specifies which network interface and IP the managed Lavalink node will bind to, "
         "by default this is 0.0.0.0 meaning it will bind to all interfaces, "
-        "only change this if you want the web server to bind to a specific IP/interface."
+        "only change this if you want the managed Lavalink node to bind to a specific IP/interface."
     ),
     "command_llsetup_config_server_token": _(
         "This command changes the authentication password required to connect to this managed node."

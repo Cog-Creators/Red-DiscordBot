@@ -19,9 +19,7 @@ from redbot.core.utils.antispam import AntiSpam
 from ..utils import (
     CacheLevel,
     PlaylistScope,
-    MIN_JAVA_RAM,
-    MAX_JAVA_RAM,
-    DEFAULT_YAML_VALUES,
+    DEFAULT_LAVALINK_YAML,
     DEFAULT_LAVALINK_SETTINGS,
 )
 from . import abc, cog_utils, commands, events, tasks, utilities
@@ -41,12 +39,9 @@ class Audio(
 ):
     """Play audio through voice channels."""
 
-    _intervals = [
-        (datetime.timedelta(minutes=10), 1),
+    llset_captcha_intervals = [
+        (datetime.timedelta(days=1), 1),
     ]
-    _default_lavalink_settings = DEFAULT_LAVALINK_SETTINGS
-
-    _default_yaml_settings = DEFAULT_YAML_VALUES
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -54,7 +49,7 @@ class Audio(
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
         self.api_interface = None
-        self.player_manager = None
+        self.managed_node_controller = None
         self.playlist_api = None
         self.local_folder_current_path = None
         self.db_conn = None
@@ -69,7 +64,7 @@ class Audio(
         self._dj_role_cache = {}
         self.skip_votes = {}
         self.play_lock = {}
-        self.antispam: Dict[int, AntiSpam] = {}
+        self.antispam: Dict[int, Dict[str, AntiSpam]] = defaultdict(lambda: defaultdict(AntiSpam))
 
         self.lavalink_connect_task = None
         self._restore_task = None
@@ -116,8 +111,8 @@ class Audio(
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
             java_exc_path="java",
-            **self._default_yaml_settings,
-            **self._default_lavalink_settings,
+            **DEFAULT_LAVALINK_YAML,
+            **DEFAULT_LAVALINK_SETTINGS,
         )
 
         default_guild = dict(

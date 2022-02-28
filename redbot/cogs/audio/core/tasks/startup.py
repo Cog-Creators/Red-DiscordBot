@@ -70,7 +70,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(1)
             tries += 1
             if tries > 60:
-                log.warning("Unable to restore players, couldn't connect to Lavalink.")
+                log.warning("Unable to restore players, couldn't connect to Lavalink node.")
                 return
         metadata = {}
         all_guilds = await self.config.all_guilds()
@@ -235,7 +235,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                                 notify_channel,
                                 title=_("Unable to Get Track"),
                                 description=_(
-                                    "I'm unable to get a track from Lavalink at the moment, "
+                                    "I'm unable to get a track from the Lavalink node at the moment, "
                                     "try again in a few minutes."
                                 ),
                             )

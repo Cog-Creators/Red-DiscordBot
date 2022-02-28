@@ -125,8 +125,8 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def update_external_status(self) -> bool:
         external = await self.config.use_external_lavalink()
         if not external:
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
+            if self.managed_node_controller is not None:
+                await self.managed_node_controller.shutdown()
             await self.config.use_external_lavalink.set(True)
             return True
         else:
