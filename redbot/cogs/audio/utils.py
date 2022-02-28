@@ -79,6 +79,8 @@ DEFAULT_LAVALINK_SETTINGS = {
     "java__Xmx": MAX_JAVA_RAM,
 }
 
+CAPTCHA_CHARACTER = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ0234567890"
+
 
 # This assumes all keys with `_` should be converted from `part1_part2` to `part1-part2`
 def convert_function(key: str) -> str:

@@ -179,7 +179,7 @@ class ServerManager:
                 "If you already have it installed then then default Java executable is not version 11, "
                 "in this case use '[p]llset java' to set the correct Java executable."  # TODO: Replace with Audio docs when they are out
             )
-        java_xms, java_xmx = list((await self._config.java.all()).values)
+        java_xms, java_xmx = list((await self._config.java.all()).values())
 
         return [
             self._java_exc,
