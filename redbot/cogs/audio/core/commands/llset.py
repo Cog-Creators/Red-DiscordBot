@@ -198,7 +198,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node host.
 
-        This command sets the connection host which Audio will use to connect to an **external** Lavalink server.
+        This command sets the connection host which Audio will use to connect to an external Lavalink node.
         """
         if not (await self.config.use_external_lavalink()):
             return await self.send_embed_msg(
@@ -231,7 +231,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node password.
 
-        This command sets the connection password which Audio will use to connect to an **external** Lavalink server.
+        This command sets the connection password which Audio will use to connect to an external Lavalink node.
         """
 
         if not (await self.config.use_external_lavalink()):
@@ -269,7 +269,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node port.
 
-        This command sets the connection port which Audio will use to connect to an **external** Lavalink server.
+        This command sets the connection port which Audio will use to connect to an external Lavalink node.
         """
         if not (await self.config.use_external_lavalink()):
             return await self.send_embed_msg(
@@ -302,7 +302,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_secured(self, ctx: commands.Context):
         """Set the Lavalink node connection to secured.
 
-        This command sets the connection type to secured when connecting to an **external** Lavalink server.
+        This command sets the connection type to secured when connecting to an external Lavalink node.
         """
         if not (await self.config.use_external_lavalink()):
             return await self.send_embed_msg(
