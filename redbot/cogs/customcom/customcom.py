@@ -3,7 +3,6 @@ import re
 import random
 from datetime import datetime, timedelta
 from inspect import Parameter
-from collections import OrderedDict
 from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
 from urllib.parse import quote_plus
 
@@ -706,9 +705,8 @@ class CustomCommands(commands.Cog):
     @staticmethod
     def prepare_args(raw_response) -> Mapping[str, Parameter]:
         args = re.findall(r"{(\d+)[^:}]*(:[^.}]*)?[^}]*\}", raw_response)
-        default = [("ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))]
         if not args:
-            return OrderedDict(default)
+            return {}
         allowed_builtins = {
             "bool": bool,
             "complex": complex,
@@ -776,9 +774,7 @@ class CustomCommands(commands.Cog):
                 i if i < high else "final",
             )
             fin[i] = fin[i].replace(name=name)
-        # insert ctx parameter for discord.py parsing
-        fin = default + [(p.name, p) for p in fin]
-        return OrderedDict(fin)
+        return dict((p.name, p) for p in fin)
 
     def test_cooldowns(self, ctx, command, cooldowns):
         now = datetime.utcnow()
