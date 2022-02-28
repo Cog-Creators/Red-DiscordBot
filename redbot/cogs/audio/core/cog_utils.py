@@ -58,8 +58,9 @@ HUMANIZED_PERM = {
 DANGEROUS_COMMANDS = {
     "command_llsetup_java": _(
         "This command will change the executable path of Java, "
-        "this is useful if you have multiple installation of Java and the default one is causing issues. "
+        "this is useful if you have multiple installations of Java and the default one is causing issues. "
         "Please don't change this unless you are certain that the Java version you are specifying is supported by Red."
+        "The default and supported version is currently Java 11."
     ),
     "command_llsetup_heapsize": _(
         "This command will change the maximum RAM allocation for the Lavalink webserver, "
@@ -73,16 +74,16 @@ DANGEROUS_COMMANDS = {
     ),
     "command_llsetup_host": _(
         "This command is used to specify the IP which will be used by Red to connect to an external Lavalink server, "
-        "this should only be changed if you have an external lavalink server ready to be connected to."
+        "this should only be changed if you have an external Lavalink server ready to be connected to."
     ),
     "command_llsetup_password": _(
         "This command is used to specify the authentication password used by Red to connect to an "
         "external Lavalink server."
-        "This should only be changed if you have an external lavalink server ready to be connected to."
+        "This should only be changed if you have an external Lavalink server ready to be connected to."
     ),
     "command_llsetup_wsport": _(
         "This command is used to specify the connection port used by Red to connect to an external Lavalink server."
-        "This should only be changed if you have an external lavalink server ready to be connected to."
+        "This should only be changed if you have an external Lavalink server ready to be connected to."
     ),
     "command_llsetup_config_server_host": _(
         "This command specifies which network interface and IP the lavalink web server will bind to, "
@@ -98,7 +99,7 @@ DANGEROUS_COMMANDS = {
         "only change this if the default port '2333' is causing conflicts with existing applications."
     ),
     "command_llsetup_config_source_http": _(
-        "This command toggles the support of direct url streams. "
+        "This command toggles the support of direct url streams like Icecast or Shoutcast streams. "
         "An example is <http://ice6.somafm.com/gsclassic-128-mp3>; "
         "Disabling this will make the bot unable to play any direct url steam content."
     ),
