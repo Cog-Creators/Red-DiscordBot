@@ -533,7 +533,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if duration:
             duration_str = humanize_timedelta(timedelta=duration)
             until = datetime.now(timezone.utc) + duration
-            until_str = f"<t:{int(until.timestamp())}>"
+            until_str = discord.utils.format_dt(until)
 
         if moderator is None:
             moderator_str = _("Unknown")

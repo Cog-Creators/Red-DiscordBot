@@ -254,8 +254,9 @@ class General(commands.Cog):
         Default to False.
         """
         guild = ctx.guild
-        created_at = _("Created on <t:{0}>. That's <t:{0}:R>!").format(
-            int(guild.created_at.timestamp())
+        created_at = _("Created on {date_and_time}. That's {relative_time}!").format(
+            date_and_time=discord.utils.format_dt(guild.created_at),
+            relative_time=discord.utils.format_dt(guild.created_at, "R"),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])

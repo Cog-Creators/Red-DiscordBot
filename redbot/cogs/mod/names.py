@@ -197,7 +197,6 @@ class ModInfo(MixinMeta):
             joined_at = special_date
         else:
             joined_at = member.joined_at
-        user_created = int(member.created_at.timestamp())
         voice_state = member.voice
         member_number = (
             sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
@@ -206,9 +205,15 @@ class ModInfo(MixinMeta):
             + 1
         )
 
-        created_on = "<t:{0}>\n(<t:{0}:R>)".format(user_created)
+        created_on = (
+            f"{discord.utils.format_dt(member.created_at)}\n"
+            f"{discord.utils.format_dt(member.created_at, 'R')}"
+        )
         if joined_at is not None:
-            joined_on = "<t:{0}>\n(<t:{0}:R>)".format(int(joined_at.timestamp()))
+            joined_on = (
+                f"{discord.utils.format_dt(joined_at)}\n"
+                f"{discord.utils.format_dt(joined_at, 'R')}"
+            )
         else:
             joined_on = _("Unknown")
 
