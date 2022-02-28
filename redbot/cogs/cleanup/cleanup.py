@@ -696,7 +696,12 @@ class Cleanup(commands.Cog):
         def check(m):
             if m.attachments:
                 return False
-            c = (m.author.id, m.content, [e.to_dict() for e in m.embeds])
+            c = (
+                m.author.id,
+                m.content,
+                [embed.to_dict() for embed in m.embeds],
+                [sticker.id for sticker in m.stickers],
+            )
             if c in msgs:
                 spam.append(m)
                 return True
