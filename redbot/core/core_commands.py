@@ -534,7 +534,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uptime = self.bot.uptime.replace(tzinfo=datetime.timezone.utc)
         uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second.")
         await ctx.send(
-            _("Been up for: **{time_quantity}** (since {timestamp})").format(
+            _("I have been up for: **{time_quantity}** (since {timestamp})").format(
                 time_quantity=uptime_str, timestamp=f"<t:{int(uptime.timestamp())}:f>"
             )
         )
