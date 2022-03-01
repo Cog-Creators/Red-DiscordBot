@@ -18,7 +18,7 @@ from red_commons.logging import getLogger
 from redbot.core import data_manager, Config
 from redbot.core.i18n import Translator
 
-from .errors import LavalinkDownloadFailed
+from .errors import LavalinkDownloadFailed, AudioError
 from .utils import task_callback_exception, change_dict_naming_convention
 
 _ = Translator("Audio", pathlib.Path(__file__))
@@ -139,9 +139,9 @@ class ServerManager:
 
         if self._proc is not None:
             if self._proc.returncode is None:
-                raise RuntimeError("Managed Lavalink node is already running")
+                raise AudioError("Managed Lavalink node is already running")
             elif self._shutdown:
-                raise RuntimeError("Server manager has already been used - create another one")
+                raise AudioError("Server manager has already been used - create another one")
         await self.process_settings()
         await self.maybe_download_jar()
         args = await self._get_jar_args()
@@ -171,12 +171,16 @@ class ServerManager:
         (java_available, java_version) = await self._has_java()
 
         if not java_available:
-            raise RuntimeError(
-                "The managed Lavalink node requires Java 11 to run; "
-                "Either install it and restart the bot or connect to an external Lavalink node "
-                "(https://docs.discord.red/en/stable/install_guides/index.html)\n\n"
-                "If you already have it installed then then default Java executable is not version 11, "
-                "in this case use '[p]llset java' to set the correct Java executable."  # TODO: Replace with Audio docs when they are out
+            if self._java_version is None:
+                extras = ""
+            else:
+                extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
+            raise AudioError(
+                f"The managed Lavalink node requires Java 11 to run{extras};\n"
+                "Either install version 11 and restart the bot or connect to an external Lavalink node "
+                "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
+                "If you already have it installed then then you will need to specify the executable path, "
+                "use '[p]llset java' to set the correct Java 11 executable."  # TODO: Replace with Audio docs when they are out
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
 
@@ -190,17 +194,17 @@ class ServerManager:
         ]
 
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
-        if self._java_available is not None:
+        if self._java_available:
             # Return cached value if we've checked this before
             return self._java_available, self._java_version
         java_exec = shutil.which(self._java_exc)
         java_available = java_exec is not None
         if not java_available:
-            self.java_available = False
-            self.java_version = None
+            self._java_available = False
+            self._java_version = None
         else:
-            self._java_version = version = await self._get_java_version()
-            self._java_available = (11, 0) <= version < (12, 0)
+            self._java_version = await self._get_java_version()
+            self._java_available = (11, 0) <= self._java_version < (12, 0)
             self._java_exc = java_exec
         return self._java_available, self._java_version
 
@@ -232,7 +236,7 @@ class ServerManager:
 
             return major, minor
 
-        raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
+        raise AudioError(f"The output of `{self._java_exc} -version` was unexpected.")
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Managed Lavalink node to be ready")
@@ -244,7 +248,7 @@ class ServerManager:
                 log.info("Managed Lavalink node is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
-                raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
+                raise AudioError(f"Lavalink failed to start: {line.decode().strip()}")
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
@@ -264,7 +268,7 @@ class ServerManager:
             await self.start(self._java_exc)
         else:
             log.critical(
-                "Your Java is borked. Please find the hs_err_pid%d.log file"
+                "Your Java install is broken. Please find the hs_err_pid%d.log file"
                 " in the Audio data folder and report this issue.",
                 self._proc.pid,
             )

@@ -19,7 +19,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.chat_formatting import box, humanize_list, underline, bold
 
-from ...errors import TrackEnqueueError
+from ...errors import TrackEnqueueError, AudioError
 from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass, DANGEROUS_COMMANDS
 from ...utils import task_callback_trace
@@ -45,8 +45,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     " architecture. Only settings related commands will be available."
                 )
             )
-            raise RuntimeError(
-                "Not running audio command due to invalid machine architecture for the managed Lavalink node."
+            raise AudioError(
+                "Not running Audio command due to invalid machine architecture for the managed Lavalink node."
             )
 
         current_perms = ctx.channel.permissions_for(ctx.me)

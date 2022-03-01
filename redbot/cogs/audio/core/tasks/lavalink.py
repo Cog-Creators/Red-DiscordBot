@@ -6,7 +6,7 @@ from red_commons.logging import getLogger
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
-from ...errors import LavalinkDownloadFailed
+from ...errors import LavalinkDownloadFailed, AudioError
 from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -53,16 +53,16 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await asyncio.sleep(1)
                     if exc.should_retry:
                         log.exception(
-                            "Exception whilst starting managed Lavalink node, retrying...",
-                            exc_info=exc,
+                            "Exception whilst starting managed Lavalink node, retrying...\n%s",
+                            exc.response,
                         )
                         retry_count += 1
                         continue
                     else:
                         log.critical(
                             "Fatal exception whilst starting managed Lavalink node, "
-                            "aborting...",
-                            exc_info=exc,
+                            "aborting...\n%s",
+                            exc.response,
                         )
                         self.lavalink_connection_aborted = True
                         return
@@ -72,10 +72,9 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     )
                     self.lavalink_connection_aborted = True
                     return
-                except RuntimeError as exc:
+                except AudioError as exc:
                     log.critical(
                         exc,
-                        exc_info=exc,
                     )
                     self.lavalink_connection_aborted = True
                     return

@@ -59,7 +59,7 @@ DANGEROUS_COMMANDS = {
     "command_llsetup_java": _(
         "This command will change the executable path of Java, "
         "this is useful if you have multiple installations of Java and the default one is causing issues. "
-        "Please don't change this unless you are certain that the Java version you are specifying is supported by Red."
+        "Please don't change this unless you are certain that the Java version you are specifying is supported by Red. "
         "The default and supported version is currently Java 11."
     ),
     "command_llsetup_heapsize": _(
@@ -80,7 +80,7 @@ DANGEROUS_COMMANDS = {
         "external Lavalink node."
     ),
     "command_llsetup_secured": _(
-        "This command is used toggle between secured and unsecured connections to the Lavalink node."
+        "This command is used toggle between secured and unsecured connections to an external Lavalink node."
     ),
     "command_llsetup_wsport": _(
         "This command is used to specify the connection port used by Red to connect to an external Lavalink node."
