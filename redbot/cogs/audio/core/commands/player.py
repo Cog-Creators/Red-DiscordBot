@@ -96,7 +96,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_("Connection to Lavalink node has not yet been established."),
+                    description=_("Connection to the Lavalink node has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
