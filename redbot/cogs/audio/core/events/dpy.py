@@ -115,9 +115,8 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 confirm_token = " ".join(i for i in token)
                 token = confirm_token.replace(" ", "")
                 message = bold(
-                    underline(
-                        _("You should not be running this command."), escape_formatting=False
-                    )
+                    underline(_("You should not be running this command.")),
+                    escape_formatting=False,
                 )
                 message += _(
                     "\n{template}\n"
