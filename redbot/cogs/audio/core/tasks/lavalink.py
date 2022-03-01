@@ -6,7 +6,11 @@ from red_commons.logging import getLogger
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
-from ...errors import LavalinkDownloadFailed, AudioError
+from ...errors import (
+    LavalinkDownloadFailed,
+    InvalidArchitectureException,
+    ManagedLavalinkNodeException,
+)
 from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -66,13 +70,13 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         )
                         self.lavalink_connection_aborted = True
                         return
-                except asyncio.CancelledError:
+                except InvalidArchitectureException:
                     log.critical(
                         "Invalid machine architecture, cannot run a managed Lavalink node."
                     )
                     self.lavalink_connection_aborted = True
                     return
-                except AudioError as exc:
+                except ManagedLavalinkNodeException as exc:
                     log.critical(
                         exc,
                     )
@@ -96,7 +100,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         else:
             log.critical(
                 "Setting up the managed Lavalink node failed after multiple attempts. "
-                "See above tracebacks for details."
+                "See above logs for details."
             )
             self.lavalink_connection_aborted = True
             return

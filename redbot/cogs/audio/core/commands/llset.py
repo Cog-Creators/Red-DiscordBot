@@ -3,6 +3,7 @@ from io import BytesIO
 from pathlib import Path
 
 import discord
+import psutil
 import yaml
 from discord.ext.commands import BadArgument
 from red_commons.logging import getLogger
@@ -21,6 +22,7 @@ from ...utils import (
     change_dict_naming_convention,
     has_managed_server,
     has_unmanaged_server,
+    sizeof_fmt,
 )
 
 log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
@@ -87,7 +89,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_llsetup.command(name="heapsize", aliases=["hs"])
+    @command_llsetup.command(name="heapsize", aliases=["hs", "ram", "memory"])
     @has_managed_server()
     async def command_llsetup_heapsize(self, ctx: commands.Context, *, size: str = MAX_JAVA_RAM):
         """Set the managed Lavalink node maximum heap-size.
@@ -99,19 +101,33 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         To reset this value to the default, run the command without any input.
         """
 
-        def validate_input(arg):
+        async def validate_input(arg):
             match = re.match(r"(\d+)([MG])", arg, flags=re.IGNORECASE)
             if not match:
-                raise BadArgument("Heap-size must be a valid measure of size, e.g. 256M, 256G")
-            if (
-                int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3)
-                < 64 * 1024 ** 2
-            ):
-                raise BadArgument(
-                    "Heap-size must be at least 64M, however it is recommended to have it set to at least 1G."
+                await ctx.send(_("Heap-size must be a valid measure of size, e.g. 256M, 256G"))
+                return 0
+            input_in_bytes = int(match.group(1)) * 1024 ** (
+                2 if match.group(2).lower() == "m" else 3
+            )
+            if input_in_bytes < 64 * 1024 ** 2:
+                await ctx.send(
+                    _(
+                        "Heap-size must be at least 64M, however it is recommended to have it set to at least 1G."
+                    )
                 )
+                return 0
+            elif input_in_bytes > (total := psutil.virtual_memory().total):
+                await ctx.send(
+                    _(
+                        "Heap-size must be less than your system RAM, "
+                        "You currently have {ram_in_bytes} of RAM available."
+                    ).format(ram_in_bytes=inline(sizeof_fmt(total)))
+                )
+                return 0
+            return 1
 
-        validate_input(size)
+        if not (await validate_input(size)):
+            return
         size = size.upper()
         await self.config.java.Xmx.set(size)
         await self.send_embed_msg(

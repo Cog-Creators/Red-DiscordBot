@@ -5,7 +5,7 @@ import time
 
 from enum import Enum, unique
 from pathlib import Path
-from typing import MutableMapping, Tuple
+from typing import MutableMapping, Tuple, Union
 
 import discord
 import psutil
@@ -77,6 +77,14 @@ DEFAULT_LAVALINK_SETTINGS = {
     "java__Xms": MIN_JAVA_RAM,
     "java__Xmx": MAX_JAVA_RAM,
 }
+
+
+def sizeof_fmt(num: Union[float, int]) -> str:
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}"
+        num /= 1024.0
+    return f"{num:.1f}Y"
 
 
 # This assumes all keys with `_` should be converted from `part1_part2` to `part1-part2`

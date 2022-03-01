@@ -11,7 +11,35 @@ class AudioError(Exception):
     """Base exception for errors in the Audio cog."""
 
 
-class LavalinkDownloadFailed(AudioError, RuntimeError):
+class ManagedLavalinkNodeException(AudioError):
+    """Base Exception for Managed Lavalink Node Exceptions"""
+
+
+class InvalidArchitectureException(ManagedLavalinkNodeException):
+    """Error thrown when the Managed Lavalink node is started on an invalid arch."""
+
+
+class ManagedLavalinkAlreadyRunningException(ManagedLavalinkNodeException):
+    """Exception thrown when a managed Lavalink node is already running"""
+
+
+class ManagedLavalinkStartFailure(ManagedLavalinkNodeException):
+    """Exception thrown when a managed Lavalink node fails to start"""
+
+
+class ManagedLavalinkPreviouslyShutdownException(ManagedLavalinkNodeException):
+    """Exception thrown when a managed Lavalink node already has been shutdown"""
+
+
+class UnsupportedJavaException(ManagedLavalinkNodeException):
+    """Exception thrown when a managed Lavalink node doesn't have a supported Java"""
+
+
+class UnexpectedJavaResponseException(ManagedLavalinkNodeException):
+    """Exception thrown when Java returns an unexpected response"""
+
+
+class LavalinkDownloadFailed(ManagedLavalinkNodeException, RuntimeError):
     """Downloading the Lavalink jar failed.
 
     Attributes

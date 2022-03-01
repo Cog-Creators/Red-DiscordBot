@@ -5,12 +5,14 @@ import json
 import pathlib
 import platform
 import re
+import shlex
 import shutil
 import tempfile
 import time
 from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
+import psutil
 import rich.progress
 import yaml
 from red_commons.logging import getLogger
@@ -18,7 +20,15 @@ from red_commons.logging import getLogger
 from redbot.core import data_manager, Config
 from redbot.core.i18n import Translator
 
-from .errors import LavalinkDownloadFailed, AudioError
+from .errors import (
+    LavalinkDownloadFailed,
+    InvalidArchitectureException,
+    ManagedLavalinkAlreadyRunningException,
+    ManagedLavalinkPreviouslyShutdownException,
+    UnsupportedJavaException,
+    ManagedLavalinkStartFailure,
+    UnexpectedJavaResponseException,
+)
 from .utils import task_callback_exception, change_dict_naming_convention
 
 _ = Translator("Audio", pathlib.Path(__file__))
@@ -133,18 +143,29 @@ class ServerManager:
         arch_name = platform.machine()
         self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
-            raise asyncio.CancelledError(
+            raise InvalidArchitectureException(
                 "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
             )
 
         if self._proc is not None:
             if self._proc.returncode is None:
-                raise AudioError("Managed Lavalink node is already running")
+                raise ManagedLavalinkAlreadyRunningException(
+                    "Managed Lavalink node is already running"
+                )
             elif self._shutdown:
-                raise AudioError("Server manager has already been used - create another one")
+                raise ManagedLavalinkPreviouslyShutdownException(
+                    "Server manager has already been used - create another one"
+                )
         await self.process_settings()
         await self.maybe_download_jar()
         args = await self._get_jar_args()
+        command_string = shlex.join(args)
+        log.info("Managed Lavalink node startup command: %s", command_string)
+        if "-Xmx" not in command_string:
+            log.warning(
+                "Managed Lavalink node maximum allowed RAM not set or higher than available RAM, "
+                "please use '[p]llset heapsize' to set a maximum value to avoid out of RAM crashes."
+            )
         self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
@@ -175,7 +196,7 @@ class ServerManager:
                 extras = ""
             else:
                 extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
-            raise AudioError(
+            raise UnsupportedJavaException(
                 f"The managed Lavalink node requires Java 11 to run{extras};\n"
                 "Either install version 11 and restart the bot or connect to an external Lavalink node "
                 "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
@@ -183,15 +204,17 @@ class ServerManager:
                 "use '[p]llset java' to set the correct Java 11 executable."  # TODO: Replace with Audio docs when they are out
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
-
-        return [
+        match = re.match(r"(\d+)([MG])", java_xmx, flags=re.IGNORECASE)
+        input_in_bytes = int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3)
+        command_args = [
             self._java_exc,
             "-Djdk.tls.client.protocols=TLSv1.2",
             f"-Xms{java_xms}",
-            f"-Xmx{java_xmx}",
-            "-jar",
-            str(LAVALINK_JAR_FILE),
         ]
+        if input_in_bytes < psutil.virtual_memory().total:
+            command_args.append(f"-Xmx{java_xmx}")
+        command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
+        return command_args
 
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
         if self._java_available:
@@ -236,7 +259,9 @@ class ServerManager:
 
             return major, minor
 
-        raise AudioError(f"The output of `{self._java_exc} -version` was unexpected.")
+        raise UnexpectedJavaResponseException(
+            f"The output of `{self._java_exc} -version` was unexpected\n{version_info}."
+        )
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Managed Lavalink node to be ready")
@@ -248,7 +273,9 @@ class ServerManager:
                 log.info("Managed Lavalink node is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
-                raise AudioError(f"Lavalink failed to start: {line.decode().strip()}")
+                raise ManagedLavalinkStartFailure(
+                    f"Lavalink failed to start: {line.decode().strip()}"
+                )
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
