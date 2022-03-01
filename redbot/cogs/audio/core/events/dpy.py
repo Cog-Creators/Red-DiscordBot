@@ -124,7 +124,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "\n\n{confirm_token}"
                 ).format(
                     template=DANGEROUS_COMMANDS[ctx.command.callback.__name__],
-                    confirm_token=confirm_token,
+                    confirm_token=bold(confirm_token),
                 )
                 sent = await ctx.send(message)
                 try:
