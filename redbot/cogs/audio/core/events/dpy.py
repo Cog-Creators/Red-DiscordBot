@@ -5,6 +5,7 @@ import re
 
 from collections import OrderedDict
 from pathlib import Path
+from string import ascii_letters, digits
 from typing import Final, Pattern
 
 import discord
@@ -112,7 +113,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
             if not self.antispam[ctx.author.id][ctx.command.callback.__name__].spammy:
                 token = random.choices((*ascii_letters, *digits), k=4)
-                confirm_token = " ".join(i for i in token)
+                confirm_token = "  ".join(i for i in token)
                 token = confirm_token.replace(" ", "")
                 message = bold(
                     underline(_("You should not be running this command.")),
@@ -124,7 +125,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "\n\n{confirm_token}"
                 ).format(
                     template=DANGEROUS_COMMANDS[ctx.command.callback.__name__],
-                    confirm_token=bold(confirm_token),
+                    confirm_token=box(confirm_token, lang="py"),
                 )
                 sent = await ctx.send(message)
                 try:

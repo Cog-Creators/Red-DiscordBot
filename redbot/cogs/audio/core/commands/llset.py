@@ -356,7 +356,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """`Dangerous command` Set the managed Lavalink node's binding IP address.
 
-        This value by default is `0.0.0.0` which will allow the server to bind to all interfaces by default, changing this will likely break the managed Lavalink node if you don't know what you are doing.
+        This value by default is `localhost` which will allow the server to bind to all interfaces by default, changing this will likely break the managed Lavalink node if you don't know what you are doing.
         """
 
         await self.config.yaml.server.address.set(host)
