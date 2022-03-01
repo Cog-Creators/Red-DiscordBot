@@ -31,7 +31,6 @@ LAVALINK_DOWNLOAD_URL: Final[str] = (
     "Lavalink.jar"
 )
 LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
-LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 

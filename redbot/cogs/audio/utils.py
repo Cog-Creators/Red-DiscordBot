@@ -1,7 +1,6 @@
 import asyncio
 import contextlib
 import math
-import re
 import time
 
 from enum import Enum, unique

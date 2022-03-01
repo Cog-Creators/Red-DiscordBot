@@ -94,7 +94,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         By default, this value is 50% of available RAM in the host machine represented by [1-1024][M|G] (256M, 256G for example)
 
-        This value only represents the maximum amount of RAM allowed to be used at any given point, and does not mean that the managed Lavalink instance will use this value ever.
+        This value only represents the maximum amount of RAM allowed to be used at any given point, and does not mean that the managed Lavalink instance will always use this amount of RAM.
 
         To reset this value to the default, run the command without any input.
         """

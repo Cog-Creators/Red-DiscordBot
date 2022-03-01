@@ -1148,8 +1148,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="logs")
     @commands.is_owner()
-    @has_managed_server()
     @commands.guild_only()
+    @has_managed_server()
     async def command_audioset_logs(self, ctx: commands.Context):
         """Sends the managed Lavalink node logs to your DMs."""
         datapath = cog_data_path(raw_name="Audio")

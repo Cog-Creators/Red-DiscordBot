@@ -5,7 +5,6 @@ import re
 
 from collections import OrderedDict
 from pathlib import Path
-from string import ascii_letters, digits
 from typing import Final, Pattern
 
 import discord
@@ -115,7 +114,11 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 token = random.choices((*ascii_letters, *digits), k=4)
                 confirm_token = " ".join(i for i in token)
                 token = confirm_token.replace(" ", "")
-                message = bold(underline(_("You should not be running this command."), escape_formatting=False))
+                message = bold(
+                    underline(
+                        _("You should not be running this command."), escape_formatting=False
+                    )
+                )
                 message += _(
                     "\n{template}\n"
                     "If you wish to continue, enter this case sensitive token without spaces as your next message."

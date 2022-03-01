@@ -70,6 +70,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     log.critical(
                         "Invalid machine architecture, cannot run a managed Lavalink node."
                     )
+                    self.lavalink_connection_aborted = True
                     return
                 except RuntimeError as exc:
                     log.critical(
