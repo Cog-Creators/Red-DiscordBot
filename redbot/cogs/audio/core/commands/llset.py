@@ -91,7 +91,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_llsetup.command(name="heapsize", aliases=["hs", "ram", "memory"])
     @has_managed_server()
-    async def command_llsetup_heapsize(self, ctx: commands.Context, *, size: str = MAX_JAVA_RAM):
+    async def command_llsetup_heapsize(self, ctx: commands.Context, size: str = MAX_JAVA_RAM):
         """Set the managed Lavalink node maximum heap-size.
 
         By default, this value is 50% of available RAM in the host machine represented by [1-1024][M|G] (256M, 256G for example)
