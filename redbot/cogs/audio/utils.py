@@ -40,7 +40,7 @@ MIN_JAVA_RAM, MAX_JAVA_RAM = get_jar_ram_defaults()
 
 DEFAULT_LAVALINK_YAML = {
     # The nesting structure of this dict is very important, it's a 1:1 mirror of application.yaml in JSON
-    "yaml__server__address": "0.0.0.0",
+    "yaml__server__address": "localhost",
     "yaml__server__port": 2333,
     "yaml__lavalink__server__password": "youshallnotpass",
     "yaml__lavalink__server__sources__http": True,
