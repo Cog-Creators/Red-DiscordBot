@@ -102,7 +102,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
 
         async def validate_input(arg):
-            match = re.match(r"(\d+)([MG])", arg, flags=re.IGNORECASE)
+            match = re.match(r"^(\d+)([MG])$", arg, flags=re.IGNORECASE)
             if not match:
                 await ctx.send(_("Heap-size must be a valid measure of size, e.g. 256M, 256G"))
                 return 0
