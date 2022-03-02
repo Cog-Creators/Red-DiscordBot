@@ -21,7 +21,7 @@ _ = Translator("Audio", Path(__file__))
 
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
-    def lavalink_restart_connect(self) -> None:
+    def lavalink_restart_connect(self, manual: bool = False) -> None:
         lavalink.unregister_event_listener(self.lavalink_event_handler)
         lavalink.unregister_update_listener(self.lavalink_update_handler)
         if self.lavalink_connect_task:
@@ -32,26 +32,29 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         self._restore_task = None
         lavalink.register_event_listener(self.lavalink_event_handler)
         lavalink.register_update_listener(self.lavalink_update_handler)
-        self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
+        self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect(manual=manual))
         self.lavalink_connect_task.add_done_callback(task_callback_debug)
 
-    async def lavalink_attempt_connect(self, timeout: int = 50) -> None:
+    async def lavalink_attempt_connect(self, timeout: int = 50, manual: bool = False) -> None:
         self.lavalink_connection_aborted = False
         max_retries = 5
         retry_count = 0
         if lavalink.node._nodes:
             await lavalink.node.disconnect()
+        if manual:
+            await asyncio.sleep(5)
         while retry_count < max_retries:
             configs = await self.config.all()
             external = configs["use_external_lavalink"]
             java_exec = configs["java_exc_path"]
+            if self.managed_node_controller is not None:
+                await self.managed_node_controller.shutdown()
             if external is False:
                 # Change these values to use whatever is set on the YAML
                 host = configs["yaml"]["server"]["address"]
                 port = configs["yaml"]["server"]["port"]
                 password = configs["yaml"]["lavalink"]["server"]["password"]
-                if self.managed_node_controller is not None:
-                    await self.managed_node_controller.shutdown()
+                secured = False
                 self.managed_node_controller = ServerManager(self.config)
                 try:
                     await self.managed_node_controller.start(java_exec)
@@ -98,6 +101,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 host = configs["host"]
                 password = configs["password"]
                 port = configs["ws_port"]
+                secured = configs["secured_ws"]
                 break
         else:
             log.critical(

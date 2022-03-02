@@ -3,6 +3,7 @@ from io import BytesIO
 from pathlib import Path
 
 import discord
+import lavalink
 import psutil
 import yaml
 from discord.ext.commands import BadArgument
@@ -149,22 +150,30 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """
         external = await self.config.use_external_lavalink()
         await self.config.use_external_lavalink.set(not external)
-
-        if external:
-            embed = discord.Embed(
-                title=_("Setting Changed"),
-                description=_("External Lavalink server: {true_or_false}.").format(
-                    true_or_false=inline(_("Enabled") if not external else _("Disabled"))
-                ),
-            )
-            await self.send_embed_msg(ctx, embed=embed)
-        else:
+        async with ctx.typing():
+            if external:
+                embed = discord.Embed(
+                    title=_("Setting Changed"),
+                    description=_("External Lavalink server: {true_or_false}.").format(
+                        true_or_false=inline(_("Enabled") if not external else _("Disabled"))
+                    ),
+                )
+                await self.send_embed_msg(ctx, embed=embed)
+            else:
+                await self.send_embed_msg(
+                    ctx,
+                    title=_("Setting Changed"),
+                    description=_("External Lavalink server: {true_or_false}.").format(
+                        true_or_false=inline(_("Enabled") if not external else _("Disabled"))
+                    ),
+                )
             try:
-                self.lavalink_restart_connect()
+                await lavalink.close(self.bot)
+                self.lavalink_restart_connect(manual=True)
             except ProcessLookupError:
                 await self.send_embed_msg(
                     ctx,
-                    title=_("Failed To Shutdown Lavalink Node"),
+                    title=_("Failed To Shutdown Lavalink"),
                     description=_("Please reload Audio (`{prefix}reload audio`).").format(
                         prefix=ctx.prefix
                     ),
@@ -681,23 +690,24 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_llsetup.command(name="reset")
     async def command_llsetup_reset(self, ctx: commands.Context):
         """Reset all `llset` changes back to their default values."""
+        async with ctx.typing():
+            async with self.config.all() as global_data:
+                del global_data["yaml"]
+                for key in (*DEFAULT_LAVALINK_SETTINGS.keys(), *DEFAULT_LAVALINK_YAML.keys()):
+                    if key in global_data:
+                        del global_data[key]
+                del global_data["java"]
+                del global_data["java_exc_path"]
+                global_data["use_external_lavalink"] = False
 
-        async with self.config.all() as global_data:
-            del global_data["yaml"]
-            for key in (*DEFAULT_LAVALINK_SETTINGS.keys(), *DEFAULT_LAVALINK_YAML.keys()):
-                if key in global_data:
-                    del global_data[key]
-            del global_data["java"]
-            del global_data["java_exc_path"]
-            global_data["use_external_lavalink"] = False
-
-        try:
-            self.lavalink_restart_connect()
-        except ProcessLookupError:
-            await self.send_embed_msg(
-                ctx,
-                title=_("Failed To Shutdown Lavalink Node"),
-                description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                    prefix=ctx.prefix
-                ),
-            )
+            try:
+                await lavalink.close(self.bot)
+                self.lavalink_restart_connect(manual=True)
+            except ProcessLookupError:
+                await self.send_embed_msg(
+                    ctx,
+                    title=_("Failed To Shutdown Lavalink Node"),
+                    description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                        prefix=ctx.prefix
+                    ),
+                )

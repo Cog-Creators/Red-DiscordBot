@@ -1456,12 +1456,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_restart(self, ctx: commands.Context):
         """Restarts the lavalink connection."""
         async with ctx.typing():
-            await lavalink.close(self.bot)
-            if self.managed_node_controller is not None:
-                await self.managed_node_controller.shutdown()
-
             try:
-                self.lavalink_restart_connect()
+                await lavalink.close(self.bot)
+                self.lavalink_restart_connect(manual=True)
             except ProcessLookupError:
                 await self.send_embed_msg(
                     ctx,

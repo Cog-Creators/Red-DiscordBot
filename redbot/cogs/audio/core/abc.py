@@ -130,7 +130,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def lavalink_restart_connect(self) -> None:
+    def lavalink_restart_connect(self, manual: bool = False) -> None:
         raise NotImplementedError()
 
     @abstractmethod
