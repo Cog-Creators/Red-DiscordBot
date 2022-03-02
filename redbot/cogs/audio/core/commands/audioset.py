@@ -1460,7 +1460,30 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if self.managed_node_controller is not None:
                 await self.managed_node_controller.shutdown()
 
-            self.lavalink_restart_connect()
+            try:
+                if self.managed_node_controller is not None:
+                    await self.managed_node_controller.shutdown()
+            except ProcessLookupError:
+                await self.send_embed_msg(
+                    ctx,
+                    title=_("Failed To Shutdown Lavalink Node"),
+                    description=_(
+                        "For it to take effect please reload Audio (`{prefix}reload audio`)."
+                    ).format(
+                        prefix=ctx.prefix,
+                    ),
+                )
+            else:
+                try:
+                    self.lavalink_restart_connect()
+                except ProcessLookupError:
+                    await self.send_embed_msg(
+                        ctx,
+                        title=_("Failed To Shutdown Lavalink Node"),
+                        description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                            prefix=ctx.prefix
+                        ),
+                    )
 
             await self.send_embed_msg(
                 ctx,
