@@ -112,7 +112,7 @@ class ServerManager:
         self.ready: asyncio.Event = asyncio.Event()
         self._config = config
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
-        self._monitor_task: Optional[asyncio.Task] = None
+        self._node_pid: Optional[int] = None
         self._shutdown: bool = False
 
     @property
@@ -166,22 +166,29 @@ class ServerManager:
                 "Managed Lavalink node maximum allowed RAM not set or higher than available RAM, "
                 "please use '[p]llset heapsize' to set a maximum value to avoid out of RAM crashes."
             )
-        self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
-            *args,
-            cwd=str(LAVALINK_DOWNLOAD_DIR),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
-        )
-
-        log.info("Managed Lavalink node started. PID: %s", self._proc.pid)
-
         try:
-            await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
+            self._proc = (
+                await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
+                    *args,
+                    cwd=str(LAVALINK_DOWNLOAD_DIR),
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.STDOUT,
+                )
+            )
+            self._node_pid = self._proc.pid
+            log.info("Managed Lavalink node started. PID: %s", self._node_pid)
+            try:
+                await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
+            except asyncio.TimeoutError:
+                log.warning(
+                    "Timeout occurred whilst waiting for managed Lavalink node to be ready"
+                )
+                raise
         except asyncio.TimeoutError:
-            log.warning("Timeout occurred whilst waiting for managed Lavalink node to be ready")
-
-        self._monitor_task = asyncio.create_task(self._monitor())
-        self._monitor_task.add_done_callback(task_callback_exception)
+            await self.shutdown()
+        except Exception:
+            await self.shutdown()
+            raise
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
@@ -286,37 +293,23 @@ class ServerManager:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
 
-    async def _monitor(self) -> None:
-        while self._proc.returncode is None:
-            await asyncio.sleep(0.5)
-
-        # This task hasn't been cancelled - Lavalink was shut down by something else
-        log.warning("Managed Lavalink node shutdown unexpectedly")
-        if not self._has_java_error():
-            log.info("Restarting managed Lavalink node")
-            await self.start(self._java_exc)
-        else:
-            log.critical(
-                "Your Java install is broken. Please find the hs_err_pid%d.log file"
-                " in the Audio data folder and report this issue.",
-                self._proc.pid,
-            )
-
-    def _has_java_error(self) -> bool:
-        poss_error_file = LAVALINK_DOWNLOAD_DIR / "hs_err_pid{}.log".format(self._proc.pid)
-        return poss_error_file.exists()
-
     async def shutdown(self) -> None:
-        if self._shutdown is True or self._proc is None:
+        # In certain situations to await self._proc.wait() is invalid so waiting on it waits forever.
+        if (
+            self._shutdown is True
+            or self._proc is None
+            or (self._node_pid is not None and not psutil.pid_exists(self._node_pid))
+        ):
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
+            self._shutdown = True
             return
-        log.info("Shutting down managed Lavalink node")
-        if self._monitor_task is not None:
-            self._monitor_task.cancel()
-        self._proc.terminate()
-        await self._proc.wait()
+        p = psutil.Process(self._node_pid)
+        p.terminate()
+        p.kill()
+        self._proc = None
         self._shutdown = True
+        self._node_pid = None
 
     async def _download_jar(self) -> None:
         log.info("Downloading Lavalink.jar...")
