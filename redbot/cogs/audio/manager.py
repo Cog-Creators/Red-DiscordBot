@@ -205,13 +205,15 @@ class ServerManager:
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
-        input_in_bytes = int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3)
         command_args = [
             self._java_exc,
             "-Djdk.tls.client.protocols=TLSv1.2",
             f"-Xms{java_xms}",
         ]
-        if input_in_bytes < psutil.virtual_memory().total:
+        if match and (
+            int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3)
+            < psutil.virtual_memory().total
+        ):
             command_args.append(f"-Xmx{java_xmx}")
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
         return command_args
