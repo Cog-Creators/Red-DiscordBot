@@ -105,7 +105,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
                 return await self.send_embed_msg(
-                    ctx, title=_("Connection to Lavalink has not yet been established.")
+                    ctx, title=_("Connection to Lavalink node has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)

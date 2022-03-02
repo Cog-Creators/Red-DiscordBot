@@ -96,7 +96,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         By default, this value is 50% of available RAM in the host machine represented by [1-1024][M|G] (256M, 256G for example)
 
-        This value only represents the maximum amount of RAM allowed to be used at any given point, and does not mean that the managed Lavalink instance will always use this amount of RAM.
+        This value only represents the maximum amount of RAM allowed to be used at any given point, and does not mean that the managed Lavalink node will always use this amount of RAM.
 
         To reset this value to the default, run the command without any input.
         """
@@ -143,7 +143,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_llsetup.command(name="external")
     async def command_llsetup_external(self, ctx: commands.Context):
-        """Toggle using external Lavalink servers - Requires an existing external Lavalink node for Audio to work, if enabled.
+        """Toggle using external Lavalink nodes - Requires an existing external Lavalink node for Audio to work, if enabled.
 
         This command disables the managed Lavalink server, if you do not have an external Lavalink node you will be unable to use Audio while this is enabled.
         """
@@ -165,7 +165,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             except ProcessLookupError:
                 await self.send_embed_msg(
                     ctx,
-                    title=_("Failed To Shutdown Lavalink"),
+                    title=_("Failed To Shutdown Lavalink Node"),
                     description=_(
                         "External Lavalink server: {true_or_false}\n"
                         "For it to take effect please reload "
@@ -188,7 +188,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         except ProcessLookupError:
             await self.send_embed_msg(
                 ctx,
-                title=_("Failed To Shutdown Lavalink"),
+                title=_("Failed To Shutdown Lavalink Node"),
                 description=_("Please reload Audio (`{prefix}reload audio`).").format(
                     prefix=ctx.prefix
                 ),
@@ -718,7 +718,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         except ProcessLookupError:
             await self.send_embed_msg(
                 ctx,
-                title=_("Failed To Shutdown Lavalink"),
+                title=_("Failed To Shutdown Lavalink Node"),
                 description=_(
                     "For it to take effect please reload Audio (`{prefix}reload audio`)."
                 ).format(
@@ -731,7 +731,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             except ProcessLookupError:
                 await self.send_embed_msg(
                     ctx,
-                    title=_("Failed To Shutdown Lavalink"),
+                    title=_("Failed To Shutdown Lavalink Node"),
                     description=_("Please reload Audio (`{prefix}reload audio`).").format(
                         prefix=ctx.prefix
                     ),
