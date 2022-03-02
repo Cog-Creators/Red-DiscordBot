@@ -708,7 +708,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         async with self.config.all() as global_data:
             del global_data["yaml"]
-            for key in DEFAULT_LAVALINK_SETTINGS.keys():
+            for key in (*DEFAULT_LAVALINK_SETTINGS.keys(), *DEFAULT_LAVALINK_YAML.keys()):
                 if key in global_data:
                     del global_data[key]
             del global_data["java"]
