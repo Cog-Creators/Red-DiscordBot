@@ -160,39 +160,15 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(ctx, embed=embed)
         else:
             try:
-                if self.managed_node_controller is not None:
-                    await self.managed_node_controller.shutdown()
+                self.lavalink_restart_connect()
             except ProcessLookupError:
                 await self.send_embed_msg(
                     ctx,
                     title=_("Failed To Shutdown Lavalink Node"),
-                    description=_(
-                        "External Lavalink server: {true_or_false}\n"
-                        "For it to take effect please reload "
-                        "Audio (`{prefix}reload audio`)."
-                    ).format(
-                        true_or_false=_("Enabled") if not external else _("Disabled"),
-                        prefix=ctx.prefix,
+                    description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                        prefix=ctx.prefix
                     ),
                 )
-            else:
-                await self.send_embed_msg(
-                    ctx,
-                    title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
-                        true_or_false=inline(_("Enabled") if not external else _("Disabled"))
-                    ),
-                )
-        try:
-            self.lavalink_restart_connect()
-        except ProcessLookupError:
-            await self.send_embed_msg(
-                ctx,
-                title=_("Failed To Shutdown Lavalink Node"),
-                description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                    prefix=ctx.prefix
-                ),
-            )
 
     @command_llsetup.command(name="host")
     @has_unmanaged_server()
@@ -716,26 +692,12 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             global_data["use_external_lavalink"] = False
 
         try:
-            if self.managed_node_controller is not None:
-                await self.managed_node_controller.shutdown()
+            self.lavalink_restart_connect()
         except ProcessLookupError:
             await self.send_embed_msg(
                 ctx,
                 title=_("Failed To Shutdown Lavalink Node"),
-                description=_(
-                    "For it to take effect please reload Audio (`{prefix}reload audio`)."
-                ).format(
-                    prefix=ctx.prefix,
+                description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                    prefix=ctx.prefix
                 ),
             )
-        else:
-            try:
-                self.lavalink_restart_connect()
-            except ProcessLookupError:
-                await self.send_embed_msg(
-                    ctx,
-                    title=_("Failed To Shutdown Lavalink Node"),
-                    description=_("Please reload Audio (`{prefix}reload audio`).").format(
-                        prefix=ctx.prefix
-                    ),
-                )

@@ -39,6 +39,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         self.lavalink_connection_aborted = False
         max_retries = 5
         retry_count = 0
+        if lavalink.node._nodes:
+            await lavalink.node.disconnect()
         while retry_count < max_retries:
             configs = await self.config.all()
             external = configs["use_external_lavalink"]
@@ -107,8 +109,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
 
         retry_count = 0
         while retry_count < max_retries:
-            if lavalink.node._nodes:
-                await lavalink.node.disconnect()
             try:
                 await lavalink.initialize(
                     bot=self.bot,
