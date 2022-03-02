@@ -707,8 +707,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Reset all `llset` changes back to their default values."""
 
         async with self.config.all() as global_data:
-            global_data.update(DEFAULT_LAVALINK_SETTINGS)
-            global_data.update(DEFAULT_LAVALINK_YAML)
+            del global_data["yaml"]
+            for key in DEFAULT_LAVALINK_SETTINGS.keys():
+                if key in global_data:
+                    del global_data[key]
+            del global_data["java"]
             del global_data["java_exc_path"]
             global_data["use_external_lavalink"] = False
 
