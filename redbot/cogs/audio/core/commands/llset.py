@@ -366,8 +366,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_server(self, ctx: commands.Context):
         """Configure the managed node authorization and connection settings."""
 
-    @command_llsetup_config_server.command(name="bind", aliases=["host", "address"])
-    async def command_llsetup_config_server_host(
+    @command_llsetup_config.command(name="bind", aliases=["host", "address"])
+    async def command_llsetup_config_host(
         self, ctx: commands.Context, *, host: str = DEFAULT_LAVALINK_YAML["yaml__server__address"]
     ):
         """`Dangerous command` Set the managed Lavalink node's binding IP address.
@@ -387,8 +387,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup_config_server.command(name="token", aliases=["password", "pass"])
-    async def command_llsetup_config_server_token(
+    @command_llsetup_config.command(name="token", aliases=["password", "pass"])
+    async def command_llsetup_config_token(
         self,
         ctx: commands.Context,
         *,
@@ -413,8 +413,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup_config_server.command(name="port")
-    async def command_llsetup_config_server_port(
+    @command_llsetup_config.command(name="port")
+    async def command_llsetup_config_port(
         self, ctx: commands.Context, *, port: int = DEFAULT_LAVALINK_YAML["yaml__server__port"]
     ):
         """`Dangerous command` Set the managed Lavalink node's connection port.

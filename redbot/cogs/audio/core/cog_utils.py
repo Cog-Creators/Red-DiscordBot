@@ -85,16 +85,16 @@ DANGEROUS_COMMANDS = {
     "command_llsetup_wsport": _(
         "This command is used to specify the connection port used by Red to connect to an external Lavalink node."
     ),
-    "command_llsetup_config_server_host": _(
+    "command_llsetup_config_host": _(
         "This command specifies which network interface and IP the managed Lavalink node will bind to, "
         "by default this is 'localhost', "  # meaning it will bind to all interfaces
         "only change this if you want the managed Lavalink node to bind to a specific IP/interface."
     ),
-    "command_llsetup_config_server_token": _(
+    "command_llsetup_config_token": _(
         "This command changes the authentication password required to connect to this managed node."
         "The default value is 'youshallnotpass'."
     ),
-    "command_llsetup_config_server_port": _(
+    "command_llsetup_config_port": _(
         "This command changes the connection port used to connect to this managed node, "
         "only change this if the default port '2333' is causing conflicts with existing applications."
     ),
