@@ -239,7 +239,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="secured", aliases=["wss"], hidden=True)
+    @command_llsetup.command(name="secured", aliases=["wss"])
     @has_unmanaged_server()
     async def command_llsetup_secured(self, ctx: commands.Context):
         """Set the Lavalink node connection to secured.
