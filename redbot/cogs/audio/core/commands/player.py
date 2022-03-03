@@ -608,7 +608,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         except DatabaseError:
             notify_channel = player.fetch("notify_channel")
             if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
+                notify_channel = ctx.guild.get_channel(notify_channel)
                 await self.send_embed_msg(notify_channel, title=_("Couldn't get a valid track."))
             return
         except TrackEnqueueError:
