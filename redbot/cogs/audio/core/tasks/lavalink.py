@@ -62,6 +62,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await self.managed_node_controller.start(java_exec)
                 except LavalinkDownloadFailed as exc:
                     await asyncio.sleep(1)
+                    if self.managed_node_controller is not None:
+                        await self.managed_node_controller.shutdown()
                     if exc.should_retry:
                         log.exception(
                             "Exception whilst starting managed Lavalink node, retrying...\n%s",
@@ -82,12 +84,16 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         "Invalid machine architecture, cannot run a managed Lavalink node."
                     )
                     self.lavalink_connection_aborted = True
+                    if self.managed_node_controller is not None:
+                        await self.managed_node_controller.shutdown()
                     return
                 except ManagedLavalinkNodeException as exc:
                     log.critical(
                         exc,
                     )
                     self.lavalink_connection_aborted = True
+                    if self.managed_node_controller is not None:
+                        await self.managed_node_controller.shutdown()
                     return
                 except Exception as exc:
                     log.exception(
@@ -96,6 +102,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         exc_info=exc,
                     )
                     self.lavalink_connection_aborted = True
+                    if self.managed_node_controller is not None:
+                        await self.managed_node_controller.shutdown()
                     return
                 else:
 
@@ -112,6 +120,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "See above logs for details."
             )
             self.lavalink_connection_aborted = True
+            if self.managed_node_controller is not None:
+                await self.managed_node_controller.shutdown()
             return
 
         retry_count = 0
@@ -127,9 +137,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     secured=secured,
                 )
             except asyncio.TimeoutError:
+                await lavalink.close(self.bot)
                 log.warning("Connecting to Lavalink node timed out, retrying...")
-                if external is False and self.managed_node_controller is not None:
-                    await self.managed_node_controller.shutdown()
                 retry_count += 1
                 await asyncio.sleep(1)  # prevent busylooping
             except Exception as exc:
@@ -137,6 +146,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     "Unhandled exception whilst connecting to Lavalink node, aborting...",
                     exc_info=exc,
                 )
+                await lavalink.close(self.bot)
                 self.lavalink_connection_aborted = True
                 return
             else:
@@ -147,6 +157,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 "Connecting to the Lavalink node failed after multiple attempts. "
                 "See above tracebacks for details."
             )
+            await lavalink.close(self.bot)
             return
         if external:
             await asyncio.sleep(5)
