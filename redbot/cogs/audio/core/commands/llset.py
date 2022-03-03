@@ -24,6 +24,7 @@ from ...utils import (
     has_managed_server,
     has_unmanaged_server,
     sizeof_fmt,
+    get_max_allocation_size,
 )
 
 log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
@@ -102,7 +103,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         To reset this value to the default, run the command without any input.
         """
 
-        async def validate_input(arg):
+        async def validate_input(cog, arg):
             match = re.match(r"^(\d+)([MG])$", arg, flags=re.IGNORECASE)
             if not match:
                 await ctx.send(_("Heap-size must be a valid measure of size, e.g. 256M, 256G"))
@@ -117,17 +118,27 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 )
                 return 0
-            elif input_in_bytes > (total := psutil.virtual_memory().total):
-                await ctx.send(
-                    _(
-                        "Heap-size must be less than your system RAM, "
-                        "You currently have {ram_in_bytes} of RAM available."
-                    ).format(ram_in_bytes=inline(sizeof_fmt(total)))
-                )
+            elif (
+                input_in_bytes
+                > (meta := get_max_allocation_size(cog.managed_node_controller._java_exc))[0]
+            ):
+                if meta[1]:
+                    await ctx.send(
+                        _(
+                            "Heap-size must be less than your system RAM, "
+                            "You currently have {ram_in_bytes} of RAM available."
+                        ).format(ram_in_bytes=inline(sizeof_fmt(meta[0])))
+                    )
+                else:
+                    await ctx.send(
+                        _(
+                            "Heap-size must be less than {limit} due to your system limitations."
+                        ).format(limit=inline(sizeof_fmt(meta[0])))
+                    )
                 return 0
             return 1
 
-        if not (await validate_input(size)):
+        if not (await validate_input(self, size)):
             return
         size = size.upper()
         await self.config.java.Xmx.set(size)

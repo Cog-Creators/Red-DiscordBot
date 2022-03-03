@@ -1,6 +1,8 @@
 import asyncio
 import contextlib
 import math
+import platform
+import sys
 import time
 
 from enum import Enum, unique
@@ -18,10 +20,22 @@ log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
 
-def get_jar_ram_defaults(max_heap=None) -> Tuple[str, str]:
-    available = psutil.virtual_memory().total
+def get_max_allocation_size(exec) -> Tuple[int, bool]:
+    if platform.architecture(exec)[0] == "64bit":
+        max_heap_allowed = psutil.virtual_memory().total
+        thinks_is_64_bit = True
+    else:
+        max_heap_allowed = 4 * 1024 ** 3
+        thinks_is_64_bit = False
+    return max_heap_allowed, thinks_is_64_bit
+
+
+def get_jar_ram_defaults() -> Tuple[str, str]:
     min_ram = 64 * 1024 ** 2
-    max_ram = max(min_ram, max_heap or available * 0.5)
+    # We don't know the java executable at this stage - not worth the extra work required here
+    max_allocation, is_64bit = get_max_allocation_size(sys.executable)
+    max_ram_allowed = max_allocation * 0.5 if is_64bit else max_allocation
+    max_ram = max(min_ram, max_ram_allowed)
     size_name = ("", "K", "M", "G", "T")
     i = int(math.floor(math.log(min_ram, 1024)))
     p = math.pow(1024, i)

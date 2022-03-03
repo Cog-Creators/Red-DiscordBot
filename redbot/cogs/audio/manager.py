@@ -29,7 +29,7 @@ from .errors import (
     ManagedLavalinkStartFailure,
     UnexpectedJavaResponseException,
 )
-from .utils import task_callback_exception, change_dict_naming_convention
+from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = getLogger("red.Audio.manager")
@@ -158,10 +158,12 @@ class ServerManager:
                 )
         await self.process_settings()
         await self.maybe_download_jar()
-        args = await self._get_jar_args()
+        args, msg = await self._get_jar_args()
+        if msg is not None:
+            log.warning(msg)
         command_string = shlex.join(args)
         log.info("Managed Lavalink node startup command: %s", command_string)
-        if "-Xmx" not in command_string:
+        if "-Xmx" not in command_string and msg is None:
             log.warning(
                 "Managed Lavalink node maximum allowed RAM not set or higher than available RAM, "
                 "please use '[p]llset heapsize' to set a maximum value to avoid out of RAM crashes."
@@ -195,7 +197,7 @@ class ServerManager:
         with open(LAVALINK_APP_YML, "w") as f:
             yaml.safe_dump(data, f)
 
-    async def _get_jar_args(self) -> List[str]:
+    async def _get_jar_args(self) -> Tuple[List[str], Optional[str]]:
         (java_available, java_version) = await self._has_java()
 
         if not java_available:
@@ -217,13 +219,21 @@ class ServerManager:
             "-Djdk.tls.client.protocols=TLSv1.2",
             f"-Xms{java_xms}",
         ]
+        meta = 0, None
+        invalid = None
         if match and (
-            int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3)
-            < psutil.virtual_memory().total
+            (int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3))
+            < (meta := get_max_allocation_size(self._java_exc))[0]
         ):
             command_args.append(f"-Xmx{java_xmx}")
+        elif meta[0] is not None:
+            invalid = (
+                "Managed Lavalink node RAM allocation ignored due to system limitations, "
+                "please fix this by setting the correct value with '[p]llset heapsize'."
+            )
+
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
-        return command_args
+        return command_args, invalid
 
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
         if self._java_available:
@@ -361,7 +371,7 @@ class ServerManager:
         if self._up_to_date is True:
             # Return cached value if we've checked this before
             return True
-        args = await self._get_jar_args()
+        args, _ = await self._get_jar_args()
         args.append("--version")
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
