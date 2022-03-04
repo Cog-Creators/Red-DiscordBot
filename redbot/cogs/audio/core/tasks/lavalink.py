@@ -43,10 +43,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         retry_count = 0
         if lavalink.node._nodes:
             await lavalink.node.disconnect()
-        if manual:
-            await asyncio.sleep(5)
         if self.managed_node_controller is not None:
-            await self.managed_node_controller.shutdown()
+            if not self.managed_node_controller._shutdown:
+                await self.managed_node_controller.shutdown()
+                await asyncio.sleep(5)
         await lavalink.close(self.bot)
         while retry_count < max_retries:
             configs = await self.config.all()
@@ -137,6 +137,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                     secured=secured,
                 )
+            except lavalink.enums.AbortingConnectionException:
+                await lavalink.close(self.bot)
+                log.warning("Connection attempt to Lavalink node aborted")
+                return
             except asyncio.TimeoutError:
                 await lavalink.close(self.bot)
                 log.warning("Connecting to Lavalink node timed out, retrying...")
