@@ -1042,8 +1042,8 @@ Additions
 
 - Added `cog guide for Cleanup cog <cleanup>` (:issue:`4488`)
 
-Removals
-********
+Changes
+*******
 
 - Removed multi-line commands from Linux install guides to avoid confusing readers (:issue:`4550`)
 
