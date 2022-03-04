@@ -6,20 +6,21 @@ Backward incompatible changes
 
 This page lists all functionalities that are currently deprecated, features that have been removed in past minor releases, and any other backward incompatible changes that are planned or have been removed in past minor releases. The objective is to give users a clear rationale why a certain change has been made, and what alternatives (if any) should be used instead.
 
-Lists below are sorted by (planned) date of the change (latest first).
-
 .. contents::
-    :depth: 3
+    :depth: 4
     :local:
 
 For Users
 *********
 
-Deprecated functionality
-------------------------
+Future changes (currently deprecated functionality)
+---------------------------------------------------
+
+Removals
+~~~~~~~~
 
 redbot-launcher
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 .. deprecated:: 3.2.0
 
@@ -42,11 +43,14 @@ how to set up auto-restart on all of the supported operating systems.
 Documentation for `autostart_systemd` and `autostart_mac` is already available,
 documentation for Windows is still in the works.
 
+Red 3.5 changes
+---------------
+
 Behavior changes
-----------------
+~~~~~~~~~~~~~~~~
 
 Red requires to have at least one owner
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionchanged:: 3.5.0
 
@@ -66,11 +70,14 @@ please make a feature request with your use case on
 For Developers
 **************
 
-Deprecated functionality
-------------------------
+Future changes (currently deprecated functionality)
+---------------------------------------------------
+
+Removals
+~~~~~~~~
 
 Downloader's shared libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. deprecated:: 3.2.0
 
@@ -83,13 +90,14 @@ Known issues, especially those related to hot-reload, were not handled automatic
 for shared libraries, same as they are not handled for the libraries installed
 through pip.
 
-Removed functionality
----------------------
+Red 3.5 changes
+---------------
+
+Removals
+~~~~~~~~
 
 ``guild_id`` parameter to ``Red.allowed_by_whitelist_blacklist()``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. deprecated-removed:: 3.4.8 30
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``guild_id`` parameter to `Red.allowed_by_whitelist_blacklist()` has been removed as
 it is not possible to properly handle the local allowlist/blocklist logic with just
@@ -113,9 +121,7 @@ Becomes:
         ...
 
 ``redbot.core.commands.converter.GuildConverter``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. deprecated-removed:: 3.4.8 60
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Use `discord.Guild`/``redbot.core.commands.GuildConverter`` instead.
 
@@ -144,9 +150,7 @@ Becomes:
             await ctx.send(f"You chose {server.name}!")
 
 ``redbot.core.utils.mod.is_allowed_by_hierarchy()``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. deprecated-removed:: 3.4.8 60
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This was an internal function that was never meant to be part of the public API.
 It was also not really possible to use it in a supported way as it required
@@ -163,12 +167,10 @@ with this code:
 
 
 Behavior changes
-----------------
+~~~~~~~~~~~~~~~~
 
 ``redbot.core.bot.RedBase`` has been merged into ``redbot.core.bot.Red``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. versionchanged:: 3.5.0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Historically, ``RedBase`` existed to allow using Red for self/user bots back when
 it was not against Discord's Terms of Service. Since this is no longer a concern,
@@ -180,9 +182,7 @@ you should now use `Red` instead. Since both of these classes resided in the sam
 module, it should be a matter of simple find&replace.
 
 ``Context.maybe_send_embed()`` requires content with length of 1-2000 characters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. versionchanged:: 3.5.0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `Context.maybe_send_embed()` now requires the message's length to be
 between 1 and 2000 characters.
@@ -197,9 +197,7 @@ This change only affects code that is already not guaranteed to work.
 You should make sure that your code properly handles message length limits.
 
 ``menu()`` listens to both reaction add and remove
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. versionchanged:: 3.5.0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Listening only to reaction add results in bad user experience.
 If the bot had Manage Messages permission, it removed the user's reaction
