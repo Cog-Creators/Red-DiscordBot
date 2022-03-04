@@ -115,9 +115,9 @@ Developer changelog
 Additions
 *********
 
-- **Commands Package** - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
 - **Core** - Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
 - **Core** - Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
+- **Commands Package** - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
 
 Changes
 *******
@@ -290,11 +290,7 @@ Developer changelog
 Additions
 *********
 
-- Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
-
-    This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
-    In addition to regular timedelta arguments, it also accepts months and years!
-- Added more APIs for allowlists and blocklists (:issue:`5206`)
+- **Core** - Added more APIs for allowlists and blocklists (:issue:`5206`)
 
     Here's the list of the methods that were added to the ``bot`` object:
 
@@ -306,7 +302,11 @@ Additions
         - `Red.remove_from_whitelist()`
         - `Red.get_whitelist()`
         - `Red.clear_whitelist()`
-- Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
+- **Commands Package** - Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
+
+    This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
+    In addition to regular timedelta arguments, it also accepts months and years!
+- **Commands Package** - Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
 
 
 Documentation changes
