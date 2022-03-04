@@ -47,6 +47,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(5)
         if self.managed_node_controller is not None:
             await self.managed_node_controller.shutdown()
+        await lavalink.close(self.bot)
         while retry_count < max_retries:
             configs = await self.config.all()
             external = configs["use_external_lavalink"]
