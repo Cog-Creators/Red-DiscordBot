@@ -1,4 +1,5 @@
 import asyncio
+import discord
 from collections import defaultdict, deque
 from typing import Optional
 from datetime import timedelta
@@ -6,6 +7,7 @@ from datetime import timedelta
 from redbot.core import commands, i18n, checks
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
+from redbot.cogs.mod.utils import create_new_cache
 
 from .abc import MixinMeta
 
@@ -39,6 +41,7 @@ class ModSettings(MixinMeta):
         data = await self.config.guild(guild).all()
         track_nicknames = data["track_nicknames"]
         delete_repeats = data["delete_repeats"]
+        delete_repeats_channels = data["delete_repeats_channels"]
         warn_mention_spam = data["mention_spam"]["warn"]
         kick_mention_spam = data["mention_spam"]["kick"]
         ban_mention_spam = data["mention_spam"]["ban"]
@@ -58,6 +61,15 @@ class ModSettings(MixinMeta):
             num_repeats=_("after {num} repeats").format(num=delete_repeats)
             if delete_repeats != -1
             else _("No")
+        )
+        custom = ""
+        for channel_id, num in delete_repeats_channels.items():
+            channel = ctx.guild.get_channel(int(channel_id))
+            custom += f"{channel.name if channel is not None else channel_id} - {num}\n"
+        msg += _(
+            "Delete repeats custom channels: {delete_repeat_channels}".format(
+                delete_repeat_channels=custom if len(custom) != 0 else "None\n"
+            )
         )
         msg += _("Warn mention spam: {num_mentions}\n").format(
             num_mentions=_("{num} mentions").format(num=warn_mention_spam)
@@ -283,33 +295,93 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def deleterepeats(self, ctx: commands.Context, repeats: int = None):
+    async def deleterepeats(
+        self, ctx: commands.Context, repeats: int = None, for_channel: str = None
+    ):
         """Enable auto-deletion of repeated messages.
 
         Must be between 2 and 20.
 
         Set to -1 to disable this feature.
+
+        Add "this" if you want to specify for only one channel
         """
+        if for_channel is not None and for_channel != "this":
+            await ctx.send(
+                _(
+                    "If you want to specify one channel to use a custom amount for this feature"
+                    ' write "this"'
+                    " or do not write anything if you want to generalize it "
+                )
+            )
+            return
+
         guild = ctx.guild
+        # Create cache if not created
+        guild_cache = self.cache.get(guild.id, None)
+        if guild_cache is None:
+            guild_cache = self.cache[guild.id] = await create_new_cache(self.config, guild)
+
+        delete_repeats_channels = await self.config.guild(guild).delete_repeats_channels.all()
+        print(delete_repeats_channels)
+        channel = ctx.channel
         if repeats is not None:
             if repeats == -1:
-                await self.config.guild(guild).delete_repeats.set(repeats)
-                self.cache.pop(guild.id, None)  # remove cache with old repeat limits
-                await ctx.send(_("Repeated messages will be ignored."))
-            elif 2 <= repeats <= 20:
-                await self.config.guild(guild).delete_repeats.set(repeats)
-                # purge and update cache to new repeat limits
-                self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
-                await ctx.send(
-                    _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
-                )
-            else:
-                await ctx.send(
-                    _(
-                        "Number of repeats must be between 2 and 20"
-                        " or equal to -1 if you want to disable this feature!"
+                if for_channel is not None:
+                    delete_repeats_channels[str(channel.id)] = repeats
+
+                    await ctx.send(
+                        _(
+                            "Repeated messages will be ignored for channel {channel_name}.".format(
+                                channel_name=channel.name
+                            )
+                        )
                     )
-                )
+                    self.cache[guild.id].pop(str(channel.id), None)
+                else:
+                    await self.config.guild(guild).delete_repeats.set(repeats)
+                    await ctx.send(_("Repeated messages will be ignored."))
+                    if len(delete_repeats_channels) == 0:
+                        # No custom value for any channel
+                        self.cache.pop(guild.id, None)  # remove cache with old repeat limits
+                    else:
+                        for key in self.cache[guild.id].copy():
+                            if key not in delete_repeats_channels:
+                                self.cache[guild.id].pop(key, None)
+            elif 2 <= repeats <= 20:
+                if for_channel is not None:
+                    delete_repeats_channels[str(channel.id)] = repeats
+                    await ctx.send(
+                        _(
+                            "Messages repeated up to {num} times in channel {channel} will be deleted."
+                        ).format(num=repeats, channel=channel.name)
+                    )
+                    self.cache[guild.id][str(channel.id)] = defaultdict(
+                        lambda: deque(maxlen=repeats)
+                    )
+                else:
+                    await self.config.guild(guild).delete_repeats.set(repeats)
+                    await ctx.send(
+                        _("Messages repeated up to {num} times will be deleted.").format(
+                            num=repeats
+                        )
+                    )
+                    # purge and update cache to new repeat limits
+                    self.cache[guild.id] = await create_new_cache(self.config, guild)
+
+            else:
+                if repeats == 0 and for_channel is not None:
+                    delete_repeats_channels.pop(str(channel.id), None)
+                    # reset the cache for this channel
+                    self.cache[guild.id].pop(str(channel.id), None)
+
+                else:
+                    await ctx.send(
+                        _(
+                            "Number of repeats must be between 2 and 20"
+                            " or equal to -1 if you want to disable this feature!"
+                        )
+                    )
         else:
             repeats = await self.config.guild(guild).delete_repeats()
             if repeats != -1:
@@ -322,6 +394,24 @@ class ModSettings(MixinMeta):
                 )
             else:
                 await ctx.send(_("Repeated messages will be ignored."))
+
+        # Update delete_repeat_channels
+        await self.config.guild(guild).delete_repeats_channels.set(delete_repeats_channels)
+
+    @modset.command()
+    @commands.guild_only()
+    async def reinit(self, ctx: commands.Context):
+        await self.config.guild(ctx.guild).delete_repeats_channels.set({})
+        await ctx.send("Reinitialisation of delete_repeats_channels")
+
+    @modset.command()
+    @commands.guild_only()
+    async def create_new_cache(self, ctx: commands.Context):
+        guild = ctx.guild
+        channel = ctx.channel
+        print("Test = {}".format(type(ctx.channel)))
+        self.cache[guild.id] = await create_new_cache(self.config, guild)
+        await ctx.send("Reinitialisation of the cache")
 
     @modset.command()
     @commands.guild_only()

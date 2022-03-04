@@ -52,6 +52,7 @@ class Mod(
     default_guild_settings = {
         "mention_spam": {"ban": None, "kick": None, "warn": None, "strict": False},
         "delete_repeats": -1,
+        "delete_repeats_channels": {},
         "ignored": False,
         "respect_hierarchy": True,
         "delete_delay": -1,

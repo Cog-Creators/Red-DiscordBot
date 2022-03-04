@@ -3,6 +3,7 @@ from datetime import timezone
 from collections import defaultdict, deque
 
 import discord
+from redbot.cogs.mod.utils import create_new_cache
 from redbot.core import i18n, modlog, commands
 from redbot.core.utils.mod import is_mod_or_superior
 from .abc import MixinMeta
@@ -19,20 +20,30 @@ class Events(MixinMeta):
 
     async def check_duplicates(self, message):
         guild = message.guild
-        author = message.author
+        author = message.author.id
+        channel = message.channel
+
+        repeats = await self.config.guild(guild).delete_repeats()
+        repeats_channels = await self.config.guild(guild).delete_repeats_channels.all()
+        if str(channel.id) in repeats_channels:
+            if repeats_channels[str(channel.id)] == -1:
+                return False
+        else:
+            if repeats == -1:
+                return False
 
         guild_cache = self.cache.get(guild.id, None)
         if guild_cache is None:
-            repeats = await self.config.guild(guild).delete_repeats()
-            if repeats == -1:
-                return False
-            guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
 
+            # Cache is Map (channel -> Map (author -> messages))
+            guild_cache = self.cache[guild.id] = await create_new_cache(self.config, guild)
         if not message.content:
             return False
 
-        guild_cache[author].append(message.content)
-        msgs = guild_cache[author]
+        guild_cache[str(channel.id)][author].append(message.content)
+        msgs = guild_cache[str(channel.id)][author]
+        print(guild_cache)
+        print("-----------------------------------------------------------------------")
         if len(msgs) == msgs.maxlen and len(set(msgs)) == 1:
             try:
                 await message.delete()
