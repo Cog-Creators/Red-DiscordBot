@@ -353,7 +353,6 @@ Changes
 - **Core - Bot Commands** - ``[p]set serverprefix`` command will now prevent the user from setting a prefix with length greater than 20 characters (:issue:`5091`, :issue:`5117`)
 - **Core - Bot Commands** - ``[p]set prefix`` command will now warn the user when trying to set a prefix with length greater than 20 characters (:issue:`5091`, :issue:`5117`)
 - **Cogs - Audio** - All local caches are now enabled by default (:issue:`5140`)
-- **Cogs - Dev** - ``[p]debug`` command will now confirm the code finished running with a tick reaction (:issue:`5107`)
 
 Removals
 ********
@@ -367,6 +366,13 @@ Fixes
 - **Cogs - Filter** - Fixed an edge case that caused the cog to sometimes check contents of DM messages (:issue:`5125`)
 - **Cogs - Warnings** - Prevented users from applying 0 or less points in custom warning reasons (:issue:`5119`, :issue:`5120`)
 
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- **Cogs - Dev** - ``[p]debug`` command will now confirm the code finished running with a tick reaction (:issue:`5107`)
 
 Redbot 3.4.11 (2021-06-12)
 ==========================
@@ -775,7 +781,6 @@ Fixes
 - **Core - Bot Commands** - ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
 - **Core - Command-line Interfaces** - Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
 - **Cogs - Cleanup** - Fixed an error from passing an overly large integer as a message ID to ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
-- **Cogs - Dev** - Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
 - **Cogs - Mod** - The ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with the vanity url feature that doesn't have a vanity url set (:issue:`4714`)
 - **Cogs - Mod** - Fixed an edge case in role hierarchy checks (:issue:`4740`)
 - **Cogs - Mutes** - Fixed an edge case in role hierarchy checks (:issue:`4740`)
@@ -805,6 +810,10 @@ Changes
 
 - **Core - Dependencies** - Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
 
+Fixes
+*****
+
+- **Cogs - Dev** - Help descriptions of the cog and its commands now get translated properly (:issue:`4815`)
 
 Documentation changes
 ---------------------
@@ -870,7 +879,6 @@ Additions
 *********
 
 - **Core - Command-line Interfaces** - Red's logging will now shine in your terminal more than ever (:issue:`4577`)
-- **Cogs - Dev** - Added new ``[p]bypasscooldown`` command that allows owners to bypass command cooldowns (:issue:`4440`)
 - **Cogs - Streams** - YouTube stream schedules are now announced before the stream (:issue:`4615`)
 
     - Alerts about YouTube stream schedules can be disabled with a new ``[p]streamset ignoreschedule`` command (:issue:`4615`)
@@ -906,6 +914,7 @@ Developer changelog
 Additions
 *********
 
+- **Cogs - Dev** - Added new ``[p]bypasscooldown`` command that allows owners to bypass command cooldowns (:issue:`4440`)
 - **Utilities** - `get_audit_reason()` can now be passed a ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
 
 Changes
@@ -1085,7 +1094,6 @@ Additions
 - **Cogs - Audio** - Added ``[p]llset java``, allowing for a custom Java executable path (:issue:`4446`)
 - **Cogs - Audio** - Added ``[p]llset info`` to show Lavalink settings (:issue:`4527`)
 - **Cogs - Audio** - Added ``[p]audioset logs`` to download Lavalink logs if the Lavalink server is set to internal (:issue:`4527`)
-- **Cogs - Dev** - Added ``[p]repl pause`` to pause/resume the REPL session in the current channel (:issue:`4366`)
 - **Cogs - Mod** - Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count towards the mention spam cap (:issue:`4359`)
 - **Cogs - Mod** - Added a default tempban duration for ``[p]tempban`` (:issue:`4473`, :issue:`3992`)
 - **Cogs - Mutes** - Added ``[p]muteset forcerole`` to make mutes role based, instead of permission based (:issue:`3634`)
@@ -1166,6 +1174,7 @@ Additions
 
 - **Core** - Added ``[all]`` and ``[dev]`` extras to the ``Red-DiscordBot`` package (:issue:`4443`)
 - **Core** - Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
+- **Cogs - Dev** - Added ``[p]repl pause`` to pause/resume the REPL session in the current channel (:issue:`4366`)
 - **API Tokens** - Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
 - **API Tokens** - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
 - **Downloader** - Added JSON schema files for ``info.json`` files (:issue:`4375`)
@@ -1930,7 +1939,6 @@ End-user changelog
 Additions
 *********
 
-- **Cogs - Dev** - Allow for top-level `await`, `async for` and `async with` in ``[p]debug`` and ``[p]repl`` commands (:issue:`3508`)
 - **Cogs - Streams** - Added ``[p]streamset timer`` command which can be used to control how often the cog checks for live streams (:issue:`3237`)
 
 Changes
@@ -1972,6 +1980,11 @@ Security
 ********
 
 - **Commands Package** - Subcommands of command group with ``invoke_without_command=True`` will again inherit this group's checks (:issue:`3614`)
+
+Additions
+*********
+
+- **Cogs - Dev** - Allow for top-level `await`, `async for` and `async with` in ``[p]debug`` and ``[p]repl`` commands (:issue:`3508`)
 
 Changes
 *******
