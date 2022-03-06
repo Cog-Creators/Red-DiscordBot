@@ -632,7 +632,7 @@ class RedHelpFormatter(HelpFormatterABC):
             for cog_name, data in coms:
 
                 if cog_name:
-                    title = f"{underline(bold(cog_name), escape_formatting=False)}:"
+                    title = underline(bold(f"{cog_name}:"), escape_formatting=False)
                 else:
                     title = underline(bold(_("No Category:")), escape_formatting=False)
 
