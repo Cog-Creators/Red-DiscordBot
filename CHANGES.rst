@@ -1165,7 +1165,7 @@ Developer changelog
 -------------------
 
 | **Important:**
-| #. Red now allows users to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Additions changelog below <important-dev-341-1>` for more information.
+| 1. Red now allows users to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Additions changelog below <important-dev-341-1>` for more information.
 
 .. _important-dev-341-1:
 
@@ -1298,8 +1298,8 @@ Developer changelog
 -------------------
 
 | **Important:**
-| #. Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the `Additions changelog below <important-dev-340-1>` for more information.
-| #. Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries in the `Additions changelog below <important-dev-340-1>` for more information.
+| 1. Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the `Additions changelog below <important-dev-340-1>` for more information.
+| 2. Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries in the `Additions changelog below <important-dev-340-1>` for more information.
 
 Breaking Changes
 ****************
