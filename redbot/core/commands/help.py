@@ -401,9 +401,11 @@ class RedHelpFormatter(HelpFormatterABC):
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = bold(underline(_("Subcommands:")))
+                        title = bold(underline(_("Subcommands:")), escape_formatting=False)
                     else:
-                        title = bold(underline(_("Subcommands: (continued)")))
+                        title = bold(underline(_("Subcommands:")), escape_formatting=False) + _(
+                            " (continued)"
+                        )
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -576,9 +578,11 @@ class RedHelpFormatter(HelpFormatterABC):
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = f"{underline(bold(_('Commands:')))}"
+                        title = underline(bold(_("Commands:")), escape_formatting=False)
                     else:
-                        title = f"{underline(bold(_('Commands: (continued)')))}"
+                        title = underline(bold(_("Commands:")), escape_formatting=False) + _(
+                            " (continued)"
+                        )
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -628,9 +632,9 @@ class RedHelpFormatter(HelpFormatterABC):
             for cog_name, data in coms:
 
                 if cog_name:
-                    title = f"{underline(bold(cog_name))}:"
+                    title = underline(bold(f"{cog_name}:"), escape_formatting=False)
                 else:
-                    title = f"{underline(bold(_('No Category:')))}"
+                    title = underline(bold(_("No Category:")), escape_formatting=False)
 
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
