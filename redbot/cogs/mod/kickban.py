@@ -29,22 +29,14 @@ class KickBanMixin(MixinMeta):
     """
 
     @staticmethod
-    async def get_invite_for_reinvite(ctx: commands.Context, max_age: int = 86400):
-        """Handles the reinvite logic for getting an invite
-        to send the newly unbanned user
-        :returns: :class:`Invite`"""
+    async def get_invite_for_reinvite(ctx: commands.Context, max_age: int = 86400) -> str:
+        """Handles the reinvite logic for getting an invite to send the newly unbanned user"""
         guild = ctx.guild
         my_perms: discord.Permissions = guild.me.guild_permissions
         if my_perms.manage_guild or my_perms.administrator:
-            if "VANITY_URL" in guild.features:
-                # guild has a vanity url so use it as the one to send
-                vanity_url = await guild.vanity_invite()
-                # If a guild has the vanity url feature,
-                # but does not have it set up,
-                # this prevents the command from failing
-                # and defaults back to another regular invite.
-                if vanity_url is not None:
-                    return vanity_url
+            if guild.vanity_url_code is not None:
+                # DEP-WARN: discord.Invite.BASE is not documented
+                return f"{discord.Invite.BASE}/{guild.vanity_url_code}"
             invites = await guild.invites()
         else:
             invites = []
@@ -54,7 +46,7 @@ class KickBanMixin(MixinMeta):
                 # has unlimited uses, doesn't expire, and
                 # doesn't grant temporary membership
                 # (i.e. they won't be kicked on disconnect)
-                return inv
+                return inv.url
         else:  # No existing invite found that is valid
             channels_and_perms = (
                 (channel, channel.permissions_for(guild.me)) for channel in guild.text_channels
@@ -64,12 +56,12 @@ class KickBanMixin(MixinMeta):
                 None,
             )
             if channel is None:
-                return
+                return ""
             try:
                 # Create invite that expires after max_age
-                return await channel.create_invite(max_age=max_age)
+                return (await channel.create_invite(max_age=max_age)).url
             except discord.HTTPException:
-                return
+                return ""
 
     @staticmethod
     async def _voice_perm_check(
@@ -631,8 +623,6 @@ class KickBanMixin(MixinMeta):
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
             return
         invite = await self.get_invite_for_reinvite(ctx, int(duration.total_seconds() + 86400))
-        if invite is None:
-            invite = ""
 
         await self.config.member(member).banned_until.set(unban_time.timestamp())
         async with self.config.guild(guild).current_tempbans() as current_tempbans:
@@ -701,8 +691,6 @@ class KickBanMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
         invite = await self.get_invite_for_reinvite(ctx)
-        if invite is None:
-            invite = ""
 
         try:  # We don't want blocked DMs preventing us from banning
             msg = await member.send(
@@ -942,7 +930,7 @@ class KickBanMixin(MixinMeta):
                         _(
                             "You've been unbanned from {server}.\n"
                             "Here is an invite for that server: {invite_link}"
-                        ).format(server=guild.name, invite_link=invite.url)
+                        ).format(server=guild.name, invite_link=invite)
                     )
                 except discord.Forbidden:
                     await ctx.send(
@@ -950,12 +938,12 @@ class KickBanMixin(MixinMeta):
                             "I failed to send an invite to that user. "
                             "Perhaps you may be able to send it for me?\n"
                             "Here's the invite link: {invite_link}"
-                        ).format(invite_link=invite.url)
+                        ).format(invite_link=invite)
                     )
                 except discord.HTTPException:
                     await ctx.send(
                         _(
                             "Something went wrong when attempting to send that user "
                             "an invite. Here's the link so you can try: {invite_link}"
-                        ).format(invite_link=invite.url)
+                        ).format(invite_link=invite)
                     )
