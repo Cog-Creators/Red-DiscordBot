@@ -31,6 +31,10 @@ class ManagedLavalinkPreviouslyShutdownException(ManagedLavalinkNodeException):
     """Exception thrown when a managed Lavalink node already has been shutdown"""
 
 
+class EarlyExitException(ManagedLavalinkNodeException):
+    """some placeholder text I cannot be bothered to add a meaning message atm"""
+
+
 class UnsupportedJavaException(ManagedLavalinkNodeException):
     """Exception thrown when a managed Lavalink node doesn't have a supported Java"""
 

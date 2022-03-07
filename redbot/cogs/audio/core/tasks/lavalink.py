@@ -41,8 +41,12 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         self.lavalink_connection_aborted = False
         max_retries = 5
         retry_count = 0
-        if lavalink.node._nodes:
-            await lavalink.node.disconnect()
+        if nodes := lavalink.get_all_nodes():
+            for node in nodes:
+                await node.disconnect()
+        # This ensures that the restore task is ended before this connect attempt is started up.
+        if self._restore_task:
+            self._restore_task.cancel()
         if self.managed_node_controller is not None:
             if not self.managed_node_controller._shutdown:
                 await self.managed_node_controller.shutdown()
@@ -58,43 +62,18 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 port = configs["yaml"]["server"]["port"]
                 password = configs["yaml"]["lavalink"]["server"]["password"]
                 secured = False
-                self.managed_node_controller = ServerManager(self.config)
+                # Make this timeout customizable for lower powered machines?
+                self.managed_node_controller = ServerManager(self.config, timeout=60, cog=self)
                 try:
                     await self.managed_node_controller.start(java_exec)
-                except LavalinkDownloadFailed as exc:
-                    await asyncio.sleep(1)
-                    if self.managed_node_controller is not None:
-                        await self.managed_node_controller.shutdown()
-                    if exc.should_retry:
-                        log.exception(
-                            "Exception whilst starting managed Lavalink node, retrying...\n%s",
-                            exc.response,
-                        )
-                        retry_count += 1
-                        continue
-                    else:
-                        log.critical(
-                            "Fatal exception whilst starting managed Lavalink node, "
-                            "aborting...\n%s",
-                            exc.response,
-                        )
-                        self.lavalink_connection_aborted = True
-                        return
-                except InvalidArchitectureException:
-                    log.critical(
-                        "Invalid machine architecture, cannot run a managed Lavalink node."
-                    )
+                    # timeout is the same as ServerManager.timeout -
+                    # 60s in case of ServerManager(self.config, timeout=60)
+                    await self.managed_node_controller.wait_until_ready()
+                except asyncio.TimeoutError:
                     self.lavalink_connection_aborted = True
                     if self.managed_node_controller is not None:
                         await self.managed_node_controller.shutdown()
-                    return
-                except ManagedLavalinkNodeException as exc:
-                    log.critical(
-                        exc,
-                    )
-                    self.lavalink_connection_aborted = True
-                    if self.managed_node_controller is not None:
-                        await self.managed_node_controller.shutdown()
+                    log.critical("Managed node startup timeout, aborting managed node startup.")
                     return
                 except Exception as exc:
                     log.exception(
@@ -107,7 +86,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         await self.managed_node_controller.shutdown()
                     return
                 else:
-
                     break
             else:
                 host = configs["host"]

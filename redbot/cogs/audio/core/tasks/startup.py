@@ -69,9 +69,18 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         while not lavalink.get_all_nodes():
             await asyncio.sleep(1)
             tries += 1
-            if tries > 60:
+            if tries > 600:  # Give 10 minutes from node creation date.
                 log.warning("Unable to restore players, couldn't connect to Lavalink node.")
                 return
+        try:
+            for node in lavalink.get_all_nodes():
+                await node.wait_until_ready(timeout=60)  # In theory this should be instant.
+        except asyncio.TimeoutError:
+            log.error(
+                "Restoring player task aborted due to a timeout waiting for Lavalink node to be ready."
+            )
+            log.warning("Audio will attempt queue restore on next restart.")
+            return
         metadata = {}
         all_guilds = await self.config.all_guilds()
         async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):

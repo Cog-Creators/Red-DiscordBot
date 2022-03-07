@@ -9,8 +9,7 @@ import re
 import shlex
 import shutil
 import tempfile
-import time
-from typing import ClassVar, Final, List, Optional, Pattern, Tuple
+from typing import ClassVar, Final, List, Optional, Pattern, Tuple, TYPE_CHECKING
 
 import aiohttp
 import lavalink
@@ -30,9 +29,15 @@ from .errors import (
     UnsupportedJavaException,
     ManagedLavalinkStartFailure,
     UnexpectedJavaResponseException,
+    EarlyExitException,
+    ManagedLavalinkNodeException,
 )
 from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size
 from ...core.utils import AsyncIter
+
+if TYPE_CHECKING:
+    from . import Audio
+
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = getLogger("red.Audio.manager")
@@ -111,13 +116,15 @@ class ServerManager:
     _buildtime: ClassVar[Optional[str]] = None
     _java_exc: ClassVar[str] = "java"
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, cog: "Audio", timeout: Optional[int] = None) -> None:
         self.ready: asyncio.Event = asyncio.Event()
         self._config = config
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._node_pid: Optional[int] = None
         self._shutdown: bool = False
         self.start_monitor_task = None
+        self.timeout = timeout
+        self.cog = cog
 
     @property
     def path(self) -> Optional[str]:
@@ -184,7 +191,7 @@ class ServerManager:
             self._node_pid = self._proc.pid
             log.info("Managed Lavalink node started. PID: %s", self._node_pid)
             try:
-                await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
+                await asyncio.wait_for(self._wait_for_launcher(), timeout=self.timeout)
             except asyncio.TimeoutError:
                 log.warning(
                     "Timeout occurred whilst waiting for managed Lavalink node to be ready"
@@ -237,6 +244,7 @@ class ServerManager:
             )
 
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
+        self._args = command_args
         return command_args, invalid
 
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
@@ -287,8 +295,7 @@ class ServerManager:
         )
 
     async def _wait_for_launcher(self) -> None:
-        log.debug("Waiting for Managed Lavalink node to be ready")
-        lastmessage = 0
+        log.info("Waiting for Managed Lavalink node to be ready")
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
@@ -299,11 +306,9 @@ class ServerManager:
                 raise ManagedLavalinkStartFailure(
                     f"Lavalink failed to start: {line.decode().strip()}"
                 )
-            if self._proc.returncode is not None and lastmessage + 2 < time.time():
+            if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
-                lastmessage = time.time()
-                log.critical("Managed Lavalink node server exited early")
-                break
+                raise EarlyExitException("Managed Lavalink node server exited early.")
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
@@ -427,59 +432,122 @@ class ServerManager:
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
-    @staticmethod
-    async def get_lavalink_process():
+    async def get_lavalink_process(self):
         process_list = []
         async for proc in AsyncIter(psutil.process_iter()):
             try:
                 pinfo = proc.as_dict(attrs=["pid", "name", "create_time", "cmdline"])
                 if (
                     pinfo["cmdline"]
-                    and any("lavalink" in p.lower() for p in pinfo["cmdline"])
-                    and "-jar" in pinfo["cmdline"]
-                    and "-Xms64M" in pinfo["cmdline"]
-                ):
+                    and self._args
+                    and all(
+                        a in pinfo["cmdline"]
+                        for a in [self._args[1], self._args[2], self._args[-2], self._args[-1]]
+                    )
+                ):  # Ensures the only jars we kill are jars started by checking 4 non-changeable args.
+                    # self._args[1], '-Djdk.tls.client.protocols=TLSv1.2'
+                    # self._args[2], '-Xms64M' - this only stays here while we hardcode the mininum value.
+                    # self._args[-2], '-jar'
+                    # self._args[-1], str(LAVALINK_JAR_FILE)
                     process_list.append(pinfo)
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         return process_list
 
+    async def wait_until_ready(self, timeout: Optional[float] = None):
+        await asyncio.wait_for(self.ready.wait(), timeout=timeout or self.timeout)
+
     async def start_monitor(self, java_path: str):
+        retry_count = 0
         while True:
             try:
                 self._shutdown = False
                 if self._node_pid is None or not psutil.pid_exists(self._node_pid):
                     await self._start(java_path=java_path)
                 while True:
-                    await self.ready.wait()
+                    await self.wait_until_ready(timeout=self.timeout)
                     process_list = await self.get_lavalink_process()
                     # Jar is not running
                     if not process_list:
+                        log.warning("Managed node process not found.")
                         break
                     # An unmanaged killable jar is running
                     elif len(process_list) == 1 and process_list[0]["pid"] != self._node_pid:
+                        log.warning(
+                            "Managed node PID expected to be %d however when querying it I only found %d",
+                            self._node_pid,
+                            process_list[0]["pid"],
+                        )
+                        log.debug("%s", process_list[0])
                         break
                     # An unmanaged killable jar is running
                     elif len(process_list) > 1:
+                        log.warning(
+                            "Multiple processes meet the managed node criteria, "
+                            "more information will be shown at DEBUG level"
+                        )
+                        for proc in process_list:
+                            log.debug("%s", proc)
                         break
-                    # only the managed jar is running
-                    elif len(process_list) == 1 and process_list[0]["pid"] == self._node_pid:
+
+                    else:
+                        # only the managed jar is running
+                        # len(process_list) == 1 and process_list[0]["pid"] == self._node_pid
+
                         # This will not be as simple as adding a for loop here if multi node support is added
+                        log.debug("Managed node possible PID: %d", self._node_pid)
                         node = lavalink.get_all_nodes()[0]
-                        await node.wait_until_ready()
+                        await node.wait_until_ready(
+                            timeout=5
+                        )  # 5 seconds wait for a ping response?
                         await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
                         await asyncio.sleep(1)
+            except asyncio.TimeoutError:
+                await self._partial_shutdown()
+            except LavalinkDownloadFailed as exc:
+                await asyncio.sleep(1)
+                if exc.should_retry:
+                    log.exception(
+                        "Exception whilst starting managed Lavalink node, retrying...\n%s",
+                        exc.response,
+                    )
+                    retry_count += 1
+                    await self._partial_shutdown()
+                else:
+                    log.critical(
+                        "Fatal exception whilst starting managed Lavalink node, "
+                        "aborting...\n%s",
+                        exc.response,
+                    )
+                    self.cog.lavalink_connection_aborted = True
+                    return await self.shutdown()
+            except InvalidArchitectureException:
+                log.critical("Invalid machine architecture, cannot run a managed Lavalink node.")
+                self.cog.lavalink_connection_aborted = True
+                return await self.shutdown()
+            except ManagedLavalinkNodeException as exc:
+                log.critical(
+                    exc,
+                )
+                await self._partial_shutdown()
             except Exception as e:
-                log.critical(e, exc_info=e)
+                # TODO: change to debug for prod -
+                #  don't wanna spam console with unhandled tracebacks -
+                #  every one you find should be mentioned so they can be properly handled
+                log.error(e, exc_info=e)
                 await self._partial_shutdown()
             else:
                 try:
                     await self._partial_shutdown()
                 except Exception as e:
-                    log.critical(e, exc_info=e)
+                    # TODO: change to debug for prod -
+                    #  don't wanna spam console with unhandled tracebacks - every one
+                    #  you find should be mentioned so they can be properly handled
+                    log.error(
+                        "Exception occurred during Audio managed node partial shutdown", exc_info=e
+                    )
 
     async def start(self, java_path: str):
         if self.start_monitor_task is not None:
             await self.shutdown()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
-        await self.ready.wait()
