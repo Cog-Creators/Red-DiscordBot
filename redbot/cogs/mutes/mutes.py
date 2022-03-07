@@ -1159,7 +1159,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         for member in users:
             ret = MuteResponse(success=False, reason=None, user=member)
             if member.guild_permissions >= ctx.author.guild_permissions:
-                re.reason = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
+                ret.reason = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
                 issues_list.append(ret)
                 continue
             if member.guild_permissions.administrator:
