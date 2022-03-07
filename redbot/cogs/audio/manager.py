@@ -1,5 +1,6 @@
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
+import contextlib
 import itertools
 import json
 import pathlib
@@ -12,6 +13,7 @@ import time
 from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
+import lavalink
 import psutil
 import rich.progress
 import yaml
@@ -30,6 +32,7 @@ from .errors import (
     UnexpectedJavaResponseException,
 )
 from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size
+from ...core.utils import AsyncIter
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = getLogger("red.Audio.manager")
@@ -114,6 +117,7 @@ class ServerManager:
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._node_pid: Optional[int] = None
         self._shutdown: bool = False
+        self.start_monitor_task = None
 
     @property
     def path(self) -> Optional[str]:
@@ -139,7 +143,7 @@ class ServerManager:
     def build_time(self) -> Optional[str]:
         return self._buildtime
 
-    async def start(self, java_path: str) -> None:
+    async def _start(self, java_path: str) -> None:
         arch_name = platform.machine()
         self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
@@ -187,9 +191,9 @@ class ServerManager:
                 )
                 raise
         except asyncio.TimeoutError:
-            await self.shutdown()
+            await self._partial_shutdown()
         except Exception:
-            await self.shutdown()
+            await self._partial_shutdown()
             raise
 
     async def process_settings(self):
@@ -299,24 +303,36 @@ class ServerManager:
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
                 log.critical("Managed Lavalink node server exited early")
+                break
             if i == 49:
                 # Sleep after 50 lines to prevent busylooping
                 await asyncio.sleep(0.1)
 
     async def shutdown(self) -> None:
+        if self.start_monitor_task is not None:
+            self.start_monitor_task.cancel()
+        await self._partial_shutdown()
+
+    async def _partial_shutdown(self) -> None:
         # In certain situations to await self._proc.wait() is invalid so waiting on it waits forever.
-        if (
-            self._shutdown is True
-            or self._proc is None
-            or (self._node_pid is not None and not psutil.pid_exists(self._node_pid))
-        ):
+        if self._shutdown is True:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
             self._shutdown = True
             return
-        p = psutil.Process(self._node_pid)
-        p.terminate()
-        p.kill()
+        self.ready.clear()
+        if self._node_pid:
+            with contextlib.suppress(psutil.Error):
+                p = psutil.Process(self._node_pid)
+                p.terminate()
+                p.kill()
+        for (
+            proc
+        ) in await self.get_lavalink_process():  # This will kill all processed with "lavalink"
+            with contextlib.suppress(psutil.Error):
+                p = psutil.Process(proc["pid"])
+                p.terminate()
+                p.kill()
         self._proc = None
         self._shutdown = True
         self._node_pid = None
@@ -410,3 +426,60 @@ class ServerManager:
     async def maybe_download_jar(self):
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
+
+    @staticmethod
+    async def get_lavalink_process():
+        process_list = []
+        async for proc in AsyncIter(psutil.process_iter()):
+            try:
+                pinfo = proc.as_dict(attrs=["pid", "name", "create_time", "cmdline"])
+                if (
+                    pinfo["cmdline"]
+                    and any("lavalink" in p.lower() for p in pinfo["cmdline"])
+                    and "-jar" in pinfo["cmdline"]
+                    and "-Xms64M" in pinfo["cmdline"]
+                ):
+                    process_list.append(pinfo)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        return process_list
+
+    async def start_monitor(self, java_path: str):
+        while True:
+            try:
+                self._shutdown = False
+                if self._node_pid is None or not psutil.pid_exists(self._node_pid):
+                    await self._start(java_path=java_path)
+                while True:
+                    await self.ready.wait()
+                    process_list = await self.get_lavalink_process()
+                    # Jar is not running
+                    if not process_list:
+                        break
+                    # An unmanaged killable jar is running
+                    elif len(process_list) == 1 and process_list[0]["pid"] != self._node_pid:
+                        break
+                    # An unmanaged killable jar is running
+                    elif len(process_list) > 1:
+                        break
+                    # only the managed jar is running
+                    elif len(process_list) == 1 and process_list[0]["pid"] == self._node_pid:
+                        # This will not be as simple as adding a for loop here if multi node support is added
+                        node = lavalink.get_all_nodes()[0]
+                        await node.wait_until_ready()
+                        await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
+                        await asyncio.sleep(1)
+            except Exception as e:
+                log.critical(e, exc_info=e)
+                await self._partial_shutdown()
+            else:
+                try:
+                    await self._partial_shutdown()
+                except Exception as e:
+                    log.critical(e, exc_info=e)
+
+    async def start(self, java_path: str):
+        if self.start_monitor_task is not None:
+            await self.shutdown()
+        self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
+        await self.ready.wait()
