@@ -1076,7 +1076,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     msg += _("__Server Timeouts__\n")
                     added_timeouts = True
                 msg += f"{member.mention}"
-                time_str = f"<t:{int(member.communication_disabled_until.timestamp())}>"
+                time_str = f"<t:{int(member.timed_out_until.timestamp())}>"
                 msg += _("__Until__: {time_left}\n").format(time_left=time_str)
         for channel_id, mutes_data in self._channel_mutes.items():
             if not mutes_data:
@@ -1168,7 +1168,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 continue
 
             try:
-                await member.timeout(until, reason=reason)
+                await member.edit(timed_out_until=until, reason=reason)
                 success_list.append(member)
             except Exception:
                 pass
@@ -1612,7 +1612,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return ret
             if guild.me.guild_permissions.moderate_members:
                 try:
-                    await user.timeout(until, reason=reason)
+                    await user.edit(timed_out_until=until, reason=reason)
                     ret.success = True
                 except Exception:
                     pass
@@ -1665,7 +1665,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return ret
             if guild.me.guild_permissions.moderate_members:
                 try:
-                    await user.timeout(None, reason=reason)
+                    await user.edit(timed_out_until=None, reason=reason)
                     ret.success = True
                 except Exception:
                     pass
