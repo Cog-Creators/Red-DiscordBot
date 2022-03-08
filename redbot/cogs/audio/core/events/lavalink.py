@@ -51,6 +51,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
+        await player.manager.node.wait_until_ready()
         log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         guild_data = await self.config.guild(guild).all()
         disconnect = guild_data["disconnect"]
