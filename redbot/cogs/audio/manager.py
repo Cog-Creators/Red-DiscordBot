@@ -319,13 +319,12 @@ class ServerManager:
         await self._partial_shutdown()
 
     async def _partial_shutdown(self) -> None:
+        self.ready.clear()
         # In certain situations to await self._proc.wait() is invalid so waiting on it waits forever.
         if self._shutdown is True:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
-            self._shutdown = True
             return
-        self.ready.clear()
         if self._node_pid:
             with contextlib.suppress(psutil.Error):
                 p = psutil.Process(self._node_pid)
@@ -463,6 +462,7 @@ class ServerManager:
             try:
                 self._shutdown = False
                 if self._node_pid is None or not psutil.pid_exists(self._node_pid):
+                    self.ready.clear()
                     await self._start(java_path=java_path)
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
@@ -470,7 +470,7 @@ class ServerManager:
                     # Jar is not running
                     if not process_list:
                         log.warning("Managed node process not found.")
-                        break
+                        raise asyncio.TimeoutError
                     # An unmanaged killable jar is running
                     elif len(process_list) == 1 and process_list[0]["pid"] != self._node_pid:
                         log.warning(
@@ -479,7 +479,7 @@ class ServerManager:
                             process_list[0]["pid"],
                         )
                         log.debug("%s", process_list[0])
-                        break
+                        raise asyncio.TimeoutError
                     # An unmanaged killable jar is running
                     elif len(process_list) > 1:
                         log.warning(
@@ -488,18 +488,14 @@ class ServerManager:
                         )
                         for proc in process_list:
                             log.debug("%s", proc)
-                        break
-
+                        raise asyncio.TimeoutError
                     else:
                         # only the managed jar is running
                         # len(process_list) == 1 and process_list[0]["pid"] == self._node_pid
-
                         # This will not be as simple as adding a for loop here if multi node support is added
                         log.debug("Managed node possible PID: %d", self._node_pid)
                         node = lavalink.get_all_nodes()[0]
-                        await node.wait_until_ready(
-                            timeout=5
-                        )  # 5 seconds wait for a ping response?
+                        await node.wait_until_ready(timeout=10)  # 10 seconds wait for a ping response?
                         await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
                         await asyncio.sleep(1)
             except asyncio.TimeoutError:
@@ -530,22 +526,14 @@ class ServerManager:
                     exc,
                 )
                 await self._partial_shutdown()
+            except asyncio.CancelledError:
+                raise
             except Exception as e:
                 # TODO: change to debug for prod -
                 #  don't wanna spam console with unhandled tracebacks -
                 #  every one you find should be mentioned so they can be properly handled
                 log.error(e, exc_info=e)
                 await self._partial_shutdown()
-            else:
-                try:
-                    await self._partial_shutdown()
-                except Exception as e:
-                    # TODO: change to debug for prod -
-                    #  don't wanna spam console with unhandled tracebacks - every one
-                    #  you find should be mentioned so they can be properly handled
-                    log.error(
-                        "Exception occurred during Audio managed node partial shutdown", exc_info=e
-                    )
 
     async def start(self, java_path: str):
         if self.start_monitor_task is not None:
