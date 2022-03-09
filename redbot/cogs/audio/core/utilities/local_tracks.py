@@ -8,7 +8,7 @@ import discord
 import lavalink
 
 from fuzzywuzzy import process
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
@@ -51,7 +51,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     async def get_localtrack_folder_tracks(
-        self, ctx, player: lavalink.player_manager.Player, query: Query
+        self, ctx, player: audio.Player, query: Query
     ) -> List[lavalink.rest_api.Track]:
         """Return a list of tracks per the provided query."""
         if not await self.localtracks_folder_exists(ctx) or self.api_interface is None:

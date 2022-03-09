@@ -1,3 +1,4 @@
+import audioop
 import datetime
 import logging
 import math
@@ -8,10 +9,9 @@ from pathlib import Path
 from typing import List, Optional
 
 import discord
-import lavalink
 
 from discord.embeds import EmptyEmbed
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
@@ -99,7 +99,8 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -109,7 +110,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
@@ -179,7 +180,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         "requester": ctx.author.id,
                     }
                 )
-                player.add(ctx.author, search_choice)
+                await player.play(requester=ctx.author, track=search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
                     "red_audio_track_enqueue", player.guild, search_choice, ctx.author
@@ -206,7 +207,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         if not player.current:
-            await player.play()
+            await player._ll_player.play()
         return await self.send_embed_msg(ctx, embed=songembed)
 
     async def _format_search_options(self, search_choice):
@@ -392,7 +393,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return box(line, lang="md")
 
     async def draw_time(self, ctx) -> str:
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         paused = player.paused
         pos = player.position or 1
         dur = getattr(player.current, "length", player.position or 1)

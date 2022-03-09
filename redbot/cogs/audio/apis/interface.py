@@ -15,7 +15,7 @@ import discord
 import lavalink
 
 from lavalink.rest_api import LoadResult, LoadType
-from redbot.core import Config, commands
+from redbot.core import Config, commands, audio
 from redbot.core.bot import Red
 from redbot.core.commands import Cog, Context
 from redbot.core.i18n import Translator
@@ -109,87 +109,87 @@ class AudioAPIInterface:
 
         return track
 
-    async def route_tasks(
-        self,
-        action_type: str = None,
-        data: Union[List[MutableMapping], MutableMapping] = None,
-    ) -> None:
-        """Separate the tasks and run them in the appropriate functions."""
-
-        if not data:
-            return
-        if action_type == "insert" and isinstance(data, list):
-            for table, d in data:
-                if table == "lavalink":
-                    await self.local_cache_api.lavalink.insert(d)
-                elif table == "youtube":
-                    await self.local_cache_api.youtube.insert(d)
-                elif table == "spotify":
-                    await self.local_cache_api.spotify.insert(d)
-        elif action_type == "update" and isinstance(data, dict):
-            for table, d in data:
-                if table == "lavalink":
-                    await self.local_cache_api.lavalink.update(data)
-                elif table == "youtube":
-                    await self.local_cache_api.youtube.update(data)
-                elif table == "spotify":
-                    await self.local_cache_api.spotify.update(data)
-        elif action_type == "global" and isinstance(data, list):
-            await asyncio.gather(*[self.global_cache_api.update_global(**d) for d in data])
-
-    async def run_tasks(self, ctx: Optional[commands.Context] = None, message_id=None) -> None:
-        """Run tasks for a specific context."""
-        if message_id is not None:
-            lock_id = message_id
-        elif ctx is not None:
-            lock_id = ctx.message.id
-        else:
-            return
-        lock_author = ctx.author if ctx else None
-        async with self._lock:
-            if lock_id in self._tasks:
-                if IS_DEBUG:
-                    log.debug("Running database writes for %d (%s)", lock_id, lock_author)
-                try:
-                    tasks = self._tasks[lock_id]
-                    tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
-                    await asyncio.gather(*tasks, return_exceptions=False)
-                    del self._tasks[lock_id]
-                except Exception as exc:
-                    debug_exc_log(
-                        log, exc, "Failed database writes for %d (%s)", lock_id, lock_author
-                    )
-                else:
-                    if IS_DEBUG:
-                        log.debug("Completed database writes for %d (%s)", lock_id, lock_author)
-
-    async def run_all_pending_tasks(self) -> None:
-        """Run all pending tasks left in the cache, called on cog_unload."""
-        async with self._lock:
-            if IS_DEBUG:
-                log.debug("Running pending writes to database")
-            try:
-                tasks: MutableMapping = {"update": [], "insert": [], "global": []}
-                async for k, task in AsyncIter(self._tasks.items()):
-                    async for t, args in AsyncIter(task.items()):
-                        tasks[t].append(args)
-                self._tasks = {}
-                coro_tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
-
-                await asyncio.gather(*coro_tasks, return_exceptions=False)
-
-            except Exception as exc:
-                debug_exc_log(log, exc, "Failed database writes")
-            else:
-                if IS_DEBUG:
-                    log.debug("Completed pending writes to database have finished")
-
-    def append_task(self, ctx: commands.Context, event: str, task: Tuple, _id: int = None) -> None:
-        """Add a task to the cache to be run later."""
-        lock_id = _id or ctx.message.id
-        if lock_id not in self._tasks:
-            self._tasks[lock_id] = {"update": [], "insert": [], "global": []}
-        self._tasks[lock_id][event].append(task)
+    # async def route_tasks(
+    #     self,
+    #     action_type: str = None,
+    #     data: Union[List[MutableMapping], MutableMapping] = None,
+    # ) -> None:
+    #     """Separate the tasks and run them in the appropriate functions."""
+    #
+    #     if not data:
+    #         return
+    #     if action_type == "insert" and isinstance(data, list):
+    #         for table, d in data:
+    #             if table == "lavalink":
+    #                 await self.local_cache_api.lavalink.insert(d)
+    #             elif table == "youtube":
+    #                 await self.local_cache_api.youtube.insert(d)
+    #             elif table == "spotify":
+    #                 await self.local_cache_api.spotify.insert(d)
+    #     elif action_type == "update" and isinstance(data, dict):
+    #         for table, d in data:
+    #             if table == "lavalink":
+    #                 await self.local_cache_api.lavalink.update(data)
+    #             elif table == "youtube":
+    #                 await self.local_cache_api.youtube.update(data)
+    #             elif table == "spotify":
+    #                 await self.local_cache_api.spotify.update(data)
+    #     elif action_type == "global" and isinstance(data, list):
+    #         await asyncio.gather(*[self.global_cache_api.update_global(**d) for d in data])
+    #
+    # async def run_tasks(self, ctx: Optional[commands.Context] = None, message_id=None) -> None:
+    #     """Run tasks for a specific context."""
+    #     if message_id is not None:
+    #         lock_id = message_id
+    #     elif ctx is not None:
+    #         lock_id = ctx.message.id
+    #     else:
+    #         return
+    #     lock_author = ctx.author if ctx else None
+    #     async with self._lock:
+    #         if lock_id in self._tasks:
+    #             if IS_DEBUG:
+    #                 log.debug("Running database writes for %d (%s)", lock_id, lock_author)
+    #             try:
+    #                 tasks = self._tasks[lock_id]
+    #                 tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
+    #                 await asyncio.gather(*tasks, return_exceptions=False)
+    #                 del self._tasks[lock_id]
+    #             except Exception as exc:
+    #                 debug_exc_log(
+    #                     log, exc, "Failed database writes for %d (%s)", lock_id, lock_author
+    #                 )
+    #             else:
+    #                 if IS_DEBUG:
+    #                     log.debug("Completed database writes for %d (%s)", lock_id, lock_author)
+    #
+    # async def run_all_pending_tasks(self) -> None:
+    #     """Run all pending tasks left in the cache, called on cog_unload."""
+    #     async with self._lock:
+    #         if IS_DEBUG:
+    #             log.debug("Running pending writes to database")
+    #         try:
+    #             tasks: MutableMapping = {"update": [], "insert": [], "global": []}
+    #             async for k, task in AsyncIter(self._tasks.items()):
+    #                 async for t, args in AsyncIter(task.items()):
+    #                     tasks[t].append(args)
+    #             self._tasks = {}
+    #             coro_tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
+    #
+    #             await asyncio.gather(*coro_tasks, return_exceptions=False)
+    #
+    #         except Exception as exc:
+    #             debug_exc_log(log, exc, "Failed database writes")
+    #         else:
+    #             if IS_DEBUG:
+    #                 log.debug("Completed pending writes to database have finished")
+    #
+    # def append_task(self, ctx: commands.Context, event: str, task: Tuple, _id: int = None) -> None:
+    #     """Add a task to the cache to be run later."""
+    #     lock_id = _id or ctx.message.id
+    #     if lock_id not in self._tasks:
+    #         self._tasks[lock_id] = {"update": [], "insert": [], "global": []}
+    #     self._tasks[lock_id][event].append(task)
 
     async def fetch_spotify_query(
         self,
@@ -262,7 +262,7 @@ class AudioAPIInterface:
                         youtube_api_error = err.message
                 if youtube_cache and val:
                     task = ("update", ("youtube", {"track": track_info}))
-                    self.append_task(ctx, *task)
+                    audio._api_interface._append_task(ctx.author.id, *task)
                 if val:
                     youtube_urls.append(val)
             else:
@@ -281,7 +281,7 @@ class AudioAPIInterface:
                 continue
         if CacheLevel.set_spotify().is_subset(current_cache_level):
             task = ("insert", ("spotify", database_entries))
-            self.append_task(ctx, *task)
+            audio._api_interface._append_task(ctx.author.id, *task)
         return youtube_urls
 
     async def fetch_from_spotify_api(
@@ -407,7 +407,7 @@ class AudioAPIInterface:
         else:
             if query_type == "track" and cache_enabled:
                 task = ("update", ("spotify", {"uri": f"spotify:track:{uri}"}))
-                self.append_task(ctx, *task)
+                audio._api_interface._append_task(ctx.author.id, *task)
             youtube_urls.append(val)
         return youtube_urls
 
@@ -538,7 +538,7 @@ class AudioAPIInterface:
                 if not youtube_api_error:
                     if youtube_cache and val and llresponse is None:
                         task = ("update", ("youtube", {"track": track_info}))
-                        self.append_task(ctx, *task)
+                        audio._api_interface._append_task(ctx.author.id, *task)
 
                     if isinstance(llresponse, LoadResult):
                         track_object = llresponse.tracks
@@ -706,7 +706,7 @@ class AudioAPIInterface:
 
             if spotify_cache:
                 task = ("insert", ("spotify", database_entries))
-                self.append_task(ctx, *task)
+                audio._api_interface._append_task(ctx.author.id, *task)
         except Exception as exc:
             lock(ctx, False)
             raise exc
@@ -738,7 +738,7 @@ class AudioAPIInterface:
                     ],
                 ),
             )
-            self.append_task(ctx, *task)
+            audio._api_interface._append_task(ctx.author.id, *task)
         return track_url
 
     async def fetch_from_youtube_api(
@@ -763,14 +763,14 @@ class AudioAPIInterface:
         else:
             if cache_enabled:
                 task = ("update", ("youtube", {"track": track_info}))
-                self.append_task(ctx, *task)
+                audio._api_interface._append_task(ctx.author.id, *task)
             youtube_url = val
         return youtube_url
 
     async def fetch_track(
         self,
         ctx: commands.Context,
-        player: lavalink.Player,
+        player: audio.Player,
         query: Query,
         forced: bool = False,
         lazy: bool = False,
@@ -823,7 +823,7 @@ class AudioAPIInterface:
                 if IS_DEBUG:
                     log.debug("Updating Local Database with %r", query_string)
                 task = ("update", ("lavalink", {"query": query_string}))
-                self.append_task(ctx, *task)
+                audio._api_interface._append_task(ctx.author.id, *task)
             else:
                 val = None
 
@@ -877,7 +877,7 @@ class AudioAPIInterface:
                 log.debug("Querying Lavalink api for %r", query_string)
             called_api = True
             try:
-                results = await player.load_tracks(query_string)
+                results = await player._ll_player.load_tracks(query_string)
             except KeyError:
                 results = None
             except RuntimeError:
@@ -896,7 +896,7 @@ class AudioAPIInterface:
                 and len(results.tracks) >= 1
             ):
                 global_task = ("global", dict(llresponse=results, query=query))
-                self.append_task(ctx, *global_task)
+                audio._api_interface._append_task(ctx.author.id, *global_task)
         if (
             cache_enabled
             and results.load_type
@@ -922,7 +922,7 @@ class AudioAPIInterface:
                             ],
                         ),
                     )
-                    self.append_task(ctx, *task)
+                    audio._api_interface._append_task(ctx.author.id, *task)
             except Exception as exc:
                 debug_exc_log(
                     log,
@@ -932,7 +932,7 @@ class AudioAPIInterface:
                 )
         return results, called_api
 
-    async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
+    async def autoplay(self, player: audio.Player, playlist_api: PlaylistWrapper):
         """Enqueue a random track."""
         autoplaylist = await self.config.guild(player.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
@@ -1005,13 +1005,13 @@ class AudioAPIInterface:
                     "requester": player.guild.me.id,
                 }
             )
-            player.add(player.guild.me, track)
+            await player.play(player.guild.me, track=track)
             self.bot.dispatch(
                 "red_audio_track_auto_play",
                 player.guild,
                 track,
                 player.guild.me,
-                player,
+                player._ll_player,
             )
             if notify_channel_id:
                 await self.config.guild_from_id(
@@ -1021,8 +1021,6 @@ class AudioAPIInterface:
                 await self.config.guild_from_id(
                     guild_id=player.guild.id
                 ).currently_auto_playing_in.set([])
-            if not player.current:
-                await player.play()
 
     async def fetch_all_contribute(self) -> List[LavalinkCacheFetchForGlobalResult]:
         return await self.local_cache_api.lavalink.fetch_all_for_global()

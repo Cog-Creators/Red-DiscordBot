@@ -4,12 +4,13 @@ from pathlib import Path
 
 import lavalink
 
-from redbot.core import data_manager
+from redbot.core import data_manager, audio
 from redbot.core.i18n import Translator
 from ...errors import LavalinkDownloadFailed
-from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+
+from redbot.core.audio_utils.server_manager import ServerManager
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.lavalink")
 _ = Translator("Audio", Path(__file__))
@@ -17,7 +18,7 @@ _ = Translator("Audio", Path(__file__))
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
     def lavalink_restart_connect(self) -> None:
-        lavalink.unregister_event_listener(self.lavalink_event_handler)
+        lavalink.unregister_event_listener(audio.Lavalink.lavalink_event_handler)
         lavalink.unregister_update_listener(self.lavalink_update_handler)
         if self.lavalink_connect_task:
             self.lavalink_connect_task.cancel()
@@ -25,7 +26,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             self._restore_task.cancel()
 
         self._restore_task = None
-        lavalink.register_event_listener(self.lavalink_event_handler)
+        # lavalink.register_event_listener(self.lavalink_event_handler)
         lavalink.register_update_listener(self.lavalink_update_handler)
         self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
 
@@ -42,11 +43,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 host = settings["host"]
                 password = settings["password"]
                 ws_port = settings["ws_port"]
-                if self.player_manager is not None:
-                    await self.player_manager.shutdown()
-                self.player_manager = ServerManager()
+                if ServerManager.is_running:
+                    await ServerManager.shutdown()
                 try:
-                    await self.player_manager.start(java_exec)
+                    await ServerManager.start(java_exec)
                 except LavalinkDownloadFailed as exc:
                     await asyncio.sleep(1)
                     if exc.should_retry:
@@ -105,8 +105,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except asyncio.TimeoutError:
                 log.error("Connecting to Lavalink server timed out, retrying...")
-                if external is False and self.player_manager is not None:
-                    await self.player_manager.shutdown()
+                if external is False and ServerManager.is_running:
+                    await ServerManager.shutdown()
                 retry_count += 1
                 await asyncio.sleep(1)  # prevent busylooping
             except Exception as exc:

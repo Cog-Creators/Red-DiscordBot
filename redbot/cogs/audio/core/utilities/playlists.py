@@ -15,7 +15,7 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box
@@ -399,7 +399,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         uploaded_track_list,
-        player: lavalink.player_manager.Player,
+        player: audio.Player,
         playlist_url: str,
         uploaded_playlist_name: str,
         scope: str,
@@ -481,7 +481,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await playlist_msg.edit(embed=embed3)
 
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
+        self, ctx: commands.Context, player: audio.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
         if getattr(playlist, "id", 0) == 42069:
             _, updated_tracks = await self._get_bundled_playlist_tracks()
@@ -544,7 +544,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ),
                     )
                     return False
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -562,7 +563,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connect to a voice channel first."),
                 )
                 return False
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
@@ -580,7 +581,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def fetch_playlist_tracks(
         self,
         ctx: commands.Context,
-        player: lavalink.player_manager.Player,
+        player: audio.Player,
         query: Query,
         skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:

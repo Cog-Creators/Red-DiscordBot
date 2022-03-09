@@ -10,7 +10,7 @@ from typing import Union
 import discord
 import lavalink
 
-from redbot.core import bank, commands
+from redbot.core import bank, commands, audio
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
@@ -1117,7 +1117,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
-        if is_owner and not global_data["use_external_lavalink"] and self.player_manager.ll_build:
+        if (
+            is_owner
+            and not global_data["use_external_lavalink"]
+            and audio._server_manager.ll_build
+        ):
             msg += _(
                 "Lavalink build:         [{llbuild}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
@@ -1126,12 +1130,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Java version:           [{jvm}]\n"
                 "Java Executable:        [{jv_exec}]\n"
             ).format(
-                build_time=self.player_manager.build_time,
-                llbuild=self.player_manager.ll_build,
-                llbranch=self.player_manager.ll_branch,
-                lavaplayer=self.player_manager.lavaplayer,
-                jvm=self.player_manager.jvm,
-                jv_exec=self.player_manager.path,
+                build_time=audio._server_manager.build_time,
+                llbuild=audio._server_manager.ll_build,
+                llbranch=audio._server_manager.ll_branch,
+                lavaplayer=audio._server_manager.lavaplayer,
+                jvm=audio._server_manager.jvm,
+                jv_exec=audio._server_manager.path,
             )
         if is_owner:
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
@@ -1445,14 +1449,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="restart")
     @commands.is_owner()
-    async def command_audioset_restart(self, ctx: commands.Context):
-        """Restarts the lavalink connection."""
-        async with ctx.typing():
-            await lavalink.close(self.bot)
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
+    async def command_audioset_restart(self, ctx: commands.Context, force_shutdown: bool = False):
+        """Restarts the lavalink connection.
 
-            self.lavalink_restart_connect()
+        force_shutdown: bool
+            Warning: If this is set to True, the Lavalink connection
+            will be force closed and all cogs using the api will get disconnected"""
+        async with ctx.typing():
+            await audio.shutdown("Audio", 2711759130, force_shutdown=force_shutdown)
+
+            await audio.initialize(self.bot, "Audio", 2711759130)
 
             await self.send_embed_msg(
                 ctx,

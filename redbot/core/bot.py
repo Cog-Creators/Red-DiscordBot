@@ -7,7 +7,6 @@ import shutil
 import sys
 import contextlib
 import weakref
-import functools
 from collections import namedtuple
 from datetime import datetime
 from enum import IntEnum
@@ -36,7 +35,7 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers, modlog, bank
+from . import Config, i18n, commands, errors, drivers, modlog, bank, audio
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
@@ -1877,6 +1876,8 @@ class Red(
                 await self.rpc.close()
         except AttributeError:
             pass
+
+        await audio.shutdown("", 1, force_shutdown=True)
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.

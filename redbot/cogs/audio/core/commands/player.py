@@ -8,10 +8,9 @@ from pathlib import Path
 from typing import MutableMapping
 
 import discord
-import lavalink
 
 from discord.embeds import EmptyEmbed
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -84,7 +83,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -100,7 +100,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
@@ -192,7 +192,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -208,7 +209,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
@@ -456,7 +457,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -472,7 +474,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
@@ -572,7 +574,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -588,7 +591,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
@@ -696,7 +699,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "I don't have permission to connect and speak in your channel."
                         ),
                     )
-                await lavalink.connect(
+                await audio.connect(
+                    self.bot,
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
@@ -712,7 +716,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Search For Tracks"),
                     description=_("Connection to Lavalink has not yet been established."),
                 )
-        player = lavalink.get_player(ctx.guild.id)
+        player = audio.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
         player.store("notify_channel", ctx.channel.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
@@ -833,7 +837,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                     "requester": ctx.author.id,
                                 }
                             )
-                            player.add(ctx.author, track)
+                            await player.play(requester=ctx.author, track=track)
                             self.bot.dispatch(
                                 "red_audio_track_enqueue", player.guild, track, ctx.author
                             )
@@ -846,12 +850,11 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                                 "requester": ctx.author.id,
                             }
                         )
-                        player.add(ctx.author, track)
+                        await player.play(requester=ctx.author, track=track)
                         self.bot.dispatch(
                             "red_audio_track_enqueue", player.guild, track, ctx.author
                         )
-                    if not player.current:
-                        await player.play()
+
                 player.maybe_shuffle(0 if empty_queue else 1)
                 if len(tracks) > track_len:
                     maxlength_msg = _(" {bad_tracks} tracks cannot be queued.").format(

@@ -13,7 +13,7 @@ import discord
 import lavalink
 from discord.embeds import EmptyEmbed
 
-from redbot.core import bank, commands
+from redbot.core import bank, commands, audio
 from redbot.core.commands import Context
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -106,11 +106,11 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def maybe_run_pending_db_tasks(self, ctx: commands.Context) -> None:
         if self.api_interface is not None:
-            await self.api_interface.run_tasks(ctx)
+            await audio._api_interface.run_tasks(ctx.author.id)
 
     async def _close_database(self) -> None:
         if self.api_interface is not None:
-            await self.api_interface.run_all_pending_tasks()
+            await audio._api_interface.run_all_pending_tasks()
             self.api_interface.close()
 
     async def _check_api_tokens(self) -> MutableMapping:
@@ -165,7 +165,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     def get_track_json(
         self,
-        player: lavalink.Player,
+        player: audio.Player,
         position: Union[int, str] = None,
         other_track: lavalink.Track = None,
     ) -> MutableMapping:

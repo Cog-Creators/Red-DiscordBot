@@ -11,7 +11,6 @@ import lavalink
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
-from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
 from ...apis.interface import AudioAPIInterface
@@ -20,7 +19,9 @@ from ...audio_logging import debug_exc_log
 from ...errors import DatabaseError, TrackEnqueueError
 from ...utils import task_callback
 from ..abc import MixinMeta
-from ..cog_utils import _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
+from ..cog_utils import _SCHEMA_VERSION, CompositeMetaClass
+
+from redbot.core import audio
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
@@ -39,6 +40,14 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
+            try:
+                await audio.initialize(self.bot, "Audio", 2711759130)
+            except Exception as e:
+                self.config = audio._config
+                self.cog_ready_event.set()
+                raise e
+
+            self.config = audio._config
             self.db_conn = APSWConnectionWrapper(
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
@@ -55,7 +64,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await self.playlist_api.delete_scheduled()
             await self.api_interface.persistent_queue_api.delete_scheduled()
             await self._build_bundled_playlist()
-            self.lavalink_restart_connect()
+
+            await self.restore_players()
+
             self.player_automated_timer_task = self.bot.loop.create_task(
                 self.player_automated_timer()
             )
@@ -87,7 +98,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(0)
             tries = 0
             try:
-                player: Optional[lavalink.Player] = None
+                player: Optional[audio.Player] = None
                 track_data = list(track_data)
                 guild = self.bot.get_guild(guild_id)
                 if not guild:
@@ -101,12 +112,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if self.lavalink_connection_aborted:
                     player = None
                 else:
-                    try:
-                        player = lavalink.get_player(guild_id)
-                    except IndexError:
-                        player = None
-                    except KeyError:
-                        player = None
+                    player = audio.get_player(guild.id)
+
                 vc = 0
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
@@ -128,7 +135,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if not (perms.connect and perms.speak):
                                 vc = None
                                 break
-                            player = await lavalink.connect(vc, deafen=auto_deafen)
+                            player = await audio.connect(self.bot, vc, deafen=auto_deafen)
                             player.store("notify_channel", notify_channel_id)
                             break
                         except IndexError:
@@ -155,10 +162,12 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await player.set_volume(volume)
                 for track in track_data:
                     track = track.track_object
-                    player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
+                    await player.play(
+                        requester=guild.get_member(track.extras.get("requester")) or guild.me,
+                        track=track,
+                    )
                 player.maybe_shuffle()
-                if not player.is_playing:
-                    await player.play()
+
                 log.info("Restored %r", player)
             except Exception as err:
                 debug_exc_log(log, err, "Error restoring player in %d", guild_id)
@@ -166,7 +175,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
 
         for guild_id, (notify_channel_id, vc_id) in metadata.items():
             guild = self.bot.get_guild(guild_id)
-            player: Optional[lavalink.Player] = None
+            player: Optional[audio.Player] = None
             vc = 0
             tries = 0
             if not guild:
@@ -174,12 +183,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             if self.lavalink_connection_aborted:
                 player = None
             else:
-                try:
-                    player = lavalink.get_player(guild_id)
-                except IndexError:
-                    player = None
-                except KeyError:
-                    player = None
+                player = audio.get_player(guild.id)
             if player is None:
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
@@ -197,7 +201,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         if not (perms.connect and perms.speak):
                             vc = None
                             break
-                        player = await lavalink.connect(vc, deafen=auto_deafen)
+                        player = await audio.connect(self.bot, vc, deafen=auto_deafen)
                         player.store("notify_channel", notify_channel_id)
                         break
                     except IndexError:

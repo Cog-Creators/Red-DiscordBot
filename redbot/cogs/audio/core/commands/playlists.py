@@ -13,7 +13,7 @@ from typing import cast
 import discord
 import lavalink
 
-from redbot.core import commands
+from redbot.core import commands, audio
 from redbot.core.commands import UserInputOptional
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
@@ -127,7 +127,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             if not await self.can_manage_playlist(scope, playlist, ctx, author, guild):
                 return
-            player = lavalink.get_player(ctx.guild.id)
+            player = audio.get_player(ctx.guild.id)
             to_append = await self.fetch_playlist_tracks(
                 ctx, player, Query.process_input(query, self.local_folder_current_path)
             )
@@ -1141,7 +1141,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx.command.reset_cooldown(ctx)
                 return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
-            player = lavalink.get_player(ctx.guild.id)
+            player = audio.get_player(ctx.guild.id)
             if not player.queue:
                 ctx.command.reset_cooldown(ctx)
                 return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
@@ -1367,7 +1367,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             if not await self._playlist_check(ctx):
                 ctx.command.reset_cooldown(ctx)
                 return
-            player = lavalink.get_player(ctx.guild.id)
+            player = audio.get_player(ctx.guild.id)
             tracklist = await self.fetch_playlist_tracks(
                 ctx, player, Query.process_input(playlist_url, self.local_folder_current_path)
             )
@@ -1511,7 +1511,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             author_obj = self.bot.get_user(ctx.author.id)
             track_len = 0
             try:
-                player = lavalink.get_player(ctx.guild.id)
+                player = audio.get_player(ctx.guild.id)
                 tracks = playlist.tracks_obj
                 empty_queue = not player.queue
                 async for track in AsyncIter(tracks):
@@ -1545,8 +1545,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "requester": ctx.author.id,
                         }
                     )
-                    player.add(author_obj, track)
-                    self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
+                    await player.play(author_obj, track=track)
+                    # self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
                     track_len += 1
                 player.maybe_shuffle(0 if empty_queue else 1)
                 if len(tracks) > track_len:
@@ -1576,8 +1576,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                 )
                 await self.send_embed_msg(ctx, embed=embed)
-                if not player.current:
-                    await player.play()
                 return
             except RuntimeError:
                 ctx.command.reset_cooldown(ctx)
@@ -1681,7 +1679,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ):
                     return
                 if playlist.url or getattr(playlist, "id", 0) == 42069:
-                    player = lavalink.get_player(ctx.guild.id)
+                    player = audio.get_player(ctx.guild.id)
                     added, removed, playlist = await self._maybe_update_playlist(
                         ctx, player, playlist
                     )
@@ -1830,7 +1828,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return
             if not await self._playlist_check(ctx):
                 return
-            player = lavalink.get_player(ctx.guild.id)
+            player = audio.get_player(ctx.guild.id)
 
             if not ctx.message.attachments:
                 await self.send_embed_msg(
