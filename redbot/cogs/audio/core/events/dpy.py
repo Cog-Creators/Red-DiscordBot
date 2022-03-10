@@ -101,25 +101,18 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             self.local_folder_current_path = Path(await self.config.localpath())
         if not ctx.guild:
             return
-
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
-        self._daily_playlist_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
-        )
-        self._persist_queue_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
-        )
+        guild_data = await self.config.guild(ctx.guild).all()
+        dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
+        self._daily_playlist_cache.setdefault(ctx.guild.id, guild_data["daily_playlists"])
+        self._persist_queue_cache.setdefault(ctx.guild.id, guild_data["persist_queue"])
         if dj_enabled:
-            dj_role = self._dj_role_cache.setdefault(
-                ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-            )
+            dj_role = self._dj_role_cache.setdefault(ctx.guild.id, guild_data["dj_role"])
             dj_role_obj = ctx.guild.get_role(dj_role)
             if not dj_role_obj:
-                await self.config.guild(ctx.guild).dj_enabled.set(None)
+                async with self.config.guild(ctx.guild).all() as write_guild_data:
+                    write_guild_data["dj_enabled"] = None
+                    write_guild_data["dj_role"] = None
                 self._dj_status_cache[ctx.guild.id] = None
-                await self.config.guild(ctx.guild).dj_role.set(None)
                 self._dj_role_cache[ctx.guild.id] = None
                 await self.send_embed_msg(ctx, title=_("No DJ role found. Disabling DJ mode."))
 
