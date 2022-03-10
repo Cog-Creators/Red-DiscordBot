@@ -1,7 +1,6 @@
 aiohttp
 aiohttp-json-rpc
 aiosqlite
-appdirs
 apsw-wheels
 babel
 click
@@ -9,6 +8,7 @@ colorama
 discord.py
 markdown
 packaging
+platformdirs
 psutil
 python-dateutil
 PyNaCl
