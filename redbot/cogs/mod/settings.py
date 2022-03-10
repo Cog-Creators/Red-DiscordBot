@@ -400,21 +400,6 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def reinit(self, ctx: commands.Context):
-        await self.config.guild(ctx.guild).delete_repeats_channels.set({})
-        await ctx.send("Reinitialisation of delete_repeats_channels")
-
-    @modset.command()
-    @commands.guild_only()
-    async def create_new_cache(self, ctx: commands.Context):
-        guild = ctx.guild
-        channel = ctx.channel
-        print("Test = {}".format(type(ctx.channel)))
-        self.cache[guild.id] = await create_new_cache(self.config, guild)
-        await ctx.send("Reinitialisation of the cache")
-
-    @modset.command()
-    @commands.guild_only()
     async def reinvite(self, ctx: commands.Context):
         """Toggle whether an invite will be sent to a user when unbanned.
 
