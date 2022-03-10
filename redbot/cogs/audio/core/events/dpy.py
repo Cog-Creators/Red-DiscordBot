@@ -14,6 +14,7 @@ from red_commons.logging import getLogger
 
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
+from lavalink import NodeNotFound, PlayerNotFound
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -320,7 +321,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         ):
             try:
                 player = lavalink.get_player(channel.guild.id)
-            except (KeyError, AttributeError):
+            except (NodeNotFound, PlayerNotFound, AttributeError):
                 pass
             else:
                 if player.channel.id == channel.id:

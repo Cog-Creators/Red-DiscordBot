@@ -9,6 +9,8 @@ import lavalink
 from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound, PlayerNotFound
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -208,7 +210,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         try:
             lavalink.get_player(ctx.guild.id)
             return True
-        except (IndexError, KeyError):
+        except (NodeNotFound, PlayerNotFound):
             return False
 
     async def self_deafen(self, player: lavalink.Player) -> None:
@@ -687,7 +689,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def maybe_move_player(self, ctx: commands.Context) -> bool:
         try:
             player = lavalink.get_player(ctx.guild.id)
-        except KeyError:
+        except PlayerNotFound:
             return False
         try:
             in_channel = sum(

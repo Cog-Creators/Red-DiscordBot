@@ -115,7 +115,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                     secured=secured,
                 )
-            except lavalink.enums.AbortingConnectionException:
+            except lavalink.AbortingNodeConnectionException:
                 await lavalink.close(self.bot)
                 log.warning("Connection attempt to Lavalink node aborted")
                 return
