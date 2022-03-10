@@ -69,7 +69,7 @@ class MixinMeta(ABC):
 
     _last_ll_update: datetime.datetime
     _ll_guild_updates: Set[int]
-    _diconnected_shard: Set[int]
+    _disconnected_shard: Set[int]
 
     @abstractmethod
     async def command_llsetup(self, ctx: commands.Context):

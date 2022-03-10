@@ -280,12 +280,12 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.Cog.listener()
     async def on_shard_disconnect(self, shard_id):
-        self._diconnected_shard.add(shard_id)
+        self._disconnected_shard.add(shard_id)
 
     @commands.Cog.listener()
     async def on_shard_ready(self, shard_id):
-        self._diconnected_shard.discard(shard_id)
+        self._disconnected_shard.discard(shard_id)
 
     @commands.Cog.listener()
     async def on_shard_resumed(self, shard_id):
-        self._diconnected_shard.discard(shard_id)
+        self._disconnected_shard.discard(shard_id)
