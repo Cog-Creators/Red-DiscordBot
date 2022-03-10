@@ -512,7 +512,9 @@ class ServerManager:
                             timeout=10
                         )  # 10 seconds wait for a ping response?
                         await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
-                        backoff = ExponentialBackoff(base=7)  # Reassign Backoff to reset it on successful ping.
+                        backoff = ExponentialBackoff(
+                            base=7
+                        )  # Reassign Backoff to reset it on successful ping.
                         # ExponentialBackoff.reset() would be a nice method to have
                         await asyncio.sleep(1)
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
