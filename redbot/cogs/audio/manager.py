@@ -496,7 +496,9 @@ class ServerManager:
                         # This will not be as simple as adding a for loop here if multi node support is added
                         log.debug("Managed node possible PID: %d", self._node_pid)
                         node = lavalink.get_all_nodes()[0]
-                        await node.wait_until_ready(timeout=10)  # 10 seconds wait for a ping response?
+                        await node.wait_until_ready(
+                            timeout=10
+                        )  # 10 seconds wait for a ping response?
                         await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
                         await asyncio.sleep(1)
             except asyncio.TimeoutError:
