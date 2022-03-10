@@ -73,7 +73,9 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     if self.managed_node_controller is not None:
                         await self.managed_node_controller.shutdown()
                     if self.lavalink_connection_aborted is not True:
-                        log.critical("Managed node startup timeout, aborting managed node startup.")
+                        log.critical(
+                            "Managed node startup timeout, aborting managed node startup."
+                        )
                     self.lavalink_connection_aborted = True
                     return
                 except Exception as exc:

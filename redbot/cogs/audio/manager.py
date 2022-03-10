@@ -33,7 +33,7 @@ from .errors import (
     EarlyExitException,
     ManagedLavalinkNodeException,
 )
-from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size
+from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size, replace_p_with_prefix
 from ...core.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -178,8 +178,11 @@ class ServerManager:
         log.info("Managed Lavalink node startup command: %s", command_string)
         if "-Xmx" not in command_string and msg is None:
             log.warning(
-                "Managed Lavalink node maximum allowed RAM not set or higher than available RAM, "
-                "please use '[p]llset heapsize' to set a maximum value to avoid out of RAM crashes."
+                await replace_p_with_prefix(
+                    self.cog.bot,
+                    "Managed Lavalink node maximum allowed RAM not set or higher than available RAM, "
+                    "please use '[p]llset heapsize' to set a maximum value to avoid out of RAM crashes.",
+                )
             )
         try:
             self._proc = (
@@ -219,11 +222,14 @@ class ServerManager:
             else:
                 extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
             raise UnsupportedJavaException(
-                f"The managed Lavalink node requires Java 11 to run{extras};\n"
-                "Either install version 11 and restart the bot or connect to an external Lavalink node "
-                "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
-                "If you already have Java 11 installed then then you will need to specify the executable path, "
-                "use '[p]llset java' to set the correct Java 11 executable."  # TODO: Replace with Audio docs when they are out
+                await replace_p_with_prefix(
+                    self.cog.bot,
+                    f"The managed Lavalink node requires Java 11 to run{extras};\n"
+                    "Either install version 11 and restart the bot or connect to an external Lavalink node "
+                    "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
+                    "If you already have Java 11 installed then then you will need to specify the executable path, "
+                    "use '[p]llset java' to set the correct Java 11 executable.",
+                )  # TODO: Replace with Audio docs when they are out
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
@@ -240,9 +246,10 @@ class ServerManager:
         ):
             command_args.append(f"-Xmx{java_xmx}")
         elif meta[0] is not None:
-            invalid = (
+            invalid = await replace_p_with_prefix(
+                self.cog.bot,
                 "Managed Lavalink node RAM allocation ignored due to system limitations, "
-                "please fix this by setting the correct value with '[p]llset heapsize'."
+                "please fix this by setting the correct value with '[p]llset heapsize'.",
             )
 
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])

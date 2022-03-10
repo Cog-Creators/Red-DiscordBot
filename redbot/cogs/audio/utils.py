@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import math
 import platform
+import re
 import sys
 import time
 
@@ -14,6 +15,7 @@ import psutil
 from red_commons.logging import getLogger
 
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
 log = getLogger("red.cogs.Audio.task.callback")
@@ -362,3 +364,10 @@ def has_unmanaged_server():
         return external
 
     return commands.check(pred)
+
+
+async def replace_p_with_prefix(bot: Red, message: str) -> str:
+    """Replaces [p] with the bot prefix"""
+    prefixes = await bot.get_valid_prefixes()
+    prefix = re.sub(rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0])
+    return message.replace("[p]", prefix)
