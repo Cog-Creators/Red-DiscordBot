@@ -32,6 +32,9 @@ from .errors import (
     UnexpectedJavaResponseException,
     EarlyExitException,
     ManagedLavalinkNodeException,
+    TooManyProcessFound,
+    IncorrectProcessFound,
+    NoProcessFound,
 )
 from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size, replace_p_with_prefix
 from ...core.utils import AsyncIter
@@ -480,7 +483,7 @@ class ServerManager:
                     # Jar is not running
                     if not process_list:
                         log.warning("Managed node process not found.")
-                        raise asyncio.TimeoutError
+                        raise NoProcessFound
                     # An unmanaged killable jar is running
                     elif len(process_list) == 1 and process_list[0]["pid"] != self._node_pid:
                         log.warning(
@@ -489,7 +492,7 @@ class ServerManager:
                             process_list[0]["pid"],
                         )
                         log.debug("%s", process_list[0])
-                        raise asyncio.TimeoutError
+                        raise IncorrectProcessFound
                     # An unmanaged killable jar is running
                     elif len(process_list) > 1:
                         log.warning(
@@ -498,7 +501,7 @@ class ServerManager:
                         )
                         for proc in process_list:
                             log.debug("%s", proc)
-                        raise asyncio.TimeoutError
+                        raise TooManyProcessFound
                     else:
                         # only the managed jar is running
                         # len(process_list) == 1 and process_list[0]["pid"] == self._node_pid
@@ -510,6 +513,8 @@ class ServerManager:
                         )  # 10 seconds wait for a ping response?
                         await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
                         await asyncio.sleep(1)
+            except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
+                await self._partial_shutdown()
             except asyncio.TimeoutError:
                 delay = backoff.delay()
                 await self._partial_shutdown()
