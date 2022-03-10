@@ -1,6 +1,5 @@
 aiohttp
 aiohttp-json-rpc
-aiosqlite
 apsw-wheels
 babel
 click
