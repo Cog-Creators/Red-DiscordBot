@@ -125,6 +125,7 @@ class ServerManager:
         self.start_monitor_task = None
         self.timeout = timeout
         self.cog = cog
+        self._args = []
 
     @property
     def path(self) -> Optional[str]:
@@ -220,7 +221,7 @@ class ServerManager:
                 f"The managed Lavalink node requires Java 11 to run{extras};\n"
                 "Either install version 11 and restart the bot or connect to an external Lavalink node "
                 "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
-                "If you already have it installed then then you will need to specify the executable path, "
+                "If you already have Java 11 installed then then you will need to specify the executable path, "
                 "use '[p]llset java' to set the correct Java 11 executable."  # TODO: Replace with Audio docs when they are out
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
