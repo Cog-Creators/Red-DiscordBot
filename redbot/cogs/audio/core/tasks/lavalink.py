@@ -70,10 +70,11 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     # 60s in case of ServerManager(self.config, timeout=60)
                     await self.managed_node_controller.wait_until_ready()
                 except asyncio.TimeoutError:
-                    self.lavalink_connection_aborted = True
                     if self.managed_node_controller is not None:
                         await self.managed_node_controller.shutdown()
-                    log.critical("Managed node startup timeout, aborting managed node startup.")
+                    if self.lavalink_connection_aborted is not True:
+                        log.critical("Managed node startup timeout, aborting managed node startup.")
+                    self.lavalink_connection_aborted = True
                     return
                 except Exception as exc:
                     log.exception(

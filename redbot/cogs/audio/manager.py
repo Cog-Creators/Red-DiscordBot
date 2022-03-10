@@ -534,6 +534,10 @@ class ServerManager:
                 log.critical("Invalid machine architecture, cannot run a managed Lavalink node.")
                 self.cog.lavalink_connection_aborted = True
                 return await self.shutdown()
+            except (UnsupportedJavaException, UnexpectedJavaResponseException) as exc:
+                self.cog.lavalink_connection_aborted = True
+                log.critical(exc)
+                return await self.shutdown()
             except ManagedLavalinkNodeException as exc:
                 delay = backoff.delay()
                 log.critical(
