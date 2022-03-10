@@ -159,7 +159,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             dj_role = self._dj_role_cache.setdefault(ctx.guild.id, guild_data["dj_role"])
             dj_role_obj = ctx.guild.get_role(dj_role)
             if not dj_role_obj:
-                async with await self.config.guild(ctx.guild).all() as write_guild_data:
+                async with self.config.guild(ctx.guild).all() as write_guild_data:
                     write_guild_data["dj_enabled"] = None
                     write_guild_data["dj_role"] = None
                 self._dj_status_cache[ctx.guild.id] = None
