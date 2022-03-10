@@ -16,6 +16,7 @@ import lavalink
 import psutil
 import rich.progress
 import yaml
+from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
 from redbot.core import data_manager, Config
@@ -459,6 +460,7 @@ class ServerManager:
 
     async def start_monitor(self, java_path: str):
         retry_count = 0
+        backoff = ExponentialBackoff(base=7)
         while True:
             try:
                 self._shutdown = False
@@ -502,16 +504,24 @@ class ServerManager:
                         await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
                         await asyncio.sleep(1)
             except asyncio.TimeoutError:
+                delay = backoff.delay()
                 await self._partial_shutdown()
+                log.warning(
+                    "Lavalink Managed node startup failed retrying in %s seconds",
+                    delay,
+                )
+                await asyncio.sleep(delay)
             except LavalinkDownloadFailed as exc:
-                await asyncio.sleep(1)
+                delay = backoff.delay()
                 if exc.should_retry:
-                    log.exception(
-                        "Exception whilst starting managed Lavalink node, retrying...\n%s",
-                        exc.response,
+                    log.warning(
+                        "Lavalink Managed node startup failed retrying in %s seconds\n%s",
+                        delay,
+                        exc.response
                     )
                     retry_count += 1
                     await self._partial_shutdown()
+                    await asyncio.sleep(delay)
                 else:
                     log.critical(
                         "Fatal exception whilst starting managed Lavalink node, "
@@ -525,18 +535,30 @@ class ServerManager:
                 self.cog.lavalink_connection_aborted = True
                 return await self.shutdown()
             except ManagedLavalinkNodeException as exc:
+                delay = backoff.delay()
                 log.critical(
                     exc,
                 )
                 await self._partial_shutdown()
+                log.warning(
+                    "Lavalink Managed node startup failed retrying in %s seconds",
+                    delay,
+                )
+                await asyncio.sleep(delay)
             except asyncio.CancelledError:
                 raise
             except Exception as e:
+                delay = backoff.delay()
                 # TODO: change to debug for prod -
                 #  don't wanna spam console with unhandled tracebacks -
                 #  every one you find should be mentioned so they can be properly handled
                 log.error(e, exc_info=e)
+                log.warning(
+                    "Lavalink Managed node startup failed retrying in %s seconds",
+                    delay,
+                )
                 await self._partial_shutdown()
+                await asyncio.sleep(delay)
 
     async def start(self, java_path: str):
         if self.start_monitor_task is not None:
