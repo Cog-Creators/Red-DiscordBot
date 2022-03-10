@@ -16,5 +16,6 @@ Red-Lavalink>=0.11.0rc1
 rich
 schema
 typing_extensions
+yarl
 distro; sys_platform == "linux"
 uvloop; sys_platform != "win32" and platform_python_implementation == "CPython"
