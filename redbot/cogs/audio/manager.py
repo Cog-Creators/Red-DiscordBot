@@ -535,8 +535,8 @@ class ServerManager:
                 self.cog.lavalink_connection_aborted = True
                 return await self.shutdown()
             except (UnsupportedJavaException, UnexpectedJavaResponseException) as exc:
-                self.cog.lavalink_connection_aborted = True
                 log.critical(exc)
+                self.cog.lavalink_connection_aborted = True
                 return await self.shutdown()
             except ManagedLavalinkNodeException as exc:
                 delay = backoff.delay()
