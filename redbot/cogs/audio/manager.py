@@ -517,7 +517,7 @@ class ServerManager:
                     log.warning(
                         "Lavalink Managed node startup failed retrying in %s seconds\n%s",
                         delay,
-                        exc.response
+                        exc.response,
                     )
                     retry_count += 1
                     await self._partial_shutdown()
