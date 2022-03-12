@@ -61,7 +61,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 current, self.local_folder_current_path
             )
             playing_servers = len(lavalink.active_players())
-        except IndexError:
+        except (IndexError, NodeNotFound, PlayerNotFound):
             get_single_title = None
             playing_servers = 0
         return get_single_title, playing_servers

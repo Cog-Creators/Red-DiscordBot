@@ -209,9 +209,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
             else:
                 await ctx.send_help()
-        elif isinstance(error, (IndexError, ClientConnectorError)) and any(
-            e in str(error).lower() for e in ["no nodes found.", "cannot connect to host"]
-        ):
+        elif isinstance(error, (NodeNotFound, ClientConnectorError)):
             handled = True
             await self.send_embed_msg(
                 ctx,
@@ -220,7 +218,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 error=True,
             )
             log.trace("This is a handled error", exc_info=error)
-        elif isinstance(error, KeyError) and "such player for that guild" in str(error):
+        elif isinstance(error, PlayerNotFound):
             handled = True
             await self.send_embed_msg(
                 ctx,
