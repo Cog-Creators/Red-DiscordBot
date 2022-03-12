@@ -22,7 +22,7 @@ from pygments.token import (
     Token,
 )
 from rich._log_render import LogRender  # DEP-WARN
-from rich.console import render_group
+from rich.console import group
 from rich.containers import Renderables
 from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
@@ -151,7 +151,7 @@ class FixedMonokaiStyle(MonokaiStyle):
 
 
 class RedTraceback(Traceback):
-    @render_group()
+    @group()
     def _render_stack(self, stack):
         for obj in super()._render_stack.__wrapped__(self, stack):
             if obj != "":
