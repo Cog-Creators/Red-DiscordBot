@@ -3,7 +3,6 @@ aiohttp-json-rpc
 apsw-wheels
 babel
 click
-colorama
 discord.py
 markdown
 packaging
