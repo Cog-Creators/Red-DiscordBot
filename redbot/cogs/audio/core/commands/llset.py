@@ -4,7 +4,6 @@ from pathlib import Path
 
 import discord
 import lavalink
-import psutil
 import yaml
 from discord.ext.commands import BadArgument
 from red_commons.logging import getLogger
