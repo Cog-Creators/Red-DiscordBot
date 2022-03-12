@@ -1,3 +1,4 @@
+# when changing the configuration in this file, please update CONTRIBUTING.md appropriately
 default_language_version:
   python: python3.8
 exclude: ^redbot/vendored/

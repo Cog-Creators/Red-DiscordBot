@@ -42,6 +42,7 @@ redbot-launcher = "redbot.launcher:main"
 [project.entry-points.pytest11]
 red-discordbot = "redbot.pytest"
 
+# when changing the configuration below, please update CONTRIBUTING.md appropriately
 [tool.black]
 line-length = 99
 required-version = '22'

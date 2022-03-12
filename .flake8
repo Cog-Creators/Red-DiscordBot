@@ -1,3 +1,4 @@
+# when changing the configuration in this file, please update CONTRIBUTING.md appropriately
 [flake8]
 max-line-length = 99
 select = C,E,F,W
