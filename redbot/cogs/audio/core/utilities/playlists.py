@@ -13,6 +13,7 @@ import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound
 from red_commons.logging import getLogger
 
 from redbot.core import commands
@@ -547,7 +548,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-            except IndexError:
+            except NodeNotFound:
                 await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Playlists"),

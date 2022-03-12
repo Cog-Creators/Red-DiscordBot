@@ -10,6 +10,8 @@ import lavalink
 from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound
+
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator
@@ -92,7 +94,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connect to a voice channel first."),
                 )
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -200,7 +202,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connect to a voice channel first."),
                 )
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -463,7 +465,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connect to a voice channel first."),
                 )
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -579,7 +581,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("Connect to a voice channel first."),
                 )
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -703,7 +705,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Search For Tracks"),
                     description=_("Connect to a voice channel first."),
                 )
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Search For Tracks"),

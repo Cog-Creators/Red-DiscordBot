@@ -10,6 +10,8 @@ import lavalink
 from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -103,7 +105,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
                     ctx, title=_("Connection to Lavalink node has not yet been established.")
                 )
