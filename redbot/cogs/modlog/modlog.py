@@ -7,7 +7,7 @@ import discord
 from redbot.core import commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import bold, box, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 
 _ = Translator("ModLog", __file__)
@@ -38,10 +38,7 @@ class ModLog(commands.Cog):
             if await ctx.embed_requested():
                 await ctx.send(embed=await case.message_content(embed=True))
             else:
-                message = _("{case}\n**Timestamp:** {timestamp}").format(
-                    case=await case.message_content(embed=False),
-                    timestamp=f"<t:{int(case.created_at)}>",
-                )
+                message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp:'))} <t:{int(case.created_at)}>"
                 await ctx.send(message)
 
     @commands.command()
@@ -74,10 +71,7 @@ class ModLog(commands.Cog):
             else:
                 rendered_cases = []
                 for case in cases:
-                    message = _("{case}\n**Timestamp:** {timestamp}").format(
-                        case=await case.message_content(embed=False),
-                        timestamp=f"<t:{int(case.created_at)}>",
-                    )
+                    message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp:'))} <t:{int(case.created_at)}>"
                     rendered_cases.append(message)
 
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
@@ -108,10 +102,7 @@ class ModLog(commands.Cog):
             rendered_cases = []
             message = ""
             for case in cases:
-                message += _("{case}\n**Timestamp:** {timestamp}\n\n").format(
-                    case=await case.message_content(embed=False),
-                    timestamp=f"<t:{int(case.created_at)}>",
-                )
+                message += f"{await case.message_content(embed=False)}\n{bold(_('Timestamp:'))} <t:{int(case.created_at)}>"
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)

@@ -19,6 +19,7 @@
 #
 import os
 import sys
+import time
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("_ext"))
@@ -61,7 +62,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018-2021, Cog Creators"
+copyright = f"2018-{time.strftime('%Y')}, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -95,7 +96,7 @@ exclude_patterns = [
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = "default"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -116,6 +117,12 @@ rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+
+# Add any extra paths that contain custom files (such as robots.txt or
+# .htaccess) here, relative to this directory. These files are copied
+# directly to the root of the documentation.
+#
+html_extra_path = ["_html"]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
