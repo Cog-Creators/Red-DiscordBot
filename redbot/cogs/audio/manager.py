@@ -468,9 +468,6 @@ class ServerManager:
                             "pid",
                             "name",
                             "create_time",
-                            "gids",
-                            "uids",
-                            "cwd",
                             "status",
                             "cmdline",
                         ]
