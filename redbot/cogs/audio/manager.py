@@ -447,20 +447,35 @@ class ServerManager:
         process_list = []
         async for proc in AsyncIter(psutil.process_iter()):
             try:
-                pinfo = proc.as_dict(attrs=["pid", "name", "create_time", "cmdline"])
+                cmdline = []
                 if (
-                    pinfo["cmdline"]
-                    and self._args
+                    self._args
+                    and (cmdline := proc.cmdline())
                     and all(
-                        a in pinfo["cmdline"]
+                        a in cmdline
                         for a in [self._args[1], self._args[2], self._args[-2], self._args[-1]]
                     )
-                ):  # Ensures the only jars we kill are jars started by checking 4 non-changeable args.
+                ):
+                    # Ensures the only jars we kill are jars started by checking 4 non-changeable args.
                     # self._args[1], '-Djdk.tls.client.protocols=TLSv1.2'
                     # self._args[2], '-Xms64M' - this only stays here while we hardcode the mininum value.
                     # self._args[-2], '-jar'
                     # self._args[-1], str(LAVALINK_JAR_FILE)
-                    process_list.append(pinfo)
+                    proc_as_dict = proc.as_dict(
+                        attrs=[
+                            "pid",
+                            "name",
+                            "create_time",
+                            "gids",
+                            "uids",
+                            "cwd",
+                            "status",
+                        ]
+                    )
+                    proc_as_dict["cmdline"] = cmdline
+
+                    process_list.append(proc_as_dict)
+
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         return process_list
