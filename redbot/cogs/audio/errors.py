@@ -15,7 +15,7 @@ class ManagedLavalinkNodeException(AudioError):
     """Base Exception for Managed Lavalink Node Exceptions"""
 
 
-class UnhealthyException(ManagedLavalinkNodeException):
+class NodeUnhealthy(ManagedLavalinkNodeException):
     """Exception Raised when the node health checks fail"""
 
 

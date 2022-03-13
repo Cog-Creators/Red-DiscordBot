@@ -35,7 +35,7 @@ from .errors import (
     TooManyProcessFound,
     IncorrectProcessFound,
     NoProcessFound,
-    UnhealthyException,
+    NodeUnhealthy,
 )
 from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size, replace_p_with_prefix
 from ...core.utils import AsyncIter
@@ -536,7 +536,7 @@ class ServerManager:
                                 await asyncio.sleep(5)
                         except Exception as exc:
                             log.info(exc, exc_info=exc)  # TODO: Change to debug
-                            raise UnhealthyException(str(exc))
+                            raise NodeUnhealthy(str(exc))
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
             except asyncio.TimeoutError:
@@ -547,7 +547,7 @@ class ServerManager:
                     delay,
                 )
                 await asyncio.sleep(delay)
-            except UnhealthyException as exc:
+            except NodeUnhealthy:
                 delay = backoff.delay()
                 await self._partial_shutdown()
                 log.warning(
