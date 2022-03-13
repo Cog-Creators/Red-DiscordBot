@@ -15,6 +15,10 @@ class ManagedLavalinkNodeException(AudioError):
     """Base Exception for Managed Lavalink Node Exceptions"""
 
 
+class UnhealthyException(ManagedLavalinkNodeException):
+    """Exception Raised when the node health checks fail"""
+
+
 class InvalidArchitectureException(ManagedLavalinkNodeException):
     """Error thrown when the Managed Lavalink node is started on an invalid arch."""
 

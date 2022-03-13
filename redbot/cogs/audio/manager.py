@@ -35,6 +35,7 @@ from .errors import (
     TooManyProcessFound,
     IncorrectProcessFound,
     NoProcessFound,
+    UnhealthyException,
 )
 from .utils import task_callback_exception, change_dict_naming_convention, get_max_allocation_size, replace_p_with_prefix
 from ...core.utils import AsyncIter
@@ -342,9 +343,9 @@ class ServerManager:
                 p = psutil.Process(self._node_pid)
                 p.terminate()
                 p.kill()
-        for (
-            proc
-        ) in await self.get_lavalink_process():  # This will kill all processed with "lavalink"
+        for proc in await self.get_lavalink_process(
+            cwd=str(LAVALINK_DOWNLOAD_DIR)
+        ):  # This will kill all processed with "lavalink" where the cwd is LAVALINK_DOWNLOAD_DIR
             with contextlib.suppress(psutil.Error):
                 p = psutil.Process(proc["pid"])
                 p.terminate()
@@ -443,16 +444,17 @@ class ServerManager:
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
-    async def get_lavalink_process(self):
+    async def get_lavalink_process(self, cwd: Optional[str] = None):
         process_list = []
+        filter = [cwd] if cwd else []
         async for proc in AsyncIter(psutil.process_iter()):
             try:
-                cmdline = []
                 if (
-                    self._args
-                    and (cmdline := proc.cmdline())
+                    self._args and (proc.cwd() in filter)
+                    if cwd
+                    else True
                     and all(
-                        a in cmdline
+                        a in proc.cmdline()
                         for a in [self._args[1], self._args[2], self._args[-2], self._args[-1]]
                     )
                 ):
@@ -470,10 +472,9 @@ class ServerManager:
                             "uids",
                             "cwd",
                             "status",
+                            "cmdline",
                         ]
                     )
-                    proc_as_dict["cmdline"] = cmdline
-
                     process_list.append(proc_as_dict)
 
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
@@ -494,7 +495,7 @@ class ServerManager:
                     await self._start(java_path=java_path)
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
-                    process_list = await self.get_lavalink_process()
+                    process_list = await self.get_lavalink_process(cwd=str(LAVALINK_DOWNLOAD_DIR))
                     # Jar is not running
                     if not process_list:
                         log.warning("Managed node process not found.")
@@ -508,7 +509,9 @@ class ServerManager:
                         )
                         log.debug("%s", process_list[0])
                         raise IncorrectProcessFound
-                    # An unmanaged killable jar is running
+                    # WARN:
+                    #  This will cause issues with users running the bot from the same instance of Red multiple times.
+                    #  AFAIK this is unsupported anyway
                     elif len(process_list) > 1:
                         log.warning(
                             "Multiple processes meet the managed node criteria, "
@@ -522,23 +525,36 @@ class ServerManager:
                         # len(process_list) == 1 and process_list[0]["pid"] == self._node_pid
                         # This will not be as simple as adding a for loop here if multi node support is added
                         log.debug("Managed node possible PID: %d", self._node_pid)
-                        node = lavalink.get_all_nodes()[0]
-                        await node.wait_until_ready(
-                            timeout=10
-                        )  # 10 seconds wait for a ping response?
-                        await node._ws.ping()  # Hoping this throws an exception which will then trigger a restart
-                        backoff = ExponentialBackoff(
-                            base=7
-                        )  # Reassign Backoff to reset it on successful ping.
-                        # ExponentialBackoff.reset() would be a nice method to have
-                        await asyncio.sleep(1)
+                        try:
+                            node = lavalink.get_all_nodes()[0]
+                            if node.ready:
+                                # Hoping this throws an exception which will then trigger a restart
+                                await node._ws.ping()
+                                backoff = ExponentialBackoff(
+                                    base=7
+                                )  # Reassign Backoff to reset it on successful ping.
+                                # ExponentialBackoff.reset() would be a nice method to have
+                                await asyncio.sleep(1)
+                            else:
+                                await asyncio.sleep(5)
+                        except Exception as exc:
+                            log.info(exc, exc_info=exc)  # TODO: Change to debug
+                            raise UnhealthyException(str(exc))
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
             except asyncio.TimeoutError:
                 delay = backoff.delay()
                 await self._partial_shutdown()
                 log.warning(
-                    "Lavalink Managed node startup failed retrying in %s seconds",
+                    "Lavalink Managed node health check timeout, restarting in %s seconds",
+                    delay,
+                )
+                await asyncio.sleep(delay)
+            except UnhealthyException as exc:
+                delay = backoff.delay()
+                await self._partial_shutdown()
+                log.warning(
+                    "Lavalink Managed node health check failed, restarting in %s seconds",
                     delay,
                 )
                 await asyncio.sleep(delay)
@@ -546,7 +562,7 @@ class ServerManager:
                 delay = backoff.delay()
                 if exc.should_retry:
                     log.warning(
-                        "Lavalink Managed node startup failed retrying in %s seconds\n%s",
+                        "Lavalink Managed node download failed retrying in %s seconds\n%s",
                         delay,
                         exc.response,
                     )
