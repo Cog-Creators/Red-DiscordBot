@@ -494,12 +494,23 @@ class Downloader(commands.Cog):
 
         - `<deps...>` The package or packages you wish to install.
         """
+        confirmation_msg = await ctx.send(f"Are you sure you want to install `{(', '.join(deps))}`?")
+        pred = ReactionPredicate.yes_or_no(confirmation_msg, ctx.author)
+        start_adding_reactions(confirmation_msg, ReactionPredicate.YES_OR_NO_EMOJIS)
+        try:
+            await self.bot.wait_for("reaction_add", check=pred, timeout=60)
+        except asyncio.TimeoutError:
+            return await ctx.send(_("I guess not."))
+        if not pred.result:
+            return await ctx.send(_("Alright I will not install it."))
         repo = Repo("", "", "", "", Path.cwd())
         async with ctx.typing():
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
-            await ctx.send(_("Libraries installed.") if len(deps) > 1 else _("Library installed."))
+            await ctx.send(
+                _("Libraries installed.") if len(deps) > 1 else _("Library installed.")
+            )
         else:
             await ctx.send(
                 _(
@@ -511,7 +522,7 @@ class Downloader(commands.Cog):
                     "The library failed to install. Please check your logs for a complete list."
                 )
             )
-
+            
     @commands.group()
     @checks.is_owner()
     async def repo(self, ctx: commands.Context) -> None:
