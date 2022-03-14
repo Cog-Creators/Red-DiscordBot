@@ -7,6 +7,7 @@ from typing import Optional, Union
 
 import discord
 import lavalink
+from lavalink import NodeNotFound
 from red_commons.logging import getLogger
 
 from redbot.core import commands
@@ -683,7 +684,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Join Voice Channel"),
                 description=_("Connect to a voice channel first."),
             )
-        except IndexError:
+        except NodeNotFound:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
