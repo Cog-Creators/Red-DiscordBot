@@ -12,6 +12,7 @@ from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
+from redbot.core.utils.chat_formatting import inline
 from .events import Events
 from .kickban import KickBanMixin
 from .names import ModInfo
@@ -141,8 +142,8 @@ class Mod(
                 if e["ignored"] is not False:
                     msg = _(
                         "Ignored guilds and channels have been moved. "
-                        "Please use `[p]moveignoredchannels` to migrate the old settings."
-                    )
+                        "Please use {command} to migrate the old settings."
+                    ).format(command=inline("[p]moveignoredchannels"))
                     self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     message_sent = True
                     break
@@ -151,8 +152,8 @@ class Mod(
                     if e["ignored"] is not False:
                         msg = _(
                             "Ignored guilds and channels have been moved. "
-                            "Please use `[p]moveignoredchannels` to migrate the old settings."
-                        )
+                            "Please use {command} to migrate the old settings."
+                        ).format(command=inline("[p]moveignoredchannels"))
                         self.bot.loop.create_task(
                             send_to_owners_with_prefix_replaced(self.bot, msg)
                         )
@@ -163,8 +164,8 @@ class Mod(
                 if e["delete_delay"] != -1:
                     msg = _(
                         "Delete delay settings have been moved. "
-                        "Please use `[p]movedeletedelay` to migrate the old settings."
-                    )
+                        "Please use {command} to migrate the old settings."
+                    ).format(command=inline("[p]movedeletedelay"))
                     self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
             await self.config.version.set("1.2.0")
