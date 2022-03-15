@@ -356,7 +356,7 @@ async def remove_instance_interaction() -> None:
 
 
 @click.group(invoke_without_command=True)
-@click.option("--debug", "-d", "--verbose", "-v", count=True)
+@click.option("--debug", "--verbose", "-v", count=True)
 @click.option(
     "--no-prompt",
     "interactive",
