@@ -297,8 +297,8 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
                 "log.time": Style(dim=True),
                 "logging.level.warning": Style(color="yellow"),
                 "logging.level.critical": Style(color="white", bgcolor="red"),
-                "logging.level.verbose": Style(color="blue", italic=True, dim=True),
-                "logging.level.trace": Style(color="green", italic=True, dim=True),
+                "logging.level.verbose": Style(color="magenta", italic=True, dim=True),
+                "logging.level.trace": Style(color="white", italic=True, dim=True),
                 "repr.number": Style(color="cyan"),
                 "repr.url": Style(underline=True, italic=True, bold=False, color="cyan"),
             }
