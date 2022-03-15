@@ -36,7 +36,7 @@ from fuzzywuzzy import fuzz, process
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 
-from redbot import VersionInfo
+from redbot import VersionInfo, _log
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -57,6 +57,7 @@ __all__ = (
     "fetch_latest_red_version_info",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
+    "cli_level_to_log_level",
 )
 
 _T = TypeVar("_T")
@@ -357,3 +358,15 @@ class RichIndefiniteBarColumn(ProgressColumn):
             total=task.total,
             completed=task.completed,
         )
+
+
+def cli_level_to_log_level(level: int) -> int:
+    if level == 0:
+        log_level = logging.INFO
+    elif level == 1:
+        log_level = logging.DEBUG
+    elif level == 2:
+        log_level = _log.VERBOSE
+    else:
+        log_level = _log.TRACE
+    return log_level

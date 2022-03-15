@@ -1,5 +1,7 @@
 import asyncio as _asyncio
+import logging as _logging
 import os as _os
+import re
 import re as _re
 import sys as _sys
 import warnings as _warnings
@@ -14,6 +16,7 @@ from typing import (
     Union as _Union,
 )
 
+from redbot._log import RedTraceLogger
 
 MIN_PYTHON_VERSION = (3, 8, 1)
 
@@ -209,9 +212,14 @@ def _ensure_no_colorama():
         colorama.initialise.wrap_stream = _colorama_wrap_stream
 
 
+def _update_logger_class():
+    _logging.setLoggerClass(RedTraceLogger)
+
+
 def _early_init():
     _update_event_loop_policy()
     _ensure_no_colorama()
+    _update_logger_class()
 
 
 __version__ = "3.5.0.dev1"
@@ -222,7 +230,8 @@ _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
 # Show DeprecationWarning
 _warnings.filterwarnings("default", category=DeprecationWarning)
 
-if "--debug" not in _sys.argv:
+# TODO: Rearrange cli flags here and use the value instead of this monkeypatch
+if not any(re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
     # DEP-WARN
     # Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
     # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
