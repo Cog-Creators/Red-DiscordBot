@@ -18,7 +18,7 @@ from ...apis.interface import AudioAPIInterface
 from ...apis.playlist_wrapper import PlaylistWrapper
 from ...audio_logging import debug_exc_log
 from ...errors import DatabaseError, TrackEnqueueError
-from ...utils import task_callback
+from ...utils import task_callback_debug
 from ..abc import MixinMeta
 from ..cog_utils import _OWNER_NOTIFICATION, _SCHEMA_VERSION, CompositeMetaClass
 
@@ -33,7 +33,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         # as initial load happens before the bot can ever be ready.
         lavalink.set_logging_level(self.bot._cli_flags.logging_level)
         self.cog_init_task = self.bot.loop.create_task(self.initialize())
-        self.cog_init_task.add_done_callback(task_callback)
+        self.cog_init_task.add_done_callback(task_callback_debug)
 
     async def initialize(self) -> None:
         await self.bot.wait_until_red_ready()
@@ -59,10 +59,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             self.player_automated_timer_task = self.bot.loop.create_task(
                 self.player_automated_timer()
             )
-            self.player_automated_timer_task.add_done_callback(task_callback)
-        except Exception as err:
-            log.exception("Audio failed to start up, please report this issue.", exc_info=err)
-            raise err
+            self.player_automated_timer_task.add_done_callback(task_callback_debug)
+        except Exception as exc:
+            log.critical("Audio failed to start up, please report this issue.", exc_info=exc)
+            raise exc
 
         self.cog_ready_event.set()
 

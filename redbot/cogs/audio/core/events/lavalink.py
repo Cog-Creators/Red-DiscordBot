@@ -14,6 +14,7 @@ from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+from ...utils import task_callback_trace
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.lavalink")
 ws_audio_log = logging.getLogger("red.Audio.WS.Audio")
@@ -294,7 +295,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         if current_id:
                             asyncio.create_task(
                                 self.api_interface.global_cache_api.report_invalid(current_id)
-                            )
+                            ).add_done_callback(task_callback_trace)
                     await message_channel.send(embed=embed)
             await player.skip()
 

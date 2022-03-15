@@ -19,7 +19,7 @@ from redbot.core import data_manager
 from redbot.core.i18n import Translator
 
 from .errors import LavalinkDownloadFailed
-from .utils import task_callback
+from .utils import task_callback_exception
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = logging.getLogger("red.Audio.manager")
@@ -167,7 +167,7 @@ class ServerManager:
             log.warning("Timeout occurred whilst waiting for internal Lavalink server to be ready")
 
         self._monitor_task = asyncio.create_task(self._monitor())
-        self._monitor_task.add_done_callback(task_callback)
+        self._monitor_task.add_done_callback(task_callback_exception)
 
     async def _get_jar_args(self) -> List[str]:
         (java_available, java_version) = await self._has_java()
