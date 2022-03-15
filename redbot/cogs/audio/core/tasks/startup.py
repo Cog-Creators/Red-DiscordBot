@@ -59,7 +59,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             self.player_automated_timer_task.add_done_callback(task_callback_debug)
         except Exception as exc:
             log.critical("Audio failed to start up, please report this issue.", exc_info=exc)
-            raise exc
+            return
 
         self.cog_ready_event.set()
 
