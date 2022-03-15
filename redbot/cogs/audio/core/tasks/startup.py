@@ -66,7 +66,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
     async def restore_players(self):
         tries = 0
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
-        while not lavalink.node._nodes:
+        while not lavalink.get_all_nodes():
             await asyncio.sleep(1)
             tries += 1
             if tries > 60:
