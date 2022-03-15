@@ -25,7 +25,6 @@ from redbot.core.utils.predicates import MessagePredicate
 from ...apis.api_utils import FakePlaylist
 from ...apis.playlist_interface import Playlist, create_playlist, delete_playlist, get_all_playlist
 from ...audio_dataclasses import LocalPath, Query
-from ...audio_logging import IS_DEBUG, debug_exc_log
 from ...converters import ComplexScopeParser, ScopeParser
 from ...errors import MissingGuild, TooManyMatches, TrackEnqueueError
 from ...utils import PlaylistScope
@@ -778,7 +777,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                             file=discord.File(str(temp_tar)),
                         )
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to send playlist to channel")
+                    log.verbose("Failed to send playlist to channel", exc_info=exc)
                 temp_file.unlink()
                 temp_tar.unlink()
             else:
@@ -1524,10 +1523,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                         query_obj=query,
                     ):
-                        if IS_DEBUG:
-                            log.debug(
-                                "Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id
-                            )
+                        log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
                         continue
                     query = Query.process_input(track.uri, self.local_folder_current_path)
                     if query.is_local:

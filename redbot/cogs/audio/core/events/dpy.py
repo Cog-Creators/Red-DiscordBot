@@ -16,7 +16,6 @@ from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_list
 
-from ...audio_logging import debug_exc_log
 from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
@@ -177,7 +176,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("Connection to Lavalink has been lost."),
                 error=True,
             )
-            debug_exc_log(log, error, "This is a handled error")
+            log.trace("This is a handled error", exc_info=error)
         elif isinstance(error, KeyError) and "such player for that guild" in str(error):
             handled = True
             await self.send_embed_msg(
@@ -186,7 +185,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 description=_("The bot is not connected to a voice channel."),
                 error=True,
             )
-            debug_exc_log(log, error, "This is a handled error")
+            log.trace("This is a handled error", exc_info=error)
         elif isinstance(error, (TrackEnqueueError, asyncio.exceptions.TimeoutError)):
             handled = True
             await self.send_embed_msg(
@@ -198,7 +197,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 ),
                 error=True,
             )
-            debug_exc_log(log, error, "This is a handled error")
+            log.trace("This is a handled error", exc_info=error)
         elif isinstance(error, discord.errors.HTTPException):
             handled = True
             await self.send_embed_msg(

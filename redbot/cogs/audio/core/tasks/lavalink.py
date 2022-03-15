@@ -106,7 +106,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                 )
             except asyncio.TimeoutError:
-                log.error("Connecting to Lavalink server timed out, retrying...")
+                log.warning("Connecting to Lavalink server timed out, retrying...")
                 if external is False and self.player_manager is not None:
                     await self.player_manager.shutdown()
                 retry_count += 1

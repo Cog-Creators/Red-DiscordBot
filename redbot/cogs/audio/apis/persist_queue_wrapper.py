@@ -16,7 +16,6 @@ from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
-from ..audio_logging import debug_exc_log
 from ..sql_statements import (
     PERSIST_QUEUE_BULK_PLAYED,
     PERSIST_QUEUE_CREATE_INDEX,
@@ -90,7 +89,7 @@ class QueueInterface:
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to complete playlist fetch from database")
+                    log.verbose("Failed to complete playlist fetch from database", exc_info=exc)
                     return []
 
         async for index, row in AsyncIter(row_result).enumerate(start=1):

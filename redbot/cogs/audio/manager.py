@@ -251,7 +251,7 @@ class ServerManager:
             await asyncio.sleep(0.5)
 
         # This task hasn't been cancelled - Lavalink was shut down by something else
-        log.info("Internal Lavalink jar shutdown unexpectedly")
+        log.warning("Internal Lavalink jar shutdown unexpectedly")
         if not self._has_java_error():
             log.info("Restarting internal Lavalink server")
             await self.start(self._java_exc)
