@@ -4,25 +4,26 @@ import os
 import re
 import shutil
 import sys
-from pathlib import Path
-from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List, cast
 from collections import defaultdict
+from pathlib import Path
+from typing import Collection, Dict, Iterable, List, Optional, Set, Tuple, Union, cast
 
 import discord
-from redbot.core import checks, commands, Config, version_info as red_version_info
+from redbot.core import Config, checks, commands
+from redbot.core import version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
+from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import errors
 from .checks import do_install_agreement
 from .converters import InstalledCog
-from .installable import InstallableType, Installable, InstalledModule
+from .installable import Installable, InstallableType, InstalledModule
 from .log import log
-from .repo_manager import RepoManager, Repo
+from .repo_manager import Repo, RepoManager
 
 _ = Translator("Downloader", __file__)
 
@@ -494,7 +495,9 @@ class Downloader(commands.Cog):
 
         - `<deps...>` The package or packages you wish to install.
         """
-        confirmation_msg = await ctx.send(f"Are you sure you want to install `{(', '.join(deps))}`?")
+        confirmation_msg = await ctx.send(
+            "Are you sure you want to install `{}`?".format(humanize_list(deps))
+        )
         pred = ReactionPredicate.yes_or_no(confirmation_msg, ctx.author)
         start_adding_reactions(confirmation_msg, ReactionPredicate.YES_OR_NO_EMOJIS)
         try:
@@ -508,9 +511,7 @@ class Downloader(commands.Cog):
             success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
-            await ctx.send(
-                _("Libraries installed.") if len(deps) > 1 else _("Library installed.")
-            )
+            await ctx.send(_("Libraries installed.") if len(deps) > 1 else _("Library installed."))
         else:
             await ctx.send(
                 _(
@@ -522,7 +523,7 @@ class Downloader(commands.Cog):
                     "The library failed to install. Please check your logs for a complete list."
                 )
             )
-            
+
     @commands.group()
     @checks.is_owner()
     async def repo(self, ctx: commands.Context) -> None:
