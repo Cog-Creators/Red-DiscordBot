@@ -846,11 +846,38 @@ class Red(
             or await self.is_owner(ctx.author)
             or await self.is_admin(ctx.author)
         )
+        # guild-wide checks
         if surpass_ignore:
             return True
         guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
-        chann_ignored = await self._ignored_cache.get_ignored_channel(ctx.channel)
-        return not (guild_ignored or chann_ignored and not perms.manage_channels)
+        if guild_ignored:
+            return False
+
+        # (parent) channel checks
+        if perms.manage_channels:
+            return True
+
+        if isinstance(ctx.channel, discord.Thread):
+            channel = ctx.channel.parent
+            thread = ctx.channel
+        else:
+            channel = ctx.channel
+            thread = None
+
+        chann_ignored = await self._ignored_cache.get_ignored_channel(channel)
+        if chann_ignored:
+            return False
+        if thread is None:
+            return True
+
+        # thread checks
+        if perms.manage_threads:
+            return True
+        thread_ignored = await self._ignored_cache.get_ignored_channel(
+            thread,
+            check_category=False,  # already checked for parent
+        )
+        return not thread_ignored
 
     async def get_valid_prefixes(self, guild: Optional[discord.Guild] = None) -> List[str]:
         """
