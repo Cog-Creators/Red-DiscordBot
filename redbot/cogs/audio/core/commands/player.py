@@ -1,5 +1,4 @@
 import contextlib
-import datetime
 import logging
 import math
 import time
@@ -18,7 +17,6 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
-from ...audio_logging import IS_DEBUG
 from ...errors import (
     DatabaseError,
     QueryUnauthorized,
@@ -129,9 +127,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self._get_spotify_tracks(ctx, query)
         try:
             await self._enqueue_tracks(ctx, query)
-        except QueryUnauthorized as err:
+        except QueryUnauthorized as exc:
             return await self.send_embed_msg(
-                ctx, title=_("Unable To Play Tracks"), description=err.message
+                ctx, title=_("Unable To Play Tracks"), description=exc.message
             )
         except Exception as e:
             self.update_player_lock(ctx, False)
@@ -238,9 +236,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 tracks = await self._get_spotify_tracks(ctx, query)
             else:
                 tracks = await self._enqueue_tracks(ctx, query, enqueue=False)
-        except QueryUnauthorized as err:
+        except QueryUnauthorized as exc:
             return await self.send_embed_msg(
-                ctx, title=_("Unable To Play Tracks"), description=err.message
+                ctx, title=_("Unable To Play Tracks"), description=exc.message
             )
         except Exception as e:
             self.update_player_lock(ctx, False)
@@ -287,8 +285,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             f"{single_track.title} {single_track.author} {single_track.uri} {str(query)}",
             query_obj=query,
         ):
-            if IS_DEBUG:
-                log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+            log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx,
@@ -818,10 +815,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                         query_obj=query,
                     ):
-                        if IS_DEBUG:
-                            log.debug(
-                                "Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id
-                            )
+                        log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
                         continue
                     elif guild_data["maxlength"] > 0:
                         if self.is_track_length_allowed(track, guild_data["maxlength"]):

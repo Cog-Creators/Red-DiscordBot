@@ -10,6 +10,7 @@ from ...errors import LavalinkDownloadFailed
 from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+from ...utils import task_callback_debug
 
 log = logging.getLogger("red.cogs.Audio.cog.Tasks.lavalink")
 _ = Translator("Audio", Path(__file__))
@@ -28,6 +29,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         lavalink.register_event_listener(self.lavalink_event_handler)
         lavalink.register_update_listener(self.lavalink_update_handler)
         self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
+        self.lavalink_connect_task.add_done_callback(task_callback_debug)
 
     async def lavalink_attempt_connect(self, timeout: int = 50) -> None:
         self.lavalink_connection_aborted = False
@@ -63,10 +65,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                             exc_info=exc,
                         )
                         self.lavalink_connection_aborted = True
-                        raise
+                        return
                 except asyncio.CancelledError:
-                    log.exception("Invalid machine architecture, cannot run Lavalink.")
-                    raise
+                    log.critical("Invalid machine architecture, cannot run Lavalink.")
+                    return
                 except Exception as exc:
                     log.exception(
                         "Unhandled exception whilst starting internal Lavalink server, "
@@ -74,7 +76,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         exc_info=exc,
                     )
                     self.lavalink_connection_aborted = True
-                    raise
+                    return
                 else:
                     break
             else:
@@ -104,7 +106,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                 )
             except asyncio.TimeoutError:
-                log.error("Connecting to Lavalink server timed out, retrying...")
+                log.warning("Connecting to Lavalink server timed out, retrying...")
                 if external is False and self.player_manager is not None:
                     await self.player_manager.shutdown()
                 retry_count += 1
@@ -114,7 +116,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     "Unhandled exception whilst connecting to Lavalink, aborting...", exc_info=exc
                 )
                 self.lavalink_connection_aborted = True
-                raise
+                return
             else:
                 break
         else:
@@ -127,3 +129,4 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         if external:
             await asyncio.sleep(5)
         self._restore_task = asyncio.create_task(self.restore_players())
+        self._restore_task.add_done_callback(task_callback_debug)
