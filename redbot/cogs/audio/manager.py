@@ -598,7 +598,7 @@ class ServerManager:
                 )
                 await asyncio.sleep(delay)
             except asyncio.CancelledError:
-                raise
+                return
             except Exception as e:
                 delay = backoff.delay()
                 # TODO: change to debug for prod -
