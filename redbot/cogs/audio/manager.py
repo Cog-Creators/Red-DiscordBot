@@ -455,9 +455,8 @@ class ServerManager:
         async for proc in AsyncIter(psutil.process_iter()):
             try:
                 if (
-                    self._args and (proc.cwd() in filter)
-                    if cwd
-                    else True
+                    self._args
+                    and ((proc.cwd() in filter) if cwd else True)
                     and all(
                         a in proc.cmdline()
                         for a in [self._args[1], self._args[2], self._args[-2], self._args[-1]]
