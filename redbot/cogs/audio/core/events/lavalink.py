@@ -51,13 +51,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
+        log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         guild_data = await self.config.guild(guild).all()
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
             self.bot.dispatch("red_audio_audio_disconnect", guild)
             self._ll_guild_updates.discard(guild.id)
             return
-
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
             deafen = guild_data["auto_deafen"]
             event_channel_id = extra.get("channelID")
@@ -68,6 +68,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     by_remote = extra.get("byRemote", "")
                     reason = extra.get("reason", "No Specified Reason").strip()
                     ws_audio_log.info(
+                        "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
+                        "Voice websocket closed event "
+                        "Code: %d -- Remote: %s -- %s",
+                        extra.get("code"),
+                        by_remote,
+                        reason,
+                    )
+                    ws_audio_log.debug(
                         "WS EVENT - SIMPLE RESUME (Healthy Socket) | "
                         "Voice websocket closed event "
                         "Code: %d -- Remote: %s -- %s, %r",
@@ -107,7 +115,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             current_track, self.local_folder_current_path
         )
         status = await self.config.status()
-        log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         prev_song: lavalink.Track = player.fetch("prev_song")
         await self.maybe_reset_error_counter(player)
 
@@ -200,12 +207,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 player.store("notify_message", notify_message)
         if event_type == lavalink.LavalinkEvents.TRACK_START and status:
+            log.debug("Track started for %s, updating bot status", guild_id)
             player_check = await self.get_active_player_count()
             await self.update_bot_presence(*player_check)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and status:
             await asyncio.sleep(1)
             if not player.is_playing:
+                log.debug("Track ended for %s, updating bot status", guild_id)
                 player_check = await self.get_active_player_count()
                 await self.update_bot_presence(*player_check)
 
@@ -216,6 +225,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 if notify_channel and notify and self._has_notify_perms(notify_channel):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
+                    log.debug(
+                        "Queue ended for %s, Disconnecting bot due to configuration", guild_id
+                    )
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     await self.config.guild_from_id(
                         guild_id=guild_id
@@ -225,6 +237,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)
             if status:
+                log.debug("Queue ended for %s, updating bot status", guild_id)
                 player_check = await self.get_active_player_count()
                 await self.update_bot_presence(*player_check)
 
@@ -266,6 +279,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
                 if early_exit:
+                    log.warning(
+                        "Audio detected multiple continuous errors during playback "
+                        "- terminating the player for guild: %s.",
+                        guild_id,
+                    )
+                    log.verbose(
+                        "Player has been terminated due to multiple playback failures: %r", player
+                    )
                     embed = discord.Embed(
                         colour=await self.bot.get_embed_color(message_channel),
                         title=_("Multiple Errors Detected"),
@@ -377,7 +398,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     reason,
                     player,
                 )
-                ws_audio_log.debug(
+                ws_audio_log.info(
                     "Reconnecting to channel %d in guild: %d | %.2fs",
                     channel_id,
                     guild_id,
