@@ -512,16 +512,16 @@ class ServerManager:
                     elif len(process_list) > 1:
                         log.warning(
                             "Multiple processes meet the managed node criteria, "
-                            "more information will be shown at DEBUG level"
+                            "more information will be shown at VERBOSE level"
                         )
                         for proc in process_list:
-                            log.debug("%s", proc)
+                            log.verbose("%s", proc)
                         raise TooManyProcessFound
                     else:
                         # only the managed jar is running
                         # len(process_list) == 1 and process_list[0]["pid"] == self._node_pid
                         # This will not be as simple as adding a for loop here if multi node support is added
-                        log.debug("Managed node possible PID: %d", self._node_pid)
+                        log.trace("Managed node possible PID: %d", self._node_pid)
                         try:
                             node = lavalink.get_all_nodes()[0]
                             if node.ready:
