@@ -66,6 +66,8 @@ class MixinMeta(ABC):
     _disconnected_players: MutableMapping[int, bool]
     global_api_user: MutableMapping[str, Any]
 
+    _runtime_external_node: bool
+
     cog_cleaned_up: bool
     lavalink_connection_aborted: bool
 

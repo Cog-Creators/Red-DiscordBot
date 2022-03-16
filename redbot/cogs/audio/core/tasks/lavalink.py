@@ -43,9 +43,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         if self._restore_task:
             self._restore_task.cancel()
         if self.managed_node_controller is not None:
-            if not self.managed_node_controller._shutdown:
-                await self.managed_node_controller.shutdown()
-                await asyncio.sleep(5)
+            await self.managed_node_controller.shutdown()
+            await asyncio.sleep(5)
         await lavalink.close(self.bot)
         while retry_count < max_retries:
             configs = await self.config.all()
@@ -67,6 +66,10 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except asyncio.TimeoutError:
                     if self.managed_node_controller is not None:
                         await self.managed_node_controller.shutdown()
+                    if self._runtime_external_node is True:
+                        log.warning("Attempting to connect to existing Lavalink Node.")
+                        self.lavalink_connection_aborted = False
+                        break
                     if self.lavalink_connection_aborted is not True:
                         log.critical(
                             "Managed node startup timeout, aborting managed node startup."
@@ -119,9 +122,15 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 return
             except asyncio.TimeoutError:
                 await lavalink.close(self.bot)
-                log.warning("Connecting to Lavalink node timed out, retrying...")
                 retry_count += 1
-                await asyncio.sleep(1)  # prevent busylooping
+                if self._runtime_external_node is True:
+                    log.warning(
+                        "Attempt to connect to existing Lavalink node failed, aborting future reconnects."
+                    )
+                    self.lavalink_connection_aborted = True
+                    return
+                log.warning("Connecting to Lavalink node timed out, retrying...")
+                await asyncio.sleep(1)
             except Exception as exc:
                 log.exception(
                     "Unhandled exception whilst connecting to Lavalink node, aborting...",
