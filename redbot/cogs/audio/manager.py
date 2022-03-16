@@ -534,8 +534,12 @@ class ServerManager:
                                 await asyncio.sleep(1)
                             else:
                                 await asyncio.sleep(5)
+                        except IndexError:
+                            # In case lavalink.get_all_nodes() returns 0 Nodes
+                            #  (During a connect or multiple connect failures)
+                            await asyncio.sleep(10)
                         except Exception as exc:
-                            log.info(exc, exc_info=exc)  # TODO: Change to debug
+                            log.debug(exc, exc_info=exc)
                             raise NodeUnhealthy(str(exc))
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
