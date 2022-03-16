@@ -291,9 +291,9 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 task_callback_trace
             )
             if self.managed_node_controller is not None:
-                self.bot.loop.create_task(self.managed_node_controller.shutdown()).add_done_callback(
-                    task_callback_trace
-                )
+                self.bot.loop.create_task(
+                    self.managed_node_controller.shutdown()
+                ).add_done_callback(task_callback_trace)
 
             self.cog_cleaned_up = True
 
