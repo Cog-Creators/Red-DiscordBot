@@ -327,7 +327,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                                 self.api_interface.global_cache_api.report_invalid(current_id)
                             ).add_done_callback(task_callback_trace)
                     await message_channel.send(embed=embed)
-            await player.skip()
+            if player.node.ready:
+                await player.skip()
 
     async def _websocket_closed_handler(
         self,
