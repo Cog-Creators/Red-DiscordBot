@@ -164,7 +164,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await player.play()
                 log.debug("Restored %r", player)
             except Exception as exc:
-                log.debug("Error restoring player in %d", guild_id, exc_info=exc)
+                log.debug("Error restoring player in %s", guild_id, exc_info=exc)
                 await self.api_interface.persistent_queue_api.drop(guild_id)
 
         for guild_id, (notify_channel_id, vc_id) in metadata.items():

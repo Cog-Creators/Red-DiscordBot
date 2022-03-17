@@ -530,7 +530,7 @@ class ServerManager:
                     # An unmanaged killable jar is running
                     elif len(process_list) == 1 and process_list[0]["pid"] != self._node_pid:
                         log.warning(
-                            "Managed node PID expected to be %d however when querying it I only found %d",
+                            "Managed node PID expected to be %s however when querying it I only found %s",
                             self._node_pid,
                             process_list[0]["pid"],
                         )
@@ -551,7 +551,7 @@ class ServerManager:
                         # only the managed jar is running
                         # len(process_list) == 1 and process_list[0]["pid"] == self._node_pid
                         # This will not be as simple as adding a for loop here if multi node support is added
-                        log.trace("Managed node possible PID: %d", self._node_pid)
+                        log.trace("Managed node possible PID: %s", self._node_pid)
                         try:
                             node = lavalink.get_all_nodes()[0]
                             if node.ready:

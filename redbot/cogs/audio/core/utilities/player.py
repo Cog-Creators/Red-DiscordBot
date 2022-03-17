@@ -452,7 +452,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                     query_obj=query,
                 ):
-                    log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+                    log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     continue
                 elif guild_data["maxlength"] > 0:
                     if self.is_track_length_allowed(track, guild_data["maxlength"]):
@@ -541,7 +541,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                     query_obj=query,
                 ):
-                    log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+                    log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     self.update_player_lock(ctx, False)
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")

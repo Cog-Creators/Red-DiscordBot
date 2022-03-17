@@ -66,7 +66,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             missing_perms = OrderedDict(sorted(missing_perms.items()))
             missing_permissions = missing_perms.keys()
             log.debug(
-                "Missing the following perms in %d, Owner ID: %d: %s",
+                "Missing the following perms in %s, Owner ID: %s: %s",
                 ctx.guild.id,
                 ctx.guild.owner.id,
                 humanize_list(list(missing_permissions)),
@@ -87,7 +87,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await ctx.send(box(text=text, lang="ini"))
                 else:
                     log.info(
-                        "Missing write permission in %d, Owner ID: %d",
+                        "Missing write permission in %s, Owner ID: %s",
                         ctx.guild.id,
                         ctx.guild.owner.id,
                     )
