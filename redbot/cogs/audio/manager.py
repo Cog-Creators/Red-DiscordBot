@@ -572,7 +572,7 @@ class ServerManager:
                                 await lavalink.wait_until_ready(timeout=60, wait_if_no_node=60)
                             except asyncio.TimeoutError:
                                 self.cog.lavalink_restart_connect(manual=True)
-                            await asyncio.sleep(10)
+                                return  # lavalink_restart_connect will cause a new monitor task to be created.
                         except Exception as exc:
                             log.debug(exc, exc_info=exc)
                             raise NodeUnhealthy(str(exc))
