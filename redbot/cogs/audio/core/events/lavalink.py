@@ -51,10 +51,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
-        await player.manager.node.wait_until_ready()
         # This event is rather spammy during playback - specially if there's multiple player
         #  Lets move it to Verbose that way it still there if needed alongside the other more verbose content.
-        log.verbose("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         guild_data = await self.config.guild(guild).all()
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
@@ -103,7 +101,11 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     exc_info=exc,
                 )
             return
-
+        if not player.manager.node.ready:
+            log.debug("Player node is not ready discarding event")
+            log.verbose("Received a new discard lavalink event for %s: %s: %r", guild_id, event_type, extra)
+            return
+        log.verbose("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         await set_contextual_locales_from_guild(self.bot, guild)
         current_requester = self.rgetattr(current_track, "requester", None)
         current_stream = self.rgetattr(current_track, "is_stream", None)

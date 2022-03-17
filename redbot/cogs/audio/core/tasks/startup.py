@@ -89,7 +89,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if guild_data["currently_auto_playing_in"]:
                     notify_channel, vc_id = guild_data["currently_auto_playing_in"]
                     metadata[guild_id] = (notify_channel, vc_id)
-
+        if self.lavalink_connection_aborted:
+            return
         for guild_id, track_data in itertools.groupby(tracks_to_restore, key=lambda x: x.guild_id):
             await asyncio.sleep(0)
             tries = 0
@@ -105,13 +106,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 if not persist_cache:
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
-                if self.lavalink_connection_aborted:
+                try:
+                    player = lavalink.get_player(guild_id)
+                except (NodeNotFound, PlayerNotFound):
                     player = None
-                else:
-                    try:
-                        player = lavalink.get_player(guild_id)
-                    except (NodeNotFound, PlayerNotFound):
-                        player = None
                 vc = 0
                 guild_data = await self.config.guild_from_id(guild.id).all()
                 shuffle = guild_data["shuffle"]
