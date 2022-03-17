@@ -103,7 +103,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             return
         if not player.manager.node.ready:
             log.debug("Player node is not ready discarding event")
-            log.verbose("Received a new discard lavalink event for %s: %s: %r", guild_id, event_type, extra)
+            log.verbose(
+                "Received a new discard lavalink event for %s: %s: %r", guild_id, event_type, extra
+            )
             return
         log.verbose("Received a new lavalink event for %s: %s: %r", guild_id, event_type, extra)
         await set_contextual_locales_from_guild(self.bot, guild)

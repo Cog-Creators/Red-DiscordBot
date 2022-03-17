@@ -568,7 +568,9 @@ class ServerManager:
                             # In case lavalink.get_all_nodes() returns 0 Nodes
                             #  (During a connect or multiple connect failures)
                             try:
-                                log.debug("Managed node monitor detected RLL is not connected to any nodes")
+                                log.debug(
+                                    "Managed node monitor detected RLL is not connected to any nodes"
+                                )
                                 await lavalink.wait_until_ready(timeout=60, wait_if_no_node=60)
                             except asyncio.TimeoutError:
                                 self.cog.lavalink_restart_connect(manual=True)
