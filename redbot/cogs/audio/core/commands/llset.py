@@ -40,7 +40,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         This command block holds all commands to manage an external or managed Lavalink node.
 
         You should not mess with any command in here unless you have a valid reason to,
-        i.e. been told by someone in support to do so. All the commands in here have the potential to break the Audio Cog.
+        i.e. been told by someone in the Red-Discord Bot support server to do so. 
+        All the commands in here have the potential to break the Audio cog.
         """
 
     @command_llsetup.command(name="java")
@@ -154,7 +155,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_llsetup.command(name="external")
     async def command_llsetup_external(self, ctx: commands.Context):
-        """Toggle using external Lavalink nodes - Requires an existing external Lavalink node for Audio to work, if enabled.
+        """Toggle using external Lavalink nodes - requires an existing external Lavalink node for Audio to work, if enabled.
 
         This command disables the managed Lavalink server, if you do not have an external Lavalink node you will be unable to use Audio while this is enabled.
         """
@@ -354,7 +355,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config(self, ctx: commands.Context):
         """Configure the managed Lavalink node runtime options.
 
-        All settings under this group will likely cause Audio to malfunction if changed from their defaults, only change settings here if you been advised to by support.
+        All settings under this group will likely cause Audio to malfunction if changed from their defaults, only change settings here if you have been advised to by support.
         """
 
     @command_llsetup_config.group(name="server")
