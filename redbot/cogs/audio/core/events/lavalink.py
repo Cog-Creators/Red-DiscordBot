@@ -52,7 +52,9 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not guild:
             return
         await player.manager.node.wait_until_ready()
-        log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
+        # This event is rather spammy during playback - specially if there's multiple player
+        #  Lets move it to Verbose that way it still there if needed alongside the other more verbose content.
+        log.verbose("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
         guild_data = await self.config.guild(guild).all()
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
