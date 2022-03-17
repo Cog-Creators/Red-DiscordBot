@@ -603,16 +603,13 @@ class ServerManager:
                 await asyncio.sleep(delay)
             except asyncio.CancelledError:
                 return
-            except Exception as e:
+            except Exception as exc:
                 delay = backoff.delay()
-                # TODO: change to debug for prod -
-                #  don't wanna spam console with unhandled tracebacks -
-                #  every one you find should be mentioned so they can be properly handled
-                log.error(e, exc_info=e)
                 log.warning(
                     "Lavalink Managed node startup failed retrying in %s seconds",
                     delay,
                 )
+                log.debug(exc, exc_info=exc)
                 await self._partial_shutdown()
                 await asyncio.sleep(delay)
 
