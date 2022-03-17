@@ -324,6 +324,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         try:
             await self.send_embed_msg(ctx.author, description=box(msg, lang="ini"))
+            await ctx.tick()
         except discord.HTTPException:
             await ctx.send(_("I need to be able to DM you to send you this info."))
 
@@ -345,6 +346,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             await ctx.author.send(
                 file=discord.File(str(temp_file)),
             )
+            await ctx.tick()
         except discord.HTTPException:
             await ctx.send(_("I need to be able to DM you to send you this info."))
         finally:
