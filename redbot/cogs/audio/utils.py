@@ -79,9 +79,9 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__sentry__environment": "",
     "yaml__logging__file__max_history": 7,
     "yaml__logging__file__max_size": "1GB",
-    "yaml__logging__path": "./logs/",
-    "yaml__level__root": "INFO",
-    "yaml__level__lavalink": "INFO",
+    "yaml__logging__logging__path": "./logs/",
+    "yaml__logging__level__root": "INFO",
+    "yaml__logging__level__lavalink": "INFO",
 }
 
 DEFAULT_LAVALINK_SETTINGS = {
