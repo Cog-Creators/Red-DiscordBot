@@ -92,7 +92,7 @@ class Downloader(commands.Cog):
             self._init_task.cancel()
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     def create_init_task(self):
@@ -1119,7 +1119,9 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, message)
 
     @cog.command(name="update")
-    async def _cog_update(self, ctx: commands.Context, reload: Optional[bool], *cogs: InstalledCog) -> None:
+    async def _cog_update(
+        self, ctx: commands.Context, reload: Optional[bool], *cogs: InstalledCog
+    ) -> None:
         """Update all cogs, or ones of your choosing.
 
         Examples:
@@ -1138,7 +1140,9 @@ class Downloader(commands.Cog):
         await self._cog_update_logic(ctx, cogs=cogs)
 
     @cog.command(name="updateallfromrepos", require_var_positional=True)
-    async def _cog_updateallfromrepos(self, ctx: commands.Context, reload: Optional[bool], *repos: Repo) -> None:
+    async def _cog_updateallfromrepos(
+        self, ctx: commands.Context, reload: Optional[bool], *repos: Repo
+    ) -> None:
         """Update all cogs from repos of your choosing.
 
         Examples:
@@ -1157,7 +1161,12 @@ class Downloader(commands.Cog):
 
     @cog.command(name="updatetoversion")
     async def _cog_updatetoversion(
-        self, ctx: commands.Context, reload: Optional[bool], repo: Repo, revision: str, *cogs: InstalledCog
+        self,
+        ctx: commands.Context,
+        reload: Optional[bool],
+        repo: Repo,
+        revision: str,
+        *cogs: InstalledCog,
     ) -> None:
         """Update all cogs, or ones of your choosing to chosen revision of one repo.
 
