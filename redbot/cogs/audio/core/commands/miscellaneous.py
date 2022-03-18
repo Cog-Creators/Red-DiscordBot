@@ -6,7 +6,7 @@ from pathlib import Path
 
 import discord
 import lavalink
-from red_commons import logging
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -17,7 +17,7 @@ from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.miscellaneous")
+log = getLogger("red.cogs.Audio.cog.Commands.miscellaneous")
 _ = Translator("Audio", Path(__file__))
 
 

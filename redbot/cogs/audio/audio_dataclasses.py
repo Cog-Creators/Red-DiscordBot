@@ -20,7 +20,7 @@ from typing import (
 from urllib.parse import urlparse
 
 import lavalink
-from red_commons import logging
+from red_commons.logging import getLogger
 
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -79,7 +79,7 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
-log = logging.getLogger("red.cogs.Audio.audio_dataclasses")
+log = getLogger("red.cogs.Audio.audio_dataclasses")
 
 
 class LocalPath:

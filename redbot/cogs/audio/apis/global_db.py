@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Mapping, Optional, Union
 
 import aiohttp
 from lavalink.rest_api import LoadResult
-from red_commons import logging
+from red_commons.logging import getLogger
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 _API_URL = "https://api.redbot.app/"
 _ = Translator("Audio", Path(__file__))
-log = logging.getLogger("red.cogs.Audio.api.GlobalDB")
+log = getLogger("red.cogs.Audio.api.GlobalDB")
 
 
 class GlobalCacheWrapper:
