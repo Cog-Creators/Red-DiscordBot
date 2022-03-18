@@ -16,7 +16,7 @@ from typing import (
     Union as _Union,
 )
 
-from redbot._log import RedTraceLogger
+from red_commons.logging import maybe_update_logger_class
 
 MIN_PYTHON_VERSION = (3, 8, 1)
 
@@ -212,14 +212,10 @@ def _ensure_no_colorama():
         colorama.initialise.wrap_stream = _colorama_wrap_stream
 
 
-def _update_logger_class():
-    _logging.setLoggerClass(RedTraceLogger)
-
-
 def _early_init():
     _update_event_loop_policy()
     _ensure_no_colorama()
-    _update_logger_class()
+    maybe_update_logger_class()
 
 
 __version__ = "3.5.0.dev1"

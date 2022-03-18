@@ -1,10 +1,10 @@
-import logging
 import re
 
 from typing import Final, List, Optional, Pattern, Set, Union
 from urllib.parse import urlparse
 
 import discord
+from red_commons import logging
 
 from redbot.core import Config
 from redbot.core.commands import Context

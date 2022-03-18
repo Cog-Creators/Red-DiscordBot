@@ -1,7 +1,7 @@
-import logging
 from pathlib import Path
 
 import discord
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.i18n import Translator

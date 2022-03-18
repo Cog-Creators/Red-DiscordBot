@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import datetime
 import json
-import logging
 import math
 import random
 import time
@@ -14,6 +13,7 @@ import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.i18n import Translator

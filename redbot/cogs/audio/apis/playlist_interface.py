@@ -1,10 +1,10 @@
-import logging
 from pathlib import Path
 
 from typing import List, MutableMapping, Optional, Union
 
 import discord
 import lavalink
+from red_commons import logging
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red

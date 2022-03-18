@@ -1,7 +1,6 @@
 import asyncio
 import contextlib
 import datetime
-import logging
 from pathlib import Path
 from typing import Dict
 
@@ -9,6 +8,7 @@ import discord
 import lavalink
 from discord.backoff import ExponentialBackoff
 from discord.gateway import DiscordWebSocket
+from red_commons import logging
 
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError

@@ -1,10 +1,11 @@
 import concurrent
 import json
-import logging
 from pathlib import Path
 
 from types import SimpleNamespace
 from typing import List, MutableMapping, Optional
+
+from red_commons import logging
 
 from redbot.core import Config
 from redbot.core.bot import Red

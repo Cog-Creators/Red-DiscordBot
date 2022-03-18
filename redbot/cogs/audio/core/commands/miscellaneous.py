@@ -1,12 +1,12 @@
 import datetime
 import heapq
-import logging
 import math
 import random
 from pathlib import Path
 
 import discord
 import lavalink
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.i18n import Translator

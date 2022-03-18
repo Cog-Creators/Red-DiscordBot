@@ -1,4 +1,3 @@
-import logging
 import math
 from pathlib import Path
 
@@ -6,6 +5,7 @@ from typing import List, Tuple
 
 import discord
 import lavalink
+from red_commons import logging
 
 from fuzzywuzzy import process
 from redbot.core import commands

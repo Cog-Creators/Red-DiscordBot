@@ -1,7 +1,8 @@
 import asyncio
-import logging
 from pathlib import Path
 from typing import Literal, Mapping
+
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.i18n import Translator

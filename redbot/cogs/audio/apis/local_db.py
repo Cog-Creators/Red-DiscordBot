@@ -1,13 +1,13 @@
 import concurrent
 import contextlib
 import datetime
-import logging
 import random
 import time
 from pathlib import Path
-
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tuple, Union
+
+from red_commons import logging
 
 from redbot.core import Config
 from redbot.core.bot import Red

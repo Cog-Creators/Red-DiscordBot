@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 from collections import namedtuple
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -8,6 +7,7 @@ from typing import List, MutableMapping, Optional, Union
 
 import discord
 import lavalink
+from red_commons import logging
 
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator

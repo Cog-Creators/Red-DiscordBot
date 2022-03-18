@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import datetime
 import json
-import logging
 import random
 import time
 
@@ -13,6 +12,7 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 import aiohttp
 import discord
 import lavalink
+from red_commons import logging
 
 from lavalink.rest_api import LoadResult, LoadType
 from redbot.core import Config, commands

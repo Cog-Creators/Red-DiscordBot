@@ -3,7 +3,6 @@ import contextlib
 import datetime
 import functools
 import json
-import logging
 import re
 import struct
 from pathlib import Path
@@ -12,6 +11,7 @@ from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from red_commons import logging
 
 from redbot.core import bank, commands
 from redbot.core.commands import Context

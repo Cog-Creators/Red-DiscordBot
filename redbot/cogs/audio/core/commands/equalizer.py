@@ -1,11 +1,11 @@
 import asyncio
 import contextlib
-import logging
 import re
 from pathlib import Path
 
 import discord
 import lavalink
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.i18n import Translator

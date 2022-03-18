@@ -1,7 +1,6 @@
 import asyncio
 import contextlib
 import json
-import logging
 
 from copy import copy
 from pathlib import Path
@@ -9,6 +8,7 @@ from typing import TYPE_CHECKING, Mapping, Optional, Union
 
 import aiohttp
 from lavalink.rest_api import LoadResult
+from red_commons import logging
 
 from redbot.core import Config
 from redbot.core.bot import Red
