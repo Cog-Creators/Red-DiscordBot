@@ -1176,7 +1176,7 @@ class Downloader(commands.Cog):
 
         See `[p]cog installversion` for an explanation of `revision`.
 
-        Example:
+        Examples:
             - `[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`
             - `[p]cog updatetoversion True Broken-Repo 6107c0770ad391f1d3a6131b216991e862cc897e cog_name`
 
