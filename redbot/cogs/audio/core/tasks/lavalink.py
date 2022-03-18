@@ -1,7 +1,9 @@
 import asyncio
+import pathlib
 from pathlib import Path
 
 import lavalink
+import yaml
 from red_commons.logging import getLogger
 
 from redbot.core import data_manager
@@ -69,6 +71,40 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     if self._runtime_external_node is True:
                         log.warning("Attempting to connect to existing Lavalink Node.")
                         self.lavalink_connection_aborted = False
+                        matching_processes = (
+                            await self.managed_node_controller.get_lavalink_process(
+                                lazy_match=True
+                            )
+                        )
+                        log.debug(
+                            "Found %s processes with lavalink in the cmdline.",
+                            len(matching_processes),
+                        )
+                        valid_working_dirs = [
+                            cwd
+                            for d in matching_processes
+                            if d.get("name") == "java" and (cwd := d.get("cwd"))
+                        ]
+                        log.debug(
+                            "Found %s java processed with a cwd set.", len(valid_working_dirs)
+                        )
+                        for cwd in valid_working_dirs:
+                            config = pathlib.Path(cwd) / "application.yml"
+                            if config.exists() and config.is_file():
+                                log.debug(
+                                    "The following config file exists for an unmanaged Lavalink node %s",
+                                    config,
+                                )
+                                try:
+                                    with config.open(mode="r") as config_data:
+                                        data = yaml.safe_load(config_data)
+                                        host = data["server"]["address"]
+                                        port = data["server"]["port"]
+                                        password = data["lavalink"]["server"]["password"]
+                                    break
+                                except Exception:
+                                    log.verbose("Failed to read contents of %s", config)
+                                    continue
                         break
                     if self.lavalink_connection_aborted is not True:
                         log.critical(
