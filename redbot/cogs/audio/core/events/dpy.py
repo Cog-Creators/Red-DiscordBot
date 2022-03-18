@@ -24,7 +24,6 @@ from redbot.core.utils.chat_formatting import box, humanize_list, underline, bol
 from ...errors import TrackEnqueueError, AudioError
 from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass, DANGEROUS_COMMANDS
-from ...utils import task_callback_trace
 
 log = getLogger("red.cogs.Audio.cog.Events.dpy")
 _ = Translator("Audio", Path(__file__))
@@ -284,16 +283,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
             lavalink.unregister_event_listener(self.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
-            self.bot.loop.create_task(lavalink.close(self.bot)).add_done_callback(
-                task_callback_trace
-            )
-            self.bot.loop.create_task(self._close_database()).add_done_callback(
-                task_callback_trace
-            )
+            self.bot.loop.create_task(lavalink.close(self.bot))
+            self.bot.loop.create_task(self._close_database())
             if self.managed_node_controller is not None:
-                self.bot.loop.create_task(
-                    self.managed_node_controller.shutdown()
-                ).add_done_callback(task_callback_trace)
+                self.bot.loop.create_task(self.managed_node_controller.shutdown())
 
             self.cog_cleaned_up = True
 

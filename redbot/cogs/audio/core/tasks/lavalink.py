@@ -11,7 +11,6 @@ from redbot.core.i18n import Translator
 from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
-from ...utils import task_callback_debug
 
 log = getLogger("red.cogs.Audio.cog.Tasks.lavalink")
 _ = Translator("Audio", Path(__file__))
@@ -32,7 +31,6 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         self.lavalink_connect_task = self.bot.loop.create_task(
             self.lavalink_attempt_connect(manual=manual)
         )
-        self.lavalink_connect_task.add_done_callback(task_callback_debug)
 
     async def lavalink_attempt_connect(self, timeout: int = 50, manual: bool = False) -> None:
         self.lavalink_connection_aborted = False
@@ -188,4 +186,3 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         if external:
             await asyncio.sleep(5)
         self._restore_task = asyncio.create_task(self.restore_players())
-        self._restore_task.add_done_callback(task_callback_debug)

@@ -39,7 +39,6 @@ from .errors import (
     PortAlreadyInUse,
 )
 from .utils import (
-    task_callback_exception,
     change_dict_naming_convention,
     get_max_allocation_size,
     replace_p_with_prefix,
