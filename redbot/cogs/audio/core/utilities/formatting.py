@@ -7,7 +7,7 @@ from typing import List, Optional
 
 import discord
 import lavalink
-from red_commons import logging
+from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
@@ -19,7 +19,7 @@ from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
+log = getLogger("red.cogs.Audio.cog.Utilities.formatting")
 _ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 
