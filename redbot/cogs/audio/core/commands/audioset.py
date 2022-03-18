@@ -1,6 +1,6 @@
 import asyncio
 import contextlib
-import logging
+import
 import os
 import tarfile
 from pathlib import Path
@@ -9,6 +9,7 @@ from typing import Union
 
 import discord
 import lavalink
+from red_commons import logging
 
 from redbot.core import bank, commands
 from redbot.core.data_manager import cog_data_path

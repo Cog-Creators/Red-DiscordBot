@@ -1,10 +1,10 @@
-import logging
 import re
 import struct
 
 from typing import Final, Optional
 
 import aiohttp
+from red_commons import logging
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass

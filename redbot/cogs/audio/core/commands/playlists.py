@@ -1,6 +1,5 @@
 import asyncio
 import json
-import logging
 import math
 import os
 import tarfile
@@ -12,6 +11,7 @@ from typing import cast
 
 import discord
 import lavalink
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional

@@ -1,4 +1,3 @@
-import logging
 import math
 import re
 import time
@@ -8,6 +7,7 @@ from typing import List, Optional
 
 import discord
 import lavalink
+from red_commons import logging
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands

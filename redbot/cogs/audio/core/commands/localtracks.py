@@ -1,10 +1,10 @@
 import contextlib
-import logging
 import math
 from pathlib import Path
 from typing import MutableMapping
 
 import discord
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.i18n import Translator

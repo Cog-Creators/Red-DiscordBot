@@ -1,11 +1,11 @@
 import asyncio
 import itertools
-import logging
 from pathlib import Path
 
 from typing import Optional
 
 import lavalink
+from red_commons import logging
 
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator

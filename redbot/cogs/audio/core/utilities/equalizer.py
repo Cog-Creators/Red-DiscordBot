@@ -1,11 +1,11 @@
 import asyncio
 import contextlib
-import logging
 
 from typing import List
 
 import discord
 import lavalink
+from red_commons import logging
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box

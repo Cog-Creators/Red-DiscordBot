@@ -1,6 +1,5 @@
 import contextlib
 import glob
-import logging
 import ntpath
 import os
 import posixpath
@@ -21,6 +20,7 @@ from typing import (
 from urllib.parse import urlparse
 
 import lavalink
+from red_commons import logging
 
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter

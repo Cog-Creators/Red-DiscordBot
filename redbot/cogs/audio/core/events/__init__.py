@@ -1,4 +1,4 @@
-import logging
+from red_commons import logging
 
 from ..cog_utils import CompositeMetaClass
 from .cog import AudioEvents

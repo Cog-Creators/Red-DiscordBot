@@ -1,11 +1,11 @@
 import contextlib
-import logging
 
 from pathlib import Path
 from typing import List, Union
 
 import discord
 import lavalink
+from red_commons import logging
 
 from fuzzywuzzy import process
 from redbot.core import commands

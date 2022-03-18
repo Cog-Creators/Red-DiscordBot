@@ -1,4 +1,3 @@
-import logging
 import time
 from pathlib import Path
 
@@ -7,6 +6,7 @@ from typing import List, Optional, Tuple, Union
 import aiohttp
 import discord
 import lavalink
+from red_commons import logging
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
