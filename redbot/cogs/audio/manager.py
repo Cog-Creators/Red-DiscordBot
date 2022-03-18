@@ -361,8 +361,19 @@ class ServerManager:
                 p = psutil.Process(self._node_pid)
                 p.terminate()
                 p.kill()
+        if self._args:
+            args = (
+                self._args[1],
+                self._args[2],
+                self._args[-2],
+                self._args[-1],
+            )
+        else:
+            args = ()
+
         for proc in await self.get_lavalink_process(
-            cwd=str(LAVALINK_DOWNLOAD_DIR)
+            *args,
+            cwd=str(LAVALINK_DOWNLOAD_DIR),
         ):  # This will kill all processed with "lavalink" where the cwd is LAVALINK_DOWNLOAD_DIR
             with contextlib.suppress(psutil.Error):
                 p = psutil.Process(proc["pid"])
@@ -462,35 +473,25 @@ class ServerManager:
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
-    async def get_lavalink_process(self, cwd: Optional[str] = None):
+    @staticmethod
+    async def get_lavalink_process(
+        *matches: str, cwd: Optional[str] = None, lazy_match: bool = False
+    ):
         process_list = []
         filter = [cwd] if cwd else []
         async for proc in AsyncIter(psutil.process_iter()):
             try:
-                if (
-                    self._args
-                    and ((proc.cwd() in filter) if cwd else True)
-                    and all(
-                        a in proc.cmdline()
-                        for a in [self._args[1], self._args[2], self._args[-2], self._args[-1]]
-                    )
+                if cwd:
+                    if not (proc.cwd() in filter):
+                        continue
+                cmdline = proc.cmdline()
+                if (matches and all(a in cmdline for a in matches)) or (
+                    lazy_match and any("lavalink" in arg for arg in cmdline)
                 ):
-                    # Ensures the only jars we kill are jars started by checking 4 non-changeable args.
-                    # self._args[1], '-Djdk.tls.client.protocols=TLSv1.2'
-                    # self._args[2], '-Xms64M' - this only stays here while we hardcode the mininum value.
-                    # self._args[-2], '-jar'
-                    # self._args[-1], str(LAVALINK_JAR_FILE)
                     proc_as_dict = proc.as_dict(
-                        attrs=[
-                            "pid",
-                            "name",
-                            "create_time",
-                            "status",
-                            "cmdline",
-                        ]
+                        attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]
                     )
                     process_list.append(proc_as_dict)
-
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         return process_list
@@ -522,7 +523,19 @@ class ServerManager:
                     await self._start(java_path=java_path)
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
-                    process_list = await self.get_lavalink_process(cwd=str(LAVALINK_DOWNLOAD_DIR))
+                    if self._args:
+                        args = (
+                            self._args[1],
+                            self._args[2],
+                            self._args[-2],
+                            self._args[-1],
+                        )
+                    else:
+                        args = ()
+                    process_list = await self.get_lavalink_process(
+                        *args,
+                        cwd=str(LAVALINK_DOWNLOAD_DIR),
+                    )
                     # Jar is not running
                     if not process_list:
                         log.warning("Managed node process not found.")
