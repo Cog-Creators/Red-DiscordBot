@@ -68,7 +68,8 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__lavalink__server__sources__vimeo": True,
     "yaml__lavalink__server__bufferDurationMs": 400,
     "yaml__lavalink__server__frameBufferDurationMs": 1000,
-    "yaml__lavalink__server__youtubePlaylistLoadLimit": 10000,
+    # 100 pages - 100 entries per page = 10,000 tracks which is the Audio Limit for a single playlist.
+    "yaml__lavalink__server__youtubePlaylistLoadLimit": 100,
     "yaml__lavalink__server__playerUpdateInterval": 1,
     "yaml__lavalink__server__youtubeSearchEnabled": True,
     "yaml__lavalink__server__soundcloudSearchEnabled": True,
