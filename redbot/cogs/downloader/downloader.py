@@ -1132,7 +1132,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `[reload]` Whether to reload the cogs after being updated or not.
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `[cogs...]` The cog or cogs to update. If omitted, all cogs are updated.
         """
         if reload:
@@ -1152,7 +1152,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `[reload]` Whether to reload the cogs after being updated or not.
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `<repos...>` The repo or repos to update all cogs from.
         """
         if reload:
@@ -1182,7 +1182,7 @@ class Downloader(commands.Cog):
 
         **Arguments**
 
-        - `[reload]` Whether to reload the cogs after being updated or not.
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `<repo>` The repo or repos to update all cogs from.
         - `<revision>` The revision to update to.
         - `[cogs...]` The cog or cogs to update.
