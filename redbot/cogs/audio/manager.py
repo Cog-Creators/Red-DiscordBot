@@ -486,7 +486,7 @@ class ServerManager:
                         continue
                 cmdline = proc.cmdline()
                 if (matches and all(a in cmdline for a in matches)) or (
-                    lazy_match and any("lavalink" in arg for arg in cmdline)
+                    lazy_match and any("lavalink" in arg.lower() for arg in cmdline)
                 ):
                     proc_as_dict = proc.as_dict(
                         attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]
