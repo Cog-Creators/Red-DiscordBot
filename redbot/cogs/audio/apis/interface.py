@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import datetime
 import json
-import logging
 import random
 import time
 
@@ -13,6 +12,7 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 import aiohttp
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from lavalink.rest_api import LoadResult, LoadType
 from redbot.core import Config, commands
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from .. import Audio
 
 _ = Translator("Audio", Path(__file__))
-log = logging.getLogger("red.cogs.Audio.api.AudioAPIInterface")
+log = getLogger("red.cogs.Audio.api.AudioAPIInterface")
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 # TODO: Get random from global Cache
 

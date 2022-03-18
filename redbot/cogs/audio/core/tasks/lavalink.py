@@ -1,8 +1,8 @@
 import asyncio
-import logging
 from pathlib import Path
 
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
@@ -12,7 +12,7 @@ from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 from ...utils import task_callback_debug
 
-log = logging.getLogger("red.cogs.Audio.cog.Tasks.lavalink")
+log = getLogger("red.cogs.Audio.cog.Tasks.lavalink")
 _ = Translator("Audio", Path(__file__))
 
 

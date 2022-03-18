@@ -1,6 +1,5 @@
 import concurrent
 import json
-import logging
 import time
 from pathlib import Path
 
@@ -8,6 +7,7 @@ from types import SimpleNamespace
 from typing import TYPE_CHECKING, List, Union
 
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -33,7 +33,7 @@ from ..sql_statements import (
 )
 from .api_utils import QueueFetchResult
 
-log = logging.getLogger("red.cogs.Audio.api.PersistQueueWrapper")
+log = getLogger("red.cogs.Audio.api.PersistQueueWrapper")
 _ = Translator("Audio", Path(__file__))
 
 if TYPE_CHECKING:

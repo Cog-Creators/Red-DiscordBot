@@ -1,6 +1,5 @@
 import asyncio
 import json
-import logging
 import math
 import os
 import tarfile
@@ -12,6 +11,7 @@ from typing import cast
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional
@@ -31,7 +31,7 @@ from ...utils import PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, LazyGreedyConverter, PlaylistConverter
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.playlist")
+log = getLogger("red.cogs.Audio.cog.Commands.playlist")
 _ = Translator("Audio", Path(__file__))
 
 

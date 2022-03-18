@@ -3,7 +3,6 @@ import contextlib
 import datetime
 import functools
 import json
-import logging
 import re
 import struct
 from pathlib import Path
@@ -12,6 +11,7 @@ from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from red_commons.logging import getLogger
 
 from redbot.core import bank, commands
 from redbot.core.commands import Context
@@ -24,7 +24,7 @@ from ...utils import PlaylistScope, task_callback_trace
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, DataReader
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
+log = getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 _ = Translator("Audio", Path(__file__))
 _RE_TIME_CONVERTER: Final[Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _prefer_lyrics_cache = {}

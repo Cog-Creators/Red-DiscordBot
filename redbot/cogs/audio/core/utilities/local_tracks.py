@@ -1,11 +1,11 @@
 import contextlib
-import logging
 
 from pathlib import Path
 from typing import List, Union
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from fuzzywuzzy import process
 from redbot.core import commands
@@ -17,7 +17,7 @@ from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
+log = getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
 _ = Translator("Audio", Path(__file__))
 
 

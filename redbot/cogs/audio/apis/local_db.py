@@ -1,13 +1,13 @@
 import concurrent
 import contextlib
 import datetime
-import logging
 import random
 import time
 from pathlib import Path
-
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tuple, Union
+
+from red_commons.logging import getLogger
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -59,7 +59,7 @@ if TYPE_CHECKING:
     from .. import Audio
 
 
-log = logging.getLogger("red.cogs.Audio.api.LocalDB")
+log = getLogger("red.cogs.Audio.api.LocalDB")
 _ = Translator("Audio", Path(__file__))
 _SCHEMA_VERSION = 3
 

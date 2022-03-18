@@ -1,14 +1,15 @@
 import asyncio
-import logging
 from pathlib import Path
 from typing import Literal, Mapping
+
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Events.red")
+log = getLogger("red.cogs.Audio.cog.Events.red")
 _ = Translator("Audio", Path(__file__))
 
 

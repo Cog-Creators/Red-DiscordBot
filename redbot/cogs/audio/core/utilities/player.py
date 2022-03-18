@@ -1,4 +1,3 @@
-import logging
 import time
 from pathlib import Path
 
@@ -7,6 +6,7 @@ from typing import List, Optional, Tuple, Union
 import aiohttp
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
@@ -20,7 +20,7 @@ from ...utils import Notifier
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.player")
+log = getLogger("red.cogs.Audio.cog.Utilities.player")
 _ = Translator("Audio", Path(__file__))
 
 

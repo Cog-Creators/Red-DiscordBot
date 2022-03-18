@@ -1,10 +1,10 @@
-import logging
 from pathlib import Path
 
 from typing import List, MutableMapping, Optional, Union
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
@@ -16,7 +16,7 @@ from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult, prepare_config_scope, standardize_scope
 from .playlist_wrapper import PlaylistWrapper
 
-log = logging.getLogger("red.cogs.Audio.api.PlaylistsInterface")
+log = getLogger("red.cogs.Audio.api.PlaylistsInterface")
 _ = Translator("Audio", Path(__file__))
 
 

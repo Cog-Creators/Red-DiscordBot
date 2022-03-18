@@ -1,11 +1,11 @@
 import asyncio
 import itertools
-import logging
 from pathlib import Path
 
 from typing import Optional
 
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
@@ -19,7 +19,7 @@ from ...utils import task_callback_debug
 from ..abc import MixinMeta
 from ..cog_utils import _SCHEMA_VERSION, CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Tasks.startup")
+log = getLogger("red.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
 
 

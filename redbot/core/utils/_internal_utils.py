@@ -35,8 +35,9 @@ import pkg_resources
 from fuzzywuzzy import fuzz, process
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
+from red_commons.logging import VERBOSE, TRACE
 
-from redbot import VersionInfo, _log
+from redbot import VersionInfo
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -366,7 +367,7 @@ def cli_level_to_log_level(level: int) -> int:
     elif level == 1:
         log_level = logging.DEBUG
     elif level == 2:
-        log_level = _log.VERBOSE
+        log_level = VERBOSE
     else:
-        log_level = _log.TRACE
+        log_level = TRACE
     return log_level

@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-import logging
 import time
 from pathlib import Path
 
@@ -8,6 +7,7 @@ from typing import Optional
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -17,7 +17,7 @@ from ...utils import PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Events.audio")
+log = getLogger("red.cogs.Audio.cog.Events.audio")
 _ = Translator("Audio", Path(__file__))
 
 

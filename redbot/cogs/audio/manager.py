@@ -2,7 +2,6 @@ import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import itertools
 import json
-import logging
 import pathlib
 import platform
 import re
@@ -13,6 +12,7 @@ from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
 import rich.progress
+from red_commons.logging import getLogger
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
@@ -21,7 +21,7 @@ from .errors import LavalinkDownloadFailed
 from .utils import task_callback_exception
 
 _ = Translator("Audio", pathlib.Path(__file__))
-log = logging.getLogger("red.Audio.manager")
+log = getLogger("red.Audio.manager")
 JAR_VERSION: Final[str] = "3.4.0"
 JAR_BUILD: Final[int] = 1275
 LAVALINK_DOWNLOAD_URL: Final[str] = (

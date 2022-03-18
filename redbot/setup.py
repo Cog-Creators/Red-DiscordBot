@@ -1,4 +1,8 @@
-#!/usr/bin/env python3
+from redbot import _early_init
+
+# this needs to be called as early as possible
+_early_init()
+
 import asyncio
 import json
 import logging
@@ -8,10 +12,6 @@ import re
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
-
-from redbot import _early_init
-
-_early_init()
 
 import appdirs
 import click

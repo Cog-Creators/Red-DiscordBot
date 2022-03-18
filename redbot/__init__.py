@@ -1,7 +1,3 @@
-import asyncio as _asyncio
-import logging as _logging
-import os as _os
-import re
 import re as _re
 import sys as _sys
 import warnings as _warnings
@@ -16,7 +12,6 @@ from typing import (
     Union as _Union,
 )
 
-from redbot._log import RedTraceLogger
 
 MIN_PYTHON_VERSION = (3, 8, 1)
 
@@ -27,7 +22,7 @@ __all__ = [
     "VersionInfo",
     "_update_event_loop_policy",
 ]
-if _sys.version_info < MIN_PYTHON_VERSION and not _os.getenv("READTHEDOCS", False):
+if _sys.version_info < MIN_PYTHON_VERSION:
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
         f"{_sys.version}! Please update Python."
@@ -187,11 +182,13 @@ def _update_event_loop_policy():
     if _sys.implementation.name == "cpython":
         # Let's not force this dependency, uvloop is much faster on cpython
         try:
-            import uvloop as _uvloop
+            import uvloop
         except ImportError:
             pass
         else:
-            _asyncio.set_event_loop_policy(_uvloop.EventLoopPolicy())
+            import asyncio
+
+            asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 def _ensure_no_colorama():
@@ -213,13 +210,17 @@ def _ensure_no_colorama():
 
 
 def _update_logger_class():
-    _logging.setLoggerClass(RedTraceLogger)
+    from red_commons.logging import maybe_update_logger_class
+
+    maybe_update_logger_class()
 
 
 def _early_init():
+    # This function replaces logger so we preferrably (though not necessarily) want that to happen
+    # before importing anything that calls `logging.getLogger()`, i.e. `asyncio`.
+    _update_logger_class()
     _update_event_loop_policy()
     _ensure_no_colorama()
-    _update_logger_class()
 
 
 __version__ = "3.5.0.dev1"
@@ -231,7 +232,7 @@ _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
 _warnings.filterwarnings("default", category=DeprecationWarning)
 
 # TODO: Rearrange cli flags here and use the value instead of this monkeypatch
-if not any(re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
+if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
     # DEP-WARN
     # Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
     # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.

@@ -1,5 +1,4 @@
 import contextlib
-import logging
 import math
 import time
 from pathlib import Path
@@ -8,6 +7,7 @@ from typing import MutableMapping
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
@@ -26,7 +26,7 @@ from ...errors import (
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
+log = getLogger("red.cogs.Audio.cog.Commands.player")
 _ = Translator("Audio", Path(__file__))
 
 

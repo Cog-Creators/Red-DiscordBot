@@ -1,6 +1,5 @@
 import asyncio
 import contextlib
-import logging
 import time
 
 from enum import Enum, unique
@@ -8,11 +7,12 @@ from pathlib import Path
 from typing import MutableMapping
 
 import discord
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
-log = logging.getLogger("red.cogs.Audio.task.callback")
+log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
 

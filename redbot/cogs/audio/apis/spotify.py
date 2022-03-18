@@ -1,13 +1,13 @@
 import base64
 import contextlib
 import json
-import logging
 import time
 from pathlib import Path
 
 from typing import TYPE_CHECKING, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
+from red_commons.logging import getLogger
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 _ = Translator("Audio", Path(__file__))
 
-log = logging.getLogger("red.cogs.Audio.api.Spotify")
+log = getLogger("red.cogs.Audio.api.Spotify")
 
 
 CATEGORY_ENDPOINT = "https://api.spotify.com/v1/browse/categories"

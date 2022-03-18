@@ -1,10 +1,11 @@
 import concurrent
 import json
-import logging
 from pathlib import Path
 
 from types import SimpleNamespace
 from typing import List, MutableMapping, Optional
+
+from red_commons.logging import getLogger
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -33,7 +34,7 @@ from ..sql_statements import (
 from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult
 
-log = logging.getLogger("red.cogs.Audio.api.Playlists")
+log = getLogger("red.cogs.Audio.api.Playlists")
 _ = Translator("Audio", Path(__file__))
 
 

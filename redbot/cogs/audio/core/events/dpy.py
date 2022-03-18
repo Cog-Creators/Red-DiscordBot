@@ -1,6 +1,5 @@
 import asyncio
 import contextlib
-import logging
 import re
 
 from collections import OrderedDict
@@ -9,6 +8,7 @@ from typing import Final, Pattern
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
@@ -22,7 +22,7 @@ from ..abc import MixinMeta
 from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
 from ...utils import task_callback_trace
 
-log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
+log = getLogger("red.cogs.Audio.cog.Events.dpy")
 _ = Translator("Audio", Path(__file__))
 RE_CONVERSION: Final[Pattern] = re.compile('Converting to "(.*)" failed for parameter "(.*)".')
 
