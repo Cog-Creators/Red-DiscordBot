@@ -1001,7 +1001,7 @@ class AudioAPIInterface:
                 player.guild.me,
                 player,
             )
-            if notify_channel_id:
+            if notify_channel_id and player.state == lavalink.enums.PlayerState.READY:
                 await self.config.guild_from_id(
                     guild_id=player.guild.id
                 ).currently_auto_playing_in.set([notify_channel_id, player.channel.id])
@@ -1009,7 +1009,10 @@ class AudioAPIInterface:
                 await self.config.guild_from_id(
                     guild_id=player.guild.id
                 ).currently_auto_playing_in.set([])
-            if not player.current:
+            currently_auto_playing_in = await self.config.guild_from_id(
+                guild_id=player.guild.id
+            ).currently_auto_playing_in()
+            if (not player.current) and (player.channel.id in currently_auto_playing_in):
                 await player.play()
 
     async def fetch_all_contribute(self) -> List[LavalinkCacheFetchForGlobalResult]:
