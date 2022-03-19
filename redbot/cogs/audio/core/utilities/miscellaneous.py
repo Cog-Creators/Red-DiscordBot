@@ -3,7 +3,6 @@ import contextlib
 import datetime
 import functools
 import json
-import logging
 import re
 import struct
 from pathlib import Path
@@ -12,6 +11,7 @@ from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from red_commons.logging import getLogger
 
 from redbot.core import bank, commands
 from redbot.core.commands import Context
@@ -20,11 +20,11 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 
 from ...apis.playlist_interface import get_all_playlist_for_migration23
-from ...utils import PlaylistScope, task_callback
+from ...utils import PlaylistScope, task_callback_trace
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, DataReader
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
+log = getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 _ = Translator("Audio", Path(__file__))
 _RE_TIME_CONVERTER: Final[Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _prefer_lyrics_cache = {}
@@ -36,7 +36,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ) -> asyncio.Task:
         """Non blocking version of clear_react."""
         task = self.bot.loop.create_task(self.clear_react(message, emoji))
-        task.add_done_callback(task_callback)
+        task.add_done_callback(task_callback_trace)
         return task
 
     async def maybe_charge_requester(self, ctx: commands.Context, jukebox_price: int) -> bool:

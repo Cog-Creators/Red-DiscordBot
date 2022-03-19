@@ -1,4 +1,7 @@
-#!/usr/bin/env python
+from redbot import _early_init
+
+# this needs to be called as early as possible
+_early_init()
 
 import asyncio
 import functools
@@ -20,14 +23,8 @@ from typing import NoReturn
 import discord
 import rich
 
-# Set the event loop policies here so any subsequent `new_event_loop()`
-# calls, in particular those as a result of the following imports,
-# return the correct loop object.
-from redbot import _early_init, __version__
-
-_early_init()
-
 import redbot.logging
+from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config

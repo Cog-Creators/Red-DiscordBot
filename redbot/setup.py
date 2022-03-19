@@ -1,4 +1,8 @@
-#!/usr/bin/env python3
+from redbot import _early_init
+
+# this needs to be called as early as possible
+_early_init()
+
 import asyncio
 import json
 import logging
@@ -9,15 +13,15 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 
-from redbot import _early_init
-
-_early_init()
-
 import appdirs
 import click
 
 from redbot.core.cli import confirm
-from redbot.core.utils._internal_utils import safe_delete, create_backup as red_create_backup
+from redbot.core.utils._internal_utils import (
+    safe_delete,
+    create_backup as red_create_backup,
+    cli_level_to_log_level,
+)
 from redbot.core import config, data_manager, drivers
 from redbot.core.drivers import BackendType, IdentifierData
 
@@ -352,7 +356,7 @@ async def remove_instance_interaction() -> None:
 
 
 @click.group(invoke_without_command=True)
-@click.option("--debug", type=bool)
+@click.option("--debug", "--verbose", "-v", count=True)
 @click.option(
     "--no-prompt",
     "interactive",
@@ -402,7 +406,7 @@ def cli(
     overwrite_existing_instance: bool,
 ) -> None:
     """Create a new instance."""
-    level = logging.DEBUG if debug else logging.INFO
+    level = cli_level_to_log_level(debug)
     base_logger = logging.getLogger("red")
     base_logger.setLevel(level)
     formatter = logging.Formatter(
