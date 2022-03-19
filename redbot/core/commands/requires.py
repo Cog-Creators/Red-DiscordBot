@@ -705,7 +705,10 @@ def bot_has_permissions(**perms: bool):
 
     def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
         if asyncio.iscoroutinefunction(func):
-            func.__requires_bot_perms__ = perms
+            if not hasattr(func, "__requires_bot_perms__"):
+                func.__requires_bot_perms__ = discord.Permissions.none()
+            _validate_perms_dict(perms)
+            func.__requires_bot_perms__.update(**perms)
         else:
             _validate_perms_dict(perms)
             func.requires.bot_perms.update(**perms)
