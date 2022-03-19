@@ -313,9 +313,7 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
 
         if bot == member:
-            await ctx.send(
-                _("I can't kick myself {emoji}").format(emoji="\N{PENSIVE FACE}")
-            )
+            await ctx.send(_("I can't kick myself {emoji}").format(emoji="\N{PENSIVE FACE}"))
             return
         elif author == member:
             await ctx.send(
@@ -613,11 +611,9 @@ class KickBanMixin(MixinMeta):
         bot = ctx.me
         guild = ctx.guild
         author = ctx.author
-        
+
         if bot == member:
-            await ctx.send(
-                _("I can't ban myself {emoji}").format(emoji="\N{PENSIVE FACE}")
-            )
+            await ctx.send(_("I can't ban myself {emoji}").format(emoji="\N{PENSIVE FACE}"))
             return
         elif author == member:
             await ctx.send(
@@ -702,9 +698,7 @@ class KickBanMixin(MixinMeta):
         author = ctx.author
 
         if bot == member:
-            await ctx.send(
-                _("I can't softban myself {emoji}").format(emoji="\N{PENSIVE FACE}")
-            )
+            await ctx.send(_("I can't softban myself {emoji}").format(emoji="\N{PENSIVE FACE}"))
             return
         elif author == member:
             await ctx.send(
