@@ -461,7 +461,7 @@ class Alias(commands.Cog):
 
     @alias.command(name="list")
     @commands.guild_only()
-    @checks.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def _list_alias(self, ctx: commands.Context):
         """List the available aliases on this server."""
         guild_aliases = await self._aliases.get_guild_aliases(ctx.guild)
@@ -470,7 +470,7 @@ class Alias(commands.Cog):
         await self.paginate_alias_list(ctx, guild_aliases)
 
     @global_.command(name="list")
-    @checks.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def _list_global_alias(self, ctx: commands.Context):
         """List the available global aliases on this bot."""
         global_aliases = await self._aliases.get_global_aliases()

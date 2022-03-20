@@ -12,7 +12,7 @@ from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
 from redbot.core import commands, checks, i18n, modlog, Config
-from redbot.core.utils import AsyncIter, bounded_gather
+from redbot.core.utils import AsyncIter, bounded_gather, can_user_react_in
 from redbot.core.utils.chat_formatting import (
     bold,
     humanize_timedelta,
@@ -1007,7 +1007,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "Role mutes do not have this issue.\n\n"
                 "Are you sure you want to continue with channel overwrites? "
             )
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if can_react:
                 msg += _(
                     "Reacting with \N{WHITE HEAVY CHECK MARK} will continue "
@@ -1233,7 +1233,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "Some users could not be properly muted. Would you like to see who, where, and why?"
         )
 
-        can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+        can_react = can_user_react_in(ctx.me, ctx.channel)
         if not can_react:
             message += " (y/n)"
         query: discord.Message = await ctx.send(message)

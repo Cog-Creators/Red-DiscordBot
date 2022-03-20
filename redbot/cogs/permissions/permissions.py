@@ -10,6 +10,7 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import can_user_react_in
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
@@ -686,7 +687,7 @@ class Permissions(commands.Cog):
     @staticmethod
     async def _confirm(ctx: commands.Context) -> bool:
         """Ask "Are you sure?" and get the response as a bool."""
-        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
+        if ctx.guild is None or can_user_react_in(ctx.guild.me, ctx.channel):
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
             task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)

@@ -78,7 +78,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_global_whitelist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.url_keyword_whitelist()
@@ -172,7 +172,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_global_blacklist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.url_keyword_blacklist()
@@ -268,7 +268,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_whitelist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
@@ -361,7 +361,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_blacklist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
@@ -453,7 +453,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.set_player_settings(ctx)
 
     @command_audioset_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_autoplay_playlist(
         self,
         ctx: commands.Context,
@@ -782,7 +782,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="localpath")
     @commands.is_owner()
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_localpath(self, ctx: commands.Context, *, local_path=None):
         """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
 

@@ -39,7 +39,7 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus
+from ..utils import can_user_react_in, menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import (
@@ -813,15 +813,7 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
-
-        # save on config calls
-        channel_permissions = ctx.channel.permissions_for(ctx.me)
-
-        if not (
-            channel_permissions.add_reactions
-            and channel_permissions.read_message_history
-            and help_settings.use_menus
-        ):
+        if not (can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus):
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
@@ -846,12 +838,11 @@ class RedHelpFormatter(HelpFormatterABC):
             if use_DMs and help_settings.use_tick:
                 await ctx.tick()
             # The if statement takes into account that 'destination' will be
-            # the context channel in non-DM context, reusing 'channel_permissions' to avoid
-            # computing the permissions twice.
+            # the context channel in non-DM context.
             if (
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
-                and channel_permissions.manage_messages  # we can manage messages here
+                and ctx.channel.permissions_for(ctx.me).manage_messages  # we can manage messages
             ):
                 # We need to wrap this in a task to not block after-sending-help interactions.
                 # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs

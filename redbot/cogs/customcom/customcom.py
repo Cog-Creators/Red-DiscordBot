@@ -539,7 +539,7 @@ class CustomCommands(commands.Cog):
             )
 
     @customcom.command(name="list")
-    @checks.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def cc_list(self, ctx: commands.Context):
         """List all available custom commands.
 

@@ -636,7 +636,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.command(name="search")
     @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 

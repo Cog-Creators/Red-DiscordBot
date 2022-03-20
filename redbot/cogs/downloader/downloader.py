@@ -13,6 +13,7 @@ from redbot.core import checks, commands, Config, version_info as red_version_in
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import can_user_react_in
 from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -1665,7 +1666,7 @@ class Downloader(commands.Cog):
                 if len(updated_cognames) > 1
                 else _("Would you like to reload the updated cog?")
             )
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if not can_react:
                 message += " (yes/no)"
             query: discord.Message = await ctx.send(message)
