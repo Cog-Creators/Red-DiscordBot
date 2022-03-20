@@ -1860,7 +1860,9 @@ class Red(
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
 
-    async def get_owner_notification_destinations(self) -> List[discord.abc.Messageable]:
+    async def get_owner_notification_destinations(
+        self,
+    ) -> List[Union[discord.TextChannel, discord.User]]:
         """
         Gets the users and channels to send to
         """
