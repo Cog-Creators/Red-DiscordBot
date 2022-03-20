@@ -14,8 +14,8 @@ class Slowmode(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_channels=True)
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.bot_can_manage_channel()
+    @commands.admin_or_can_manage_channel()
     async def slowmode(
         self,
         ctx,

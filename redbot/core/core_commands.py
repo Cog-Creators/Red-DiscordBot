@@ -5160,7 +5160,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.admin_or_can_manage_channel()
     async def ignore(self, ctx: commands.Context):
         """
         Commands to add servers or channels to the ignore list.
@@ -5233,7 +5233,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.admin_or_can_manage_channel()
     async def unignore(self, ctx: commands.Context):
         """Commands to remove servers or channels from the ignore list."""
 
