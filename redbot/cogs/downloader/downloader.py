@@ -92,7 +92,7 @@ class Downloader(commands.Cog):
             self._init_task.cancel()
 
     async def red_delete_data_for_user(self, **kwargs):
-        """Nothing to delete"""
+        """ Nothing to delete """
         return
 
     def create_init_task(self):

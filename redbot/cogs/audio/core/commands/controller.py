@@ -613,17 +613,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(ctx, title=_("Stopping..."))
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
-    @commands.command(name="summon", syntaxe="<voice_channel>")
+    @commands.command(name="summon")
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
-    async def command_summon(
-        self, ctx: commands.Context, channel: Optional[discord.VoiceChannel] = None
-    ):
-        """Summon the bot to a voice channel.
-        You can specify a personalised voice room with a mention or an id. Otherwise, the bot will use the voice room you are in.
-        To be able to easily mention a voice room, you can use `#!` on the computer, as with `#` and text rooms.
-        """
+    async def command_summon(self, ctx: commands.Context, channel: Optional[discord.VoiceChannel] = None):
+        """Summon the bot to a voice channel."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -668,7 +663,10 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("notify_channel", ctx.channel.id)
-                if channel == player.channel and ctx.guild.me in channel.members:
+               if channel == player.channel and ctx.guild.me in channel.members:
+                    channel == player.channel
+                    and ctx.guild.me in channel.members
+                ):
                     ctx.command.reset_cooldown(ctx)
                     return await self.send_embed_msg(
                         ctx,

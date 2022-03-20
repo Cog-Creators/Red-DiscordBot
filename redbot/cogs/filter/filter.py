@@ -347,7 +347,7 @@ class Filter(commands.Cog):
             await ctx.send(_("Names and nicknames will now be filtered."))
 
     def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
-        """Invalidate a cached pattern"""
+        """ Invalidate a cached pattern"""
         self.pattern_cache.pop((guild, channel), None)
         if channel is None:
             for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove

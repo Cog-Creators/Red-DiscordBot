@@ -99,7 +99,7 @@ class HelpSettings:
 
     @property
     def pretty(self):
-        """Returns a discord safe representation of the settings"""
+        """ Returns a discord safe representation of the settings """
 
         def bool_transformer(val):
             if val is False:

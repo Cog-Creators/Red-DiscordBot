@@ -134,7 +134,7 @@ class Alias(commands.Cog):
         t.add_done_callback(done_callback)
 
     async def _initialize(self):
-        """Should only ever be a task"""
+        """ Should only ever be a task """
 
         await self._maybe_handle_string_keys()
 
