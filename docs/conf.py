@@ -70,7 +70,7 @@ author = "Cog Creators"
 # built documents.
 #
 from redbot.core import __version__
-from discord import __version__ as dpy_version
+from discord import __version__ as dpy_version, version_info as dpy_version_info
 
 # The short X.Y version.
 version = __version__
@@ -225,10 +225,20 @@ linkcheck_retries = 3
 
 # -- Options for extensions -----------------------------------------------
 
+if dpy_version_info.releaselevel == "final":
+    # final release - versioned docs should be available
+    dpy_docs_url = f"https://discordpy.readthedocs.io/en/v{dpy_version}/"
+elif dpy_version_info.minor == dpy_version_info.micro == 0:
+    # alpha release of a new major version - `master` version of docs should be used
+    dpy_docs_url = "https://discordpy.readthedocs.io/en/master/"
+else:
+    # alpha release of a new minor or micro version - `latest` version of docs should be used
+    dpy_docs_url = "https://discordpy.readthedocs.io/en/latest/"
+
 # Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
+    "dpy": (dpy_docs_url, None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
     "babel": ("http://babel.pocoo.org/en/stable/", None),
     "dateutil": ("https://dateutil.readthedocs.io/en/stable/", None),
@@ -238,7 +248,7 @@ intersphinx_mapping = {
 # This allows to create links to d.py docs with
 # :dpy_docs:`link text <site_name.html>`
 extlinks = {
-    "dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None),
+    "dpy_docs": (f"{dpy_docs_url}/%s", None),
     "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
     "ghuser": ("https://github.com/%s", "@"),
 }
