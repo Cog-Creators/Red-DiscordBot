@@ -51,7 +51,7 @@ from .settings_caches import (
     I18nManager,
 )
 from .rpc import RPCMixin
-from .utils import common_filters, AsyncIter
+from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
@@ -815,8 +815,8 @@ class Red(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))  # nosec
-            if not channel.permissions_for(guild.me).send_messages:
+            assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))
+            if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
                 return False

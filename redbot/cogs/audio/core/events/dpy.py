@@ -18,6 +18,7 @@ from lavalink import NodeNotFound, PlayerNotFound
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import can_user_send_messages_in
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.chat_formatting import box, humanize_list, underline, bold
 
@@ -185,13 +186,31 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 "Not running Audio command due to invalid machine architecture for the managed Lavalink node."
             )
 
-        current_perms = ctx.channel.permissions_for(ctx.me)
         surpass_ignore = (
             isinstance(ctx.channel, discord.abc.PrivateChannel)
             or await ctx.bot.is_owner(ctx.author)
             or await ctx.bot.is_admin(ctx.author)
         )
         guild = ctx.guild
+        if guild and not can_user_send_messages_in(ctx.me, ctx.channel):
+            log.debug(
+                "Missing perms to send messages in %d, Owner ID: %d",
+                guild.id,
+                guild.owner.id,
+            )
+            if not surpass_ignore:
+                text = _(
+                    "I'm missing permissions to send messages in this server. "
+                    "Please address this as soon as possible."
+                )
+                log.info(
+                    "Missing write permission in %d, Owner ID: %d",
+                    guild.id,
+                    guild.owner.id,
+                )
+                raise CheckFailure(message=text)
+
+        current_perms = ctx.channel.permissions_for(ctx.me)
         if guild and not current_perms.is_superset(self.permission_cache):
             current_perms_set = set(iter(current_perms))
             expected_perms_set = set(iter(self.permission_cache))
@@ -217,14 +236,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                         perm=_(HUMANIZED_PERM.get(perm, perm)),
                     )
                 text = text.strip()
-                if current_perms.send_messages and current_perms.read_messages:
-                    await ctx.send(box(text=text, lang="ini"))
-                else:
-                    log.info(
-                        "Missing write permission in %s, Owner ID: %s",
-                        ctx.guild.id,
-                        ctx.guild.owner.id,
-                    )
+                await ctx.send(box(text=text, lang="ini"))
                 raise CheckFailure(message=text)
 
         with contextlib.suppress(Exception):
