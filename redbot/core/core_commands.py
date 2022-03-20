@@ -39,7 +39,7 @@ from . import (
     modlog,
 )
 from ._diagnoser import IssueDiagnoser
-from .utils import AsyncIter
+from .utils import AsyncIter, can_user_send_messages_in
 from .utils._internal_utils import fetch_latest_red_version_info
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
@@ -4202,7 +4202,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def diagnoseissues(
         self,
         ctx: commands.Context,
-        channel: Optional[discord.TextChannel],
+        channel: Optional[Union[discord.TextChannel, discord.Thread]],
         member: Union[discord.Member, discord.User],
         *,
         command_name: str,
@@ -4223,8 +4223,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if channel is None:
             channel = ctx.channel
-            if not isinstance(channel, discord.TextChannel):
-                await ctx.send(_("The channel needs to be passed when using this command in DMs."))
+            if not isinstance(channel, (discord.TextChannel, discord.Thread)):
+                await ctx.send(
+                    _(
+                        "The text channel or thread needs to be passed"
+                        " when using this command in DMs."
+                    )
+                )
                 return
 
         command = self.bot.get_command(command_name)
@@ -4241,7 +4246,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 return
             member = maybe_member
 
-        if not channel.permissions_for(member).send_messages:
+        if not can_user_send_messages_in(member, channel):
             # Let's make Flame happy here
             await ctx.send(
                 _(
