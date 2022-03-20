@@ -154,9 +154,7 @@ class Mod(
                             "Ignored guilds and channels have been moved. "
                             "Please use {command} to migrate the old settings."
                         ).format(command=inline("[p]moveignoredchannels"))
-                        asyncio.create_task(
-                            send_to_owners_with_prefix_replaced(self.bot, msg)
-                        )
+                        asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                         break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":

@@ -53,9 +53,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.delete_scheduled()
             await self._build_bundled_playlist()
             self.lavalink_restart_connect()
-            self.player_automated_timer_task = asyncio.create_task(
-                self.player_automated_timer()
-            )
+            self.player_automated_timer_task = asyncio.create_task(self.player_automated_timer())
             self.player_automated_timer_task.add_done_callback(task_callback_debug)
         except Exception as exc:
             log.critical("Audio failed to start up, please report this issue.", exc_info=exc)
