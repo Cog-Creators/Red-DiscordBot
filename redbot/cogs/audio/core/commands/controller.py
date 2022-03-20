@@ -613,7 +613,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(ctx, title=_("Stopping..."))
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
-    @commands.command(name="summon")
+    @commands.command(name="summon", usage="voice_channel")
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
@@ -623,7 +623,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Summon the bot to a voice channel.
 
         You can specify a personalised voice room with an id. Otherwise, the bot will join the voice room you are in.
-        To learn how to get a channel ID please read the following help article <https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID>
+        To learn how to get a channel ID please read the following help article: <https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID>
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
