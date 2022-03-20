@@ -809,6 +809,11 @@ class Red(
         if message.author.bot:
             return False
 
+        # We do not consider messages with PartialMessageable channel as eligible.
+        # See `process_commands()` for our handling of it.
+        if isinstance(channel, discord.PartialMessageable):
+            return False
+
         if guild:
             assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))  # nosec
             if not channel.permissions_for(guild.me).send_messages:
@@ -1547,7 +1552,14 @@ class Red(
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            await self.invoke(ctx)
+            if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
+                log.warning(
+                    "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
+                    message.id,
+                    message.channel,
+                )
+            else:
+                await self.invoke(ctx)
         else:
             ctx = None
 
