@@ -621,8 +621,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.Context, channel: Optional[discord.VoiceChannel] = None
     ):
         """Summon the bot to a voice channel.
-        You can specify a personalised voice room with a mention or an id. Otherwise, the bot will use the voice room you are in.
-        To be able to easily mention a voice room, you can use `#!` on the computer, as with `#` and text rooms.
+        You can specify a personalised voice room with an id. Otherwise, the bot will join the voice room you are in.
+        To learn how to get a channel ID please read the following help article <https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID>
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
