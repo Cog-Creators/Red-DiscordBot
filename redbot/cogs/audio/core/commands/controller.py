@@ -617,7 +617,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
-    async def command_summon(self, ctx: commands.Context, channel: Optional[discord.VoiceChannel]):
+    async def command_summon(self, ctx: commands.Context, channel: Optional[discord.VoiceChannel] = None):
         """Summon the bot to a voice channel."""
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
