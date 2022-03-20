@@ -663,7 +663,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             else:
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("notify_channel", ctx.channel.id)
-                if (
+               if channel == player.channel and ctx.guild.me in channel.members:
                     channel == player.channel
                     and ctx.guild.me in channel.members
                 ):
