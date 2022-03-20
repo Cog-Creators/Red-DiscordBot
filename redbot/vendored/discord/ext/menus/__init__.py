@@ -553,13 +553,12 @@ class Menu(metaclass=_MenuMeta):
     async def _internal_loop(self):
         try:
             self.__timed_out = False
-            loop = self.bot.loop
             # Ensure the name exists for the cancellation handling
             tasks = []
             while self._running:
                 tasks = [
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check)),
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
+                    asyncio.create_task(self.bot.wait_for('raw_reaction_add', check=self.reaction_check)),
+                    asyncio.create_task(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
                 ]
                 done, pending = await asyncio.wait(tasks, timeout=self.timeout, return_when=asyncio.FIRST_COMPLETED)
                 for task in pending:
@@ -570,7 +569,7 @@ class Menu(metaclass=_MenuMeta):
 
                 # Exception will propagate if e.g. cancelled or timed out
                 payload = done.pop().result()
-                loop.create_task(self.update(payload))
+                asyncio.create_task(self.update(payload))
 
                 # NOTE: Removing the reaction ourselves after it's been done when
                 # mixed with the checks above is incredibly racy.
@@ -712,12 +711,12 @@ class Menu(metaclass=_MenuMeta):
             self.__tasks.clear()
 
             self._running = True
-            self.__tasks.append(bot.loop.create_task(self._internal_loop()))
+            self.__tasks.append(asyncio.create_task(self._internal_loop()))
 
             async def add_reactions_task():
                 for emoji in self.buttons:
                     await msg.add_reaction(emoji)
-            self.__tasks.append(bot.loop.create_task(add_reactions_task()))
+            self.__tasks.append(asyncio.create_task(add_reactions_task()))
 
             if wait:
                 await self._event.wait()
