@@ -2,20 +2,18 @@ from __future__ import annotations
 
 import discord
 
-from discord.ext.commands import BadArgument
-from typing import TYPE_CHECKING, List, Union, Optional, Dict, Any
-from redbot.core.commands.converter import get_dict_converter
+from typing import TYPE_CHECKING, List, Union
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
 
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Red
     from redbot.core.commands import Context
 
 _ = Translator("UtilsViews", __file__)
 
-class SimplePageSource(menus.ListPageSource):
+
+class _SimplePageSource(menus.ListPageSource):
     def __init__(self, items: List[Union[str, discord.Embed]]):
         super().__init__(items, per_page=1)
 
@@ -26,23 +24,36 @@ class SimplePageSource(menus.ListPageSource):
 
 
 class SimpleMenu(discord.ui.View):
+    """
+    A simple Button menu
+
+    .. note:: All pages should be of the same type
+
+    Parameters
+    ----------
+    pages: `list` of `str` or `discord.Embed`
+        The pages of the menu.
+    page: int
+        The current page number of the menu
+    timeout: float
+        The time (in seconds) to wait for a reaction
+        defaults to 180 seconds.
+    """
+
     def __init__(
         self,
         pages: List[Union[str, discord.Embed]],
-        clear_reactions_after: bool = True,
-        delete_message_after: bool = False,
-        timeout: int = 180,
-        message: discord.Message = None,
-        **kwargs: Any,
+        timeout: float = 180.0,
+        page_start: int = 0,
     ) -> None:
         super().__init__(
             timeout=timeout,
         )
         self.author = None
-        self.message = message
-        self._source = SimplePageSource(items=pages)
+        self.message = None
+        self._source = _SimplePageSource(items=pages)
         self.ctx = None
-        self.current_page = kwargs.get("page_start", 0)
+        self.current_page = page_start
 
     @property
     def source(self):
