@@ -90,8 +90,8 @@ async def menu(
     try:
         predicates = ReactionPredicate.with_emojis(tuple(controls.keys()), message, ctx.author)
         tasks = [
-            asyncio.ensure_future(ctx.bot.wait_for("reaction_add", check=predicates)),
-            asyncio.ensure_future(ctx.bot.wait_for("reaction_remove", check=predicates)),
+            asyncio.create_task(ctx.bot.wait_for("reaction_add", check=predicates)),
+            asyncio.create_task(ctx.bot.wait_for("reaction_remove", check=predicates)),
         ]
         done, pending = await asyncio.wait(
             tasks, timeout=timeout, return_when=asyncio.FIRST_COMPLETED

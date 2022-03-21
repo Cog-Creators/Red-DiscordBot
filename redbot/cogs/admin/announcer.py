@@ -29,7 +29,7 @@ class Announcer:
         """
         if self.active is None:
             self.active = True
-            self.ctx.bot.loop.create_task(self.announcer())
+            asyncio.create_task(self.announcer())
 
     def cancel(self):
         """

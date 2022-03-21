@@ -142,7 +142,7 @@ class Mod(
                         "Ignored guilds and channels have been moved. "
                         "Please use {command} to migrate the old settings."
                     ).format(command=inline("[p]moveignoredchannels"))
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     message_sent = True
                     break
             if message_sent is False:
@@ -152,9 +152,7 @@ class Mod(
                             "Ignored guilds and channels have been moved. "
                             "Please use {command} to migrate the old settings."
                         ).format(command=inline("[p]moveignoredchannels"))
-                        self.bot.loop.create_task(
-                            send_to_owners_with_prefix_replaced(self.bot, msg)
-                        )
+                        asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                         break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":
@@ -164,7 +162,7 @@ class Mod(
                         "Delete delay settings have been moved. "
                         "Please use {command} to migrate the old settings."
                     ).format(command=inline("[p]movedeletedelay"))
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
             await self.config.version.set("1.2.0")
         if await self.config.version() < "1.3.0":

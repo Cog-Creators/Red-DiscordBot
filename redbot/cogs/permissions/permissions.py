@@ -819,7 +819,7 @@ class Permissions(commands.Cog):
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
     def cog_unload(self) -> None:
-        self.bot.loop.create_task(self._unload_all_rules())
+        asyncio.create_task(self._unload_all_rules())
 
     async def _unload_all_rules(self) -> None:
         """Unload all rules set by this cog.

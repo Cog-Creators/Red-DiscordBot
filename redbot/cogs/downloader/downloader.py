@@ -92,7 +92,7 @@ class Downloader(commands.Cog):
             self._init_task.cancel()
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     def create_init_task(self):
@@ -1119,36 +1119,54 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, message)
 
     @cog.command(name="update")
-    async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
+    async def _cog_update(
+        self, ctx: commands.Context, reload: Optional[bool], *cogs: InstalledCog
+    ) -> None:
         """Update all cogs, or ones of your choosing.
 
         Examples:
             - `[p]cog update`
+            - `[p]cog update True`
             - `[p]cog update defender`
+            - `[p]cog update True defender`
 
         **Arguments**
 
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `[cogs...]` The cog or cogs to update. If omitted, all cogs are updated.
         """
+        if reload:
+            ctx.assume_yes = True
         await self._cog_update_logic(ctx, cogs=cogs)
 
     @cog.command(name="updateallfromrepos", require_var_positional=True)
-    async def _cog_updateallfromrepos(self, ctx: commands.Context, *repos: Repo) -> None:
+    async def _cog_updateallfromrepos(
+        self, ctx: commands.Context, reload: Optional[bool], *repos: Repo
+    ) -> None:
         """Update all cogs from repos of your choosing.
 
         Examples:
             - `[p]cog updateallfromrepos 26-Cogs`
+            - `[p]cog updateallfromrepos True 26-Cogs`
             - `[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs`
 
         **Arguments**
 
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `<repos...>` The repo or repos to update all cogs from.
         """
+        if reload:
+            ctx.assume_yes = True
         await self._cog_update_logic(ctx, repos=repos)
 
     @cog.command(name="updatetoversion")
     async def _cog_updatetoversion(
-        self, ctx: commands.Context, repo: Repo, revision: str, *cogs: InstalledCog
+        self,
+        ctx: commands.Context,
+        reload: Optional[bool],
+        repo: Repo,
+        revision: str,
+        *cogs: InstalledCog,
     ) -> None:
         """Update all cogs, or ones of your choosing to chosen revision of one repo.
 
@@ -1158,15 +1176,19 @@ class Downloader(commands.Cog):
 
         See `[p]cog installversion` for an explanation of `revision`.
 
-        Example:
+        Examples:
             - `[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`
+            - `[p]cog updatetoversion True Broken-Repo 6107c0770ad391f1d3a6131b216991e862cc897e cog_name`
 
         **Arguments**
 
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `<repo>` The repo or repos to update all cogs from.
         - `<revision>` The revision to update to.
         - `[cogs...]` The cog or cogs to update.
         """
+        if reload:
+            ctx.assume_yes = True
         await self._cog_update_logic(ctx, repo=repo, rev=revision, cogs=cogs)
 
     async def _cog_update_logic(
