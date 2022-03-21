@@ -338,6 +338,13 @@ class Case:
         self.case_number = case_number
         self.message = message
 
+    async def _set_message(self, message: discord.Message, /) -> None:
+        # This should only be used for setting the message right after case creation
+        # in order to avoid making an API request to "edit" the message with changes.
+        # In all other cases, edit() is correct method.
+        self.message = message
+        await _config.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
+
     async def edit(self, data: dict):
         """
         Edits a case
@@ -992,7 +999,7 @@ async def create_case(
             msg = await mod_channel.send(embed=case_content)
         else:
             msg = await mod_channel.send(case_content)
-        await case.edit({"message": msg})
+        await case._set_message(msg)
     except RuntimeError:  # modlog channel isn't set
         pass
     except discord.Forbidden:

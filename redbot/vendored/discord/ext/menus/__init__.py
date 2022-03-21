@@ -30,11 +30,15 @@ import discord
 import itertools
 import inspect
 import bisect
+import logging
 import re
 from collections import OrderedDict, namedtuple
 
 # Needed for the setup.py script
 __version__ = '1.0.0-a'
+
+# consistency with the `discord` namespaced logging
+log = logging.getLogger(__name__)
 
 class MenuError(Exception):
     pass
@@ -99,7 +103,7 @@ class First(Position):
     def __init__(self, number=0):
         super().__init__(number, bucket=0)
 
-_custom_emoji = re.compile(r'<?(?P<animated>a)?:?(?P<name>[A-Za-z0-9\_]+):(?P<id>[0-9]{13,21})>?')
+_custom_emoji = re.compile(r'<?(?P<animated>a)?:?(?P<name>[A-Za-z0-9\_]+):(?P<id>[0-9]{13,20})>?')
 
 def _cast_emoji(obj, *, _custom_emoji=_custom_emoji):
     if isinstance(obj, discord.PartialEmoji):
@@ -638,10 +642,25 @@ class Menu(metaclass=_MenuMeta):
                         await button(self, payload)
             else:
                 await button(self, payload)
-        except Exception:
-            # TODO: logging?
-            import traceback
-            traceback.print_exc()
+        except Exception as exc:
+            await self.on_menu_button_error(exc)
+
+    async def on_menu_button_error(self, exc):
+        """|coro|
+
+        Handles reporting of errors while updating the menu from events.
+        The default behaviour is to log the exception.
+
+        This may be overriden by subclasses.
+
+        Parameters
+        ----------
+        exc: :class:`Exception`
+            The exception which was raised during a menu update.
+        """
+        # some users may wish to take other actions during or beyond logging
+        # which would require awaiting, such as stopping an erroring menu.
+        log.exception("Unhandled exception during menu update.", exc_info=exc)
 
     async def start(self, ctx, *, channel=None, wait=False):
         """|coro|
@@ -677,8 +696,7 @@ class Menu(metaclass=_MenuMeta):
         self.ctx = ctx
         self._author_id = ctx.author.id
         channel = channel or ctx.channel
-        is_guild = isinstance(channel, discord.abc.GuildChannel)
-        me = ctx.guild.me if is_guild else ctx.bot.user
+        me = channel.guild.me if hasattr(channel, 'guild') else ctx.bot.user
         permissions = channel.permissions_for(me)
         self.__me = discord.Object(id=me.id)
         self._verify_permissions(ctx, channel, permissions)
@@ -960,7 +978,7 @@ class MenuPages(Menu):
             pass
 
     async def show_current_page(self):
-        if self._source.paginating:
+        if self._source.is_paginating():
             await self.show_page(self.current_page)
 
     def _skip_double_triangle_buttons(self):

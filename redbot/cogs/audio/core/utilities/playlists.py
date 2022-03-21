@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import datetime
 import json
-import logging
 import math
 import random
 import time
@@ -14,6 +13,7 @@ import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -24,13 +24,12 @@ from redbot.core.utils.predicates import ReactionPredicate
 
 from ...apis.playlist_interface import Playlist, PlaylistCompat23, create_playlist
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
-from ...audio_logging import debug_exc_log
 from ...errors import TooManyMatches, TrackEnqueueError
 from ...utils import Notifier, PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
+log = getLogger("red.cogs.Audio.cog.Utilities.playlists")
 _ = Translator("Audio", Path(__file__))
 CURRATED_DATA = (
     "https://gist.githubusercontent.com/aikaterna/4b5de6c420cd6f12b83cb895ca2de16a/raw/json"
@@ -434,15 +433,15 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     raise e
 
                 track = result.tracks[0]
-            except Exception as err:
-                debug_exc_log(log, err, "Failed to get track for %r", song_url)
+            except Exception as exc:
+                log.verbose("Failed to get track for %r", song_url, exc_info=exc)
                 continue
             try:
                 track_obj = self.get_track_json(player, other_track=track)
                 track_list.append(track_obj)
                 successful_count += 1
-            except Exception as err:
-                debug_exc_log(log, err, "Failed to create track for %r", track)
+            except Exception as exc:
+                log.verbose("Failed to create track for %r", track, exc_info=exc)
                 continue
             if (track_count % 2 == 0) or (track_count == len(uploaded_track_list)):
                 await notifier.notify_user(
@@ -695,8 +694,10 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return 0, []
                 try:
                     data = json.loads(await response.read())
-                except Exception:
-                    log.exception("Curated playlist couldn't be parsed, report this error.")
+                except Exception as exc:
+                    log.error(
+                        "Curated playlist couldn't be parsed, report this error.", exc_info=exc
+                    )
                     data = {}
                 web_version = data.get("version", 0)
                 entries = data.get("entries", [])
