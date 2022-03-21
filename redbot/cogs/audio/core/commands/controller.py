@@ -613,12 +613,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(ctx, title=_("Stopping..."))
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
-    @commands.command(name="summon", usage="[voice_channel]")
+    @commands.command(name="summon")
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
     async def command_summon(
-        self, ctx: commands.Context, channel: Optional[discord.VoiceChannel] = None
+        self, ctx: commands.Context, *, voice_channel: Optional[discord.VoiceChannel] = None
     ):
         """Summon the bot to a voice channel.
 
@@ -648,7 +648,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         try:
-            channel = channel or ctx.author.voice.channel
+            channel = voice_channel or ctx.author.voice.channel
             if (
                 not self.can_join_and_speak(channel)
                 or not channel.permissions_for(ctx.me).move_members
