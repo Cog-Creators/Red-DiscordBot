@@ -188,7 +188,6 @@ def init_events(bot, cli_flags):
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)
 
-        bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
         if outdated_red_message:
             await send_to_owners_with_prefix_replaced(bot, outdated_red_message)

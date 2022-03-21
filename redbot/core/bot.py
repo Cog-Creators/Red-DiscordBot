@@ -216,7 +216,6 @@ class Red(
 
         self._uptime = None
         self._checked_time_accuracy = None
-        self._color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
@@ -1044,6 +1043,7 @@ class Red(
         """
         await self._maybe_update_config()
         self.description = await self._config.description()
+        self._color = discord.Colour(await self._config.color())
 
         init_global_checks(self)
         init_events(self, self._cli_flags)
