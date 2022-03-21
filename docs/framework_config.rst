@@ -467,7 +467,7 @@ much the same way they would in V2. The following examples will demonstrate how 
     async def setup(bot):
         cog = ExampleCog()
         await cog.load_data()
-        bot.add_cog(cog)
+        await bot.add_cog(cog)
 
 ************************************
 Best practices and performance notes

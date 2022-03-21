@@ -88,7 +88,7 @@ it from your setup function:
     async def setup(bot):
         cog = MyCog()
         await cog.initialize()
-        bot.add_cog(cog)
+        await bot.add_cog(cog)
 
 .. important::
     Image should be the emoji you want to represent your case type with.

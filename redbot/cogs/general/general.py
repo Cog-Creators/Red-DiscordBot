@@ -7,6 +7,7 @@ import urllib.parse
 import aiohttp
 import discord
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.utils.chat_formatting import (
@@ -72,8 +73,9 @@ class General(commands.Cog):
     ]
     _ = T_
 
-    def __init__(self):
+    def __init__(self, bot: Red) -> None:
         super().__init__()
+        self.bot = bot
         self.stopwatches = {}
 
     async def red_delete_data_for_user(self, **kwargs):

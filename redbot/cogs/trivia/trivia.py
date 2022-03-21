@@ -11,6 +11,7 @@ import yaml
 import discord
 
 from redbot.core import Config, commands, checks, bank
+from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter, can_user_react_in
@@ -54,8 +55,9 @@ class InvalidListError(Exception):
 class Trivia(commands.Cog):
     """Play trivia with friends!"""
 
-    def __init__(self):
+    def __init__(self, bot: Red) -> None:
         super().__init__()
+        self.bot = bot
         self.trivia_sessions = []
         self.config = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 
