@@ -412,10 +412,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not handled:
             await self.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
-    def cog_unload(self) -> None:
+    async def cog_unload(self) -> None:
         if not self.cog_cleaned_up:
             self.bot.dispatch("red_audio_unload", self)
-            self.session.detach()
+            await self.session.close()
             if self.player_automated_timer_task:
                 self.player_automated_timer_task.cancel()
 
@@ -430,10 +430,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
             lavalink.unregister_event_listener(self.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
-            asyncio.create_task(lavalink.close(self.bot))
-            asyncio.create_task(self._close_database())
+            await lavalink.close(self.bot)
+            await self._close_database()
             if self.managed_node_controller is not None:
-                asyncio.create_task(self.managed_node_controller.shutdown())
+                await self.managed_node_controller.shutdown()
 
             self.cog_cleaned_up = True
 

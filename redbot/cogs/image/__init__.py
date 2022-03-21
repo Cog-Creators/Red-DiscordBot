@@ -4,6 +4,4 @@ from .image import Image
 
 
 async def setup(bot: Red) -> None:
-    cog = Image(bot)
-    await cog.initialize()
-    await bot.add_cog(cog)
+    await bot.add_cog(Image(bot))

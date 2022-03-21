@@ -56,7 +56,7 @@ class Filter(commands.Cog):
             if user_id in guild_data:
                 await self.config.member_from_ids(guild_id, user_id).clear()
 
-    async def initialize(self) -> None:
+    async def cog_load(self) -> None:
         await self.register_casetypes()
 
     @staticmethod

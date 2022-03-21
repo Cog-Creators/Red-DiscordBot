@@ -84,12 +84,9 @@ class Admin(commands.Cog):
         )
 
         self.__current_announcer = None
-        self._ready = asyncio.Event()
-        asyncio.create_task(self.handle_migrations())
-        # As this is a data migration, don't store this for cancelation.
 
-    async def cog_before_invoke(self, ctx: commands.Context):
-        await self._ready.wait()
+    async def cog_load(self) -> None:
+        await self.handle_migrations()
 
     async def red_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
@@ -106,9 +103,7 @@ class Admin(commands.Cog):
                 await self.migrate_config_from_0_to_1()
                 await self.config.schema_version.set(1)
 
-        self._ready.set()
-
-    async def migrate_config_from_0_to_1(self):
+    async def migrate_config_from_0_to_1(self) -> None:
         all_guilds = await self.config.all_guilds()
 
         for guild_id, guild_data in all_guilds.items():

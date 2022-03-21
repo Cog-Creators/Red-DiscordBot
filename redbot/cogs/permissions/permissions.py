@@ -816,8 +816,8 @@ class Permissions(commands.Cog):
                 elif rule is False:
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
-    def cog_unload(self) -> None:
-        asyncio.create_task(self._unload_all_rules())
+    async def cog_unload(self) -> None:
+        await self._unload_all_rules()
 
     async def _unload_all_rules(self) -> None:
         """Unload all rules set by this cog.

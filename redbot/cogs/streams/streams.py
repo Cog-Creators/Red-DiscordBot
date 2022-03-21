@@ -79,9 +79,6 @@ class Streams(commands.Cog):
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
-        self._ready_event: asyncio.Event = asyncio.Event()
-        self._init_task: asyncio.Task = asyncio.create_task(self.initialize())
-
     async def red_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
         return
@@ -92,10 +89,8 @@ class Streams(commands.Cog):
             return True
         return False
 
-    async def initialize(self) -> None:
+    async def cog_load(self) -> None:
         """Should be called straight after cog instantiation."""
-        await self.bot.wait_until_ready()
-
         try:
             await self.move_api_keys()
             await self.get_twitch_bearer_token()
@@ -104,15 +99,10 @@ class Streams(commands.Cog):
         except Exception as error:
             log.exception("Failed to initialize Streams cog:", exc_info=error)
 
-        self._ready_event.set()
-
     @commands.Cog.listener()
     async def on_red_api_tokens_update(self, service_name, api_tokens):
         if service_name == "twitch":
             await self.get_twitch_bearer_token(api_tokens)
-
-    async def cog_before_invoke(self, ctx: commands.Context):
-        await self._ready_event.wait()
 
     async def move_api_keys(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
@@ -127,6 +117,29 @@ class Streams(commands.Cog):
                 await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.config.tokens.clear()
 
+    async def _notify_owner_about_missing_twitch_secret(self) -> None:
+        message = _(
+            "You need a client secret key if you want to use the Twitch API on this cog.\n"
+            "Follow these steps:\n"
+            "1. Go to this page: {link}.\n"
+            '2. Click "Manage" on your application.\n'
+            '3. Click on "New secret".\n'
+            "5. Copy your client ID and your client secret into:\n"
+            "{command}"
+            "\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel "
+            "or in DM with the bot."
+        ).format(
+            link="https://dev.twitch.tv/console/apps",
+            command=inline(
+                "[p]set api twitch client_id {} client_secret {}".format(
+                    _("<your_client_id_here>"), _("<your_client_secret_here>")
+                )
+            ),
+        )
+        await send_to_owners_with_prefix_replaced(self.bot, message)
+        await self.config.notified_owner_missing_twitch_secret.set(True)
+
     async def get_twitch_bearer_token(self, api_tokens: Optional[Dict] = None) -> None:
         tokens = (
             await self.bot.get_shared_api_tokens("twitch") if api_tokens is None else api_tokens
@@ -140,28 +153,8 @@ class Streams(commands.Cog):
                 if notified_owner_missing_twitch_secret is True:
                     await self.config.notified_owner_missing_twitch_secret.set(False)
             except KeyError:
-                message = _(
-                    "You need a client secret key if you want to use the Twitch API on this cog.\n"
-                    "Follow these steps:\n"
-                    "1. Go to this page: {link}.\n"
-                    '2. Click "Manage" on your application.\n'
-                    '3. Click on "New secret".\n'
-                    "5. Copy your client ID and your client secret into:\n"
-                    "{command}"
-                    "\n\n"
-                    "Note: These tokens are sensitive and should only be used in a private channel "
-                    "or in DM with the bot."
-                ).format(
-                    link="https://dev.twitch.tv/console/apps",
-                    command=inline(
-                        "[p]set api twitch client_id {} client_secret {}".format(
-                            _("<your_client_id_here>"), _("<your_client_secret_here>")
-                        )
-                    ),
-                )
                 if notified_owner_missing_twitch_secret is False:
-                    await send_to_owners_with_prefix_replaced(self.bot, message)
-                    await self.config.notified_owner_missing_twitch_secret.set(True)
+                    asyncio.create_task(self._notify_owner_about_missing_twitch_secret())
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",

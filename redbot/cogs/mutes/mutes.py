@@ -87,28 +87,42 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "dm": False,
             "show_mod": False,
         }
-        self.config.register_global(force_role_mutes=True, schema_version=0)
         # Tbh I would rather force everyone to use role mutes.
         # I also honestly think everyone would agree they're the
         # way to go. If for whatever reason someone wants to
         # enable channel overwrite mutes for their bot they can.
         # Channel overwrite logic still needs to be in place
         # for channel mutes methods.
+        self.config.register_global(force_role_mutes=True, schema_version=0)
         self.config.register_guild(**default_guild)
         self.config.register_member(perms_cache={})
         self.config.register_channel(muted_users={})
         self._server_mutes: Dict[int, Dict[int, dict]] = {}
         self._channel_mutes: Dict[int, Dict[int, dict]] = {}
-        self._ready = asyncio.Event()
         self._unmute_tasks: Dict[str, asyncio.Task] = {}
-        self._unmute_task = None
+        self._unmute_task: Optional[asyncio.Task] = None
         self.mute_role_cache: Dict[int, int] = {}
-        self._channel_mute_events: Dict[int, asyncio.Event] = {}
         # this is a dict of guild ID's and asyncio.Events
         # to wait for a guild to finish channel unmutes before
         # checking for manual overwrites
+        self._channel_mute_events: Dict[int, asyncio.Event] = {}
+        self._ready = asyncio.Event()
+        self._init_task: Optional[asyncio.Task] = None
+        self._ready_raised = False
 
-        self._init_task = asyncio.create_task(self._initialize())
+    def create_init_task(self) -> None:
+        def _done_callback(task: asyncio.Task) -> None:
+            exc = task.exception()
+            if exc is not None:
+                log.error(
+                    "An unexpected error occurred during Mutes's initialization.",
+                    exc_info=exc,
+                )
+                self._ready_raised = True
+                self._ready.set()
+
+        self._init_task = asyncio.create_task(self.initialize())
+        self._init_task.add_done_callback(_done_callback)
 
     async def red_delete_data_for_user(
         self,
@@ -125,13 +139,17 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return
 
         await self._ready.wait()
+        if self._ready_raised:
+            raise RuntimeError(
+                "Mutes cog is in a bad state, can't proceed with data deletion request."
+            )
         all_members = await self.config.all_members()
         for g_id, data in all_members.items():
             for m_id, mutes in data.items():
                 if m_id == user_id:
                     await self.config.member_from_ids(g_id, m_id).clear()
 
-    async def _initialize(self):
+    async def initialize(self):
         await self.bot.wait_until_red_ready()
         await self._maybe_update_config()
 
@@ -184,11 +202,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         )
 
     async def cog_before_invoke(self, ctx: commands.Context):
-        await self._ready.wait()
+        if not self._ready.is_set():
+            async with ctx.typing():
+                await self._ready.wait()
+        if self._ready_raised:
+            await ctx.send(
+                "There was an error during Mutes's initialization."
+                " Check logs for more information."
+            )
+            raise commands.CheckFailure()
 
     def cog_unload(self):
-        self._init_task.cancel()
-        self._unmute_task.cancel()
+        if self._init_task is not None:
+            self._init_task.cancel()
+        if self._unmute_task is not None:
+            self._unmute_task.cancel()
         for task in self._unmute_tasks.values():
             task.cancel()
 
@@ -208,6 +236,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         await self.bot.wait_until_red_ready()
         await self._ready.wait()
+        if self._ready_raised:
+            raise RuntimeError("Mutes cog is in a bad state, cancelling automatic unmute task.")
         while True:
             await self._clean_tasks()
             try:
