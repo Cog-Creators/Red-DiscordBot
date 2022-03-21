@@ -361,14 +361,20 @@ class Requires:
         def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
             if inspect.iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
-                func.__requires_user_perms__ = user_perms
+                if user_perms is None:
+                    func.__requires_user_perms__ = None
+                else:
+                    if getattr(func, "__requires_user_perms__", None) is None:
+                        func.__requires_user_perms__ = discord.Permissions.none()
+                    func.__requires_user_perms__.update(**user_perms)
             else:
                 func.requires.privilege_level = privilege_level
                 if user_perms is None:
                     func.requires.user_perms = None
                 else:
                     _validate_perms_dict(user_perms)
-                    assert func.requires.user_perms is not None
+                    if func.requires.user_perms is None:
+                        func.requires.user_perms = discord.Permissions.none()
                     func.requires.user_perms.update(**user_perms)
             return func
 
@@ -705,7 +711,10 @@ def bot_has_permissions(**perms: bool):
 
     def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
         if asyncio.iscoroutinefunction(func):
-            func.__requires_bot_perms__ = perms
+            if not hasattr(func, "__requires_bot_perms__"):
+                func.__requires_bot_perms__ = discord.Permissions.none()
+            _validate_perms_dict(perms)
+            func.__requires_bot_perms__.update(**perms)
         else:
             _validate_perms_dict(perms)
             func.requires.bot_perms.update(**perms)
