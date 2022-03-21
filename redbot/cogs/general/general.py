@@ -390,7 +390,7 @@ class General(commands.Cog):
                 if "VERIFIED" in guild.features
                 else "https://cdn.discordapp.com/emojis/508929941610430464.png"
                 if "PARTNERED" in guild.features
-                else discord.Embed.Empty,
+                else None,
             )
             if guild.icon:
                 data.set_thumbnail(url=guild.icon)

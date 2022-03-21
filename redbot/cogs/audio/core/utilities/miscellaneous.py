@@ -10,7 +10,6 @@ from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
 
 import discord
 import lavalink
-from discord.embeds import EmptyEmbed
 from red_commons.logging import getLogger
 
 from redbot.core import bank, commands
@@ -65,10 +64,10 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self, ctx: commands.Context, author: Mapping[str, str] = None, **kwargs
     ) -> discord.Message:
         colour = kwargs.get("colour") or kwargs.get("color") or await self.bot.get_embed_color(ctx)
-        title = kwargs.get("title", EmptyEmbed) or EmptyEmbed
+        title = kwargs.get("title") or None
         _type = kwargs.get("type", "rich") or "rich"
-        url = kwargs.get("url", EmptyEmbed) or EmptyEmbed
-        description = kwargs.get("description", EmptyEmbed) or EmptyEmbed
+        url = kwargs.get("url") or None
+        description = kwargs.get("description") or None
         timestamp = kwargs.get("timestamp")
         footer = kwargs.get("footer")
         thumbnail = kwargs.get("thumbnail")
