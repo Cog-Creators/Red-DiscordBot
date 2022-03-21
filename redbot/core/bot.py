@@ -112,6 +112,7 @@ class Red(
             help__max_pages_in_guild=2,
             help__delete_delay=0,
             help__use_menus=False,
+            help__use_buttons=False,
             help__show_hidden=False,
             help__show_aliases=True,
             help__verify_checks=True,

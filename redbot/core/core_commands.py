@@ -3669,6 +3669,33 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Help will not use menus."))
 
+    @helpset.command(name="usebuttons")
+    async def helpset_usebuttons(self, ctx: commands.Context, use_buttons: bool = None):
+        """
+        Allows the help command to be sent with paginated menu using buttons
+        instead of reactions.
+
+        When enabled `[p]help` will only show one page at a time and will use buttons
+        to navigate between pages.
+
+        This defaults to False.
+        Using this without a setting will toggle.
+
+        **Examples:**
+            - `[p]helpset usebuttons True` - Enables using buttons.
+            - `[p]helpset usebuttons` - Toggles the value.
+
+        **Arguments:**
+            - `[use_buttons]` - Whether to use buttons. Leave blank to toggle.
+        """
+        if use_buttons is None:
+            use_buttons = not await ctx.bot._config.help.use_buttons()
+        await ctx.bot._config.help.use_buttons.set(use_buttons)
+        if use_buttons:
+            await ctx.send(_("Help will use buttons if menus are also enabled."))
+        else:
+            await ctx.send(_("Help will not use buttons if menus are also enabled."))
+
     @helpset.command(name="showhidden")
     async def helpset_showhidden(self, ctx: commands.Context, show_hidden: bool = None):
         """

@@ -134,6 +134,7 @@ class HelpSettings:
             "Maximum characters per page: {page_char_limit}"
             "\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}"
             "\nHelp is a menu: {use_menus}"
+            "\nHelp is using buttons: {use_buttons}"
             "\nHelp shows hidden commands: {show_hidden}"
             "\nHelp shows commands aliases: {show_aliases}"
             "\nHelp only shows commands which can be used: {verify_checks}"
@@ -856,15 +857,18 @@ class RedHelpFormatter(HelpFormatterABC):
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
-            # Specifically ensuring the menu's message is sent prior to returning
-            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
-            # Allow other things to happen during menu timeout/interaction.
-            asyncio.create_task(
-                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
-            )
-            # menu needs reactions added manually since we fed it a message
-            menus.start_adding_reactions(m, c.keys())
+            if help_settings.use_buttons:
+                await SimpleMenu(pages, timeout=help_settings.react_timeout).start(ctx)
+            else:
+                # Specifically ensuring the menu's message is sent prior to returning
+                m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+                c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+                # Allow other things to happen during menu timeout/interaction.
+                asyncio.create_task(
+                    menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+                )
+                # menu needs reactions added manually since we fed it a message
+                menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=_)
