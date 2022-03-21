@@ -237,14 +237,14 @@ class Context(DPYContext):
 
         .. code:: python
 
-            await ctx.bot.embed_requested(ctx, check_permissions=True)
+            await ctx.bot.embed_requested(ctx)
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
-        return await self.bot.embed_requested(self, check_permissions=True)
+        return await self.bot.embed_requested(self)
 
     async def maybe_send_embed(self, message: str) -> discord.Message:
         """

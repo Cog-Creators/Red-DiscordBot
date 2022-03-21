@@ -1208,7 +1208,7 @@ class Red(
         channel: discord.abc.Messageable,
         *,
         command: Optional[commands.Command] = None,
-        check_permissions: bool = False,
+        check_permissions: bool = True,
     ) -> bool:
         """
         Determine if an embed is requested for a response.

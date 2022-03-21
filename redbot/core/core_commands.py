@@ -3979,9 +3979,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if not is_dm and not destination.permissions_for(destination.guild.me).send_messages:
                 continue
 
-            if await ctx.bot.embed_requested(
-                destination, command=ctx.command, check_permissions=True
-            ):
+            if await ctx.bot.embed_requested(destination, command=ctx.command):
                 color = await ctx.bot.get_embed_color(destination)
 
                 e = discord.Embed(colour=color, description=message)
