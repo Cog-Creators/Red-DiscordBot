@@ -275,7 +275,7 @@ class CoreLogic:
 
         for name in pkg_names:
             if name in bot.extensions:
-                bot.unload_extension(name)
+                await bot.unload_extension(name)
                 await bot.remove_loaded_package(name)
                 unloaded_packages.append(name)
             else:
@@ -5157,7 +5157,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def rpc_unload(self, request):
         cog_name = request.params[0]
 
-        self.bot.unload_extension(cog_name)
+        await self.bot.unload_extension(cog_name)
 
     async def rpc_reload(self, request):
         await self.rpc_unload(request)

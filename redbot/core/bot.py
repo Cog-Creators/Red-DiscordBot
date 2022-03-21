@@ -1101,10 +1101,10 @@ class Red(
         """
         This should only be run once, prior to connecting to Discord gateway.
         """
-        self.add_cog(Core(self))
-        self.add_cog(CogManagerUI())
+        await self.add_cog(Core(self))
+        await self.add_cog(CogManagerUI())
         if self._cli_flags.dev:
-            self.add_cog(Dev())
+            await self.add_cog(Dev())
 
         await modlog._init(self)
         await bank._init()
@@ -1597,18 +1597,23 @@ class Red(
             raise discord.ClientException(f"extension {name} does not have a setup function")
 
         try:
-            if asyncio.iscoroutinefunction(lib.setup):
-                await lib.setup(self)
-            else:
-                lib.setup(self)
+            await lib.setup(self)
         except Exception as e:
-            self._remove_module_references(lib.__name__)
-            self._call_module_finalizers(lib, name)
+            await self._remove_module_references(lib.__name__)
+            await self._call_module_finalizers(lib, name)
             raise
         else:
             self._BotBase__extensions[name] = lib
 
-    def remove_cog(self, cogname: str, /) -> Optional[commands.Cog]:
+    async def remove_cog(
+        self,
+        cogname: str,
+        /,
+        *,
+        # DEP-WARN: MISSING is implementation detail
+        guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
+        guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
+    ) -> Optional[commands.Cog]:
         cog = self.get_cog(cogname)
         if cog is None:
             return
@@ -1621,7 +1626,7 @@ class Red(
             else:
                 self.remove_permissions_hook(hook)
 
-        super().remove_cog(cogname)
+        await super().remove_cog(cogname, guild=guild, guilds=guilds)
 
         cog.requires.reset()
 
@@ -1711,7 +1716,16 @@ class Red(
 
         return await destination.send(content=content, **kwargs)
 
-    def add_cog(self, cog: commands.Cog, /, *, override: bool = False) -> None:
+    async def add_cog(
+        self,
+        cog: commands.Cog,
+        /,
+        *,
+        override: bool = False,
+        # DEP-WARN: MISSING is implementation detail
+        guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
+        guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
+    ) -> None:
         if not isinstance(cog, commands.Cog):
             raise RuntimeError(
                 f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
@@ -1722,7 +1736,7 @@ class Red(
         if cog_name in self.cogs:
             if not override:
                 raise discord.ClientException(f"Cog named {cog_name!r} already loaded")
-            self.remove_cog(cog_name)
+            await self.remove_cog(cog_name, guild=guild, guilds=guilds)
 
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
@@ -1739,7 +1753,7 @@ class Red(
                     self.add_permissions_hook(hook)
                     added_hooks.append(hook)
 
-            super().add_cog(cog)
+            await super().add_cog(cog, guild=guild, guilds=guilds)
             self.dispatch("cog_add", cog)
             if "permissions" not in self.extensions:
                 cog.requires.ready_event.set()
