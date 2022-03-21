@@ -193,7 +193,6 @@ class Reports(commands.Cog):
             return guild
 
     async def send_report(self, ctx: commands.Context, msg: discord.Message, guild: discord.Guild):
-
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
 
@@ -207,7 +206,7 @@ class Reports(commands.Cog):
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
-        if await self.bot.embed_requested(channel, author):
+        if await self.bot.embed_requested(channel):
             em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(

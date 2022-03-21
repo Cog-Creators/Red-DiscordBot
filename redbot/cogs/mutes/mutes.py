@@ -543,8 +543,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not reason:
             reason = _("No reason provided.")
 
-        # okay, this is some poor API to require PrivateChannel here...
-        if await self.bot.embed_requested(await user.create_dm(), user):
+        if await self.bot.embed_requested(user):
             em = discord.Embed(
                 title=title,
                 description=reason,

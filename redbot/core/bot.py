@@ -1205,26 +1205,24 @@ class Red(
 
     async def embed_requested(
         self,
-        channel: Union[discord.abc.GuildChannel, discord.abc.PrivateChannel],
-        user: discord.abc.User,
-        command: Optional[commands.Command] = None,
+        channel: discord.abc.Messageable,
         *,
-        check_permissions: bool = False,
+        command: Optional[commands.Command] = None,
+        check_permissions: bool = True,
     ) -> bool:
         """
         Determine if an embed is requested for a response.
 
         Arguments
         ---------
-        channel : `discord.abc.GuildChannel` or `discord.abc.PrivateChannel`
-            The channel to check embed settings for.
-        user : `discord.abc.User`
-            The user to check embed settings for.
-        command : `redbot.core.commands.Command`, optional
-            The command ran.
+        channel : `discord.abc.Messageable`
+            The target messageable object to check embed settings for.
 
         Keyword Arguments
         -----------------
+        command : `redbot.core.commands.Command`, optional
+            The command ran.
+            This is auto-filled when ``channel`` is passed with command context.
         check_permissions : `bool`
             If ``True``, this method will also check whether the bot can send embeds
             in the given channel and if it can't, it will return ``False`` regardless of
@@ -1242,10 +1240,12 @@ class Red(
             scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
             return await scope.embeds()
 
-        if isinstance(channel, discord.abc.PrivateChannel):
-            if (user_setting := await self._config.user(user).embeds()) is not None:
-                return user_setting
-        else:
+        # using dpy_commands.Context to keep the Messageable contract in full
+        if isinstance(channel, dpy_commands.Context):
+            command = command or channel.command
+            channel = channel.channel
+
+        if isinstance(channel, discord.TextChannel):
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
                 return False
 
@@ -1257,6 +1257,13 @@ class Red(
 
             if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
+        elif isinstance(channel, discord.GroupChannel):
+            # this only uses global settings
+            pass
+        else:
+            user = channel.recipient if isinstance(discord.DMChannel) else channel
+            if (user_setting := await self._config.user(user).embeds()) is not None:
+                return user_setting
 
         # XXX: maybe this should be checked before guild setting?
         if (global_command_setting := await get_command_setting(0)) is not None:
