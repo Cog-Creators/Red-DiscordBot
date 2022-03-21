@@ -261,12 +261,15 @@ class General(commands.Cog):
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
         )
-        total_users = humanize_number(guild.member_count)
+        total_users = guild.member_count and humanize_number(guild.member_count)
         text_channels = humanize_number(len(guild.text_channels))
         voice_channels = humanize_number(len(guild.voice_channels))
         if not details:
             data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
-            data.add_field(name=_("Users online"), value=f"{online}/{total_users}")
+            data.add_field(
+                name=_("Users online"),
+                value=f"{online}/{total_users}" if total_users else _("Not available"),
+            )
             data.add_field(name=_("Text Channels"), value=text_channels)
             data.add_field(name=_("Voice Channels"), value=voice_channels)
             data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
