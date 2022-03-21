@@ -47,7 +47,7 @@ class Warnings(commands.Cog):
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
-        self.registration_task = self.bot.loop.create_task(self.register_warningtype())
+        self.registration_task = asyncio.create_task(self.register_warningtype())
 
     async def red_delete_data_for_user(
         self,

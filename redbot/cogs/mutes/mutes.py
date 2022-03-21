@@ -108,7 +108,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         # to wait for a guild to finish channel unmutes before
         # checking for manual overwrites
 
-        self._init_task = self.bot.loop.create_task(self._initialize())
+        self._init_task = asyncio.create_task(self._initialize())
 
     async def red_delete_data_for_user(
         self,

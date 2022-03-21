@@ -1082,7 +1082,7 @@ class Red(
             if any(LIB_PATH.iterdir()):
                 shutil.rmtree(str(LIB_PATH))
                 LIB_PATH.mkdir()
-                self.loop.create_task(
+                asyncio.create_task(
                     send_to_owners_with_prefix_replaced(
                         self,
                         "We detected a change in minor Python version"
@@ -1117,7 +1117,7 @@ class Red(
             system_changed = True
 
         if system_changed and not python_version_changed:
-            self.loop.create_task(
+            asyncio.create_task(
                 send_to_owners_with_prefix_replaced(
                     self,
                     "We detected a possible change in machine's operating system"
