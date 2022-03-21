@@ -1219,14 +1219,15 @@ class Red(
             raise _NoOwnerSet("Bot doesn't have any owner set!")
 
     async def start(self, token: str) -> None:
-        """
-        Overridden start which ensures that cog load and other pre-connection tasks are handled.
-        """
+        # Overriding start to call _pre_login() before login()
         await self._pre_login()
         await self.login(token)
+        # Pre-connect actions are done by setup_hook() which is called at the end of d.py's login()
+        await self.connect()
+
+    async def setup_hook(self) -> None:
         await self._pre_fetch_owners()
         await self._pre_connect()
-        await self.connect()
 
     async def send_help_for(
         self,
