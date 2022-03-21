@@ -1364,7 +1364,7 @@ class Red(
         """
         data = await self._config.all()
         commands_scope = data["invite_commands_scope"]
-        scopes = ("bot", "applications.commands") if commands_scope else None
+        scopes = ("bot", "applications.commands") if commands_scope else ("bot",)
         perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
         return discord.utils.oauth_url(self._app_info.id, permissions=permissions, scopes=scopes)
