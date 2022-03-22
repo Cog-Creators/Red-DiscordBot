@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import discord
 
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Union, Dict
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
 
@@ -23,7 +23,7 @@ class _SimplePageSource(menus.ListPageSource):
         return page
 
 
-class NavigateButton(discord.ui.Button):
+class _NavigateButton(discord.ui.Button):
     def __init__(
         self, style: discord.ButtonStyle, emoji: Union[str, discord.PartialEmoji], direction: int
     ):
@@ -45,12 +45,12 @@ class SimpleMenu(discord.ui.View):
     """
     A simple Button menu
 
-    .. note:: All pages should be of the same type
-
     Parameters
     ----------
-    pages: `list` of `str` or `discord.Embed`
+    pages: `list` of `str`, `discord.Embed`, or `dict`.
         The pages of the menu.
+        if the page is a `dict` its keys must be valid messageable args.
+        e,g. `{"content": "My content", "embed": discord.Embed(description="hello")}`
     page_start: int
         The page to start the menu at.
     timeout: float
@@ -60,11 +60,18 @@ class SimpleMenu(discord.ui.View):
         Whether or not to delete the message after
         the timeout has expired.
         Defaults to False.
+
+    Examples
+    --------
+        from redbot.core.utils.views import SimpleMenu
+
+        pages = ["Hello", "Hi", "Bonjour", "Salut"]
+        await SimpleMenu(pages).start(ctx)
     """
 
     def __init__(
         self,
-        pages: List[Union[str, discord.Embed]],
+        pages: List[Union[str, discord.Embed, Dict[str, Union[str, discord.Embed]]]],
         timeout: float = 180.0,
         page_start: int = 0,
         delete_after_timeout: bool = False,
@@ -79,22 +86,22 @@ class SimpleMenu(discord.ui.View):
         self.current_page = page_start
         self.delete_after_timeout = delete_after_timeout
 
-        self.forward_button = NavigateButton(
+        self.forward_button = _NavigateButton(
             discord.ButtonStyle.grey,
             "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
             direction=1,
         )
-        self.backward_button = NavigateButton(
+        self.backward_button = _NavigateButton(
             discord.ButtonStyle.grey,
             "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
             direction=-1,
         )
-        self.first_button = NavigateButton(
+        self.first_button = _NavigateButton(
             discord.ButtonStyle.grey,
             "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
             direction=0,
         )
-        self.last_button = NavigateButton(
+        self.last_button = _NavigateButton(
             discord.ButtonStyle.grey,
             "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
             direction=self.source.get_max_pages(),
