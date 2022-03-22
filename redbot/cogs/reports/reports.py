@@ -356,11 +356,9 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-
         to_remove = []
 
         for k, v in self.tunnel_store.items():
-
             guild, ticket_number = k
             if await self.bot.cog_disabled_in_guild(self, guild):
                 to_remove.append(k)

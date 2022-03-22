@@ -39,7 +39,7 @@ class RPSParser:
             self.choice = None
 
 
-MAX_ROLL: Final[int] = 2 ** 64 - 1
+MAX_ROLL: Final[int] = 2**64 - 1
 
 
 @cog_i18n(_)
@@ -77,7 +77,7 @@ class General(commands.Cog):
         self.stopwatches = {}
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     @commands.command(usage="<first> <second> [others...]")

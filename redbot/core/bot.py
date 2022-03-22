@@ -489,7 +489,7 @@ class Red(
 
     @property
     def uptime(self) -> datetime:
-        """ Allow access to the value, but we don't want cog creators setting it """
+        """Allow access to the value, but we don't want cog creators setting it"""
         return self._uptime
 
     @uptime.setter

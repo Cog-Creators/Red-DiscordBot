@@ -274,7 +274,6 @@ if TYPE_CHECKING:
     def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
         ...
 
-
 else:
 
     def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
@@ -353,7 +352,6 @@ if TYPE_CHECKING:
         allowed_units: Optional[List[str]] = None,
     ) -> Type[timedelta]:
         ...
-
 
 else:
 

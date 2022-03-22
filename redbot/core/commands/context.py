@@ -93,7 +93,7 @@ class Context(DPYContext):
         return await super().send(content=content, **kwargs)
 
     async def send_help(self, command=None):
-        """ Send the command help message. """
+        """Send the command help message."""
         # This allows people to manually use this similarly
         # to the upstream d.py version, while retaining our use.
         command = command or self.command
@@ -359,7 +359,6 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
         @property
         def me(self) -> discord.Member:
             ...
-
 
 else:
     GuildContext = Context

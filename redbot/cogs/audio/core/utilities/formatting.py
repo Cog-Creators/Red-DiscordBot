@@ -167,7 +167,6 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ctx, title=_("This track is not allowed in this server.")
             )
         elif guild_data["maxlength"] > 0:
-
             if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
                 search_choice.extras.update(
                     {

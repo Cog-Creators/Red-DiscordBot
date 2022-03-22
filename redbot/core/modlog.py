@@ -98,7 +98,6 @@ async def _init(bot: Red):
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
-
         if not guild.me.guild_permissions.view_audit_log:
             return
 

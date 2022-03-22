@@ -349,7 +349,6 @@ class Economy(commands.Cog):
                     ).format(author=author, time=dtime)
                 )
         else:
-
             # Gets the users latest successfully payday and adds the guilds payday time
             next_payday = (
                 await self.config.member(author).next_payday()
