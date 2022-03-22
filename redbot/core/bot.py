@@ -1232,6 +1232,13 @@ class Red(
         -------
         bool
             :code:`True` if an embed is requested
+
+        Raises
+        ------
+        TypeError
+            When the passed channel is of type `discord.GroupChannel`
+            or `discord.DMChannel`
+
         """
 
         async def get_command_setting(guild_id: int) -> Optional[bool]:
