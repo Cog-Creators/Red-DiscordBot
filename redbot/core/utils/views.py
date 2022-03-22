@@ -23,6 +23,24 @@ class _SimplePageSource(menus.ListPageSource):
         return page
 
 
+class NavigateButton(discord.ui.Button):
+    def __init__(
+        self, style: discord.ButtonStyle, emoji: Union[str, discord.PartialEmoji], direction: int
+    ):
+        super().__init__(style=style, emoji=emoji)
+        self.direction = direction
+
+    async def callback(self, interaction: discord.Interaction):
+        if self.direction == 0:
+            self.view.current_page = 0
+        elif self.direction == self.view.source.get_max_pages():
+            self.view.current_page = self.view.source.get_max_pages() - 1
+        else:
+            self.view.current_page += self.direction
+        kwargs = await self.view.get_page(self.view.current_page)
+        await interaction.response.edit_message(**kwargs)
+
+
 class SimpleMenu(discord.ui.View):
     """
     A simple Button menu
@@ -33,11 +51,15 @@ class SimpleMenu(discord.ui.View):
     ----------
     pages: `list` of `str` or `discord.Embed`
         The pages of the menu.
-    page: int
-        The current page number of the menu
+    page_start: int
+        The page to start the menu at.
     timeout: float
         The time (in seconds) to wait for a reaction
         defaults to 180 seconds.
+    delete_after_timeout: bool
+        Whether or not to delete the message after
+        the timeout has expired.
+        Defaults to False.
     """
 
     def __init__(
@@ -45,6 +67,7 @@ class SimpleMenu(discord.ui.View):
         pages: List[Union[str, discord.Embed]],
         timeout: float = 180.0,
         page_start: int = 0,
+        delete_after_timeout: bool = False,
     ) -> None:
         super().__init__(
             timeout=timeout,
@@ -54,13 +77,43 @@ class SimpleMenu(discord.ui.View):
         self._source = _SimplePageSource(items=pages)
         self.ctx = None
         self.current_page = page_start
+        self.delete_after_timeout = delete_after_timeout
+
+        self.forward_button = NavigateButton(
+            discord.ButtonStyle.grey,
+            "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+            direction=1,
+        )
+        self.backward_button = NavigateButton(
+            discord.ButtonStyle.grey,
+            "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+            direction=-1,
+        )
+        self.first_button = NavigateButton(
+            discord.ButtonStyle.grey,
+            "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+            direction=0,
+        )
+        self.last_button = NavigateButton(
+            discord.ButtonStyle.grey,
+            "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+            direction=self.source.get_max_pages(),
+        )
+        if self.source.is_paginating():
+            self.add_item(self.first_button)
+            self.add_item(self.backward_button)
+            self.add_item(self.forward_button)
+            self.add_item(self.last_button)
 
     @property
     def source(self):
         return self._source
 
     async def on_timeout(self):
-        await self.message.edit(view=None)
+        if self.delete_after_timeout:
+            await self.message.delete()
+        else:
+            await self.message.edit(view=None)
 
     async def start(self, ctx: Context):
         self.ctx = ctx
@@ -100,50 +153,7 @@ class SimpleMenu(discord.ui.View):
                 content=_("You are not authorized to interact with this."), ephemeral=True
             )
             return False
-        self.interaction = interaction
         return True
-
-    @discord.ui.button(
-        style=discord.ButtonStyle.grey,
-        emoji="\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
-    )
-    async def go_to_first_page(self, button: discord.ui.Button, interaction: discord.Interaction):
-        """go to the first page"""
-        kwargs = await self.get_page(0)
-        await interaction.response.edit_message(**kwargs)
-
-    @discord.ui.button(
-        style=discord.ButtonStyle.grey,
-        emoji="\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
-    )
-    async def go_to_previous_page(
-        self, button: discord.ui.Button, interaction: discord.Interaction
-    ):
-        """go to the previous page"""
-        self.current_page -= 1
-        kwargs = await self.get_page(self.current_page)
-        await interaction.response.edit_message(**kwargs)
-
-    @discord.ui.button(
-        style=discord.ButtonStyle.grey,
-        emoji="\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
-    )
-    async def go_to_next_page(self, button: discord.ui.Button, interaction: discord.Interaction):
-        """go to the next page"""
-        self.current_page += 1
-        kwargs = await self.get_page(self.current_page)
-        await interaction.response.edit_message(**kwargs)
-
-    @discord.ui.button(
-        style=discord.ButtonStyle.grey,
-        emoji="\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
-    )
-    async def go_to_last_page(self, button: discord.ui.Button, interaction: discord.Interaction):
-        """go to the last page"""
-        # The call here is safe because it's guarded by skip_if
-        self.current_page = self.source.get_max_pages() - 1
-        kwargs = await self.get_page(self.current_page)
-        await interaction.response.edit_message(**kwargs)
 
     @discord.ui.button(
         style=discord.ButtonStyle.red,
