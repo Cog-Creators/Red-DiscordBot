@@ -347,24 +347,6 @@ class ServerManager:
                 p = psutil.Process(self._node_pid)
                 p.terminate()
                 p.kill()
-        if self._args:
-            args = (
-                self._args[1],
-                self._args[2],
-                self._args[-2],
-                self._args[-1],
-            )
-        else:
-            args = ()
-
-        for proc in await self.get_lavalink_process(
-            *args,
-            cwd=str(LAVALINK_DOWNLOAD_DIR),
-        ):  # This will kill all processed with "lavalink" where the cwd is LAVALINK_DOWNLOAD_DIR
-            with contextlib.suppress(psutil.Error):
-                p = psutil.Process(proc["pid"])
-                p.terminate()
-                p.kill()
         self._proc = None
         self._shutdown = True
         self._node_pid = None
@@ -459,29 +441,6 @@ class ServerManager:
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
-    @staticmethod
-    async def get_lavalink_process(
-        *matches: str, cwd: Optional[str] = None, lazy_match: bool = False
-    ):
-        process_list = []
-        filter = [cwd] if cwd else []
-        async for proc in AsyncIter(psutil.process_iter()):
-            try:
-                if cwd:
-                    if not (proc.cwd() in filter):
-                        continue
-                cmdline = proc.cmdline()
-                if (matches and all(a in cmdline for a in matches)) or (
-                    lazy_match and any("lavalink" in arg.lower() for arg in cmdline)
-                ):
-                    proc_as_dict = proc.as_dict(
-                        attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]
-                    )
-                    process_list.append(proc_as_dict)
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
-        return process_list
-
     async def wait_until_ready(self, timeout: Optional[float] = None):
         await asyncio.wait_for(self.ready.wait(), timeout=timeout or self.timeout)
 
@@ -496,74 +455,34 @@ class ServerManager:
                     await self._start(java_path=java_path)
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
-                    if self._args:
-                        args = (
-                            self._args[1],
-                            self._args[2],
-                            self._args[-2],
-                            self._args[-1],
-                        )
-                    else:
-                        args = ()
-                    process_list = await self.get_lavalink_process(
-                        *args,
-                        cwd=str(LAVALINK_DOWNLOAD_DIR),
-                    )
-                    # Jar is not running
-                    if not process_list:
-                        log.warning("Managed node process not found.")
+                    if not psutil.pid_exists(self._node_pid):
                         raise NoProcessFound
-                    # An unmanaged killable jar is running
-                    elif len(process_list) == 1 and process_list[0]["pid"] != self._node_pid:
-                        log.warning(
-                            "Managed node PID expected to be %s however when querying it I only found %s",
-                            self._node_pid,
-                            process_list[0]["pid"],
-                        )
-                        log.debug("%s", process_list[0])
-                        raise IncorrectProcessFound
-                    # WARN:
-                    #  This will cause issues with users running the bot from the same instance of Red multiple times.
-                    #  AFAIK this is unsupported anyway
-                    elif len(process_list) > 1:
-                        log.warning(
-                            "Multiple processes meet the managed node criteria, "
-                            "more information will be shown at VERBOSE level"
-                        )
-                        for proc in process_list:
-                            log.verbose("%s", proc)
-                        raise TooManyProcessFound
-                    else:
-                        # only the managed jar is running
-                        # len(process_list) == 1 and process_list[0]["pid"] == self._node_pid
-                        # This will not be as simple as adding a for loop here if multi node support is added
-                        log.trace("Managed node possible PID: %s", self._node_pid)
+                    try:
+                        node = lavalink.get_all_nodes()[0]
+                        if node.ready:
+                            # Hoping this throws an exception which will then trigger a restart
+                            await node._ws.ping()
+                            backoff = ExponentialBackoff(
+                                base=7
+                            )  # Reassign Backoff to reset it on successful ping.
+                            # ExponentialBackoff.reset() would be a nice method to have
+                            await asyncio.sleep(1)
+                        else:
+                            await asyncio.sleep(5)
+                    except IndexError:
+                        # In case lavalink.get_all_nodes() returns 0 Nodes
+                        #  (During a connect or multiple connect failures)
                         try:
-                            node = lavalink.get_all_nodes()[0]
-                            if node.ready:
-                                # Hoping this throws an exception which will then trigger a restart
-                                await node._ws.ping()
-                                backoff = ExponentialBackoff(
-                                    base=7
-                                )  # Reassign Backoff to reset it on successful ping.
-                                # ExponentialBackoff.reset() would be a nice method to have
-                                await asyncio.sleep(1)
-                            else:
-                                await asyncio.sleep(5)
-                        except IndexError:
-                            # In case lavalink.get_all_nodes() returns 0 Nodes
-                            #  (During a connect or multiple connect failures)
-                            try:
-                                log.debug(
-                                    "Managed node monitor detected RLL is not connected to any nodes"
-                                )
-                                await lavalink.wait_until_ready(timeout=60, wait_if_no_node=60)
-                            except asyncio.TimeoutError:
-                                self.cog.lavalink_restart_connect(manual=True)
-                                return  # lavalink_restart_connect will cause a new monitor task to be created.
-                        except Exception as exc:
-                            log.debug(exc, exc_info=exc)
-                            raise NodeUnhealthy(str(exc))
+                            log.debug(
+                                "Managed node monitor detected RLL is not connected to any nodes"
+                            )
+                            await lavalink.wait_until_ready(timeout=60, wait_if_no_node=60)
+                        except asyncio.TimeoutError:
+                            self.cog.lavalink_restart_connect(manual=True)
+                            return  # lavalink_restart_connect will cause a new monitor task to be created.
+                    except Exception as exc:
+                        log.debug(exc, exc_info=exc)
+                        raise NodeUnhealthy(str(exc))
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
             except asyncio.TimeoutError:
