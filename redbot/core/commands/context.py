@@ -231,17 +231,20 @@ class Context(DPYContext):
 
     async def embed_requested(self):
         """
-        Simple helper to call bot.embed_requested
-        with logic around if embed permissions are available
+        Short-hand for calling bot.embed_requested with permission checks.
+
+        Equivalent to:
+
+        .. code:: python
+
+            await ctx.bot.embed_requested(ctx)
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
-        return await self.bot.embed_requested(
-            self.channel, self.author, command=self.command, check_permissions=True
-        )
+        return await self.bot.embed_requested(self)
 
     async def maybe_send_embed(self, message: str) -> discord.Message:
         """

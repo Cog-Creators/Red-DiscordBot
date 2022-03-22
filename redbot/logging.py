@@ -282,7 +282,6 @@ class RedRichHandler(RichHandler):
 
 def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespace) -> None:
     root_logger = logging.getLogger()
-
     base_logger = logging.getLogger("red")
     base_logger.setLevel(level)
     dpy_logger = logging.getLogger("discord")
@@ -298,6 +297,8 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
                 "log.time": Style(dim=True),
                 "logging.level.warning": Style(color="yellow"),
                 "logging.level.critical": Style(color="white", bgcolor="red"),
+                "logging.level.verbose": Style(color="magenta", italic=True, dim=True),
+                "logging.level.trace": Style(color="white", italic=True, dim=True),
                 "repr.number": Style(color="cyan"),
                 "repr.url": Style(underline=True, italic=True, bold=False, color="cyan"),
             }

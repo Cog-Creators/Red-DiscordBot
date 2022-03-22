@@ -1,5 +1,3 @@
-import datetime
-import logging
 import math
 import re
 import time
@@ -9,6 +7,7 @@ from typing import List, Optional
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
 from redbot.core import commands
@@ -17,11 +16,10 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
 
 from ...audio_dataclasses import LocalPath, Query
-from ...audio_logging import IS_DEBUG
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
+log = getLogger("red.cogs.Audio.cog.Utilities.formatting")
 _ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 
@@ -163,8 +161,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
         ):
-            if IS_DEBUG:
-                log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+            log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")

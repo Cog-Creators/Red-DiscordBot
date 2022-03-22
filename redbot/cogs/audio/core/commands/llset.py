@@ -1,7 +1,7 @@
-import logging
 from pathlib import Path
 
 import discord
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -10,7 +10,7 @@ from redbot.core.utils.chat_formatting import box
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
+log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
 _ = Translator("Audio", Path(__file__))
 
 

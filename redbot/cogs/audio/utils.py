@@ -1,6 +1,5 @@
 import asyncio
 import contextlib
-import logging
 import time
 
 from enum import Enum, unique
@@ -8,11 +7,12 @@ from pathlib import Path
 from typing import MutableMapping
 
 import discord
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
-log = logging.getLogger("red.cogs.Audio.task.callback")
+log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
 
@@ -216,10 +216,28 @@ class PlaylistScope(Enum):
         return list(map(lambda c: c.value, PlaylistScope))
 
 
-def task_callback(task: asyncio.Task) -> None:
+def task_callback_exception(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
         if exc := task.exception():
             log.exception("%s raised an Exception", task.get_name(), exc_info=exc)
+
+
+def task_callback_debug(task: asyncio.Task) -> None:
+    with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
+        if exc := task.exception():
+            log.debug("%s raised an Exception", task.get_name(), exc_info=exc)
+
+
+def task_callback_verbose(task: asyncio.Task) -> None:
+    with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
+        if exc := task.exception():
+            log.verbose("%s raised an Exception", task.get_name(), exc_info=exc)
+
+
+def task_callback_trace(task: asyncio.Task) -> None:
+    with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
+        if exc := task.exception():
+            log.trace("%s raised an Exception", task.get_name(), exc_info=exc)
 
 
 def has_internal_server():

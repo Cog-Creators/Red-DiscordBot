@@ -1,11 +1,11 @@
 import asyncio
 import contextlib
-import logging
 import re
 from pathlib import Path
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -17,7 +17,7 @@ from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.equalizer")
+log = getLogger("red.cogs.Audio.cog.Commands.equalizer")
 _ = Translator("Audio", Path(__file__))
 
 
