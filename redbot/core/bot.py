@@ -1256,7 +1256,9 @@ class Red(
         if isinstance(channel, dpy_commands.Context):
             command = command or channel.command
             channel = (
-                channel.author if isinstance(ctx.channel, discord.DMChannel) else channel.channel
+                channel.author
+                if isinstance(channel.channel, discord.DMChannel)
+                else channel.channel
             )
 
         if isinstance(channel, discord.TextChannel):
