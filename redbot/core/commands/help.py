@@ -713,7 +713,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 yield obj
 
     async def embed_requested(self, ctx: Context) -> bool:
-        return await ctx.bot.embed_requested(channel=ctx.channel, command=red_help)
+        return await ctx.bot.embed_requested(channel=ctx, command=red_help)
 
     async def command_not_found(self, ctx, help_for, help_settings: HelpSettings):
         """

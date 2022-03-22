@@ -1239,6 +1239,10 @@ class Red(
                 return None
             scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
             return await scope.embeds()
+        if isinstance(channel, discord.GroupChannel) or isinstance(channel, discord.DMChannel):
+            # we should not be passing group channels to this function
+            # this only uses global settings
+            raise TypeError("You cannot pass a GroupChannel or DMChannel to this method")
 
         # using dpy_commands.Context to keep the Messageable contract in full
         if isinstance(channel, dpy_commands.Context):
@@ -1251,24 +1255,20 @@ class Red(
 
             if (channel_setting := await self._config.channel(channel).embeds()) is not None:
                 return channel_setting
-
             if (command_setting := await get_command_setting(channel.guild.id)) is not None:
                 return command_setting
 
             if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
-        elif isinstance(channel, discord.GroupChannel):
-            # this only uses global settings
-            pass
+
         else:
-            user = channel.recipient if isinstance(discord.DMChannel) else channel
+            user = channel
             if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
 
         # XXX: maybe this should be checked before guild setting?
         if (global_command_setting := await get_command_setting(0)) is not None:
             return global_command_setting
-
         global_setting = await self._config.embeds()
         return global_setting
 
