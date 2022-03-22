@@ -1247,9 +1247,7 @@ class Red(
             scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
             return await scope.embeds()
 
-        if isinstance(channel, discord.GroupChannel) or isinstance(channel, discord.DMChannel):
-            # we should not be passing group channels to this function
-            # this only uses global settings
+        if isinstance(channel, (discord.GroupChannel, discord.DMChannel)):
             raise TypeError("You cannot pass a GroupChannel or DMChannel to this method")
 
         # using dpy_commands.Context to keep the Messageable contract in full
