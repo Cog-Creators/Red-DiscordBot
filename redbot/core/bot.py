@@ -1205,7 +1205,7 @@ class Red(
 
     async def embed_requested(
         self,
-        channel: discord.abc.Messageable,
+        channel: Union[discord.TextChannel, commands.Context, discord.User, discord.Member],
         *,
         command: Optional[commands.Command] = None,
         check_permissions: bool = True,
@@ -1232,6 +1232,13 @@ class Red(
         -------
         bool
             :code:`True` if an embed is requested
+
+        Raises
+        ------
+        TypeError
+            When the passed channel is of type `discord.GroupChannel`
+            or `discord.DMChannel`
+
         """
 
         async def get_command_setting(guild_id: int) -> Optional[bool]:
@@ -1240,10 +1247,17 @@ class Red(
             scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
             return await scope.embeds()
 
+        if isinstance(channel, (discord.GroupChannel, discord.DMChannel)):
+            raise TypeError("You cannot pass a GroupChannel or DMChannel to this method")
+
         # using dpy_commands.Context to keep the Messageable contract in full
         if isinstance(channel, dpy_commands.Context):
             command = command or channel.command
-            channel = channel.channel
+            channel = (
+                channel.author
+                if isinstance(channel.channel, discord.DMChannel)
+                else channel.channel
+            )
 
         if isinstance(channel, discord.TextChannel):
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
@@ -1257,15 +1271,11 @@ class Red(
 
             if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
-        elif isinstance(channel, discord.GroupChannel):
-            # this only uses global settings
-            pass
         else:
-            user = channel.recipient if isinstance(discord.DMChannel) else channel
+            user = channel
             if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
 
-        # XXX: maybe this should be checked before guild setting?
         if (global_command_setting := await get_command_setting(0)) is not None:
             return global_command_setting
 
