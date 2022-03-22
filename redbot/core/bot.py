@@ -1205,7 +1205,7 @@ class Red(
 
     async def embed_requested(
         self,
-        channel: discord.abc.Messageable,
+        channel: Union[discord.TextChannel, commands.Context, discord.User, discord.Member],
         *,
         command: Optional[commands.Command] = None,
         check_permissions: bool = True,
@@ -1255,7 +1255,7 @@ class Red(
         # using dpy_commands.Context to keep the Messageable contract in full
         if isinstance(channel, dpy_commands.Context):
             command = command or channel.command
-            channel = channel.channel
+            channel = channel.author
 
         if isinstance(channel, discord.TextChannel):
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
@@ -1263,6 +1263,7 @@ class Red(
 
             if (channel_setting := await self._config.channel(channel).embeds()) is not None:
                 return channel_setting
+
             if (command_setting := await get_command_setting(channel.guild.id)) is not None:
                 return command_setting
 
@@ -1274,9 +1275,9 @@ class Red(
             if (user_setting := await self._config.user(user).embeds()) is not None:
                 return user_setting
 
-        # XXX: maybe this should be checked before guild setting?
         if (global_command_setting := await get_command_setting(0)) is not None:
             return global_command_setting
+
         global_setting = await self._config.embeds()
         return global_setting
 
