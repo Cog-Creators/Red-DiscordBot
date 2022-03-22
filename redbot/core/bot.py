@@ -1269,7 +1269,6 @@ class Red(
 
             if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
-
         else:
             user = channel
             if (user_setting := await self._config.user(user).embeds()) is not None:
