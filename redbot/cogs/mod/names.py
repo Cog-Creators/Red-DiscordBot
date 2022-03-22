@@ -226,7 +226,6 @@ class ModInfo(MixinMeta):
         status_string = self.get_status_string(member)
 
         if roles:
-
             role_str = ", ".join([x.mention for x in roles])
             # 400 BAD REQUEST (error code: 50035): Invalid Form Body
             # In embed.fields.2.value: Must be 1024 or fewer in length.

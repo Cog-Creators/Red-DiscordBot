@@ -94,12 +94,10 @@ class Alias(commands.Cog):
         all_guild_aliases = await self.config.all_guilds()
 
         for guild_id, guild_data in all_guild_aliases.items():
-
             to_set = []
             modified = False
 
             for a in guild_data.get("entries", []):
-
                 for keyname in ("creator", "guild"):
                     if isinstance((val := a.get(keyname)), str):
                         try:
@@ -134,7 +132,7 @@ class Alias(commands.Cog):
         t.add_done_callback(done_callback)
 
     async def _initialize(self):
-        """ Should only ever be a task """
+        """Should only ever be a task"""
 
         await self._maybe_handle_string_keys()
 
@@ -482,7 +480,6 @@ class Alias(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
-
         await self._ready_event.wait()
 
         if message.guild is not None:

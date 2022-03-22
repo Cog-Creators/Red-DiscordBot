@@ -224,7 +224,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         *,
         scope_data: ComplexScopeParser = None,
     ):
-
         """Copy a playlist from one scope to another.
 
         **Usage**:
@@ -962,7 +961,6 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         scope, author, guild, specified_user = scope_data
         async with ctx.typing():
             if scope is None:
-
                 global_matches = await get_all_playlist(
                     scope=PlaylistScope.GLOBAL.value,
                     bot=self.bot,

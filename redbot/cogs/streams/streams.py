@@ -83,7 +83,7 @@ class Streams(commands.Cog):
         self._init_task: asyncio.Task = asyncio.create_task(self.initialize())
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     def check_name_or_id(self, data: str) -> bool:

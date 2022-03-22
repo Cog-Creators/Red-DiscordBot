@@ -24,7 +24,7 @@ class ModLog(commands.Cog):
         self.bot = bot
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     @commands.command()
