@@ -85,7 +85,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             timestamp = timestamp.replace(tzinfo=datetime.timezone.utc)
             contents["timestamp"] = timestamp
         else:
-            embed.timestamp = datetime.datetime.now(tz=datetime.timezone.utc)
+            contents["timestamp"] = datetime.datetime.now(tz=datetime.timezone.utc)
         embed = discord.Embed.from_dict(contents)
         embed.color = colour
         if footer:
