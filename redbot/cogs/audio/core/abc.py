@@ -352,7 +352,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: "Playlist"
+        self, ctx: commands.Context, player: lavalink.player.Player, playlist: "Playlist"
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], "Playlist"]:
         raise NotImplementedError()
 
@@ -424,7 +424,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def get_localtrack_folder_tracks(
-        self, ctx, player: lavalink.player_manager.Player, query: "Query"
+        self, ctx, player: lavalink.player.Player, query: "Query"
     ) -> List[lavalink.rest_api.Track]:
         raise NotImplementedError()
 
@@ -475,7 +475,7 @@ class MixinMeta(ABC):
         self,
         ctx: commands.Context,
         queue: list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         page_num: int,
     ) -> discord.Embed:
         raise NotImplementedError()
@@ -500,7 +500,7 @@ class MixinMeta(ABC):
     async def fetch_playlist_tracks(
         self,
         ctx: commands.Context,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         query: "Query",
         skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
@@ -534,7 +534,7 @@ class MixinMeta(ABC):
         self,
         ctx: commands.Context,
         uploaded_track_list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         playlist_url: str,
         uploaded_playlist_name: str,
         scope: str,

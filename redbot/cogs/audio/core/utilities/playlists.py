@@ -399,7 +399,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         uploaded_track_list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         playlist_url: str,
         uploaded_playlist_name: str,
         scope: str,
@@ -481,7 +481,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await playlist_msg.edit(embed=embed3)
 
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
+        self, ctx: commands.Context, player: lavalink.player.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
         if getattr(playlist, "id", 0) == 42069:
             _, updated_tracks = await self._get_bundled_playlist_tracks()
@@ -580,7 +580,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def fetch_playlist_tracks(
         self,
         ctx: commands.Context,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         query: Query,
         skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
