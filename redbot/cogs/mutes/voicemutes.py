@@ -199,9 +199,7 @@ class VoiceMutes(MixinMeta):
                 channel = user_voice_state.channel
                 audit_reason = get_audit_reason(author, reason, shorten=True)
 
-                result = await self.channel_unmute_user(
-                    guild, channel, author, user, audit_reason
-                )
+                result = await self.channel_unmute_user(guild, channel, author, user, audit_reason)
 
                 if result.success:
                     if result.reason:
