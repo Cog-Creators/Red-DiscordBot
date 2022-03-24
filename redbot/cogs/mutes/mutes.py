@@ -324,11 +324,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     del muted_users[str(data["member"])]
             del self._server_mutes[guild.id][data["member"]]
             return
-        success = await self.unmute_user(guild, author, member, _("Automatic unmute"))
+        result = await self.unmute_user(guild, author, member, _("Automatic unmute"))
         async with self.config.guild(guild).muted_users() as muted_users:
             if str(member.id) in muted_users:
                 del muted_users[str(member.id)]
-        if success["success"]:
+        if result.success:
             await modlog.create_case(
                 self.bot,
                 guild,
@@ -351,7 +351,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return
             error_msg = _(
                 "I am unable to unmute {user} for the following reason:\n{reason}"
-            ).format(user=member, reason=success["reason"])
+            ).format(user=member, reason=result.reason)
             try:
                 await notification_channel.send(error_msg)
             except discord.errors.Forbidden:
@@ -500,13 +500,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             ):
                 del self._channel_mutes[channel.id][data["member"]]
             return None
-        success = await self.channel_unmute_user(
+        result = await self.channel_unmute_user(
             channel.guild, channel, author, member, _("Automatic unmute")
         )
         async with self.config.channel(channel).muted_users() as muted_users:
             if str(member.id) in muted_users:
                 del muted_users[str(member.id)]
-        if success["success"]:
+        if result.success:
             if create_case:
                 if isinstance(channel, discord.VoiceChannel):
                     unmute_type = "vunmute"
@@ -532,7 +532,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             error_msg = _(
                 "I am unable to unmute {user} in {channel} for the following reason:\n{reason}"
-            ).format(user=member, channel=channel.mention, reason=success["reason"])
+            ).format(user=member, channel=channel.mention, reason=result.reason)
             if create_case:
                 chan_id = await self.config.guild(channel.guild).notification_channel()
                 notification_channel = channel.guild.get_channel(chan_id)
@@ -546,7 +546,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     log.info(error_msg)
                     return None
             else:
-                return (member, channel, success["reason"])
+                return (member, channel, result.reason)
 
     async def _send_dm_notification(
         self,
