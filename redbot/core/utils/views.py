@@ -18,7 +18,7 @@ class _SimplePageSource(menus.ListPageSource):
         super().__init__(items, per_page=1)
 
     async def format_page(
-        self, menu: menus.MenuPages, page: Union[str, discord.Embed]
+        self, view: discord.ui.View, page: Union[str, discord.Embed]
     ) -> Union[str, discord.Embed]:
         return page
 
