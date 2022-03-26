@@ -167,7 +167,7 @@ class SimpleMenu(discord.ui.View):
         emoji="\N{HEAVY MULTIPLICATION X}\N{VARIATION SELECTOR-16}",
     )
     async def stop_pages(
-        self, button: discord.ui.Button, interaction: discord.Interaction
+        self, interaction: discord.Interaction, button: discord.ui.Button
     ) -> None:
         """stops the pagination session."""
         self.stop()
