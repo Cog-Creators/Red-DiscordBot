@@ -98,7 +98,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             if self.managed_node_controller is not None:
                 await self.managed_node_controller.shutdown()
             return
-
+        log.debug("Attempting to initialize Red-Lavalink")
         retry_count = 0
         while retry_count < max_retries:
             try:

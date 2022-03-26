@@ -60,10 +60,12 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         self.cog_ready_event.set()
 
     async def restore_players(self):
+        log.debug("Starting new restore player task")
         tries = 0
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
         while not lavalink.get_all_nodes():
             await asyncio.sleep(1)
+            log.trace("Waiting for node to be available")
             tries += 1
             if tries > 600:  # Give 10 minutes from node creation date.
                 log.warning("Unable to restore players, couldn't connect to Lavalink node.")
@@ -85,6 +87,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     notify_channel, vc_id = guild_data["currently_auto_playing_in"]
                     metadata[guild_id] = (notify_channel, vc_id)
         if self.lavalink_connection_aborted:
+            log.warning("Aborting player restore due to Lavalink connection being aborted.")
             return
         for guild_id, track_data in itertools.groupby(tracks_to_restore, key=lambda x: x.guild_id):
             await asyncio.sleep(0)
@@ -94,11 +97,18 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 track_data = list(track_data)
                 guild = self.bot.get_guild(guild_id)
                 if not guild:
+                    log.verbose(
+                        "Skipping player restore - Bot is no longer in Guild (%s)", guild_id
+                    )
                     continue
                 persist_cache = self._persist_queue_cache.setdefault(
                     guild_id, await self.config.guild(guild).persist_queue()
                 )
                 if not persist_cache:
+                    log.verbose(
+                        "Skipping player restore - Guild (%s) does not have a persist cache",
+                        guild_id,
+                    )
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
                 try:
@@ -142,7 +152,24 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             else:
                                 await asyncio.sleep(1)
 
-                if tries >= 5 or guild is None or vc is None or player is None:
+                if tries >= 5 or vc is None or player is None:
+                    if tries >= 5:
+                        log.verbose(
+                            "Skipping player restore - Guild (%s), 5 attempts to restore player failed.",
+                            guild_id,
+                        )
+                    elif vc is None:
+                        log.verbose(
+                            "Skipping player restore - Guild (%s), VC (%s) does not exist.",
+                            guild_id,
+                            vc_id,
+                        )
+                    else:
+                        log.verbose(
+                            "Skipping player restore - Guild (%s), Unable to create player for VC (%s).",
+                            guild_id,
+                            vc_id,
+                        )
                     await self.api_interface.persistent_queue_api.drop(guild_id)
                     continue
 
@@ -206,7 +233,24 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             break
                         else:
                             await asyncio.sleep(1)
-                if tries >= 5 or guild is None or vc is None or player is None:
+                if tries >= 5 or vc is None or player is None:
+                    if tries >= 5:
+                        log.verbose(
+                            "Skipping player restore - Guild (%s), 5 attempts to restore player failed.",
+                            guild_id,
+                        )
+                    elif vc is None:
+                        log.verbose(
+                            "Skipping player restore - Guild (%s), VC (%s) does not exist.",
+                            guild_id,
+                            vc_id,
+                        )
+                    else:
+                        log.verbose(
+                            "Skipping player restore - Guild (%s), Unable to create player for VC (%s).",
+                            guild_id,
+                            vc_id,
+                        )
                     continue
 
                 player.repeat = repeat
