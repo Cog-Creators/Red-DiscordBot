@@ -72,7 +72,9 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 return
         try:
             for node in lavalink.get_all_nodes():
-                await node.wait_until_ready(timeout=60)  # In theory this should be instant.
+                if not node.ready:
+                    log.trace("Waiting for node: %r", node)
+                    await node.wait_until_ready(timeout=60)  # In theory this should be instant.
         except asyncio.TimeoutError:
             log.error(
                 "Restoring player task aborted due to a timeout waiting for Lavalink node to be ready."
@@ -285,3 +287,4 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         return
         del metadata
         del all_guilds
+        log.debug("Player restore task completed successfully")
