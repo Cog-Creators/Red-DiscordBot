@@ -140,7 +140,7 @@ class SetApiView(discord.ui.View):
         label=_("Set API token"),
         style=discord.ButtonStyle.grey,
     )
-    async def auth_button(self, button: discord.Button, interaction: discord.Interaction):
+    async def auth_button(self, interaction: discord.Interaction, button: discord.Button):
         return await interaction.response.send_modal(
             SetApiModal(self.bot, self.default_service, self.default_keys)
         )
