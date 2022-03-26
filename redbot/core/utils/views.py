@@ -30,7 +30,7 @@ class SetApiModal(discord.ui.Modal):
         _placeholder_service = "service"
         if self.default_service is not None:
             _placeholder_service = self.default_service
-        _placeholder_token = "client_id YOUR_CLIENT_ID"
+        _placeholder_token = "client_id YOUR_CLIENT_ID\nclient_secret YOUR_CLIENT_SECRET"
         if self.default_keys_fmt is not None:
             _placeholder_token = self.default_keys_fmt
 
