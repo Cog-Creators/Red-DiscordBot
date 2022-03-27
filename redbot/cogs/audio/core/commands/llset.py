@@ -110,7 +110,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             input_in_bytes = int(match.group(1)) * 1024 ** (
                 2 if match.group(2).lower() == "m" else 3
             )
-            if input_in_bytes < 64 * 1024 ** 2:
+            if input_in_bytes < 64 * 1024**2:
                 await ctx.send(
                     _(
                         "Heap-size must be at least 64M, however it is recommended to have it set to at least 1G."
