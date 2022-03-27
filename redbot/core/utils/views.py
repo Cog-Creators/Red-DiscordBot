@@ -123,6 +123,14 @@ class SimpleMenu(discord.ui.View):
             await self.message.edit(view=None)
 
     async def start(self, ctx: Context):
+        """
+        Used to start the menu displaying the first page requested.
+
+        Parameters
+        ----------
+            ctx: `commands.Context`
+                The context to start the menu in.
+        """
         self.ctx = ctx
         await self.send_initial_message(ctx, ctx.channel)
 
@@ -140,22 +148,16 @@ class SimpleMenu(discord.ui.View):
         elif isinstance(value, discord.Embed):
             return {"embed": value, "content": None}
 
-    async def send_initial_message(self, ctx, channel):
-        """|coro|
-        The default implementation of :meth:`Menu.send_initial_message`
-        for the interactive pagination session.
-        This implementation shows the first page of the source.
-        """
+    async def send_initial_message(self, ctx: Context, channel: discord.abc.Messageable):
         self.author = ctx.author
-
         self.ctx = ctx
         kwargs = await self.get_page(self.current_page)
         self.message = await channel.send(**kwargs, view=self)
         return self.message
 
     async def interaction_check(self, interaction: discord.Interaction):
-        """Just extends the default reaction_check to use owner_ids"""
-        if interaction.user.id != self.author.id:
+        """Ensure only the author is allowed to interact with the menu."""
+        if self.author and interaction.user.id != self.author.id:
             await interaction.response.send_message(
                 content=_("You are not authorized to interact with this."), ephemeral=True
             )
