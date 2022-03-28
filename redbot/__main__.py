@@ -100,7 +100,7 @@ def debug_info():
     sys.exit(0)
 
 
-async def edit_instance(red, cli_flags):
+async def edit_instance(blue, cli_flags):
     no_prompt = cli_flags.no_prompt
     token = cli_flags.token
     owner = cli_flags.owner
@@ -129,9 +129,9 @@ async def edit_instance(red, cli_flags):
         )
         sys.exit(1)
 
-    await _edit_token(red, token, no_prompt)
-    await _edit_prefix(red, prefix, no_prompt)
-    await _edit_owner(red, owner, no_prompt)
+    await _edit_token(blue, token, no_prompt)
+    await _edit_prefix(blue, prefix, no_prompt)
+    await _edit_owner(blue, owner, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
     name = _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt)
@@ -142,7 +142,7 @@ async def edit_instance(red, cli_flags):
         save_config(old_name, {}, remove=True)
 
 
-async def _edit_token(red, token, no_prompt):
+async def _edit_token(blue, token, no_prompt):
     if token:
         if not len(token) >= 50:
             print(
@@ -152,11 +152,11 @@ async def _edit_token(red, token, no_prompt):
             return
         await red._config.token.set(token)
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
-        await interactive_config(red, False, True, print_header=False)
+        await interactive_config(blue, False, True, print_header=False)
         print("Token updated.\n")
 
 
-async def _edit_prefix(red, prefix, no_prompt):
+async def _edit_prefix(blue, prefix, no_prompt):
     if prefix:
         prefixes = sorted(prefix, reverse=True)
         await red._config.prefix.set(prefixes)
@@ -176,7 +176,7 @@ async def _edit_prefix(red, prefix, no_prompt):
             break
 
 
-async def _edit_owner(red, owner, no_prompt):
+async def _edit_owner(blue, owner, no_prompt):
     if owner:
         if not (15 <= len(str(owner)) <= 20):
             print(
@@ -369,7 +369,7 @@ async def run_bot(red: Blue, cli_flags: Namespace) -> None:
     if not (token and prefix):
         if cli_flags.no_prompt is False:
             new_token = await interactive_config(
-                red, token_set=bool(token), prefix_set=bool(prefix)
+               blue, token_set=bool(token), prefix_set=bool(prefix)
             )
             if new_token:
                 token = new_token
@@ -436,7 +436,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
         sys.exit(1)
 
 
-async def shutdown_handler(red, signal_type=None, exit_code=None):
+async def shutdown_handler(blue, signal_type=None, exit_code=None):
     if signal_type:
         log.info("%s received. Quitting...", signal_type)
         # Do not collapse the below line into other logic
@@ -459,7 +459,7 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         await asyncio.gather(*pending, return_exceptions=True)
 
 
-def global_exception_handler(red, loop, context):
+def global_exception_handler(blue, loop, context):
     """
     Logs unhandled exceptions in other tasks
     """
@@ -477,7 +477,7 @@ def global_exception_handler(red, loop, context):
     )
 
 
-def red_exception_handler(red, red_task: asyncio.Future):
+def red_exception_handler(blue, red_task: asyncio.Future):
     """
     This is set as a done callback for Blue
 
@@ -527,7 +527,7 @@ def main():
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
                 loop.add_signal_handler(
-                    s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
+                    s, lambda s=s: asyncio.create_task(shutdown_handler(blue, s))
                 )
 
         exc_handler = functools.partial(global_exception_handler, red)
@@ -535,7 +535,7 @@ def main():
         # We actually can't (just) use asyncio.run here
         # We probably could if we didn't support windows, but we might run into
         # a scenario where this isn't true if anyone works on RPC more in the future
-        fut = loop.create_task(run_bot(red, cli_flags))
+        fut = loop.create_task(run_bot(blue, cli_flags))
         r_exc_handler = functools.partial(red_exception_handler, red)
         fut.add_done_callback(r_exc_handler)
         loop.run_forever()
@@ -544,18 +544,18 @@ def main():
         log.warning("Please do not use Ctrl+C to Shutdown Blue! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
         ifblueis not None:
-            loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+            loop.run_until_complete(shutdown_handler(blue, signal.SIGINT))
     except SystemExit as exc:
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
         # We need to do something with prior to having the loop close
         log.info("Shutting down with exit code: %s", exc.code)
         ifblueis not None:
-            loop.run_until_complete(shutdown_handler(red, None, exc.code))
+            loop.run_until_complete(shutdown_handler(blue, None, exc.code))
     except Exception as exc:  # Non standard case.
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
         ifblueis not None:
-            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
+            loop.run_until_complete(shutdown_handler(blue, None, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correctly on windows, see below

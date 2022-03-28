@@ -36,7 +36,7 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
         print("Error: invalid input")
 
 
-async def interactive_config(red, token_set, prefix_set, *, print_header=True):
+async def interactive_config(blue, token_set, prefix_set, *, print_header=True):
     token = None
 
     if print_header:
