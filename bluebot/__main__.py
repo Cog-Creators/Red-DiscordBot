@@ -32,7 +32,7 @@ from bluebot.core import data_manager, drivers
 from bluebot.core._sharedlibdeprecation import SharedLibImportWarner
 
 
-log = logging.getLogger("red.main")
+log = logging.getLogger("blue.main")
 
 #
 #               Blue - Discord Bot v3
@@ -150,7 +150,7 @@ async def _edit_token(blue, token, no_prompt):
                 " Instance's token will remain unchanged.\n"
             )
             return
-        await red._config.token.set(token)
+        await blue._config.token.set(token)
     elif not no_prompt and confirm("Would you like to change instance's token?", default=False):
         await interactive_config(blue, False, True, print_header=False)
         print("Token updated.\n")
@@ -159,7 +159,7 @@ async def _edit_token(blue, token, no_prompt):
 async def _edit_prefix(blue, prefix, no_prompt):
     if prefix:
         prefixes = sorted(prefix, reverse=True)
-        await red._config.prefix.set(prefixes)
+        await blue._config.prefix.set(prefixes)
     elif not no_prompt and confirm("Would you like to change instance's prefixes?", default=False):
         print(
             "Enter the prefixes, separated by a space (please note "
@@ -171,7 +171,7 @@ async def _edit_prefix(blue, prefix, no_prompt):
                 print("You need to pass at least one prefix!")
                 continue
             prefixes = sorted(prefixes, reverse=True)
-            await red._config.prefix.set(prefixes)
+            await blue._config.prefix.set(prefixes)
             print("Prefixes updated.\n")
             break
 
@@ -184,7 +184,7 @@ async def _edit_owner(blue, owner, no_prompt):
                 " Instance's owner will remain unchanged."
             )
             return
-        await red._config.owner.set(owner)
+        await blue._config.owner.set(owner)
     elif not no_prompt and confirm("Would you like to change instance's owner?", default=False):
         print(
             "Remember:\n"
@@ -200,7 +200,7 @@ async def _edit_owner(blue, owner, no_prompt):
                     print("That doesn't look like a valid Discord user id.")
                     continue
                 owner_id = int(owner_id)
-                await red._config.owner.set(owner_id)
+                await blue._config.owner.set(owner_id)
                 print("Owner updated.")
                 break
         else:
@@ -362,9 +362,9 @@ async def run_bot(blue: Blue, cli_flags: Namespace) -> None:
     else:
         token = os.environ.get("RED_TOKEN", None)
         if not token:
-            token = await red._config.token()
+            token = await blue._config.token()
 
-    prefix = cli_flags.prefix or await red._config.prefix()
+    prefix = cli_flags.prefix or await blue._config.prefix()
 
     if not (token and prefix):
         if cli_flags.no_prompt is False:
@@ -378,16 +378,16 @@ async def run_bot(blue: Blue, cli_flags: Namespace) -> None:
             sys.exit(1)
 
     if cli_flags.dry_run:
-        await red.http.close()
+        await blue.http.close()
         sys.exit(0)
     try:
-        await red.start(token, bot=True)
+        await blue.start(token, bot=True)
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
-        db_token = await red._config.token()
+        db_token = await blue._config.token()
         if db_token and not cli_flags.no_prompt:
             if confirm("\nDo you want to reset the token?"):
-                await red._config.token.set("")
+                await blue._config.token.set("")
                 print("Token has been reset.")
                 sys.exit(0)
         sys.exit(1)
@@ -445,13 +445,13 @@ async def shutdown_handler(blue, signal_type=None, exit_code=None):
         sys.exit(ExitCodes.SHUTDOWN)
     elif exit_code is None:
         log.info("Shutting down from unhandled exception")
-        red._shutdown_mode = ExitCodes.CRITICAL
+        blue._shutdown_mode = ExitCodes.CRITICAL
 
     if exit_code is not None:
-        red._shutdown_mode = exit_code
+        blue._shutdown_mode = exit_code
 
     try:
-        await red.close()
+        await blue.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
@@ -497,7 +497,7 @@ def blue_exception_handler(blue, blue_task: asyncio.Future):
 
 
 def main():
-   blue= None  # Error handling for users misusing the bot
+    blue = None  # Error handling for users misusing the bot
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
     if cli_flags.edit:
@@ -519,7 +519,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-       blue= Blue(cli_flags=cli_flags, description="Blue V3", dm_help=None)
+        blue= Blue(cli_flags=cli_flags, description="Blue V3", dm_help=None)
 
         if os.name != "nt":
             # None of this works on windows.
@@ -543,18 +543,18 @@ def main():
         # We still have to catch this here too. (*joy*)
         log.warning("Please do not use Ctrl+C to Shutdown Blue! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
-        ifblueis not None:
+        if blue is not None:
             loop.run_until_complete(shutdown_handler(blue, signal.SIGINT))
     except SystemExit as exc:
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
         # We need to do something with prior to having the loop close
         log.info("Shutting down with exit code: %s", exc.code)
-        ifblueis not None:
+        if blue is not None:
             loop.run_until_complete(shutdown_handler(blue, None, exc.code))
     except Exception as exc:  # Non standard case.
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
-        ifblueis not None:
+        if blue is not None:
             loop.run_until_complete(shutdown_handler(blue, None, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
@@ -570,7 +570,7 @@ def main():
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
-        exit_code = red._shutdown_mode ifblueis not None else 1
+        exit_code = blue._shutdown_mode if blue is not None else 1
         sys.exit(exit_code)
 
 
