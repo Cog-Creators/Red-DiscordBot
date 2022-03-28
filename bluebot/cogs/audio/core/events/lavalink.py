@@ -8,7 +8,7 @@ import discord
 import lavalink
 from discord.backoff import ExponentialBackoff
 from discord.gateway import DiscordWebSocket
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from bluebot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError

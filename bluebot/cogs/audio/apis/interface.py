@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 import aiohttp
 import discord
 import lavalink
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from lavalink.rest_api import LoadResult, LoadType
 from bluebot.core import Config, commands

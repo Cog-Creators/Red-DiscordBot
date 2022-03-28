@@ -5,7 +5,7 @@ from typing import List
 
 import discord
 import lavalink
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.utils.chat_formatting import box

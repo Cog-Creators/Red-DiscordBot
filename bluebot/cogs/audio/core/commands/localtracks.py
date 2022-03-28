@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import MutableMapping
 
 import discord
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.i18n import Translator

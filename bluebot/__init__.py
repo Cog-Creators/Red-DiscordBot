@@ -210,7 +210,7 @@ def _ensure_no_colorama():
 
 
 def _update_logger_class():
-    from blue_commons.logging import maybe_update_logger_class
+    from red_commons.logging import maybe_update_logger_class
 
     maybe_update_logger_class()
 

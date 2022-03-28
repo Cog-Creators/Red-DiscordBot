@@ -11,7 +11,7 @@ from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from bluebot.core import bank, commands
 from bluebot.core.commands import Context

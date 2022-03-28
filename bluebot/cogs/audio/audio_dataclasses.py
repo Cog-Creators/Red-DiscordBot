@@ -20,7 +20,7 @@ from typing import (
 from urllib.parse import urlparse
 
 import lavalink
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from bluebot.core.i18n import Translator
 from bluebot.core.utils import AsyncIter

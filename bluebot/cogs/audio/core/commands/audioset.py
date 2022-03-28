@@ -8,7 +8,7 @@ from typing import Union
 
 import discord
 import lavalink
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from bluebot.core import bank, commands
 from bluebot.core.data_manager import cog_data_path

@@ -7,7 +7,7 @@ from typing import Optional
 
 import discord
 import lavalink
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.i18n import Translator

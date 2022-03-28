@@ -35,7 +35,7 @@ import pkg_resources
 from fuzzywuzzy import fuzz, process
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
-from blue_commons.logging import VERBOSE, TRACE
+from red_commons.logging import VERBOSE, TRACE
 
 from bluebot import VersionInfo
 from bluebot.core import data_manager

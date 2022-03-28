@@ -8,7 +8,7 @@ from typing import Final, Pattern
 
 import discord
 import lavalink
-from blue_commons.logging import getLogger
+from red_commons.logging import getLogger
 
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
