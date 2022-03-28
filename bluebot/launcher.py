@@ -20,7 +20,7 @@ from bluebot.setup import (
     remove_instance_interaction,
     create_backup,
 )
-from bluebot.core import __version__, version_info as red_version_info, VersionInfo
+from bluebot.core import __version__, version_info as blue_version_info, VersionInfo
 from bluebot.core.cli import confirm
 from bluebot.core.data_manager import load_existing_config
 

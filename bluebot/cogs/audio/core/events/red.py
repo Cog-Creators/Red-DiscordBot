@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 from typing import Literal, Mapping
 
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.i18n import Translator
@@ -25,7 +25,7 @@ class BlueEvents(MixinMeta, metaclass=CompositeMetaClass):
         elif service_name == "audiodb":
             await self.api_interface.global_cache_api.update_token(api_tokens)
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

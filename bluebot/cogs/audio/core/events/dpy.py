@@ -8,7 +8,7 @@ from typing import Final, Pattern
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
@@ -228,7 +228,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
     def cog_unload(self) -> None:
         if not self.cog_cleaned_up:
-            self.bot.dispatch("red_audio_unload", self)
+            self.bot.dispatch("blue_audio_unload", self)
             self.session.detach()
             asyncio.create_task(self._close_database()).add_done_callback(task_callback_trace)
             if self.player_automated_timer_task:

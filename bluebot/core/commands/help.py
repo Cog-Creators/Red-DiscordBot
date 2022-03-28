@@ -52,7 +52,7 @@ from ..utils.chat_formatting import (
     underline,
 )
 
-__all__ = ["red_help", "BlueHelpFormatter", "HelpSettings", "HelpFormatterABC"]
+__all__ = ["blue_help", "BlueHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
 _ = Translator("Help", __file__)
 
@@ -713,7 +713,7 @@ class BlueHelpFormatter(HelpFormatterABC):
                 yield obj
 
     async def embed_requested(self, ctx: Context) -> bool:
-        return await ctx.bot.embed_requested(channel=ctx, command=red_help)
+        return await ctx.bot.embed_requested(channel=ctx, command=blue_help)
 
     async def command_not_found(self, ctx, help_for, help_settings: HelpSettings):
         """
@@ -875,7 +875,7 @@ class BlueHelpFormatter(HelpFormatterABC):
 
 
 @commands.command(name="help", hidden=True, i18n=_)
-async def red_help(ctx: Context, *, thing_to_get_help_for: str = None):
+async def blue_help(ctx: Context, *, thing_to_get_help_for: str = None):
     """
     I need somebody
     (Help) not just anybody

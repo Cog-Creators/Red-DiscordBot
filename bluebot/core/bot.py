@@ -226,7 +226,7 @@ class Blue(
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.BlueHelpFormatter()
-        self.add_command(commands.help.red_help)
+        self.add_command(commands.help.blue_help)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
         self._blue_ready = asyncio.Event()
@@ -480,7 +480,7 @@ class Blue(
     async def before_identify_hook(self, shard_id, *, initial=False):
         """A hook that is called before IDENTIFYing a session.
         Same as in discord.py, but also dispatches "on_blue_identify" bot event."""
-        self.dispatch("red_before_identify", shard_id, initial)
+        self.dispatch("blue_before_identify", shard_id, initial)
         return await super().before_identify_hook(shard_id, initial=initial)
 
     @property
@@ -1449,7 +1449,7 @@ class Blue(
 
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             group.update(tokens)
-        self.dispatch("red_api_tokens_update", service_name, MappingProxyType(group))
+        self.dispatch("blue_api_tokens_update", service_name, MappingProxyType(group))
 
     async def remove_shared_api_tokens(self, service_name: str, *token_names: str):
         """
@@ -1471,7 +1471,7 @@ class Blue(
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             for name in token_names:
                 group.pop(name, None)
-        self.dispatch("red_api_tokens_update", service_name, MappingProxyType(group))
+        self.dispatch("blue_api_tokens_update", service_name, MappingProxyType(group))
 
     async def remove_shared_api_services(self, *service_names: str):
         """
@@ -1493,7 +1493,7 @@ class Blue(
                 group.pop(service, None)
         # dispatch needs to happen *after* it actually updates
         for service in service_names:
-            self.dispatch("red_api_tokens_update", service, MappingProxyType({}))
+            self.dispatch("blue_api_tokens_update", service, MappingProxyType({}))
 
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
@@ -1990,11 +1990,11 @@ class Blue(
         extension_handlers = {
             extension_name: handler
             for extension_name, extension in self.extensions.items()
-            if (handler := getattr(extension, "red_delete_data_for_user", None))
+            if (handler := getattr(extension, "blue_delete_data_for_user", None))
         }
 
         cog_handlers = {
-            cog_qualname: cog.red_delete_data_for_user for cog_qualname, cog in self.cogs.items()
+            cog_qualname: cog.blue_delete_data_for_user for cog_qualname, cog in self.cogs.items()
         }
 
         special_handlers = {

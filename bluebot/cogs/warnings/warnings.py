@@ -49,7 +49,7 @@ class Warnings(commands.Cog):
         self.bot = bot
         self.registration_task = asyncio.create_task(self.register_warningtype())
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
@@ -223,16 +223,16 @@ class Warnings(commands.Cog):
 
         # Have all details for the action, now save the action
         guild_settings = self.config.guild(guild)
-        async with guild_settings.actions() as registered_actions:
-            for act in registered_actions:
+        async with guild_settings.actions() as registeblue_actions:
+            for act in registeblue_actions:
                 if act["action_name"] == to_add["action_name"]:
                     await ctx.send(_("Duplicate action name found!"))
                     break
             else:
-                registered_actions.append(to_add)
+                registeblue_actions.append(to_add)
                 # Sort in descending order by point count for ease in
                 # finding the highest possible action to take
-                registered_actions.sort(key=lambda a: a["points"], reverse=True)
+                registeblue_actions.sort(key=lambda a: a["points"], reverse=True)
                 await ctx.send(_("Action {name} has been added.").format(name=name))
 
     @warnaction.command(name="delete", aliases=["del", "remove"])
@@ -241,14 +241,14 @@ class Warnings(commands.Cog):
         """Delete the action with the specified name."""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
-        async with guild_settings.actions() as registered_actions:
+        async with guild_settings.actions() as registeblue_actions:
             to_remove = None
-            for act in registered_actions:
+            for act in registeblue_actions:
                 if act["action_name"] == action_name:
                     to_remove = act
                     break
             if to_remove:
-                registered_actions.remove(to_remove)
+                registeblue_actions.remove(to_remove)
                 await ctx.tick()
             else:
                 await ctx.send(_("No action named {name} exists!").format(name=action_name))
@@ -280,8 +280,8 @@ class Warnings(commands.Cog):
 
         guild_settings = self.config.guild(guild)
 
-        async with guild_settings.reasons() as registered_reasons:
-            registered_reasons.update(completed)
+        async with guild_settings.reasons() as registeblue_reasons:
+            registeblue_reasons.update(completed)
 
         await ctx.send(_("The new reason has been registered."))
 
@@ -291,8 +291,8 @@ class Warnings(commands.Cog):
         """Delete a warning reason."""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
-        async with guild_settings.reasons() as registered_reasons:
-            if registered_reasons.pop(reason_name.lower(), None):
+        async with guild_settings.reasons() as registeblue_reasons:
+            if registeblue_reasons.pop(reason_name.lower(), None):
                 await ctx.tick()
             else:
                 await ctx.send(_("That is not a registered reason name."))
@@ -305,8 +305,8 @@ class Warnings(commands.Cog):
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
         msg_list = []
-        async with guild_settings.reasons() as registered_reasons:
-            for r, v in registered_reasons.items():
+        async with guild_settings.reasons() as registeblue_reasons:
+            for r, v in registeblue_reasons.items():
                 if await ctx.embed_requested():
                     em = discord.Embed(
                         title=_("Reason: {name}").format(name=r),
@@ -334,8 +334,8 @@ class Warnings(commands.Cog):
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
         msg_list = []
-        async with guild_settings.actions() as registered_actions:
-            for r in registered_actions:
+        async with guild_settings.actions() as registeblue_actions:
+            for r in registeblue_actions:
                 if await ctx.embed_requested():
                     em = discord.Embed(
                         title=_("Action: {name}").format(name=r["action_name"]),
@@ -396,8 +396,8 @@ class Warnings(commands.Cog):
         custom_allowed = guild_settings["allow_custom_reasons"]
 
         reason_type = None
-        async with self.config.guild(ctx.guild).reasons() as registered_reasons:
-            if (reason_type := registered_reasons.get(reason.lower())) is None:
+        async with self.config.guild(ctx.guild).reasons() as registeblue_reasons:
+            if (reason_type := registeblue_reasons.get(reason.lower())) is None:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
                     if points < 0:

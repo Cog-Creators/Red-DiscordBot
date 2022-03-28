@@ -72,7 +72,7 @@ excluded from being guaranteed.
 
 Method names and names of attributes of classes, functions, extensions, and modules
 provided by or provided to the bot should not begin with 
-``red_`` or be of the form ``__blue_*__`` except as documented.
+``blue_`` or be of the form ``__blue_*__`` except as documented.
 This allows us to add certain optional features non-breakingly without a name conflict.
 
 Any RPC method exposed by Blue may break without notice.

@@ -21,7 +21,7 @@ from bluebot.core.i18n import (
     set_contextual_locales_from_guild,
 )
 from .utils import AsyncIter
-from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
+from .. import __version__ as blue_version, version_info as blue_version_info, VersionInfo
 from . import commands
 from .config import get_latest_confs
 from .utils._internal_utils import (
@@ -74,13 +74,13 @@ def init_events(bot, cli_flags):
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
-        red_pkg = pkg_resources.get_distribution("Blue-DiscordBot")
+        blue_pkg = pkg_resources.get_distribution("Blue-DiscordBot")
         dpy_version = discord.__version__
 
         table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         table_general_info.add_row("Prefixes", ", ".join(prefixes))
         table_general_info.add_row("Language", lang)
-        table_general_info.add_row("Blue version", red_version)
+        table_general_info.add_row("Blue version", blue_version)
         table_general_info.add_row("Discord.py version", dpy_version)
         table_general_info.add_row("Storage type", data_manager.storage_type())
 
@@ -95,12 +95,12 @@ def init_events(bot, cli_flags):
         rich_outdated_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
             pypi_version, py_version_req = await fetch_latest_blue_version_info()
-            outdated = pypi_version and pypi_version > red_version_info
+            outdated = pypi_version and pypi_version > blue_version_info
             if outdated:
                 outdated_blue_message = _(
                     "Your Blue instance is out of date! {} is the current "
                     "version, however you are using {}!"
-                ).format(pypi_version, red_version)
+                ).format(pypi_version, blue_version)
                 rich_outdated_message = (
                     f"[blue]Outdated version![/red]\n"
                     f"[blue]!!![/red]Version [cyan]{pypi_version}[/] is available, "
@@ -116,7 +116,7 @@ def init_events(bot, cli_flags):
                 ).format(docs="https://docs.discord.red/en/stable/update_red.html")
                 if expected_version(current_python, py_version_req):
                     installed_extras = []
-                    for extra, reqs in red_pkg._dep_map.items():
+                    for extra, reqs in blue_pkg._dep_map.items():
                         if extra is None or extra in {"dev", "all"}:
                             continue
                         try:

@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 import aiohttp
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from lavalink.rest_api import LoadResult, LoadType
 from bluebot.core import Config, commands
@@ -636,7 +636,7 @@ class AudioAPIInterface:
                             )
                             player.add(ctx.author, single_track)
                             self.bot.dispatch(
-                                "red_audio_track_enqueue",
+                                "blue_audio_track_enqueue",
                                 player.guild,
                                 single_track,
                                 ctx.author,
@@ -652,7 +652,7 @@ class AudioAPIInterface:
                         )
                         player.add(ctx.author, single_track)
                         self.bot.dispatch(
-                            "red_audio_track_enqueue",
+                            "blue_audio_track_enqueue",
                             player.guild,
                             single_track,
                             ctx.author,
@@ -995,7 +995,7 @@ class AudioAPIInterface:
             )
             player.add(player.guild.me, track)
             self.bot.dispatch(
-                "red_audio_track_auto_play",
+                "blue_audio_track_auto_play",
                 player.guild,
                 track,
                 player.guild.me,

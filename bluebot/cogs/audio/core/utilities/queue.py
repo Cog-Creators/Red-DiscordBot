@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from fuzzywuzzy import process
 from bluebot.core import commands

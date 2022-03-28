@@ -60,7 +60,7 @@ class Reports(commands.Cog):
         # (guild, ticket#):
         #   {'tun': Tunnel, 'msgs': List[int]}
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

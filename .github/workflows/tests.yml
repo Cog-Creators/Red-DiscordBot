@@ -68,7 +68,7 @@ jobs:
           ports:
             - 5432:5432
           env:
-            POSTGRES_DB: red_db
+            POSTGRES_DB: blue_db
             POSTGRES_PASSWORD: postgres
             POSTGRES_USER: postgres
       steps:
@@ -86,7 +86,7 @@ jobs:
         - name: Tox test
           env:
             TOXENV: postgres
-            PGDATABASE: red_db
+            PGDATABASE: blue_db
             PGUSER: postgres
             PGPASSWORD: postgres
             PGPORT: 5432

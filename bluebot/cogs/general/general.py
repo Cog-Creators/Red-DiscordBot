@@ -76,7 +76,7 @@ class General(commands.Cog):
         super().__init__()
         self.stopwatches = {}
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
         return
 
@@ -154,7 +154,7 @@ class General(commands.Cog):
                     r="rock", p="paper", s="scissors"
                 )
             )
-        red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
+        blue_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
             (RPS.rock, RPS.paper): False,
             (RPS.rock, RPS.scissors): True,
@@ -164,27 +164,27 @@ class General(commands.Cog):
             (RPS.scissors, RPS.paper): True,
         }
 
-        if red_choice == player_choice:
+        if blue_choice == player_choice:
             outcome = None  # Tie
         else:
-            outcome = cond[(player_choice, red_choice)]
+            outcome = cond[(player_choice, blue_choice)]
 
         if outcome is True:
             await ctx.send(
                 _("{choice} You win {author.mention}!").format(
-                    choice=red_choice.value, author=author
+                    choice=blue_choice.value, author=author
                 )
             )
         elif outcome is False:
             await ctx.send(
                 _("{choice} You lose {author.mention}!").format(
-                    choice=red_choice.value, author=author
+                    choice=blue_choice.value, author=author
                 )
             )
         else:
             await ctx.send(
                 _("{choice} We're square {author.mention}!").format(
-                    choice=red_choice.value, author=author
+                    choice=blue_choice.value, author=author
                 )
             )
 

@@ -281,13 +281,13 @@ class Translator(Callable[[str], str]):
 
 
 @functools.lru_cache()
-def _get_babel_locale(red_locale: str) -> babel.core.Locale:
+def _get_babel_locale(blue_locale: str) -> babel.core.Locale:
     supported_locales = babel.localedata.locale_identifiers()
-    try:  # Handles cases where red_locale is already Babel supported
-        babel_locale = Locale(*babel.parse_locale(red_locale))
+    try:  # Handles cases where blue_locale is already Babel supported
+        babel_locale = Locale(*babel.parse_locale(blue_locale))
     except (ValueError, babel.core.UnknownLocaleError):
         try:
-            babel_locale = Locale(*babel.parse_locale(red_locale, sep="-"))
+            babel_locale = Locale(*babel.parse_locale(blue_locale, sep="-"))
         except (ValueError, babel.core.UnknownLocaleError):
             # ValueError is Raised by `parse_locale` when an invalid Locale is given to it
             # Lets handle it silently and default to "en_US"

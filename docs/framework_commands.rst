@@ -17,9 +17,9 @@ extend functionalities used throughout the bot, as outlined below.
 
     .. automethod:: format_help_for_context
     
-    .. automethod:: red_get_data_for_user
+    .. automethod:: blue_get_data_for_user
     
-    .. automethod:: red_delete_data_for_user
+    .. automethod:: blue_delete_data_for_user
 
 .. autoclass:: bluebot.core.commands.Command
     :members:

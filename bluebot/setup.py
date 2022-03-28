@@ -17,7 +17,7 @@ import click
 from bluebot.core.cli import confirm
 from bluebot.core.utils._internal_utils import (
     safe_delete,
-    create_backup as red_create_backup,
+    create_backup as blue_create_backup,
     cli_level_to_log_level,
 )
 from bluebot.core import config, data_manager, drivers
@@ -270,7 +270,7 @@ async def create_backup(instance: str, destination_folder: Path = Path.home()) -
     print("Backing up the instance's data...")
     driver_cls = drivers.get_driver_class()
     await driver_cls.initialize(**data_manager.storage_details())
-    backup_fpath = await red_create_backup(destination_folder)
+    backup_fpath = await blue_create_backup(destination_folder)
     await driver_cls.teardown()
     if backup_fpath is not None:
         print(f"A backup of {instance} has been made. It is at {backup_fpath}")

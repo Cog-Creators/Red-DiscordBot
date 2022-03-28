@@ -27,7 +27,7 @@ class Image(commands.Cog):
     def cog_unload(self):
         self.session.detach()
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
         return
 

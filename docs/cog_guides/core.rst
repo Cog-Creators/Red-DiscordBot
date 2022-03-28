@@ -2408,7 +2408,7 @@ mydata
 
 Commands which interact with the data Blue has about you.
 
-More information can be found in the :doc:`End User Data Documentation.<../red_core_data_statement>`
+More information can be found in the :doc:`End User Data Documentation.<../blue_core_data_statement>`
 
 .. _core-command-mydata-3rdparty:
 

@@ -50,9 +50,9 @@ Paste the following and replace the following:
                 <false/>
             </dict>
             <key>StandardOutPath</key>
-            <string>/tmp/red_out.log</string>
+            <string>/tmp/blue_out.log</string>
             <key>StandardErrorPath</key>
-            <string>/tmp/red_err.log</string>
+            <string>/tmp/blue_err.log</string>
             <key>UserName</key>
             <string>username</string>
             <key>InitGroups</key>
@@ -101,10 +101,10 @@ To stop the bot and set it to not start on boot anymore, run the following:
 
     sudo launchctl unload -w /Library/LaunchDaemons/red.plist
 
-To view Blue's log, run the following (:code:`red_out.log` is for the console output, and
-:code:`red_err.log` for the error logs):
+To view Blue's log, run the following (:code:`blue_out.log` is for the console output, and
+:code:`blue_err.log` for the error logs):
 
 .. prompt:: bash
 
-    nano /tmp/red_out.log
-    nano /tmp/red_err.log
+    nano /tmp/blue_out.log
+    nano /tmp/blue_err.log

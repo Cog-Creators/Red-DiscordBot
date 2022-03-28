@@ -4,7 +4,7 @@ import struct
 from typing import Final, Optional
 
 import aiohttp
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass

@@ -86,7 +86,7 @@ class Mod(
 
         self._ready = asyncio.Event()
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

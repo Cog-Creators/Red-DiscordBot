@@ -250,7 +250,7 @@ class CustomCommands(commands.Cog):
         self.commandobj = CommandObj(config=self.config, bot=self.bot)
         self.cooldowns = {}
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

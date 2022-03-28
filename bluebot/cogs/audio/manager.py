@@ -12,7 +12,7 @@ from typing import ClassVar, Final, List, Optional, Pattern, Tuple
 
 import aiohttp
 import rich.progress
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import data_manager
 from bluebot.core.i18n import Translator

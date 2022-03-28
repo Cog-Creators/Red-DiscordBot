@@ -11,7 +11,7 @@ from typing import cast
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.commands import UserInputOptional
@@ -1540,7 +1540,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         }
                     )
                     player.add(author_obj, track)
-                    self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
+                    self.bot.dispatch("blue_audio_track_enqueue", player.guild, track, ctx.author)
                     track_len += 1
                 player.maybe_shuffle(0 if empty_queue else 1)
                 if len(tracks) > track_len:

@@ -72,7 +72,7 @@ class Trivia(commands.Cog):
 
         self.config.register_member(wins=0, games=0, total_score=0)
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

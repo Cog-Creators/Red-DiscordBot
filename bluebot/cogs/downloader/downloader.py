@@ -9,7 +9,7 @@ from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List
 from collections import defaultdict
 
 import discord
-from bluebot.core import checks, commands, Config, version_info as red_version_info
+from bluebot.core import checks, commands, Config, version_info as blue_version_info
 from bluebot.core.bot import Blue
 from bluebot.core.data_manager import cog_data_path
 from bluebot.core.i18n import Translator, cog_i18n
@@ -91,7 +91,7 @@ class Downloader(commands.Cog):
         if self._init_task is not None:
             self._init_task.cancel()
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
         return
 
@@ -1493,9 +1493,9 @@ class Downloader(commands.Cog):
                 continue
             ignore_max = cog.min_bot_version > cog.max_bot_version
             if (
-                cog.min_bot_version > red_version_info
+                cog.min_bot_version > blue_version_info
                 or not ignore_max
-                and cog.max_bot_version < red_version_info
+                and cog.max_bot_version < blue_version_info
             ):
                 outdated_bot_version.append(
                     inline(cog.name)
@@ -1527,7 +1527,7 @@ class Downloader(commands.Cog):
                     "\nThis cog requires different Blue version than you currently "
                     "have ({current_version}): "
                 )
-            ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
+            ).format(current_version=blue_version_info) + humanize_list(outdated_bot_version)
 
         return tuple(correct_cogs), message
 

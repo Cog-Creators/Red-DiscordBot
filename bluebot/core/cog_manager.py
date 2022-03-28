@@ -315,7 +315,7 @@ _ = Translator("CogManagerUI", __file__)
 class CogManagerUI(commands.Cog):
     """Commands to interface with Blue's cog manager."""
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """Nothing to delete (Core Config is handled in a bot method )"""
         return
 

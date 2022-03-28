@@ -39,7 +39,7 @@ START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
 class Dev(commands.Cog):
     """Various development focused utilities."""
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """
         Because despite my best efforts to advise otherwise,
         people use ``--dev`` in production

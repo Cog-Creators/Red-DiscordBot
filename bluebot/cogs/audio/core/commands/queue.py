@@ -7,7 +7,7 @@ from typing import MutableMapping, Optional
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.i18n import Translator

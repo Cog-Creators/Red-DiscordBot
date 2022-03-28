@@ -30,7 +30,7 @@ from bluebot.core.data_manager import storage_type
 
 from . import (
     __version__,
-    version_info as red_version_info,
+    version_info as blue_version_info,
     checks,
     commands,
     errors,
@@ -379,7 +379,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     These commands come loaded with every Blue bot, and cover some of the most basic usage of the bot.
     """
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """Nothing to delete (Core Config is handled in a bot method)"""
         return
 
@@ -394,8 +394,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cock-Creators"
-        red_repo = org_repo + "/Blue-DiscordBot"
-        red_pypi = "https://pypi.org/project/Blue-DiscordBot"
+        blue_repo = org_repo + "/Blue-DiscordBot"
+        blue_pypi = "https://pypi.org/project/Blue-DiscordBot"
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
@@ -410,12 +410,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         custom_info = await self.bot._config.custom_info()
 
         pypi_version, py_version_req = await fetch_latest_blue_version_info()
-        outdated = pypi_version and pypi_version > red_version_info
+        outdated = pypi_version and pypi_version > blue_version_info
 
         if embed_links:
             dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
             python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
-            red_version = "[{}]({})".format(__version__, red_pypi)
+            blue_version = "[{}]({})".format(__version__, blue_pypi)
 
             about = _(
                 "This bot is an instance of [Blue, an open source Discord bot]({}) "
@@ -424,7 +424,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "creates content for everyone to enjoy. [Join us today]({}) "
                 "and help us improve!\n\n"
                 "(c) Cog Creators"
-            ).format(red_repo, author_repo, org_repo, support_server_url)
+            ).format(blue_repo, author_repo, org_repo, support_server_url)
 
             embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(
@@ -433,7 +433,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             embed.add_field(name="Python", value=python_version)
             embed.add_field(name="discord.py", value=dpy_version)
-            embed.add_field(name=_("Blue version"), value=red_version)
+            embed.add_field(name=_("Blue version"), value=blue_version)
             if outdated in (True, None):
                 if outdated is True:
                     outdated_value = _("Yes, {version} is available.").format(
@@ -453,7 +453,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             python_version = "{}.{}.{}".format(*sys.version_info[:3])
             dpy_version = "{}".format(discord.__version__)
-            red_version = "{}".format(__version__)
+            blue_version = "{}".format(__version__)
 
             about = _(
                 "This bot is an instance of Blue, an open source Discord bot (1) "
@@ -475,7 +475,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     owner=owner,
                     python_version=python_version,
                     dpy_version=dpy_version,
-                    red_version=red_version,
+                    blue_version=blue_version,
                 )
             else:
                 extras = _(
@@ -487,7 +487,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     owner=owner,
                     python_version=python_version,
                     dpy_version=dpy_version,
-                    red_version=red_version,
+                    blue_version=blue_version,
                 )
 
             if outdated in (True, None):
@@ -523,7 +523,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "6. <{}>\n"
                 "7. <{}>\n"
             ).format(
-                red_repo, author_repo, org_repo, support_server_url, python_url, dpy_repo, red_pypi
+                blue_repo, author_repo, org_repo, support_server_url, python_url, dpy_repo, blue_pypi
             )
             await ctx.send(refs)
 
@@ -544,7 +544,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Commands which interact with the data [botname] has about you.
 
-        More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/red_core_data_statement.html)
+        More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/blue_core_data_statement.html)
         """
 
     # 1/10 minutes. It's a static response, but the inability to lock
@@ -559,8 +559,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]mydata whatdata`
         """
 
-        ver = "latest" if red_version_info.dev_release else "stable"
-        link = f"https://docs.discord.red/en/{ver}/red_core_data_statement.html"
+        ver = "latest" if blue_version_info.dev_release else "stable"
+        link = f"https://docs.discord.red/en/{ver}/blue_core_data_statement.html"
         await ctx.send(
             _(
                 "This bot stores some data about users as necessary to function. "
@@ -4106,7 +4106,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         python_version = ".".join(map(str, sys.version_info[:3]))
         pyver = f"{python_version} ({platform.architecture()[0]})"
         pipver = pip.__version__
-        redver = red_version_info
+        redver = blue_version_info
         dpy_version = discord.__version__
         if IS_WINDOWS:
             os_info = platform.uname()

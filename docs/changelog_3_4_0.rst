@@ -1287,7 +1287,7 @@ Bluebot 3.4.0 (2020-08-17)
 | :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kablekompany`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
 |
 | **Read before updating**:
-| 1. Blue 3.4 comes with support for data deletion requests. Bot owners should read `red_core_data_statement` to ensure they know what information about their users is stored by the bot.
+| 1. Blue 3.4 comes with support for data deletion requests. Bot owners should read `blue_core_data_statement` to ensure they know what information about their users is stored by the bot.
 | 2. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
 | 3. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
 | 4. There's been a change in behavior of announcements in Admin cog. Look at `Admin changelog <important-340-2>` for full details.
@@ -1305,7 +1305,7 @@ Core Bot
     - Guild owners can enable/disable cogs for their guild using ``[p]command disablecog`` and ``[p]command enablecog`` commands
     - Cogs disabled in the guild can be listed with ``[p]command listdisabledcogs``
 
-- Added support for data deletion requests; see `red_core_data_statement` for more information (:issue:`4045`)
+- Added support for data deletion requests; see `blue_core_data_statement` for more information (:issue:`4045`)
 - Blue now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 - ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 - Added ``[p]helpset showsettings`` command (:issue:`4013`, :issue:`4022`)
@@ -1373,7 +1373,7 @@ Breaking changes
 - `Context.maybe_send_embed()` now supresses all mentions, including user mentions (:issue:`4192`)
 - The default value of the ``filter`` keyword argument has been changed to ``None`` (:issue:`3845`)
 - Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`__ (:issue:`3605`, :issue:`3679`)
-- Method/attribute names starting with ``red_`` or being in the form of ``__blue_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
+- Method/attribute names starting with ``blue_`` or being in the form of ``__blue_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
 - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 - Removed things past deprecation time: (:issue:`4163`)
 
@@ -1392,7 +1392,7 @@ Core Bot
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
 
-    - New special methods added to `bluebot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
+    - New special methods added to `bluebot.core.commands.Cog`: `blue_get_data_for_user()` (documented provisionally), `blue_delete_data_for_user()`
     - New special module level variable added: ``__blue_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information

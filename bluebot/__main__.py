@@ -477,7 +477,7 @@ def global_exception_handler(blue, loop, context):
     )
 
 
-def red_exception_handler(blue, red_task: asyncio.Future):
+def blue_exception_handler(blue, blue_task: asyncio.Future):
     """
     This is set as a done callback for Blue
 
@@ -487,7 +487,7 @@ def red_exception_handler(blue, red_task: asyncio.Future):
     we don't want to swallow the exception and hang.
     """
     try:
-        red_task.result()
+        blue_task.result()
     except (SystemExit, KeyboardInterrupt, asyncio.CancelledError):
         pass  # Handled by the global_exception_handler, or cancellation
     except Exception as exc:
@@ -536,7 +536,7 @@ def main():
         # We probably could if we didn't support windows, but we might run into
         # a scenario where this isn't true if anyone works on RPC more in the future
         fut = loop.create_task(run_bot(blue, cli_flags))
-        r_exc_handler = functools.partial(red_exception_handler, red)
+        r_exc_handler = functools.partial(blue_exception_handler, red)
         fut.add_done_callback(r_exc_handler)
         loop.run_forever()
     except KeyboardInterrupt:

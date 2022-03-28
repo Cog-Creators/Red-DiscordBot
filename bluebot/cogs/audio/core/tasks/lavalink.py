@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import data_manager
 from bluebot.core.i18n import Translator

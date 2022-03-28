@@ -82,7 +82,7 @@ class Streams(commands.Cog):
         self._ready_event: asyncio.Event = asyncio.Event()
         self._init_task: asyncio.Task = asyncio.create_task(self.initialize())
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
         return
 

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import Config
 from bluebot.core.bot import Blue

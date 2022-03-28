@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict
 
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core.i18n import Translator
 from bluebot.core.utils import AsyncIter

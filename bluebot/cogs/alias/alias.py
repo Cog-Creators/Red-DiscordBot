@@ -52,7 +52,7 @@ class Alias(commands.Cog):
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
         self._ready_event = asyncio.Event()
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

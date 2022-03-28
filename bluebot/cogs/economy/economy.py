@@ -157,7 +157,7 @@ class Economy(commands.Cog):
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

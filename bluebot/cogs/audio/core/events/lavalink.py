@@ -8,7 +8,7 @@ import discord
 import lavalink
 from discord.backoff import ExponentialBackoff
 from discord.gateway import DiscordWebSocket
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
@@ -55,7 +55,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_data = await self.config.guild(guild).all()
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
-            self.bot.dispatch("red_audio_audio_disconnect", guild)
+            self.bot.dispatch("blue_audio_audio_disconnect", guild)
             self._ll_guild_updates.discard(guild.id)
             return
         if event_type == lavalink.LavalinkEvents.WEBSOCKET_CLOSED:
@@ -126,7 +126,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("prev_requester", requester)
             player.store("playing_song", current_track)
             player.store("requester", current_requester)
-            self.bot.dispatch("red_audio_track_start", guild, current_track, current_requester)
+            self.bot.dispatch("blue_audio_track_start", guild, current_track, current_requester)
             if guild_id and current_track:
                 await self.api_interface.persistent_queue_api.played(
                     guild_id=guild_id, track_id=current_track.track_identifier
@@ -142,11 +142,11 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
+            self.bot.dispatch("blue_audio_track_end", guild, prev_song, prev_requester)
             player.store("resume_attempts", 0)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
+            self.bot.dispatch("blue_audio_queue_end", guild, prev_song, prev_requester)
             if guild_id:
                 await self.api_interface.persistent_queue_api.drop(guild_id)
             if player.is_auto_playing or (
@@ -228,7 +228,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     log.debug(
                         "Queue ended for %s, Disconnecting bot due to configuration", guild_id
                     )
-                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    self.bot.dispatch("blue_audio_audio_disconnect", guild)
                     await self.config.guild_from_id(
                         guild_id=guild_id
                     ).currently_auto_playing_in.set([])
@@ -275,7 +275,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     []
                 )
                 self._ll_guild_updates.discard(guild_id)
-                self.bot.dispatch("red_audio_audio_disconnect", guild)
+                self.bot.dispatch("blue_audio_audio_disconnect", guild)
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
                 if early_exit:
@@ -455,7 +455,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                     self._ll_guild_updates.discard(guild_id)
                 elif not has_perm:
-                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    self.bot.dispatch("blue_audio_audio_disconnect", guild)
                     ws_audio_log.info(
                         "Voice websocket disconnected "
                         "Reason: Error code %d & Missing permissions",
@@ -475,7 +475,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         guild_id=guild_id
                     ).currently_auto_playing_in.set([])
                 else:
-                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    self.bot.dispatch("blue_audio_audio_disconnect", guild)
                     ws_audio_log.info(
                         "Voice websocket disconnected Reason: Error code %d & Unknown", code
                     )
@@ -560,7 +560,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                     self._ll_guild_updates.discard(guild_id)
                 elif not has_perm:
-                    self.bot.dispatch("red_audio_audio_disconnect", guild)
+                    self.bot.dispatch("blue_audio_audio_disconnect", guild)
                     ws_audio_log.info(
                         "Voice websocket disconnected "
                         "Reason: Error code %d & Missing permissions",

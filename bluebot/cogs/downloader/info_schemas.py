@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union, cast
 
-from bluebot import VersionInfo, version_info as red_version_info
+from bluebot import VersionInfo, version_info as blue_version_info
 
 from . import installable
 from .log import log
@@ -70,7 +70,7 @@ def ensure_str(info_file: Path, key_name: str, value: Union[Any, UseDefault]) ->
 def ensure_blue_version_info(
     info_file: Path, key_name: str, value: Union[Any, UseDefault]
 ) -> VersionInfo:
-    default = red_version_info
+    default = blue_version_info
     if value is USE_DEFAULT:
         return default
     if not isinstance(value, str):

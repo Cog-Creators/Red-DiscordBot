@@ -266,7 +266,7 @@ class Command(CogCommandMixin, DPYCommand):
         If you subclass this command, attributes and methods
         must remain compatible.
 
-        None of your methods should start with ``red_`` or
+        None of your methods should start with ``blue_`` or
         be dunder names which start withblue(eg. ``__blue_test_thing__``)
         unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be
@@ -841,7 +841,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         if doc:
             return inspect.cleandoc(translator(doc))
 
-    async def red_get_data_for_user(self, *, user_id: int) -> MutableMapping[str, io.BytesIO]:
+    async def blue_get_data_for_user(self, *, user_id: int) -> MutableMapping[str, io.BytesIO]:
         """
 
         .. note::
@@ -889,7 +889,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         raise BlueUnhandledAPI()
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
@@ -1032,7 +1032,7 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
 
     .. warning::
 
-        None of your methods should start with ``red_`` or
+        None of your methods should start with ``blue_`` or
         be dunder names which start withblue(eg. ``__blue_test_thing__``)
         unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be

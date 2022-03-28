@@ -164,7 +164,7 @@ While not required for approved Cog Creators, they are still recommended in orde
 
 - Utilize the data deletion and statement APIs
 
-  - See `bluebot.core.commands.Cog.red_delete_data_for_user()`
+  - See `bluebot.core.commands.Cog.blue_delete_data_for_user()`
   - | Make a statement about what data your cogs use with the module level
       variable ``__blue_end_user_data_statement__``.
     | This should be a string containing a user friendly explanation of what data

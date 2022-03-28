@@ -139,7 +139,7 @@ class PostgresDriver(BaseDriver):
     async def get(self, identifier_data: IdentifierData):
         try:
             result = await self._execute(
-                "SELECT red_config.get($1)",
+                "SELECT blue_config.get($1)",
                 encode_identifier_data(identifier_data),
                 method=self._pool.fetchval,
             )
@@ -155,7 +155,7 @@ class PostgresDriver(BaseDriver):
     async def set(self, identifier_data: IdentifierData, value=None):
         try:
             await self._execute(
-                "SELECT red_config.set($1, $2::jsonb)",
+                "SELECT blue_config.set($1, $2::jsonb)",
                 encode_identifier_data(identifier_data),
                 json.dumps(value),
             )
@@ -165,7 +165,7 @@ class PostgresDriver(BaseDriver):
     async def clear(self, identifier_data: IdentifierData):
         try:
             await self._execute(
-                "SELECT red_config.clear($1)", encode_identifier_data(identifier_data)
+                "SELECT blue_config.clear($1)", encode_identifier_data(identifier_data)
             )
         except asyncpg.UndefinedTableError:
             pass
@@ -175,7 +175,7 @@ class PostgresDriver(BaseDriver):
     ) -> Union[int, float]:
         try:
             return await self._execute(
-                f"SELECT red_config.inc($1, $2, $3)",
+                f"SELECT blue_config.inc($1, $2, $3)",
                 encode_identifier_data(identifier_data),
                 value,
                 default,
@@ -187,7 +187,7 @@ class PostgresDriver(BaseDriver):
     async def toggle(self, identifier_data: IdentifierData, default: bool) -> bool:
         try:
             return await self._execute(
-                "SELECT red_config.inc($1, $2)",
+                "SELECT blue_config.inc($1, $2)",
                 encode_identifier_data(identifier_data),
                 default,
                 method=self._pool.fetchval,
@@ -197,7 +197,7 @@ class PostgresDriver(BaseDriver):
 
     @classmethod
     async def aiter_cogs(cls) -> AsyncIterator[Tuple[str, str]]:
-        query = "SELECT cog_name, cog_id FROM red_config.red_cogs"
+        query = "SELECT cog_name, cog_id FROM blue_config.blue_cogs"
         log.invisible(query)
         async with cls._pool.acquire() as conn, conn.transaction():
             async for row in conn.cursor(query):

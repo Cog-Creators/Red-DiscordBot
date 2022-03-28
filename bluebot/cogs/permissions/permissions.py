@@ -114,7 +114,7 @@ class Permissions(commands.Cog):
         self.config.init_custom(COMMAND, 1)
         self.config.register_custom(COMMAND)
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

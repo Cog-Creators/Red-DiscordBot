@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple, Union
 import aiohttp
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
 from bluebot.core import commands
@@ -192,7 +192,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
-        self.bot.dispatch("red_audio_skip_track", player.guild, player.current, ctx.author)
+        self.bot.dispatch("blue_audio_skip_track", player.guild, player.current, ctx.author)
         await player.play()
         player.queue += queue_to_append
 
@@ -464,7 +464,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         )
                         player.add(ctx.author, track)
                         self.bot.dispatch(
-                            "red_audio_track_enqueue", player.guild, track, ctx.author
+                            "blue_audio_track_enqueue", player.guild, track, ctx.author
                         )
 
                 else:
@@ -477,7 +477,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         }
                     )
                     player.add(ctx.author, track)
-                    self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
+                    self.bot.dispatch("blue_audio_track_enqueue", player.guild, track, ctx.author)
             player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
@@ -556,7 +556,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         player.add(ctx.author, single_track)
                         player.maybe_shuffle()
                         self.bot.dispatch(
-                            "red_audio_track_enqueue",
+                            "blue_audio_track_enqueue",
                             player.guild,
                             single_track,
                             ctx.author,
@@ -578,7 +578,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     player.add(ctx.author, single_track)
                     player.maybe_shuffle()
                     self.bot.dispatch(
-                        "red_audio_track_enqueue", player.guild, single_track, ctx.author
+                        "blue_audio_track_enqueue", player.guild, single_track, ctx.author
                     )
             except IndexError:
                 self.update_player_lock(ctx, False)

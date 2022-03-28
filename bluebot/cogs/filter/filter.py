@@ -41,7 +41,7 @@ class Filter(commands.Cog):
         self.config.register_channel(**default_channel_settings)
         self.pattern_cache = {}
 
-    async def red_delete_data_for_user(
+    async def blue_delete_data_for_user(
         self,
         *,
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],

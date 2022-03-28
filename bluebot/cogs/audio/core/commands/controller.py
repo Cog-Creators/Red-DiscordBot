@@ -7,7 +7,7 @@ from typing import Optional, Union
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.i18n import Translator
@@ -62,7 +62,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
 
             await self.send_embed_msg(ctx, title=_("Disconnecting..."))
-            self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
+            self.bot.dispatch("blue_audio_audio_disconnect", ctx.guild)
             self.update_player_lock(ctx, False)
             eq = player.fetch("eq")
             player.queue = []
@@ -285,7 +285,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 }
             )
             player.add(player.fetch("prev_requester"), track)
-            self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
+            self.bot.dispatch("blue_audio_track_enqueue", player.guild, track, ctx.author)
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
             player.queue.insert(0, bump_song)

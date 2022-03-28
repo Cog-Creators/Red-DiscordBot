@@ -52,7 +52,7 @@ Welcome to Blue - Discord Bot's documentation!
     cog_guides/streams
     cog_guides/trivia
     cog_guides/warnings
-    red_core_data_statement
+    blue_core_data_statement
 
 .. toctree::
     :maxdepth: 2

@@ -91,7 +91,7 @@ class Admin(commands.Cog):
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready.wait()
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def blue_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
         return
 

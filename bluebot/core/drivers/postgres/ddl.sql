@@ -4,15 +4,15 @@
  ************************************************************
  */
 
-CREATE SCHEMA IF NOT EXISTS red_config;
-CREATE SCHEMA IF NOT EXISTS red_utils;
+CREATE SCHEMA IF NOT EXISTS blue_config;
+CREATE SCHEMA IF NOT EXISTS blue_utils;
 
 DO $$
 BEGIN
-  PERFORM 'red_config.identifier_data'::regtype;
+  PERFORM 'blue_config.identifier_data'::regtype;
 EXCEPTION
   WHEN UNDEFINED_OBJECT THEN
-    CREATE TYPE red_config.identifier_data AS (
+    CREATE TYPE blue_config.identifier_data AS (
       cog_name text,
       cog_id text,
       category text,
@@ -29,8 +29,8 @@ CREATE OR REPLACE FUNCTION
   /*
    * Create the config schema and/or table if they do not exist yet.
    */
-  red_config.maybe_create_table(
-    id_data red_config.identifier_data
+  blue_config.maybe_create_table(
+    id_data blue_config.identifier_data
   )
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -39,7 +39,7 @@ CREATE OR REPLACE FUNCTION
     schemaname CONSTANT text := concat_ws('.', id_data.cog_name, id_data.cog_id);
     schema_exists CONSTANT boolean := exists(
       SELECT 1
-      FROM red_config.red_cogs t
+      FROM blue_config.blue_cogs t
       WHERE t.cog_name = id_data.cog_name AND t.cog_id = id_data.cog_id);
     table_exists CONSTANT boolean := schema_exists AND exists(
       SELECT 1
@@ -48,10 +48,10 @@ CREATE OR REPLACE FUNCTION
 
   BEGIN
     IF NOT schema_exists THEN
-      PERFORM red_config.create_schema(id_data.cog_name, id_data.cog_id);
+      PERFORM blue_config.create_schema(id_data.cog_name, id_data.cog_id);
     END IF;
     IF NOT table_exists THEN
-      PERFORM red_config.create_table(id_data);
+      PERFORM blue_config.create_table(id_data);
     END IF;
   END;
 $$;
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION
   /*
    * Create the config schema for the given cog.
    */
-  red_config.create_schema(new_cog_name text, new_cog_id text, OUT schemaname text)
+  blue_config.create_schema(new_cog_name text, new_cog_id text, OUT schemaname text)
     RETURNS text
     LANGUAGE 'plpgsql'
   AS $$
@@ -70,7 +70,7 @@ CREATE OR REPLACE FUNCTION
 
     EXECUTE format('CREATE SCHEMA IF NOT EXISTS %I', schemaname);
 
-    INSERT INTO red_config.red_cogs AS t VALUES(new_cog_name, new_cog_id, schemaname)
+    INSERT INTO blue_config.blue_cogs AS t VALUES(new_cog_name, new_cog_id, schemaname)
     ON CONFLICT(cog_name, cog_id) DO UPDATE
     SET
       schemaname = excluded.schemaname;
@@ -82,16 +82,16 @@ CREATE OR REPLACE FUNCTION
   /*
    * Create the config table for the given category.
    */
-  red_config.create_table(id_data red_config.identifier_data)
+  blue_config.create_table(id_data blue_config.identifier_data)
     RETURNS void
     LANGUAGE 'plpgsql'
   AS $$
   DECLARE
     schemaname CONSTANT text := concat_ws('.', id_data.cog_name, id_data.cog_id);
     constraintname CONSTANT text := id_data.category||'_pkey';
-    pkey_columns CONSTANT text := red_utils.gen_pkey_columns(1, id_data.pkey_len);
-    pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
-    pkey_column_definitions CONSTANT text := red_utils.gen_pkey_column_definitions(
+    pkey_columns CONSTANT text := blue_utils.gen_pkey_columns(1, id_data.pkey_len);
+    pkey_type CONSTANT text := blue_utils.get_pkey_type(id_data.is_custom);
+    pkey_column_definitions CONSTANT text := blue_utils.gen_pkey_column_definitions(
       1, id_data.pkey_len, pkey_type);
 
   BEGIN
@@ -122,8 +122,8 @@ CREATE OR REPLACE FUNCTION
    * aggregated together into a single JSONB object, with primary keys
    * as keys mapping to the documents.
    */
-  red_config.get(
-    id_data red_config.identifier_data,
+  blue_config.get(
+    id_data blue_config.identifier_data,
     OUT result jsonb
   )
     LANGUAGE 'plpgsql'
@@ -134,8 +134,8 @@ CREATE OR REPLACE FUNCTION
     schemaname CONSTANT text := concat_ws('.', id_data.cog_name, id_data.cog_id);
     num_pkeys CONSTANT integer := coalesce(array_length(id_data.pkeys, 1), 0);
     num_missing_pkeys CONSTANT integer :=  id_data.pkey_len - num_pkeys;
-    pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
-    whereclause CONSTANT text := red_utils.gen_whereclause(num_pkeys, pkey_type);
+    pkey_type CONSTANT text := blue_utils.get_pkey_type(id_data.is_custom);
+    whereclause CONSTANT text := blue_utils.gen_whereclause(num_pkeys, pkey_type);
 
     missing_pkey_columns text;
 
@@ -161,12 +161,12 @@ CREATE OR REPLACE FUNCTION
       INTO result
       USING id_data.pkeys;
     ELSE
-      -- Multiple missing primary keys: we must use our custom red_utils.jsonb_object_agg2()
+      -- Multiple missing primary keys: we must use our custom blue_utils.jsonb_object_agg2()
       -- aggregate function.
-      missing_pkey_columns := red_utils.gen_pkey_columns_casted(num_pkeys + 1, id_data.pkey_len);
+      missing_pkey_columns := blue_utils.gen_pkey_columns_casted(num_pkeys + 1, id_data.pkey_len);
 
       EXECUTE format(
-        'SELECT red_utils.jsonb_object_agg2(json_data, %s) FROM %I.%I WHERE %s',
+        'SELECT blue_utils.jsonb_object_agg2(json_data, %s) FROM %I.%I WHERE %s',
         missing_pkey_columns,
         schemaname,
         id_data.category,
@@ -191,8 +191,8 @@ CREATE OR REPLACE FUNCTION
    * Raises `error_in_assignment` error when trying to set a sub-key
    * of a non-document type.
    */
-  red_config.set(
-    id_data red_config.identifier_data,
+  blue_config.set(
+    id_data blue_config.identifier_data,
     new_value jsonb
   )
     RETURNS void
@@ -203,8 +203,8 @@ CREATE OR REPLACE FUNCTION
     constraintname CONSTANT text := id_data.category||'_pkey';
     num_pkeys CONSTANT integer := coalesce(array_length(id_data.pkeys, 1), 0);
     num_missing_pkeys CONSTANT integer := id_data.pkey_len - num_pkeys;
-    pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
-    pkey_placeholders CONSTANT text := red_utils.gen_pkey_placeholders(num_pkeys, pkey_type);
+    pkey_type CONSTANT text := blue_utils.get_pkey_type(id_data.is_custom);
+    pkey_placeholders CONSTANT text := blue_utils.gen_pkey_placeholders(num_pkeys, pkey_type);
 
     new_document jsonb;
     pkey_column_definitions text;
@@ -212,18 +212,18 @@ CREATE OR REPLACE FUNCTION
     missing_pkey_columns text;
 
   BEGIN
-    PERFORM red_config.maybe_create_table(id_data);
+    PERFORM blue_config.maybe_create_table(id_data);
 
     IF num_missing_pkeys = 0 THEN
       -- Setting all or part of a document
-      new_document := red_utils.jsonb_set2('{}', new_value, VARIADIC id_data.identifiers);
+      new_document := blue_utils.jsonb_set2('{}', new_value, VARIADIC id_data.identifiers);
 
       EXECUTE format(
         $query$
         INSERT INTO %I.%I AS t VALUES (%s, $2)
         ON CONFLICT ON CONSTRAINT %I DO UPDATE
         SET
-          json_data = red_utils.jsonb_set2(t.json_data, $3, VARIADIC $4)
+          json_data = blue_utils.jsonb_set2(t.json_data, $3, VARIADIC $4)
         $query$,
         schemaname,
         id_data.category,
@@ -233,10 +233,10 @@ CREATE OR REPLACE FUNCTION
 
     ELSE
       -- Setting multiple documents
-      whereclause := red_utils.gen_whereclause(num_pkeys, pkey_type);
-      missing_pkey_columns := red_utils.gen_pkey_columns_casted(
+      whereclause := blue_utils.gen_whereclause(num_pkeys, pkey_type);
+      missing_pkey_columns := blue_utils.gen_pkey_columns_casted(
         num_pkeys + 1, id_data.pkey_len, pkey_type);
-      pkey_column_definitions := red_utils.gen_pkey_column_definitions(num_pkeys + 1, id_data.pkey_len);
+      pkey_column_definitions := blue_utils.gen_pkey_column_definitions(num_pkeys + 1, id_data.pkey_len);
 
       -- Delete all documents which we're setting first, since we don't know whether they'll be
       -- replaced by the subsequent INSERT.
@@ -248,7 +248,7 @@ CREATE OR REPLACE FUNCTION
         $query$
         INSERT INTO %I.%I AS t
           SELECT %s, json_data
-          FROM red_utils.generate_rows_from_object($2, $3) AS f(%s, json_data jsonb)
+          FROM blue_utils.generate_rows_from_object($2, $3) AS f(%s, json_data jsonb)
         ON CONFLICT ON CONSTRAINT %I DO UPDATE
         SET
           json_data = excluded.json_data
@@ -278,8 +278,8 @@ CREATE OR REPLACE FUNCTION
    *
    * Has no effect when the document or key does not exist.
    */
-  red_config.clear(
-    id_data red_config.identifier_data
+  blue_config.clear(
+    id_data blue_config.identifier_data
   )
     RETURNS void
     LANGUAGE 'plpgsql'
@@ -288,14 +288,14 @@ CREATE OR REPLACE FUNCTION
     schemaname CONSTANT text := concat_ws('.', id_data.cog_name, id_data.cog_id);
     num_pkeys CONSTANT integer := coalesce(array_length(id_data.pkeys, 1), 0);
     num_identifiers CONSTANT integer := coalesce(array_length(id_data.identifiers, 1), 0);
-    pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
+    pkey_type CONSTANT text := blue_utils.get_pkey_type(id_data.is_custom);
 
     whereclause text;
 
   BEGIN
     IF num_identifiers > 0 THEN
       -- Popping a key from a document or nested document.
-      whereclause := red_utils.gen_whereclause(num_pkeys, pkey_type);
+      whereclause := blue_utils.gen_whereclause(num_pkeys, pkey_type);
 
       EXECUTE format(
         $query$
@@ -311,7 +311,7 @@ CREATE OR REPLACE FUNCTION
 
     ELSIF num_pkeys > 0 THEN
       -- Deleting one or many documents
-      whereclause := red_utils.gen_whereclause(num_pkeys, pkey_type);
+      whereclause := blue_utils.gen_whereclause(num_pkeys, pkey_type);
 
       EXECUTE format('DELETE FROM %I.%I WHERE %s', schemaname, id_data.category, whereclause)
       USING id_data.pkeys;
@@ -324,7 +324,7 @@ CREATE OR REPLACE FUNCTION
       -- Deleting an entire cog's data
       EXECUTE format('DROP SCHEMA %I CASCADE', schemaname);
 
-      DELETE FROM red_config.red_cogs
+      DELETE FROM blue_config.blue_cogs
       WHERE cog_name = id_data.cog_name AND cog_id = id_data.cog_id;
     END IF;
   END;
@@ -341,8 +341,8 @@ CREATE OR REPLACE FUNCTION
    * Raises 'wrong_object_type' error when trying to increment a
    * non-numeric value.
    */
-  red_config.inc(
-    id_data red_config.identifier_data,
+  blue_config.inc(
+    id_data blue_config.identifier_data,
     amount numeric,
     default_value numeric,
     OUT result numeric
@@ -352,8 +352,8 @@ CREATE OR REPLACE FUNCTION
   DECLARE
     schemaname CONSTANT text := concat_ws('.', id_data.cog_name, id_data.cog_id);
     num_identifiers CONSTANT integer := coalesce(array_length(id_data.identifiers, 1), 0);
-    pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
-    whereclause CONSTANT text := red_utils.gen_whereclause(id_data.pkey_len, pkey_type);
+    pkey_type CONSTANT text := blue_utils.get_pkey_type(id_data.is_custom);
+    whereclause CONSTANT text := blue_utils.gen_whereclause(id_data.pkey_len, pkey_type);
 
     new_document jsonb;
     existing_document jsonb;
@@ -367,7 +367,7 @@ CREATE OR REPLACE FUNCTION
       USING ERRCODE = 'wrong_object_type';
     END IF;
 
-    PERFORM red_config.maybe_create_table(id_data);
+    PERFORM blue_config.maybe_create_table(id_data);
 
     -- Look for the existing document
     EXECUTE format(
@@ -380,8 +380,8 @@ CREATE OR REPLACE FUNCTION
     IF existing_document IS NULL THEN
       -- We need to insert a new document
       result := default_value + amount;
-      new_document := red_utils.jsonb_set2('{}', result, VARIADIC id_data.identifiers);
-      pkey_placeholders := red_utils.gen_pkey_placeholders(id_data.pkey_len, pkey_type);
+      new_document := blue_utils.jsonb_set2('{}', result, VARIADIC id_data.identifiers);
+      pkey_placeholders := blue_utils.gen_pkey_placeholders(id_data.pkey_len, pkey_type);
 
       EXECUTE format(
         'INSERT INTO %I.%I VALUES(%s, $2)',
@@ -405,7 +405,7 @@ CREATE OR REPLACE FUNCTION
         USING ERRCODE = 'wrong_object_type';
       END IF;
 
-      new_document := red_utils.jsonb_set2(
+      new_document := blue_utils.jsonb_set2(
         existing_document, to_jsonb(result), id_data.identifiers);
 
       EXECUTE format(
@@ -429,8 +429,8 @@ CREATE OR REPLACE FUNCTION
    * Raises 'wrong_object_type' error when trying to toggle a
    * non-boolean value.
    */
-  red_config.toggle(
-    id_data red_config.identifier_data,
+  blue_config.toggle(
+    id_data blue_config.identifier_data,
     default_value boolean,
     OUT result boolean
   )
@@ -439,8 +439,8 @@ CREATE OR REPLACE FUNCTION
   DECLARE
     schemaname CONSTANT text := concat_ws('.', id_data.cog_name, id_data.cog_id);
     num_identifiers CONSTANT integer := coalesce(array_length(id_data.identifiers, 1), 0);
-    pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
-    whereclause CONSTANT text := red_utils.gen_whereclause(id_data.pkey_len, pkey_type);
+    pkey_type CONSTANT text := blue_utils.get_pkey_type(id_data.is_custom);
+    whereclause CONSTANT text := blue_utils.gen_whereclause(id_data.pkey_len, pkey_type);
 
     new_document jsonb;
     existing_document jsonb;
@@ -454,7 +454,7 @@ CREATE OR REPLACE FUNCTION
       USING ERRCODE = 'wrong_object_type';
     END IF;
 
-    PERFORM red_config.maybe_create_table(id_data);
+    PERFORM blue_config.maybe_create_table(id_data);
 
     -- Look for the existing document
     EXECUTE format(
@@ -467,8 +467,8 @@ CREATE OR REPLACE FUNCTION
     IF existing_document IS NULL THEN
       -- We need to insert a new document
       result := NOT default_value;
-      new_document := red_utils.jsonb_set2('{}', result, VARIADIC id_data.identifiers);
-      pkey_placeholders := red_utils.gen_pkey_placeholders(id_data.pkey_len, pkey_type);
+      new_document := blue_utils.jsonb_set2('{}', result, VARIADIC id_data.identifiers);
+      pkey_placeholders := blue_utils.gen_pkey_placeholders(id_data.pkey_len, pkey_type);
 
       EXECUTE format(
         'INSERT INTO %I.%I VALUES(%s, $2)',
@@ -492,7 +492,7 @@ CREATE OR REPLACE FUNCTION
         USING ERRCODE = 'wrong_object_type';
       END IF;
 
-      new_document := red_utils.jsonb_set2(
+      new_document := blue_utils.jsonb_set2(
         existing_document, to_jsonb(result), id_data.identifiers);
 
       EXECUTE format(
@@ -507,8 +507,8 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
-  red_config.extend(
-    id_data red_config.identifier_data,
+  blue_config.extend(
+    id_data blue_config.identifier_data,
     new_value text,
     default_value text,
     max_length integer DEFAULT NULL,
@@ -520,8 +520,8 @@ CREATE OR REPLACE FUNCTION
   DECLARE
     schemaname CONSTANT text := concat_ws('.', id_data.cog_name, id_data.cog_id);
     num_identifiers CONSTANT integer := coalesce(array_length(id_data.identifiers, 1), 0);
-    pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
-    whereclause CONSTANT text := red_utils.gen_whereclause(id_data.pkey_len, pkey_type);
+    pkey_type CONSTANT text := blue_utils.get_pkey_type(id_data.is_custom);
+    whereclause CONSTANT text := blue_utils.gen_whereclause(id_data.pkey_len, pkey_type);
     pop_idx CONSTANT integer := CASE extend_left WHEN TRUE THEN -1 ELSE 0 END;
 
     new_document jsonb;
@@ -536,7 +536,7 @@ CREATE OR REPLACE FUNCTION
       USING ERRCODE = 'wrong_object_type';
     END IF;
 
-    PERFORM red_config.maybe_create_table(id_data);
+    PERFORM blue_config.maybe_create_table(id_data);
 
     -- Look for the existing document
     EXECUTE format(
@@ -548,8 +548,8 @@ CREATE OR REPLACE FUNCTION
 
     IF existing_document IS NULL THEN
       result := default_value || new_value;
-      new_document := red_utils.jsonb_set2('{}'::jsonb, result, id_data.identifiers);
-      pkey_placeholders := red_utils.gen_pkey_placeholders(id_data.pkey_len, pkey_type);
+      new_document := blue_utils.jsonb_set2('{}'::jsonb, result, id_data.identifiers);
+      pkey_placeholders := blue_utils.gen_pkey_placeholders(id_data.pkey_len, pkey_type);
 
       EXECUTE format(
         'INSERT INTO %I.%I VALUES(%s, $2)',
@@ -582,7 +582,7 @@ CREATE OR REPLACE FUNCTION
         END LOOP;
       END IF;
 
-      new_document := red_utils.jsonb_set2(existing_document, result, id_data.identifiers);
+      new_document := blue_utils.jsonb_set2(existing_document, result, id_data.identifiers);
 
       EXECUTE format(
         'UPDATE %I.%I SET json_data = $2 WHERE %s',
@@ -597,20 +597,20 @@ $$;
 
 CREATE OR REPLACE FUNCTION
   /*
-   * Delete all schemas listed in the red_config.red_cogs table.
+   * Delete all schemas listed in the blue_config.blue_cogs table.
    */
-  red_config.delete_all_schemas()
+  blue_config.delete_all_schemas()
     RETURNS void
     LANGUAGE 'plpgsql'
   AS $$
   DECLARE
     cog_entry record;
   BEGIN
-    FOR cog_entry IN SELECT * FROM red_config.red_cogs t LOOP
+    FOR cog_entry IN SELECT * FROM blue_config.blue_cogs t LOOP
       EXECUTE format('DROP SCHEMA %I CASCADE', cog_entry.schemaname);
     END LOOP;
-    -- Clear out red_config.red_cogs table
-    DELETE FROM red_config.red_cogs WHERE TRUE;
+    -- Clear out blue_config.blue_cogs table
+    DELETE FROM blue_config.blue_cogs WHERE TRUE;
   END;
 $$;
 
@@ -624,7 +624,7 @@ CREATE OR REPLACE FUNCTION
    * Raises `error_in_assignment` error when trying to set a sub-key
    * of a non-document type.
    */
-  red_utils.jsonb_set2(target jsonb, new_value jsonb, VARIADIC identifiers text[])
+  blue_utils.jsonb_set2(target jsonb, new_value jsonb, VARIADIC identifiers text[])
     RETURNS jsonb
     LANGUAGE 'plpgsql'
     IMMUTABLE
@@ -664,7 +664,7 @@ CREATE OR REPLACE FUNCTION
    * Return a set of rows to insert into a table, from a single JSONB
    * object containing multiple documents.
    */
-  red_utils.generate_rows_from_object(object jsonb, num_missing_pkeys integer)
+  blue_utils.generate_rows_from_object(object jsonb, num_missing_pkeys integer)
     RETURNS setof record
     LANGUAGE 'plpgsql'
     IMMUTABLE
@@ -681,14 +681,14 @@ CREATE OR REPLACE FUNCTION
         FROM jsonb_each(object);
     ELSE
       -- We need to return (key, key, ..., value) pairs: recurse into inner JSONB objects
-      column_definitions := red_utils.gen_pkey_column_definitions(2, num_missing_pkeys);
+      column_definitions := blue_utils.gen_pkey_column_definitions(2, num_missing_pkeys);
 
       FOR pair IN SELECT * FROM jsonb_each(object) LOOP
         RETURN QUERY
           EXECUTE format(
             $query$
             SELECT $1 AS key_1, *
-            FROM red_utils.generate_rows_from_object($2, $3)
+            FROM blue_utils.generate_rows_from_object($2, $3)
               AS f(%s, json_data jsonb)
             $query$,
             column_definitions)
@@ -707,7 +707,7 @@ CREATE OR REPLACE FUNCTION
    * The placeholder will always be $1. Particularly useful for
    * inserting values into a table from an array of primary keys.
    */
-  red_utils.gen_pkey_placeholders(num_pkeys integer, pkey_type text DEFAULT 'text')
+  blue_utils.gen_pkey_placeholders(num_pkeys integer, pkey_type text DEFAULT 'text')
     RETURNS text
     LANGUAGE 'sql'
     IMMUTABLE
@@ -728,7 +728,7 @@ CREATE OR REPLACE FUNCTION
    * string 'TRUE'. When there are multiple, it will return multiple
    * equality comparisons concatenated with 'AND'.
    */
-  red_utils.gen_whereclause(num_pkeys integer, pkey_type text)
+  blue_utils.gen_whereclause(num_pkeys integer, pkey_type text)
     RETURNS text
     LANGUAGE 'sql'
     IMMUTABLE
@@ -745,7 +745,7 @@ CREATE OR REPLACE FUNCTION
   /*
    * Generate a comma-separated list of primary key column names.
    */
-  red_utils.gen_pkey_columns(start integer, stop integer)
+  blue_utils.gen_pkey_columns(start integer, stop integer)
     RETURNS text
     LANGUAGE 'sql'
     IMMUTABLE
@@ -763,7 +763,7 @@ CREATE OR REPLACE FUNCTION
    * Generate a comma-separated list of primary key column names casted
    * to the given type.
    */
-  red_utils.gen_pkey_columns_casted(start integer, stop integer, pkey_type text DEFAULT 'text')
+  blue_utils.gen_pkey_columns_casted(start integer, stop integer, pkey_type text DEFAULT 'text')
     RETURNS text
     LANGUAGE 'sql'
     IMMUTABLE
@@ -781,7 +781,7 @@ CREATE OR REPLACE FUNCTION
   /*
    * Generate a primary key column definition list.
    */
-  red_utils.gen_pkey_column_definitions(
+  blue_utils.gen_pkey_column_definitions(
     start integer, stop integer, column_type text DEFAULT 'text'
   )
     RETURNS text
@@ -798,7 +798,7 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION
-  red_utils.get_pkey_type(is_custom boolean)
+  blue_utils.get_pkey_type(is_custom boolean)
     RETURNS TEXT
     LANGUAGE 'sql'
     IMMUTABLE
@@ -808,7 +808,7 @@ CREATE OR REPLACE FUNCTION
 $$;
 
 
-DROP AGGREGATE IF EXISTS red_utils.jsonb_object_agg2(jsonb, VARIADIC text[]);
+DROP AGGREGATE IF EXISTS blue_utils.jsonb_object_agg2(jsonb, VARIADIC text[]);
 CREATE AGGREGATE
   /*
    * Like `jsonb_object_agg` but aggregates more than two columns into a
@@ -817,8 +817,8 @@ CREATE AGGREGATE
    * If possible, use `jsonb_object_agg` instead for performance
    * reasons.
    */
-  red_utils.jsonb_object_agg2(json_data jsonb, VARIADIC primary_keys text[]) (
-    SFUNC = red_utils.jsonb_set2,
+  blue_utils.jsonb_object_agg2(json_data jsonb, VARIADIC primary_keys text[]) (
+    SFUNC = blue_utils.jsonb_set2,
     STYPE = jsonb,
     INITCOND = '{}',
     PARALLEL = SAFE
@@ -830,7 +830,7 @@ CREATE TABLE IF NOT EXISTS
   /*
    * Table to keep track of other cogs' schemas.
    */
-  red_config.red_cogs(
+  blue_config.blue_cogs(
     cog_name text,
     cog_id text,
     schemaname text NOT NULL,

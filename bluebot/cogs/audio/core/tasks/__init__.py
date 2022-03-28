@@ -1,4 +1,4 @@
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from ..cog_utils import CompositeMetaClass
 from .lavalink import LavalinkTasks

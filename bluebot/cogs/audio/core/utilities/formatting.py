@@ -7,7 +7,7 @@ from typing import List, Optional
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
 from bluebot.core import commands
@@ -178,7 +178,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
-                    "red_audio_track_enqueue", player.guild, search_choice, ctx.author
+                    "blue_audio_track_enqueue", player.guild, search_choice, ctx.author
                 )
             else:
                 return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
@@ -192,7 +192,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
-            self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
+            self.bot.dispatch("blue_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
         if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(

@@ -41,7 +41,7 @@ from .errors import (
     ArgParserFailure as ArgParserFailure,
 )
 from .help import (
-    red_help as red_help,
+    blue_help as blue_help,
     BlueHelpFormatter as BlueHelpFormatter,
     HelpSettings as HelpSettings,
 )
