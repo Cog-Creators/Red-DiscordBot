@@ -31,7 +31,6 @@ class RedEvents(MixinMeta, metaclass=CompositeMetaClass):
         requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
         user_id: int,
     ):
-
         await self.cog_ready_event.wait()
 
         if requester in ("discord_deleted_user", "owner"):

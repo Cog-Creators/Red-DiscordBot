@@ -268,7 +268,6 @@ PermStateAllowedStates = (
 
 
 def transition_permstate_to(prev: PermState, next_state: PermState) -> TransitionResult:
-
     # Transforms here are used so that the
     # informational ALLOWED_BY_HOOK/DENIED_BY_HOOK
     # remain, while retaining the behavior desired.

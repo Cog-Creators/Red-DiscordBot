@@ -38,7 +38,7 @@ class Cleanup(commands.Cog):
         self.config.register_guild(notify=True)
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     @staticmethod
@@ -155,7 +155,7 @@ class Cleanup(commands.Cog):
         resolved = reference.resolved
         if resolved and isinstance(resolved, discord.Message):
             message = resolved
-        elif (message := reference.cached_message) :
+        elif message := reference.cached_message:
             pass
         else:
             try:

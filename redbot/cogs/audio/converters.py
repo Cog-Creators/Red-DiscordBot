@@ -192,7 +192,6 @@ class ScopeParser(commands.Converter):
     async def convert(
         self, ctx: commands.Context, argument: str
     ) -> Tuple[Optional[str], discord.User, Optional[discord.Guild], bool]:
-
         target_scope: Optional[str] = None
         target_user: Optional[Union[discord.Member, discord.User]] = None
         target_guild: Optional[discord.Guild] = None
@@ -302,7 +301,6 @@ class ComplexScopeParser(commands.Converter):
         Optional[discord.Guild],
         bool,
     ]:
-
         target_scope: Optional[str] = None
         target_user: Optional[Union[discord.Member, discord.User]] = None
         target_guild: Optional[discord.Guild] = None

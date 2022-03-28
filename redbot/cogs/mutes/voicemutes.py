@@ -54,7 +54,6 @@ class VoiceMutes(MixinMeta):
             ctx.permission_state is commands.PermState.NORMAL
             and not voice_channel.permissions_for(ctx.author) >= required_perms
         ):
-
             return (
                 False,
                 _(

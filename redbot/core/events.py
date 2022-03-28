@@ -198,7 +198,6 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
-
         if not unhandled_by_cog:
             if hasattr(ctx.command, "on_error"):
                 return

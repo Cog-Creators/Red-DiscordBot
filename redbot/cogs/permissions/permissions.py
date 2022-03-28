@@ -131,7 +131,6 @@ class Permissions(commands.Cog):
         # there's a below recast to int where needed for guild ids
 
         for typename, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
-
             obj_type_rules = await self.config.custom(typename).all()
 
             count += 1
@@ -139,7 +138,6 @@ class Permissions(commands.Cog):
                 await asyncio.sleep(0)
 
             for obj_name, rules_dict in obj_type_rules.items():
-
                 count += 1
                 if not count % 100:
                     await asyncio.sleep(0)
@@ -147,7 +145,6 @@ class Permissions(commands.Cog):
                 obj = getter(obj_name)
 
                 for guild_id, guild_rules in rules_dict.items():
-
                     count += 1
                     if not count % 100:
                         await asyncio.sleep(0)

@@ -1065,7 +1065,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if ctx.guild.id in self._server_mutes:
             mutes_data = self._server_mutes[ctx.guild.id]
             if mutes_data:
-
                 msg += _("__Server Mutes__\n")
                 for user_id, mutes in mutes_data.items():
                     if not mutes:
@@ -1528,7 +1527,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         mute_role = await self.config.guild(guild).mute_role()
 
         if mute_role:
-
             role = guild.get_role(mute_role)
             if not role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["role_missing"])
@@ -1601,8 +1599,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not await self.is_allowed_by_hierarchy(guild, author, user):
             ret["reason"] = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
             return ret
-        if mute_role:
 
+        if mute_role:
             role = guild.get_role(mute_role)
             if not role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["role_missing"])

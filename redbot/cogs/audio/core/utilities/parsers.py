@@ -11,7 +11,7 @@ from ..cog_utils import CompositeMetaClass
 
 log = getLogger("red.cogs.Audio.cog.Utilities.Parsing")
 
-STREAM_TITLE: Final[re.Pattern] = re.compile(br"StreamTitle='([^']*)';")
+STREAM_TITLE: Final[re.Pattern] = re.compile(rb"StreamTitle='([^']*)';")
 
 
 class ParsingUtilities(MixinMeta, metaclass=CompositeMetaClass):

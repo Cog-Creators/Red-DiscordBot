@@ -676,7 +676,6 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     def humanize_scope(
         self, scope: str, ctx: Union[discord.Guild, discord.abc.User, str] = None, the: bool = None
     ) -> Optional[str]:
-
         if scope == PlaylistScope.GLOBAL.value:
             return _("the Global") if the else _("Global")
         elif scope == PlaylistScope.GUILD.value:

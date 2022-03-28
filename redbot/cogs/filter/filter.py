@@ -349,7 +349,7 @@ class Filter(commands.Cog):
     def invalidate_cache(
         self, guild: discord.Guild, channel: Optional[discord.TextChannel] = None
     ) -> None:
-        """ Invalidate a cached pattern"""
+        """Invalidate a cached pattern"""
         self.pattern_cache.pop((guild.id, channel and channel.id), None)
         if channel is None:
             for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
@@ -399,7 +399,6 @@ class Filter(commands.Cog):
     async def filter_hits(
         self, text: str, server_or_channel: Union[discord.Guild, discord.TextChannel]
     ) -> Set[str]:
-
         try:
             guild = server_or_channel.guild
             channel = server_or_channel
@@ -528,7 +527,6 @@ class Filter(commands.Cog):
         await self.maybe_filter_name(member)
 
     async def maybe_filter_name(self, member: discord.Member):
-
         guild = member.guild
         if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
             return

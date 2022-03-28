@@ -92,11 +92,10 @@ class Admin(commands.Cog):
         await self._ready.wait()
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     async def handle_migrations(self):
-
         lock = self.config.get_guilds_lock()
         async with lock:
             # This prevents the edge case of someone loading admin,
@@ -110,7 +109,6 @@ class Admin(commands.Cog):
         self._ready.set()
 
     async def migrate_config_from_0_to_1(self):
-
         all_guilds = await self.config.all_guilds()
 
         for guild_id, guild_data in all_guilds.items():
