@@ -229,9 +229,9 @@ New Features
 - Added ``[p]licenseinfo``. (`#3090 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3090>`_)
 - Ensured that people can migrate from MongoDB. (`#3108 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3108>`_)
 - Added a command to list disabled commands globally or per guild. (`#3118 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3118>`_)
-- New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for a service are updated. (`#3134 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3134>`_)
+- New event ``on_blue_api_tokens_update`` is now dispatched when shared api keys for a service are updated. (`#3134 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3134>`_)
 - Added ``bluebot-setup backup``. (`#3235 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3235>`_)
-- Added the method ``bluebot.core.bot.Bot.wait_until_red_ready()`` that waits until Blue's post connection startup is done. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
+- Added the method ``bluebot.core.bot.Bot.wait_until_blue_ready()`` that waits until Blue's post connection startup is done. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
 
 
 Removals
@@ -286,7 +286,7 @@ Documentation Changes
 - Added a deprecation note about shared libraries in the Downloader Framework docs. (`#3106 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3106>`_)
 - Updated the apikey framework documentation. Changed ``bot.get_shared_api_keys()`` to ``bot.get_shared_api_tokens()``. (`#3110 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3110>`_)
 - Added information about ``info.json``'s ``min_python_version`` key in Downloader Framework docs. (`#3124 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3124>`_)
-- Added an event reference for the ``on_red_api_tokens_update`` event in the Shared API Keys docs. (`#3134 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3134>`_)
+- Added an event reference for the ``on_blue_api_tokens_update`` event in the Shared API Keys docs. (`#3134 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3134>`_)
 - Added notes explaining the best practices with config. (`#3149 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3149>`_)
 - Documented additional attributes in Context. (`#3151 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3151>`_)
 - Updated Windows docs with up to date dependency instructions. (`#3188 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3188>`_)
@@ -406,13 +406,13 @@ New Features
 - ``[p]audioset autoplay`` can be used to enable auto play once the queue runs out. (`#2904 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2904>`_)
 - New events dispatched by Audio.
 
-   - ``on_red_audio_track_start(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
-   - ``on_red_audio_track_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
-   - ``on_red_audio_track_enqueue(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
-   - ``on_red_audio_track_auto_play(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
-   - ``on_red_audio_queue_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
-   - ``on_red_audio_audio_disconnect(guild: discord.Guild)``
-   - ``on_red_audio_skip_track(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`` (`#2904 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2904>`_)
+   - ``on_blue_audio_track_start(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
+   - ``on_blue_audio_track_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
+   - ``on_blue_audio_track_enqueue(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
+   - ``on_blue_audio_track_auto_play(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
+   - ``on_blue_audio_queue_end(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
+   - ``on_blue_audio_audio_disconnect(guild: discord.Guild)``
+   - ``on_blue_audio_skip_track(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)`` (`#2904 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2904>`_)
 - ``[p]queue shuffle`` can be used to shuffle the queue manually. (`#2904 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2904>`_)
 - ``[p]queue clean self`` can be used to remove all songs you requested from the queue. (`#2904 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2904>`_)
 - ``[p]audioset restrictions`` can be used to add or remove keywords which songs must have or are not allowed to have. (`#2904 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2904>`_)

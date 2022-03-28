@@ -531,7 +531,7 @@ def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
     --------
     >>> # In cog's `__init__.py`
     >>> from bluebot.core.utils import get_end_user_data_statement
-    >>> __red_end_user_data_statement__  = get_end_user_data_statement(__file__)
+    >>> __blue_end_user_data_statement__  = get_end_user_data_statement(__file__)
     >>> def setup(bot):
     ...     ...
     """

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.i18n import Translator
@@ -17,7 +17,7 @@ from bluebot.core.utils.menus import DEFAULT_CONTROLS, menu
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Commands.miscellaneous")
+log = getLogger("blue.cogs.Audio.cog.Commands.miscellaneous")
 _ = Translator("Audio", Path(__file__))
 
 

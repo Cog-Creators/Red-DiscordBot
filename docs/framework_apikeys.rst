@@ -52,7 +52,7 @@ Basic Usage
 Event Reference
 ***************
 
-.. function:: on_red_api_tokens_update(service_name, api_tokens)
+.. function:: on_blue_api_tokens_update(service_name, api_tokens)
 
     Dispatched when service's api keys are updated.
 

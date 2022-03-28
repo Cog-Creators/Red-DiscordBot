@@ -132,7 +132,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await self.config.member_from_ids(g_id, m_id).clear()
 
     async def _initialize(self):
-        await self.bot.wait_until_red_ready()
+        await self.bot.wait_until_blue_ready()
         await self._maybe_update_config()
 
         guild_data = await self.config.all_guilds()
@@ -206,7 +206,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         to allow for decent resolution on low timed
         unmutes and without being too busy on our event loop
         """
-        await self.bot.wait_until_red_ready()
+        await self.bot.wait_until_blue_ready()
         await self._ready.wait()
         while True:
             await self._clean_tasks()

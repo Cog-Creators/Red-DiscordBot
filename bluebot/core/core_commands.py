@@ -40,7 +40,7 @@ from . import (
 )
 from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter
-from .utils._internal_utils import fetch_latest_red_version_info
+from .utils._internal_utils import fetch_latest_blue_version_info
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -409,7 +409,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
 
-        pypi_version, py_version_req = await fetch_latest_red_version_info()
+        pypi_version, py_version_req = await fetch_latest_blue_version_info()
         outdated = pypi_version and pypi_version > red_version_info
 
         if embed_links:
@@ -470,7 +470,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Instance owned by team: [{owner}]\n"
                     "Python:                 [{python_version}] (5)\n"
                     "discord.py:             [{dpy_version}] (6)\n"
-                    "Blue version:            [{red_version}] (7)\n"
+                    "Blue version:            [{blue_version}] (7)\n"
                 ).format(
                     owner=owner,
                     python_version=python_version,
@@ -482,7 +482,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Instance owned by: [{owner}]\n"
                     "Python:            [{python_version}] (5)\n"
                     "discord.py:        [{dpy_version}] (6)\n"
-                    "Blue version:       [{red_version}] (7)\n"
+                    "Blue version:       [{blue_version}] (7)\n"
                 ).format(
                     owner=owner,
                     python_version=python_version,
@@ -595,7 +595,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return await ctx.send(_("I need to be able to attach files (try in DMs?)."))
 
         statements = {
-            ext_name: getattr(ext, "__red_end_user_data_statement__", None)
+            ext_name: getattr(ext, "__blue_end_user_data_statement__", None)
             for ext_name, ext in ctx.bot.extensions.items()
             if not (ext.__package__ and ext.__package__.startswith("bluebot."))
         }
@@ -4168,9 +4168,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             f"Python version: {pyver}\n"
             f"Pip version: {pipver}\n"
         )
-        resp_red_metadata = f"Blue version: {redver}\nDiscord.py version: {dpy_version}\n"
-        resp_red_vars_intro = "## Blue variables:"
-        resp_red_vars = (
+        resp_blue_metadata = f"Blue version: {bluever}\nDiscord.py version: {dpy_version}\n"
+        resp_blue_vars_intro = "## Blue variables:"
+        resp_blue_vars = (
             f"Instance name: {data_manager.instance_name}\n"
             f"Owner(s): {owners_string}\n"
             f"Storage type: {driver}\n"
@@ -4188,10 +4188,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             box(resp_os_intro, lang="md"),
             box(resp_os),
             box(resp_py_metadata),
-            box(resp_red_metadata),
+            box(resp_blue_metadata),
             "\n",
-            box(resp_red_vars_intro, lang="md"),
-            box(resp_red_vars),
+            box(resp_blue_vars_intro, lang="md"),
+            box(resp_blue_vars),
         )
 
         await ctx.send("".join(response))

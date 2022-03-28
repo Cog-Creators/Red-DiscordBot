@@ -23,7 +23,7 @@ _ = Translator("Audio", Path(__file__))
 
 class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     @commands.Cog.listener()
-    async def on_red_audio_track_start(
+    async def on_blue_audio_track_start(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
         if not (track and guild):
@@ -146,7 +146,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @commands.Cog.listener()
-    async def on_red_audio_queue_end(
+    async def on_blue_audio_queue_end(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
         if not (track and guild):
@@ -160,7 +160,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.delete_scheduled()
 
     @commands.Cog.listener()
-    async def on_red_audio_track_enqueue(
+    async def on_blue_audio_track_enqueue(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
         if not (track and guild):
@@ -174,7 +174,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @commands.Cog.listener()
-    async def on_red_audio_track_end(
+    async def on_blue_audio_track_end(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
         if not (track and guild):
@@ -188,7 +188,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.api_interface.persistent_queue_api.delete_scheduled()
 
     @commands.Cog.listener()
-    async def on_red_audio_track_auto_play(
+    async def on_blue_audio_track_auto_play(
         self,
         guild: discord.Guild,
         track: lavalink.Track,

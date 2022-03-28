@@ -365,7 +365,7 @@ Core Bot
 - Libraries using ``pkg_resources`` (like ``humanize`` or ``google-api-python-client``) that were installed through Downloader should now work properly (:issue:`3843`)
 - All bot owner IDs can now be found under ``bot.owner_ids`` attribute (:issue:`3793`)
 
-  -  Note: If you want to use this on bot startup (e.g. in cog's initialisation), you need to await ``bot.wait_until_red_ready()`` first
+  -  Note: If you want to use this on bot startup (e.g. in cog's initialisation), you need to await ``bot.wait_until_blue_ready()`` first
 
 
 Documentation changes

@@ -31,7 +31,7 @@ from ...utils import PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, LazyGreedyConverter, PlaylistConverter
 
-log = getLogger("red.cogs.Audio.cog.Commands.playlist")
+log = getLogger("blue.cogs.Audio.cog.Commands.playlist")
 _ = Translator("Audio", Path(__file__))
 
 

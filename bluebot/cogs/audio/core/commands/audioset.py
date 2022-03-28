@@ -24,7 +24,7 @@ from ...utils import CacheLevel, PlaylistScope, has_internal_server
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, PlaylistConverter, __version__
 
-log = getLogger("red.cogs.Audio.cog.Commands.audioset")
+log = getLogger("blue.cogs.Audio.cog.Commands.audioset")
 
 _ = Translator("Audio", Path(__file__))
 

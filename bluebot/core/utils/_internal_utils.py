@@ -55,7 +55,7 @@ __all__ = (
     "send_to_owners_with_preprocessor",
     "send_to_owners_with_prefix_replaced",
     "expected_version",
-    "fetch_latest_red_version_info",
+    "fetch_latest_blue_version_info",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
     "cli_level_to_log_level",
@@ -320,7 +320,7 @@ def expected_version(current: str, expected: str) -> bool:
     return current in pkg_resources.Requirement.parse(f"x{expected}")
 
 
-async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
+async def fetch_latest_blue_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get("https://pypi.org/pypi/Blue-DiscordBot/json") as r:

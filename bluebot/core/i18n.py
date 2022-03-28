@@ -293,7 +293,7 @@ def _get_babel_locale(red_locale: str) -> babel.core.Locale:
             # Lets handle it silently and default to "en_US"
             try:
                 # Try to find a babel locale that's close to the one used by red
-                babel_locale = Locale(Locale.negotiate([red_locale], supported_locales, sep="-"))
+                babel_locale = Locale(Locale.negotiate([blue_locale], supported_locales, sep="-"))
             except (ValueError, TypeError, babel.core.UnknownLocaleError):
                 # If we fail to get a close match we will then default to "en_US"
                 babel_locale = Locale("en", "US")

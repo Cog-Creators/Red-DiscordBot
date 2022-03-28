@@ -67,7 +67,7 @@ def ensure_str(info_file: Path, key_name: str, value: Union[Any, UseDefault]) ->
     return value
 
 
-def ensure_red_version_info(
+def ensure_blue_version_info(
     info_file: Path, key_name: str, value: Union[Any, UseDefault]
 ) -> VersionInfo:
     default = red_version_info
@@ -211,8 +211,8 @@ REPO_SCHEMA: SchemaType = {
     "short": ensure_str,
 }
 INSTALLABLE_SCHEMA: SchemaType = {
-    "min_bot_version": ensure_red_version_info,
-    "max_bot_version": ensure_red_version_info,
+    "min_bot_version": ensure_blue_version_info,
+    "max_bot_version": ensure_blue_version_info,
     "min_python_version": ensure_python_version_info,
     "hidden": ensure_bool,
     "disabled": ensure_bool,

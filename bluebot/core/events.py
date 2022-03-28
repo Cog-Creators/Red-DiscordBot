@@ -28,7 +28,7 @@ from .utils._internal_utils import (
     fuzzy_command_search,
     format_fuzzy_results,
     expected_version,
-    fetch_latest_red_version_info,
+    fetch_latest_blue_version_info,
     send_to_owners_with_prefix_replaced,
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
@@ -91,20 +91,20 @@ def init_events(bot, cli_flags):
         if bot.intents.members:  # Lets avoid 0 Unique Users
             table_counts.add_row("Unique Users", str(users))
 
-        outdated_red_message = ""
+        outdated_blue_message = ""
         rich_outdated_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
-            pypi_version, py_version_req = await fetch_latest_red_version_info()
+            pypi_version, py_version_req = await fetch_latest_blue_version_info()
             outdated = pypi_version and pypi_version > red_version_info
             if outdated:
-                outdated_red_message = _(
+                outdated_blue_message = _(
                     "Your Blue instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(pypi_version, red_version)
                 rich_outdated_message = (
-                    f"[red]Outdated version![/red]\n"
-                    f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
-                    f"but you're using [cyan]{red_version}[/][red]!!![/red]"
+                    f"[blue]Outdated version![/red]\n"
+                    f"[blue]!!![/red]Version [cyan]{pypi_version}[/] is available, "
+                    f"but you're using [cyan]{blue_version}[/][blue]!!![/red]"
                 )
                 current_python = platform.python_version()
                 extra_update = _(
@@ -159,7 +159,7 @@ def init_events(bot, cli_flags):
                         "if you still need help updating after following the docs go to our "
                         "#support channel in <https://discord.gg/red>"
                     ).format(py_version=current_python, req_py=py_version_req)
-                outdated_red_message += extra_update
+                outdated_blue_message += extra_update
 
         rich_console = rich.get_console()
         rich_console.print(INTRO, style="red", markup=False, highlight=False)
@@ -188,9 +188,9 @@ def init_events(bot, cli_flags):
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)
 
-        bot._red_ready.set()
-        if outdated_red_message:
-            await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
+        bot._blue_ready.set()
+        if outdated_blue_message:
+            await send_to_owners_with_prefix_replaced(bot, outdated_blue_message)
 
     @bot.event
     async def on_command_completion(ctx: commands.Context):

@@ -305,7 +305,7 @@ class ServerManager:
                     rich.progress.TimeElapsedColumn(),
                 ) as progress:
                     progress_task_id = progress.add_task(
-                        "[red]Downloading Lavalink.jar", total=response.content_length
+                        "[blue]Downloading Lavalink.jar", total=response.content_length
                     )
                     try:
                         chunk = await response.content.read(1024)

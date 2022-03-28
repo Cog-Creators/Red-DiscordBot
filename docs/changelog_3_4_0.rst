@@ -637,7 +637,7 @@ Developer changelog
 - Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Blue.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
 
     - Read the method's documentation for more information
-- Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
+- Fixed ``on_blue_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
 
 
 Documentation changes
@@ -816,7 +816,7 @@ Core Bot
 ********
 
 - Updated versions of the libraries used in Blue: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
-- Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
+- Added an event ``on_blue_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
 
 Utility Functions
 *****************
@@ -1373,7 +1373,7 @@ Breaking changes
 - `Context.maybe_send_embed()` now supresses all mentions, including user mentions (:issue:`4192`)
 - The default value of the ``filter`` keyword argument has been changed to ``None`` (:issue:`3845`)
 - Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`__ (:issue:`3605`, :issue:`3679`)
-- Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
+- Method/attribute names starting with ``red_`` or being in the form of ``__blue_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
 - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 - Removed things past deprecation time: (:issue:`4163`)
 
@@ -1393,7 +1393,7 @@ Core Bot
 - Added data request API (:issue:`4045`,  :issue:`4169`)
 
     - New special methods added to `bluebot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
-    - New special module level variable added: ``__red_end_user_data_statement__``
+    - New special module level variable added: ``__blue_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 

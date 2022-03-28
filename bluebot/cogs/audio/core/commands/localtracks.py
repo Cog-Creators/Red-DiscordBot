@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import MutableMapping
 
 import discord
-from red_commons.logging import getLogger
+from blue_commons.logging import getLogger
 
 from bluebot.core import commands
 from bluebot.core.i18n import Translator
@@ -14,7 +14,7 @@ from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Commands.local_track")
+log = getLogger("blue.cogs.Audio.cog.Commands.local_track")
 _ = Translator("Audio", Path(__file__))
 
 

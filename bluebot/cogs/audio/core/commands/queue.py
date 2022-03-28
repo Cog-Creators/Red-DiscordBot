@@ -25,7 +25,7 @@ from bluebot.core.utils.predicates import ReactionPredicate
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Commands.queue")
+log = getLogger("blue.cogs.Audio.cog.Commands.queue")
 _ = Translator("Audio", Path(__file__))
 
 

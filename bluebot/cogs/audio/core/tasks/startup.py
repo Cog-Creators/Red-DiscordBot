@@ -33,7 +33,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         self.cog_init_task.add_done_callback(task_callback_debug)
 
     async def initialize(self) -> None:
-        await self.bot.wait_until_red_ready()
+        await self.bot.wait_until_blue_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
             self.db_conn = APSWConnectionWrapper(

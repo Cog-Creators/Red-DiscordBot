@@ -229,8 +229,8 @@ class Blue(
         self.add_command(commands.help.red_help)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
-        self._red_ready = asyncio.Event()
-        self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
+        self._blue_ready = asyncio.Event()
+        self._blue_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
         self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
 
@@ -387,19 +387,19 @@ class Blue(
 
     @property
     def _before_invoke(self):  # DEP-WARN
-        return self._red_before_invoke_method
+        return self._blue_before_invoke_method
 
     @_before_invoke.setter
     def _before_invoke(self, val):  # DEP-WARN
         """Prevent this from being overwritten in super().__init__"""
         pass
 
-    async def _red_before_invoke_method(self, ctx):
-        await self.wait_until_red_ready()
+    async def _blue_before_invoke_method(self, ctx):
+        await self.wait_until_blue_ready()
         return_exceptions = isinstance(ctx.command, commands.commands._RuleDropper)
-        if self._red_before_invoke_objs:
+        if self._blue_before_invoke_objs:
             await asyncio.gather(
-                *(coro(ctx) for coro in self._red_before_invoke_objs),
+                *(coro(ctx) for coro in self._blue_before_invoke_objs),
                 return_exceptions=return_exceptions,
             )
 
@@ -442,7 +442,7 @@ class Blue(
         """
         Functional method to remove a `before_invoke` hook.
         """
-        self._red_before_invoke_objs.discard(coro)
+        self._blue_before_invoke_objs.discard(coro)
 
     def before_invoke(self, coro: T_BIC) -> T_BIC:
         """
@@ -474,12 +474,12 @@ class Blue(
         if not asyncio.iscoroutinefunction(coro):
             raise TypeError("The pre-invoke hook must be a coroutine.")
 
-        self._red_before_invoke_objs.add(coro)
+        self._blue_before_invoke_objs.add(coro)
         return coro
 
     async def before_identify_hook(self, shard_id, *, initial=False):
         """A hook that is called before IDENTIFYing a session.
-        Same as in discord.py, but also dispatches "on_red_identify" bot event."""
+        Same as in discord.py, but also dispatches "on_blue_identify" bot event."""
         self.dispatch("red_before_identify", shard_id, initial)
         return await super().before_identify_hook(shard_id, initial=initial)
 
@@ -1806,7 +1806,7 @@ class Blue(
         """
         Gets the users and channels to send to
         """
-        await self.wait_until_red_ready()
+        await self.wait_until_blue_ready()
         destinations = []
         opt_outs = await self._config.owner_opt_out_list()
         for user_id in self.owner_ids:
@@ -1859,9 +1859,9 @@ class Blue(
         sends = [wrapped_send(d, content, **kwargs) for d in destinations]
         await asyncio.gather(*sends)
 
-    async def wait_until_red_ready(self):
+    async def wait_until_blue_ready(self):
         """Wait until our post connection startup is done."""
-        await self._red_ready.wait()
+        await self._blue_ready.wait()
 
     async def _delete_delay(self, ctx: commands.Context):
         """
@@ -1964,7 +1964,7 @@ class Blue(
             containing lists with names of failed modules, failed cogs,
             and cogs that didn't handle data deletion request.
         """
-        await self.wait_until_red_ready()
+        await self.wait_until_blue_ready()
         lock = self._deletion_requests.setdefault(user_id, asyncio.Lock())
         async with lock:
             return await self._handle_data_deletion_request(requester=requester, user_id=user_id)

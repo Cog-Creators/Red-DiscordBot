@@ -15,7 +15,7 @@ _ = Translator("Audio", Path(__file__))
 
 class BlueEvents(MixinMeta, metaclass=CompositeMetaClass):
     @commands.Cog.listener()
-    async def on_red_api_tokens_update(
+    async def on_blue_api_tokens_update(
         self, service_name: str, api_tokens: Mapping[str, str]
     ) -> None:
         if service_name == "youtube":

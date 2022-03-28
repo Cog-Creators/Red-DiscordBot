@@ -10,7 +10,7 @@ from bluebot.core.utils.chat_formatting import box
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
+log = getLogger("blue.cogs.Audio.cog.Commands.lavalink_setup")
 _ = Translator("Audio", Path(__file__))
 
 
