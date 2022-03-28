@@ -93,7 +93,7 @@ msgstr ""
 #: redbot/cogs/admin/admin.py:255
 #, docstring
 msgid "Edit role settings."
-msgstr "Rediger rolle indstillinger."
+msgstr "Blueiger rolle indstillinger."
 
 #: redbot/cogs/admin/admin.py:262
 #, docstring

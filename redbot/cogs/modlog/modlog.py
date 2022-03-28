@@ -6,7 +6,7 @@ from typing import Optional, Union
 import discord
 
 from redbot.core import checks, commands, modlog
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
@@ -19,7 +19,7 @@ _ = Translator("ModLog", __file__)
 class ModLog(commands.Cog):
     """Browse and manage modlog cases."""
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
 

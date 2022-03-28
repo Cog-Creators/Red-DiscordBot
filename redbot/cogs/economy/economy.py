@@ -10,7 +10,7 @@ import discord
 
 from redbot.core import Config, bank, commands, errors, checks
 from redbot.core.commands.converter import TimedeltaConverter
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
@@ -146,7 +146,7 @@ class Economy(commands.Cog):
 
     default_user_settings = default_member_settings
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 1256844281)

@@ -6,7 +6,7 @@ on:
 
 jobs:
   release_information:
-    if: github.repository == 'Cog-Creators/Red-DiscordBot'
+    if: github.repository == 'Cog-Creators/Blue-DiscordBot'
     name: GO HERE BEFORE APPROVING
     runs-on: ubuntu-latest
     steps:
@@ -81,7 +81,7 @@ jobs:
       contents: write
       pull-requests: write
     needs: release_to_pypi
-    name: Update Red version number to dev
+    name: Update Blue version number to dev
     runs-on: ubuntu-latest
     steps:
       - name: Get base branch
@@ -99,7 +99,7 @@ jobs:
           python-version: '3.8'
 
       # Version bump to development version
-      - name: Update Red version number to dev
+      - name: Update Blue version number to dev
         id: bump_version_dev
         run: |
           python .github/workflows/scripts/bump_version.py

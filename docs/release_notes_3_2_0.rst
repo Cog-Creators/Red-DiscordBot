@@ -1,7 +1,7 @@
 .. v3.2.0 Release Notes
 
 ##################################
-Red DiscordBot 3.2.0 Release Notes
+Blue DiscordBot 3.2.0 Release Notes
 ##################################
 
 

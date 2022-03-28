@@ -80,7 +80,7 @@ jobs:
           python-version: '3.8'
 
       # Create PR for stable version bump
-      - name: Update Red version number from input
+      - name: Update Blue version number from input
         id: bump_version_stable
         run: |
           python .github/workflows/scripts/bump_version.py

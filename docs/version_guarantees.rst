@@ -4,7 +4,7 @@
 Versioning
 ==========
 
-Red is versioned as ``major.minor.micro``
+Blue is versioned as ``major.minor.micro``
 
 While this is very similar to SemVer, we have our own set of guarantees.
 
@@ -14,11 +14,11 @@ Major versions are for project wide rewrites and are not expected in the foresee
 End-user Guarantees
 ===================
 
-Red `provides support for wide variety of operating systems <install_guides/index>`.
+Blue `provides support for wide variety of operating systems <install_guides/index>`.
 
 Support for an entire operating system may only be dropped in a minor or major version bump.
 
-Red will continue to, at the very least, support current latest stable version of
+Blue will continue to, at the very least, support current latest stable version of
 each operating system that was supported by previous micro versions.
 
 In addition to that, we strive (but do not guarantee) to provide support for all versions that
@@ -28,7 +28,7 @@ their end-of-life date.
 
 .. note::
 
-    We recommend to always use the latest OS version supported by Red.
+    We recommend to always use the latest OS version supported by Blue.
 
 ================================   ============================================================
 Operating system version           Ideally supported until
@@ -75,7 +75,7 @@ provided by or provided to the bot should not begin with
 ``red_`` or be of the form ``__red_*__`` except as documented.
 This allows us to add certain optional features non-breakingly without a name conflict.
 
-Any RPC method exposed by Red may break without notice.
+Any RPC method exposed by Blue may break without notice.
 
 If you would like something in here to be guaranteed,
 open an issue making a case for it to be moved.
@@ -84,7 +84,7 @@ open an issue making a case for it to be moved.
 Breaking Change Notices
 =======================
 
-Breaking changes in Red will be noted in the changelog with a special section.
+Breaking changes in Blue will be noted in the changelog with a special section.
 
 Breaking changes may only occur on a minor or major version bump.
 

@@ -8,7 +8,7 @@ from typing import List, MutableMapping, Optional
 from red_commons.logging import getLogger
 
 from redbot.core import Config
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.dbtools import APSWConnectionWrapper
@@ -39,7 +39,7 @@ _ = Translator("Audio", Path(__file__))
 
 
 class PlaylistWrapper:
-    def __init__(self, bot: Red, config: Config, conn: APSWConnectionWrapper):
+    def __init__(self, bot: Blue, config: Config, conn: APSWConnectionWrapper):
         self.bot = bot
         self.database = conn
         self.config = config

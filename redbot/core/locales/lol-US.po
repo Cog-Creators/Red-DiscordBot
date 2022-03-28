@@ -26,7 +26,7 @@ msgstr ""
 
 #: redbot/core/cog_manager.py:312
 #, docstring
-msgid "Commands to interface with Red's cog manager."
+msgid "Commands to interface with Blue's cog manager."
 msgstr ""
 
 #: redbot/core/cog_manager.py:317
@@ -131,11 +131,11 @@ msgstr "Meow :3"
 
 #: redbot/core/core_commands.py:273
 #, docstring
-msgid "Shows info about Red"
+msgid "Shows info about Blue"
 msgstr ""
 
 #: redbot/core/core_commands.py:294
-msgid "This is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nRed is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n"
+msgid "This is an instance of [Blue, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\\n\\nBlue is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\\n\\n"
 msgstr ""
 
 #: redbot/core/core_commands.py:303
@@ -143,7 +143,7 @@ msgid "Instance owned by"
 msgstr ""
 
 #: redbot/core/core_commands.py:306
-msgid "Red version"
+msgid "Blue version"
 msgstr ""
 
 #: redbot/core/core_commands.py:309
@@ -159,7 +159,7 @@ msgid "About this instance"
 msgstr ""
 
 #: redbot/core/core_commands.py:313
-msgid "About Red"
+msgid "About Blue"
 msgstr ""
 
 #: redbot/core/core_commands.py:316
@@ -172,7 +172,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:325
 #, docstring
-msgid "Shows Red's uptime"
+msgid "Shows Blue's uptime"
 msgstr ""
 
 #: redbot/core/core_commands.py:329
@@ -254,7 +254,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:437
 #, docstring
-msgid "Show's Red's invite url"
+msgid "Show's Blue's invite url"
 msgstr ""
 
 #: redbot/core/core_commands.py:443
@@ -423,7 +423,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:741
 #, docstring
-msgid "Attempts to restart Red\\n\\n        Makes Red quit with exit code 26\\n        The restart is not guaranteed: it must be dealt\\n        with by the process manager in use"
+msgid "Attempts to restart Blue\\n\\n        Makes Blue quit with exit code 26\\n        The restart is not guaranteed: it must be dealt\\n        with by the process manager in use"
 msgstr ""
 
 #: redbot/core/core_commands.py:748
@@ -432,7 +432,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:753
 #, docstring
-msgid "Changes Red's settings"
+msgid "Changes Blue's settings"
 msgstr ""
 
 #: redbot/core/core_commands.py:766
@@ -545,7 +545,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:915
 #, docstring
-msgid "Sets Red's avatar"
+msgid "Sets Blue's avatar"
 msgstr ""
 
 #: redbot/core/core_commands.py:924
@@ -558,7 +558,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:939
 #, docstring
-msgid "Sets Red's playing status"
+msgid "Sets Blue's playing status"
 msgstr ""
 
 #: redbot/core/core_commands.py:947
@@ -567,7 +567,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:953
 #, docstring
-msgid "Sets Red's listening status"
+msgid "Sets Blue's listening status"
 msgstr ""
 
 #: redbot/core/core_commands.py:961
@@ -576,7 +576,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:967
 #, docstring
-msgid "Sets Red's watching status"
+msgid "Sets Blue's watching status"
 msgstr ""
 
 #: redbot/core/core_commands.py:975
@@ -585,7 +585,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:981
 #, docstring
-msgid "Sets Red's status\\n\\n        Available statuses:\\n            online\\n            idle\\n            dnd\\n            invisible\\n        "
+msgid "Sets Blue's status\\n\\n        Available statuses:\\n            online\\n            idle\\n            dnd\\n            invisible\\n        "
 msgstr ""
 
 #: redbot/core/core_commands.py:1004
@@ -594,12 +594,12 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1010
 #, docstring
-msgid "Sets Red's streaming status\\n        Leaving both streamer and stream_title empty will clear it."
+msgid "Sets Blue's streaming status\\n        Leaving both streamer and stream_title empty will clear it."
 msgstr ""
 
 #: redbot/core/core_commands.py:1031
 #, docstring
-msgid "Sets Red's username"
+msgid "Sets Blue's username"
 msgstr ""
 
 #: redbot/core/core_commands.py:1036
@@ -608,7 +608,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1050
 #, docstring
-msgid "Sets Red's nickname"
+msgid "Sets Blue's nickname"
 msgstr ""
 
 #: redbot/core/core_commands.py:1054
@@ -617,7 +617,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1061
 #, docstring
-msgid "Sets Red's global prefix(es)"
+msgid "Sets Blue's global prefix(es)"
 msgstr ""
 
 #: redbot/core/core_commands.py:1066 redbot/core/core_commands.py:1079
@@ -626,7 +626,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1072
 #, docstring
-msgid "Sets Red's server prefix(es)"
+msgid "Sets Blue's server prefix(es)"
 msgstr ""
 
 #: redbot/core/core_commands.py:1075
@@ -635,7 +635,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1084
 #, docstring
-msgid "Sets Red's main owner"
+msgid "Sets Blue's main owner"
 msgstr ""
 
 #: redbot/core/core_commands.py:1093
@@ -647,7 +647,7 @@ msgid "\\nVerification token:"
 msgstr ""
 
 #: redbot/core/core_commands.py:1097
-msgid "⚠ **Only** the person who is hosting Red should be owner. **This has SERIOUS security implications. The owner can access any data that is present on the host system.** ⚠"
+msgid "⚠ **Only** the person who is hosting Blue should be owner. **This has SERIOUS security implications. The owner can access any data that is present on the host system.** ⚠"
 msgstr ""
 
 #: redbot/core/core_commands.py:1103

@@ -1,11 +1,11 @@
 import discord
 
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.config import Config
 
 
 async def is_allowed_by_hierarchy(
-    bot: Red, config: Config, guild: discord.Guild, mod: discord.Member, user: discord.Member
+    bot: Blue, config: Config, guild: discord.Guild, mod: discord.Member, user: discord.Member
 ):
     if not await config.guild(guild).respect_hierarchy():
         return True

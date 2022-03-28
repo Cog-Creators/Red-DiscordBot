@@ -16,7 +16,7 @@ from red_commons.logging import getLogger
 
 from lavalink.rest_api import LoadResult, LoadType
 from redbot.core import Config, commands
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.commands import Cog, Context
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -51,7 +51,7 @@ class AudioAPIInterface:
 
     def __init__(
         self,
-        bot: Red,
+        bot: Blue,
         config: Config,
         session: aiohttp.ClientSession,
         conn: APSWConnectionWrapper,

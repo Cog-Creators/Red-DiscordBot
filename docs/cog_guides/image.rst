@@ -163,8 +163,8 @@ Explains how to set GIPHY API tokens.
 2. Visit `this page <https://developers.giphy.com/dashboard>`__.
 3. Press 'Create an App'.
 4. Click 'Select API', and then 'Next Step'.
-5. Add an app name, for example 'Red'.
-6. Add an app description, for example 'Used for Red's image cog'.
+5. Add an app name, for example 'Blue'.
+6. Add an app description, for example 'Used for Blue's image cog'.
 7. Click 'Create App'. You'll need to agree to the GIPHY API terms.
 8. Copy the API Key.
 9. In Discord, run the following command::
@@ -193,7 +193,7 @@ Explains how to set Imgur API tokens.
 
 1. Login to (or create) an Imgur account.
 2. Visit `this page <https://api.imgur.com/oauth2/addclient>`__.
-3. Add an app name for your application, for example 'Red'.
+3. Add an app name for your application, for example 'Blue'.
 4. Select 'Anonymous usage without user authorization' for the auth type.
 5. Set the authorization callback URL to ``https://localhost``
 6. Leave the app website blank.

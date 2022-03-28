@@ -25,8 +25,8 @@ msgstr "Du trenger minst {cost} {currency} for å bruke denne kommandoen."
 
 #: redbot/core/cog_manager.py:316
 #, docstring
-msgid "Commands to interface with Red's cog manager."
-msgstr "Kommandoer for å kommunisere med Red sin cog manager."
+msgid "Commands to interface with Blue's cog manager."
+msgstr "Kommandoer for å kommunisere med Blue sin cog manager."
 
 #: redbot/core/cog_manager.py:325
 #, docstring
@@ -154,7 +154,7 @@ msgstr "Kommandoen {command_name} er allerede en eksisterende kommando eller ali
 #, docstring
 msgid "\n"
 "    The Core cog has many commands related to core functions.\n\n"
-"    These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.\n"
+"    These commands come loaded with every Blue bot, and cover some of the most basic usage of the bot.\n"
 "    "
 msgstr "\n"
 "    Kjerne cog har mange kommandoer relatert til kjernefunksjoner.\n\n"
@@ -176,11 +176,11 @@ msgstr "Viser informasjon om [botname].\n\n"
 "        "
 
 #: redbot/core/core_commands.py:445
-msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\n\n"
-"Red is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\n\n"
+msgid "This bot is an instance of [Blue, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\n\n"
+"Blue is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr "Denne boten er en instans av [Red, en åpen kilde Discord bot]({}) laget av [Twentysix]({}) og [forbedret av mange]({}).\n\n"
-"Red er støttet av et lidenskapelig samfunn som bidrar til å skape innhold for alle til nye. [Bli med oss i dag]({}) og hjelp oss med forbedring!\n\n"
+msgstr "Denne boten er en instans av [Blue, en åpen kilde Discord bot]({}) laget av [Twentysix]({}) og [forbedret av mange]({}).\n\n"
+"Blue er støttet av et lidenskapelig samfunn som bidrar til å skape innhold for alle til nye. [Bli med oss i dag]({}) og hjelp oss med forbedring!\n\n"
 "(c) Cog Creators"
 
 #: redbot/core/core_commands.py:456
@@ -192,8 +192,8 @@ msgid "Instance owned by"
 msgstr "Instans eid av"
 
 #: redbot/core/core_commands.py:461
-msgid "Red version"
-msgstr "Red versjon"
+msgid "Blue version"
+msgstr "Blue versjon"
 
 #: redbot/core/core_commands.py:464 redbot/core/core_commands.py:520
 msgid "Yes, {version} is available."
@@ -212,48 +212,48 @@ msgid "About this instance"
 msgstr "Om denne instansen"
 
 #: redbot/core/core_commands.py:472
-msgid "About Red"
-msgstr "Om Red"
+msgid "About Blue"
+msgstr "Om Blue"
 
 #: redbot/core/core_commands.py:475 redbot/core/core_commands.py:533
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
 msgstr "Bringer glede siden 02 Jan 2016 (over {} dager siden!)"
 
 #: redbot/core/core_commands.py:483
-msgid "This bot is an instance of Red, an open source Discord bot (1) created by Twentysix (2) and improved by many (3).\n\n"
-"Red is backed by a passionate community who contributes and creates content for everyone to enjoy. Join us today (4) and help us improve!\n\n"
+msgid "This bot is an instance of Blue, an open source Discord bot (1) created by Twentysix (2) and improved by many (3).\n\n"
+"Blue is backed by a passionate community who contributes and creates content for everyone to enjoy. Join us today (4) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr "Denne boten er en instans av Red, en åpen kildekode Discord bot (1) laget av Twentysix (2) og forbedret av mange (3).\n\n"
-"Red er støttet av et lidenskapelig samfunn som bidrar til og skaper innhold for alle til nye. Bli med oss i dag (4) og hjelp oss med forbedring!\n\n"
+msgstr "Denne boten er en instans av Blue, en åpen kildekode Discord bot (1) laget av Twentysix (2) og forbedret av mange (3).\n\n"
+"Blue er støttet av et lidenskapelig samfunn som bidrar til og skaper innhold for alle til nye. Bli med oss i dag (4) og hjelp oss med forbedring!\n\n"
 "(c) Cog Creators"
 
 #: redbot/core/core_commands.py:494
 msgid "Instance owned by team: [{owner}]\n"
 "Python:                 [{python_version}] (5)\n"
 "discord.py:             [{dpy_version}] (6)\n"
-"Red version:            [{red_version}] (7)\n"
+"Blue version:            [{red_version}] (7)\n"
 msgstr "Instans eid av gruppe: [{owner}]\n"
 "Python:                 [{python_version}] (5)\n"
 "discord.py:             [{dpy_version}] (6)\n"
-"Red versjon:            [{red_version}] (7)\n"
+"Blue versjon:            [{red_version}] (7)\n"
 
 #: redbot/core/core_commands.py:506
 msgid "Instance owned by: [{owner}]\n"
 "Python:            [{python_version}] (5)\n"
 "discord.py:        [{dpy_version}] (6)\n"
-"Red version:       [{red_version}] (7)\n"
+"Blue version:       [{red_version}] (7)\n"
 msgstr "Insants eid av: [{owner}]\n"
 "Python: [{python_version}] (5)\n"
 "discord.py: [{dpy_version}] (6)\n"
-"Red versjon: [{red_version}] (7)\n"
+"Blue versjon: [{red_version}] (7)\n"
 
 #: redbot/core/core_commands.py:525
 msgid "Outdated:          [{state}]\n"
 msgstr "Utdatert: [{state}]\n"
 
 #: redbot/core/core_commands.py:528
-msgid "**About Red**\n"
-msgstr "**Om Red**\n"
+msgid "**About Blue**\n"
+msgstr "**Om Blue**\n"
 
 #: redbot/core/core_commands.py:539
 msgid "**About this instance**\n"
@@ -1010,7 +1010,7 @@ msgid "\n"
 "        Note: This command is interactive.\n\n"
 "        **Examples:**\n"
 "            - `[p]leave` - Leave the current server.\n"
-"            - `[p]leave \"Red - Discord Bot\"` - Quotes are necessary when there are spaces in the name.\n"
+"            - `[p]leave \"Blue - Discord Bot\"` - Quotes are necessary when there are spaces in the name.\n"
 "            - `[p]leave 133049272517001216 240154543684321280` - Leaves multiple servers, using IDs.\n\n"
 "        **Arguments:**\n"
 "            - `[servers...]` - The servers to leave. When blank, attempts to leave the current server.\n"
@@ -1328,10 +1328,10 @@ msgid "\n"
 "        Use without a description to reset.\n"
 "        This is shown in a few locations, including the help menu.\n\n"
 "        The maximum description length is 250 characters to ensure it displays properly.\n\n"
-"        The default is \"Red V3\".\n\n"
+"        The default is \"Blue V3\".\n\n"
 "        **Examples:**\n"
 "            - `[p]set description` - Resets the description to the default setting.\n"
-"            - `[p]set description MyBot: A Red V3 Bot`\n\n"
+"            - `[p]set description MyBot: A Blue V3 Bot`\n\n"
 "        **Arguments:**\n"
 "            - `[description]` - The description to use for this bot. Leave blank to reset to the default.\n"
 "        "
@@ -1827,7 +1827,7 @@ msgstr "Server prefikser satt."
 msgid "\n"
 "        Changes the bot's default locale.\n\n"
 "        This will be used when a server has not set a locale, or in DMs.\n\n"
-"        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.\n\n"
+"        Go to [Blue's Crowdin page](https://translate.discord.red) to see locales that are available with translations.\n\n"
 "        To reset to English, use \"en-US\".\n\n"
 "        **Examples:**\n"
 "            - `[p]set locale en-US`\n"
@@ -1857,7 +1857,7 @@ msgstr "Globalt Lokale innstillinger er angitt."
 #, docstring
 msgid "\n"
 "        Changes the bot's locale in this server.\n\n"
-"        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.\n\n"
+"        Go to [Blue's Crowdin page](https://translate.discord.red) to see locales that are available with translations.\n\n"
 "        Use \"default\" to return to the bot's default set language.\n"
 "        To reset to English, use \"en-US\".\n\n"
 "        **Examples:**\n"
@@ -3127,7 +3127,7 @@ msgstr "De er ikke immuniserte."
 #, docstring
 msgid "\n"
 "        Commands for configuring owner notifications.\n\n"
-"        Owner notifications include usage of `[p]contact` and available Red updates.\n"
+"        Owner notifications include usage of `[p]contact` and available Blue updates.\n"
 "        "
 msgstr ""
 
@@ -3313,10 +3313,10 @@ msgstr "Nåværende ignorerte kategorier: {categories}\n"
 #: redbot/core/core_commands.py:4862
 #, docstring
 msgid "\n"
-"        Get info about Red's licenses.\n"
+"        Get info about Blue's licenses.\n"
 "        "
 msgstr "\n"
-"        Få informasjon om Red's lisenser.\n"
+"        Få informasjon om Blue's lisenser.\n"
 "        "
 
 #: redbot/core/dev_commands.py:36
@@ -3486,8 +3486,8 @@ msgid "{user}'s balance cannot rise above {max} {currency}."
 msgstr "{user} er saldo kan ikke stige over {max} {currency}."
 
 #: redbot/core/events.py:112
-msgid "Your Red instance is out of date! {} is the current version, however you are using {}!"
-msgstr "Red forekomsten din er utgått på dato! {} er den gjeldende versjonen, men du bruker {}!"
+msgid "Your Blue instance is out of date! {} is the current version, however you are using {}!"
+msgstr "Blue forekomsten din er utgått på dato! {} er den gjeldende versjonen, men du bruker {}!"
 
 #: redbot/core/events.py:122
 msgid "\n\n"

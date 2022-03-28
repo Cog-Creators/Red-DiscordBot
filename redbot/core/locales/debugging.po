@@ -18,7 +18,7 @@ msgstr ""
 #: ../cog_manager.py:21
 #, docstring
 msgid ""
-"Directory manager for Red's cogs.\n"
+"Directory manager for Blue's cogs.\n"
 "\n"
 "    This module allows you to load cogs from multiple directories and even from\n"
 "    outside the bot directory. You may also set a directory for downloader to\n"
@@ -73,9 +73,9 @@ msgstr ""
 #: ../cog_manager.py:298
 #, docstring
 msgid ""
-"Commands to interface with Red's cog manager."
+"Commands to interface with Blue's cog manager."
 msgstr ""
-"(TRANSLATED) Commands to interface with Red's cog manager."
+"(TRANSLATED) Commands to interface with Blue's cog manager."
 
 #: ../cog_manager.py:302
 #, docstring

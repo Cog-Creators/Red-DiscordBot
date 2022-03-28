@@ -591,7 +591,7 @@ class Group(Value):
 
 
 class Config(metaclass=ConfigMeta):
-    """Configuration manager for cogs and Red.
+    """Configuration manager for cogs and Blue.
 
     You should always use `get_conf` to instantiate a Config object. Use
     `get_core_conf` for Config used in the core package.

@@ -40,7 +40,7 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
     token = None
 
     if print_header:
-        print("Red - Discord Bot | Configuration process\n")
+        print("Blue - Discord Bot | Configuration process\n")
 
     if not token_set:
         print(
@@ -101,9 +101,9 @@ def message_cache_size_int(arg: str) -> int:
 
 def parse_cli_flags(args):
     parser = argparse.ArgumentParser(
-        description="Red - Discord Bot", usage="redbot <instance_name> [arguments]"
+        description="Blue - Discord Bot", usage="redbot <instance_name> [arguments]"
     )
-    parser.add_argument("--version", "-V", action="store_true", help="Show Red's current version")
+    parser.add_argument("--version", "-V", action="store_true", help="Show Blue's current version")
     parser.add_argument("--debuginfo", action="store_true", help="Show debug information.")
     parser.add_argument(
         "--list-instances",
@@ -145,7 +145,7 @@ def parse_cli_flags(args):
         "--owner",
         type=int,
         help="ID of the owner. Only who hosts "
-        "Red should be owner, this has "
+        "Blue should be owner, this has "
         "serious security implications if misused.",
     )
     parser.add_argument(
@@ -154,7 +154,7 @@ def parse_cli_flags(args):
         default=[],
         nargs="+",
         help="ID of a co-owner. Only people who have access "
-        "to the system that is hosting Red should be  "
+        "to the system that is hosting Blue should be  "
         "co-owners, as this gives them complete access "
         "to the system's data. This has serious "
         "security implications if misused. Can be "
@@ -171,7 +171,7 @@ def parse_cli_flags(args):
         "result",
     )
     parser.add_argument(
-        "--no-cogs", action="store_true", help="Starts Red with no cogs loaded, only core"
+        "--no-cogs", action="store_true", help="Starts Blue with no cogs loaded, only core"
     )
     parser.add_argument(
         "--load-cogs",
@@ -183,7 +183,7 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Makes Red quit with code 0 just before the "
+        help="Makes Blue quit with code 0 just before the "
         "login. This is useful for testing the boot "
         "process.",
     )
@@ -213,12 +213,12 @@ def parse_cli_flags(args):
         default=6133,
         help="The port of the built-in RPC server to use. Default to 6133.",
     )
-    parser.add_argument("--token", type=str, help="Run Red with the given token.")
+    parser.add_argument("--token", type=str, help="Run Blue with the given token.")
     parser.add_argument(
         "--no-instance",
         action="store_true",
         help=(
-            "Run Red without any existing instance. "
+            "Run Blue without any existing instance. "
             "The data will be saved under a temporary folder "
             "and deleted on next system restart."
         ),
@@ -254,7 +254,7 @@ def parse_cli_flags(args):
         default=[],
         help="Unsupported flag that allows disabling the given intent."
         " Currently NOT SUPPORTED (and not covered by our version guarantees)"
-        " as Red is not prepared to work without all intents.\n"
+        " as Blue is not prepared to work without all intents.\n"
         f"Go to https://discordpy.readthedocs.io/en/v{discord_version}/api.html#discord.Intents"
         " to see what each intent does.\n"
         "This flag can be used multiple times to specify multiple intents.",

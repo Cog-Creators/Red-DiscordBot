@@ -1,7 +1,7 @@
 .. _install-arch:
 
 ============================
-Installing Red on Arch Linux
+Installing Blue on Arch Linux
 ============================
 
 .. include:: _includes/linux-preamble.rst

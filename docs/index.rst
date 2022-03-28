@@ -1,11 +1,11 @@
-.. Red - Discord Bot documentation master file, created by
+.. Blue - Discord Bot documentation master file, created by
     sphinx-quickstart on Thu Aug 10 23:18:25 2017.
     You can adapt this file completely to your liking, but it should at least
     contain the root `toctree` directive.
 
 .. _main:
 
-Welcome to Red - Discord Bot's documentation!
+Welcome to Blue - Discord Bot's documentation!
 =============================================
 
 .. toctree::
@@ -56,7 +56,7 @@ Welcome to Red - Discord Bot's documentation!
 
 .. toctree::
     :maxdepth: 2
-    :caption: Red Development Framework Reference:
+    :caption: Blue Development Framework Reference:
 
     guide_migration
     guide_cog_creation

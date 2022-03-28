@@ -7,15 +7,15 @@
 Getting started
 ===============
 
-If you recently installed Red, you should read this.
+If you recently installed Blue, you should read this.
 This is a quick start guide for a general usage.
 
 .. note::
 
-    If you haven't installed Red, please do it by following
+    If you haven't installed Blue, please do it by following
     one of the `installation guides <install_guides/index>`.
 
-Assuming you correctly installed Red, you should have a
+Assuming you correctly installed Blue, you should have a
 window like this:
 
 .. image:: .resources/red-console.png
@@ -23,7 +23,7 @@ window like this:
 .. _gettings-started-invite:
 
 -------------------------
-Invite Red to your server
+Invite Blue to your server
 -------------------------
 
 When started, the console will show you the ``Invite URL``
@@ -45,10 +45,10 @@ should see your bot in the members list.
 .. _getting-started-interact:
 
 -----------------
-Interact with Red
+Interact with Blue
 -----------------
 
-As a chatbot, you interact with Red via the Discord text channels
+As a chatbot, you interact with Blue via the Discord text channels
 (not from the command prompt). To send commands to the bot, you will have to
 use the prefix you set before, followed by the command you want to use. For
 example, if your prefix is ``!``, you will execute your command like this:
@@ -130,11 +130,11 @@ to use one of them, do: ``[p]cleanup messages 10``
 Cogs
 ----
 
-Red is built with cogs, a fancy term for plugins. They are
-modules that add functionality to Red. They contain
+Blue is built with cogs, a fancy term for plugins. They are
+modules that add functionality to Blue. They contain
 commands to use.
 
-Red comes with 18 cogs containing the basic features, such
+Blue comes with 18 cogs containing the basic features, such
 as moderation, utility, music, streams...
 
 You can see your loaded and unloaded cogs with the ``[p]cogs``
@@ -154,7 +154,7 @@ You can load or unload a cog by using the load or unload command
         [p]load cog1 cog2 ...
 
 You can enable and disable everything you want, which means you can
-customize Red how you want!
+customize Blue how you want!
 
 .. _getting-started-community-cogs:
 
@@ -163,7 +163,7 @@ Community cogs
 ~~~~~~~~~~~~~~
 
 There's an entire `community <https://discord.gg/red>`_ that contributes
-to Red. Those contributors make additional cogs for you to use. You can
+to Blue. Those contributors make additional cogs for you to use. You can
 download them using the downloader cog.
 
 You can start using the downloader cog by loading it: ``[p]load downloader``
@@ -199,7 +199,7 @@ command we talked about before.
 Permissions
 -----------
 
-Red works with different levels of permissions. Every cog defines
+Blue works with different levels of permissions. Every cog defines
 the level of permission needed for a command.
 
 ~~~~~~~~~
@@ -252,17 +252,17 @@ not be able to modify the cog settings with the ``[p]filterset`` command.
 Hosting
 -------
 
-If you are hosting Red on your personal computer, you will soon notice that
-if you close the window or if you shut down you computer, Red will be offline.
+If you are hosting Blue on your personal computer, you will soon notice that
+if you close the window or if you shut down you computer, Blue will be offline.
 It needs an environment to work and respond.
 
-You can try to host Red somewhere it will always be online, like on a virtual
+You can try to host Blue somewhere it will always be online, like on a virtual
 private server (VPS) or on a personal server (e.g. Raspberry Pi).
 
 If you want to do it, follow these steps.
 
 .. warning::
-    Before trying to host Red on a Linux environment, you need to know the
+    Before trying to host Blue on a Linux environment, you need to know the
     basics of the Unix commands, such as navigating the system files or use
     a terminal text editor.
 
@@ -272,12 +272,12 @@ If you want to do it, follow these steps.
 
 1. **Find a host**
 
-  You need to find a server to host Red. You can rent a VPS (it can be free)
+  You need to find a server to host Blue. You can rent a VPS (it can be free)
   on an online service. Please check :ref:`this list of hosts <host-list>` for
   more information.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
-  be able to host Red. The model 3 or above is recommended.
+  be able to host Blue. The model 3 or above is recommended.
 
 2. **Install Linux**
 
@@ -305,7 +305,7 @@ If you want to do it, follow these steps.
 
   .. note:: Don't forget to type the command ``logout`` to close the SSH properly.
 
-3. **Install and set up Red**
+3. **Install and set up Blue**
 
   Follow one of the Linux installation guides. We provide guides for the
   most used distributions. Check the `list of install guides <install_guides/index>` and search for
@@ -313,10 +313,10 @@ If you want to do it, follow these steps.
 
 4. **Set up an auto-restart**
 
-  Once you got Red running on your server, it will still shut down if you close
+  Once you got Blue running on your server, it will still shut down if you close
   the window. You can set up an auto-restarting system that will create a
   side task and handle fatal errors, so you can just leave your server running
-  and enjoy Red!
+  and enjoy Blue!
 
   For that, follow :ref:`the systemd service guide <systemd-service-guide>`.
 
@@ -326,7 +326,7 @@ If you want to do it, follow these steps.
 User documentation
 ------------------
 
-You will soon start using the Red core cogs. A detailed documentation is
+You will soon start using the Blue core cogs. A detailed documentation is
 available for every core cog, under the :ref:`How to use <main>` section.
 
 The cog guides are formatted the same. They're divided into 3 sections:

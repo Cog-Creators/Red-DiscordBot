@@ -1,9 +1,9 @@
 .. Publishing cogs for V3
 
-Publishing cogs for Red V3
+Publishing cogs for Blue V3
 ==========================
 
-Users of Red install 3rd-party cogs using Downloader cog. To make your cog available
+Users of Blue install 3rd-party cogs using Downloader cog. To make your cog available
 to install for others, you will have to create a git repository
 and publish it on git repository hosting (for example `GitHub <https://github.com>`_)
 
@@ -11,7 +11,7 @@ Repository Template
 -------------------
 
 We have standardized what a repository's structure should look like to better assist
-our Downloader system and provide essential information to the Red portal.
+our Downloader system and provide essential information to the Blue portal.
 
 The main repository should contain at a minimum:
 
@@ -58,9 +58,9 @@ Keys specific to the cog info.json (case sensitive)
 - ``end_user_data_statement`` (string) - A statement explaining what end user data the cog is storing.
   This is displayed when a user executes ``[p]cog info``. If the statement has changed since last update, user will be informed during the update.
 
-- ``min_bot_version`` (string) - Min version number of Red in the format ``MAJOR.MINOR.MICRO``
+- ``min_bot_version`` (string) - Min version number of Blue in the format ``MAJOR.MINOR.MICRO``
 
-- ``max_bot_version`` (string) - Max version number of Red in the format ``MAJOR.MINOR.MICRO``,
+- ``max_bot_version`` (string) - Max version number of Blue in the format ``MAJOR.MINOR.MICRO``,
   if ``min_bot_version`` is newer than ``max_bot_version``, ``max_bot_version`` will be ignored
 
 - ``min_python_version`` (list of integers) - Min version number of Python
@@ -92,6 +92,6 @@ Adding to the Index
 
 Repositories that are correctly configured can be added to the `public index of cogs <https://index.discord.red/>`_.
 
-To be added to the index, make a pull request to the `Red-Index repository <https://github.com/Cog-Creators/Red-Index>`_ in the unapproved section. You can learn more about this process in the repository description.
+To be added to the index, make a pull request to the `Blue-Index repository <https://github.com/Cog-Creators/Blue-Index>`_ in the unapproved section. You can learn more about this process in the repository description.
 
 To be added to the approved repositories, first see `guide_cog_creators`.

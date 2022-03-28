@@ -34,7 +34,7 @@ class MongoDriver(BaseDriver):
     async def initialize(cls, **storage_details) -> None:
         if motor is None:
             raise errors.MissingExtraRequirements(
-                "Red must be installed with the [mongo] extra to use the MongoDB driver"
+                "Blue must be installed with the [mongo] extra to use the MongoDB driver"
             )
         uri = storage_details.get("URI", "mongodb")
         host = storage_details["HOST"]
@@ -374,7 +374,7 @@ class MongoDriver(BaseDriver):
             print(
                 "Please choose from one of the following options:\n"
                 " 1. Drop the entire MongoDB database for this instance, or\n"
-                " 2. Delete all of Red's data within this database, without dropping the database "
+                " 2. Delete all of Blue's data within this database, without dropping the database "
                 "itself."
             )
             options = ("1", "2")

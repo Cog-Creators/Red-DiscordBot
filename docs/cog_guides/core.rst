@@ -17,7 +17,7 @@ Usage
 
 The Core cog has many commands related to core functions.
 
-These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.
+These commands come loaded with every Blue bot, and cover some of the most basic usage of the bot.
 
 
 .. _core-commands:
@@ -1562,7 +1562,7 @@ helpset resetformatter
 
 **Description**
 
-This resets Red's help formatter to the default formatter.
+This resets Blue's help formatter to the default formatter.
 
 **Example:**
     - ``[p]helpset resetformatter``
@@ -1581,7 +1581,7 @@ helpset resetsettings
 
 **Description**
 
-This resets Red's help settings to their defaults.
+This resets Blue's help settings to their defaults.
 
 This may not have an impact when using custom formatters from 3rd party cogs
 
@@ -1917,7 +1917,7 @@ info
 
 **Description**
 
-Shows info about Red.
+Shows info about Blue.
 
 .. _core-command-invite:
 
@@ -1933,7 +1933,7 @@ invite
 
 **Description**
 
-Shows Red's invite url.
+Shows Blue's invite url.
 
 This will always send the invite to DMs to keep it private.
 
@@ -1958,7 +1958,7 @@ inviteset
 
 **Description**
 
-Commands to setup Red's invite settings.
+Commands to setup Blue's invite settings.
 
 .. _core-command-inviteset-perms:
 
@@ -2038,7 +2038,7 @@ If no server IDs are passed the local server will be left instead.
 
 **Examples:**
     - ``[p]leave`` - Leave the current server.
-    - ``[p]leave "Red - Discord Bot"`` - Quotes are necessary when there are spaces in the name.
+    - ``[p]leave "Blue - Discord Bot"`` - Quotes are necessary when there are spaces in the name.
     - ``[p]leave 133049272517001216 240154543684321280`` - Leaves multiple servers, using IDs.
 
 **Arguments:**
@@ -2060,7 +2060,7 @@ licenseinfo
 
 **Description**
 
-Get info about Red's licenses.
+Get info about Blue's licenses.
 
 .. _core-command-load:
 
@@ -2406,7 +2406,7 @@ mydata
 
 **Description**
 
-Commands which interact with the data Red has about you.
+Commands which interact with the data Blue has about you.
 
 More information can be found in the :doc:`End User Data Documentation.<../red_core_data_statement>`
 
@@ -2445,12 +2445,12 @@ mydata forgetme
 
 **Description**
 
-Have Red forget what it knows about you.
+Have Blue forget what it knows about you.
 
 This may not remove all data about you, data needed for operation,
 such as command cooldowns will be kept until no longer necessary.
 
-Further interactions with Red may cause it to learn about you again.
+Further interactions with Blue may cause it to learn about you again.
 
 **Example:**
     - ``[p]mydata forgetme``
@@ -2469,7 +2469,7 @@ mydata getmydata
 
 **Description**
 
-[Coming Soon] Get what data Red has about you.
+[Coming Soon] Get what data Blue has about you.
 
 .. _core-command-mydata-ownermanagement:
 
@@ -2525,7 +2525,7 @@ mydata ownermanagement deleteforuser
 
 **Description**
 
-Delete data Red has about a user for a user.
+Delete data Blue has about a user for a user.
 
 This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user.
 Users have access to a different command for this unless they can't interact with the bot at all.
@@ -2548,7 +2548,7 @@ mydata ownermanagement deleteuserasowner
 
 **Description**
 
-Delete data Red has about a user.
+Delete data Blue has about a user.
 
 This will cause the bot to get rid of or disassociate a lot of data about the specified user.
 This may include more than just end user data, including anti abuse records.
@@ -2641,7 +2641,7 @@ mydata whatdata
 
 **Description**
 
-Find out what type of data Red stores and why.
+Find out what type of data Blue stores and why.
 
 **Example:**
     - ``[p]mydata whatdata``
@@ -2691,9 +2691,9 @@ restart
 
 **Description**
 
-Attempts to restart Red.
+Attempts to restart Blue.
 
-Makes Red quit with exit code 26.
+Makes Blue quit with exit code 26.
 The restart is not guaranteed: it must be dealt with by the process manager in use.
 
 **Examples:**
@@ -2719,7 +2719,7 @@ servers
 
 **Description**
 
-Lists the servers Red is currently in.
+Lists the servers Blue is currently in.
 
 .. Note:: This command is interactive.
 
@@ -2738,7 +2738,7 @@ set
 
 **Description**
 
-Commands for changing Red's settings.
+Commands for changing Blue's settings.
 
 .. _core-command-set-api:
 
@@ -2834,7 +2834,7 @@ set bot
 
 **Description**
 
-Commands for changing Red's metadata.
+Commands for changing Blue's metadata.
 
 .. _core-command-set-bot-avatar:
 
@@ -2852,7 +2852,7 @@ set bot avatar
 
 **Description**
 
-Sets Red's avatar
+Sets Blue's avatar
 
 Supports either an attachment or an image URL.
 
@@ -2882,7 +2882,7 @@ set bot avatar remove
 
 **Description**
 
-Removes Red's avatar.
+Removes Blue's avatar.
 
 **Example:**
     - ``[p]set bot avatar remove``
@@ -2941,11 +2941,11 @@ This is shown in a few locations, including the help menu.
 
 The maximum description length is 250 characters to ensure it displays properly.
 
-The default is "Red V3".
+The default is "Blue V3".
 
 **Examples:**
     - ``[p]set bot description`` - Resets the description to the default setting.
-    - ``[p]set bot description MyBot: A Red V3 Bot``
+    - ``[p]set bot description MyBot: A Blue V3 Bot``
 
 **Arguments:**
     - ``[description]`` - The description to use for this bot. Leave blank to reset to the default.
@@ -2966,7 +2966,7 @@ set bot nickname
 
 **Description**
 
-Sets Red's nickname for the current server.
+Sets Blue's nickname for the current server.
 
 Maximum length for a nickname is 32 characters.
 
@@ -2994,7 +2994,7 @@ set bot username
 
 **Description**
 
-Sets Red's username.
+Sets Blue's username.
 
 Maximum length for a username is 32 characters.
 
@@ -3117,7 +3117,7 @@ set locale
 
 Changes the bot's locale in this server.
 
-Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
+Go to `Blue's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
 
 Use "default" to return to the bot's default set language.
 
@@ -3153,7 +3153,7 @@ Changes the bot's default locale.
 
 This will be used when a server has not set a locale, or in DMs.
 
-Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
+Go to `Blue's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
 
 To reset to English, use "en-US".
 
@@ -3186,7 +3186,7 @@ set locale server
 
 Changes the bot's locale in this server.
 
-Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
+Go to `Blue's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
 
 Use "default" to return to the bot's default set language.
 
@@ -3218,7 +3218,7 @@ set ownernotifications
 
 Commands for configuring owner notifications.
 
-Owner notifications include usage of ``[p]contact`` and available Red updates.
+Owner notifications include usage of ``[p]contact`` and available Blue updates.
 
 .. _core-command-set-ownernotifications-adddestination:
 
@@ -3353,7 +3353,7 @@ set prefix
 
 **Description**
 
-Sets Red's global prefix(es).
+Sets Blue's global prefix(es).
 
 .. Warning:: This is not additive. It will replace all current prefixes.
 
@@ -3363,7 +3363,7 @@ See also the ``--mentionable`` flag to enable mentioning the bot as the prefix.
 **Examples:**
     - ``[p]set prefix !``
     - ``[p]set prefix "! "`` - Quotes are needed to use spaces in prefixes.
-    - ``[p]set prefix "@Red "`` - This uses a mention as the prefix. See also the ``--mentionable`` flag.
+    - ``[p]set prefix "@Blue "`` - This uses a mention as the prefix. See also the ``--mentionable`` flag.
     - ``[p]set prefix ! ? .`` - Sets multiple prefixes.
 
 **Arguments:**
@@ -3478,7 +3478,7 @@ set roles
 
 **Description**
 
-Set server's admin and mod roles for Red.
+Set server's admin and mod roles for Blue.
 
 .. _core-command-set-roles-addadminrole:
 
@@ -3645,7 +3645,7 @@ set serverprefix
 
 **Description**
 
-Sets Red's server prefix(es).
+Sets Blue's server prefix(es).
 
 .. Warning:: This will override global prefixes, the bot will not respond to any global prefixes in this server.
 
@@ -3656,7 +3656,7 @@ Sets Red's server prefix(es).
 **Examples:**
     - ``[p]set serverprefix !``
     - ``[p]set serverprefix "! "`` - Quotes are needed to use spaces in prefixes.
-    - ``[p]set serverprefix "@Red "`` - This uses a mention as the prefix.
+    - ``[p]set serverprefix "@Blue "`` - This uses a mention as the prefix.
     - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
 
 **Arguments:**
@@ -3676,7 +3676,7 @@ set showsettings
 
 **Description**
 
-Show the current settings for Red.
+Show the current settings for Blue.
 
 .. _core-command-set-status:
 
@@ -3694,7 +3694,7 @@ set status
 
 **Description**
 
-Commands for setting Red's status.
+Commands for setting Blue's status.
 
 .. _core-command-set-status-competing:
 
@@ -3712,7 +3712,7 @@ set status competing
 
 **Description**
 
-Sets Red's competing status.
+Sets Blue's competing status.
 
 This will appear as ``Competing in <competing>``.
 
@@ -3743,7 +3743,7 @@ set status dnd
 
 **Description**
 
-Sets Red's status to do not disturb.
+Sets Blue's status to do not disturb.
 
 .. _core-command-set-status-idle:
 
@@ -3763,7 +3763,7 @@ set status idle
 
 **Description**
 
-Sets Red's status to idle.
+Sets Blue's status to idle.
 
 .. _core-command-set-status-invisible:
 
@@ -3783,7 +3783,7 @@ set status invisible
 
 **Description**
 
-Sets Red's status to invisible.
+Sets Blue's status to invisible.
 
 .. _core-command-set-status-listening:
 
@@ -3801,7 +3801,7 @@ set status listening
 
 **Description**
 
-Sets Red's listening status.
+Sets Blue's listening status.
 
 This will appear as ``Listening to <listening>``.
 
@@ -3830,7 +3830,7 @@ set status online
 
 **Description**
 
-Sets Red's status to online.
+Sets Blue's status to online.
 
 .. _core-command-set-status-playing:
 
@@ -3850,7 +3850,7 @@ set status playing
 
 **Description**
 
-Sets Red's playing status.
+Sets Blue's playing status.
 
 This will appear as ``Playing <game>`` or ``PLAYING A GAME: <game>`` depending on the context.
 
@@ -3881,7 +3881,7 @@ set status streaming
 
 **Description**
 
-Sets Red's streaming status to a twitch stream.
+Sets Blue's streaming status to a twitch stream.
 
 This will appear as ``Streaming <stream_title>`` or ``LIVE ON TWITCH`` depending on the context.
 It will also include a ``Watch`` button with a twitch.tv url for the provided streamer.
@@ -3915,7 +3915,7 @@ set status watching
 
 **Description**
 
-Sets Red's watching status.
+Sets Blue's watching status.
 
 This will appear as ``Watching <watching>``.
 
@@ -3972,7 +3972,7 @@ shutdown
 
 Shuts down the bot.
 
-Allows Red to shut down gracefully.
+Allows Blue to shut down gracefully.
 
 This is the recommended method for shutting down the bot.
 
@@ -4122,4 +4122,4 @@ uptime
 
 **Description**
 
-Shows Red's uptime.
+Shows Blue's uptime.

@@ -9,7 +9,7 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 
@@ -116,7 +116,7 @@ def standardize_scope(scope: str) -> str:
 
 
 def prepare_config_scope(
-    bot: Red,
+    bot: Blue,
     scope,
     author: Union[discord.abc.User, int] = None,
     guild: Union[discord.Guild, int] = None,

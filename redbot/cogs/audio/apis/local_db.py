@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 from red_commons.logging import getLogger
 
 from redbot.core import Config
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.commands import Cog
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -66,7 +66,7 @@ _SCHEMA_VERSION = 3
 
 class BaseWrapper:
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self, bot: Blue, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
     ):
         self.bot = bot
         self.config = config
@@ -232,7 +232,7 @@ class BaseWrapper:
 
 class YouTubeTableWrapper(BaseWrapper):
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self, bot: Blue, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
     ):
         super().__init__(bot, config, conn, cog)
         self.statement.upsert = YOUTUBE_UPSERT
@@ -268,7 +268,7 @@ class YouTubeTableWrapper(BaseWrapper):
 
 class SpotifyTableWrapper(BaseWrapper):
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self, bot: Blue, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
     ):
         super().__init__(bot, config, conn, cog)
         self.statement.upsert = SPOTIFY_UPSERT
@@ -304,7 +304,7 @@ class SpotifyTableWrapper(BaseWrapper):
 
 class LavalinkTableWrapper(BaseWrapper):
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self, bot: Blue, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
     ):
         super().__init__(bot, config, conn, cog)
         self.statement.upsert = LAVALINK_UPSERT
@@ -362,7 +362,7 @@ class LocalCacheWrapper:
     """Wraps all table apis into 1 object representing the local cache"""
 
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self, bot: Blue, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
     ):
         self.bot = bot
         self.config = config

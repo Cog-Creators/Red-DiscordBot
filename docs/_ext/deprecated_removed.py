@@ -6,7 +6,7 @@ The key difference is that instead of passing the version of planned removal,
 the writer must provide the minimum amount of days that must pass
 since the date of the release it was deprecated in.
 
-Due to lack of a concrete release schedule for Red, this ensures that
+Due to lack of a concrete release schedule for Blue, this ensures that
 we give enough time to people affected by the changes no matter
 when the releases actually happen.
 

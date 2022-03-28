@@ -4,17 +4,17 @@
     :language: python
 
 ==========================
-Migrating cogs from Red V2
+Migrating cogs from Blue V2
 ==========================
 
 First, be sure to read :dpy_docs:`discord.py's migration guide <migrating.html>`
 as that covers all of the changes to discord.py that will affect the migration process
 
 ----------------
-Red as a package
+Blue as a package
 ----------------
 
-V3 makes Red a package that is installed with :code:`pip`. Please
+V3 makes Blue a package that is installed with :code:`pip`. Please
 keep this in mind when writing cogs as this affects how imports 
 should be done (for example, to import :code:`pagify` in V2, one
 would do :code:`from .utils.chat_formatting import pagify`; in

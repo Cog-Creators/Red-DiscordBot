@@ -1,7 +1,7 @@
 .. _install-ubuntu-non-lts:
 
 =========================================
-Installing Red on Ubuntu non-LTS versions
+Installing Blue on Ubuntu non-LTS versions
 =========================================
 
 .. include:: _includes/linux-preamble.rst

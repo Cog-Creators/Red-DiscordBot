@@ -1,16 +1,16 @@
-.. Red Core Data Statement
+.. Blue Core Data Statement
 
 =====================
-Red and End User Data
+Blue and End User Data
 =====================
 
 Notes for everyone
 ******************
 
-What data Red collects
+What data Blue collects
 ----------------------
 
-Red and the cogs included with it collect some amount of data
+Blue and the cogs included with it collect some amount of data
 about users for the bot's normal operations. 
 
 The bot will keep track of a short history of usernames/nicknames. It will also
@@ -18,15 +18,15 @@ remember which actions were taken using your Discord account (such as creating a
 as well as the content of specific messages used directly as commands for the bot
 (such as reports sent to servers).
 
-By default, Red will not collect any more data than it needs, and will not use it
-for anything other than the portion of the Red's functionality that necessitated it.
+By default, Blue will not collect any more data than it needs, and will not use it
+for anything other than the portion of the Blue's functionality that necessitated it.
 
-3rd party extensions may store additional data beyond what Red does by default.
+3rd party extensions may store additional data beyond what Blue does by default.
 You can use the command ``[p]mydata 3rdparty``
 to view statements about how extensions use your data made by the authors of 
-the specific 3rd party extensions an instance of Red has installed.
+the specific 3rd party extensions an instance of Blue has installed.
 
-How can I delete data Red has about me?
+How can I delete data Blue has about me?
 ---------------------------------------
 
 The command ``[p]mydata forgetme`` provides a way for users to remove
@@ -34,7 +34,7 @@ large portions of their own data from the bot. This command will not
 remove operational data, such as a record that your
 Discord account was the target of a moderation action.
 
-3rd party extensions to Red are able to delete data when this command
+3rd party extensions to Blue are able to delete data when this command
 is used as well, but this is something each extension must implement.
 If a loaded extension does not implement this, the user will be informed.
 

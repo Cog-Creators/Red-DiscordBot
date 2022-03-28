@@ -8,17 +8,17 @@ problems.
 
 **What Are Virtual Environments For?**
 
-Virtual environments allow you to isolate Red's library dependencies, cog dependencies and python
+Virtual environments allow you to isolate Blue's library dependencies, cog dependencies and python
 binaries from the rest of your system. There is no performance overhead to using virtual environment
-and it saves you from a lot of troubles during setup. It also makes sure Red and its dependencies
-are installed to a predictable location which makes uninstalling Red as simple as removing a single folder,
+and it saves you from a lot of troubles during setup. It also makes sure Blue and its dependencies
+are installed to a predictable location which makes uninstalling Blue as simple as removing a single folder,
 without worrying about losing your data or other things on your system becoming broken.
 
 
 --------------------------------------------
 Virtual Environments with Multiple Instances
 --------------------------------------------
-If you are running multiple instances of Red on the same machine, you have the option of either
+If you are running multiple instances of Blue on the same machine, you have the option of either
 using the same virtual environment for all of them, or creating separate ones.
 
 .. note::
@@ -28,7 +28,7 @@ using the same virtual environment for all of them, or creating separate ones.
 
 The advantages of using a *single* virtual environment for all of your V3 instances are:
 
-- When updating Red, you will only need to update it once for all instances (however you will still need to restart all instances for the changes to take effect)
+- When updating Blue, you will only need to update it once for all instances (however you will still need to restart all instances for the changes to take effect)
 - It will save space on your hard drive
 
 On the other hand, you may wish to update each of your instances individually.

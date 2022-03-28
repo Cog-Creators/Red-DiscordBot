@@ -19,7 +19,7 @@ from redbot.core.utils.chat_formatting import (
 )
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Red
+    from redbot.core.bot import Blue
 
 _ = Translator("IssueDiagnoser", __file__)
 
@@ -35,7 +35,7 @@ class CheckResult:
 class IssueDiagnoserBase:
     def __init__(
         self,
-        bot: Red,
+        bot: Blue,
         original_ctx: commands.Context,
         channel: discord.TextChannel,
         author: discord.Member,
@@ -530,7 +530,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                     "Fatal error: There's an issue related to the permissions for the"
                     " {command} command but we're not able to determine the exact cause."
                 ),
-                _("This is an unexpected error, please report it on Red's issue tracker."),
+                _("This is an unexpected error, please report it on Blue's issue tracker."),
             ),
         )
 

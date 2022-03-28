@@ -15,7 +15,7 @@ from .commands import (
     GroupMixin as GroupMixin,
     command as command,
     group as group,
-    RedUnhandledAPI as RedUnhandledAPI,
+    BlueUnhandledAPI as BlueUnhandledAPI,
     RESERVED_COMMAND_NAMES as RESERVED_COMMAND_NAMES,
 )
 from .context import Context as Context, GuildContext as GuildContext, DMContext as DMContext
@@ -42,7 +42,7 @@ from .errors import (
 )
 from .help import (
     red_help as red_help,
-    RedHelpFormatter as RedHelpFormatter,
+    BlueHelpFormatter as BlueHelpFormatter,
     HelpSettings as HelpSettings,
 )
 from .requires import (

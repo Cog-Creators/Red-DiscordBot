@@ -60,7 +60,7 @@ SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("red")
 
-__all__ = ("Red", "ExitCodes")
+__all__ = ("Blue", "ExitCodes")
 
 NotMessage = namedtuple("NotMessage", "guild")
 
@@ -83,7 +83,7 @@ class _NoOwnerSet(RuntimeError):
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
 # and must include a call to super().__init__ unless they do not provide an init
-class Red(
+class Blue(
     commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
 ):  # pylint: disable=no-member # barely spurious warning caused by shadowing
     """Our subclass of discord.ext.commands.AutoShardedBot"""
@@ -119,7 +119,7 @@ class Red(
             help__tagline="",
             help__use_tick=False,
             help__react_timeout=30,
-            description="Red V3",
+            description="Blue V3",
             invite_public=False,
             invite_perm=0,
             invite_commands_scope=False,
@@ -186,7 +186,7 @@ class Red(
             kwargs["command_prefix"] = prefix_manager
 
         if "owner_id" in kwargs:
-            raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
+            raise RuntimeError("Blue doesn't accept owner_id kwarg, use owner_ids instead.")
 
         if "intents" not in kwargs:
             intents = discord.Intents.all()
@@ -225,7 +225,7 @@ class Red(
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
-        self._help_formatter = commands.help.RedHelpFormatter()
+        self._help_formatter = commands.help.BlueHelpFormatter()
         self.add_command(commands.help.red_help)
 
         self._permissions_hooks: List[commands.CheckPredicate] = []
@@ -236,7 +236,7 @@ class Red(
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
-        Set's Red's help formatter.
+        Set's Blue's help formatter.
 
         .. warning::
             This method is provisional.
@@ -270,14 +270,14 @@ class Red(
 
         # do not switch to isinstance, we want to know that this has not been overridden,
         # even with a subclass.
-        if type(self._help_formatter) is commands.help.RedHelpFormatter:
+        if type(self._help_formatter) is commands.help.BlueHelpFormatter:
             self._help_formatter = formatter
         else:
             raise RuntimeError("The formatter has already been overridden.")
 
     def reset_help_formatter(self):
         """
-        Resets Red's help formatter.
+        Resets Blue's help formatter.
 
         .. warning::
             This method is provisional.
@@ -287,7 +287,7 @@ class Red(
         as well as for a rescue command in core_commands.
 
         """
-        self._help_formatter = commands.help.RedHelpFormatter()
+        self._help_formatter = commands.help.BlueHelpFormatter()
 
     def add_dev_env_value(self, name: str, value: Callable[[commands.Context], Any]):
         """
@@ -446,7 +446,7 @@ class Red(
 
     def before_invoke(self, coro: T_BIC) -> T_BIC:
         """
-        Overridden decorator method for Red's ``before_invoke`` behavior.
+        Overridden decorator method for Blue's ``before_invoke`` behavior.
 
         This can safely be used purely functionally as well.
 
@@ -685,7 +685,7 @@ class Red(
     ) -> bool:
         """
         This checks if a user or member is allowed to run things,
-        as considered by Red's allowlist and blocklist.
+        as considered by Blue's allowlist and blocklist.
 
         If given a user object, this function will check the global lists
 
@@ -826,7 +826,7 @@ class Red(
     ) -> bool:
         """
         This checks if the bot is meant to be ignoring commands in a channel or guild,
-        as considered by Red's whitelist and blacklist.
+        as considered by Blue's whitelist and blacklist.
 
         Parameters
         ----------
@@ -1197,7 +1197,7 @@ class Red(
         from_help_command: bool = False,
     ):
         """
-        Invokes Red's helpformatter for a given context and object.
+        Invokes Blue's helpformatter for a given context and object.
         """
         return await self._help_formatter.send_help(
             ctx, help_for, from_help_command=from_help_command
@@ -1308,7 +1308,7 @@ class Red(
 
         Does not check if the invite URL is configured to be public
         with ``[p]inviteset public``. To check if invites are public,
-        use `Red.is_invite_url_public()`.
+        use `Blue.is_invite_url_public()`.
 
         Returns
         -------
@@ -1896,7 +1896,7 @@ class Red(
             pass
 
     async def shutdown(self, *, restart: bool = False):
-        """Gracefully quit Red.
+        """Gracefully quit Blue.
 
         The program will exit with code :code:`0` by default.
 
@@ -1944,7 +1944,7 @@ class Red(
         user_id: int,
     ) -> DataDeletionResults:
         """
-        This tells each cog and extension, as well as any APIs in Red
+        This tells each cog and extension, as well as any APIs in Blue
         to go delete data
 
         Calling this should be limited to interfaces designed for it.
@@ -1998,9 +1998,9 @@ class Red(
         }
 
         special_handlers = {
-            "Red Core Modlog API": modlog._process_data_deletion,
-            "Red Core Bank API": bank._process_data_deletion,
-            "Red Core Bot Data": self._core_data_deletion,
+            "Blue Core Modlog API": modlog._process_data_deletion,
+            "Blue Core Bank API": bank._process_data_deletion,
+            "Blue Core Bot Data": self._core_data_deletion,
         }
 
         failures = {
@@ -2012,7 +2012,7 @@ class Red(
         async def wrapper(func, stype, sname):
             try:
                 await func(requester=requester, user_id=user_id)
-            except commands.commands.RedUnhandledAPI:
+            except commands.commands.BlueUnhandledAPI:
                 log.warning(f"{stype}.{sname} did not handle data deletion ")
                 failures["unhandled"].append(sname)
             except Exception as exc:

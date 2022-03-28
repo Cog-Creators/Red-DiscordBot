@@ -1,4 +1,4 @@
-.. red commands module documentation
+..bluecommands module documentation
 
 ================
 Commands Package
@@ -56,7 +56,7 @@ Help Functionality
 
     The content in this section is provisional and may change
     without prior notice or warning. Updates to this will be communicated
-    on `this issue <https://github.com/Cog-Creators/Red-DiscordBot/issues/4084>`_
+    on `this issue <https://github.com/Cog-Creators/Blue-DiscordBot/issues/4084>`_
 
 
 .. automodule:: redbot.core.commands.help

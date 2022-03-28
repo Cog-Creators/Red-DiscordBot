@@ -6,7 +6,7 @@ Creating a Virtual Environment
 
     If you want to learn more about virtual environments, see page: `about-venvs`
 
-We require installing Red into a virtual environment. Don't be scared, it's very
+We require installing Blue into a virtual environment. Don't be scared, it's very
 straightforward.
 
 **************
@@ -35,4 +35,4 @@ And activate it with the following command:
 .. important::
 
     You must activate the virtual environment with the above command every time you open a new
-    shell to run, install or update Red.
+    shell to run, install or update Blue.

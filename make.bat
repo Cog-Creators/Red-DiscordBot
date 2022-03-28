@@ -45,6 +45,6 @@ echo   stylecheck                 Check which tracked .py files need reformattin
 echo   stylediff                  Show the post-reformat diff of the tracked .py files
 echo                              without modifying them.
 echo   newenv                     Create or replace this project's virtual environment.
-echo   syncenv                    Sync this project's virtual environment to Red's latest
+echo   syncenv                    Sync this project's virtual environment to Blue's latest
 echo                              dependencies.
 echo   activateenv                Activates project's virtual environment.

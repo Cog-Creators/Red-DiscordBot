@@ -8,11 +8,11 @@ from .i18n import Translator
 _ = Translator(__name__, __file__)
 
 
-class RedError(Exception):
-    """Base error class for Red-related errors."""
+class BlueError(Exception):
+    """Base error class for Blue-related errors."""
 
 
-class PackageAlreadyLoaded(RedError):
+class PackageAlreadyLoaded(BlueError):
     """Raised when trying to load an already-loaded package."""
 
     def __init__(self, spec: importlib.machinery.ModuleSpec, *args, **kwargs):
@@ -23,14 +23,14 @@ class PackageAlreadyLoaded(RedError):
         return f"There is already a package named {self.spec.name.split('.')[-1]} loaded"
 
 
-class CogLoadError(RedError):
+class CogLoadError(BlueError):
     """Raised by a cog when it cannot load itself.
     The message will be sent to the user."""
 
     pass
 
 
-class BankError(RedError):
+class BankError(BlueError):
     """Base error class for bank-related errors."""
 
 
@@ -55,11 +55,11 @@ class BankPruneError(BankError):
     """Raised when trying to prune a local bank and no server is specified."""
 
 
-class MissingExtraRequirements(RedError):
+class MissingExtraRequirements(BlueError):
     """Raised when an extra requirement is missing but required."""
 
 
-class ConfigError(RedError):
+class ConfigError(BlueError):
     """Error in a Config operation."""
 
 

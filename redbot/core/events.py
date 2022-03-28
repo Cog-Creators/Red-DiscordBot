@@ -13,7 +13,7 @@ import pkg_resources
 from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
-from redbot.core.commands import RedHelpFormatter, HelpSettings
+from redbot.core.commands import BlueHelpFormatter, HelpSettings
 from redbot.core.i18n import (
     Translator,
     set_contextual_locale,
@@ -74,13 +74,13 @@ def init_events(bot, cli_flags):
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
-        red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
+        red_pkg = pkg_resources.get_distribution("Blue-DiscordBot")
         dpy_version = discord.__version__
 
         table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         table_general_info.add_row("Prefixes", ", ".join(prefixes))
         table_general_info.add_row("Language", lang)
-        table_general_info.add_row("Red version", red_version)
+        table_general_info.add_row("Blue version", red_version)
         table_general_info.add_row("Discord.py version", dpy_version)
         table_general_info.add_row("Storage type", data_manager.storage_type())
 
@@ -98,7 +98,7 @@ def init_events(bot, cli_flags):
             outdated = pypi_version and pypi_version > red_version_info
             if outdated:
                 outdated_red_message = _(
-                    "Your Red instance is out of date! {} is the current "
+                    "Your Blue instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(pypi_version, red_version)
                 rich_outdated_message = (
@@ -141,7 +141,7 @@ def init_events(bot, cli_flags):
                         else _("Terminal")
                     )
                     extra_update += (
-                        '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
+                        '```"{python}" -m pip install -U Blue-DiscordBot{package_extras}```'.format(
                             python=sys.executable, package_extras=package_extras
                         )
                     )
@@ -183,7 +183,7 @@ def init_events(bot, cli_flags):
             # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
             rich_console.print(
-                f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
+                f"Looking for a quick guide on setting up Blue? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)
@@ -249,7 +249,7 @@ def init_events(bot, cli_flags):
             help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
                 ctx,
-                commands=RedHelpFormatter.help_filter_func(
+                commands=BlueHelpFormatter.help_filter_func(
                     ctx, bot.walk_commands(), help_settings=help_settings
                 ),
             )

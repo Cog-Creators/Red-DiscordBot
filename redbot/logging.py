@@ -150,7 +150,7 @@ class FixedMonokaiStyle(MonokaiStyle):
     styles = {**MonokaiStyle.styles, Token: "#f8f8f2"}
 
 
-class RedTraceback(Traceback):
+class BlueTraceback(Traceback):
     @render_group()
     def _render_stack(self, stack):
         for obj in super()._render_stack.__wrapped__(self, stack):
@@ -158,7 +158,7 @@ class RedTraceback(Traceback):
                 yield obj
 
 
-class RedLogRender(LogRender):
+class BlueLogRender(LogRender):
     def __call__(
         self,
         console,
@@ -198,12 +198,12 @@ class RedLogRender(LogRender):
         return output
 
 
-class RedRichHandler(RichHandler):
+class BlueRichHandler(RichHandler):
     """Adaptation of Rich's RichHandler to manually adjust the path to a logger name"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._log_render = RedLogRender(
+        self._log_render = BlueLogRender(
             show_time=self._log_render.show_time,
             show_level=self._log_render.show_level,
             show_path=self._log_render.show_path,
@@ -236,7 +236,7 @@ class RedRichHandler(RichHandler):
             exc_type, exc_value, exc_traceback = record.exc_info
             assert exc_type is not None
             assert exc_value is not None
-            traceback = RedTraceback.from_exception(
+            traceback = BlueTraceback.from_exception(
                 exc_type,
                 exc_value,
                 exc_traceback,
@@ -324,7 +324,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     if enable_rich_logging is True:
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
-        stdout_handler = RedRichHandler(
+        stdout_handler = BlueRichHandler(
             rich_tracebacks=True,
             show_path=False,
             highlighter=NullHighlighter(),

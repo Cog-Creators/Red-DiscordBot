@@ -92,7 +92,7 @@ def entity_transformer(statement: str) -> str:
 
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Red
+    from redbot.core.bot import Blue
 
 __all__ = ["Core"]
 
@@ -106,7 +106,7 @@ MAX_PREFIX_LENGTH = 25
 
 
 class CoreLogic:
-    def __init__(self, bot: "Red"):
+    def __init__(self, bot: "Blue"):
         self.bot = bot
         self.bot.register_rpc_handler(self._load)
         self.bot.register_rpc_handler(self._unload)
@@ -200,7 +200,7 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
-                # remove in Red 3.4
+                # remove in Blue 3.4
                 downloader = bot.get_cog("Downloader")
                 if downloader is None:
                     continue
@@ -344,7 +344,7 @@ class CoreLogic:
     @classmethod
     async def _version_info(cls) -> Dict[str, str]:
         """
-        Version information for Red and discord.py
+        Version information for Blue and discord.py
 
         Returns
         -------
@@ -376,7 +376,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     """
     The Core cog has many commands related to core functions.
 
-    These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.
+    These commands come loaded with every Blue bot, and cover some of the most basic usage of the bot.
     """
 
     async def red_delete_data_for_user(self, **kwargs):
@@ -394,8 +394,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
-        red_repo = org_repo + "/Red-DiscordBot"
-        red_pypi = "https://pypi.org/project/Red-DiscordBot"
+        red_repo = org_repo + "/Blue-DiscordBot"
+        red_pypi = "https://pypi.org/project/Blue-DiscordBot"
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
@@ -418,9 +418,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             red_version = "[{}]({})".format(__version__, red_pypi)
 
             about = _(
-                "This bot is an instance of [Red, an open source Discord bot]({}) "
+                "This bot is an instance of [Blue, an open source Discord bot]({}) "
                 "created by [Twentysix]({}) and [improved by many]({}).\n\n"
-                "Red is backed by a passionate community who contributes and "
+                "Blue is backed by a passionate community who contributes and "
                 "creates content for everyone to enjoy. [Join us today]({}) "
                 "and help us improve!\n\n"
                 "(c) Cog Creators"
@@ -433,7 +433,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             embed.add_field(name="Python", value=python_version)
             embed.add_field(name="discord.py", value=dpy_version)
-            embed.add_field(name=_("Red version"), value=red_version)
+            embed.add_field(name=_("Blue version"), value=red_version)
             if outdated in (True, None):
                 if outdated is True:
                     outdated_value = _("Yes, {version} is available.").format(
@@ -444,7 +444,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 embed.add_field(name=_("Outdated"), value=outdated_value)
             if custom_info:
                 embed.add_field(name=_("About this instance"), value=custom_info, inline=False)
-            embed.add_field(name=_("About Red"), value=about, inline=False)
+            embed.add_field(name=_("About Blue"), value=about, inline=False)
 
             embed.set_footer(
                 text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
@@ -456,9 +456,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             red_version = "{}".format(__version__)
 
             about = _(
-                "This bot is an instance of Red, an open source Discord bot (1) "
+                "This bot is an instance of Blue, an open source Discord bot (1) "
                 "created by Twentysix (2) and improved by many (3).\n\n"
-                "Red is backed by a passionate community who contributes and "
+                "Blue is backed by a passionate community who contributes and "
                 "creates content for everyone to enjoy. Join us today (4) "
                 "and help us improve!\n\n"
                 "(c) Cog Creators"
@@ -470,7 +470,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Instance owned by team: [{owner}]\n"
                     "Python:                 [{python_version}] (5)\n"
                     "discord.py:             [{dpy_version}] (6)\n"
-                    "Red version:            [{red_version}] (7)\n"
+                    "Blue version:            [{red_version}] (7)\n"
                 ).format(
                     owner=owner,
                     python_version=python_version,
@@ -482,7 +482,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "Instance owned by: [{owner}]\n"
                     "Python:            [{python_version}] (5)\n"
                     "discord.py:        [{dpy_version}] (6)\n"
-                    "Red version:       [{red_version}] (7)\n"
+                    "Blue version:       [{red_version}] (7)\n"
                 ).format(
                     owner=owner,
                     python_version=python_version,
@@ -499,8 +499,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     outdated_value = _("Checking for updates failed.")
                 extras += _("Outdated:          [{state}]\n").format(state=outdated_value)
 
-            red = (
-                _("**About Red**\n")
+           blue= (
+                _("**About Blue**\n")
                 + about
                 + "\n"
                 + box(extras, lang="ini")
@@ -1562,7 +1562,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Examples:**
             - `[p]leave` - Leave the current server.
-            - `[p]leave "Red - Discord Bot"` - Quotes are necessary when there are spaces in the name.
+            - `[p]leave "Blue - Discord Bot"` - Quotes are necessary when there are spaces in the name.
             - `[p]leave 133049272517001216 240154543684321280` - Leaves multiple servers, using IDs.
 
         **Arguments:**
@@ -2334,18 +2334,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The maximum description length is 250 characters to ensure it displays properly.
 
-        The default is "Red V3".
+        The default is "Blue V3".
 
         **Examples:**
             - `[p]set bot description` - Resets the description to the default setting.
-            - `[p]set bot description MyBot: A Red V3 Bot`
+            - `[p]set bot description MyBot: A Blue V3 Bot`
 
         **Arguments:**
             - `[description]` - The description to use for this bot. Leave blank to reset to the default.
         """
         if not description:
             await ctx.bot._config.description.clear()
-            ctx.bot.description = "Red V3"
+            ctx.bot.description = "Blue V3"
             await ctx.send(_("Description reset."))
         elif len(description) > 250:  # While the limit is 256, we bold it adding characters.
             await ctx.send(
@@ -2866,7 +2866,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Changes [botname]'s locale in this server.
 
-        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
+        Go to [Blue's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
 
         Use "default" to return to the bot's default set language.
 
@@ -2895,7 +2895,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This will be used when a server has not set a locale, or in DMs.
 
-        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
+        Go to [Blue's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
 
         To reset to English, use "en-US".
 
@@ -2931,7 +2931,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Changes [botname]'s locale in this server.
 
-        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
+        Go to [Blue's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
 
         Use "default" to return to the bot's default set language.
 
@@ -3169,7 +3169,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         Commands for configuring owner notifications.
 
-        Owner notifications include usage of `[p]contact` and available Red updates.
+        Owner notifications include usage of `[p]contact` and available Blue updates.
         """
         pass
 
@@ -3593,7 +3593,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
 
-        if type(ctx.bot._help_formatter) is commands.help.RedHelpFormatter:
+        if type(ctx.bot._help_formatter) is commands.help.BlueHelpFormatter:
             message = help_settings.pretty
         else:
             message = _(
@@ -4156,7 +4156,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 owners.append(f"{uid} (Unresolvable)")
         owners_string = ", ".join(owners) or "None"
 
-        resp_intro = "# Debug Info for Red:"
+        resp_intro = "# Debug Info for Blue:"
         resp_system_intro = "## System Metadata:"
         resp_system = (
             f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\nRAM: {ram_string}\n"
@@ -4168,8 +4168,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             f"Python version: {pyver}\n"
             f"Pip version: {pipver}\n"
         )
-        resp_red_metadata = f"Red version: {redver}\nDiscord.py version: {dpy_version}\n"
-        resp_red_vars_intro = "## Red variables:"
+        resp_red_metadata = f"Blue version: {redver}\nDiscord.py version: {dpy_version}\n"
+        resp_red_vars_intro = "## Blue variables:"
         resp_red_vars = (
             f"Instance name: {data_manager.instance_name}\n"
             f"Owner(s): {owners_string}\n"
@@ -5316,14 +5316,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     )
     async def license_info_command(self, ctx):
         """
-        Get info about Red's licenses.
+        Get info about Blue's licenses.
         """
 
         message = (
-            "This bot is an instance of Red-DiscordBot (hereinafter referred to as Red).\n"
-            "Red is a free and open source application made available to the public and "
+            "This bot is an instance of Blue-DiscordBot (hereinafter referred to as Blue).\n"
+            "Blue is a free and open source application made available to the public and "
             "licensed under the GNU GPLv3. The full text of this license is available to you at "
-            "<https://github.com/Cog-Creators/Red-DiscordBot/blob/V3/develop/LICENSE>."
+            "<https://github.com/Cog-Creators/Blue-DiscordBot/blob/V3/develop/LICENSE>."
         )
         await ctx.send(message)
         # We need a link which contains a thank you to other projects which we use at some point.

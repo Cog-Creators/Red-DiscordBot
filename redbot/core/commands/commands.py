@@ -59,7 +59,7 @@ __all__ = [
     "command",
     "group",
     "RESERVED_COMMAND_NAMES",
-    "RedUnhandledAPI",
+    "BlueUnhandledAPI",
 ]
 
 #: The following names are reserved for various reasons
@@ -71,7 +71,7 @@ _ = Translator("commands.commands", __file__)
 DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
 
 
-class RedUnhandledAPI(Exception):
+class BlueUnhandledAPI(Exception):
     """An exception which can be raised to signal a lack of handling specific APIs"""
 
     pass
@@ -253,7 +253,7 @@ class CogCommandMixin:
 
 
 class Command(CogCommandMixin, DPYCommand):
-    """Command class for Red.
+    """Command class for Blue.
 
     This should not be created directly, and instead via the decorator.
 
@@ -267,7 +267,7 @@ class Command(CogCommandMixin, DPYCommand):
         must remain compatible.
 
         None of your methods should start with ``red_`` or
-        be dunder names which start with red (eg. ``__red_test_thing__``)
+        be dunder names which start withblue(eg. ``__red_test_thing__``)
         unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.
@@ -312,7 +312,7 @@ class Command(CogCommandMixin, DPYCommand):
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
 
-        # Red specific
+        # Blue specific
         other.requires = self.requires
         other.ignore_optional_for_conversion = self.ignore_optional_for_conversion
         return other
@@ -646,10 +646,10 @@ class Command(CogCommandMixin, DPYCommand):
         The on_command_error event is still dispatched
         for commands with a dedicated error handler.
 
-        Red's global error handler will ignore commands with a registered error handler.
+        Blue's global error handler will ignore commands with a registered error handler.
 
-        To have red handle specific errors with the default behavior,
-        call ``Red.on_command_error`` with ``unhandled_by_cog`` set to True.
+        To havebluehandle specific errors with the default behavior,
+        call ``Blue.on_command_error`` with ``unhandled_by_cog`` set to True.
 
         Due to how discord.py wraps exceptions, the exception you are expecting here
         is likely in ``error.original`` despite that the normal event handler for bot
@@ -702,7 +702,7 @@ class Command(CogCommandMixin, DPYCommand):
 
 
 class GroupMixin(discord.ext.commands.GroupMixin):
-    """Mixin for `Group` and `Red` classes.
+    """Mixin for `Group` and `Blue` classes.
 
     This class inherits from :class:`discord.ext.commands.GroupMixin`.
     """
@@ -786,7 +786,7 @@ class CogGroupMixin:
 
 
 class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
-    """Group command class for Red.
+    """Group command class for Blue.
 
     This class inherits from `Command`, with :class:`GroupMixin` and
     `discord.ext.commands.Group` mixed in.
@@ -882,12 +882,12 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         Raises
         ------
-        RedUnhandledAPI
+        BlueUnhandledAPI
             If the method was not overridden,
             or an overridden implementation is not handling this
 
         """
-        raise RedUnhandledAPI()
+        raise BlueUnhandledAPI()
 
     async def red_delete_data_for_user(
         self,
@@ -965,11 +965,11 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         Raises
         ------
-        RedUnhandledAPI
+        BlueUnhandledAPI
             If the method was not overridden,
             or an overridden implementation is not handling this
         """
-        raise RedUnhandledAPI()
+        raise BlueUnhandledAPI()
 
     async def can_run(self, ctx: "Context", **kwargs) -> bool:
         """
@@ -1026,14 +1026,14 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
 class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
     """
-    Red's Cog base class
+    Blue's Cog base class
 
     This includes a metaclass from discord.py
 
     .. warning::
 
         None of your methods should start with ``red_`` or
-        be dunder names which start with red (eg. ``__red_test_thing__``)
+        be dunder names which start withblue(eg. ``__red_test_thing__``)
         unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.

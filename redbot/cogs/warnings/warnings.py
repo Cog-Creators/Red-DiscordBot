@@ -14,7 +14,7 @@ from redbot.cogs.warnings.helpers import (
     warning_points_remove_check,
 )
 from redbot.core import Config, checks, commands, modlog
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
@@ -41,7 +41,7 @@ class Warnings(commands.Cog):
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.config = Config.get_conf(self, identifier=5757575755)
         self.config.register_guild(**self.default_guild)

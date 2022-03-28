@@ -3,7 +3,7 @@ Installing Python with pyenv
 ----------------------------
 
 On distributions where Python 3.8 needs to be compiled from source, we recommend the use of pyenv.
-This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
+This simplifies the compilation process and has the added bonus of simplifying setting up Blue in a
 virtual environment.
 
 .. include:: _includes/_install-pyenv-and-setup-path.rst

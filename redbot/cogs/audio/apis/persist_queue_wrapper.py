@@ -10,7 +10,7 @@ import lavalink
 from red_commons.logging import getLogger
 
 from redbot.core import Config
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.commands import Cog
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 
 class QueueInterface:
     def __init__(
-        self, bot: Red, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
+        self, bot: Blue, config: Config, conn: APSWConnectionWrapper, cog: Union["Audio", Cog]
     ):
         self.bot = bot
         self.database = conn

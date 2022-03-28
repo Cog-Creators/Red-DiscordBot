@@ -3,7 +3,7 @@ from typing import List, Tuple, Optional
 
 import discord
 from redbot.core import Config, commands
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 
 
 class MixinMeta(ABC):
@@ -15,7 +15,7 @@ class MixinMeta(ABC):
 
     def __init__(self, *_args):
         self.config: Config
-        self.bot: Red
+        self.bot: Blue
         self.cache: dict
 
     @staticmethod

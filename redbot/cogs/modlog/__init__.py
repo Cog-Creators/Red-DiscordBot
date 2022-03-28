@@ -1,6 +1,6 @@
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from .modlog import ModLog
 
 
-def setup(bot: Red):
+def setup(bot: Blue):
     bot.add_cog(ModLog(bot))

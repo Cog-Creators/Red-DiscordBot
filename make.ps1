@@ -1,6 +1,6 @@
 <#
 .Synopsis
-Makefile script in PowerShell that contains commands useful during development for Red.
+Makefile script in PowerShell that contains commands useful during development for Blue.
 
 .Description
 Available commands:
@@ -9,7 +9,7 @@ Available commands:
    stylediff                  Show the post-reformat diff of the tracked .py files
                               without modifying them.
    newenv                     Create or replace this project's virtual environment.
-   syncenv                    Sync this project's virtual environment to Red's latest
+   syncenv                    Sync this project's virtual environment to Blue's latest
                               dependencies.
    activateenv                Activates project's virtual environment.
 

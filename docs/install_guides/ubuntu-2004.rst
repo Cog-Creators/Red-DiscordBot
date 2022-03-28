@@ -1,7 +1,7 @@
 .. _install-ubuntu-2004:
 
 ==================================
-Installing Red on Ubuntu 20.04 LTS
+Installing Blue on Ubuntu 20.04 LTS
 ==================================
 
 .. include:: _includes/linux-preamble.rst

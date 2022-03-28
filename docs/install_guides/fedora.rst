@@ -1,7 +1,7 @@
 .. _install-fedora:
 
 ==============================
-Installing Red on Fedora Linux
+Installing Blue on Fedora Linux
 ==============================
 
 .. include:: _includes/linux-preamble.rst

@@ -1,7 +1,7 @@
 .. _install-centos-7:
 
 ==========================
-Installing Red on CentOS 7
+Installing Blue on CentOS 7
 ==========================
 
 .. include:: _includes/linux-preamble.rst

@@ -1,6 +1,6 @@
 from .cleanup import Cleanup
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 
 
-def setup(bot: Red):
+def setup(bot: Blue):
     bot.add_cog(Cleanup(bot))

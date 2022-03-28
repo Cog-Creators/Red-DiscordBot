@@ -9,7 +9,7 @@ CustomCommands Cog Reference
 How it works
 ------------
 
-CustomCommands allows you to create simple commands for your bot without requiring you to code your own cog for Red.
+CustomCommands allows you to create simple commands for your bot without requiring you to code your own cog for Blue.
 
 If the command you attempt to create shares a name with an already loaded command, you cannot overwrite it with this cog.
 
@@ -107,4 +107,4 @@ Comparing two text channel's categories
 
     [p]customcom add simple comparecategory {0.category:TextChannel}  |  {1.category:TextChannel}
     [p]comparecategory #support #general
-        Red  |  Community
+        Blue  |  Community

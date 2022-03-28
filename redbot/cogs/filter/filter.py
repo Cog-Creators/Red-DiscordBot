@@ -5,7 +5,7 @@ from datetime import timezone
 from typing import Union, Set, Literal, Optional
 
 from redbot.core import checks, Config, modlog, commands
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils import AsyncIter
@@ -23,7 +23,7 @@ class Filter(commands.Cog):
     This can be used to prevent inappropriate language, off-topic discussions, invite links, and more.
     """
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 4766951341)

@@ -21,7 +21,7 @@ def get_name(func, prefix=""):
     return f"{class_name}__{func_name}".upper()
 
 
-class RedRpc(JsonRpc):
+class BlueRpc(JsonRpc):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.add_methods(("", self.get_method_info))
@@ -64,7 +64,7 @@ class RPC:
 
     def __init__(self):
         self.app = web.Application()
-        self._rpc = RedRpc()
+        self._rpc = BlueRpc()
         self.app.router.add_route("*", "/", self._rpc.handle_request)
 
         self._runner = web.AppRunner(self.app)
@@ -145,7 +145,7 @@ class RPCMixin:
             The return value of handler methods must also be JSON serializable.
 
         .. important::
-            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
+            RPC support is included in Blue on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
         Parameters
         ----------
@@ -169,7 +169,7 @@ class RPCMixin:
         method is not previously registered.
 
         .. important::
-            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
+            RPC support is included in Blue on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
         Parameters
         ----------

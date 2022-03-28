@@ -1108,7 +1108,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("Lavalink Settings")
             + "---        \n"
             + _("Cog version:            [{version}]\n")
-            + _("Red-Lavalink:           [{lavalink_version}]\n")
+            + _("Blue-Lavalink:           [{lavalink_version}]\n")
             + _("External server:        [{use_external_lavalink}]\n")
         ).format(
             version=__version__,

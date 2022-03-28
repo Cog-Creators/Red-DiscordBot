@@ -1,5 +1,5 @@
 import discord
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core import checks, commands, Config
 from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
@@ -64,7 +64,7 @@ class Streams(commands.Cog):
 
     role_defaults = {"mention": False}
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.config: Config = Config.get_conf(self, 26262626)
         self.ttv_bearer_cache: dict = {}
@@ -72,7 +72,7 @@ class Streams(commands.Cog):
         self.config.register_guild(**self.guild_defaults)
         self.config.register_role(**self.role_defaults)
 
-        self.bot: Red = bot
+        self.bot: Blue = bot
 
         self.streams: List[Stream] = []
         self.task: Optional[asyncio.Task] = None
@@ -480,7 +480,7 @@ class Streams(commands.Cog):
             "To set the twitch API tokens, follow these steps:\n"
             "1. Go to this page: {link}.\n"
             "2. Click *Register Your Application*.\n"
-            "3. Enter a name, set the OAuth Redirect URI to {localhost}, and "
+            "3. Enter a name, set the OAuth Blueirect URI to {localhost}, and "
             "select an Application Category of your choosing.\n"
             "4. Click *Register*.\n"
             "5. Copy your client ID and your client secret into:\n"

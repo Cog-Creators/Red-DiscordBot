@@ -4,10 +4,10 @@
     :language: python
 
 ========================
-Creating cogs for Red V3
+Creating cogs for Blue V3
 ========================
 
-This guide serves as a tutorial on creating cogs for Red V3.
+This guide serves as a tutorial on creating cogs for Blue V3.
 It will cover the basics of setting up a package for your
 cog and the basics of setting up the file structure. We will
 also point you towards some further resources that may assist
@@ -18,19 +18,19 @@ Getting started
 ---------------
 
 To start off, be sure that you have installed Python 3.8.
-Next, you need to decide if you want to develop against the Stable or Develop version of Red.
+Next, you need to decide if you want to develop against the Stable or Develop version of Blue.
 Depending on what your goal is should help determine which version you need.
 
 .. attention::
     The Develop version may have changes on it which break compatibility with the Stable version and other cogs.
-    If your goal is to support both versions, make sure you build compatibility layers or use separate branches to keep compatibility until the next Red release
+    If your goal is to support both versions, make sure you build compatibility layers or use separate branches to keep compatibility until the next Blue release
 
 Open a terminal or command prompt and type one of the following
-    Stable Version: :code:`python3.8 -m pip install -U Red-DiscordBot`
+    Stable Version: :code:`python3.8 -m pip install -U Blue-DiscordBot`
 
 .. note::
 
-  To install the development version, replace ``Red-DiscordBot`` in the above commands with the
+  To install the development version, replace ``Blue-DiscordBot`` in the above commands with the
   link below. **The development version of the bot contains experimental changes. It is not
   intended for normal users.** We will not support anyone using the development version in any
   support channels. Using the development version may break third party cogs and not all core
@@ -40,7 +40,7 @@ Open a terminal or command prompt and type one of the following
 
   .. code-block:: none
 
-      git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=Red-DiscordBot
+      git+https://github.com/Cog-Creators/Blue-DiscordBot@V3/develop#egg=Blue-DiscordBot
 
 
 (Windows users may need to use :code:`py -3.8` or :code:`python` instead of :code:`python3.8`)
@@ -59,12 +59,12 @@ a text editor or IDE (examples include `Sublime Text 3 <https://www.sublimetext.
 `PyCharm <http://www.jetbrains.com/pycharm/>`_).
 
 .. attention:: 
-    While you can intentionally override Red's cogs/extensions, this may break things.
+    While you can intentionally override Blue's cogs/extensions, this may break things.
     We would prefer if people wanted custom behavior
     for any core cog/extension, an issue and/or PR is made
     Overriding Permissions specifically is dangerous.
 
-    Subclassing to make changes to Red's cogs/extensions
+    Subclassing to make changes to Blue's cogs/extensions
     may not be a safe way to stay up to date either,
     as changes to cogs and their interactions with red
     are not guaranteed to not be breaking.
@@ -113,8 +113,8 @@ Testing your cog
 
 To test your cog, you will need a running instance of V3.
 Assuming you installed V3 as outlined above, run :code:`redbot-setup`
-and provide the requested information. Once that's done, run Red
-by doing :code:`redbot <instance name> --dev` to start Red.
+and provide the requested information. Once that's done, run Blue
+by doing :code:`redbot <instance name> --dev` to start Blue.
 Complete the initial setup by providing a valid token and setting a
 prefix. Once the bot has started up, use the link provided in the
 console to add it to a server (note that you must have the
@@ -163,7 +163,7 @@ Go to :doc:`/guide_publish_cogs`
 Becoming an Approved Cog Creator
 --------------------------------
 
-:doc:`/guide_cog_creators` explains the Cog Creator Application process and lists requirements and good practices for Cog Creators.  This information is worth following for anyone creating cogs for Red, regardless of if you plan to publish your cogs or not.
+:doc:`/guide_cog_creators` explains the Cog Creator Application process and lists requirements and good practices for Cog Creators.  This information is worth following for anyone creating cogs for Blue, regardless of if you plan to publish your cogs or not.
 
 --------------------
 Additional resources

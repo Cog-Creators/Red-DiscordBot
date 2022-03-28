@@ -8,7 +8,7 @@ Config
 ======
 
 Config was introduced in V3 as a way to make data storage easier and safer for all developers regardless of skill level.
-It will take some getting used to as the syntax is entirely different from what Red has used before, but we believe
+It will take some getting used to as the syntax is entirely different from what Blue has used before, but we believe
 Config will be extremely beneficial to both cog developers and end users in the long run.
 
 .. note:: While config is great for storing data safely, there are some caveats to writing performant code which uses it.

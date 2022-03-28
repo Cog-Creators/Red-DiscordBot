@@ -9,7 +9,7 @@ This script will not work when run on Windows.
 
 What this script does
 ---------------------
-It prints to stdout all primary and secondary dependencies for Red,
+It prints to stdout all primary and secondary dependencies for Blue,
 pinned to the latest possible version, within the constraints specified
 in ``primary_deps.ini``. The output should be suitable for copying and
 pasting into ``setup.cfg``. PEP 508 markers are preserved.

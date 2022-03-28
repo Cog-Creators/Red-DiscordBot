@@ -328,7 +328,7 @@ To set the Twitch API tokens, follow these steps:
 
 2. Click Register Your Application.
 
-3. Enter a name, set the OAuth Redirect URI to http://localhost, and select an Application Category of your choosing.
+3. Enter a name, set the OAuth Blueirect URI to http://localhost, and select an Application Category of your choosing.
 
 4. Click Register.
 

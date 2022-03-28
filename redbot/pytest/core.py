@@ -5,7 +5,7 @@ import weakref
 
 import pytest
 from redbot.core import Config
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core import config as config_module, drivers
 
 __all__ = [
@@ -151,18 +151,18 @@ def ctx(empty_member, empty_channel, red):
 # endregion
 
 
-# region Red Mock
+# region Blue Mock
 @pytest.fixture()
 def red(config_fr):
     from redbot.core.cli import parse_cli_flags
 
     cli_flags = parse_cli_flags(["ignore_me"])
 
-    description = "Red v3 - Alpha"
+    description = "Blue v3 - Alpha"
 
     Config.get_core_conf = lambda *args, **kwargs: config_fr
 
-    red = Red(cli_flags=cli_flags, description=description, dm_help=None, owner_ids=set())
+   blue= Blue(cli_flags=cli_flags, description=description, dm_help=None, owner_ids=set())
 
     yield red
 

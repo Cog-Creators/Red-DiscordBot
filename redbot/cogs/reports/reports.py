@@ -10,7 +10,7 @@ from redbot.core import Config, checks, commands
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
@@ -47,7 +47,7 @@ class Reports(commands.Cog):
         (timedelta(days=1), 24),
     ]
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 78631113035100160, force_registration=True)
@@ -129,7 +129,7 @@ class Reports(commands.Cog):
         if mod and await self.bot.is_mod(m):
             return True
         # The following line is for consistency with how perms are handled
-        # in Red, though I'm not sure it makes sense to use here.
+        # in Blue, though I'm not sure it makes sense to use here.
         if await self.bot.is_owner(m):
             return True
 

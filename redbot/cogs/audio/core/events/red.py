@@ -13,7 +13,7 @@ log = getLogger("red.cogs.Audio.cog.Events.red")
 _ = Translator("Audio", Path(__file__))
 
 
-class RedEvents(MixinMeta, metaclass=CompositeMetaClass):
+class BlueEvents(MixinMeta, metaclass=CompositeMetaClass):
     @commands.Cog.listener()
     async def on_red_api_tokens_update(
         self, service_name: str, api_tokens: Mapping[str, str]

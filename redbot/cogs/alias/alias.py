@@ -11,7 +11,7 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
 
 _ = Translator("Alias", __file__)
@@ -42,7 +42,7 @@ class Alias(commands.Cog):
     and append them to the stored alias.
     """
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 8927348724)

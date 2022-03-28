@@ -1,6 +1,6 @@
 .. 3.3.x Changelogs
 
-Redbot 3.3.12 (2020-08-18)
+Bluebot 3.3.12 (2020-08-18)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -12,7 +12,7 @@ End-user changelog
 Core Bot
 ********
 
-- Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
+- Blue now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 
 Mod
 ***
@@ -39,7 +39,7 @@ Miscellaneous
 - Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
 
 
-Redbot 3.3.11 (2020-08-10)
+Bluebot 3.3.11 (2020-08-10)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -81,7 +81,7 @@ Warnings
 - ``[p]warn`` now sends an error message (instead of no feedback) when an unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
 
 
-Redbot 3.3.10 (2020-07-09)
+Bluebot 3.3.10 (2020-07-09)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -131,7 +131,7 @@ Mod
 - Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
 - Fixed invite being sent with ``[p]tempban`` even when no invite was set (:issue:`3991`)
 - Prevented an issue whereby the author may lock him self out of using the bot via whitelists (:issue:`3903`)
-- Reduced the number of API calls made to the storage APIs (:issue:`3910`)
+- Blueuced the number of API calls made to the storage APIs (:issue:`3910`)
 
 Permissions
 ***********
@@ -180,7 +180,7 @@ Miscellaneous
 - Fixed grammar errors and added full stopts in ``core_commands.py`` (:issue:`4023`)
 
 
-Redbot 3.3.9 (2020-06-12)
+Bluebot 3.3.9 (2020-06-12)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -206,7 +206,7 @@ Core Bot
 
 - ``[p]info`` command can now be used when bot doesn't have Embed Links permission (:issue:`3907`, :issue:`3102`)
 - Fixed ungraceful error that happened in ``[p]set custominfo`` when provided text was too long (:issue:`3923`)
-- Red's start up message now shows storage type (:issue:`3935`)
+- Blue's start up message now shows storage type (:issue:`3935`)
 
 Audio
 *****
@@ -253,7 +253,7 @@ Developer changelog
 Core Bot
 ********
 
-- Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
+- Added `bot.set_prefixes() <Blue.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
@@ -274,7 +274,7 @@ Miscellaneous
 - **Mod** - Preemptive fix for d.py 1.4 (:issue:`3891`)
 
 
-Redbot 3.3.8 (2020-05-29)
+Bluebot 3.3.8 (2020-05-29)
 ==================================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -288,7 +288,7 @@ Core Bot
 
 - Important fixes to how PostgreSQL data backend saves data in bulks (:issue:`3829`)
 - Fixed ``[p]localwhitelist`` and ``[p]localblacklist`` commands (:issue:`3857`)
-- Red now includes information on how to update when sending information about being out of date (:issue:`3744`)
+- Blue now includes information on how to update when sending information about being out of date (:issue:`3744`)
 - Using backslashes in bot's username/nickname no longer causes issues (:issue:`3826`, :issue:`3825`)
 
 Admin
@@ -354,14 +354,14 @@ Developer changelog
 -------------------
 
 | **Important:**
-| If you're using RPC, please see the full annoucement about current state of RPC in main Red server
+| If you're using RPC, please see the full annoucement about current state of RPC in main Blue server
   `by clicking here <https://discord.com/channels/133049272517001216/411381123101491200/714560168465137694>`_.
 
 
 Core Bot
 ********
 
-- Red now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
+- Blue now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
 - Libraries using ``pkg_resources`` (like ``humanize`` or ``google-api-python-client``) that were installed through Downloader should now work properly (:issue:`3843`)
 - All bot owner IDs can now be found under ``bot.owner_ids`` attribute (:issue:`3793`)
 
@@ -373,7 +373,7 @@ Documentation changes
 
 - Added information about provisional status of RPC (:issue:`3862`)
 - Revised install instructions (:issue:`3847`)
-- Improved navigation in `document about updating Red <update_red>` (:issue:`3856`, :issue:`3849`)
+- Improved navigation in `document about updating Blue <update_red>` (:issue:`3856`, :issue:`3849`)
 
 
 Miscellaneous
@@ -383,13 +383,13 @@ Miscellaneous
 - **Downloader** - Downloader no longer removes the repo when it fails to load it (:issue:`3867`)
 
 
-Redbot 3.3.7 (2020-04-28)
+Bluebot 3.3.7 (2020-04-28)
 =========================
 
 This is a hotfix release fixing issue with generating messages for new cases in Modlog.
 
 
-Redbot 3.3.6 (2020-04-27)
+Bluebot 3.3.6 (2020-04-27)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -405,11 +405,11 @@ Core Bot
 - Fixed big delays in commands that happened when the bot was owner-less (or if it only used co-owners feature) and command caller wasn't the owner (:issue:`3782`)
 - Various optimizations
 
-  - Reduced calls to data backend when loading bot's commands (:issue:`3764`)
-  - Reduced calls to data backend when showing help for cogs/commands (:issue:`3766`)
+  - Blueuced calls to data backend when loading bot's commands (:issue:`3764`)
+  - Blueuced calls to data backend when showing help for cogs/commands (:issue:`3766`)
   - Improved performance for bots with big amount of guilds (:issue:`3767`)
   - Mod cog no longer fetches guild's bans every 60 seconds when handling unbanning for tempbans (:issue:`3783`)
-  - Reduced the bot load for messages starting with a prefix when fuzzy search is disabled (:issue:`3718`)
+  - Blueuced the bot load for messages starting with a prefix when fuzzy search is disabled (:issue:`3718`)
   - Aliases in Alias cog are now cached for better performance (:issue:`3788`)
 
 Core Commands
@@ -448,7 +448,7 @@ Trivia
 Trivia Lists
 ************
 
-- Updated ``leagueoflegends`` list with new changes to League of Legends (`b8ac70e <https://github.com/Cog-Creators/Red-DiscordBot/commit/b8ac70e59aa1328f246784f14f992d6ffe00d778>`_)
+- Updated ``leagueoflegends`` list with new changes to League of Legends (`b8ac70e <https://github.com/Cog-Creators/Blue-DiscordBot/commit/b8ac70e59aa1328f246784f14f992d6ffe00d778>`_)
 
 
 Developer changelog
@@ -464,7 +464,7 @@ Utility Functions
 Documentation changes
 ---------------------
 
-- Added `document about updating Red <update_red>` (:issue:`3790`)
+- Added `document about updating Blue <update_red>` (:issue:`3790`)
 - ``pyenv`` instructions will now update ``pyenv`` if it's already installed (:issue:`3740`)
 - Updated Python version in ``pyenv`` instructions (:issue:`3740`)
 - Updated install docs to include Ubuntu 20.04 (:issue:`3792`)
@@ -478,7 +478,7 @@ Miscellaneous
 - **Trivia** - Corrected spelling of Compact Disc in ``games`` list (:issue:`3759`, :issue:`3758`)
 
 
-Redbot 3.3.5 (2020-04-09)
+Bluebot 3.3.5 (2020-04-09)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -490,7 +490,7 @@ End-user changelog
 Core Bot
 ********
 
-- "Outdated" field no longer shows in ``[p]info`` when Red is up-to-date (:issue:`3730`)
+- "Outdated" field no longer shows in ``[p]info`` when Blue is up-to-date (:issue:`3730`)
 
 Alias
 *****
@@ -498,7 +498,7 @@ Alias
 - Fixed regression in ``[p]alias add`` that caused it to reject commands containing arguments (:issue:`3734`)
 
 
-Redbot 3.3.4 (2020-04-05)
+Bluebot 3.3.4 (2020-04-05)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -537,7 +537,7 @@ Documentation changes
 - Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
 
 
-Redbot 3.3.3 (2020-03-28)
+Bluebot 3.3.3 (2020-03-28)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -552,7 +552,7 @@ Core Bot
 - Delete delay for command messages has been moved from Mod cog to Core (:issue:`3638`, :issue:`3636`)
 - Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
 - Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
-- ``[p]set locale`` allows any valid locale now, not just locales for which Red has translations (:issue:`3676`, :issue:`3596`)
+- ``[p]set locale`` allows any valid locale now, not just locales for which Blue has translations (:issue:`3676`, :issue:`3596`)
 - Permissions for commands in Bank, Economy and Trivia cogs can now be overridden by Permissions cog (:issue:`3672`, :issue:`3233`)
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
 - Fixed formatting of help strings in fuzzy search results (:issue:`3673`, :issue:`3507`)
@@ -584,7 +584,7 @@ Cleanup
 Downloader
 **********
 
-- ``[p]cog checkforupdates`` now includes information about cogs that can't be installed due to Red/Python version requirements (:issue:`3678`, :issue:`3448`)
+- ``[p]cog checkforupdates`` now includes information about cogs that can't be installed due to Blue/Python version requirements (:issue:`3678`, :issue:`3448`)
 
 General
 *******
@@ -639,7 +639,7 @@ Developer changelog
 Core Bot
 ********
 
-- Deprecation warnings issued by Red now use correct stack level so that the cog developers can find the cause of them (:issue:`3644`)
+- Deprecation warnings issued by Blue now use correct stack level so that the cog developers can find the cause of them (:issue:`3644`)
 
 Dev Cog
 *******
@@ -667,7 +667,7 @@ Miscellaneous
 - **Utility Functions** - `redbot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
 
 
-Redbot 3.3.2 (2020-02-28)
+Bluebot 3.3.2 (2020-02-28)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -720,7 +720,7 @@ Downloader
 Image
 *****
 
-- Fix load error for users that updated Red from version lower than 3.1 to version 3.2 or newer (:issue:`3617`)
+- Fix load error for users that updated Blue from version lower than 3.1 to version 3.2 or newer (:issue:`3617`)
 
 Mod
 ***
@@ -808,7 +808,7 @@ Miscellaneous
 - Stop using deprecated code in core (:issue:`3610`)
 
 
-Redbot 3.3.1 (2020-02-05)
+Bluebot 3.3.1 (2020-02-05)
 =========================
 
 
@@ -842,7 +842,7 @@ Documentation Changes
 - Added section to install docs for CentOS 8
 - Improve usage of apt update in docs
 
-Redbot 3.3.0 (2020-01-26)
+Bluebot 3.3.0 (2020-01-26)
 =========================
 
 Core Bot

@@ -74,7 +74,7 @@ def repo(tmp_path):
 def bot_repo(event_loop):
     cwd = Path.cwd()
     return Repo(
-        name="Red-DiscordBot",
+        name="Blue-DiscordBot",
         branch="WRONG",
         commit="",
         url="https://empty.com/something.git",

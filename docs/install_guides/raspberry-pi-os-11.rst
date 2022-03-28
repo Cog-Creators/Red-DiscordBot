@@ -1,7 +1,7 @@
 .. _install-raspberry-pi-os-11:
 
 =============================================
-Installing Red on Raspberry Pi OS 11 Bullseye
+Installing Blue on Raspberry Pi OS 11 Bullseye
 =============================================
 
 .. note::

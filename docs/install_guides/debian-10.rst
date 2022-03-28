@@ -1,7 +1,7 @@
 .. _install-debian-10:
 
 ==================================
-Installing Red on Debian 10 Buster
+Installing Blue on Debian 10 Buster
 ==================================
 
 .. include:: _includes/linux-preamble.rst

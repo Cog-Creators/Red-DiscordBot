@@ -1,11 +1,11 @@
 .. _install-guides:
 
-Installing Red
+Installing Blue
 ==============
 
 The list below shows the installation guides available based on the operating system being used.
 
-If you want to host Red on a VPS and are unsure what operating system you should choose,
+If you want to host Blue on a VPS and are unsure what operating system you should choose,
 we recommend **Ubuntu 20.04 LTS**.
 
 .. toctree::

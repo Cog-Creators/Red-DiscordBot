@@ -1,7 +1,7 @@
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from .mutes import Mutes
 
 
-def setup(bot: Red):
+def setup(bot: Blue):
     cog = Mutes(bot)
     bot.add_cog(cog)

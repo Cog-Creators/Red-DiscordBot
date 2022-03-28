@@ -1,7 +1,7 @@
 .. _install-debian-11:
 
 ====================================
-Installing Red on Debian 11 Bullseye
+Installing Blue on Debian 11 Bullseye
 ====================================
 
 .. include:: _includes/linux-preamble.rst

@@ -1,7 +1,7 @@
 .. _windows-install-guide:
 
 =========================
-Installing Red on Windows
+Installing Blue on Windows
 =========================
 
 -------------------------------
@@ -58,7 +58,7 @@ Manually installing dependencies
 * `Python 3.8.1 - 3.9.x <https://www.python.org/downloads/windows/>`_
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
-               you may run into issues when trying to run Red.
+               you may run into issues when trying to run Blue.
 
 * `Git 2.11+ <https://git-scm.com/download/win>`_
 
@@ -80,7 +80,7 @@ Creating a Virtual Environment
 
     If you want to learn more about virtual environments, see page: `about-venvs`.
 
-We require installing Red into a virtual environment. Don't be scared, it's very
+We require installing Blue into a virtual environment. Don't be scared, it's very
 straightforward.
 
 First, choose a directory where you would like to create your virtual environment. It's a good idea
@@ -92,7 +92,7 @@ Start with opening a command prompt (open Start, search for "command prompt", th
 .. note:: 
 
     You shouldn't run command prompt as administrator when creating your virtual environment, or
-    running Red.
+    running Blue.
 
 .. warning::
 
@@ -113,13 +113,13 @@ And activate it with the following command
 .. important::
 
     You must activate the virtual environment with the above command every time you open a new
-    Command Prompt to run, install or update Red.
+    Command Prompt to run, install or update Blue.
 
 
 .. _installing-red-windows:
 
 --------------
-Installing Red
+Installing Blue
 --------------
 
 .. attention:: You may need to restart your computer after installing dependencies
@@ -133,7 +133,7 @@ Run **one** of the following set of commands, depending on what extras you want 
         :prompts: (redenv) C:\\>
 
         python -m pip install -U pip setuptools wheel
-        python -m pip install -U Red-DiscordBot
+        python -m pip install -U Blue-DiscordBot
 
   * With PostgreSQL support:
 
@@ -141,10 +141,10 @@ Run **one** of the following set of commands, depending on what extras you want 
         :prompts: (redenv) C:\\>
 
         python -m pip install -U pip setuptools wheel
-        python -m pip install -U Red-DiscordBot[postgres]
+        python -m pip install -U Blue-DiscordBot[postgres]
 
 --------------------------
-Setting Up and Running Red
+Setting Up and Running Blue
 --------------------------
 
 After installation, set up your instance with the following command:
@@ -158,7 +158,7 @@ This will set the location where data will be stored, as well as your
 storage backend and the name of the instance (which will be used for
 running the bot).
 
-Once done setting up the instance, run the following command to run Red:
+Once done setting up the instance, run the following command to run Blue:
 
 .. prompt:: batch
     :prompts: (redenv) C:\\>
@@ -169,5 +169,5 @@ It will walk through the initial setup, asking for your token and a prefix.
 `See how to obtain a token. <../bot_application_guide>`
 
 .. tip::
-   If it's the first time you're using Red, you should check our `getting-started` guide
-   that will walk you through all essential information on how to interact with Red.
+   If it's the first time you're using Blue, you should check our `getting-started` guide
+   that will walk you through all essential information on how to interact with Blue.

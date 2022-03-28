@@ -1,7 +1,7 @@
 .. _install-opensuse-tumbleweed:
 
 =====================================
-Installing Red on openSUSE Tumbleweed
+Installing Blue on openSUSE Tumbleweed
 =====================================
 
 .. include:: _includes/linux-preamble.rst

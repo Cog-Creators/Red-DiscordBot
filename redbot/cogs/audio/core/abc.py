@@ -13,7 +13,7 @@ import discord
 import lavalink
 
 from redbot.core import Config, commands
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.commands import Context
 from redbot.core.utils.dbtools import APSWConnectionWrapper
 
@@ -32,7 +32,7 @@ class MixinMeta(ABC):
     Basically, to keep developers sane when not all attributes are defined in each mixin.
     """
 
-    bot: Red
+    bot: Blue
     config: Config
     api_interface: Optional["AudioAPIInterface"]
     player_manager: Optional["ServerManager"]

@@ -18,7 +18,7 @@ async def do_install_agreement(ctx: commands.Context) -> bool:
     confirmation_message = "I agree"
     await ctx.send(
         _(
-            "You're about to add a 3rd party repository. The creator of Red"
+            "You're about to add a 3rd party repository. The creator of Blue"
             " and its community have no responsibility for any potential "
             "damage that the content of 3rd party repositories might cause."
             "\n\nBy typing '{confirmation_message}' you declare that you have read and"

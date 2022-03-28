@@ -1,7 +1,7 @@
 .. _install-mac:
 
 =======================
-Installing Red on macOS
+Installing Blue on macOS
 =======================
 
 -------------------------------

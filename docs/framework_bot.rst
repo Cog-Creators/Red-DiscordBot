@@ -6,10 +6,10 @@ Bot
 
 .. automodule:: redbot.core.bot
 
-Red
+Blue
 ^^^
 
-.. autoclass:: Red
+.. autoclass:: Blue
     :members:
     :exclude-members: get_context
 

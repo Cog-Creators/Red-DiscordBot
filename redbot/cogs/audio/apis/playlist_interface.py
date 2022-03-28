@@ -7,7 +7,7 @@ import lavalink
 from red_commons.logging import getLogger
 
 from redbot.core import Config, commands
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
@@ -25,7 +25,7 @@ class Playlist:
 
     def __init__(
         self,
-        bot: Red,
+        bot: Blue,
         playlist_api: PlaylistWrapper,
         scope: str,
         author: int,
@@ -110,7 +110,7 @@ class Playlist:
     @classmethod
     async def from_json(
         cls,
-        bot: Red,
+        bot: Blue,
         playlist_api: PlaylistWrapper,
         scope: str,
         playlist_number: int,
@@ -120,7 +120,7 @@ class Playlist:
         """Get a Playlist object from the provided information.
         Parameters
         ----------
-        bot: Red
+        bot: Blue
             The bot's instance. Needed to get the target user.
         playlist_api: PlaylistWrapper
             The Playlist API interface.
@@ -172,7 +172,7 @@ class PlaylistCompat23:
 
     def __init__(
         self,
-        bot: Red,
+        bot: Blue,
         playlist_api: PlaylistWrapper,
         scope: str,
         author: int,
@@ -196,7 +196,7 @@ class PlaylistCompat23:
     @classmethod
     async def from_json(
         cls,
-        bot: Red,
+        bot: Blue,
         playlist_api: PlaylistWrapper,
         scope: str,
         playlist_number: int,
@@ -206,7 +206,7 @@ class PlaylistCompat23:
         """Get a Playlist object from the provided information.
         Parameters
         ----------
-        bot: Red
+        bot: Blue
             The Bot instance.
         playlist_api: PlaylistWrapper
             The Playlist API interface.
@@ -267,7 +267,7 @@ class PlaylistCompat23:
 
 
 async def get_all_playlist_for_migration23(
-    bot: Red,
+    bot: Blue,
     playlist_api: PlaylistWrapper,
     config: Config,
     scope: str,
@@ -277,7 +277,7 @@ async def get_all_playlist_for_migration23(
     Gets all playlist for the specified scope.
     Parameters
     ----------
-    bot: Red
+    bot: Blue
         The Bot instance.
     playlist_api: PlaylistWrapper
         The Playlist API interface.
@@ -347,7 +347,7 @@ async def get_all_playlist_for_migration23(
 async def get_playlist(
     playlist_number: int,
     scope: str,
-    bot: Red,
+    bot: Blue,
     playlist_api: PlaylistWrapper,
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
@@ -366,7 +366,7 @@ async def get_playlist(
         The guild to get the playlist from if scope is GUILDPLAYLIST.
     author: int
         The ID of the user to get the playlist from if scope is USERPLAYLIST.
-    bot: Red
+    bot: Blue
         The bot's instance.
     Returns
     -------
@@ -401,7 +401,7 @@ async def get_playlist(
 
 async def get_all_playlist(
     scope: str,
-    bot: Red,
+    bot: Blue,
     playlist_api: PlaylistWrapper,
     guild: Union[discord.Guild, int] = None,
     author: Union[discord.abc.User, int] = None,
@@ -417,7 +417,7 @@ async def get_all_playlist(
         The guild to get the playlist from if scope is GUILDPLAYLIST.
     author: int
         The ID of the user to get the playlist from if scope is USERPLAYLIST.
-    bot: Red
+    bot: Blue
         The bot's instance
     playlist_api: PlaylistWrapper
         The Playlist API interface.
@@ -462,7 +462,7 @@ async def get_all_playlist(
 
 async def get_all_playlist_converter(
     scope: str,
-    bot: Red,
+    bot: Blue,
     playlist_api: PlaylistWrapper,
     arg: str,
     guild: Union[discord.Guild, int] = None,
@@ -478,7 +478,7 @@ async def get_all_playlist_converter(
         The guild to get the playlist from if scope is GUILDPLAYLIST.
     author: int
         The ID of the user to get the playlist from if scope is USERPLAYLIST.
-    bot: Red
+    bot: Blue
         The bot's instance
     arg:str
         The value to lookup.
@@ -577,7 +577,7 @@ async def create_playlist(
 
 
 async def reset_playlist(
-    bot: Red,
+    bot: Blue,
     playlist_api: PlaylistWrapper,
     scope: str,
     guild: Union[discord.Guild, int] = None,
@@ -587,7 +587,7 @@ async def reset_playlist(
 
     Parameters
     ----------
-    bot: Red
+    bot: Blue
         The bot's instance
     scope: str
         The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.
@@ -613,7 +613,7 @@ async def reset_playlist(
 
 
 async def delete_playlist(
-    bot: Red,
+    bot: Blue,
     playlist_api: PlaylistWrapper,
     scope: str,
     playlist_id: Union[str, int],
@@ -624,7 +624,7 @@ async def delete_playlist(
 
     Parameters
     ----------
-    bot: Red
+    bot: Blue
         The bot's instance
     scope: str
         The custom config scope. One of 'GLOBALPLAYLIST', 'GUILDPLAYLIST' or 'USERPLAYLIST'.

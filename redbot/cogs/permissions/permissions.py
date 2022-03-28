@@ -8,7 +8,7 @@ import discord
 import yaml
 from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
@@ -87,7 +87,7 @@ class Permissions(commands.Cog):
     # to prevent the guild owner from ever locking themselves out
     # see ``Permissions.__permissions_hook`` for more details
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
         # Config Schema:

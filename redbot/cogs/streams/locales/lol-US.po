@@ -137,7 +137,7 @@ msgid "Explain how to set the twitch token."
 msgstr ""
 
 #: redbot/cogs/streams/streams.py:323
-msgid "To set the twitch API tokens, follow these steps:\\n1. Go to this page: https://dev.twitch.tv/dashboard/apps.\\n2. Click *Register Your Application*.\\n3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and select an Application Category of your choosing.\\n4. Click *Register*.\\n5. On the following page, copy the Client ID.\\n6. Run the command `{prefix}set api twitch client_id,<your_client_id_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel\\nor in DM with the bot.\\n"
+msgid "To set the twitch API tokens, follow these steps:\\n1. Go to this page: https://dev.twitch.tv/dashboard/apps.\\n2. Click *Register Your Application*.\\n3. Enter a name, set the OAuth Blueirect URI to `http://localhost`, and select an Application Category of your choosing.\\n4. Click *Register*.\\n5. On the following page, copy the Client ID.\\n6. Run the command `{prefix}set api twitch client_id,<your_client_id_here>`\\n\\nNote: These tokens are sensitive and should only be used in a private channel\\nor in DM with the bot.\\n"
 msgstr ""
 
 #: redbot/cogs/streams/streams.py:341

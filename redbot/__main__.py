@@ -25,7 +25,7 @@ import rich
 
 import redbot.logging
 from redbot import __version__
-from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
+from redbot.core.bot import Blue, ExitCodes, _NoOwnerSet
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
@@ -35,7 +35,7 @@ from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 log = logging.getLogger("red.main")
 
 #
-#               Red - Discord Bot v3
+#               Blue - Discord Bot v3
 #
 #         Made by Twentysix, improved by many
 #
@@ -85,8 +85,8 @@ def debug_info():
         osver = f"{distro.name()} {distro.version()}".strip()
     user_who_ran = getpass.getuser()
     info = (
-        "Debug Info for Red\n\n"
-        + "Red version: {}\n".format(redver)
+        "Debug Info for Blue\n\n"
+        + "Blue version: {}\n".format(redver)
         + "Python version: {}\n".format(pyver)
         + "Python executable: {}\n".format(sys.executable)
         + "Discord.py version: {}\n".format(dpy_version)
@@ -188,7 +188,7 @@ async def _edit_owner(red, owner, no_prompt):
     elif not no_prompt and confirm("Would you like to change instance's owner?", default=False):
         print(
             "Remember:\n"
-            "ONLY the person who is hosting Red should be owner."
+            "ONLY the person who is hosting Blue should be owner."
             " This has SERIOUS security implications."
             " The owner can access any data that is present on the host system.\n"
         )
@@ -298,7 +298,7 @@ def handle_edit(cli_flags: Namespace):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
-    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+   blue= Blue(cli_flags=cli_flags, description="Blue V3", dm_help=None)
     try:
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
@@ -314,7 +314,7 @@ def handle_edit(cli_flags: Namespace):
         sys.exit(0)
 
 
-async def run_bot(red: Red, cli_flags: Namespace) -> None:
+async def run_bot(red: Blue, cli_flags: Namespace) -> None:
     """
     This runs the bot.
 
@@ -394,7 +394,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     except discord.PrivilegedIntentsRequired:
         console = rich.get_console()
         console.print(
-            "Red requires all Privileged Intents to be enabled.\n"
+            "Blue requires all Privileged Intents to be enabled.\n"
             "You can find out how to enable Privileged Intents with this guide:\n"
             "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
             style="red",
@@ -406,15 +406,15 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             "This can happen when your bot's application is owned by team"
             " as team members are NOT owners by default.\n\n"
             "Remember:\n"
-            "ONLY the person who is hosting Red should be owner."
+            "ONLY the person who is hosting Blue should be owner."
             " This has SERIOUS security implications."
             " The owner can access any data that is present on the host system.\n"
             "With that out of the way, depending on who you want to be considered as owner,"
             " you can:\n"
-            "a) pass --team-members-are-owners when launching Red"
-            " - in this case Red will treat all members of the bot application's team as owners\n"
+            "a) pass --team-members-are-owners when launching Blue"
+            " - in this case Blue will treat all members of the bot application's team as owners\n"
             f"b) set owner manually with `redbot --edit {cli_flags.instance_name}`\n"
-            "c) pass owner ID(s) when launching Red with --owner"
+            "c) pass owner ID(s) when launching Blue with --owner"
             " (and --co-owner if you need more than one) flag\n"
         )
         sys.exit(1)
@@ -426,7 +426,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
     if cli_flags.list_instances:
         list_instances()
     elif cli_flags.version:
-        print("Red V3")
+        print("Blue V3")
         print("Current Version: {}".format(__version__))
         sys.exit(0)
     elif cli_flags.debuginfo:
@@ -479,7 +479,7 @@ def global_exception_handler(red, loop, context):
 
 def red_exception_handler(red, red_task: asyncio.Future):
     """
-    This is set as a done callback for Red
+    This is set as a done callback for Blue
 
     must be used with functools.partial
 
@@ -497,7 +497,7 @@ def red_exception_handler(red, red_task: asyncio.Future):
 
 
 def main():
-    red = None  # Error handling for users misusing the bot
+   blue= None  # Error handling for users misusing the bot
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
     if cli_flags.edit:
@@ -519,7 +519,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+       blue= Blue(cli_flags=cli_flags, description="Blue V3", dm_help=None)
 
         if os.name != "nt":
             # None of this works on windows.
@@ -541,20 +541,20 @@ def main():
         loop.run_forever()
     except KeyboardInterrupt:
         # We still have to catch this here too. (*joy*)
-        log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
+        log.warning("Please do not use Ctrl+C to Shutdown Blue! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
-        if red is not None:
+        ifblueis not None:
             loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
     except SystemExit as exc:
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
         # We need to do something with prior to having the loop close
         log.info("Shutting down with exit code: %s", exc.code)
-        if red is not None:
+        ifblueis not None:
             loop.run_until_complete(shutdown_handler(red, None, exc.code))
     except Exception as exc:  # Non standard case.
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
-        if red is not None:
+        ifblueis not None:
             loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
@@ -570,7 +570,7 @@ def main():
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
-        exit_code = red._shutdown_mode if red is not None else 1
+        exit_code = red._shutdown_mode ifblueis not None else 1
         sys.exit(exit_code)
 
 

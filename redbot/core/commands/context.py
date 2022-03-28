@@ -15,7 +15,7 @@ from ..utils import common_filters
 
 if TYPE_CHECKING:
     from .commands import Command
-    from ..bot import Red
+    from ..bot import Blue
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -23,7 +23,7 @@ __all__ = ["Context", "GuildContext", "DMContext"]
 
 
 class Context(DPYContext):
-    """Command invocation context for Red.
+    """Command invocation context for Blue.
 
     All context passed into commands will be of this type.
 
@@ -49,7 +49,7 @@ class Context(DPYContext):
 
     command: "Command"
     invoked_subcommand: "Optional[Command]"
-    bot: "Red"
+    bot: "Blue"
 
     def __init__(self, **attrs):
         self.assume_yes = attrs.pop("assume_yes", False)

@@ -42,7 +42,7 @@ from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Red
+    from redbot.core.bot import Blue
     from redbot.core.commands import Command, Context
 
 main_log = logging.getLogger("red")
@@ -257,23 +257,23 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
 
 
 async def send_to_owners_with_preprocessor(
-    bot: Red,
+    bot: Blue,
     content: str,
     *,
     content_preprocessor: Optional[
-        Callable[[Red, discord.abc.Messageable, str], Awaitable[str]]
+        Callable[[Blue, discord.abc.Messageable, str], Awaitable[str]]
     ] = None,
     **kwargs,
 ):
     """
     This sends something to all owners and their configured extra destinations.
 
-    This acts the same as `Red.send_to_owners`, with
+    This acts the same as `Blue.send_to_owners`, with
     one added keyword argument as detailed below in *Other Parameters*.
 
     Other Parameters
     ----------------
-    content_preprocessor: Optional[Callable[[Red, discord.abc.Messageable, str], Awaitable[str]]]
+    content_preprocessor: Optional[Callable[[Blue, discord.abc.Messageable, str], Awaitable[str]]]
         Optional async function that takes
         bot object, owner notification destination and message content
         and returns the content that should be sent to given location.
@@ -297,15 +297,15 @@ async def send_to_owners_with_preprocessor(
     await asyncio.gather(*sends)
 
 
-async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
+async def send_to_owners_with_prefix_replaced(bot: Blue, content: str, **kwargs):
     """
     This sends something to all owners and their configured extra destinations.
 
-    This acts the same as `Red.send_to_owners`, with one addition - `[p]` in ``content`` argument
+    This acts the same as `Blue.send_to_owners`, with one addition - `[p]` in ``content`` argument
     is replaced with a clean prefix for each specific destination.
     """
 
-    async def preprocessor(bot: Red, destination: discord.abc.Messageable, content: str) -> str:
+    async def preprocessor(bot: Blue, destination: discord.abc.Messageable, content: str) -> str:
         prefixes = await bot.get_valid_prefixes(getattr(destination, "guild", None))
         prefix = re.sub(
             rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0]
@@ -323,7 +323,7 @@ def expected_version(current: str, expected: str) -> bool:
 async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
+            async with session.get("https://pypi.org/pypi/Blue-DiscordBot/json") as r:
                 data = await r.json()
     except (aiohttp.ClientError, asyncio.TimeoutError):
         return None, None

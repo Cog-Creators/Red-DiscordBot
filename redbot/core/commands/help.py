@@ -12,7 +12,7 @@
 # While the issue above discusses this as theoretical, merely interacting with config within
 # the help command preparation was enough to cause
 # demonstrable breakage in 150 help invokes in a 2 minute window.
-# This is not an unreasonable volume on some already existing Red instances,
+# This is not an unreasonable volume on some already existing Blue instances,
 # especially since help is invoked for command groups
 # automatically when subcommands are not provided correctly as user feedback.
 #
@@ -52,7 +52,7 @@ from ..utils.chat_formatting import (
     underline,
 )
 
-__all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
+__all__ = ["red_help", "BlueHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
 _ = Translator("Help", __file__)
 
@@ -164,10 +164,10 @@ class HelpFormatterABC(abc.ABC):
     .. note::
         You may define __init__ however you want
         (such as to include config),
-        Red will not initialize a formatter for you,
+        Blue will not initialize a formatter for you,
         and must be passed an initialized formatter.
 
-        If you want to use Red's existing settings, use ``HelpSettings.from_context``
+        If you want to use Blue's existing settings, use ``HelpSettings.from_context``
 
     .. warning::
 
@@ -191,9 +191,9 @@ class HelpFormatterABC(abc.ABC):
         ...
 
 
-class RedHelpFormatter(HelpFormatterABC):
+class BlueHelpFormatter(HelpFormatterABC):
     """
-    Red's help implementation
+    Blue's help implementation
 
     This is intended to be overridable in parts to only change some behavior.
 
@@ -696,7 +696,7 @@ class RedHelpFormatter(HelpFormatterABC):
         # TODO: Settings for this in core bot db
         for obj in objects:
             if verify_checks and not show_hidden:
-                # Default Red behavior, can_see includes a can_run check.
+                # Default Blue behavior, can_see includes a can_run check.
                 if await obj.can_see(ctx) and getattr(obj, "enabled", True):
                     yield obj
             elif verify_checks:

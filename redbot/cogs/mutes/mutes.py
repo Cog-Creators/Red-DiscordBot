@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 from .converters import MuteTime
 from .voicemutes import VoiceMutes
 
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core import commands, checks, i18n, modlog, Config
 from redbot.core.utils import AsyncIter, bounded_gather
 from redbot.core.utils.chat_formatting import (
@@ -75,7 +75,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     Mute users temporarily or indefinitely.
     """
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         self.bot = bot
         self.config = Config.get_conf(self, 49615220001, force_registration=True)
         default_guild = {

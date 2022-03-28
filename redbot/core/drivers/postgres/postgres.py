@@ -43,7 +43,7 @@ class PostgresDriver(BaseDriver):
     async def initialize(cls, **storage_details) -> None:
         if asyncpg is None:
             raise errors.MissingExtraRequirements(
-                "Red must be installed with the [postgres] extra to use the PostgreSQL driver"
+                "Blue must be installed with the [postgres] extra to use the PostgreSQL driver"
             )
         cls._pool = await asyncpg.create_pool(**storage_details)
         with DDL_SCRIPT_PATH.open() as fs:
@@ -67,7 +67,7 @@ class PostgresDriver(BaseDriver):
         host = (
             input(
                 f"Enter the PostgreSQL server's address.\n"
-                f"If left blank, Red will try the following, in order:\n"
+                f"If left blank, Blue will try the following, in order:\n"
                 f" - The PGHOST environment variable,\n{unixmsg}"
                 f" - localhost.\n"
                 f"> "
@@ -98,7 +98,7 @@ class PostgresDriver(BaseDriver):
                 "Enter the PostgreSQL server username.\n"
                 "If left blank, this will default to either:\n"
                 " - The PGUSER environment variable,\n"
-                " - The OS name of the user running Red (ident/peer authentication).\n"
+                " - The OS name of the user running Blue (ident/peer authentication).\n"
                 "> "
             )
             or None
@@ -122,7 +122,7 @@ class PostgresDriver(BaseDriver):
                 "Enter the PostgreSQL database's name.\n"
                 "If left blank, this will default to either:\n"
                 " - The PGDATABASE environment variable,\n"
-                " - The OS name of the user running Red.\n"
+                " - The OS name of the user running Blue.\n"
                 "> "
             )
             or None
@@ -221,7 +221,7 @@ class PostgresDriver(BaseDriver):
         if drop_db is True:
             print(
                 "Dropping the entire database is not possible in PostgreSQL driver."
-                " We will delete all of Red's data within this database,"
+                " We will delete all of Blue's data within this database,"
                 " without dropping the database itself."
             )
         with DROP_DDL_SCRIPT_PATH.open() as fs:

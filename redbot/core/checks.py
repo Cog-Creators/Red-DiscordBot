@@ -22,7 +22,7 @@ from .utils.mod import (
 )
 
 if TYPE_CHECKING:
-    from .bot import Red
+    from .bot import Blue
     from .commands import Context
 
 __all__ = [

@@ -4,7 +4,7 @@
 Installing the pre-requirements
 -------------------------------
 
-Red Hat Enterprise Linux (RHEL) 8.4-8.x and its derivatives have all required packages available in official repositories.
+Blue Hat Enterprise Linux (RHEL) 8.4-8.x and its derivatives have all required packages available in official repositories.
 Install them with dnf:
 
 .. prompt:: bash

@@ -11,7 +11,7 @@ recursive-include redbot/**/data *
 # include *.export files from the test fixtures
 recursive-include redbot *.export
 
-# include the py.typed file informing about Red being typed
+# include the py.typed file informing about Blue being typed
 recursive-include redbot py.typed
 
 # include *.sql files from postgres driver

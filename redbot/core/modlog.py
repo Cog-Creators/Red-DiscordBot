@@ -21,7 +21,7 @@ from .i18n import Translator, set_contextual_locales_from_guild
 from .generic_casetypes import all_generics
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Red
+    from redbot.core.bot import Blue
 
 log = logging.getLogger("red.core.modlog")
 
@@ -42,7 +42,7 @@ __all__ = [
 ]
 
 _config: Optional[Config] = None
-_bot_ref: Optional[Red] = None
+_bot_ref: Optional[Blue] = None
 
 _CASETYPES = "CASETYPES"
 _CASES = "CASES"
@@ -83,7 +83,7 @@ async def _process_data_deletion(
                     case["amended_by"] = 0xDE1
 
 
-async def _init(bot: Red):
+async def _init(bot: Blue):
     global _config
     global _bot_ref
     _bot_ref = bot
@@ -239,7 +239,7 @@ class Case:
 
     Attributes
     ----------
-    bot: Red
+    bot: Blue
         The bot object.
     guild: discord.Guild
         The guild the action was taken in.
@@ -301,7 +301,7 @@ class Case:
 
     def __init__(
         self,
-        bot: Red,
+        bot: Blue,
         guild: discord.Guild,
         created_at: int,
         action_type: str,
@@ -598,7 +598,7 @@ class Case:
 
     @classmethod
     async def from_json(
-        cls, mod_channel: discord.TextChannel, bot: Red, case_number: int, data: dict, **kwargs
+        cls, mod_channel: discord.TextChannel, bot: Blue, case_number: int, data: dict, **kwargs
     ):
         """Get a Case object from the provided information
 
@@ -606,7 +606,7 @@ class Case:
         ----------
         mod_channel: discord.TextChannel
             The mod log channel for the guild
-        bot: Red
+        bot: Blue
             The bot's instance. Needed to get the target user
         case_number: int
             The case's number.
@@ -773,7 +773,7 @@ class CaseType:
         return cls(name=name, **data_copy, **kwargs)
 
 
-async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
+async def get_case(case_number: int, guild: discord.Guild, bot: Blue) -> Case:
     """
     Gets the case with the associated case number
 
@@ -783,7 +783,7 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
         The case number for the case to get
     guild: discord.Guild
         The guild to get the case from
-    bot: Red
+    bot: Blue
         The bot's instance
 
     Returns
@@ -805,14 +805,14 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     return await Case.from_json(mod_channel, bot, case_number, case)
 
 
-async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
+async def get_latest_case(guild: discord.Guild, bot: Blue) -> Optional[Case]:
     """Get the latest case for the specified guild.
 
     Parameters
     ----------
     guild : discord.Guild
         The guild to get the latest case for.
-    bot : Red
+    bot : Blue
         The bot object.
 
     Returns
@@ -826,7 +826,7 @@ async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
         return await get_case(case_number, guild, bot)
 
 
-async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
+async def get_all_cases(guild: discord.Guild, bot: Blue) -> List[Case]:
     """
     Gets all cases for the specified guild
 
@@ -834,7 +834,7 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
     ----------
     guild: `discord.Guild`
         The guild to get the cases from
-    bot: Red
+    bot: Blue
         The bot's instance
 
     Returns
@@ -852,7 +852,7 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
 
 async def get_cases_for_member(
-    guild: discord.Guild, bot: Red, *, member: discord.Member = None, member_id: int = None
+    guild: discord.Guild, bot: Blue, *, member: discord.Member = None, member_id: int = None
 ) -> List[Case]:
     """
     Gets all cases for the specified member or member id in a guild.
@@ -861,7 +861,7 @@ async def get_cases_for_member(
     ----------
     guild: `discord.Guild`
         The guild to get the cases from
-    bot: Red
+    bot: Blue
         The bot's instance
     member: `discord.Member`
         The member to get cases about
@@ -909,7 +909,7 @@ async def get_cases_for_member(
 
 
 async def create_case(
-    bot: Red,
+    bot: Blue,
     guild: discord.Guild,
     created_at: datetime,
     action_type: str,
@@ -927,7 +927,7 @@ async def create_case(
 
     Parameters
     ----------
-    bot: Red
+    bot: Blue
         The bot object
     guild: discord.Guild
         The guild the action was taken in

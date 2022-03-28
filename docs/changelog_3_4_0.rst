@@ -1,6 +1,6 @@
 .. 3.4.x Changelogs
 
-Redbot 3.4.16 (2021-12-31)
+Bluebot 3.4.16 (2021-12-31)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -24,10 +24,10 @@ Developer changelog
 Documentation changes
 ---------------------
 
-- Changed Arch install guide to temporarily use ``python39`` AUR package instead of ``python`` package as Red does not currently support Python 3.10 (:issue:`5518`)
+- Changed Arch install guide to temporarily use ``python39`` AUR package instead of ``python`` package as Blue does not currently support Python 3.10 (:issue:`5518`)
 
 
-Redbot 3.4.15 (2021-12-31)
+Bluebot 3.4.15 (2021-12-31)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -39,7 +39,7 @@ Read before updating
 #. Fedora 33 and CentOS 8 are no longer supported as they have already reached end of life.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.15 uses a new Lavalink jar that you MUST manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1275>`__ to be able to continue using Audio.
+    Blue 3.4.15 uses a new Lavalink jar that you MUST manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1275>`__ to be able to continue using Audio.
 
 
 End-user changelog
@@ -61,10 +61,10 @@ Core Bot
 - Corrected usage examples in help of ``[p]set api`` and ``[p]set api remove`` (:issue:`5444`)
 - Updated prefix length limit to ``25`` to allow setting bot mention as a prefix (:issue:`5476`)
 - Confirmation prompts (accepting "yes/no" or "I agree" as the answer) no longer wrongfully translate the answer that needs to be sent when only English answers are accepted by the bot (:issue:`5363`, :issue:`5364`, :issue:`5404`)
-- Fixed short help for some of the commands in Core Red (:issue:`5502`)
+- Fixed short help for some of the commands in Core Blue (:issue:`5502`)
 - Fixed issues with rendering of modlog cases with usernames written in a right-to-left language (:issue:`5422`)
 - Fixed an issue with instance backup failing for non-JSON storage backends (:issue:`5315`)
-- Running Red with ``--no-instance`` CLI flag no longer fails when no instance was ever created by the user (:issue:`5415`, :issue:`5416`)
+- Running Blue with ``--no-instance`` CLI flag no longer fails when no instance was ever created by the user (:issue:`5415`, :issue:`5416`)
 - ``[p]command enable guild`` and ``[p]command disable guild`` commands no longer error out for commands that *only* check for user permissions, not caller's roles (:issue:`5477`)
 
 Admin
@@ -137,8 +137,8 @@ Developer changelog
 -------------------
 
 - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
-- Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
-- Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
+- Added optional ``check_permissions`` keyword-only argument to `Blue.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
+- Added `Blue.get_invite_url()` and `Blue.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
 - Changed the output of ``CORE__LOAD``, ``CORE__RELOAD``, and ``CORE__UNLOAD`` RPC methods to a dictionary (:issue:`5451`, :issue:`5453`)
 
 
@@ -150,12 +150,12 @@ Documentation changes
 - Improved Mac and pyenv instructions to address common issues with load path configuration (:issue:`5356`)
 - Updated the server locations for Hetzner and Contabo in :ref:`host-list` document (:issue:`5475`)
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`5447`)
-- Removed inaccurate note from Unix install guides about install commands also being used for updating Red (:issue:`5439`)
+- Removed inaccurate note from Unix install guides about install commands also being used for updating Blue (:issue:`5439`)
 - Removed LXC from unsupported hosting platforms as many VPS providers utilize that technology (:issue:`5351`)
-- Specified that Red currently requires Python 3.8.1 - 3.9.x (:issue:`5403`)
+- Specified that Blue currently requires Python 3.8.1 - 3.9.x (:issue:`5403`)
 
 
-Redbot 3.4.14 (2021-09-23)
+Bluebot 3.4.14 (2021-09-23)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -167,7 +167,7 @@ Read before updating
 #. Versions of RHEL older than 8.4 (including 7) and versions of CentOS older than 8.4 (excluding 7) are no longer supported.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.14 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1239>`__.
+    Blue 3.4.14 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1239>`__.
 
 
 End-user changelog
@@ -188,7 +188,7 @@ Documentation changes
 - Install guides for RHEL derivatives no longer require the use of pyenv (:issue:`5328`)
 
 
-Redbot 3.4.13 (2021-09-09)
+Bluebot 3.4.13 (2021-09-09)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -201,7 +201,7 @@ Read before updating
 2. Fedora 32 is no longer supported as it has already reached end of life.
 3. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.13 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1238>`__.
+    Blue 3.4.13 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1238>`__.
 
 
 End-user changelog
@@ -220,14 +220,14 @@ Core Bot
 
     More specifically, added information about CPU and RAM, bot's instance name and owners
 
-- The formatting of Red's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
+- The formatting of Blue's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
 - Added the new native Discord timestamps in Modlog cases, ``[p]userinfo``, ``[p]serverinfo``, and ``[p]tempban`` (:issue:`5155`, :issue:`5241`)
 - Added a setting for ``[p]help``'s reaction timeout (:issue:`5205`)
 
     This can be changed with ``[p]helpset reacttimeout`` command
 
-- Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
-- Upgraded all Red's dependencies (:issue:`5121`)
+- Blue 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
+- Upgraded all Blue's dependencies (:issue:`5121`)
 - Fedora 32 is no longer supported as it has already reached end of life (:issue:`5121`)
 - Fixed a bunch of errors related to the missing permissions and channels/messages no longer existing (:issue:`5109`, :issue:`5163`, :issue:`5172`, :issue:`5191`)
 
@@ -308,14 +308,14 @@ Developer changelog
 
     Here's the list of the methods that were added to the ``bot`` object:
 
-        - `Red.add_to_blacklist()`
-        - `Red.remove_from_blacklist()`
-        - `Red.get_blacklist()`
-        - `Red.clear_blacklist()`
-        - `Red.add_to_whitelist()`
-        - `Red.remove_from_whitelist()`
-        - `Red.get_whitelist()`
-        - `Red.clear_whitelist()`
+        - `Blue.add_to_blacklist()`
+        - `Blue.remove_from_blacklist()`
+        - `Blue.get_blacklist()`
+        - `Blue.clear_blacklist()`
+        - `Blue.add_to_whitelist()`
+        - `Blue.remove_from_whitelist()`
+        - `Blue.get_whitelist()`
+        - `Blue.clear_whitelist()`
 
 - Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
 
@@ -339,13 +339,13 @@ Miscellaneous
 - **Downloader** - Added a few missing line breaks (:issue:`5185`, :issue:`5187`)
 
 
-Redbot 3.4.12 (2021-06-17)
+Bluebot 3.4.12 (2021-06-17)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`npc203`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`
 
-This is a hotfix release related to Red ceasing to use the Audio Global API service.
+This is a hotfix release related to Blue ceasing to use the Audio Global API service.
 
 Full changelog
 --------------
@@ -361,7 +361,7 @@ Full changelog
 - **Warnings** - Prevented users from applying 0 or less points in custom warning reasons (:issue:`5119`, :issue:`5120`)
 
 
-Redbot 3.4.11 (2021-06-12)
+Bluebot 3.4.11 (2021-06-12)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -373,10 +373,10 @@ Full changelog
 --------------
 
 - discord.py version has been bumped to 1.7.3 (:issue:`5129`)
-- Links to the CogBoard in Red's documentation have been updated to use the new domain (:issue:`5124`)
+- Links to the CogBoard in Blue's documentation have been updated to use the new domain (:issue:`5124`)
 
 
-Redbot 3.4.10 (2021-05-28)
+Bluebot 3.4.10 (2021-05-28)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -394,8 +394,8 @@ Read before updating
     If you experience any issues when trying to configure it, you can join `our discord server <https://discord.gg/red>`__ and ask in the **support** channel for help.
 2. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    - Red 3.4.10 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1233>`__.
-    - We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.10/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+    - Blue 3.4.10 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1233>`__.
+    - We've updated our `application.yml file <https://github.com/Cog-Creators/Blue-DiscordBot/blob/3.4.10/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
 
 
 End-user changelog
@@ -410,7 +410,7 @@ Core Bot
 - The help command no longer errors when it doesn't have permission to read message history and menus are enabled (:issue:`4959`, :issue:`5030`)
 - Fixed a bug in ``[p]embedset user`` that made it impossible to reset the user's embed setting (:issue:`4962`)
 - ``[p]embedset command`` and its subcommands now properly check whether any of the passed command's parents require Embed Links permission (:issue:`4962`)
-- Fixed an issue with Red reloading unrelated modules when using ``[p]load`` and ``[p]reload`` (:issue:`4956`, :issue:`4958`)
+- Fixed an issue with Blue reloading unrelated modules when using ``[p]load`` and ``[p]reload`` (:issue:`4956`, :issue:`4958`)
 
 Admin
 *****
@@ -514,7 +514,7 @@ Miscellaneous
 - Rephrased a few strings and fixed maaaaany grammar issues and typos (:issue:`4793`, :issue:`4832`, :issue:`4955`, :issue:`4966`, :issue:`5015`, :issue:`5019`, :issue:`5029`, :issue:`5038`, :issue:`5055`, :issue:`5080`, :issue:`5081`)
 
 
-Redbot 3.4.9 (2021-04-06)
+Bluebot 3.4.9 (2021-04-06)
 =========================
 
 This is a hotfix release fixing an issue with command error handling.
@@ -524,7 +524,7 @@ discord.py version has been bumped to 1.7.1.
 Thanks again to :ghuser:`Rapptz` for quick response on this issue.
 
 
-Redbot 3.4.8 (2021-04-06)
+Bluebot 3.4.8 (2021-04-06)
 =========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`6days9weeks`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kingslayer268`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`rijusougata13`, :ghuser:`TheDiscordHistorian`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
@@ -534,7 +534,7 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.8 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1212>`__.
+    Blue 3.4.8 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1212>`__.
 
 2. Fedora 31 and OpenSUSE Leap 15.1 are no longer supported as they have already reached end of life.
 
@@ -634,7 +634,7 @@ Developer changelog
 - Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
 
     - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
-- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Red.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Blue.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
 
     - Read the method's documentation for more information
 - Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
@@ -655,7 +655,7 @@ Documentation changes
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`4864`, :issue:`4942`)
 
 
-Redbot 3.4.7 (2021-02-26)
+Bluebot 3.4.7 (2021-02-26)
 =========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
@@ -675,7 +675,7 @@ Documentation changes
 - Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
 
 
-Redbot 3.4.6 (2021-02-16)
+Bluebot 3.4.6 (2021-02-16)
 =========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Andeeeee`, :ghuser:`bobloy`, :ghuser:`BreezeQS`, :ghuser:`Danstr5544`, :ghuser:`Dav-Git`, :ghuser:`Elysweyr`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Strafee`, :ghuser:`TheWyn`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
@@ -685,7 +685,7 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.6 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1199>`__.
+    Blue 3.4.6 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1199>`__.
 
 
 End-user changelog
@@ -694,8 +694,8 @@ End-user changelog
 Core Bot
 ********
 
-- Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
-- Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
+- Fixed the rotation of Blue's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
+- Fixed command usage in the help messages for few commands in Blue (:issue:`4599`, :issue:`4733`)
 - Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
 - ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
 - Improvements and fixes for our new (colorful) logging (:issue:`4702`, :issue:`4726`)
@@ -815,7 +815,7 @@ Developer changelog
 Core Bot
 ********
 
-- Updated versions of the libraries used in Red: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
+- Updated versions of the libraries used in Blue: discord.py to 1.6.0, aiohttp to 3.7.3 (:issue:`4728`)
 - Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
 
 Utility Functions
@@ -830,18 +830,18 @@ Dev Cog
 
     - Variables can be added and removed from the environment of Dev cog using two new methods:
 
-        - `bot.add_dev_env_value() <Red.add_dev_env_value()>`
-        - `bot.remove_dev_env_value() <Red.remove_dev_env_value()>`
+        - `bot.add_dev_env_value() <Blue.add_dev_env_value()>`
+        - `bot.remove_dev_env_value() <Blue.remove_dev_env_value()>`
 
 
 Documentation changes
 ---------------------
 
 - Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
-- Added information about the Red Index to `guide_publish_cogs` (:issue:`4778`)
+- Added information about the Blue Index to `guide_publish_cogs` (:issue:`4778`)
 - Restructured the host list (:issue:`4710`)
 - Clarified how to use pm2 with ``pyenv virtualenv`` (:issue:`4709`)
-- Updated the pip command for Red with the postgres extra in Linux/macOS install guide to work on zsh shell (:issue:`4697`)
+- Updated the pip command for Blue with the postgres extra in Linux/macOS install guide to work on zsh shell (:issue:`4697`)
 - Updated Python version in ``pyenv`` and Windows instructions (:issue:`4770`)
 
 
@@ -849,10 +849,10 @@ Miscellaneous
 -------------
 
 - Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4763`, :issue:`4788`, :issue:`4792`, :issue:`4810`)
-- Red's dependencies have been bumped (:issue:`4572`)
+- Blue's dependencies have been bumped (:issue:`4572`)
 
 
-Redbot 3.4.5 (2020-12-24)
+Bluebot 3.4.5 (2020-12-24)
 =========================
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
@@ -866,7 +866,7 @@ Streams
 - Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
 
 
-Redbot 3.4.4 (2020-12-24)
+Bluebot 3.4.4 (2020-12-24)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -877,11 +877,11 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.4 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.2_1170>`__.
+    Blue 3.4.4 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.2_1170>`__.
 
 2. Ubuntu 16.04 is no longer supported as it will soon reach its end of life and it is no longer viable for us to maintain support for it.
 
-    While you might still be able to run Red on it, we will no longer put any resources into supporting it. If you're using Ubuntu 16.04, we highly recommend that you upgrade to the latest LTS version of Ubuntu.
+    While you might still be able to run Blue on it, we will no longer put any resources into supporting it. If you're using Ubuntu 16.04, we highly recommend that you upgrade to the latest LTS version of Ubuntu.
 
 
 End-user changelog
@@ -890,8 +890,8 @@ End-user changelog
 Core Bot
 ********
 
-- Red's logging will now shine in your terminal more than ever (:issue:`4577`)
-- Improved consistency of command usage in the help messages within all commands in Core Red (:issue:`4589`)
+- Blue's logging will now shine in your terminal more than ever (:issue:`4577`)
+- Improved consistency of command usage in the help messages within all commands in Core Blue (:issue:`4589`)
 - Added a friendly error when the duration provided to commands that use the ``commands.TimedeltaConverter`` converter is out of the maximum bounds allowed by Python interpreter (:issue:`4019`, :issue:`4628`, :issue:`4630`)
 - Fixed an error when removing path from a different operating system than the bot is currently running on with ``[p]removepath`` (:issue:`2609`, :issue:`4662`, :issue:`4466`)
 
@@ -963,7 +963,7 @@ Documentation changes
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 
 
-Redbot 3.4.3 (2020-11-16)
+Bluebot 3.4.3 (2020-11-16)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -974,7 +974,7 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.3 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1132>`__.
+    Blue 3.4.3 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1132>`__.
 
 End-user changelog
 ------------------
@@ -1033,7 +1033,7 @@ Documentation changes
 - Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
 
 
-Redbot 3.4.2 (2020-10-28)
+Bluebot 3.4.2 (2020-10-28)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -1044,7 +1044,7 @@ Read before updating
 
 1. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    Red 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`__.
+    Blue 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`__.
 
 End-user changelog
 ------------------
@@ -1064,7 +1064,7 @@ Documentation changes
 - Removed multi-line commands from Linux install guides to avoid confusing readers (:issue:`4550`)
 
 
-Redbot 3.4.1 (2020-10-27)
+Bluebot 3.4.1 (2020-10-27)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
@@ -1074,11 +1074,11 @@ Read before updating
 --------------------
 
 1. This release fixes a security issue in Mod cog. See `Security changelog below <important-341-2>` for more information.
-2. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Privileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
+2. This Blue update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Blue requires all Privileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
 3. Mutes functionality has been moved from the Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see the full `Mutes changelog below <important-341-1>`.
 4. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-   We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+   We've updated our `application.yml file <https://github.com/Cog-Creators/Blue-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
    Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
 
 End-user changelog
@@ -1091,7 +1091,7 @@ Security
 
 **NOTE:** If you can't update immediately, we recommend globally disabling the affected command until you can.
 
-- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`__.
+- **Mod** - Fixed unauthorized privilege escalation exploit in ``[p]massban`` (also called ``[p]hackban``) command. Full security advisory `can be found on our GitHub <https://github.com/Cog-Creators/Blue-DiscordBot/security/advisories/GHSA-mp9m-g7qj-6vqr>`__.
 
 Core Bot
 ********
@@ -1210,7 +1210,7 @@ Developer changelog
 -------------------
 
 | **Important:**
-| 1. Red now allows users to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Core Bot changelog below <important-dev-341-1>` for more information.
+| 1. Blue now allows users to set locale per guild, which requires 3rd-party cogs to set contextual locale manually in code ran outside of command's context. See the `Core Bot changelog below <important-dev-341-1>` for more information.
 
 .. _important-dev-341-1:
 
@@ -1222,9 +1222,9 @@ Core Bot
     - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
     - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
-- Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
-- Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
-- Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
+- Added `bot.remove_shared_api_services() <Blue.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
+- Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Blue.get_shared_api_tokens()>` (:issue:`4370`)
+- Added `bot.get_or_fetch_user() <Blue.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Blue.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
 - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 
 Bank
@@ -1273,25 +1273,25 @@ Miscellaneous
 
 - Added JSON schema files for ``info.json`` files (:issue:`4375`)
 - Added ``[all]`` and ``[dev]`` bundled install extras (:issue:`4443`)
-- Replaced the link to the approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
+- Replaced the link to the approved repository list on CogBoard and references to ``cogs.red`` with a link to new Blue Index (:issue:`4439`)
 - Improved documentation about arguments in command syntax (:issue:`4058`)
-- Replaced a few instances of Red with the bot name in command docstrings (:issue:`4470`)
+- Replaced a few instances of Blue with the bot name in command docstrings (:issue:`4470`)
 - Fixed grammar in places scattered throughout bot (:issue:`4500`)
 - Properly define supported Python versions to be lower than 3.9 (:issue:`4538`)
 
 
-Redbot 3.4.0 (2020-08-17)
+Bluebot 3.4.0 (2020-08-17)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kablekompany`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
 |
 | **Read before updating**:
-| 1. Red 3.4 comes with support for data deletion requests. Bot owners should read `red_core_data_statement` to ensure they know what information about their users is stored by the bot.
+| 1. Blue 3.4 comes with support for data deletion requests. Bot owners should read `red_core_data_statement` to ensure they know what information about their users is stored by the bot.
 | 2. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
 | 3. There's been a change in behavior of ``[p]tempban``. Look at `Mod changelog <important-340-1>` for full details.
 | 4. There's been a change in behavior of announcements in Admin cog. Look at `Admin changelog <important-340-2>` for full details.
-| 5. Red 3.4 comes with breaking changes for cog developers. Look at `Developer changelog <important-340-3>` for full details.
+| 5. Blue 3.4 comes with breaking changes for cog developers. Look at `Developer changelog <important-340-3>` for full details.
 
 End-user changelog
 ------------------
@@ -1306,10 +1306,10 @@ Core Bot
     - Cogs disabled in the guild can be listed with ``[p]command listdisabledcogs``
 
 - Added support for data deletion requests; see `red_core_data_statement` for more information (:issue:`4045`)
-- Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
+- Blue now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 - ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 - Added ``[p]helpset showsettings`` command (:issue:`4013`, :issue:`4022`)
-- Updated Red's emoji usage to ensure consistent rendering accross different devices (:issue:`4106`, :issue:`4105`, :issue:`4127`)
+- Updated Blue's emoji usage to ensure consistent rendering accross different devices (:issue:`4106`, :issue:`4105`, :issue:`4127`)
 - Whitelist and blacklist are now called allowlist and blocklist. Old names have been left as aliases (:issue:`4138`)
 
 .. _important-340-2:
@@ -1360,8 +1360,8 @@ Developer changelog
 -------------------
 
 | **Important:**
-| 1. Red now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the `Core Bot changelog below <important-dev-340-1>` for more information.
-| 2. Red now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries in the `Core Bot changelog below <important-dev-340-1>` for more information.
+| 1. Blue now offers cog disabling API, which should be respected by 3rd-party cogs in guild-related actions happening outside of command's context. See the `Core Bot changelog below <important-dev-340-1>` for more information.
+| 2. Blue now provides data request API, which should be supported by all 3rd-party cogs. See the changelog entries in the `Core Bot changelog below <important-dev-340-1>` for more information.
 
 Breaking changes
 ****************
@@ -1387,7 +1387,7 @@ Core Bot
 
 - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
-    - New methods added: `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <Red.cog_disabled_in_guild_raw()>`
+    - New methods added: `bot.cog_disabled_in_guild() <Blue.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <Blue.cog_disabled_in_guild_raw()>`
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
@@ -1397,13 +1397,13 @@ Core Bot
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 
-- Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
+- Added `bot.message_eligible_as_command() <Blue.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
-- `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
+- `bot.ignored_channel_or_guild() <Blue.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
-- Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
+- Blue no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
 - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
-- RPC functionality no longer makes Red hang for a minute on shutdown (:issue:`4134`, :issue:`4143`)
+- RPC functionality no longer makes Blue hang for a minute on shutdown (:issue:`4134`, :issue:`4143`)
 
 Vendored packages
 *****************
@@ -1434,4 +1434,4 @@ Miscellaneous
 - Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
 - ``[p]set nickname``, ``[p]set serverprefix``, ``[p]streamalert``, and ``[p]streamset`` commands now can be run by users with permissions related to the actions they're making (:issue:`4109`)
 - `bordered()` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
-- Fixed timestamp storage in few places in Red (:issue:`4017`)
+- Fixed timestamp storage in few places in Blue (:issue:`4017`)

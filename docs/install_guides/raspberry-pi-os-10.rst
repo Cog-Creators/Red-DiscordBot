@@ -1,12 +1,12 @@
 .. _install-raspberry-pi-os-10:
 
 ====================================================
-Installing Red on Raspberry Pi OS (Legacy) 10 Buster
+Installing Blue on Raspberry Pi OS (Legacy) 10 Buster
 ====================================================
 
 .. note::
 
-    While we do provide support and install instructions for running Red
+    While we do provide support and install instructions for running Blue
     on Raspberry Pi OS (Legacy) 10 Buster, we highly recommend installing/upgrading to
     the new version - Raspberry Pi OS 11 Bullseye.
 

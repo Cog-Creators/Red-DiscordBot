@@ -41,7 +41,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:167
 #, docstring
-msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Red 6`\\n        "
+msgid "Delete the last X messages from a specified user.\\n\\n        Examples:\\n            `[p]cleanup user @​Twentysix 2`\\n            `[p]cleanup user Blue 6`\\n        "
 msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:223

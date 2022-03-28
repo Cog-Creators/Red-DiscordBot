@@ -73,8 +73,8 @@ Core
  * Fix local blacklist/whitelist management (`#2531`_)
  * ``[p]set locale`` now only accepts actual locales (`#2553`_)
  * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
- * ``redbot --version`` will now give you current version of Red (`#2567`_)
- * Redesign help and related formatter (`#2628`_)
+ * ``redbot --version`` will now give you current version of Blue (`#2567`_)
+ * Blueesign help and related formatter (`#2628`_)
  * Default locale changed from ``en`` to ``en-US`` (`#2642`_)
  * New command ``[p]datapath`` that prints the bot's datapath (`#2652`_)
 
@@ -109,8 +109,8 @@ Downloader
  * Fixed bug, that caused Downloader to include submodules on cog list (`#2590`_)
  * ``[p]cog uninstall`` allows to uninstall multiple cogs now (`#2592`_)
  * ``[p]cog uninstall`` will now remove cog from installed cogs even if it can't find the cog in install path anymore (`#2595`_)
- * ``[p]cog install`` will not allow to install cogs which aren't suitable for installed version of Red anymore (`#2605`_)
- * Cog Developers now have to use ``min_bot_version`` in form of version string instead of ``bot_version`` in info.json and they can also use ``max_bot_version`` to specify maximum version of Red, more in :ref:`info-json-format`. (`#2605`_)
+ * ``[p]cog install`` will not allow to install cogs which aren't suitable for installed version of Blue anymore (`#2605`_)
+ * Cog Developers now have to use ``min_bot_version`` in form of version string instead of ``bot_version`` in info.json and they can also use ``max_bot_version`` to specify maximum version of Blue, more in :ref:`info-json-format`. (`#2605`_)
 
 ------
 Filter
@@ -174,59 +174,59 @@ Utility Functions
  * ``Tunnel`` - fixed behavior of ``react_close()``, now when tunnel closes message will be sent to other end (`#2507`_)
  * ``chat_formatting.humanize_list`` - Improved error handling of empty lists (`#2597`_)
 
-.. _#2326: https://github.com/Cog-Creators/Red-DiscordBot/pull/2326
-.. _#2328: https://github.com/Cog-Creators/Red-DiscordBot/pull/2328
-.. _#2338: https://github.com/Cog-Creators/Red-DiscordBot/pull/2338
-.. _#2412: https://github.com/Cog-Creators/Red-DiscordBot/pull/2412
-.. _#2437: https://github.com/Cog-Creators/Red-DiscordBot/pull/2437
-.. _#2457: https://github.com/Cog-Creators/Red-DiscordBot/pull/2457
-.. _#2461: https://github.com/Cog-Creators/Red-DiscordBot/pull/2461
-.. _#2462: https://github.com/Cog-Creators/Red-DiscordBot/pull/2462
-.. _#2465: https://github.com/Cog-Creators/Red-DiscordBot/pull/2465
-.. _#2467: https://github.com/Cog-Creators/Red-DiscordBot/pull/2467
-.. _#2469: https://github.com/Cog-Creators/Red-DiscordBot/pull/2469
-.. _#2470: https://github.com/Cog-Creators/Red-DiscordBot/pull/2470
-.. _#2472: https://github.com/Cog-Creators/Red-DiscordBot/pull/2472
-.. _#2473: https://github.com/Cog-Creators/Red-DiscordBot/pull/2473
-.. _#2476: https://github.com/Cog-Creators/Red-DiscordBot/pull/2476
-.. _#2481: https://github.com/Cog-Creators/Red-DiscordBot/pull/2481
-.. _#2482: https://github.com/Cog-Creators/Red-DiscordBot/pull/2482
-.. _#2496: https://github.com/Cog-Creators/Red-DiscordBot/pull/2496
-.. _#2507: https://github.com/Cog-Creators/Red-DiscordBot/pull/2507
-.. _#2509: https://github.com/Cog-Creators/Red-DiscordBot/pull/2509
-.. _#2513: https://github.com/Cog-Creators/Red-DiscordBot/pull/2513
-.. _#2521: https://github.com/Cog-Creators/Red-DiscordBot/pull/2521
-.. _#2523: https://github.com/Cog-Creators/Red-DiscordBot/pull/2523
-.. _#2525: https://github.com/Cog-Creators/Red-DiscordBot/pull/2525
-.. _#2531: https://github.com/Cog-Creators/Red-DiscordBot/pull/2531
-.. _#2533: https://github.com/Cog-Creators/Red-DiscordBot/pull/2533
-.. _#2536: https://github.com/Cog-Creators/Red-DiscordBot/pull/2536
-.. _#2540: https://github.com/Cog-Creators/Red-DiscordBot/pull/2540
-.. _#2545: https://github.com/Cog-Creators/Red-DiscordBot/pull/2545
-.. _#2550: https://github.com/Cog-Creators/Red-DiscordBot/pull/2550
-.. _#2553: https://github.com/Cog-Creators/Red-DiscordBot/pull/2553
-.. _#2554: https://github.com/Cog-Creators/Red-DiscordBot/pull/2554
-.. _#2556: https://github.com/Cog-Creators/Red-DiscordBot/pull/2556
-.. _#2557: https://github.com/Cog-Creators/Red-DiscordBot/pull/2557
-.. _#2565: https://github.com/Cog-Creators/Red-DiscordBot/pull/2565
-.. _#2567: https://github.com/Cog-Creators/Red-DiscordBot/pull/2567
-.. _#2576: https://github.com/Cog-Creators/Red-DiscordBot/pull/2576
-.. _#2579: https://github.com/Cog-Creators/Red-DiscordBot/pull/2579
-.. _#2586: https://github.com/Cog-Creators/Red-DiscordBot/pull/2586
-.. _#2587: https://github.com/Cog-Creators/Red-DiscordBot/pull/2587
-.. _#2588: https://github.com/Cog-Creators/Red-DiscordBot/pull/2588
-.. _#2590: https://github.com/Cog-Creators/Red-DiscordBot/pull/2590
-.. _#2591: https://github.com/Cog-Creators/Red-DiscordBot/pull/2591
-.. _#2592: https://github.com/Cog-Creators/Red-DiscordBot/pull/2592
-.. _#2595: https://github.com/Cog-Creators/Red-DiscordBot/pull/2595
-.. _#2597: https://github.com/Cog-Creators/Red-DiscordBot/pull/2597
-.. _#2600: https://github.com/Cog-Creators/Red-DiscordBot/pull/2600
-.. _#2602: https://github.com/Cog-Creators/Red-DiscordBot/pull/2602
-.. _#2604: https://github.com/Cog-Creators/Red-DiscordBot/pull/2604
-.. _#2605: https://github.com/Cog-Creators/Red-DiscordBot/pull/2605
-.. _#2606: https://github.com/Cog-Creators/Red-DiscordBot/pull/2606
-.. _#2620: https://github.com/Cog-Creators/Red-DiscordBot/pull/2620
-.. _#2628: https://github.com/Cog-Creators/Red-DiscordBot/pull/2628
-.. _#2639: https://github.com/Cog-Creators/Red-DiscordBot/pull/2639
-.. _#2642: https://github.com/Cog-Creators/Red-DiscordBot/pull/2642
-.. _#2652: https://github.com/Cog-Creators/Red-DiscordBot/pull/2652
+.. _#2326: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2326
+.. _#2328: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2328
+.. _#2338: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2338
+.. _#2412: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2412
+.. _#2437: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2437
+.. _#2457: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2457
+.. _#2461: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2461
+.. _#2462: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2462
+.. _#2465: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2465
+.. _#2467: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2467
+.. _#2469: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2469
+.. _#2470: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2470
+.. _#2472: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2472
+.. _#2473: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2473
+.. _#2476: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2476
+.. _#2481: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2481
+.. _#2482: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2482
+.. _#2496: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2496
+.. _#2507: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2507
+.. _#2509: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2509
+.. _#2513: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2513
+.. _#2521: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2521
+.. _#2523: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2523
+.. _#2525: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2525
+.. _#2531: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2531
+.. _#2533: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2533
+.. _#2536: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2536
+.. _#2540: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2540
+.. _#2545: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2545
+.. _#2550: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2550
+.. _#2553: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2553
+.. _#2554: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2554
+.. _#2556: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2556
+.. _#2557: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2557
+.. _#2565: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2565
+.. _#2567: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2567
+.. _#2576: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2576
+.. _#2579: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2579
+.. _#2586: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2586
+.. _#2587: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2587
+.. _#2588: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2588
+.. _#2590: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2590
+.. _#2591: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2591
+.. _#2592: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2592
+.. _#2595: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2595
+.. _#2597: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2597
+.. _#2600: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2600
+.. _#2602: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2602
+.. _#2604: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2604
+.. _#2605: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2605
+.. _#2606: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2606
+.. _#2620: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2620
+.. _#2628: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2628
+.. _#2639: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2639
+.. _#2642: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2642
+.. _#2652: https://github.com/Cog-Creators/Blue-DiscordBot/pull/2652

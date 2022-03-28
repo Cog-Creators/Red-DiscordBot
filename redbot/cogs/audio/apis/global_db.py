@@ -11,7 +11,7 @@ from lavalink.rest_api import LoadResult
 from red_commons.logging import getLogger
 
 from redbot.core import Config
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.commands import Cog
 from redbot.core.i18n import Translator
 
@@ -27,7 +27,7 @@ log = getLogger("red.cogs.Audio.api.GlobalDB")
 
 class GlobalCacheWrapper:
     def __init__(
-        self, bot: Red, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
+        self, bot: Blue, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
     ):
         # Place Holder for the Global Cache PR
         self.bot = bot

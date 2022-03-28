@@ -26,7 +26,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_sing(self, ctx: commands.Context):
-        """Make Red sing one of her songs."""
+        """Make Blue sing one of her songs."""
         ids = (
             "zGTkAVsrfg8",
             "cGMWL8cOeAU",

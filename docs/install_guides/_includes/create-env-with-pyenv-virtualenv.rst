@@ -6,7 +6,7 @@ Creating a Virtual Environment
 
     If you want to learn more about virtual environments, see page: `about-venvs`
 
-We require installing Red into a virtual environment. Don't be scared, it's very
+We require installing Blue into a virtual environment. Don't be scared, it's very
 straightforward.
 
 **************************
@@ -40,5 +40,5 @@ Now activate your virtualenv with the following command:
 .. important::
 
     You must activate the virtual environment with the above command every time you open a new
-    shell to run, install or update Red. You can check out other commands like ``pyenv local`` and
+    shell to run, install or update Blue. You can check out other commands like ``pyenv local`` and
     ``pyenv global`` if you wish to keep the virtualenv activated all the time.

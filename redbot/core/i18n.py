@@ -15,7 +15,7 @@ import babel.localedata
 from babel.core import Locale
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Red
+    from redbot.core.bot import Blue
 
 
 __all__ = [
@@ -82,13 +82,13 @@ def reload_locales() -> None:
         translator.load_translations()
 
 
-async def get_locale_from_guild(bot: Red, guild: Optional[discord.Guild]) -> str:
+async def get_locale_from_guild(bot: Blue, guild: Optional[discord.Guild]) -> str:
     """
     Get locale set for the given guild.
 
     Parameters
     ----------
-    bot: Red
+    bot: Blue
          The bot's instance.
     guild: Optional[discord.Guild]
          The guild contextual locale is set for.
@@ -102,13 +102,13 @@ async def get_locale_from_guild(bot: Red, guild: Optional[discord.Guild]) -> str
     return await bot._i18n_cache.get_locale(guild)
 
 
-async def get_regional_format_from_guild(bot: Red, guild: Optional[discord.Guild]) -> str:
+async def get_regional_format_from_guild(bot: Blue, guild: Optional[discord.Guild]) -> str:
     """
     Get regional format for the given guild.
 
     Parameters
     ----------
-    bot: Red
+    bot: Blue
          The bot's instance.
     guild: Optional[discord.Guild]
          The guild contextual locale is set for.
@@ -122,13 +122,13 @@ async def get_regional_format_from_guild(bot: Red, guild: Optional[discord.Guild
     return await bot._i18n_cache.get_regional_format(guild)
 
 
-async def set_contextual_locales_from_guild(bot: Red, guild: Optional[discord.Guild]) -> None:
+async def set_contextual_locales_from_guild(bot: Blue, guild: Optional[discord.Guild]) -> None:
     """
     Set contextual locales (locale and regional format) for given guild context.
 
     Parameters
     ----------
-    bot: Red
+    bot: Blue
          The bot's instance.
     guild: Optional[discord.Guild]
          The guild contextual locale is set for.
@@ -258,7 +258,7 @@ class Translator(Callable[[str], str]):
         locale = get_locale()
 
         if locale.lower() == "en-us":
-            # Red is written in en-US, no point in loading it
+            # Blue is written in en-US, no point in loading it
             return
         if locale in self.translations:
             # Locales cannot be loaded twice as they have an entry in

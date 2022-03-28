@@ -46,7 +46,7 @@ How to install a local package without using downloader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let's suppose you made a cog request on the `cog board <https://cogboard.discord.red>`_
-and now you want to add your own cog to Red. You should have a folder that
+and now you want to add your own cog to Blue. You should have a folder that
 looks like this:
 
 .. image:: ../.resources/cog_manager_ui/custom-cog-example.png

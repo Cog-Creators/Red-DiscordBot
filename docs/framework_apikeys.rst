@@ -4,7 +4,7 @@
 Shared API Keys
 ===============
 
-Red has a central API key storage utilising the core bots config. This allows cog creators to add a single location to store API keys for their cogs which may be shared between other cogs.
+Blue has a central API key storage utilising the core bots config. This allows cog creators to add a single location to store API keys for their cogs which may be shared between other cogs.
 
 There needs to be some consistency between cog creators when using shared API keys between cogs. To help make this easier service should be all **lowercase** and the key names should match the naming convention of the API being accessed.
 
@@ -68,14 +68,14 @@ Additional References
 
 .. py:currentmodule:: redbot.core.bot
 
-.. automethod:: Red.get_shared_api_tokens
+.. automethod:: Blue.get_shared_api_tokens
     :noindex:
 
-.. automethod:: Red.set_shared_api_tokens
+.. automethod:: Blue.set_shared_api_tokens
     :noindex:
 
-.. automethod:: Red.remove_shared_api_tokens
+.. automethod:: Blue.remove_shared_api_tokens
     :noindex:
 
-.. automethod:: Red.remove_shared_api_services
+.. automethod:: Blue.remove_shared_api_services
     :noindex:

@@ -24,7 +24,7 @@ Commands:
   download_translations      Download translations from Crowdin.
   bumpdeps                   Run script bumping dependencies.
   newenv                     Create or replace this project's virtual environment.
-  syncenv                    Sync this project's virtual environment to Red's latest
+  syncenv                    Sync this project's virtual environment to Blue's latest
                              dependencies.
 endef
 export HELP_BODY

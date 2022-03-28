@@ -73,7 +73,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 
   - Cogs that are more than what is able to be run in a simple eval.
   - Cogs that are more than just a simple API access request.
-  - Cogs that properly use Red utilities, including Config, checks, and any other utility functions.
+  - Cogs that properly use Blue utilities, including Config, checks, and any other utility functions.
   - Cogs that use event listeners (bot.wait_for or cog-wide listeners) or custom tasks that are efficient and handle exceptions appropriately.
   - Cogs that handle errors properly.
   - Cogs that handle permissions properly.
@@ -88,13 +88,13 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 - If your cog install comes with any pre-packaged data, use `bundled_data_path()` to access it.
 - If your cog install creates any non-config data, use `cog_data_path()` to store it.
 - Unless the cog is intentionally designed to listen to certain input from bots, cogs should ignore input from bots.
-- Cogs use public methods of Red where possible.
+- Cogs use public methods of Blue where possible.
 - Use the proper method if one exists. (and ask for one if it doesn't exist)
 
   - If that's not possible, don't break anything in core or any other cog with your code.
-  - If you have to use private methods, lock the cog to specific Red versions you can guarantee it works on without breaking anything using the ``min_bot_version`` and ``max_bot_version`` keys in that cog's ``info.json`` file.
+  - If you have to use private methods, lock the cog to specific Blue versions you can guarantee it works on without breaking anything using the ``min_bot_version`` and ``max_bot_version`` keys in that cog's ``info.json`` file.
 
-- Cog Creators must keep their cogs up-to-date with core Red or be delisted until cogs meet Red API changes. Repositories must be kept up to date with the latest version of Red within 3 months of its release.
+- Cog Creators must keep their cogs up-to-date with core Blue or be delisted until cogs meet Blue API changes. Repositories must be kept up to date with the latest version of Blue within 3 months of its release.
 
 .. _recommendations-for-cog-creators:
 
@@ -145,7 +145,7 @@ While not required for approved Cog Creators, they are still recommended in orde
   - Values provided make sense. (eg. no negative numbers for payday)
   - Don't unsafely use user input for things like database input.
 
-- Check events against `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`\
+- Check events against `bot.cog_disabled_in_guild() <Blue.cog_disabled_in_guild()>`\
 
   - Not all events need to be checked, only those that interact with a guild.
   - Some discretion may apply, for example,
@@ -179,12 +179,12 @@ While not required for approved Cog Creators, they are still recommended in orde
 Perks of being a Cog Creator
 ----------------------------
 
-- Added to a growing, curated list of approved repositories hosted on the `Red Index <https://index.discord.red/>`__.
-- The Cog Creator role on the main Red Server and the Cog Support Server.
-- Access to an additional testing channel and the #advanced-coding channel on the main Red Server.
-- Write permission in the #v3-burndown channel on the main Red Server.
+- Added to a growing, curated list of approved repositories hosted on the `Blue Index <https://index.discord.red/>`__.
+- The Cog Creator role on the main Blue Server and the Cog Support Server.
+- Access to an additional testing channel and the #advanced-coding channel on the main Blue Server.
+- Write permission in the #v3-burndown channel on the main Blue Server.
 - Access to an additional testing channel and the Cog Creators channel on the Support Server.
-- Alerted about breaking changes in Red before anyone else.
+- Alerted about breaking changes in Blue before anyone else.
 - Ability to request a channel in the Cog Support Server if you feel like the traffic/question volume for your cogs warrants it.
 
 -------------

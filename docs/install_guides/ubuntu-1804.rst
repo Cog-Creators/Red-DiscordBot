@@ -1,7 +1,7 @@
 .. _install-ubuntu-1804:
 
 ==================================
-Installing Red on Ubuntu 18.04 LTS
+Installing Blue on Ubuntu 18.04 LTS
 ==================================
 
 .. include:: _includes/linux-preamble.rst

@@ -1,6 +1,6 @@
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from .reports import Reports
 
 
-def setup(bot: Red):
+def setup(bot: Blue):
     bot.add_cog(Reports(bot))

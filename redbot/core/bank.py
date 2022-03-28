@@ -16,7 +16,7 @@ from .i18n import Translator
 from .errors import BankPruneError
 
 if TYPE_CHECKING:
-    from .bot import Red
+    from .bot import Blue
 
 _ = Translator("Bank API", __file__)
 
@@ -501,12 +501,12 @@ async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
         await _config.clear_all_members(guild)
 
 
-async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None) -> None:
+async def bank_prune(bot: Blue, guild: discord.Guild = None, user_id: int = None) -> None:
     """Prune bank accounts from the bank.
 
     Parameters
     ----------
-    bot : Red
+    bot : Blue
         The bot.
     guild : discord.Guild
         The guild to prune. This is required if the bank is set to local.
@@ -1030,7 +1030,7 @@ def cost(amount: int):
     You can intentionally refund by raising `AbortPurchase`
     (this error will be consumed and not show to users)
 
-    Other exceptions will propagate and will be handled by Red's (and/or
+    Other exceptions will propagate and will be handled by Blue's (and/or
     any other configured) error handling.
 
     """

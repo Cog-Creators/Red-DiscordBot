@@ -10,7 +10,7 @@ from collections import defaultdict
 
 import discord
 from redbot.core import checks, commands, Config, version_info as red_version_info
-from redbot.core.bot import Red
+from redbot.core.bot import Blue
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
@@ -39,7 +39,7 @@ class Downloader(commands.Cog):
     """Install community cogs made by Cog Creators.
 
     Community cogs, also called third party cogs, are not included
-    in the default Red install.
+    in the default Blue install.
 
     Community cogs come in repositories. Repos are a group of cogs
     you can install. You always need to add the creator's repository
@@ -47,7 +47,7 @@ class Downloader(commands.Cog):
     cogs from the creator.
     """
 
-    def __init__(self, bot: Red):
+    def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
 
@@ -303,7 +303,7 @@ class Downloader(commands.Cog):
             if last_cog_occurrence is not None and not last_cog_occurrence.disabled:
                 cogs_to_update.add(last_cog_occurrence)
 
-        # Reduces diff requests to a single dict with no repeats
+        # Blueuces diff requests to a single dict with no repeats
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
             module.repo = cast(Repo, module.repo)
@@ -439,7 +439,7 @@ class Downloader(commands.Cog):
             Tuple of failed requirements.
         """
 
-        # Reduces requirements to a single list with no repeats
+        # Blueuces requirements to a single list with no repeats
         requirements = {requirement for cog in cogs for requirement in cog.requirements}
         repos: List[Tuple[Repo, List[str]]] = [(repo, []) for repo in self._repo_manager.repos]
 
@@ -704,11 +704,11 @@ class Downloader(commands.Cog):
     @cog.command(name="reinstallreqs", hidden=True)
     async def _cog_reinstallreqs(self, ctx: commands.Context) -> None:
         """
-        This command should not be used unless Red specifically asks for it.
+        This command should not be used unless Blue specifically asks for it.
 
         This command will reinstall cog requirements and shared libraries for all installed cogs.
 
-        Red might ask the owner to use this when it clears contents of the lib folder
+        Blue might ask the owner to use this when it clears contents of the lib folder
         because of change in minor version of Python.
         """
         async with ctx.typing():
@@ -1519,12 +1519,12 @@ class Downloader(commands.Cog):
         if outdated_bot_version:
             message += (
                 _(
-                    "\nThese cogs require different Red version"
+                    "\nThese cogs require different Blue version"
                     " than you currently have ({current_version}): "
                 )
                 if len(outdated_bot_version) > 1
                 else _(
-                    "\nThis cog requires different Red version than you currently "
+                    "\nThis cog requires different Blue version than you currently "
                     "have ({current_version}): "
                 )
             ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
@@ -1760,9 +1760,9 @@ class Downloader(commands.Cog):
                 cog_name = cog_installable.name
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 made_by = "Cog Creators"
-                repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
+                repo_url = "https://github.com/Cog-Creators/Blue-DiscordBot"
                 cog_name = cog.__class__.__name__
-                repo_name = "Red-DiscordBot"
+                repo_name = "Blue-DiscordBot"
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")

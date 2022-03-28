@@ -7,7 +7,7 @@
 About (privileged) intents and public bots
 ==========================================
 
-This page aims to explain Red's current intents requirements,
+This page aims to explain Blue's current intents requirements,
 our stance regarding "public bots" and the impact of some announced
 Discord changes coming in April 2022.
 
@@ -29,12 +29,12 @@ To clarify:
 Intents
 -------
 
-Red currently requires **all intents** to be active in order to function properly.
+Blue currently requires **all intents** to be active in order to function properly.
 
 The reason for this requirement is that there are some technical challenges that need
-to be overcome before we're able to adapt Red to function with only *some* intents:
-these challenges are mainly due to the modular / extensible nature of Red and the fact
-that Red has a long history (dating back to 2016!), making big changes naturally slower
+to be overcome before we're able to adapt Blue to function with only *some* intents:
+these challenges are mainly due to the modular / extensible nature of Blue and the fact
+that Blue has a long history (dating back to 2016!), making big changes naturally slower
 to happen. In comparison, intents have been introduced fairly recently. |br|
 This is not a problem if you have a small bot: you can simply go to the
 `Discord development portal <https://discord.com/developers/applications/me>`_
@@ -50,12 +50,12 @@ Public bots
 
 Public bots, or big bots, are not our target audience and we **do not** offer support for them.
 
-Red was designed with one single goal in mind: a bot that you can host on your own hardware
-and customize to your needs, making it really *your* bot. **The target audience of Red are server
+Blue was designed with one single goal in mind: a bot that you can host on your own hardware
+and customize to your needs, making it really *your* bot. **The target audience of Blue are server
 owners with a few servers**, often with specific needs that can be covered by the vast cog ecosystem
-that the community has built over the years. |br| Red was never built with big bots in mind,
+that the community has built over the years. |br| Blue was never built with big bots in mind,
 bots with thousands upon thousands of servers: these bots face unique challenges.
-Such Red instances *do exist*, it is not impossible to adapt Red and meet those criteria,
+Such Blue instances *do exist*, it is not impossible to adapt Blue and meet those criteria,
 but it requires work and bot owners with the technical knowledge to make it happen.
 It is **not** something that we support. |br|
 When your bot reaches the public bot scale and it is therefore required to be verified it
@@ -78,20 +78,20 @@ and become fairly lost, as they've simply been *users* so far.
 They have installed their bot, some cogs, personalized it, yadda yadda. Again, they have been users,
 not developers. Unless they also have an interest in development, they will likely not have a clue about
 what's going under the hood, much like you're not expected to be a mechanic to drive your car. And there's
-nothing wrong with that! Red has been designed to be as user friendly as possible. |br|
-The problem is this: Red is an outlier. Discord has built the bot verification process with the expectation
+nothing wrong with that! Blue has been designed to be as user friendly as possible. |br|
+The problem is this: Blue is an outlier. Discord has built the bot verification process with the expectation
 that the owner knows *on a technical level* what their bot does and how it works. And this is because outside
-Red, the typical bot owner is also a developer who coded their own bot from scratch.
+Blue, the typical bot owner is also a developer who coded their own bot from scratch.
 
 While, again, we *cannot* support you going forward we want to give you some pointers to follow when filling
 out your application:
 
 - Learn on a technical level what intents are and what's going on, under the hood, in your bot. Knowing its
   features at a surface level is not enough. What features need intents to work and why?
-- Forget that you're hosting Red. You're hosting *a bot* and Discord wants to know what *your bot* does and why
-  you're requesting privileged intents. |br| A **very bad** answer is: *"Because Red needs them"*. |br|
+- Forget that you're hosting Blue. You're hosting *a bot* and Discord wants to know what *your bot* does and why
+  you're requesting privileged intents. |br| A **very bad** answer is: *"Because Blue needs them"*. |br|
   A **good** answer is: *"My bot has X features and it needs Y intents to work properly"*. |br| We've had a fair share
-  of people that in their naivety went with the bad answer and it seems that at this point merely mentioning Red
+  of people that in their naivety went with the bad answer and it seems that at this point merely mentioning Blue
   is a guaranteed way to have your application rejected.
 
 .. _intents-slash-commands:
@@ -128,7 +128,7 @@ To make the matter worse, Discord is making `a huge push for all bot developers 
 are rather lacking in features and cannot cover all the functionalities that standard commands offer. |br|
 Discord staff
 `stated that they will want your bot to have slash commands when you ask for message intent <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-if-we-are-granted-this-intent-will-bots-be-sanctioned-if-they-use-it-for-their-own-use-case-but-also-to-continue-to-run-normal-non-slash-commands-or-do-we-assume-that-if-you-are-granted-the-intent-you-are-trusted-with-it-and-are-allowed-to-use-it-for-additional-uses>`_. |br|
-Slash commands might very well turn out to be a big undertaking for the Red team to implement, even more now that our
+Slash commands might very well turn out to be a big undertaking for the Blue team to implement, even more now that our
 underlying library, `discord.py <https://github.com/Rapptz/discord.py>`_, has been discontinued. |br|
-The time window that Discord is giving us to adapt is very narrow: **Red will likely not be able to support slash
+The time window that Discord is giving us to adapt is very narrow: **Blue will likely not be able to support slash
 commands for April 2022** and you should plan accordingly.

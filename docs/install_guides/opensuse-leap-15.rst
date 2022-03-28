@@ -1,7 +1,7 @@
 .. _install-opensuse-leap-15:
 
 =====================================
-Installing Red on openSUSE Leap 15.2+
+Installing Blue on openSUSE Leap 15.2+
 =====================================
 
 .. include:: _includes/linux-preamble.rst

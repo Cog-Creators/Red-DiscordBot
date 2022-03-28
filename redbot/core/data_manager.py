@@ -36,7 +36,7 @@ basic_config_default: Dict[str, Any] = {
     "CORE_PATH_APPEND": "core",
 }
 
-appdir = appdirs.AppDirs("Red-DiscordBot")
+appdir = appdirs.AppDirs("Blue-DiscordBot")
 config_dir = Path(appdir.user_config_dir)
 _system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
 if _system_user:
@@ -44,7 +44,7 @@ if _system_user:
         # We don't want to break someone just because they created home dir
         # but were already using the site_data_dir.
         #
-        # But otherwise, we do want Red to use user_config_dir if home dir exists.
+        # But otherwise, we do want Blue to use user_config_dir if home dir exists.
         _maybe_config_file = Path(appdir.site_data_dir) / "config.json"
         if _maybe_config_file.exists():
             config_dir = _maybe_config_file.parent
@@ -71,7 +71,7 @@ def load_existing_config():
 
 def create_temp_config():
     """
-    Creates a default instance for Red, so it can be ran
+    Creates a default instance for Blue, so it can be ran
     without creating an instance.
 
     .. warning:: The data of this instance will be removed

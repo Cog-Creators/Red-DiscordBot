@@ -28,7 +28,7 @@ class NoSuchCog(ImportError):
 
 
 class CogManager:
-    """Directory manager for Red's cogs.
+    """Directory manager for Blue's cogs.
 
     This module allows you to load cogs from multiple directories and even from
     outside the bot directory. You may also set a directory for downloader to
@@ -313,7 +313,7 @@ _ = Translator("CogManagerUI", __file__)
 
 @cog_i18n(_)
 class CogManagerUI(commands.Cog):
-    """Commands to interface with Red's cog manager."""
+    """Commands to interface with Blue's cog manager."""
 
     async def red_delete_data_for_user(self, **kwargs):
         """Nothing to delete (Core Config is handled in a bot method )"""
