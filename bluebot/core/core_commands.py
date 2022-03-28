@@ -499,7 +499,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     outdated_value = _("Checking for updates failed.")
                 extras += _("Outdated:          [{state}]\n").format(state=outdated_value)
 
-           blue= (
+            blue= (
                 _("**About Blue**\n")
                 + about
                 + "\n"
