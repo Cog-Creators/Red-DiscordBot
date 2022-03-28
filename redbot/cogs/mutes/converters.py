@@ -4,8 +4,8 @@ from typing import Union, Dict
 from datetime import timedelta
 
 from discord.ext.commands.converter import Converter
-from redbot.core import commands
-from redbot.core import i18n
+from bluebot.core import commands
+from bluebot.core import i18n
 
 log = logging.getLogger("red.cogs.mutes")
 
@@ -14,7 +14,7 @@ log = logging.getLogger("red.cogs.mutes")
 # this is to prevent "empty" matches when parsing the full reason
 # This is also designed more to allow time interval at the beginning or the end of the mute
 # to account for those times when you think of adding time *after* already typing out the reason
-# https://github.com/Cock-Creators/Blue-DiscordBot/blob/V3/develop/redbot/core/commands/converter.py#L55
+# https://github.com/Cock-Creators/Blue-DiscordBot/blob/V3/develop/bluebot/core/commands/converter.py#L55
 TIME_RE_STRING = r"|".join(
     [
         r"((?P<weeks>\d+?)\s?(weeks?|w))",

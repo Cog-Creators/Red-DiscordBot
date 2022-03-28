@@ -9,8 +9,8 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
 
 from ...apis.playlist_interface import Playlist, delete_playlist, get_playlist
 from ...utils import PlaylistScope

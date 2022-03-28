@@ -1,8 +1,8 @@
 from typing import NewType, TYPE_CHECKING
 
-from redbot.core.commands import BadArgument, Context, Converter
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import inline
+from bluebot.core.commands import BadArgument, Context, Converter
+from bluebot.core.i18n import Translator
+from bluebot.core.utils.chat_formatting import inline
 
 _ = Translator("Cleanup", __file__)
 

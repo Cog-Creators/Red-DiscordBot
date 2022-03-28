@@ -205,7 +205,7 @@ highest folder in the list will be kept and the other ones will be ignored.
 For example, let's suppose this is the output of
 :ref:`paths <cogmanagerui-command-paths>`:
 
-    1.  ``/usr/local/lib/python3.7/site-packages/redbot/cogs``
+    1.  ``/usr/local/lib/python3.7/site-packages/bluebot/cogs``
     2.  ``/home/laggron/custom_cogs``
     3.  ``/mnt/not_suspicious_usb_drive/not_suspicious_cogs``
 
@@ -215,7 +215,7 @@ have to put the 3rd path higher than the 2nd path, let's swap them! Type
 ``[p]reorderpath 2 3`` and the output of
 :ref:`paths <cogmanagerui-command-paths>` will then be the following:
 
-    1.  ``/usr/local/lib/python3.7/site-packages/redbot/cogs``
+    1.  ``/usr/local/lib/python3.7/site-packages/bluebot/cogs``
     2.  ``/mnt/not_suspicious_usb_drive/not_suspicious_cogs``
     3.  ``/home/laggron/custom_cogs``
 

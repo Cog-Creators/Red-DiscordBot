@@ -7,19 +7,19 @@ from typing import Union, Optional, Literal
 
 import discord
 
-from redbot.cogs.warnings.helpers import (
+from bluebot.cogs.warnings.helpers import (
     warning_points_add_check,
     get_command_for_exceeded_points,
     get_command_for_dropping_points,
     warning_points_remove_check,
 )
-from redbot.core import Config, checks, commands, modlog
-from redbot.core.bot import Blue
-from redbot.core.commands import UserInputOptional
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import warning, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from bluebot.core import Config, checks, commands, modlog
+from bluebot.core.bot import Blue
+from bluebot.core.commands import UserInputOptional
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import warning, pagify
+from bluebot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 
 _ = Translator("Warnings", __file__)

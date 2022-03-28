@@ -6,10 +6,10 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core import Config, commands
-from redbot.core.bot import Blue
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
+from bluebot.core import Config, commands
+from bluebot.core.bot import Blue
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
 
 from ..errors import NotAllowed
 from ..utils import PlaylistScope

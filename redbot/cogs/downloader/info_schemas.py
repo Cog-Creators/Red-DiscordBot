@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union, cast
 
-from redbot import VersionInfo, version_info as red_version_info
+from bluebot import VersionInfo, version_info as red_version_info
 
 from . import installable
 from .log import log

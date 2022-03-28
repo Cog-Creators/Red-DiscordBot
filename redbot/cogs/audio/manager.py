@@ -14,8 +14,8 @@ import aiohttp
 import rich.progress
 from red_commons.logging import getLogger
 
-from redbot.core import data_manager
-from redbot.core.i18n import Translator
+from bluebot.core import data_manager
+from bluebot.core.i18n import Translator
 
 from .errors import LavalinkDownloadFailed
 from .utils import task_callback_exception

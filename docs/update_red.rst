@@ -97,7 +97,7 @@ Blue 3.1.X
 
 If you have Blue 3.1.X, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
-Go to the `install_guides/index` guide and follow every step to ensure you have all dependencies up-to-date and only skip the ``redbot-setup`` step as you already have a bot instance.
+Go to the `install_guides/index` guide and follow every step to ensure you have all dependencies up-to-date and only skip the ``bluebot-setup`` step as you already have a bot instance.
 
 **If you already have Blue installed in a virtual environment, you will need to delete it before starting this process.**
 
@@ -114,7 +114,7 @@ Go to the `install_guides/index` guide and follow every step to ensure you have 
            :prompts: (redenv) $
 
            python -m pip install dnspython~=1.16.0 motor~=2.0.0 pymongo~=3.8.0
-           redbot-setup convert [instancename] json
+           bluebot-setup convert [instancename] json
 
 
 Blue 3.0.2 and older
@@ -132,10 +132,10 @@ Blue 3.0.2 and older
          .. prompt:: bash
            :prompts: (redenv) $
 
-           redbot-setup --edit
+           bluebot-setup --edit
 
 If you have Blue 3.0.2 or older, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
-Go to the `install_guides/index` guide and follow every step to ensure you have all dependencies up-to-date and only skip the ``redbot-setup`` step as you already have a bot instance.
+Go to the `install_guides/index` guide and follow every step to ensure you have all dependencies up-to-date and only skip the ``bluebot-setup`` step as you already have a bot instance.
 
 **If you already have Blue installed in a virtual environment, you will need to delete it before starting this process.**

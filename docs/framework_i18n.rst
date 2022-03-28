@@ -13,8 +13,8 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import commands
-    from redbot.core.i18n import Translator, cog_i18n
+    from bluebot.core import commands
+    from bluebot.core.i18n import Translator, cog_i18n
     
     _ = Translator("ExampleCog", __file__)
 
@@ -49,6 +49,6 @@ You can now use a tool like `poedit
 API Reference
 -------------
 
-.. automodule:: redbot.core.i18n
+.. automodule:: bluebot.core.i18n
     :members:
     :special-members: __call__

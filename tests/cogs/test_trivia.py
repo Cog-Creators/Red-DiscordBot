@@ -5,7 +5,7 @@ from schema import SchemaError
 
 
 def test_trivia_lists():
-    from redbot.cogs.trivia import InvalidListError, get_core_lists, get_list
+    from bluebot.cogs.trivia import InvalidListError, get_core_lists, get_list
 
     list_names = get_core_lists()
     assert list_names

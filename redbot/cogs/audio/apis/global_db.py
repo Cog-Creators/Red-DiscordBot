@@ -10,17 +10,17 @@ import aiohttp
 from lavalink.rest_api import LoadResult
 from red_commons.logging import getLogger
 
-from redbot.core import Config
-from redbot.core.bot import Blue
-from redbot.core.commands import Cog
-from redbot.core.i18n import Translator
+from bluebot.core import Config
+from bluebot.core.bot import Blue
+from bluebot.core.commands import Cog
+from bluebot.core.i18n import Translator
 
 from ..audio_dataclasses import Query
 
 if TYPE_CHECKING:
     from .. import Audio
 
-_API_URL = "https://api.redbot.app/"
+_API_URL = "https://api.bluebot.app/"
 _ = Translator("Audio", Path(__file__))
 log = getLogger("red.cogs.Audio.api.GlobalDB")
 

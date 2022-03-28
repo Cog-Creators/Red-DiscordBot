@@ -15,12 +15,12 @@ import lavalink
 from red_commons.logging import getLogger
 
 from lavalink.rest_api import LoadResult, LoadType
-from redbot.core import Config, commands
-from redbot.core.bot import Blue
-from redbot.core.commands import Cog, Context
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.dbtools import APSWConnectionWrapper
+from bluebot.core import Config, commands
+from bluebot.core.bot import Blue
+from bluebot.core.commands import Cog, Context
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.dbtools import APSWConnectionWrapper
 
 from ..audio_dataclasses import Query
 from ..errors import DatabaseError, SpotifyFetchError, TrackEnqueueError, YouTubeApiError

@@ -8,9 +8,9 @@ from functools import partial
 from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, List, Optional, Union
 
 import discord
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import (
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils.chat_formatting import (
     bold,
     escape,
     format_perms_list,
@@ -19,7 +19,7 @@ from redbot.core.utils.chat_formatting import (
 )
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Blue
+    from bluebot.core.bot import Blue
 
 _ = Translator("IssueDiagnoser", __file__)
 

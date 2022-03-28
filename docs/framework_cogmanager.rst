@@ -4,5 +4,5 @@
 Cog Manager
 ===========
 
-.. automodule:: redbot.core.cog_manager
+.. automodule:: bluebot.core.cog_manager
     :members:

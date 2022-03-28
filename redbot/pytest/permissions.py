@@ -1,7 +1,7 @@
 import pytest
 
-from redbot.cogs.permissions import Permissions
-from redbot.core import Config
+from bluebot.cogs.permissions import Permissions
+from bluebot.core import Config
 
 
 @pytest.fixture()

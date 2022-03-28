@@ -3,8 +3,8 @@ from typing import List, Tuple, Optional, Dict, Union
 from datetime import datetime
 
 import discord
-from redbot.core import Config, commands
-from redbot.core.bot import Blue
+from bluebot.core import Config, commands
+from bluebot.core.bot import Blue
 
 
 class MixinMeta(ABC):

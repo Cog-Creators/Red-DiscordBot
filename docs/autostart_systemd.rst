@@ -24,11 +24,11 @@ Next, your python :code:`path` can be fetched with the following commands:
     :prompts: $,(redenv) $
     :modifiers: auto
 
-    # If redbot is installed in a venv
+    # If bluebot is installed in a venv
     $ source ~/redenv/bin/activate
     (redenv) $ which python
 
-    # If redbot is installed in a pyenv virtualenv
+    # If bluebot is installed in a pyenv virtualenv
     $ pyenv shell <virtualenv_name>
     (redenv) $ pyenv which python
 
@@ -42,13 +42,13 @@ Paste the following in the file, and replace all instances of :code:`username` w
     :emphasize-lines: 8-10
 
     [Unit]
-    Description=%I redbot
+    Description=%I bluebot
     After=multi-user.target
     After=network-online.target
     Wants=network-online.target
 
     [Service]
-    ExecStart=path -O -m redbot %I --no-prompt
+    ExecStart=path -O -m bluebot %I --no-prompt
     User=username
     Group=username
     Type=idle

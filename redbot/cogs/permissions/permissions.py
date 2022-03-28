@@ -7,12 +7,12 @@ from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView,
 import discord
 import yaml
 from schema import And, Or, Schema, SchemaError, Optional as UseOptional
-from redbot.core import checks, commands, config
-from redbot.core.bot import Blue
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
+from bluebot.core import checks, commands, config
+from bluebot.core.bot import Blue
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils.chat_formatting import box
+from bluebot.core.utils.menus import start_adding_reactions
+from bluebot.core.utils.predicates import ReactionPredicate, MessagePredicate
 
 from .converters import (
     CogOrCommand,

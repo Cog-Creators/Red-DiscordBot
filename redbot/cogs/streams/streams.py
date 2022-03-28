@@ -1,9 +1,9 @@
 import discord
-from redbot.core.bot import Blue
-from redbot.core import checks, commands, Config
-from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
-from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
-from redbot.core.utils.chat_formatting import escape, inline, pagify
+from bluebot.core.bot import Blue
+from bluebot.core import checks, commands, Config
+from bluebot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
+from bluebot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
+from bluebot.core.utils.chat_formatting import escape, inline, pagify
 
 from .streamtypes import (
     PicartoStream,

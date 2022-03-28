@@ -104,7 +104,7 @@ def load_basic_configuration(instance_name_: str):
     ----------
     instance_name_ : str
         The instance name given by CLI argument and created during
-        redbot setup.
+        bluebot setup.
     """
     global basic_config
     global instance_name
@@ -115,7 +115,7 @@ def load_basic_configuration(instance_name_: str):
             config = json.load(fs)
     except FileNotFoundError:
         print(
-            "You need to configure the bot instance using `redbot-setup`"
+            "You need to configure the bot instance using `bluebot-setup`"
             " prior to running the bot."
         )
         sys.exit(1)
@@ -124,7 +124,7 @@ def load_basic_configuration(instance_name_: str):
     except KeyError:
         print(
             "Instance with this name doesn't exist."
-            " You can create new instance using `redbot-setup` prior to running the bot."
+            " You can create new instance using `bluebot-setup` prior to running the bot."
         )
         sys.exit(1)
 

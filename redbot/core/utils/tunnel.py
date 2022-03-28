@@ -1,7 +1,7 @@
 import asyncio
 import discord
 from datetime import datetime
-from redbot.core.utils.chat_formatting import pagify
+from bluebot.core.utils.chat_formatting import pagify
 import io
 import weakref
 from typing import List, Optional

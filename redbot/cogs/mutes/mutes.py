@@ -10,19 +10,19 @@ from datetime import datetime, timedelta, timezone
 from .converters import MuteTime
 from .voicemutes import VoiceMutes
 
-from redbot.core.bot import Blue
-from redbot.core import commands, checks, i18n, modlog, Config
-from redbot.core.utils import AsyncIter, bounded_gather
-from redbot.core.utils.chat_formatting import (
+from bluebot.core.bot import Blue
+from bluebot.core import commands, checks, i18n, modlog, Config
+from bluebot.core.utils import AsyncIter, bounded_gather
+from bluebot.core.utils.chat_formatting import (
     bold,
     humanize_timedelta,
     humanize_list,
     inline,
     pagify,
 )
-from redbot.core.utils.mod import get_audit_reason
-from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from bluebot.core.utils.mod import get_audit_reason
+from bluebot.core.utils.menus import start_adding_reactions
+from bluebot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 T_ = i18n.Translator("Mutes", __file__)
 

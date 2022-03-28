@@ -48,11 +48,11 @@ End-user changelog
 Core Bot
 ********
 
-- Added new CLI options for non-interactive usage of ``redbot-setup`` (:issue:`2396`, :issue:`5448`)
+- Added new CLI options for non-interactive usage of ``bluebot-setup`` (:issue:`2396`, :issue:`5448`)
 
-    See output of ``redbot-setup --help`` for more information.
+    See output of ``bluebot-setup --help`` for more information.
 
-- JSON is now more strongly recommended and is used by default for new instances in ``redbot-setup`` (:issue:`5448`)
+- JSON is now more strongly recommended and is used by default for new instances in ``bluebot-setup`` (:issue:`5448`)
 - The embed setting for ``[p]help`` command set with ``[p]embedset command`` will now affect all help messages, not just the ones sent when invoking ``[p]help`` command directly (:issue:`5452`)
 - ``[p]traceback`` command now indicates that it DMed the command caller with a tick reaction (:issue:`5353`)
 - Improved ``[p]helpset showaliases`` responses (:issue:`5376`)
@@ -174,7 +174,7 @@ End-user changelog
 ------------------
 
 - **Core Bot** - Added the new native Discord timestamp in the ``[p]uptime`` command (:issue:`5323`)
-- **Core Bot** - ``redbot-setup delete`` command no longer requires database connection if the data deletion was not requested (:issue:`5312`, :issue:`5313`)
+- **Core Bot** - ``bluebot-setup delete`` command no longer requires database connection if the data deletion was not requested (:issue:`5312`, :issue:`5313`)
 - **Audio** - Fixed intermittent 403 Forbidden errors (:issue:`5329`)
 - **Modlog** - Fixed formatting of **Last modified at** field in Modlog cases (:issue:`5317`)
 
@@ -299,7 +299,7 @@ Warnings
 Developer changelog
 -------------------
 
-- Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
+- Added `RelativedeltaConverter` and `parse_relativedelta` to the ``bluebot.core.commands`` package (:issue:`5000`)
 
     This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
     In addition to regular timedelta arguments, it also accepts months and years!
@@ -317,7 +317,7 @@ Developer changelog
         - `Blue.get_whitelist()`
         - `Blue.clear_whitelist()`
 
-- Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
+- Added `CommandConverter` and `CogConverter` to the ``bluebot.core.commands`` package (:issue:`5037`)
 
 
 Documentation changes
@@ -395,7 +395,7 @@ Read before updating
 2. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     - Blue 3.4.10 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1233>`__.
-    - We've updated our `application.yml file <https://github.com/Cog-Creators/Blue-DiscordBot/blob/3.4.10/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+    - We've updated our `application.yml file <https://github.com/Cog-Creators/Blue-DiscordBot/blob/3.4.10/bluebot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
 
 
 End-user changelog
@@ -497,7 +497,7 @@ Documentation changes
 - Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`1734`, :issue:`4882`)
 - Added `cog guide for Warnings cog <cog_guides/warnings>` (:issue:`1734`, :issue:`4920`)
 - Added :ref:`a guide about Trivia list creation <guide_trivia_list_creation>` (:issue:`4595`, :issue:`5023`)
-- Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
+- Added the documentation for `bluebot.core.modlog.Case` (:issue:`4979`)
 - Removed PM2 guide (:issue:`4991`)
 
 
@@ -555,8 +555,8 @@ Core Bot
 - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
 - An error message will now be shown when a command that is only available in NSFW channels is used in a non-NSFW channel (:issue:`4933`)
 - Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
-- Removed the option to drop the entire PostgreSQL database in ``redbot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
-- Added a progress bar to ``redbot-setup convert`` (:issue:`2952`)
+- Removed the option to drop the entire PostgreSQL database in ``bluebot-setup delete`` due to limitations of PostgreSQL (:issue:`3699`, :issue:`3833`)
+- Added a progress bar to ``bluebot-setup convert`` (:issue:`2952`)
 - Fixed how the command signature is shown in help for subcommands that have group args (:issue:`4928`)
 
 Alias
@@ -631,9 +631,9 @@ Developer changelog
 -------------------
 
 - Bumped discord.py version to 1.7.0 (:issue:`4928`)
-- Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
+- Deprecated importing ``GuildConverter`` from ``bluebot.core.commands.converter`` namespace (:issue:`4928`)
 
-    - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
+    - ``discord.Guild`` or ``GuildConverter`` from ``bluebot.core.commands`` should be used instead
 - Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Blue.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
 
     - Read the method's documentation for more information
@@ -718,7 +718,7 @@ Core Bot
 
     - This can be disabled with ``[p]helpset showaliases`` command
 
-- Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
+- Fixed errors appearing when using Ctrl+C to interrupt ``bluebot --edit`` (:issue:`3777`, :issue:`4572`)
 
 Admin
 *****
@@ -821,7 +821,7 @@ Core Bot
 Utility Functions
 *****************
 
-- Added a function `redbot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
+- Added a function `bluebot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
 
 Dev Cog
 *******
@@ -1049,7 +1049,7 @@ Read before updating
 End-user changelog
 ------------------
 
-- **Core Bot** - Added info about the metadata file to ``redbot --debuginfo`` (:issue:`4557`)
+- **Core Bot** - Added info about the metadata file to ``bluebot --debuginfo`` (:issue:`4557`)
 - **Audio** - Fixed the ``[p]local search`` command (:issue:`4553`)
 - **Audio** - Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
 - **Audio** - Commands in ``[p]llset`` group can now be used in DMs (:issue:`4562`)
@@ -1078,7 +1078,7 @@ Read before updating
 3. Mutes functionality has been moved from the Mod cog to a new separate cog (Mutes) featuring timed and role-based mutes. If you were using it (or want to start now), you can load the new cog with ``[p]load mutes``. You can see the full `Mutes changelog below <important-341-1>`.
 4. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-   We've updated our `application.yml file <https://github.com/Cog-Creators/Blue-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+   We've updated our `application.yml file <https://github.com/Cog-Creators/Blue-DiscordBot/blob/3.4.1/bluebot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
    Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
 
 End-user changelog
@@ -1219,13 +1219,13 @@ Core Bot
 
 - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
 
-    - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
+    - New function added: `bluebot.core.i18n.set_contextual_locales_from_guild()`
     - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added `bot.remove_shared_api_services() <Blue.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
 - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Blue.get_shared_api_tokens()>` (:issue:`4370`)
 - Added `bot.get_or_fetch_user() <Blue.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Blue.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
-- Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
+- Moved ``bluebot.core.checks.bot_in_a_guild()`` to `bluebot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 
 Bank
 ****
@@ -1235,7 +1235,7 @@ Bank
 Mod
 ***
 
-- Deprecated ``redbot.core.utils.mod.is_allowed_by_hierarchy`` (:issue:`4435`)
+- Deprecated ``bluebot.core.utils.mod.is_allowed_by_hierarchy`` (:issue:`4435`)
 
 Modlog
 ******
@@ -1247,8 +1247,8 @@ Modlog
 Utility
 *******
 
-- Added `redbot.core.utils.get_end_user_data_statement()` and `redbot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
-- Added `redbot.core.utils.chat_formatting.quote()` to quote text in a message (:issue:`4425`)
+- Added `bluebot.core.utils.get_end_user_data_statement()` and `bluebot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
+- Added `bluebot.core.utils.chat_formatting.quote()` to quote text in a message (:issue:`4425`)
 
 Documentation changes
 ---------------------
@@ -1377,7 +1377,7 @@ Breaking changes
 - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 - Removed things past deprecation time: (:issue:`4163`)
 
-    - ``redbot.core.commands.APIToken``
+    - ``bluebot.core.commands.APIToken``
     - ``loop`` kwarg from `bounded_gather_iter()`, `bounded_gather()`, and `start_adding_reactions()`
 
 .. _important-dev-340-1:
@@ -1392,7 +1392,7 @@ Core Bot
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
 
-    - New special methods added to `redbot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
+    - New special methods added to `bluebot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information

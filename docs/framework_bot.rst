@@ -4,7 +4,7 @@
 Bot
 ===
 
-.. automodule:: redbot.core.bot
+.. automodule:: bluebot.core.bot
 
 Blue
 ^^^

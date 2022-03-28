@@ -4,8 +4,8 @@ from base64 import b64decode
 from io import BytesIO
 import struct
 
-from redbot import VersionInfo
-from redbot.core import commands
+from bluebot import VersionInfo
+from bluebot.core import commands
 
 from ..converters import get_lazy_converter, get_playlist_converter
 

@@ -6,10 +6,10 @@ from typing import Final
 import urllib.parse
 import aiohttp
 import discord
-from redbot.core import commands
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.chat_formatting import (
+from bluebot.core import commands
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils.menus import menu, DEFAULT_CONTROLS
+from bluebot.core.utils.chat_formatting import (
     bold,
     escape,
     italics,

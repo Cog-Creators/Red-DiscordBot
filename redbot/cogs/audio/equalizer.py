@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Final
 
-from redbot.core.i18n import Translator
+from bluebot.core.i18n import Translator
 
 _ = Translator("Audio", Path(__file__))
 

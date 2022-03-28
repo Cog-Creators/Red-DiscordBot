@@ -9,10 +9,10 @@ import lavalink
 from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import bold, escape
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import bold, escape
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
 from ...errors import QueryUnauthorized, SpotifyFetchError, TrackEnqueueError

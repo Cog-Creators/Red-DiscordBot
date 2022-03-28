@@ -1,7 +1,7 @@
 import discord
 
-from redbot.core.bot import Blue
-from redbot.core.config import Config
+from bluebot.core.bot import Blue
+from bluebot.core.config import Config
 
 
 async def is_allowed_by_hierarchy(

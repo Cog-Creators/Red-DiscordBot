@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List, Tuple, Optional
 
 import discord
-from redbot.core import Config, commands
-from redbot.core.bot import Blue
+from bluebot.core import Config, commands
+from bluebot.core.bot import Blue
 
 
 class MixinMeta(ABC):

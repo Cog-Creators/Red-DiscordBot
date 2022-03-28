@@ -6,12 +6,12 @@ from string import Formatter
 from typing import Dict, List, Literal
 
 import discord
-from redbot.core import Config, commands, checks
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from bluebot.core import Config, commands, checks
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils.chat_formatting import box, pagify
+from bluebot.core.utils.menus import menu, DEFAULT_CONTROLS
 
-from redbot.core.bot import Blue
+from bluebot.core.bot import Blue
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
 
 _ = Translator("Alias", __file__)

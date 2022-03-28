@@ -104,7 +104,7 @@ async def is_mod_or_superior(
 
     Parameters
     ----------
-    bot : redbot.core.bot.Blue
+    bot : bluebot.core.bot.Blue
         The bot object.
     obj : `discord.Message` or `discord.Member` or `discord.Role`
         The object to check permissions for.
@@ -186,7 +186,7 @@ async def is_admin_or_superior(
 
     Parameters
     ----------
-    bot : redbot.core.bot.Blue
+    bot : bluebot.core.bot.Blue
         The bot object.
     obj : `discord.Message` or `discord.Member` or `discord.Role`
         The object to check permissions for.

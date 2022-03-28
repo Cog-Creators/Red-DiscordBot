@@ -1220,7 +1220,7 @@ class Blue(
 
         Keyword Arguments
         -----------------
-        command : `redbot.core.commands.Command`, optional
+        command : `bluebot.core.commands.Command`, optional
             The command ran.
             This is auto-filled when ``channel`` is passed with command context.
         check_permissions : `bool`
@@ -1699,7 +1699,7 @@ class Blue(
 
     def add_command(self, command: commands.Command) -> None:
         if not isinstance(command, commands.Command):
-            raise RuntimeError("Commands must be instances of `redbot.core.commands.Command`")
+            raise RuntimeError("Commands must be instances of `bluebot.core.commands.Command`")
 
         super().add_command(command)
 
@@ -1949,7 +1949,7 @@ class Blue(
 
         Calling this should be limited to interfaces designed for it.
 
-        See ``redbot.core.commands.Cog.delete_data_for_user``
+        See ``bluebot.core.commands.Cog.delete_data_for_user``
         for details about the parameters and intent.
 
         Parameters

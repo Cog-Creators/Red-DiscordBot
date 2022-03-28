@@ -4,9 +4,9 @@ from typing import NamedTuple, Union, Optional
 
 import discord
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
 
 _ = Translator("PermissionsConverters", __file__)
 

@@ -1,4 +1,4 @@
-from redbot import _early_init
+from bluebot import _early_init
 
 # this needs to be called as early as possible
 _early_init()
@@ -23,13 +23,13 @@ from typing import NoReturn
 import discord
 import rich
 
-import redbot.logging
-from redbot import __version__
-from redbot.core.bot import Blue, ExitCodes, _NoOwnerSet
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
-from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core import data_manager, drivers
-from redbot.core._sharedlibdeprecation import SharedLibImportWarner
+import bluebot.logging
+from bluebot import __version__
+from bluebot.core.bot import Blue, ExitCodes, _NoOwnerSet
+from bluebot.core.cli import interactive_config, confirm, parse_cli_flags
+from bluebot.setup import get_data_dir, get_name, save_config
+from bluebot.core import data_manager, drivers
+from bluebot.core._sharedlibdeprecation import SharedLibImportWarner
 
 
 log = logging.getLogger("red.main")
@@ -51,7 +51,7 @@ def list_instances():
     if not data_manager.config_file.exists():
         print(
             "No instances have been configured! Configure one "
-            "using `redbot-setup` before trying to run the bot!"
+            "using `bluebot-setup` before trying to run the bot!"
         )
         sys.exit(1)
     else:
@@ -331,7 +331,7 @@ async def run_bot(red: Blue, cli_flags: Namespace) -> None:
 
     await driver_cls.initialize(**data_manager.storage_details())
 
-    redbot.logging.init_logging(
+    bluebot.logging.init_logging(
         level=cli_flags.logging_level,
         location=data_manager.core_data_path() / "logs",
         cli_flags=cli_flags,
@@ -413,7 +413,7 @@ async def run_bot(red: Blue, cli_flags: Namespace) -> None:
             " you can:\n"
             "a) pass --team-members-are-owners when launching Blue"
             " - in this case Blue will treat all members of the bot application's team as owners\n"
-            f"b) set owner manually with `redbot --edit {cli_flags.instance_name}`\n"
+            f"b) set owner manually with `bluebot --edit {cli_flags.instance_name}`\n"
             "c) pass owner ID(s) when launching Blue with --owner"
             " (and --co-owner if you need more than one) flag\n"
         )

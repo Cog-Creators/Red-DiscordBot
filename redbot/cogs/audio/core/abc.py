@@ -12,10 +12,10 @@ import aiohttp
 import discord
 import lavalink
 
-from redbot.core import Config, commands
-from redbot.core.bot import Blue
-from redbot.core.commands import Context
-from redbot.core.utils.dbtools import APSWConnectionWrapper
+from bluebot.core import Config, commands
+from bluebot.core.bot import Blue
+from bluebot.core.commands import Context
+from bluebot.core.utils.dbtools import APSWConnectionWrapper
 
 if TYPE_CHECKING:
     from ..apis.interface import AudioAPIInterface

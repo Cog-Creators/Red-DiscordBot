@@ -9,11 +9,11 @@ from typing import TYPE_CHECKING, List, Mapping, MutableMapping, Optional, Tuple
 import aiohttp
 from red_commons.logging import getLogger
 
-from redbot.core import Config
-from redbot.core.bot import Blue
-from redbot.core.commands import Cog, Context
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
+from bluebot.core import Config
+from bluebot.core.bot import Blue
+from bluebot.core.commands import Cog, Context
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
 
 from ..errors import SpotifyFetchError
 

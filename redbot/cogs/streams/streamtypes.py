@@ -21,8 +21,8 @@ from .errors import (
     StreamNotFound,
     YoutubeQuotaExceeded,
 )
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelta
+from bluebot.core.i18n import Translator
+from bluebot.core.utils.chat_formatting import humanize_number, humanize_timedelta
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"

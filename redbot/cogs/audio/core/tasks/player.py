@@ -7,8 +7,8 @@ from typing import Dict
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass

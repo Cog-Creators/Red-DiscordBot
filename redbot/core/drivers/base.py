@@ -4,7 +4,7 @@ from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type
 
 import rich.progress
 
-from redbot.core.utils._internal_utils import RichIndefiniteBarColumn
+from bluebot.core.utils._internal_utils import RichIndefiniteBarColumn
 
 __all__ = ["BaseDriver", "IdentifierData", "ConfigCategory"]
 

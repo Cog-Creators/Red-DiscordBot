@@ -15,12 +15,12 @@ import lavalink
 from discord.embeds import EmptyEmbed
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import ReactionPredicate
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import box
+from bluebot.core.utils.menus import start_adding_reactions
+from bluebot.core.utils.predicates import ReactionPredicate
 
 from ...apis.playlist_interface import Playlist, PlaylistCompat23, create_playlist
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query

@@ -1,5 +1,5 @@
-from redbot.core import commands
-from redbot.core.i18n import Translator
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
 
 __all__ = ("trivia_stop_check",)
 

@@ -4,9 +4,9 @@ from pathlib import Path
 import weakref
 
 import pytest
-from redbot.core import Config
-from redbot.core.bot import Blue
-from redbot.core import config as config_module, drivers
+from bluebot.core import Config
+from bluebot.core.bot import Blue
+from bluebot.core import config as config_module, drivers
 
 __all__ = [
     "override_data_path",
@@ -30,7 +30,7 @@ __all__ = [
 
 @pytest.fixture(autouse=True)
 def override_data_path(tmpdir):
-    from redbot.core import data_manager
+    from bluebot.core import data_manager
 
     data_manager.basic_config = data_manager.basic_config_default
     data_manager.basic_config["DATA_PATH"] = str(tmpdir)
@@ -154,7 +154,7 @@ def ctx(empty_member, empty_channel, red):
 # region Blue Mock
 @pytest.fixture()
 def red(config_fr):
-    from redbot.core.cli import parse_cli_flags
+    from bluebot.core.cli import parse_cli_flags
 
     cli_flags = parse_cli_flags(["ignore_me"])
 

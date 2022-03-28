@@ -2,7 +2,7 @@ import asyncio
 import pytest
 import random
 import textwrap
-from redbot.core.utils import (
+from bluebot.core.utils import (
     chat_formatting,
     bounded_gather,
     bounded_gather_iter,

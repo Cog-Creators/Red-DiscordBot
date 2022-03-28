@@ -32,7 +32,7 @@ Please read the following prior to updating.
       .. code::
         
         python -m pip install dnspython~=1.16.0 motor~=2.0.0 pymongo~=3.8.0
-        redbot-setup convert [instancename] json
+        bluebot-setup convert [instancename] json
 
 
 - 3.2 comes with many feature upgrades. A brief high level list of these is below.

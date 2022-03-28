@@ -152,7 +152,7 @@ After installation, set up your instance with the following command:
 .. prompt:: batch
     :prompts: (redenv) C:\\>
 
-    redbot-setup
+    bluebot-setup
 
 This will set the location where data will be stored, as well as your
 storage backend and the name of the instance (which will be used for
@@ -163,7 +163,7 @@ Once done setting up the instance, run the following command to run Blue:
 .. prompt:: batch
     :prompts: (redenv) C:\\>
 
-    redbot <your instance name>
+    bluebot <your instance name>
 
 It will walk through the initial setup, asking for your token and a prefix.
 `See how to obtain a token. <../bot_application_guide>`

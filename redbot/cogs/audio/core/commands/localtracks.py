@@ -6,9 +6,9 @@ from typing import MutableMapping
 import discord
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta

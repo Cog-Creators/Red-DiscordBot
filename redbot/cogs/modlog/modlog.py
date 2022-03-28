@@ -5,12 +5,12 @@ from typing import Optional, Union
 
 import discord
 
-from redbot.core import checks, commands, modlog
-from redbot.core.bot import Blue
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
-from redbot.core.utils.predicates import MessagePredicate
+from bluebot.core import checks, commands, modlog
+from bluebot.core.bot import Blue
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils.chat_formatting import bold, box, pagify
+from bluebot.core.utils.menus import DEFAULT_CONTROLS, menu
+from bluebot.core.utils.predicates import MessagePredicate
 
 _ = Translator("ModLog", __file__)
 

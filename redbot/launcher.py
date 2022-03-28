@@ -13,16 +13,16 @@ import asyncio
 import aiohttp
 
 import pkg_resources
-from redbot import MIN_PYTHON_VERSION
-from redbot.setup import (
+from bluebot import MIN_PYTHON_VERSION
+from bluebot.setup import (
     basic_setup,
     remove_instance,
     remove_instance_interaction,
     create_backup,
 )
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
-from redbot.core.cli import confirm
-from redbot.core.data_manager import load_existing_config
+from bluebot.core import __version__, version_info as red_version_info, VersionInfo
+from bluebot.core.cli import confirm
+from bluebot.core.data_manager import load_existing_config
 
 if sys.platform == "linux":
     import distro  # pylint: disable=import-error
@@ -69,7 +69,7 @@ def run_red(selected_instance, autorestart: bool = False, cliflags=None):
     interpreter = sys.executable
     while True:
         print("Starting {}...".format(selected_instance))
-        cmd_list = [interpreter, "-m", "redbot", selected_instance]
+        cmd_list = [interpreter, "-m", "bluebot", selected_instance]
         if cliflags:
             cmd_list += cliflags
         status = subprocess.call(cmd_list)

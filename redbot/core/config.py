@@ -128,7 +128,7 @@ class Value:
         Information on identifiers for this value.
     default
         The default value for the data element that `identifiers` points at.
-    driver : `redbot.core.drivers.BaseDriver`
+    driver : `bluebot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -277,7 +277,7 @@ class Group(Value):
         All registered default values for this Group.
     force_registration : `bool`
         Same as `Config.force_registration`.
-    driver : `redbot.core.drivers.BaseDriver`
+    driver : `bluebot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -613,7 +613,7 @@ class Config(metaclass=ConfigMeta):
         Unique identifier provided to differentiate cog data when name
         conflicts occur.
     driver
-        An instance of a driver that implements `redbot.core.drivers.BaseDriver`.
+        An instance of a driver that implements `bluebot.core.drivers.BaseDriver`.
     force_registration : `bool`
         Determines if Config should throw an error if a cog attempts to access
         an attribute which has not been previously registered.
@@ -955,7 +955,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The guild's Group object.
 
         Raises
@@ -977,7 +977,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The guild's Group object.
 
         """
@@ -995,7 +995,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The channel's Group object.
 
         Raises
@@ -1021,7 +1021,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The channel's Group object.
 
         """
@@ -1037,7 +1037,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The role's Group object.
 
         Raises
@@ -1059,7 +1059,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The role's Group object.
 
         """
@@ -1075,7 +1075,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The user's Group object.
 
         Raises
@@ -1097,7 +1097,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The user's Group object.
 
         """
@@ -1115,7 +1115,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The member's Group object.
 
         Raises
@@ -1141,7 +1141,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The member's Group object.
 
         """
@@ -1160,7 +1160,7 @@ class Config(metaclass=ConfigMeta):
 
         Returns
         -------
-        `Group <redbot.core.config.Group>`
+        `Group <bluebot.core.config.Group>`
             The custom group's Group object.
 
         """

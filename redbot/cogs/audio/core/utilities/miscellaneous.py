@@ -13,11 +13,11 @@ import lavalink
 from discord.embeds import EmptyEmbed
 from red_commons.logging import getLogger
 
-from redbot.core import bank, commands
-from redbot.core.commands import Context
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import humanize_number
+from bluebot.core import bank, commands
+from bluebot.core.commands import Context
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import humanize_number
 
 from ...apis.playlist_interface import get_all_playlist_for_migration23
 from ...utils import PlaylistScope, task_callback_trace

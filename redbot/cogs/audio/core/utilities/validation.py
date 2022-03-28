@@ -6,8 +6,8 @@ from urllib.parse import urlparse
 import discord
 from red_commons.logging import getLogger
 
-from redbot.core import Config
-from redbot.core.commands import Context
+from bluebot.core import Config
+from bluebot.core.commands import Context
 
 from ...audio_dataclasses import Query
 from ..abc import MixinMeta

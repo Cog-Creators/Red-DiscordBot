@@ -7,7 +7,7 @@ Utility Functions
 General Utility
 ===============
 
-.. automodule:: redbot.core.utils
+.. automodule:: bluebot.core.utils
     :members: deduplicate_iterables, bounded_gather, bounded_gather_iter, get_end_user_data_statement, get_end_user_data_statement_or_raise
 
 .. autoclass:: AsyncIter
@@ -25,20 +25,20 @@ General Utility
 Chat Formatting
 ===============
 
-.. automodule:: redbot.core.utils.chat_formatting
+.. automodule:: bluebot.core.utils.chat_formatting
     :members:
 
 Embed Helpers
 =============
 
-.. automodule:: redbot.core.utils.embed
+.. automodule:: bluebot.core.utils.embed
     :members:
     :exclude-members: randomize_color
 
 Reaction Menus
 ==============
 
-.. automodule:: redbot.core.utils.menus
+.. automodule:: bluebot.core.utils.menus
     :members:
 
 Event Predicates
@@ -47,29 +47,29 @@ Event Predicates
 MessagePredicate
 ****************
 
-.. autoclass:: redbot.core.utils.predicates.MessagePredicate
+.. autoclass:: bluebot.core.utils.predicates.MessagePredicate
     :members:
 
 ReactionPredicate
 *****************
 
-.. autoclass:: redbot.core.utils.predicates.ReactionPredicate
+.. autoclass:: bluebot.core.utils.predicates.ReactionPredicate
     :members:
 
 Mod Helpers
 ===========
 
-.. automodule:: redbot.core.utils.mod
+.. automodule:: bluebot.core.utils.mod
     :members:
 
 Tunnel
 ======
 
-.. automodule:: redbot.core.utils.tunnel
+.. automodule:: bluebot.core.utils.tunnel
     :members: Tunnel
 
 Common Filters
 ==============
 
-.. automodule:: redbot.core.utils.common_filters
+.. automodule:: bluebot.core.utils.common_filters
     :members:

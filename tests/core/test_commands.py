@@ -5,8 +5,8 @@ from dateutil.relativedelta import relativedelta
 import pytest
 from discord.ext import commands as dpy_commands
 
-from redbot.core import commands
-from redbot.core.commands import converter
+from bluebot.core import commands
+from bluebot.core.commands import converter
 
 
 @pytest.fixture(scope="session")

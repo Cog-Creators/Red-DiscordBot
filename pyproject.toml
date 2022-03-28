@@ -9,6 +9,6 @@
     include = '\.py$'
     force-exclude = '''
     /(
-        redbot\/vendored
+        bluebot\/vendored
     )/
     '''

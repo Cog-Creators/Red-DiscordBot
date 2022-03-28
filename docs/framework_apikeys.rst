@@ -66,7 +66,7 @@ Event Reference
 Additional References
 *********************
 
-.. py:currentmodule:: redbot.core.bot
+.. py:currentmodule:: bluebot.core.bot
 
 .. automethod:: Blue.get_shared_api_tokens
     :noindex:

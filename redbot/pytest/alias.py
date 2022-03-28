@@ -1,7 +1,7 @@
 import pytest
 
-from redbot.cogs.alias import Alias
-from redbot.core import Config
+from bluebot.cogs.alias import Alias
+from bluebot.core import Config
 
 __all__ = ["alias"]
 

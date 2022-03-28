@@ -2,10 +2,10 @@ from copy import copy
 import asyncio
 import discord
 
-from redbot.core import Config, checks, commands
-from redbot.core.commands.requires import PrivilegeLevel
-from redbot.core.i18n import Translator
-from redbot.core.utils.predicates import MessagePredicate
+from bluebot.core import Config, checks, commands
+from bluebot.core.commands.requires import PrivilegeLevel
+from bluebot.core.i18n import Translator
+from bluebot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Warnings", __file__)
 

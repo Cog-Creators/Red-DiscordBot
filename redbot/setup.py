@@ -1,4 +1,4 @@
-from redbot import _early_init
+from bluebot import _early_init
 
 # this needs to be called as early as possible
 _early_init()
@@ -14,15 +14,15 @@ from typing import Dict, Any, Optional, Union
 
 import click
 
-from redbot.core.cli import confirm
-from redbot.core.utils._internal_utils import (
+from bluebot.core.cli import confirm
+from bluebot.core.utils._internal_utils import (
     safe_delete,
     create_backup as red_create_backup,
     cli_level_to_log_level,
 )
-from redbot.core import config, data_manager, drivers
-from redbot.core.data_manager import appdir, config_dir, config_file
-from redbot.core.drivers import BackendType, IdentifierData
+from bluebot.core import config, data_manager, drivers
+from bluebot.core.data_manager import appdir, config_dir, config_file
+from bluebot.core.drivers import BackendType, IdentifierData
 
 conversion_log = logging.getLogger("red.converter")
 
@@ -223,7 +223,7 @@ def basic_setup(
     if interactive:
         print()
         print(
-            f"Your basic configuration has been saved. Please run `redbot {name}` to"
+            f"Your basic configuration has been saved. Please run `bluebot {name}` to"
             " continue your setup process and to run the bot.\n\n"
             "First time? Read the quickstart guide:\n"
             "https://docs.discord.red/en/stable/getting_started.html"

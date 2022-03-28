@@ -9,13 +9,13 @@ from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List
 from collections import defaultdict
 
 import discord
-from redbot.core import checks, commands, Config, version_info as red_version_info
-from redbot.core.bot import Blue
-from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
-from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from bluebot.core import checks, commands, Config, version_info as red_version_info
+from bluebot.core.bot import Blue
+from bluebot.core.data_manager import cog_data_path
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils.chat_formatting import box, pagify, humanize_list, inline
+from bluebot.core.utils.menus import start_adding_reactions
+from bluebot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import errors
 from .checks import do_install_agreement
@@ -1758,7 +1758,7 @@ class Downloader(commands.Cog):
                     else cog_installable.repo.name
                 )
                 cog_name = cog_installable.name
-            elif cog.__module__.startswith("redbot."):  # core commands or core cog
+            elif cog.__module__.startswith("bluebot."):  # core commands or core cog
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cock-Creators/Blue-DiscordBot"
                 cog_name = cog.__class__.__name__

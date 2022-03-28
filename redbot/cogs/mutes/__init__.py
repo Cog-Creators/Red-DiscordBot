@@ -1,4 +1,4 @@
-from redbot.core.bot import Blue
+from bluebot.core.bot import Blue
 from .mutes import Mutes
 
 

@@ -7,10 +7,10 @@ from typing import Optional
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.dbtools import APSWConnectionWrapper
+from bluebot.core.data_manager import cog_data_path
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.dbtools import APSWConnectionWrapper
 
 from ...apis.interface import AudioAPIInterface
 from ...apis.playlist_wrapper import PlaylistWrapper

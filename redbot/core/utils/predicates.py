@@ -5,7 +5,7 @@ from typing import Callable, ClassVar, List, Optional, Pattern, Sequence, Tuple,
 
 import discord
 
-from redbot.core import commands
+from bluebot.core import commands
 
 _ID_RE = re.compile(r"([0-9]{15,20})$")
 _USER_MENTION_RE = re.compile(r"<@!?([0-9]{15,20})>$")
@@ -834,8 +834,8 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     --------
     Confirming a yes/no question with a tick/cross reaction::
 
-        from redbot.core.utils.predicates import ReactionPredicate
-        from redbot.core.utils.menus import start_adding_reactions
+        from bluebot.core.utils.predicates import ReactionPredicate
+        from bluebot.core.utils.menus import start_adding_reactions
 
         msg = await ctx.send("Yes or no?")
         start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
@@ -852,8 +852,8 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     Waiting for the first reaction from any user with one of the first
     5 letters of the alphabet::
 
-        from redbot.core.utils.predicates import ReactionPredicate
-        from redbot.core.utils.menus import start_adding_reactions
+        from bluebot.core.utils.predicates import ReactionPredicate
+        from bluebot.core.utils.menus import start_adding_reactions
 
         msg = await ctx.send("React to me!")
         emojis = ReactionPredicate.ALPHABET_EMOJIS[:5]

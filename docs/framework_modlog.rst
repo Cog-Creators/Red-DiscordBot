@@ -16,7 +16,7 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import commands, modlog
+    from bluebot.core import commands, modlog
     import discord
 
     class MyCog(commands.Cog):
@@ -41,7 +41,7 @@ it from your setup function:
 .. code-block:: python
 
     # mycog/mycog.py
-    from redbot.core import modlog, commands
+    from bluebot.core import modlog, commands
     import discord
 
     class MyCog(commands.Cog):
@@ -101,5 +101,5 @@ API Reference
 Mod log
 =======
 
-.. automodule:: redbot.core.modlog
+.. automodule:: bluebot.core.modlog
     :members:

@@ -2,7 +2,7 @@ import importlib.machinery
 
 import discord
 
-from redbot.core.utils.chat_formatting import humanize_number
+from bluebot.core.utils.chat_formatting import humanize_number
 from .i18n import Translator
 
 _ = Translator(__name__, __file__)
@@ -78,7 +78,7 @@ class CannotSetSubfield(StoredTypeError):
     This would occur in the following example::
 
         >>> import asyncio
-        >>> from redbot.core import Config
+        >>> from bluebot.core import Config
         >>> config = Config.get_conf(None, 1234, cog_name="Example")
         >>> async def example():
         ...     await config.foo.set(True)

@@ -3,9 +3,9 @@ from re import findall
 
 import discord
 from discord.ext.commands.view import StringView
-from redbot.core import commands, Config
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
+from bluebot.core import commands, Config
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
 
 _ = Translator("Alias", __file__)
 

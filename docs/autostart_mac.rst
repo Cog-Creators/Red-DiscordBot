@@ -38,7 +38,7 @@ Paste the following and replace the following:
                 <string>path</string>
                 <string>-O</string>
                 <string>-m</string>
-                <string>redbot</string>
+                <string>bluebot</string>
                 <string>instance-name</string>
                 <string>--no-prompt</string>
             </array>
@@ -62,7 +62,7 @@ Paste the following and replace the following:
 
 .. note::
 
-    You may add any additional arguments you need to add to the :code:`redbot` command by 
+    You may add any additional arguments you need to add to the :code:`bluebot` command by 
     adding them to the end of the array under :code:`ProgramArguments`
 
 .. note::

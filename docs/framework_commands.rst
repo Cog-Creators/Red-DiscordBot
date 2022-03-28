@@ -9,11 +9,11 @@ all of the attributes from discord.py's are also in ours.
 Some of these attributes, however, have been slightly modified, while others have been added to
 extend functionalities used throughout the bot, as outlined below.
 
-.. autofunction:: redbot.core.commands.command
+.. autofunction:: bluebot.core.commands.command
 
-.. autofunction:: redbot.core.commands.group
+.. autofunction:: bluebot.core.commands.group
 
-.. autoclass:: redbot.core.commands.Cog
+.. autoclass:: bluebot.core.commands.Cog
 
     .. automethod:: format_help_for_context
     
@@ -21,24 +21,24 @@ extend functionalities used throughout the bot, as outlined below.
     
     .. automethod:: red_delete_data_for_user
 
-.. autoclass:: redbot.core.commands.Command
+.. autoclass:: bluebot.core.commands.Command
     :members:
     :inherited-members: format_help_for_context
 
-.. autoclass:: redbot.core.commands.Group
+.. autoclass:: bluebot.core.commands.Group
     :members:
 
-.. autoclass:: redbot.core.commands.Context
+.. autoclass:: bluebot.core.commands.Context
     :members:
 
-.. autoclass:: redbot.core.commands.GuildContext
+.. autoclass:: bluebot.core.commands.GuildContext
 
-.. autoclass:: redbot.core.commands.DMContext
+.. autoclass:: bluebot.core.commands.DMContext
 
-.. automodule:: redbot.core.commands.requires
+.. automodule:: bluebot.core.commands.requires
     :members: PrivilegeLevel, PermState, Requires
 
-.. automodule:: redbot.core.commands.converter
+.. automodule:: bluebot.core.commands.converter
     :members:
     :exclude-members: UserInputOptional, convert
     :no-undoc-members:
@@ -59,5 +59,5 @@ Help Functionality
     on `this issue <https://github.com/Cock-Creators/Blue-DiscordBot/issues/4084>`_
 
 
-.. automodule:: redbot.core.commands.help
+.. automodule:: bluebot.core.commands.help
     :members:

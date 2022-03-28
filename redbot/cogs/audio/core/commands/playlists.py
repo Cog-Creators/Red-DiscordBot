@@ -13,14 +13,14 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.commands import UserInputOptional
-from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import bold, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
-from redbot.core.utils.predicates import MessagePredicate
+from bluebot.core import commands
+from bluebot.core.commands import UserInputOptional
+from bluebot.core.data_manager import cog_data_path
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import bold, pagify
+from bluebot.core.utils.menus import DEFAULT_CONTROLS, menu
+from bluebot.core.utils.predicates import MessagePredicate
 
 from ...apis.api_utils import FakePlaylist
 from ...apis.playlist_interface import Playlist, create_playlist, delete_playlist, get_all_playlist

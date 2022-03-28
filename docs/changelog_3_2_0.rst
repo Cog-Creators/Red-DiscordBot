@@ -97,7 +97,7 @@ Breaking Changes
 ~~~~~~~~~~~~~~~~
 
 - Modlog casetypes no longer have an attribute for auditlog action type. (`#2897 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2897>`_)
-- Removed ``redbot.core.modlog.get_next_case_number()``. (`#2908 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2908>`_)
+- Removed ``bluebot.core.modlog.get_next_case_number()``. (`#2908 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2908>`_)
 - Removed ``bank.MAX_BALANCE``, use ``bank.get_max_balance()`` from now on. (`#2926 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2926>`_)
 - The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned.
   New methods for this include
@@ -110,7 +110,7 @@ Breaking Changes
     - ``bot.get_admin_role_ids``
     - ``bot.get_mod_roles``
     - ``bot.get_mod_role_ids`` (`#2967 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2967>`_)
-- Reserved some command names for internal Blue use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES``. (`#2973 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2973>`_)
+- Reserved some command names for internal Blue use. These are available programatically as ``bluebot.core.commands.RESERVED_COMMAND_NAMES``. (`#2973 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2973>`_)
 - Removed ``bot._counter``, Made a few more attrs private (``cog_mgr``, ``main_dir``). (`#2976 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2976>`_)
 - Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord.
   This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it. (`#3073 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3073>`_)
@@ -129,8 +129,8 @@ Bug Fixes
 - Removed potential for additional bad API calls per ban/unban. (`#2945 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2945>`_)
 - The ``[p]invite`` command no longer errors when a user has the bot blocked or DMs disabled in the server. (`#2948 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2948>`_)
 - Stopped using the ``:`` character in backup's filename - Windows doesn't accept it. (`#2954 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2954>`_)
-- ``redbot-setup delete`` no longer errors with "unexpected keyword argument". (`#2955 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2955>`_)
-- ``redbot-setup delete`` no longer prompts about backup when the user passes the option ``--no-prompt``. (`#2956 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2956>`_)
+- ``bluebot-setup delete`` no longer errors with "unexpected keyword argument". (`#2955 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2955>`_)
+- ``bluebot-setup delete`` no longer prompts about backup when the user passes the option ``--no-prompt``. (`#2956 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2956>`_)
 - Cleaned up the ``[p]inviteset public`` and ``[p]inviteset perms`` help strings.  (`#2963 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2963>`_)
 - ```[p]embedset user`` now only affects DM's. (`#2966 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2966>`_)
 - Fixed an unfriendly error when the provided instance name doesn't exist. (`#2968 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2968>`_)
@@ -150,7 +150,7 @@ Bug Fixes
 - Fixed ``is_automod_immune``'s handling of the guild check and added support for checking webhooks. (`#3100 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3100>`_)
 - Fixed the generation of the ``repos.json`` file in the backup process. (`#3114 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3114>`_)
 - Fixed an issue where calling audio commands when not in a voice channel could result in a crash. (`#3120 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3120>`_)
-- Added handling for invalid folder names in the data path gracefully in ``redbot-setup`` and ``redbot --edit``. (`#3171 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3171>`_)
+- Added handling for invalid folder names in the data path gracefully in ``bluebot-setup`` and ``bluebot --edit``. (`#3171 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3171>`_)
 - ``--owner`` and ``-p`` cli flags now work when added from launcher. (`#3174 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3174>`_)
 - Blue will now prevent users from locking themselves out with localblacklist. (`#3207 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3207>`_)
 - Fixed help ending up a little too large for discord embed limits. (`#3208 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3208>`_)
@@ -159,8 +159,8 @@ Bug Fixes
 - Guild owners are no longer affected by the local whitelist and blacklist. (`#3221 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3221>`_)
 - Fixed an attribute error that can be raised in ``humanize_timedelta`` if ``seconds = 0``. (`#3231 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3231>`_)
 - Fixed ``ctx.clean_prefix`` issues resulting from undocumented changes from discord. (`#3249 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3249>`_)
-- ``redbot.core.bot.Bot.owner_id`` is now set in the post connection startup. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
-- ``redbot.core.bot.Bot.send_to_owners()`` and ``redbot.core.bot.Bot.get_owner_notification_destinations()`` now wait until Blue is done with post connection startup to ensure owner ID is available. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
+- ``bluebot.core.bot.Bot.owner_id`` is now set in the post connection startup. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
+- ``bluebot.core.bot.Bot.send_to_owners()`` and ``bluebot.core.bot.Bot.get_owner_notification_destinations()`` now wait until Blue is done with post connection startup to ensure owner ID is available. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
 
 
 Enhancements
@@ -168,29 +168,29 @@ Enhancements
 
 - Added the option to modify the RPC port with the ``--rpc-port`` flag. (`#2429 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2429>`_)
 - Slots now has a 62.5% expected payout and will not inflate economy when spammed. (`#2875 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2875>`_)
-- Allowed passing ``cls`` in the ``redbot.core.commands.group()`` decorator. (`#2881 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2881>`_)
+- Allowed passing ``cls`` in the ``bluebot.core.commands.group()`` decorator. (`#2881 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2881>`_)
 - Blue's Help Formatter is now considered to have a stable API. (`#2892 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2892>`_)
 - Modlog no longer generates cases without being told to for actions the bot did. (`#2897 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2897>`_)
 - Some generic modlog casetypes are now pre-registered for cog creator use. (`#2897 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2897>`_)
 - ModLog is now much faster at creating cases, especially in large servers. (`#2908 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2908>`_)
 - JSON config files are now stored without indentation, this is to reduce the file size and increase the performance of write operations. (`#2921 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2921>`_)
-- ``--[no-]backup``, ``--[no-]drop-db`` and ``--[no-]remove-datapath`` in the ``redbot-setup delete`` command are now on/off flags. (`#2958 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2958>`_)
-- The confirmation prompts in ``redbot-setup`` now have default values for user convenience. (`#2958 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2958>`_)
-- ``redbot-setup delete`` now has the option to leave Blue's data untouched on database backends. (`#2962 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2962>`_)
+- ``--[no-]backup``, ``--[no-]drop-db`` and ``--[no-]remove-datapath`` in the ``bluebot-setup delete`` command are now on/off flags. (`#2958 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2958>`_)
+- The confirmation prompts in ``bluebot-setup`` now have default values for user convenience. (`#2958 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2958>`_)
+- ``bluebot-setup delete`` now has the option to leave Blue's data untouched on database backends. (`#2962 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2962>`_)
 - Blue now takes less time to fetch cases, unban members, and list warnings. (`#2964 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2964>`_)
 - Blue now handles more things prior to connecting to discord to reduce issues during the initial load. (`#3045 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3045>`_)
 - ``bot.send_filtered`` now returns the message that is sent. (`#3052 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3052>`_)
 - Blue will now send a message when the invoked command is DM-only. (`#3057 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3057>`_)
 - All ``y/n`` confirmations in cli commands are now unified. (`#3060 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3060>`_)
 - Changed ``[p]info`` to say "This bot is an..." instead of "This is an..." for clarity. (`#3121 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3121>`_)
-- ``redbot-setup`` will now use the instance name in default data paths to avoid creating a second instance with the same data path. (`#3171 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3171>`_)
+- ``bluebot-setup`` will now use the instance name in default data paths to avoid creating a second instance with the same data path. (`#3171 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3171>`_)
 - Instance names can now only include characters A-z, numbers, underscores, and hyphens. Old instances are unaffected by this change. (`#3171 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3171>`_)
 - Clarified that ``[p]backup`` saves the **bot's** data in the help text. (`#3172 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3172>`_)
-- Added ``redbot --debuginfo`` flag which shows useful information for debugging. (`#3183 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3183>`_)
+- Added ``bluebot --debuginfo`` flag which shows useful information for debugging. (`#3183 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3183>`_)
 - Added the Python executable field to ``[p]debuginfo``. (`#3184 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3184>`_)
 - When Blue prompts for a token, it will now print a link to the guide explaining how to obtain a token. (`#3204 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3204>`_)
-- ``redbot-setup`` will no longer log to disk. (`#3269 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3269>`_)
-- ``redbot.core.bot.Bot.send_to_owners()`` and ``redbot.core.bot.Bot.get_owner_notification_destinations()`` now log when they are not able to find the owner notification destination. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
+- ``bluebot-setup`` will no longer log to disk. (`#3269 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3269>`_)
+- ``bluebot.core.bot.Bot.send_to_owners()`` and ``bluebot.core.bot.Bot.get_owner_notification_destinations()`` now log when they are not able to find the owner notification destination. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
 - The lib folder is now cleared on minor Python version changes. ``[p]cog reinstallreqs`` in Downloader can be used to regenerate the lib folder for a new Python version. (`#3274 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3274>`_)
 - If Blue detects operating system or architecture change, it will now warn the owner about possible problems with the lib folder. (`#3274 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3274>`_)
 - ``[p]playlist download`` will now compress playlists larger than the server attachment limit and attempt to send that. (`#3279 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3279>`_)
@@ -210,28 +210,28 @@ New Features
     - ``Config.member_from_ids``
       - This one requires multiple ids, one for the guild, one for the user
       - Consequence of discord's object model (`#2804 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2804>`_)
-- New method ``humanize_number`` in ``redbot.core.utils.chat_formatting`` to convert numbers into text that respects the current locale. (`#2836 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2836>`_)
+- New method ``humanize_number`` in ``bluebot.core.utils.chat_formatting`` to convert numbers into text that respects the current locale. (`#2836 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2836>`_)
 - Added new commands to Economy
 
   - ``[p]bank prune user`` - This will delete a user's bank account.
   - ``[p]bank prune local`` - This will prune the bank of accounts for users who are no longer in the server.
   - ``[p]bank prune global`` - This will prune the global bank of accounts for users who do not share any servers with the bot. (`#2845 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2845>`_)
 - Blue now uses towncrier for changelog generation. (`#2872 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2872>`_)
-- Added ``redbot.core.modlog.get_latest_case`` to fetch the case object for the most recent ModLog case. (`#2908 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2908>`_)
+- Added ``bluebot.core.modlog.get_latest_case`` to fetch the case object for the most recent ModLog case. (`#2908 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2908>`_)
 - Added ``[p]bankset maxbal`` to set the maximum bank balance. (`#2926 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2926>`_)
 - Added a few methods and classes replacing direct config access (which is no longer supported)
 
-   - ``redbot.core.Blue.allowed_by_whitelist_blacklist``
-   - ``redbot.core.Blue.get_valid_prefixes``
-   - ``redbot.core.Blue.clear_shared_api_tokens``
-   - ``redbot.core.commands.help.HelpSettings`` (`#2976 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2976>`_)
-- Added the cli flag ``redbot --edit`` which is used to edit the instance name, token, owner, and datapath. (`#3060 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3060>`_)
+   - ``bluebot.core.Blue.allowed_by_whitelist_blacklist``
+   - ``bluebot.core.Blue.get_valid_prefixes``
+   - ``bluebot.core.Blue.clear_shared_api_tokens``
+   - ``bluebot.core.commands.help.HelpSettings`` (`#2976 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2976>`_)
+- Added the cli flag ``bluebot --edit`` which is used to edit the instance name, token, owner, and datapath. (`#3060 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3060>`_)
 - Added ``[p]licenseinfo``. (`#3090 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3090>`_)
 - Ensured that people can migrate from MongoDB. (`#3108 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3108>`_)
 - Added a command to list disabled commands globally or per guild. (`#3118 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3118>`_)
 - New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for a service are updated. (`#3134 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3134>`_)
-- Added ``redbot-setup backup``. (`#3235 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3235>`_)
-- Added the method ``redbot.core.bot.Bot.wait_until_red_ready()`` that waits until Blue's post connection startup is done. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
+- Added ``bluebot-setup backup``. (`#3235 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3235>`_)
+- Added the method ``bluebot.core.bot.Bot.wait_until_red_ready()`` that waits until Blue's post connection startup is done. (`#3273 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3273>`_)
 
 
 Removals
@@ -239,8 +239,8 @@ Removals
 
 - ``[p]set owner`` and ``[p]set token`` have been removed in favor of managing server side. (`#2928 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2928>`_)
 - Shared libraries are marked for removal in Blue 3.4. (`#3106 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3106>`_)
-- Removed ``[p]backup``. Use the cli command ``redbot-setup backup`` instead. (`#3235 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3235>`_)
-- Removed the functions ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` from ``redbot.core.utils``. (`#3240 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3240>`_)
+- Removed ``[p]backup``. Use the cli command ``bluebot-setup backup`` instead. (`#3235 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3235>`_)
+- Removed the functions ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` from ``bluebot.core.utils``. (`#3240 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3240>`_)
 - Removed a lot of the launcher's handled behavior. (`#3289 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3289>`_)
 
 
@@ -266,11 +266,11 @@ Documentation Changes
 - Added documentation for PM2 support. (`#2105 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2105>`_)
 - Updated linux install docs, adding sections for Fedora Linux, Debian/Raspbian Buster, and openSUSE. (`#2558 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2558>`_)
 - Created documentation covering what we consider a developer facing breaking change and the guarantees regarding them. (`#2882 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2882>`_)
-- Fixed the user parameter being labeled as ``discord.TextChannel`` instead of ``discord.abc.User`` in ``redbot.core.utils.predicates``. (`#2914 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2914>`_)
+- Fixed the user parameter being labeled as ``discord.TextChannel`` instead of ``discord.abc.User`` in ``bluebot.core.utils.predicates``. (`#2914 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2914>`_)
 - Updated towncrier info in the contribution guidelines to explain how to create a changelog for a standalone PR. (`#2915 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2915>`_)
 - Reworded the virtual environment guide to make it sound less scary. (`#2920 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2920>`_)
 - Driver docs no longer show twice. (`#2972 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2972>`_)
-- Added more information about ``redbot.core.utils.humanize_timedelta`` into the docs. (`#2986 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2986>`_)
+- Added more information about ``bluebot.core.utils.humanize_timedelta`` into the docs. (`#2986 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2986>`_)
 - Added a direct link to the "Installing Blue" section in "Installing using powershell and chocolatey". (`#2995 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2995>`_)
 - Updated Git PATH install (Windows), capitalized some words, stopped mentioning the launcher. (`#2998 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2998>`_)
 - Added autostart documentation for Blue users who installed Blue inside of a virtual environment. (`#3005 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3005>`_)
@@ -291,7 +291,7 @@ Documentation Changes
 - Documented additional attributes in Context. (`#3151 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3151>`_)
 - Updated Windows docs with up to date dependency instructions. (`#3188 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3188>`_)
 - Added a "Publishing cogs for V3" document explaining how to make user's cogs work with Downloader. (`#3234 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3234>`_)
-- Fixed broken docs for ``redbot.core.commands.Context.react_quietly``. (`#3257 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3257>`_)
+- Fixed broken docs for ``bluebot.core.commands.Context.react_quietly``. (`#3257 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3257>`_)
 - Updated copyright notices on License and RTD config to 2020. (`#3259 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3259>`_)
 - Added a line about setuptools and wheel. (`#3262 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3262>`_)
 - Ensured development builds are not advertised to the wrong audience. (`#3292 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3292>`_)
@@ -448,7 +448,7 @@ Bug Fixes
 - Downloader will no longer attempt to install a cog with same name as another cog that is already installed. (`#2927 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2927>`_)
 - Added error handling for when a remote repository or branch is deleted, now notifies the which repository failed and continues to update the others. (`#2936 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2936>`_)
 - ``[p]cog install`` will no longer error if a cog has an empty install message. (`#3024 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3024>`_)
-- Made ``redbot.cogs.downloader.repo_manager.Repo.clean_url`` work with relative urls. This property is ``str`` type now. (`#3141 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3141>`_)
+- Made ``bluebot.cogs.downloader.repo_manager.Repo.clean_url`` work with relative urls. This property is ``str`` type now. (`#3141 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3141>`_)
 - Fixed an error on repo add from empty string values for the ``install_msg`` info.json field. (`#3153 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3153>`_)
 - Disabled all git auth prompts when adding/updating a repo with Downloader. (`#3159 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3159>`_)
 - ``[p]findcog`` now properly works for cogs with less typical folder structure. (`#3177 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3177>`_)
@@ -483,7 +483,7 @@ New Features
 Documentation Changes
 ~~~~~~~~~~~~~~~~~~~~~
 
-- Added ``redbot.cogs.downloader.installable.InstalledModule`` to Downloader's framework docs. (`#2527 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2527>`_)
+- Added ``bluebot.cogs.downloader.installable.InstalledModule`` to Downloader's framework docs. (`#2527 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/2527>`_)
 - Removed API References for Downloader. (`#3234 <https://github.com/Cog-Creators/Blue-DiscordBot/issues/3234>`_)
 
 

@@ -164,7 +164,7 @@ While not required for approved Cog Creators, they are still recommended in orde
 
 - Utilize the data deletion and statement APIs
 
-  - See `redbot.core.commands.Cog.red_delete_data_for_user()`
+  - See `bluebot.core.commands.Cog.red_delete_data_for_user()`
   - | Make a statement about what data your cogs use with the module level
       variable ``__red_end_user_data_statement__``.
     | This should be a string containing a user friendly explanation of what data
@@ -172,7 +172,7 @@ While not required for approved Cog Creators, they are still recommended in orde
 
 - Set contextual locales in events and other background tasks that use i18n APIs
 
-  - See `redbot.core.i18n.set_contextual_locales_from_guild()`
+  - See `bluebot.core.i18n.set_contextual_locales_from_guild()`
   - Usage of i18n APIs within commands automatically has proper contextual locales set.
 
 ----------------------------

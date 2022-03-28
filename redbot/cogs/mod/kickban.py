@@ -5,17 +5,17 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple, Union
 
 import discord
-from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional, RawUserIdConverter
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import (
+from bluebot.core import commands, i18n, checks, modlog
+from bluebot.core.commands import UserInputOptional, RawUserIdConverter
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import (
     pagify,
     humanize_number,
     bold,
     humanize_list,
     format_perms_list,
 )
-from redbot.core.utils.mod import get_audit_reason
+from bluebot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
 from .utils import is_allowed_by_hierarchy
 

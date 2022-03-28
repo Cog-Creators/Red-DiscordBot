@@ -5,8 +5,8 @@ import sys
 
 import pytest
 
-from redbot import core
-from redbot.core import VersionInfo
+from bluebot import core
+from bluebot.core import VersionInfo
 
 
 def test_version_working():

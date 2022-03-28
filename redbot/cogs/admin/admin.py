@@ -3,10 +3,10 @@ import logging
 from typing import Tuple
 
 import discord
-from redbot.core import Config, checks, commands
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.predicates import MessagePredicate
+from bluebot.core import Config, checks, commands
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils.chat_formatting import box
+from bluebot.core.utils.predicates import MessagePredicate
 
 from .announcer import Announcer
 from .converters import SelfRole

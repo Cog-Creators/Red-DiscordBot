@@ -10,11 +10,11 @@ import lavalink
 from red_commons.logging import getLogger
 
 from discord.embeds import EmptyEmbed
-from redbot.core import commands
-from redbot.core.commands import UserInputOptional
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
+from bluebot.core import commands
+from bluebot.core.commands import UserInputOptional
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
 from ...errors import (

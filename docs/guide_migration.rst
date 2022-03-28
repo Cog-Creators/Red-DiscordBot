@@ -18,7 +18,7 @@ V3 makes Blue a package that is installed with :code:`pip`. Please
 keep this in mind when writing cogs as this affects how imports 
 should be done (for example, to import :code:`pagify` in V2, one
 would do :code:`from .utils.chat_formatting import pagify`; in
-V3, this becomes :code:`from redbot.core.utils.chat_formatting import pagify`)
+V3, this becomes :code:`from bluebot.core.utils.chat_formatting import pagify`)
 
 ----------------
 Cogs as packages

@@ -3,9 +3,9 @@ from collections import defaultdict, deque
 from typing import Optional
 from datetime import timedelta
 
-from redbot.core import commands, i18n, checks
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
+from bluebot.core import commands, i18n, checks
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import box, humanize_timedelta, inline
 
 from .abc import MixinMeta
 

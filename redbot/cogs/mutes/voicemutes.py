@@ -3,15 +3,15 @@ from datetime import timezone, timedelta, datetime
 from .abc import MixinMeta
 
 import discord
-from redbot.core import commands, checks, i18n, modlog
-from redbot.core.utils.chat_formatting import (
+from bluebot.core import commands, checks, i18n, modlog
+from bluebot.core.utils.chat_formatting import (
     bold,
     humanize_timedelta,
     humanize_list,
     pagify,
     format_perms_list,
 )
-from redbot.core.utils.mod import get_audit_reason
+from bluebot.core.utils.mod import get_audit_reason
 
 from .converters import MuteTime
 

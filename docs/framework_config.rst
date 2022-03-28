@@ -20,8 +20,8 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import Config
-    from redbot.core import commands
+    from bluebot.core import Config
+    from bluebot.core import commands
 
     class MyCog(commands.Cog):
         def __init__(self):
@@ -39,7 +39,7 @@ Basic Usage
 Tutorial
 ********
 
-.. py:currentmodule:: redbot.core.config
+.. py:currentmodule:: bluebot.core.config
 
 This tutorial will walk you through how to use Config.
 
@@ -47,7 +47,7 @@ First, you need to import Config:
 
 .. code-block:: python
 
-    from redbot.core import Config
+    from bluebot.core import Config
 
 Then, in the class's :code:`__init__` function, you need to get a config instance:
 
@@ -208,7 +208,7 @@ Tutorial example.
 
 .. code-block:: python
 
-    from redbot.core import Config, commands
+    from bluebot.core import Config, commands
 
 
     class MyCog(commands.Cog):
@@ -259,7 +259,7 @@ Now let's see an example that uses multiple identifiers:
 
 .. code-block:: python
 
-    from redbot.core import Config, commands, checks
+    from bluebot.core import Config, commands, checks
 
 
     class ChannelAccesss(commands.Cog):
@@ -298,8 +298,8 @@ Raw Group Access
 For this example let's suppose that we're creating a cog that allows users to buy and own multiple pets using
 the built-in Economy credits::
 
-    from redbot.core import bank
-    from redbot.core import Config, commands
+    from bluebot.core import bank
+    from bluebot.core import Config, commands
 
 
     class Pets(commands.Cog):
@@ -448,7 +448,7 @@ much the same way they would in V2. The following examples will demonstrate how 
 
 .. code-block:: python
 
-    from redbot.core import Config, commands
+    from bluebot.core import Config, commands
 
 
     class ExampleCog(commands.Cog):
@@ -518,7 +518,7 @@ API Reference
         >>> await config.foo()
         {'123': True, '456': {'789': False}}
 
-.. automodule:: redbot.core.config
+.. automodule:: bluebot.core.config
 
 Config
 ^^^^^^
@@ -545,25 +545,25 @@ Value
 Driver Reference
 ****************
 
-.. autofunction:: redbot.core.drivers.get_driver
+.. autofunction:: bluebot.core.drivers.get_driver
 
-.. autoclass:: redbot.core.drivers.BackendType
+.. autoclass:: bluebot.core.drivers.BackendType
     :members:
 
-.. autoclass:: redbot.core.drivers.ConfigCategory
+.. autoclass:: bluebot.core.drivers.ConfigCategory
     :members:
 
 Base Driver
 ^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.BaseDriver
+.. autoclass:: bluebot.core.drivers.BaseDriver
     :members:
 
 JSON Driver
 ^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.JsonDriver
+.. autoclass:: bluebot.core.drivers.JsonDriver
     :members:
 
 Postgres Driver
 ^^^^^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.PostgresDriver
+.. autoclass:: bluebot.core.drivers.PostgresDriver
     :members:

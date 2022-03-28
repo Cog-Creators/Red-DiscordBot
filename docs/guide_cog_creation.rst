@@ -81,7 +81,7 @@ In that file, place the following code:
 
 .. code-block:: python
 
-    from redbot.core import commands
+    from bluebot.core import commands
 
     class MyCog(commands.Cog):
         """My custom cog"""
@@ -112,9 +112,9 @@ Testing your cog
 ----------------
 
 To test your cog, you will need a running instance of V3.
-Assuming you installed V3 as outlined above, run :code:`redbot-setup`
+Assuming you installed V3 as outlined above, run :code:`bluebot-setup`
 and provide the requested information. Once that's done, run Blue
-by doing :code:`redbot <instance name> --dev` to start Blue.
+by doing :code:`bluebot <instance name> --dev` to start Blue.
 Complete the initial setup by providing a valid token and setting a
 prefix. Once the bot has started up, use the link provided in the
 console to add it to a server (note that you must have the

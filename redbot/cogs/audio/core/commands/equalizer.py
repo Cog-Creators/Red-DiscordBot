@@ -7,11 +7,11 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, humanize_number, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
-from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils.chat_formatting import box, humanize_number, pagify
+from bluebot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from bluebot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...equalizer import Equalizer
 from ..abc import MixinMeta

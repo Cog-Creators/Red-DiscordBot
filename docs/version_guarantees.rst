@@ -64,10 +64,10 @@ Ubuntu 21.10                       2022-07-31 (`End of Standard Support <https:/
 Developer Guarantees
 ====================
 
-Anything in the ``redbot.core`` module or any of its submodules 
+Anything in the ``bluebot.core`` module or any of its submodules 
 which is not private (even if not documented) should not break without notice.
 
-Anything in the ``redbot.cogs`` and ``redbot.vendored`` modules or any of their submodules is specifically
+Anything in the ``bluebot.cogs`` and ``bluebot.vendored`` modules or any of their submodules is specifically
 excluded from being guaranteed.
 
 Method names and names of attributes of classes, functions, extensions, and modules

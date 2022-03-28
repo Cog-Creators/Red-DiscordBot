@@ -17,16 +17,16 @@ import getpass
 import pip
 import traceback
 from pathlib import Path
-from redbot.core import data_manager
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.commands import GuildConverter, RawUserIdConverter
+from bluebot.core import data_manager
+from bluebot.core.utils.menus import menu, DEFAULT_CONTROLS
+from bluebot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
 import aiohttp
 import discord
 from babel import Locale as BabelLocale, UnknownLocaleError
-from redbot.core.data_manager import storage_type
+from bluebot.core.data_manager import storage_type
 
 from . import (
     __version__,
@@ -92,7 +92,7 @@ def entity_transformer(statement: str) -> str:
 
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Blue
+    from bluebot.core.bot import Blue
 
 __all__ = ["Core"]
 
@@ -349,9 +349,9 @@ class CoreLogic:
         Returns
         -------
         dict
-            `redbot` and `discordpy` keys containing version information for both.
+            `bluebot` and `discordpy` keys containing version information for both.
         """
-        return {"redbot": __version__, "discordpy": discord.__version__}
+        return {"bluebot": __version__, "discordpy": discord.__version__}
 
     async def _invite_url(self) -> str:
         """
@@ -597,7 +597,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         statements = {
             ext_name: getattr(ext, "__red_end_user_data_statement__", None)
             for ext_name, ext in ctx.bot.extensions.items()
-            if not (ext.__package__ and ext.__package__.startswith("redbot."))
+            if not (ext.__package__ and ext.__package__.startswith("bluebot."))
         }
 
         if not statements:
@@ -4085,7 +4085,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def datapath(self, ctx: commands.Context):
         """Prints the bot's data path."""
-        from redbot.core.data_manager import basic_config
+        from bluebot.core.data_manager import basic_config
 
         data_dir = Path(basic_config["DATA_PATH"])
         msg = _("Data path: {path}").format(path=data_dir)
@@ -4121,7 +4121,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         user_who_ran = getpass.getuser()
         driver = storage_type()
 
-        from redbot.core.data_manager import basic_config, config_file
+        from bluebot.core.data_manager import basic_config, config_file
 
         data_path = Path(basic_config["DATA_PATH"])
         disabled_intents = (

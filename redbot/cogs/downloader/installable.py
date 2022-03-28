@@ -10,7 +10,7 @@ from .log import log
 from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
 from .json_mixins import RepoJSONMixin
 
-from redbot.core import VersionInfo
+from bluebot.core import VersionInfo
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo

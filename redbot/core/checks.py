@@ -44,8 +44,8 @@ __all__ = [
 
 def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
     warnings.warn(
-        "`redbot.core.checks.is_mod_or_superior` is deprecated and will be removed in a future "
-        "release, please use `redbot.core.utils.mod.is_mod_or_superior` instead.",
+        "`bluebot.core.checks.is_mod_or_superior` is deprecated and will be removed in a future "
+        "release, please use `bluebot.core.utils.mod.is_mod_or_superior` instead.",
         category=DeprecationWarning,
         stacklevel=2,
     )
@@ -54,8 +54,8 @@ def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
 
 def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
     warnings.warn(
-        "`redbot.core.checks.is_admin_or_superior` is deprecated and will be removed in a future "
-        "release, please use `redbot.core.utils.mod.is_admin_or_superior` instead.",
+        "`bluebot.core.checks.is_admin_or_superior` is deprecated and will be removed in a future "
+        "release, please use `bluebot.core.utils.mod.is_admin_or_superior` instead.",
         category=DeprecationWarning,
         stacklevel=2,
     )
@@ -64,8 +64,8 @@ def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
 
 def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> Awaitable[bool]:
     warnings.warn(
-        "`redbot.core.checks.check_permissions` is deprecated and will be removed in a future "
-        "release, please use `redbot.core.utils.mod.check_permissions`.",
+        "`bluebot.core.checks.check_permissions` is deprecated and will be removed in a future "
+        "release, please use `bluebot.core.utils.mod.check_permissions`.",
         DeprecationWarning,
         stacklevel=2,
     )

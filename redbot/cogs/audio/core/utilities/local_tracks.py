@@ -8,9 +8,9 @@ import lavalink
 from red_commons.logging import getLogger
 
 from fuzzywuzzy import process
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
 
 from ...audio_dataclasses import LocalPath, Query
 from ...errors import TrackEnqueueError

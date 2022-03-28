@@ -6,8 +6,8 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Union, List, Optional
 
-import redbot.cogs
-from redbot.core.utils import deduplicate_iterables
+import bluebot.cogs
+from bluebot.core.utils import deduplicate_iterables
 import discord
 
 from . import checks, commands
@@ -36,7 +36,7 @@ class CogManager:
     bot directory.
     """
 
-    CORE_PATH = Path(redbot.cogs.__path__[0])
+    CORE_PATH = Path(bluebot.cogs.__path__[0])
 
     def __init__(self):
         self.config = Config.get_conf(self, 2938473984732, True)
@@ -250,7 +250,7 @@ class CogManager:
             When no matching spec can be found.
         """
         real_name = ".{}".format(name)
-        package = "redbot.cogs"
+        package = "bluebot.cogs"
 
         try:
             mod = import_module(real_name, package=package)

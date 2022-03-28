@@ -64,7 +64,7 @@ __all__ = [
 
 #: The following names are reserved for various reasons
 RESERVED_COMMAND_NAMES = (
-    "cancel",  # reserved due to use in ``redbot.core.utils.MessagePredicate``
+    "cancel",  # reserved due to use in ``bluebot.core.utils.MessagePredicate``
 )
 
 _ = Translator("commands.commands", __file__)

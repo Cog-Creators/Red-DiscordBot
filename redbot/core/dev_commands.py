@@ -141,7 +141,7 @@ class Dev(commands.Cog):
             author   - command author's member object
             message  - the command's message object
             discord  - discord.py library
-            commands - redbot.core.commands
+            commands - bluebot.core.commands
             _        - The result of the last dev command.
         """
         env = self.get_environment(ctx)
@@ -184,7 +184,7 @@ class Dev(commands.Cog):
             author   - command author's member object
             message  - the command's message object
             discord  - discord.py library
-            commands - redbot.core.commands
+            commands - bluebot.core.commands
             _        - The result of the last dev command.
         """
         env = self.get_environment(ctx)

@@ -22,8 +22,8 @@ from urllib.parse import urlparse
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
 
 _ = Translator("Audio", Path(__file__))
 

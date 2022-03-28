@@ -69,7 +69,7 @@ author = "Cog Creators"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from redbot.core import __version__
+from bluebot.core import __version__
 from discord import __version__ as dpy_version
 
 # The short X.Y version.

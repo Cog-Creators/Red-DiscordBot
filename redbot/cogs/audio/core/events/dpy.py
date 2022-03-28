@@ -13,9 +13,9 @@ from red_commons.logging import getLogger
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, humanize_list
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils.chat_formatting import box, humanize_list
 
 from ...errors import TrackEnqueueError
 from ..abc import MixinMeta

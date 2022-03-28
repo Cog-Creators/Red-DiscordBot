@@ -9,11 +9,11 @@ from typing import Mapping
 import aiohttp
 import discord
 
-from redbot.core import Config
-from redbot.core.bot import Blue
-from redbot.core.commands import Cog
-from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator, cog_i18n
+from bluebot.core import Config
+from bluebot.core.bot import Blue
+from bluebot.core.commands import Cog
+from bluebot.core.data_manager import cog_data_path
+from bluebot.core.i18n import Translator, cog_i18n
 
 from ..utils import CacheLevel, PlaylistScope
 from . import abc, cog_utils, commands, events, tasks, utilities

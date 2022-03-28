@@ -10,7 +10,7 @@ from discord.backoff import ExponentialBackoff
 from discord.gateway import DiscordWebSocket
 from red_commons.logging import getLogger
 
-from redbot.core.i18n import Translator, set_contextual_locales_from_guild
+from bluebot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass

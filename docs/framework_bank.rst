@@ -16,7 +16,7 @@ Basic Usage
 
 .. code-block:: python
 
-    from redbot.core import bank, commands
+    from bluebot.core import bank, commands
     import discord
 
     class MyCog(commands.Cog):
@@ -39,7 +39,7 @@ API Reference
 Bank
 ======
 
-.. automodule:: redbot.core.bank
+.. automodule:: bluebot.core.bank
     :members:
     :exclude-members: cost
 

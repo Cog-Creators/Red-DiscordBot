@@ -11,10 +11,10 @@ import aiohttp
 import discord
 import pkg_resources
 from pkg_resources import DistributionNotFound
-from redbot.core import data_manager
+from bluebot.core import data_manager
 
-from redbot.core.commands import BlueHelpFormatter, HelpSettings
-from redbot.core.i18n import (
+from bluebot.core.commands import BlueHelpFormatter, HelpSettings
+from bluebot.core.i18n import (
     Translator,
     set_contextual_locale,
     set_contextual_regional_format,

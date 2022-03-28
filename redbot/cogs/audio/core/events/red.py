@@ -4,8 +4,8 @@ from typing import Literal, Mapping
 
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 

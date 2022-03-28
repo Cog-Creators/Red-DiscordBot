@@ -6,13 +6,13 @@ from collections import defaultdict
 from typing import List, Tuple, Literal
 
 import discord
-from redbot.core.utils import AsyncIter
+from bluebot.core.utils import AsyncIter
 
-from redbot.core import Config, modlog, commands
-from redbot.core.bot import Blue
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
-from redbot.core.utils.chat_formatting import inline
+from bluebot.core import Config, modlog, commands
+from bluebot.core.bot import Blue
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
+from bluebot.core.utils.chat_formatting import inline
 from .events import Events
 from .kickban import KickBanMixin
 from .names import ModInfo

@@ -25,13 +25,13 @@ Setup Utility
 -------------
 
 New commands were introduced to simplify the conversion/editing/removal process both on our end and the users end.
-Please use ``redbot-setup --help`` to learn how to use the new features.
+Please use ``bluebot-setup --help`` to learn how to use the new features.
 
 .. HINT::
 
-    Converting to JSON: ``redbot-setup convert <instance_name> json``
+    Converting to JSON: ``bluebot-setup convert <instance_name> json``
 
-    Converting to Mongo: ``redbot-setup convert <instance_name> mongo``
+    Converting to Mongo: ``bluebot-setup convert <instance_name> mongo``
 
 ################
 v3.1.0 Changelog
@@ -73,7 +73,7 @@ Core
  * Fix local blacklist/whitelist management (`#2531`_)
  * ``[p]set locale`` now only accepts actual locales (`#2553`_)
  * ``[p]listlocales`` now displays ``en-US`` (`#2553`_)
- * ``redbot --version`` will now give you current version of Blue (`#2567`_)
+ * ``bluebot --version`` will now give you current version of Blue (`#2567`_)
  * Blueesign help and related formatter (`#2628`_)
  * Default locale changed from ``en`` to ``en-US`` (`#2642`_)
  * New command ``[p]datapath`` that prints the bot's datapath (`#2652`_)
@@ -142,8 +142,8 @@ Permissions
 Setup Scripts
 -------------
 
- * ``redbot-setup`` now uses the click CLI library (`#2579`_)
- * ``redbot-setup convert`` now used to convert between libraries (`#2579`_)
+ * ``bluebot-setup`` now uses the click CLI library (`#2579`_)
+ * ``bluebot-setup convert`` now used to convert between libraries (`#2579`_)
  * Backup support for Mongo is currently broken (`#2579`_)
 
 -------

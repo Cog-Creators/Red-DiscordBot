@@ -28,9 +28,9 @@ from typing import (
 )
 
 import discord
-from redbot.core import data_manager, commands, Config
-from redbot.core.utils._internal_utils import safe_delete
-from redbot.core.i18n import Translator
+from bluebot.core import data_manager, commands, Config
+from bluebot.core.utils._internal_utils import safe_delete
+from bluebot.core.i18n import Translator
 
 from . import errors
 from .installable import Installable, InstallableType, InstalledModule

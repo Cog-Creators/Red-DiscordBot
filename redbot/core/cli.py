@@ -7,7 +7,7 @@ from typing import Optional
 import discord
 from discord import __version__ as discord_version
 
-from redbot.core.utils._internal_utils import cli_level_to_log_level
+from bluebot.core.utils._internal_utils import cli_level_to_log_level
 
 
 def confirm(text: str, default: Optional[bool] = None) -> bool:
@@ -101,14 +101,14 @@ def message_cache_size_int(arg: str) -> int:
 
 def parse_cli_flags(args):
     parser = argparse.ArgumentParser(
-        description="Blue - Discord Bot", usage="redbot <instance_name> [arguments]"
+        description="Blue - Discord Bot", usage="bluebot <instance_name> [arguments]"
     )
     parser.add_argument("--version", "-V", action="store_true", help="Show Blue's current version")
     parser.add_argument("--debuginfo", action="store_true", help="Show debug information.")
     parser.add_argument(
         "--list-instances",
         action="store_true",
-        help="List all instance names setup with 'redbot-setup'",
+        help="List all instance names setup with 'bluebot-setup'",
     )
     parser.add_argument(
         "--edit",
@@ -224,7 +224,7 @@ def parse_cli_flags(args):
         ),
     )
     parser.add_argument(
-        "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."
+        "instance_name", nargs="?", help="Name of the bot instance created during `bluebot-setup`."
     )
     parser.add_argument(
         "--team-members-are-owners",

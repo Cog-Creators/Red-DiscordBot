@@ -401,7 +401,7 @@ End-user changelog
 Core Bot
 ********
 
-- Converting from and to Postgres driver with ``redbot-setup convert`` have been fixed (:issue:`3714`, :issue:`3115`)
+- Converting from and to Postgres driver with ``bluebot-setup convert`` have been fixed (:issue:`3714`, :issue:`3115`)
 - Fixed big delays in commands that happened when the bot was owner-less (or if it only used co-owners feature) and command caller wasn't the owner (:issue:`3782`)
 - Various optimizations
 
@@ -457,7 +457,7 @@ Developer changelog
 Utility Functions
 *****************
 
-- Added `redbot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`, :issue:`3776`)
+- Added `bluebot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`, :issue:`3776`)
 - `bold()`, `italics()`, `strikethrough()`, and `underline()` now accept ``escape_formatting`` argument that can be used to disable escaping of markdown formatting in passed text (:issue:`3742`)
 
 
@@ -528,8 +528,8 @@ Core Bot
 Utility Functions
 *****************
 
-- `redbot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
-- Fixed false-positives in `redbot.core.utils.common_filters.filter_invites` (:issue:`3717`)
+- `bluebot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
+- Fixed false-positives in `bluebot.core.utils.common_filters.filter_invites` (:issue:`3717`)
 
 Documentation changes
 ---------------------
@@ -658,13 +658,13 @@ Miscellaneous
 -------------
 
 - **Core Bot** - Command errors (i.e. command on cooldown, dm-only and guild-only commands, etc) can now be translated (:issue:`3665`, :issue:`2988`)
-- **Core Bot** - ``redbot-setup`` now prints link to Getting started guide at the end of the setup (:issue:`3027`)
+- **Core Bot** - ``bluebot-setup`` now prints link to Getting started guide at the end of the setup (:issue:`3027`)
 - **Core Bot** - Whitelist and blacklist commands now properly require passing at least one user (or role in case of local whitelist/blacklist) (:issue:`3652`, :issue:`3645`)
 - **Downloader** - Fix misleading error appearing when repo name is already taken in ``[p]repo add`` (:issue:`3695`)
 - **Downloader** - Improved error messages for unexpected errors in ``[p]repo add`` (:issue:`3656`)
 - **Downloader** - Prevent encoding errors from crashing ``[p]cog update`` (:issue:`3639`, :issue:`3637`)
 - **Trivia** - Non-finite numbers can no longer be passed to ``[p]triviaset timelimit``, ``[p]triviaset stopafter`` and ``[p]triviaset payout`` (:issue:`3668`, :issue:`3583`)
-- **Utility Functions** - `redbot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
+- **Utility Functions** - `bluebot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
 
 
 Bluebot 3.3.2 (2020-02-28)
@@ -771,7 +771,7 @@ Config
 Utility Functions
 *****************
 
-- Add clearer error when page is of a wrong type in `redbot.core.utils.menus.menu()` (:issue:`3571`)
+- Add clearer error when page is of a wrong type in `bluebot.core.utils.menus.menu()` (:issue:`3571`)
 
 Dev Cog
 *******
@@ -816,7 +816,7 @@ Core Bot
 --------
 
 - Add a cli flag for setting a max size of message cache
-- Allow to edit prefix from command line using ``redbot --edit``.
+- Allow to edit prefix from command line using ``bluebot --edit``.
 - Some functions have been changed to no longer use deprecated asyncio functions
 
 Core Commands

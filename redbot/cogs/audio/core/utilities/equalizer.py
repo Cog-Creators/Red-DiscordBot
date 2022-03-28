@@ -7,8 +7,8 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.utils.chat_formatting import box
+from bluebot.core import commands
+from bluebot.core.utils.chat_formatting import box
 
 from ...equalizer import Equalizer
 from ..abc import MixinMeta

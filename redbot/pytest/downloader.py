@@ -6,8 +6,8 @@ import shutil
 
 import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormatter
-from redbot.cogs.downloader.installable import Installable, InstalledModule
+from bluebot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormatter
+from bluebot.cogs.downloader.installable import Installable, InstalledModule
 
 __all__ = [
     "GIT_VERSION",
@@ -166,7 +166,7 @@ def _init_test_repo(destination: Path):
 async def _session_git_repo(tmp_path_factory, event_loop):
     # we will import repo only once once per session and duplicate the repo folder
     repo_path = tmp_path_factory.mktemp("session_git_repo")
-    repo = Repo(name="redbot-testrepo", url="", branch="master", commit="", folder_path=repo_path)
+    repo = Repo(name="bluebot-testrepo", url="", branch="master", commit="", folder_path=repo_path)
     git_dirparams = _init_test_repo(repo_path)
     fast_import = sp.Popen((*git_dirparams, "fast-import", "--quiet"), stdin=sp.PIPE)
     with TEST_REPO_EXPORT_PTH.open(mode="rb") as f:
@@ -181,10 +181,10 @@ async def _session_git_repo(tmp_path_factory, event_loop):
 @pytest.fixture
 async def git_repo(_session_git_repo, tmp_path, event_loop):
     # fixture only copies repo that was imported in _session_git_repo
-    repo_path = tmp_path / "redbot-testrepo"
+    repo_path = tmp_path / "bluebot-testrepo"
     shutil.copytree(_session_git_repo.folder_path, repo_path)
     repo = Repo(
-        name="redbot-testrepo",
+        name="bluebot-testrepo",
         url=_session_git_repo.url,
         branch=_session_git_repo.branch,
         commit=_session_git_repo.commit,
@@ -196,9 +196,9 @@ async def git_repo(_session_git_repo, tmp_path, event_loop):
 @pytest.fixture
 async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
     # don't use this if you want to edit origin repo
-    repo_path = tmp_path / "redbot-cloned_testrepo"
+    repo_path = tmp_path / "bluebot-cloned_testrepo"
     repo = Repo(
-        name="redbot-testrepo",
+        name="bluebot-testrepo",
         url=str(_session_git_repo.folder_path),
         branch=_session_git_repo.branch,
         commit=_session_git_repo.commit,
@@ -211,9 +211,9 @@ async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
 @pytest.fixture
 async def git_repo_with_remote(git_repo, tmp_path, event_loop):
     # this can safely be used when you want to do changes to origin repo
-    repo_path = tmp_path / "redbot-testrepo_with_remote"
+    repo_path = tmp_path / "bluebot-testrepo_with_remote"
     repo = Repo(
-        name="redbot-testrepo",
+        name="bluebot-testrepo",
         url=str(git_repo.folder_path),
         branch=git_repo.branch,
         commit=git_repo.commit,

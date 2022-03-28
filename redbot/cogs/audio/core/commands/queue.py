@@ -9,10 +9,10 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from redbot.core import commands
-from redbot.core.i18n import Translator
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.menus import (
+from bluebot.core import commands
+from bluebot.core.i18n import Translator
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.menus import (
     DEFAULT_CONTROLS,
     close_menu,
     menu,
@@ -20,7 +20,7 @@ from redbot.core.utils.menus import (
     prev_page,
     start_adding_reactions,
 )
-from redbot.core.utils.predicates import ReactionPredicate
+from bluebot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass

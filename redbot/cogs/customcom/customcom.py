@@ -10,11 +10,11 @@ from urllib.parse import quote_plus
 import discord
 from fuzzywuzzy import process
 
-from redbot.core import Config, checks, commands
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import menus, AsyncIter
-from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
-from redbot.core.utils.predicates import MessagePredicate
+from bluebot.core import Config, checks, commands
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils import menus, AsyncIter
+from bluebot.core.utils.chat_formatting import box, pagify, escape, humanize_list
+from bluebot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
 

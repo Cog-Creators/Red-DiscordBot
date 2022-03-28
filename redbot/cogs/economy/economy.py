@@ -8,13 +8,13 @@ from typing import cast, Iterable, Union, Literal
 
 import discord
 
-from redbot.core import Config, bank, commands, errors, checks
-from redbot.core.commands.converter import TimedeltaConverter
-from redbot.core.bot import Blue
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
+from bluebot.core import Config, bank, commands, errors, checks
+from bluebot.core.commands.converter import TimedeltaConverter
+from bluebot.core.bot import Blue
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import box, humanize_number
+from bluebot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
 from .converters import positive_int
 
 T_ = Translator("Economy", __file__)

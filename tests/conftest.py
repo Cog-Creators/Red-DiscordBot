@@ -3,8 +3,8 @@ import os
 
 import pytest
 
-from redbot import _update_event_loop_policy
-from redbot.core import drivers, data_manager
+from bluebot import _update_event_loop_policy
+from bluebot.core import drivers, data_manager
 
 _update_event_loop_policy()
 

@@ -7,7 +7,7 @@ from typing import List, Literal, Union, Optional, cast, TYPE_CHECKING
 
 import discord
 
-from redbot.core import Config
+from bluebot.core import Config
 from .utils import AsyncIter
 from .utils.common_filters import (
     filter_invites,
@@ -21,7 +21,7 @@ from .i18n import Translator, set_contextual_locales_from_guild
 from .generic_casetypes import all_generics
 
 if TYPE_CHECKING:
-    from redbot.core.bot import Blue
+    from bluebot.core.bot import Blue
 
 log = logging.getLogger("red.core.modlog")
 
@@ -1149,7 +1149,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
 
     See Also
     --------
-    redbot.core.modlog.register_casetype
+    bluebot.core.modlog.register_casetype
 
     """
     type_list = []

@@ -10,13 +10,13 @@ import io
 import yaml
 import discord
 
-from redbot.core import Config, commands, checks, bank
-from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box, pagify, bold
-from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from bluebot.core import Config, commands, checks, bank
+from bluebot.core.data_manager import cog_data_path
+from bluebot.core.i18n import Translator, cog_i18n
+from bluebot.core.utils import AsyncIter
+from bluebot.core.utils.chat_formatting import box, pagify, bold
+from bluebot.core.utils.menus import start_adding_reactions
+from bluebot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from .checks import trivia_stop_check
 from .converters import finite_float
