@@ -298,11 +298,11 @@ def handle_edit(cli_flags: Namespace):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     data_manager.load_basic_configuration(cli_flags.instance_name)
-   blue= Blue(cli_flags=cli_flags, description="Blue V3", dm_help=None)
+    blue = Blue(cli_flags=cli_flags, description="Blue V3", dm_help=None)
     try:
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
-        loop.run_until_complete(edit_instance(red, cli_flags))
+        loop.run_until_complete(edit_instance(blue, cli_flags))
         loop.run_until_complete(driver_cls.teardown())
     except (KeyboardInterrupt, EOFError):
         print("Aborted!")
