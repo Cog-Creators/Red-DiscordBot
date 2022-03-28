@@ -320,8 +320,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             msg += _("Password:         [{password}]\n").format(
                 password=configs["yaml"]["lavalink"]["server"]["password"]
             )
-            msg += _("Xms:              [{xms}]\n").format(xms=configs["java"]["Xms"])
-            msg += _("Xmx:              [{xmx}]\n").format(xmx=configs["java"]["Xmx"])
+            msg += _("Initial Heapsize: [{xms}]\n").format(xms=configs["java"]["Xms"])
+            msg += _("Max Heapsize:     [{xmx}]\n").format(xmx=configs["java"]["Xmx"])
             msg += _("Java exec:        [{java_exc_path}]\n").format(
                 java_exc_path=configs["java_exc_path"]
             )

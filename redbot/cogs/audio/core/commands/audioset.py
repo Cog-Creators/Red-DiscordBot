@@ -1129,8 +1129,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Lavaplayer version:     [{lavaplayer}]\n"
                 "Java version:           [{jvm}]\n"
                 "Java Executable:        [{jv_exec}]\n"
-                "Xms:                    [{xms}]\n"
-                "Xmx:                    [{xmx}]\n"
+                "Initial Heapsize:       [{xms}]\n"
+                "Max Heapsize:           [{xmx}]\n"
             ).format(
                 build_time=self.managed_node_controller.build_time,
                 llbuild=self.managed_node_controller.ll_build,
