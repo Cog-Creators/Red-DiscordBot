@@ -54,7 +54,7 @@ async def interactive_config(blue, token_set, prefix_set, *, print_header=True):
                 print("That doesn't look like a valid token.")
                 token = None
             if token:
-                await red._config.token.set(token)
+                await blue._config.token.set(token)
 
     if not prefix_set:
         prefix = ""
@@ -71,7 +71,7 @@ async def interactive_config(blue, token_set, prefix_set, *, print_header=True):
                 if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
             if prefix:
-                await red._config.prefix.set([prefix])
+                await blue._config.prefix.set([prefix])
 
     return token
 
