@@ -314,7 +314,7 @@ def handle_edit(cli_flags: Namespace):
         sys.exit(0)
 
 
-async def run_bot(red: Blue, cli_flags: Namespace) -> None:
+async def run_bot(blue: Blue, cli_flags: Namespace) -> None:
     """
     This runs the bot.
 
@@ -493,7 +493,7 @@ def red_exception_handler(blue, red_task: asyncio.Future):
     except Exception as exc:
         log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
-        asyncio.create_task(shutdown_handler(red))
+        asyncio.create_task(shutdown_handler(blue))
 
 
 def main():

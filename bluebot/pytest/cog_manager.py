@@ -4,10 +4,10 @@ __all__ = ["cog_mgr", "default_dir"]
 
 
 @pytest.fixture()
-def cog_mgr(red):
+def cog_mgr(blue):
     return red._cog_mgr
 
 
 @pytest.fixture()
-def default_dir(red):
+def default_dir(blue):
     return red._main_dir

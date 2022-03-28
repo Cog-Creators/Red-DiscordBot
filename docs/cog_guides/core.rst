@@ -3040,7 +3040,7 @@ https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.com
     - ``[p]set color #7F8C8D``
 
 **Arguments:**
-    - ``[colour]`` - The colour to use for embeds. Leave blank to set to the default value (red).
+    - ``[colour]`` - The colour to use for embeds. Leave blank to set to the default value (blue).
 
 .. _core-command-set-deletedelay:
 

@@ -8,4 +8,4 @@ from bluebot.core import Config
 def permissions(config, monkeypatch, red):
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
-        return Permissions(red)
+        return Permissions(blue)

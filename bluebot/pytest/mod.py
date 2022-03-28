@@ -11,5 +11,5 @@ async def mod(config, monkeypatch, red):
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
 
-        await modlog._init(red)
+        await modlog._init(blue)
         return modlog

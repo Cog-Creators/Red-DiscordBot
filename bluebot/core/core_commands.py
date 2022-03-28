@@ -509,7 +509,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 + "\n\n"
             )
 
-            await ctx.send(red)
+            await ctx.send(blue)
             if custom_info:
                 custom_info = _("**About this instance**\n") + custom_info + "\n\n"
                 await ctx.send(custom_info)
@@ -3480,7 +3480,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set color #7F8C8D`
 
         **Arguments:**
-            - `[colour]` - The colour to use for embeds. Leave blank to set to the default value (red).
+            - `[colour]` - The colour to use for embeds. Leave blank to set to the default value (blue).
         """
         if colour is None:
             ctx.bot._color = discord.Color.red()
