@@ -6,7 +6,7 @@ on:
 
 jobs:
   release_information:
-    if: github.repository == 'Cog-Creators/Blue-DiscordBot'
+    if: github.repository == 'Cock-Creators/Blue-DiscordBot'
     name: GO HERE BEFORE APPROVING
     runs-on: ubuntu-latest
     steps:

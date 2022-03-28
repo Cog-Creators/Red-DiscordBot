@@ -133,7 +133,7 @@ html_extra_path = ["_html"]
 html_context = {
     # Enable the "Edit in GitHub link within the header of each page.
     "display_github": True,
-    "github_user": "Cog-Creators",
+    "github_user": "Cock-Creators",
     "github_repo": "Blue-DiscordBot",
     "github_version": "V3/develop/docs/",
 }
@@ -239,7 +239,7 @@ intersphinx_mapping = {
 # :dpy_docs:`link text <site_name.html>`
 extlinks = {
     "dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None),
-    "issue": ("https://github.com/Cog-Creators/Blue-DiscordBot/issues/%s", "#"),
+    "issue": ("https://github.com/Cock-Creators/Blue-DiscordBot/issues/%s", "#"),
     "ghuser": ("https://github.com/%s", "@"),
 }
 

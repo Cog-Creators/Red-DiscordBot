@@ -24,7 +24,7 @@ The main repository should contain at a minimum:
 We also recommend adding a license and README file with general information about the repository.
 
 For a simple example of what this might look like when finished,
-take a look at `our example template <https://github.com/Cog-Creators/Applications>`_.
+take a look at `our example template <https://github.com/Cock-Creators/Applications>`_.
 
 .. _info-json-format:
 
@@ -92,6 +92,6 @@ Adding to the Index
 
 Repositories that are correctly configured can be added to the `public index of cogs <https://index.discord.red/>`_.
 
-To be added to the index, make a pull request to the `Blue-Index repository <https://github.com/Cog-Creators/Blue-Index>`_ in the unapproved section. You can learn more about this process in the repository description.
+To be added to the index, make a pull request to the `Blue-Index repository <https://github.com/Cock-Creators/Blue-Index>`_ in the unapproved section. You can learn more about this process in the repository description.
 
 To be added to the approved repositories, first see `guide_cog_creators`.

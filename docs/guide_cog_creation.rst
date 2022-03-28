@@ -40,7 +40,7 @@ Open a terminal or command prompt and type one of the following
 
   .. code-block:: none
 
-      git+https://github.com/Cog-Creators/Blue-DiscordBot@V3/develop#egg=Blue-DiscordBot
+      git+https://github.com/Cock-Creators/Blue-DiscordBot@V3/develop#egg=Blue-DiscordBot
 
 
 (Windows users may need to use :code:`py -3.8` or :code:`python` instead of :code:`python3.8`)
@@ -151,7 +151,7 @@ have successfully created a cog!
     and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
     to load them
     
-    You can also take a look at `our cookiecutter <https://github.com/Cog-Creators/cog-cookiecutter>`_, for help creating the right structure.
+    You can also take a look at `our cookiecutter <https://github.com/Cock-Creators/cog-cookiecutter>`_, for help creating the right structure.
 
 -------------------
 Publishing your cog

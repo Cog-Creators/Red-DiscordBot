@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/Cog-Creators/Blue-DiscordBot/tree/V3/develop"><img src="https://imgur.com/pY1WUFX.png" alt="Blue - Discord Bot"></a>
+  <a href="https://github.com/Cock-Creators/Blue-DiscordBot/tree/V3/develop"><img src="https://imgur.com/pY1WUFX.png" alt="Blue - Discord Bot"></a>
   <br>
   Blue Discord Bot
   <br>
@@ -26,8 +26,8 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/Cog-Creators/Blue-DiscordBot/actions">
-    <img src="https://img.shields.io/github/workflow/status/Cog-Creators/Blue-Discordbot/Tests?label=tests" alt="GitHub Actions">
+  <a href="https://github.com/Cock-Creators/Blue-DiscordBot/actions">
+    <img src="https://img.shields.io/github/workflow/status/Cock-Creators/Blue-Discordbot/Tests?label=tests" alt="GitHub Actions">
   </a>
   <a href="http://docs.discord.red/en/stable/?badge=stable">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=stable" alt="Blue on readthedocs.org">

@@ -121,5 +121,5 @@ You can keep adding questions until you are satisfied, and then you can upload a
 play your very own trivia! See :ref:`[p]triviaset custom <trivia-command-triviaset-custom>` for more information.
 
 Still stuck? Take a look at 
-`the core trivia lists <https://github.com/Cog-Creators/Blue-DiscordBot/tree/V3/develop/redbot/cogs/trivia/data/lists>`_
+`the core trivia lists <https://github.com/Cock-Creators/Blue-DiscordBot/tree/V3/develop/redbot/cogs/trivia/data/lists>`_
 for reference.

@@ -96,7 +96,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 
 - Cog Creators must keep their cogs up-to-date with core Blue or be delisted until cogs meet Blue API changes. Repositories must be kept up to date with the latest version of Blue within 3 months of its release.
 
-.. _recommendations-for-cog-creators:
+.. _recommendations-for-cock-creators:
 
 --------------------------------
 Recommendations for Cog Creators

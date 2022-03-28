@@ -1,6 +1,6 @@
 from typing import Final
 
-# TODO: https://github.com/Cog-Creators/Blue-DiscordBot/pull/3195#issuecomment-567821701
+# TODO: https://github.com/Cock-Creators/Blue-DiscordBot/pull/3195#issuecomment-567821701
 # Thanks a lot Sinbad!
 
 __all__ = [

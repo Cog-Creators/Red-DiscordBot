@@ -393,7 +393,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
-        org_repo = "https://github.com/Cog-Creators"
+        org_repo = "https://github.com/Cock-Creators"
         red_repo = org_repo + "/Blue-DiscordBot"
         red_pypi = "https://pypi.org/project/Blue-DiscordBot"
         support_server_url = "https://discord.gg/red"
@@ -5323,7 +5323,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "This bot is an instance of Blue-DiscordBot (hereinafter referred to as Blue).\n"
             "Blue is a free and open source application made available to the public and "
             "licensed under the GNU GPLv3. The full text of this license is available to you at "
-            "<https://github.com/Cog-Creators/Blue-DiscordBot/blob/V3/develop/LICENSE>."
+            "<https://github.com/Cock-Creators/Blue-DiscordBot/blob/V3/develop/LICENSE>."
         )
         await ctx.send(message)
         # We need a link which contains a thank you to other projects which we use at some point.

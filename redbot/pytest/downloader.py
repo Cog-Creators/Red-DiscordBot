@@ -152,8 +152,8 @@ def _init_test_repo(destination: Path):
     init_commands = (
         (*git_dirparams, "init"),
         (*git_dirparams, "checkout", "-b", "master"),
-        (*git_dirparams, "config", "--local", "user.name", "Cog-Creators"),
-        (*git_dirparams, "config", "--local", "user.email", "cog-creators@example.org"),
+        (*git_dirparams, "config", "--local", "user.name", "Cock-Creators"),
+        (*git_dirparams, "config", "--local", "user.email", "cock-creators@example.org"),
         (*git_dirparams, "config", "--local", "commit.gpgSign", "false"),
     )
 
