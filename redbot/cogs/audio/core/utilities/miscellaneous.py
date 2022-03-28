@@ -20,7 +20,7 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
 
 from ...apis.playlist_interface import get_all_playlist_for_migration23
-from ...utils import PlaylistScope, task_callback_trace
+from ...utils import PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, DataReader
 
@@ -35,9 +35,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self, message: discord.Message, emoji: MutableMapping = None
     ) -> asyncio.Task:
         """Non blocking version of clear_react."""
-        task = asyncio.create_task(self.clear_react(message, emoji))
-        task.add_done_callback(task_callback_trace)
-        return task
+        return asyncio.create_task(self.clear_react(message, emoji))
 
     async def maybe_charge_requester(self, ctx: commands.Context, jukebox_price: int) -> bool:
         jukebox = await self.config.guild(ctx.guild).jukebox()
@@ -125,8 +123,8 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def update_external_status(self) -> bool:
         external = await self.config.use_external_lavalink()
         if not external:
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
+            if self.managed_node_controller is not None:
+                await self.managed_node_controller.shutdown()
             await self.config.use_external_lavalink.set(True)
             return True
         else:

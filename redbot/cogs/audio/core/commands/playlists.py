@@ -1521,7 +1521,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                         f"{track.title} {track.author} {track.uri} " f"{str(query)}",
                         query_obj=query,
                     ):
-                        log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+                        log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                         continue
                     query = Query.process_input(track.uri, self.local_folder_current_path)
                     if query.is_local:
@@ -1921,7 +1921,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
                         "minutes."
                     ),
                 )

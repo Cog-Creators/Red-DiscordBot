@@ -13,6 +13,7 @@ import aiohttp
 import discord
 import lavalink
 from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound
 from red_commons.logging import getLogger
 
 from redbot.core import commands
@@ -424,7 +425,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
-                            "I'm unable to get a track from Lavalink at the moment, "
+                            "I'm unable to get a track from the Lavalink node at the moment, "
                             "try again in a few minutes."
                         ),
                     )
@@ -523,7 +524,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _playlist_check(self, ctx: commands.Context) -> bool:
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
+                msg = _("Connection to Lavalink node has failed")
                 desc = EmptyEmbed
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
@@ -547,11 +548,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-            except IndexError:
+            except NodeNotFound:
                 await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Playlists"),
-                    description=_("Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink node has not yet been established."),
                 )
                 return False
             except AttributeError:
@@ -625,7 +626,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
                         "minutes."
                     ),
                 )
@@ -654,7 +655,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
                         "minutes."
                     ),
                 )
