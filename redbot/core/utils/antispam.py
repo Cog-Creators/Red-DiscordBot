@@ -9,7 +9,7 @@ AntiSpamInterval = namedtuple("AntiSpamInterval", ["period", "frequency"])
 class AntiSpam:
     """
     An object that counts against intervals to prevent spam.
-    
+
     Attributes
     ----------
     intervals : List[Tuple[datetime.timedelta, int]]
