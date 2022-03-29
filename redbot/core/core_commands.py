@@ -645,7 +645,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     async def get_serious_confirmation(self, ctx: commands.Context, prompt: str) -> bool:
-
         confirm_token = "".join(random.choices((*ascii_letters, *digits), k=8))
 
         await ctx.send(f"{prompt}\n\n{confirm_token}")
@@ -3975,31 +3974,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         successful = False
 
         for destination in destinations:
-
             is_dm = isinstance(destination, discord.User)
-            send_embed = None
+            if not is_dm and not destination.permissions_for(destination.guild.me).send_messages:
+                continue
 
-            if is_dm:
-                send_embed = await ctx.bot._config.user(destination).embeds()
-            else:
-                if not destination.permissions_for(destination.guild.me).send_messages:
-                    continue
-                if destination.permissions_for(destination.guild.me).embed_links:
-                    send_embed = await ctx.bot._config.channel(destination).embeds()
-                    if send_embed is None:
-                        send_embed = await ctx.bot._config.guild(destination.guild).embeds()
-                else:
-                    send_embed = False
-
-            if send_embed is None:
-                send_embed = await ctx.bot._config.embeds()
-
-            if send_embed:
-
-                if not is_dm:
-                    color = await ctx.bot.get_embed_color(destination)
-                else:
-                    color = ctx.bot._color
+            if await ctx.bot.embed_requested(destination, command=ctx.command):
+                color = await ctx.bot.get_embed_color(destination)
 
                 e = discord.Embed(colour=color, description=message)
                 if author.avatar_url:
@@ -4021,9 +4001,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     )
                 else:
                     successful = True
-
             else:
-
                 msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
 
                 try:

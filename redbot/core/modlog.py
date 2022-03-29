@@ -98,7 +98,6 @@ async def _init(bot: Red):
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
-
         if not guild.me.guild_permissions.view_audit_log:
             return
 
@@ -375,7 +374,7 @@ class Case:
         if not self.message:
             return
         try:
-            use_embed = await self.bot.embed_requested(self.message.channel, self.guild.me)
+            use_embed = await self.bot.embed_requested(self.message.channel)
             case_content = await self.message_content(use_embed)
             if use_embed:
                 await self.message.edit(embed=case_content)
@@ -993,7 +992,7 @@ async def create_case(
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
-        use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
+        use_embeds = await case.bot.embed_requested(mod_channel)
         case_content = await case.message_content(use_embeds)
         if use_embeds:
             msg = await mod_channel.send(embed=case_content)

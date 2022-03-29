@@ -80,10 +80,10 @@ class Streams(commands.Cog):
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
         self._ready_event: asyncio.Event = asyncio.Event()
-        self._init_task: asyncio.Task = self.bot.loop.create_task(self.initialize())
+        self._init_task: asyncio.Task = asyncio.create_task(self.initialize())
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     def check_name_or_id(self, data: str) -> bool:
@@ -100,7 +100,7 @@ class Streams(commands.Cog):
             await self.move_api_keys()
             await self.get_twitch_bearer_token()
             self.streams = await self.load_streams()
-            self.task = self.bot.loop.create_task(self._stream_alerts())
+            self.task = asyncio.create_task(self._stream_alerts())
         except Exception as error:
             log.exception("Failed to initialize Streams cog:", exc_info=error)
 

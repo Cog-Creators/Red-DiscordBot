@@ -175,7 +175,7 @@ class PlaylistWrapper:
         try:
             playlist_id = int(playlist_id)
         except Exception as exc:
-            log.verbose("Failed converting playlist_id to int", exc_info=exc)
+            log.trace("Failed converting playlist_id to int", exc_info=exc)
             playlist_id = -1
 
         output = []
