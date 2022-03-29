@@ -8,15 +8,15 @@ AntiSpamInterval = namedtuple("AntiSpamInterval", ["period", "frequency"])
 
 class AntiSpam:
     """
-    Custom class which is more flexible than using discord.py's
-    `commands.cooldown()`
-
-    Can be intialized with a custom set of intervals
-    These should be provided as a list of tuples in the form
-    (timedelta, quantity)
-
-    Where quantity represents the maximum amount of times
-    something should be allowed in an interval.
+    An object that counts against intervals to prevent spam.
+    
+    Attributes
+    ----------
+    intervals : List[Tuple[timedelta, int]]
+        A list of tuples, where the first item is
+        a timedelta representing the length of the interval,
+        and the second is an int representing the number of repeats
+        this interval can have before expiring.
     """
 
     # TODO : Decorator interface for command check using `spammy`
@@ -32,7 +32,7 @@ class AntiSpam:
 
     def __init__(self, intervals: List[Interval]):
         self.__event_timestamps = []
-        _itvs = intervals if intervals else self.default_intervals
+        _itvs = intervals or self.default_intervals
         self.__intervals = [AntiSpamInterval(*x) for x in _itvs]
         self.__discard_after = max([x.period for x in self.__intervals])
 
@@ -45,14 +45,13 @@ class AntiSpam:
     @property
     def spammy(self):
         """
-        use this to check if any interval criteria are met
+        Check whether any intervals are active.
         """
         return any(self.__interval_check(x) for x in self.__intervals)
 
     def stamp(self):
         """
-        Use this to mark an event that counts against the intervals
-        as happening now
+        Mark an event against the intervals.
         """
         self.__event_timestamps.append(datetime.utcnow())
         self.__event_timestamps = [
