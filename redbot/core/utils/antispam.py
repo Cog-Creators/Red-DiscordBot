@@ -13,7 +13,7 @@ class AntiSpam:
     Attributes
     ----------
     intervals : List[Tuple[timedelta, int]]
-        A list of tuples, where the first item is
+        A list of tuples, where the first item of the tuple is
         a timedelta representing the length of the interval,
         and the second is an int representing the number of repeats
         this interval can have before expiring.
