@@ -12,7 +12,7 @@ class AntiSpam:
     
     Attributes
     ----------
-    intervals : List[Tuple[timedelta, int]]
+    intervals : List[Tuple[datetime.timedelta, int]]
         A list of tuples in the format (timedelta, int),
         where the timedelta represents the length of the interval,
         and the int represents the maximum number of times something
@@ -51,7 +51,7 @@ class AntiSpam:
 
     def stamp(self):
         """
-        Mark an event against the intervals.
+        Mark an event against the intervals as happening now.
         """
         self.__event_timestamps.append(datetime.utcnow())
         self.__event_timestamps = [
