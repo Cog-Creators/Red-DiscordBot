@@ -99,7 +99,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     exc_info=exc,
                 )
             return
-        if not player.manager.node.ready:
+        if not player.node.ready:
             log.debug("Player node is not ready discarding event")
             log.verbose(
                 "Received a new discard lavalink event for %s: %s: %r", guild_id, event_type, extra
