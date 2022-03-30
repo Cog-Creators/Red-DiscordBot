@@ -250,7 +250,7 @@ class ServerManager:
         invalid = None
         if match and (
             (int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3))
-            < (meta := get_max_allocation_size(self._java_exc))[0]
+            <= (meta := get_max_allocation_size(self._java_exc))[0]
         ):
             command_args.append(f"-Xmx{java_xmx}")
         elif meta[0] is not None:
