@@ -119,6 +119,36 @@ muteset
 
 Mute settings.
 
+.. _mutes-command-muteset-autoupdate:
+
+""""""""""""""""""
+muteset autoupdate
+""""""""""""""""""
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]muteset autoupdate <true_or_false>
+
+**Description**
+
+Defines if the bot should auto-update new channels for the mute role.
+
+If this is enabled, when a new channel is created on the server (text, voice
+or category), the bot will edit its permissions and deny the permissions of
+sending messages, adding reactions and speaking to the mute role.
+
+.. warning:: You must have configured a mute role with
+    :ref:`muteset role <mutes-command-muteset-role>` or
+    :ref:`muteset makerole <mutes-command-muteset-makerole>` before using this.
+
+**Arguments**
+
+* ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
+
 .. _mutes-command-muteset-defaulttime:
 
 """""""""""""""""""
