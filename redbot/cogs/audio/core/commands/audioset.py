@@ -1113,6 +1113,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             lavalink_version=lavalink.__version__,
             use_external_lavalink=_("Enabled")
             if global_data["use_external_lavalink"]
+            else _("Enabled (Temporary)")
+            if self._runtime_external_node
             else _("Disabled"),
         )
         if (

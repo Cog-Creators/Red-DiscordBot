@@ -65,6 +65,7 @@ class Audio(
         self.skip_votes = {}
         self.play_lock = {}
         self.antispam: Dict[int, Dict[str, AntiSpam]] = defaultdict(lambda: defaultdict(AntiSpam))
+        self._runtime_external_node = False
 
         self.lavalink_connect_task = None
         self._restore_task = None
