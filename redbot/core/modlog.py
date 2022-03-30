@@ -315,6 +315,7 @@ class Case:
         modified_at: Optional[float] = None,
         message: Optional[Union[discord.PartialMessage, discord.Message]] = None,
         last_known_username: Optional[str] = None,
+        extra_info: Optional[str] = None,
     ):
         self.bot = bot
         self.guild = guild
@@ -336,6 +337,7 @@ class Case:
         self.modified_at = modified_at
         self.case_number = case_number
         self.message = message
+        self.extra_info = extra_info
 
     async def _set_message(self, message: discord.Message, /) -> None:
         # This should only be used for setting the message right after case creation
@@ -504,6 +506,8 @@ class Case:
                         )
                         + "..."
                     )
+            if self.extra_info:
+                reason += self.extra_info
             emb = discord.Embed(title=title, description=reason)
             emb.set_author(name=user)
             emb.add_field(name=_("Moderator"), value=moderator, inline=False)
@@ -545,6 +549,8 @@ class Case:
             case_text += f"{bold(_('User:'))} {user}\n"
             case_text += f"{bold(_('Moderator:'))} {moderator}\n"
             case_text += "{}\n".format(reason)
+            if self.extra_info:
+                case_text += "{}\n".format(self.extra_info)
             if until and duration:
                 case_text += f"{bold(_('Until:'))} {until}\n{bold(_('Duration:'))} {duration}\n"
             if self.channel:
@@ -593,6 +599,7 @@ class Case:
             "amended_by": amended_by,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
+            "extra_info": self.extra_info,
         }
         return data
 
@@ -664,6 +671,7 @@ class Case:
             modified_at=data["modified_at"],
             message=message,
             last_known_username=data.get("last_known_username"),
+            extra_info=data.get("extra_info"),
             **user_objects,
         )
 
@@ -919,6 +927,7 @@ async def create_case(
     until: Optional[datetime] = None,
     channel: Optional[discord.abc.GuildChannel] = None,
     last_known_username: Optional[str] = None,
+    extra_info: Optional[str] = None,
 ) -> Optional[Case]:
     """
     Creates a new case.
@@ -953,6 +962,8 @@ async def create_case(
         The last known username of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
+    extra_info: Optional[str]
+        Any extra information to show in the case
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
@@ -984,6 +995,7 @@ async def create_case(
             modified_at=None,
             message=None,
             last_known_username=last_known_username,
+            extra_info=extra_info,
         )
         await _config.custom(_CASES, str(guild.id), str(next_case_number)).set(case.to_json())
         await _config.guild(guild).latest_case_number.set(next_case_number)

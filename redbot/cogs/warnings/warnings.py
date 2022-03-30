@@ -395,14 +395,14 @@ class Warnings(commands.Cog):
         guild_settings = await self.config.guild(ctx.guild).all()
         custom_allowed = guild_settings["allow_custom_reasons"]
 
-        reason_type = None
+        allowed_reason = None
         async with self.config.guild(ctx.guild).reasons() as registered_reasons:
-            if (reason_type := registered_reasons.get(reason.lower())) is None:
+            if (allowed_reason := registered_reasons.get(reason.lower())) is None:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
                     if points < 0:
                         return await ctx.send(_("You cannot apply negative points."))
-                    reason_type = {"description": reason, "points": points}
+                    allowed_reason = reason
                 else:
                     # logic taken from `[p]permissions canrun`
                     fake_message = copy(ctx.message)
@@ -420,14 +420,14 @@ class Warnings(commands.Cog):
                             "reasons."
                         ).format(prefix=ctx.clean_prefix)
                     return await ctx.send(msg)
-        if reason_type is None:
+        if allowed_reason is None:
             return
         member_settings = self.config.member(member)
         current_point_count = await member_settings.total_points()
         warning_to_add = {
             str(ctx.message.id): {
-                "points": reason_type["points"],
-                "description": reason_type["description"],
+                "points": points,
+                "description": allowed_reason,
                 "mod": ctx.author.id,
             }
         }
@@ -440,9 +440,9 @@ class Warnings(commands.Cog):
             else:
                 title = _("Warning")
             em = discord.Embed(
-                title=title, description=reason_type["description"], color=await ctx.embed_colour()
+                title=title, description=allowed_reason, color=await ctx.embed_colour()
             )
-            em.add_field(name=_("Points"), value=str(reason_type["points"]))
+            em.add_field(name=_("Points"), value=str(points))
             try:
                 await member.send(
                     _("You have received a warning in {guild_name}.").format(
@@ -462,7 +462,7 @@ class Warnings(commands.Cog):
             )
         async with member_settings.warnings() as user_warnings:
             user_warnings.update(warning_to_add)
-        current_point_count += reason_type["points"]
+        current_point_count += points
         await member_settings.total_points.set(current_point_count)
         await warning_points_add_check(self.config, ctx, member, current_point_count)
 
@@ -473,9 +473,9 @@ class Warnings(commands.Cog):
             else:
                 title = _("Warning")
             em = discord.Embed(
-                title=title, description=reason_type["description"], color=await ctx.embed_colour()
+                title=title, description=allowed_reason, color=await ctx.embed_colour()
             )
-            em.add_field(name=_("Points"), value=str(reason_type["points"]))
+            em.add_field(name=_("Points"), value=str(points))
             warn_channel = self.bot.get_channel(guild_settings["warn_channel"])
             if warn_channel:
                 if warn_channel.permissions_for(guild.me).send_messages:
@@ -495,12 +495,10 @@ class Warnings(commands.Cog):
         else:
             if not dm_failed:
                 await ctx.tick()
-        reason_msg = _(
-            "{reason}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
+        extra = _(
+            "\nPoints: {points}\n\nUse `{prefix}unwarn {user} {message}` to remove this warning."
         ).format(
-            reason=_("{description}\nPoints: {points}").format(
-                description=reason_type["description"], points=reason_type["points"]
-            ),
+            points=points,
             prefix=ctx.clean_prefix,
             user=member.id,
             message=ctx.message.id,
@@ -512,9 +510,10 @@ class Warnings(commands.Cog):
             "warning",
             member,
             ctx.message.author,
-            reason_msg,
+            allowed_reason,
             until=None,
             channel=None,
+            extra_info=extra,
         )
 
     @commands.command()
