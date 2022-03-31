@@ -17,10 +17,10 @@ class LRUDict:
     def __init__(self, *keyval_pairs: Sequence[Iterable[Any]], size: int):
         self.size = size
         self._dict = collections.OrderedDict(*keyval_pairs)
-   
+
     def __len__(self):
         return len(self._dict)
-    
+
     def __bool__(self):
         return len(self._dict)
 
