@@ -22,7 +22,7 @@ class LRUDict:
         return len(self._dict)
 
     def __bool__(self):
-        return len(self._dict)
+        return bool(self._dict)
 
     def __contains__(self, key):
         if key in self._dict:
