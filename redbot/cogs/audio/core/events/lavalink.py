@@ -7,7 +7,6 @@ from typing import Dict
 import discord
 import lavalink
 from discord.backoff import ExponentialBackoff
-from discord.gateway import DiscordWebSocket
 from red_commons.logging import getLogger
 
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
@@ -100,7 +99,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     exc_info=exc,
                 )
             return
-        if not player.manager.node.ready:
+        if not player.node.ready:
             log.debug("Player node is not ready discarding event")
             log.verbose(
                 "Received a new discard lavalink event for %s: %s: %r", guild_id, event_type, extra
@@ -340,14 +339,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         disconnect: bool,
     ) -> None:
         guild_id = guild.id
+        shard = self.bot.shards[guild.shard_id]
         event_channel_id = extra.get("channelID")
         try:
             if not self._ws_resume[guild_id].is_set():
                 await self._ws_resume[guild_id].wait()
             else:
                 self._ws_resume[guild_id].clear()
-            node = player.node
-            voice_ws: DiscordWebSocket = node.get_voice_ws(guild_id)
             code = extra.get("code")
             by_remote = extra.get("byRemote", "")
             reason = extra.get("reason", "No Specified Reason").strip()
@@ -387,7 +385,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
                 return
 
-            if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
+            if shard.is_closed():
                 if player._con_delay:
                     delay = player._con_delay.delay()
                 else:
@@ -399,7 +397,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     "Socket Closed %s.  "
                     "Code: %s -- Remote: %s -- %s, %r",
                     guild_id,
-                    voice_ws.socket._closing or voice_ws.socket.closed,
+                    shard.is_closed(),
                     code,
                     by_remote,
                     reason,
@@ -412,8 +410,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     delay,
                 )
                 await asyncio.sleep(delay)
-                while voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
-                    voice_ws = node.get_voice_ws(guild_id)
+                while shard.is_closed():
                     await asyncio.sleep(0.1)
 
                 if has_perm and player.current and player.is_playing:

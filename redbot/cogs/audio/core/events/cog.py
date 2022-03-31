@@ -208,7 +208,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if notify_channel and has_perms and not player.fetch("autoplay_notified", False):
             if (
-                len(player.manager.players) < 10
+                len(player.node.players) < 10
                 or not player._last_resume
                 and player._last_resume + datetime.timedelta(seconds=60)
                 > datetime.datetime.now(tz=datetime.timezone.utc)
