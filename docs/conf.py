@@ -251,3 +251,21 @@ doctest_test_doctest_blocks = ""
 # Autodoc options
 autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"
+
+
+from docutils import nodes
+from sphinx.transforms import SphinxTransform
+
+
+# d.py's |coro| substitution leaks into our docs because we don't replace some of the docstrings
+class IgnoreCoroSubstitution(SphinxTransform):
+    default_priority = 210
+
+    def apply(self, **kwargs) -> None:
+        for ref in self.document.traverse(nodes.substitution_reference):
+            if ref["refname"] == "coro":
+                ref.replace_self(nodes.Text("", ""))
+
+
+def setup(app):
+    app.add_transform(IgnoreCoroSubstitution)
