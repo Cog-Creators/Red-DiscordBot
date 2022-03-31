@@ -1,17 +1,20 @@
 import collections
+from typing import Any, Iterable, Sequence
 
 
 class LRUDict:
     """
-    dict with LRU-eviction and max-size
+    Dictionary with LRU-eviction and maximum-size, intended for caching.
 
-    This is intended for caching, it may not behave how you want otherwise
-
-    This uses collections.OrderedDict under the hood, but does not directly expose
-    all of it's methods (intentional)
+    Attributes
+    ----------
+    keyval_pairs : Sequence[Iterable[Any]]
+        A sequence of key value pairs to instantiate the dictionary.
+    size : int
+        The maximum size of the dictionary at any given time.
     """
 
-    def __init__(self, *keyval_pairs, size):
+    def __init__(self, *keyval_pairs: Sequence[Iterable[Any]], size: int):
         self.size = size
         self._dict = collections.OrderedDict(*keyval_pairs)
 
