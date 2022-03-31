@@ -98,7 +98,7 @@ async def _init(bot: Red):
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
-        if not guild.me.guild_permissions.view_audit_log:
+        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
             return
 
         try:
@@ -135,7 +135,7 @@ async def _init(bot: Red):
             await asyncio.sleep(300)
 
     async def on_member_unban(guild: discord.Guild, user: discord.User):
-        if not guild.me.guild_permissions.view_audit_log:
+        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
             return
 
         try:
