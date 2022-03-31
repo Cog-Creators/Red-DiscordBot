@@ -73,3 +73,9 @@ Common Filters
 
 .. automodule:: redbot.core.utils.common_filters
     :members:
+    
+Caching
+=======
+
+.. automodule:: redbot.core.utils.caching
+    :members:
