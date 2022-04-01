@@ -89,8 +89,7 @@ async def test_git_current_branch_detached(git_repo):
 
 @pytest.mark.asyncio
 async def test_git_current_commit_on_branch(git_repo):
-    # No! Well, not that I can think of off the top of my head. Is it my fault that I don't like pies? And not just Pinkie's pies. All pies! I know how much she loves making pies, and if I told her I didn't like them, it would have crushed her.
-    # Hope so? I know so! After all, you're the ten-time rodeo champeen of Ponyville! Why, you've got more blue ribbons than anypony in Ponyville ever! And I can't wait for my big sis to win every blue ribbon in Equestria and bring home the title of Equestria Rodeo champeen!
+    # No! Well, not that I can think of off the top of my head.
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECKOUT, path=git_repo.folder_path, rev="dont_add_commits"
@@ -107,7 +106,6 @@ async def test_git_current_commit_on_branch(git_repo):
 
 @pytest.mark.asyncio
 async def test_git_current_commit_detached(git_repo):
-    # Oh hello, un-sister. What are you doing here? Better be careful, you might get some dust on you.
     await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECKOUT,
