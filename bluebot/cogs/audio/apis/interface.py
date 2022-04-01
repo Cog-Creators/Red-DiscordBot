@@ -147,7 +147,7 @@ class AudioAPIInterface:
         lock_author = ctx.author if ctx else None
         async with self._lock:
             if lock_id in self._tasks:
-                log.trace("Running database writes for %d (%s)", lock_id, lock_author)
+                log.trace("Running database writes for %s (%s)", lock_id, lock_author)
                 try:
                     tasks = self._tasks[lock_id]
                     tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
@@ -155,10 +155,10 @@ class AudioAPIInterface:
                     del self._tasks[lock_id]
                 except Exception as exc:
                     log.verbose(
-                        "Failed database writes for %d (%s)", lock_id, lock_author, exc_info=exc
+                        "Failed database writes for %s (%s)", lock_id, lock_author, exc_info=exc
                     )
                 else:
-                    log.trace("Completed database writes for %d (%s)", lock_id, lock_author)
+                    log.trace("Completed database writes for %s (%s)", lock_id, lock_author)
 
     async def run_all_pending_tasks(self) -> None:
         """Run all pending tasks left in the cache, called on cog_unload."""
@@ -618,7 +618,7 @@ class AudioAPIInterface:
                     query_obj=query,
                 ):
                     has_not_allowed = True
-                    log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+                    log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     continue
                 track_list.append(single_track)
                 if enqueue:
@@ -973,7 +973,7 @@ class AudioAPIInterface:
                     and not query.local_track_path.exists()
                 ):
                     continue
-                notify_channel = self.bot.get_channel(notify_channel_id)
+                notify_channel = player.guild.get_channel(notify_channel_id)
                 if not await self.cog.is_query_allowed(
                     self.config,
                     notify_channel,
@@ -981,7 +981,7 @@ class AudioAPIInterface:
                     query_obj=query,
                 ):
                     log.debug(
-                        "Query is not allowed in %r (%d)", player.guild.name, player.guild.id
+                        "Query is not allowed in %r (%s)", player.guild.name, player.guild.id
                     )
                     continue
                 valid = True
