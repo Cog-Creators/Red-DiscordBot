@@ -15,21 +15,19 @@ async def is_allowed_by_hierarchy(
     return mod.top_role > user.top_role or is_special
 
 
+def lambda_cache(repeats_channel):
+    return lambda: deque(maxlen=repeats_channel if repeats_channel != -1 else 0)
+
+
 async def create_new_cache(config: Config, guild: discord.Guild):
     repeats = await config.guild(guild).delete_repeats()
-    guild_cache = (
-        defaultdict(lambda: defaultdict(lambda: deque(maxlen=repeats)))
-        if repeats != -1
-        else dict()
+    channel_data = await config.all_channels()
+    guild_cache = defaultdict(
+        lambda: defaultdict(lambda: deque(maxlen=repeats if repeats != -1 else 0))
     )
-
     # Create already keys for custom amount of repeated messages per channel
-    repeats_channels = await config.guild(guild).delete_repeats_channels.all()
-    print(repeats_channels)
-    for key, value in repeats_channels.items():
-        print(f"{key}:{value}")
-        print(type(key))
-        if int(value) > 0:
-            guild_cache[key] = defaultdict(lambda: deque(maxlen=int(value)))
-
+    for channel in guild.channels:
+        data = channel_data.get(channel.id, None)
+        if data is not None and data["delete_repeats"]:
+            guild_cache[channel.id] = defaultdict(lambda_cache(data["delete_repeats"]))
     return guild_cache

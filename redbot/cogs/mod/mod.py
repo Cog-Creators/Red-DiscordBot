@@ -52,7 +52,6 @@ class Mod(
     default_guild_settings = {
         "mention_spam": {"ban": None, "kick": None, "warn": None, "strict": False},
         "delete_repeats": -1,
-        "delete_repeats_channels": {},
         "ignored": False,
         "respect_hierarchy": True,
         "delete_delay": -1,
@@ -64,7 +63,7 @@ class Mod(
         "track_nicknames": True,
     }
 
-    default_channel_settings = {"ignored": False}
+    default_channel_settings = {"ignored": False, "delete_repeats": 0}
 
     default_member_settings = {"past_nicks": [], "perms_cache": {}, "banned_until": False}
 
