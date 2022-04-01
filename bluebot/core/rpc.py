@@ -16,7 +16,7 @@ __all__ = ["RPC", "RPCMixin", "get_name"]
 def get_name(func, prefix=""):
     class_name = prefix or func.__self__.__class__.__name__.lower()
     func_name = func.__name__.strip("_")
-    if class_name == "redrpc":
+    if class_name == "bluerpc":
         return func_name.upper()
     return f"{class_name}__{func_name}".upper()
 

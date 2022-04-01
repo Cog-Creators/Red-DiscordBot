@@ -153,7 +153,7 @@ def ctx(empty_member, empty_channel, blue):
 
 # region Blue Mock
 @pytest.fixture()
-def red(config_fr):
+def blue(config_fr):
     from bluebot.core.cli import parse_cli_flags
 
     cli_flags = parse_cli_flags(["ignore_me"])
