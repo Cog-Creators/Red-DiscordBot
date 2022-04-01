@@ -16,7 +16,7 @@ from ..errors import YouTubeApiError
 if TYPE_CHECKING:
     from .. import Audio
 
-log = getLogger("red.cogs.Audio.api.YouTube")
+log = getLogger("blue.cogs.Audio.api.YouTube")
 _ = Translator("Audio", Path(__file__))
 SEARCH_ENDPOINT = "https://www.googleapis.com/youtube/v3/search"
 

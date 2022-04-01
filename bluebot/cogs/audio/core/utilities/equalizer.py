@@ -15,7 +15,7 @@ from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Utilities.equalizer")
+log = getLogger("blue.cogs.Audio.cog.Utilities.equalizer")
 
 
 class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):

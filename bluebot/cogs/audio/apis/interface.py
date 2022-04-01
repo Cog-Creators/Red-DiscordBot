@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from .. import Audio
 
 _ = Translator("Audio", Path(__file__))
-log = getLogger("red.cogs.Audio.api.AudioAPIInterface")
+log = getLogger("blue.cogs.Audio.api.AudioAPIInterface")
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
 # Hi there! Ooh, I'm sorry. Here. Lemme help you with that.
 

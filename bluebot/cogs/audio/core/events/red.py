@@ -9,7 +9,7 @@ from bluebot.core.i18n import Translator
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Events.red")
+log = getLogger("blue.cogs.Audio.cog.Events.red")
 _ = Translator("Audio", Path(__file__))
 
 

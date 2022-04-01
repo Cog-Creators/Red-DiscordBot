@@ -11,7 +11,7 @@ from bluebot.core.utils.predicates import MessagePredicate
 from .announcer import Announcer
 from .converters import SelfRole
 
-log = logging.getLogger("red.admin")
+log = logging.getLogger("blue.admin")
 
 T_ = Translator("Admin", __file__)
 

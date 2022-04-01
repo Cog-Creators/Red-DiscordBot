@@ -23,7 +23,7 @@ from .generic_casetypes import all_generics
 if TYPE_CHECKING:
     from bluebot.core.bot import Blue
 
-log = logging.getLogger("red.core.modlog")
+log = logging.getLogger("blue.core.modlog")
 
 __all__ = [
     "Case",

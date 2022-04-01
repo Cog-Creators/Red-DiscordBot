@@ -17,7 +17,7 @@ from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
+log = getLogger("blue.cogs.Audio.cog.Utilities.local_tracks")
 _ = Translator("Audio", Path(__file__))
 
 

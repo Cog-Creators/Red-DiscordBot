@@ -19,7 +19,7 @@ from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
 
-logger = logging.getLogger("red.economy")
+logger = logging.getLogger("blue.economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
 VARIATION_SELECTOR = "\N{VARIATION SELECTOR-16}"

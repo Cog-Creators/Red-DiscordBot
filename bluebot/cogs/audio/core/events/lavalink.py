@@ -14,8 +14,8 @@ from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Events.lavalink")
-ws_audio_log = getLogger("red.Audio.WS.Audio")
+log = getLogger("blue.cogs.Audio.cog.Events.lavalink")
+ws_audio_log = getLogger("blue.Audio.WS.Audio")
 
 _ = Translator("Audio", Path(__file__))
 

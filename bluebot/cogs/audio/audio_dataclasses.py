@@ -79,7 +79,7 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
-log = getLogger("red.cogs.Audio.audio_dataclasses")
+log = getLogger("blue.cogs.Audio.audio_dataclasses")
 
 
 class LocalPath:

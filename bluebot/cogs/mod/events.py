@@ -8,7 +8,7 @@ from bluebot.core.utils.mod import is_mod_or_superior
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
-log = logging.getLogger("red.mod")
+log = logging.getLogger("blue.mod")
 
 
 class Events(MixinMeta):

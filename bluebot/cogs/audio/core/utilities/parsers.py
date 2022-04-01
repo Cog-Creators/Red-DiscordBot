@@ -9,7 +9,7 @@ from red_commons.logging import getLogger
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Utilities.Parsing")
+log = getLogger("blue.cogs.Audio.cog.Utilities.Parsing")
 
 STREAM_TITLE: Final[re.Pattern] = re.compile(rb"StreamTitle='([^']*)';")
 

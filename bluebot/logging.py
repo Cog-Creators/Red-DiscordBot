@@ -282,7 +282,7 @@ class BlueRichHandler(RichHandler):
 
 def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespace) -> None:
     root_logger = logging.getLogger()
-    base_logger = logging.getLogger("red")
+    base_logger = logging.getLogger("blue")
     base_logger.setLevel(level)
     dpy_logger = logging.getLogger("discord")
     dpy_logger.setLevel(logging.WARNING)
@@ -372,7 +372,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         encoding="utf-8",
     )
     all_fhandler = RotatingFileHandler(
-        stem="red",
+        stem="blue",
         directory=location,
         maxBytes=1_000_000,
         backupCount=MAX_OLD_LOGS,

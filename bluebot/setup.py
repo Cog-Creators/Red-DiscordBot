@@ -24,7 +24,7 @@ from bluebot.core import config, data_manager, drivers
 from bluebot.core.data_manager import appdir, config_dir, config_file
 from bluebot.core.drivers import BackendType, IdentifierData
 
-conversion_log = logging.getLogger("red.converter")
+conversion_log = logging.getLogger("blue.converter")
 
 try:
     config_dir.mkdir(parents=True, exist_ok=True)

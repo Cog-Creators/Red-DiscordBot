@@ -30,7 +30,7 @@ from ...utils import Notifier, PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Utilities.playlists")
+log = getLogger("blue.cogs.Audio.cog.Utilities.playlists")
 _ = Translator("Audio", Path(__file__))
 CURRATED_DATA = (
     "https://gist.githubusercontent.com/aikaterna/4b5de6c420cd6f12b83cb895ca2de16a/raw/json"

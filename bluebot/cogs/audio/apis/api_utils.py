@@ -16,7 +16,7 @@ from bluebot.core.utils.chat_formatting import humanize_list
 from ..errors import InvalidPlaylistScope, MissingAuthor, MissingGuild
 from ..utils import PlaylistScope
 
-log = getLogger("red.cogs.Audio.api.utils")
+log = getLogger("blue.cogs.Audio.api.utils")
 _ = Translator("Audio", Path(__file__))
 
 

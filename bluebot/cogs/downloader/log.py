@@ -1,3 +1,3 @@
 import logging
 
-log = logging.getLogger("red.downloader")
+log = logging.getLogger("blue.downloader")

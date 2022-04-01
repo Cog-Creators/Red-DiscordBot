@@ -59,7 +59,7 @@ if TYPE_CHECKING:
     from .. import Audio
 
 
-log = getLogger("red.cogs.Audio.api.LocalDB")
+log = getLogger("blue.cogs.Audio.api.LocalDB")
 _ = Translator("Audio", Path(__file__))
 _SCHEMA_VERSION = 3
 

@@ -34,7 +34,7 @@ __all__ = (
     "get_end_user_data_statement_or_raise",
 )
 
-log = logging.getLogger("red.core.utils")
+log = logging.getLogger("blue.core.utils")
 
 _T = TypeVar("_T")
 _S = TypeVar("_S")

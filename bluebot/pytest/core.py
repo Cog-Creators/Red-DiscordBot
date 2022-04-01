@@ -143,9 +143,9 @@ def empty_message():
 
 
 @pytest.fixture()
-def ctx(empty_member, empty_channel, red):
+def ctx(empty_member, empty_channel, blue):
     mock_ctx = namedtuple("Context", "author guild channel message bot")
-    return mock_ctx(empty_member, empty_member.guild, empty_channel, empty_message, red)
+    return mock_ctx(empty_member, empty_member.guild, empty_channel, empty_message, blue)
 
 
 # endregion
@@ -162,9 +162,9 @@ def red(config_fr):
 
     Config.get_core_conf = lambda *args, **kwargs: config_fr
 
-   blue= Blue(cli_flags=cli_flags, description=description, dm_help=None, owner_ids=set())
+    blue= Blue(cli_flags=cli_flags, description=description, dm_help=None, owner_ids=set())
 
-    yield red
+    yield blue
 
 
 # endregion

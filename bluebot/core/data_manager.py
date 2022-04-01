@@ -24,7 +24,7 @@ __all__ = [
     "storage_type",
 ]
 
-log = logging.getLogger("red.data_manager")
+log = logging.getLogger("blue.data_manager")
 
 basic_config = None
 

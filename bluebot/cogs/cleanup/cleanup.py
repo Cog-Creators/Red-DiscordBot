@@ -17,7 +17,7 @@ from .converters import PositiveInt, RawMessageIds, positive_int
 
 _ = Translator("Cleanup", __file__)
 
-log = logging.getLogger("red.cleanup")
+log = logging.getLogger("blue.cleanup")
 
 
 @cog_i18n(_)

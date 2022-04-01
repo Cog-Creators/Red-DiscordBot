@@ -15,10 +15,10 @@ import psutil
 from red_commons.logging import getLogger
 
 from bluebot.core import commands
-from bluebot.core.bot import Red
+from bluebot.core.bot import Blue
 from bluebot.core.i18n import Translator
 
-log = getLogger("red.cogs.Audio.task.callback")
+log = getLogger("blue.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
 
@@ -343,7 +343,7 @@ def has_unmanaged_server():
     return commands.check(pred)
 
 
-async def replace_p_with_prefix(bot: Red, message: str) -> str:
+async def replace_p_with_prefix(bot: Blue, message: str) -> str:
     """Replaces [p] with the bot prefix"""
     prefixes = await bot.get_valid_prefixes()
     prefix = re.sub(rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0])

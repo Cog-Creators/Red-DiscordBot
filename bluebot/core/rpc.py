@@ -8,7 +8,7 @@ from aiohttp_json_rpc.rpc import JsonRpcMethod
 
 import logging
 
-log = logging.getLogger("red.rpc")
+log = logging.getLogger("blue.rpc")
 
 __all__ = ["RPC", "RPCMixin", "get_name"]
 

@@ -5,7 +5,7 @@ __all__ = ["mod"]
 
 
 @pytest.fixture
-async def mod(config, monkeypatch, red):
+async def mod(config, monkeypatch, blue):
     from bluebot.core import Config
 
     with monkeypatch.context() as m:

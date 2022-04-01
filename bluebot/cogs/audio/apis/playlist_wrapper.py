@@ -34,7 +34,7 @@ from ..sql_statements import (
 from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult
 
-log = getLogger("red.cogs.Audio.api.Playlists")
+log = getLogger("blue.cogs.Audio.api.Playlists")
 _ = Translator("Audio", Path(__file__))
 
 

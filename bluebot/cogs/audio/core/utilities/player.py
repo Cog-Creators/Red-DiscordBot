@@ -22,7 +22,7 @@ from ...utils import Notifier
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Utilities.player")
+log = getLogger("blue.cogs.Audio.cog.Utilities.player")
 _ = Translator("Audio", Path(__file__))
 
 

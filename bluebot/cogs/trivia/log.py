@@ -4,4 +4,4 @@ import logging
 
 __all__ = ["LOG"]
 
-LOG = logging.getLogger("red.trivia")
+LOG = logging.getLogger("blue.trivia")

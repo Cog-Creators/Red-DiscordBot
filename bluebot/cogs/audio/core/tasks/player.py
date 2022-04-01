@@ -13,7 +13,7 @@ from bluebot.core.utils import AsyncIter
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Tasks.player")
+log = getLogger("blue.cogs.Audio.cog.Tasks.player")
 _ = Translator("Audio", Path(__file__))
 
 

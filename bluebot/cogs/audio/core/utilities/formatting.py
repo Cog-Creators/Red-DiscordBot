@@ -21,7 +21,7 @@ from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Utilities.formatting")
+log = getLogger("blue.cogs.Audio.cog.Utilities.formatting")
 _ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 

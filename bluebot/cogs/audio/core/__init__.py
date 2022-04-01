@@ -10,7 +10,7 @@ import aiohttp
 import discord
 
 from bluebot.core import Config
-from bluebot.core.bot import Red
+from bluebot.core.bot import Blue
 from bluebot.core.commands import Cog
 from bluebot.core.data_manager import cog_data_path
 from bluebot.core.i18n import Translator, cog_i18n

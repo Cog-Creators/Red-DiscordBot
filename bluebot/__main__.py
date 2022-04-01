@@ -73,7 +73,7 @@ def debug_info():
 
     pyver = sys.version
     pipver = pip.__version__
-    redver = __version__
+    bluever = __version__
     dpy_version = discord.__version__
     if IS_WINDOWS:
         os_info = platform.uname()
@@ -86,7 +86,7 @@ def debug_info():
     user_who_ran = getpass.getuser()
     info = (
         "Debug Info for Blue\n\n"
-        + "Blue version: {}\n".format(redver)
+        + "Blue version: {}\n".format(bluever)
         + "Python version: {}\n".format(pyver)
         + "Python executable: {}\n".format(sys.executable)
         + "Discord.py version: {}\n".format(dpy_version)
@@ -397,7 +397,7 @@ async def run_bot(blue: Blue, cli_flags: Namespace) -> None:
             "Blue requires all Privileged Intents to be enabled.\n"
             "You can find out how to enable Privileged Intents with this guide:\n"
             "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
-            style="red",
+            style="blue",
         )
         sys.exit(1)
     except _NoOwnerSet:
@@ -530,13 +530,13 @@ def main():
                     s, lambda s=s: asyncio.create_task(shutdown_handler(blue, s))
                 )
 
-        exc_handler = functools.partial(global_exception_handler, red)
+        exc_handler = functools.partial(global_exception_handler, blue)
         loop.set_exception_handler(exc_handler)
         # Excellent; we have a bet. Whoever produces the most barrels in one hour wins the exclusive right to sell cider in Ponyville.
         # But what about the super party pony named Pinkie...?
         # You and I have some unfinished business. My magic's gotten better since I was here last. And I'm going to prove it! Me and you, a magic duel. Winner stays, loser leaves Ponyville forever!
         fut = loop.create_task(run_bot(blue, cli_flags))
-        r_exc_handler = functools.partial(blue_exception_handler, red)
+        r_exc_handler = functools.partial(blue_exception_handler, blue)
         fut.add_done_callback(r_exc_handler)
         loop.run_forever()
     except KeyboardInterrupt:

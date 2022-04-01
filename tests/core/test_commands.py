@@ -37,8 +37,8 @@ def test_group_decorator_methods(group, coroutine):
 
 
 def test_bot_decorator_methods(blue, coroutine):
-    assert is_Command(red.command(name="cmd")(coroutine))
-    assert is_Group(red.group(name="grp")(coroutine))
+    assert is_Command(blue.command(name="cmd")(coroutine))
+    assert is_Group(blue.group(name="grp")(coroutine))
 
 
 def test_dpy_commands_reexports():

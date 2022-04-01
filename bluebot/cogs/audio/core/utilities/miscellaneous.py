@@ -24,7 +24,7 @@ from ...utils import PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, DataReader
 
-log = getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
+log = getLogger("blue.cogs.Audio.cog.Utilities.miscellaneous")
 _ = Translator("Audio", Path(__file__))
 _RE_TIME_CONVERTER: Final[Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _prefer_lyrics_cache = {}

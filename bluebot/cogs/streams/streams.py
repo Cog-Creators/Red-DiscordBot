@@ -34,7 +34,7 @@ from typing import Optional, List, Tuple, Union, Dict
 MAX_RETRY_COUNT = 10
 
 _ = Translator("Streams", __file__)
-log = logging.getLogger("red.core.cogs.Streams")
+log = logging.getLogger("blue.core.cogs.Streams")
 
 
 @cog_i18n(_)

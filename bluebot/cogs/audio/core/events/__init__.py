@@ -6,7 +6,7 @@ from .dpy import DpyEvents
 from .lavalink import LavalinkEvents
 from .red import BlueEvents
 
-log = getLogger("red.cogs.Audio.cog.Events")
+log = getLogger("blue.cogs.Audio.cog.Events")
 
 
 class Events(AudioEvents, DpyEvents, LavalinkEvents, BlueEvents, metaclass=CompositeMetaClass):

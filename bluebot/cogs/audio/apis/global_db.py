@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 _API_URL = "https://api.bluebot.app/"
 _ = Translator("Audio", Path(__file__))
-log = getLogger("red.cogs.Audio.api.GlobalDB")
+log = getLogger("blue.cogs.Audio.api.GlobalDB")
 
 
 class GlobalCacheWrapper:

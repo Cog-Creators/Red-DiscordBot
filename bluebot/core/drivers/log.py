@@ -7,5 +7,5 @@ if os.getenv("RED_INSPECT_DRIVER_QUERIES"):
 else:
     LOGGING_INVISIBLE = 0
 
-log = logging.getLogger("red.driver")
+log = logging.getLogger("blue.driver")
 log.invisible = functools.partial(log.log, LOGGING_INVISIBLE)

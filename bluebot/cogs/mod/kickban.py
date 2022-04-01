@@ -19,7 +19,7 @@ from bluebot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
 from .utils import is_allowed_by_hierarchy
 
-log = logging.getLogger("red.mod")
+log = logging.getLogger("blue.mod")
 _ = i18n.Translator("Mod", __file__)
 
 

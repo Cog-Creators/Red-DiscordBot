@@ -33,7 +33,7 @@ from ..sql_statements import (
 )
 from .api_utils import QueueFetchResult
 
-log = getLogger("red.cogs.Audio.api.PersistQueueWrapper")
+log = getLogger("blue.cogs.Audio.api.PersistQueueWrapper")
 _ = Translator("Audio", Path(__file__))
 
 if TYPE_CHECKING:

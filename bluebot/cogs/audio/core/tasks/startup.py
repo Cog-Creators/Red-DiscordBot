@@ -19,7 +19,7 @@ from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import _SCHEMA_VERSION, CompositeMetaClass
 
-log = getLogger("red.cogs.Audio.cog.Tasks.startup")
+log = getLogger("blue.cogs.Audio.cog.Tasks.startup")
 _ = Translator("Audio", Path(__file__))
 
 

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 _ = Translator("Audio", Path(__file__))
 
-log = getLogger("red.cogs.Audio.api.Spotify")
+log = getLogger("blue.cogs.Audio.api.Spotify")
 
 
 CATEGORY_ENDPOINT = "https://api.spotify.com/v1/browse/categories"

@@ -7,7 +7,7 @@ from discord.ext.commands.converter import Converter
 from bluebot.core import commands
 from bluebot.core import i18n
 
-log = logging.getLogger("red.cogs.mutes")
+log = logging.getLogger("blue.cogs.mutes")
 
 # What?
 # Princess, if I may have a word... I-I have two pieces of news for you. First, your mane stylist has the flu and won't be able to make it for fear of you catching it, too.

@@ -24,7 +24,7 @@ import discord
 import lavalink
 
 from bluebot.core import Config, commands
-from bluebot.core.bot import Red
+from bluebot.core.bot import Blue
 from bluebot.core.commands import Context
 from bluebot.core.utils.antispam import AntiSpam
 from bluebot.core.utils.dbtools import APSWConnectionWrapper

@@ -39,7 +39,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         This command block holds all commands to manage an external or managed Lavalink node.
 
         You should not mess with any command in here unless you have a valid reason to,
-        i.e. been told by someone in the Red-Discord Bot support server to do so.
+        i.e. been told by someone in the Blue-Discord Bot support server to do so.
         All the commands in here have the potential to break the Audio cog.
         """
 

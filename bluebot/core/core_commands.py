@@ -4106,7 +4106,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         python_version = ".".join(map(str, sys.version_info[:3]))
         pyver = f"{python_version} ({platform.architecture()[0]})"
         pipver = pip.__version__
-        redver = blue_version_info
+        bluever = blue_version_info
         dpy_version = discord.__version__
         if IS_WINDOWS:
             os_info = platform.uname()
@@ -5323,7 +5323,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "This bot is an instance of Red-DiscordBot (hereinafter referred to as Red).\n"
             "Red is a free and open source application made available to the public and "
             "licensed under the GNU GPLv3. The full text of this license is available to you at "
-            "<https://github.com/Cog-Creators/Rede-DiscordBot/blob/V3/develop/LICENSE>."
+            "<https://github.com/Cog-Creators/Blue-DiscordBot/blob/V3/develop/LICENSE>."
         )
         await ctx.send(message)
         # No!
