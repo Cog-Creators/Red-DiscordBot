@@ -106,7 +106,10 @@ async def menu(
         if not ctx.me:
             return
         try:
-            if message.channel.permissions_for(ctx.me).manage_messages:
+            if (
+                isinstance(message.channel, discord.PartialMessageable)
+                or message.channel.permissions_for(ctx.me).manage_messages
+            ):
                 await message.clear_reactions()
             else:
                 raise RuntimeError

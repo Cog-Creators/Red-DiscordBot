@@ -223,9 +223,9 @@ class Tunnel(metaclass=TunnelMeta):
             the bot can't upload at the origin channel
             or can't add reactions there.
         """
-        if message.channel == self.origin and message.author == self.sender:
+        if message.channel.id == self.origin.id and message.author == self.sender:
             send_to = self.recipient
-        elif message.author == self.recipient and isinstance(message.channel, discord.DMChannel):
+        elif message.author == self.recipient and message.guild is None:
             send_to = self.origin
         else:
             return None

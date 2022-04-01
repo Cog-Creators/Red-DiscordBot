@@ -641,6 +641,9 @@ class CustomCommands(commands.Cog):
         # something similar once it's added
         user_allowed = True
 
+        if isinstance(message.channel, discord.PartialMessageable):
+            return
+
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
             return
 

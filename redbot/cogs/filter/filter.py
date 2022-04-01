@@ -480,6 +480,12 @@ class Filter(commands.Cog):
         hits = await self.filter_hits(message.content, message.channel)
 
         if hits:
+            # modlog doesn't accept PartialMessageable
+            channel = (
+                None
+                if isinstance(message.channel, discord.PartialMessageable)
+                else message.channel
+            )
             await modlog.create_case(
                 bot=self.bot,
                 guild=guild,
@@ -492,7 +498,7 @@ class Filter(commands.Cog):
                     if len(hits) > 1
                     else _("Filtered word used: {word}").format(word=list(hits)[0])
                 ),
-                channel=message.channel,
+                channel=channel,
             )
             try:
                 await message.delete()
