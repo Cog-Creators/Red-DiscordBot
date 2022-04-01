@@ -25,7 +25,7 @@ Now install the pre-requirements with zypper:
 
 .. prompt:: bash
 
-    sudo zypper -n install opt-python39 opt-python39-setuptools git-core java-11-openjdk-headless nano
+    sudo zypper -n install opt-python39 opt-python39-setuptools git-core  nano
     sudo zypper -n install -t pattern devel_basis
 
 Since Python is now installed to ``/opt/python``, we should add it to PATH. You can add a file in

@@ -15,7 +15,7 @@ them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python39 git java-11-openjdk-headless @development-tools nano
+    sudo dnf -y install python39 git @development-tools nano
 
 .. Include common instructions:
 

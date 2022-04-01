@@ -15,7 +15,7 @@ Install the pre-requirements with yum:
 .. prompt:: bash
 
     sudo yum -y groupinstall development
-    sudo yum -y install gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel java-11-openjdk-headless nano git
+    sudo yum -y install gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel nano git
 
 In order to install gcc 8, we'll use SCL repository:
 

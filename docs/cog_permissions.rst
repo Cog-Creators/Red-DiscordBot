@@ -54,9 +54,6 @@ allow, or ``false`` for deny. Here is an example:
       Admin:
         78631113035100160: true
         96733288462286848: false
-      Audio:
-        133049272517001216: true
-        default: false
     COMMAND:
       cleanup bot:
         78631113035100160: true

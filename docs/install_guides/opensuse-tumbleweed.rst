@@ -15,7 +15,7 @@ with zypper:
 
 .. prompt:: bash
 
-    sudo zypper -n install python39-base python39-pip git-core java-11-openjdk-headless nano
+    sudo zypper -n install python39-base python39-pip git-core nano
     sudo zypper -n install -t pattern devel_basis
 
 .. Include common instructions:

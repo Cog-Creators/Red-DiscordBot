@@ -67,11 +67,6 @@ Choosing a Provider
   providers not listed here if desired. The key is the provider offering 
   an OS supported by Red.
 
-.. tip::
- You will have better results with Audio when the region in your Discord 
- server settings is closer to the bulk of the server's audience and
- the location you picked for your Red host.
-
 
 -----------------
 Average Providers

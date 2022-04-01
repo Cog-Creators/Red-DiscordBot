@@ -33,12 +33,6 @@ Then run each of the following commands:
     choco upgrade visualstudio2019-workload-vctools -y
     choco upgrade python3 -y --version 3.9.9
 
-For Audio support, you should also run the following command before exiting:
-
-.. prompt:: powershell
-
-    choco upgrade temurin11 -y
-
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
 
@@ -63,8 +57,6 @@ Manually installing dependencies
 * `Git 2.11+ <https://git-scm.com/download/win>`_
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
-
-* `Java 11 <https://adoptium.net/?variant=openjdk11>`_ - needed for Audio
 
 From here, continue onto `creating-venv-windows`.
 
