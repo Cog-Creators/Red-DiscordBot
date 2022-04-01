@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/Cock-Creators/Blue-DiscordBot/tree/V3/develop"><img src="https://imgur.com/pY1WUFX.png" alt="Blue - Discord Bot"></a>
+  <a href="https://duckduckgo.com/?t=ffab&q=blue+anime+character&iax=images&ia=images"><img src="https://karel.go-get-a.life/5scKL_UV9.png" alt="Blue - Discord Bot"></a>
   <br>
   Blue Discord Bot
   <br>
