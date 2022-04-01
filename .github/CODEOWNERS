@@ -1,25 +1,25 @@
 # Cogs
-/bluebot/cogs/audio/** @aikaterna @PredaaA
-/bluebot/cogs/downloader/* @jack1142
-/bluebot/cogs/streams/* @palmtree5
-/bluebot/cogs/mutes/* @TrustyJAID
+/bluebot/cogs/audio/** @AAA3A-AAA3A
+/bluebot/cogs/downloader/* @AAA3A-AAA3A
+/bluebot/cogs/streams/* @evoxq
+/bluebot/cogs/mutes/* @evoxq
 
 # Docs - Install and update guides
-/docs/install_guides/** @jack1142
-/docs/update_red.rst @jack1142
+/docs/install_guides/** @torvalds
+/docs/update_red.rst @torvalds
 
 # Docs - Version guarantees
-/docs/version_guarantees.rst @jack1142
+/docs/version_guarantees.rst @torvalds
 
 # Trivia Lists
-/bluebot/cogs/trivia/data/lists/whosthatpokemon*.yaml @aikaterna
+/bluebot/cogs/trivia/data/lists/whosthatpokemon*.yaml @ass-ketchup
 
 # Tests
-/bluebot/pytest/downloader* @jack1142
-/tests/cogs/downloader/* @jack1142
+/bluebot/pytest/downloader* @evoxq
+/tests/cogs/downloader/* @evoxq
 
 # Schemas
-/schema/* @jack1142
+/schema/* @Kowlin
 
 # CI
 /.travis.yml @Kowlin
