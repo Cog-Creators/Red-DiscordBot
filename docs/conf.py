@@ -96,7 +96,7 @@ exclude_patterns = [
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = "default"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -117,6 +117,12 @@ rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+
+# Add any extra paths that contain custom files (such as robots.txt or
+# .htaccess) here, relative to this directory. These files are copied
+# directly to the root of the documentation.
+#
+html_extra_path = ["_html"]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -245,3 +251,21 @@ doctest_test_doctest_blocks = ""
 # Autodoc options
 autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"
+
+
+from docutils import nodes
+from sphinx.transforms import SphinxTransform
+
+
+# d.py's |coro| substitution leaks into our docs because we don't replace some of the docstrings
+class IgnoreCoroSubstitution(SphinxTransform):
+    default_priority = 210
+
+    def apply(self, **kwargs) -> None:
+        for ref in self.document.traverse(nodes.substitution_reference):
+            if ref["refname"] == "coro":
+                ref.replace_self(nodes.Text("", ""))
+
+
+def setup(app):
+    app.add_transform(IgnoreCoroSubstitution)

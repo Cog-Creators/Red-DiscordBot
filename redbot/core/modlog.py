@@ -15,7 +15,7 @@ from .utils.common_filters import (
     filter_urls,
     escape_spoilers,
 )
-from .utils.chat_formatting import pagify
+from .utils.chat_formatting import bold, pagify
 from .i18n import Translator, set_contextual_locales_from_guild
 
 from .generic_casetypes import all_generics
@@ -98,7 +98,6 @@ async def _init(bot: Red):
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
-
         if not guild.me.guild_permissions.view_audit_log:
             return
 
@@ -338,6 +337,13 @@ class Case:
         self.case_number = case_number
         self.message = message
 
+    async def _set_message(self, message: discord.Message, /) -> None:
+        # This should only be used for setting the message right after case creation
+        # in order to avoid making an API request to "edit" the message with changes.
+        # In all other cases, edit() is correct method.
+        self.message = message
+        await _config.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
+
     async def edit(self, data: dict):
         """
         Edits a case
@@ -368,7 +374,7 @@ class Case:
         if not self.message:
             return
         try:
-            use_embed = await self.bot.embed_requested(self.message.channel, self.guild.me)
+            use_embed = await self.bot.embed_requested(self.message.channel)
             case_content = await self.message_content(use_embed)
             if use_embed:
                 await self.message.edit(embed=case_content)
@@ -486,7 +492,7 @@ class Case:
 
         if embed:
             if self.reason:
-                reason = _("**Reason:** {}").format(self.reason)
+                reason = f"{bold(_('Reason:'))} {self.reason}"
                 if len(reason) > 2048:
                     reason = (
                         next(
@@ -521,7 +527,7 @@ class Case:
             return emb
         else:
             if self.reason:
-                reason = _("**Reason:** {}").format(self.reason)
+                reason = f"{bold(_('Reason:'))} {self.reason}"
                 if len(reason) > 1000:
                     reason = (
                         next(
@@ -536,20 +542,20 @@ class Case:
             user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
-            case_text += _("**User:** {}\n").format(user)
-            case_text += _("**Moderator:** {}\n").format(moderator)
+            case_text += f"{bold(_('User:'))} {user}\n"
+            case_text += f"{bold(_('Moderator:'))} {moderator}\n"
             case_text += "{}\n".format(reason)
             if until and duration:
-                case_text += _("**Until:** {}\n**Duration:** {}\n").format(until, duration)
+                case_text += f"{bold(_('Until:'))} {until}\n{bold(_('Duration:'))} {duration}\n"
             if self.channel:
                 if isinstance(self.channel, int):
-                    case_text += _("**Channel**: {} (Deleted)\n").format(self.channel)
+                    case_text += f"{bold(_('Channel:'))} {self.channel} {_('(Deleted)')}\n"
                 else:
-                    case_text += _("**Channel**: {}\n").format(self.channel.name)
+                    case_text += f"{bold(_('Channel:'))} {self.channel.name}\n"
             if amended_by:
-                case_text += _("**Amended by:** {}\n").format(amended_by)
+                case_text += f"{bold(_('Amended by:'))} {amended_by}\n"
             if last_modified:
-                case_text += _("**Last modified at:** {}\n").format(last_modified)
+                case_text += f"{bold(_('Last modified at:'))} {last_modified}\n"
             return case_text.strip()
 
     def to_json(self) -> dict:
@@ -986,13 +992,13 @@ async def create_case(
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
-        use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
+        use_embeds = await case.bot.embed_requested(mod_channel)
         case_content = await case.message_content(use_embeds)
         if use_embeds:
             msg = await mod_channel.send(embed=case_content)
         else:
             msg = await mod_channel.send(case_content)
-        await case.edit({"message": msg})
+        await case._set_message(msg)
     except RuntimeError:  # modlog channel isn't set
         pass
     except discord.Forbidden:
