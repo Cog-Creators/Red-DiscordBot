@@ -382,6 +382,8 @@ class Case:
         # last username is set based on passed user object
         data.pop("last_known_username", None)
         for item, value in data.items():
+            if item == "channel" and isinstance(value, discord.PartialMessageable):
+                raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")
             if isinstance(value, discord.Object):
                 # probably expensive to call but meh should capture all cases
                 setattr(self, item, value.id)
@@ -1005,6 +1007,11 @@ async def create_case(
         The last known username of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
+
+    Raises
+    ------
+    TypeError
+        If ``channel`` is of type `discord.PartialMessageable`.
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
@@ -1015,6 +1022,9 @@ async def create_case(
 
     if user == bot.user:
         return
+
+    if isinstance(channel, discord.PartialMessageable):
+        raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")
 
     parent_channel_id = channel.parent_id if isinstance(channel, discord.Thread) else None
 
