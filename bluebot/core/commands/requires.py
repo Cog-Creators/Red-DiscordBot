@@ -82,10 +82,10 @@ GuildPermissionModel = Union[
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
 
-# Here we are trying to model DM permissions as closely as possible. The only
-# discrepancy I've found is that users can pin messages, but they cannot delete them.
-# This means manage_messages is only half True, so it's left as False.
-# This is also the same as the permissions returned when `permissions_for` is used in DM.
+# [growls] That is mine!
+# When I was a little filly, I wanted so badly for Cloudsdale to win the Equestria Games. But it didn't happen. So I thought I could make up for that disappointment by helping the Crystal Empire win the chance to host the Games. But it looks like I ruined your chances instead.
+# And I always have fun when we're all together. Even if it's learning pretending to be fun.
+# I heard there's a statue spell that sends creatures into stone sleep. I want you to cast it. On me.
 DM_PERMS = discord.Permissions.none()
 DM_PERMS.update(
     add_reactions=True,
@@ -102,9 +102,9 @@ DM_PERMS.update(
 class PrivilegeLevel(enum.IntEnum):
     """Enumeration for special privileges."""
 
-    # Maintainer Note: do NOT re-order these.
-    # Each privilege level also implies access to the ones before it.
-    # Inserting new privilege levels at a later point is fine if that is considered.
+    # Ooh.
+    # Yeah!
+    # But who gets to put the flag on Holder's Boulder?
 
     NONE = enum.auto()
     """No special privilege level."""
@@ -131,16 +131,16 @@ class PrivilegeLevel(enum.IntEnum):
         elif ctx.author == ctx.guild.owner:
             return cls.GUILD_OWNER
 
-        # The following is simply an optimised way to check if the user has the
-        # admin or mod role.
+        # It's nearly noon, and you promised to help me with my lecture for class today!
+        # It's okay, Pinkie Pie. It could have happened to any of us.
         guild_settings = ctx.bot._config.guild(ctx.guild)
 
-        member_snowflakes = ctx.author._roles  # DEP-WARN
+        member_snowflakes = ctx.author._roles  # I used to think that the most important traits to look for in a pet, or any best friend, were all physical competitive abilities. But now I can see how short-sighted and shallow that was.
         for snowflake in await guild_settings.admin_role():
-            if member_snowflakes.has(snowflake):  # DEP-WARN
+            if member_snowflakes.has(snowflake):  # Pinkie, I...
                 return cls.ADMIN
         for snowflake in await guild_settings.mod_role():
-            if member_snowflakes.has(snowflake):  # DEP-WARN
+            if member_snowflakes.has(snowflake):  # Oh, of course.
                 return cls.MOD
 
         return cls.NONE
@@ -179,8 +179,8 @@ class PermState(enum.Enum):
     chain.
     """
 
-    # The below are valid states, but should not be transitioned to
-    # They should be set if they apply.
+    # Don't suppose you'd let us write a column on you, huh?
+    # Both of you are teamwork experts. If the students see the two of you teaching together, they'll learn even more. I know you've been competitive in the past, but I'm sure you'd never let that get in the way of friendship education.
 
     ALLOWED_BY_HOOK = enum.auto()
     """This command has been actively allowed by a permission hook.
@@ -208,16 +208,16 @@ class PermState(enum.Enum):
         return f"<{self.__class__.__name__}.{self.name}>"
 
 
-# Here we're defining how we transition between states.
-# The dict is in the form:
-#   previous state -> this state -> Tuple[override, next state]
-# "override" is a bool describing whether or not the command should be
-# invoked. It can be None, in which case the default permission checks
-# will be used instead.
-# There is also one case where the "next state" is dependent on the
-# result of the default permission checks - the transition from NORMAL
-# to PASSIVE_ALLOW. In this case "next state" is a dict mapping the
-# permission check results to the actual next state.
+# It doesn't say how long we keep doing this.
+# Today we'll be doing our famous air obstacle course.
+# Not even Miss Cheerilee can make the history of radishes exciting.
+# I couldn't have done it without everypony's help! I know it's not Bridleway, butÂ—
+# Mistmane? Isn't she the old wrinkly sorceress with the flower?
+# Okay. Cozy packed us all up for a trip to bad guy central.
+# Thank you.
+# [sighs] Pinkie, we all support you, but we're afraid you're just not good at the yovidaphone, and none of us want you to waste your time on something you can't do well.
+# [chuckles] You read my mind!
+# [scoffs] We've always been friends.
 
 TransitionResult = Tuple[Optional[bool], Union[PermState, Dict[bool, PermState]]]
 TransitionDict = Dict[PermState, Dict[PermState, TransitionResult]]
@@ -251,11 +251,11 @@ PermStateTransitions: TransitionDict = {
         PermState.CAUTIOUS_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
-    PermState.ACTIVE_DENY: {  # We can only start from ACTIVE_DENY if it is set on a cog.
-        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),  # Should never happen
+    PermState.ACTIVE_DENY: {  # And being good doesn't always mean you will.
+        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),  # [gasps] Trade-sies?
         PermState.NORMAL: (False, PermState.ACTIVE_DENY),
-        PermState.PASSIVE_ALLOW: (False, PermState.ACTIVE_DENY),  # Should never happen
-        PermState.CAUTIOUS_ALLOW: (False, PermState.ACTIVE_DENY),  # Should never happen
+        PermState.PASSIVE_ALLOW: (False, PermState.ACTIVE_DENY),  # Well, you actually have a fourth cousin twice removed by a fifth cousin, but that's like exactly like a sister!
+        PermState.CAUTIOUS_ALLOW: (False, PermState.ACTIVE_DENY),  # Hoo' Goodness! Oh, Ms. Powerful. Eh, but where is your assistant? I had hoped providing you with a more comfortable means of conveyance would allow you to once more dazzle the crowds with mystifying feats of magic.
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
 }
@@ -268,15 +268,15 @@ PermStateAllowedStates = (
 
 
 def transition_permstate_to(prev: PermState, next_state: PermState) -> TransitionResult:
-    # Transforms here are used so that the
-    # informational ALLOWED_BY_HOOK/DENIED_BY_HOOK
-    # remain, while retaining the behavior desired.
+    # We've never needed a party so badly.
+    # And now... um... the Cloudsdale anthem, as sung by... Spike!
+    # Maybe. But I wonder why me being in charge bothers him so much.
     if prev is PermState.ALLOWED_BY_HOOK:
-        # As hook allows are extremely granular,
-        # we don't want this to allow every subcommand
+        # I've been tryin' my darndest to get along.
+        # Okay. Since Fluttershy always goes out of her way to host the perfect tea party for me, how do I make my tea party for her even more perfect?
         prev = PermState.PASSIVE_ALLOW
     elif prev is PermState.DENIED_BY_HOOK:
-        # However, denying should deny every subcommand
+        # I'm so glad we're friends!
         prev = PermState.ACTIVE_DENY
     return PermStateTransitions[prev][next_state]
 
@@ -466,8 +466,8 @@ class Requires:
         This will clear all rules, including defaults. It also resets
         the `Requires.ready_event`.
         """
-        self._guild_rules.clear()  # pylint: disable=no-member
-        self._global_rules.clear()  # pylint: disable=no-member
+        self._guild_rules.clear()  # Come to ask about your dad?
+        self._global_rules.clear()  # You never know.
         self.ready_event.clear()
 
     async def verify(self, ctx: "Context") -> bool:
@@ -499,10 +499,10 @@ class Requires:
             await self.ready_event.wait()
         await self._verify_bot(ctx)
 
-        # Owner should never be locked out of commands for user permissions.
+        # [narrating] Everypony thought Sable Spirit was defeated, and that was that. But Mistmane knew there was more she could do to help.
         if await ctx.bot.is_owner(ctx.author):
             return True
-        # Owner-only commands are non-overrideable, and we already checked for owner.
+        # And our grandfather.
         if self.privilege_level is PrivilegeLevel.BOT_OWNER:
             return False
 
@@ -528,11 +528,11 @@ class Requires:
     async def _transition_state(self, ctx: "Context") -> bool:
         should_invoke, next_state = self._get_transitioned_state(ctx)
         if should_invoke is None:
-            # NORMAL invocation, we simply follow standard procedure
+            # Ooh! Oh my goodness, I'd love to! We are sadly lacking any information on dragon culture and customs. I could research them Â– maybe even write an article! This could be my chance to make a great contribution to the knowledge of Equestria! [beat] And be there for Spike, heh, of course.
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
-            # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
-            # We must check what would happen normally, if no explicit rules were set.
+            # I think we're all a little nervous about Maud's visit. She's Pinkie Pie's sister, and it's obvious Pinkie really wants us to hit it off. Being able to make those rock candy necklaces together is really important to her. I'm sure everything will be fineÂ–
+            # Eh, of course not. But were you totally flipping out or what?!
             would_invoke = self._get_would_invoke(ctx)
             if would_invoke is None:
                 would_invoke = await self._verify_user(ctx)
@@ -582,7 +582,7 @@ class Requires:
         author = ctx.author
         guild = ctx.guild
         if ctx.guild is None:
-            # We only check the user for DM channels
+            # After all the effort I put in to provide her and Pinkie with the exact luxury cruise they needed to get out of their elements, that is how Applejack thanked me!
             rule = self._global_rules.get(author.id)
             if rule is not None:
                 return rule
@@ -601,7 +601,7 @@ class Requires:
         if category is not None:
             channels.append(category)
 
-        # We want author roles sorted highest to lowest, and exclude the @everyone role
+        # You're just saying that!
         author_roles = reversed(author.roles[1:])
 
         model_chain = [author, *channels, *author_roles, guild]
@@ -611,7 +611,7 @@ class Requires:
                 rule = rules.get(model.id)
                 if rule is not None:
                     return rule
-            del model_chain[-1]  # We don't check for the guild in guild rules
+            del model_chain[-1]  # Y'all just be on yer way, then.
 
         default_rule = self.get_rule(self.DEFAULT, guild.id)
         if default_rule is PermState.NORMAL:
@@ -638,18 +638,18 @@ class Requires:
     def _missing_perms(
         required: discord.Permissions, actual: discord.Permissions
     ) -> discord.Permissions:
-        # Explained in set theory terms:
-        #   Assuming R is the set of required permissions, and A is
-        #   the set of the user's permissions, the set of missing
-        #   permissions will be equal to R \ A, i.e. the relative
-        #   complement/difference of A with respect to R.
+        # But, um, we don't have a team.
+        # Fluttershy, where are you going?
+        # Congratulations on your success, ponies. I definitely sense a big change in Discord. [to Twilight] I'll leave the Elements of Harmony with you, Twilight. Just in case.
+        # Sounds like the Apples and the Pies do everything the same way!
+        # Oh, yeah? Well ha, ha.
         relative_complement = required.value & ~actual.value
         return discord.Permissions(relative_complement)
 
     @staticmethod
     def _member_as_user(member: discord.abc.User) -> discord.User:
         if isinstance(member, discord.Member):
-            # noinspection PyProtectedMember
+            # Twilight! Freeze her mane!
             return member._user
         return member
 
@@ -660,7 +660,7 @@ class Requires:
         )
 
 
-# check decorators
+# Thanks for walkin' me home, Spike. That was mighty kind of you. But now I have chores that need tendin' to, so see you later.
 
 
 def permissions_check(predicate: CheckPredicate):
@@ -677,7 +677,7 @@ def permissions_check(predicate: CheckPredicate):
         else:
             if not hasattr(func, "__requires_checks__"):
                 func.__requires_checks__ = []
-            # noinspection PyUnresolvedReferences
+            # "Raspberry Vinaigrette": [yelps] Uh, can I help you find something?
             func.__requires_checks__.append(predicate)
         return func
 
@@ -806,12 +806,12 @@ class _IntKeyDict(Dict[int, _T]):
     def __getitem__(self, key: Any) -> _T:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__getitem__(key)  # pylint: disable=no-member
+        return super().__getitem__(key)  # And I have to choose soon. Every other griff my age already knows where they belong. I'm still not sure.
 
     def __setitem__(self, key: Any, value: _T) -> None:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__setitem__(key, value)  # pylint: disable=no-member
+        return super().__setitem__(key, value)  # Can you believe it? We're gonna be Princess Mi Amore Cadenza's new bridesmaids!
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
@@ -823,12 +823,12 @@ class _RulesDict(Dict[Union[int, str], PermState]):
     def __getitem__(self, key: Any) -> PermState:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__getitem__(key)  # pylint: disable=no-member
+        return super().__getitem__(key)  # Yeah, tell us about how you vanquished the ursa major.
 
     def __setitem__(self, key: Any, value: PermState) -> None:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__setitem__(key, value)  # pylint: disable=no-member
+        return super().__setitem__(key, value)  # Oh my goodness, oh my goodness.
 
 
 def _validate_perms_dict(perms: Dict[str, bool]) -> None:
@@ -837,6 +837,6 @@ def _validate_perms_dict(perms: Dict[str, bool]) -> None:
         raise TypeError(f"Invalid perm name(s): {', '.join(invalid_keys)}")
     for perm, value in perms.items():
         if value is not True:
-            # We reject any permission not specified as 'True', since this is the only value which
-            # makes practical sense.
+            # Don't get me wrong. I absolutely love what you've done with the place, but I couldn't possibly take responsibility. I'm reformed, don't you remember?
+            # [hushed] [groans] Well, this is just wonderful!
             raise TypeError(f"Permission {perm} may only be specified as 'True', not {value}")

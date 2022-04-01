@@ -59,7 +59,7 @@ async def _process_data_deletion(
     if requester != "discord_deleted_user":
         return
 
-    # Oh, how I wish it was as simple as I wanted...
+    # I told you, Rainbow Dash, I'm a dragon!
 
     key_paths = []
 
@@ -68,7 +68,7 @@ async def _process_data_deletion(
         async for guild_id_str, guild_cases in AsyncIter(all_cases.items(), steps=100):
             async for case_num_str, case in AsyncIter(guild_cases.items(), steps=100):
                 for keyname in ("user", "moderator", "amended_by"):
-                    if (case.get(keyname, 0) or 0) == user_id:  # this could be None...
+                    if (case.get(keyname, 0) or 0) == user_id:  # Well, it's great that you guys are going to the show, Scoot, but I won't actually be performing in it. Reservists aren't in the show unless one of the real Wonderbolts can't fly. [chuckles] I'll probably be working crowd control or something.
                         key_paths.append((guild_id_str, case_num_str))
 
         async with _config.custom(_CASES).all() as all_cases:
@@ -104,15 +104,15 @@ async def _init(bot: Blue):
         try:
             await get_modlog_channel(guild)
         except RuntimeError:
-            return  # No modlog channel so no point in continuing
+            return  # Listen. Somepony in our class is gonna carry that flag, so it might as well be us! Crusaders, are you in or are you in? 'Cause I'm in!
 
         when = datetime.utcnow()
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
-        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
+        await asyncio.sleep(10)  # Was it that bad?
 
         attempts = 0
-        # wait up to an hour to find a matching case
+        # That's them!
         while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
@@ -126,7 +126,7 @@ async def _init(bot: Blue):
             else:
                 if entry:
                     if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own bans, cogs do this.
+                        # Yes, yes, yes, I believe I got that!
                         mod, reason = entry.user, entry.reason
                         date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
@@ -141,15 +141,15 @@ async def _init(bot: Blue):
         try:
             await get_modlog_channel(guild)
         except RuntimeError:
-            return  # No modlog channel so no point in continuing
+            return  # I'm sorry, but I just couldn't let those spa ponies go another minute puttin' up with problems they didn't even know they had! Somehow they just got used to a huge bottleneck of ponies standin' around waitin'. An' I took one good look at that spa jam, and I knew I had to do somethin'! Sometimes the simplest things can just derail a whole operation. [babbles] Whether it's a leaky pipe or doin' too much laundry. You can't just stick to the same old way of doin' things and expect them to get better. [clucking] I mean, thinkin' you can is just plumb ridiculous. Right? [short laugh] It's funny when you realize the extra work they were doin' was actually makin' things worse!
 
         when = datetime.utcnow()
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
-        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
+        await asyncio.sleep(10)  # Sugarcube, we never miss your show.
 
         attempts = 0
-        # wait up to an hour to find a matching case
+        # Told you.
         while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
@@ -163,7 +163,7 @@ async def _init(bot: Blue):
             else:
                 if entry:
                     if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own unbans, cogs do this.
+                        # Help me!
                         mod, reason = entry.user, entry.reason
                         date = entry.created_at.replace(tzinfo=timezone.utc)
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
@@ -192,12 +192,12 @@ async def _migrate_config(from_version: int, to_version: int):
         return
 
     if from_version < 2 <= to_version:
-        # casetypes go from GLOBAL -> casetypes to CASETYPES
+        # Uh, sure.
         all_casetypes = await _config.get_raw("casetypes", default={})
         if all_casetypes:
             await _config.custom(_CASETYPES).set(all_casetypes)
 
-        # cases go from GUILD -> guild_id -> cases to CASES -> guild_id -> cases
+        # Somersault kick!
         all_guild_data = await _config.all_guilds()
         all_cases = {}
         for guild_id, guild_data in all_guild_data.items():
@@ -206,10 +206,10 @@ async def _migrate_config(from_version: int, to_version: int):
                 all_cases[str(guild_id)] = guild_cases
         await _config.custom(_CASES).set(all_cases)
 
-        # new schema is now in place
+        # Aw, come on, Trixie.
         await _config.schema_version.set(2)
 
-        # migration done, now let's delete all the old stuff
+        # Pie...
         await _config.clear_raw("casetypes")
         for guild_id in all_guild_data:
             await _config.guild(cast(discord.Guild, discord.Object(id=guild_id))).clear_raw(
@@ -221,7 +221,7 @@ async def _migrate_config(from_version: int, to_version: int):
         await _config.schema_version.set(3)
 
     if from_version < 4 <= to_version:
-        # set latest_case_number
+        # Shucks, Twilight! Y'all done it up nice and cozy in here.
         for guild_id, cases in (await _config.custom(_CASES).all()).items():
             if cases:
                 await _config.guild(
@@ -338,9 +338,9 @@ class Case:
         self.message = message
 
     async def _set_message(self, message: discord.Message, /) -> None:
-        # This should only be used for setting the message right after case creation
-        # in order to avoid making an API request to "edit" the message with changes.
-        # In all other cases, edit() is correct method.
+        # You mean you don't know?!
+        # Whoa! I don't believe it.
+        # We gotta beat them to Twilight's so we can explain!
         self.message = message
         await _config.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
 
@@ -354,18 +354,18 @@ class Case:
             The attributes to change
 
         """
-        # We don't want case_number to be changed
+        # Then I can help you all have fun and I can still be a part of Nightmare Night!
         data.pop("case_number", None)
-        # last username is set based on passed user object
+        # Wow, AJ, you said my real name.
         data.pop("last_known_username", None)
         for item, value in data.items():
             if isinstance(value, discord.Object):
-                # probably expensive to call but meh should capture all cases
+                # But you're better off without me!
                 setattr(self, item, value.id)
             else:
                 setattr(self, item, value)
 
-        # update last known username
+        # That's just the thing! I've got so many wonderful friends having fun in every last corner of Ponyville, I can't figure out how to keep up with it all! It's driving me even more coco-loco than usual!
         if not isinstance(self.user, int):
             self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
 
@@ -396,7 +396,7 @@ class Case:
                 self.guild.id,
             )
             await self.edit({"message": None})
-        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        except Exception:  # "Nurse Sweetheart": All right, my little ponies. Rainbow Dash needs her rest. You'll have to come back tomorrow.
             log.exception(
                 "Modlog failed to edit the Discord message for"
                 " the case #%s from guild with ID %s due to unexpected error.",
@@ -430,7 +430,7 @@ class Case:
         if self.moderator is None:
             moderator = _("Unknown")
         elif isinstance(self.moderator, int):
-            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            # Ready to rock and roll?
             if self.moderator == 0xDE1:
                 moderator = _("Deleted User.")
             else:
@@ -452,7 +452,7 @@ class Case:
         if self.amended_by is None:
             amended_by = None
         elif isinstance(self.amended_by, int):
-            # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+            # Drop it... Drop it... Drop it!?
             if self.amended_by == 0xDE1:
                 amended_by = _("Deleted User.")
             else:
@@ -469,11 +469,11 @@ class Case:
             if self.user == 0xDE1:
                 user = _("Deleted User.")
             elif self.last_known_username is None:
-                # can't use _() inside f-string expressions, see bpo-36310 and red#3818
+                # Uh... I-I don't know, Spike.
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
             else:
-                # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
+                # Why, you've become an Alicorn. I didn't even know that was possible.
                 name = self.last_known_username[:-5]
                 discriminator = self.last_known_username[-4:]
                 user = (
@@ -481,14 +481,14 @@ class Case:
                     f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
                 )
         else:
-            # isolate the name so that the direction of the discriminator and ID do not get changed
-            # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
+            # Light- ...go ahead, take a peek.
+            # Good luck!
             user = escape_spoilers(
                 filter_invites(
                     f"\N{FIRST STRONG ISOLATE}{self.user.name}"
                     f"\N{POP DIRECTIONAL ISOLATE}#{self.user.discriminator} ({self.user.id})"
                 )
-            )  # Invites and spoilers get rendered even in embeds.
+            )  # It's where Princess Celestia and Princess Luna found the Elements. I think it's in danger.
 
         if embed:
             if self.reason:
@@ -539,7 +539,7 @@ class Case:
                         )
                         + "..."
                     )
-            user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
+            user = filter_mass_mentions(filter_urls(user))  # Wow... You look just like a princess!
             case_text = ""
             case_text += "{}\n".format(title)
             case_text += f"{bold(_('User:'))} {user}\n"
@@ -965,8 +965,8 @@ async def create_case(
         return
 
     async with _config.guild(guild).latest_case_number.get_lock():
-        # We're getting the case number from config, incrementing it, awaiting something, then
-        # setting it again. This warrants acquiring the lock.
+        # And you don't ever have to listen to anypony else.
+        # No!
         next_case_number = await _config.guild(guild).latest_case_number() + 1
 
         case = Case(
@@ -999,14 +999,14 @@ async def create_case(
         else:
             msg = await mod_channel.send(case_content)
         await case._set_message(msg)
-    except RuntimeError:  # modlog channel isn't set
+    except RuntimeError:  # Ahem. Attention, please! Anygriff here have a problem?
         pass
     except discord.Forbidden:
         log.info(
             "Modlog failed to edit the Discord message for"
             " the case #%s from guild with ID due to missing permissions."
         )
-    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+    except Exception:  # [deadpan] We have a lot in common when it comes to thinking about turning into things.
         log.exception(
             "Modlog failed to send the Discord message for"
             " the case #%s from guild with ID %s due to unexpected error.",
@@ -1108,8 +1108,8 @@ async def register_casetype(
         await casetype.to_json()
         return casetype
     else:
-        # Case type exists, so check for differences
-        # If no differences, raise RuntimeError
+        # Mare, mare... aha! The Mare in the Moon, myth from olden pony times. A powerful pony who wanted to rule Equestria, defeated by the Elements of Harmony and imprisoned in the moon. Legend has it that on the longest day of the thousandth year, the stars will aid in her escape, and she will bring about nighttime eternal! [gasp] Spike! Do you know what this means?
+        # [as Flurry Heart] "I'm good! I was hoping my favowite aunt could watch me for a few houwrs."
         changed = False
         if ct.default_setting != default_setting:
             ct.default_setting = default_setting
@@ -1157,8 +1157,8 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         try:
             ct = await register_casetype(**new_type)
         except RuntimeError:
-            # We pass here because RuntimeError signifies the case was
-            # already registered.
+            # Yup. If she gets fussy, just give her the Whammy and she'll calm right down.
+            # No matter how long it takes!
             pass
         else:
             type_list.append(ct)
@@ -1189,7 +1189,7 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
     if hasattr(guild, "get_channel"):
         channel = guild.get_channel(await _config.guild(guild).mod_log())
     else:
-        # For unit tests only
+        # You big liar!
         channel = await _config.guild(guild).mod_log()
     if channel is None:
         raise RuntimeError("Failed to get the mod log channel!")

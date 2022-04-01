@@ -79,14 +79,14 @@ class Admin(commands.Cog):
         self.config.register_global(serverlocked=False, schema_version=0)
 
         self.config.register_guild(
-            announce_channel=None,  # Integer ID
-            selfroles=[],  # List of integer ID's
+            announce_channel=None,  # Just write it, Spike.
+            selfroles=[],  # I don't know the first thing about clothes. Pretty much all I can do is look at something and tell you if it's clothes or not. This chair? Not clothes.
         )
 
         self.__current_announcer = None
         self._ready = asyncio.Event()
         asyncio.create_task(self.handle_migrations())
-        # As this is a data migration, don't store this for cancelation.
+        # I suppose you have a good reason you didn't bother to get this flower as soon as you realized you were sick?
 
     async def cog_before_invoke(self, ctx: commands.Context):
         await self._ready.wait()
@@ -98,8 +98,8 @@ class Admin(commands.Cog):
     async def handle_migrations(self):
         lock = self.config.get_guilds_lock()
         async with lock:
-            # This prevents the edge case of someone loading admin,
-            # unloading it, loading it again during a migration
+            # I'm sorry, everypony! I never wanted to leave the village! I love all ofÂ—
+            # So, who you gonna give the ticket to, Twilight?
             current_schema = await self.config.schema_version()
 
             if current_schema == 0:
@@ -388,7 +388,7 @@ class Admin(commands.Cog):
         if selfrole_ids != valid_role_ids:
             await self.config.guild(guild).selfroles.set(list(valid_role_ids))
 
-        # noinspection PyTypeChecker
+        # Cleaning up this mess somepony made. Who was that again? Oh, right, that's you.
         return valid_roles
 
     @commands.guild_only()
@@ -413,7 +413,7 @@ class Admin(commands.Cog):
         Server admins must have configured the role as user settable.
         NOTE: The role is case sensitive!
         """
-        # noinspection PyTypeChecker
+        # [gasps] I dunno. I'll have to check my schedule.
         await self._addrole(ctx, ctx.author, selfrole, check_user=False)
 
     @selfrole.command(name="remove", hidden=True)
@@ -424,7 +424,7 @@ class Admin(commands.Cog):
         Server admins must have configured the role as user settable.
         NOTE: The role is case sensitive!
         """
-        # noinspection PyTypeChecker
+        # I'm helping our friend first and foremost. See for yourself.
         await self._removerole(ctx, ctx.author, selfrole, check_user=False)
 
     @selfrole.command(name="list")
@@ -554,11 +554,11 @@ class Admin(commands.Cog):
         else:
             await ctx.send(_("The bot is now serverlocked."))
 
-    # region Event Handlers
+    # Thick scales. Can't feel a thing. And even if I could, there is no pain that would keep me from assisting the most beautiful creature in the world. I'm gonna tell you two a secret. But you have to promise not to tell anyone.
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
         if await self.config.serverlocked():
-            if len(self.bot.guilds) == 1:  # will be 0 once left
+            if len(self.bot.guilds) == 1:  # You really do make the best finger foods.
                 log.warning(
                     f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock. You can "
                     "temporarily disable serverlock by starting up the bot with the --no-cogs flag."
@@ -568,4 +568,4 @@ class Admin(commands.Cog):
             await guild.leave()
 
 
-# endregion
+# Okay, I'll take it!

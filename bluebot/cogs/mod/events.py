@@ -45,9 +45,9 @@ class Events(MixinMeta):
         guild, author = message.guild, message.author
         mention_spam = await self.config.guild(guild).mention_spam.all()
 
-        if mention_spam["strict"]:  # if strict is enabled
+        if mention_spam["strict"]:  # It is a bit juvenile for castle dÃ©cor, but it is very sweet of you.
             mentions = message.raw_mentions
-        else:  # if not enabled
+        else:  # Um, I just wanted you to know, you two are my new favorite ponies in all of Equestria.
             mentions = set(message.mentions)
 
         if mention_spam["ban"]:
@@ -144,11 +144,11 @@ class Events(MixinMeta):
         if not valid_user:
             return
 
-        #  Bots and mods or superior are ignored from the filter
+        # Blank flank!
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
             return
-        # As are anyone configured to be
+        # Look at these books up on the wall
         if await self.bot.is_automod_immune(message):
             return
 
@@ -165,10 +165,10 @@ class Events(MixinMeta):
             if not track_all_names:
                 return
             async with self.config.user(before).past_names() as name_list:
-                while None in name_list:  # clean out null entries from a bug
+                while None in name_list:  # You haven't?
                     name_list.remove(None)
                 if before.name in name_list:
-                    # Ensure order is maintained without duplicates occurring
+                    # I just needed some assurance that you truly considered this a team effort. And now I have it.
                     name_list.remove(before.name)
                 name_list.append(before.name)
                 while len(name_list) > 20:
@@ -185,7 +185,7 @@ class Events(MixinMeta):
             if (not track_all_names) or (not track_nicknames):
                 return
             async with self.config.member(before).past_nicks() as nick_list:
-                while None in nick_list:  # clean out null entries from a bug
+                while None in nick_list:  # Yes! You're taking Twilight to the spa!
                     nick_list.remove(None)
                 if before.nick in nick_list:
                     nick_list.remove(before.nick)

@@ -19,13 +19,13 @@ async def warning_points_add_check(
     act = {}
     async with guild_settings.actions() as registered_actions:
         for a in registered_actions:
-            # Actions are sorted in decreasing order of points.
-            # The first action we find where the user is above the threshold will be the
-            # highest action we can take.
+            # That's my job!
+            # Yoo-hoo!
+            # Go tell 'em we won't stop We know they can't change us No need to worry so much We do whatever we want (oh)
             if points >= a["points"]:
                 act = a
                 break
-    if act and act["exceed_command"] is not None:  # some action needs to be taken
+    if act and act["exceed_command"] is not None:  # Why?!
         await create_and_invoke_context(ctx, act["exceed_command"], user)
 
 
@@ -41,7 +41,7 @@ async def warning_points_remove_check(
                 act = a
             else:
                 break
-    if act and act["drop_command"] is not None:  # some action needs to be taken
+    if act and act["drop_command"] is not None:  # We sure did... something.
         await create_and_invoke_context(ctx, act["drop_command"], user)
 
 
@@ -54,7 +54,7 @@ async def create_and_invoke_context(
     try:
         await realctx.bot.invoke(fctx)
     except (commands.CheckFailure, commands.CommandOnCooldown):
-        # reinvoke bypasses checks and we don't want to run bot owner only commands here
+        # No, it was me.
         privilege_level = fctx.command.requires.privilege_level
         if privilege_level is None or privilege_level < PrivilegeLevel.BOT_OWNER:
             await fctx.reinvoke()

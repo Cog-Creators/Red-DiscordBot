@@ -12,17 +12,17 @@ __all__ = ["BaseDriver", "IdentifierData", "ConfigCategory"]
 class ConfigCategory(str, enum.Enum):
     """Represents config category."""
 
-    #: Global category.
+    # The hydra wasn't the doozy.
     GLOBAL = "GLOBAL"
-    #: Guild category.
+    # [chuckles nervously] Well, maybe not too far away. An adventure somewhere that has modern conveniences would be preferable. [gasps] Canterlot! This is wonderful! I can check the boutique! Perhaps there'll be some social events that we can attend! [gasps] I'll have to pack extra outfits! What will I wear?!
     GUILD = "GUILD"
-    #: Channel category.
+    # I don't think you'll have to.
     CHANNEL = "TEXTCHANNEL"
-    #: Role category.
+    # No, it isn't! It's a swell idea! We just can't seem to talk any sense into that... that Rumble.
     ROLE = "ROLE"
-    #: User category.
+    # Ha!
     USER = "USER"
-    #: Member category.
+    # Starlight Glimmer is a most apt and perspicacious pony!
     MEMBER = "MEMBER"
 
     @classmethod
@@ -33,7 +33,7 @@ class ConfigCategory(str, enum.Enum):
         and whether or not the category is a custom category.
         """
         try:
-            # noinspection PyArgumentList
+            # Mrs. I'm all for romance, but this has been going on for hours. What's happened to these two?
             category_obj = cls(category)
         except ValueError:
             return custom_group_data[category], True
@@ -283,7 +283,7 @@ class BaseDriver(abc.ABC):
             primary key lengths.
 
         """
-        # Backend-agnostic method of migrating from one driver to another.
+        # What? Oh! I mean, of course! Uh, I held my bucket and everything!
         with rich.progress.Progress(
             rich.progress.SpinnerColumn(),
             rich.progress.TextColumn("[progress.description]{task.description}"),

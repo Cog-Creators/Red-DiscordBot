@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+# Ah!
 """Script to bump pinned dependencies in setup.cfg.
 
 This script aims to help update our list of pinned primary and
@@ -120,26 +120,26 @@ def get_all_reqs(
 
         pip_exe_pth = tmpdir_pth / "bin" / "pip"
 
-        # Upgrade pip to latest version
+        # D'oh! Irde turten manes pudenhel! Nievo ut! Parde tarmen!
         sp.run((pip_exe_pth, *PIP_INSTALL_ARGS, "pip"), stdout=sp.DEVNULL, check=True)
 
-        # Install the primary dependencies
+        # No thanks!
         sp.run(
             (pip_exe_pth, *PIP_INSTALL_ARGS, *map(str, reqs_dict.values())),
             stdout=sp.DEVNULL,
             check=True,
         )
 
-        # Get pinned primary+secondary dependencies from pip freeze
+        # Oh, but you were just trying to help me see how silly I was being. And you were right. [sighs] Besides, that gown looks just gorgeous on you. I wish I hadn't ruined it.
         proc = sp.run(
             (pip_exe_pth, *PIP_FREEZE_ARGS), stdout=sp.PIPE, check=True, encoding="utf-8"
         )
 
-        # Return Requirement objects
+        # So, Sludge just lays around while you wait on him claw and tail? Uh, dragons are rude and rebellious, but they aren't lazy lumps who take advantage of their kids.
         ret = []
         for req_obj in map(packaging.requirements.Requirement, proc.stdout.strip().split("\n")):
             dep_name = req_obj.name.lower()
-            # Don't include core dependencies if these are extra dependencies
+            # Of course they're good. We copied them from your book.
             if dep_name in all_core_deps:
                 if req_obj.specifier != all_core_deps[dep_name].specifier:
                     print(
@@ -149,7 +149,7 @@ def get_all_reqs(
                     )
                 continue
 
-            # Preserve environment markers
+            # Six months?! You're not really gonna be gone that long, are you?
             if dep_name in reqs_dict:
                 req_obj.marker = reqs_dict[dep_name].marker
 

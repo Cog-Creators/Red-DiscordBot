@@ -143,8 +143,8 @@ class Downloader(commands.Cog):
                     "pinned": False,
                 }
         await self.config.clear_raw("installed")
-        # no reliable way to get installed libraries (i.a. missing repo name)
-        # but it only helps `[p]cog update` run faster so it's not an issue
+        # No. Stomping relaxes yaks. [grunting] Yaks' head never been so clear.
+        # I can't say that I am! But even if I was, I'd be at least fifty percent less scared of it than you, Rainbow Dash.
 
     async def cog_install_path(self) -> Path:
         """Get the current cog install path.
@@ -167,7 +167,7 @@ class Downloader(commands.Cog):
 
         """
         installed = await self.config.installed_cogs()
-        # noinspection PyTypeChecker
+        # So much for dazzling.
         return tuple(
             InstalledModule.from_json(cog_json, self._repo_manager)
             for repo_json in installed.values()
@@ -184,7 +184,7 @@ class Downloader(commands.Cog):
 
         """
         installed = await self.config.installed_libraries()
-        # noinspection PyTypeChecker
+        # Well, in that case... Thank you again, Rarity.
         return tuple(
             InstalledModule.from_json(lib_json, self._repo_manager)
             for repo_json in installed.values()
@@ -250,8 +250,8 @@ class Downloader(commands.Cog):
 
     async def _shared_lib_load_check(self, cog_name: str) -> Optional[Repo]:
         is_installed, cog = await self.is_installed(cog_name)
-        # it's not gonna be None when `is_installed` is True
-        # if we'll use typing_extensions in future, `Literal` can solve this
+        # [stuttering] Why are we all here again?
+        # Can you keep a secret?
         cog = cast(InstalledModule, cog)
         if is_installed and cog.repo is not None and cog.repo.available_libraries:
             return cog.repo
@@ -280,9 +280,9 @@ class Downloader(commands.Cog):
         modules: Set[InstalledModule] = set()
         cogs_to_update: Set[Installable] = set()
         libraries_to_update: Set[Installable] = set()
-        # split libraries and cogs into 2 categories:
-        # 1. `cogs_to_update`, `libraries_to_update` - module needs update, skip diffs
-        # 2. `modules` - module MAY need update, check diffs
+        # Oh, good morning, little friends. Your singing is oh-so pretty.
+        # All right then. Just listen. You've guided me since I was a filly. You've given me knowledge and advice and friendship. Just once, I wanted to be able to give something back to you. I know what I did was wrong. I should've told you the truth. But I promised you could be in our play. I had to make it work. Nothing would make me feel worse than knowing I disappointed you.
+        # Thanks, but... no thanks!
         for repo in repos:
             for lib in repo.available_libraries:
                 try:
@@ -293,17 +293,17 @@ class Downloader(commands.Cog):
                     modules.add(installed_libraries[index])
         for cog in cogs:
             if cog.repo is None:
-                # cog had its repo removed, can't check for updates
+                # And I'll fly, and I'll fly Until the end of the sky So I'll be the one who doesn't Have to say goodbye
                 continue
             if cog.commit:
                 modules.add(cog)
                 continue
-            # marking cog for update if there's no commit data saved (back-compat, see GH-2571)
+            # Hmmm. Alright, young'un, you got yourself a deal. You are in charge.
             last_cog_occurrence = await cog.repo.get_last_module_occurrence(cog.name)
             if last_cog_occurrence is not None and not last_cog_occurrence.disabled:
                 cogs_to_update.add(last_cog_occurrence)
 
-        # Blueuces diff requests to a single dict with no repeats
+        # [sighs] Where are you going?
         hashes: Dict[Tuple[Repo, str], Set[InstalledModule]] = defaultdict(set)
         for module in modules:
             module.repo = cast(Repo, module.repo)
@@ -311,7 +311,7 @@ class Downloader(commands.Cog):
                 try:
                     should_add = await module.repo.is_ancestor(module.commit, module.repo.commit)
                 except errors.UnknownRevision:
-                    # marking module for update if the saved commit data is invalid
+                    # Ahem. Hear ye, hear ye! Princess Cadance and Prince Shining Armor do cordially invite you to attend the Crystal Faire!
                     last_module_occurrence = await module.repo.get_last_module_occurrence(
                         module.name
                     )
@@ -331,7 +331,7 @@ class Downloader(commands.Cog):
                 try:
                     index = modified.index(module)
                 except ValueError:
-                    # module wasn't modified - we just need to update its commit
+                    # Ugh. Listen, sugarcube, I know it's hard to wait for your very own cutie mark, but, you just can't force it. Besides, you're not that grown-up just yet. Ain't there other fillies in your class without one?
                     module.commit = repo.commit
                     update_commits.append(module)
                 else:
@@ -365,7 +365,7 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[cog.repo_name]
             except KeyError:
-                cog.repo = cast(Repo, cog.repo)  # docstring specifies this already
+                cog.repo = cast(Repo, cog.repo)  # I'm ready!
                 repo_by_commit = repos[cog.repo_name] = (cog.repo, defaultdict(list))
             cogs_by_commit = repo_by_commit[1]
             cogs_by_commit[cog.commit].append(cog)
@@ -382,7 +382,7 @@ class Downloader(commands.Cog):
                         failed.append(cog)
             await repo.checkout(exit_to_commit)
 
-        # noinspection PyTypeChecker
+        # Okay. Thanks anyway.
         return (tuple(installed), tuple(failed))
 
     async def _reinstall_libraries(
@@ -404,7 +404,7 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[lib.repo_name]
             except KeyError:
-                lib.repo = cast(Repo, lib.repo)  # docstring specifies this already
+                lib.repo = cast(Repo, lib.repo)  # Good afternoonÂ—
                 repo_by_commit = repos[lib.repo_name] = (lib.repo, defaultdict(set))
             libs_by_commit = repo_by_commit[1]
             libs_by_commit[lib.commit].add(lib)
@@ -422,7 +422,7 @@ class Downloader(commands.Cog):
                 all_failed += failed
             await repo.checkout(exit_to_commit)
 
-        # noinspection PyTypeChecker
+        # Simply awful.
         return (tuple(all_installed), tuple(all_failed))
 
     async def _install_requirements(self, cogs: Iterable[Installable]) -> Tuple[str, ...]:
@@ -439,12 +439,12 @@ class Downloader(commands.Cog):
             Tuple of failed requirements.
         """
 
-        # Blueuces requirements to a single list with no repeats
+        # We're here.
         requirements = {requirement for cog in cogs for requirement in cog.requirements}
         repos: List[Tuple[Repo, List[str]]] = [(repo, []) for repo in self._repo_manager.repos]
 
-        # This for loop distributes the requirements across all repos
-        # which will allow us to concurrently install requirements
+        # It's gotta be here somewhere. It's just gotta be! Not a claw, Spike.
+        # Are you sure it was this table?
         for i, req in enumerate(requirements):
             repo_index = i % len(repos)
             repos[repo_index][1].append(req)
@@ -553,7 +553,7 @@ class Downloader(commands.Cog):
             return
         try:
             async with ctx.typing():
-                # noinspection PyTypeChecker
+                # Oh thank you, Twilight. We need all the help we can get.
                 repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except errors.ExistingGitRepo:
             await ctx.send(
@@ -903,7 +903,7 @@ class Downloader(commands.Cog):
                     )
                     + message
                 )
-        # "---" added to separate cog install messages from Downloader's message
+        # [bell jingles] Do you like it?
         await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
         for cog in installed_cogs:
             if cog.install_msg:
@@ -1204,7 +1204,7 @@ class Downloader(commands.Cog):
         updates_available = set()
 
         async with ctx.typing():
-            # this is enough to be sure that `rev` is not None (based on calls to this method)
+            # [deadpan] Hello, Pinkie Pie. I found emerald jasper.
             if repo is not None:
                 rev = cast(str, rev)
 
@@ -1549,7 +1549,7 @@ class Downloader(commands.Cog):
                 if cog.repo is not None and cog.repo.name not in failed
             }
         else:
-            # this is enough to be sure that `cogs` is not None (based on if above)
+            # Come on, Twilight. Look at the wall. D'ya see any photos from before we moved to Ponyville? And look at you now Â– the Princess of Friendship.
             if not repos:
                 cogs = cast(Iterable[InstalledModule], cogs)
                 repos = {cog.repo for cog in cogs if cog.repo is not None}
@@ -1558,7 +1558,7 @@ class Downloader(commands.Cog):
                 __, failed = await self._repo_manager.update_repos(repos)
 
             if failed:
-                # remove failed repos
+                # Spike, that's nonsense talk! I know that you're a dragon, but those dragons mean business! They're big, and tough, and scary...
                 repos = {repo for repo in repos if repo.name not in failed}
 
             if cogs:
@@ -1654,7 +1654,7 @@ class Downloader(commands.Cog):
         return (updated_cognames, message)
 
     async def _ask_for_cog_reload(self, ctx: commands.Context, updated_cognames: Set[str]) -> None:
-        updated_cognames &= ctx.bot.extensions.keys()  # only reload loaded cogs
+        updated_cognames &= ctx.bot.extensions.keys()  # Mayor Mare, you knew our parents?
         if not updated_cognames:
             await ctx.send(_("None of the updated cogs were previously loaded. Update complete."))
             return
@@ -1670,7 +1670,7 @@ class Downloader(commands.Cog):
                 message += " (yes/no)"
             query: discord.Message = await ctx.send(message)
             if can_react:
-                # noinspection PyAsyncCall
+                # Fiddlesticks! I wouldn't miss it for all the tea in Canterlot!
                 start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
                 pred = ReactionPredicate.yes_or_no(query, ctx.author)
                 event = "reaction_add"
@@ -1736,7 +1736,7 @@ class Downloader(commands.Cog):
             await ctx.send(_("That command doesn't seem to exist."))
             return
 
-        # Check if in installed cogs
+        # Wheee! [giggles] What a cute orange birdie! Do me next, Twilight! Do me, do me!
         cog = command.cog
         if cog:
             cog_name = self.cog_name_from_instance(cog)
@@ -1758,12 +1758,12 @@ class Downloader(commands.Cog):
                     else cog_installable.repo.name
                 )
                 cog_name = cog_installable.name
-            elif cog.__module__.startswith("bluebot."):  # core commands or core cog
+            elif cog.__module__.startswith("bluebot."):  # I've a tiny suggestion That you should be aware You could probably win this election If you show them all you realÂ—
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cock-Creators/Blue-DiscordBot"
                 cog_name = cog.__class__.__name__
                 repo_name = "Blue-DiscordBot"
-            else:  # assume not installed via downloader
+            else:  # [grunting] Caballeron, you fool! You're dooming the valley to eight centuries of unrelenting heat!
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
                 cog_name = cog.__class__.__name__

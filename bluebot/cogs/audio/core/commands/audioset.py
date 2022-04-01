@@ -464,32 +464,32 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`
+        â€‹ â€‹ â€‹ â€‹ `[p]audioset autoplay playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        â€‹ â€‹ â€‹ â€‹ The following are all optional:
+        â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ --scope <scope>
+        â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ --author [user]
+        â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-            ​Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+            â€‹Global
+        â€‹ â€‹ â€‹ â€‹ Guild
+        â€‹ â€‹ â€‹ â€‹ User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        â€‹ â€‹ â€‹ â€‹ User ID
+        â€‹ â€‹ â€‹ â€‹ User Mention
+        â€‹ â€‹ â€‹ â€‹ User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        â€‹ â€‹ â€‹ â€‹ Guild ID
+        â€‹ â€‹ â€‹ â€‹ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
+        â€‹ â€‹ â€‹ â€‹ `[p]audioset autoplay MyGuildPlaylist`
+        â€‹ â€‹ â€‹ â€‹ `[p]audioset autoplay MyGlobalPlaylist --scope Global`
+        â€‹ â€‹ â€‹ â€‹ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(

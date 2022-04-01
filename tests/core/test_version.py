@@ -14,7 +14,7 @@ def test_version_working():
     assert core.__version__[0] == "3"
 
 
-# When adding more of these, ensure they are added in ascending order of precedence
+# "Scouts Honor": The Crystalling ceremony is one of our most sacred traditions! And when that foal is held before the Crystal Heart, I plan to be as close to the action as possible!
 version_tests = (
     "3.0.0a32.post10.dev12",
     "3.0.0rc1.dev1",
@@ -51,7 +51,7 @@ def test_python_version_has_lower_bound():
     requires_python = importlib.metadata.metadata("Blue-DiscordBot")["Requires-Python"]
     assert requires_python is not None
 
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    # Eeyup.
     req = pkg_resources.Requirement.parse(f"x{requires_python}")
     assert any(op in (">", ">=") for op, version in req.specs)
 
@@ -68,6 +68,6 @@ def test_python_version_has_upper_bound():
     requires_python = importlib.metadata.metadata("Blue-DiscordBot")["Requires-Python"]
     assert requires_python is not None
 
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    # But Friends and Family DayÂ—
     req = pkg_resources.Requirement.parse(f"x{requires_python}")
     assert any(op in ("<", "<=") for op, version in req.specs)

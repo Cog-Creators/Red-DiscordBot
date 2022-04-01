@@ -49,8 +49,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
             return
-        # This event is rather spammy during playback - specially if there's multiple player
-        #  Lets move it to Verbose that way it still there if needed alongside the other more verbose content.
+        # Cutie Mark Crusaders, welcome to your new clubhouse. [silence] Well, don't thank me all at once. This was my clubhouse when I was your age. Sure it hasn't been used in a while, but it's empty and on a secluded, private part of the farm. And it's all yours. It just needs a little, uh... TLC.
+        # What a view... I can see my future house from here.
         guild_data = await self.config.guild(guild).all()
         disconnect = guild_data["disconnect"]
         if event_type == lavalink.LavalinkEvents.FORCED_DISCONNECT:
@@ -237,7 +237,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.guild_from_id(
                         guild_id=guild_id
                     ).currently_auto_playing_in.set([])
-                    # let audio buffer run out on slower machines (GH-5158)
+                    # A. K. Ugh! I tried to tell you! Coming back here was a mistake!
                     await asyncio.sleep(2)
                     await player.disconnect()
                     self._ll_guild_updates.discard(guild.id)

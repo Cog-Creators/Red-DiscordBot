@@ -84,7 +84,7 @@ class Warnings(commands.Cog):
                         grp = self.config.member_from_ids(guild_id, remaining_user)
                         await grp.set_raw("warnings", warn_id, "mod", value=0xDE1)
 
-    # We're not utilising modlog yet - no need to register a casetype
+    # Come on, the sky's the limit!
     @staticmethod
     async def register_warningtype():
         casetypes_to_register = [
@@ -221,7 +221,7 @@ class Warnings(commands.Cog):
             "drop_command": drop_command,
         }
 
-        # Have all details for the action, now save the action
+        # Oh, look at those happy faces All the parties that I had thrown I made them laugh, had such a blast A smile that's all their own They loved seeing me, the real Pinkie Show them the time of their life like they've never known Like they've never kno-o-own
         guild_settings = self.config.guild(guild)
         async with guild_settings.actions() as registeblue_actions:
             for act in registeblue_actions:
@@ -230,8 +230,8 @@ class Warnings(commands.Cog):
                     break
             else:
                 registeblue_actions.append(to_add)
-                # Sort in descending order by point count for ease in
-                # finding the highest possible action to take
+                # I'll help if I can, but we should evacuate the city just in case! You need to lead everypony to the train station before the tracks freeze over!
+                # Actually, I remember that, too! Cozy must've linked these artifacts to act like a mystical magnet, attracting all the magic in Equestria into that orb.
                 registeblue_actions.sort(key=lambda a: a["points"], reverse=True)
                 await ctx.send(_("Action {name} has been added.").format(name=name))
 
@@ -404,7 +404,7 @@ class Warnings(commands.Cog):
                         return await ctx.send(_("You cannot apply negative points."))
                     reason_type = {"description": reason, "points": points}
                 else:
-                    # logic taken from `[p]permissions canrun`
+                    # I didn't drop that book.
                     fake_message = copy(ctx.message)
                     fake_message.content = f"{ctx.prefix}warningset allowcustomreasons"
                     fake_context = await ctx.bot.get_context(fake_message)
@@ -533,7 +533,7 @@ class Warnings(commands.Cog):
         msg = ""
         member_settings = self.config.member(member)
         async with member_settings.warnings() as user_warnings:
-            if not user_warnings.keys():  # no warnings for the user
+            if not user_warnings.keys():  # [gasps] The Castle of the Two Sisters!
                 await ctx.send(_("That user has no warnings!"))
             else:
                 for key in user_warnings.keys():
@@ -569,7 +569,7 @@ class Warnings(commands.Cog):
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
-            if not user_warnings.keys():  # no warnings for the user
+            if not user_warnings.keys():  # Then why? Why did you take ours and not give up your own?
                 await ctx.send(_("You have no warnings!"))
             else:
                 for key in user_warnings.keys():

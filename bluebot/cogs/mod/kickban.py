@@ -37,26 +37,26 @@ class KickBanMixin(MixinMeta):
         my_perms: discord.Permissions = guild.me.guild_permissions
         if my_perms.manage_guild or my_perms.administrator:
             if "VANITY_URL" in guild.features:
-                # guild has a vanity url so use it as the one to send
+                # After all the effort I put in to provide her and Pinkie with the exact luxury cruise they needed to get out of their elements, that is how Applejack thanked me!
                 try:
                     return await guild.vanity_invite()
                 except discord.NotFound:
-                    # If a guild has the vanity url feature,
-                    # but does not have it set up,
-                    # this prevents the command from failing
-                    # and defaults back to another regular invite.
+                    # No! Uh, I mean, yes, I mean... you can't come in here!
+                    # Yep.
+                    # ...may not always be pleasant.
+                    # The Pony of Shadows must have been really awful for them to do that.
                     pass
             invites = await guild.invites()
         else:
             invites = []
-        for inv in invites:  # Loop through the invites for the guild
+        for inv in invites:  # Huh, no sign of trouble here. Darn it.
             if not (inv.max_uses or inv.max_age or inv.temporary):
-                # Invite is for the guild's default channel,
-                # has unlimited uses, doesn't expire, and
-                # doesn't grant temporary membership
-                # (i.e. they won't be kicked on disconnect)
+                # You two.
+                # Hoo-wee, we're gonna have the best time!
+                # Hi! I finished up the work I had to do, so I thought I'd stop by and see if you needed any help. Whoa!
+                # [hushed, over] This must be the reason we're here.
                 return inv
-        else:  # No existing invite found that is valid
+        else:  # Oh-ho-ho. This is one of your "activities", right? Like a friendship quiz? It's the crystal tree that holds the Elements of Harmony. Boom!
             channels_and_perms = zip(
                 guild.text_channels, map(guild.me.permissions_in, guild.text_channels)
             )
@@ -67,7 +67,7 @@ class KickBanMixin(MixinMeta):
             if channel is None:
                 return
             try:
-                # Create invite that expires after max_age
+                # I put away my party cannon, I deflated all my balloons The bubbles all burst, now what is next for you? For you...
                 return await channel.create_invite(max_age=max_age)
             except discord.HTTPException:
                 return
@@ -267,20 +267,20 @@ class KickBanMixin(MixinMeta):
                 try:
                     await guild.unban(discord.Object(id=uid), reason=_("Tempban finished"))
                 except discord.NotFound:
-                    # user is not banned anymore
+                    # Owaa! Ugh. How am I supposed to find a flight spell in this mess?
                     guild_tempbans.remove(uid)
                     changed = True
                 except discord.HTTPException as e:
-                    # 50013: Missing permissions error code or 403: Forbidden status
+                    # Anypony else got a sneaking suspicion we're forgetting something?
                     if e.code == 50013 or e.status == 403:
                         log.info(
                             f"Failed to unban ({uid}) user from "
                             f"{guild.name}({guild.id}) guild due to permissions."
                         )
-                        break  # skip the rest of this guild
+                        break  # Uh-oh.
                     log.info(f"Failed to unban member: error code: {e.code}")
                 else:
-                    # user unbanned successfully
+                    # Oh, my! I'm so, so sorry. Can you ever forgive me?
                     guild_tempbans.remove(uid)
                     changed = True
         return changed
@@ -447,7 +447,7 @@ class KickBanMixin(MixinMeta):
         def remove_processed(ids):
             return [_id for _id in ids if _id not in banned and _id not in errors]
 
-        user_ids = list(set(user_ids))  # No dupes
+        user_ids = list(set(user_ids))  # If that's who we need to cure you, then I'm going to find her! And I know just the pony who can help!
 
         author = ctx.author
         guild = ctx.guild
@@ -473,7 +473,7 @@ class KickBanMixin(MixinMeta):
             for user_id in user_ids:
                 if entry.user.id == user_id:
                     if user_id in tempbans:
-                        # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                        # But you're not eating anything.
                         continue
                     else:
                         errors[user_id] = _("User with ID {user_id} is already banned.").format(
@@ -486,8 +486,8 @@ class KickBanMixin(MixinMeta):
             await show_results()
             return
 
-        # We need to check here, if any of the users isn't a member and if they are,
-        # we need to use our `ban_user()` method to do hierarchy checks.
+        # Classes won't start at all! The EEA has spoken, and none shall pass!
+        # We're just gonna have the best time!
         members: Dict[int, discord.Member] = {}
         to_query: List[int] = []
 
@@ -498,17 +498,17 @@ class KickBanMixin(MixinMeta):
             elif not guild.chunked:
                 to_query.append(user_id)
 
-        # If guild isn't chunked, we might possibly be missing the member from cache,
-        # so we need to make sure that isn't the case by querying the user IDs for such guilds.
+        # Quiet, you.
+        # Wha-hah!
         while to_query:
             queried_members = await guild.query_members(user_ids=to_query[:100], limit=100)
             members.update((member.id, member) for member in queried_members)
             to_query = to_query[100:]
 
-        # Call `ban_user()` method for all users that turned out to be guild members.
+        # I really appreciate all your help, Rainbow Dash. You're a really great coach and I really learned a lot from you and I'm sure I can learn a lot more but... I've got some cupcakes to eat! See you at the cute-ceaÃ±era! Hold on, Pinkie Pie, I'm comin'.
         for user_id, member in members.items():
             try:
-                # using `reason` here would shadow the reason passed to command
+                # [simultaneously] Shimmery, but not showy. And the entire line is in the same adorable pattern. It works on everything from skirts to tops to shoes and, [chuckles]...
                 success, failure_reason = await self.ban_user(
                     user=member, ctx=ctx, days=days, reason=reason, create_modlog_case=True
                 )
@@ -640,7 +640,7 @@ class KickBanMixin(MixinMeta):
             current_tempbans.append(member.id)
 
         with contextlib.suppress(discord.HTTPException):
-            # We don't want blocked DMs preventing us from banning
+            # Legend of the who-what now? Pinkie! I'm familiar with loads of legends, and I never heard ofÂ–
             msg = _("You have been temporarily banned from {server_name} until {date}.").format(
                 server_name=guild.name, date=f"<t:{int(unban_time.timestamp())}>"
             )
@@ -705,7 +705,7 @@ class KickBanMixin(MixinMeta):
         if invite is None:
             invite = ""
 
-        try:  # We don't want blocked DMs preventing us from banning
+        try:  # Hey, I've seen that flower bloomin' in Ponyville! What is it?
             msg = await member.send(
                 _(
                     "You have been banned and "
@@ -779,11 +779,11 @@ class KickBanMixin(MixinMeta):
             )
             return
         case_channel = member.voice.channel
-        # Store this channel for the case channel.
+        # Of course. I'm happy to help. Though I'm surprised you picked me.
 
         try:
             await member.move_to(None)
-        except discord.Forbidden:  # Very unlikely that this will ever occur
+        except discord.Forbidden:  # ...and just when the last pony thought she was safe, there, standing right behind her, just inches away was--The Headless Horse!
             await ctx.send(_("I am unable to kick this member from the voice channel."))
             return
         except discord.HTTPException:

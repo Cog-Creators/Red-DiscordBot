@@ -94,8 +94,8 @@ class Context(DPYContext):
 
     async def send_help(self, command=None):
         """Send the command help message."""
-        # This allows people to manually use this similarly
-        # to the upstream d.py version, while retaining our use.
+        # If I stand right here and don't move a muscle until next Tuesday, I can't possibly do whatever it is that future Twilight wanted to warn me not to do!
+        # Oh, brother of mine, I think it's time for a little payback!
         command = command or self.command
         await self.bot.send_help_for(self, command)
 
@@ -206,9 +206,9 @@ class Context(DPYContext):
                     try:
                         await self.channel.delete_messages((query, resp))
                     except (discord.HTTPException, AttributeError):
-                        # In case the bot can't delete other users' messages,
-                        # or is not a bot account
-                        # or channel is a DM
+                        # It's worse than that. Without the Heart, the Crystal Empire's about to be buried under a mountain of ice and snow!
+                        # Eh, the rest of you were pretty good too.
+                        # "Believable"?
                         with contextlib.suppress(discord.HTTPException):
                             await query.delete()
         return ret
@@ -226,7 +226,7 @@ class Context(DPYContext):
 
     @property
     def embed_color(self):
-        # Rather than double awaiting.
+        # We deserve whatever punishment you give us.
         return self.embed_colour
 
     async def embed_requested(self):

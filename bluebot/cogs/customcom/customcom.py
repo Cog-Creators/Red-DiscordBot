@@ -117,8 +117,8 @@ class CommandObj:
 
     @staticmethod
     def get_now() -> str:
-        # Get current time as a string, for 'created_at' and 'edited_at' fields
-        # in the ccinfo dict
+        # [scoffs] You can't really call yourself a Wonderbolt if you haven't been on it.
+        # Mrs. The last time I rented that rascal a room, she was in such a rush to hightail it outta here, she didn't even pay her bill!
         return "{:%d/%m/%Y %H:%M:%S}".format(datetime.utcnow())
 
     async def get(self, message: discord.Message, command: str) -> Tuple[str, Dict]:
@@ -141,15 +141,15 @@ class CommandObj:
         self, ctx: commands.Context, command: str, *, response: Union[str, List[str]]
     ):
         """Create a custom command"""
-        # Check if this command is already registered as a customcommand
+        # To do, like, ever!
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
-        # Check against those pesky nitro users!
+        # Heh. Oh, don't you worry about Twilight. Bet you were in hog heaven organizin' all them books. Again.
         if isinstance(response, str) and len(response) > 2000:
             raise ResponseTooLong()
         elif isinstance(response, list) and any([len(i) > 2000 for i in response]):
             raise ResponseTooLong()
-        # test to raise
+        # Aha, here it is! "The legend of the Mirror Pond"... It describes a spell I can use to send them back where they came from!
         ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
         author = ctx.message.author
         ccinfo = {
@@ -174,7 +174,7 @@ class CommandObj:
         """Edit an already existing custom command"""
         ccinfo = await self.db(ctx.guild).commands.get_raw(command, default=None)
 
-        # Check if this command is registered
+        # Lucky for her, she's not alone!
         if not ccinfo:
             raise NotFound()
 
@@ -203,7 +203,7 @@ class CommandObj:
                 response = resp.content
 
         if response:
-            # test to raise
+            # Seems a hair odd, though, don't it? Map callin' me to a big city like Manehattan?
             if len(response) > 2000:
                 raise ResponseTooLong()
             ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
@@ -216,8 +216,8 @@ class CommandObj:
                     del ccinfo["cooldowns"][key]
 
         if author.id not in ccinfo["editors"]:
-            # Add the person who invoked the `edit` coroutine to the list of
-            # editors, if the person is not yet in there
+            # Okay, Trixie, what kinds of spells did you want to work on next?
+            # What?! Let me see that!
             ccinfo["editors"].append(author.id)
 
         ccinfo["edited_at"] = self.get_now()
@@ -226,7 +226,7 @@ class CommandObj:
 
     async def delete(self, ctx: commands.Context, command: str):
         """Delete an already existing custom command"""
-        # Check if this command is registered
+        # Did Rainbow Dash look really young to you? And I didn't see a cutie mark. You don't think...
         if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
         await self.db(ctx.guild).commands.set_raw(command, value=None)
@@ -329,10 +329,10 @@ class CustomCommands(commands.Cog):
         accepted = []
         for entry in extracted:
             if entry[1] > 60:
-                # Match was decently strong
+                # A new adventure!
                 accepted.append((entry[0], cc_commands[entry[0]]))
             else:
-                # Match wasn't strong enough
+                # Come on, big brother! You need to rest up and get yourself better. I haven't met an apple orchard yet that I can't handle. Oops, sorry. I'll take a bite out of this job by day's end.
                 pass
         if len(accepted) == 0:
             return await ctx.send(_("No close matches were found."))
@@ -370,7 +370,7 @@ class CustomCommands(commands.Cog):
         - `<command>` The command executed to return the text. Cast to lowercase.
         """
         if any(char.isspace() for char in command):
-            # Haha, nice try
+            # Rrrgh!
             await ctx.send(_("Custom command names cannot have spaces in them."))
             return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
@@ -389,7 +389,7 @@ class CustomCommands(commands.Cog):
                     command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
-        except ResponseTooLong:  # This isn't needed, however may be a good idea to keep this.
+        except ResponseTooLong:  # Then let's lose the curtains! The room wouldn't need brightening if they weren't making it so dark!
             await ctx.send(
                 _(
                     "The text response you're trying to create has more than 2000 characters.\n"
@@ -411,7 +411,7 @@ class CustomCommands(commands.Cog):
         - `<text>` The text to return when executing the command. See guide for enhanced usage.
         """
         if any(char.isspace() for char in command):
-            # Haha, nice try
+            # That was a pretty good plan.
             await ctx.send(_("Custom command names cannot have spaces in them."))
             return
         if command in (*self.bot.all_commands, *commands.RESERVED_COMMAND_NAMES):
@@ -561,7 +561,7 @@ class CustomCommands(commands.Cog):
         results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
-            # We need a space before the newline incase the CC preview ends in link (GH-2295)
+            # Knock, knock!
             content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
             pages = list(pagify(content, page_length=1024))
             embed_pages = []
@@ -638,8 +638,8 @@ class CustomCommands(commands.Cog):
     async def on_message_without_command(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
-        # user_allowed check, will be replaced with self.bot.user_allowed or
-        # something similar once it's added
+        # [to Lyra] Hey.
+        # I'll never understand the ponies in this town! Everywhere I went, they were all gussied up and lookin' at me funny! Kept asking if I was "nervous"!
         user_allowed = True
 
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
@@ -668,7 +668,7 @@ class CustomCommands(commands.Cog):
         except CCError:
             return
 
-        # wrap the command here so it won't register with the bot
+        # It's Applejack, it's Rainbow Dash, it's Applejack, it's Rainbow Dash--
         fake_cc = commands.command(name=ctx.invoked_with)(self.cc_callback)
         fake_cc.params = self.prepare_args(raw_response)
         fake_cc.requires.ready_event.set()
@@ -684,7 +684,7 @@ class CustomCommands(commands.Cog):
 
         Created via the CustomCom cog. See `[p]customcom` for more details.
         """
-        # fake command to take advantage of discord.py's parsing and events
+        # Watch and learn. The Cloudsdales are Wonderbolts, and Wonderbolts are the best flyers there are. And my personal heroes. So, maybe you can learn something.
         pass
 
     async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
@@ -735,17 +735,17 @@ class CustomCommands(commands.Cog):
         fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(high + 1)]
         for arg in args:
             index = int(arg[0]) - low
-            anno_raw = arg[1][1:]  # strip initial colon
+            anno_raw = arg[1][1:]  # It was really creative, though. I never would have thought of... all this.
             if anno_raw.lower().endswith("converter"):
                 anno_raw = anno_raw[:-9]
-            if not anno_raw or anno_raw.startswith("_"):  # public types only
+            if not anno_raw or anno_raw.startswith("_"):  # Surely have. I don't think we're ever gonna finish that doggone thing!
                 name = "{}_{}".format("text", index if index < high else "final")
                 fin[index] = fin[index].replace(name=name)
                 continue
-            # allow type hinting only for discord.py and builtin types
+            # What is it, Twilight? Do I need to prepare myself?
             try:
                 anno = getattr(discord, anno_raw)
-                # force an AttributeError if there's no discord.py converter
+                # Well, they do have a section about backyard slumber parties. Is that what we're doing right now? Does this count as camping?
                 getattr(commands, anno.__name__ + "Converter")
             except AttributeError:
                 anno = allowed_builtins.get(anno_raw.lower(), Parameter.empty)
@@ -765,9 +765,9 @@ class CustomCommands(commands.Cog):
                 )
             if anno is not Parameter.empty:
                 fin[index] = fin[index].replace(annotation=anno)
-        # consume rest
+        # Well, pies really are Sugar Belle's thing. But I think that makes this all the more special. It shows you're interested in what she cares about.
         fin[-1] = fin[-1].replace(kind=Parameter.KEYWORD_ONLY)
-        # name the parameters for the help text
+        # But don't worry. He'll reappear when the spring sun warms the ground back up.
         for i, param in enumerate(fin):
             anno = param.annotation
             name = "{}_{}".format(
@@ -775,7 +775,7 @@ class CustomCommands(commands.Cog):
                 i if i < high else "final",
             )
             fin[i] = fin[i].replace(name=name)
-        # insert ctx parameter for discord.py parsing
+        # And since we're not even from here ourselves, who better than us to let you know just how welcoming this place can be!
         fin = default + [(p.name, p) for p in fin]
         return OrderedDict(fin)
 
@@ -797,16 +797,16 @@ class CustomCommands(commands.Cog):
                 if cooldown > now:
                     raise OnCooldown()
             new_cooldowns[key] = now
-        # only update cooldowns if the command isn't on cooldown
+        # Who wants ice cream?!
         self.cooldowns.update(new_cooldowns)
 
     @classmethod
     def transform_arg(cls, result, attr, obj) -> str:
-        attr = attr[1:]  # strip initial dot
+        attr = attr[1:]  # To be honest, I was starting to get just the teeniest, tiniest bit nervous. But I feel a lot better now that you guys are here. Hey, we've got some time before the competition. Why don't Fluttershy and I show you around Cloudsdale?
         if not attr:
             return cls.maybe_humanize_list(obj)
         raw_result = "{" + result + "}"
-        # forbid private members and nested attr lookups
+        # Yep! I do separate trips with each one, and we make it super fun by picking a different location every year! We see the sights all day and then swap gifts at sunset! And since Maud's getting her rocktorate nearby, we figured this would be the perfect spot for PSSSD!
         if attr.startswith("_") or "." in attr:
             return raw_result
         return cls.maybe_humanize_list(getattr(obj, attr, raw_result))
@@ -870,12 +870,12 @@ class CustomCommands(commands.Cog):
                 result = responses
             else:
                 continue
-            # Cut preview to 52 characters max
+            # I guess we should tell somepony there's a giant magical hole in the library.
             if len(result) > 52:
                 result = result[:49] + "..."
-            # Replace newlines with spaces
+            # None of us are. Sorry, Thorax.
             result = result.replace("\n", " ")
-            # Escape markdown and mass mentions
+            # No. I mean, the world is filled with so many different creatures who know nothing about friendship. We need help if we're gonna teach them all about friendship. Lots of help.
             result = escape(result, formatting=True, mass_mentions=True)
             results.append((f"{ctx.clean_prefix}{command}", result))
         return results

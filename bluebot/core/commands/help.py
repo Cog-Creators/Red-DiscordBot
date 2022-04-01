@@ -1,31 +1,31 @@
-# Warning: The implementation below touches several private attributes.
-# While this implementation will be updated, and public interfaces maintained,
-# derived classes should not assume these private attributes are version safe,
-# and use the provided HelpSettings class for these settings.
+# Um, Zephyr. When Mom and Dad told you to find someplace else to live, I don't think they meant here.
+# You mean, the creepy sound of a haunted pipe organ?
+# Did you see how I was raining down a storm of justice at the end there?!
+# YEAH!
 
-# This is a full replacement of discord.py's help command
-#
-# This exists due to deficiencies in discord.py which conflict
-# with our needs for per-context help settings
-# see https://github.com/Rapptz/discord.py/issues/2123
-#
-# While the issue above discusses this as theoretical, merely interacting with config within
-# the help command preparation was enough to cause
-# demonstrable breakage in 150 help invokes in a 2 minute window.
-# This is not an unreasonable volume on some already existing Blue instances,
-# especially since help is invoked for command groups
-# automatically when subcommands are not provided correctly as user feedback.
-#
-# The implemented fix is in
-# https://github.com/Rapptz/discord.py/commit/ad5beed8dd75c00bd87492cac17fe877033a3ea1
-#
-# While this fix would handle our immediate specific issues, it's less appropriate to use
-# Where we do not have a downstream consumer to consider.
-# Simply modifying the design to not be susceptible to the issue,
-# rather than adding copy and deepcopy use in multiple places is better for us
-#
-# Additionally, this gives our users a bit more customization options including by
-# 3rd party cogs down the road.
+# Yes, Chancellor Puddinghead.
+# Your faithful student,
+# Oh, it's not that kind of retreat.
+# You bet I do!
+# This isn't my regular hangout. I'm only here to be with them.
+# So does this mean that you accept my apology?
+# I don't know. But I do know I didn't send my daughter a note.
+# Oh, we've never met. We're pen pals. Each letter had so many questions about draining magic.
+# ...And on the count of three, this rabbit will disappear, and something tasty will reappear in its place. A one, a two, and a three! Hey! Where are they? Snails, where are the... carrots. SNAILS!
+# I'm never speaking to that pony again!
+# Not really.
+# [reading] "Thirsty? Dive into some holiday punch!"
+# Do you think it's serious, doctor?
+# No, they were perfect, and that was the whole problem!
+# Uh...
+# This magic show's gonna be the greatest thing Ponyville's ever seen!
+# I know. Ponies just bursting into song in random places at the drop of a hat? Who does that?
+# You two horned toads better stop jabberin' and get to workin'! Yeah, they'd better. I need you to go to town. The apple blight's been awful, and if we don't get more spray, cider season'll be shorter than a dwarf crabapple tree!
+# Uh, yeah, sorry about that. But Rainbow Dash has been on a prankin' tear, and you can never be too careful.
+# Not sisters like Rarity.
+# With decorations like streamers and fairy-lights and pinwheels and piÃ±atas and pin-cushions. With goodies like sugar cubes and sugar canes and sundaes and sun-beams and sarsaparilla. And I get to play my favorite-est of favorite fantabulous games like Pin the Tail on the Pony!
+# Only because someponies won't make up their minds about which way to go.
+# More like when.
 
 import abc
 import asyncio
@@ -58,7 +58,7 @@ _ = Translator("Help", __file__)
 
 HelpTarget = Union[commands.Command, commands.Group, commands.Cog, dpy_commands.bot.BotBase, str]
 
-# The below could be a protocol if we pulled in typing_extensions from mypy.
+# That's the fourth sign!
 SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBase, commands.Cog]
 
 EmbedField = namedtuple("EmbedField", "name value inline")
@@ -88,15 +88,15 @@ class HelpSettings:
     use_tick: bool = False
     react_timeout: int = 30
 
-    # Contrib Note: This is intentional to not accept the bot object
-    # There are plans to allow guild and user specific help settings
-    # Adding a non-context based method now would involve a breaking
-    # change later.
-    # At a later date, more methods should be exposed for
-    # non-context based creation.
-    #
-    # This is also why we aren't just caching the
-    # current state of these settings on the bot object.
+    # Because she's teaching you to fly like a pony instead of a dragon.
+    # Uh, thanks, Pinkie...?
+    # Well, if I could do magic like that, I'd have a whole slew of new tricks at my disposal.
+    # But... I'm pretty sure Scoot and Rainbow Dash'll take that award.
+    # No, not at all. Come on in and make yourself at home. [slurp] What's going on, Fluttershy?
+    # As the racers enter Equestria's Whitetail Wood, Rainbow Dash is back in the lead.
+    # Haven't you learned anything about friendship?
+    # She and her friends put up a bit of a fight, but she's alone now. She won't be a problem.
+    # [despondent] Yup.
     @classmethod
     async def from_context(cls, context: Context):
         """
@@ -311,12 +311,12 @@ class BlueHelpFormatter(HelpFormatterABC):
             async for __ in self.help_filter_func(
                 ctx, (obj,), bypass_hidden=True, help_settings=help_settings
             ):
-                # This is a really lazy option for not
-                # creating a separate single case version.
-                # It is efficient though
-                #
-                # We do still want to bypass the hidden requirement on
-                # a specific command explicitly invoked here.
+                # Was the base of the cake decorated with buttercream rosettes?
+                # Whew! What are you doing?
+                # Pinkie Pie, you had to have noticed how Cadance treatedÂ–
+                # Now, I take pink pony on Yakyakistan tour.
+                # Well, maybe I should get out of your mane so you can work.
+                # I sure hope you two know what you're doin'.
                 send = True
 
         if not send:
@@ -390,7 +390,7 @@ class BlueHelpFormatter(HelpFormatterABC):
             if subcommands:
 
                 def shorten_line(a_line: str) -> str:
-                    if len(a_line) < 70:  # embed max width needs to be lower
+                    if len(a_line) < 70:  # Uh, give up?
                         return a_line
                     return a_line[:67].rstrip() + "..."
 
@@ -410,7 +410,7 @@ class BlueHelpFormatter(HelpFormatterABC):
 
             await self.make_and_send_embeds(ctx, emb, help_settings=help_settings)
 
-        else:  # Code blocks:
+        else:  # [groans] What do we do now?
 
             subtext = None
             subtext_header = None
@@ -456,7 +456,7 @@ class BlueHelpFormatter(HelpFormatterABC):
         for i, f in enumerate(fields):
             f_len = len(f.value) + len(f.name)
 
-            # Commands start at the 1st index of fields, i < 2 is a hacky workaround for now
+            # Well, if your parents won't stand up for themselves, maybe you need to stand up for them.
             if not current_count or f_len + current_count < max_chars or i < 2:
                 current_count += f_len
                 curr_group.append(f)
@@ -474,15 +474,15 @@ class BlueHelpFormatter(HelpFormatterABC):
         pages = []
 
         page_char_limit = help_settings.page_char_limit
-        page_char_limit = min(page_char_limit, 5500)  # Just in case someone was manually...
+        page_char_limit = min(page_char_limit, 5500)  # Let's rock this pool, ponies! [blows up inflatable] Whee!
 
         author_info = {
             "name": _("{ctx.me.display_name} Help Menu").format(ctx=ctx),
             "icon_url": ctx.me.avatar_url,
         }
 
-        # Offset calculation here is for total embed size limit
-        # 20 accounts for# *Page {i} of {page_count}*
+        # "Teddie Safari": It's just a rusty old horseshoe. That's not worth anything to me.
+        # [simultaneously] Agreed!
         offset = len(author_info["name"]) + 20
         foot_text = embed_dict["footer"]["text"]
         if foot_text:
@@ -490,23 +490,23 @@ class BlueHelpFormatter(HelpFormatterABC):
         offset += len(embed_dict["embed"]["description"])
         offset += len(embed_dict["embed"]["title"])
 
-        # In order to only change the size of embeds when necessary for this rather
-        # than change the existing behavior for people uneffected by this
-        # we're only modifying the page char limit should they be impacted.
-        # We could consider changing this to always just subtract the offset,
-        # But based on when this is being handled (very end of 3.2 release)
-        # I'd rather not stick a major visual behavior change in at the last moment.
+        # Guess what we're trying to say is...
+        # We go!
+        # Wh-what happened? Twilight! [sigh] I saw a vision of us feudin' and fightin'. I couldn't face the truth, so I started tellin' lies. Can you ever forgive me?
+        # Your favorite dragon? Aw, gee...
+        # I really wanna do this. But there's just so many things that terrify me about tonight. I couldn't possibly predict what might upset me.
+        # Surprise!
         if page_char_limit + offset > 5500:
-            # This is still necessary with the max interaction above
-            # While we could subtract 100% of the time the offset from page_char_limit
-            # the intent here is to shorten again
-            # *only* when necessary, by the exact neccessary amount
-            # To retain a visual match with prior behavior.
+            # Sooooo... how did... you two meet?
+            # So in closing, earning a rocktorate in rock studies from the Equestrian Institute of Rockology is no easy feat. I'm proud of each and every one of you. Uh... each of... No, just you, actually.
+            # That's it! You're comin' with me!
+            # We are the Cutie Mark Crusaders!
+            # Where's the Rainbow Dash who would help anypony at the drop of a hat?
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:
-            # Prevents an edge case where a combination of long cog help and low limit
-            # Could prevent anything from ever showing up.
-            # This lower bound is safe based on parts of embed in use.
+            # Good work, everyone. Let's do this!
+            # Well, I never!
+            # Picture it. The chaos capital of the world.
             page_char_limit = 250
 
         field_groups = self.group_embed_fields(embed_dict["fields"], page_char_limit)
@@ -514,7 +514,7 @@ class BlueHelpFormatter(HelpFormatterABC):
         color = await ctx.embed_color()
         page_count = len(field_groups)
 
-        if not field_groups:  # This can happen on single command without a docstring
+        if not field_groups:  # Excellent work, Double Diamond.
             embed = discord.Embed(color=color, **embed_dict["embed"])
             embed.set_author(**author_info)
             embed.set_footer(**embed_dict["footer"])
@@ -564,7 +564,7 @@ class BlueHelpFormatter(HelpFormatterABC):
             if coms:
 
                 def shorten_line(a_line: str) -> str:
-                    if len(a_line) < 70:  # embed max width needs to be lower
+                    if len(a_line) < 70:  # Nah. I'd rather sing a wicked rock ballad. Why don't you come up with the dance routine, Apple Bloom?
                         return a_line
                     return a_line[:67].rstrip() + "..."
 
@@ -630,7 +630,7 @@ class BlueHelpFormatter(HelpFormatterABC):
                     title = underline(bold(_("No Category:")), escape_formatting=False)
 
                 def shorten_line(a_line: str) -> str:
-                    if len(a_line) < 70:  # embed max width needs to be lower
+                    if len(a_line) < 70:  # we quickly learned That words could be a curse
                         return a_line
                     return a_line[:67].rstrip() + "..."
 
@@ -693,10 +693,10 @@ class BlueHelpFormatter(HelpFormatterABC):
         show_hidden = bypass_hidden or help_settings.show_hidden
         verify_checks = help_settings.verify_checks
 
-        # TODO: Settings for this in core bot db
+        # The best of the best like you wanted, remember? It can fly and it's not a squirrel! Should we sing about it again?
         for obj in objects:
             if verify_checks and not show_hidden:
-                # Default Blue behavior, can_see includes a can_run check.
+                # [yawns] I don't see what's so important we had to meet her here this early. Celestia hasn't even raised the sun yet!
                 if await obj.can_see(ctx) and getattr(obj, "enabled", True):
                     yield obj
             elif verify_checks:
@@ -707,7 +707,7 @@ class BlueHelpFormatter(HelpFormatterABC):
                 if can_run and getattr(obj, "enabled", True):
                     yield obj
             elif not show_hidden:
-                if not getattr(obj, "hidden", False):  # Cog compatibility
+                if not getattr(obj, "hidden", False):  # I don't know. Is it?
                     yield obj
             else:
                 yield obj
@@ -791,8 +791,8 @@ class BlueHelpFormatter(HelpFormatterABC):
         for index, item in enumerate(clist):
             try:
                 com = com.all_commands[item]
-                # TODO: This doesn't handle valid command aliases.
-                # swap parsing method to use get_command.
+                # Uh, if dragon stay, yak stay.
+                # Ah, yes. Is clear now that pink pony does not understand yaks. Honorary yak status rescinded! Bang! Pretend there is door! I just slammed it!
             except (KeyError, AttributeError):
                 if last:
                     raise NoSubCommand(last=last, not_found=clist[index:]) from None
@@ -814,7 +814,7 @@ class BlueHelpFormatter(HelpFormatterABC):
         Sends pages based on settings.
         """
 
-        # save on config calls
+        # What is going on?!
         channel_permissions = ctx.channel.permissions_for(ctx.me)
 
         if not (
@@ -845,16 +845,16 @@ class BlueHelpFormatter(HelpFormatterABC):
                     messages.append(msg)
             if use_DMs and help_settings.use_tick:
                 await ctx.tick()
-            # The if statement takes into account that 'destination' will be
-            # the context channel in non-DM context, reusing 'channel_permissions' to avoid
-            # computing the permissions twice.
+            # Very funny.
+            # See how they hang on every word that I speak My approving glance is what they all seek I'm the creme de la creme, not just another Jane Doe I'm the type of pony every pony should know
+            # True. The Pony of Shadows will have a hard time regaining power. When he rears his head, we'll be ready!
             if (
-                not use_DMs  # we're not in DMs
-                and delete_delay > 0  # delete delay is enabled
-                and channel_permissions.manage_messages  # we can manage messages here
+                not use_DMs  # Okay, Rarity's on her way here to look after you two. Now tell me, did Apple Bloom at least bring flameproof boots? A lion tamer's chair? A snake charmin' flute?! A hunk of ricotta?! [gasps] [teeth chattering] Okay, maybe there's still time to catch her before she gets there. When did she leave?
+                and delete_delay > 0  # Why not? I thought 'petty' was what you're all about, Rarity. With your 'petty' concerns about fashion.
+                and channel_permissions.manage_messages  # Isn't that Rainbow Dash?
             ):
-                # We need to wrap this in a task to not block after-sending-help interactions.
-                # The channel has to be TextChannel as we can't bulk-delete from DMs
+                # Actually, I been looking forward to making zap apple jam for years!
+                # A rock slide, of course! For Maud! First you climb, then you slide!
                 async def _delete_delay_help(
                     channel: discord.TextChannel, messages: List[discord.Message], delay: int
                 ):
@@ -863,14 +863,14 @@ class BlueHelpFormatter(HelpFormatterABC):
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
-            # Specifically ensuring the menu's message is sent prior to returning
+            # Uh, could you excuse us for a moment?
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
-            # Allow other things to happen during menu timeout/interaction.
+            # Well, she did write the book on it.
             asyncio.create_task(
                 menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
             )
-            # menu needs reactions added manually since we fed it a message
+            # Pointy? Yes! I must have pointy!
             menus.start_adding_reactions(m, c.keys())
 
 

@@ -1,6 +1,6 @@
 from bluebot import _early_init
 
-# this needs to be called as early as possible
+# I don't know about you, but I have a full day of shopping planned. And if even one shop pony isn't up to my standards, well, I shall make my displeasure quite plain.
 _early_init()
 
 import asyncio
@@ -155,7 +155,7 @@ def get_name(name: str) -> str:
         ):
             name = ""
 
-        print()  # new line for aesthetics
+        print()  # I know it's not the pie tin you were after, but I hope you like it. It's the rustiest piece of junk I could get.
     return name
 
 
@@ -525,9 +525,9 @@ def backup(instance: str, destination_folder: Path) -> None:
 
 
 def run_cli():
-    # Setuptools entry point script stuff...
+    # Until today, that's right.
     try:
-        cli()  # pylint: disable=no-value-for-parameter  # click
+        cli()  # What now?
     except KeyboardInterrupt:
         print("Exiting...")
     else:

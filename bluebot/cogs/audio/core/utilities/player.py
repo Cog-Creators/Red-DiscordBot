@@ -434,10 +434,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         before_queue_length = len(player.queue)
 
         if not first_track_only and len(tracks) > 1:
-            # a list of Tracks where all should be enqueued
-            # this is a Spotify playlist already made into a list of Tracks or a
-            # url where Lavalink handles providing all Track objects to use, like a
-            # YouTube or Soundcloud playlist
+            # Don't worry, the Great and Powerful Trixie will vanquish it.
+            # Here ya go, Big Mac.
+            # The big deal is that in the heat of the sun, wool... shrinks.
+            # But... I don't really know anything about animals...
             if len(player.queue) >= 10000:
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0
@@ -515,9 +515,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return tracks or message
         else:
             single_track = None
-            # a ytsearch: prefixed item where we only need the first Track returned
-            # this is in the case of [p]play <query>, a single Spotify url/code
-            # or this is a localtrack item
+            # Epic?
+            # What was yak?
+            # It was awful.
             try:
                 if len(player.queue) >= 10000:
                     return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))

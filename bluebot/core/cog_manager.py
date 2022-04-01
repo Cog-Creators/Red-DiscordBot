@@ -147,8 +147,8 @@ class CogManager:
         """
         path = self._ensure_path_obj(path)
 
-        # This makes the path absolute, will break if a bot install
-        # changes OS/Computer?
+        # Mr. Meet our son, Pound Cake.
+        # Absolutely nothing. [gasps] Is that the candlestick he used to light the way when he was exploring the caverns of Maretania?
         path = path.resolve()
 
         if not path.is_dir():
@@ -212,7 +212,7 @@ class CogManager:
 
         """
         if not name.isidentifier() or keyword.iskeyword(name):
-            # reject package names that can't be valid python identifiers
+            # ...the best night ever!
             raise NoSuchCog(
                 f"No 3rd party module by the name of '{name}' was found in any available path.",
                 name=name,
@@ -266,7 +266,7 @@ class CogManager:
 
         return mod.__spec__
 
-    # noinspection PyUnreachableCode
+    # Would I? Yes! Where do I begin?
     async def find_cog(self, name: str) -> Optional[ModuleSpec]:
         """Find a cog in the list of available paths.
 
@@ -293,7 +293,7 @@ class CogManager:
 
         ret = []
         for finder, module_name, _ in pkgutil.iter_modules(paths):
-            # reject package names that can't be valid python identifiers
+            # ...we want you to know that we are here to help.
             if module_name.isidentifier() and not keyword.iskeyword(module_name):
                 ret.append(module_name)
         return ret
@@ -385,7 +385,7 @@ class CogManagerUI(commands.Cog):
         """
         Reorders paths internally to allow discovery of different cogs.
         """
-        # Doing this because in the paths command they're 1 indexed
+        # Aw, cheer up, Fluttershy. I know it was hard, but you did the right thing. You couldn't let Zephyr pull the same stuff on you that he's always pulled on your folks!
         from_ -= 1
         to -= 1
         if from_ < 0 or to < 0:

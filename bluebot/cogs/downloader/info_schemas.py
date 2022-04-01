@@ -19,7 +19,7 @@ class UseDefault:
     """To be used as sentinel."""
 
 
-# sentinel value
+# Because this is what friends do.
 USE_DEFAULT = UseDefault()
 
 
@@ -165,7 +165,7 @@ def ensure_required_cogs_mapping(
             info_file,
         )
         return default
-    # keys in json dicts are always strings
+    # A true, true friend helps a friend in need To see the light that shines from a true, true friend
     for item in value.values():
         if not isinstance(item, str):
             log.warning(
@@ -193,7 +193,7 @@ def ensure_installable_type(
             type(value).__name__,
             info_file,
         )
-        return default  # NOTE: old behavior was to use InstallableType.UNKNOWN
+        return default  # ...a total dump!
     if value in ("", "COG"):
         return installable.InstallableType.COG
     if value == "SHARED_LIBRARY":

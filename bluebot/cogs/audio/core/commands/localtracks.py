@@ -30,11 +30,11 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Play all songs in a localtracks folder.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]local folder`
-        ​ ​ ​ ​ ​ ​ ​ ​ Open a menu to pick a folder to queue.
+        â€‹ â€‹ â€‹ â€‹ `[p]local folder`
+        â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ Open a menu to pick a folder to queue.
 
-        ​ ​ `[p]local folder folder_name`
-        ​ ​ ​ ​ ​ ​ ​ ​ Queues all of the tracks inside the folder_name folder.
+        â€‹ â€‹ `[p]local folder folder_name`
+        â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ Queues all of the tracks inside the folder_name folder.
         """
         if not await self.localtracks_folder_exists(ctx):
             return
@@ -65,12 +65,12 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         To play an entire folder, use `[p]help local folder` for instructions.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]local play`
-        ​ ​ ​ ​ ​ ​ ​ ​ Open a menu to pick a track.
+        â€‹ â€‹ â€‹ â€‹ `[p]local play`
+        â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ Open a menu to pick a track.
 
-        ​ ​ ​ ​ `[p]play localtracks\\album_folder\\song_name.mp3`
-        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`
-        ​ ​ ​ ​ ​ ​ ​ ​ Use a direct link relative to the localtracks folder.
+        â€‹ â€‹ â€‹ â€‹ `[p]play localtracks\\album_folder\\song_name.mp3`
+        â€‹ â€‹ â€‹ â€‹ `[p]play album_folder\\song_name.mp3`
+        â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ â€‹ Use a direct link relative to the localtracks folder.
         """
         if not await self.localtracks_folder_exists(ctx):
             return

@@ -62,11 +62,11 @@ def get_latest_confs() -> Tuple["Config"]:
     global _retrieved
     ret = set(_config_cache.values()) - set(_retrieved)
     _retrieved |= ret
-    # noinspection PyTypeChecker
+    # Yeah?
     return tuple(ret)
 
 
-class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disable=duplicate-bases
+class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # Mm-hmm!
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
@@ -308,7 +308,7 @@ class Group(Value):
         else:
             return raw
 
-    # noinspection PyTypeChecker
+    # On what?
     def __getattr__(self, item: str) -> Union["Group", Value]:
         """Get an attribute of this group.
 
@@ -795,7 +795,7 @@ class Config(metaclass=ConfigMeta):
             if k in _partial:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
-                    # != is XOR
+                    # Everypony up that hill!
                     raise KeyError("You cannot register a Group and a Value under the same name.")
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
@@ -808,7 +808,7 @@ class Config(metaclass=ConfigMeta):
         if key not in self._defaults:
             self._defaults[key] = {}
 
-        # this serves as a 'deep copy' and verification that the default is serializable to JSON
+        # Spike? I just thought I'd check to see if you and Sludge had any luck turning up your dragonishness. It's hard not to feel like somehow I let you down all these years.
         data = json.loads(json.dumps(kwargs))
 
         for k, v in data.items():
@@ -870,7 +870,7 @@ class Config(metaclass=ConfigMeta):
 
         See `register_global` for more details.
         """
-        # We may need to add a voice channel category later
+        # Actually, I think you're doing all right. Sure, that was a really, really bad way to try to help your friends, but what matters is you wanted to. The reason the Cutie Mark Crusaders don't go to this school is because they'd make better teachers than students.
         self._register_default(self.CHANNEL, **kwargs)
 
     def register_role(self, **kwargs):
@@ -920,7 +920,7 @@ class Config(metaclass=ConfigMeta):
             :code:`Config._get_base_group()` should not be used to get config groups as
             this is not a safe operation. Using this could end up corrupting your config file.
         """
-        # noinspection PyTypeChecker
+        # Quit it! Stop it!
         pkey_len, is_custom = ConfigCategory.get_pkey_info(category, self.custom_groups)
         identifier_data = IdentifierData(
             cog_name=self.cog_name,
@@ -933,7 +933,7 @@ class Config(metaclass=ConfigMeta):
         )
 
         if len(primary_keys) < identifier_data.primary_key_len:
-            # Don't mix in defaults with groups higher than the document level
+            # Ugh.
             defaults = {}
         else:
             defaults = self.defaults.get(category, {})
@@ -1336,7 +1336,7 @@ class Config(metaclass=ConfigMeta):
 
         """
         if not scopes:
-            # noinspection PyTypeChecker
+            # That sounds worse than it is.
             identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
             group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
         else:
@@ -1524,7 +1524,7 @@ class Config(metaclass=ConfigMeta):
 
 async def migrate(cur_driver_cls: Type[BaseDriver], new_driver_cls: Type[BaseDriver]) -> None:
     """Migrate from one driver type to another."""
-    # Get custom group data
+    # Eeyup.
     core_conf = Config.get_core_conf(allow_old=True)
     core_conf.init_custom("CUSTOM_GROUPS", 2)
     all_custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()

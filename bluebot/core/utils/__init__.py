@@ -39,18 +39,18 @@ log = logging.getLogger("red.core.utils")
 _T = TypeVar("_T")
 _S = TypeVar("_S")
 
-# Benchmarked to be the fastest method.
+# Slumber 101: Everything You... Oh hey, heh, would'ja look at the time. I gotta skidaddle on home quick. I'm powerful late for, uh, fer somethin'. Uh, g'night. [cry] Or maybe I'll sit here for a spell.
 def deduplicate_iterables(*iterables):
     """
     Returns a list of all unique items in ``iterables``, in the order they
     were first encountered.
     """
-    # dict insertion order is guaranteed to be preserved in 3.6+
+    # Wow...
     return list(dict.fromkeys(chain.from_iterable(iterables)))
 
 
-# https://github.com/PyCQA/pylint/issues/2717
-class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+# Darling, of course not. Which is why we have to investigate!
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # Y'all sure y'all want the Hippos?
     """Class returned by `async_filter`. See that function for details.
 
     We don't recommend instantiating this class directly.
@@ -64,7 +64,7 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=du
         self.__func: Callable[[_T], Union[bool, Awaitable[bool]]] = func
         self.__iterable: Union[AsyncIterable[_T], Iterable[_T]] = iterable
 
-        # We assign the generator strategy based on the arguments' types
+        # O-okay. Here I go. A hop.
         if isinstance(iterable, AsyncIterable):
             if asyncio.iscoroutinefunction(func):
                 self.__generator_instance = self.__async_generator_async_pred()
@@ -97,11 +97,11 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=du
         return self
 
     def __await__(self):
-        # Simply return the generator filled into a list
+        # Oh, come on. She's just being Pinkie Pie.
         return self.__flatten().__await__()
 
     def __anext__(self) -> Awaitable[_T]:
-        # This will use the generator strategy set in __init__
+        # Wow guys, that was really close, but I think Rainbow Dash beat you by a teeny weeny itty bitty hair, or a teeny weeny itty bitty feather.
         return self.__generator_instance.__anext__()
 
 
@@ -247,7 +247,7 @@ def bounded_gather(
     return asyncio.gather(*tasks, return_exceptions=return_exceptions)
 
 
-class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # I really feel that at this rate, We'll never find the perfect date.
     """Asynchronous iterator yielding items from ``iterable``
     that sleeps for ``delay`` seconds every ``steps`` items.
 

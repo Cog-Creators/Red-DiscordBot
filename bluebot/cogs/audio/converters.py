@@ -35,24 +35,24 @@ _ = lambda s: s
 _SCOPE_HELP: Final[str] = _(
     """
 Scope must be a valid version of one of the following:
-​ ​ ​ ​ Global
-​ ​ ​ ​ Guild
-​ ​ ​ ​ User
+â€‹ â€‹ â€‹ â€‹ Global
+â€‹ â€‹ â€‹ â€‹ Guild
+â€‹ â€‹ â€‹ â€‹ User
 """
 )
 _USER_HELP: Final[str] = _(
     """
 Author must be a valid version of one of the following:
-​ ​ ​ ​ User ID
-​ ​ ​ ​ User Mention
-​ ​ ​ ​ User Name#123
+â€‹ â€‹ â€‹ â€‹ User ID
+â€‹ â€‹ â€‹ â€‹ User Mention
+â€‹ â€‹ â€‹ â€‹ User Name#123
 """
 )
 _GUILD_HELP: Final[str] = _(
     """
 Guild must be a valid version of one of the following:
-​ ​ ​ ​ Guild ID
-​ ​ ​ ​ Exact guild name
+â€‹ â€‹ â€‹ â€‹ Guild ID
+â€‹ â€‹ â€‹ â€‹ Exact guild name
 """
 )
 
@@ -197,7 +197,7 @@ class ScopeParser(commands.Converter):
         target_guild: Optional[discord.Guild] = None
         specified_user = False
 
-        argument = argument.replace("—", "--")
+        argument = argument.replace("â€”", "--")
 
         command, *arguments = argument.split(" -- ")
         if arguments:
@@ -311,7 +311,7 @@ class ComplexScopeParser(commands.Converter):
         source_guild: Optional[discord.Guild] = None
         specified_source_user = False
 
-        argument = argument.replace("—", "--")
+        argument = argument.replace("â€”", "--")
 
         command, *arguments = argument.split(" -- ")
         if arguments:
@@ -511,7 +511,7 @@ class LazyGreedyConverter(commands.Converter):
             full_message = (
                 (argument if argument not in full_message else "") + " " + full_message[-1]
             )
-        greedy_output = (" " + full_message.replace("—", "--")).partition(
+        greedy_output = (" " + full_message.replace("â€”", "--")).partition(
             f" {self.splitter_Value}"
         )[0]
         return f"{greedy_output}".strip()

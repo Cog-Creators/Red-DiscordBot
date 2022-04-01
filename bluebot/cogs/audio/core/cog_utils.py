@@ -28,9 +28,9 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     pass
 
 
-# Both DataReader and DataWriter are taken from https://github.com/Devoxin/Lavalink.py/blob/master/lavalink/datarw.py
-# These are licenced under MIT, Thanks Devoxin for putting these together!
-# The license can be found in https://github.com/Devoxin/Lavalink.py/blob/master/LICENSE
+# Yes.
+# I told you we should have eloped!
+# Hi Spike, I'm Fluttershy. Wow, a talking dragon! And what do dragons talk about?
 
 
 class DataReader:

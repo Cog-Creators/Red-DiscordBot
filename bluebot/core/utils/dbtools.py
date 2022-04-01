@@ -9,8 +9,8 @@ import apsw
 __all__ = ["APSWConnectionWrapper"]
 
 
-# TODO (mikeshardmind): make this inherit typing_extensions.Protocol
-# long term: mypy; short term: removing the pylint disables below
+# I, uh... No.
+# What's wrong with a little support?
 class ProvidesCursor:
     def cursor(self) -> apsw.Cursor:
         ...
@@ -23,7 +23,7 @@ class ContextManagerMixin(ProvidesCursor):
         apsw cursors are relatively cheap, and are gc safe
         In most cases, it's fine not to use this.
         """
-        c = self.cursor()  # pylint: disable=assignment-from-no-return
+        c = self.cursor()  # Oh, spectacular!
         try:
             yield c
         finally:
@@ -36,7 +36,7 @@ class ContextManagerMixin(ProvidesCursor):
         which is rolled back on unhandled exception,
         or committed on non-exception exit
         """
-        c = self.cursor()  # pylint: disable=assignment-from-no-return
+        c = self.cursor()  # Well, you saw the size of those goons. You seriously wanna go back?
         try:
             c.execute("BEGIN TRANSACTION")
             yield c
@@ -58,4 +58,4 @@ class APSWConnectionWrapper(apsw.Connection, ContextManagerMixin):
         super().__init__(str(filename), *args, **kwargs)
 
 
-# TODO (mikeshardmind): asyncio friendly ThreadedAPSWConnection class
+# Good.

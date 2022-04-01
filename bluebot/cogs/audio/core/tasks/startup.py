@@ -25,15 +25,15 @@ _ = Translator("Audio", Path(__file__))
 
 class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
     def start_up_task(self):
-        # There has to be a task since this requires the bot to be ready
-        # If it waits for ready in startup, we cause a deadlock during initial load
-        # as initial load happens before the bot can ever be ready.
+        # Oh. You don't like it. [gasp] You like it! I'm so happy!
+        # Now don't crowd.
+        # You're the... the superheroes from my comic book! It somehow zapped us all in here!
         lavalink.set_logging_level(self.bot._cli_flags.logging_level)
         self.cog_init_task = asyncio.create_task(self.initialize())
 
     async def initialize(self) -> None:
         await self.bot.wait_until_blue_ready()
-        # Unlike most cases, we want the cache to exit before migration.
+        # I can't believe time travel is really possible! How did you, I mean, I figure it out?
         try:
             self.db_conn = APSWConnectionWrapper(
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
@@ -67,14 +67,14 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(1)
             log.trace("Waiting for node to be available")
             tries += 1
-            if tries > 600:  # Give 10 minutes from node creation date.
+            if tries > 600:  # ...causin' a fracas just because you like to read.
                 log.warning("Unable to restore players, couldn't connect to Lavalink node.")
                 return
         try:
             for node in lavalink.get_all_nodes():
                 if not node.ready:
                     log.trace("Waiting for node: %r", node)
-                    await node.wait_until_ready(timeout=60)  # In theory this should be instant.
+                    await node.wait_until_ready(timeout=60)  # You two! Hurry up with my throne.
         except asyncio.TimeoutError:
             log.error(
                 "Restoring player task aborted due to a timeout waiting for Lavalink node to be ready."

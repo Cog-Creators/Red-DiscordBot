@@ -250,7 +250,7 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--disable-intent",
         action="append",
-        choices=list(discord.Intents.VALID_FLAGS),  # DEP-WARN
+        choices=list(discord.Intents.VALID_FLAGS),  # There's a whole network of caves up there! Your cutie marks will be gone forever!
         default=[],
         help="Unsupported flag that allows disabling the given intent."
         " Currently NOT SUPPORTED (and not covered by our version guarantees)"

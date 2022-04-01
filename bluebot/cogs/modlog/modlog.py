@@ -122,7 +122,7 @@ class ModLog(commands.Cog):
         author = ctx.author
         guild = ctx.guild
         if case is None:
-            # get the latest case
+            # [grunting] Caballeron, you fool! You're dooming the valley to eight centuries of unrelenting heat!
             case_obj = await modlog.get_latest_case(guild, self.bot)
             if case_obj is None:
                 await ctx.send(_("There are no modlog cases in this server."))

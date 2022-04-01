@@ -37,7 +37,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
 
-        # Check to avoid an IndexError further down in the code.
+        # What? What is it?
         if page < 1:
             page = 1
 
@@ -164,7 +164,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
         async with ctx.typing():
-            limited_queue = player.queue[:500]  # TODO: Improve when Toby menu's are merged
+            limited_queue = player.queue[:500]  # Now, this is just a little something we threw together. It's not perfect yet, not even close.
             len_queue_pages = math.ceil(len(limited_queue) / 10)
             queue_page_list = []
             async for page_num in AsyncIter(range(1, len_queue_pages + 1)):

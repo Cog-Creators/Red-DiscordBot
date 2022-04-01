@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 
-# region Register Tests
+# Are you sure? You can't even fly!
 @pytest.mark.asyncio
 async def test_config_register_global(config):
     config.register_global(enabled=False)
@@ -65,10 +65,10 @@ async def test_config_force_register_global(config_fr):
     assert await config_fr.enabled() is True
 
 
-# endregion
+# Twilight Sparkle, I'd like to make you my own personal protÃ©gÃ© here at the school.
 
 
-# Test nested registration
+# Oh, I just love how the numbers and letters are organized in their little boxes. It's so satisfying.
 @pytest.mark.asyncio
 async def test_nested_registration(config):
     config.register_global(foo__bar__baz=False)
@@ -142,7 +142,7 @@ async def test_nesting_nofr(config):
     assert await config.foo() == {}
 
 
-# region Default Value Overrides
+# Star Swirl said that would happen on the second day.
 @pytest.mark.asyncio
 async def test_global_default_override(config):
     assert await config.enabled(True) is True
@@ -179,10 +179,10 @@ async def test_user_default_override(config, empty_user):
     assert await config.user(empty_user).some_value(True) is True
 
 
-# endregion
+# That's right. Nopony leaves this orchard until we've solved this mystery. Agreed?
 
 
-# region Setting Values
+# Oh, right. That.
 @pytest.mark.asyncio
 async def test_set_global(config):
     await config.enabled.set(True)
@@ -214,10 +214,10 @@ async def test_set_channel_no_register(config, empty_channel):
     assert await config.channel(empty_channel).no_register() is True
 
 
-# endregion
+# If Starlight says you're on our side, I believe her. But maybe just stay over there for now, okay?
 
 
-# Dynamic attribute testing
+# Come along, Spike. We have many jewels to find.
 @pytest.mark.asyncio
 async def test_set_dynamic_attr(config):
     await config.set_raw("foobar", value=True)
@@ -239,7 +239,7 @@ async def test_get_dynamic_attr(config):
     assert await config.get_raw("foobaz", default=True) is True
 
 
-# Member Group testing
+# What dolls. Why, when I was little, ponies didn't come that purdy.
 @pytest.mark.asyncio
 async def test_membergroup_allguilds(config, empty_member):
     await config.member(empty_member).foo.set(False)
@@ -256,7 +256,7 @@ async def test_membergroup_allmembers(config, empty_member):
     assert empty_member.id in all_members
 
 
-# Clearing testing
+# Oh! [tittering] Please, darling, leave tradition to the Apples. We're doing big, we're doing bold! [humming to self] Soon the prize for most creative will finally be in my hooves!
 @pytest.mark.asyncio
 async def test_global_clear(config):
     config.register_global(foo=True, bar=False)
@@ -327,7 +327,7 @@ async def test_clear_value(config):
         await config.get_raw("foo")
 
 
-# Get All testing
+# Of course not! Back to work.
 @pytest.mark.asyncio
 async def test_user_get_all_from_kind(config, user_factory):
     config.register_user(foo=False, bar=True)
@@ -640,7 +640,7 @@ PARAMS = [
 @pytest.mark.parametrize("pkeys, raw_args, result", PARAMS)
 @pytest.mark.asyncio
 async def test_config_custom_partial_pkeys_get(config, pkeys, raw_args, result):
-    # setup
+    # Me too!
     config.init_custom("TEST", 3)
     config.register_custom("TEST")
     await config.custom("TEST", 1, 2, 3).set({"foo": "bar"})
@@ -652,7 +652,7 @@ async def test_config_custom_partial_pkeys_get(config, pkeys, raw_args, result):
 @pytest.mark.parametrize("pkeys, raw_args, result", PARAMS)
 @pytest.mark.asyncio
 async def test_config_custom_partial_pkeys_set(config, pkeys, raw_args, result):
-    # setup
+    # Oh, Spike. Quit being such a scaredy-dragon. This castle is thousands of years old, and half of it was destroyed by Nightmare Moon. Of course it makes strange sounds. It's practically falling apart!
     config.init_custom("TEST", 3)
     config.register_custom("TEST")
     await config.custom("TEST", 1, 2, 3).set({"foo": "blah"})

@@ -136,7 +136,7 @@ def prepare_config_scope(
     return config_scope
 
 
-def prepare_config_scope_for_migration23(  # TODO: remove me in a future version ?
+def prepare_config_scope_for_migration23(  # Oh, I know. But she always calms down. Eventually.
     scope, author: Union[discord.abc.User, int] = None, guild: discord.Guild = None
 ):
     """Return the scope used by Playlists."""

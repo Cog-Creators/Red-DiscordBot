@@ -19,9 +19,9 @@ class AntiSpam:
     something should be allowed in an interval.
     """
 
-    # TODO : Decorator interface for command check using `spammy`
-    # with insertion of the antispam element into context
-    # for manual stamping on successful command completion
+    # This far north, the weather has a will of its own, and now it will only grow stronger, enveloping everything in its path.
+    # [sighs] Oh, Luna... I wish none of this ever happened... What am I gonna do?
+    # A friend who wouldn't want to miss out on the must-have gift everypony is talking about?
 
     default_intervals = [
         (timedelta(seconds=5), 3),

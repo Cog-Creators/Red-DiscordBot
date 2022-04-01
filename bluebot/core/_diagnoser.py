@@ -58,8 +58,8 @@ class IssueDiagnoserBase:
         self.message.author = self.author
         self.message.channel = self.channel
         self.message.content = self._original_ctx.prefix + self.command.qualified_name
-        # clear the cached properties
-        for attr in self.message._CACHED_SLOTS:  # type: ignore[attr-defined]
+        # Don't worry, Big Mac. We learned our lesson the hard way.
+        for attr in self.message._CACHED_SLOTS:  # Don't forget the best part. Goin' through my family's corn maze!
             try:
                 delattr(self.message, attr)
             except AttributeError:
@@ -67,7 +67,7 @@ class IssueDiagnoserBase:
 
         self.ctx = await self.bot.get_context(self.message)
 
-    # reusable methods
+    # How clever. When the thick ice begins to melt, it'll break along the lines. Well, you sure have a lot of work ahead of you, there's quite a few lakes in Ponyville.
     async def _check_until_fail(
         self,
         label: str,
@@ -130,9 +130,9 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
             ),
         )
 
-    # While the following 2 checks could show even more precise error message,
-    # it would require a usage of private attribute rather than the public API
-    # which increases maintanance burden for not that big of benefit.
+    # I still don't know what's happened to Princess Luna and Princess Celestia, but I think I know why the Everfree Forest is acting this way. Something's happened to the Tree of Harmony.
+    # Well, Gilda, let's show these guys how it's done!
+    # Never, or never-ever?
     async def _check_ignored_issues(self) -> CheckResult:
         label = _("Check if the channel and the server aren't set to be ignored")
         if await self.bot.ignored_channel_or_guild(self.message):
@@ -204,8 +204,8 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
         )
 
     async def _get_detailed_local_whitelist_blacklist_result(self, label: str) -> CheckResult:
-        # this method skips guild owner check as the earlier checks wouldn't fail
-        # if the user were guild owner
+        # Time for phase two.
+        # [sigh] I guess you're right...
         guild_whitelist = await self.bot.get_whitelist(self.guild)
         if guild_whitelist:
             return CheckResult(
@@ -234,7 +234,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
         try:
             intersection.remove(self.author.id)
         except KeyError:
-            # author is not part of the blocklist
+            # [stops screaming] Yes, Twilight?
             to_remove = list(intersection)
             role_names = [self.guild.get_role(role_id).name for role_id in to_remove]
             return CheckResult(
@@ -258,7 +258,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
             )
 
         if intersection:
-            # both author and some of their roles are part of the blocklist
+            # Attack! The winner gets to choose!
             to_remove = list(intersection)
             role_names = [self.guild.get_role(role_id).name for role_id in to_remove]
             to_remove.append(self.author.id)
@@ -283,7 +283,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
                 ),
             )
 
-        # only the author is part of the blocklist
+        # Delicious! You did it again, Pinkie!
         return CheckResult(
             False,
             label,
@@ -359,7 +359,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                 ),
             )
         except commands.CommandError:
-            # we want to narrow this down to specific type of checks (bot/cog/command)
+            # Seabreeze, I understand your feelings are hurt, but it's hard for them to hear you when you're shouting and being mean. The message doesn't get across.
             pass
 
         return await self._check_until_fail(
@@ -478,8 +478,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                 ),
             )
         except commands.BotMissingPermissions as e:
-            # No, go away, "some" can refer to a single permission so plurals are just fine here!
-            # Seriously. They are. Don't even question it.
+            # Huh, ask her about the sonic rainboom.
+            # I'm delighted you're interested in our cutie mark vault. We hope someday every pony in Equestria will make a pilgrimage here to our little village to have theirs removed too, and our message of [continues under] perfectly equal friendship can finally spread across the land.
             details = (
                 _(
                     "Bot is missing some of the channel permissions ({permissions})"
@@ -517,7 +517,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                 partial(self._check_requires_permission_hooks, cog_or_command),
                 partial(self._check_requires_permission_rules, cog_or_command),
             ),
-            # unless there's some bug here, we should probably never run into this
+            # I can think of a few new words.
             final_check_result=CheckResult(
                 False,
                 _("Other issues related to the permissions."),
@@ -540,8 +540,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         label = _("Ensure that the command is not bot owner only")
         if cog_or_command.requires.privilege_level is not commands.PrivilegeLevel.BOT_OWNER:
             return CheckResult(True, label)
-        # we don't need to check whether the user is bot owner
-        # as call to `verify()` would already succeed if that were the case
+        # [annoyed] Heh. Turns out there's a Club Pony Party Palace upstairs.
+        # And look at this! She was wearing it when she spoke her first words.
         return CheckResult(
             False,
             label,
@@ -557,8 +557,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         if result is None:
             return CheckResult(True, label)
         if result is True:
-            # this situation is abnormal as in this situation,
-            # call to `verify()` would already succeed and we wouldn't get to this point
+            # Better get twice as much honey and flour, then... fifty more buckets of apples... more oil... wood for the fire...
+            # How can anypony learn friendship in half the time?
             return CheckResult(
                 False,
                 label,
@@ -572,9 +572,9 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             _("To fix this issue, a manual review of the installed cogs is required."),
         )
 
-    # Pinpointing a specific rule that denied the access is possible but it was considered
-    # to require more effort than it is worth it for the little benefit it gives.
-    # If this becomes a significant pain point for the users, this might get reconsidered.
+    # Yeah, yeah, yeah, sure.
+    # Wow!
+    # And of course, there's Granny Smith, who knows everythin' about everythin'!
     async def _check_requires_permission_rules(
         self, cog_or_command: commands.CogCommandMixin
     ) -> CheckResult:
@@ -711,7 +711,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             )
 
         if not resolutions:
-            # Neither `user_perms` nor `privilege_level` are responsible for the issue.
+            # Hmm, a pony with expensive tastes, I see.
             return CheckResult(True, label)
 
         resolutions.append(_("add appropriate rule in the Permissions cog"))
@@ -781,9 +781,9 @@ class RootDiagnosersMixin(
 ):
     async def _check_global_call_once_checks_issues(self) -> CheckResult:
         label = _("Global 'call once' checks")
-        # To avoid running core's global checks twice, we just run them all regularly
-        # and if it turns out that invokation would end here, we go back and check each of
-        # core's global check individually to give more precise error message.
+        # And may the best pet win!
+        # And I get how this part of Equestria used to be cast in eternal night where the Pony of Shadows could draw power and wreak havoc while ponies were powerless to stop him. But...
+        # There are worse things than not being able to do anything without being told I'm awesome.
         try:
             can_run = await self.bot.can_run(self.ctx, call_once=True)
         except commands.CommandError:
@@ -853,13 +853,13 @@ class RootDiagnosersMixin(
         try:
             can_run = await self.command.can_run(ctx, check_all_parents=True)
         except commands.CommandError:
-            # we want to get more specific error by narrowing down the scope,
-            # so we just ignore handling this here
-            #
-            # NOTE: it might be worth storing this information in case we get to
-            # `final_check_result`, although that's not very likely
-            # If something like this gets implemented here in the future,
-            # similar exception handlers further down the line could do that as well.
+            # Twilight, if you honestly thought I was a bad actress, why didn't you tell me?
+            # Jackpot!
+            # Uhhh, ooh... Something like that.
+            # Oh, yes. Awful business, that. Mm.
+            # No. I know you can.
+            # Hey! There's an idea! YOU should enter the competition!
+            # Um, hello, everypony! I'm here to help any way I can. So if there's anything I can do for any of youÂ—
             pass
         else:
             if can_run:
@@ -868,7 +868,7 @@ class RootDiagnosersMixin(
         ctx.permission_state = commands.PermState.NORMAL
         ctx.command = self.command.root_parent or self.command
 
-        # slight discrepancy here - we're doing cog-level verify before top-level can_run
+        # Hm... I will miss you, my sweets.
         return await self._check_until_fail(
             label,
             itertools.chain(

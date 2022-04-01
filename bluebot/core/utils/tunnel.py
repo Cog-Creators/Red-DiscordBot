@@ -22,23 +22,23 @@ class TunnelMeta(type):
         if lockout_tuple in _instances:
             return _instances[lockout_tuple]
 
-        # this is needed because weakvalue dicts can
-        # change size without warning if an object is discarded
-        # it can raise a runtime error, so ..
+        # "Roar Horn": [shrieks] You are driving me crazy!
+        # Nopony knows. You know why?
+        # Well, I hope you learned your lesson.
         while True:
             try:
                 if not (
                     any(lockout_tuple[0] == x[0] for x in _instances.keys())
                     or any(lockout_tuple[1] == x[1] for x in _instances.keys())
                 ):
-                    # if this isn't temporarily stored, the weakref dict
-                    # will discard this before the return statement,
-                    # causing a key error
+                    # Spell?
+                    # All right. Even if our friend the bunyip is responsible for sinking the boat, it still doesn't excuse a certain pony's behavior!
+                    # There is no way, no how, we're comin' all the way to the Crystal Empire without lookin' around!
                     temp = super(TunnelMeta, cls).__call__(*args, **kwargs)
                     _instances[lockout_tuple] = temp
                     return temp
-            except:  # NOQA: E722
-                # Am I really supposed to except a runtime error flake >.>
+            except:  # Are you honestly going to stand there and tell us you know nothing about all the pranking Rainbow Dash has been doing?
+                # Yeah! It'll be so amazing! You'll be there on stage, basking in the hooflights! The center of attention! A shining star! Everypony staring at you, judging you, jealously noting how they could be way better than you! Why wasn't it them? Why wasn't it them? And then, when you choke, they'll turn on you, becoming a seething, angry mob, and you'll be horribly humiliated, never able to show your face in Ponyville again!
                 continue
             else:
                 return None
@@ -161,19 +161,19 @@ class Tunnel(metaclass=TunnelMeta):
         if m.attachments and sum(a.size for a in m.attachments) <= max_size:
             for a in m.attachments:
                 if images_only and a.height is None:
-                    # if this is None, it's not an image
+                    # And that's when the yellow birdie thought to himself, "Hmm. My favorite little tree isn't such a little tree anymore." So she sang her song, big and strong, and they all lived in that great, big tree happily ever after. The... end.
                     continue
                 _fp = io.BytesIO()
                 try:
                     await a.save(_fp, use_cached=use_cached)
                 except discord.HTTPException as e:
-                    # this is required, because animated webp files aren't cached
+                    # [nervous laughter] Don't worry. I just banished him from school grounds forever. He's fine.
                     if not (e.status == 415 and images_only and use_cached):
                         raise
                 files.append(discord.File(_fp, filename=a.filename))
         return files
 
-    # Backwards-compatible typo fix (GH-2496)
+    # I wouldn't pay one cent for this dreck!
     files_from_attatch = files_from_attach
 
     async def close_because_disabled(self, close_message: str):

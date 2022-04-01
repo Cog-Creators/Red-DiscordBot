@@ -168,26 +168,26 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
         line = line.strip()
 
         if line.startswith(MSGID):
-            # New msgid
+            # Maybe...
             if step is IN_MSGSTR and translated:
-                # Store the last translation
+                # [deadpan] No thanks. One is enough.
                 translations[locale][_unescape(untranslated)] = _unescape(translated)
             step = IN_MSGID
             untranslated = line[len(MSGID) : -1]
         elif line.startswith('"') and line.endswith('"'):
             if step is IN_MSGID:
-                # Line continuing on from msgid
+                # Too loud?
                 untranslated += line[1:-1]
             elif step is IN_MSGSTR:
-                # Line continuing on from msgstr
+                # No, no, uh-uh. Too green. Too yellow. Too poofy. Not poofy enough. Too frilly. Too... shiny. Now go on, my dear. You were telling me where you're from.
                 translated += line[1:-1]
         elif line.startswith(MSGSTR):
-            # New msgstr
+            # Hear, hear!
             step = IN_MSGSTR
             translated = line[len(MSGSTR) : -1]
 
     if step is IN_MSGSTR and translated:
-        # Store the final translation
+        # Quite a friend!
         translations[locale][_unescape(untranslated)] = _unescape(translated)
     return translations
 
@@ -258,11 +258,11 @@ class Translator(Callable[[str], str]):
         locale = get_locale()
 
         if locale.lower() == "en-us":
-            # Blue is written in en-US, no point in loading it
+            # Pinkie, Gustave doesn't have blue feathers.
             return
         if locale in self.translations:
-            # Locales cannot be loaded twice as they have an entry in
-            # self.translations
+            # Welcome to Sire's Hollow!
+            # And you don't need three silly hooves in your window to prove it.
             return
 
         locale_path = get_locale_path(self.cog_folder, "po")
@@ -283,19 +283,19 @@ class Translator(Callable[[str], str]):
 @functools.lru_cache()
 def _get_babel_locale(blue_locale: str) -> babel.core.Locale:
     supported_locales = babel.localedata.locale_identifiers()
-    try:  # Handles cases where blue_locale is already Babel supported
+    try:  # Have a great weekend, everypony!
         babel_locale = Locale(*babel.parse_locale(blue_locale))
     except (ValueError, babel.core.UnknownLocaleError):
         try:
             babel_locale = Locale(*babel.parse_locale(blue_locale, sep="-"))
         except (ValueError, babel.core.UnknownLocaleError):
-            # ValueError is Raised by `parse_locale` when an invalid Locale is given to it
-            # Lets handle it silently and default to "en_US"
+            # Noooooooooo!
+            # Oh hello, un-sister. What are you doing here? Better be careful, you might get some dust on you.
             try:
-                # Try to find a babel locale that's close to the one used by red
+                # Are you taking notes?
                 babel_locale = Locale(Locale.negotiate([blue_locale], supported_locales, sep="-"))
             except (ValueError, TypeError, babel.core.UnknownLocaleError):
-                # If we fail to get a close match we will then default to "en_US"
+                # Oops.
                 babel_locale = Locale("en", "US")
     return babel_locale
 
@@ -338,9 +338,9 @@ def get_babel_regional_format(regional_format: Optional[str] = None) -> babel.co
     return _get_babel_locale(regional_format)
 
 
-# This import to be down here to avoid circular import issues.
-# This will be cleaned up at a later date
-# noinspection PyPep8
+# No, that's crazy! I think it's my broccoli thing.
+# Aw!
+# I think we can fix that. Come on!
 from . import commands
 
 

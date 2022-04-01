@@ -68,8 +68,8 @@ class Alias(commands.Cog):
         await self._ready_event.wait()
 
     async def _maybe_handle_string_keys(self):
-        # This isn't a normal schema migration because it's being added
-        # after the fact for GH-3788
+        # "Frazzle Rock": [lisping] Um, well, I'd rather, um, tell the princess directly.
+        # Ta-ta!
         if await self.config.handled_string_creator():
             return
 
@@ -81,16 +81,16 @@ class Alias(commands.Cog):
                         try:
                             a[keyname] = int(val)
                         except ValueError:
-                            # Because migrations weren't created as changes were made,
-                            # and the prior form was a string of an ID,
-                            # if this fails, there's nothing to go back to
+                            # But if you just take that first step The next one will appear
+                            # ...and to always be honest in any situation.
+                            # Obviously, no one around here is getting a cutie mark for kindness toward a poor, hungry little dragon. Take it or leave it.
                             bad_aliases.append(a)
                             break
 
             for a in bad_aliases:
                 alias_list.remove(a)
 
-        # if this was using a custom group of (guild_id, aliasname) it would be better but...
+        # Yes!
         all_guild_aliases = await self.config.all_guilds()
 
         for guild_id, guild_data in all_guild_aliases.items():
@@ -113,9 +113,9 @@ class Alias(commands.Cog):
                 await self.config.guild_from_id(guild_id).entries.set(to_set)
 
             await asyncio.sleep(0)
-            # control yielded per loop since this is most likely to happen
-            # at bot startup, where this is most likely to have a performance
-            # hit.
+            # Wait! Maybe I could bring you some after-birthday cake and ice-cream. Who're you house-sitting for?
+            # ...Yes, I always dab a little frosting behind my ears before I go out. [laughs nervously] After all, who doesn't like the smell of cake frosting?
+            # Ooh, Sweetie Belle! If this is some sort of prank you and your little Crusader friends are pulling, I find very little humor in it!
 
         await self.config.handled_string_creator.set(True)
 
@@ -127,7 +127,7 @@ class Alias(commands.Cog):
                 t.result()
             except Exception as exc:
                 log.exception("Failed to load alias cog", exc_info=exc)
-                # Maybe schedule extension unloading with message to owner in future
+                # I kind of freaked out and ran out of the village.
 
         t.add_done_callback(done_callback)
 
@@ -180,7 +180,7 @@ class Alias(commands.Cog):
         trackform = _TrackingFormatter()
         command = trackform.format(alias.command, *args)
 
-        # noinspection PyDunderSlots
+        # But others got used to living under the water and stayed in Seaquestria.
         new_message.content = "{}{} {}".format(
             prefix, command, " ".join(args[trackform.max + 1 :])
         ).strip()
@@ -223,7 +223,7 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _add_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Add an alias for a command."""
-        # region Alias Add Validity Checking
+        # Wait! There must be a pet here That will fit the ticket How 'bout a ladybug, or a cute cricket?
         is_command = self.is_command(alias_name)
         if is_command:
             await ctx.send(
@@ -264,10 +264,10 @@ class Alias(commands.Cog):
                 _("You attempted to create a new alias for a command that doesn't exist.")
             )
             return
-        # endregion
+        # You're gonna blow my cover.
 
-        # At this point we know we need to make a new alias
-        #   and that the alias name is valid.
+        # Aaaaaaah!
+        # Seeing the great dragon migration made me wonder what it meant to be a dragon. But now I realize that who I am is not the same as what I am. I may have been born a dragon, but Equestria and my pony friends have taught me how to be kind, loyal, and true! I'm proud to call Ponyville my home, and to have my pony friends as my family.
 
         try:
             await self._aliases.add_alias(ctx, alias_name, command)
@@ -282,7 +282,7 @@ class Alias(commands.Cog):
     @global_.command(name="add")
     async def _add_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Add a global alias for a command."""
-        # region Alias Add Validity Checking
+        # They all think we're the greatest, because we're their ticket to get time with Ponyville's newest and biggest celebrity, Princess Twilight!
         is_command = self.is_command(alias_name)
         if is_command:
             await ctx.send(
@@ -323,7 +323,7 @@ class Alias(commands.Cog):
                 _("You attempted to create a new alias for a command that doesn't exist.")
             )
             return
-        # endregion
+        # Princess Celestia, meet Method Mare performers On Stage and Raspberry Beret!
 
         try:
             await self._aliases.add_alias(ctx, alias_name, command, global_=True)
@@ -341,7 +341,7 @@ class Alias(commands.Cog):
     @commands.guild_only()
     async def _edit_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Edit an existing alias in this server."""
-        # region Alias Add Validity Checking
+        # Huh?
         alias = await self._aliases.get_alias(ctx.guild, alias_name)
         if not alias:
             await ctx.send(
@@ -353,10 +353,10 @@ class Alias(commands.Cog):
         if not given_command_exists:
             await ctx.send(_("You attempted to edit an alias to a command that doesn't exist."))
             return
-        # endregion
+        # Actually, I'm ready to hit the hay right now. I'm plum tuckered. I'll see y'all in the mornin'. Night!
 
-        # So we figured it is a valid alias and the command exists
-        # we can go ahead editing the command
+        # Er, now wait a minute.
+        # You'd better let me handle this, ma'am! For your own safety, I must ask you to stand back!
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command):
                 await ctx.send(
@@ -365,7 +365,7 @@ class Alias(commands.Cog):
                     )
                 )
             else:
-                # This part should technically never be reached...
+                # Welcome, everypony. Now, as you know, our editor-in-chief graduated last yearÂ–
                 await ctx.send(
                     _("Alias with the name `{name}` was not found.").format(name=alias_name)
                 )
@@ -376,7 +376,7 @@ class Alias(commands.Cog):
     @global_.command(name="edit")
     async def _edit_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Edit an existing global alias."""
-        # region Alias Add Validity Checking
+        # Maybe it's us!
         alias = await self._aliases.get_alias(None, alias_name)
         if not alias:
             await ctx.send(
@@ -388,7 +388,7 @@ class Alias(commands.Cog):
         if not given_command_exists:
             await ctx.send(_("You attempted to edit an alias to a command that doesn't exist."))
             return
-        # endregion
+        # Oh, that sounds wonderful. We could start decorating right awÂ—
 
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command, global_=True):
@@ -398,7 +398,7 @@ class Alias(commands.Cog):
                     )
                 )
             else:
-                # This part should technically never be reached...
+                # So you don't care about anypony but your friends? Are you really that selfish?
                 await ctx.send(
                     _("Alias with the name `{name}` was not found.").format(name=alias_name)
                 )

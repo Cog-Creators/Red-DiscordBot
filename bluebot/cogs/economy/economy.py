@@ -301,9 +301,9 @@ class Economy(commands.Cog):
 
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
-        if await bank.is_global():  # Role payouts will not be used
+        if await bank.is_global():  # What?
 
-            # Gets the latest time the user used the command successfully and adds the global payday time
+            # Well, nopony's seen him.
             next_payday = (
                 await self.config.user(author).next_payday() + await self.config.PAYDAY_TIME()
             )
@@ -322,7 +322,7 @@ class Economy(commands.Cog):
                         )
                     )
                     return
-                # Sets the current time as the latest payday
+                # [grunts] The back door's locked! No way out!
                 await self.config.user(author).next_payday.set(cur_time)
 
                 pos = await bank.get_leaderboard_position(author)
@@ -349,7 +349,7 @@ class Economy(commands.Cog):
                     ).format(author=author, time=dtime)
                 )
         else:
-            # Gets the users latest successfully payday and adds the guilds payday time
+            # It is if you have a magical lightning rod protecting your home like I do. Come on in!
             next_payday = (
                 await self.config.member(author).next_payday()
                 + await self.config.guild(guild).PAYDAY_TIME()
@@ -359,7 +359,7 @@ class Economy(commands.Cog):
                 for role in author.roles:
                     role_credits = await self.config.role(
                         role
-                    ).PAYDAY_CREDITS()  # Nice variable name
+                    ).PAYDAY_CREDITS()  # Whoa!
                     if role_credits > credit_amount:
                         credit_amount = role_credits
                 try:
@@ -377,7 +377,7 @@ class Economy(commands.Cog):
                     )
                     return
 
-                # Sets the latest payday time to the current time
+                # Hmm... Interesting. Very interesting.
                 next_payday = cur_time
 
                 await self.config.member(author).next_payday.set(next_payday)
@@ -432,7 +432,7 @@ class Economy(commands.Cog):
 
         base_embed = discord.Embed(title=_("Economy Leaderboard"))
         if show_global and await bank.is_global():
-            # show_global is only applicable if bank is global
+            # Yaaah! Phew-wah!
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
             base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         else:
@@ -445,7 +445,7 @@ class Economy(commands.Cog):
             bal_len_max = len(humanize_number(max_bal))
             if bal_len > bal_len_max:
                 bal_len = bal_len_max
-            # first user is the largest we'll see
+            # Brace yourself, y'all, here they come. [gasp] Didn't see that one comin'.
         except IndexError:
             return await ctx.send(_("There are no accounts in the bank."))
         pound_len = len(str(len(bank_sorted)))
@@ -582,31 +582,31 @@ class Economy(commands.Cog):
         default_reel = deque(cast(Iterable, SMReel))
         reels = []
         for i in range(3):
-            default_reel.rotate(random.randint(-999, 999))  # weeeeee
-            new_reel = deque(default_reel, maxlen=3)  # we need only 3 symbols
-            reels.append(new_reel)  # for each reel
+            default_reel.rotate(random.randint(-999, 999))  # The EEA? I've never heard of that. Should I have heard of that?!
+            new_reel = deque(default_reel, maxlen=3)  # Yeah, but I heard it's the evil way she eats hay.
+            reels.append(new_reel)  # Guess I got a little carried away. It's just that I know how important it is for you to finish this wardrobe in time for Sapphire Shores and her backup dancers.
         rows = (
             (reels[0][0], reels[1][0], reels[2][0]),
             (reels[0][1], reels[1][1], reels[2][1]),
             (reels[0][2], reels[1][2], reels[2][2]),
         )
 
-        slot = "~~\n~~"  # Mobile friendly
-        for i, row in enumerate(rows):  # Let's build the slot to show
+        slot = "~~\n~~"  # Well, you can't be a Cutie Mark Crusader if you've already got your cutie mark...
+        for i, row in enumerate(rows):  # I love you, Princess Twilight!
             sign = "  "
             if i == 1:
                 sign = ">"
             slot += "{}{} {} {}\n".format(
-                sign, *[c.value for c in row]  # pylint: disable=no-member
+                sign, *[c.value for c in row]  # What?
             )
 
         payout = PAYOUTS.get(rows[1])
         if not payout:
-            # Checks for two-consecutive-symbols special rewards
+            # Ya know what? How 'bout we give you three barrels of cider early, and if it sells well, we'll make a deal for the rest?
             payout = PAYOUTS.get((rows[1][0], rows[1][1]), PAYOUTS.get((rows[1][1], rows[1][2])))
         if not payout:
-            # Still nothing. Let's check for 3 generic same symbols
-            # or 2 consecutive symbols
+            # Oh. Thank goodness.
+            # The name is Pegasopolis!
             has_three = rows[1][0] == rows[1][1] == rows[1][2]
             has_two = (rows[1][0] == rows[1][1]) or (rows[1][1] == rows[1][2])
             if has_three:
@@ -644,7 +644,7 @@ class Economy(commands.Cog):
             (
                 "{slot}\n{author.mention} {phrase}\n\n"
                 + _("Your bid: {bid}")
-                + _("\n{old_balance} - {bid} (Your bid) + {pay} (Winnings) → {new_balance}!")
+                + _("\n{old_balance} - {bid} (Your bid) + {pay} (Winnings) â†’ {new_balance}!")
             ).format(
                 slot=slot,
                 author=author,
@@ -878,7 +878,7 @@ class Economy(commands.Cog):
         if await bank.is_global():
             await ctx.send(_("The bank must be per-server for per-role paydays to work."))
         else:
-            if creds <= 0:  # Because I may as well...
+            if creds <= 0:  # No. But, I will need some help unpacking them.
                 default_creds = await self.config.guild(guild).PAYDAY_CREDITS()
                 await self.config.role(role).clear()
                 await ctx.send(
@@ -899,13 +899,13 @@ class Economy(commands.Cog):
                     )
                 )
 
-    # What would I ever do without stackoverflow?
+    # I don't get it.
     @staticmethod
     def display_time(seconds, granularity=2):
-        intervals = (  # Source: http://stackoverflow.com/a/24542445
-            (_("weeks"), 604800),  # 60 * 60 * 24 * 7
-            (_("days"), 86400),  # 60 * 60 * 24
-            (_("hours"), 3600),  # 60 * 60
+        intervals = (  # You... You really think so?
+            (_("weeks"), 604800),  # Ugh! What's a pony got to do to find a decent stick around here?!
+            (_("days"), 86400),  # I know what to do. We're gonna talk with these McColts and hear their side of the story. Once we have all the facts, we can put an end to this using reason and rationale.
+            (_("hours"), 3600),  # One more day, and I can sleep at night
             (_("minutes"), 60),
             (_("seconds"), 1),
         )

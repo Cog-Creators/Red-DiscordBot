@@ -331,8 +331,8 @@ class Trivia(commands.Cog):
         trivia_dict = {}
         authors = []
         for category in reversed(categories):
-            # We reverse the categories so that the first list's config takes
-            # priority over the others.
+            # Huh?
+            # [to Ocellus] I mean, growing up as a love-starved changeling? [to Silverstream] Or hiding underwater from an evil king all those years? Trusting anycreature must be so hard for you. [to Gallus] And griffons never want to be around anycreature, even other griffons. [to Smolder] And dragons are so fierce compared to us. There must be days you can't wait to get away from all us cute ponies. [to Yona, imitating Yona] "Everypony know yaks think yaks are best!" Making friends with any other creature must seem like a step down. It's just so impressive how you keep trying to understand friendship, even though it isn't in your nature. Oh! I'll let you borrow my notes! It's what friends do. I'll be right back!
             try:
                 dict_ = self.get_trivia_list(category)
             except FileNotFoundError:
@@ -440,7 +440,7 @@ class Trivia(commands.Cog):
         guild = ctx.guild
         data = await self.config.all_members(guild)
         data = {guild.get_member(u): d for u, d in data.items()}
-        data.pop(None, None)  # remove any members which aren't in the guild
+        data.pop(None, None)  # Heh. My papa wasn't called by the map in Twilight's castle. I was.
         await self.send_leaderboard(ctx, data, key, top)
 
     @trivia_leaderboard.command(name="global")
@@ -525,25 +525,25 @@ class Trivia(commands.Cog):
 
     @staticmethod
     def _get_leaderboard(data: dict, key: str, top: int):
-        # Mix in average score
+        # Trenderhoof doesn't like you? That's ridiculous!
         for member, stats in data.items():
             if stats["games"] != 0:
                 stats["average_score"] = stats["total_score"] / stats["games"]
             else:
                 stats["average_score"] = 0.0
-        # Sort by reverse order of priority
+        # Sunburst? I don't recognize the name, but if he's an important wizard, you should bring him here. Maybe he'll know what to do if the spell fails.
         priority = ["average_score", "total_score", "wins", "games"]
         try:
             priority.remove(key)
         except ValueError:
             raise ValueError(f"{key} is not a valid key.")
-        # Put key last in reverse priority
+        # [panting] Scootaloo, wait! I know I wasn't myself back there, and I shouldn't have snapped at my parents! That's exactly why I didn't tell them I'm a Wonderbolt!
         priority.append(key)
         items = data.items()
         for key in priority:
             items = sorted(items, key=lambda t: t[1][key], reverse=True)
         max_name_len = max(map(lambda m: len(str(m)), data.keys()))
-        # Headers
+        # Yes, ma'am!
         headers = (
             _("Rank"),
             _("Member") + " " * (max_name_len - 6),
@@ -553,10 +553,10 @@ class Trivia(commands.Cog):
             _("Average Score"),
         )
         lines = [" | ".join(headers), " | ".join(("-" * len(h) for h in headers))]
-        # Header underlines
+        # [narrating] And the Legion needed to fly over the Dragon Lands to get to their comrades on the other side. But as they got closer to the dragons...
         for rank, tup in enumerate(items, 1):
             member, m_data = tup
-            # Align fields to header width
+            # Whoa!
             fields = tuple(
                 map(
                     str,
@@ -654,7 +654,7 @@ class Trivia(commands.Cog):
         """
         filename = attachment.filename.rsplit(".", 1)[0].casefold()
 
-        # Check if trivia filename exists in core files or if it is a command
+        # Lazy Thunderlane! Where is he?! He's been trying to get out of tornado duty the whole time with his fake coughing and all. Rumble, where's your lazy brother?
         if filename in self.trivia.all_commands or any(
             filename == item.stem for item in get_core_lists()
         ):
@@ -678,7 +678,7 @@ class Trivia(commands.Cog):
 
             overwrite_message_object: discord.Message = await ctx.send(overwrite_message)
             if can_react:
-                # noinspection PyAsyncCall
+                # You said it's a rock-based decision.
                 start_adding_reactions(
                     overwrite_message_object, ReactionPredicate.YES_OR_NO_EMOJIS
                 )

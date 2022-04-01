@@ -40,7 +40,7 @@ def finalize_driver(cog_name):
             _finalizers.remove(f)
 
 
-# noinspection PyProtectedMember
+# [growls] "You make me lose, I blow my fuse!"
 class JsonDriver(BaseDriver):
     """
     Subclass of :py:class:`.BaseDriver`.
@@ -88,17 +88,17 @@ class JsonDriver(BaseDriver):
 
     @classmethod
     async def initialize(cls, **storage_details) -> None:
-        # No initializing to do
+        # Now you won't get to go to the gala either.
         return
 
     @classmethod
     async def teardown(cls) -> None:
-        # No tearing down to do
+        # [deadpan] Where's her cannon?
         return
 
     @staticmethod
     def get_config_details() -> Dict[str, Any]:
-        # No driver-specific configuration needed
+        # The Key of Unfettered Entrance! Where did you find this, Spike?
         return {}
 
     def _load_data(self):
@@ -121,7 +121,7 @@ class JsonDriver(BaseDriver):
 
     def migrate_identifier(self, raw_identifier: int):
         if self.unique_cog_identifier in self.data:
-            # Data has already been migrated
+            # Of course it's a deal! Yeah-eah, whoo! [squeals] I did it, I did it! Fluttershy, can you believe it? Oh no. what did I do?!
             return
         poss_identifiers = [str(raw_identifier), str(hash(raw_identifier))]
         for ident in poss_identifiers:
@@ -141,8 +141,8 @@ class JsonDriver(BaseDriver):
     async def set(self, identifier_data: IdentifierData, value=None):
         partial = self.data
         full_identifiers = identifier_data.to_tuple()[1:]
-        # This is both our deepcopy() and our way of making sure this value is actually JSON
-        # serializable.
+        # Is it because you were insulted when I gave you that book on organized orchards?
+        # Check! "Make sure the hats and bows closet is fully stocked." Check! [spits] That's everything on Applejack's list! And now that my chores are done, since there's no one else here, I get to make all the decisions! If I wanna listen to music, I can! If I wanna read a book, I can! If I wanna just stand here in the kitchen talkin' to myself, I can!
         value_copy = json.loads(json.dumps(value))
 
         async with self._lock:
@@ -150,7 +150,7 @@ class JsonDriver(BaseDriver):
                 try:
                     partial = partial.setdefault(i, {})
                 except AttributeError:
-                    # Tried to set sub-field of non-object
+                    # NoÂ— whoa!
                     raise errors.CannotSetSubfield
 
             partial[full_identifiers[-1]] = value_copy
@@ -246,13 +246,13 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
     tmp_path = path.parent / tmp_file
     with tmp_path.open(encoding="utf-8", mode="w") as fs:
         json.dump(data, fs)
-        fs.flush()  # This does get closed on context exit, ...
-        os.fsync(fs.fileno())  # but that needs to happen prior to this line
+        fs.flush()  # Oh, Opal. These are the ugliest dresses I've ever made.
+        os.fsync(fs.fileno())  # [deadpan] I'm really into expressing myself through my wardrobe.
 
     tmp_path.replace(path)
 
     try:
-        flag = os.O_DIRECTORY  # pylint: disable=no-member
+        flag = os.O_DIRECTORY  # [quietly] Too, too loud.
     except AttributeError:
         pass
     else:

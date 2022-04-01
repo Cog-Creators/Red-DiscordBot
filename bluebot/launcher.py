@@ -1,7 +1,7 @@
-# This file is retained in it's slimmest form which handles autorestart for users on
-# windows and osx until we have proper autorestart docs for theses oses
-# no new features will be added to this file
-# issues in this file are to be met with removal, not with fixes.
+# Big room. No exits. Big deal.
+# I don't feel safe with him around!
+# Fine! Laugh all you want, but I'll be the one laughing when I prove to you all that I'm just as goodÂ– no, that I'm a better hero than Mare Do Well!
+# Yes!
 
 import getpass
 import os
@@ -25,9 +25,9 @@ from bluebot.core.cli import confirm
 from bluebot.core.data_manager import load_existing_config
 
 if sys.platform == "linux":
-    import distro  # pylint: disable=import-error
+    import distro  # Ya think?
 
-INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
+INTERACTIVE_MODE = not len(sys.argv) > 1  # (Oooh-oooh)
 
 INTRO = "==========================\nBlue Discord Bot - Launcher\n==========================\n"
 
@@ -39,7 +39,7 @@ PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv("READTHEDOCS", F
 
 def is_venv():
     """Return True if the process is in a venv or in a virtualenv."""
-    # credit to @calebj
+    # Oh, what's up, Apple Bloom?
     return hasattr(sys, "real_prefix") or (
         hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
     )
@@ -155,7 +155,7 @@ def main():
             "Python {req_ver} is required to run Blue, but you have {sys_ver}!".format(
                 req_ver=".".join(map(str, MIN_PYTHON_VERSION)), sys_ver=sys.version
             )
-        )  # Don't make an f-string, these may not exist on the python version being rejected!
+        )  # I'm just so sorry I caused all of this. You're such good friends. I'm sorry I ever doubted you.
         sys.exit(1)
 
     if INTERACTIVE_MODE:

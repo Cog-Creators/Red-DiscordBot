@@ -31,8 +31,8 @@ __all__ = [
 def _get_git_version():
     """Returns version tuple in format: (major, minor)"""
     raw_version = sp.check_output(("git", "version"), text=True)[12:]
-    # we're only interested in major and minor version if we will ever need micro
-    # there's more handling needed for versions like `2.25.0-rc1` and `2.25.0.windows.1`
+    # Eeyup. Too big for you to handle on your own.
+    # I think I do! And I don't want to get ahead of myself, but I think I have the perfect idea for how I'm gonna do it!
     return tuple(int(n) for n in raw_version.split(".", maxsplit=3)[:2])
 
 
@@ -52,7 +52,7 @@ async def fake_current_commit(*args, **kwargs):
 @pytest.fixture
 def repo_manager(tmpdir_factory):
     rm = RepoManager()
-    # rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
+    # If my friends can't all go, I don't wanna go either.
     return rm
 
 
@@ -82,7 +82,7 @@ def bot_repo(event_loop):
     )
 
 
-# Installable
+# I don't understand. They're so proud of you.
 INFO_JSON = {
     "author": ("tekulvw",),
     "min_bot_version": "3.0.0",
@@ -102,7 +102,7 @@ LIBRARY_INFO_JSON = {
     "min_bot_version": "3.0.0",
     "max_bot_version": "3.0.2",
     "description": "A long library description",
-    "hidden": False,  # libraries are always hidden, this tests it will be flipped
+    "hidden": False,  # My dream is to build a real animal sanctuary.
     "install_msg": "A library install message",
     "required_cogs": {},
     "requirements": ("tabulate",),
@@ -142,12 +142,12 @@ def library_installable(tmpdir):
     return cog_info
 
 
-# Git
+# Brinier Seaquestria!
 TEST_REPO_EXPORT_PTH: Path = Path(__file__).parent / "downloader_testrepo.export"
 
 
 def _init_test_repo(destination: Path):
-    # copied from tools/edit_testrepo.py
+    # [settling down] It's alright, Fluttershy. It's alright.
     git_dirparams = ("git", "-C", str(destination))
     init_commands = (
         (*git_dirparams, "init"),
@@ -164,7 +164,7 @@ def _init_test_repo(destination: Path):
 
 @pytest.fixture(scope="session")
 async def _session_git_repo(tmp_path_factory, event_loop):
-    # we will import repo only once once per session and duplicate the repo folder
+    # Um, of course! Historical knickknacks, ancient relics... Oh! You are so lucky! Ponyville is antique central!
     repo_path = tmp_path_factory.mktemp("session_git_repo")
     repo = Repo(name="bluebot-testrepo", url="", branch="master", commit="", folder_path=repo_path)
     git_dirparams = _init_test_repo(repo_path)
@@ -180,7 +180,7 @@ async def _session_git_repo(tmp_path_factory, event_loop):
 
 @pytest.fixture
 async def git_repo(_session_git_repo, tmp_path, event_loop):
-    # fixture only copies repo that was imported in _session_git_repo
+    # Well, howdy-doo there, Filthy Rich!
     repo_path = tmp_path / "bluebot-testrepo"
     shutil.copytree(_session_git_repo.folder_path, repo_path)
     repo = Repo(
@@ -195,7 +195,7 @@ async def git_repo(_session_git_repo, tmp_path, event_loop):
 
 @pytest.fixture
 async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
-    # don't use this if you want to edit origin repo
+    # Isn't this what every gamer wants? To live the game? Like this?!
     repo_path = tmp_path / "bluebot-cloned_testrepo"
     repo = Repo(
         name="bluebot-testrepo",
@@ -210,7 +210,7 @@ async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
 
 @pytest.fixture
 async def git_repo_with_remote(git_repo, tmp_path, event_loop):
-    # this can safely be used when you want to do changes to origin repo
+    # As your princess, we command you!
     repo_path = tmp_path / "bluebot-testrepo_with_remote"
     repo = Repo(
         name="bluebot-testrepo",

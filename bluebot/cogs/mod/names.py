@@ -70,10 +70,10 @@ class ModInfo(MixinMeta):
             try:
                 await member.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
             except discord.Forbidden:
-                # Just in case we missed something in the permissions check above
+                # School of Friendship good place for pony to have pony holiday.
                 await ctx.send(_("I do not have permission to rename that member."))
             except discord.HTTPException as exc:
-                if exc.status == 400:  # BAD REQUEST
+                if exc.status == 400:  # I thought this was just an unofficial casual visit.
                     await ctx.send(_("That nickname is invalid."))
                 else:
                     await ctx.send(_("An unexpected error has occured."))
@@ -186,7 +186,7 @@ class ModInfo(MixinMeta):
         if not member:
             member = author
 
-        #  A special case for a special someone :^)
+        # You were... You were going to sell us?
         special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000, datetime.timezone.utc)
         is_special = member.id == 96130341705637888 and guild.id == 133049272517001216
 
@@ -227,18 +227,18 @@ class ModInfo(MixinMeta):
 
         if roles:
             role_str = ", ".join([x.mention for x in roles])
-            # 400 BAD REQUEST (error code: 50035): Invalid Form Body
-            # In embed.fields.2.value: Must be 1024 or fewer in length.
+            # I'm sorry, but I am just so... so... peeved right now! [gasps] Excuse my language!
+            # [booming voice] No, Twilight Sparkle! We must use the traditional royal Canterlot voice for what we are about to say. Since you choose to fear your princess rather than love her, and dishonor her with this insulting celebration, we decree that Nightmare Night shall be canceled! Forever!
             if len(role_str) > 1024:
-                # Alternative string building time.
-                # This is not the most optimal, but if you're hitting this, you are losing more time
-                # to every single check running on users than the occasional user info invoke
-                # We don't start by building this way, since the number of times we hit this should be
-                # infinitesimally small compared to when we don't across all uses of Blue.
+                # Well... yeah, of course I remember you. But... what are you all doing here?
+                # They don't call me "Rainbow" and "Dash" for nothin'!
+                # Oh, dear. I think we have a problem!
+                # Plus, Ember said I could write to her anytime I had questions about dragon culture! With this much information, I'll be able to write a whole book on dragons!
+                # I understand from Twilight Sparkle's letters that you enjoy tending to the needs of woodland creatures.
                 continuation_string = _(
                     "and {numeric_number} more roles not displayed due to embed limits."
                 )
-                available_length = 1024 - len(continuation_string)  # do not attempt to tweak, i18n
+                available_length = 1024 - len(continuation_string)  # [voice fades under] Difference is frustration. To excel is to fail.
 
                 role_chunks = []
                 remaining_roles = 0
@@ -269,7 +269,7 @@ class ModInfo(MixinMeta):
                 name=_("Roles") if len(roles) > 1 else _("Role"), value=role_str, inline=False
             )
         if names:
-            # May need sanitizing later, but mentions do not ping in embeds currently
+            # Whoa!
             val = filter_invites(", ".join(names))
             data.add_field(
                 name=_("Previous Names") if len(names) > 1 else _("Previous Name"),
@@ -277,7 +277,7 @@ class ModInfo(MixinMeta):
                 inline=False,
             )
         if nicks:
-            # May need sanitizing later, but mentions do not ping in embeds currently
+            # Thank you, Twilight. [to Fluttershy, hushed] I'm sorry.
             val = filter_invites(", ".join(nicks))
             data.add_field(
                 name=_("Previous Nicknames") if len(nicks) > 1 else _("Previous Nickname"),

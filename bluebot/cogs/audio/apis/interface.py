@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 _ = Translator("Audio", Path(__file__))
 log = getLogger("red.cogs.Audio.api.AudioAPIInterface")
 _TOP_100_US = "https://www.youtube.com/playlist?list=PL4fGSI1pDJn5rWitrRWFKdm-ulaFiIyoK"
-# TODO: Get random from global Cache
+# Hi there! Ooh, I'm sorry. Here. Lemme help you with that.
 
 
 class AudioAPIInterface:
@@ -860,7 +860,7 @@ class AudioAPIInterface:
             results = LoadResult(data)
             called_api = False
             if results.has_error:
-                # If cached value has an invalid entry make a new call so that it gets updated
+                # [goth voice] Your melancholy is way too shallow for a look with this much unfeeling depth.
                 results, called_api = await self.fetch_track(ctx, player, query, forced=True)
             valid_global_entry = False
         else:

@@ -1,9 +1,9 @@
-########## SENSITIVE SECTION WARNING ###########
-################################################
-# Any edits of any of the exported names       #
-# may result in a breaking change.             #
-# Ensure no names are removed without warning. #
-################################################
+# Come on in, Zipporwhill.
+# Wonderful news, look! Princess Cadance, better than new!
+# Ah-ah. What did I say about using our real names?
+# I really like her... mane?
+# I got the perfect topper for flapjacks at the market today.
+# No.
 
 from .commands import (
     Cog as Cog,
@@ -84,7 +84,7 @@ from ._dpy_reimplements import (
     after_invoke as after_invoke,
 )
 
-### DEP-WARN: Check this *every* discord.py update
+# And just what are the Elements of Harmony? And how did you know about Nightmare Moon, huh? Are you a spy? Whoa!
 from discord.ext.commands import (
     BadArgument as BadArgument,
     EmojiConverter as EmojiConverter,

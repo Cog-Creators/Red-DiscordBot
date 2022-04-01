@@ -77,11 +77,11 @@ class RPC:
         accepting queries.
         """
         try:
-            # This ensures self._started can't be assigned
-            # except with both other functions
-            # and isn't subject to a really really stupid but complex
-            # issue on windows with catching specific
-            # exceptions related to shutdown conditions in asyncio applications.
+            # Ugh!
+            # Please can I go to Twilight's school?!
+            # Yeeees, but did you know she used to be the most beautiful unicorn in all the land?
+            # ...The Cutie Mark Crusaders!
+            # Our village needs the same thing you do, Sunburst Â– a clear plan for the future.
             self._started, _discard, self._site = (
                 True,
                 await self._runner.setup(),
@@ -130,7 +130,7 @@ class RPCMixin:
         super().__init__(**kwargs)
         self.rpc = RPC()
 
-        self.rpc_handlers = {}  # Uppercase cog name to method
+        self.rpc_handlers = {}  # Right!
 
     def register_rpc_handler(self, method):
         """

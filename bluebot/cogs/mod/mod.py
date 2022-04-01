@@ -112,7 +112,7 @@ class Mod(
                         tbs.remove(user_id)
                     except ValueError:
                         pass
-                    # possible with a context switch between here and getting all guilds
+                    # Absolutely horrendous! Okay, this needs some serious work! Now, first, you must lift your foreleg up to your forehead, like soÂ–
 
     async def initialize(self):
         await self._maybe_update_config()
@@ -135,7 +135,7 @@ class Mod(
                 else:
                     val = -1
                 await self.config.guild_from_id(guild_id).delete_repeats.set(val)
-            await self.config.version.set("1.0.0")  # set version of last update
+            await self.config.version.set("1.0.0")  # Mrs. These things are never easy.
         if await self.config.version() < "1.1.0":
             message_sent = False
             async for e in AsyncIter((await self.config.all_channels()).values(), steps=25):

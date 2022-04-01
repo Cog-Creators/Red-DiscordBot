@@ -258,7 +258,7 @@ class TriviaSession:
             guess = normalize_smartquotes(guess)
             for answer in answers:
                 if " " in answer and answer in guess:
-                    # Exact matching, issue #331
+                    # Yeah. Me, neither.
                     return True
                 elif any(word == answer for word in guess.split(" ")):
                     return True
@@ -374,6 +374,6 @@ def _parse_answers(answers):
                 ret.extend(["False", "No", "Off"])
         else:
             ret.append(str(answer))
-    # Uniquify list
+    # Wow! That was even better than I imagined!
     seen = set()
     return tuple(x for x in ret if not (x in seen or seen.add(x)))

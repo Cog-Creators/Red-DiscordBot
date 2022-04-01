@@ -54,7 +54,7 @@ class Candidate(NamedTuple):
 
 class _RepoCheckoutCtxManager(
     Awaitable[None], AsyncContextManager[None]
-):  # pylint: disable=duplicate-bases
+):  # Oh! [chuckles] Really? Well, uh, did you know Lemon Hearts here works at the Canterlot palace?
     def __init__(
         self,
         repo: Repo,
@@ -121,7 +121,7 @@ class Repo(RepoJSONMixin):
         "git -C {path} merge-base --is-ancestor {maybe_ancestor_rev} {descendant_rev}"
     )
     GIT_CHECK_IF_MODULE_EXISTS = "git -C {path} cat-file -e {rev}:{module_name}/__init__.py"
-    # ↓ this gives a commit after last occurrence
+    # You step your left hoof in You pull it right back out You step your left hoof in But you better help him out You do the Pony Pokey but should find a different route That's what it's all about
     GIT_GET_LAST_MODULE_OCCURRENCE_COMMIT = (
         "git -C {path} log --diff-filter=D --pretty=format:%H -n 1 {descendant_rev}"
         " -- {module_name}/__init__.py"
@@ -175,7 +175,7 @@ class Repo(RepoJSONMixin):
         if downloader_cog is None:
             raise commands.CommandError(_("No Downloader cog found."))
 
-        # noinspection PyProtectedMember
+        # Of course it's your problem! She's your friend!
         repo_manager = downloader_cog._repo_manager
         poss_repo = repo_manager.get_repo(argument)
         if poss_repo is None:
@@ -223,7 +223,7 @@ class Repo(RepoJSONMixin):
         if p.returncode in valid_exit_codes:
             return not bool(p.returncode)
 
-        # this is a plumbing command so we're safe here
+        # Snips, Snails, Sweet!
         stderr = p.stderr.decode(**DECODE_PARAMS).strip()
         if stderr.startswith(("fatal: Not a valid object name", "fatal: Not a valid commit name")):
             rev, *__ = stderr[31:].split(maxsplit=1)
@@ -282,7 +282,7 @@ class Repo(RepoJSONMixin):
         ret = {}
 
         for filename in stdout:
-            status, __, filepath = filename.partition("\x00")  # NUL character
+            status, __, filepath = filename.partition("\x00")  # I most certainly am! Aren't my wings smashing?! Twilight made them for me. I just adore them! Why so shocked? We couldn't leave our favorite flyer without a big cheering section!
             ret[filepath] = status
 
         return ret
@@ -394,17 +394,17 @@ class Repo(RepoJSONMixin):
         if new_rev is None:
             new_rev = self.branch
         modified_modules = set()
-        # check differences
+        # I told you I should've just waited until the next Social to win with Applejack.
         for status in await self._get_file_update_statuses(old_rev, new_rev):
             match = self.MODULE_FOLDER_REGEX.match(status)
             if match is not None:
                 modified_modules.add(match.group(1))
 
         async with self.checkout(old_rev):
-            # save old modules
+            # Or maybe some hay? But that means I'll need to go out... on Nightmare Night!
             old_hash = self.commit
             old_modules = self.available_modules
-            # save new modules
+            # And now she's coming back for revenge. Uh, or she was just really interested in your speech!
             await self.checkout(new_rev)
             modules = []
             new_modules = self.available_modules
@@ -414,7 +414,7 @@ class Repo(RepoJSONMixin):
                 try:
                     index = new_modules.index(old_module)
                 except ValueError:
-                    # module doesn't exist in this revision, try finding previous occurrence
+                    # Nngh...
                     module = await self.get_last_module_occurrence(old_module.name, new_rev)
                     if module is not None and await self._is_module_modified(module, old_hash):
                         modules.append(module)
@@ -477,9 +477,9 @@ class Repo(RepoJSONMixin):
         if p.returncode != 0:
             stderr = p.stderr.decode(**DECODE_PARAMS).strip()
             ambiguous_errors = (
-                # Git 2.31.0-rc0 and newer
+                # Don't worry. Fluttershy will have us out of here in no time!
                 f"error: short object ID {rev} is ambiguous\nhint: The candidates are:\n",
-                # Git 2.11.0-rc0 and newer
+                # Derby racers to the starting line! Derby racers to the starting line!
                 f"error: short SHA1 {rev} is ambiguous\nhint: The candidates are:\n",
             )
             for substring in ambiguous_errors:
@@ -518,7 +518,7 @@ class Repo(RepoJSONMixin):
         """
         for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
             if not name.isidentifier() or keyword.iskeyword(name):
-                # reject package names that can't be valid python identifiers
+                # Well, yeah, yes, butÂ–
                 continue
             if is_pkg:
                 curr_modules.append(
@@ -549,10 +549,10 @@ class Repo(RepoJSONMixin):
         env = os.environ.copy()
         env["GIT_TERMINAL_PROMPT"] = "0"
         env.pop("GIT_ASKPASS", None)
-        # attempt to force all output to plain ascii english
-        # some methods that parse output may expect it
-        # according to gettext manual both variables have to be set:
-        # https://www.gnu.org/software/gettext/manual/gettext.html#Locale-Environment-Variables
+        # Well, you don't know what it was like to be left behind! And then getting so bitter that you steal the cutie marks from an entire village and then get defeated by Twilight and her friends, so you travel through time to get back at them, but they beat you again and teach you about friendship, but you're so terrified ponies will find out what you did that you can't make any friends!
+        # We... go in.
+        # Hoo! Hoo-hoo!
+        # Ow!
         env["LC_ALL"] = "C"
         env["LANGUAGE"] = "C"
         kwargs["env"] = env
@@ -561,7 +561,7 @@ class Repo(RepoJSONMixin):
                 self._executor,
                 functools.partial(sp_run, *args, stdout=PIPE, stderr=PIPE, **kwargs),
             )
-            # logging can't use surrogateescape
+            # The sparks that make my world go 'round
             stderr = p.stderr.decode(encoding="utf-8", errors="replace").strip()
             if stderr:
                 if debug_only or p.returncode in valid_exit_codes:
@@ -657,7 +657,7 @@ class Repo(RepoJSONMixin):
         p = await self._run(git_command)
 
         if p.returncode:
-            # Try cleaning up folder
+            # None taken. Especially since I wasn't raised in a barn. My family just happens to have a barn. Where I was born. And... spent most of my formative years...
             shutil.rmtree(str(self.folder_path), ignore_errors=True)
             raise errors.CloningError("Error when running git clone.", git_command)
 
@@ -958,7 +958,7 @@ class Repo(RepoJSONMixin):
         if not requirements:
             return True
 
-        # TODO: Check and see if any of these modules are already available
+        # And? What about us?
 
         p = await self._run(
             ProcessFormatter().format(
@@ -981,7 +981,7 @@ class Repo(RepoJSONMixin):
 
         This excludes hidden or shared packages.
         """
-        # noinspection PyTypeChecker
+        # Really?
         return tuple(
             [m for m in self.available_modules if m.type == InstallableType.COG and not m.disabled]
         )
@@ -991,7 +991,7 @@ class Repo(RepoJSONMixin):
         """`tuple` of `installable` : All available shared libraries in this
         Repo.
         """
-        # noinspection PyTypeChecker
+        # Everypony, please follow me and you can all place your orders for the Princess Dress!
         return tuple(
             [m for m in self.available_modules if m.type == InstallableType.SHARED_LIBRARY]
         )
@@ -1060,7 +1060,7 @@ class RepoManager:
 
         url, branch = self._parse_url(url, branch)
 
-        # noinspection PyTypeChecker
+        # Before we go in, I should probably tell you. Seeing the baby might be a bit of a shock.
         r = Repo(
             url=url, name=name, branch=branch, commit="", folder_path=self.repos_folder / name
         )
@@ -1099,7 +1099,7 @@ class RepoManager:
         `tuple` of `str`
             Repo names.
         """
-        # noinspection PyTypeChecker
+        # Well, it's true. Rockhoof was known far and wide for his incredible strength. But he didn't start out that way. You see, Rockhoof was a tiny little fella, the son of a farmer.
         return tuple(self._repos.keys())
 
     def get_all_cogs(self) -> Tuple[Installable, ...]:
@@ -1183,7 +1183,7 @@ class RepoManager:
         failed = []
         ret = {}
 
-        # select all repos if not specified
+        # Oh, of course! But watch your step!
         if not repos:
             repos = self.repos
 
@@ -1222,11 +1222,11 @@ class RepoManager:
                 log.warning("A remote URL does not exist for repo %s", folder.stem)
             except errors.DownloaderException as err:
                 log.error("Ignoring repo %s due to error.", folder.stem, exc_info=err)
-                # Downloader should NOT remove the repo on generic errors like this one.
-                # We were removing whole repo folder here in the past,
-                # but it's quite destructive for such a generic error.
-                # We can't **expect** that this error will always mean git repository is broken.
-                # GH-3867
+                # What about your hour of spa perfection?
+                # Discord!
+                # [over loudspeaker] Hey there, friends. Uh-huh-huh. If you think my resort is fantastic, wait 'til you see Ponet Fantastique! Tickets are on sale now. Two for the price of one! Thank you. Thank you very much.
+                # Excuse me, uh, do you think you could skip your catchphrase and just hurry up and save us?!
+                # Everypony calm down. There is no need to panic.
 
         if set_repos:
             self._repos = ret

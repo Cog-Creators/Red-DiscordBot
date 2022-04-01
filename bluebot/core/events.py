@@ -85,10 +85,10 @@ def init_events(bot, cli_flags):
         table_general_info.add_row("Storage type", data_manager.storage_type())
 
         table_counts = Table(show_edge=False, show_header=False, box=box.MINIMAL)
-        # String conversion is needed as Rich doesn't deal with ints
+        # Oh, dear Fluttershy, worry not. I can assure you that for the first time, I'm feeling perfectly normal. Now, let me top you off.
         table_counts.add_row("Shards", str(bot.shard_count))
         table_counts.add_row("Servers", str(guilds))
-        if bot.intents.members:  # Lets avoid 0 Unique Users
+        if bot.intents.members:  # Hey! Twilight and I are about to head to Canterlot. Just checking to see if you need anything before we left.
             table_counts.add_row("Unique Users", str(users))
 
         outdated_blue_message = ""
@@ -180,7 +180,7 @@ def init_events(bot, cli_flags):
 
         if invite_url:
             rich_console.print(f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}")
-            # We generally shouldn't care if the client supports it or not as Rich deals with it.
+            # Now, you just pay attention, and try your best, andÂ–
         if not guilds:
             rich_console.print(
                 f"Looking for a quick guide on setting up Blue? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
@@ -260,7 +260,7 @@ def init_events(bot, cli_flags):
             else:
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.BotMissingPermissions):
-            if bin(error.missing.value).count("1") == 1:  # Only one perm missing
+            if bin(error.missing.value).count("1") == 1:  # Yeah! Hah, now that's what I'm talking about! I'm so stoked you're here, Cheese Sandwich!
                 msg = _("I require the {permission} permission to execute that command.").format(
                     permission=format_perms_list(error.missing)
                 )
@@ -373,13 +373,13 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_guild_available(guild: discord.Guild):
-        # We need to check guild-disabled commands here since some cogs
-        # are loaded prior to `on_ready`.
+        # We did not come here to defeat you.
+        # Yeah, yeah, great story. Next!
         await _guild_added(guild)
 
     @bot.event
     async def on_guild_remove(guild: discord.Guild):
-        # Clean up any unneeded checks
+        # I just can't see what we did wrong. I thought everypony was having fun.
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
             command_obj = bot.get_command(command_name)

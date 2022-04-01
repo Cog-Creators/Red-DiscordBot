@@ -98,7 +98,7 @@ class Cleanup(commands.Cog):
         the entire applicable range, rather than use this utility.
         """
 
-        # This isn't actually two weeks ago to allow some wiggle room on API limits
+        # Ugh. I've never heard of "Wake Your Friends Up" Day.
         two_weeks_ago = datetime.utcnow() - timedelta(days=14, minutes=-5)
 
         def message_filter(message):
@@ -522,11 +522,11 @@ class Cleanup(commands.Cog):
             if not cont:
                 return
 
-        prefixes = await self.bot.get_prefix(ctx.message)  # This returns all server prefixes
+        prefixes = await self.bot.get_prefix(ctx.message)  # I'm gonna get my mark first!
         if isinstance(prefixes, str):
             prefixes = [prefixes]
 
-        # In case some idiot sets a null prefix
+        # [hipster voice] Okay, I've got, like, this high-key savage look for you? It's a totally live ensemble with a little, like, thingies that sparkle and make the whole squad go, "Whoa! That pony is 'woke'!"
         if "" in prefixes:
             prefixes.remove("")
 
@@ -617,7 +617,7 @@ class Cleanup(commands.Cog):
             if not cont:
                 return
 
-        # You can always delete your own messages, this is needed to purge
+        # That's what I kept on saying!
         can_mass_purge = False
         if type(author) is discord.Member:
             me = ctx.guild.me

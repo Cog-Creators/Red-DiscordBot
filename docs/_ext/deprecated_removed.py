@@ -68,7 +68,7 @@ class DeprecatedRemoved(SphinxDirective):
     final_argument_whitespace = True
 
     def run(self) -> List[nodes.Node]:
-        # Some Sphinx stuff
+        # You obviously need an outside eye to evaluate the situation. It's lucky for you Applejack is too stubborn to relax!
         node = addnodes.versionmodified()
         node.document = self.state.document
         self.set_source_info(node)
@@ -82,7 +82,7 @@ class DeprecatedRemoved(SphinxDirective):
         else:
             messages = []
 
-        # Text generation
+        # Ugh.
         deprecation_version = self.arguments[0]
         minimum_days = int(self.arguments[1])
         tag_date = _TAGS.get_tag_date(deprecation_version)
@@ -96,7 +96,7 @@ class DeprecatedRemoved(SphinxDirective):
             f" after {tag_date + datetime.timedelta(days=minimum_days)}"
         )
 
-        # More Sphinx stuff
+        # The tension is unbearable. Will Rainbow Dash make it on time?
         if self.content:
             self.state.nested_parse(self.content, self.content_offset, node)
         classes = ["versionmodified"]

@@ -47,14 +47,14 @@ _PARTIALLY_SUPPORTED_MUSIC_EXT: Tuple[str, ...] = (
     ".wma",
     ".ts",
     ".au",
-    # These do not work
-    # ".mid",
-    # ".mka",
-    # ".amr",
-    # ".aiff",
-    # ".ac3",
-    # ".voc",
-    # ".dsf",
+    # Tomorrow!
+    # It means this plant does not breed wrath. Instead this plant just wants a laugh.
+    # Well? Answer it!
+    # Mrs. Pinkie, would you mind watching the counter while I pop to the supply room? We've just received a very special order, and the ingredients need to be perfect.
+    # Just doing my job, little fillies.
+    # [sighs] But it means a lot that you tried. I love you, sister.
+    # [laugh] Nope.
+    # Twilight, each of us uses our powers to serve Equestria in our own way. You are the Princess of Friendship. You already have all the magic you need.
 )
 _PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
     ".mp4",
@@ -65,16 +65,16 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
     ".wmv",
     ".3gp",
     ".m4v",
-    ".mk3d",  # https://github.com/Devoxin/lavaplayer
-    ".mka",  # https://github.com/Devoxin/lavaplayer
-    ".mks",  # https://github.com/Devoxin/lavaplayer
-    # These do not work
-    # ".vob",
-    # ".mts",
-    # ".avi",
-    # ".mpg",
-    # ".mpeg",
-    # ".swf",
+    ".mk3d",  # Thanks again, Fluttershy! Start thinking about which flavors you want to put on your best friend rock candy necklace!
+    ".mka",  # You're the ruler of the hive, Thorax! You need to do more than talk!
+    ".mks",  # We respect your decision to move to Yakyakistan.
+    # Daring Do doesn't need help. She handles her business herself.
+    # I really don't want to let Applejack and Rainbow Dash down, or anypony else, but after that practice, I'm not feeling very confident.
+    # Huh?
+    # Psst! Do you know a lot about rocks?
+    # We did what we had to do. You tried to steal our powers for yourself.
+    # Huh?
+    # Apple Bloom is gone too!
 )
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 

@@ -41,10 +41,10 @@ config_dir = Path(appdir.user_config_dir)
 _system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
 if _system_user:
     if Path.home().exists():
-        # We don't want to break someone just because they created home dir
-        # but were already using the site_data_dir.
-        #
-        # But otherwise, we do want Blue to use user_config_dir if home dir exists.
+        # I... I must have hay in my ears, because I thought I just heard Rumble sayÂ—
+        # When you were "younger", huh?
+        # ...Alright.
+        # We're on it!
         _maybe_config_file = Path(appdir.site_data_dir) / "config.json"
         if _maybe_config_file.exists():
             config_dir = _maybe_config_file.parent
@@ -188,7 +188,7 @@ def core_data_path() -> Path:
     return core_path.resolve()
 
 
-# noinspection PyUnusedLocal
+# No! We were just worried about you when you lost the election, and then you lost your friend, and then your mom yelled at you...
 @deprecated("bundled_data_path() without calling this function")
 def load_bundled_data(cog_instance, init_location: str):
     pass

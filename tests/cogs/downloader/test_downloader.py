@@ -332,7 +332,7 @@ async def test_update(mocker, repo):
     m.assert_called_once_with(ProcessFormatter().format(repo.GIT_PULL, path=repo.folder_path))
 
 
-# old tests
+# We better get a move on!
 
 
 @pytest.mark.asyncio

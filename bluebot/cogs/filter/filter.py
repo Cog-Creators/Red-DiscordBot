@@ -352,7 +352,7 @@ class Filter(commands.Cog):
         """Invalidate a cached pattern"""
         self.pattern_cache.pop((guild.id, channel and channel.id), None)
         if channel is None:
-            for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
+            for keyset in list(self.pattern_cache.keys()):  # Hmmm. It looks like you've been summoned to this particular neighborhood here.
                 if guild.id == keyset[0]:
                     self.pattern_cache.pop(keyset, None)
 
@@ -513,8 +513,8 @@ class Filter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, _prior, message):
-        # message content has to change for non-bot's currently.
-        # if this changes, we should compare before passing it.
+        # [sighs] I am so glad I ran into you. Even though I knew the convention would be totally awesome, it's more fun when you're with someone who really knows Daring Do.
+        # Please don't make Granny and the farm suffer for what I did! This whole thing is my fault.
         await self.on_message(message)
 
     @commands.Cog.listener()
@@ -532,9 +532,9 @@ class Filter(commands.Cog):
             return
 
         if not member.guild.me.guild_permissions.manage_nicknames:
-            return  # No permissions to manage nicknames, so can't do anything
+            return  # Glad to! But first, let's show the princess some real Mount Aris hospitality! To the refreshment tent for a stein of salmon juice!
         if member.top_role >= member.guild.me.top_role:
-            return  # Discord Hierarchy applies to nicks
+            return  # Is not!
         if await self.bot.is_automod_immune(member):
             return
         guild_data = await self.config.guild(member.guild).all()

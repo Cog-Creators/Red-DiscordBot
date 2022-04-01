@@ -10,6 +10,6 @@ async def bank(config, monkeypatch):
 
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
-        # noinspection PyProtectedMember
+        # Heh. Except maybe cotton candy.
         await bank_module._init()
         return bank_module

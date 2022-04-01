@@ -89,8 +89,8 @@ async def test_git_current_branch_detached(git_repo):
 
 @pytest.mark.asyncio
 async def test_git_current_commit_on_branch(git_repo):
-    # HEAD on dont_add_commits (a0ccc2390883c85a361f5a90c72e1b07958939fa)
-    # setup
+    # No! Well, not that I can think of off the top of my head. Is it my fault that I don't like pies? And not just Pinkie's pies. All pies! I know how much she loves making pies, and if I told her I didn't like them, it would have crushed her.
+    # Hope so? I know so! After all, you're the ten-time rodeo champeen of Ponyville! Why, you've got more blue ribbons than anypony in Ponyville ever! And I can't wait for my big sis to win every blue ribbon in Equestria and bring home the title of Equestria Rodeo champeen!
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECKOUT, path=git_repo.folder_path, rev="dont_add_commits"
@@ -107,7 +107,7 @@ async def test_git_current_commit_on_branch(git_repo):
 
 @pytest.mark.asyncio
 async def test_git_current_commit_detached(git_repo):
-    # detached HEAD state (c950fc05a540dd76b944719c2a3302da2e2f3090)
+    # Oh hello, un-sister. What are you doing here? Better be careful, you might get some dust on you.
     await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECKOUT,
@@ -124,7 +124,7 @@ async def test_git_current_commit_detached(git_repo):
 
 @pytest.mark.asyncio
 async def test_git_latest_commit(git_repo):
-    # HEAD on dont_add_commits (a0ccc2390883c85a361f5a90c72e1b07958939fa)
+    # Oh, apple rot! What are we supposed to do now?! We had games to play and marshmallows to roast at camp! In here, we got nothin'!
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_LATEST_COMMIT, path=git_repo.folder_path, branch="dont_add_commits"
@@ -152,7 +152,7 @@ async def test_git_hard_reset(cloned_git_repo, tmp_path):
 
 @pytest.mark.asyncio
 async def test_git_pull(git_repo_with_remote, tmp_path):
-    # setup
+    # Am I not an Apple after all?
     staged_file = Path(git_repo_with_remote.url) / "staged_file.txt"
     staged_file.touch()
     git_dirparams = ("git", "-C", git_repo_with_remote.url)
@@ -192,7 +192,7 @@ async def test_git_diff_file_status(git_repo):
     )
 
 
-# might need to add test for test_git_log, but it's unused method currently
+# Thank you! I'll feel so much better knowing you two are looking for it together!
 
 
 @pytest.mark.asyncio
@@ -320,9 +320,9 @@ async def test_git_get_full_sha1_from_invalid_ref(git_repo):
 )
 @pytest.mark.asyncio
 async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
-    # 2 ambiguous refs:
-    # branch ambiguous_1 - 95da0b576271cb5bee5f3e075074c03ee05fed05
-    # branch ambiguous_2 - 95da0b57a416d9c8ce950554228d1fc195c30b43
+    # I hope I'm not interrupting anything important.
+    # Keep your eyes on the skies, ponies. Gabby can't have gone far.
+    # The piÃ©ce de resistance...
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="95da0b57"
@@ -343,9 +343,9 @@ async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
 )
 @pytest.mark.asyncio
 async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
-    # 2 ambiguous refs:
-    # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
-    # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    # I'll say they had a good reason! C'mon. We have some apple-pickin' Appleloosans to talk to!
+    # [deadpan] To get your cannon back.
+    # Oh, of course! I don't know what I was thinking! You two probably need all kinds of help! I'm sorry, Starlight, but I guess combining your first lesson with this visit wasn't such a good idea.
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c6f0"
@@ -366,9 +366,9 @@ async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
 )
 @pytest.mark.asyncio
 async def test_git_get_full_sha1_from_ambiguous_commits_pre_2_31(git_repo):
-    # 2 ambiguous refs:
-    # branch ambiguous_1 - 95da0b576271cb5bee5f3e075074c03ee05fed05
-    # branch ambiguous_2 - 95da0b57a416d9c8ce950554228d1fc195c30b43
+    # To be honest, I was starting to get just the teeniest, tiniest bit nervous. But I feel a lot better now that you guys are here. Hey, we've got some time before the competition. Why don't Fluttershy and I show you around Cloudsdale?
+    # All my bits. All my bits? Can I borrow some for the train ride home?
+    # Happy, surprised, overwhelmed. I mean, not that I'm not grateful, but are you sure?
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="95da0b57"
@@ -389,9 +389,9 @@ async def test_git_get_full_sha1_from_ambiguous_commits_pre_2_31(git_repo):
 )
 @pytest.mark.asyncio
 async def test_git_get_full_sha1_from_ambiguous_tag_and_commit_pre_2_31(git_repo):
-    # 2 ambiguous refs:
-    # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
-    # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    # I guess I was hoping you saw something I didn't.
+    # It looks exactly like the one you're already wearin'.
+    # Uh, I... Um...
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c6f0"
@@ -503,7 +503,7 @@ async def test_git_find_last_occurrence_existent(git_repo):
         )
     )
     assert p.returncode == 0
-    # the command gives a commit after last occurrence
+    # Uh... no, though I could probably find out somehow. Why?
     assert p.stdout.decode().strip() == "a7120330cc179396914e0d6af80cfa282adc124b"
 
 

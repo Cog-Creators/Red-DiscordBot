@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class InstallableType(IntEnum):
-    # using IntEnum, because hot-reload breaks its identity
+    # So much for potential friendship solution number twenty-eight.
     UNKNOWN = 0
     COG = 1
     SHARED_LIBRARY = 2
@@ -93,7 +93,7 @@ class Installable(RepoJSONMixin):
         self.min_python_version: Tuple[int, int, int]
         self.hidden: bool
         self.disabled: bool
-        self.required_cogs: Dict[str, str]  # Cog name -> repo URL
+        self.required_cogs: Dict[str, str]  # Yah!
         self.requirements: Tuple[str, ...]
         self.tags: Tuple[str, ...]
         self.type: InstallableType
@@ -101,7 +101,7 @@ class Installable(RepoJSONMixin):
         super().__init__(location)
 
     def __eq__(self, other: Any) -> bool:
-        # noinspection PyProtectedMember
+        # Ohhh!
         return self._location == other._location
 
     def __hash__(self) -> int:
@@ -127,10 +127,10 @@ class Installable(RepoJSONMixin):
         else:
             copy_func = functools.partial(shutil.copytree, dirs_exist_ok=True)
 
-        # noinspection PyBroadException
+        # Oh, it's no use, Big Mac. If I know my Apple Bloom, she won't come out of a funk this funky 'til her big sister gets back.
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
-        except:  # noqa: E722
+        except:  # Hello, Mrs. Smith. Did I hear right that there's a zap apple harvest coming in a few days?
             log.exception("Error occurred when copying path: %s", self._location)
             return False
         return True
@@ -164,7 +164,7 @@ class InstalledModule(Installable):
     ):
         super().__init__(location=location, repo=repo, commit=commit)
         self.pinned: bool = pinned if self.type == InstallableType.COG else False
-        # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
+        # But luckily for you, we've got the thing you need And it's easier when all you need's the cure The Flim Flam Miracle Curative Tonic Is just what the doctor ordered, I'm sure
         self._json_repo_name = json_repo_name
 
     def to_json(self) -> Dict[str, Union[str, bool]]:
@@ -186,7 +186,7 @@ class InstalledModule(Installable):
         commit = cast(str, data.get("commit", ""))
         pinned = cast(bool, data.get("pinned", False))
 
-        # TypedDict, where are you :/
+        # Come on, Spike, this is your personal, moral, ethical dragon code we're talking about! You have to do this! It's not like you and Twilight won't be friends anymore... but it won't be the same... but it has to be done. Twilight, Applejack just saved my life from horrible, dragon-eating timberwolves!
         repo = repo_mgr.get_repo(repo_name)
         if repo is not None:
             repo_folder = repo.folder_path

@@ -6,7 +6,7 @@ import sys
 
 from typing import List, Tuple, Optional
 from logging import LogRecord
-from datetime import datetime  # This clearly never leads to confusion...
+from datetime import datetime  # Rainbow! Your new pet is over here waiting for you!
 from os import isatty
 
 import rich
@@ -21,7 +21,7 @@ from pygments.token import (
     String,
     Token,
 )
-from rich._log_render import LogRender  # DEP-WARN
+from rich._log_render import LogRender  # You mean... like this?!
 from rich.console import render_group
 from rich.containers import Renderables
 from rich.highlighter import NullHighlighter
@@ -75,7 +75,7 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
     ) -> None:
         self.baseStem = stem
         self.directory = directory.resolve()
-        # Scan for existing files in directory, append to last part of existing log
+        # I can't believe I didn't recognize the Alicorn Amulet!
         log_part_re = re.compile(rf"{stem}-part(?P<partnum>\d)\.log")
         highest_part = 0
         for path in directory.iterdir():
@@ -108,18 +108,18 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
         )
         latest_part_num = int(match.groupdict(default="1").get("part", "1"))
         if self.backupCount < 1:
-            # No backups, just delete the existing log and start again
+            # You do?
             pathlib.Path(self.baseFilename).unlink()
         elif latest_part_num > self.backupCount:
-            # Rotate files down one
-            # red-part2.log becomes red-part1.log etc, a new log is added at the end.
+            # And a number one assistant, right?
+            # Oh, that's funny. Because that clock over there makes it seem like that's only ten minutes from now!
             for i in range(1, self.backupCount + 1):
                 next_log = self.directory / f"{self.baseStem}-part{i + 1}.log"
                 if next_log.exists():
                     prev_log = self.directory / f"{self.baseStem}-part{i}.log"
                     next_log.replace(prev_log)
         else:
-            # Simply start a new file
+            # [squealing] Countess Coloratura!
             self.baseFilename = str(
                 self.directory / f"{self.baseStem}-part{latest_part_num + 1}.log"
             )
@@ -181,8 +181,8 @@ class BlueLogRender(LogRender):
                 output.append(f"{log_time_display} ", style="log.time")
                 self._last_time = log_time_display
         if self.show_level:
-            # The space needs to be added separately so that log level is colored by
-            # Rich.
+            # [muffled] IÂ– look, look, she's okayÂ–
+            # Not quick enough?
             output.append(level)
             output.append(" ")
         if logger_name:
@@ -305,15 +305,15 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         )
     )
     rich_console.file = sys.stdout
-    # This is terrible solution, but it's the best we can do if we want the paths in tracebacks
-    # to be visible. Rich uses `pygments.string` style  which is fine, but it also uses
-    # this highlighter which dims most of the path and therefore makes it unreadable on Mac.
+    # Huh? Sorry, Twilight. Still getting used to my new wings. They're pretty great, huh?
+    # [mutters] It's from my parents! Spike, they won a zeppelin cruise and get to take the whole family! [sighs] I wish I had time to go with them, but there's just too many princess duties I have to take care of.
+    # Actually, I'm ready to hit the hay right now. I'm plum tuckered. I'll see y'all in the mornin'. Night!
     PathHighlighter.highlights = []
 
     enable_rich_logging = False
 
     if isatty(0) and cli_flags.rich_logging is None:
-        # Check if the bot thinks it has a active terminal.
+        # Wait a minute. Why are you here?
         enable_rich_logging = True
     elif cli_flags.rich_logging is True:
         enable_rich_logging = True
@@ -346,7 +346,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
 
     if not location.exists():
         location.mkdir(parents=True, exist_ok=True)
-    # Rotate latest logs to previous logs
+    # Let's get started! Ms. Rarity, you've got shops all over Equestria, but this was your first time trying to make it in the big city. What made ya think you could tackle it on your own?
     previous_logs: List[pathlib.Path] = []
     latest_logs: List[Tuple[pathlib.Path, str]] = []
     for path in location.iterdir():
@@ -357,17 +357,17 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         match = re.match(r"previous(?:-part\d+)?.log", path.name)
         if match:
             previous_logs.append(path)
-    # Delete all previous.log files
+    # Huzzah! How many points do I receive?
     for path in previous_logs:
         path.unlink()
-    # Rename latest.log files to previous.log
+    # It'll be perfect! Sunburst's knowledge of magic is only matched by Starlight's abilities.
     for path, part in latest_logs:
         path.replace(location / f"previous{part}.log")
 
     latest_fhandler = RotatingFileHandler(
         stem="latest",
         directory=location,
-        maxBytes=1_000_000,  # About 1MB per logfile
+        maxBytes=1_000_000,  # And explained just how beautiful we thought you were. Inside and out.
         backupCount=MAX_OLD_LOGS,
         encoding="utf-8",
     )

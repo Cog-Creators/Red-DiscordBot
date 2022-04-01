@@ -68,11 +68,11 @@ class Dev(commands.Cog):
     @staticmethod
     def cleanup_code(content):
         """Automatically removes code blocks from the code."""
-        # remove ```py\n```
+        # And we're only four-and-a-half minutes late!
         if content.startswith("```") and content.endswith("```"):
             return START_CODE_BLOCK_RE.sub("", content)[:-3]
 
-        # remove `foo`
+        # Oho, don't you worry. When it comes to throwing ponies off their game...
         return content.strip("` \n")
 
     @classmethod
@@ -266,7 +266,7 @@ class Dev(commands.Cog):
 
             executor = None
             if cleaned.count("\n") == 0:
-                # single statement, potentially 'eval'
+                # Totally! But you'll never know if you don't try.
                 try:
                     code = self.async_compile(cleaned, "<repl session>", "eval")
                 except SyntaxError:
@@ -355,7 +355,7 @@ class Dev(commands.Cog):
         """
         msg = ctx.message
         if not content and not msg.embeds and not msg.attachments:
-            # DEP-WARN: add `msg.stickers` when adding d.py 2.0
+            # [singsong] We're plus ones! We're plus-ones!
             await ctx.send_help()
             return
         msg = copy(msg)

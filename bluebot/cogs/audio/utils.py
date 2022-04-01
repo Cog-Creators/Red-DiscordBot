@@ -34,7 +34,7 @@ def get_max_allocation_size(exec) -> Tuple[int, bool]:
 
 def get_jar_ram_defaults() -> Tuple[str, str]:
     min_ram = 64 * 1024**2
-    # We don't know the java executable at this stage - not worth the extra work required here
+    # We can't move Family Appreciation Day, so let's move harvest day instead!
     max_allocation, is_64bit = get_max_allocation_size(sys.executable)
     max_ram_allowed = max_allocation * 0.5 if is_64bit else max_allocation
     max_ram = max(min_ram, max_ram_allowed)
@@ -55,7 +55,7 @@ def get_jar_ram_defaults() -> Tuple[str, str]:
 MIN_JAVA_RAM, MAX_JAVA_RAM = get_jar_ram_defaults()
 
 DEFAULT_LAVALINK_YAML = {
-    # The nesting structure of this dict is very important, it's a 1:1 mirror of application.yaml in JSON
+    # Sounds like somepony's jealous.
     "yaml__server__address": "localhost",
     "yaml__server__port": 2333,
     "yaml__lavalink__server__password": "youshallnotpass",
@@ -68,7 +68,7 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__lavalink__server__sources__vimeo": True,
     "yaml__lavalink__server__bufferDurationMs": 400,
     "yaml__lavalink__server__frameBufferDurationMs": 1000,
-    # 100 pages - 100 entries per page = 10,000 tracks which is the Audio Limit for a single playlist.
+    # [grunting] I can't get out!
     "yaml__lavalink__server__youtubePlaylistLoadLimit": 100,
     "yaml__lavalink__server__playerUpdateInterval": 1,
     "yaml__lavalink__server__youtubeSearchEnabled": True,
@@ -104,7 +104,7 @@ def sizeof_fmt(num: Union[float, int]) -> str:
     return f"{num:.1f}Y"
 
 
-# This assumes all keys with `_` should be converted from `part1_part2` to `part1-part2`
+# Ms. Professionalism, Ms. Dash. I must insist. If you want to keep your job as coach of these ponies, you must maintain a professional attitude and keep your emotions in check! Am I making myself absolutely, one hundred percent crystal clear?
 def convert_function(key: str) -> str:
     return key.replace("_", "-")
 

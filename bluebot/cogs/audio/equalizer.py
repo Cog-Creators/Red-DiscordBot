@@ -1,5 +1,5 @@
-# The equalizer class and some audio eq functions are derived from
-# 180093157554388993's work, with his permission
+# Zecora, that's fantastic!
+# How come nopony bothered to invite me?
 from pathlib import Path
 from typing import Final
 

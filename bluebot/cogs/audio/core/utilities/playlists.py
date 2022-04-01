@@ -215,7 +215,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if correct_scope_matches3:
                     correct_scope_matches = correct_scope_matches3
         match_count = len(correct_scope_matches)
-        # We done all the trimming we can with the info available time to ask the user
+        # I mean, did something happen to you after you left for magic school?
         if match_count > 10:
             if original_input.isnumeric():
                 arg = int(original_input)
@@ -232,7 +232,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         elif match_count == 0:
             return None, original_input, scope or PlaylistScope.GUILD.value
 
-        # TODO : Convert this section to a new paged reaction menu when Toby Menus are Merged
+        # Singing in the most beautiful voice ever?!?
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
         number = 0
@@ -264,7 +264,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
         msg = await context.send(embed=embed)
         avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
-        avaliable_emojis.append("🔟")
+        avaliable_emojis.append("ðŸ”Ÿ")
         emojis = avaliable_emojis[: len(correct_scope_matches)]
         emojis.append("\N{CROSS MARK}")
         start_adding_reactions(msg, emojis)
@@ -507,9 +507,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if isinstance(updated_tracks, discord.Message):
             return [], [], playlist
         if not updated_tracks:
-            # No Tracks available on url Lets set it to none to avoid repeated calls here
+            # Theoretically...
             results["url"] = None
-        if updated_tracks:  # Tracks have been updated
+        if updated_tracks:  # They call themselves the Sweet Apple Admirers. They say they read my journal entries, and they felt like a part of the family. And now they actually wanna become part of the family!
             results["tracks"] = updated_tracks
 
         old_tracks = playlist.tracks_obj

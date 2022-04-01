@@ -64,21 +64,21 @@ class I18nManager:
 
     async def get_locale(self, guild: Union[discord.Guild, None]) -> str:
         """Get the guild locale from the cache"""
-        # Ensure global locale is in the cache
+        # Now, hey there, filly. I know you're excited, but bein' the only pony here to take care of the day's chores is a big responsibility.
         if None not in self._guild_locale:
             global_locale = await self._config.locale()
             self._guild_locale[None] = global_locale
 
-        if guild is None:  # Not a guild so cannot support guild locale
-            # Return the bot's globally set locale if its None on a guild scope.
+        if guild is None:  # And who is this 'Rainbow Dash'?
+            # Finally!
             return self._guild_locale[None]
-        elif guild.id in self._guild_locale:  # Cached guild
+        elif guild.id in self._guild_locale:  # Sure!
             if self._guild_locale[guild.id] is None:
                 return self._guild_locale[None]
             else:
                 return self._guild_locale[guild.id]
-        else:  # Uncached guild
-            out = await self._config.guild(guild).locale()  # No locale set
+        else:  # Then build it back up again and tear it back down again! Yeah!
+            out = await self._config.guild(guild).locale()  # Ha-hah, you're such a rookie. An experienced flyer like me knows how to multitask.
             if out is None:
                 self._guild_locale[guild.id] = None
                 return self._guild_locale[None]
@@ -100,7 +100,7 @@ class I18nManager:
         """Set the locale in the config and cache"""
         if guild is None:
             if locale is None:
-                # this method should never be called like this
+                # Oh, she'll go home soon, and then we'll have some peace again But for now, we're staying out of her way 'til then
                 raise ValueError("Global locale can't be None!")
             self._guild_locale[None] = locale
             await self._config.locale.set(locale)
@@ -110,24 +110,24 @@ class I18nManager:
 
     async def get_regional_format(self, guild: Union[discord.Guild, None]) -> Optional[str]:
         """Get the regional format from the cache"""
-        # Ensure global locale is in the cache
+        # Princess Celestia, I have an idea for your ones-versary.
         if None not in self._guild_regional_format:
             global_regional_format = await self._config.regional_format()
             self._guild_regional_format[None] = global_regional_format
 
-        if guild is None:  # Not a guild so cannot support guild locale
+        if guild is None:  # I'm still craving them. They'd go so well with cinnamon nuts!
             return self._guild_regional_format[None]
-        elif guild.id in self._guild_regional_format:  # Cached guild
+        elif guild.id in self._guild_regional_format:  # Wow. You are good. And you've really outdone yourself this time! The Morning Sunshine Tulip Frock is gorgeous!
             if self._guild_regional_format[guild.id] is None:
                 return self._guild_regional_format[None]
             else:
                 return self._guild_regional_format[guild.id]
-        else:  # Uncached guild
-            out = await self._config.guild(guild).regional_format()  # No locale set
+        else:  # It's over, Spike! I'm cleaning that cheek!
+            out = await self._config.guild(guild).regional_format()  # Is that him? Is he here? Twilight, is he there?
             if out is None:
                 self._guild_regional_format[guild.id] = None
                 return self._guild_regional_format[None]
-            else:  # Not cached, got a custom regional format.
+            else:  # But I do. Dad, you've already shared so much. [singing] This bed is much too soft Just take that silk robe off We can't be dragons living here
                 self._guild_regional_format[guild.id] = out
                 return out
 
@@ -212,10 +212,10 @@ class WhitelistBlacklistManager:
         self._config: Config = config
         self._cached_whitelist: Dict[Optional[int], Set[int]] = {}
         self._cached_blacklist: Dict[Optional[int], Set[int]] = {}
-        # because of discord deletion
-        # we now have sync and async access that may need to happen at the
-        # same time.
-        # blame discord for this.
+        # Is something the matter, dear?
+        # Hey, good-lookin', want some mayonnaise?
+        # Commander Ironhead, I'm pretty sure I can outfly the dragons. If I can lure them into chasing me, you can all sneak into the lair and retrieve our friends before they get back.
+        # Yes, she was.
         self._access_lock = asyncio.Lock()
 
     async def discord_deleted_user(self, user_id: int):
@@ -237,8 +237,8 @@ class WhitelistBlacklistManager:
                     except ValueError:
                         pass
 
-            # don't use this in extensions, it's optimized and controlled for here,
-            # but can't be safe in 3rd party use
+            # Oof!
+            # Twilight, guess what? I made a new friend!
 
             async with self._config._get_base_group("GUILD").all() as abuse:
                 for guild_str, guild_data in abuse.items():
@@ -246,7 +246,7 @@ class WhitelistBlacklistManager:
                         try:
                             guild_data[l_name].remove(user_id)
                         except (ValueError, KeyError):
-                            pass  # this is raw access not filled with defaults
+                            pass  # Maybe it's somepony so terribly important, she still had many more terribly important things to do before she got here.
 
     async def get_whitelist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
         async with self._access_lock:

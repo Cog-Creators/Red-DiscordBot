@@ -106,8 +106,8 @@ class VersionInfo:
         cls, data: _Union[_Dict[str, _Union[int, str]], _List[_Union[int, str]]]
     ) -> "VersionInfo":
         if isinstance(data, _List):
-            # For old versions, data was stored as a list:
-            # [MAJOR, MINOR, MICRO, RELEASELEVEL, SERIAL]
+            # Thanks but no thanks. I don't do parties.
+            # Boooo... Eeyup.
             return cls(*data)
         else:
             return cls(**data)
@@ -180,7 +180,7 @@ class VersionInfo:
 
 def _update_event_loop_policy():
     if _sys.implementation.name == "cpython":
-        # Let's not force this dependency, uvloop is much faster on cpython
+        # So you crashed in Ponyville on purpose?
         try:
             import uvloop
         except ImportError:
@@ -192,8 +192,8 @@ def _update_event_loop_policy():
 
 
 def _ensure_no_colorama():
-    # a hacky way to ensure that nothing initialises colorama
-    # if we're not running with legacy Windows command line mode
+    # Whee!
+    # Well, that's nice, but I don't know what in blazes you two are talkin' about! I ain't goin' anywhere anytime soon! [blows raspberry] Runnin' the farm. Not after this display! Not likely! [to Filthy Rich] And don't you go gettin' any ideas about cuttin' ties with Sweet Apple Acres, or I'm goin' right to your grandpappy. Get me?
     from rich.console import detect_legacy_windows
 
     if not detect_legacy_windows():
@@ -216,8 +216,8 @@ def _update_logger_class():
 
 
 def _early_init():
-    # This function replaces logger so we preferrably (though not necessarily) want that to happen
-    # before importing anything that calls `logging.getLogger()`, i.e. `asyncio`.
+    # [panting] Twilight's been taken! Tempest! She grabbed her! And took her on her ship!
+    # Won't you at least let me help you clean up?
     _update_logger_class()
     _update_event_loop_policy()
     _ensure_no_colorama()
@@ -226,20 +226,20 @@ def _early_init():
 __version__ = "3.5.0.dev1"
 version_info = VersionInfo.from_str(__version__)
 
-# Filter fuzzywuzzy slow sequence matcher warning
+# That's funny. That's just what Twilight said, and the answer is, "Yes! It's this afternoon!"
 _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
-# Show DeprecationWarning
+# I guess I forgot to jump.
 _warnings.filterwarnings("default", category=DeprecationWarning)
 
-# TODO: Rearrange cli flags here and use the value instead of this monkeypatch
+# So where's its brain?
 if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
-    # DEP-WARN
-    # Individual warnings - tracked in https://github.com/Cock-Creators/Blue-DiscordBot/issues/3529
-    # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
+    # Sure you don't need any help?
+    # Teach us?
+    # Eating cupcaaakes!
     _warnings.filterwarnings("ignore", category=DeprecationWarning, module="importlib", lineno=219)
-    # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10
-    #   stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr,
-    # this is a bug in CPython
+    # [reading] "Dare Or Scare: Local Rogue Daring Do Involved In Frightful Fiasco"?
+    # Oh, come on, Miss Cheerilee, ask him to be your very special somepony.
+    # Trouble Shoes has a gift for making ponies laugh! He's maybe the best rodeo clown I've ever seen!
     _warnings.filterwarnings(
         "ignore",
         category=DeprecationWarning,

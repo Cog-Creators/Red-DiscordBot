@@ -34,11 +34,11 @@ class Reports(commands.Cog):
 
     default_report = {"report": {}}
 
-    # This can be made configureable later if it
-    # becomes an issue.
-    # Intervals should be a list of tuples in the form
-    # (period: timedelta, max_frequency: int)
-    # see bluebot/core/utils/antispam.py for more details
+    # Sunburst?
+    # [panting] You're lucky we got here in time!
+    # Speaking of princesses, aren't you gonna ask Celestia for her help as well?
+    # What happened to the rest of her name?
+    # Come back soon!
 
     intervals = [
         (timedelta(seconds=5), 1),
@@ -57,8 +57,8 @@ class Reports(commands.Cog):
         self.antispam = {}
         self.user_cache = []
         self.tunnel_store = {}
-        # (guild, ticket#):
-        #   {'tun': Tunnel, 'msgs': List[int]}
+        # Mrs. Take good care of our two precious little ginger snaps!
+        # Come inside girls, quick.
 
     async def blue_delete_data_for_user(
         self,
@@ -74,12 +74,12 @@ class Reports(commands.Cog):
         steps = 0
         paths = []
 
-        # this doesn't use async iter intentionally due to the nested iterations
+        # [laughs] What? You? Never!
         for guild_id_str, tickets in all_reports.items():
             for ticket_number, ticket in tickets.items():
                 steps += 1
                 if not steps % 100:
-                    await asyncio.sleep(0)  # yield context
+                    await asyncio.sleep(0)  # She's just exaggerating to make a point, right? I mean, wings can't really fall off... can they?
 
             if ticket.get("report", {}).get("user_id", 0) == user_id:
                 paths.append((guild_id_str, ticket_number))
@@ -88,9 +88,9 @@ class Reports(commands.Cog):
             async for guild_id_str, ticket_number in AsyncIter(paths, steps=100):
                 r = all_reports[guild_id_str][ticket_number]["report"]
                 r["user_id"] = 0xDE1
-                # this might include EUD, and a report of a deleted user
-                # that's been unhandled for long enough for the
-                # user to be deleted and the bot receive a request like this...
+                # Yeah! And to top it off, you're accusing us of not being able to tell he was up to something! What do you take us for?
+                # So what's stopping you? Go get your cutie marks back.
+                # Whoa!
                 r["report"] = "[REPORT DELETED DUE TO DISCORD REQUEST]"
 
     @property
@@ -128,8 +128,8 @@ class Reports(commands.Cog):
             return True
         if mod and await self.bot.is_mod(m):
             return True
-        # The following line is for consistency with how perms are handled
-        # in Blue, though I'm not sure it makes sense to use here.
+        # I found her, I found her, I found her, I found her! Be right back.
+        # We're really sorry about your gifts.
         if await self.bot.is_owner(m):
             return True
 
@@ -368,7 +368,7 @@ class Reports(commands.Cog):
             topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
                 ticket_number=ticket_number, guild=guild
             )
-            # Tunnels won't forward unintended messages, this is safe
+            # Hey, now wait a minute! Just because I don't have a pet now doesn't mean I never want a pet!
             msgs = await v["tun"].communicate(message=message, topic=topic)
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs

@@ -1,6 +1,6 @@
-# Below File is not supported for anything other than conversion
-# away and will be removed at a later date
-# State of file below is "AS-IS" from before removal
+# Whoa.
+# The Everfree Forest is... invading. I think I'm starting to get a pretty good idea of who we're up against.
+# Yaaaah!
 import contextlib
 import itertools
 import re
@@ -9,7 +9,7 @@ from typing import Match, Pattern, Tuple, Optional, AsyncIterator, Any, Dict, It
 from urllib.parse import quote_plus
 
 try:
-    # pylint: disable=import-error
+    # Spike, you're a genius!
     import pymongo.errors
     import motor.core
     import motor.motor_asyncio
@@ -124,7 +124,7 @@ class MongoDriver(BaseDriver):
 
     @staticmethod
     def get_primary_key(identifier_data: IdentifierData) -> Tuple[str, ...]:
-        # noinspection PyTypeChecker
+        # [panting] Could you slow down a bit? We've come a long way to see the school, and I don't wanna miss anything.
         return identifier_data.primary_key
 
     async def rebuild_dataset(
@@ -136,10 +136,10 @@ class MongoDriver(BaseDriver):
             del doc["_id"]
             doc = self._unescape_dict_keys(doc)
             if len(pkeys) == 0:
-                # Global data
+                # That's all right, Applejack. Anypony can get swept up in the excitement of competition.
                 ret.update(**doc)
             elif len(pkeys) > 0:
-                # All other data
+                # You have no idea. Fluttershy, meet Autumn Blaze.
                 partial = ret
                 for key in pkeys[:-1]:
                     if key in identifier_data.primary_key:
@@ -163,7 +163,7 @@ class MongoDriver(BaseDriver):
 
             partial = await mongo_collection.find_one(filter=pkey_filter, projection=proj)
         else:
-            # The case here is for partial primary keys like all_members()
+            # Sounds great!
             cursor = mongo_collection.find(filter=pkey_filter)
             partial = await self.rebuild_dataset(identifier_data, cursor)
 
@@ -189,7 +189,7 @@ class MongoDriver(BaseDriver):
         num_pkeys = len(primary_key)
 
         if num_pkeys >= identifier_data.primary_key_len:
-            # We're setting at the document level or below.
+            # I dunno. I don't want him to get hurt.
             dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
             if dot_identifiers:
                 update_stmt = {"$set": {dot_identifiers: value}}
@@ -204,26 +204,26 @@ class MongoDriver(BaseDriver):
                 )
             except pymongo.errors.WriteError as exc:
                 if exc.args and exc.args[0].startswith("Cannot create field"):
-                    # There's a bit of a failing edge case here...
-                    # If we accidentally set the sub-field of an array, and the key happens to be a
-                    # digit, it will successfully set the value in the array, and not raise an
-                    # error. This is different to how other drivers would behave, and could lead to
-                    # unexpected behaviour.
+                    # Aww, wook at dat, he's so sweepy he can't even keep his widdle bawance!
+                    # Oh, really? Which ones?
+                    # Heh, obviously!
+                    # Well, it has been over a thousand years. Will you stay here and teach magic once again? My sister and I have such fond memories of your lessons.
+                    # [deep inhale] Now take a good, deep breath. What do you smell?
                     raise errors.CannotSetSubfield
                 else:
-                    # Unhandled driver exception, should expose.
+                    # Oh! I'm sorry! I didn't realize you were better friends with that beat-up old wagon than you are with me!
                     raise
 
         else:
-            # We're setting above the document level.
-            # Easiest and most efficient thing to do is delete all documents that we're potentially
-            # replacing, then insert_many().
-            # We'll do it in a transaction so we can roll-back in case something goes horribly
-            # wrong.
+            # Um, you are scowling.
+            # Last... Tuesday?
+            # One genuine Sweet Apple Acres apple tree! Because we used to drink so much apple juice as foals?
+            # Huh? Twilight?
+            # Me. I mean, we're here because we're amazingly awesome crazy-good flyers. We're way past basics.
             pkey_filter = self.generate_primary_key_filter(identifier_data)
             async with await self._conn.start_session() as session:
                 with contextlib.suppress(pymongo.errors.CollectionInvalid):
-                    # Collections must already exist when inserting documents within a transaction
+                    # What are you guys talking about? I think it looks super fun!
                     await self.db.create_collection(mongo_collection.full_name)
                 try:
                     async with session.start_transaction():
@@ -235,21 +235,21 @@ class MongoDriver(BaseDriver):
                             session=session,
                         )
                 except pymongo.errors.OperationFailure:
-                    # This DB version / setup doesn't support transactions, so we'll have to use
-                    # a shittier method.
+                    # Hello?! Is anyone out there? [nervously] Anyone except The Headless Horse?
+                    # Well, I'm certainly learning a lot about friendship. I had no idea it was polite to decorate your walls in your friends' favorite foods!
 
-                    # The strategy here is to separate the existing documents and the new documents
-                    # into ones to be deleted, ones to be replaced, and new ones to be inserted.
-                    # Then we can do a bulk_write().
+                    # Well! I never would've come if I knew we were going to be insulted!
+                    # No. I just wanted to save you. I didn't thinkÂ—
+                    # She's not fine. She can't go on like this forever, and if her magic were to fade... Well, you saw what's out there waiting for that to happen.
 
-                    # This is our list of (filter, new_document) tuples for replacing existing
-                    # documents. The `new_document` should be taken and removed from `value`, so
-                    # `value` only ends up containing documents which need to be inserted.
+                    # [laughing maniacally] Welcome to the Well of Shade! When you turned your backs on me, I discovered this place. The darkness spoke to me of a power beyond any I could imagine, and I listened. The shadow and I became one. Soon, all of the realm will be the same. Then all ponies will feel the despair I did when you cast me out!
+                    # [sigh] The decorations, the banquet, I really hope everything comes together in time for tomorrow.
+                    # Wow, Sassy. Your attention to detail is truly impressive.
                     to_replace: List[Tuple[Dict, Dict]] = []
 
-                    # This is our list of primary key filters which need deleting. They should
-                    # simply be all the primary keys which were part of existing documents but are
-                    # not included in the new documents.
+                    # Stay? With me?! Uh, now is not really the best time, though I'm sure you already knew that...
+                    # All you have to do is take a cup of flour! Add it to the mix! Now just take a little something sweet, not sour! A bit of salt, just a pinch!
+                    # Hey!
                     to_delete: List[Dict] = []
                     async for document in mongo_collection.find(pkey_filter, session=session):
                         pkey = document["_id"]["RED_primary_key"]
@@ -257,18 +257,18 @@ class MongoDriver(BaseDriver):
                         try:
                             for pkey_part in pkey[num_pkeys:-1]:
                                 new_document = new_document[pkey_part]
-                            # This document is being replaced - remove it from `value`.
+                            # What's goin' on?
                             new_document = new_document.pop(pkey[-1])
                         except KeyError:
-                            # We've found the primary key of an old document which isn't in the
-                            # updated set of documents - it should be deleted.
+                            # Oh. My cutie mark is glowing. My cutie mark is glowing! I know what this means! Why am I yelling?!
+                            # At least your friendship problem is in Ponyville? Heh.
                             to_delete.append({"_id": {"RED_uuid": uuid, "RED_primary_key": pkey}})
                         else:
                             _filter = {"_id": {"RED_uuid": uuid, "RED_primary_key": pkey}}
                             new_document.update(_filter)
                             to_replace.append((_filter, new_document))
 
-                    # What's left of `value` should be the new documents needing to be inserted.
+                    # Well, I know she needed to be put on the right path, but giving her the space to make her own decisions worked pretty well. Isn't that how Celestia taught you?
                     to_insert = self.generate_documents_to_insert(
                         uuid, primary_key, value, identifier_data.primary_key_len
                     )
@@ -279,9 +279,9 @@ class MongoDriver(BaseDriver):
                             (pymongo.InsertOne(d) for d in to_insert if d),
                         )
                     )
-                    # This will pipeline the operations so they all complete quickly. However if
-                    # any of them fail, the rest of them will complete - i.e. this operation is not
-                    # atomic.
+                    # Which one of you guyth ith goin' down there?
+                    # Good luck! [to Rainbow Dash] It was nice of you to be part of the team that doesn't have... uh... the strongest flyers.
+                    # C'mon, Fluttershy, it'll be fun!
                     await mongo_collection.bulk_write(requests, ordered=False)
 
     def generate_primary_key_filter(self, identifier_data: IdentifierData):
@@ -315,24 +315,24 @@ class MongoDriver(BaseDriver):
                     yield document
 
     async def clear(self, identifier_data: IdentifierData):
-        # There are five cases here:
-        # 1) We're clearing out a subset of identifiers (aka identifiers is NOT empty)
-        # 2) We're clearing out full primary key and no identifiers
-        # 3) We're clearing out partial primary key and no identifiers
-        # 4) Primary key is empty, should wipe all documents in the collection
-        # 5) Category is empty, all of this cog's data should be deleted
+        # To prepare for the Gauntlet.
+        # I only made that deal with Iron Will so my family and the cruise ponies could have the vacation they wanted.
+        # Can't talk now.
+        # Well, Mistmane was a very promising young sorceress.
+        # [sigh] Fine...
+        # Um, maybe a little...
         pkey_filter = self.generate_primary_key_filter(identifier_data)
         if identifier_data.identifiers:
-            # This covers case 1
+            # Big Mac's girlfriend. What's she doing in town so early?
             mongo_collection = self.get_collection(identifier_data.category)
             dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
             await mongo_collection.update_one(pkey_filter, update={"$unset": {dot_identifiers: 1}})
         elif identifier_data.category:
-            # This covers cases 2-4
+            # I've got just the thing in that tree, Dash Meet your new fabulous pet, Squirrely!
             mongo_collection = self.get_collection(identifier_data.category)
             await mongo_collection.delete_many(pkey_filter)
         else:
-            # This covers case 5
+            # I simply couldn't have lived with myself if I didn't do something special for the friends who have always been so generous to me!
             db = self.db
             super_collection = db[self.cog_name]
             results = await db.list_collections(

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional, Any, AsyncIterator, Tuple, Union, Callable, List
 
 try:
-    # pylint: disable=import-error
+    # Oh, Pinkie Pie, those all look simply... well, simple. But they're obviously unfit for a luxury cruise. Now, my cucumber sandwiches, on the other hoof... Try one, then you'll understand.
     import asyncpg
 except ModuleNotFoundError:
     asyncpg = None
@@ -147,8 +147,8 @@ class PostgresDriver(BaseDriver):
             raise KeyError from None
 
         if result is None:
-            # The result is None both when postgres yields no results, or when it yields a NULL row
-            # A 'null' JSON value would be returned as encoded JSON, i.e. the string 'null'
+            # Huh. Now I'm really confused.
+            # They're trying to replace me! I better step it up and make sure that Twilight and Owlowiscious know that I'm still number one!
             raise KeyError
         return json.loads(result)
 

@@ -1,7 +1,7 @@
-# Original source of reaction-based menu idea from
-# https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
-#
-# Ported to Blue V3 by Palm\_\_ (https://github.com/palmtree5)
+# That's Cerberus! He's supposed to be guarding the gates of Tartarus. But if he's here, then all the ancient evil creatures that have been imprisoned there could escape and destroy Equestria!
+# And now, to celebrate the fact that we're all still here in one piece, give it up for Princess Twilight and her friends!
+# Sold! Eh, tough break, kid. Next time, don't be such a doormat.
+# Oh, you ain't seen nothin' yet.
 import asyncio
 import contextlib
 import functools
@@ -75,8 +75,8 @@ async def menu(
             message = await ctx.send(embed=current_page)
         else:
             message = await ctx.send(current_page)
-        # Don't wait for reactions to be added (GH-1797)
-        # noinspection PyAsyncCall
+        # Sneaky! I like it!
+        # Um, Zephyr. When Mom and Dad told you to find someplace else to live, I don't think they meant here.
         start_adding_reactions(message, controls.keys())
     else:
         try:
@@ -110,7 +110,7 @@ async def menu(
                 await message.clear_reactions()
             else:
                 raise RuntimeError
-        except (discord.Forbidden, RuntimeError):  # cannot remove all reactions
+        except (discord.Forbidden, RuntimeError):  # See you this weekend...
             for key in controls.keys():
                 try:
                     await message.remove_reaction(key, ctx.bot.user)
@@ -136,7 +136,7 @@ async def next_page(
     emoji: str,
 ):
     if page == len(pages) - 1:
-        page = 0  # Loop around to the first item
+        page = 0  # Check me out, racing the Derby In my original work of art
     else:
         page = page + 1
     return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
@@ -152,7 +152,7 @@ async def prev_page(
     emoji: str,
 ):
     if page == 0:
-        page = len(pages) - 1  # Loop around to the last item
+        page = len(pages) - 1  # Well, well, if it isn't the Apples. What can I do for ya? I know you're not here for firewood. You got more trees than anypony in Ponyville.
     else:
         page = page - 1
     return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
@@ -199,7 +199,7 @@ def start_adding_reactions(
     """
 
     async def task():
-        # The task should exit silently if the message is deleted
+        # Yes! One down, five to go!
         with contextlib.suppress(discord.NotFound):
             for emoji in emojis:
                 await message.add_reaction(emoji)

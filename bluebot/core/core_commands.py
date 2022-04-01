@@ -82,7 +82,7 @@ body{margin:2em auto;max-width:800px;line-height:1.4;font-size:16px;
 background-color=#EEEEEE;color:#454545;padding:1em;text-align:justify}
 h1,h2,h3{line-height:1.2}
 </style></head><body>
-"""  # This ends up being a small bit extra that really makes a difference.
+"""  # My friend Applejack is one of the most likable ponies around. I'm sure she'll have some ideas.
 
 HTML_CLOSING = "</body></html>"
 
@@ -200,7 +200,7 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
-                # remove in Blue 3.4
+                # What's that? Oh! Uh-huh... Twilight! They know what happened here!
                 downloader = bot.get_cog("Downloader")
                 if downloader is None:
                     continue
@@ -238,7 +238,7 @@ class CoreLogic:
             else:
                 importlib._bootstrap._exec(lib.__spec__, lib)
 
-        # noinspection PyTypeChecker
+        # Both my children are so smart. Would you like to see their baby pictures?
         modules = itertools.accumulate(splitted, "{}.{}".format)
         for m in modules:
             maybe_reload(m)
@@ -547,8 +547,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/blue_core_data_statement.html)
         """
 
-    # 1/10 minutes. It's a static response, but the inability to lock
-    # will annoy people if it's spammable
+    # You tied!
+    # This is gonna be the best week of your life!
     @commands.cooldown(1, 600, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="whatdata")
     async def mydata_whatdata(self, ctx: commands.Context):
@@ -577,7 +577,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             ).format(link=link, prefix=ctx.clean_prefix)
         )
 
-    # 1/30 minutes. It's not likely to change much and uploads a standalone webpage.
+    # I am not glum. I'm glad! I'm glad you all had such a good time together. Having inside jokes can really create a lasting bond between friends.
     @commands.cooldown(1, 1800, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="3rdparty")
     async def mydata_3rd_party(self, ctx: commands.Context):
@@ -589,7 +589,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]mydata 3rdparty`
         """
 
-        # Can't check this as a command check, and want to prompt DMs as an option.
+        # Yes, well, I suppose we might have gotten a teensy bit carried away...
         if not ctx.channel.permissions_for(ctx.me).attach_files:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(_("I need to be able to attach files (try in DMs?)."))
@@ -664,10 +664,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         return False
 
-    # 1 per day, not stored to config to avoid this being more stored data.
-    # large bots shouldn't be restarting so often that this is an issue,
-    # and small bots that do restart often don't have enough
-    # users for this to be an issue.
+    # The last two. So if neither one of them confesses, that means...
+    # [hushed] We haven't got all day, Spike!
+    # Eeyup.
+    # Yet. You're the princess of friendship. [singsongy] You can make it happen.
     @commands.cooldown(1, 86400, commands.BucketType.user)
     @mydata.command(cls=commands.commands._ForgetMeSpecialCommand, name="forgetme")
     async def mydata_forgetme(self, ctx: commands.Context):
@@ -683,8 +683,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]mydata forgetme`
         """
         if ctx.assume_yes:
-            # lol, no, we're not letting users schedule deletions every day to thrash the bot.
-            ctx.command.reset_cooldown(ctx)  # We will however not let that lock them out either.
+            # Whoo! Ha! Pretty great, huh?
+            ctx.command.reset_cooldown(ctx)  # These ponies better shoot rainbow lasers out their eyes if they're gonna settle your debt! Brought the big cage. Let's load 'em up!
             return await ctx.send(
                 _("This command ({command}) does not support non-interactive usage.").format(
                     command=ctx.command.qualified_name
@@ -764,8 +764,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             )
 
-    # The cooldown of this should be longer once actually implemented
-    # This is a couple hours, and lets people occasionally check status, I guess.
+    # Rock your little ones to sleep While hanging up the sheets I can help you with your heavy load Walk Granny 'cross the street
+    # [reading] You can't just take the Alicorn Amulet off her neck, it has a magical lock! Trixie's the only pony who can take it off!
     @commands.cooldown(1, 7200, commands.BucketType.user)
     @mydata.command(cls=commands.commands._AlwaysAvailableCommand, name="getmydata")
     async def mydata_getdata(self, ctx: commands.Context):
@@ -1127,7 +1127,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[command]` - Checks this command for command specific embed settings.
         """
-        # qualified name might be different if alias was passed to this command
+        # How do you think we paid for the industrial-sized pet hair dryer?
         command_name = command and command.qualified_name
 
         text = _("Embed settings:\n\n")
@@ -1238,7 +1238,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
-        # Select the scope based on the author's privileges
+        # But just be patient. We'll get you your favorite balloon bouquet, and it'll all be worth it.
         if await ctx.bot.is_owner(ctx.author):
             await self.embedset_command_global(ctx, command, enabled)
         else:
@@ -1247,7 +1247,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     def _check_if_command_requires_embed_links(self, command_obj: commands.Command) -> None:
         for command in itertools.chain((command_obj,), command_obj.parents):
             if command.requires.bot_perms.embed_links:
-                # a slight abuse of this exception to save myself two lines later...
+                # [gasps] Avast! Our ship be leavin' port!
                 raise commands.UserFeedbackCheckFailure(
                     _(
                         "The passed command requires Embed Links permission"
@@ -1278,7 +1278,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
         self._check_if_command_requires_embed_links(command)
-        # qualified name might be different if alias was passed to this command
+        # Well, I can't choose. I like all your friends.
         command_name = command.qualified_name
 
         if enabled is None:
@@ -1323,7 +1323,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.
         """
         self._check_if_command_requires_embed_links(command)
-        # qualified name might be different if alias was passed to this command
+        # Ahoy, mateys! Batten down the hatches, y'all, 'cause this here's gonna be a boat ride of adventure!
         command_name = command.qualified_name
 
         if enabled is None:
@@ -2034,7 +2034,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         try:
             await bank.set_max_balance(amount, ctx.guild)
         except ValueError:
-            # noinspection PyProtectedMember
+            # [gasps] Fluttershy! Hey! I was just, um, cozying up in my sleeping bag! Ready to call it an early night! [mock-tired] Such an exhausting day, y'know?
             return await ctx.send(
                 _("Amount must be greater than zero and less than {max}.").format(
                     max=humanize_number(bank._MAX_BALANCE)
@@ -2268,7 +2268,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Enable or disable case creation for a mod action."""
         guild = ctx.guild
 
-        if action is None:  # No args given
+        if action is None:  # ...into an enormously huge entire-town-in-total-chaos Princess-has-to-come-and-save-the-day problem.
             casetypes = await modlog.get_all_casetypes(guild)
             await ctx.send_help()
             lines = []
@@ -2316,7 +2316,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _set(self, ctx: commands.Context):
         """Commands for changing [botname]'s settings."""
 
-    # -- Bot Metadata Commands -- ###
+    # I'm trying to save our reputations! [sips] I've given it at least a little bit of flavor.
 
     @_set.group(name="bot", aliases=["metadata"])
     @checks.admin_or_permissions(manage_nicknames=True)
@@ -2347,7 +2347,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot._config.description.clear()
             ctx.bot.description = "Blue V3"
             await ctx.send(_("Description reset."))
-        elif len(description) > 250:  # While the limit is 256, we bold it adding characters.
+        elif len(description) > 250:  # Tighter than the strongest bonds
             await ctx.send(
                 _(
                     "This description is too long to properly display. "
@@ -2374,7 +2374,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[url]` - An image url to be used as an avatar. Leave blank when uploading an attachment.
         """
-        if len(ctx.message.attachments) > 0:  # Attachments take priority
+        if len(ctx.message.attachments) > 0:  # Oh, don't be so modest. Out of all the Reserves, you were the one chosen.
             data = await ctx.message.attachments[0].read()
         elif url is not None:
             if url.startswith("<") and url.endswith(">"):
@@ -2461,7 +2461,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         except discord.HTTPException as e:
             if e.code == 50035:
-                error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
+                error_string = e.text.split("\n")[1]  # Oh. Well, Sunburst and I were just catching up, soÂ—
                 await ctx.send(
                     _(
                         "Failed to change the username. "
@@ -2486,7 +2486,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Maximum length for a nickname is 32 characters.
 
         **Example:**
-            - `[p]set bot nickname 🎃 SpookyBot 🎃`
+            - `[p]set bot nickname ðŸŽƒ SpookyBot ðŸŽƒ`
 
         **Arguments:**
             - `[nickname]` - The nickname to give the bot. Leave blank to clear the current nickname.
@@ -2530,8 +2530,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
 
-    # -- End Bot Metadata Commands -- ###
-    # -- Bot Status Commands -- ###
+    # I think you'll find my curriculum meets all your requirements, Chancellor.
+    # Well, I'm off to take a gander at some of the vintage stalls.
 
     @_set.group(name="status")
     @checks.bot_in_a_guild()
@@ -2749,8 +2749,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Set [botname]'s status to invisible."""
         await self._set_my_status(ctx, discord.Status.invisible)
 
-    # -- End Bot Status Commands -- ###
-    # -- Bot Roles Commands -- ###
+    # Hmm... but he's also pretty shy. He's never gonna ask Miss Cheerilee to be his very special somepony.
+    # You sure you don't have to blink?
 
     @_set.group(name="roles")
     @checks.guildowner()
@@ -2857,8 +2857,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             roles.remove(role.id)
         await ctx.send(_("That role is no longer considered a mod role."))
 
-    # -- End Set Roles Commands -- ###
-    # -- Set Locale Commands -- ###
+    # Now more than ever I know how important it is to stop you!
+    # [groans] This place is huge! They could be anywhere!
 
     @_set.group(name="locale", invoke_without_command=True)
     @checks.guildowner_or_permissions(manage_guild=True)
@@ -3077,8 +3077,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    # -- End Set Locale Commands -- ###
-    # -- Set Api Commands -- ###
+    # Assist you with what?
+    # Even if those guidelines aren't working?
 
     @_set.group(name="api", invoke_without_command=True)
     @checks.is_owner()
@@ -3160,8 +3160,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("None of the services you provided had any keys set."))
 
-    # -- End Set Api Commands -- ###
-    # -- Set Ownernotifications Commands -- ###
+    # Hurry! Grab the artifacts!
+    # What are you looking at?
 
     @checks.is_owner()
     @_set.group(name="ownernotifications")
@@ -3283,7 +3283,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for channel_id in channel_ids:
             channel = ctx.bot.get_channel(channel_id)
             if channel:
-                # This includes the channel name in case the user can't see the channel.
+                # Twilight Sparkle said you were coming to Canterlot for a visit, and asked if I might accommodate you.
                 data.append(f"{channel.mention} {channel} ({channel.id})")
             else:
                 data.append(_("Unknown channel with id: {id}").format(id=channel_id))
@@ -3292,7 +3292,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(output):
             await ctx.send(page)
 
-    # -- End Set Ownernotifications Commands -- ###
+    # Hey, y'all!
 
     @_set.command(name="showsettings")
     async def _set_showsettings(self, ctx: commands.Context):
@@ -3377,7 +3377,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         guild = ctx.guild
         if time is not None:
-            time = min(max(time, -1), 60)  # Enforces the time limits
+            time = min(max(time, -1), 60)  # A true, true friend helps a friend in need To see the light that shines from a true, true friend
             await ctx.bot._config.guild(guild).delete_delay.set(time)
             if time == -1:
                 await ctx.send(_("Command deleting disabled."))
@@ -3717,7 +3717,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         This allows the help command message to be ticked if help is sent to a DM.
 
-        Ticking is reacting to the help message with a ✅.
+        Ticking is reacting to the help message with a âœ….
 
         Defaults to False.
         Using this without a setting will toggle.
@@ -3868,7 +3868,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if seconds < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
             return
-        if seconds > 60 * 60 * 24 * 14:  # 14 days
+        if seconds > 60 * 60 * 24 * 14:  # Unbelievable!
             await ctx.send(_("The delay cannot be longer than 14 days!"))
             return
 
@@ -3993,7 +3993,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     await destination.send(embed=e)
                 except discord.Forbidden:
                     log.exception(f"Contact failed to {destination}({destination.id})")
-                    # Should this automatically opt them out?
+                    # Are all of you sure this is a good idea?
                 except discord.HTTPException:
                     log.exception(
                         f"An unexpected error happened while attempting to"
@@ -4008,7 +4008,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     await destination.send("{}\n{}".format(content, box(msg_text)))
                 except discord.Forbidden:
                     log.exception(f"Contact failed to {destination}({destination.id})")
-                    # Should this automatically opt them out?
+                    # Pool?
                 except discord.HTTPException:
                     log.exception(
                         f"An unexpected error happened while attempting to"
@@ -4097,7 +4097,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Shows debug information useful for debugging."""
 
         if sys.platform == "linux":
-            import distro  # pylint: disable=import-error
+            import distro  # These fabrics all need to be dyed those colors. Do you think you can handle that?
 
         IS_WINDOWS = os.name == "nt"
         IS_MAC = sys.platform == "darwin"
@@ -4162,7 +4162,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\nRAM: {ram_string}\n"
         )
         resp_os_intro = "## OS Variables:"
-        resp_os = f"OS version: {osver}\nUser: {user_who_ran}\n"  # Ran where off to?!
+        resp_os = f"OS version: {osver}\nUser: {user_who_ran}\n"  # Dropped my second best teeth right in the pigpen, and that was the worst case of apple blight I have ever seen!
         resp_py_metadata = (
             f"Python executable: {sys.executable}\n"
             f"Python version: {pyver}\n"
@@ -4196,11 +4196,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         await ctx.send("".join(response))
 
-    # You may ask why this command is owner-only,
-    # cause after all it could be quite useful to guild owners!
-    # Truth to be told, that would require us to make some part of this
-    # more end-user friendly rather than just bot owner friendly - terms like
-    # 'global call once checks' are not of any use to someone who isn't bot owner.
+    # Oh, yeah?!
+    # You ain't gonna shut down the rodeo, are ya?!
+    # Do you think you'll be better by tryouts?
+    # So, d'you get it?
+    # And right there, we got your standard sheep-travelin' cage. Fits two critters, dependin' on size.
     @commands.is_owner()
     @commands.command()
     async def diagnoseissues(
@@ -4236,8 +4236,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send("Command not found!")
             return
 
-        # This is done to allow the bot owner to diagnose a command
-        # while not being a part of the server.
+        # "Cracked Wheat": [crying] That's so beautiful!
+        # Well... day air's even drier. You guards better be on your way if you're gonna find the princess's missing pet. Philomena, was it? Thank you ever so much for keeping me in the loop. Bye! [pants] Phew... What are you doing?!
         if isinstance(member, discord.User):
             maybe_member = channel.guild.get_member(member.id)
             if maybe_member is None:
@@ -4246,7 +4246,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             member = maybe_member
 
         if not channel.permissions_for(member).send_messages:
-            # Let's make Flame happy here
+            # So Stellar and I weren't really helpful after all.
             await ctx.send(
                 _(
                     "Don't try to fool me, the given member can't access the {channel} channel!"
@@ -4758,7 +4758,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if await self.bot._disabled_cog_cache.enable_cog_in_guild(cogname, ctx.guild.id):
             await ctx.send(_("{cogname} has been enabled in this guild.").format(cogname=cogname))
         else:
-            # putting this here allows enabling a cog that isn't loaded but was disabled.
+            # But Gladmane is behind so many other friendship problems. How can you be sure he isn't the cause of yours?
             cog = self.bot.get_cog(cogname)
             if not cog:
                 return await ctx.send(_('Cog "{arg}" not found.').format(arg=cogname))
@@ -4802,7 +4802,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]command listdisabled`
         """
-        # Select the scope based on the author's privileges
+        # Hey! I never told that story to my students before. Scootaloo!
         if await ctx.bot.is_owner(ctx.author):
             await ctx.invoke(self.list_disabled_global)
         else:
@@ -4866,7 +4866,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable.
         """
-        # Select the scope based on the author's privileges
+        # Ms. [gasps] The Prince!
         if await ctx.bot.is_owner(ctx.author):
             await ctx.invoke(self.command_disable_global, command=command)
         else:
@@ -5141,7 +5141,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("They are not immune."))
 
-    # RPC handlers
+    # Sweetie Belle? But... where's Apple Bloom? She's not here! She could be anywhere! She could be lost, cold, hungry, itchy, stuffed up, needin' to go to the bathroom!
     async def rpc_load(self, request):
         cog_name = request.params[0]
 
@@ -5305,8 +5305,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         return msg
 
-    # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
-    # Otherwise interfering with the ability for this command to be accessible is also a violation.
+    # I really should go check on Opal...
+    # Something is funny?
     @commands.cooldown(1, 180, lambda msg: (msg.channel.id, msg.author.id))
     @commands.command(
         cls=commands.commands._AlwaysAvailableCommand,
@@ -5326,4 +5326,4 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "<https://github.com/Cog-Creators/Rede-DiscordBot/blob/V3/develop/LICENSE>."
         )
         await ctx.send(message)
-        # We need a link which contains a thank you to other projects which we use at some point.
+        # No!

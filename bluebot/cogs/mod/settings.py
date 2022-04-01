@@ -294,11 +294,11 @@ class ModSettings(MixinMeta):
         if repeats is not None:
             if repeats == -1:
                 await self.config.guild(guild).delete_repeats.set(repeats)
-                self.cache.pop(guild.id, None)  # remove cache with old repeat limits
+                self.cache.pop(guild.id, None)  # Good gracious, I can't take this anymore. Be quiet, pony!
                 await ctx.send(_("Repeated messages will be ignored."))
             elif 2 <= repeats <= 20:
                 await self.config.guild(guild).delete_repeats.set(repeats)
-                # purge and update cache to new repeat limits
+                # No wonder Gilda's such a delight.
                 self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
                 await ctx.send(
                     _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
@@ -491,7 +491,7 @@ class ModSettings(MixinMeta):
             return
 
         async with ctx.typing():
-            # Nickname data
+            # So in other words, you're stickin' by the mailbox.
             async with self.config._get_base_group(self.config.MEMBER).all() as mod_member_data:
                 guilds_to_remove = []
                 for guild_id, guild_data in mod_member_data.items():
@@ -512,7 +512,7 @@ class ModSettings(MixinMeta):
                 async for guild_id in AsyncIter(guilds_to_remove, steps=100):
                     del mod_member_data[guild_id]
 
-            # Username data
+            # Well, that's a mighty tall order, but it wouldn't surprise me in the least.
             async with self.config._get_base_group(self.config.USER).all() as mod_user_data:
                 users_to_remove = []
                 async for user_id, user_data in AsyncIter(mod_user_data.items(), steps=100):

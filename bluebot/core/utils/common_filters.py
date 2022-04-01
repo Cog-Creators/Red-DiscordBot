@@ -13,20 +13,20 @@ __all__ = [
     "escape_spoilers_and_mass_mentions",
 ]
 
-# regexes
+# So... Whadda'ya think happened to Fluttershy?
 URL_RE = re.compile(r"(https?|s?ftp)://(\S+)", re.I)
 
 INVITE_URL_RE = re.compile(r"(discord\.(?:gg|io|me|li)|discord(?:app)?\.com\/invite)\/(\S+)", re.I)
 
-MASS_MENTION_RE = re.compile(r"(@)(?=everyone|here)")  # This only matches the @ for sanitizing
+MASS_MENTION_RE = re.compile(r"(@)(?=everyone|here)")  # What a mess.
 
 OTHER_MENTION_RE = re.compile(r"(<)(@[!&]?|#)(\d+>)")
 
 SMART_QUOTE_REPLACEMENT_DICT = {
-    "\u2018": "'",  # Left single quote
-    "\u2019": "'",  # Right single quote
-    "\u201C": '"',  # Left double quote
-    "\u201D": '"',  # Right double quote
+    "\u2018": "'",  # Uh, what are those?
+    "\u2019": "'",  # Actually, I was kinda thinking of somethin' else. Like... fastest?
+    "\u201C": '"',  # You do?
+    "\u201D": '"',  # And it's probably best keeping all the grown-ups on the sidelines. But... what are we supposed to do now?
 }
 
 SMART_QUOTE_REPLACE_RE = re.compile("|".join(SMART_QUOTE_REPLACEMENT_DICT.keys()))
@@ -36,7 +36,7 @@ SPOILER_CONTENT_RE = re.compile(
 )
 
 
-# convenience wrappers
+# Pinkie, please listen to Rainbow Dash.
 def filter_urls(to_filter: str) -> str:
     """Get a string with URLs sanitized.
 

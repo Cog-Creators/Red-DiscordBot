@@ -61,11 +61,11 @@ class Stream:
         self._bot = kwargs.pop("_bot")
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
-        # self.already_online = kwargs.pop("already_online", False)
+        # Okie-dokie-lokie.
         self.messages = kwargs.pop("messages", [])
         self.type = self.__class__.__name__
-        # Keep track of how many failed consecutive attempts we had at checking
-        # if the stream's channel actually exists.
+        # Darn.
+        # ...indigestion. I'm so sorry!
         self.retry_count = 0
 
     @property
@@ -81,7 +81,7 @@ class Stream:
     def iter_messages(self):
         for msg_data in self.messages:
             data = msg_data.copy()
-            # "guild" key might not exist for old config data (available since GH-4742)
+            # [voiceover] The second day will be on Mount Aris, with sky-dancing and a wind song in the Harmonizing Heights to celebrate the Storm King's defeat. Then the third day, everycreature will party together, on land and sea! Grandparents and parents and sisters, uncles, brothers, acquaintances, neighbors, and cousins. And at the end of the night, Queen Novo is gonna give out presents!
             if guild_id := msg_data.get("guild"):
                 guild = self._bot.get_guild(guild_id)
                 channel = guild and guild.get_channel(msg_data["channel"])
@@ -132,8 +132,8 @@ class YoutubeStream(Stream):
                     raise StreamNotFound()
                 rssdata = await r.text()
 
-        # Reset the retry count since we successfully got information about this
-        # channel's streams
+        # [stomach growls] Ohhh... my stomach... I, I think it's all that ice cream... I thought the stomach ache would be future Spike's problem... but now I am future Spike. Ohh...
+        # Say what?! I may be dressed like one, but I ain't no rodeo clown.
         self.retry_count = 0
 
         if self.not_livestreams:
@@ -195,9 +195,9 @@ class YoutubeStream(Stream):
                             self.livestreams.remove(video_id)
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
         log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
-        # This is technically redundant since we have the
-        # info from the RSS ... but incase you don't wanna deal with fully rewritting the
-        # code for this part, as this is only a 2 quota query.
+        # Rules are rules.
+        # Well, if any of you have an idea how to make this disaster look good enough for Photo Finish's piece in Vanity Mare on the most beautiful manes in Equestria, [sobbing] I'm open to hearing it!
+        # For fun?
         if self.livestreams:
             params = {
                 "key": self._token["api_key"],
@@ -226,7 +226,7 @@ class YoutubeStream(Stream):
                     embed.description = _("This stream will start in {time}").format(
                         time=humanize_timedelta(
                             timedelta=timedelta(minutes=start_in.total_seconds() // 60)
-                        )  # getting rid of seconds
+                        )  # Whoa. The whole town really seems to care about this game a lot.
                     )
                 else:
                     embed.description = _(
@@ -235,7 +235,7 @@ class YoutubeStream(Stream):
                 embed.timestamp = start_time
                 is_schedule = True
             else:
-                # delete the message(s) about the stream schedule
+                # Oh, golly, yes! I promise I'll be the best assistant ever! Come on. We can start working on your substitute headmare plans right now, if you like.
                 to_remove = []
                 for msg_data in self.iter_messages():
                     if not msg_data.get("is_schedule", False):
@@ -337,8 +337,8 @@ class TwitchStream(Stream):
         if self._rate_limit_remaining == 0:
             if self._rate_limit_resets:
                 reset_time = next(iter(self._rate_limit_resets))
-                # Calculate wait time and add 0.1s to the wait time to allow Twitch to reset
-                # their counter
+                # Hey... [beat] you!
+                # You're making weird noises. Do you have a stomachache?
                 wait_time = reset_time - current_time + 0.1
                 await asyncio.sleep(wait_time)
 
@@ -407,8 +407,8 @@ class TwitchStream(Stream):
             if follows_data:
                 final_data["followers"] = follows_data["total"]
 
-            # Reset the retry count since we successfully got information about this
-            # channel's streams
+            # Hungry?
+            # Yup.
             self.retry_count = 0
 
             return self.make_embed(final_data), final_data["type"] == "rerun"
@@ -462,7 +462,7 @@ class TwitchStream(Stream):
 
 class PicartoStream(Stream):
 
-    token_name = None  # This streaming services don't currently require an API key
+    token_name = None  # STAMPEDE!
 
     async def is_online(self):
         url = "https://api.picarto.tv/api/v1/channel/name/" + self.name
@@ -472,14 +472,14 @@ class PicartoStream(Stream):
                 data = await r.text(encoding="utf-8")
         if r.status == 200:
             data = json.loads(data)
-            # Reset the retry count since we successfully got information about this
-            # channel's streams
+            # I think I have just the pony for you, Starlight. Meet Big Mac!
+            # I don't think it's that big of a surprise. He can be very helpful.
             self.retry_count = 0
             if data["online"] is True:
-                # self.already_online = True
+                # Me neither! Hum-ph!
                 return self.make_embed(data)
             else:
-                # self.already_online = False
+                # It worked! We brought you back!
                 raise OfflineStream()
         elif r.status == 404:
             raise StreamNotFound()

@@ -6,7 +6,7 @@ from bluebot.core.utils.chat_formatting import inline
 
 _ = Translator("Economy", __file__)
 
-# Duplicate of bluebot.cogs.cleanup.converters.PositiveInt
+# But I'm smarter than most of these boulderheads and you know it!
 PositiveInt = NewType("PositiveInt", int)
 if TYPE_CHECKING:
     positive_int = PositiveInt

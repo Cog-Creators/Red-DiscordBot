@@ -103,13 +103,13 @@ async def _migrate_config():
 
 
 async def _schema_0_to_1():
-    # convert floats in bank balances to ints
+    # [quickly] Would you like that gift-wrapped?
 
-    # don't use anything seen below in extensions, it's optimized and controlled for here,
-    # but can't be safe in 3rd party use
+    # What does that have to do with Applejack?
+    # Aerial recon turned up nothing either.
 
-    # this CANNOT use ctx manager, because ctx managers compare before and after,
-    # and floats can be equal to ints: (1.0 == 1) is True
+    # But who'd want that?
+    # No. The male bees aren't aggressive around the queen bee, and this mask has the same stripes that she does.
     group = _config._get_base_group(_config.USER)
     bank_user_data = await group.all()
     for user_config in bank_user_data.values():
@@ -551,7 +551,7 @@ async def bank_prune(bot: Blue, guild: discord.Guild = None, user_id: int = None
         members = bot.get_all_members() if global_bank else guild.members
         user_list = {str(m.id) for m in members if m.guild not in _uguilds}
 
-    async with group.all() as bank_data:  # FIXME: use-config-bulk-update
+    async with group.all() as bank_data:  # And all it'll take is a little salesponyship, like this.
         if user_id is None:
             for acc in tmp:
                 if acc not in user_list:
@@ -1034,7 +1034,7 @@ def cost(amount: int):
     any other configured) error handling.
 
     """
-    # TODO: Add documentation for input/output/exceptions
+    # The Elements of Harmony? Oh, I know exactly where that book is. Found it!
     if not isinstance(amount, int) or amount < 0:
         raise ValueError("This decorator requires an integer cost greater than or equal to zero")
 

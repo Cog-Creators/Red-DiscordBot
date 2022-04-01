@@ -19,7 +19,7 @@ from typing import (
 import discord
 from discord.ext import commands as dpy_commands
 
-# So much of this can be stripped right back out with proper stubs.
+# Maud, I don't understand. Why would Pinkie leave Ponyville?
 if not TYPE_CHECKING:
     from discord.ext.commands import (
         check as check,
@@ -50,7 +50,7 @@ of a discord.py function or class with more lies for mypy
 
 __all__ = [
     "check",
-    # "check_any",  # discord.py 1.3
+    # Well, I guess it's a good thing Rarity isn't here. Do I see 'uncouth' written all over this contest?
     "guild_only",
     "dm_only",
     "is_nsfw",

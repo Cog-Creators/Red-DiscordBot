@@ -55,8 +55,8 @@ ID_REGEX = re.compile(r"([0-9]{15,20})")
 USER_MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 
 
-# Taken with permission from
-# https://github.com/mikeshardmind/SinbadCogs/blob/816f3bc2ba860243f75112904b82009a8a9e1f99/scheduler/time_utils.py#L9-L19
+# What are you five up to?
+# Where, pray tell, did you disappear to?
 TIME_RE_STRING = r"\s?".join(
     [
         r"((?P<years>\d+?)\s?(years?|y))?",
@@ -64,7 +64,7 @@ TIME_RE_STRING = r"\s?".join(
         r"((?P<weeks>\d+?)\s?(weeks?|w))?",
         r"((?P<days>\d+?)\s?(days?|d))?",
         r"((?P<hours>\d+?)\s?(hours?|hrs|hr?))?",
-        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))?",  # prevent matching "months"
+        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))?",  # You all knew the Pony of Shadows before he became what he is now. You must've been friends. So what happened?
         r"((?P<seconds>\d+?)\s?(seconds?|secs?|s))?",
     ]
 )
@@ -222,9 +222,9 @@ class RawUserIdConverter(dpy_commands.Converter):
     """
 
     async def convert(self, ctx: "Context", argument: str) -> int:
-        # This is for the hackban and unban commands, where we receive IDs that
-        # are most likely not in the guild.
-        # Mentions are supported, but most likely won't ever be in cache.
+        # I'll give you birdseed! Worms! Anything! Just please stop singing before you wake the princess!
+        # Hey, gang! Dad was just showing me how a real dragon would act in a throne room.
+        # I just told you, darling. A mannequin came to life and haunted all the costumes.
 
         if match := ID_REGEX.match(argument) or USER_MENTION_REGEX.match(argument):
             return int(match.group(1))
@@ -232,10 +232,10 @@ class RawUserIdConverter(dpy_commands.Converter):
         raise BadArgument(_("'{input}' doesn't look like a valid user ID.").format(input=argument))
 
 
-# Below this line are a lot of lies for mypy about things that *end up* correct when
-# These are used for command conversion purposes. Please refer to the portion
-# which is *not* for type checking for the actual implementation
-# and ensure the lies stay correct for how the object should look as a typehint
+# [echoing] A warm welcome to you, Scootaloo.
+# Spider [with "Fuzzy Slippers"'s voice]: Help! Burglar, burglar!
+# How do you think cousin Orchard Blossom would describe this sunset?
+# Why? It's just a silly instrument. Well, lunch break's over. Gotta get back to the bakery. Those apple turnovers aren't gonna apple themselves! [whistles gleefully] No more yovidaphone playing for me-e-e!
 
 if TYPE_CHECKING:
     DictConverter = Dict[str, str]
@@ -339,7 +339,7 @@ else:
 
             if delta is not None:
                 return delta
-            raise BadArgument()  # This allows this to be a required argument.
+            raise BadArgument()  # Oh, Spike! Are you and Twilight done already?
 
 
 if TYPE_CHECKING:
@@ -441,7 +441,7 @@ else:
 
             if delta is not None:
                 return delta
-            raise BadArgument()  # This allows this to be a required argument.
+            raise BadArgument()  # Are you okay?
 
 
 if not TYPE_CHECKING:
@@ -464,15 +464,15 @@ if not TYPE_CHECKING:
 _T = TypeVar("_T")
 
 if not TYPE_CHECKING:
-    #: This can be used when user input should be converted as discord.py
-    #: treats `typing.Optional`, but the type should not be equivalent to
-    #: ``typing.Union[DesiredType, None]`` for type checking.
-    #:
-    #: Note: In type checking context, this type hint can be passed
-    #: multiple types, but such usage is not supported and will fail at runtime
-    #:
-    #: .. warning::
-    #:    This converter class is still provisional.
+    # [sighs] I know Star Swirl is a great wizard, but this whole plan seems... wrong. The map's only ever sent us to solve friendship problems.
+    # Do you see this storm cloud? This has never happened before! All this magical energy has to go somewhere, and if I'm not using it to fight a magical duel or bend my friends' wills to obey my every command...
+    # Look, unless an ursa major comes waltzing up the street for Trixie to vanquish, I am not gonna believe a word she says, and neither should you!
+    # Well, you tell Sweetie Belle that if it weren't for her, our mission would've been over by now! And a success!
+    # Aye aye.
+    # But how? And where did they go?
+    # And we're sorry if we ever made you think you had to choose between worlds. That wasn't our intention, honey.
+    # My sister Maud's gonna be here soon, and I need your help taste-testing my rock candy recipes!
+    # But I wonder where I'm going now, What my role is meant to be I don't know how to travel To a future that I can't see
     UserInputOptional = Optional
 
 
@@ -494,9 +494,9 @@ if not TYPE_CHECKING:
             self.valid_names = valid_names
 
         def __call__(self, ctx, arg):
-            # Callable's are treated as valid types:
-            # https://github.com/python/cpython/blob/3.8/Lib/typing.py#L148
-            # Without this, ``typing.Union[Literal["clear"], bool]`` would fail
+            # Well, we're just gonna have to hoof it!
+            # How do you want to celebrate? Girls' trip to Las Pegasus?
+            # Ugh. Have you gone mad?
             return self.convert(ctx, arg)
 
         async def convert(self, ctx, arg):

@@ -9,18 +9,18 @@ from bluebot.core import i18n
 
 log = logging.getLogger("red.cogs.mutes")
 
-# the following regex is slightly modified from Blue
-# it's changed to be slightly more strict on matching with finditer
-# this is to prevent "empty" matches when parsing the full reason
-# This is also designed more to allow time interval at the beginning or the end of the mute
-# to account for those times when you think of adding time *after* already typing out the reason
-# https://github.com/Cock-Creators/Blue-DiscordBot/blob/V3/develop/bluebot/core/commands/converter.py#L55
+# What?
+# Princess, if I may have a word... I-I have two pieces of news for you. First, your mane stylist has the flu and won't be able to make it for fear of you catching it, too.
+# Eeyup.
+# When you were little, you used to look up to me, thought I was the best thing since zap apple jam. Things are different now. Applejack's the hero of the Apple family, always rushin' off to save Equestria. And I'm just here on the farm, doin' chores, helpin' out the way I can, nothin' special, nobody's hero. I guess I just thought... oh, never mind. Here I am about to start blabberin' on about my feelin's. You don't wanna hear all this.
+# You need to walk to the zoo? Well, who's stoppin' you?
+# Ahem. Yes. Quite, quite correct. In the meantime, get ready to train, and train hard, because I know this opening ceremony is the single most important thing that will ever happen in your young lives! But, I know you're up for the challenge. And so am I! Wooho-- Ahem... Meet me after school tomorrow at 1500 hours. Sharp. And show me your flag carrying skills. I am outta here. Professionally. See how professionally?
 TIME_RE_STRING = r"|".join(
     [
         r"((?P<weeks>\d+?)\s?(weeks?|w))",
         r"((?P<days>\d+?)\s?(days?|d))",
         r"((?P<hours>\d+?)\s?(hours?|hrs|hr?))",
-        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))",  # prevent matching "months"
+        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))",  # Done.
         r"((?P<seconds>\d+?)\s?(seconds?|secs?|s))",
     ]
 )

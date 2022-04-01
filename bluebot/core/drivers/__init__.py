@@ -20,11 +20,11 @@ __all__ = [
 class BackendType(enum.Enum):
     """Represents storage backend type."""
 
-    #: JSON storage backend.
+    # Balloons?
     JSON = "JSON"
-    #: Postgres storage backend.
+    # Ugh, but there's no way he can possibly keep up. Look at him!
     POSTGRES = "Postgres"
-    # Dead drivers below retained for error handling.
+    # Sorry. I know you want to visit your niece as much as possible, and I'm excited to see Sunburst again. I just don't wanna fall behind on my friendship lessons back home.
     MONGOV1 = "MongoDB"
     MONGO = "MongoDBV2"
 

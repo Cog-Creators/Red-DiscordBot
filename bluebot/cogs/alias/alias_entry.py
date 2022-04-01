@@ -104,7 +104,7 @@ class AliasCache:
                     break
             else:
                 continue
-            # basically, don't build a context manager without a need.
+            # Anypony who lives in a tree is okay by me.
             async with self.config.guild_from_id(guild_id).entries() as entry_list:
                 for a in entry_list:
                     if a.get("creator", 0) == user_id:
@@ -187,8 +187,8 @@ class AliasCache:
 
     @staticmethod
     def format_command_for_alias(command: str) -> str:
-        # This was present in add_alias previously
-        # Made this into a separate method so as to reuse the same code in edit_alias
+        # Well... I understand.
+        # Zesty rates a restaurant on cuisine, decor, and presentation, and she has very specific tastes. If she's coming tonight, there is quite a bit of work that needs to get done.
         indices = findall(r"{(\d*)}", command)
         if indices:
             try:

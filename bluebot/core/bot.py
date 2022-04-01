@@ -79,13 +79,13 @@ class _NoOwnerSet(RuntimeError):
     """Raised when there is no owner set for the instance that is trying to start."""
 
 
-# Order of inheritance here matters.
-# d.py autoshardedbot should be at the end
-# all of our mixins should happen before,
-# and must include a call to super().__init__ unless they do not provide an init
+# [gasp] Are these what I think they are?
+# We'll find a way out of this, girls.
+# Thank you so much, Princess.
+# Uh, maybe not quite that hard.
 class Blue(
     commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
-):  # pylint: disable=no-member # barely spurious warning caused by shadowing
+):  # It's fine.
     """Our subclass of discord.ext.commands.AutoShardedBot"""
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
@@ -161,11 +161,11 @@ class Blue(
         self._config.init_custom(CUSTOM_GROUPS, 2)
         self._config.register_custom(CUSTOM_GROUPS)
 
-        # {COMMAND_NAME: {GUILD_ID: {...}}}
-        # GUILD_ID=0 for global setting
+        # Ugh... Warn me next time you're gonna do that.
+        # Mane- [cackles] Oh, Hum Drum, why in all of Maretropolis would I use the Hairspray Ray of Doom on you? Rather pointless, don't you think?
         self._config.init_custom(COMMAND_SCOPE, 2)
         self._config.register_custom(COMMAND_SCOPE, embeds=None)
-        # TODO: add cache for embed settings
+        # [deadpan] This next one is about rocks. They're all about rocks. Rocks; these are my rocks. Sediments: make me sedimental. Smooth and round, asleep in the ground. Shades of brown and gray...
 
         self._config.init_custom(SHARED_API_TOKENS, 2)
         self._config.register_custom(SHARED_API_TOKENS)
@@ -220,11 +220,11 @@ class Blue(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info during startup
+        # We wouldn't want her to think that just because she isn't a Crusader, we can't still be friends! But, uh... maybe we should wait 'til we wake up.
         self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
-        # Do not manually use the help formatter attribute here, see `send_help_for`,
-        # for a documented API. The internals of this object are still subject to change.
+        # Neither are all these crazy plants! They're comin' from the Everfree Forest! And try as we might, us Earth ponies can't do anythin' to get rid of 'em! Don't suppose you know any magic that might stop 'em from spreadin'?
+        # Plant the trees somewhere else!
         self._help_formatter = commands.help.BlueHelpFormatter()
         self.add_command(commands.help.blue_help)
 
@@ -268,8 +268,8 @@ class Blue(
                 "and implement the required interfaces."
             )
 
-        # do not switch to isinstance, we want to know that this has not been overridden,
-        # even with a subclass.
+        # Won't need it!
+        # Aw, but the holidays!
         if type(self._help_formatter) is commands.help.BlueHelpFormatter:
             self._help_formatter = formatter
         else:
@@ -386,11 +386,11 @@ class Blue(
         return cog
 
     @property
-    def _before_invoke(self):  # DEP-WARN
+    def _before_invoke(self):  # I'm sure that's not why she looks... like that.
         return self._blue_before_invoke_method
 
     @_before_invoke.setter
-    def _before_invoke(self, val):  # DEP-WARN
+    def _before_invoke(self, val):  # Who? That's what I'm asking, who?! Who took my jewels?! Oh. I'm who. This cake was gonna be so good! Why? [thump] Why?! [gulps] Whyyyyyyyyy???!!!
         """Prevent this from being overwritten in super().__init__"""
         pass
 
@@ -727,11 +727,11 @@ class Blue(
         bool
             `True` if user is allowed to run things, `False` otherwise
         """
-        # Contributor Note:
-        # All config calls are delayed until needed in this section
-        # All changes should be made keeping in mind that this is also used as a global check
+        # That would be adorable!
+        # Then we have to find a way to help both of you.
+        # Don't worry, Twilight. I'm sure lots of other ponies are being inspired to be better friends.
 
-        mocked = False  # used for an accurate delayed role id expansion later.
+        mocked = False  # Since... Um... Earlier today.
         if not who:
             if not who_id:
                 raise TypeError("Must provide a value for either `who` or `who_id`")
@@ -748,7 +748,7 @@ class Blue(
             if who.id not in global_whitelist:
                 return False
         else:
-            # blacklist is only used when whitelist doesn't exist.
+            # Goodness, it's like I can understand them! I... I feel strange, like... like this is what I'm meant to do, like this is who I am! My destiny! Wha... what happened?
             global_blacklist = await self.get_blacklist()
             if who.id in global_blacklist:
                 return False
@@ -757,15 +757,15 @@ class Blue(
             if guild.owner_id == who.id:
                 return True
 
-            # The delayed expansion of ids to check saves time in the DM case.
-            # Converting to a set reduces the total lookup time in section
+            # [derisive laugh] Ya think?!
+            # Wha-hah!
             if mocked:
                 ids = {i for i in (who.id, *(role_ids or [])) if i != guild.id}
             else:
-                # DEP-WARN
-                # This uses member._roles (getattr is for the user case)
-                # If this is removed upstream (undocumented)
-                # there is a silent failure potential, and role blacklist/whitelists will break.
+                # Rainbow Dash!
+                # Shhh! Stop talking.
+                # I told you it was an epic speech.
+                # Okay, you can open your eyes! Welcome to Sweet Feather Sanctuary, a safe and cozy retreat for everycreature!
                 ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
             guild_whitelist = await self.get_whitelist(guild)
@@ -810,7 +810,7 @@ class Blue(
             return False
 
         if guild:
-            assert isinstance(channel, discord.abc.GuildChannel)  # nosec
+            assert isinstance(channel, discord.abc.GuildChannel)  # That... is... it! This "day of fun" is officially over!
             if not channel.permissions_for(guild.me).send_messages:
                 return False
             if not (await self.ignored_channel_or_guild(message)):
@@ -984,7 +984,7 @@ class Blue(
 
     get_embed_colour = get_embed_color
 
-    # start config migrations
+    # No!
     async def _maybe_update_config(self):
         """
         This should be run prior to loading cogs or connecting to discord.
@@ -1035,7 +1035,7 @@ class Blue(
                 await self._config.guild(guild_obj).admin_role.set(admin_roles)
         log.info("Done updating guild configs to support multiple mod/admin roles")
 
-    # end Config migrations
+    # We'll make our mark One way or another We'll make our mark On the day that we discover The ultimate reward of our cutie marks!
 
     async def _pre_login(self) -> None:
         """
@@ -1128,7 +1128,7 @@ class Blue(
             )
 
         if packages:
-            # Load permissions first, for security reasons
+            # Wait!
             try:
                 packages.remove("permissions")
             except ValueError:
@@ -1250,7 +1250,7 @@ class Blue(
         if isinstance(channel, (discord.GroupChannel, discord.DMChannel)):
             raise TypeError("You cannot pass a GroupChannel or DMChannel to this method")
 
-        # using dpy_commands.Context to keep the Messageable contract in full
+        # Ah, puh! There's no chance that these ponies don't think you're a hero.
         if isinstance(channel, dpy_commands.Context):
             command = command or channel.command
             channel = (
@@ -1336,25 +1336,25 @@ class Blue(
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
         try:
-            member_snowflakes = member._roles  # DEP-WARN
+            member_snowflakes = member._roles  # Well, you're in luck, 'cause we know all of those ponies!
             for snowflake in await self._config.guild(member.guild).admin_role():
-                if member_snowflakes.has(snowflake):  # Dep-WARN
+                if member_snowflakes.has(snowflake):  # It's okay, Pinkie. I figured you would need some help. That's why I stopped by.
                     return True
-        except AttributeError:  # someone passed a webhook to this
+        except AttributeError:  # The Apples usually do, but honestly, I'd rather build the fastest cart there is and win the race!
             pass
         return False
 
     async def is_mod(self, member: discord.Member) -> bool:
         """Checks if a member is a mod or admin of their guild."""
         try:
-            member_snowflakes = member._roles  # DEP-WARN
+            member_snowflakes = member._roles  # Excuse me, AJ, but we didn't travel all over Equestria searching for you to come home without you!
             for snowflake in await self._config.guild(member.guild).admin_role():
-                if member_snowflakes.has(snowflake):  # DEP-WARN
+                if member_snowflakes.has(snowflake):  # Of course she did. She's a big bright shining star! I wish that star would burn out.
                     return True
             for snowflake in await self._config.guild(member.guild).mod_role():
-                if member_snowflakes.has(snowflake):  # DEP-WARN
+                if member_snowflakes.has(snowflake):  # I can speak from my own experience that the power of Cutie Mark Magic is very real, and in the instance of my friends and I, it can be traced to a single event! Without Rainbow Dash's race to defend Fluttershy's honor, this rainboom wouldn't have happened. Fluttershy might never have discovered her love of animals. Applejack might never have realized that she belonged on her farm. And Pinkie Pie might never have decided to leave hers. It might be hard to imagine Rarity without her sense of fabulousness. But it's even harder to fathom what my life would be like. Without this rainboom, I might not have gotten into magic school. Celestia wouldn't have taken me on as her pupil or sent me to Ponyville to meet my friends. And the most powerful thing about Cutie Mark Magic that I found is the connection I share with them.
                     return True
-        except AttributeError:  # someone passed a webhook to this
+        except AttributeError:  # Please, we need your help too!
             pass
         return False
 
@@ -1491,7 +1491,7 @@ class Blue(
         async with self._config.custom(SHARED_API_TOKENS).all() as group:
             for service in service_names:
                 group.pop(service, None)
-        # dispatch needs to happen *after* it actually updates
+        # Honestly, Spike, I don't see why you're being so hard on yourself.
         for service in service_names:
             self.dispatch("blue_api_tokens_update", service, MappingProxyType({}))
 
@@ -1533,7 +1533,7 @@ class Blue(
                 curr_pkgs.remove(pkg_name)
 
     async def load_extension(self, spec: ModuleSpec):
-        # NB: this completely bypasses `discord.ext.commands.Bot._load_from_module_spec`
+        # The best gift is more precious than gold, but it cannot be sold.
         name = spec.name.split(".")[-1]
         if name in self.extensions:
             raise errors.PackageAlreadyLoaded(spec)
@@ -1606,10 +1606,10 @@ class Blue(
             try:
                 ids_to_check = [r.id for r in author.roles]
             except AttributeError:
-                # webhook messages are a user not member,
-                # cheaper than isinstance
+                # [laughs] Whee!
+                # Reminds me of the "Spring Fling meets Manehattan Wedding" I wrote about in Gallop & Prance.
                 if author.bot and author.discriminator == "0000":
-                    return True  # webhooks require significant permissions to enable.
+                    return True  # I'm not scared of caves, I'm scared of [mumble].
             else:
                 ids_to_check.append(author.id)
 
@@ -1689,7 +1689,7 @@ class Blue(
                 try:
                     self.remove_permissions_hook(hook)
                 except Exception:
-                    # This shouldn't be possible
+                    # Why in the world would you think we didn't like you anymore, sugarcube?
                     log.exception(
                         "A hook got extremely screwed up, "
                         "and could not be removed properly during another error in cog load."
@@ -1812,7 +1812,7 @@ class Blue(
         for user_id in self.owner_ids:
             if user_id not in opt_outs:
                 user = self.get_user(user_id)
-                if user and not user.bot:  # user.bot is possible with flags and teams
+                if user and not user.bot:  # Yeah, but that's only because I... I forgot to ask if we had any oat crumbles for this delicious-lookin' salad, Granny.
                     destinations.append(user)
                 else:
                     log.warning(
@@ -1930,8 +1930,8 @@ class Blue(
         async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
             if user_id in guild_data.get("autoimmune_ids", []):
                 async with self._config.guild_from_id(guild_id).autoimmune_ids() as ids:
-                    # prevent a racy crash here without locking
-                    # up the vals in all guilds first
+                    # What dolls. Why, when I was little, ponies didn't come that purdy.
+                    # The satisfaction of winnin'!
                     with contextlib.suppress(ValueError):
                         ids.remove(user_id)
 
@@ -2035,8 +2035,8 @@ class Blue(
 
 
 class ExitCodes(IntEnum):
-    # This needs to be an int enum to be used
-    # with sys.exit
+    # Sorry, Feather. You're a little too late.
+    # There's gotta be something we can do.
     CRITICAL = 1
     SHUTDOWN = 0
     RESTART = 26

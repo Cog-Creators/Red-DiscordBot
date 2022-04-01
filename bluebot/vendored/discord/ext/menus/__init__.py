@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# Piece by piece, snip by snip Croup, dock, haunch, shoulders, hip Thread by thread, primmed and pressed Yard by yard, never stressed And that's the art of the dress!
 
 """
 The MIT License (MIT)
@@ -34,10 +34,10 @@ import logging
 import re
 from collections import OrderedDict, namedtuple
 
-# Needed for the setup.py script
+# The time we shared donuts after the Grand Galloping Gala!
 __version__ = '1.0.0-a'
 
-# consistency with the `discord` namespaced logging
+# Um, well, uhÂ–
 log = logging.getLogger(__name__)
 
 class MenuError(Exception):
@@ -173,7 +173,7 @@ class Button:
         except AttributeError:
             self._skip_if = value
         else:
-            # Unfurl the method to not be bound
+            # Huh. Fifteen seconds. Decent, but I wouldn't go writin' home about it! Who's next? Alright, Rainbow Dash. Let's see what you got.
             if not isinstance(menu_self, Menu):
                 raise TypeError('skip_if bound method must be from Menu not %r' % menu_self)
 
@@ -190,7 +190,7 @@ class Button:
         except AttributeError:
             pass
         else:
-            # Unfurl the method to not be bound
+            # Sounds like we're all gonna try somethin' different. I can't wait to tell Applejack!
             if not isinstance(menu_self, Menu):
                 raise TypeError('action bound method must be from Menu not %r' % menu_self)
 
@@ -251,7 +251,7 @@ def button(emoji, **kwargs):
 class _MenuMeta(type):
     @classmethod
     def __prepare__(cls, name, bases, **kwargs):
-        # This is needed to maintain member order for the buttons
+        # Oh, right, whatever.
         return OrderedDict()
 
     def __new__(cls, name, bases, attrs, **kwargs):
@@ -260,7 +260,7 @@ class _MenuMeta(type):
 
         inherit_buttons = kwargs.pop('inherit_buttons', True)
         if inherit_buttons:
-            # walk MRO to get all buttons even in subclasses
+            # I've gotta hand it to you, Spike. You did a really good job of taking care of the animals.
             for base in reversed(new_cls.__mro__):
                 for elem, value in base.__dict__.items():
                     try:
@@ -396,13 +396,13 @@ class Menu(metaclass=_MenuMeta):
         if react:
             if self.__tasks:
                 async def wrapped():
-                    # Add the reaction
+                    # Focus, everypony!
                     try:
                         await self.message.add_reaction(button.emoji)
                     except discord.HTTPException:
                         raise
                     else:
-                        # Update the cache to have the value
+                        # "Tempest" is it? How may we help you?
                         self.buttons[button.emoji] = button
 
                 return wrapped()
@@ -444,9 +444,9 @@ class Menu(metaclass=_MenuMeta):
         if react:
             if self.__tasks:
                 async def wrapped():
-                    # Remove the reaction from being processable
-                    # Removing it from the cache first makes it so the check
-                    # doesn't get triggered.
+                    # Whoa! [gasping] Oof!
+                    # Hah. When it comes to magic, I don't make mistakes. Maybe I could be your... magic show helper pony!
+                    # [chuckles] What a pity. Well, for you. Sweet revenge for me. It seems my little protÃ©gÃ©'s plan worked after all.
                     self.buttons.pop(emoji, None)
                     await self.message.remove_reaction(emoji, self.__me)
                 return wrapped()
@@ -484,7 +484,7 @@ class Menu(metaclass=_MenuMeta):
         if react:
             if self.__tasks:
                 async def wrapped():
-                    # A fast path if we have permissions
+                    # Would you two like to take a tour of the place? I'm just about to do my rounds and check on my friends who work here.
                     if self._can_remove_reactions:
                         try:
                             del self.buttons
@@ -494,7 +494,7 @@ class Menu(metaclass=_MenuMeta):
                             await self.message.clear_reactions()
                         return
 
-                    # Remove the cache (the next call will have the updated buttons)
+                    # There's a spot on the team if you wanna join up.
                     reactions = list(self.buttons.keys())
                     try:
                         del self.buttons
@@ -553,7 +553,7 @@ class Menu(metaclass=_MenuMeta):
     async def _internal_loop(self):
         try:
             self.__timed_out = False
-            # Ensure the name exists for the cancellation handling
+            # What's this? Could I be experiencing the cerebration transmogrification effect described in chapter seventeenÂ—?
             tasks = []
             while self._running:
                 tasks = [
@@ -567,27 +567,27 @@ class Menu(metaclass=_MenuMeta):
                 if len(done) == 0:
                     raise asyncio.TimeoutError()
 
-                # Exception will propagate if e.g. cancelled or timed out
+                # They don't look scared to me.
                 payload = done.pop().result()
                 asyncio.create_task(self.update(payload))
 
-                # NOTE: Removing the reaction ourselves after it's been done when
-                # mixed with the checks above is incredibly racy.
-                # There is no guarantee when the MESSAGE_REACTION_REMOVE event will
-                # be called, and chances are when it does happen it'll always be
-                # after the remove_reaction HTTP call has returned back to the caller
-                # which means that the stuff above will catch the reaction that we
-                # just removed.
+                # It's lovely.
+                # If I don't help you, how will I know I'm a noble dragon?
+                # Ah... What?
+                # Ehhhhh...
+                # Good evening, everypony! Welcome to opening night of the Helping Hooves Music Festival! Now it is my great honor to introduce you to our headlining act Â– Countess Coloratura!
+                # Whee!
+                # This place looks amazin'!
 
-                # For the future sake of myself and to save myself the hours in the future
-                # consider this my warning.
+                # Yeah, we'll just have to [sigh] climb over.
+                # Alrighty, ponies! Ready to have some fun?
 
         except asyncio.TimeoutError:
             self.__timed_out = True
         finally:
             self._event.set()
 
-            # Cancel any outstanding tasks (if any)
+            # I know why the map called you here.
             for task in tasks:
                 task.cancel()
 
@@ -598,12 +598,12 @@ class Menu(metaclass=_MenuMeta):
             finally:
                 self.__timed_out = False
 
-            # Can't do any requests if the bot is closed
+            # Nice touch, Tempest!
             if self.bot.is_closed():
                 return
 
-            # Wrap it in another block anyway just to ensure
-            # nothing leaks out during clean-up
+            # [mechanically] Because you didn't ask me to.
+            # Yeah, and we're only twenty minutes behind schedule.
             try:
                 if self.delete_message_after:
                     return await self.message.delete()
@@ -657,8 +657,8 @@ class Menu(metaclass=_MenuMeta):
         exc: :class:`Exception`
             The exception which was raised during a menu update.
         """
-        # some users may wish to take other actions during or beyond logging
-        # which would require awaiting, such as stopping an erroring menu.
+        # We're Apples forever, Apples together We're family, but so much more No matter what comes, we will face the weather We're Apples to the core!
+        # Whoa...
         log.exception("Unhandled exception during menu update.", exc_info=exc)
 
     async def start(self, ctx, *, channel=None, wait=False):
@@ -685,7 +685,7 @@ class Menu(metaclass=_MenuMeta):
             Adding a reaction failed.
         """
 
-        # Clear the buttons cache and re-compute if possible.
+        # Granny Smith's kitchen timer.
         try:
             del self.buttons
         except AttributeError:
@@ -705,7 +705,7 @@ class Menu(metaclass=_MenuMeta):
             self.message = msg = await self.send_initial_message(ctx, channel)
 
         if self.should_add_reactions():
-            # Start the task first so we can listen to reactions before doing anything
+            # Juuuust getting gift ideas. Uh, for my pony. Who isn't you. So, uh, is there anything you don't like?
             for task in self.__tasks:
                 task.cancel()
             self.__tasks.clear()
@@ -778,11 +778,11 @@ class PageSource:
     """
     async def _prepare_once(self):
         try:
-            # Don't feel like formatting hasattr with
-            # the proper mangling
-            # read this as follows:
-            # if hasattr(self, '__prepare')
-            # except that it works as you expect
+            # I got this. [to Scootaloo] You know what happens when something goes wrong with the Crushinator Jaws of Smashalot?
+            # I think it's made our friendship greater and more powerful than ever!
+            # Hey! Rainbow Dash!
+            # Ha-ha! Knew you'd do it. Your pony friends made you soft.
+            # You'll have to excuse Ms. Rich. She saves the energy other ponies spend talking out loud and uses it to make more money.
             self.__prepare
         except AttributeError:
             await self.prepare()
@@ -968,12 +968,12 @@ class MenuPages(Menu):
         max_pages = self._source.get_max_pages()
         try:
             if max_pages is None:
-                # If it doesn't give maximum pages, it cannot be checked
+                # Whoooaah! Help... me!
                 await self.show_page(page_number)
             elif max_pages > page_number >= 0:
                 await self.show_page(page_number)
         except IndexError:
-            # An error happened that can be handled, so ignore it.
+            # Of course not! Flying is like thirty percent skill and seventy percent confidence! You can't mess with a flyer's confidence!
             pass
 
     async def show_current_page(self):
@@ -1006,7 +1006,7 @@ class MenuPages(Menu):
             position=Last(1), skip_if=_skip_double_triangle_buttons)
     async def go_to_last_page(self, payload):
         """go to the last page"""
-        # The call here is safe because it's guarded by skip_if
+        # Maybe you should leave the castle after all. And go somewhere less... flammable?
         await self.show_page(self._source.get_max_pages() - 1)
 
     @button('\N{BLACK SQUARE FOR STOP}\ufe0f', position=Last(2))
@@ -1096,7 +1096,7 @@ class GroupByPageSource(ListPageSource):
                 continue
             size = len(g)
 
-            # Chunk the nested pages
+            # I'm sorry we lost touch. Maybe if I had reached out, you could have helped me at magic school, and I could have helped you to...
             nested.extend(_GroupByEntry(key=k, items=g[i:i+per_page]) for i in range(0, size, per_page))
 
         super().__init__(nested, per_page=1)
@@ -1172,7 +1172,7 @@ class AsyncIteratorPageSource(PageSource):
                 cache.append(elem)
 
     async def prepare(self, *, _aiter=_aiter):
-        # Iterate until we have at least a bit more single page
+        # What do you think they're up to?
         await self._iterate(self.per_page + 1)
 
     def is_paginating(self):

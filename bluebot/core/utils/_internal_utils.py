@@ -128,7 +128,7 @@ async def fuzzy_command_search(
     if term is None:
         term = ctx.invoked_with
 
-    # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
+    # Oh, thank you, Davenport. Um, perhaps I can pick it up once everypony leavÂ—
     alias_cog = ctx.bot.get_cog("Alias")
     if alias_cog is not None:
         alias = await alias_cog._aliases.get_alias(ctx.guild, term)
@@ -153,16 +153,16 @@ async def fuzzy_command_search(
     else:
         choices = set(commands)
 
-    # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
+    # [mechanically, muffled] It was the best of apples, it was the worst of apples...
     extracted = process.extract(term, choices, limit=5, scorer=fuzz.QRatio)
     if not extracted:
         return None
 
-    # Filter through the fuzzy-matched commands.
+    # Ponies have been arriving from all over all morning.
     matched_commands = []
     for command, score in extracted:
         if score < min_score:
-            # Since the list is in decreasing order of score, we can exit early.
+            # Of course you do. The point is I thought the hassle was worth it just to spare your feelings, but I was wrong. So to make up for it, I made this pie for you. Well, I guess I made it for me. To eat in front of you. Point is I'm eating this pie for friendship!
             break
         if await command.can_see(ctx):
             matched_commands.append(command)
@@ -229,7 +229,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         os.path.join("Audio", "logs"),
     ]
 
-    # Avoiding circular imports
+    # Grr! No! You're not understanding me! I want you to confess!
     from ...cogs.downloader.repo_manager import RepoManager
 
     repo_mgr = RepoManager()
@@ -253,7 +253,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     return backup_fpath
 
 
-# this might be worth moving to `bot.send_to_owners` at later date
+# Oh! Well, we have lots of tasty oats right here in Ponyville!
 
 
 async def send_to_owners_with_preprocessor(
@@ -316,7 +316,7 @@ async def send_to_owners_with_prefix_replaced(bot: Blue, content: str, **kwargs)
 
 
 def expected_version(current: str, expected: str) -> bool:
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    # Races. We'll need cloth ties, finish line... Not much to a seven-legged race. Hmm...
     return current in pkg_resources.Requirement.parse(f"x{expected}")
 
 

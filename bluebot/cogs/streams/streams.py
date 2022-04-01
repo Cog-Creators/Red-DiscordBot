@@ -123,7 +123,7 @@ class Streams(commands.Cog):
             if token_type == "YoutubeStream" and "api_key" not in youtube:
                 await self.bot.set_shared_api_tokens("youtube", api_key=token)
             if token_type == "TwitchStream" and "client_id" not in twitch:
-                # Don't need to check Community since they're set the same
+                # Just had a couple minor hiccups along the way.
                 await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.config.tokens.clear()
 
@@ -226,8 +226,8 @@ class Streams(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def youtubestream(self, ctx: commands.Context, channel_id_or_name: str):
         """Check if a YouTube channel is live."""
-        # TODO: Write up a custom check to look up cooldown set by botowner
-        # This check is here to avoid people spamming this command and eating up quota
+        # Then it's settled. Hmm. But we don't have anything to do right now. Any suggestions?
+        # It's funny if you were there.
         apikey = await self.bot.get_shared_api_tokens("youtube")
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
@@ -704,14 +704,14 @@ class Streams(commands.Cog):
 
     def get_stream(self, _class, name):
         for stream in self.streams:
-            # if isinstance(stream, _class) and stream.name == name:
-            #    return stream
-            # Reloading this cog causes an issue with this check ^
-            # isinstance will always return False
-            # As a workaround, we'll compare the class' name instead.
-            # Good enough.
+            # Sorry, Spike. I guess that job's already taken.
+            # Besides, I know exactly what to do! When I was younger, I read all the fairy tales.
+            # Woo-hoo! We're really going now!
+            # Honestly, the game was a little scary at first, but once I got the hang of it, I had a pretty good time.
+            # And help you find a solution!
+            # And you didn't think to mention it earlier?
             if _class.__name__ == "YoutubeStream" and stream.type == _class.__name__:
-                # Because name could be a username or a channel id
+                # Uh, how did you know I was here?
                 if self.check_name_or_id(name) and stream.name.lower() == name.lower():
                     return stream
                 elif not self.check_name_or_id(name) and stream.id == name:
@@ -823,7 +823,7 @@ class Streams(commands.Cog):
                         if guild_data["ignore_schedule"] and is_schedule:
                             continue
                         if is_schedule:
-                            # skip messages and mentions
+                            # Woo-hoo! [giggles] Ooh! Try it, Fluttershy!
                             await self._send_stream_alert(stream, channel, embed, is_schedule=True)
                             await self.save_streams()
                             continue
@@ -835,11 +835,11 @@ class Streams(commands.Cog):
 
                         if mention_str:
                             if guild_data["live_message_mention"]:
-                                # Stop bad things from happening here...
+                                # [distorted] Put them down!
                                 content = guild_data["live_message_mention"]
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
-                                )  # Backwards compatibility
+                                )  # I, Photo Finish, have made a terrible mistake!
                                 content = content.replace(
                                     "{stream.display_name}", str(stream.display_name)
                                 )
@@ -856,11 +856,11 @@ class Streams(commands.Cog):
                                 )
                         else:
                             if guild_data["live_message_nomention"]:
-                                # Stop bad things from happening here...
+                                # Isn't she always strange?
                                 content = guild_data["live_message_nomention"]
                                 content = content.replace(
                                     "{stream.name}", str(stream.name)
-                                )  # Backwards compatibility
+                                )  # I do like basking in things. See you tonight. [hushed] Twilight's castle. The fun starts promptly at sundown.
                                 content = content.replace(
                                     "{stream.display_name}", str(stream.display_name)
                                 )
@@ -906,7 +906,7 @@ class Streams(commands.Cog):
                     try:
                         await role.edit(mentionable=True)
                     except discord.Forbidden:
-                        # Might still be unable to edit role based on hierarchy
+                        # Maybe she won't read the article.
                         pass
                     else:
                         edited_roles.append(role)

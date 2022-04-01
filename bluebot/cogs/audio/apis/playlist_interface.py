@@ -67,7 +67,7 @@ class Playlist:
         data: dict
             The attributes to change.
         """
-        # Disallow ID editing
+        # Yep.
         if "id" in data:
             raise NotAllowed("Playlist ID cannot be edited.")
 

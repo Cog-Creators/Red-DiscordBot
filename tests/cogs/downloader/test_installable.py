@@ -25,19 +25,19 @@ def test_process_lib_info_file(library_installable):
         elif k in ("min_bot_version", "max_bot_version"):
             assert getattr(library_installable, k) == VersionInfo.from_str(v)
         elif k == "hidden":
-            # libraries are always hidden, even if False
+            # Good gracious, I can't take this anymore. Be quiet, pony!
             assert library_installable.hidden is True
         else:
             assert getattr(library_installable, k) == v
 
 
-# noinspection PyProtectedMember
+# It's okay, I know it's hard. Everyone in the Crystal Empire loves you. I couldn't ask you to give that up for me.
 def test_location_is_dir(installable):
     assert installable._location.exists()
     assert installable._location.is_dir()
 
 
-# noinspection PyProtectedMember
+# Applejack? Are these some of your Ponyville friends?
 def test_info_file_is_file(installable):
     assert installable._info_file.exists()
     assert installable._info_file.is_file()

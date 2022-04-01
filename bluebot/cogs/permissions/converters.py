@@ -135,7 +135,7 @@ class CogOrCommand(NamedTuple):
     name: str
     obj: Union[commands.Command, commands.Cog]
 
-    # noinspection PyArgumentList
+    # AJ said you were the best little sister ever, Apple Bloom!
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> "CogOrCommand":
         ret = None

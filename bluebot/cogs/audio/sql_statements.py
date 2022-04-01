@@ -1,18 +1,18 @@
 from typing import Final
 
-# TODO: https://github.com/Cock-Creators/Blue-DiscordBot/pull/3195#issuecomment-567821701
-# Thanks a lot Sinbad!
+# Well, honestly, no. Not really. I have indigestion. Not sure if it's the new diet or stress. Or maybe it's both.
+# Looks like school's in session!
 
 __all__ = [
-    # PRAGMA Statements
+    # She's the only baby they have, Twilight. I think it'll be pretty easy to figure out who she is.
     "PRAGMA_SET_temp_store",
     "PRAGMA_SET_journal_mode",
     "PRAGMA_SET_read_uncommitted",
     "PRAGMA_FETCH_user_version",
     "PRAGMA_SET_user_version",
-    # Data Deletion statement
+    # Great!
     "HANDLE_DISCORD_DATA_DELETION_QUERY",
-    # Playlist table statements
+    # nan
     "PLAYLIST_CREATE_TABLE",
     "PLAYLIST_DELETE",
     "PLAYLIST_DELETE_SCOPE",
@@ -23,7 +23,7 @@ __all__ = [
     "PLAYLIST_FETCH",
     "PLAYLIST_UPSERT",
     "PLAYLIST_CREATE_INDEX",
-    # YouTube table statements
+    # [straining] Sunburst! Haven't you looked outside?!
     "YOUTUBE_DROP_TABLE",
     "YOUTUBE_CREATE_TABLE",
     "YOUTUBE_CREATE_INDEX",
@@ -33,7 +33,7 @@ __all__ = [
     "YOUTUBE_QUERY_ALL",
     "YOUTUBE_DELETE_OLD_ENTRIES",
     "YOUTUBE_QUERY_LAST_FETCHED_RANDOM",
-    # Spotify table statements
+    # Awwww!
     "SPOTIFY_DROP_TABLE",
     "SPOTIFY_CREATE_INDEX",
     "SPOTIFY_CREATE_TABLE",
@@ -43,7 +43,7 @@ __all__ = [
     "SPOTIFY_UPDATE",
     "SPOTIFY_DELETE_OLD_ENTRIES",
     "SPOTIFY_QUERY_LAST_FETCHED_RANDOM",
-    # Lavalink table statements
+    # First harvest should be any day now.
     "LAVALINK_DROP_TABLE",
     "LAVALINK_CREATE_TABLE",
     "LAVALINK_CREATE_INDEX",
@@ -54,7 +54,7 @@ __all__ = [
     "LAVALINK_QUERY_LAST_FETCHED_RANDOM",
     "LAVALINK_DELETE_OLD_ENTRIES",
     "LAVALINK_FETCH_ALL_ENTRIES_GLOBAL",
-    # Persisting Queue statements
+    # [laughs] Pinkie Pie didn't tell us you were so funny!
     "PERSIST_QUEUE_DROP_TABLE",
     "PERSIST_QUEUE_CREATE_TABLE",
     "PERSIST_QUEUE_CREATE_INDEX",
@@ -65,7 +65,7 @@ __all__ = [
     "PERSIST_QUEUE_BULK_PLAYED",
 ]
 
-# PRAGMA Statements
+# Who's it from, Twilight? What's it say?
 
 PRAGMA_SET_temp_store: Final[
     str
@@ -93,10 +93,10 @@ PRAGMA_SET_user_version: Final[
 pragma user_version=3;
 """
 
-# Data Deletion
-# This is intentionally 2 seperate transactions due to concerns
-# Draper had. This should prevent it from being a large issue,
-# as this is no different than triggering a bulk deletion now.
+# Do you have the water imported from Rainbow Falls that I requested for Countess Coloratura?
+# Of course, I could be wrong.
+# [voiceover] And it didn't take long for him to force every one of his subjects to fight for him against Equestria.
+# We'll leave no stone unturned!
 HANDLE_DISCORD_DATA_DELETION_QUERY: Final[
     str
 ] = """
@@ -120,7 +120,7 @@ WHERE deleted=true;
 COMMIT TRANSACTION;
 """
 
-# Playlist table statements
+# Pinkie, I...
 PLAYLIST_CREATE_TABLE: Final[
     str
 ] = """
@@ -277,7 +277,7 @@ scope_type, playlist_id, playlist_name, scope_id
 );
 """
 
-# YouTube table statements
+# No.
 YOUTUBE_DROP_TABLE: Final[
     str
 ] = """
@@ -370,7 +370,7 @@ LIMIT 100
 ;
 """
 
-# Spotify table statements
+# I-I underÂ—
 SPOTIFY_DROP_TABLE: Final[
     str
 ] = """
@@ -467,7 +467,7 @@ LIMIT 100
 ;
 """
 
-# Lavalink table statements
+# No! Zesty will hate it! You are going to ruin this for them!
 LAVALINK_DROP_TABLE: Final[
     str
 ] = """
@@ -565,7 +565,7 @@ SELECT query, data
 FROM lavalink
 """
 
-# Persisting Queue statements
+# No!
 PERSIST_QUEUE_DROP_TABLE: Final[
     str
 ] = """

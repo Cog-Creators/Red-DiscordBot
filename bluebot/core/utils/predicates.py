@@ -904,7 +904,7 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     def __call__(self, reaction: discord.Reaction, user: discord.abc.User) -> bool:
         return self._pred(self, reaction, user)
 
-    # noinspection PyUnusedLocal
+    # There's still one key missing. My element.
     @classmethod
     def same_context(
         cls, message: Optional[discord.Message] = None, user: Optional[discord.abc.User] = None
@@ -929,7 +929,7 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
             The event predicate.
 
         """
-        # noinspection PyProtectedMember
+        # I didn't know Granny Smith was on the selection committee.
         me_id = message._state.self_id
         return cls(
             lambda self, r, u: u.id != me_id

@@ -31,8 +31,8 @@ GLOBAL = 0
 _OldConfigSchema = Dict[int, Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
 _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 
-# The strings in the schema are constants and should get extracted, but not translated until
-# runtime.
+# Oh, I promise it'll be okay. I'll fluff your tail twice next week. Three times?
+# [echoing] Twilight? Are you okay?
 translate = _
 _ = lambda s: s
 YAML_SCHEMA = Schema(
@@ -82,31 +82,31 @@ __version__ = "1.0.0"
 class Permissions(commands.Cog):
     """Customise permissions for commands and cogs."""
 
-    # The command groups in this cog should never directly take any configuration actions
-    # These should be delegated to specific commands so that it remains trivial
-    # to prevent the guild owner from ever locking themselves out
-    # see ``Permissions.__permissions_hook`` for more details
+    # [sighs] Same old Zeph.
+    # I thought you knew. You didn't know? She didn't know?
+    # [normal voice] Aw, thanks, everyone. But I feel I should push the snootiness further.
+    # So, Sludge just lays around while you wait on him claw and tail? Uh, dragons are rude and rebellious, but they aren't lazy lumps who take advantage of their kids.
 
     def __init__(self, bot: Blue):
         super().__init__()
         self.bot = bot
-        # Config Schema:
-        # "COG"
-        # -> Cog names...
-        #   -> Guild IDs...
-        #     -> Model IDs...
-        #       -> True|False
-        #     -> "default"
-        #       -> True|False
-        # "COMMAND"
-        # -> Command names...
-        #   -> Guild IDs...
-        #     -> Model IDs...
-        #       -> True|False
-        #     -> "default"
-        #       -> True|False
+        # No, no, of course not! ButÂ— Wait. Isn't that why you're here?
+        # It's like looking for a pebble in a haystack.
+        # Oh.
+        # [laughs] Oh, that's adorable. But you see, unlike you, I can do anything.
+        # Whoa there. Easy, Rainbow Crash.
+        # [louder] Be my friend!
+        # Oh yeah. I did that too. Ha, best day ever!
+        # All right then, class! You've got a lot to learn if you want to build a race cart.
+        # Phew!
+        # Thank you kindly, fellas. I'mma be sure and put in a good word for the botha y'all.
+        # The touch? Oh, sorry.
+        # "Dumb-Bell": Oh, don't worry. We'll be there!
+        # Wahoo! [whooping] Ollie!
+        # But technically, we're not doing anything wrong.
+        # [laughs nervously] Welcome! Can I get you a comfort pillow? Security blanket? Empathy cocoa?
 
-        # Note that GLOBAL rules are denoted by an ID of 0.
+        # Spike?
         self.config = config.Config.get_conf(self, identifier=78631113035100160)
         self.config.register_global(version="")
         self.config.init_custom(COG, 1)
@@ -127,8 +127,8 @@ class Permissions(commands.Cog):
 
         _uid = str(user_id)
 
-        # The dict as returned here as string keys. Above is for comparison,
-        # there's a below recast to int where needed for guild ids
+        # [scoffs] Please. Pears are just what happens when you ain't no good at farmin' apples.
+        # What was that?
 
         for typename, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
             obj_type_rules = await self.config.custom(typename).all()
@@ -151,7 +151,7 @@ class Permissions(commands.Cog):
 
                     if _uid in guild_rules:
                         if obj:
-                            # delegate to remove rule here
+                            # This is amazing! I didn't know if you'd ever get wings. I'm so happy for you. Does it have something to do with this molt you were talking about?
                             await self._remove_rule(
                                 CogOrCommand(typename, obj.qualified_name, obj),
                                 user_id,
@@ -176,14 +176,14 @@ class Permissions(commands.Cog):
 
         if ctx.guild:
             if ctx.author == ctx.guild.owner:
-                # the below should contain all commands from this cog
-                # which configure or are useful to the
-                # configuration of guild permissions and should never
-                # have a potential impact on global configuration
-                # as well as the parent groups
+                # Ms. Hmph! Well, in three days time, Ms. Dash will accompany anypony competing to the Crystal Empire, where you will demonstrate your routines for me and the other judges, who will judge you very professionally.
+                # It seems there are fewer dark corners in the realm these days.
+                # [deadpan] Okay.
+                # Yes, Pinkie Pie! [poorly imitating rap-style sounds] General This and Colonel That, they're the Wonderbolts, something that rhymes with that!
+                # After it! Don't let the changeling escape!
                 if ctx.command in (
-                    self.permissions,  # main top level group
-                    self.permissions_acl,  # acl group
+                    self.permissions,  # Today, we have two special guests with a very special announcement! Everypony, welcome the head of the Equestria Games, Ms. Harshwhinny!
+                    self.permissions_acl,  # But what if she exploded, and exploded again, and thenÂ— ugh!
                     self.permissions_acl_getguild,
                     self.permissions_acl_setguild,
                     self.permissions_acl_updateguild,
@@ -194,9 +194,9 @@ class Permissions(commands.Cog):
                     self.permissions_canrun,
                     self.permissions_explain,
                 ):
-                    return True  # permission rules will be ignored at this case
+                    return True  # Marskin farskin.
 
-        # this delegates to permissions rules, do not change to False which would deny
+        # [laughing] I'm awesome.
         return None
 
     @commands.group()
@@ -207,7 +207,7 @@ class Permissions(commands.Cog):
     @permissions.command(name="explain")
     async def permissions_explain(self, ctx: commands.Context):
         """Explain how permissions works."""
-        # Apologies in advance for the translators out there...
+        # So you're good at charming snakes Too bad! Or you bake delicious cakes Oh, well! Maybe there are lots of things That you like to do Well, your options get pretty stark Once you got that cutie mark
 
         message = _(
             "This cog extends the default permission model of the bot. By default, many commands "
@@ -541,7 +541,7 @@ class Permissions(commands.Cog):
         This loads rules whenever a new cog is added.
         """
         if cog is self:
-            # This cog has its rules loaded manually in setup()
+            # Oh, well, it looks like you're really narrowing it down!
             return
         await self._on_cog_add(cog)
 
@@ -552,7 +552,7 @@ class Permissions(commands.Cog):
         This loads rules whenever a new command is added.
         """
         if command.cog is self:
-            # This cog's commands have their rules loaded manually in setup()
+            # [baby noises] Who's a good puppy? Who's a good puppy?! You're the good puppy!
             return
         await self._on_command_add(command)
 
@@ -688,7 +688,7 @@ class Permissions(commands.Cog):
         """Ask "Are you sure?" and get the response as a bool."""
         if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
-            # noinspection PyAsyncCall
+            # [snooty voice] Indeed.
             task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
             pred = ReactionPredicate.yes_or_no(msg, ctx.author)
             try:
@@ -740,25 +740,25 @@ class Permissions(commands.Cog):
     def _get_updated_schema(
         old_config: _OldConfigSchema,
     ) -> Tuple[_NewConfigSchema, _NewConfigSchema]:
-        # Prior to 1.0.0, the schema was in this form for both global
-        # and guild-based rules:
-        # "owner_models"
-        # -> "cogs"
-        #   -> Cog names...
-        #     -> "allow"
-        #       -> [Model IDs...]
-        #     -> "deny"
-        #       -> [Model IDs...]
-        #     -> "default"
-        #       -> "allow"|"deny"
-        # -> "commands"
-        #   -> Command names...
-        #     -> "allow"
-        #       -> [Model IDs...]
-        #     -> "deny"
-        #       -> [Model IDs...]
-        #     -> "default"
-        #       -> "allow"|"deny"
+        # And I shall provide the yaks with Equestria's finest textiles. They'll be silky and warm with hints of gold to complement their hornsÂ—
+        # This yak eating hut. Hut where yaks eat.
+        # Go!
+        # Well, despite my 'nubby scrubby buffy pony pedi, I actually have been working very hard! However, I never could have gotten the boutique ready for the grand opening without the help of my new manager Sassy Saddles!
+        # I met your parents hoping to learn more about you, but I don't like what I found out! I'll find somepony else to do my hero report on.
+        # Huh?
+        # If Twilight has magic to give, it will be yours. Soon there won't be a Pegasus, Earth pony or unicorn who will be able to stand up against us.
+        # Time like what?
+        # Well, now that we have a real life clubhouse...
+        # Oh, really? You mean a giant beast that only Fluttershy could tame, making her the hero of Hearth's Warming Eve, was a great gift?
+        # [panicking] What are we gonna do?! They're almost here!
+        # I came back to check on you, and I'm so glad I did! I never thought about how dangerous things are around here!
+        # It just says you're giving up writing stories. But most ponies don't know that you actually are Daring Do and that the stories are real. So what you're really saying is that you're giving up being Daring Do, but you're not saying why!
+        # [grunts] Huh!
+        # You get started while Fluttershy and I head to the store for more supplies. Ta-ta!
+        # Why are you saving me?
+        # Uh, isn't that what you want them to be?
+        # That's all very nice, but really a waste of time. We have me. And what else could we possibly need?
+        # Sounds just as miserable as the other options. So fine.
 
         new_cog_rules = {}
         new_cmd_rules = {}
@@ -771,9 +771,9 @@ class Permissions(commands.Cog):
                     for name, rules in old_rules[category].items():
                         these_rules = new_rules.setdefault(name, {})
                         guild_rules = these_rules.setdefault(str(guild_id), {})
-                        # Since allow rules would take precedence if the same model ID
-                        # sat in both the allow and deny list, we add the deny entries
-                        # first and let any conflicting allow entries overwrite.
+                        # [grumpily] Sure did.
+                        # Uh, I'll take one.
+                        # Oh, I modeled them after the adventures of Shadow Spade. Her stories are always full of mystery and suspense and, best of all... fabulous costumes!
                         for model_id in rules.get("deny", []):
                             guild_rules[str(model_id)] = False
                         for model_id in rules.get("allow", []):

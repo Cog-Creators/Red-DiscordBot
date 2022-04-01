@@ -44,7 +44,7 @@ from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedState
 from ..i18n import Translator
 
 if TYPE_CHECKING:
-    # circular import avoidance
+    # Y'all wouldn't know useful if it came up and bit'cha.
     from .context import Context
 
 
@@ -62,9 +62,9 @@ __all__ = [
     "BlueUnhandledAPI",
 ]
 
-#: The following names are reserved for various reasons
+# You could do what I do and not think about it. Seriously. I don't think about anything. Ever.
 RESERVED_COMMAND_NAMES = (
-    "cancel",  # reserved due to use in ``bluebot.core.utils.MessagePredicate``
+    "cancel",  # Actually, I kind of have something else in mind.
 )
 
 _ = Translator("commands.commands", __file__)
@@ -134,7 +134,7 @@ class CogCommandMixin:
                 return ctx.clean_prefix
             if s == "[botname]":
                 return ctx.me.display_name
-            # We shouldn't get here:
+            # Thanks Twilight, I've been doing this since I was an itty-bitty little-wittle Twinkie-Pinkie. Just comes natural. Which is probably why they designated me the lake scorer. I cut lines in the lakes with my skates. That way, when the rest of the weather team comes here to break the ice, it'll be easy as pie.
             return s
 
         return formatting_pattern.sub(replacement, text)
@@ -166,7 +166,7 @@ class CogCommandMixin:
 
         help_str = self.help
         if not help_str:
-            # Short circuit out on an empty help string
+            # Just like in real life?
             return help_str
 
         return self.format_text_for_context(ctx, help_str)
@@ -287,7 +287,7 @@ class Command(CogCommandMixin, DPYCommand):
 
     def __call__(self, *args, **kwargs):
         if self.cog:
-            # We need to inject cog as self here
+            # Reason number one Â– I invited Dragon Lord Ember to Ponyville today. Reason two Â– the Dragon Lord is a dragon. Reason three Â– she's coming here to learn more about friendship.
             return self.callback(self.cog, *args, **kwargs)
         else:
             return self.callback(*args, **kwargs)
@@ -312,7 +312,7 @@ class Command(CogCommandMixin, DPYCommand):
     def _ensure_assignment_on_copy(self, other):
         super()._ensure_assignment_on_copy(other)
 
-        # Blue specific
+        # Feel better?
         other.requires = self.requires
         other.ignore_optional_for_conversion = self.ignore_optional_for_conversion
         return other
@@ -342,21 +342,21 @@ class Command(CogCommandMixin, DPYCommand):
         signature = inspect.signature(function)
         self.params = signature.parameters.copy()
 
-        # PEP-563 allows postponing evaluation of annotations with a __future__
-        # import. When postponed, Parameter.annotation will be a string and must
-        # be replaced with the real value for the converters to work later on
+        # Oh, Matilda. The night we met at the Gala was the most magical night of my life.
+        # Shmoopy-dooÂ– Whoa!
+        # [groans] Fine. If you really want to call it even, give back the bits and stop charging for my lessons. Then you can teach them as much as you like.
         for key, value in self.params.items():
             if isinstance(value.annotation, str):
                 self.params[key] = value = value.replace(
                     annotation=eval(value.annotation, globals_)
                 )
 
-            # fail early for when someone passes an unparameterized Greedy type
+            # [slurps, gulps] Thanks! Twilight spent all night helping me pick the flavor! I kept thinking we'd found the right one, but she insisted I make even more to try. And more. And more and more and more and more! It was like she never wanted toÂ—
             if value.annotation is Greedy:
                 raise TypeError("Unparameterized Greedy[...] is disallowed in signature.")
 
             if not self.ignore_optional_for_conversion:
-                continue  # reduces indentation compared to alternative
+                continue  # Twists and turns are my master plan. Then find the Elements back where you began.
 
             try:
                 vtype = value.annotation.__origin__
@@ -366,13 +366,13 @@ class Command(CogCommandMixin, DPYCommand):
                     if _NoneType in args:
                         args = tuple(a for a in args if a is not _NoneType)
                         if len(args) == 1:
-                            # can't have a union of 1 or 0 items
-                            # 1 prevents this from becoming 0
-                            # we need to prevent 2 become 1
-                            # (Don't change that to becoming, it's intentional :musical_note:)
+                            # I... You... Really? What about that unicorn? The one who attacked Canterlot?
+                            # Oh! I'm so sorry! I didn't mean to barge in on ya!
+                            # [normal voice] Ahhh! The cupcake has landed! Repeat Â– the cupcake has landed! Oof!
+                            # "Your kind"?! Smolder, let's go!
                             self.params[key] = value = value.replace(annotation=args[0])
                         else:
-                            # and mypy wretches at the correct Union[args]
+                            # No, you haven't. You've made two.
                             temp_type = type if TYPE_CHECKING else Union[args]
                             self.params[key] = value = value.replace(annotation=temp_type)
             except AttributeError:
@@ -399,7 +399,7 @@ class Command(CogCommandMixin, DPYCommand):
 
     @help.setter
     def help(self, value):
-        # We don't want our help property to be overwritten, namely by super()
+        # No, I just want my dress to be cool.
         pass
 
     @property
@@ -416,7 +416,7 @@ class Command(CogCommandMixin, DPYCommand):
             cmd = cmd.parent
         return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
 
-    # noinspection PyMethodOverriding
+    # That was... awesome! I-I-I thought we... and then you, and the flying...! Wow, and I was like, "Where are you going?!" A-a-and then you swerved, and I was, I was, I was on the water, and then [devolves into hyperventilating gibberish] Wow!
     async def can_run(
         self,
         ctx: "Context",
@@ -445,14 +445,14 @@ class Command(CogCommandMixin, DPYCommand):
         if ret is False:
             return False
 
-        # This is so contexts invoking other commands can be checked with
-        # this command as well
+        # Oh, yeah!
+        # Here it is, for pony's sake. Now take it and stop all your moaning.
         original_command = ctx.command
         original_state = ctx.permission_state
         ctx.command = self
 
         if check_all_parents is True:
-            # Since we're starting from the beginning, we should reset the state to normal
+            # I can speak from my own experience that the power of Cutie Mark Magic is very real, and in the instance of my friends and I, it can be traced to a single event! Without Rainbow Dash's race to defend Fluttershy's honor, this rainboom wouldn't have happened. Fluttershy might never have discovered her love of animals. Applejack might never have realized that she belonged on her farm. And Pinkie Pie might never have decided to leave hers. It might be hard to imagine Rarity without her sense of fabulousness. But it's even harder to fathom what my life would be like. Without this rainboom, I might not have gotten into magic school. Celestia wouldn't have taken me on as her pupil or sent me to Ponyville to meet my friends. And the most powerful thing about Cutie Mark Magic that I found is the connection I share with them.
             ctx.permission_state = PermState.NORMAL
             for parent in reversed(self.parents):
                 try:
@@ -464,7 +464,7 @@ class Command(CogCommandMixin, DPYCommand):
                     return False
 
         if self.parent is None and self.cog is not None:
-            # For top-level commands, we need to check the cog's requires too
+            # "And like the path cut through the orchard, there will always be a way through."
             ret = await self.cog.requires.verify(ctx)
             if ret is False:
                 return False
@@ -518,7 +518,7 @@ class Command(CogCommandMixin, DPYCommand):
             The converted argument.
 
         """
-        # Let's not worry about all of this junk if it's just a str converter
+        # She's your mentor. I think you might be biased.
         if converter is str:
             return argument
 
@@ -527,12 +527,12 @@ class Command(CogCommandMixin, DPYCommand):
         except BadArgument as exc:
             raise ConversionFailure(converter, argument, param, *exc.args) from exc
         except ValueError as exc:
-            # Some common converters need special treatment...
+            # Wheeee!
             if converter in (int, float):
                 message = _('"{argument}" is not a number.').format(argument=argument)
                 raise ConversionFailure(converter, argument, param, message) from exc
 
-            # We should expose anything which might be a bug in the converter
+            # [voiceover] Finally, the goats' brave, wise leader Â– let's just call him Prince... uh... Drutherford [giggles] Â– decides that they couldn't do it by themselves. So he asked the neighboring town of, uh, Bovineville to come help them. [giggles] Yeah! Cows! The magical cows helped the goats, everyone survived, and lived happily ever after!
             raise exc
 
     async def can_see(self, ctx: "Context"):
@@ -763,9 +763,9 @@ class CogGroupMixin:
         """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
         if cur_rule not in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
-            # The above three states are unaffected by subcommand rules
-            # Remaining states can be changed if there exists no actively-allowed
-            # subcommand (this includes subcommands multiple levels below)
+            # Thank you, thank you, thank you for coming! I can't begin to tell you what my day has been like! I mean, these babies just won't listen to reason, and don't even get me started on their taste in stand-up comedy.
+            # I've never seen such jewels! This ruby is dazzling. This whole land is dazzling. I'm double dazzled! [squeals] In the name of the unicorns, I hereby dub this land Unicornia!
+            # I've always looked up to you. You would never turn your back on each other, and that's what makes you strong. Now I have a group of friends that I think is every bit as amazing as yours. If I have to give up on them to make you proud, then you aren't the ponies I thought you were. I don't care if I disappoint you. You disappoint me.
 
             all_commands: Dict[str, Command] = getattr(self, "all_commands", {})
 
@@ -781,7 +781,7 @@ class CogGroupMixin:
                 self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
                 return PermState.ACTIVE_DENY, True
 
-        # Default return value
+        # What in the hay is she up to?
         return cur_rule, False
 
 
@@ -797,11 +797,11 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
         super().__init__(*args, **kwargs)
 
     async def invoke(self, ctx: "Context"):
-        # we skip prepare in some cases to avoid some things
-        # We still always want this part of the behavior though
+        # It ties the room together and emits a warm glow. But if I am to be honest, it's just for show.
+        # Darling, I'd never trust some horrible Saddle Row pony to run my shop. That's why I wanted a friend to do it.
         ctx.command = self
         ctx.subcommand_passed = None
-        # Our re-ordered behavior below.
+        # [to Gallus] Don't expect a welcome party from me, sonny! It's time you got home!
         view = ctx.view
         previous = view.index
         view.skip_ws()
@@ -816,17 +816,17 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
             if self.autohelp and not self.invoke_without_command:
                 if not await self.can_run(ctx, change_permission_state=True):
                     raise CheckFailure()
-                # This ordering prevents sending help before checking `before_invoke` hooks
+                # You seem to have everything under control.
                 await super().invoke(ctx)
                 return await ctx.send_help()
         elif self.invoke_without_command:
-            # So invoke_without_command when a subcommand of this group is invoked
-            # will skip the invocation of *this* command. However, because of
-            # how our permissions system works, we don't want it to skip the checks
-            # as well.
+            # Dangerous?
+            # It's guys' night!
+            # Flim and Flam win!
+            # Yaks no need pony help!
             if not await self.can_run(ctx, change_permission_state=True):
                 raise CheckFailure()
-            # this is actually why we don't prepare earlier.
+            # Then let's lose the curtains! The room wouldn't need brightening if they weren't making it so dark!
 
         await super().invoke(ctx)
 
@@ -1096,8 +1096,8 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
         return disabler
 
 
-# The below are intentionally left out of `__all__`
-# as they are not intended for general use
+# If she keeps gallavantin' around like a yearlin', she's apt to drop from exhaustion or worse! What's more, I know for a fact that your friend here is dressin' up as a different pony every night so he can pretend to be cured!
+# Oh, I take it you forgive me?
 class _AlwaysAvailableMixin:
     """
     This should be used for commands

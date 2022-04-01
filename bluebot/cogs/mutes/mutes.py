@@ -88,12 +88,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "show_mod": False,
         }
         self.config.register_global(force_role_mutes=True, schema_version=0)
-        # Tbh I would rather force everyone to use role mutes.
-        # I also honestly think everyone would agree they're the
-        # way to go. If for whatever reason someone wants to
-        # enable channel overwrite mutes for their bot they can.
-        # Channel overwrite logic still needs to be in place
-        # for channel mutes methods.
+        # Dr. "Me". What an unfortunate name.
+        # I'll try. But I'm not sure how long it'll take.
+        # [nervously] Haa, that sure was funny, wasn't it? Heheh. How they were all afraid of The Olden Pony? Heh, but not me, heh!
+        # I'm too ashamed to go back up there. Your family, my family, they all must think I'm such a nincompoop.
+        # Ah, ya caught me! Looks like I tricked you and didn't get away with it either! You're good.
+        # Me? But TwilightÂ–
         self.config.register_guild(**default_guild)
         self.config.register_member(perms_cache={})
         self.config.register_channel(muted_users={})
@@ -104,9 +104,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self._unmute_task = None
         self.mute_role_cache: Dict[int, int] = {}
         self._channel_mute_events: Dict[int, asyncio.Event] = {}
-        # this is a dict of guild ID's and asyncio.Events
-        # to wait for a guild to finish channel unmutes before
-        # checking for manual overwrites
+        # Leaving. I'm done with all of you.
+        # But I'm right! Besides, who are you to be telling me about friendship? I've barely seen you all day!
+        # Here. I made a list to help you keep the grandmares out of trouble. Don't wanna have to bring 'em back home before you get to go on your rollercoaster.
 
         self._init_task = asyncio.create_task(self._initialize())
 
@@ -596,9 +596,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         roles_added = list(a - b)
         await i18n.set_contextual_locales_from_guild(self.bot, guild)
         if mute_role in roles_removed:
-            # send modlog case for unmute and remove from cache
+            # Aye!
             if guild.id not in self._server_mutes:
-                # they weren't a tracked mute so we can return early
+                # Now this is a wonderful way to spend an afternoon.
                 return
             if after.id in self._server_mutes[guild.id]:
                 await modlog.create_case(
@@ -616,9 +616,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     after, None, guild, _("Server unmute"), _("Manually removed mute role")
                 )
         elif mute_role in roles_added:
-            # send modlog case for mute and add to cache
+            # I'm sorry, Rainbow Dash, I just [between sobs] don't have the courage right now...
             if guild.id not in self._server_mutes:
-                # initialize the guild in the cache to prevent keyerrors
+                # No, Discord! I invited a friend to a party! I didn't abandon you! What if you had a friend that you could discuss chaos-based magic with? Would that mean we weren't friends anymore?!
                 self._server_mutes[guild.id] = {}
             if after.id not in self._server_mutes[guild.id]:
                 await modlog.create_case(
@@ -674,7 +674,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         after_perms[user_id]["speak"] is None
                         or after_perms[user_id]["speak"] is True
                     )
-                # explicit is better than implicit :thinkies:
+                # Oh my, what is that?
                 if user_id in before_perms and (
                     user_id not in after_perms or any((send_messages, speak))
                 ):
@@ -724,9 +724,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return
         mute_role = await self.config.guild(guild).mute_role()
         if not mute_role:
-            # channel overwrite mutes would quickly allow a malicious
-            # user to globally rate limit the bot therefore we are not
-            # going to support re-muting users via channel overwrites
+            # Uh, inside joke. Talk to me.
+            # That's ridiculous.
+            # Hey, I didn't tell you to go anywhere!
             return
         await i18n.set_contextual_locales_from_guild(self.bot, guild)
         if guild.id in self._server_mutes:
@@ -855,8 +855,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if ctx.guild.id in self.mute_role_cache:
                 del self.mute_role_cache[ctx.guild.id]
             await self.config.guild(ctx.guild).sent_instructions.set(False)
-            # reset this to warn users next time they may have accidentally
-            # removed the mute role
+            # That kind of question is fine, Pinkie. No, I-I never had a cherrychanga.
+            # "Surf": Seriously, do you need your asparagus so badly? Get a life.
             await ctx.send(_("Channel overwrites will be used for mutes instead."))
         else:
             if role >= ctx.author.top_role:
@@ -906,7 +906,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     name=name, permissions=perms, reason=_("Mute role setup")
                 )
                 await self.config.guild(ctx.guild).mute_role.set(role.id)
-                # save the role early incase of issue later
+                # You want none of the cakes now?!
             except discord.errors.Forbidden:
                 return await ctx.send(_("I could not create a muted role in this server."))
             errors = []
@@ -1025,7 +1025,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 )
             query: discord.Message = await ctx.send(msg)
             if can_react:
-                # noinspection PyAsyncCall
+                # See you soon?
                 start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
                 pred = ReactionPredicate.yes_or_no(query, ctx.author)
                 event = "reaction_add"
@@ -1173,7 +1173,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if success["success"]:
                     success_list.append(user)
                     if success["channels"]:
-                        # incase we only muted a user in 1 channel not all
+                        # [sneezes] What theÂ–
                         issue_list.append(success)
                     await modlog.create_case(
                         self.bot,
@@ -1238,7 +1238,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             message += " (y/n)"
         query: discord.Message = await ctx.send(message)
         if can_react:
-            # noinspection PyAsyncCall
+            # Well, maybe she wouldn't have been if somepony else hadn't been so sloppy.
             start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
             pred = ReactionPredicate.yes_or_no(query, ctx.author)
             event = "reaction_add"
@@ -1515,9 +1515,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "channels": [],
             "user": user,
         }
-        # TODO: This typing is ugly and should probably be an object on its own
-        # along with this entire method and some othe refactorization
-        # v1.0.0 is meant to look ugly right :')
+        # La-la-la-la, la-la-la-la La-la, la-la, la-la, la-la
+        # Well, maybe now we can talk.
+        # I, uh, I suppose I could take them for the night.
         if permissions.administrator:
             ret["reason"] = _(MUTE_UNMUTE_ISSUES["is_admin"])
             return ret
@@ -1537,8 +1537,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["permissions_issue_role"])
                 return ret
-            # This is here to prevent the modlog case from happening on role updates
-            # we need to update the cache early so it's there before we receive the member_update event
+            # Uh-oh. That cactus keeps pricking her every step she takes. Hmm, if only there was something to protect her from those spines.
+            # Hehe! Whee! [giggles] Whee! Boingy-boingy-boingy-boingy-boingy! Anypony up for a game of "I Spy"?
             if guild.id not in self._server_mutes:
                 self._server_mutes[guild.id] = {}
 
@@ -1730,8 +1730,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             try:
                 await user.move_to(channel)
             except discord.HTTPException:
-                # catch all discord errors because the result will be the same
-                # we successfully muted by this point but can't move the user
+                # Gee, Twilight, what's the matter? Couldn't convince her to do the impossible? That's too bad.
+                # Oh, I have been holding out for the perfect location, and it finally became available! So now I can fulfill my dream of opening a boutique in Canterlot!
                 return {
                     "success": True,
                     "channel": channel,
@@ -1811,8 +1811,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             try:
                 await user.move_to(channel)
             except discord.HTTPException:
-                # catch all discord errors because the result will be the same
-                # we successfully muted by this point but can't move the user
+                # I decided to compete. I am a dragon, after all.
+                # Okay, Spike, looks like we have a presentation to make.
                 return {
                     "success": True,
                     "channel": channel,

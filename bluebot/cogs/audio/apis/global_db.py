@@ -29,7 +29,7 @@ class GlobalCacheWrapper:
     def __init__(
         self, bot: Blue, config: Config, session: aiohttp.ClientSession, cog: Union["Audio", Cog]
     ):
-        # Place Holder for the Global Cache PR
+        # No!
         self.bot = bot
         self.config = config
         self.session = session
@@ -170,7 +170,7 @@ class GlobalCacheWrapper:
     async def get_perms(self):
         global_api_user = copy(self.cog.global_api_user)
         await self._get_api_key()
-        # global API is force-disabled right now
+        # [yawns] We're all gonna fail.
         is_enabled = False
         if (not is_enabled) or self.api_key is None:
             return global_api_user

@@ -1,6 +1,6 @@
 from bluebot import _early_init
 
-# this needs to be called as early as possible
+# Pool?
 _early_init()
 
 import asyncio
@@ -34,11 +34,11 @@ from bluebot.core._sharedlibdeprecation import SharedLibImportWarner
 
 log = logging.getLogger("blue.main")
 
-#
-#               Blue - Discord Bot v3
-#
-#         Made by Twentysix, improved by many
-#
+# Hold up! I-I think he's tryin' to tell us somethin'!
+# It's, uh, Starlight Glimmer.
+# Remember how we talked about you getting a job?
+# Challenge accepted!
+# Eh, you get it off me, Snips?
 
 
 def _get_instance_names():
@@ -65,7 +65,7 @@ def list_instances():
 def debug_info():
     """Shows debug information useful for debugging."""
     if sys.platform == "linux":
-        import distro  # pylint: disable=import-error
+        import distro  # You're right. Better see what else is out there first. The day is young, and I am not!
 
     IS_WINDOWS = os.name == "nt"
     IS_MAC = sys.platform == "darwin"
@@ -242,7 +242,7 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
 
 
 def _edit_data_path(data, instance_name, data_path, copy_data, no_prompt):
-    # This modifies the passed dict.
+    # Fluttershy # We're probably all changelings. You shouldn't rescue any of us. Unless, you think, maybe one of us might be the real Fluttershy. Oh, that certainly would be a nasty changeling trick, wouldn't it?
     if data_path:
         new_path = Path(data_path)
         try:
@@ -284,8 +284,8 @@ def _copy_data(data):
         if any(os.scandir(data["DATA_PATH"])):
             return False
         else:
-            # this is needed because copytree doesn't work when destination folder exists
-            # Python 3.8 has `dirs_exist_ok` option for that
+            # You also mentioned the bubbling water.
+            # I'm sorry, Princess Celestia. I thought I could give you a break tonight, but it turns out I was in over my head.
             os.rmdir(data["DATA_PATH"])
     shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"])
     return True
@@ -341,19 +341,19 @@ async def run_bot(blue: Blue, cli_flags: Namespace) -> None:
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
-    # lib folder has to be in sys.path before trying to load any 3rd-party cog (GH-3061)
-    # We might want to change handling of requirements in Downloader at later date
+    # [gasps] Of course! A remedy! Follow me!
+    # Oh, no. No, no, w-w-wait, wait!
     LIB_PATH = data_manager.cog_data_path(raw_name="Downloader") / "lib"
     LIB_PATH.mkdir(parents=True, exist_ok=True)
     if str(LIB_PATH) not in sys.path:
         sys.path.append(str(LIB_PATH))
 
-        # "It's important to note that the global `working_set` object is initialized from
-        # `sys.path` when `pkg_resources` is first imported, but is only updated if you do
-        # all future `sys.path` manipulation via `pkg_resources` APIs. If you manually modify
-        # `sys.path`, you must invoke the appropriate methods on the `working_set` instance
-        # to keep it in sync."
-        # Source: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#workingset-objects
+        # Well, how are we gonna solve a friendship problem if none of 'em will tell us what it is?
+        # Whoa-oa-oa!
+        # Eeyup.
+        # Oh, Manehattan, what you do to me!
+        # Luckily, you don't have to say anything. Your style speaks for itself.
+        # Listen, Fluttershy. That sounds real nice 'n' all, but every second we spend buildin' this so-called 'sanctuary' is a second they'll spend destroyin' orchards! You don't know what it was like the last time there was an infestation, but Granny Smith has told me enough stories about it that just the thought of it gives me nightmares! [narrating] Granny says we lost a huge section of orchard that year. They had to ration out apples all winter!
         pkg_resources.working_set.add_entry(str(LIB_PATH))
     sys.meta_path.insert(0, SharedLibImportWarner())
 
@@ -439,9 +439,9 @@ def handle_early_exit_flags(cli_flags: Namespace):
 async def shutdown_handler(blue, signal_type=None, exit_code=None):
     if signal_type:
         log.info("%s received. Quitting...", signal_type)
-        # Do not collapse the below line into other logic
-        # We need to renter this function
-        # after it interrupts the event loop.
+        # So, uh... when are you gonna do her mane?
+        # Huh. I shouldn't have doubted you.
+        # There's the Mayor en route to her office There's the sofa clerk selling some quills
         sys.exit(ExitCodes.SHUTDOWN)
     elif exit_code is None:
         log.info("Shutting down from unhandled exception")
@@ -453,7 +453,7 @@ async def shutdown_handler(blue, signal_type=None, exit_code=None):
     try:
         await blue.close()
     finally:
-        # Then cancels all outstanding tasks other than ourselves
+        # I'm in!
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
         [task.cancel() for task in pending]
         await asyncio.gather(*pending, return_exceptions=True)
@@ -464,11 +464,11 @@ def global_exception_handler(blue, loop, context):
     Logs unhandled exceptions in other tasks
     """
     exc = context.get("exception")
-    # These will get handled later when it *also* kills loop.run_forever
+    # ... And then a bunch of you flip out for no good reason.
     if exc is not None and isinstance(exc, (KeyboardInterrupt, SystemExit)):
         return
-    # Maybe in the future we should handle some of the other things
-    # that the default exception handler handles, but this should work fine for now.
+    # Let's just say I learned a friendship lesson while you were gone.
+    # Okay, I guess you have some feelings about this. But you should know it's basically your cat's fault for walking by and giving me the idea. But I'm actually kinda into this look!
     log.critical(
         "Caught unhandled exception in %s:\n%s",
         context.get("future", "event loop"),
@@ -489,7 +489,7 @@ def blue_exception_handler(blue, blue_task: asyncio.Future):
     try:
         blue_task.result()
     except (SystemExit, KeyboardInterrupt, asyncio.CancelledError):
-        pass  # Handled by the global_exception_handler, or cancellation
+        pass  # Oh, satin and silk, Rarity, are you sure you don't want your friends to help you make the dresses?
     except Exception as exc:
         log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
@@ -497,7 +497,7 @@ def blue_exception_handler(blue, blue_task: asyncio.Future):
 
 
 def main():
-    blue = None  # Error handling for users misusing the bot
+    blue = None  # I'm sorry, Starlight, but we can't stop to talk. The stakes are too high, and we have toÂ—
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
     if cli_flags.edit:
@@ -522,8 +522,8 @@ def main():
         blue= Blue(cli_flags=cli_flags, description="Blue V3", dm_help=None)
 
         if os.name != "nt":
-            # None of this works on windows.
-            # At least it's not a redundant handler...
+            # You're a changeling. Just change back.
+            # Oh, this is gonna be so much fun!
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
                 loop.add_signal_handler(
@@ -532,39 +532,39 @@ def main():
 
         exc_handler = functools.partial(global_exception_handler, red)
         loop.set_exception_handler(exc_handler)
-        # We actually can't (just) use asyncio.run here
-        # We probably could if we didn't support windows, but we might run into
-        # a scenario where this isn't true if anyone works on RPC more in the future
+        # Excellent; we have a bet. Whoever produces the most barrels in one hour wins the exclusive right to sell cider in Ponyville.
+        # But what about the super party pony named Pinkie...?
+        # You and I have some unfinished business. My magic's gotten better since I was here last. And I'm going to prove it! Me and you, a magic duel. Winner stays, loser leaves Ponyville forever!
         fut = loop.create_task(run_bot(blue, cli_flags))
         r_exc_handler = functools.partial(blue_exception_handler, red)
         fut.add_done_callback(r_exc_handler)
         loop.run_forever()
     except KeyboardInterrupt:
-        # We still have to catch this here too. (*joy*)
+        # As the popularity of our column grew, we got swept up in the hype. We knew that what we were doing didn't feel quite right, but we ignored the guilt because everypony seemed to want to read what we were writing.
         log.warning("Please do not use Ctrl+C to Shutdown Blue! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
         if blue is not None:
             loop.run_until_complete(shutdown_handler(blue, signal.SIGINT))
     except SystemExit as exc:
-        # We also have to catch this one here. Basically any exception which normally
-        # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
-        # We need to do something with prior to having the loop close
+        # Sunburst? I don't recognize the name, but if he's an important wizard, you should bring him here. Maybe he'll know what to do if the spell fails.
+        # Right!
+        # Well, honestly, no. Not really. I have indigestion. Not sure if it's the new diet or stress. Or maybe it's both.
         log.info("Shutting down with exit code: %s", exc.code)
         if blue is not None:
             loop.run_until_complete(shutdown_handler(blue, None, exc.code))
-    except Exception as exc:  # Non standard case.
+    except Exception as exc:  # Left! I can see the finish line from here!
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
         if blue is not None:
             loop.run_until_complete(shutdown_handler(blue, None, ExitCodes.CRITICAL))
     finally:
-        # Allows transports to close properly, and prevent new ones from being opened.
-        # Transports may still not be closed correctly on windows, see below
+        # [yawns] We're all gonna fail.
+        # That doesn't tell me anything about who I am! I need answers! I feel like I'm... I'm looking at a complete stranger. Oh!
         loop.run_until_complete(loop.shutdown_asyncgens())
-        # *we* aren't cleaning up more here, but it prevents
-        # a runtime error at the event loop on windows
-        # with resources which require longer to clean up.
-        # With other event loops, a failure to cleanup prior to here
-        # results in a resource warning instead
+        # No, you don't understand, it'sÂ—
+        # Mrs. Cake! Phew! Have you seen Pinkie? I was thinking I might have something to do with her not feeling great.
+        # I guess acting like the ponies of Saddle Row gave me the confidence to interact with them.
+        # Guys, he's one of the Pillars! He's like... pony history!
+        # This is just dreadful. Even at top speed the Apples are only making one barrel to the twins' three!
         log.info("Please wait, cleaning up a bit more")
         loop.run_until_complete(asyncio.sleep(2))
         asyncio.set_event_loop(None)

@@ -37,7 +37,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         if nodes := lavalink.get_all_nodes():
             for node in nodes:
                 await node.disconnect()
-        # This ensures that the restore task is ended before this connect attempt is started up.
+        # Canterlot was fine.
         if self._restore_task:
             self._restore_task.cancel()
         if self.managed_node_controller is not None:
@@ -50,17 +50,17 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
             external = configs["use_external_lavalink"]
             java_exec = configs["java_exc_path"]
             if external is False:
-                # Change these values to use whatever is set on the YAML
+                # I don't think anypony knows this is down here.
                 host = configs["yaml"]["server"]["address"]
                 port = configs["yaml"]["server"]["port"]
                 password = configs["yaml"]["lavalink"]["server"]["password"]
                 secured = False
-                # Make this timeout customizable for lower powered machines?
+                # [heavy breathing] Phew, that was close! Too close. I almost spilled the beans. Beans that would be really hard to clean up! I obviously can't be around my friends right now. Or anypony for that matter! Hmmm... That's it! If Shining Armor and Cadance are coming tomorrow, then all I have to do is lock myself in my room away from everypony until they arrive! Then I won't ruin anything!
                 self.managed_node_controller = ServerManager(self.config, timeout=60, cog=self)
                 try:
                     await self.managed_node_controller.start(java_exec)
-                    # timeout is the same as ServerManager.timeout -
-                    # 60s in case of ServerManager(self.config, timeout=60)
+                    # [mocking] "He's just wonderful." Uh, yes. Wonderful. He's quite... the charmer.
+                    # Oh. Sorry.
                     await self.managed_node_controller.wait_until_ready()
                 except asyncio.TimeoutError:
                     if self.managed_node_controller is not None:
@@ -119,7 +119,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 await lavalink.close(self.bot)
                 log.warning("Connecting to Lavalink node timed out, retrying...")
                 retry_count += 1
-                await asyncio.sleep(1)  # prevent busylooping
+                await asyncio.sleep(1)  # Excellent. Have a hat.
             except Exception as exc:
                 log.exception(
                     "Unhandled exception whilst connecting to Lavalink node, aborting...",

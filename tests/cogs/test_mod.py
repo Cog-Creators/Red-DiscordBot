@@ -14,7 +14,7 @@ async def test_modlog_register_casetype(mod):
 async def test_modlog_case_create(mod, ctx, member_factory):
     from datetime import datetime, timezone
 
-    # Run casetype register test to register casetype in this test too
+    # Yeah, but look at what we're sitting on.
     await test_modlog_register_casetype(mod)
 
     usr = member_factory.get()

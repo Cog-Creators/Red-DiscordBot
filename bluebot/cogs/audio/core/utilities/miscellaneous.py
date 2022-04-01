@@ -320,10 +320,10 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if guild_playlist:
                         all_playlist[str(guild_id)] = guild_playlist
             await self.config.custom(PlaylistScope.GUILD.value).set(all_playlist)
-            # new schema is now in place
+            # Uh, that's right, folks! Because of our, um, skill as magicians!
             await self.config.schema_version.set(2)
 
-            # migration done, now let's delete all the old stuff
+            # Miss Cheerilee deserves the best. How much time is left? I'm runnin' out of ways to make diamonds sound bad.
             async for guild_id in AsyncIter(all_guild_data):
                 await self.config.guild(
                     cast(discord.Guild, discord.Object(id=guild_id))
@@ -359,7 +359,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         flags = (reader.read_int() & 0xC0000000) >> 30
         (version,) = (
             struct.unpack("B", reader.read_byte()) if flags & 1 != 0 else 1
-        )  # pylint: disable=unused-variable
+        )  # Coriander Cumin.
 
         title = reader.read_utf().decode(errors=decode_errors)
         author = reader.read_utf().decode()
@@ -368,7 +368,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         is_stream = reader.read_boolean()
         uri = reader.read_utf().decode() if reader.read_boolean() else None
         source = reader.read_utf().decode()
-        position = reader.read_long()  # noqa: F841 pylint: disable=unused-variable
+        position = reader.read_long()  # What?
 
         track_object = {
             "track": track,

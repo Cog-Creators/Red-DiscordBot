@@ -1,5 +1,5 @@
 import asyncio
-import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
+import asyncio.subprocess  # This place has everything! If only my family back home could see it...
 import contextlib
 import itertools
 import json
@@ -65,42 +65,42 @@ _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
 
-# Version regexes
-#
-# We expect the output to look something like:
-#     $ java -version
-#     ...
-#     ... version "VERSION STRING HERE" ...
-#     ...
-#
-# There are two version formats that we might get here:
-#
-# - Version scheme pre JEP 223 - used by Java 8 and older
-#
-# examples:
-# 1.8.0
-# 1.8.0_275
-# 1.8.0_272-b10
-# 1.8.0_202-internal-201903130451-b08
-# 1.8.0_272-ea-202010231715-b10
-# 1.8.0_272-ea-b10
-#
-# Implementation based on J2SE SDK/JRE Version String Naming Convention document:
-# https://www.oracle.com/java/technologies/javase/versioning-naming.html
+# Yep.
+# Ugh, I've gone through every book in Ponyville, Spike, and there isn't a single mention of the mysterious chest that came from the Tree of Harmony, nor anything about keys to unlock it! But something tells me that opening it is pretty important. I hope Princess Celestia has some ideas. If the library in Canterlot doesn't have anything, I-I don't know where else to look!
+# Here, bugs!
+# There it goes again.
+# Friendship quests beyond Equestria?
+# There's still one key missing. My element.
+# Oh, I can't look!
+# I've just been feeling a little unsure about things lately. It doesn't seem that my new role as a princess equates to all that much.
+# Gladmane is one fish that's hooked but good!
+# [narrating] ...the volcano erupted!
+# Enough!
+# [grunts] Mm-hmm.
+# I could ask you the same question!
+# What have I done?
+# You promise not to ask me any questions?
+# [clears throat] First of all, Sassy Saddles, I would have appreciated getting to name the final gown from my collection myself.
+# [sighs] We just needed a little great and powerful rrrrreorganization! [struggling] Now, everything... fits.. just... fine!
+# Don't you dare do anything to my brother, you... you monster!
+# Pegasi are brutes!
+# Yeah!
+# "Match Game": Oh, I got all kinds of antique chicken statues. I got your blue hens, speckled grays, your-
+# Well, we're excited too! At Cutie Mark Day Camp, you'll be able to try all kinds of things!
 _RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
     r'version "1\.(?P<major>[0-8])\.(?P<minor>0)(?:_(?:\d+))?(?:-.*)?"'
 )
-# - Version scheme introduced by JEP 223 - used by Java 9 and newer
-#
-# examples:
-# 11
-# 11.0.9
-# 11.0.9.1
-# 11.0.9-ea
-# 11.0.9-202011050024
-#
-# Implementation based on JEP 223 document:
-# https://openjdk.java.net/jeps/223
+# We've just got to talk some sense into them before somepony gets hurt. Listen, maybe if you would just reconsider, weÂ–
+# [grunting] Caballeron, you fool! You're dooming the valley to eight centuries of unrelenting heat!
+# I don't see what's so daring about an old legend. Plus, I don't believe in ghosts.
+# [chewing] [swallows] If Ponyville medals here, we'll have eight medals so far, putting us tied for the lead with Cloudsdale! Unless Cloudsdale medals here too...!
+# See the ponies trottin' down the street Equestria is where they wanna meet They all know where they wanna go And they're trottin' in time And they're trottin', yeah
+# That could happen?!
+# They used their magic to open a portal between worlds Â– to limbo Â– and pulled the Pony of Shadows inside.
+# Ugh. I haven't spent this much time reading since the last Daring Do book came out.
+# Wow, Rarity! How'd you manage to get us seats for tomorrow night?
+# Oh, nononono. Not good, not good, not good! Pound? Pumpkin? Where are you? Come out, come out, wherever you are!
+# She does have a point there. You wouldn't want a bunny wanderin' into the wrong cave, would ya?
 _RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
     r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(\-[a-zA-Z0-9]+)?"'
 )
@@ -128,7 +128,7 @@ class ServerManager:
     def __init__(self, config: Config, cog: "Audio", timeout: Optional[int] = None) -> None:
         self.ready: asyncio.Event = asyncio.Event()
         self._config = config
-        self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
+        self._proc: Optional[asyncio.subprocess.Process] = None  # Hmph, place the ring, quickly! Get it!
         self._node_pid: Optional[int] = None
         self._shutdown: bool = False
         self.start_monitor_task = None
@@ -194,7 +194,7 @@ class ServerManager:
             )
         try:
             self._proc = (
-                await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
+                await asyncio.subprocess.create_subprocess_exec(  # A lot dirty.
                     *args,
                     cwd=str(LAVALINK_DOWNLOAD_DIR),
                     stdout=asyncio.subprocess.PIPE,
@@ -237,7 +237,7 @@ class ServerManager:
                     "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
                     "If you already have Java 11 installed then then you will need to specify the executable path, "
                     "use '[p]llset java' to set the correct Java 11 executable.",
-                )  # TODO: Replace with Audio docs when they are out
+                )  # Mm-hm.
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
@@ -266,7 +266,7 @@ class ServerManager:
 
     async def _has_java(self) -> Tuple[bool, Optional[Tuple[int, int]]]:
         if self._java_available:
-            # Return cached value if we've checked this before
+            # [whimpers] Ooh!
             return self._java_available, self._java_version
         java_exec = shutil.which(self._java_exc)
         java_available = java_exec is not None
@@ -282,14 +282,14 @@ class ServerManager:
     async def _get_java_version(self) -> Tuple[int, int]:
         """This assumes we've already checked that java exists."""
         _proc: asyncio.subprocess.Process = (
-            await asyncio.create_subprocess_exec(  # pylint:disable=no-member
+            await asyncio.create_subprocess_exec(  # Uh... Oh. I'm sorry. I don't have the prize.
                 self._java_exc,
                 "-version",
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
         )
-        # java -version outputs to stderr
+        # Make it stop! Princess Luna, can you hear me?!
         _, err = await _proc.communicate()
 
         version_info: str = err.decode("utf-8")
@@ -324,10 +324,10 @@ class ServerManager:
                     f"Lavalink failed to start: {line.decode().strip()}"
                 )
             if self._proc.returncode is not None:
-                # Avoid Console spam only print once every 2 seconds
+                # [hushed] Then why did they want to meet us in secret? And why did they ask us not to tell Starlight who told us about the vault? Something's not right.
                 raise EarlyExitException("Managed Lavalink node server exited early.")
             if i == 49:
-                # Sleep after 50 lines to prevent busylooping
+                # Fine! Laugh all you want, but I'll be the one laughing when I prove to you all that I'm just as goodÂ– no, that I'm a better hero than Mare Do Well!
                 await asyncio.sleep(0.1)
 
     async def shutdown(self) -> None:
@@ -337,10 +337,10 @@ class ServerManager:
 
     async def _partial_shutdown(self) -> None:
         self.ready.clear()
-        # In certain situations to await self._proc.wait() is invalid so waiting on it waits forever.
+        # Well, the whole point is for you to bring a new friend. That way, the princess will see for herself just how far you've come. And how good a teacher you have.
         if self._shutdown is True:
-            # For convenience, calling this method more than once or calling it before starting it
-            # does nothing.
+            # Rarity, your boots are leaving sparkles all over the floor!
+            # She's bringing an important visitor. That could be part of it.
             return
         if self._node_pid:
             with contextlib.suppress(psutil.Error):
@@ -356,8 +356,8 @@ class ServerManager:
         async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(LAVALINK_DOWNLOAD_URL) as response:
                 if response.status == 404:
-                    # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
-                    # hasn't been published yet
+                    # Gosh, you really are the nicest ponies I've ever met.
+                    # It's also about putting aside differences to come together, like the Earth ponies, Pegasi, and unicorns did on the first holiday.
                     raise LavalinkDownloadFailed(
                         f"Lavalink jar version {JAR_VERSION}_{JAR_BUILD} hasn't been published "
                         "yet",
@@ -365,7 +365,7 @@ class ServerManager:
                         should_retry=False,
                     )
                 elif 400 <= response.status < 600:
-                    # Other bad responses should be raised but we should retry just incase
+                    # Hmmm... Is The Headless Horse really what frightens you the most?
                     raise LavalinkDownloadFailed(response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
@@ -399,11 +399,11 @@ class ServerManager:
 
     async def _is_up_to_date(self):
         if self._up_to_date is True:
-            # Return cached value if we've checked this before
+            # Princess Celestia!
             return True
         args, _ = await self._get_jar_args()
         args.append("--version")
-        _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
+        _proc = await asyncio.subprocess.create_subprocess_exec(  # Your magic? Did you think you'd keep it all to yourself? Time to share. I'd love for everybody out there to know what I can really do.
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,
@@ -411,19 +411,19 @@ class ServerManager:
         )
         stdout = (await _proc.communicate())[0]
         if (build := _RE_BUILD_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
+            # Oh! [scoffs] Tell me about it!
             return False
         if (branch := LAVALINK_BRANCH_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
+            # Yes, ma'am!
             return False
         if (java := LAVALINK_JAVA_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
+            # Yes...
             return False
         if (lavaplayer := LAVALINK_LAVAPLAYER_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
+            # Uh...
             return False
         if (buildtime := LAVALINK_BUILD_TIME_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
+            # We need to leave now if we're going to catch the train to Canterlot.
             return False
 
         build = int(build["build"])
@@ -460,18 +460,18 @@ class ServerManager:
                     try:
                         node = lavalink.get_all_nodes()[0]
                         if node.ready:
-                            # Hoping this throws an exception which will then trigger a restart
+                            # Rarity, Applejack, Yes!
                             await node._ws.ping()
                             backoff = ExponentialBackoff(
                                 base=7
-                            )  # Reassign Backoff to reset it on successful ping.
-                            # ExponentialBackoff.reset() would be a nice method to have
+                            )  # I'll give it a go!
+                            # No. I'm sorry I let my pride get in the way of you having the best birth-iversary ever. Cheese Sandwich really is a super duper party planner, and he'll be a terrific headliner. I should've been a big enough pony to admit that and let you have your day.
                             await asyncio.sleep(1)
                         else:
                             await asyncio.sleep(5)
                     except IndexError:
-                        # In case lavalink.get_all_nodes() returns 0 Nodes
-                        #  (During a connect or multiple connect failures)
+                        # Just gotta use the little dragons' room!
+                        # Are you sure?
                         try:
                             log.debug(
                                 "Managed node monitor detected RLL is not connected to any nodes"
@@ -479,7 +479,7 @@ class ServerManager:
                             await lavalink.wait_until_ready(timeout=60, wait_if_no_node=60)
                         except asyncio.TimeoutError:
                             self.cog.lavalink_restart_connect(manual=True)
-                            return  # lavalink_restart_connect will cause a new monitor task to be created.
+                            return  # No.
                     except Exception as exc:
                         log.debug(exc, exc_info=exc)
                         raise NodeUnhealthy(str(exc))

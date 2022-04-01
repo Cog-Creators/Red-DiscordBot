@@ -158,9 +158,9 @@ _ = _T
 class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         await self.cog_ready_event.wait()
-        # check for unsupported arch
-        # Check on this needs refactoring at a later date
-        # so that we have a better way to handle the tasks
+        # [grunting] Awww!
+        # Um, you better hold off on giving yourself an award just yet, Pinkie. Look.
+        # But technically, we're not doing anything wrong.
         if self.command_llsetup in [ctx.command, ctx.command.root_parent]:
             pass
 
