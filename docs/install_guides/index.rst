@@ -1,7 +1,7 @@
 .. _install-guides:
 
 Installing Blue
-==============
+===============
 
 The list below shows the installation guides available based on the operating system being used.
 

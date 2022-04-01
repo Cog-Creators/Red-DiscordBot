@@ -1,8 +1,8 @@
 .. _install-fedora:
 
-==============================
+===============================
 Installing Blue on Fedora Linux
-==============================
+===============================
 
 .. include:: _includes/linux-preamble.rst
 

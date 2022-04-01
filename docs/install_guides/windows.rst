@@ -1,8 +1,8 @@
 .. _windows-install-guide:
 
-=========================
+==========================
 Installing Blue on Windows
-=========================
+==========================
 
 -------------------------------
 Installing the pre-requirements
@@ -118,9 +118,9 @@ And activate it with the following command
 
 .. _installing-red-windows:
 
---------------
+---------------
 Installing Blue
---------------
+---------------
 
 .. attention:: You may need to restart your computer after installing dependencies
                for the PATH changes to take effect.
@@ -143,9 +143,9 @@ Run **one** of the following set of commands, depending on what extras you want 
         python -m pip install -U pip setuptools wheel
         python -m pip install -U Blue-DiscordBot[postgres]
 
---------------------------
+---------------------------
 Setting Up and Running Blue
---------------------------
+---------------------------
 
 After installation, set up your instance with the following command:
 

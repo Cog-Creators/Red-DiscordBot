@@ -1,8 +1,8 @@
 .. _install-opensuse-tumbleweed:
 
-=====================================
+======================================
 Installing Blue on openSUSE Tumbleweed
-=====================================
+======================================
 
 .. include:: _includes/linux-preamble.rst
 

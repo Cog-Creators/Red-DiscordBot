@@ -1,14 +1,14 @@
 .. Blue Core Data Statement
 
-=====================
+======================
 Blue and End User Data
-=====================
+======================
 
 Notes for everyone
 ******************
 
 What data Blue collects
-----------------------
+-----------------------
 
 Blue and the cogs included with it collect some amount of data
 about users for the bot's normal operations. 
@@ -27,7 +27,7 @@ to view statements about how extensions use your data made by the authors of
 the specific 3rd party extensions an instance of Blue has installed.
 
 How can I delete data Blue has about me?
----------------------------------------
+----------------------------------------
 
 The command ``[p]mydata forgetme`` provides a way for users to remove
 large portions of their own data from the bot. This command will not

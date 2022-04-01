@@ -1,8 +1,8 @@
 .. _install-arch:
 
-============================
+=============================
 Installing Blue on Arch Linux
-============================
+=============================
 
 .. include:: _includes/linux-preamble.rst
 

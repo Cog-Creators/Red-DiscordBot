@@ -22,9 +22,9 @@ window like this:
 
 .. _gettings-started-invite:
 
--------------------------
+--------------------------
 Invite Blue to your server
--------------------------
+--------------------------
 
 When started, the console will show you the ``Invite URL``
 (visible at the bottom of the screenshot above).
@@ -44,9 +44,9 @@ should see your bot in the members list.
 
 .. _getting-started-interact:
 
------------------
+------------------
 Interact with Blue
------------------
+------------------
 
 As a chatbot, you interact with Blue via the Discord text channels
 (not from the command prompt). To send commands to the bot, you will have to

@@ -3,16 +3,16 @@
 .. role:: python(code)
     :language: python
 
-==========================
+===========================
 Migrating cogs from Blue V2
-==========================
+===========================
 
 First, be sure to read :dpy_docs:`discord.py's migration guide <migrating.html>`
 as that covers all of the changes to discord.py that will affect the migration process
 
-----------------
+-----------------
 Blue as a package
-----------------
+-----------------
 
 V3 makes Blue a package that is installed with :code:`pip`. Please
 keep this in mind when writing cogs as this affects how imports 

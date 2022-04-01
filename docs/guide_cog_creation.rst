@@ -3,9 +3,9 @@
 .. role:: python(code)
     :language: python
 
-========================
+=========================
 Creating cogs for Blue V3
-========================
+=========================
 
 This guide serves as a tutorial on creating cogs for Blue V3.
 It will cover the basics of setting up a package for your

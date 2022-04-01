@@ -6,7 +6,7 @@
 .. _main:
 
 Welcome to Blue - Discord Bot's documentation!
-=============================================
+==============================================
 
 .. toctree::
     :maxdepth: 1

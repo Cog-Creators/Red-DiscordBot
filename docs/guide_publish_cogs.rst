@@ -1,7 +1,7 @@
 .. Publishing cogs for V3
 
 Publishing cogs for Blue V3
-==========================
+===========================
 
 Users of Blue install 3rd-party cogs using Downloader cog. To make your cog available
 to install for others, you will have to create a git repository

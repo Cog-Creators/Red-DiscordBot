@@ -1,6 +1,6 @@
---------------
+---------------
 Installing Blue
---------------
+---------------
 
 Choose one of the following commands to install Blue.
 
@@ -21,9 +21,9 @@ Or, to install with PostgreSQL support:
     python -m pip install -U "Blue-DiscordBot[postgres]"
 
 
---------------------------
+---------------------------
 Setting Up and Running Blue
---------------------------
+---------------------------
 
 After installation, set up your instance with the following command:
 

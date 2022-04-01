@@ -1,8 +1,8 @@
 .. _install-ubuntu-non-lts:
 
-=========================================
+==========================================
 Installing Blue on Ubuntu non-LTS versions
-=========================================
+==========================================
 
 .. include:: _includes/linux-preamble.rst
 

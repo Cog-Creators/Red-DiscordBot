@@ -1,6 +1,6 @@
-============
+=============
 Updating Blue
-============
+=============
 
 Updating to the latest version of Blue has several benefits:
 
@@ -26,7 +26,7 @@ Updating differs depending on the version you currently have. Next sections will
 
 
 Blue 3.2.0 or newer
-******************
+*******************
 
 Windows
 -------
@@ -93,7 +93,7 @@ If you have Blue 3.2.0 or newer, you can upgrade by following these steps:
 5. If you have any 3rd-party cogs installed, we highly recommend you update them with this command in Discord: ``[p]cog update`` (``[p]`` is considered as your prefix)
 
 Blue 3.1.X
-*********
+**********
 
 If you have Blue 3.1.X, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
@@ -118,7 +118,7 @@ Go to the `install_guides/index` guide and follow every step to ensure you have 
 
 
 Blue 3.0.2 and older
-*******************
+********************
 
 .. important::
 
