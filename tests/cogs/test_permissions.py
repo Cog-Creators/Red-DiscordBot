@@ -7,6 +7,7 @@ def test_schema_update():
             "owner_models": {
                 "cogs": {
                     "Admin": {"allow": [78631113035100160], "deny": [96733288462286848]},
+                    "Mod": {"allow": [133049272517001216], "default": "deny"},
                 },
                 "commands": {
                     "cleanup bot": {"allow": [78631113035100160], "default": "deny"},
@@ -45,6 +46,7 @@ def test_schema_update():
                 str(GLOBAL): {"78631113035100160": True, "96733288462286848": False},
                 "43733288462286848": {"24231113035100160": True, "35533288462286848": False},
             },
+            "Mod": {str(GLOBAL): {"133049272517001216": True, "default": False}},
             "General": {"43733288462286848": {"133049272517001216": True, "default": False}},
         },
         {
