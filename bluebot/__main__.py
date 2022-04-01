@@ -360,7 +360,7 @@ async def run_bot(blue: Blue, cli_flags: Namespace) -> None:
     if cli_flags.token:
         token = cli_flags.token
     else:
-        token = os.environ.get("RED_TOKEN", None)
+        token = os.environ.get("BLUE_TOKEN", None)
         if not token:
             token = await blue._config.token()
 
@@ -514,7 +514,7 @@ def main():
                 "reboot."
                 "\033[0m"
             )
-            cli_flags.instance_name = "temporary_red"
+            cli_flags.instance_name = "temporary_blue"
             data_manager.create_temp_config()
 
         data_manager.load_basic_configuration(cli_flags.instance_name)

@@ -14,7 +14,7 @@ __all__ = [
     "driver",
     "config",
     "config_fr",
-    "red",
+    "blue",
     "guild_factory",
     "empty_guild",
     "empty_channel",

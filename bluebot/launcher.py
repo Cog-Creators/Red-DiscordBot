@@ -65,7 +65,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def run_red(selected_instance, autorestart: bool = False, cliflags=None):
+def run_blue(selected_instance, autorestart: bool = False, cliflags=None):
     interpreter = sys.executable
     while True:
         print("Starting {}...".format(selected_instance))
@@ -136,12 +136,12 @@ def main_menu(flags_to_pass):
         if choice == "1":
             instance = instance_menu()
             if instance:
-                run_red(instance, autorestart=True, cliflags=flags_to_pass)
+                run_blue(instance, autorestart=True, cliflags=flags_to_pass)
             wait()
         elif choice == "2":
             instance = instance_menu()
             if instance:
-                run_red(instance, autorestart=False, cliflags=flags_to_pass)
+                run_blue(instance, autorestart=False, cliflags=flags_to_pass)
             wait()
         elif choice == "0":
             break
@@ -163,7 +163,7 @@ def main():
     elif args.start:
         print("WARNING: The launcher is scheduled for removal at a later date.")
         print("Starting Blue...")
-        run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
+        run_blue(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
 
 
 if __name__ == "__main__":
