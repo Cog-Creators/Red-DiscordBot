@@ -166,8 +166,11 @@ class KickBanMixin(MixinMeta):
         else:
             tempbans = await self.config.guild(guild).current_tempbans()
 
-            ban_list = [ban.user.id for ban in await guild.bans()]
-            if user.id in ban_list:
+            try:
+                await guild.fetch_ban(user)
+            except discord.NotFound:
+                pass
+            else:
                 if user.id in tempbans:
                     async with self.config.guild(guild).current_tempbans() as tempbans:
                         tempbans.remove(user.id)
@@ -468,17 +471,18 @@ class KickBanMixin(MixinMeta):
 
         tempbans = await self.config.guild(guild).current_tempbans()
 
-        ban_list = await guild.bans()
-        for entry in ban_list:
-            for user_id in user_ids:
-                if entry.user.id == user_id:
-                    if user_id in tempbans:
-                        # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
-                        continue
-                    else:
-                        errors[user_id] = _("User with ID {user_id} is already banned.").format(
-                            user_id=user_id
-                        )
+        for user_id in user_ids:
+            if user_id in tempbans:
+                # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                continue
+            try:
+                await guild.fetch_ban(discord.Object(user_id))
+            except discord.NotFound:
+                pass
+            else:
+                errors[user_id] = _("User with ID {user_id} is already banned.").format(
+                    user_id=user_id
+                )
 
         user_ids = remove_processed(user_ids)
 
@@ -903,14 +907,13 @@ class KickBanMixin(MixinMeta):
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(ctx.author, reason, shorten=True)
-        bans = await guild.bans()
-        bans = [be.user for be in bans]
-        user = discord.utils.get(bans, id=user_id)
-        if not user:
+        try:
+            ban_entry = await guild.fetch_ban(discord.Object(user_id))
+        except discord.NotFound:
             await ctx.send(_("It seems that user isn't banned!"))
             return
         try:
-            await guild.unban(user, reason=audit_reason)
+            await guild.unban(ban_entry.user, reason=audit_reason)
         except discord.HTTPException:
             await ctx.send(_("Something went wrong while attempting to unban that user."))
             return
@@ -920,7 +923,7 @@ class KickBanMixin(MixinMeta):
                 guild,
                 ctx.message.created_at.replace(tzinfo=timezone.utc),
                 "unban",
-                user,
+                ban_entry.user,
                 author,
                 reason,
                 until=None,
