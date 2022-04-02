@@ -86,39 +86,47 @@ DANGEROUS_COMMANDS = {
         "usually you will never have to change this, "
         "before considering changing it please consult our support team."
     ),
-    "command_llsetup_external": _(
+    "command_llsetup_unmanaged": _(
         "This command will disable the managed Lavalink node, "
-        "if you toggle this command you must specify an external Lavalink node to connect to, "
+        "if you toggle this command you must specify an unmanaged Lavalink node to connect to, "
         "if you do not do so Audio will stop working."
     ),
     "command_llsetup_host": _(
-        "This command is used to specify the IP which will be used by Red to connect to an external Lavalink node. "
+        "This command is used to specify the IP which will be used by Red "
+        "to connect to an unmanaged Lavalink node. "
     ),
     "command_llsetup_password": _(
         "This command is used to specify the authentication password used by Red to connect to an "
-        "external Lavalink node."
+        "unmanaged Lavalink node."
     ),
     "command_llsetup_secured": _(
-        "This command is used toggle between secured and unsecured connections to an external Lavalink node."
+        "This command is used toggle between secured and unsecured connections "
+        "to an unmanaged Lavalink node."
     ),
     "command_llsetup_wsport": _(
-        "This command is used to specify the connection port used by Red to connect to an external Lavalink node."
+        "This command is used to specify the connection port used by Red "
+        "to connect to an unmanaged Lavalink node."
     ),
     "command_llsetup_config_host": _(
-        "This command specifies which network interface and IP the managed Lavalink node will bind to, "
+        "This command specifies which network interface and IP the "
+        "managed Lavalink node will bind to, "
         "by default this is 'localhost', "
-        "only change this if you want the managed Lavalink node to bind to a specific IP/interface."
+        "only change this if you want the managed Lavalink node to "
+        "bind to a specific IP/interface."
     ),
     "command_llsetup_config_token": _(
-        "This command changes the authentication password required to connect to this managed node."
+        "This command changes the authentication password required to "
+        "connect to this managed node."
         "The default value is 'youshallnotpass'."
     ),
     "command_llsetup_config_port": _(
         "This command changes the connection port used to connect to this managed node, "
-        "only change this if the default port '2333' is causing conflicts with existing applications."
+        "only change this if the default port '2333' is causing conflicts "
+        "with existing applications."
     ),
     "command_llsetup_config_source_http": _(
-        "This command toggles the support of direct url streams like Icecast or Shoutcast streams. "
+        "This command toggles the support of direct url streams like "
+        "Icecast or Shoutcast streams. "
         "An example is <http://ice6.somafm.com/gsclassic-128-mp3>; "
         "Disabling this will make the bot unable to play any direct url steam content."
     ),
@@ -159,6 +167,95 @@ DANGEROUS_COMMANDS = {
     "command_llsetup_config_server_buffer": _(
         "This setting controls the managed nodes NAS buffer, "
         "Do not change this unless instructed."
+    ),
+    "command_llsetup_config_server_gcwarnings": _(
+        "This setting controls the managed nodes garbage collection warnings."
+    ),
+    "command_llsetup_config_server_playerupdateinterval": _(
+        "This setting controls the managed nodes player update interval, "
+        "The default is 1, which means the managed node sends an update to the bot every seconds, "
+        "these updates increase the accuracy of the bot's playback position."
+    ),
+    "command_llsetup_config_server_ratelimit": _(
+        "**This command is not supported**\n"
+        "This setting controls the managed nodes ratelimit settings "
+        "which can be used to help with getting around ratelimiting. "
+        "\nFor a guide on how to setup your host to use IP rotation, "
+        "have a read of <https://blog.arbjerg.dev/2020/3/tunnelbroker-with-lavalink>. "
+        "\nFor more information on the different rotation policies, check out the documentation on"
+        ": <https://github.com/freyacodes/Lavalink/blob/master/ROUTEPLANNERS.md>"
+    ),
+    "command_llsetup_config_server_ratelimit_ipblocks": _(
+        "**This command is not supported**\n"
+        "With this command you can set one or more IP subnets to be used by the managed node "
+        "for its rotation policy. IP subnets are specified in CIDR notation, "
+        "and should be separated by a space if multiple are entered."
+    ),
+    "command_llsetup_config_server_ratelimit_excludeips": _(
+        "**This command is not supported**\n"
+        "With this command you can set one or more IPs to be excluded from the managed node "
+        "when rotating through your IP subnets."
+    ),
+    "command_llsetup_config_server_ratelimit_strategy": _(
+        "**This command is not supported**\n"
+        "This command controls the managed nodes rotation policy. "
+        "The default is `RotateOnBan`, "
+        "which means the managed node will rotate through your IP subnets as your IPs are banned. "
+        "Other options are `LoadBalance`, `NanoSwitch` and `RotatingNanoSwitch`. "
+        "\nFor more information on the different rotation policies, check out the documentation on"
+        ": <https://github.com/freyacodes/Lavalink/blob/master/ROUTEPLANNERS.md>"
+    ),
+    "command_llsetup_config_server_ratelimit_searchtriggerfail": _(
+        "**This command is not supported**\n"
+        "This command controls whether the managed node will mark an IP as banned "
+        "if a search returns a 429 response."
+    ),
+    "command_llsetup_config_server_ratelimit_retrylimit": _(
+        "**This command is not supported**\n"
+        "This command controls the number of times the managed node will retry a search "
+        "if you set the value to 0, the managed node will keep retrying forever, "
+        "if you set the value to greater than 0 it will attempt that many times,"
+        "if you set the value to -1 it will user the built-in default value."
+    ),
+    "command_llsetup_config_server_youtubeconfig": _(
+        "**This command is not supported**\n"
+        "This command group allows you to associate a Google account with your bot allowing it "
+        "to play age restricted content."
+    ),
+    "command_llsetup_config_server_youtubeconfig_papisid": _(
+        "**This command is not supported**\n"
+        "This command sets the PAPOSID key from your Google account as the one the bot should use."
+        " for more information on how to get this key, check out the documentation on: "
+        "<https://github.com/Walkyst/lavaplayer-fork/issues/18>"
+    ),
+    "command_llsetup_config_server_youtubeconfig_psid": _(
+        "**This command is not supported**\n"
+        "This command sets the PSID key from your Google account as the one the bot should use."
+        " for more information on how to get this key, check out the documentation on: "
+        "<https://github.com/Walkyst/lavaplayer-fork/issues/18>"
+    ),
+    "command_llsetup_config_sentry": _(
+        "This command group allows you to configure the managed node "
+        "Sentry error reporting system."
+    ),
+    "command_llsetup_config_sentry_dns": _(
+        "This command sets the DNS address of the Sentry server which the managed node should use."
+    ),
+    "command_llsetup_config_sentry_environment": _(
+        "This command sets the environmentwhich the managed node should report "
+        "to the Sentry server."
+    ),
+    "command_llsetup_config_metrics": _(
+        "This command group allows you to configure the managed node metric settings."
+    ),
+    "command_llsetup_config_metrics_prometheus": _(
+        "This command group allows you to configure the managed node's Prometheus settings."
+    ),
+    "command_llsetup_config_metrics_prometheus_toggle": _(
+        "This command toggles the managed node's Prometheus endpoint."
+    ),
+    "command_llsetup_config_metrics_prometheus_endpoint": _(
+        "This command sets the managed node's Prometheus endpoint."
     ),
     "command_llsetup_reset": _("This command will reset every setting changed by `[p]llset`."),
 }

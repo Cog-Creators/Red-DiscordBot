@@ -1,3 +1,5 @@
+import contextlib
+import ipaddress
 import re
 from io import BytesIO
 from pathlib import Path
@@ -7,13 +9,14 @@ import lavalink
 import yaml
 from red_commons.logging import getLogger
 
+from redbot import __version__ as red_version
 from redbot.core import commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, inline
+from redbot.core.utils.chat_formatting import box, humanize_list, inline
 
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
+from ..cog_utils import CompositeMetaClass, __version__
 from ...utils import (
     MAX_JAVA_RAM,
     DEFAULT_LAVALINK_YAML,
@@ -36,7 +39,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup(self, ctx: commands.Context):
         """`Dangerous commands` Manage Lavalink node configuration settings.
 
-        This command block holds all commands to manage an external or managed Lavalink node.
+        This command block holds all commands to manage an unmanaged or managed Lavalink node.
 
         You should not mess with any command in here unless you have a valid reason to,
         i.e. been told by someone in the Red-Discord Bot support server to do so.
@@ -152,11 +155,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="external")
-    async def command_llsetup_external(self, ctx: commands.Context):
-        """Toggle using external Lavalink nodes - requires an existing external Lavalink node for Audio to work, if enabled.
+    @command_llsetup.command(name="unmanaged", aliases=["external", "public"])
+    async def command_llsetup_unmanaged(self, ctx: commands.Context):
+        """Toggle using unmanaged Lavalink nodes - requires an existing unmanaged Lavalink node for Audio to work, if enabled.
 
-        This command disables the managed Lavalink server, if you do not have an external Lavalink node you will be unable to use Audio while this is enabled.
+        This command disables the managed Lavalink server, if you do not have an unmanaged Lavalink node you will be unable to use Audio while this is enabled.
         """
         external = await self.config.use_external_lavalink()
         await self.config.use_external_lavalink.set(not external)
@@ -164,7 +167,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             if external:
                 embed = discord.Embed(
                     title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
+                    description=_("Unmanaged Lavalink server: {true_or_false}.").format(
                         true_or_false=inline(_("Enabled") if not external else _("Disabled"))
                     ),
                 )
@@ -173,7 +176,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(
                     ctx,
                     title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
+                    description=_("Unmanaged Lavalink server: {true_or_false}.").format(
                         true_or_false=inline(_("Enabled") if not external else _("Disabled"))
                     ),
                 )
@@ -196,14 +199,14 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node host.
 
-        This command sets the connection host which Audio will use to connect to an external Lavalink node.
+        This command sets the connection host which Audio will use to connect to an unmanaged Lavalink node.
         """
         await self.config.host.set(host)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node host set to {host}. "
+                "Unmanaged Lavalink node host set to {host}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 host=inline(host), p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name
@@ -217,7 +220,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node password.
 
-        This command sets the connection password which Audio will use to connect to an external Lavalink node.
+        This command sets the connection password which Audio will use to connect to an unmanaged Lavalink node.
         """
 
         await self.config.password.set(str(password))
@@ -225,7 +228,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node password set to {password}. "
+                "Unmanaged Lavalink node password set to {password}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 password=inline(password),
@@ -241,7 +244,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node port.
 
-        This command sets the connection port which Audio will use to connect to an external Lavalink node.
+        This command sets the connection port which Audio will use to connect to an unmanaged Lavalink node.
         Set port to -1 to disable the port and connect to the specified host via ports 80/443
         """
         if port < 0:
@@ -257,7 +260,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node port set to {port}. "
+                "Unmanaged Lavalink node port set to {port}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 port=inline(str(port)),
@@ -271,7 +274,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_secured(self, ctx: commands.Context):
         """Set the Lavalink node connection to secured.
 
-        This command sets the connection type to secured when connecting to an external Lavalink node.
+        This command sets the connection type to secured when connecting to an unmanaged Lavalink node.
         """
         state = await self.config.secured_ws()
         await self.config.secured_ws.set(not state)
@@ -340,6 +343,22 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_yaml(self, ctx: commands.Context):
         """Uploads a copy of the application.yml file used by the managed Lavalink node."""
         configs = change_dict_naming_convention(await self.config.yaml.all())
+        if not all(
+            (
+                configs["lavalink"]["server"]["youtubeConfig"]["PAPISID"],
+                configs["lavalink"]["server"]["youtubeConfig"]["PSID"],
+            )
+        ):
+            del configs["lavalink"]["server"]["youtubeConfig"]
+        if not configs["lavalink"]["server"]["ratelimit"]["ipBlocks"]:
+            del configs["lavalink"]["server"]["ratelimit"]
+        if configs["sentry"]["dsn"]:
+            configs["sentry"]["tags"]["ID"] = self.bot.user.id
+        if configs["sentry"]["dsn"]:
+            configs["sentry"]["tags"]["ID"] = self.bot.user.id
+            configs["sentry"]["tags"]["audio_version"] = __version__
+            configs["sentry"]["tags"]["rll_version"] = lavalink.__version__
+            configs["sentry"]["tags"]["red_version"] = red_version
         data = yaml.safe_dump(configs)
         playlist_data = data.encode("utf-8")
         to_write = BytesIO()
@@ -702,6 +721,434 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 milliseconds=inline(str(milliseconds)),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config_server.command(name="gcwarnings", aliases=["gcw"])
+    async def command_llsetup_config_server_gcwarnings(self, ctx: commands.Context):
+        """Toggle whether the managed node logs will show or omit GC warnings."""
+        state = await self.config.yaml.lavalink.server.gc_warnings()
+        await self.config.yaml.lavalink.server.gc_warnings.set(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will show GC warnings in its logs.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not show GC warnings in its logs.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
+            )
+
+    @command_llsetup_config_server.command(name="playerupdateinterval", aliases=["pui"])
+    async def command_llsetup_config_server_playerupdateinterval(
+        self,
+        ctx: commands.Context,
+        *,
+        interval: int = DEFAULT_LAVALINK_YAML["yaml__lavalink__server__playerUpdateInterval"],
+    ):
+        """`Unsupported command` Set how often the managed node will send player state updates to the bot."""
+        if interval < 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_("The retry limit must be greater than 1"),
+            )
+        await self.config.yaml.lavalink.server.playerUpdateInterval.set(interval)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's retry on fail set to {interval}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                interval=inline(str(interval)),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config_server.group(name="ratelimit")
+    async def command_llsetup_config_server_ratelimit(self, ctx: commands.Context):
+        """`Unsupported commands` Configure the ratelimit settings for the managed Lavalink node."""
+
+    @command_llsetup_config_server_ratelimit.command(name="ipblocks", aliases=["blocks", "cidr"])
+    async def command_llsetup_config_server_ratelimit_ipblocks(
+        self, ctx: commands.Context, *ips_blocks: str
+    ):
+        """`Unsupported command` Enter a list of IP blocks to be used by the managed Lavalink Node.
+
+        Pass to arguments to reset back to default and disable IP rotation.
+        Usage example: `[p]llset config server ratelimit ipblocks 1.0.0.0/8 192.168.0.0/24`
+        """
+        valid_ips = []
+        invalid_ips = []
+        for ip in ips_blocks:
+            try:
+                ipaddress.ip_network(ip)
+                valid_ips.append(ip)
+            except ValueError:
+                invalid_ips.append(ip)
+
+        if not ips_blocks or valid_ips:
+            await self.config.yaml.lavalink.server.ratelimit.ipBlocks.set(list(valid_ips))
+        if valid_ips:
+            valid_ips_str = humanize_list(valid_ips)
+        else:
+            valid_ips_str = "[]"
+        if invalid_ips:
+            invalid_ips_str = humanize_list(invalid_ips)
+        else:
+            invalid_ips_str = None
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's ipBlocks set to {valid_ips}.{invalid_text}\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                valid_ips=inline(str(valid_ips_str)),
+                p=ctx.prefix,
+                invalid_text=""
+                if not invalid_ips_str
+                else _(
+                    "\nThe following IP blocks were invalid and therefore ignored: {invalid_ips}."
+                ).format(invalid_ips=invalid_ips_str),
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config_server_ratelimit.command(name="excludeips")
+    async def command_llsetup_config_server_ratelimit_excludeips(
+        self, ctx: commands.Context, *ips: str
+    ):
+        """`Unsupported command` Enter a list of IPs to be explicit excluded from usage by the managed lavalink Node.
+
+        Pass to arguments to reset back to default and disable IP rotation.
+        Usage example: `[p]llset config server ratelimit ipblocks 1.0.0.2 1.0.0.3 1.0.0.4`
+        """
+        valid_ips = []
+        invalid_ips = []
+        for ip in ips:
+            try:
+                ipaddress.ip_address(ip)
+                valid_ips.append(ip)
+            except ValueError:
+                invalid_ips.append(ip)
+        if not ips or valid_ips:
+            await self.config.yaml.lavalink.server.ratelimit.excludedIps.set(list(valid_ips))
+        if valid_ips:
+            valid_ips_str = humanize_list(valid_ips)
+        else:
+            valid_ips_str = "[]"
+        if invalid_ips:
+            invalid_ips_str = humanize_list(invalid_ips)
+        else:
+            invalid_ips_str = None
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's excludedIps set to {valid_ips}.{invalid_text}\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                valid_ips=inline(str(valid_ips_str)),
+                p=ctx.prefix,
+                invalid_text=""
+                if not invalid_ips_str
+                else _(
+                    "\nThe following IP blocks were invalid and therefore ignored: {invalid_ips}."
+                ).format(invalid_ips=invalid_ips_str),
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config_server_ratelimit.command(name="strategy", aliases=["strat"])
+    async def command_llsetup_config_server_ratelimit_strategy(
+        self,
+        ctx: commands.Context,
+        *,
+        strategy: str = DEFAULT_LAVALINK_YAML["yaml__lavalink__server__ratelimit__strategy"],
+    ):
+        """`Unsupported command` Set the IP rotation policy.
+
+        The strategy must be one of: RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
+        """
+        strategy = strategy.strip().lower()
+        if strategy not in ("rotateonban", "loadbalance", "nanoswitch", "rotatingnanoswitch"):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "The IP rotation strategy must be one of RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch."
+                ),
+            )
+        if strategy == "rotateonban":
+            strategy = "RotateOnBan"
+        elif strategy == "loadbalance":
+            strategy = "LoadBalance"
+        elif strategy == "nanoswitch":
+            strategy = "NanoSwitch"
+        elif strategy == "rotatingnanoswitch":
+            strategy = "RotatingNanoSwitch"
+        else:
+            return await ctx.send_help()
+
+        await self.config.yaml.lavalink.server.ratelimit.strategy.set(strategy)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's IP rotation strategy set to {strategy}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                strategy=inline(strategy),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config_server_ratelimit.command(
+        name="searchtriggerfail", aliases=["stf", "failon429"]
+    )
+    async def command_llsetup_config_server_ratelimit_searchtriggerfail(
+        self, ctx: commands.Context
+    ):
+        """`Unsupported command` Toggle whether a search 429 should trigger marking the ip as failing."""
+        state = await self.config.yaml.lavalink.server.ratelimit.searchTriggersFail()
+        await self.config.yaml.lavalink.server.ratelimit.searchTriggersFail.set(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will now mark IPs as failing if a request returns a 429.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will not mark IPs as failing if a request returns a 429.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
+            )
+
+    @command_llsetup_config_server.command(name="retrylimit", aliases=["rl"])
+    async def command_llsetup_config_server_ratelimit_retrylimit(
+        self,
+        ctx: commands.Context,
+        *,
+        retrylimit: int = DEFAULT_LAVALINK_YAML["yaml__lavalink__server__ratelimit__retryLimit"],
+    ):
+        """`Unsupported command` Set the number of time to retry a search upon failure.
+
+        -1 = use default value
+        0 = keep trying forever
+        >0 = retry will happen this numbers times before giving up
+        """
+        if retrylimit < -1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Setting Not Changed"),
+                description=_(
+                    "The retry limit must be greater than 0 to specify "
+                    "how many times you wish to retry a search, "
+                    "alternatively set it to 0 to try an infinitive amount of times "
+                    "or -1 to set it to the default value."
+                ),
+            )
+        await self.config.yaml.lavalink.server.ratelimit.retryLimit.set(retrylimit)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's retry on fail set to {retrylimit}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                retrylimit=inline(str(retrylimit)),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config_server.group(name="youtubeconfig", aliases=["yc"])
+    async def command_llsetup_config_server_youtubeconfig(self, ctx: commands.Context):
+        """`Unsupported commands` Associate your bot with a Google account to bypass age restriction - Commands availabe in DM only."""
+
+    @commands.dm_only()
+    @command_llsetup_config_server_youtubeconfig.command(name="papisid", aliases=["paid"])
+    async def command_llsetup_config_server_youtubeconfig_papisid(
+        self,
+        ctx: commands.Context,
+        *,
+        paid: str = DEFAULT_LAVALINK_YAML["yaml__lavalink__server__youtubeConfig__PAPISID"],
+    ):
+        """`Unsupported command` Set the Secure-3PAPISID from a Google account.
+
+        Instruction on how to obtain the PAPISID can be found here: <https://github.com/Walkyst/lavaplayer-fork/issues/18>
+        """
+        with contextlib.suppress(discord.HTTPException):
+            await ctx.message.delete()
+
+        await self.config.yaml.lavalink.server.youtubeConfig.PAPISID.set(paid)
+        await self.send_embed_msg(
+            ctx.author,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's PAPISID set to {strategy}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                strategy=inline(paid),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @commands.dm_only()
+    @command_llsetup_config_server_youtubeconfig.command(name="psid", aliases=["psid"])
+    async def command_llsetup_config_server_youtubeconfig_psid(
+        self,
+        ctx: commands.Context,
+        *,
+        psid: str = DEFAULT_LAVALINK_YAML["yaml__lavalink__server__youtubeConfig__PAPISID"],
+    ):
+        """`Unsupported command` Set the Secure-3PSID from a Google account.
+
+        Instruction on how to obtain the 3PSID can be found here: <https://github.com/Walkyst/lavaplayer-fork/issues/18>
+        """
+        with contextlib.suppress(discord.HTTPException):
+            await ctx.message.delete()
+
+        await self.config.yaml.lavalink.server.youtubeConfig.PSID.set(psid)
+        await self.send_embed_msg(
+            ctx.author,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's PSID set to {strategy}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                strategy=inline(psid),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config.group(name="sentry")
+    async def command_llsetup_config_sentry(self, ctx: commands.Context):
+        """`Unsupported commands` Configure the sentry settings for the managed Lavalink node."""
+
+    @command_llsetup_config_sentry.command(name="dns")
+    async def command_llsetup_config_sentry_dns(
+        self,
+        ctx: commands.Context,
+        *,
+        dns: str = DEFAULT_LAVALINK_YAML["yaml__sentry__dsn"],
+    ):
+        """`Unsupported command` Set sentry server DNS which the managed Node should use."""
+        with contextlib.suppress(discord.HTTPException):
+            await ctx.message.delete()
+        await self.config.yaml.sentry.dns.set(dns)
+        await self.send_embed_msg(
+            ctx.author,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's sentry DND set to {dns}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                dns=inline(dns),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config_sentry.command(name="environment", aliases=["env"])
+    async def command_llsetup_config_sentry_environment(
+        self,
+        ctx: commands.Context,
+        *,
+        environment: str = DEFAULT_LAVALINK_YAML["yaml__sentry__environment"],
+    ):
+        """`Unsupported command` Set sentry environment which the managed Node should use."""
+        with contextlib.suppress(discord.HTTPException):
+            await ctx.message.delete()
+        await self.config.yaml.sentry.environment.set(environment)
+        await self.send_embed_msg(
+            ctx.author,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's sentry environment set to {environment}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                environment=inline(environment),
+                p=ctx.prefix,
+                cmd=self.command_audioset_restart.qualified_name,
+            ),
+        )
+
+    @command_llsetup_config.group(name="metrics")
+    async def command_llsetup_config_metrics(self, ctx: commands.Context):
+        """`Unsupported commands` Configure the Managed node metrics settings."""
+
+    @command_llsetup_config_metrics.group(name="prometheus")
+    async def command_llsetup_config_metrics_prometheus(self, ctx: commands.Context):
+        """`Unsupported commands` Configure the Managed node prometheus settings."""
+
+    @command_llsetup_config_metrics_prometheus.command(name="toggle")
+    async def command_llsetup_config_metrics_prometheus_toggle(self, ctx: commands.Context):
+        """Toggle whether the managed node should expose its Prometheus endpoint."""
+        state = await self.config.yaml.metrics.prometheus.enabled()
+        await self.config.yaml.metrics.prometheus.enable.set(not state)
+        if not state:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will enable its Prometheus endpoint.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting Changed"),
+                description=_(
+                    "Managed node will now disable its Prometheus endpoint.\n\n"
+                    "Run `{p}{cmd}` for it to take effect."
+                ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
+            )
+
+    @command_llsetup_config_metrics_prometheus.command(name="endpoint")
+    async def command_llsetup_config_metrics_prometheus_endpoint(
+        self,
+        ctx: commands.Context,
+        *,
+        endpoint: str = DEFAULT_LAVALINK_YAML["yaml__metrics__prometheus__endpoint"],
+    ):
+        """`Unsupported command` Set the Prometheus endpoint for the managed Node."""
+        if not (endpoint := endpoint.strip()).startswith("/"):
+            endpoint = f"/{endpoint}"
+        await self.config.yaml.metrics.prometheus.endpoint.set(endpoint)
+        await self.send_embed_msg(
+            ctx.author,
+            title=_("Setting Changed"),
+            description=_(
+                "Managed node's Prometheus endpoint set to {endpoint}.\n\n"
+                "Run `{p}{cmd}` for it to take effect."
+            ).format(
+                endpoint=inline(endpoint),
                 p=ctx.prefix,
                 cmd=self.command_audioset_restart.qualified_name,
             ),

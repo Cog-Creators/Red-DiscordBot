@@ -255,7 +255,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 embed.description = _(
                     "Local tracks will not work "
                     "if the managed Lavalink node cannot see the track.\n"
-                    "This may be due to permissions or you are using an external Lavalink node "
+                    "This may be due to permissions or you are using an unmanaged Lavalink node "
                     "in a different machine than the bot and the local tracks."
                 )
             elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:

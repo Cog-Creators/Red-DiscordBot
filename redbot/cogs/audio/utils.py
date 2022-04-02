@@ -73,6 +73,13 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__lavalink__server__playerUpdateInterval": 1,
     "yaml__lavalink__server__youtubeSearchEnabled": True,
     "yaml__lavalink__server__soundcloudSearchEnabled": True,
+    "yaml__lavalink__server__ratelimit__ipBlocks": [],  # list of ip blocks
+    "yaml__lavalink__server__ratelimit__excludedIps": [],  # ips which should be explicit excluded from usage by lavalink
+    "yaml__lavalink__server__ratelimit__strategy": "RotateOnBan",  # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
+    "yaml__lavalink__server__ratelimit__searchTriggersFail": True,  # Whether a search 429 should trigger marking the ip as failing
+    "yaml__lavalink__server__ratelimit__retryLimit": -1,  # -1 = use default lavaplayer value | 0 = infinity | >0 = retry will happen this numbers times
+    "yaml__lavalink__server__youtubeConfig__PAPISID": "",
+    "yaml__lavalink__server__youtubeConfig__PSID": "",
     "yaml__lavalink__server__gc_warnings": True,
     "yaml__metrics__prometheus__enabled": False,
     "yaml__metrics__prometheus__endpoint": "/metrics",

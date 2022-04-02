@@ -19,6 +19,7 @@ import yaml
 from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
+from redbot import __version__ as red_version
 from redbot.core import data_manager, Config
 from redbot.core.i18n import Translator
 
@@ -43,7 +44,7 @@ from .utils import (
     get_max_allocation_size,
     replace_p_with_prefix,
 )
-from ...core.utils import AsyncIter
+from .core.cog_utils import __version__
 
 if TYPE_CHECKING:
     from . import Audio
@@ -221,6 +222,23 @@ class ServerManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
+        # The reason this is here is to completely remove these keys from the application.yml
+        # if they are set to empty values
+        if not all(
+            (
+                data["lavalink"]["server"]["youtubeConfig"]["PAPISID"],
+                data["lavalink"]["server"]["youtubeConfig"]["PSID"],
+            )
+        ):
+            del data["lavalink"]["server"]["youtubeConfig"]
+        if not data["lavalink"]["server"]["ratelimit"]["ipBlocks"]:
+            del data["lavalink"]["server"]["ratelimit"]
+        if data["sentry"]["dsn"]:
+            data["sentry"]["tags"]["ID"] = self.cog.bot.user.id
+            data["sentry"]["tags"]["audio_version"] = __version__
+            data["sentry"]["tags"]["rll_version"] = lavalink.__version__
+            data["sentry"]["tags"]["red_version"] = red_version
+
         self._current_config = data
         with open(LAVALINK_APP_YML, "w") as f:
             yaml.safe_dump(data, f)
@@ -237,7 +255,7 @@ class ServerManager:
                 await replace_p_with_prefix(
                     self.cog.bot,
                     f"The managed Lavalink node requires Java 11 to run{extras};\n"
-                    "Either install version 11 and restart the bot or connect to an external Lavalink node "
+                    "Either install version 11 and restart the bot or connect to an unmanaged Lavalink node "
                     "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
                     "If you already have Java 11 installed then then you will need to specify the executable path, "
                     "use '[p]llset java' to set the correct Java 11 executable.",

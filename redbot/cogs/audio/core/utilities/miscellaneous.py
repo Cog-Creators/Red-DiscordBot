@@ -61,7 +61,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return True
 
     async def send_embed_msg(
-        self, ctx: commands.Context, author: Mapping[str, str] = None, **kwargs
+        self, ctx: discord.abc.Messageable, author: Mapping[str, str] = None, **kwargs
     ) -> discord.Message:
         colour = kwargs.get("colour") or kwargs.get("color") or await self.bot.get_embed_color(ctx)
         title = kwargs.get("title") or None
