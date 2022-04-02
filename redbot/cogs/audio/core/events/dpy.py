@@ -527,12 +527,23 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
             lavalink.unregister_event_listener(self.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
+            await self.save_player_state()
             await lavalink.close(self.bot)
             await self._close_database()
             if self.managed_node_controller is not None:
                 await self.managed_node_controller.shutdown()
 
             self.cog_cleaned_up = True
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild: discord.Guild) -> None:
+        await self.clean_up_guild_config(
+            "last_known_vc_and_notify_channels",
+            "last_known_track",
+            "currently_auto_playing_in",
+            guild_ids=[guild.id],
+        )
+        await self.api_interface.persistent_queue_api.drop(guild.id)
 
     @commands.Cog.listener()
     async def on_voice_state_update(

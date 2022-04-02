@@ -71,11 +71,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
             await player.disconnect()
-            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
-                []
-            )
             self._ll_guild_updates.discard(ctx.guild.id)
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
+            await self.clean_up_guild_config(
+                "last_known_vc_and_notify_channels",
+                "last_known_track",
+                "currently_auto_playing_in",
+                guild_ids=[ctx.guild.id],
+            )
 
     @commands.command(name="now")
     @commands.guild_only()
@@ -590,11 +593,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             player.store("requester", None)
             player.store("autoplay_notified", False)
             await player.stop()
-            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
-                []
-            )
             await self.send_embed_msg(ctx, title=_("Stopping..."))
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
+            await self.clean_up_guild_config(
+                "last_known_vc_and_notify_channels",
+                "last_known_track",
+                "currently_auto_playing_in",
+                guild_ids=[ctx.guild.id],
+            )
 
     @commands.command(name="summon")
     @commands.guild_only()

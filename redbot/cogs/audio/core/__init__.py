@@ -118,6 +118,8 @@ class Audio(
         default_guild = dict(
             auto_play=False,
             currently_auto_playing_in=None,
+            last_known_vc_and_notify_channels=None,
+            last_known_track={},
             auto_deafen=True,
             autoplaylist=dict(
                 enabled=True,

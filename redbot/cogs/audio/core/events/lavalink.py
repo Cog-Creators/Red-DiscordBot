@@ -42,9 +42,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             await player.stop()
             await player.disconnect()
             if guild:
-                await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set(
-                    []
+                await self.clean_up_guild_config(
+                    "last_known_vc_and_notify_channels",
+                    "last_known_track",
+                    "currently_auto_playing_in",
+                    guild_ids=[guild.id],
                 )
+                await self.api_interface.persistent_queue_api.drop(guild.id)
             return
         guild_id = self.rgetattr(guild, "id", None)
         if not guild:
@@ -139,7 +143,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             notify_channel = player.fetch("notify_channel")
             if notify_channel and autoplay:
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    [notify_channel, player.channel.id]
+                    [notify_channel, player.channel.id, player.paused, player.volume]
                 )
             else:
                 await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
@@ -234,9 +238,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         "Queue ended for %s, Disconnecting bot due to configuration", guild_id
                     )
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.clean_up_guild_config(
+                        "last_known_vc_and_notify_channels",
+                        "last_known_track",
+                        "currently_auto_playing_in",
+                        guild_ids=[guild.id],
+                    )
+                    await self.api_interface.persistent_queue_api.drop(guild.id)
                     # let audio buffer run out on slower machines (GH-5158)
                     await asyncio.sleep(2)
                     await player.disconnect()
@@ -276,9 +284,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     await self.config.custom("EQUALIZER", guild_id).eq_bands.set(eq.bands)
                 await player.stop()
                 await player.disconnect()
-                await self.config.guild_from_id(guild_id=guild_id).currently_auto_playing_in.set(
-                    []
+                await self.clean_up_guild_config(
+                    "last_known_vc_and_notify_channels",
+                    "last_known_track",
+                    "currently_auto_playing_in",
+                    guild_ids=[guild_id],
                 )
+                await self.api_interface.persistent_queue_api.drop(guild_id)
                 self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
@@ -475,9 +487,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.clean_up_guild_config(
+                        "last_known_vc_and_notify_channels",
+                        "last_known_track",
+                        "currently_auto_playing_in",
+                        guild_ids=[guild_id],
+                    )
+                    await self.api_interface.persistent_queue_api.drop(guild_id)
                 else:
                     self.bot.dispatch("red_audio_audio_disconnect", guild)
                     ws_audio_log.info(
@@ -492,9 +508,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.clean_up_guild_config(
+                        "last_known_vc_and_notify_channels",
+                        "last_known_track",
+                        "currently_auto_playing_in",
+                        guild_ids=[guild_id],
+                    )
+                    await self.api_interface.persistent_queue_api.drop(guild_id)
             elif code in (42069,) and has_perm and player.current and player.is_playing:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
                 await player.connect(deafen=deafen)
@@ -580,9 +600,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     player.store("autoplay_notified", False)
                     await player.stop()
                     await player.disconnect()
-                    await self.config.guild_from_id(
-                        guild_id=guild_id
-                    ).currently_auto_playing_in.set([])
+                    await self.clean_up_guild_config(
+                        "last_known_vc_and_notify_channels",
+                        "last_known_track",
+                        "currently_auto_playing_in",
+                        guild_ids=[guild_id],
+                    )
+                    await self.api_interface.persistent_queue_api.drop(guild_id)
             else:
                 if not player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)

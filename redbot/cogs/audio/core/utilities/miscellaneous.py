@@ -6,7 +6,20 @@ import json
 import re
 import struct
 from pathlib import Path
-from typing import Any, Final, Mapping, MutableMapping, Pattern, Union, cast
+from typing import (
+    Any,
+    Dict,
+    Final,
+    Iterable,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Pattern,
+    Tuple,
+    Union,
+    cast,
+)
 
 import discord
 import lavalink
@@ -180,11 +193,14 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         track_keys = track._info.keys()
         track_values = track._info.values()
         track_id = track.track_identifier
+        extras = track.extras
+        if "requester" not in extras and track.requester:
+            extras["requester"] = track.requester.id
         track_info = {}
         for k, v in zip(track_keys, track_values):
             track_info[k] = v
         keys = ["track", "info", "extras"]
-        values = [track_id, track_info]
+        values = [track_id, track_info, extras]
         track_obj = {}
         for key, value in zip(keys, values):
             track_obj[key] = value
@@ -385,3 +401,29 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         }
 
         return track_object
+
+    async def clean_up_guild_config(self, *keys: str, guild_ids: Optional[Iterable[int]] = None):
+        if guild_ids is None:
+            guild_ids = []
+        group = self.config._get_base_group(self.config.GUILD)
+        async with group.all() as guild_data:
+            for guild_id in guild_ids:
+                for key in keys:
+                    if f"{guild_id}" not in guild_data:
+                        continue
+                    if key in guild_data[f"{guild_id}"]:
+                        del guild_data[f"{guild_id}"][key]
+
+    async def update_guild_config(
+        self, *values: Dict[int, List[Tuple[str, Union[str, int, float, bool, None, dict, list]]]]
+    ):
+        group = self.config._get_base_group(self.config.GUILD)
+        async with group.all() as guild_data:
+            for value in values:
+                _d = tuple(value.items())
+                guild_id, guild_data_ = _d[0]
+                if f"{guild_id}" not in guild_data:
+                    guild_data[f"{guild_id}"] = {}
+                for entry in guild_data_:
+                    key, value_ = entry
+                    guild_data[f"{guild_id}"][f"{key}"] = value_

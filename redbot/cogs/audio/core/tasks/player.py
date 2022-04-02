@@ -46,32 +46,37 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                     stop_times.pop(sid, None)
                     pause_times.pop(sid, None)
                     try:
-                        player = lavalink.get_player(sid)
+                        await self.clean_up_guild_config(
+                            "last_known_vc_and_notify_channels",
+                            "last_known_track",
+                            "currently_auto_playing_in",
+                            guild_ids=[sid],
+                        )
                         await self.api_interface.persistent_queue_api.drop(sid)
+                        player = lavalink.get_player(sid)
                         player.store("autoplay_notified", False)
                         await player.stop()
                         await player.disconnect()
-                        await self.config.guild_from_id(
-                            guild_id=sid
-                        ).currently_auto_playing_in.set([])
                     except Exception as exc:
                         log.debug(
                             "Exception raised in Audio's emptydc_timer for %s.", sid, exc_info=exc
                         )
-
                 elif sid in stop_times and await self.config.guild(server_obj).emptydc_enabled():
                     emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
                     if (time.time() - stop_times[sid]) >= emptydc_timer:
                         stop_times.pop(sid)
                         try:
-                            player = lavalink.get_player(sid)
+                            await self.clean_up_guild_config(
+                                "last_known_vc_and_notify_channels",
+                                "last_known_track",
+                                "currently_auto_playing_in",
+                                guild_ids=[sid],
+                            )
                             await self.api_interface.persistent_queue_api.drop(sid)
+                            player = lavalink.get_player(sid)
                             player.store("autoplay_notified", False)
                             await player.stop()
                             await player.disconnect()
-                            await self.config.guild_from_id(
-                                guild_id=sid
-                            ).currently_auto_playing_in.set([])
                         except Exception as exc:
                             if "No such player for that guild" in str(exc):
                                 stop_times.pop(sid, None)

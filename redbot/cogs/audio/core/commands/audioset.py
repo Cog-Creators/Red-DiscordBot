@@ -1447,6 +1447,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Restarts the lavalink connection."""
         async with ctx.typing():
             try:
+                await self.save_player_state()
                 await lavalink.close(self.bot)
                 self.lavalink_restart_connect(manual=True)
             except ProcessLookupError:
