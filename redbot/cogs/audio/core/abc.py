@@ -245,7 +245,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def send_embed_msg(
-        self, ctx: commands.Context, author: Mapping[str, str] = None, **kwargs
+        self, ctx: discord.abc.Messageable, author: Mapping[str, str] = None, **kwargs
     ) -> discord.Message:
         raise NotImplementedError()
 
