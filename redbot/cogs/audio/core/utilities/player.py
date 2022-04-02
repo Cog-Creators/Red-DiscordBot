@@ -132,10 +132,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not player.current:
             await self.send_embed_msg(ctx, title=_("Nothing playing."))
             return
-        elif not player.queue and not autoplay:
-            await ctx.invoke(self.command_stop)  # Thank you Draper and Zephyrkul
-            return
-        elif autoplay and not player.queue:
+        elif not player.queue:
             embed = discord.Embed(
                 title=_("Track Skipped"),
                 description=await self.get_track_description(
@@ -143,6 +140,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
+            self.bot.dispatch("red_audio_skip_track", player.guild, player.current, ctx.author)
             await player.skip()
             return
 
