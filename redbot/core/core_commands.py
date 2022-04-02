@@ -3987,7 +3987,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 else:
                     e.set_author(name=description)
 
-                e.set_footer(text=footer)
+                e.set_footer(text="{}\n{}".format(footer, content))
 
                 try:
                     await destination.send(embed=e)
