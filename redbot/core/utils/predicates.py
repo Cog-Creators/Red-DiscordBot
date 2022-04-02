@@ -932,6 +932,7 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
 
         """
         # noinspection PyProtectedMember
+        # DEP-WARN
         me_id = message._state.self_id
         return cls(
             lambda self, r, u: u.id != me_id
