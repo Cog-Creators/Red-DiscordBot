@@ -108,7 +108,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         # to wait for a guild to finish channel unmutes before
         # checking for manual overwrites
 
-        self._init_task = self.bot.loop.create_task(self._initialize())
+        self._init_task = asyncio.create_task(self._initialize())
 
     async def red_delete_data_for_user(
         self,
@@ -543,8 +543,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not reason:
             reason = _("No reason provided.")
 
-        # okay, this is some poor API to require PrivateChannel here...
-        if await self.bot.embed_requested(await user.create_dm(), user):
+        if await self.bot.embed_requested(user):
             em = discord.Embed(
                 title=title,
                 description=reason,
@@ -564,19 +563,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             message = f"{title}\n>>> "
             message += reason
+            message += (f"\n{bold(_('Moderator:'))} {moderator_str}") if show_mod else ""
             message += (
-                _("\n**Moderator**: {moderator}").format(moderator=moderator_str)
-                if show_mod
-                else ""
-            )
-            message += (
-                _("\n**Until**: {until}\n**Duration**: {duration}").format(
-                    until=until_str, duration=duration_str
-                )
+                (f"\n{bold(_('Until:'))} {until_str}\n{bold(_('Duration:'))} {duration_str}")
                 if duration
                 else ""
             )
-            message += _("\n**Guild**: {guild_name}").format(guild_name=guild.name)
+            message += f"\n{bold(_('Guild:'))} {guild.name}"
             try:
                 await user.send(message)
             except discord.Forbidden:
@@ -1072,7 +1065,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if ctx.guild.id in self._server_mutes:
             mutes_data = self._server_mutes[ctx.guild.id]
             if mutes_data:
-
                 msg += _("__Server Mutes__\n")
                 for user_id, mutes in mutes_data.items():
                     if not mutes:
@@ -1535,7 +1527,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         mute_role = await self.config.guild(guild).mute_role()
 
         if mute_role:
-
             role = guild.get_role(mute_role)
             if not role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["role_missing"])
@@ -1608,8 +1599,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not await self.is_allowed_by_hierarchy(guild, author, user):
             ret["reason"] = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
             return ret
-        if mute_role:
 
+        if mute_role:
             role = guild.get_role(mute_role)
             if not role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["role_missing"])

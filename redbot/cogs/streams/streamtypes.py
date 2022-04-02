@@ -263,7 +263,6 @@ class YoutubeStream(Stream):
         return snippet["title"]
 
     async def _fetch_channel_resource(self, resource: str):
-
         params = {"key": self._token["api_key"], "part": resource}
         if resource == "id":
             params["forUsername"] = self.name
@@ -334,8 +333,8 @@ class TwitchStream(Stream):
         """
         current_time = int(time.time())
         self._rate_limit_resets = {x for x in self._rate_limit_resets if x > current_time}
-        if self._rate_limit_remaining == 0:
 
+        if self._rate_limit_remaining == 0:
             if self._rate_limit_resets:
                 reset_time = next(iter(self._rate_limit_resets))
                 # Calculate wait time and add 0.1s to the wait time to allow Twitch to reset

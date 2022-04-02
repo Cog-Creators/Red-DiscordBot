@@ -216,7 +216,6 @@ class Red(
 
         self._uptime = None
         self._checked_time_accuracy = None
-        self._color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
@@ -490,7 +489,7 @@ class Red(
 
     @property
     def uptime(self) -> datetime:
-        """ Allow access to the value, but we don't want cog creators setting it """
+        """Allow access to the value, but we don't want cog creators setting it"""
         return self._uptime
 
     @uptime.setter
@@ -1044,6 +1043,7 @@ class Red(
         """
         await self._maybe_update_config()
         self.description = await self._config.description()
+        self._color = discord.Colour(await self._config.color())
 
         init_global_checks(self)
         init_events(self, self._cli_flags)
@@ -1082,7 +1082,7 @@ class Red(
             if any(LIB_PATH.iterdir()):
                 shutil.rmtree(str(LIB_PATH))
                 LIB_PATH.mkdir()
-                self.loop.create_task(
+                asyncio.create_task(
                     send_to_owners_with_prefix_replaced(
                         self,
                         "We detected a change in minor Python version"
@@ -1117,7 +1117,7 @@ class Red(
             system_changed = True
 
         if system_changed and not python_version_changed:
-            self.loop.create_task(
+            asyncio.create_task(
                 send_to_owners_with_prefix_replaced(
                     self,
                     "We detected a possible change in machine's operating system"
@@ -1205,26 +1205,24 @@ class Red(
 
     async def embed_requested(
         self,
-        channel: Union[discord.abc.GuildChannel, discord.abc.PrivateChannel],
-        user: discord.abc.User,
-        command: Optional[commands.Command] = None,
+        channel: Union[discord.TextChannel, commands.Context, discord.User, discord.Member],
         *,
-        check_permissions: bool = False,
+        command: Optional[commands.Command] = None,
+        check_permissions: bool = True,
     ) -> bool:
         """
         Determine if an embed is requested for a response.
 
         Arguments
         ---------
-        channel : `discord.abc.GuildChannel` or `discord.abc.PrivateChannel`
-            The channel to check embed settings for.
-        user : `discord.abc.User`
-            The user to check embed settings for.
-        command : `redbot.core.commands.Command`, optional
-            The command ran.
+        channel : `discord.abc.Messageable`
+            The target messageable object to check embed settings for.
 
         Keyword Arguments
         -----------------
+        command : `redbot.core.commands.Command`, optional
+            The command ran.
+            This is auto-filled when ``channel`` is passed with command context.
         check_permissions : `bool`
             If ``True``, this method will also check whether the bot can send embeds
             in the given channel and if it can't, it will return ``False`` regardless of
@@ -1234,6 +1232,13 @@ class Red(
         -------
         bool
             :code:`True` if an embed is requested
+
+        Raises
+        ------
+        TypeError
+            When the passed channel is of type `discord.GroupChannel`
+            or `discord.DMChannel`
+
         """
 
         async def get_command_setting(guild_id: int) -> Optional[bool]:
@@ -1242,10 +1247,19 @@ class Red(
             scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
             return await scope.embeds()
 
-        if isinstance(channel, discord.abc.PrivateChannel):
-            if (user_setting := await self._config.user(user).embeds()) is not None:
-                return user_setting
-        else:
+        if isinstance(channel, (discord.GroupChannel, discord.DMChannel)):
+            raise TypeError("You cannot pass a GroupChannel or DMChannel to this method")
+
+        # using dpy_commands.Context to keep the Messageable contract in full
+        if isinstance(channel, dpy_commands.Context):
+            command = command or channel.command
+            channel = (
+                channel.author
+                if isinstance(channel.channel, discord.DMChannel)
+                else channel.channel
+            )
+
+        if isinstance(channel, discord.TextChannel):
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
                 return False
 
@@ -1257,8 +1271,11 @@ class Red(
 
             if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
+        else:
+            user = channel
+            if (user_setting := await self._config.user(user).embeds()) is not None:
+                return user_setting
 
-        # XXX: maybe this should be checked before guild setting?
         if (global_command_setting := await get_command_setting(0)) is not None:
             return global_command_setting
 

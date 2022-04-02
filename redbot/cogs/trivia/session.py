@@ -103,8 +103,7 @@ class TriviaSession:
 
         """
         session = cls(ctx, question_list, settings)
-        loop = ctx.bot.loop
-        session._task = loop.create_task(session.run())
+        session._task = asyncio.create_task(session.run())
         session._task.add_done_callback(session._error_handler)
         return session
 

@@ -67,7 +67,6 @@ class AliasEntry:
         return extra
 
     def to_json(self) -> dict:
-
         return {
             "name": self.name,
             "command": self.command,
@@ -91,7 +90,6 @@ class AliasCache:
         self._aliases: Dict[Optional[int], Dict[str, AliasEntry]] = {None: {}}
 
     async def anonymize_aliases(self, user_id: int):
-
         async with self.config.entries() as global_aliases:
             for a in global_aliases:
                 if a.get("creator", 0) == user_id:

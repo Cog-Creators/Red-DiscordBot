@@ -93,7 +93,7 @@ class Context(DPYContext):
         return await super().send(content=content, **kwargs)
 
     async def send_help(self, command=None):
-        """ Send the command help message. """
+        """Send the command help message."""
         # This allows people to manually use this similarly
         # to the upstream d.py version, while retaining our use.
         command = command or self.command
@@ -231,17 +231,20 @@ class Context(DPYContext):
 
     async def embed_requested(self):
         """
-        Simple helper to call bot.embed_requested
-        with logic around if embed permissions are available
+        Short-hand for calling bot.embed_requested with permission checks.
+
+        Equivalent to:
+
+        .. code:: python
+
+            await ctx.bot.embed_requested(ctx)
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
-        return await self.bot.embed_requested(
-            self.channel, self.author, command=self.command, check_permissions=True
-        )
+        return await self.bot.embed_requested(self)
 
     async def maybe_send_embed(self, message: str) -> discord.Message:
         """
@@ -356,7 +359,6 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
         @property
         def me(self) -> discord.Member:
             ...
-
 
 else:
     GuildContext = Context

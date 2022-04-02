@@ -72,7 +72,7 @@ DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable
 
 
 class RedUnhandledAPI(Exception):
-    """ An exception which can be raised to signal a lack of handling specific APIs """
+    """An exception which can be raised to signal a lack of handling specific APIs"""
 
     pass
 
@@ -661,7 +661,6 @@ class Command(CogCommandMixin, DPYCommand):
 
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
-
                     if isinstance(error.original, MyErrorType):
                         self.log_exception(error.original)
                     else:
@@ -1131,10 +1130,10 @@ class _RuleDropper(CogCommandMixin):
     """
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
-        """ This will do nothing. """
+        """This will do nothing."""
 
     def deny_to(self, model_id: Union[int, str], guild_id: int) -> None:
-        """ This will do nothing. """
+        """This will do nothing."""
 
     def clear_rule_for(
         self, model_id: Union[int, str], guild_id: int
@@ -1146,7 +1145,7 @@ class _RuleDropper(CogCommandMixin):
         return cur_rule, cur_rule
 
     def set_default_rule(self, rule: Optional[bool], guild_id: int) -> None:
-        """ This will do nothing. """
+        """This will do nothing."""
 
 
 class _AlwaysAvailableCommand(_AlwaysAvailableMixin, _RuleDropper, Command):

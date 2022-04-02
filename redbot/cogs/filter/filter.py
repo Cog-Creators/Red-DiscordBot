@@ -2,7 +2,7 @@ import asyncio
 import discord
 import re
 from datetime import timezone
-from typing import Union, Set, Literal
+from typing import Union, Set, Literal, Optional
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
@@ -346,12 +346,14 @@ class Filter(commands.Cog):
         else:
             await ctx.send(_("Names and nicknames will now be filtered."))
 
-    def invalidate_cache(self, guild: discord.Guild, channel: discord.TextChannel = None):
-        """ Invalidate a cached pattern"""
-        self.pattern_cache.pop((guild, channel), None)
+    def invalidate_cache(
+        self, guild: discord.Guild, channel: Optional[discord.TextChannel] = None
+    ) -> None:
+        """Invalidate a cached pattern"""
+        self.pattern_cache.pop((guild.id, channel and channel.id), None)
         if channel is None:
             for keyset in list(self.pattern_cache.keys()):  # cast needed, no remove
-                if guild in keyset:
+                if guild.id == keyset[0]:
                     self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
@@ -397,7 +399,6 @@ class Filter(commands.Cog):
     async def filter_hits(
         self, text: str, server_or_channel: Union[discord.Guild, discord.TextChannel]
     ) -> Set[str]:
-
         try:
             guild = server_or_channel.guild
             channel = server_or_channel
@@ -408,7 +409,7 @@ class Filter(commands.Cog):
         hits: Set[str] = set()
 
         try:
-            pattern = self.pattern_cache[(guild, channel)]
+            pattern = self.pattern_cache[(guild.id, channel and channel.id)]
         except KeyError:
             word_list = set(await self.config.guild(guild).filter())
             if channel:
@@ -421,7 +422,7 @@ class Filter(commands.Cog):
             else:
                 pattern = None
 
-            self.pattern_cache[(guild, channel)] = pattern
+            self.pattern_cache[(guild.id, channel and channel.id)] = pattern
 
         if pattern:
             hits |= set(pattern.findall(text))
@@ -526,7 +527,6 @@ class Filter(commands.Cog):
         await self.maybe_filter_name(member)
 
     async def maybe_filter_name(self, member: discord.Member):
-
         guild = member.guild
         if (not guild) or await self.bot.cog_disabled_in_guild(self, guild):
             return

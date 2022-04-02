@@ -1,7 +1,5 @@
 import asyncio
 import contextlib
-import datetime
-import logging
 import math
 from pathlib import Path
 
@@ -9,6 +7,8 @@ from typing import MutableMapping, Optional
 
 import discord
 import lavalink
+from lavalink import NodeNotFound, PlayerNotFound
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
@@ -26,7 +26,7 @@ from redbot.core.utils.predicates import ReactionPredicate
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.queue")
+log = getLogger("red.cogs.Audio.cog.Commands.queue")
 _ = Translator("Audio", Path(__file__))
 
 
@@ -179,7 +179,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Clears the queue."""
         try:
             player = lavalink.get_player(ctx.guild.id)
-        except KeyError:
+        except (NodeNotFound, PlayerNotFound):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -210,7 +210,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Removes songs from the queue if the requester is not in the voice channel."""
         try:
             player = lavalink.get_player(ctx.guild.id)
-        except KeyError:
+        except (NodeNotFound, PlayerNotFound):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
@@ -257,7 +257,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         try:
             player = lavalink.get_player(ctx.guild.id)
-        except KeyError:
+        except (NodeNotFound, PlayerNotFound):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if not self._player_check(ctx) or not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
@@ -289,7 +289,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Search the queue."""
         try:
             player = lavalink.get_player(ctx.guild.id)
-        except KeyError:
+        except (NodeNotFound, PlayerNotFound):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if not self._player_check(ctx) or not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
@@ -354,12 +354,12 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Shuffle Queue"),
                 description=_("Connect to a voice channel first."),
             )
-        except IndexError:
+        except NodeNotFound:
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
-                description=_("Connection to Lavalink has not yet been established."),
+                description=_("Connection to Lavalink node has not yet been established."),
             )
         except KeyError:
             ctx.command.reset_cooldown(ctx)
