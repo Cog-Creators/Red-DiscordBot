@@ -1018,7 +1018,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     @commands.dm_only()
-    @command_llsetup_config_server_youtubeconfig.command(name="psid", aliases=["psid"])
+    @command_llsetup_config_server_youtubeconfig.command(name="psid")
     async def command_llsetup_config_server_youtubeconfig_psid(
         self,
         ctx: commands.Context,
