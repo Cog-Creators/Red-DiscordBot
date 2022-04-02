@@ -32,6 +32,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
         self.cog_init_task = asyncio.create_task(self.initialize())
 
     async def initialize(self) -> None:
+        await self.init_config_cache()
         await self.bot.wait_until_red_ready()
         # Unlike most cases, we want the cache to exit before migration.
         try:
@@ -59,7 +60,15 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
 
         self.cog_ready_event.set()
 
-    async def restore_players(self):
+    async def init_config_cache(self) -> None:
+        all_guilds = await self.config.all_guilds()
+        async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
+            self._dj_status_cache.setdefault(guild_id, guild_data["dj_enabled"])
+            self._daily_playlist_cache.setdefault(guild_id, guild_data["daily_playlists"])
+            self._persist_queue_cache.setdefault(guild_id, guild_data["persist_queue"])
+            self._dj_role_cache.setdefault(guild_id, guild_data["dj_role"])
+
+    async def restore_players(self) -> None:
         log.debug("Starting new restore player task")
         tries = 0
         tracks_to_restore = await self.api_interface.persistent_queue_api.fetch_all()
@@ -103,12 +112,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         "Skipping player restore - Bot is no longer in Guild (%s)", guild_id
                     )
                     continue
-                persist_cache = self._persist_queue_cache.setdefault(
-                    guild_id, await self.config.guild(guild).persist_queue()
-                )
+                persist_cache = self._persist_queue_cache.get(guild_id)
                 if not persist_cache:
                     log.verbose(
-                        "Skipping player restore - Guild (%s) does not have a persist cache",
+                        "Skipping player restore - Guild (%s) does not have a persist queue enabled",
                         guild_id,
                     )
                     await self.api_interface.persistent_queue_api.drop(guild_id)

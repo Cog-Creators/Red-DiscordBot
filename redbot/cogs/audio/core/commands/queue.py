@@ -182,9 +182,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             player = lavalink.get_player(ctx.guild.id)
         except (NodeNotFound, PlayerNotFound):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if not self._player_check(ctx) or not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if (
@@ -213,9 +211,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             player = lavalink.get_player(ctx.guild.id)
         except (NodeNotFound, PlayerNotFound):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if not self._player_check(ctx) or not player.queue:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
         if (
@@ -310,9 +306,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.cooldown(1, 30, commands.BucketType.guild)
     async def command_queue_shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if (
             dj_enabled
             and not await self._can_instaskip(ctx, ctx.author)

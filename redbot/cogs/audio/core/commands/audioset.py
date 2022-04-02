@@ -598,9 +598,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Daily queues creates a playlist for all tracks played today.
         """
-        daily_playlists = self._daily_playlist_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).daily_playlists()
-        )
+        daily_playlists = self._daily_playlist_cache.get(ctx.guild.id)
         await self.config.guild(ctx.guild).daily_playlists.set(not daily_playlists)
         self._daily_playlist_cache[ctx.guild.id] = not daily_playlists
         await self.send_embed_msg(
@@ -642,9 +640,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         DJ mode allows users with the DJ role to use audio commands.
         """
-        dj_role = self._dj_role_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-        )
+        dj_role = self._dj_role_cache.get(ctx.guild.id)
         dj_role = ctx.guild.get_role(dj_role)
         if dj_role is None:
             await self.send_embed_msg(
@@ -663,9 +659,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx, title=_("Response timed out, try again later.")
                 )
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
         self._dj_status_cache[ctx.guild.id] = not dj_enabled
         await self.send_embed_msg(
@@ -941,9 +935,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the role to use for DJ mode."""
         await self.config.guild(ctx.guild).dj_role.set(role_name.id)
         self._dj_role_cache[ctx.guild.id] = role_name.id
-        dj_role = self._dj_role_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-        )
+        dj_role = self._dj_role_cache.get(ctx.guild.id)
         dj_role_obj = ctx.guild.get_role(dj_role)
         await self.send_embed_msg(
             ctx,
@@ -1436,9 +1428,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         Persistent queues allows the current queue to be restored when the queue closes.
         """
-        persist_cache = self._persist_queue_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).persist_queue()
-        )
+        persist_cache = self._persist_queue_cache.get(ctx.guild.id)
         await self.config.guild(ctx.guild).persist_queue.set(not persist_cache)
         self._persist_queue_cache[ctx.guild.id] = not persist_cache
         await self.send_embed_msg(

@@ -67,9 +67,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if not is_different_user:
                 has_perms = True
         elif playlist.scope == PlaylistScope.GUILD.value and not is_different_guild:
-            dj_enabled = self._dj_status_cache.setdefault(
-                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-            )
+            dj_enabled = self._dj_status_cache.get(ctx.guild.id)
             if (
                 guild.owner_id == ctx.author.id
                 or (dj_enabled and await self._has_dj_role(ctx, ctx.author))

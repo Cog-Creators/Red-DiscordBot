@@ -38,9 +38,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         player = lavalink.get_player(ctx.guild.id)
         eq = player.fetch("eq", Equalizer())
         reactions = [
@@ -164,9 +162,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         player = lavalink.get_player(ctx.guild.id)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
@@ -193,9 +189,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Reset the eq to 0 across all bands."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
@@ -227,9 +221,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Save the current eq settings to a preset."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             ctx.command.reset_cooldown(ctx)
             return await self.send_embed_msg(
@@ -317,9 +309,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
