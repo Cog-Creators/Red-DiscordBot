@@ -18,7 +18,7 @@ import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import NoReturn
+from typing import Any, Awaitable, Callable, NoReturn, Union
 
 import discord
 import rich
@@ -29,6 +29,7 @@ from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
+from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
 
@@ -62,42 +63,9 @@ def list_instances():
         sys.exit(0)
 
 
-def debug_info():
+async def debug_info(*args: Any) -> None:
     """Shows debug information useful for debugging."""
-    if sys.platform == "linux":
-        import distro  # pylint: disable=import-error
-
-    IS_WINDOWS = os.name == "nt"
-    IS_MAC = sys.platform == "darwin"
-    IS_LINUX = sys.platform == "linux"
-
-    pyver = sys.version
-    pipver = pip.__version__
-    redver = __version__
-    dpy_version = discord.__version__
-    if IS_WINDOWS:
-        os_info = platform.uname()
-        osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
-    elif IS_MAC:
-        os_info = platform.mac_ver()
-        osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
-    else:
-        osver = f"{distro.name()} {distro.version()}".strip()
-    user_who_ran = getpass.getuser()
-    info = (
-        "Debug Info for Red\n\n"
-        + "Red version: {}\n".format(redver)
-        + "Python version: {}\n".format(pyver)
-        + "Python executable: {}\n".format(sys.executable)
-        + "Discord.py version: {}\n".format(dpy_version)
-        + "Pip version: {}\n".format(pipver)
-        + "OS version: {}\n".format(osver)
-        + "System arch: {}\n".format(platform.machine())
-        + "User: {}\n".format(user_who_ran)
-        + "Metadata file: {}\n".format(data_manager.config_file)
-    )
-    print(info)
-    sys.exit(0)
+    print(await DebugInfo().get_text())
 
 
 async def edit_instance(red, cli_flags):
@@ -291,18 +259,25 @@ def _copy_data(data):
     return True
 
 
-def handle_edit(cli_flags: Namespace):
+def early_exit_runner(
+    cli_flags: Namespace,
+    func: Union[Callable[[], Awaitable[Any]], Callable[[Red, Namespace], Awaitable[Any]]],
+) -> None:
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    data_manager.load_basic_configuration(cli_flags.instance_name)
-    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
     try:
+        if not cli_flags.instance_name:
+            loop.run_until_complete(func())
+            return
+
+        data_manager.load_basic_configuration(cli_flags.instance_name)
+        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
-        loop.run_until_complete(edit_instance(red, cli_flags))
+        loop.run_until_complete(func(red, cli_flags))
         loop.run_until_complete(driver_cls.teardown())
     except (KeyboardInterrupt, EOFError):
         print("Aborted!")
@@ -430,7 +405,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
         print("Current Version: {}".format(__version__))
         sys.exit(0)
     elif cli_flags.debuginfo:
-        debug_info()
+        early_exit_runner(cli_flags, debug_info)
     elif not cli_flags.instance_name and (not cli_flags.no_instance or cli_flags.edit):
         print("Error: No instance name was provided!")
         sys.exit(1)
@@ -501,7 +476,7 @@ def main():
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
     if cli_flags.edit:
-        handle_edit(cli_flags)
+        early_exit_runner(cli_flags, edit_instance)
         return
     try:
         loop = asyncio.new_event_loop()
