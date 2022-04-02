@@ -81,10 +81,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
-
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if member.bot:
             return True
 
@@ -111,9 +108,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return not nonbots
 
     async def _has_dj_role(self, ctx: commands.Context, member: discord.Member) -> bool:
-        dj_role = self._dj_role_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
-        )
+        dj_role = self._dj_role_cache.get(ctx.guild.id)
         dj_role_obj = ctx.guild.get_role(dj_role)
         return dj_role_obj in ctx.guild.get_member(member.id).roles
 

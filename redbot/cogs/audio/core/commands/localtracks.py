@@ -111,7 +111,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
 
-        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)
         else:

@@ -919,9 +919,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             tracks = query
 
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+        dj_enabled = self._dj_status_cache.get(ctx.guild.id)
 
         len_search_pages = math.ceil(len(tracks) / 5)
         search_page_list = []

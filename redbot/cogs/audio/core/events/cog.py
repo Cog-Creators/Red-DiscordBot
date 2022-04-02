@@ -39,9 +39,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         track_identifier = track.track_identifier
         if self.playlist_api is not None:
-            daily_cache = self._daily_playlist_cache.setdefault(
-                guild.id, await self.config.guild(guild).daily_playlists()
-            )
+            daily_cache = self._daily_playlist_cache.get(guild.id)
             global_daily_playlists = self._daily_global_playlist_cache.setdefault(
                 self.bot.user.id, await self.config.daily_playlists()
             )
@@ -137,9 +135,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 log.verbose(
                     "Failed to delete global daily playlist ID: %s", too_old_id, exc_info=exc
                 )
-        persist_cache = self._persist_queue_cache.setdefault(
-            guild.id, await self.config.guild(guild).persist_queue()
-        )
+        persist_cache = self._persist_queue_cache.get(guild.id)
         if persist_cache:
             await self.api_interface.persistent_queue_api.played(
                 guild_id=guild.id, track_id=track_identifier
@@ -165,9 +161,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not (track and guild):
             return
-        persist_cache = self._persist_queue_cache.setdefault(
-            guild.id, await self.config.guild(guild).persist_queue()
-        )
+        persist_cache = self._persist_queue_cache.get(guild.id)
         if persist_cache:
             await self.api_interface.persistent_queue_api.enqueued(
                 guild_id=guild.id, room_id=track.extras["vc"], track=track
