@@ -12,13 +12,15 @@ if TYPE_CHECKING:
 
 _ = Translator("UtilsViews", __file__)
 
+_ACCEPTABLE_PAGE_TYPES = Union[Dict[str, Union[str, discord.Embed]], discord.Embed, str]
+
 
 class _SimplePageSource(menus.ListPageSource):
-    def __init__(self, items: List[Union[str, discord.Embed]]):
+    def __init__(self, items: List[_ACCEPTABLE_PAGE_TYPES]):
         super().__init__(items, per_page=1)
 
     async def format_page(
-        self, view: discord.ui.View, page: Union[str, discord.Embed]
+        self, view: discord.ui.View, page: _ACCEPTABLE_PAGE_TYPES
     ) -> Union[str, discord.Embed]:
         return page
 
@@ -71,7 +73,7 @@ class SimpleMenu(discord.ui.View):
 
     def __init__(
         self,
-        pages: List[Union[str, discord.Embed, Dict[str, Union[str, discord.Embed]]]],
+        pages: List[_ACCEPTABLE_PAGE_TYPES],
         timeout: float = 180.0,
         page_start: int = 0,
         delete_after_timeout: bool = False,
