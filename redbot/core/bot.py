@@ -111,7 +111,7 @@ class Red(
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__delete_delay=0,
-            help__use_menus=False,
+            help__use_menus=0,
             help__show_hidden=False,
             help__show_aliases=True,
             help__verify_checks=True,
@@ -1046,7 +1046,8 @@ class Red(
     async def _schema_2_to_3(self):
         log.info("Migrating help menus to enum values")
         old = await self._config.help__use_menus()
-        await self._config.help__use_menus.set(int(old))
+        if old is not None:
+            await self._config.help__use_menus.set(int(old))
 
     async def _schema_1_to_2(self):
         """
