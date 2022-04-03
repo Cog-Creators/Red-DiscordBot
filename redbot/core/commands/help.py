@@ -31,6 +31,7 @@ import abc
 import asyncio
 from collections import namedtuple
 from dataclasses import dataclass, asdict as dc_asdict
+from enum import Enum
 from typing import Union, List, AsyncIterator, Iterable, cast
 
 import discord
@@ -66,6 +67,12 @@ EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
 
 
+class HelpMenuSetting(Enum):
+    no_menu = 0
+    reactions = 1
+    buttons = 2
+
+
 @dataclass(frozen=True)
 class HelpSettings:
     """
@@ -79,8 +86,7 @@ class HelpSettings:
 
     page_char_limit: int = 1000
     max_pages_in_guild: int = 2
-    use_menus: bool = False
-    use_buttons: bool = False
+    use_menus: HelpMenuSetting = HelpMenuSetting(0)
     show_hidden: bool = False
     show_aliases: bool = True
     verify_checks: bool = True
@@ -105,7 +111,8 @@ class HelpSettings:
         Get the HelpSettings for the current context
         """
         settings = await context.bot._config.help.all()
-        return cls(**settings)
+        menus = settings.pop("use_menus", 0)
+        return cls(**settings, use_menus=HelpMenuSetting(menus))
 
     @property
     def pretty(self):
@@ -816,10 +823,21 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
-        if help_settings.use_buttons and help_settings.use_menus:
+        if help_settings.use_menus is HelpMenuSetting.buttons:
             await SimpleMenu(pages, timeout=help_settings.react_timeout).start(ctx)
 
-        elif not (can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus):
+        if can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus is HelpMenuSetting.reactions:
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(
+                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+            )
+            # menu needs reactions added manually since we fed it a message
+            menus.start_adding_reactions(m, c.keys())
+
+        else:
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
@@ -861,16 +879,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     await mass_purge(messages, channel)
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
-        else:
-            # Specifically ensuring the menu's message is sent prior to returning
-            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
-            # Allow other things to happen during menu timeout/interaction.
-            asyncio.create_task(
-                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
-            )
-            # menu needs reactions added manually since we fed it a message
-            menus.start_adding_reactions(m, c.keys())
+
 
 
 @commands.command(name="help", hidden=True, i18n=_)

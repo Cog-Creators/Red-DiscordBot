@@ -21,7 +21,18 @@ from redbot.core import data_manager
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
+from typing import (
+    TYPE_CHECKING,
+    Union,
+    Tuple,
+    List,
+    Optional,
+    Iterable,
+    Sequence,
+    Dict,
+    Set,
+    Literal,
+)
 
 import aiohttp
 import discord
@@ -3644,57 +3655,36 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @helpset.command(name="usemenus")
-    async def helpset_usemenus(self, ctx: commands.Context, use_menus: bool = None):
+    async def helpset_usemenus(
+        self, ctx: commands.Context, use_menus: Literal["buttons", "reactions", "disable"]
+    ):
         """
         Allows the help command to be sent as a paginated menu instead of separate
         messages.
 
-        When enabled, `[p]help` will only show one page at a time and will use reactions to navigate between pages.
-
-        This defaults to False.
-        Using this without a setting will toggle.
+        When "reactions" is passed, `[p]help` will only show one page at a time
+        and will use reactions to navigate between pages.
 
          **Examples:**
-            - `[p]helpset usemenus True` - Enables using menus.
-            - `[p]helpset usemenus` - Toggles the value.
+            - `[p]helpset usemenus reactions` - Enables using reaction menus.
+            - `[p]helpset usemenus buttons` - Enables using button menus.
+            - `[p]helpset usemenus disable` - Disables all button menus.
 
         **Arguments:**
-            - `[use_menus]` - Whether to use menus. Leave blank to toggle.
+            - `<"buttons"|"reactions"|"disable">` - Whether to use `buttons`,
+            `reactons`, or no menus.
         """
-        if use_menus is None:
-            use_menus = not await ctx.bot._config.help.use_menus()
-        await ctx.bot._config.help.use_menus.set(use_menus)
-        if use_menus:
-            await ctx.send(_("Help will use menus."))
-        else:
-            await ctx.send(_("Help will not use menus."))
+        if use_menus == "buttons":
+            await ctx.bot._config.help.use_menus.set(2)
+            msg = _("Help will use button menus.")
+        if use_menus == "reactions":
+            await ctx.bot._config.help.use_menus.set(1)
+            msg = _("Help will use reaction menus.")
+        if use_menus == "disable":
+            await ctx.bot._config.help.use_menus.set(0)
+            msg = _("Help will not use menus.")
 
-    @helpset.command(name="usebuttons")
-    async def helpset_usebuttons(self, ctx: commands.Context, use_buttons: bool = None):
-        """
-        Allows the help command to be sent with paginated menu using buttons
-        instead of reactions.
-
-        When enabled `[p]help` will only show one page at a time and will use buttons
-        to navigate between pages.
-
-        This defaults to False.
-        Using this without a setting will toggle.
-
-        **Examples:**
-            - `[p]helpset usebuttons True` - Enables using buttons.
-            - `[p]helpset usebuttons` - Toggles the value.
-
-        **Arguments:**
-            - `[use_buttons]` - Whether to use buttons. Leave blank to toggle.
-        """
-        if use_buttons is None:
-            use_buttons = not await ctx.bot._config.help.use_buttons()
-        await ctx.bot._config.help.use_buttons.set(use_buttons)
-        if use_buttons:
-            await ctx.send(_("Help will use buttons if menus are also enabled."))
-        else:
-            await ctx.send(_("Help will not use buttons if menus are also enabled."))
+        await ctx.send(msg)
 
     @helpset.command(name="showhidden")
     async def helpset_showhidden(self, ctx: commands.Context, show_hidden: bool = None):

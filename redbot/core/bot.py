@@ -112,7 +112,6 @@ class Red(
             help__max_pages_in_guild=2,
             help__delete_delay=0,
             help__use_menus=False,
-            help__use_buttons=False,
             help__show_hidden=False,
             help__show_aliases=True,
             help__verify_checks=True,
@@ -1039,6 +1038,15 @@ class Red(
             await self._schema_1_to_2()
             schema_version += 1
             await self._config.schema_version.set(schema_version)
+        if schema_version == 2:
+            await self._schema_2_to_3()
+            schema_version += 1
+            await self._config.schema_version.set(schema_version)
+
+    async def _schema_2_to_3(self):
+        log.info("Migrating help menus to enum values")
+        old = await self._config.help__use_menus()
+        await self._config.help__use_menus.set(int(old))
 
     async def _schema_1_to_2(self):
         """
