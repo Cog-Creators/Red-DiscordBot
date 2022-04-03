@@ -7,7 +7,9 @@ def _get_version(*, ignore_installed: bool = False) -> str:
 
         path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
         output = subprocess.check_output(
-            ("git", "describe", "--tags", "--long", "--dirty"), cwd=path
+            ("git", "describe", "--tags", "--long", "--dirty"),
+            stderr=subprocess.DEVNULL,
+            cwd=path,
         )
         _, count, commit, *dirty = output.decode("utf-8").strip().split("-", 3)
         dirty_suffix = f".{dirty[0]}" if dirty else ""
