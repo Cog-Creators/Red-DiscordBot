@@ -816,7 +816,10 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
-        if not (can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus):
+        if help_settings.use_buttons and help_settings.use_menus:
+            await SimpleMenu(pages, timeout=help_settings.react_timeout).start(ctx)
+
+        elif not (can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus):
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
@@ -859,22 +862,19 @@ class RedHelpFormatter(HelpFormatterABC):
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
         else:
-            if help_settings.use_buttons:
-                await SimpleMenu(pages, timeout=help_settings.react_timeout).start(ctx)
-            else:
-                # Specifically ensuring the menu's message is sent prior to returning
-                m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-                c = (
-                    menus.DEFAULT_CONTROLS
-                    if len(pages) > 1
-                    else {"\N{CROSS MARK}": menus.close_menu}
-                )
-                # Allow other things to happen during menu timeout/interaction.
-                asyncio.create_task(
-                    menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
-                )
-                # menu needs reactions added manually since we fed it a message
-                menus.start_adding_reactions(m, c.keys())
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            c = (
+                menus.DEFAULT_CONTROLS
+                if len(pages) > 1
+                else {"\N{CROSS MARK}": menus.close_menu}
+            )
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(
+                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+            )
+            # menu needs reactions added manually since we fed it a message
+            menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=_)
