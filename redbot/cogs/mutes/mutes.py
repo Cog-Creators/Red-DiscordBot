@@ -1061,7 +1061,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         user_str = user.mention
                     if mutes["until"]:
                         timestamp = int(mutes["until"])
-                        time_str = f"<t:{timestamp}>"
+                        time_str = discord.utils.format_dt(datetime.fromtimestamp(timestamp))
                     else:
                         time_str = ""
                     msg += f"{user_str} "
@@ -1076,7 +1076,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     msg += _("__Server Timeouts__\n")
                     added_timeouts = True
                 msg += f"{member.mention}"
-                time_str = f"<t:{int(member.timed_out_until.timestamp())}>"
+                time_str = discord.utils.format_dt(member.timed_out_until)
                 msg += _("__Until__: {time_left}\n").format(time_left=time_str)
         for channel_id, mutes_data in self._channel_mutes.items():
             if not mutes_data:
@@ -1093,7 +1093,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         user_str = user.mention
                     if mutes["until"]:
                         timestamp = int(mutes["until"])
-                        time_str = f"<t:{timestamp}>"
+                        time_str = discord.utils.format_dt(datetime.fromtimestamp(timestamp))
                     else:
                         time_str = ""
                     msg += f"{user_str} "
@@ -1222,13 +1222,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
+                time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
 
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
+                    time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
 
             author = ctx.message.author
             guild = ctx.guild
@@ -1355,12 +1355,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
+                time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" until {duration}").format(duration=f"<t:{int(until.timestamp())}>")
+                    time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
             author = ctx.message.author
             channel = ctx.message.channel
             if isinstance(channel, discord.Thread):
