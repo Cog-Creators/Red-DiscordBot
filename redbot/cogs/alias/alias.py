@@ -459,8 +459,6 @@ class Alias(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message: discord.Message):
-        await self._ready_event.wait()
-
         if message.guild is not None:
             if await self.bot.cog_disabled_in_guild(self, message.guild):
                 return

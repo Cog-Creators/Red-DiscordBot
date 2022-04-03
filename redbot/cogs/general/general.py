@@ -7,6 +7,7 @@ import urllib.parse
 import aiohttp
 import discord
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.utils.chat_formatting import (
@@ -72,8 +73,9 @@ class General(commands.Cog):
     ]
     _ = T_
 
-    def __init__(self):
+    def __init__(self, bot: Red) -> None:
         super().__init__()
+        self.bot = bot
         self.stopwatches = {}
 
     async def red_delete_data_for_user(self, **kwargs):
@@ -254,18 +256,22 @@ class General(commands.Cog):
         Default to False.
         """
         guild = ctx.guild
-        created_at = _("Created on <t:{0}>. That's <t:{0}:R>!").format(
-            int(guild.created_at.replace(tzinfo=datetime.timezone.utc).timestamp()),
+        created_at = _("Created on {date_and_time}. That's {relative_time}!").format(
+            date_and_time=discord.utils.format_dt(guild.created_at),
+            relative_time=discord.utils.format_dt(guild.created_at, "R"),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
         )
-        total_users = humanize_number(guild.member_count)
+        total_users = guild.member_count and humanize_number(guild.member_count)
         text_channels = humanize_number(len(guild.text_channels))
         voice_channels = humanize_number(len(guild.voice_channels))
         if not details:
             data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
-            data.add_field(name=_("Users online"), value=f"{online}/{total_users}")
+            data.add_field(
+                name=_("Users online"),
+                value=f"{online}/{total_users}" if total_users else _("Not available"),
+            )
             data.add_field(name=_("Text Channels"), value=text_channels)
             data.add_field(name=_("Voice Channels"), value=voice_channels)
             data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
@@ -277,9 +283,9 @@ class General(commands.Cog):
                     command=f"{ctx.clean_prefix}serverinfo 1"
                 )
             )
-            if guild.icon_url:
-                data.set_author(name=guild.name, url=guild.icon_url)
-                data.set_thumbnail(url=guild.icon_url)
+            if guild.icon:
+                data.set_author(name=guild.name, url=guild.icon)
+                data.set_thumbnail(url=guild.icon)
             else:
                 data.set_author(name=guild.name)
         else:
@@ -342,7 +348,7 @@ class General(commands.Cog):
                 "low": _("1 - Low"),
                 "medium": _("2 - Medium"),
                 "high": _("3 - High"),
-                "extreme": _("4 - Extreme"),
+                "highest": _("4 - Highest"),
             }
 
             features = {
@@ -389,10 +395,10 @@ class General(commands.Cog):
                 if "VERIFIED" in guild.features
                 else "https://cdn.discordapp.com/emojis/508929941610430464.png"
                 if "PARTNERED" in guild.features
-                else discord.Embed.Empty,
+                else None,
             )
-            if guild.icon_url:
-                data.set_thumbnail(url=guild.icon_url)
+            if guild.icon:
+                data.set_thumbnail(url=guild.icon)
             data.add_field(name=_("Members:"), value=member_msg)
             data.add_field(
                 name=_("Channels:"),
@@ -444,7 +450,7 @@ class General(commands.Cog):
                 )
                 data.add_field(name=_("Nitro Boost:"), value=nitro_boost)
             if guild.splash:
-                data.set_image(url=guild.splash_url_as(format="png"))
+                data.set_image(url=guild.splash.replace(format="png"))
             data.set_footer(text=joined_on)
 
         await ctx.send(embed=data)

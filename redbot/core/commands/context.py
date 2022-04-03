@@ -283,7 +283,6 @@ class Context(DPYContext):
                 allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
             )
 
-
     @property
     def me(self) -> Union[discord.ClientUser, discord.Member]:
         """

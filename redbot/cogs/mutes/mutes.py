@@ -1044,7 +1044,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "Role mutes do not have this issue.\n\n"
                 "Are you sure you want to continue with channel overwrites? "
             )
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if can_react:
                 msg += _(
                     "Reacting with \N{WHITE HEAVY CHECK MARK} will continue "

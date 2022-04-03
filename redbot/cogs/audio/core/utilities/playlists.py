@@ -12,7 +12,7 @@ from typing import List, MutableMapping, Optional, Tuple, Union
 import aiohttp
 import discord
 import lavalink
-from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound
 from red_commons.logging import getLogger
 
 from redbot.core import commands
@@ -398,7 +398,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         uploaded_track_list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         playlist_url: str,
         uploaded_playlist_name: str,
         scope: str,
@@ -424,7 +424,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
-                            "I'm unable to get a track from Lavalink at the moment, "
+                            "I'm unable to get a track from the Lavalink node at the moment, "
                             "try again in a few minutes."
                         ),
                     )
@@ -480,7 +480,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await playlist_msg.edit(embed=embed3)
 
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
+        self, ctx: commands.Context, player: lavalink.player.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
         if getattr(playlist, "id", 0) == 42069:
             _, updated_tracks = await self._get_bundled_playlist_tracks()
@@ -523,8 +523,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _playlist_check(self, ctx: commands.Context) -> bool:
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
-                desc = EmptyEmbed
+                msg = _("Connection to Lavalink node has failed")
+                desc = None
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 await self.send_embed_msg(ctx, title=msg, description=desc)
@@ -547,11 +547,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx.author.voice.channel,
                     deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
-            except IndexError:
+            except NodeNotFound:
                 await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Playlists"),
-                    description=_("Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink node has not yet been established."),
                 )
                 return False
             except AttributeError:
@@ -579,7 +579,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def fetch_playlist_tracks(
         self,
         ctx: commands.Context,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         query: Query,
         skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
@@ -625,7 +625,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
                         "minutes."
                     ),
                 )
@@ -654,7 +654,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
                         "minutes."
                     ),
                 )

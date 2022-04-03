@@ -9,7 +9,8 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -91,8 +92,8 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
-                description = EmptyEmbed
+                msg = _("Connection to Lavalink node has failed")
+                description = None
                 if await self.bot.is_owner(ctx.author):
                     description = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=description)
@@ -103,9 +104,9 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
-                    ctx, title=_("Connection to Lavalink has not yet been established.")
+                    ctx, title=_("Connection to Lavalink node has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -161,7 +162,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
         ):
-            log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
+            log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
