@@ -826,7 +826,7 @@ class RedHelpFormatter(HelpFormatterABC):
         if help_settings.use_menus is HelpMenuSetting.buttons:
             await SimpleMenu(pages, timeout=help_settings.react_timeout).start(ctx)
 
-        if can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus is HelpMenuSetting.reactions:
+        elif can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus is HelpMenuSetting.reactions:
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
