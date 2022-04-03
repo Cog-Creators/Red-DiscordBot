@@ -3668,7 +3668,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
          **Examples:**
             - `[p]helpset usemenus reactions` - Enables using reaction menus.
             - `[p]helpset usemenus buttons` - Enables using button menus.
-            - `[p]helpset usemenus disable` - Disables all button menus.
+            - `[p]helpset usemenus disable` - Disables help menus.
 
         **Arguments:**
             - `<"buttons"|"reactions"|"disable">` - Whether to use `buttons`,
