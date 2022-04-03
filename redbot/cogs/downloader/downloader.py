@@ -13,6 +13,7 @@ from redbot.core import checks, commands, Config, version_info as red_version_in
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import can_user_react_in
 from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -933,7 +934,7 @@ class Downloader(commands.Cog):
                 poss_installed_path = (await self.cog_install_path()) / real_name
                 if poss_installed_path.exists():
                     with contextlib.suppress(commands.ExtensionNotLoaded):
-                        ctx.bot.unload_extension(real_name)
+                        await ctx.bot.unload_extension(real_name)
                         await ctx.bot.remove_loaded_package(real_name)
                     await self._delete_cog(poss_installed_path)
                     uninstalled_cogs.append(inline(real_name))
@@ -1665,7 +1666,7 @@ class Downloader(commands.Cog):
                 if len(updated_cognames) > 1
                 else _("Would you like to reload the updated cog?")
             )
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if not can_react:
                 message += " (yes/no)"
             query: discord.Message = await ctx.send(message)

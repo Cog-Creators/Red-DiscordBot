@@ -41,7 +41,8 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="audiostats")
     @commands.guild_only()
     @commands.is_owner()
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_audiostats(self, ctx: commands.Context):
         """Audio stats."""
         server_num = len(lavalink.active_players())

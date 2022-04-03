@@ -378,10 +378,10 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             sys.exit(1)
 
     if cli_flags.dry_run:
-        await red.http.close()
         sys.exit(0)
     try:
-        await red.start(token, bot=True)
+        # `async with red:` is unnecessary here because we call red.close() in shutdown handler
+        await red.start(token)
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
         db_token = await red._config.token()
@@ -451,7 +451,8 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         red._shutdown_mode = exit_code
 
     try:
-        await red.close()
+        if not red.is_closed():
+            await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
