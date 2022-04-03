@@ -864,11 +864,7 @@ class RedHelpFormatter(HelpFormatterABC):
         else:
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-            c = (
-                menus.DEFAULT_CONTROLS
-                if len(pages) > 1
-                else {"\N{CROSS MARK}": menus.close_menu}
-            )
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
             asyncio.create_task(
                 menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
