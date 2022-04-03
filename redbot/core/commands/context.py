@@ -11,6 +11,7 @@ from discord.ext.commands import Context as DPYContext
 from .requires import PermState
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
+from ..utils import can_user_react_in
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -138,7 +139,7 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
         """
         try:
-            if not self.channel.permissions_for(self.me).add_reactions:
+            if not can_user_react_in(self.me, self.channel):
                 raise RuntimeError
             await self.message.add_reaction(reaction)
         except (RuntimeError, discord.HTTPException):
@@ -282,15 +283,6 @@ class Context(DPYContext):
                 allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
             )
 
-    @property
-    def clean_prefix(self) -> str:
-        """
-        str: The command prefix, but with a sanitized version of the bot's mention if it was used as prefix.
-        This can be used in a context where discord user mentions might not render properly.
-        """
-        me = self.me
-        pattern = re.compile(rf"<@!?{me.id}>")
-        return pattern.sub(f"@{me.display_name}".replace("\\", r"\\"), self.prefix)
 
     @property
     def me(self) -> Union[discord.ClientUser, discord.Member]:
@@ -348,7 +340,7 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
             ...
 
         @property
-        def channel(self) -> discord.TextChannel:
+        def channel(self) -> Union[discord.TextChannel, discord.Thread]:
             ...
 
         @property
