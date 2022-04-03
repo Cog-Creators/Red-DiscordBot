@@ -80,6 +80,7 @@ class HelpSettings:
     page_char_limit: int = 1000
     max_pages_in_guild: int = 2
     use_menus: bool = False
+    use_buttons: bool = False
     show_hidden: bool = False
     show_aliases: bool = True
     verify_checks: bool = True
