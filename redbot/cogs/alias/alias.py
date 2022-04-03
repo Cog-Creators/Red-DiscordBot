@@ -57,7 +57,6 @@ class Alias(commands.Cog):
         if not self._aliases._loaded:
             await self._aliases.load_aliases()
 
-
     async def red_delete_data_for_user(
         self,
         *,
