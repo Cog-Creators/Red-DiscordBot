@@ -19,6 +19,7 @@
 #
 import os
 import sys
+import time
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("_ext"))
@@ -61,7 +62,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018-2021, Cog Creators"
+copyright = f"2018-{time.strftime('%Y')}, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -69,7 +70,7 @@ author = "Cog Creators"
 # built documents.
 #
 from redbot.core import __version__
-from discord import __version__ as dpy_version
+from discord import __version__ as dpy_version, version_info as dpy_version_info
 
 # The short X.Y version.
 version = __version__
@@ -95,7 +96,7 @@ exclude_patterns = [
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = "default"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -116,6 +117,12 @@ rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+
+# Add any extra paths that contain custom files (such as robots.txt or
+# .htaccess) here, relative to this directory. These files are copied
+# directly to the root of the documentation.
+#
+html_extra_path = ["_html"]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -218,10 +225,20 @@ linkcheck_retries = 3
 
 # -- Options for extensions -----------------------------------------------
 
+if dpy_version_info.releaselevel == "final":
+    # final release - versioned docs should be available
+    dpy_docs_url = f"https://discordpy.readthedocs.io/en/v{dpy_version}/"
+elif dpy_version_info.minor == dpy_version_info.micro == 0:
+    # alpha release of a new major version - `master` version of docs should be used
+    dpy_docs_url = "https://discordpy.readthedocs.io/en/master/"
+else:
+    # alpha release of a new minor or micro version - `latest` version of docs should be used
+    dpy_docs_url = "https://discordpy.readthedocs.io/en/latest/"
+
 # Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dpy": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/", None),
+    "dpy": (dpy_docs_url, None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
     "babel": ("http://babel.pocoo.org/en/stable/", None),
     "dateutil": ("https://dateutil.readthedocs.io/en/stable/", None),
@@ -231,7 +248,7 @@ intersphinx_mapping = {
 # This allows to create links to d.py docs with
 # :dpy_docs:`link text <site_name.html>`
 extlinks = {
-    "dpy_docs": (f"https://discordpy.readthedocs.io/en/v{dpy_version}/%s", None),
+    "dpy_docs": (f"{dpy_docs_url}/%s", None),
     "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
     "ghuser": ("https://github.com/%s", "@"),
 }
@@ -244,3 +261,21 @@ doctest_test_doctest_blocks = ""
 # Autodoc options
 autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"
+
+
+from docutils import nodes
+from sphinx.transforms import SphinxTransform
+
+
+# d.py's |coro| substitution leaks into our docs because we don't replace some of the docstrings
+class IgnoreCoroSubstitution(SphinxTransform):
+    default_priority = 210
+
+    def apply(self, **kwargs) -> None:
+        for ref in self.document.traverse(nodes.substitution_reference):
+            if ref["refname"] == "coro":
+                ref.replace_self(nodes.Text("", ""))
+
+
+def setup(app):
+    app.add_transform(IgnoreCoroSubstitution)

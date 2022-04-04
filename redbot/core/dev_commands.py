@@ -1,3 +1,15 @@
+"""
+The original implementation of this cog was heavily based on
+RoboDanny's REPL cog which can be found here:
+https://github.com/Rapptz/RoboDanny/blob/f13e1c9a6a7205e50de6f91fa5326fc7113332d3/cogs/repl.py
+
+Copyright (c) 2017-present Cog Creators
+Copyright (c) 2016-2017 Rapptz
+
+The original copy was distributed under MIT License and this derivative work
+is distributed under GNU GPL Version 3.
+"""
+
 import ast
 import asyncio
 import aiohttp
@@ -17,14 +29,6 @@ from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
 from .utils.chat_formatting import pagify
 from .utils.predicates import MessagePredicate
-
-"""
-Notice:
-
-95% of the below code came from R.Danny which can be found here:
-
-https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
-"""
 
 _ = Translator("Dev", __file__)
 
@@ -350,8 +354,7 @@ class Dev(commands.Cog):
         or anything else that makes the message non-empty.
         """
         msg = ctx.message
-        if not content and not msg.embeds and not msg.attachments:
-            # DEP-WARN: add `msg.stickers` when adding d.py 2.0
+        if not content and not msg.embeds and not msg.attachments and not msg.stickers:
             await ctx.send_help()
             return
         msg = copy(msg)

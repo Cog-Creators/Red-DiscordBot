@@ -6,7 +6,7 @@ from redbot.core.utils.chat_formatting import inline
 
 _ = Translator("Cleanup", __file__)
 
-SNOWFLAKE_THRESHOLD = 2 ** 63
+SNOWFLAKE_THRESHOLD = 2**63
 
 
 class RawMessageIds(Converter):

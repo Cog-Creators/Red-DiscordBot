@@ -3,7 +3,7 @@ from redbot.core.bot import Red
 from redbot.core import checks, commands, Config
 from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
-from redbot.core.utils.chat_formatting import escape, pagify
+from redbot.core.utils.chat_formatting import escape, inline, pagify
 
 from .streamtypes import (
     PicartoStream,
@@ -79,11 +79,8 @@ class Streams(commands.Cog):
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
-        self._ready_event: asyncio.Event = asyncio.Event()
-        self._init_task: asyncio.Task = self.bot.loop.create_task(self.initialize())
-
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     def check_name_or_id(self, data: str) -> bool:
@@ -92,27 +89,20 @@ class Streams(commands.Cog):
             return True
         return False
 
-    async def initialize(self) -> None:
+    async def cog_load(self) -> None:
         """Should be called straight after cog instantiation."""
-        await self.bot.wait_until_ready()
-
         try:
             await self.move_api_keys()
             await self.get_twitch_bearer_token()
             self.streams = await self.load_streams()
-            self.task = self.bot.loop.create_task(self._stream_alerts())
+            self.task = asyncio.create_task(self._stream_alerts())
         except Exception as error:
             log.exception("Failed to initialize Streams cog:", exc_info=error)
-
-        self._ready_event.set()
 
     @commands.Cog.listener()
     async def on_red_api_tokens_update(self, service_name, api_tokens):
         if service_name == "twitch":
             await self.get_twitch_bearer_token(api_tokens)
-
-    async def cog_before_invoke(self, ctx: commands.Context):
-        await self._ready_event.wait()
 
     async def move_api_keys(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
@@ -127,6 +117,29 @@ class Streams(commands.Cog):
                 await self.bot.set_shared_api_tokens("twitch", client_id=token)
         await self.config.tokens.clear()
 
+    async def _notify_owner_about_missing_twitch_secret(self) -> None:
+        message = _(
+            "You need a client secret key if you want to use the Twitch API on this cog.\n"
+            "Follow these steps:\n"
+            "1. Go to this page: {link}.\n"
+            '2. Click "Manage" on your application.\n'
+            '3. Click on "New secret".\n'
+            "5. Copy your client ID and your client secret into:\n"
+            "{command}"
+            "\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel "
+            "or in DM with the bot."
+        ).format(
+            link="https://dev.twitch.tv/console/apps",
+            command=inline(
+                "[p]set api twitch client_id {} client_secret {}".format(
+                    _("<your_client_id_here>"), _("<your_client_secret_here>")
+                )
+            ),
+        )
+        await send_to_owners_with_prefix_replaced(self.bot, message)
+        await self.config.notified_owner_missing_twitch_secret.set(True)
+
     async def get_twitch_bearer_token(self, api_tokens: Optional[Dict] = None) -> None:
         tokens = (
             await self.bot.get_shared_api_tokens("twitch") if api_tokens is None else api_tokens
@@ -140,25 +153,8 @@ class Streams(commands.Cog):
                 if notified_owner_missing_twitch_secret is True:
                     await self.config.notified_owner_missing_twitch_secret.set(False)
             except KeyError:
-                message = _(
-                    "You need a client secret key if you want to use the Twitch API on this cog.\n"
-                    "Follow these steps:\n"
-                    "1. Go to this page: https://dev.twitch.tv/console/apps.\n"
-                    '2. Click "Manage" on your application.\n'
-                    '3. Click on "New secret".\n'
-                    "5. Copy your client ID and your client secret into:\n"
-                    "{command}"
-                    "\n\n"
-                    "Note: These tokens are sensitive and should only be used in a private channel "
-                    "or in DM with the bot."
-                ).format(
-                    command="`[p]set api twitch client_id {} client_secret {}`".format(
-                        _("<your_client_id_here>"), _("<your_client_secret_here>")
-                    )
-                )
                 if notified_owner_missing_twitch_secret is False:
-                    await send_to_owners_with_prefix_replaced(self.bot, message)
-                    await self.config.notified_owner_missing_twitch_secret.set(True)
+                    asyncio.create_task(self._notify_owner_about_missing_twitch_secret())
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
@@ -258,14 +254,14 @@ class Streams(commands.Cog):
         except InvalidTwitchCredentials:
             await ctx.send(
                 _("The Twitch token is either invalid or has not been set. See {command}.").format(
-                    command=f"`{ctx.clean_prefix}streamset twitchtoken`"
+                    command=inline(f"{ctx.clean_prefix}streamset twitchtoken")
                 )
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
                 _(
                     "The YouTube API key is either invalid or has not been set. See {command}."
-                ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
+                ).format(command=inline(f"{ctx.clean_prefix}streamset youtubekey"))
             )
         except YoutubeQuotaExceeded:
             await ctx.send(
@@ -388,6 +384,9 @@ class Streams(commands.Cog):
             await ctx.send(page)
 
     async def stream_alert(self, ctx: commands.Context, _class, channel_name):
+        if isinstance(ctx.channel, discord.Thread):
+            await ctx.send("Stream alerts cannot be set up in threads.")
+            return
         stream = self.get_stream(_class, channel_name)
         if not stream:
             token = await self.bot.get_shared_api_tokens(_class.token_name)
@@ -416,7 +415,7 @@ class Streams(commands.Cog):
                 await ctx.send(
                     _(
                         "The Twitch token is either invalid or has not been set. See {command}."
-                    ).format(command=f"`{ctx.clean_prefix}streamset twitchtoken`")
+                    ).format(command=inline(f"{ctx.clean_prefix}streamset twitchtoken"))
                 )
                 return
             except InvalidYoutubeCredentials:
@@ -424,7 +423,7 @@ class Streams(commands.Cog):
                     _(
                         "The YouTube API key is either invalid or has not been set. See "
                         "{command}."
-                    ).format(command=f"`{ctx.clean_prefix}streamset youtubekey`")
+                    ).format(command=inline(f"{ctx.clean_prefix}streamset youtubekey"))
                 )
                 return
             except YoutubeQuotaExceeded:
@@ -475,9 +474,9 @@ class Streams(commands.Cog):
         """Explain how to set the twitch token."""
         message = _(
             "To set the twitch API tokens, follow these steps:\n"
-            "1. Go to this page: https://dev.twitch.tv/dashboard/apps.\n"
+            "1. Go to this page: {link}.\n"
             "2. Click *Register Your Application*.\n"
-            "3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and "
+            "3. Enter a name, set the OAuth Redirect URI to {localhost}, and "
             "select an Application Category of your choosing.\n"
             "4. Click *Register*.\n"
             "5. Copy your client ID and your client secret into:\n"
@@ -486,9 +485,11 @@ class Streams(commands.Cog):
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(
+            link="https://dev.twitch.tv/dashboard/apps",
+            localhost=inline("http://localhost"),
             command="`{}set api twitch client_id {} client_secret {}`".format(
                 ctx.clean_prefix, _("<your_client_id_here>"), _("<your_client_secret_here>")
-            )
+            ),
         )
 
         await ctx.maybe_send_embed(message)
@@ -501,19 +502,22 @@ class Streams(commands.Cog):
         message = _(
             "To get one, do the following:\n"
             "1. Create a project\n"
-            "(see https://support.google.com/googleapi/answer/6251787 for details)\n"
+            "(see {link1} for details)\n"
             "2. Enable the YouTube Data API v3 \n"
-            "(see https://support.google.com/googleapi/answer/6158841 for instructions)\n"
+            "(see {link2} for instructions)\n"
             "3. Set up your API key \n"
-            "(see https://support.google.com/googleapi/answer/6158862 for instructions)\n"
+            "(see {link3} for instructions)\n"
             "4. Copy your API key and run the command "
             "{command}\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel\n"
             "or in DM with the bot.\n"
         ).format(
+            link1="https://support.google.com/googleapi/answer/6251787",
+            link2="https://support.google.com/googleapi/answer/6158841",
+            link3="https://support.google.com/googleapi/answer/6158862",
             command="`{}set api youtube api_key {}`".format(
                 ctx.clean_prefix, _("<your_api_key_here>")
-            )
+            ),
         )
 
         await ctx.maybe_send_embed(message)
@@ -576,10 +580,18 @@ class Streams(commands.Cog):
         current_setting = await self.config.guild(guild).mention_everyone()
         if current_setting:
             await self.config.guild(guild).mention_everyone.set(False)
-            await ctx.send(_("`@\u200beveryone` will no longer be mentioned for stream alerts."))
+            await ctx.send(
+                _("{everyone} will no longer be mentioned for stream alerts.").format(
+                    everyone=inline("@\u200beveryone")
+                )
+            )
         else:
             await self.config.guild(guild).mention_everyone.set(True)
-            await ctx.send(_("When a stream is live, `@\u200beveryone` will be mentioned."))
+            await ctx.send(
+                _("When a stream is live, {everyone} will be mentioned.").format(
+                    everyone=inline("@\u200beveryone")
+                )
+            )
 
     @mention.command(aliases=["here"])
     @commands.guild_only()
@@ -589,10 +601,18 @@ class Streams(commands.Cog):
         current_setting = await self.config.guild(guild).mention_here()
         if current_setting:
             await self.config.guild(guild).mention_here.set(False)
-            await ctx.send(_("`@\u200bhere` will no longer be mentioned for stream alerts."))
+            await ctx.send(
+                _("{here} will no longer be mentioned for stream alerts.").format(
+                    here=inline("@\u200bhere")
+                )
+            )
         else:
             await self.config.guild(guild).mention_here.set(True)
-            await ctx.send(_("When a stream is live, `@\u200bhere` will be mentioned."))
+            await ctx.send(
+                _("When a stream is live, {here} will be mentioned.").format(
+                    here=inline("@\u200bhere")
+                )
+            )
 
     @mention.command()
     @commands.guild_only()
@@ -602,15 +622,15 @@ class Streams(commands.Cog):
         if current_setting:
             await self.config.role(role).mention.set(False)
             await ctx.send(
-                _("`@\u200b{role.name}` will no longer be mentioned for stream alerts.").format(
-                    role=role
+                _("{role} will no longer be mentioned for stream alerts.").format(
+                    role=inline(f"@\u200b{role.name}")
                 )
             )
         else:
             await self.config.role(role).mention.set(True)
-            msg = _(
-                "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
-            ).format(role=role)
+            msg = _("When a stream or community is live, {role} will be mentioned.").format(
+                role=inline(f"@\u200b{role.name}")
+            )
             if not role.mentionable:
                 msg += " " + _(
                     "Since the role is not mentionable, it will be momentarily made mentionable "
