@@ -1107,7 +1107,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_metrics_prometheus_toggle(self, ctx: commands.Context):
         """Toggle whether the managed node should expose its Prometheus endpoint."""
         state = await self.config.yaml.metrics.prometheus.enabled()
-        await self.config.yaml.metrics.prometheus.enable.set(not state)
+        await self.config.yaml.metrics.prometheus.enabled.set(not state)
         if not state:
             await self.send_embed_msg(
                 ctx,
