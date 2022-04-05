@@ -245,9 +245,10 @@ DANGEROUS_COMMANDS = {
         "This command sets the environmentwhich the managed node should report "
         "to the Sentry server."
     ),
-    "command_llsetup_config_metrics": _(
-        "This command group allows you to configure the managed node metric settings."
-    ),
+    # Commented out until there's more metric entries to support
+    # "command_llsetup_config_metrics": _(
+    #     "This command group allows you to configure the managed node metric settings."
+    # ),
     "command_llsetup_config_metrics_prometheus": _(
         "This command group allows you to configure the managed node's Prometheus settings."
     ),
