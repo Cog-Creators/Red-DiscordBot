@@ -3,9 +3,14 @@ def _get_version(*, ignore_installed: bool = False) -> str:
         return __version__
     try:
         import os
-        import subprocess
 
         path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        # we only want to do this for editable installs
+        if not os.path.exists(os.path.join(path, ".git")):
+            raise RuntimeError("not a git repository")
+
+        import subprocess
+
         output = subprocess.check_output(
             ("git", "describe", "--tags", "--long", "--dirty"),
             stderr=subprocess.DEVNULL,
