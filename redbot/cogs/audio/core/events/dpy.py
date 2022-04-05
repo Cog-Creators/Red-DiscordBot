@@ -353,6 +353,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             ctx.author
         ):
             if ctx.command.callback.__name__ not in self.antispam[ctx.author.id]:
+                for c in ctx.command.parents:
+                    self.antispam[ctx.author.id][c.callback.__name__] = AntiSpam(
+                    self.llset_captcha_intervals
+                )
                 self.antispam[ctx.author.id][ctx.command.callback.__name__] = AntiSpam(
                     self.llset_captcha_intervals
                 )
