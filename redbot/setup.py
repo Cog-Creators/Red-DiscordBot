@@ -21,6 +21,7 @@ from redbot.core.utils._internal_utils import (
     cli_level_to_log_level,
 )
 from redbot.core import config, data_manager, drivers
+from redbot.core.bot import ExitCodes
 from redbot.core.data_manager import appdir, config_dir, config_file
 from redbot.core.drivers import BackendType, IdentifierData
 
@@ -30,7 +31,7 @@ try:
     config_dir.mkdir(parents=True, exist_ok=True)
 except PermissionError:
     print("You don't have permission to write to '{}'\nExiting...".format(config_dir))
-    sys.exit(1)
+    sys.exit(ExitCodes.CRITICAL)
 
 instance_data = data_manager.load_existing_config()
 if instance_data is None:
@@ -77,7 +78,7 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
             "We were unable to check your chosen directory."
             " Provided path may contain an invalid character."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.CRITICAL)
 
     if not exists:
         try:
@@ -88,12 +89,12 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
                 " You may need to restart this process with admin"
                 " privileges."
             )
-            sys.exit(1)
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     print("You have chosen {} to be your data directory.".format(data_path))
     if not click.confirm("Please confirm", default=True):
         print("Please start the process over.")
-        sys.exit(0)
+        sys.exit(ExitCodes.CRITICAL)
     return str(data_path.resolve())
 
 
@@ -132,7 +133,7 @@ def get_name(name: str) -> str:
                 "ERROR: Instance names can only include characters A-z, numbers, "
                 "underscores (_) and periods (.)."
             )
-            sys.exit(1)
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
         return name
 
     while len(name) == 0:
@@ -176,7 +177,7 @@ def basic_setup(
             "Providing instance name through --instance-name is required"
             " when using non-interactive mode."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     if interactive:
         print(
@@ -210,14 +211,14 @@ def basic_setup(
                 "Are you absolutely certain you want to continue?", default=False
             ):
                 print("Not continuing")
-                sys.exit(0)
+                sys.exit(ExitCodes.SHUTDOWN)
         else:
             print(
                 "An instance with this name already exists.\n"
                 "If you want to remove the existing instance and replace it with this one,"
                 " run this command with --overwrite-existing-instance flag."
             )
-            sys.exit(1)
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
     save_config(name, default_dirs)
 
     if interactive:

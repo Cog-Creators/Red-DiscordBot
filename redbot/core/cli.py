@@ -7,6 +7,7 @@ from typing import Optional
 import discord
 from discord import __version__ as discord_version
 
+from redbot.core.bot import ExitCodes
 from redbot.core.utils._internal_utils import cli_level_to_log_level
 
 
@@ -25,7 +26,7 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
             value = input(f"{text}: [{options}] ").lower().strip()
         except (KeyboardInterrupt, EOFError):
             print("\nAborted!")
-            sys.exit(1)
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
         if value in ("y", "yes"):
             return True
         if value in ("n", "no"):
