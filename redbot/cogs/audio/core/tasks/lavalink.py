@@ -1,7 +1,8 @@
 import asyncio
-from pathlib import Path
+import pathlib
 
 import lavalink
+import yaml
 from red_commons.logging import getLogger
 
 from redbot.core import data_manager
@@ -11,7 +12,7 @@ from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
 log = getLogger("red.cogs.Audio.cog.Tasks.lavalink")
-_ = Translator("Audio", Path(__file__))
+_ = Translator("Audio", pathlib.Path(__file__))
 
 
 class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
@@ -41,9 +42,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         if self._restore_task:
             self._restore_task.cancel()
         if self.managed_node_controller is not None:
-            if not self.managed_node_controller._shutdown:
-                await self.managed_node_controller.shutdown()
-                await asyncio.sleep(5)
+            await self.managed_node_controller.shutdown()
+            await asyncio.sleep(5)
         await lavalink.close(self.bot)
         while retry_count < max_retries:
             configs = await self.config.all()
@@ -65,6 +65,44 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except asyncio.TimeoutError:
                     if self.managed_node_controller is not None:
                         await self.managed_node_controller.shutdown()
+                    if self._runtime_external_node is True:
+                        log.warning("Attempting to connect to existing Lavalink Node.")
+                        self.lavalink_connection_aborted = False
+                        matching_processes = (
+                            await self.managed_node_controller.get_lavalink_process(
+                                lazy_match=True
+                            )
+                        )
+                        log.debug(
+                            "Found %s processes with lavalink in the cmdline.",
+                            len(matching_processes),
+                        )
+                        valid_working_dirs = [
+                            cwd
+                            for d in matching_processes
+                            if d.get("name") == "java" and (cwd := d.get("cwd"))
+                        ]
+                        log.debug(
+                            "Found %s java processed with a cwd set.", len(valid_working_dirs)
+                        )
+                        for cwd in valid_working_dirs:
+                            config = pathlib.Path(cwd) / "application.yml"
+                            if config.exists() and config.is_file():
+                                log.debug(
+                                    "The following config file exists for an unmanaged Lavalink node %s",
+                                    config,
+                                )
+                                try:
+                                    with config.open(mode="r") as config_data:
+                                        data = yaml.safe_load(config_data)
+                                        host = data["server"]["address"]
+                                        port = data["server"]["port"]
+                                        password = data["lavalink"]["server"]["password"]
+                                    break
+                                except Exception:
+                                    log.verbose("Failed to read contents of %s", config)
+                                    continue
+                        break
                     if self.lavalink_connection_aborted is not True:
                         log.critical(
                             "Managed node startup timeout, aborting managed node startup."
@@ -117,9 +155,15 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 return
             except asyncio.TimeoutError:
                 await lavalink.close(self.bot)
-                log.warning("Connecting to Lavalink node timed out, retrying...")
                 retry_count += 1
-                await asyncio.sleep(1)  # prevent busylooping
+                if self._runtime_external_node is True:
+                    log.warning(
+                        "Attempt to connect to existing Lavalink node failed, aborting future reconnects."
+                    )
+                    self.lavalink_connection_aborted = True
+                    return
+                log.warning("Connecting to Lavalink node timed out, retrying...")
+                await asyncio.sleep(1)
             except Exception as exc:
                 log.exception(
                     "Unhandled exception whilst connecting to Lavalink node, aborting...",

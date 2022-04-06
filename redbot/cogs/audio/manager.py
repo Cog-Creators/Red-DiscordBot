@@ -21,6 +21,7 @@ from red_commons.logging import getLogger
 
 from redbot.core import data_manager, Config
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 from .errors import (
     LavalinkDownloadFailed,
@@ -36,13 +37,13 @@ from .errors import (
     IncorrectProcessFound,
     NoProcessFound,
     NodeUnhealthy,
+    PortAlreadyInUse,
 )
 from .utils import (
     change_dict_naming_convention,
     get_max_allocation_size,
     replace_p_with_prefix,
 )
-from ...core.utils import AsyncIter
 
 if TYPE_CHECKING:
     from . import Audio
@@ -127,6 +128,7 @@ class ServerManager:
 
     def __init__(self, config: Config, cog: "Audio", timeout: Optional[int] = None) -> None:
         self.ready: asyncio.Event = asyncio.Event()
+        self.abort_for_unmanaged: asyncio.Event = asyncio.Event()
         self._config = config
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._node_pid: Optional[int] = None
@@ -135,6 +137,7 @@ class ServerManager:
         self.timeout = timeout
         self.cog = cog
         self._args = []
+        self._current_config = {}
 
     @property
     def path(self) -> Optional[str]:
@@ -218,6 +221,7 @@ class ServerManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
+        self._current_config = data
         with open(LAVALINK_APP_YML, "w") as f:
             yaml.safe_dump(data, f)
 
@@ -320,6 +324,14 @@ class ServerManager:
                 log.info("Managed Lavalink node is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
+                if (
+                    f"Port {self._current_config['server']['port']} was already in use".encode()
+                    in line
+                ):
+                    raise PortAlreadyInUse(
+                        f"Port {self._current_config['server']['port']} already in use. "
+                        f"Managed Lavalink startup aborted."
+                    )
                 raise ManagedLavalinkStartFailure(
                     f"Lavalink failed to start: {line.decode().strip()}"
                 )
@@ -333,6 +345,7 @@ class ServerManager:
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
             self.start_monitor_task.cancel()
+        self.abort_for_unmanaged.clear()
         await self._partial_shutdown()
 
     async def _partial_shutdown(self) -> None:
@@ -441,8 +454,44 @@ class ServerManager:
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
+    @staticmethod
+    async def get_lavalink_process(
+        *matches: str, cwd: Optional[str] = None, lazy_match: bool = False
+    ):
+        process_list = []
+        filter = [cwd] if cwd else []
+        async for proc in AsyncIter(psutil.process_iter()):
+            try:
+                if cwd:
+                    if not (proc.cwd() in filter):
+                        continue
+                cmdline = proc.cmdline()
+                if (matches and all(a in cmdline for a in matches)) or (
+                    lazy_match and any("lavalink" in arg.lower() for arg in cmdline)
+                ):
+                    proc_as_dict = proc.as_dict(
+                        attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]
+                    )
+                    process_list.append(proc_as_dict)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        return process_list
+
     async def wait_until_ready(self, timeout: Optional[float] = None):
-        await asyncio.wait_for(self.ready.wait(), timeout=timeout or self.timeout)
+        tasks = [
+            asyncio.create_task(c) for c in [self.ready.wait(), self.abort_for_unmanaged.wait()]
+        ]
+        done, pending = await asyncio.wait(
+            tasks, timeout=timeout or self.timeout, return_when=asyncio.FIRST_COMPLETED
+        )
+        for task in pending:
+            task.cancel()
+        if done:
+            done.pop().result()
+        if self.abort_for_unmanaged.is_set():
+            raise asyncio.TimeoutError
+        if not self.ready.is_set():
+            raise asyncio.TimeoutError
 
     async def start_monitor(self, java_path: str):
         retry_count = 0
@@ -527,6 +576,12 @@ class ServerManager:
             except (UnsupportedJavaException, UnexpectedJavaResponseException) as exc:
                 log.critical(exc)
                 self.cog.lavalink_connection_aborted = True
+                return await self.shutdown()
+            except PortAlreadyInUse as exc:
+                log.critical(exc)
+                self.cog.lavalink_connection_aborted = False
+                self.cog._runtime_external_node = True
+                self.abort_for_unmanaged.set()
                 return await self.shutdown()
             except ManagedLavalinkNodeException as exc:
                 delay = backoff.delay()

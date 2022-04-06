@@ -31,6 +31,10 @@ class ManagedLavalinkStartFailure(ManagedLavalinkNodeException):
     """Exception thrown when a managed Lavalink node fails to start"""
 
 
+class PortAlreadyInUse(ManagedLavalinkStartFailure):
+    """Exception thrown when a managed Lavalink node fails to start due to a port conflict"""
+
+
 class ManagedLavalinkPreviouslyShutdownException(ManagedLavalinkNodeException):
     """Exception thrown when a managed Lavalink node already has been shutdown"""
 
