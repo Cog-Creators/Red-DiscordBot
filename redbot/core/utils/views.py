@@ -176,6 +176,6 @@ class SimpleMenu(discord.ui.View):
         """stops the pagination session."""
         self.stop()
         if interaction.message.flags.ephemeral:
-            await interaction.message.edit(view=None)
+            await interaction.response.edit_message(view=None)
             return
         await interaction.message.delete()
