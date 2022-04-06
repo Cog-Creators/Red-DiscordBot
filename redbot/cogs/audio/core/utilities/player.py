@@ -26,6 +26,37 @@ _ = Translator("Audio", Path(__file__))
 
 
 class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
+    async def save_player_state(self) -> None:
+        to_update = []
+        for node in lavalink.get_all_nodes():
+            for player in node.players:
+                guild_data = {}
+                last_known_vc_and_notify_channels = []
+                last_known_track = []
+                guild_id = None
+                if player.connected:
+                    notify_channel = player.fetch("notify_channel")
+                    vc_id = self.rgetattr(player, "channel.id", None)
+                    guild_id = self.rgetattr(player, "guild.id", None)
+                    if guild_id:
+                        last_known_vc_and_notify_channels = (
+                            "last_known_vc_and_notify_channels",
+                            [notify_channel, vc_id, player.paused, player.volume],
+                        )
+                        if player.current:
+                            data = self.get_track_json(player, position="np")
+                            data["info"]["timestamp"] = player.position
+                            last_known_track = ("last_known_track", data)
+                if last_known_vc_and_notify_channels or last_known_track:
+                    guild_data[guild_id] = []
+                    if last_known_vc_and_notify_channels:
+                        guild_data[guild_id].append(last_known_vc_and_notify_channels)
+                    if last_known_track:
+                        guild_data[guild_id].append(last_known_track)
+                if guild_data:
+                    to_update.append(guild_data)
+        await self.update_guild_config(*to_update)
+
     async def maybe_reset_error_counter(self, player: lavalink.Player) -> None:
         guild = self.rgetattr(player, "channel.guild.id", None)
         if not guild:

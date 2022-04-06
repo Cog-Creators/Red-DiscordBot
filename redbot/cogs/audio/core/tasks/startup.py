@@ -2,7 +2,7 @@ import asyncio
 import itertools
 from pathlib import Path
 
-from typing import Optional
+from typing import Dict, Optional, Tuple
 
 import lavalink
 from lavalink import NodeNotFound, PlayerNotFound
@@ -81,13 +81,38 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             )
             log.warning("Audio will attempt queue restore on next restart.")
             return
-        metadata = {}
+        metadata: Dict[int, Tuple[int, int, bool, int]] = {}
+        current_track_meta: Dict[int, lavalink.Track] = {}
         all_guilds = await self.config.all_guilds()
         async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
             if guild_data["auto_play"]:
                 if guild_data["currently_auto_playing_in"]:
-                    notify_channel, vc_id = guild_data["currently_auto_playing_in"]
-                    metadata[guild_id] = (notify_channel, vc_id)
+                    if len(guild_data["currently_auto_playing_in"]) == 4:
+                        notify_channel, vc_id, paused, volume = guild_data[
+                            "currently_auto_playing_in"
+                        ]
+                    else:
+                        notify_channel, vc_id = guild_data["currently_auto_playing_in"]
+                        paused, volume = False, all_guilds[guild_id]["volume"]
+                    metadata[guild_id] = (notify_channel, vc_id, paused, volume)
+            if guild_data["last_known_vc_and_notify_channels"]:
+                if len(guild_data["last_known_vc_and_notify_channels"]) == 4:
+                    notify_channel, vc_id, paused, volume = guild_data[
+                        "last_known_vc_and_notify_channels"
+                    ]
+                else:
+                    notify_channel, vc_id = guild_data["last_known_vc_and_notify_channels"]
+                    paused, volume = False, all_guilds[guild_id]["volume"]
+                if vc_id:
+                    metadata[guild_id] = (notify_channel, vc_id, paused, volume)
+            if guild_data["last_known_track"]:
+                guild = self.bot.get_guild(guild_id)
+                if not guild:
+                    continue
+                last_track = guild_data["last_known_track"]
+                track = lavalink.Track(last_track)
+                track.requester = guild.me
+                current_track_meta[guild_id] = track
         if self.lavalink_connection_aborted:
             log.warning("Aborting player restore due to Lavalink connection being aborted.")
             return
@@ -104,7 +129,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     )
                     continue
                 persist_cache = self._persist_queue_cache.setdefault(
-                    guild_id, await self.config.guild(guild).persist_queue()
+                    guild_id, all_guilds[guild.id]["persist_queue"]
                 )
                 if not persist_cache:
                     log.verbose(
@@ -118,19 +143,16 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except (NodeNotFound, PlayerNotFound):
                     player = None
                 vc = 0
-                guild_data = await self.config.guild_from_id(guild.id).all()
-                shuffle = guild_data["shuffle"]
-                repeat = guild_data["repeat"]
-                volume = guild_data["volume"]
-                shuffle_bumped = guild_data["shuffle_bumped"]
-                auto_deafen = guild_data["auto_deafen"]
-
+                shuffle = all_guilds[guild.id]["shuffle"]
+                repeat = all_guilds[guild.id]["repeat"]
+                shuffle_bumped = all_guilds[guild.id]["shuffle_bumped"]
+                auto_deafen = all_guilds[guild.id]["auto_deafen"]
+                notify_channel_id, vc_id, paused, volume = metadata.pop(
+                    guild_id, (None, track_data[-1].room_id, False, all_guilds[guild.id]["volume"])
+                )
                 if player is None:
                     while tries < 5 and vc is not None:
                         try:
-                            notify_channel_id, vc_id = metadata.pop(
-                                guild_id, (None, track_data[-1].room_id)
-                            )
                             vc = guild.get_channel(vc_id)
                             if not vc:
                                 break
@@ -178,20 +200,28 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
+                player._paused = paused
                 if player.volume != volume:
                     await player.set_volume(volume)
+                if player.guild.id in current_track_meta:
+                    player.current = current_track_meta[player.guild.id]
+                    await player.resume(
+                        current_track_meta[player.guild.id],
+                        start=current_track_meta[player.guild.id].start_timestamp,
+                        pause=paused,
+                    )
                 for track in track_data:
                     track = track.track_object
                     player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
                 player.maybe_shuffle()
-                if not player.is_playing:
+                if not player.is_playing and not player.paused:
                     await player.play()
-                log.debug("Restored %r", player)
+                log.debug("Restored from track db %r", player)
             except Exception as exc:
                 log.debug("Error restoring player in %s", guild_id, exc_info=exc)
                 await self.api_interface.persistent_queue_api.drop(guild_id)
 
-        for guild_id, (notify_channel_id, vc_id) in metadata.items():
+        for guild_id, (notify_channel_id, vc_id, paused, volume) in metadata.items():
             guild = self.bot.get_guild(guild_id)
             player: Optional[lavalink.Player] = None
             vc = 0
@@ -206,12 +236,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 except (NodeNotFound, PlayerNotFound):
                     player = None
             if player is None:
-                guild_data = await self.config.guild_from_id(guild.id).all()
-                shuffle = guild_data["shuffle"]
-                repeat = guild_data["repeat"]
-                volume = guild_data["volume"]
-                shuffle_bumped = guild_data["shuffle_bumped"]
-                auto_deafen = guild_data["auto_deafen"]
+                shuffle = all_guilds[guild.id]["shuffle"]
+                repeat = all_guilds[guild.id]["repeat"]
+                shuffle_bumped = all_guilds[guild.id]["shuffle_bumped"]
+                auto_deafen = all_guilds[guild.id]["auto_deafen"]
 
                 while tries < 5 and vc is not None:
                     try:
@@ -258,11 +286,19 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 player.repeat = repeat
                 player.shuffle = shuffle
                 player.shuffle_bumped = shuffle_bumped
+                player._paused = paused
                 if player.volume != volume:
                     await player.set_volume(volume)
                 player.maybe_shuffle()
-                log.debug("Restored %r", player)
-                if not player.is_playing:
+                log.debug("Restored config settings %r", player)
+                if player.guild.id in current_track_meta:
+                    player.current = current_track_meta[player.guild.id]
+                    await player.resume(
+                        current_track_meta[player.guild.id],
+                        start=current_track_meta[player.guild.id].start_timestamp,
+                        pause=paused,
+                    )
+                elif not player.is_playing and not player.paused:
                     notify_channel = player.fetch("notify_channel")
                     try:
                         await self.api_interface.autoplay(player, self.playlist_api)
@@ -285,6 +321,10 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                                 ),
                             )
                         return
+        await self.clean_up_guild_config(
+            "last_known_vc_and_notify_channels", "last_known_track", guild_ids=all_guilds.keys()
+        )
+
         del metadata
         del all_guilds
         log.debug("Player restore task completed successfully")

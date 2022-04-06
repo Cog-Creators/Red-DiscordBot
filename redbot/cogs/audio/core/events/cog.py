@@ -34,7 +34,13 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("autoplay_notified", False)
             await player.stop()
             await player.disconnect()
-            await self.config.guild_from_id(guild_id=guild.id).currently_auto_playing_in.set([])
+            await self.clean_up_guild_config(
+                "last_known_vc_and_notify_channels",
+                "last_known_track",
+                "currently_auto_playing_in",
+                guild_ids=[guild.id],
+            )
+            await self.api_interface.persistent_queue_api.drop(guild.id)
             return
 
         track_identifier = track.track_identifier
@@ -170,7 +176,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         )
         if persist_cache:
             await self.api_interface.persistent_queue_api.enqueued(
-                guild_id=guild.id, room_id=track.extras["vc"], track=track
+                guild_id=guild.id, room_id=track.extras["vc"], track=track, requester=requester
             )
 
     @commands.Cog.listener()
@@ -206,10 +212,14 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 return
             tries += 1
 
-        if notify_channel and has_perms and not player.fetch("autoplay_notified", False):
-            if (
-                len(player.node.players) < 10
-                or not player._last_resume
+        if (
+            notify_channel
+            and has_perms
+            and not player.fetch("autoplay_notified", False)
+            and player.connected
+        ):
+            if (len(player.node.players) < 10) or (
+                not player._last_resume
                 and player._last_resume + datetime.timedelta(seconds=60)
                 > datetime.datetime.now(tz=datetime.timezone.utc)
             ):

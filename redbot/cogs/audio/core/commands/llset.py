@@ -178,6 +178,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                 )
             try:
+                await self.save_player_state()
                 await lavalink.close(self.bot)
                 self.lavalink_restart_connect(manual=True)
             except ProcessLookupError:
@@ -718,6 +719,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 global_data["use_external_lavalink"] = False
 
             try:
+                await self.save_player_state()
                 await lavalink.close(self.bot)
                 self.lavalink_restart_connect(manual=True)
             except ProcessLookupError:

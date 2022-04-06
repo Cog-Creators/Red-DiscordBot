@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, List, Union
 
+import discord
 import lavalink
 from red_commons.logging import getLogger
 
@@ -114,12 +115,18 @@ class QueueInterface:
                 self.database.cursor().execute, PERSIST_QUEUE_BULK_PLAYED, ({"guild_id": guild_id})
             )
 
-    async def enqueued(self, guild_id: int, room_id: int, track: lavalink.Track):
+    async def enqueued(
+        self, guild_id: int, room_id: int, track: lavalink.Track, requester: discord.Member = None
+    ) -> None:
         enqueue_time = track.extras.get("enqueue_time", 0)
         if enqueue_time == 0:
             track.extras["enqueue_time"] = int(time.time())
         track_identifier = track.track_identifier
         track = self.cog.track_to_json(track)
+        if requester:
+            if "extras" not in track:
+                track["extras"] = {}
+            track["extras"]["requester"] = requester.id
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(
                 self.database.cursor().execute,

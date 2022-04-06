@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import (
+    Iterable,
     Set,
     TYPE_CHECKING,
     Any,
@@ -548,6 +549,10 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def save_player_state(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def get_lyrics_status(self, ctx: Context) -> bool:
         raise NotImplementedError()
 
@@ -573,4 +578,14 @@ class MixinMeta(ABC):
 
     @abstractmethod
     def can_join_and_speak(self, channel: discord.VoiceChannel) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def update_guild_config(
+        self, *values: Dict[int, List[Tuple[str, Union[str, int, float, bool, None, dict, list]]]]
+    ):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def clean_up_guild_config(self, *keys: str, guild_ids: Optional[Iterable[int]] = None):
         raise NotImplementedError()

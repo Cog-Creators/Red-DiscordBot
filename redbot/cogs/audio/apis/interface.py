@@ -923,6 +923,8 @@ class AudioAPIInterface:
 
     async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
         """Enqueue a random track."""
+        if not player.connected:
+            return
         autoplaylist = await self.config.guild(player.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
         cache_enabled = CacheLevel.set_lavalink().is_subset(current_cache_level)
@@ -1004,7 +1006,9 @@ class AudioAPIInterface:
             if notify_channel_id:
                 await self.config.guild_from_id(
                     guild_id=player.guild.id
-                ).currently_auto_playing_in.set([notify_channel_id, player.channel.id])
+                ).currently_auto_playing_in.set(
+                    [notify_channel_id, player.channel.id, player.paused, player.volume]
+                )
             else:
                 await self.config.guild_from_id(
                     guild_id=player.guild.id
