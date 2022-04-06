@@ -242,8 +242,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set the Lavalink node port.
 
         This command sets the connection port which Audio will use to connect to an external Lavalink node.
+        Set port to -1 to disable the port and connect to the specified host via ports 80/443
         """
-        if port < 0 or port > 65535:
+        if port < 0:
+            port = None
+        elif port > 65535:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Setting Not Changed"),
