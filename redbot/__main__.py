@@ -286,7 +286,6 @@ def early_exit_runner(
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
-        sys.exit(0)
 
 
 async def run_bot(red: Red, cli_flags: Namespace) -> None:
@@ -546,8 +545,8 @@ def main():
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
-        exit_code = red._shutdown_mode if red is not None else 1
-        sys.exit(exit_code)
+    exit_code = red._shutdown_mode if red is not None else 1
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
