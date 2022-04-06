@@ -21,7 +21,7 @@ from redbot.core.utils._internal_utils import (
     cli_level_to_log_level,
 )
 from redbot.core import config, data_manager, drivers
-from redbot.core.bot import ExitCodes
+from redbot.core.cli import ExitCodes
 from redbot.core.data_manager import appdir, config_dir, config_file
 from redbot.core.drivers import BackendType, IdentifierData
 

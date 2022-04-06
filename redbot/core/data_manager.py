@@ -12,7 +12,7 @@ import appdirs
 from discord.utils import deprecated
 
 from . import commands
-from .bot import ExitCodes
+from .cli import ExitCodes
 
 __all__ = [
     "create_temp_config",
