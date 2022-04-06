@@ -45,6 +45,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                 await self.managed_node_controller.shutdown()
                 await asyncio.sleep(5)
         await lavalink.close(self.bot)
+        is_managed = False
         while retry_count < max_retries:
             configs = await self.config.all()
             external = configs["use_external_lavalink"]
@@ -62,6 +63,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     # timeout is the same as ServerManager.timeout -
                     # 60s in case of ServerManager(self.config, timeout=60)
                     await self.managed_node_controller.wait_until_ready()
+                    is_managed = True
                 except asyncio.TimeoutError:
                     if self.managed_node_controller is not None:
                         await self.managed_node_controller.shutdown()
@@ -110,6 +112,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     timeout=timeout,
                     resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
                     secured=secured,
+                    is_managed=is_managed,
                 )
             except lavalink.AbortingNodeConnection:
                 await lavalink.close(self.bot)

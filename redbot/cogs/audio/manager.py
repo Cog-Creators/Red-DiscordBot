@@ -458,8 +458,11 @@ class ServerManager:
                     if not psutil.pid_exists(self._node_pid):
                         raise NoProcessFound
                     try:
-                        node = lavalink.get_all_nodes()[0]
-                        if node.ready:
+                        lavalink.get_all_nodes()[0]
+                        node = next(
+                            (node for node in lavalink.get_all_nodes() if node.is_managed), None
+                        )
+                        if node and node.ready:
                             # Hoping this throws an exception which will then trigger a restart
                             await node._ws.ping()
                             backoff = ExponentialBackoff(
