@@ -64,6 +64,7 @@ from .utils.chat_formatting import (
 )
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
+from .commands.help import HelpMenuSetting
 
 _entities = {
     "*": "&midast;",
@@ -3656,7 +3657,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @helpset.command(name="usemenus")
     async def helpset_usemenus(
-        self, ctx: commands.Context, use_menus: Literal["buttons", "reactions", "disable"]
+        self,
+        ctx: commands.Context,
+        use_menus: Literal["buttons", "reactions", "select", "selectonly", "disable"],
     ):
         """
         Allows the help command to be sent as a paginated menu instead of separate
@@ -3674,15 +3677,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<"buttons"|"reactions"|"disable">` - Whether to use `buttons`,
             `reactons`, or no menus.
         """
+        if use_menus == "selectonly":
+            msg = _("Help will use the select menu only.")
+            await ctx.bot._config.help.use_menus.set(4)
+        if use_menus == "select":
+            msg = _("Help will use button menus and add a select menu.")
+            await ctx.bot._config.help.use_menus.set(3)
         if use_menus == "buttons":
-            await ctx.bot._config.help.use_menus.set(2)
             msg = _("Help will use button menus.")
+            await ctx.bot._config.help.use_menus.set(2)
         if use_menus == "reactions":
-            await ctx.bot._config.help.use_menus.set(1)
             msg = _("Help will use reaction menus.")
-        if use_menus == "disable":
-            await ctx.bot._config.help.use_menus.set(0)
+            await ctx.bot._config.help.use_menus.set(1)
+        if use_menus == "disabled":
             msg = _("Help will not use menus.")
+            await ctx.bot._config.help.use_menus.set(0)
 
         await ctx.send(msg)
 

@@ -68,9 +68,11 @@ EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
 
 
 class HelpMenuSetting(Enum):
-    no_menu = 0
+    disabled = 0
     reactions = 1
     buttons = 2
+    select = 3
+    selectonly = 4
 
 
 @dataclass(frozen=True)
@@ -823,9 +825,14 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
-        if help_settings.use_menus is HelpMenuSetting.buttons:
+        if help_settings.use_menus.value >= HelpMenuSetting.buttons.value:
+            use_select = help_settings.use_menus.value == 3
+            select_only = help_settings.use_menus.value == 4
             await SimpleMenu(
-                pages, timeout=help_settings.react_timeout, use_select_menu=True
+                pages,
+                timeout=help_settings.react_timeout,
+                use_select_menu=use_select,
+                use_select_only=select_only,
             ).start(ctx)
 
         elif (

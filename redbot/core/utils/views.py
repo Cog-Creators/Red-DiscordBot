@@ -56,6 +56,18 @@ class _NavigateButton(discord.ui.Button):
         await interaction.response.edit_message(**kwargs)
 
 
+class _StopButton(discord.ui.Button):
+    def __init__(self, style: discord.ButtonStyle, emoji: Union[str, discord.PartialEmoji]):
+        super().__init__(style=style, emoji=emoji)
+
+    async def callback(self, interaction: discord.Interaction):
+        self.view.stop()
+        if interaction.message.flags.ephemeral:
+            await interaction.response.edit_message(view=None)
+            return
+        await interaction.message.delete()
+
+
 class SimpleMenu(discord.ui.View):
     """
     A simple Button menu
@@ -79,6 +91,12 @@ class SimpleMenu(discord.ui.View):
         Whether or not to include a select menu
         to jump specifically between pages.
         Defaults to False.
+    use_select_only: bool
+        Whether the menu will only display the select
+        menu for paginating instead of the buttons.
+        The stop button will remain but is positioned
+        under the select menu in this instance.
+        Defaults to False.
 
     Examples
     --------
@@ -95,6 +113,7 @@ class SimpleMenu(discord.ui.View):
         page_start: int = 0,
         delete_after_timeout: bool = False,
         use_select_menu: bool = False,
+        use_select_only: bool = False,
     ) -> None:
         super().__init__(
             timeout=timeout,
@@ -105,7 +124,8 @@ class SimpleMenu(discord.ui.View):
         self.ctx = None
         self.current_page = page_start
         self.delete_after_timeout = delete_after_timeout
-        self.use_select_menu = use_select_menu
+        self.use_select_menu = use_select_menu or use_select_only
+        self.use_select_only = use_select_only
 
         self.forward_button = _NavigateButton(
             discord.ButtonStyle.grey,
@@ -131,14 +151,20 @@ class SimpleMenu(discord.ui.View):
             discord.SelectOption(label=_("Page {num}").format(num=num + 1), value=num)
             for num, x in enumerate(pages)
         ]
+        self.stop_button = _StopButton(
+            discord.ButtonStyle.red, "\N{HEAVY MULTIPLICATION X}\N{VARIATION SELECTOR-16}"
+        )
         self.select_menu = self.get_select_menu()
-        if self.source.is_paginating():
+        if self.source.is_paginating() and not self.use_select_only:
+            self.add_item(self.stop_button)
             self.add_item(self.first_button)
             self.add_item(self.backward_button)
             self.add_item(self.forward_button)
             self.add_item(self.last_button)
-            if use_select_menu:
-                self.add_item(self.select_menu)
+        if self.use_select_menu and self.source.is_paginating():
+            self.add_item(self.select_menu)
+            if self.use_select_only:
+                self.add_item(self.stop_button)
 
     @property
     def source(self):
@@ -218,17 +244,3 @@ class SimpleMenu(discord.ui.View):
             )
             return False
         return True
-
-    @discord.ui.button(
-        style=discord.ButtonStyle.red,
-        emoji="\N{HEAVY MULTIPLICATION X}\N{VARIATION SELECTOR-16}",
-    )
-    async def stop_pages(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ) -> None:
-        """stops the pagination session."""
-        self.stop()
-        if interaction.message.flags.ephemeral:
-            await interaction.response.edit_message(view=None)
-            return
-        await interaction.message.delete()
