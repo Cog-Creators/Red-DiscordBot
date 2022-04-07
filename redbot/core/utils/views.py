@@ -210,7 +210,9 @@ class SimpleMenu(discord.ui.View):
 
     async def interaction_check(self, interaction: discord.Interaction):
         """Ensure only the author is allowed to interact with the menu."""
-        if self.author and interaction.user.id != self.author.id:
+        allowed_ids = (*interaction.client.owner_ids, getattr(self.author, "id", None))
+        # extend the interaction check allowing bot owners to modify the menu
+        if interaction.user.id not in allowed_ids:
             await interaction.response.send_message(
                 content=_("You are not authorized to interact with this."), ephemeral=True
             )
