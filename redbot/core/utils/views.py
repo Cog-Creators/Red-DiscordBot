@@ -25,6 +25,19 @@ class _SimplePageSource(menus.ListPageSource):
         return page
 
 
+class _SelectMenu(discord.ui.Select):
+    def __init__(self, options: List[discord.SelectOption]):
+        super().__init__(
+            placeholder=_("Select a Page"), min_values=1, max_values=1, options=options
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        index = int(self.values[0])
+        self.view.current_page = index
+        kwargs = await self.view.get_page(self.view.current_page)
+        await interaction.response.edit_message(**kwargs)
+
+
 class _NavigateButton(discord.ui.Button):
     def __init__(
         self, style: discord.ButtonStyle, emoji: Union[str, discord.PartialEmoji], direction: int
@@ -62,6 +75,10 @@ class SimpleMenu(discord.ui.View):
         Whether or not to delete the message after
         the timeout has expired.
         Defaults to False.
+    use_select_menu: bool
+        Whether or not to include a select menu
+        to jump specifically between pages.
+        Defaults to False.
 
     Examples
     --------
@@ -77,6 +94,7 @@ class SimpleMenu(discord.ui.View):
         timeout: float = 180.0,
         page_start: int = 0,
         delete_after_timeout: bool = False,
+        use_select_menu: bool = False,
     ) -> None:
         super().__init__(
             timeout=timeout,
@@ -87,6 +105,7 @@ class SimpleMenu(discord.ui.View):
         self.ctx = None
         self.current_page = page_start
         self.delete_after_timeout = delete_after_timeout
+        self.use_select_menu = use_select_menu
 
         self.forward_button = _NavigateButton(
             discord.ButtonStyle.grey,
@@ -108,11 +127,18 @@ class SimpleMenu(discord.ui.View):
             "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
             direction=self.source.get_max_pages(),
         )
+        self.select_options = [
+            discord.SelectOption(label=_("Page {num}").format(num=num+1), value=num)
+            for num, x in enumerate(pages)
+        ]
+        self.select_menu = self.get_select_menu()
         if self.source.is_paginating():
             self.add_item(self.first_button)
             self.add_item(self.backward_button)
             self.add_item(self.forward_button)
             self.add_item(self.last_button)
+            if use_select_menu:
+                self.add_item(self.select_menu)
 
     @property
     def source(self):
@@ -123,6 +149,25 @@ class SimpleMenu(discord.ui.View):
             await self.message.delete()
         else:
             await self.message.edit(view=None)
+
+    def get_select_menu(self):
+        # handles modifying the select menu if more than 25 pages are provided
+        # this will show the previous 12 and next 13 pages in the select menu
+        # based on the currently displayed page. Once you reach close to the max
+        # pages it will display the last 25 pages.
+        if len(self.select_options) > 25:
+            minus_diff = None
+            plus_diff = 25
+            if 12 < self.current_page < len(self.select_options) - 25:
+                minus_diff = self.current_page - 12
+                plus_diff = self.current_page + 13
+            elif self.current_page >= len(self.select_options) - 25:
+                minus_diff = len(self.select_options) - 25
+                plus_diff = None
+            options = self.select_options[minus_diff:plus_diff]
+        else:
+            options = self.select_options[:25]
+        return _SelectMenu(options)
 
     async def start(self, ctx: Context):
         """
@@ -143,18 +188,27 @@ class SimpleMenu(discord.ui.View):
             self.current_page = 0
             page = await self.source.get_page(self.current_page)
         value = await self.source.format_page(self, page)
+        if (
+            self.use_select_menu
+            and len(self.select_options) > 25
+            and self.source.is_paginating()
+        ):
+            self.remove_item(self.select_menu)
+            self.select_menu = self.get_select_menu()
+            self.add_item(self.select_menu)
+
         if isinstance(value, dict):
-            return value
+            return value.update({"view": self})
         elif isinstance(value, str):
-            return {"content": value, "embed": None}
+            return {"content": value, "embed": None, "view": self}
         elif isinstance(value, discord.Embed):
-            return {"embed": value, "content": None}
+            return {"embed": value, "content": None, "view": self}
 
     async def send_initial_message(self, ctx: Context, channel: discord.abc.Messageable):
         self.author = ctx.author
         self.ctx = ctx
         kwargs = await self.get_page(self.current_page)
-        self.message = await channel.send(**kwargs, view=self)
+        self.message = await channel.send(**kwargs)
         return self.message
 
     async def interaction_check(self, interaction: discord.Interaction):

@@ -824,7 +824,9 @@ class RedHelpFormatter(HelpFormatterABC):
         Sends pages based on settings.
         """
         if help_settings.use_menus is HelpMenuSetting.buttons:
-            await SimpleMenu(pages, timeout=help_settings.react_timeout).start(ctx)
+            await SimpleMenu(
+                pages, timeout=help_settings.react_timeout, use_select_menu=True
+            ).start(ctx)
 
         elif (
             can_user_react_in(ctx.me, ctx.channel)
