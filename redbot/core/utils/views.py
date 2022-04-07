@@ -194,7 +194,8 @@ class SimpleMenu(discord.ui.View):
             self.add_item(self.select_menu)
 
         if isinstance(value, dict):
-            return value.update({"view": self})
+            value.update({"view": self})
+            return value
         elif isinstance(value, str):
             return {"content": value, "embed": None, "view": self}
         elif isinstance(value, discord.Embed):
