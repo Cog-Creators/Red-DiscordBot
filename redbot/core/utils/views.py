@@ -128,7 +128,7 @@ class SimpleMenu(discord.ui.View):
             direction=self.source.get_max_pages(),
         )
         self.select_options = [
-            discord.SelectOption(label=_("Page {num}").format(num=num+1), value=num)
+            discord.SelectOption(label=_("Page {num}").format(num=num + 1), value=num)
             for num, x in enumerate(pages)
         ]
         self.select_menu = self.get_select_menu()
@@ -188,11 +188,7 @@ class SimpleMenu(discord.ui.View):
             self.current_page = 0
             page = await self.source.get_page(self.current_page)
         value = await self.source.format_page(self, page)
-        if (
-            self.use_select_menu
-            and len(self.select_options) > 25
-            and self.source.is_paginating()
-        ):
+        if self.use_select_menu and len(self.select_options) > 25 and self.source.is_paginating():
             self.remove_item(self.select_menu)
             self.select_menu = self.get_select_menu()
             self.add_item(self.select_menu)
