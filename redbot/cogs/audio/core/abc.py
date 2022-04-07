@@ -568,6 +568,10 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def scrape_bandcamp_url(self, url: str) -> "Query":
+        raise NotImplementedError()
+
+    @abstractmethod
     async def self_deafen(self, player: lavalink.Player) -> None:
         raise NotImplementedError()
 

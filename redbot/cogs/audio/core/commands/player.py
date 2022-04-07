@@ -47,11 +47,17 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if restrict and self.match_url(str(query)):
             valid_url = self.is_url_allowed(str(query))
             if not valid_url:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("That URL is not allowed."),
-                )
+                # If it is a bandcamp page with a custom domain (not bandcamp.com),
+                # try and webscrape for the original bandcamp url and use that
+                bc_scrape_query = await self.scrape_bandcamp_url(str(query))
+                if bc_scrape_query is not None:
+                    query = bc_scrape_query
+                else:
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Play Tracks"),
+                        description=_("That URL is not allowed."),
+                    )
         elif not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
