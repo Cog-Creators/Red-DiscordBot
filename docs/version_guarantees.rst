@@ -10,6 +10,8 @@ While this is very similar to SemVer, we have our own set of guarantees.
 
 Major versions are for project wide rewrites and are not expected in the foreseeable future.
 
+.. _end-user-guarantees:
+
 ===================
 End-user Guarantees
 ===================
