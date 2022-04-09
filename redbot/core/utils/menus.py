@@ -5,23 +5,28 @@
 import asyncio
 import contextlib
 import functools
-from typing import Iterable, List, Union
+from types import MappingProxyType
+from typing import Callable, Iterable, List, Mapping, TypeVar, Union
+
 import discord
 
 from .. import commands
 from .predicates import ReactionPredicate
 
+_T = TypeVar("_T")
+_PageList = TypeVar("_PageList", List[str], List[discord.Embed])
 _ReactableEmoji = Union[str, discord.Emoji]
+_ControlCallable = Callable[[commands.Context, _PageList, discord.Message, int, float, str], _T]
 
 
 async def menu(
     ctx: commands.Context,
-    pages: Union[List[str], List[discord.Embed]],
-    controls: dict,
+    pages: _PageList,
+    controls: Mapping[str, _ControlCallable],
     message: discord.Message = None,
     page: int = 0,
     timeout: float = 30.0,
-):
+) -> _T:
     """
     An emoji-based menu
 
@@ -40,9 +45,10 @@ async def menu(
         The command context
     pages: `list` of `str` or `discord.Embed`
         The pages of the menu.
-    controls: dict
+    controls: Mapping[str, Callable],
         A mapping of emoji to the function which handles the action for the
-        emoji.
+        emoji. The signature of the function should be the same as of this function
+        and should additionally accept an ``emoji`` parameter of type `str`.
     message: discord.Message
         The message representing the menu. Usually :code:`None` when first opening
         the menu
@@ -132,12 +138,12 @@ async def menu(
 async def next_page(
     ctx: commands.Context,
     pages: list,
-    controls: dict,
+    controls: Mapping[str, _ControlCallable],
     message: discord.Message,
     page: int,
     timeout: float,
     emoji: str,
-):
+) -> _T:
     if page == len(pages) - 1:
         page = 0  # Loop around to the first item
     else:
@@ -148,12 +154,12 @@ async def next_page(
 async def prev_page(
     ctx: commands.Context,
     pages: list,
-    controls: dict,
+    controls: Mapping[str, _ControlCallable],
     message: discord.Message,
     page: int,
     timeout: float,
     emoji: str,
-):
+) -> _T:
     if page == 0:
         page = len(pages) - 1  # Loop around to the last item
     else:
@@ -164,12 +170,12 @@ async def prev_page(
 async def close_menu(
     ctx: commands.Context,
     pages: list,
-    controls: dict,
+    controls: Mapping[str, _ControlCallable],
     message: discord.Message,
     page: int,
     timeout: float,
     emoji: str,
-):
+) -> None:
     with contextlib.suppress(discord.NotFound):
         await message.delete()
 
@@ -210,8 +216,10 @@ def start_adding_reactions(
     return asyncio.create_task(task())
 
 
-DEFAULT_CONTROLS = {
-    "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
-    "\N{CROSS MARK}": close_menu,
-    "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
-}
+DEFAULT_CONTROLS: Mapping[str, _ControlCallable] = MappingProxyType(
+    {
+        "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
+        "\N{CROSS MARK}": close_menu,
+        "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
+    }
+)

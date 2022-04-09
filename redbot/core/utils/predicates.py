@@ -881,19 +881,19 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     )
     """Tuple[str, str] : A tuple containing the tick emoji and cross emoji, in that order."""
 
-    ALPHABET_EMOJIS: ClassVar[List[str]] = [
+    ALPHABET_EMOJIS: ClassVar[Tuple[str, ...]] = tuple(
         chr(code)
         for code in range(
             ord("\N{REGIONAL INDICATOR SYMBOL LETTER A}"),
             ord("\N{REGIONAL INDICATOR SYMBOL LETTER Z}") + 1,
         )
-    ]
-    """List[str] : A list of all 26 alphabetical letter emojis."""
+    )
+    """Tuple[str, ...] : A tuple of all 26 alphabetical letter emojis."""
 
-    NUMBER_EMOJIS: ClassVar[List[str]] = [
+    NUMBER_EMOJIS: ClassVar[Tuple[str, ...]] = tuple(
         chr(code) + "\N{COMBINING ENCLOSING KEYCAP}" for code in range(ord("0"), ord("9") + 1)
-    ]
-    """List[str] : A list of all single-digit number emojis, 0 through 9."""
+    )
+    """Tuple[str, ...] : A tuple of all single-digit number emojis, 0 through 9."""
 
     def __init__(
         self, predicate: Callable[["ReactionPredicate", discord.Reaction, discord.abc.User], bool]
