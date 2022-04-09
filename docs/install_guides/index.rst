@@ -17,6 +17,7 @@ we recommend **Ubuntu 20.04 LTS**.
    arch
    centos-7
    centos-stream-8
+   centos-stream-9
    debian-10
    debian-11
    fedora
