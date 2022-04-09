@@ -424,15 +424,13 @@ class Case:
                 self.guild.id,
             )
             await self.edit({"message": None})
-        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        except Exception:
             log.exception(
                 "Modlog failed to edit the Discord message for"
                 " the case #%s from guild with ID %s due to unexpected error.",
                 self.case_number,
                 self.guild.id,
             )
-        finally:
-            return None
 
     async def message_content(self, embed: bool = True):
         """
@@ -1071,15 +1069,14 @@ async def create_case(
             "Modlog failed to edit the Discord message for"
             " the case #%s from guild with ID due to missing permissions."
         )
-    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+    except Exception:
         log.exception(
             "Modlog failed to send the Discord message for"
             " the case #%s from guild with ID %s due to unexpected error.",
             case.case_number,
             case.guild.id,
         )
-    finally:
-        return case
+    return case
 
 
 async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Optional[CaseType]:
