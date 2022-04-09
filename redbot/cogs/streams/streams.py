@@ -251,7 +251,7 @@ class Streams(commands.Cog):
         except OfflineStream:
             await ctx.send(_("That user is offline."))
         except StreamNotFound:
-            await ctx.send(_("That channel doesn't seem to exist."))
+            await ctx.send(_("That user doesn't seem to exist."))
         except InvalidTwitchCredentials:
             await ctx.send(
                 _("The Twitch token is either invalid or has not been set. See {command}.").format(
@@ -464,7 +464,7 @@ class Streams(commands.Cog):
                 return
             else:
                 if not exists:
-                    await ctx.send(_("That channel doesn't seem to exist."))
+                    await ctx.send(_("That user doesn't seem to exist."))
                     return
 
         await self.add_or_remove(ctx, stream, discord_channel)
