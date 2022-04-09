@@ -742,7 +742,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_lyrics(self, ctx: commands.Context):
         """Search for tracks with lyric videos.
 
-        This adds `- lyrics` to all youtube searches (including spotify conversions) to try to match only music.
+        This appends `- lyrics` to all youtube searches (including spotify conversions) to try to match only music.
         """
         prefer_lyrics = await self.config.guild(ctx.guild).prefer_lyrics()
         await self.config.guild(ctx.guild).prefer_lyrics.set(not prefer_lyrics)
