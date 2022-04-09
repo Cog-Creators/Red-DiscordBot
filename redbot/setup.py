@@ -125,7 +125,17 @@ def get_storage_type(backend: Optional[str], *, interactive: bool):
 
 
 def get_name(name: str) -> str:
-    INSTANCE_NAME_RE = re.compile(r"[A-Za-z0-9_\.\-]*")
+    INSTANCE_NAME_RE = re.compile(
+        r"""
+        [a-z0-9]              # starts with letter or digit
+        (?:
+            (?!.*[_\.\-]{2})  # ensure no consecutive dots, hyphens, or undrescores
+            [a-z0-9_\.\-]*    # match allowed characters
+            [a-z0-9]          # ensure string ends with letter or digit
+        )?                    # optional to allow strings of length 1
+        """,
+        re.VERBOSE | re.IGNORECASE,
+    )
     if name:
         if INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
@@ -143,7 +153,9 @@ def get_name(name: str) -> str:
             " A-z, numbers, underscores (_) and periods (.)."
         )
         name = input("> ")
-        if INSTANCE_NAME_RE.fullmatch(name) is None:
+        if not name:
+            pass
+        elif INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
                 "ERROR: Instance names can only include characters A-z, numbers, "
                 "underscores (_) and periods (.)."
