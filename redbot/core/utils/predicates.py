@@ -890,9 +890,9 @@ class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
     )
     """Tuple[str, ...] : A tuple of all 26 alphabetical letter emojis."""
 
-    NUMBER_EMOJIS: ClassVar[Tuple[str, ...]] = [
+    NUMBER_EMOJIS: ClassVar[Tuple[str, ...]] = tuple(
         chr(code) + "\N{COMBINING ENCLOSING KEYCAP}" for code in range(ord("0"), ord("9") + 1)
-    ]
+    )
     """Tuple[str, ...] : A tuple of all single-digit number emojis, 0 through 9."""
 
     def __init__(
