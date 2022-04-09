@@ -84,9 +84,15 @@ jobs:
     name: Update Red version number to dev
     runs-on: ubuntu-latest
     steps:
+      - name: Get base branch
+        env:
+          TAG_BASE_BRANCH: ${{ github.event.base_ref }}
+        run: |
+          echo "BASE_BRANCH=${TAG_BASE_BRANCH#'refs/heads/'}" >> $GITHUB_ENV
+
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.base_ref }}
+          ref: ${{ env.BASE_BRANCH }}
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -128,7 +134,7 @@ jobs:
           branch: "automated/pr_bumps/${{ steps.bump_version_dev.outputs.new_version }}"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           milestone: ${{ steps.get_milestone_number.outputs.result }}
-          base: ${{ github.event.base_ref }}
+          base: ${{ env.BASE_BRANCH }}
 
       - name: Close and reopen the PR with different token to trigger CI
         uses: actions/github-script@v3

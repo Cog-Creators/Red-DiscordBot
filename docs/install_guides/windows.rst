@@ -31,13 +31,13 @@ Then run each of the following commands:
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2019-workload-vctools -y
-    choco upgrade python3 -y --version 3.9.7
+    choco upgrade python3 -y --version 3.9.9
 
 For Audio support, you should also run the following command before exiting:
 
 .. prompt:: powershell
 
-    choco upgrade adoptopenjdk11jre -y
+    choco upgrade temurin11 -y
 
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
@@ -55,7 +55,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python 3.8.1 or greater <https://www.python.org/downloads/>`_
+* `Python 3.8.1 - 3.9.x <https://www.python.org/downloads/windows/>`_
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -64,7 +64,7 @@ Manually installing dependencies
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java 11 <https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot>`_ - needed for Audio
+* `Java 11 <https://adoptium.net/?variant=openjdk11>`_ - needed for Audio
 
 From here, continue onto `creating-venv-windows`.
 

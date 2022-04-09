@@ -1,4 +1,7 @@
-#!/usr/bin/env python
+from redbot import _early_init
+
+# this needs to be called as early as possible
+_early_init()
 
 import asyncio
 import functools
@@ -20,15 +23,9 @@ from typing import NoReturn
 import discord
 import rich
 
-# Set the event loop policies here so any subsequent `new_event_loop()`
-# calls, in particular those as a result of the following imports,
-# return the correct loop object.
-from redbot import _early_init, __version__
-
-_early_init()
-
 import redbot.logging
-from redbot.core.bot import Red, ExitCodes
+from redbot import __version__
+from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
@@ -381,10 +378,10 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             sys.exit(1)
 
     if cli_flags.dry_run:
-        await red.http.close()
         sys.exit(0)
     try:
-        await red.start(token, bot=True, cli_flags=cli_flags)
+        # `async with red:` is unnecessary here because we call red.close() in shutdown handler
+        await red.start(token)
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
         db_token = await red._config.token()
@@ -401,6 +398,24 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             "You can find out how to enable Privileged Intents with this guide:\n"
             "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
             style="red",
+        )
+        sys.exit(1)
+    except _NoOwnerSet:
+        print(
+            "Bot doesn't have any owner set!\n"
+            "This can happen when your bot's application is owned by team"
+            " as team members are NOT owners by default.\n\n"
+            "Remember:\n"
+            "ONLY the person who is hosting Red should be owner."
+            " This has SERIOUS security implications."
+            " The owner can access any data that is present on the host system.\n"
+            "With that out of the way, depending on who you want to be considered as owner,"
+            " you can:\n"
+            "a) pass --team-members-are-owners when launching Red"
+            " - in this case Red will treat all members of the bot application's team as owners\n"
+            f"b) set owner manually with `redbot --edit {cli_flags.instance_name}`\n"
+            "c) pass owner ID(s) when launching Red with --owner"
+            " (and --co-owner if you need more than one) flag\n"
         )
         sys.exit(1)
 
@@ -436,7 +451,8 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         red._shutdown_mode = exit_code
 
     try:
-        await red.close()
+        if not red.is_closed():
+            await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
@@ -478,7 +494,7 @@ def red_exception_handler(red, red_task: asyncio.Future):
     except Exception as exc:
         log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
-        red.loop.create_task(shutdown_handler(red))
+        asyncio.create_task(shutdown_handler(red))
 
 
 def main():

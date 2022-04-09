@@ -11,7 +11,7 @@ from discord.ext.commands import Context as DPYContext
 from .requires import PermState
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
-from ..utils import common_filters
+from ..utils import can_user_react_in, common_filters
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -93,14 +93,19 @@ class Context(DPYContext):
         return await super().send(content=content, **kwargs)
 
     async def send_help(self, command=None):
-        """ Send the command help message. """
+        """Send the command help message."""
         # This allows people to manually use this similarly
         # to the upstream d.py version, while retaining our use.
         command = command or self.command
         await self.bot.send_help_for(self, command)
 
-    async def tick(self) -> bool:
+    async def tick(self, *, message: Optional[str] = None) -> bool:
         """Add a tick reaction to the command message.
+
+        Keyword Arguments
+        -----------------
+        message : str, optional
+            The message to send if adding the reaction doesn't succeed.
 
         Returns
         -------
@@ -108,26 +113,38 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
 
         """
-        try:
-            await self.message.add_reaction(TICK)
-        except discord.HTTPException:
-            return False
-        else:
-            return True
+        return await self.react_quietly(TICK, message=message)
 
     async def react_quietly(
-        self, reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+        self,
+        reaction: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str],
+        *,
+        message: Optional[str] = None,
     ) -> bool:
         """Adds a reaction to the command message.
 
+        Parameters
+        ----------
+        reaction : Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]
+            The emoji to react with.
+
+        Keyword Arguments
+        -----------------
+        message : str, optional
+            The message to send if adding the reaction doesn't succeed.
+
         Returns
         -------
         bool
             :code:`True` if adding the reaction succeeded.
         """
         try:
+            if not can_user_react_in(self.me, self.channel):
+                raise RuntimeError
             await self.message.add_reaction(reaction)
-        except discord.HTTPException:
+        except (RuntimeError, discord.HTTPException):
+            if message is not None:
+                await self.send(message)
             return False
         else:
             return True
@@ -214,17 +231,20 @@ class Context(DPYContext):
 
     async def embed_requested(self):
         """
-        Simple helper to call bot.embed_requested
-        with logic around if embed permissions are available
+        Short-hand for calling bot.embed_requested with permission checks.
+
+        Equivalent to:
+
+        .. code:: python
+
+            await ctx.bot.embed_requested(ctx)
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
-        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
-            return False
-        return await self.bot.embed_requested(self.channel, self.author, command=self.command)
+        return await self.bot.embed_requested(self)
 
     async def maybe_send_embed(self, message: str) -> discord.Message:
         """
@@ -262,16 +282,6 @@ class Context(DPYContext):
                 message,
                 allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
             )
-
-    @property
-    def clean_prefix(self) -> str:
-        """
-        str: The command prefix, but with a sanitized version of the bot's mention if it was used as prefix.
-        This can be used in a context where discord user mentions might not render properly.
-        """
-        me = self.me
-        pattern = re.compile(rf"<@!?{me.id}>")
-        return pattern.sub(f"@{me.display_name}".replace("\\", r"\\"), self.prefix)
 
     @property
     def me(self) -> Union[discord.ClientUser, discord.Member]:
@@ -329,7 +339,7 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
             ...
 
         @property
-        def channel(self) -> discord.TextChannel:
+        def channel(self) -> Union[discord.TextChannel, discord.Thread]:
             ...
 
         @property
@@ -339,7 +349,6 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
         @property
         def me(self) -> discord.Member:
             ...
-
 
 else:
     GuildContext = Context

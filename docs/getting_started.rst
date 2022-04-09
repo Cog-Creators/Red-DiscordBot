@@ -134,7 +134,7 @@ Red is built with cogs, a fancy term for plugins. They are
 modules that add functionality to Red. They contain
 commands to use.
 
-Red comes with 19 cogs containing the basic features, such
+Red comes with 18 cogs containing the basic features, such
 as moderation, utility, music, streams...
 
 You can see your loaded and unloaded cogs with the ``[p]cogs``
@@ -225,7 +225,7 @@ Administrator
 ~~~~~~~~~~~~~
 
 The administrator is defined by its roles. You can set multiple admin roles
-with the ``[p]set addadminrole`` and ``[p]set removeadminrole`` commands.
+with the ``[p]set roles addadminrole`` and ``[p]set roles removeadminrole`` commands.
 
 For example, in the mod cog, an admin can use the ``[p]modset`` command
 which defines the cog settings.
@@ -235,7 +235,7 @@ Moderator
 ~~~~~~~~~
 
 A moderator is a step above the average users. You can set multiple moderator
-roles with the ``[p]set addmodrole`` and ``[p]set removemodrole`` commands.
+roles with the ``[p]set roles addmodrole`` and ``[p]set roles removemodrole`` commands.
 
 For example, in the filter cog, a mod will be able to use the various commands 
 under ``[p]filter`` (such as adding and removing filtered words), but they will

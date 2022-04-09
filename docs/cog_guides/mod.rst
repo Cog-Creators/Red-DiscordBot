@@ -58,7 +58,7 @@ Ban a user from this server and optionally delete days of messages.
 **Example Usage**
 
 * ``[p]ban 428675506947227648 7 Continued to spam after told to stop.``
-    This will ban Twentysix and it will delete 7 days worth of messages.
+    This will ban the user with ID 428675506947227648 and it will delete 7 days worth of messages.
 * ``[p]ban @Twentysix 7 Continued to spam after told to stop.``
     This will ban Twentysix and it will delete 7 days worth of messages.
 
@@ -92,7 +92,7 @@ Kick a user.
 **Example Usage**
 
 * ``[p]kick 428675506947227648 wanted to be kicked.``
-    This will kick Twentysix from the server.
+    This will kick the user with ID 428675506947227648 from the server.
 * ``[p]kick @Twentysix wanted to be kicked.``
     This will kick Twentysix from the server.
 
@@ -574,14 +574,14 @@ slowmode
 
 **Description**
 
-Changes channel's slowmode setting.
+Changes thread's or channel's slowmode setting.
 
 Interval can be anything from 0 seconds to 6 hours.
 Use without parameters to disable.
 
 **Arguments**
 
-* ``[interval=0:00:00]``: The time for the channel's slowmode settings.
+* ``[interval=0:00:00]``: The time for the thread's/channel's slowmode settings.
 
 .. note::
     Interval can be anything from 0 seconds to 6 hours.
@@ -642,7 +642,7 @@ Temporarily ban a user from this server.
 * ``[p]tempban @Twentysix 15m You need a timeout``
     This will ban Twentysix for 15 minutes.
 * ``[p]tempban 428675506947227648 1d2h15m 5 Evil person``
-    This will ban the user for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
+    This will ban the user with ID 428675506947227648 for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
 
 .. _mod-command-unban:
 

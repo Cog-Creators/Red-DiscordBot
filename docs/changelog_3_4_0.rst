@@ -1,5 +1,160 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.16 (2021-12-31)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`jack1142`, :ghuser:`PredaaA`
+
+This is a hotfix release fixing issues with invite URL API that caused
+``[p]invite`` command and ``CORE__INVITE_URL`` RPC method to not work.
+
+End-user changelog
+------------------
+
+- **Core Bot** - Fixed ``[p]invite`` command (:issue:`5517`)
+
+
+Developer changelog
+-------------------
+
+- Fixed ``CORE__INVITE_URL`` RPC method (:issue:`5517`)
+
+
+Documentation changes
+---------------------
+
+- Changed Arch install guide to temporarily use ``python39`` AUR package instead of ``python`` package as Red does not currently support Python 3.10 (:issue:`5518`)
+
+
+Redbot 3.4.15 (2021-12-31)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Arman0334`, :ghuser:`Crossedfall`, :ghuser:`Dav-Git`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Jan200101`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`ltzmax`, :ghuser:`Parnassius`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`RasmusWL`, :ghuser:`sravan1946`, :ghuser:`Stonedestroyer`, :ghuser:`the-krak3n`, :ghuser:`Tobotimus`, :ghuser:`vertyco`, :ghuser:`Vexed01`, :ghuser:`WreckRox`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+#. Fedora 33 and CentOS 8 are no longer supported as they have already reached end of life.
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.15 uses a new Lavalink jar that you MUST manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1275>`__ to be able to continue using Audio.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Added new CLI options for non-interactive usage of ``redbot-setup`` (:issue:`2396`, :issue:`5448`)
+
+    See output of ``redbot-setup --help`` for more information.
+
+- JSON is now more strongly recommended and is used by default for new instances in ``redbot-setup`` (:issue:`5448`)
+- The embed setting for ``[p]help`` command set with ``[p]embedset command`` will now affect all help messages, not just the ones sent when invoking ``[p]help`` command directly (:issue:`5452`)
+- ``[p]traceback`` command now indicates that it DMed the command caller with a tick reaction (:issue:`5353`)
+- Improved ``[p]helpset showaliases`` responses (:issue:`5376`)
+- Added plural forms to the responses of ``[p]leave`` command (:issue:`5391`)
+- Fedora 33 and CentOS 8 are no longer supported as they have already reached end of life (:issue:`5440`)
+- Corrected usage examples in help of ``[p]set api`` and ``[p]set api remove`` (:issue:`5444`)
+- Updated prefix length limit to ``25`` to allow setting bot mention as a prefix (:issue:`5476`)
+- Confirmation prompts (accepting "yes/no" or "I agree" as the answer) no longer wrongfully translate the answer that needs to be sent when only English answers are accepted by the bot (:issue:`5363`, :issue:`5364`, :issue:`5404`)
+- Fixed short help for some of the commands in Core Red (:issue:`5502`)
+- Fixed issues with rendering of modlog cases with usernames written in a right-to-left language (:issue:`5422`)
+- Fixed an issue with instance backup failing for non-JSON storage backends (:issue:`5315`)
+- Running Red with ``--no-instance`` CLI flag no longer fails when no instance was ever created by the user (:issue:`5415`, :issue:`5416`)
+- ``[p]command enable guild`` and ``[p]command disable guild`` commands no longer error out for commands that *only* check for user permissions, not caller's roles (:issue:`5477`)
+
+Admin
+*****
+
+- Added ``[p]selfroleset clear`` command which can be used to clear the list of available selfroles in the server (:issue:`5387`)
+
+Audio
+*****
+
+- Added native Mac M1 support for Java runtimes supporting Mac M1 (:issue:`5474`)
+- Enabled JDA-NAS on all system architectures which should limit stuttering/buffering issues on some machines (:issue:`5474`)
+- The bot will now disconnect from the voice channel when all members are bots if the auto-disconnect setting is enabled (:issue:`5421`)
+- Fixed an issue with resuming playback after changing voice channels (:issue:`5170`)
+- Fixed issues with Soundcloud private playlists and mobile links (:issue:`5474`)
+- Fixed searching music with some of the queries containing quotes or backslashes (:issue:`5474`)
+- Fixed an exception caused by unavailable YT tracks in Mix playlists (:issue:`5474`)
+- Fixed ``IndexError`` in ``[p]queue`` command which occurred when the user provides negative integer as the page number (:issue:`5429`)
+
+Cleanup
+*******
+
+- Restricted ``[p]cleanupset notify`` to only be invokable in server channels (:issue:`5466`)
+
+Custom Commands
+***************
+
+- Added 2000 character limit for custom command responses to prevent Nitro users from adding longer responses than a Discord bot can send (:issue:`5499`)
+
+Dev Cog
+*******
+
+- ``[p]mockmsg`` now allows mocking attachment-only messages (:issue:`5446`)
+
+Downloader
+**********
+
+- Added repo name to the response of ``[p]findcog`` command (:issue:`5382`, :issue:`5383`)
+
+Economy
+*******
+
+- ``[p]economyset showsettings`` now includes configured role payday amounts (:issue:`5455`, :issue:`5457`)
+
+General
+*******
+
+- Removed voice region field from ``[p]serverinfo`` command as Discord no longer provides this setting for servers (:issue:`5449`)
+
+Mod
+***
+
+- ``[p]voicekick`` now sends a response when the action succeeds (:issue:`5367`)
+- Fixed an error with ``[p]tempban`` failing to send an invite link when a server has an unset vanity URL (:issue:`5472`)
+- Fixed explanations of example usage for ``[p]ban``, ``[p]kick``, and ``[p]tempban`` commands (:issue:`5372`)
+- Fixed a typo in one of ``[p]unban``'s error messages (:issue:`5470`)
+
+Modlog
+******
+
+- Added the new native Discord timestamps in ``[p]case``, ``[p]casesfor``, and ``[p]listcases`` commands (:issue:`5395`)
+
+Warnings
+********
+
+- Warning actions no longer error out when the action is set to use a command that *only* checks for user permissions, not caller's roles (:issue:`5477`)
+
+
+Developer changelog
+-------------------
+
+- Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
+- Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
+- Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
+- Changed the output of ``CORE__LOAD``, ``CORE__RELOAD``, and ``CORE__UNLOAD`` RPC methods to a dictionary (:issue:`5451`, :issue:`5453`)
+
+
+Documentation changes
+---------------------
+
+- Added install guide for Alma Linux 8.4-8.x and Raspberry Pi OS 11 Bullseye (:issue:`5440`)
+- Updated the Java distribution used in the Windows install guide to Temurin - rebranded AdoptOpenJDK (:issue:`5403`)
+- Improved Mac and pyenv instructions to address common issues with load path configuration (:issue:`5356`)
+- Updated the server locations for Hetzner and Contabo in :ref:`host-list` document (:issue:`5475`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`5447`)
+- Removed inaccurate note from Unix install guides about install commands also being used for updating Red (:issue:`5439`)
+- Removed LXC from unsupported hosting platforms as many VPS providers utilize that technology (:issue:`5351`)
+- Specified that Red currently requires Python 3.8.1 - 3.9.x (:issue:`5403`)
+
+
 Redbot 3.4.14 (2021-09-23)
 ==========================
 
@@ -153,14 +308,14 @@ Developer changelog
 
     Here's the list of the methods that were added to the ``bot`` object:
 
-        - `Red.add_to_blacklist() <RedBase.add_to_blacklist()>`
-        - `Red.remove_from_blacklist() <RedBase.remove_from_blacklist()>`
-        - `Red.get_blacklist() <RedBase.get_blacklist()>`
-        - `Red.clear_blacklist() <RedBase.clear_blacklist()>`
-        - `Red.add_to_whitelist() <RedBase.add_to_whitelist()>`
-        - `Red.remove_from_whitelist() <RedBase.remove_from_whitelist()>`
-        - `Red.get_whitelist() <RedBase.get_whitelist()>`
-        - `Red.clear_whitelist() <RedBase.clear_whitelist()>`
+        - `Red.add_to_blacklist()`
+        - `Red.remove_from_blacklist()`
+        - `Red.get_blacklist()`
+        - `Red.clear_blacklist()`
+        - `Red.add_to_whitelist()`
+        - `Red.remove_from_whitelist()`
+        - `Red.get_whitelist()`
+        - `Red.clear_whitelist()`
 
 - Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
 
@@ -479,7 +634,7 @@ Developer changelog
 - Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
 
     - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
-- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <RedBase.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+- Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Red.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
 
     - Read the method's documentation for more information
 - Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
@@ -675,8 +830,8 @@ Dev Cog
 
     - Variables can be added and removed from the environment of Dev cog using two new methods:
 
-        - `bot.add_dev_env_value() <RedBase.add_dev_env_value()>`
-        - `bot.remove_dev_env_value() <RedBase.remove_dev_env_value()>`
+        - `bot.add_dev_env_value() <Red.add_dev_env_value()>`
+        - `bot.remove_dev_env_value() <Red.remove_dev_env_value()>`
 
 
 Documentation changes
@@ -1067,9 +1222,9 @@ Core Bot
     - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
     - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
-- Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
-- Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
-- Added `bot.get_or_fetch_user() <RedBase.get_or_fetch_user()>` and `bot.get_or_fetch_member() <RedBase.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
+- Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
+- Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
+- Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
 - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 
 Bank
@@ -1232,7 +1387,7 @@ Core Bot
 
 - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
-    - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
+    - New methods added: `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <Red.cog_disabled_in_guild_raw()>`
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 
 - Added data request API (:issue:`4045`,  :issue:`4169`)
@@ -1242,9 +1397,9 @@ Core Bot
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 
-- Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
+- Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
-- `bot.ignored_channel_or_guild() <RedBase.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
+- `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
 - Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
 - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)

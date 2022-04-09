@@ -32,7 +32,7 @@ For each of those, the first rule pertaining to one of the following models will
 
 1. User
 2. Voice channel
-3. Text channel
+3. Text channel (parent text channel in case of invocations in threads)
 4. Channel category
 5. Roles, highest to lowest
 6. Server (can only be in global rules)
