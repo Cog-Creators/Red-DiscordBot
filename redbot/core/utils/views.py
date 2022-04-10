@@ -21,7 +21,7 @@ class SetApiModal(discord.ui.Modal):
     for custom implementations, or created via ``SetApiView``
     to have an easy to implemement secure way of setting API keys.
 
-    Attributes
+    Parameters
     ----------
     bot: Red
         The current bot in use.
@@ -144,7 +144,7 @@ class SetApiView(discord.ui.View):
     This view is an standalone, easy to implement ``discord.ui.View``
     to allow an bot owner to securely set API keys in a public environment.
 
-    Attributes
+    Parameters
     ----------
     bot: Red
         The current bot in use.
