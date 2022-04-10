@@ -14,6 +14,27 @@ _ = Translator("UtilsViews", __file__)
 
 
 class SetApiModal(discord.ui.Modal):
+    """
+    A secure ``discord.ui.Modal`` used to set API keys.
+
+    This Modal can either be used standalone with its own ``discord.ui.View``
+    for custom implementations, or created via ``SetApiView``
+    to have an easy to implemement secure way of setting API keys.
+
+    Attributes
+    ----------
+    bot: Red
+        The current bot in use.
+    default_service: Optional[str]
+        The service to add the API keys to.
+        If this is omitted the bot owner is allowed to set his own service.
+        Defaults to ``None``.
+    default_keys: Optional[Dict[str, str]]
+        The API keys the service is expecting.
+        This will only allow the bot owner to set keys the Modal is expecting.
+        Defaults to ``None``.
+    """
+
     def __init__(
         self,
         bot: Red,
@@ -117,6 +138,26 @@ class SetApiModal(discord.ui.Modal):
 
 
 class SetApiView(discord.ui.View):
+    """
+    A secure ``discord.ui.View`` used to set API keys.
+
+    This view is an standalone, easy to implement ``discord.ui.View``
+    to allow an bot owner to securely set API keys in a public environment.
+
+    Attributes
+    ----------
+    bot: Red
+        The current bot in use.
+    default_service: Optional[str]
+        The service to add the API keys to.
+        If this is omitted the bot owner is allowed to set his own service.
+        Defaults to ``None``.
+    default_keys: Optional[Dict[str, str]]
+        The API keys the service is expecting.
+        This will only allow the bot owner to set keys the Modal is expecting.
+        Defaults to ``None``.
+    """
+
     def __init__(
         self,
         bot: Red,
@@ -131,7 +172,7 @@ class SetApiView(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if await self.bot.is_owner(interaction.user) is False:
             await interaction.response.send_message(
-                _("This button is for bot owners only. Oh well"), ephemeral=True
+                _("This button is for bot owners only, oh well."), ephemeral=True
             )
             return False
         return True
