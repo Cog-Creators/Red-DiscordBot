@@ -60,7 +60,7 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def is_query_allowed(
         self,
         config: Config,
-        ctx_or_channel: Optional[Union[Context, discord.TextChannel]],
+        ctx_or_channel: Optional[Union[Context, discord.TextChannel, discord.Thread]],
         query: str,
         query_obj: Query,
     ) -> bool:

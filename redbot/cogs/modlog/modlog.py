@@ -40,7 +40,11 @@ class ModLog(commands.Cog):
             if await ctx.embed_requested():
                 await ctx.send(embed=await case.message_content(embed=True))
             else:
-                message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp:'))} <t:{int(case.created_at)}>"
+                created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
+                message = (
+                    f"{await case.message_content(embed=False)}\n"
+                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
+                )
                 await ctx.send(message)
 
     @commands.command()
@@ -73,7 +77,11 @@ class ModLog(commands.Cog):
             else:
                 rendered_cases = []
                 for case in cases:
-                    message = f"{await case.message_content(embed=False)}\n{bold(_('Timestamp:'))} <t:{int(case.created_at)}>"
+                    created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
+                    message = (
+                        f"{await case.message_content(embed=False)}\n"
+                        f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
+                    )
                     rendered_cases.append(message)
 
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
@@ -104,7 +112,11 @@ class ModLog(commands.Cog):
             rendered_cases = []
             message = ""
             for case in cases:
-                message += f"{await case.message_content(embed=False)}\n{bold(_('Timestamp:'))} <t:{int(case.created_at)}>"
+                created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
+                message += (
+                    f"{await case.message_content(embed=False)}\n"
+                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
+                )
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)
         await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
@@ -143,7 +155,7 @@ class ModLog(commands.Cog):
         to_modify = {"reason": reason}
         if case_obj.moderator != author:
             to_modify["amended_by"] = author
-        to_modify["modified_at"] = ctx.message.created_at.replace(tzinfo=timezone.utc).timestamp()
+        to_modify["modified_at"] = ctx.message.created_at.timestamp()
         await case_obj.edit(to_modify)
         await ctx.send(
             _("Reason for case #{num} has been updated.").format(num=case_obj.case_number)

@@ -21,7 +21,8 @@ _ = Translator("Audio", Path(__file__))
 class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="local")
     @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_local(self, ctx: commands.Context):
         """Local playback commands."""
 

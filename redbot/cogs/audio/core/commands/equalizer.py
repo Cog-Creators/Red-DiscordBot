@@ -25,7 +25,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="eq", invoke_without_command=True)
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_equalizer(self, ctx: commands.Context):
         """Equalizer management.
 
