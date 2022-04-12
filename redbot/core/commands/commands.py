@@ -33,6 +33,9 @@ from discord.ext.commands import (
     DisabledCommand,
     command as dpy_command_deco,
     Command as DPYCommand,
+    HybridCommand as DPYHybridCommand,
+    hybrid_command as dpy_hybrid_command_deco,
+    HybridGroup as DPYHybridGroup,
     Cog as DPYCog,
     CogMeta as DPYCogMeta,
     Group as DPYGroup,
@@ -287,9 +290,9 @@ class Command(CogCommandMixin, DPYCommand):
 
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
-        super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
+        super().__init__(*args, **kwargs)
         if self.parent is None:
             for name in (self.name, *self.aliases):
                 if name in RESERVED_COMMAND_NAMES:
@@ -982,6 +985,59 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
         :meta private:
         """
         return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+
+class HybridCommand(Command, DPYHybridCommand):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class HybridGroup(Group, DPYHybridGroup):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def command(
+        self,
+        name: str = None,
+        *args,
+        **kwargs
+    ):
+        def decorator(func):
+            kwargs.setdefault("parent", self)
+            result = hybrid_command(name=name, *args, **kwargs)(func)
+            self.add_command(result)
+            return result
+        return decorator
+
+    def group(
+        self,
+        name: str = None,
+        *args,
+        **kwargs,
+    ):
+        def decorator(func):
+            kwargs.setdefault("parent", self)
+            result = hybrid_group(name=name, *args, **kwargs)(func)
+            self.add_command(result)
+            return result
+
+        return decorator
+
+
+def hybrid_command(name=None, **attrs):
+    def decorator(func):
+        if isinstance(func, Command):
+            raise TypeError("callback is already a command.")
+        attrs["help_override"] = attrs.pop("help", None)
+        return HybridCommand(func, name=name, **attrs)
+    return decorator
+
+
+def hybrid_group(name=None, **attrs):
+    def decorator(func):
+        attrs["help_override"] = attrs.pop("help", None)
+        return HybridGroup(func, name=name, **attrs)
+    return decorator
 
 
 def command(name=None, cls=Command, **attrs):
