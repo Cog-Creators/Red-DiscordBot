@@ -996,17 +996,13 @@ class HybridGroup(Group, DPYHybridGroup):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def command(
-        self,
-        name: str = None,
-        *args,
-        **kwargs
-    ):
+    def command(self, name: str = None, *args, **kwargs):
         def decorator(func):
             kwargs.setdefault("parent", self)
             result = hybrid_command(name=name, *args, **kwargs)(func)
             self.add_command(result)
             return result
+
         return decorator
 
     def group(
@@ -1030,6 +1026,7 @@ def hybrid_command(name=None, **attrs):
             raise TypeError("callback is already a command.")
         attrs["help_override"] = attrs.pop("help", None)
         return HybridCommand(func, name=name, **attrs)
+
     return decorator
 
 
@@ -1037,6 +1034,7 @@ def hybrid_group(name=None, **attrs):
     def decorator(func):
         attrs["help_override"] = attrs.pop("help", None)
         return HybridGroup(func, name=name, **attrs)
+
     return decorator
 
 
