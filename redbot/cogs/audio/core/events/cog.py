@@ -197,7 +197,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not guild:
             return
-        notify_channel = guild.get_channel(player.fetch("notify_channel"))
+        notify_channel = guild.get_channel_or_thread(player.fetch("notify_channel"))
         has_perms = self._has_notify_perms(notify_channel)
         tries = 0
         while not player._is_playing:
@@ -208,7 +208,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
 
         if notify_channel and has_perms and not player.fetch("autoplay_notified", False):
             if (
-                len(player.manager.players) < 10
+                len(player.node.players) < 10
                 or not player._last_resume
                 and player._last_resume + datetime.timedelta(seconds=60)
                 > datetime.datetime.now(tz=datetime.timezone.utc)

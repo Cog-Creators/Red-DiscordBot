@@ -249,7 +249,9 @@ class TriviaSession:
         answers = tuple(s.lower() for s in answers)
 
         def _pred(message: discord.Message):
-            early_exit = message.channel != self.ctx.channel or message.author == self.ctx.guild.me
+            early_exit = (
+                message.channel.id != self.ctx.channel.id or message.author == self.ctx.guild.me
+            )
             if early_exit:
                 return False
 

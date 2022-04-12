@@ -12,7 +12,6 @@ from typing import List, MutableMapping, Optional, Tuple, Union
 import aiohttp
 import discord
 import lavalink
-from discord.embeds import EmptyEmbed
 from lavalink import NodeNotFound
 from red_commons.logging import getLogger
 
@@ -399,7 +398,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         uploaded_track_list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         playlist_url: str,
         uploaded_playlist_name: str,
         scope: str,
@@ -481,7 +480,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await playlist_msg.edit(embed=embed3)
 
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
+        self, ctx: commands.Context, player: lavalink.player.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
         if getattr(playlist, "id", 0) == 42069:
             _, updated_tracks = await self._get_bundled_playlist_tracks()
@@ -525,7 +524,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink node has failed")
-                desc = EmptyEmbed
+                desc = None
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 await self.send_embed_msg(ctx, title=msg, description=desc)
@@ -580,7 +579,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def fetch_playlist_tracks(
         self,
         ctx: commands.Context,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         query: Query,
         skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:

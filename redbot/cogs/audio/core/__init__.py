@@ -74,7 +74,6 @@ class Audio(
         self.permission_cache = discord.Permissions(
             embed_links=True,
             read_messages=True,
-            send_messages=True,
             read_message_history=True,
             add_reactions=True,
         )

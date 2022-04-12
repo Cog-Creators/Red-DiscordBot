@@ -4,6 +4,8 @@
 Installing Red on Windows
 =========================
 
+.. include:: _includes/supported-arch-x64.rst
+
 -------------------------------
 Installing the pre-requirements
 -------------------------------

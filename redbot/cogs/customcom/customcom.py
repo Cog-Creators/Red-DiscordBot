@@ -3,7 +3,6 @@ import re
 import random
 from datetime import datetime, timedelta
 from inspect import Parameter
-from collections import OrderedDict
 from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
 from urllib.parse import quote_plus
 
@@ -540,7 +539,7 @@ class CustomCommands(commands.Cog):
             )
 
     @customcom.command(name="list")
-    @checks.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def cc_list(self, ctx: commands.Context):
         """List all available custom commands.
 
@@ -636,11 +635,14 @@ class CustomCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message):
-        is_private = isinstance(message.channel, discord.abc.PrivateChannel)
+        is_private = message.guild is None
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
         # something similar once it's added
         user_allowed = True
+
+        if isinstance(message.channel, discord.PartialMessageable):
+            return
 
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
             return
@@ -705,9 +707,8 @@ class CustomCommands(commands.Cog):
     @staticmethod
     def prepare_args(raw_response) -> Mapping[str, Parameter]:
         args = re.findall(r"{(\d+)[^:}]*(:[^.}]*)?[^}]*\}", raw_response)
-        default = [("ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))]
         if not args:
-            return OrderedDict(default)
+            return {}
         allowed_builtins = {
             "bool": bool,
             "complex": complex,
@@ -775,9 +776,7 @@ class CustomCommands(commands.Cog):
                 i if i < high else "final",
             )
             fin[i] = fin[i].replace(name=name)
-        # insert ctx parameter for discord.py parsing
-        fin = default + [(p.name, p) for p in fin]
-        return OrderedDict(fin)
+        return dict((p.name, p) for p in fin)
 
     def test_cooldowns(self, ctx, command, cooldowns):
         now = datetime.utcnow()

@@ -354,8 +354,7 @@ class Dev(commands.Cog):
         or anything else that makes the message non-empty.
         """
         msg = ctx.message
-        if not content and not msg.embeds and not msg.attachments:
-            # DEP-WARN: add `msg.stickers` when adding d.py 2.0
+        if not content and not msg.embeds and not msg.attachments and not msg.stickers:
             await ctx.send_help()
             return
         msg = copy(msg)

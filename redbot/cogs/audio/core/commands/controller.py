@@ -81,7 +81,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @commands.command(name="now")
     @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
