@@ -992,7 +992,7 @@ class HybridCommand(Command, DPYHybridCommand):
     This should not be created directly, and instead via the decorator.
 
     This class inherits from `discord.ext.commands.Command` and
-    `discord.ext.hybrid.HybridCommand`.
+    `discord.ext.commands.HybridCommand`.
     The attributes listed below are simply additions to the ones listed
     with that class.
 
@@ -1028,7 +1028,7 @@ class HybridGroup(Group, DPYHybridGroup):
     """HybridGroup command class for Red.
 
     This class inherits from `Command`, with :class:`GroupMixin`,
-    `discord.ext.commands.Group`, and `discord.ext.commands.hybrid.HybridGroup` mixed in.
+    `discord.ext.commands.Group`, and `discord.ext.commands.HybridGroup` mixed in.
     """
 
     def __init__(self, *args: Any, **kwargs: Any):
