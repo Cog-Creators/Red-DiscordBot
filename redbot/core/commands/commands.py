@@ -1020,9 +1020,6 @@ class HybridCommand(Command, DPYHybridCommand):
         (type used will be of the inner type instead)
     """
 
-    def __init__(self, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-
 
 class HybridGroup(Group, DPYHybridGroup):
     """HybridGroup command class for Red.
@@ -1030,9 +1027,6 @@ class HybridGroup(Group, DPYHybridGroup):
     This class inherits from `Command`, with :class:`GroupMixin`,
     `discord.ext.commands.Group`, and `discord.ext.commands.HybridGroup` mixed in.
     """
-
-    def __init__(self, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
 
     def command(self, name: str = discord.utils.MISSING, *args: Any, **kwargs: Any):
         def decorator(func):
