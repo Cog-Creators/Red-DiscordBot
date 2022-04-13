@@ -1020,7 +1020,7 @@ class HybridCommand(Command, DPYHybridCommand):
         (type used will be of the inner type instead)
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
 
 
@@ -1031,10 +1031,10 @@ class HybridGroup(Group, DPYHybridGroup):
     `discord.ext.commands.Group`, and `discord.ext.commands.hybrid.HybridGroup` mixed in.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
 
-    def command(self, name: str = None, *args, **kwargs):
+    def command(self, name: str = discord.utils.MISSING, *args: Any, **kwargs: Any):
         def decorator(func):
             kwargs.setdefault("parent", self)
             result = hybrid_command(name=name, *args, **kwargs)(func)
@@ -1045,9 +1045,9 @@ class HybridGroup(Group, DPYHybridGroup):
 
     def group(
         self,
-        name: str = None,
-        *args,
-        **kwargs,
+        name: str = discord.utils.MISSING,
+        *args: Any,
+        **kwargs: Any,
     ):
         def decorator(func):
             kwargs.setdefault("parent", self)
@@ -1058,7 +1058,7 @@ class HybridGroup(Group, DPYHybridGroup):
         return decorator
 
 
-def hybrid_command(name=None, **attrs):
+def hybrid_command(name: str = discord.utils.MISSING, **attrs: Any):
     """A decorator which transforms an async function into a `HybridCommand`.
 
     Same interface as `discord.ext.commands.hybrid_command`.
@@ -1073,13 +1073,15 @@ def hybrid_command(name=None, **attrs):
     return decorator
 
 
-def hybrid_group(name=None, **attrs):
+def hybrid_group(name: str = discord.utils.MISSING, **attrs: Any):
     """A decorator which transforms an async function into a `HybridGroup`.
 
     Same interface as `discord.ext.commands.hybrid_group`.
     """
 
     def decorator(func):
+        if isinstance(func, Command):
+            raise TypeError("callback is already a command.")
         attrs["help_override"] = attrs.pop("help", None)
         return HybridGroup(func, name=name, **attrs)
 
