@@ -205,7 +205,7 @@ class SimpleMenu(discord.ui.View):
                 The context to start the menu in.
         """
         self.ctx = ctx
-        await self.send_initial_message(ctx, ctx.channel)
+        await self.send_initial_message(ctx)
 
     async def get_page(self, page_num: int):
         try:
@@ -227,12 +227,11 @@ class SimpleMenu(discord.ui.View):
         elif isinstance(value, discord.Embed):
             return {"embed": value, "content": None, "view": self}
 
-    async def send_initial_message(self, ctx: Context, channel: discord.abc.Messageable):
+    async def send_initial_message(self, ctx: Context):
         self.author = ctx.author
         self.ctx = ctx
         kwargs = await self.get_page(self.current_page)
-        self.message = await channel.send(**kwargs)
-        return self.message
+        self.message = await ctx.send(**kwargs)
 
     async def interaction_check(self, interaction: discord.Interaction):
         """Ensure only the author is allowed to interact with the menu."""
