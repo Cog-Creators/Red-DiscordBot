@@ -34,7 +34,6 @@ from discord.ext.commands import (
     command as dpy_command_deco,
     Command as DPYCommand,
     HybridCommand as DPYHybridCommand,
-    hybrid_command as dpy_hybrid_command_deco,
     HybridGroup as DPYHybridGroup,
     Cog as DPYCog,
     CogMeta as DPYCogMeta,
