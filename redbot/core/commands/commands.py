@@ -1021,8 +1021,8 @@ class HybridGroup(Group, DPYHybridGroup):
 
     def __init__(self, *args: Any, **kwargs: Any):
         fallback = "fallback" in kwargs and kwargs["fallback"] is not None
-        super().__init__(*args, **kwargs)
         invoke_without_command = kwargs.pop("invoke_without_command", False)
+        super().__init__(*args, **kwargs)
         self.invoke_without_command = invoke_without_command or fallback
 
     def command(self, name: str = discord.utils.MISSING, *args: Any, **kwargs: Any):
