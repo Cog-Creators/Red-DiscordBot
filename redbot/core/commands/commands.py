@@ -1024,6 +1024,12 @@ class HybridCommand(Command, DPYHybridCommand):
 class HybridGroup(Group, DPYHybridGroup):
     """HybridGroup command class for Red.
 
+    .. note::
+        Red's HybridGroups differ from `discord.ext.commands.HybridGroup`
+        by setting `invoke_without_command` to be `False` by default.
+        If `fallback` is provided then `invoke_without_command` is
+        set to `True`.
+
     This class inherits from `Command`, with :class:`GroupMixin`,
     `discord.ext.commands.Group`, and `discord.ext.commands.HybridGroup` mixed in.
     """
