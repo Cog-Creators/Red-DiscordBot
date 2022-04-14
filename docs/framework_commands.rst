@@ -11,7 +11,11 @@ extend functionalities used throughout the bot, as outlined below.
 
 .. autofunction:: redbot.core.commands.command
 
+.. autofunction:: redbot.core.commands.hybrid_command
+
 .. autofunction:: redbot.core.commands.group
+
+.. autofunction:: redbot.core.commands.hybrid_group
 
 .. autoclass:: redbot.core.commands.Cog
 
@@ -25,7 +29,13 @@ extend functionalities used throughout the bot, as outlined below.
     :members:
     :inherited-members: format_help_for_context
 
+.. autoclass:: redbot.core.commands.HybridCommand
+    :members:
+
 .. autoclass:: redbot.core.commands.Group
+    :members:
+
+.. autoclass:: redbot.core.commands.HybridGroup
     :members:
 
 .. autoclass:: redbot.core.commands.Context
