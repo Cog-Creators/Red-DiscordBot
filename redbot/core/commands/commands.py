@@ -991,10 +991,7 @@ class HybridCommand(Command, DPYHybridCommand):
 
     This should not be created directly, and instead via the decorator.
 
-    This class inherits from `discord.ext.commands.Command` and
-    `discord.ext.commands.HybridCommand`.
-    The attributes listed below are simply additions to the ones listed
-    with that class.
+    This class inherits from `Command` and `discord.ext.commands.HybridCommand`.
 
     .. warning::
 
@@ -1006,18 +1003,6 @@ class HybridCommand(Command, DPYHybridCommand):
         unless to override behavior in a method designed to be overridden,
         as this prefix is reserved for future methods in order to be
         able to add features non-breakingly.
-
-    Attributes
-    ----------
-    checks : List[`coroutine function`]
-        A list of check predicates which cannot be overridden, unlike
-        `Requires.checks`.
-    translator : Translator
-        A translator for this command's help docstring.
-    ignore_optional_for_conversion : bool
-        A value which can be set to not have discord.py's
-        argument parsing behavior for ``typing.Optional``
-        (type used will be of the inner type instead)
     """
 
 
@@ -1030,8 +1015,7 @@ class HybridGroup(Group, DPYHybridGroup):
         If `fallback` is provided then `invoke_without_command` is
         set to `True`.
 
-    This class inherits from `Command`, with :class:`GroupMixin`,
-    `discord.ext.commands.Group`, and `discord.ext.commands.HybridGroup` mixed in.
+    This class inherits from `Group` and `discord.ext.commands.HybridGroup`.
     """
 
     def __init__(self, *args: Any, **kwargs: Any):
