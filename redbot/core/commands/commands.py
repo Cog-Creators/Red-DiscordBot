@@ -1021,9 +1021,24 @@ class HybridGroup(Group, DPYHybridGroup):
 
     def __init__(self, *args: Any, **kwargs: Any):
         fallback = "fallback" in kwargs and kwargs["fallback"] is not None
-        invoke_without_command = kwargs.pop("invoke_without_command", False)
+        invoke_without_command = kwargs.pop("invoke_without_command", False) or fallback
+        kwargs["invoke_without_command"] = invoke_without_command
         super().__init__(*args, **kwargs)
-        self.invoke_without_command = invoke_without_command or fallback
+        self.invoke_without_command = invoke_without_command
+
+    @property
+    def callback(self):
+        return self._callback
+
+    @callback.setter
+    def callback(self, function):
+        # Below should be mostly the same as discord.py
+        super(__class__, __class__).callback.__set__(self, function)
+
+        if not self.invoke_without_command and self.params:
+            raise TypeError(
+                "You cannot have a group command with callbacks and `invoke_without_command` set to False."
+            )
 
     def command(self, name: str = discord.utils.MISSING, *args: Any, **kwargs: Any):
         def decorator(func):
