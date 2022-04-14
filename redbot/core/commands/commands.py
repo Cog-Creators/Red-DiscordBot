@@ -1020,7 +1020,7 @@ class HybridGroup(Group, DPYHybridGroup):
     """
 
     def __init__(self, *args: Any, **kwargs: Any):
-        fallback = "fallback" in kwargs
+        fallback = "fallback" in kwargs and kwargs["fallback"] is not None
         super().__init__(*args, **kwargs)
         invoke_without_command = kwargs.pop("invoke_without_command", False)
         self.invoke_without_command = invoke_without_command or fallback
