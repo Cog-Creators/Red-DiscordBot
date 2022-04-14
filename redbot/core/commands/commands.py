@@ -1028,6 +1028,12 @@ class HybridGroup(Group, DPYHybridGroup):
     `discord.ext.commands.Group`, and `discord.ext.commands.HybridGroup` mixed in.
     """
 
+    def __init__(self, *args: Any, **kwargs: Any):
+        fallback = "fallback" in kwargs
+        super().__init__(*args, **kwargs)
+        invoke_without_command = kwargs.pop("invoke_without_command", False)
+        self.invoke_without_command = invoke_without_command or fallback
+
     def command(self, name: str = discord.utils.MISSING, *args: Any, **kwargs: Any):
         def decorator(func):
             kwargs.setdefault("parent", self)
