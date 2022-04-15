@@ -6,7 +6,7 @@ import asyncio
 import contextlib
 import functools
 from types import MappingProxyType
-from typing import Callable, Iterable, List, Mapping, Optional, TypeVar, Union
+from typing import Callable, Dict, Iterable, List, Mapping, Optional, TypeVar, Union
 
 import discord
 
