@@ -165,6 +165,8 @@ class SimpleMenu(discord.ui.View):
             self.add_item(self.select_menu)
             if self.use_select_only:
                 self.add_item(self.stop_button)
+        else:
+            self.add_item(self.stop_button)
 
     @property
     def source(self):
