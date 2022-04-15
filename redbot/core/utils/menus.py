@@ -12,14 +12,14 @@ import discord
 
 from .. import commands
 from .predicates import ReactionPredicate
-from .views import SimpleMenu
+from .views import SimpleMenu, _SimplePageSource
 
 _T = TypeVar("_T")
 _PageList = TypeVar("_PageList", List[str], List[discord.Embed])
 _ReactableEmoji = Union[str, discord.Emoji]
 _ControlCallable = Callable[[commands.Context, _PageList, discord.Message, int, float, str], _T]
 
-_active_menus: Set[int] = set()
+_active_menus: Dict[int, SimpleMenu] = {}
 
 
 class _GenericButton(discord.ui.Button):
@@ -91,6 +91,12 @@ async def menu(
     """
     if ctx.message.id in _active_menus:
         # prevents the expected callback from going any further
+        view = _active_menus[ctx.message.id]
+        if pages != view.source.entries:
+            view._source = _SimplePageSource(pages)
+        new_page = await view.get_page(page)
+        view.current_page = page
+        await view.message.edit(**new_page)
         return
     if not isinstance(pages[0], (discord.Embed, str)):
         raise RuntimeError("Pages must be of type discord.Embed or str")
@@ -117,6 +123,9 @@ async def menu(
             await view.wait()
             return
         else:
+            view = SimpleMenu(pages)
+            view.remove_item(view.last_button)
+            view.remove_item(view.first_button)
             has_next = False
             has_prev = False
             has_close = False
@@ -124,21 +133,28 @@ async def menu(
             for emoji, func in controls.items():
                 if func == next_page:
                     has_next = True
+                    if emoji != view.forward_button.emoji:
+                        view.forward_button.emoji = discord.PartialEmoji.from_str(emoji)
                 elif func == prev_page:
                     has_prev = True
+                    if emoji != view.backward_button.emoji:
+                        view.backward_button.emoji = discord.PartialEmoji.from_str(emoji)
                 elif func == close_menu:
                     has_close = True
                 else:
                     to_add[emoji] = func
-            view = SimpleMenu(pages)
-            if not all([has_next, has_prev, has_close]):
-                view.clear_items()
+            if not has_next:
+                view.remove_item(view.forward_button)
+            if not has_prev:
+                view.remove_item(view.backward_button)
+            if not has_close:
+                view.remove_item(view.stop_button)
             for emoji, func in to_add.items():
                 view.add_item(_GenericButton(emoji, func))
-            _active_menus.add(ctx.message.id)
+            _active_menus[ctx.message.id] = view
             await view.start(ctx)
             await view.wait()
-            _active_menus.remove(ctx.message.id)
+            del _active_menus[ctx.message.id]
             return
     current_page = pages[page]
 
