@@ -1009,7 +1009,7 @@ class HybridGroup(Group, DPYHybridGroup):
     .. note::
         Red's HybridGroups differ from `discord.ext.commands.HybridGroup`
         by setting `discord.ext.commands.Group.invoke_without_command` to be `False` by default.
-        If ``fallback`` is provided then
+        If `discord.ext.commands.HybridGroup.fallback` is provided then
         `discord.ext.commands.Group.invoke_without_command` is
         set to `True`.
 
