@@ -12,11 +12,36 @@ import discord
 
 from .. import commands
 from .predicates import ReactionPredicate
+from .views import SimpleMenu
 
 _T = TypeVar("_T")
 _PageList = TypeVar("_PageList", List[str], List[discord.Embed])
 _ReactableEmoji = Union[str, discord.Emoji]
 _ControlCallable = Callable[[commands.Context, _PageList, discord.Message, int, float, str], _T]
+
+_active_menus: Set[int] = set()
+
+
+class _GenericButton(discord.ui.Button):
+    def __init__(self, emoji: Union[str, discord.PartialEmoji], func):
+        super().__init__(
+            emoji=discord.PartialEmoji.from_str(emoji), style=discord.ButtonStyle.grey
+        )
+        self.func = func
+
+    async def callback(self, interaction: discord.Interaction):
+        ctx = self.view.ctx
+        pages = self.view.source.entries
+        controls = {}
+        message = self.view.message
+        page = self.view.current_page
+        timeout = self.view.timeout
+        emoji = self.emoji
+        try:
+            await self.func(ctx, pages, controls, message, page, timeout, emoji)
+        except Exception:
+            pass
+        await interaction.response.defer()
 
 
 async def menu(
@@ -64,6 +89,9 @@ async def menu(
     RuntimeError
         If either of the notes above are violated
     """
+    if ctx.message.id in _active_menus:
+        # prevents the expected callback from going any further
+        return
     if not isinstance(pages[0], (discord.Embed, str)):
         raise RuntimeError("Pages must be of type discord.Embed or str")
     if not all(isinstance(x, discord.Embed) for x in pages) and not all(
@@ -81,6 +109,37 @@ async def menu(
             maybe_coro = value.func
         if not asyncio.iscoroutinefunction(maybe_coro):
             raise RuntimeError("Function must be a coroutine")
+
+    if await ctx.bot.use_buttons():
+        if controls == DEFAULT_CONTROLS:
+            view = SimpleMenu(pages)
+            await view.start(ctx)
+            await view.wait()
+            return
+        else:
+            has_next = False
+            has_prev = False
+            has_close = False
+            to_add = {}
+            for emoji, func in controls.items():
+                if func == next_page:
+                    has_next = True
+                elif func == prev_page:
+                    has_prev = True
+                elif func == close_menu:
+                    has_close = True
+                else:
+                    to_add[emoji] = func
+            view = SimpleMenu(pages)
+            if not all([has_next, has_prev, has_close]):
+                view.clear_items()
+            for emoji, func in to_add.items():
+                view.add_item(_GenericButton(emoji, func))
+            _active_menus.add(ctx.message.id)
+            await view.start(ctx)
+            await view.wait()
+            _active_menus.remove(ctx.message.id)
+            return
     current_page = pages[page]
 
     if not message:
