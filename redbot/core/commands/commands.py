@@ -995,19 +995,16 @@ class HybridCommand(Command, DPYHybridCommand):
 
     .. warning::
 
-        If you subclass this command, attributes and methods
-        must remain compatible.
-
-        None of your methods should start with ``red_`` or
-        be dunder names which start with red (eg. ``__red_test_thing__``)
-        unless to override behavior in a method designed to be overridden,
-        as this prefix is reserved for future methods in order to be
-        able to add features non-breakingly.
+        This class is not intended to be subclassed.
     """
 
 
 class HybridGroup(Group, DPYHybridGroup):
     """HybridGroup command class for Red.
+
+    This should not be created directly, and instead via the decorator.
+
+    This class inherits from `Group` and `discord.ext.commands.HybridGroup`.
 
     .. note::
         Red's HybridGroups differ from `discord.ext.commands.HybridGroup`
@@ -1016,7 +1013,9 @@ class HybridGroup(Group, DPYHybridGroup):
         `discord.ext.commands.Group.invoke_without_command` is
         set to `True`.
 
-    This class inherits from `Group` and `discord.ext.commands.HybridGroup`.
+    .. warning::
+
+        This class is not intended to be subclassed.
     """
 
     def __init__(self, *args: Any, **kwargs: Any):
