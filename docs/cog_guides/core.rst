@@ -176,7 +176,7 @@ autoimmune add
 Makes a user or role immune from automated moderation actions.
 
 **Examples:**
-    - ``[p]autoimmune add @TwentySix`` - Adds a user.
+    - ``[p]autoimmune add @Twentysix`` - Adds a user.
     - ``[p]autoimmune add @Mods`` - Adds a role.
 
 **Arguments:**
@@ -199,7 +199,7 @@ autoimmune isimmune
 Checks if a user or role would be considered immune from automated actions.
 
 **Examples:**
-    - ``[p]autoimmune isimmune @TwentySix``
+    - ``[p]autoimmune isimmune @Twentysix``
     - ``[p]autoimmune isimmune @Mods``
 
 **Arguments:**
@@ -241,11 +241,314 @@ autoimmune remove
 Remove a user or role from being immune to automated moderation actions.
 
 **Examples:**
-    - ``[p]autoimmune remove @TwentySix`` - Removes a user.
+    - ``[p]autoimmune remove @Twentysix`` - Removes a user.
     - ``[p]autoimmune remove @Mods`` - Removes a role.
 
 **Arguments:**
     - ``<user_or_role>`` - The user or role to remove immunity from.
+
+.. _core-command-bankset:
+
+^^^^^^^
+bankset
+^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset
+
+**Description**
+
+Base command for configuring bank settings.
+
+.. _core-command-bankset-bankname:
+
+""""""""""""""""
+bankset bankname
+""""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset bankname <name>
+
+**Description**
+
+Set bank's name.
+
+**Arguments**
+
+* ``<name>``: The new bank's name.
+
+.. _core-command-bankset-creditsname:
+
+"""""""""""""""""""
+bankset creditsname
+"""""""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset creditsname <name>
+
+**Description**
+
+Change the credits name of the bank. It is ``credits`` by default.
+
+For example, if you switch it to ``dollars``, the payday
+command will show this:
+
+.. TODO reference the payday command
+
+.. code-block:: none
+
+    Here, take some dollars. Enjoy! (+120 dollars!)
+
+    You currently have 220 dollars.
+
+**Arguments**
+
+* ``<name>``: The new credits name.
+
+.. _core-command-bankset-maxbal:
+
+""""""""""""""
+bankset maxbal
+""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset maxbal <amount>
+
+**Description**
+
+Defines the maximum amount of money a user can have with the bot.
+
+If an user reaches this limit, he will be unable to gain more money.
+
+**Arguments**
+
+*   ``<amount>``: The maximum amount of money for users.
+
+.. _core-command-bankset-prune:
+
+"""""""""""""
+bankset prune
+"""""""""""""
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune 
+
+**Description**
+
+Base command for pruning bank accounts.
+
+.. _core-command-bankset-prune-global:
+
+""""""""""""""""""""
+bankset prune global
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune global [confirmation=False]
+
+**Description**
+
+Prune bank accounts for users who no longer share a server with the bot.
+
+Cannot be used without a global bank. See ``[p]bankset prune server``.
+
+Examples:
+    - ``[p]bankset prune global`` - Did not confirm. Shows the help message.
+    - ``[p]bankset prune global yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-prune-server:
+
+""""""""""""""""""""
+bankset prune server
+""""""""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune server [confirmation=False]
+
+.. tip:: Aliases: ``bankset prune guild``, ``bankset prune local``
+
+**Description**
+
+Prune bank accounts for users no longer in the server.
+
+Cannot be used with a global bank. See ``[p]bankset prune global``.
+
+Examples:
+    - ``[p]bankset prune server`` - Did not confirm. Shows the help message.
+    - ``[p]bankset prune server yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-prune-user:
+
+""""""""""""""""""
+bankset prune user
+""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset prune user <user> [confirmation=False]
+
+**Description**
+
+Delete the bank account of a specified user.
+
+Examples:
+    - ``[p]bankset prune user @Twentysix`` - Did not confirm. Shows the help message.
+    - ``[p]bankset prune user @Twentysix yes``
+
+**Arguments**
+
+- ``<user>`` The user to delete the bank of. Takes mentions, names, and user ids.
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-registeramount:
+
+""""""""""""""""""""""
+bankset registeramount
+""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset registeramount <creds>
+
+**Description**
+
+Set the initial balance for new bank accounts.
+
+Example:
+    - ``[p]bankset registeramount 5000``
+
+**Arguments**
+
+- ``<creds>`` The new initial balance amount. Default is 0.
+
+.. _core-command-bankset-reset:
+
+"""""""""""""
+bankset reset
+"""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset reset [confirmation=False]
+
+**Description**
+
+Delete all bank accounts.
+
+Examples:
+    - ``[p]bankset reset`` - Did not confirm. Shows the help message.
+    - ``[p]bankset reset yes``
+
+**Arguments**
+
+- ``<confirmation>`` This will default to false unless specified.
+
+.. _core-command-bankset-showsettings:
+
+""""""""""""""""""""
+bankset showsettings
+""""""""""""""""""""
+
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset showsettings
+
+**Description**
+
+Shows the current settings of your bank.
+
+This will display the following information:
+
+*   Name of the bank
+*   Scope of the bank (global or per server)
+*   Currency name
+*   Default balance
+*   Maximum allowed balance
+
+.. _core-command-bankset-toggleglobal:
+
+""""""""""""""""""""
+bankset toggleglobal
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bankset toggleglobal [confirm=False]
+
+**Description**
+
+Makes the bank global instead of server-wide. If it
+is already global, the command will switch it back
+to the server-wide bank.
+
+.. warning:: Using this command will reset **all** accounts.
+
+**Arguments**
+
+* ``[confirm=False]``: Put ``yes`` to confirm.
 
 .. _core-command-blocklist:
 
@@ -1262,7 +1565,7 @@ helpset resetformatter
 This resets Red's help formatter to the default formatter.
 
 **Example:**
-    - ``[p]helpset resetformatter````
+    - ``[p]helpset resetformatter``
 
 .. _core-command-helpset-resetsettings:
 
@@ -1283,7 +1586,7 @@ This resets Red's help settings to their defaults.
 This may not have an impact when using custom formatters from 3rd party cogs
 
 **Example:**
-    - ``[p]helpset resetsettings````
+    - ``[p]helpset resetsettings``
 
 .. _core-command-helpset-showaliases:
 
@@ -1357,7 +1660,7 @@ Show the current help settings.
 
 
 **Example:**
-    - ``[p]helpset showsettings````
+    - ``[p]helpset showsettings``
 
 .. _core-command-helpset-tagline:
 
@@ -1539,9 +1842,9 @@ ignore channel
 
 **Description**
 
-Ignore commands in the channel or category.
+Ignore commands in the channel, thread, or category.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 .. Note:: Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
@@ -1553,7 +1856,7 @@ Defaults to the current channel.
     - ``[p]ignore channel 356236713347252226`` - Also accepts IDs.
 
 **Arguments:**
-    - ``<channel>`` - The channel to ignore. Can be a category channel.
+    - ``<channel>`` - The channel to ignore. This can also be a thread or category channel.
 
 .. _core-command-ignore-list:
 
@@ -1615,8 +1918,6 @@ info
 **Description**
 
 Shows info about Red.
-
-See ``[p]set custominfo`` to customize.
 
 .. _core-command-invite:
 
@@ -2015,6 +2316,82 @@ Removes user or role from blocklist.
 **Arguments:**
     - ``<users_or_roles...>`` - The users or roles to remove from the local blocklist.
 
+.. _core-command-modlogset:
+
+^^^^^^^^^
+modlogset
+^^^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset 
+
+**Description**
+
+Manage modlog settings.
+
+.. _core-command-modlogset-cases:
+
+"""""""""""""""
+modlogset cases
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset cases [action]
+
+**Description**
+
+Enable or disable case creation for a mod action.
+
+**Arguments**
+
+* ``[action]``: The action to enable or disable case creation for.
+
+.. _core-command-modlogset-modlog:
+
+""""""""""""""""
+modlogset modlog
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset modlog [channel]
+
+.. tip:: Alias: ``modlogset channel``
+
+**Description**
+
+Set a channel as the modlog.
+
+**Arguments**
+
+* ``[channel]``: The channel to set as the modlog. If omitted, the modlog will be disabled.
+
+.. _core-command-modlogset-resetcases:
+
+""""""""""""""""""""
+modlogset resetcases
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset resetcases 
+
+**Description**
+
+Reset all modlog cases in this server.
+
 .. _core-command-mydata:
 
 ^^^^^^
@@ -2363,71 +2740,6 @@ set
 
 Commands for changing Red's settings.
 
-.. _core-command-set-addadminrole:
-
-""""""""""""""""
-set addadminrole
-""""""""""""""""
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set addadminrole <role>
-
-**Description**
-
-Adds an admin role for this guild.
-
-Admins have the same access as Mods, plus additional admin level commands like:
- - ``[p]set serverprefix``
- - ``[p]addrole``
- - ``[p]ban``
- - ``[p]ignore guild``
-
- And more.
-
- **Examples:**
-    - ``[p]set addadminrole @Admins``
-    - ``[p]set addadminrole Super Admins``
-
-**Arguments:**
-    - ``<role>`` - The role to add as an admin.
-
-.. _core-command-set-addmodrole:
-
-""""""""""""""
-set addmodrole
-""""""""""""""
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set addmodrole <role>
-
-**Description**
-
-Adds a moderator role for this guild.
-
-This grants access to moderator level commands like:
- - ``[p]mute``
- - ``[p]cleanup``
- - ``[p]customcommand create``
-
- And more.
-
- **Examples:**
-    - ``[p]set addmodrole @Mods``
-    - ``[p]set addmodrole Loyal Helpers``
-
-**Arguments:**
-    - ``<role>`` - The role to add as a moderator.
-
 .. _core-command-set-api:
 
 """""""
@@ -2455,7 +2767,7 @@ list of key,values as described by the cog requesting this command.
 
 
 **Examples:**
-    - ``[p]set api Spotify redirect_uri localhost``
+    - ``[p]set api spotify redirect_uri localhost``
     - ``[p]set api github client_id,whoops client_secret,whoops``
 
 **Arguments:**
@@ -2481,7 +2793,7 @@ Show all external API services along with their keys that have been set.
 Secrets are not shown.
 
 **Example:**
-    - ``[p]set api list````
+    - ``[p]set api list``
 
 .. _core-command-set-api-remove:
 
@@ -2500,17 +2812,35 @@ set api remove
 Remove the given services with all their keys and tokens.
 
 **Examples:**
-    - ``[p]set api remove Spotify``
-    - ``[p]set api remove github audiodb``
+    - ``[p]set api remove spotify``
+    - ``[p]set api remove github youtube``
 
 **Arguments:**
     - ``<services...>`` - The services to remove.
 
-.. _core-command-set-avatar:
+.. _core-command-set-bot:
 
-""""""""""
-set avatar
-""""""""""
+"""""""
+set bot
+"""""""
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot
+
+**Description**
+
+Commands for changing Red's metadata.
+
+.. _core-command-set-bot-avatar:
+
+""""""""""""""
+set bot avatar
+""""""""""""""
 
 .. note:: |owner-lock|
 
@@ -2518,7 +2848,7 @@ set avatar
 
 .. code-block:: none
 
-    [p]set avatar [url]
+    [p]set bot avatar [url]
 
 **Description**
 
@@ -2527,18 +2857,18 @@ Sets Red's avatar
 Supports either an attachment or an image URL.
 
 **Examples:**
-    - ``[p]set avatar`` - With an image attachment, this will set the avatar.
-    - ``[p]set avatar`` - Without an attachment, this will show the command help.
-    - ``[p]set avatar https://links.flaree.xyz/k95`` - Sets the avatar to the provided url.
+    - ``[p]set bot avatar`` - With an image attachment, this will set the avatar.
+    - ``[p]set bot avatar`` - Without an attachment, this will show the command help.
+    - ``[p]set bot avatar https://links.flaree.xyz/k95`` - Sets the avatar to the provided url.
 
 **Arguments:**
     - ``[url]`` - An image url to be used as an avatar. Leave blank when uploading an attachment.
 
-.. _core-command-set-avatar-remove:
+.. _core-command-set-bot-avatar-remove:
 
-"""""""""""""""""
-set avatar remove
-"""""""""""""""""
+"""""""""""""""""""""
+set bot avatar remove
+"""""""""""""""""""""
 
 .. note:: |owner-lock|
 
@@ -2546,16 +2876,137 @@ set avatar remove
 
 .. code-block:: none
 
-    [p]set avatar remove 
+    [p]set bot avatar remove 
 
-.. tip:: Alias: ``set avatar clear``
+.. tip:: Alias: ``set bot avatar clear``
 
 **Description**
 
 Removes Red's avatar.
 
 **Example:**
-    - ``[p]set avatar remove``
+    - ``[p]set bot avatar remove``
+
+.. _core-command-set-bot-custominfo:
+
+""""""""""""""""""
+set bot custominfo
+""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot custominfo [text]
+
+**Description**
+
+Customizes a section of ``[p]info``.
+
+The maximum amount of allowed characters is 1024.
+Supports markdown, links and "mentions".
+
+Link example: ``[My link](https://example.com)``
+
+**Examples:**
+    - ``[p]set bot custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.``
+    - ``[p]set bot custominfo Join my [support server](discord.gg/discord)!``
+    - ``[p]set bot custominfo`` - Removes custom info text.
+
+**Arguments:**
+    - ``[text]`` - The custom info text.
+
+.. _core-command-set-bot-description:
+
+"""""""""""""""""""
+set bot description
+"""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot description [description]
+
+**Description**
+
+Sets the bot's description.
+
+Use without a description to reset.
+This is shown in a few locations, including the help menu.
+
+The maximum description length is 250 characters to ensure it displays properly.
+
+The default is "Red V3".
+
+**Examples:**
+    - ``[p]set bot description`` - Resets the description to the default setting.
+    - ``[p]set bot description MyBot: A Red V3 Bot``
+
+**Arguments:**
+    - ``[description]`` - The description to use for this bot. Leave blank to reset to the default.
+
+.. _core-command-set-bot-nickname:
+
+""""""""""""""""
+set bot nickname
+""""""""""""""""
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot nickname [nickname]
+
+**Description**
+
+Sets Red's nickname for the current server.
+
+Maximum length for a nickname is 32 characters.
+
+**Example:**
+    - ``[p]set bot nickname 🎃 SpookyBot 🎃``
+
+**Arguments:**
+    - ``[nickname]`` - The nickname to give the bot. Leave blank to clear the current nickname.
+
+.. _core-command-set-bot-username:
+
+""""""""""""""""
+set bot username
+""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot username <username>
+
+.. tip:: Alias: ``set bot name``
+
+**Description**
+
+Sets Red's username.
+
+Maximum length for a username is 32 characters.
+
+.. Note:: The username of a verified bot cannot be manually changed.
+
+    Please contact Discord support to change it.
+
+**Example:**
+    - ``[p]set bot username BaguetteBot``
+
+**Arguments:**
+    - ``<username>`` - The username to give the bot.
 
 .. _core-command-set-colour:
 
@@ -2591,66 +3042,6 @@ https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.com
 **Arguments:**
     - ``[colour]`` - The colour to use for embeds. Leave blank to set to the default value (red).
 
-.. _core-command-set-competing:
-
-"""""""""""""
-set competing
-"""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set competing [competing]
-
-**Description**
-
-Sets Red's competing status.
-
-This will appear as ``Competing in <competing>``.
-
-Maximum length for a competing status is 128 characters.
-
-**Examples:**
-    - ``[p]set competing`` - Clears the activity status.
-    - ``[p]set competing London 2012 Olympic Games``
-
-**Arguments:**
-    - ``[competing]`` - The text to follow ``Competing in``. Leave blank to clear the current activity status.
-
-.. _core-command-set-custominfo:
-
-""""""""""""""
-set custominfo
-""""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set custominfo [text]
-
-**Description**
-
-Customizes a section of ``[p]info``.
-
-The maximum amount of allowed characters is 1024.
-Supports markdown, links and "mentions".
-
-Link example: ``[My link](https://example.com)``
-
-**Examples:**
-    - ``[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.``
-    - ``[p]set custominfo Join my [support server](discord.gg/discord)!``
-    - ``[p]set custominfo`` - Removes custom info text.
-
-**Arguments:**
-    - ``[text]`` - The custom info text.
-
 .. _core-command-set-deletedelay:
 
 """""""""""""""
@@ -2683,38 +3074,6 @@ This is only applied to the current server and not globally.
 **Arguments:**
     - ``[time]`` - The seconds to wait before deleting the command message. Use -1 to disable.
 
-.. _core-command-set-description:
-
-"""""""""""""""
-set description
-"""""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set description [description]
-
-**Description**
-
-Sets the bot's description.
-
-Use without a description to reset.
-This is shown in a few locations, including the help menu.
-
-The maximum description length is 250 characters to ensure it displays properly.
-
-The default is "Red V3".
-
-**Examples:**
-    - ``[p]set description`` - Resets the description to the default setting.
-    - ``[p]set description MyBot: A Red V3 Bot``
-
-**Arguments:**
-    - ``[description]`` - The description to use for this bot. Leave blank to reset to the default.
-
 .. _core-command-set-fuzzy:
 
 """""""""
@@ -2740,99 +3099,6 @@ Default is for fuzzy command search to be disabled.
 **Example:**
     - ``[p]set fuzzy``
 
-.. _core-command-set-globallocale:
-
-""""""""""""""""
-set globallocale
-""""""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set globallocale <language_code>
-
-**Description**
-
-Changes the bot's default locale.
-
-This will be used when a server has not set a locale, or in DMs.
-
-Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
-
-To reset to English, use "en-US".
-
-**Examples:**
-    - ``[p]set locale en-US``
-    - ``[p]set locale de-DE``
-    - ``[p]set locale fr-FR``
-    - ``[p]set locale pl-PL``
-
-**Arguments:**
-    - ``<language_code>`` - The default locale to use for the bot. This can be any language code with country code included.
-
-.. _core-command-set-globalregionalformat:
-
-""""""""""""""""""""""""
-set globalregionalformat
-""""""""""""""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set globalregionalformat [language_code]
-
-.. tip:: Alias: ``set globalregion``
-
-**Description**
-
-Changes the bot's regional format. This is used for formatting date, time and numbers.
-
-``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
-Leave ``language_code`` empty to base regional formatting on bot's locale.
-
-**Examples:**
-    - ``[p]set globalregionalformat en-US``
-    - ``[p]set globalregion de-DE``
-    - ``[p]set globalregionalformat`` - Resets to the locale.
-
-**Arguments:**
-    - ``[language_code]`` - The default region format to use for the bot.
-
-.. _core-command-set-listening:
-
-"""""""""""""
-set listening
-"""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set listening [listening]
-
-**Description**
-
-Sets Red's listening status.
-
-This will appear as ``Listening to <listening>``.
-
-Maximum length for a listening status is 128 characters.
-
-**Examples:**
-    - ``[p]set listening`` - Clears the activity status.
-    - ``[p]set listening jams``
-
-**Arguments:**
-    - ``[listening]`` - The text to follow ``Listening to``. Leave blank to clear the current activity status.
-
 .. _core-command-set-locale:
 
 """"""""""
@@ -2854,7 +3120,8 @@ Changes the bot's locale in this server.
 Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
 
 Use "default" to return to the bot's default set language.
-To reset to English, use "en-US".
+
+If you want to change bot's global locale, see ``[p]set locale global`` command.
 
 **Examples:**
     - ``[p]set locale en-US``
@@ -2866,31 +3133,72 @@ To reset to English, use "en-US".
 **Arguments:**
     - ``<language_code>`` - The default locale to use for the bot. This can be any language code with country code included.
 
-.. _core-command-set-nickname:
+.. _core-command-set-locale-global:
 
-""""""""""""
-set nickname
-""""""""""""
+"""""""""""""""""
+set locale global
+"""""""""""""""""
 
-.. note:: |admin-lock|
+.. note:: |owner-lock|
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]set nickname [nickname]
+    [p]set locale global <language_code>
 
 **Description**
 
-Sets Red's nickname for the current server.
+Changes the bot's default locale.
 
-Maximum length for a nickname is 32 characters.
+This will be used when a server has not set a locale, or in DMs.
 
-**Example:**
-    - ``[p]set nickname 🎃 SpookyBot 🎃``
+Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
+
+To reset to English, use "en-US".
+
+**Examples:**
+    - ``[p]set locale global en-US``
+    - ``[p]set locale global de-DE``
+    - ``[p]set locale global fr-FR``
+    - ``[p]set locale global pl-PL``
 
 **Arguments:**
-    - ``[nickname]`` - The nickname to give the bot. Leave blank to clear the current nickname.
+    - ``<language_code>`` - The default locale to use for the bot. This can be any language code with country code included.
+
+.. _core-command-set-locale-server:
+
+"""""""""""""""""
+set locale server
+"""""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set locale server <language_code>
+
+.. tip:: Aliases: ``set locale local``, ``set locale guild``
+
+**Description**
+
+Changes the bot's locale in this server.
+
+Go to `Red's Crowdin page <https://translate.discord.red>`_ to see locales that are available with translations.
+
+Use "default" to return to the bot's default set language.
+
+**Examples:**
+    - ``[p]set locale server en-US``
+    - ``[p]set locale server de-DE``
+    - ``[p]set locale server fr-FR``
+    - ``[p]set locale server pl-PL``
+    - ``[p]set locale server default`` - Resets to the global default locale.
+
+**Arguments:**
+    - ``<language_code>`` - The default locale to use for the bot. This can be any language code with country code included.
 
 .. _core-command-set-ownernotifications:
 
@@ -2929,8 +3237,8 @@ set ownernotifications adddestination
 Adds a destination text channel to receive owner notifications.
 
 **Examples:**
-    - ``[p]ownernotifications adddestination #owner-notifications``
-    - ``[p]ownernotifications adddestination 168091848718417920`` - Accepts channel IDs.
+    - ``[p]set ownernotifications adddestination #owner-notifications``
+    - ``[p]set ownernotifications adddestination 168091848718417920`` - Accepts channel IDs.
 
 **Arguments:**
     - ``<channel>`` - The channel to send owner notifications to.
@@ -2952,7 +3260,7 @@ set ownernotifications listdestinations
 Lists the configured extra destinations for owner notifications.
 
 **Example:**
-    - ``[p]ownernotifications listdestinations``
+    - ``[p]set ownernotifications listdestinations``
 
 .. _core-command-set-ownernotifications-optin:
 
@@ -2977,7 +3285,7 @@ This is the default state.
     Additional owners and destinations will not be affected.
 
 **Example:**
-    - ``[p]ownernotifications optin``
+    - ``[p]set ownernotifications optin``
 
 .. _core-command-set-ownernotifications-optout:
 
@@ -3000,7 +3308,7 @@ Opt-out of receiving owner notifications.
     Additional owners and destinations will still receive notifications.
 
 **Example:**
-    - ``[p]ownernotifications optout``
+    - ``[p]set ownernotifications optout``
 
 .. _core-command-set-ownernotifications-removedestination:
 
@@ -3021,42 +3329,11 @@ set ownernotifications removedestination
 Removes a destination text channel from receiving owner notifications.
 
 **Examples:**
-    - ``[p]ownernotifications removedestination #owner-notifications``
-    - ``[p]ownernotifications deletedestination 168091848718417920`` - Accepts channel IDs.
+    - ``[p]set ownernotifications removedestination #owner-notifications``
+    - ``[p]set ownernotifications deletedestination 168091848718417920`` - Accepts channel IDs.
 
 **Arguments:**
     - ``<channel>`` - The channel to stop sending owner notifications to.
-
-.. _core-command-set-playing:
-
-"""""""""""
-set playing
-"""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set playing [game]
-
-.. tip:: Alias: ``set game``
-
-**Description**
-
-Sets Red's playing status.
-
-This will appear as ``Playing <game>`` or ``PLAYING A GAME: <game>`` depending on the context.
-
-Maximum length for a playing status is 128 characters.
-
-**Examples:**
-    - ``[p]set playing`` - Clears the activity status.
-    - ``[p]set playing the keyboard``
-
-**Arguments:**
-    - ``[game]`` - The text to follow ``Playing``. Leave blank to clear the current activity status.
 
 .. _core-command-set-prefix:
 
@@ -3104,7 +3381,7 @@ set regionalformat
 
 .. code-block:: none
 
-    [p]set regionalformat [language_code]
+    [p]set regionalformat <language_code>
 
 .. tip:: Alias: ``set region``
 
@@ -3113,21 +3390,52 @@ set regionalformat
 Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
 
 ``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
-Leave ``language_code`` empty to base regional formatting on bot's locale in this server.
+Pass "reset" to ``language_code`` to base regional formatting on bot's locale in this server.
+
+If you want to change bot's global regional format, see ``[p]set regionalformat global`` command.
 
 **Examples:**
     - ``[p]set regionalformat en-US``
     - ``[p]set region de-DE``
-    - ``[p]set regionalformat`` - Resets to the locale.
+    - ``[p]set regionalformat reset`` - Resets to the locale.
 
 **Arguments:**
     - ``[language_code]`` - The region format to use for the bot in this server.
 
-.. _core-command-set-removeadminrole:
+.. _core-command-set-regionalformat-global:
 
-"""""""""""""""""""
-set removeadminrole
-"""""""""""""""""""
+"""""""""""""""""""""""""
+set regionalformat global
+"""""""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set regionalformat global <language_code>
+
+**Description**
+
+Changes the bot's regional format. This is used for formatting date, time and numbers.
+
+``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
+Pass "reset" to ``language_code`` to base regional formatting on bot's locale.
+
+**Examples:**
+    - ``[p]set regionalformat global en-US``
+    - ``[p]set region global de-DE``
+    - ``[p]set regionalformat global reset`` - Resets to the locale.
+
+**Arguments:**
+    - ``[language_code]`` - The default region format to use for the bot.
+
+.. _core-command-set-regionalformat-server:
+
+"""""""""""""""""""""""""
+set regionalformat server
+"""""""""""""""""""""""""
 
 .. note:: |guildowner-lock|
 
@@ -3135,26 +3443,140 @@ set removeadminrole
 
 .. code-block:: none
 
-    [p]set removeadminrole <role>
+    [p]set regionalformat server <language_code>
 
-.. tip:: Aliases: ``set remadmindrole``, ``set deladminrole``, ``set deleteadminrole``
+.. tip:: Aliases: ``set regionalformat local``, ``set regionalformat guild``
+
+**Description**
+
+Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
+
+``language_code`` can be any language code with country code included, e.g. ``en-US``, ``de-DE``, ``fr-FR``, ``pl-PL``, etc.
+Pass "reset" to ``language_code`` to base regional formatting on bot's locale in this server.
+
+**Examples:**
+    - ``[p]set regionalformat server en-US``
+    - ``[p]set region local de-DE``
+    - ``[p]set regionalformat server reset`` - Resets to the locale.
+
+**Arguments:**
+    - ``[language_code]`` - The region format to use for the bot in this server.
+
+.. _core-command-set-roles:
+
+"""""""""
+set roles
+"""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set roles
+
+**Description**
+
+Set server's admin and mod roles for Red.
+
+.. _core-command-set-roles-addadminrole:
+
+""""""""""""""""""""""
+set roles addadminrole
+""""""""""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set roles addadminrole <role>
+
+**Description**
+
+Adds an admin role for this guild.
+
+Admins have the same access as Mods, plus additional admin level commands like:
+ - ``[p]set serverprefix``
+ - ``[p]addrole``
+ - ``[p]ban``
+ - ``[p]ignore guild``
+
+ And more.
+
+ **Examples:**
+    - ``[p]set roles addadminrole @Admins``
+    - ``[p]set roles addadminrole Super Admins``
+
+**Arguments:**
+    - ``<role>`` - The role to add as an admin.
+
+.. _core-command-set-roles-addmodrole:
+
+""""""""""""""""""""
+set roles addmodrole
+""""""""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set roles addmodrole <role>
+
+**Description**
+
+Adds a moderator role for this guild.
+
+This grants access to moderator level commands like:
+ - ``[p]mute``
+ - ``[p]cleanup``
+ - ``[p]customcommand create``
+
+ And more.
+
+ **Examples:**
+    - ``[p]set roles addmodrole @Mods``
+    - ``[p]set roles addmodrole Loyal Helpers``
+
+**Arguments:**
+    - ``<role>`` - The role to add as a moderator.
+
+.. _core-command-set-roles-removeadminrole:
+
+"""""""""""""""""""""""""
+set roles removeadminrole
+"""""""""""""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set roles removeadminrole <role>
+
+.. tip:: Aliases: ``set roles remadmindrole``, ``set roles deladminrole``, ``set roles deleteadminrole``
 
 **Description**
 
 Removes an admin role for this guild.
 
 **Examples:**
-    - ``[p]set removeadminrole @Admins``
-    - ``[p]set removeadminrole Super Admins``
+    - ``[p]set roles removeadminrole @Admins``
+    - ``[p]set roles removeadminrole Super Admins``
 
 **Arguments:**
     - ``<role>`` - The role to remove from being an admin.
 
-.. _core-command-set-removemodrole:
+.. _core-command-set-roles-removemodrole:
 
-"""""""""""""""""
-set removemodrole
-"""""""""""""""""
+"""""""""""""""""""""""
+set roles removemodrole
+"""""""""""""""""""""""
 
 .. note:: |guildowner-lock|
 
@@ -3162,17 +3584,17 @@ set removemodrole
 
 .. code-block:: none
 
-    [p]set removemodrole <role>
+    [p]set roles removemodrole <role>
 
-.. tip:: Aliases: ``set remmodrole``, ``set delmodrole``, ``set deletemodrole``
+.. tip:: Aliases: ``set roles remmodrole``, ``set roles delmodrole``, ``set roles deletemodrole``
 
 **Description**
 
 Removes a mod role for this guild.
 
 **Examples:**
-    - ``[p]set removemodrole @Mods``
-    - ``[p]set removemodrole Loyal Helpers``
+    - ``[p]set roles removemodrole @Mods``
+    - ``[p]set roles removemodrole Loyal Helpers``
 
 **Arguments:**
     - ``<role>`` - The role to remove from being a moderator.
@@ -3229,7 +3651,7 @@ Sets Red's server prefix(es).
 
     This is not additive. It will replace all current server prefixes.
 
-    You cannot have a prefix with more than 20 characters.
+    You cannot have a prefix with more than 25 characters.
 
 **Examples:**
     - ``[p]set serverprefix !``
@@ -3268,30 +3690,17 @@ set status
 
 .. code-block:: none
 
-    [p]set status <status>
+    [p]set status
 
 **Description**
 
-Sets Red's status.
+Commands for setting Red's status.
 
-Available statuses:
-    - ``online``
-    - ``idle``
-    - ``dnd``
-    - ``invisible``
+.. _core-command-set-status-competing:
 
-**Examples:**
-    - ``[p]set status online`` - Clears the status.
-    - ``[p]set status invisible``
-
-**Arguments:**
-    - ``<status>`` - One of the available statuses.
-
-.. _core-command-set-streaming:
-
-"""""""""""""
-set streaming
-"""""""""""""
+""""""""""""""""""""
+set status competing
+""""""""""""""""""""
 
 .. note:: |owner-lock|
 
@@ -3299,9 +3708,176 @@ set streaming
 
 .. code-block:: none
 
-    [p]set streaming [(<streamer> <stream_title>)]
+    [p]set status competing [competing]
 
-.. tip:: Aliases: ``set stream``, ``set twitch``
+**Description**
+
+Sets Red's competing status.
+
+This will appear as ``Competing in <competing>``.
+
+Maximum length for a competing status is 128 characters.
+
+**Examples:**
+    - ``[p]set status competing`` - Clears the activity status.
+    - ``[p]set status competing London 2012 Olympic Games``
+
+**Arguments:**
+    - ``[competing]`` - The text to follow ``Competing in``. Leave blank to clear the current activity status.
+
+.. _core-command-set-status-dnd:
+
+""""""""""""""
+set status dnd
+""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status dnd
+
+.. tip:: Aliases: ``set status donotdisturb``, ``set status busy``
+
+**Description**
+
+Sets Red's status to do not disturb.
+
+.. _core-command-set-status-idle:
+
+"""""""""""""""
+set status idle
+"""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status idle
+
+.. tip:: Aliases: ``set status away``, ``set status afk``
+
+**Description**
+
+Sets Red's status to idle.
+
+.. _core-command-set-status-invisible:
+
+""""""""""""""""""""
+set status invisible
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status invisible
+
+.. tip:: Alias: ``set status offline``
+
+**Description**
+
+Sets Red's status to invisible.
+
+.. _core-command-set-status-listening:
+
+""""""""""""""""""""
+set status listening
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status listening [listening]
+
+**Description**
+
+Sets Red's listening status.
+
+This will appear as ``Listening to <listening>``.
+
+Maximum length for a listening status is 128 characters.
+
+**Examples:**
+    - ``[p]set status listening`` - Clears the activity status.
+    - ``[p]set status listening jams``
+
+**Arguments:**
+    - ``[listening]`` - The text to follow ``Listening to``. Leave blank to clear the current activity status.
+
+.. _core-command-set-status-online:
+
+"""""""""""""""""
+set status online
+"""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status online
+
+**Description**
+
+Sets Red's status to online.
+
+.. _core-command-set-status-playing:
+
+""""""""""""""""""
+set status playing
+""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status playing [game]
+
+.. tip:: Alias: ``set status game``
+
+**Description**
+
+Sets Red's playing status.
+
+This will appear as ``Playing <game>`` or ``PLAYING A GAME: <game>`` depending on the context.
+
+Maximum length for a playing status is 128 characters.
+
+**Examples:**
+    - ``[p]set status playing`` - Clears the activity status.
+    - ``[p]set status playing the keyboard``
+
+**Arguments:**
+    - ``[game]`` - The text to follow ``Playing``. Leave blank to clear the current activity status.
+
+.. _core-command-set-status-streaming:
+
+""""""""""""""""""""
+set status streaming
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status streaming [(<streamer> <stream_title>)]
+
+.. tip:: Aliases: ``set status stream``, ``set status twitch``
 
 **Description**
 
@@ -3315,13 +3891,42 @@ Maximum length for a stream title is 128 characters.
 Leaving both streamer and stream_title empty will clear it.
 
 **Examples:**
-    - ``[p]set stream`` - Clears the activity status.
-    - ``[p]set stream 26 Twentysix is streaming`` - Sets the stream to ``https://www.twitch.tv/26``.
-    - ``[p]set stream https://twitch.tv/26 Twentysix is streaming`` - Sets the URL manually.
+    - ``[p]set status stream`` - Clears the activity status.
+    - ``[p]set status stream 26 Twentysix is streaming`` - Sets the stream to ``https://www.twitch.tv/26``.
+    - ``[p]set status stream https://twitch.tv/26 Twentysix is streaming`` - Sets the URL manually.
 
 **Arguments:**
     - ``<streamer>`` - The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
     - ``<stream_title>`` - The text to follow ``Streaming`` in the status.
+
+.. _core-command-set-status-watching:
+
+"""""""""""""""""""
+set status watching
+"""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status watching [watching]
+
+**Description**
+
+Sets Red's watching status.
+
+This will appear as ``Watching <watching>``.
+
+Maximum length for a watching status is 128 characters.
+
+**Examples:**
+    - ``[p]set status watching`` - Clears the activity status.
+    - ``[p]set status watching [p]help``
+
+**Arguments:**
+    - ``[watching]`` - The text to follow ``Watching``. Leave blank to clear the current activity status.
 
 .. _core-command-set-usebotcolour:
 
@@ -3348,67 +3953,6 @@ Otherwise, the colour used will be the colour of the bot's top role.
 
 **Example:**
     - ``[p]set usebotcolour``
-
-.. _core-command-set-username:
-
-""""""""""""
-set username
-""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set username <username>
-
-.. tip:: Alias: ``set name``
-
-**Description**
-
-Sets Red's username.
-
-Maximum length for a username is 32 characters.
-
-.. Note:: The username of a verified bot cannot be manually changed.
-
-    Please contact Discord support to change it.
-
-**Example:**
-    - ``[p]set username BaguetteBot``
-
-**Arguments:**
-    - ``<username>`` - The username to give the bot.
-
-.. _core-command-set-watching:
-
-""""""""""""
-set watching
-""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]set watching [watching]
-
-**Description**
-
-Sets Red's watching status.
-
-This will appear as ``Watching <watching>``.
-
-Maximum length for a watching status is 128 characters.
-
-**Examples:**
-    - ``[p]set watching`` - Clears the activity status.
-    - ``[p]set watching [p]help``
-
-**Arguments:**
-    - ``[watching]`` - The text to follow ``Watching``. Leave blank to clear the current activity status.
 
 .. _core-command-shutdown:
 
@@ -3501,9 +4045,9 @@ unignore channel
 
 **Description**
 
-Remove a channel or category from the ignore list.
+Remove a channel, thread, or category from the ignore list.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 **Examples:**
     - ``[p]unignore channel #general`` - Unignores commands in the #general channel.
@@ -3512,7 +4056,7 @@ Defaults to the current channel.
     - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to unignore categories.
 
 **Arguments:**
-    - ``<channel>`` - The channel to unignore. This can be a category channel.
+    - ``<channel>`` - The channel to unignore. This can also be a thread or category channel.
 
 .. _core-command-unignore-server:
 

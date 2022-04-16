@@ -8,8 +8,8 @@ import discord
 from redbot.core import checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.chat_formatting import bold, box, pagify
+from redbot.core.utils.menus import menu
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("ModLog", __file__)
@@ -17,107 +17,15 @@ _ = Translator("ModLog", __file__)
 
 @cog_i18n(_)
 class ModLog(commands.Cog):
-    """Manage log channels for moderation actions."""
+    """Browse and manage modlog cases."""
 
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
-
-    @commands.group()
-    @checks.guildowner_or_permissions(administrator=True)
-    async def modlogset(self, ctx: commands.Context):
-        """Manage modlog settings."""
-        pass
-
-    @checks.is_owner()
-    @modlogset.command(hidden=True, name="fixcasetypes")
-    async def reapply_audittype_migration(self, ctx: commands.Context):
-        """Command to fix misbehaving casetypes."""
-        await modlog.handle_auditype_key()
-        await ctx.tick()
-
-    @modlogset.command(aliases=["channel"])
-    @commands.guild_only()
-    async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
-        """Set a channel as the modlog.
-
-        Omit `[channel]` to disable the modlog.
-        """
-        guild = ctx.guild
-        if channel:
-            if channel.permissions_for(guild.me).send_messages:
-                await modlog.set_modlog_channel(guild, channel)
-                await ctx.send(
-                    _("Mod events will be sent to {channel}.").format(channel=channel.mention)
-                )
-            else:
-                await ctx.send(
-                    _("I do not have permissions to send messages in {channel}!").format(
-                        channel=channel.mention
-                    )
-                )
-        else:
-            try:
-                await modlog.get_modlog_channel(guild)
-            except RuntimeError:
-                await ctx.send(_("Mod log is already disabled."))
-            else:
-                await modlog.set_modlog_channel(guild, None)
-                await ctx.send(_("Mod log deactivated."))
-
-    @modlogset.command(name="cases")
-    @commands.guild_only()
-    async def set_cases(self, ctx: commands.Context, action: str = None):
-        """Enable or disable case creation for a mod action."""
-        guild = ctx.guild
-
-        if action is None:  # No args given
-            casetypes = await modlog.get_all_casetypes(guild)
-            await ctx.send_help()
-            lines = []
-            for ct in casetypes:
-                enabled = _("enabled") if await ct.is_enabled() else _("disabled")
-                lines.append(f"{ct.name} : {enabled}")
-
-            await ctx.send(_("Current settings:\n") + box("\n".join(lines)))
-            return
-
-        casetype = await modlog.get_casetype(action, guild)
-        if not casetype:
-            await ctx.send(_("That action is not registered."))
-        else:
-            enabled = await casetype.is_enabled()
-            await casetype.set_enabled(not enabled)
-            await ctx.send(
-                _("Case creation for {action_name} actions is now {enabled}.").format(
-                    action_name=action, enabled=_("enabled") if not enabled else _("disabled")
-                )
-            )
-
-    @modlogset.command()
-    @commands.guild_only()
-    async def resetcases(self, ctx: commands.Context):
-        """Reset all modlog cases in this server."""
-        guild = ctx.guild
-        await ctx.send(
-            _("Are you sure you would like to reset all modlog cases in this server?")
-            + " (yes/no)"
-        )
-        try:
-            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
-            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
-        except asyncio.TimeoutError:
-            await ctx.send(_("You took too long to respond."))
-            return
-        if pred.result:
-            await modlog.reset_cases(guild)
-            await ctx.send(_("Cases have been reset."))
-        else:
-            await ctx.send(_("No changes have been made."))
 
     @commands.command()
     @commands.guild_only()
@@ -132,9 +40,10 @@ class ModLog(commands.Cog):
             if await ctx.embed_requested():
                 await ctx.send(embed=await case.message_content(embed=True))
             else:
-                message = _("{case}\n**Timestamp:** {timestamp}").format(
-                    case=await case.message_content(embed=False),
-                    timestamp=f"<t:{int(case.created_at)}>",
+                created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
+                message = (
+                    f"{await case.message_content(embed=False)}\n"
+                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
                 )
                 await ctx.send(message)
 
@@ -168,13 +77,14 @@ class ModLog(commands.Cog):
             else:
                 rendered_cases = []
                 for case in cases:
-                    message = _("{case}\n**Timestamp:** {timestamp}").format(
-                        case=await case.message_content(embed=False),
-                        timestamp=f"<t:{int(case.created_at)}>",
+                    created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
+                    message = (
+                        f"{await case.message_content(embed=False)}\n"
+                        f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
                     )
                     rendered_cases.append(message)
 
-        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+        await menu(ctx, rendered_cases)
 
     @commands.command()
     @commands.guild_only()
@@ -202,13 +112,14 @@ class ModLog(commands.Cog):
             rendered_cases = []
             message = ""
             for case in cases:
-                message += _("{case}\n**Timestamp:** {timestamp}\n\n").format(
-                    case=await case.message_content(embed=False),
-                    timestamp=f"<t:{int(case.created_at)}>",
+                created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
+                message += (
+                    f"{await case.message_content(embed=False)}\n"
+                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
                 )
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)
-        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+        await menu(ctx, rendered_cases)
 
     @commands.command()
     @commands.guild_only()
@@ -244,7 +155,7 @@ class ModLog(commands.Cog):
         to_modify = {"reason": reason}
         if case_obj.moderator != author:
             to_modify["amended_by"] = author
-        to_modify["modified_at"] = ctx.message.created_at.replace(tzinfo=timezone.utc).timestamp()
+        to_modify["modified_at"] = ctx.message.created_at.timestamp()
         await case_obj.edit(to_modify)
         await ctx.send(
             _("Reason for case #{num} has been updated.").format(num=case_obj.case_number)

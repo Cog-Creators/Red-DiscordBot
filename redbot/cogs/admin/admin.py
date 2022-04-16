@@ -84,19 +84,15 @@ class Admin(commands.Cog):
         )
 
         self.__current_announcer = None
-        self._ready = asyncio.Event()
-        asyncio.create_task(self.handle_migrations())
-        # As this is a data migration, don't store this for cancelation.
 
-    async def cog_before_invoke(self, ctx: commands.Context):
-        await self._ready.wait()
+    async def cog_load(self) -> None:
+        await self.handle_migrations()
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     async def handle_migrations(self):
-
         lock = self.config.get_guilds_lock()
         async with lock:
             # This prevents the edge case of someone loading admin,
@@ -107,10 +103,7 @@ class Admin(commands.Cog):
                 await self.migrate_config_from_0_to_1()
                 await self.config.schema_version.set(1)
 
-        self._ready.set()
-
-    async def migrate_config_from_0_to_1(self):
-
+    async def migrate_config_from_0_to_1(self) -> None:
         all_guilds = await self.config.all_guilds()
 
         for guild_id, guild_data in all_guilds.items():
@@ -356,14 +349,8 @@ class Admin(commands.Cog):
         pass
 
     @announceset.command(name="channel")
-    async def announceset_channel(self, ctx, *, channel: discord.TextChannel = None):
-        """
-        Change the channel where the bot will send announcements.
-
-        If channel is left blank it defaults to the current channel.
-        """
-        if channel is None:
-            channel = ctx.channel
+    async def announceset_channel(self, ctx, *, channel: discord.TextChannel):
+        """Change the channel where the bot will send announcements."""
         await self.config.guild(ctx.guild).announce_channel.set(channel.id)
         await ctx.send(
             _("The announcement channel has been set to {channel.mention}").format(channel=channel)

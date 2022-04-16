@@ -13,10 +13,11 @@ we recommend **Ubuntu 20.04 LTS**.
 
    windows
    mac
+   alma-linux-8
    arch
    centos-7
-   centos-8
    centos-stream-8
+   centos-stream-9
    debian-10
    debian-11
    fedora
@@ -24,6 +25,7 @@ we recommend **Ubuntu 20.04 LTS**.
    opensuse-tumbleweed
    oracle-linux-8
    raspberry-pi-os-10
+   raspberry-pi-os-11
    rhel-8
    rocky-linux-8
    ubuntu-1804

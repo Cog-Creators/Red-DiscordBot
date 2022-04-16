@@ -18,8 +18,8 @@ import pip
 import traceback
 from pathlib import Path
 from redbot.core import data_manager
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.commands import GuildConverter
+from redbot.core.utils.menus import menu
+from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
 
@@ -35,9 +35,11 @@ from . import (
     commands,
     errors,
     i18n,
+    bank,
+    modlog,
 )
 from ._diagnoser import IssueDiagnoser
-from .utils import AsyncIter
+from .utils import AsyncIter, can_user_send_messages_in
 from .utils._internal_utils import fetch_latest_red_version_info
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
@@ -100,7 +102,7 @@ _ = i18n.Translator("Core", __file__)
 
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
-MAX_PREFIX_LENGTH = 20
+MAX_PREFIX_LENGTH = 25
 
 
 class CoreLogic:
@@ -114,11 +116,7 @@ class CoreLogic:
         self.bot.register_rpc_handler(self._version_info)
         self.bot.register_rpc_handler(self._invite_url)
 
-    async def _load(
-        self, pkg_names: Iterable[str]
-    ) -> Tuple[
-        List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
-    ]:
+    async def _load(self, pkg_names: Iterable[str]) -> Dict[str, Union[List[str], Dict[str, str]]]:
         """
         Loads packages by name.
 
@@ -129,23 +127,23 @@ class CoreLogic:
 
         Returns
         -------
-        tuple
-            7-tuple of:
-              1. List of names of packages that loaded successfully
-              2. List of names of packages that failed to load without specified reason
-              3. List of names of packages that don't have a valid package name
-              4. List of names of packages that weren't found in any cog path
-              5. List of names of packages that are already loaded
-              6. List of 2-tuples (pkg_name, reason) for packages
-              that failed to load with a specified reason
-              7. Set of repo names that use deprecated shared libraries
+        dict
+            Dictionary with keys:
+              ``loaded_packages``: List of names of packages that loaded successfully
+              ``failed_packages``: List of names of packages that failed to load without specified reason
+              ``invalid_pkg_names``: List of names of packages that don't have a valid package name
+              ``notfound_packages``: List of names of packages that weren't found in any cog path
+              ``alreadyloaded_packages``: List of names of packages that are already loaded
+              ``failed_with_reason_packages``: Dictionary of packages that failed to load with
+              a specified reason with mapping of package names -> failure reason
+              ``repos_with_shared_libs``: List of repo names that use deprecated shared libraries
         """
         failed_packages = []
         loaded_packages = []
         invalid_pkg_names = []
         notfound_packages = []
         alreadyloaded_packages = []
-        failed_with_reason_packages = []
+        failed_with_reason_packages = {}
         repos_with_shared_libs = set()
 
         bot = self.bot
@@ -177,7 +175,7 @@ class CoreLogic:
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
             except errors.CogLoadError as e:
-                failed_with_reason_packages.append((name, str(e)))
+                failed_with_reason_packages[name] = str(e)
             except Exception as e:
                 if isinstance(e, commands.CommandRegistrationError):
                     if e.alias_conflict:
@@ -190,7 +188,7 @@ class CoreLogic:
                             "Command {command_name} is already an existing command"
                             " or alias in one of the loaded cogs."
                         ).format(command_name=inline(e.name))
-                    failed_with_reason_packages.append((name, error_message))
+                    failed_with_reason_packages[name] = error_message
                     continue
 
                 log.exception("Package loading failed", exc_info=e)
@@ -217,15 +215,15 @@ class CoreLogic:
                 if maybe_repo is not None:
                     repos_with_shared_libs.add(maybe_repo.name)
 
-        return (
-            loaded_packages,
-            failed_packages,
-            invalid_pkg_names,
-            notfound_packages,
-            alreadyloaded_packages,
-            failed_with_reason_packages,
-            repos_with_shared_libs,
-        )
+        return {
+            "loaded_packages": loaded_packages,
+            "failed_packages": failed_packages,
+            "invalid_pkg_names": invalid_pkg_names,
+            "notfound_packages": notfound_packages,
+            "alreadyloaded_packages": alreadyloaded_packages,
+            "failed_with_reason_packages": failed_with_reason_packages,
+            "repos_with_shared_libs": list(repos_with_shared_libs),
+        }
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
@@ -253,7 +251,7 @@ class CoreLogic:
         for child_name, lib in children.items():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
-    async def _unload(self, pkg_names: Iterable[str]) -> Tuple[List[str], List[str]]:
+    async def _unload(self, pkg_names: Iterable[str]) -> Dict[str, List[str]]:
         """
         Unloads packages with the given names.
 
@@ -264,29 +262,30 @@ class CoreLogic:
 
         Returns
         -------
-        tuple
-            2 element tuple of successful unloads and failed unloads.
+        dict
+            Dictionary with keys:
+              ``unloaded_packages``: List of names of packages that unloaded successfully.
+              ``notloaded_packages``: List of names of packages that weren't unloaded
+              because they weren't loaded.
         """
-        failed_packages = []
+        notloaded_packages = []
         unloaded_packages = []
 
         bot = self.bot
 
         for name in pkg_names:
             if name in bot.extensions:
-                bot.unload_extension(name)
+                await bot.unload_extension(name)
                 await bot.remove_loaded_package(name)
                 unloaded_packages.append(name)
             else:
-                failed_packages.append(name)
+                notloaded_packages.append(name)
 
-        return unloaded_packages, failed_packages
+        return {"unloaded_packages": unloaded_packages, "notloaded_packages": notloaded_packages}
 
     async def _reload(
         self, pkg_names: Sequence[str]
-    ) -> Tuple[
-        List[str], List[str], List[str], List[str], List[str], List[Tuple[str, str]], Set[str]
-    ]:
+    ) -> Dict[str, Union[List[str], Dict[str, str]]]:
         """
         Reloads packages with the given names.
 
@@ -297,30 +296,12 @@ class CoreLogic:
 
         Returns
         -------
-        tuple
-            Tuple as returned by `CoreLogic._load()`
+        dict
+            Dictionary with keys as returned by `CoreLogic._load()`
         """
         await self._unload(pkg_names)
 
-        (
-            loaded,
-            load_failed,
-            invalid_pkg_names,
-            not_found,
-            already_loaded,
-            load_failed_with_reason,
-            repos_with_shared_libs,
-        ) = await self._load(pkg_names)
-
-        return (
-            loaded,
-            load_failed,
-            invalid_pkg_names,
-            not_found,
-            already_loaded,
-            load_failed_with_reason,
-            repos_with_shared_libs,
-        )
+        return await self._load(pkg_names)
 
     async def _name(self, name: Optional[str] = None) -> str:
         """
@@ -337,7 +318,7 @@ class CoreLogic:
             The current (or new) username of the bot.
         """
         if name is not None:
-            await self.bot.user.edit(username=name)
+            return (await self.bot.user.edit(username=name)).name
 
         return self.bot.user.name
 
@@ -381,13 +362,7 @@ class CoreLogic:
         str
             Invite URL.
         """
-        app_info = await self.bot.application_info()
-        data = await self.bot._config.all()
-        commands_scope = data["invite_commands_scope"]
-        scopes = ("bot", "applications.commands") if commands_scope else None
-        perms_int = data["invite_perm"]
-        permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(app_info.id, permissions, scopes=scopes)
+        return await self.bot.get_invite_url()
 
     @staticmethod
     async def _can_get_invite_url(ctx):
@@ -405,7 +380,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     """
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete (Core Config is handled in a bot method ) """
+        """Nothing to delete (Core Config is handled in a bot method)"""
         return
 
     @commands.command(hidden=True)
@@ -415,10 +390,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     async def info(self, ctx: commands.Context):
-        """Shows info about [botname].
-
-        See `[p]set custominfo` to customize.
-        """
+        """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -562,8 +534,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         uptime = self.bot.uptime.replace(tzinfo=datetime.timezone.utc)
         uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second.")
         await ctx.send(
-            _("Been up for: **{time_quantity}** (since {timestamp})").format(
-                time_quantity=uptime_str, timestamp=f"<t:{int(uptime.timestamp())}:f>"
+            _("I have been up for: **{time_quantity}** (since {timestamp})").format(
+                time_quantity=uptime_str, timestamp=discord.utils.format_dt(uptime, "f")
             )
         )
 
@@ -673,7 +645,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     async def get_serious_confirmation(self, ctx: commands.Context, prompt: str) -> bool:
-
         confirm_token = "".join(random.choices((*ascii_letters, *digits), k=8))
 
         await ctx.send(f"{prompt}\n\n{confirm_token}")
@@ -1395,6 +1366,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.
         """
+        if isinstance(ctx.channel, discord.Thread):
+            await ctx.send(
+                _(
+                    "This setting cannot be set for threads. If you want to set this for"
+                    " the parent channel, send the command in that channel."
+                )
+            )
+            return
+
         if enabled is None:
             await self.bot._config.channel(ctx.channel).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
@@ -1487,7 +1467,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]invite`
         """
         try:
-            await ctx.author.send(await self._invite_url())
+            await ctx.author.send(await self.bot.get_invite_url())
             await ctx.tick()
         except discord.errors.Forbidden:
             await ctx.send(
@@ -1602,6 +1582,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return await ctx.send(_("You need to specify at least one server ID."))
 
         leaving_local_guild = not guilds
+        number = len(guilds)
 
         if leaving_local_guild:
             guilds = (ctx.guild,)
@@ -1610,11 +1591,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 + " (yes/no)"
             )
         else:
-            msg = (
-                _("Are you sure you want me to leave these servers?")
-                + " (yes/no):\n"
-                + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
-            )
+            if number > 1:
+                msg = (
+                    _("Are you sure you want me to leave these servers?")
+                    + " (yes/no):\n"
+                    + "\n".join(f"- {guild.name} (`{guild.id}`)" for guild in guilds)
+                )
+            else:
+                msg = (
+                    _("Are you sure you want me to leave this server?")
+                    + " (yes/no):\n"
+                    + f"- {guilds[0].name} (`{guilds[0].id}`)"
+                )
 
         for guild in guilds:
             if guild.owner.id == ctx.me.id:
@@ -1637,9 +1625,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright. Bye :wave:"))
                 else:
-                    await ctx.send(
-                        _("Alright. Leaving {number} servers...").format(number=len(guilds))
-                    )
+                    if number > 1:
+                        await ctx.send(
+                            _("Alright. Leaving {number} servers...").format(number=number)
+                        )
+                    else:
+                        await ctx.send(_("Alright. Leaving one server..."))
                 for guild in guilds:
                     log.debug("Leaving guild '%s' (%s)", guild.name, guild.id)
                     await guild.leave()
@@ -1647,7 +1638,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if leaving_local_guild is True:
                     await ctx.send(_("Alright, I'll stay then. :)"))
                 else:
-                    await ctx.send(_("Alright, I'm not leaving those servers."))
+                    if number > 1:
+                        await ctx.send(_("Alright, I'm not leaving those servers."))
+                    else:
+                        await ctx.send(_("Alright, I'm not leaving that server."))
 
     @commands.command()
     @checks.is_owner()
@@ -1665,7 +1659,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if len(pages) == 1:
             await ctx.send(pages[0])
         else:
-            await menu(ctx, pages, DEFAULT_CONTROLS)
+            await menu(ctx, pages)
 
     @commands.command(require_var_positional=True)
     @checks.is_owner()
@@ -1685,24 +1679,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            (
-                loaded,
-                failed,
-                invalid_pkg_names,
-                not_found,
-                already_loaded,
-                failed_with_reason,
-                repos_with_shared_libs,
-            ) = await self._load(cogs)
+            outcomes = await self._load(cogs)
 
         output = []
 
-        if loaded:
+        if loaded := outcomes["loaded_packages"]:
             loaded_packages = humanize_list([inline(package) for package in loaded])
             formed = _("Loaded {packs}.").format(packs=loaded_packages)
             output.append(formed)
 
-        if already_loaded:
+        if already_loaded := outcomes["alreadyloaded_packages"]:
             if len(already_loaded) == 1:
                 formed = _("The following package is already loaded: {pack}").format(
                     pack=inline(already_loaded[0])
@@ -1713,7 +1699,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             output.append(formed)
 
-        if failed:
+        if failed := outcomes["failed_packages"]:
             if len(failed) == 1:
                 formed = _(
                     "Failed to load the following package: {pack}."
@@ -1726,7 +1712,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in failed]))
             output.append(formed)
 
-        if invalid_pkg_names:
+        if invalid_pkg_names := outcomes["invalid_pkg_names"]:
             if len(invalid_pkg_names) == 1:
                 formed = _(
                     "The following name is not a valid package name: {pack}\n"
@@ -1741,7 +1727,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
-        if not_found:
+        if not_found := outcomes["notfound_packages"]:
             if len(not_found) == 1:
                 formed = _("The following package was not found in any cog path: {pack}.").format(
                     pack=inline(not_found[0])
@@ -1752,8 +1738,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in not_found]))
             output.append(formed)
 
-        if failed_with_reason:
-            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
+        if failed_with_reason := outcomes["failed_with_reason_packages"]:
+            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason.items()])
             if len(failed_with_reason) == 1:
                 formed = _(
                     "This package could not be loaded for the following reason:\n\n{reason}"
@@ -1764,7 +1750,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(reasons=reasons)
             output.append(formed)
 
-        if repos_with_shared_libs:
+        if repos_with_shared_libs := outcomes["repos_with_shared_libs"]:
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
@@ -1803,11 +1789,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<cogs...>` - The cog packages to unload.
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
-        unloaded, failed = await self._unload(cogs)
+        outcomes = await self._unload(cogs)
 
         output = []
 
-        if unloaded:
+        if unloaded := outcomes["unloaded_packages"]:
             if len(unloaded) == 1:
                 formed = _("The following package was unloaded: {pack}.").format(
                     pack=inline(unloaded[0])
@@ -1818,7 +1804,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             output.append(formed)
 
-        if failed:
+        if failed := outcomes["notloaded_packages"]:
             if len(failed) == 1:
                 formed = _("The following package was not loaded: {pack}.").format(
                     pack=inline(failed[0])
@@ -1852,24 +1838,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         cogs = tuple(map(lambda cog: cog.rstrip(","), cogs))
         async with ctx.typing():
-            (
-                loaded,
-                failed,
-                invalid_pkg_names,
-                not_found,
-                already_loaded,
-                failed_with_reason,
-                repos_with_shared_libs,
-            ) = await self._reload(cogs)
+            outcomes = await self._reload(cogs)
 
         output = []
 
-        if loaded:
+        if loaded := outcomes["loaded_packages"]:
             loaded_packages = humanize_list([inline(package) for package in loaded])
             formed = _("Reloaded {packs}.").format(packs=loaded_packages)
             output.append(formed)
 
-        if failed:
+        if failed := outcomes["failed_packages"]:
             if len(failed) == 1:
                 formed = _(
                     "Failed to reload the following package: {pack}."
@@ -1882,7 +1860,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in failed]))
             output.append(formed)
 
-        if invalid_pkg_names:
+        if invalid_pkg_names := outcomes["invalid_pkg_names"]:
             if len(invalid_pkg_names) == 1:
                 formed = _(
                     "The following name is not a valid package name: {pack}\n"
@@ -1897,7 +1875,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in invalid_pkg_names]))
             output.append(formed)
 
-        if not_found:
+        if not_found := outcomes["notfound_packages"]:
             if len(not_found) == 1:
                 formed = _("The following package was not found in any cog path: {pack}.").format(
                     pack=inline(not_found[0])
@@ -1908,8 +1886,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(packs=humanize_list([inline(package) for package in not_found]))
             output.append(formed)
 
-        if failed_with_reason:
-            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
+        if failed_with_reason := outcomes["failed_with_reason_packages"]:
+            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason.items()])
             if len(failed_with_reason) == 1:
                 formed = _(
                     "This package could not be reloaded for the following reason:\n\n{reason}"
@@ -1920,7 +1898,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(reasons=reasons)
             output.append(formed)
 
-        if repos_with_shared_libs:
+        if repos_with_shared_libs := outcomes["repos_with_shared_libs"]:
             if len(repos_with_shared_libs) == 1:
                 formed = _(
                     "**WARNING**: The following repo is using shared libs"
@@ -1983,12 +1961,1344 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(_("Restarting..."))
         await ctx.bot.shutdown(restart=True)
 
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.group()
+    async def bankset(self, ctx: commands.Context):
+        """Base command for bank settings."""
+
+    @bankset.command(name="showsettings")
+    async def bankset_showsettings(self, ctx: commands.Context):
+        """Show the current bank settings."""
+        cur_setting = await bank.is_global()
+        if cur_setting:
+            group = bank._config
+        else:
+            if not ctx.guild:
+                return
+            group = bank._config.guild(ctx.guild)
+        group_data = await group.all()
+        bank_name = group_data["bank_name"]
+        bank_scope = _("Global") if cur_setting else _("Server")
+        currency_name = group_data["currency"]
+        default_balance = group_data["default_balance"]
+        max_balance = group_data["max_balance"]
+
+        settings = _(
+            "Bank settings:\n\nBank name: {bank_name}\nBank scope: {bank_scope}\n"
+            "Currency: {currency_name}\nDefault balance: {default_balance}\n"
+            "Maximum allowed balance: {maximum_bal}\n"
+        ).format(
+            bank_name=bank_name,
+            bank_scope=bank_scope,
+            currency_name=currency_name,
+            default_balance=humanize_number(default_balance),
+            maximum_bal=humanize_number(max_balance),
+        )
+        await ctx.send(box(settings))
+
+    @bankset.command(name="toggleglobal")
+    @checks.is_owner()
+    async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
+        """Toggle whether the bank is global or not.
+
+        If the bank is global, it will become per-server.
+        If the bank is per-server, it will become global.
+        """
+        cur_setting = await bank.is_global()
+
+        word = _("per-server") if cur_setting else _("global")
+        if confirm is False:
+            await ctx.send(
+                _(
+                    "This will toggle the bank to be {banktype}, deleting all accounts "
+                    "in the process! If you're sure, type `{command}`"
+                ).format(banktype=word, command=f"{ctx.clean_prefix}bankset toggleglobal yes")
+            )
+        else:
+            await bank.set_global(not cur_setting)
+            await ctx.send(_("The bank is now {banktype}.").format(banktype=word))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="bankname")
+    async def bankset_bankname(self, ctx: commands.Context, *, name: str):
+        """Set the bank's name."""
+        await bank.set_bank_name(name, ctx.guild)
+        await ctx.send(_("Bank name has been set to: {name}").format(name=name))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="creditsname")
+    async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
+        """Set the name for the bank's currency."""
+        await bank.set_currency_name(name, ctx.guild)
+        await ctx.send(_("Currency name has been set to: {name}").format(name=name))
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="maxbal")
+    async def bankset_maxbal(self, ctx: commands.Context, *, amount: int):
+        """Set the maximum balance a user can get."""
+        try:
+            await bank.set_max_balance(amount, ctx.guild)
+        except ValueError:
+            # noinspection PyProtectedMember
+            return await ctx.send(
+                _("Amount must be greater than zero and less than {max}.").format(
+                    max=humanize_number(bank._MAX_BALANCE)
+                )
+            )
+        await ctx.send(
+            _("Maximum balance has been set to: {amount}").format(amount=humanize_number(amount))
+        )
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="registeramount")
+    async def bankset_registeramount(self, ctx: commands.Context, creds: int):
+        """Set the initial balance for new bank accounts.
+
+        Example:
+            - `[p]bankset registeramount 5000`
+
+        **Arguments**
+
+        - `<creds>` The new initial balance amount. Default is 0.
+        """
+        guild = ctx.guild
+        max_balance = await bank.get_max_balance(ctx.guild)
+        credits_name = await bank.get_currency_name(guild)
+        try:
+            await bank.set_default_balance(creds, guild)
+        except ValueError:
+            return await ctx.send(
+                _("Amount must be greater than or equal to zero and less than {maxbal}.").format(
+                    maxbal=humanize_number(max_balance)
+                )
+            )
+        await ctx.send(
+            _("Registering an account will now give {num} {currency}.").format(
+                num=humanize_number(creds), currency=credits_name
+            )
+        )
+
+    @bank.is_owner_if_bank_global()
+    @checks.guildowner_or_permissions(administrator=True)
+    @bankset.command(name="reset")
+    async def bankset_reset(self, ctx, confirmation: bool = False):
+        """Delete all bank accounts.
+
+        Examples:
+            - `[p]bankset reset` - Did not confirm. Shows the help message.
+            - `[p]bankset reset yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
+                    "`{prefix}bankset reset yes`"
+                ).format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    prefix=ctx.clean_prefix,
+                )
+            )
+        else:
+            await bank.wipe_bank(guild=ctx.guild)
+            await ctx.send(
+                _("All bank accounts for {scope} have been deleted.").format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server")
+                )
+            )
+
+    @bank.is_owner_if_bank_global()
+    @checks.admin_or_permissions(manage_guild=True)
+    @bankset.group(name="prune")
+    async def bankset_prune(self, ctx):
+        """Base command for pruning bank accounts."""
+        pass
+
+    @bankset_prune.command(name="server", aliases=["guild", "local"])
+    @commands.guild_only()
+    @checks.guildowner()
+    async def bankset_prune_local(self, ctx, confirmation: bool = False):
+        """Prune bank accounts for users no longer in the server.
+
+        Cannot be used with a global bank. See `[p]bankset prune global`.
+
+        Examples:
+            - `[p]bankset prune server` - Did not confirm. Shows the help message.
+            - `[p]bankset prune server yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        global_bank = await bank.is_global()
+        if global_bank is True:
+            return await ctx.send(_("This command cannot be used with a global bank."))
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for users no longer in this server."
+                    "\nIf you're sure, type "
+                    "`{prefix}bankset prune local yes`"
+                ).format(prefix=ctx.clean_prefix)
+            )
+        else:
+            await bank.bank_prune(self.bot, guild=ctx.guild)
+            await ctx.send(
+                _("Bank accounts for users no longer in this server have been deleted.")
+            )
+
+    @bankset_prune.command(name="global")
+    @checks.is_owner()
+    async def bankset_prune_global(self, ctx, confirmation: bool = False):
+        """Prune bank accounts for users who no longer share a server with the bot.
+
+        Cannot be used without a global bank. See `[p]bankset prune server`.
+
+        Examples:
+            - `[p]bankset prune global` - Did not confirm. Shows the help message.
+            - `[p]bankset prune global yes`
+
+        **Arguments**
+
+        - `<confirmation>` This will default to false unless specified.
+        """
+        global_bank = await bank.is_global()
+        if global_bank is False:
+            return await ctx.send(_("This command cannot be used with a local bank."))
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete all bank accounts for users "
+                    "who no longer share a server with the bot."
+                    "\nIf you're sure, type `{prefix}bankset prune global yes`"
+                ).format(prefix=ctx.clean_prefix)
+            )
+        else:
+            await bank.bank_prune(self.bot)
+            await ctx.send(
+                _(
+                    "Bank accounts for users who "
+                    "no longer share a server with the bot have been pruned."
+                )
+            )
+
+    @bankset_prune.command(name="user", usage="<user> [confirmation=False]")
+    async def bankset_prune_user(
+        self,
+        ctx,
+        member_or_id: Union[discord.Member, RawUserIdConverter],
+        confirmation: bool = False,
+    ):
+        """Delete the bank account of a specified user.
+
+        Examples:
+            - `[p]bankset prune user @Twentysix` - Did not confirm. Shows the help message.
+            - `[p]bankset prune user @Twentysix yes`
+
+        **Arguments**
+
+        - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.
+        - `<confirmation>` This will default to false unless specified.
+        """
+        try:
+            name = member_or_id.display_name
+            uid = member_or_id.id
+        except AttributeError:
+            name = member_or_id
+            uid = member_or_id
+
+        if confirmation is False:
+            await ctx.send(
+                _(
+                    "This will delete {name}'s bank account."
+                    "\nIf you're sure, type "
+                    "`{prefix}bankset prune user {id} yes`"
+                ).format(prefix=ctx.clean_prefix, id=uid, name=name)
+            )
+        else:
+            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
+            await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
+
+    @commands.group()
+    @checks.guildowner_or_permissions(administrator=True)
+    async def modlogset(self, ctx: commands.Context):
+        """Manage modlog settings."""
+        pass
+
+    @checks.is_owner()
+    @modlogset.command(hidden=True, name="fixcasetypes")
+    async def modlogset_fixcasetypes(self, ctx: commands.Context):
+        """Command to fix misbehaving casetypes."""
+        await modlog.handle_auditype_key()
+        await ctx.tick()
+
+    @modlogset.command(aliases=["channel"], name="modlog")
+    @commands.guild_only()
+    async def modlogset_modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
+        """Set a channel as the modlog.
+
+        Omit `[channel]` to disable the modlog.
+        """
+        guild = ctx.guild
+        if channel:
+            if channel.permissions_for(guild.me).send_messages:
+                await modlog.set_modlog_channel(guild, channel)
+                await ctx.send(
+                    _("Mod events will be sent to {channel}.").format(channel=channel.mention)
+                )
+            else:
+                await ctx.send(
+                    _("I do not have permissions to send messages in {channel}!").format(
+                        channel=channel.mention
+                    )
+                )
+        else:
+            try:
+                await modlog.get_modlog_channel(guild)
+            except RuntimeError:
+                await ctx.send(_("Mod log is already disabled."))
+            else:
+                await modlog.set_modlog_channel(guild, None)
+                await ctx.send(_("Mod log deactivated."))
+
+    @modlogset.command(name="cases")
+    @commands.guild_only()
+    async def modlogset_cases(self, ctx: commands.Context, action: str = None):
+        """Enable or disable case creation for a mod action."""
+        guild = ctx.guild
+
+        if action is None:  # No args given
+            casetypes = await modlog.get_all_casetypes(guild)
+            await ctx.send_help()
+            lines = []
+            for ct in casetypes:
+                enabled = _("enabled") if await ct.is_enabled() else _("disabled")
+                lines.append(f"{ct.name} : {enabled}")
+
+            await ctx.send(_("Current settings:\n") + box("\n".join(lines)))
+            return
+
+        casetype = await modlog.get_casetype(action, guild)
+        if not casetype:
+            await ctx.send(_("That action is not registered."))
+        else:
+            enabled = await casetype.is_enabled()
+            await casetype.set_enabled(not enabled)
+            await ctx.send(
+                _("Case creation for {action_name} actions is now {enabled}.").format(
+                    action_name=action, enabled=_("enabled") if not enabled else _("disabled")
+                )
+            )
+
+    @modlogset.command(name="resetcases")
+    @commands.guild_only()
+    async def modlogset_resetcases(self, ctx: commands.Context):
+        """Reset all modlog cases in this server."""
+        guild = ctx.guild
+        await ctx.send(
+            _("Are you sure you would like to reset all modlog cases in this server?")
+            + " (yes/no)"
+        )
+        try:
+            pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
+            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(_("You took too long to respond."))
+            return
+        if pred.result:
+            await modlog.reset_cases(guild)
+            await ctx.send(_("Cases have been reset."))
+        else:
+            await ctx.send(_("No changes have been made."))
+
     @commands.group(name="set")
     async def _set(self, ctx: commands.Context):
         """Commands for changing [botname]'s settings."""
 
-    @_set.command("showsettings")
-    async def set_showsettings(self, ctx: commands.Context):
+    # -- Bot Metadata Commands -- ###
+
+    @_set.group(name="bot", aliases=["metadata"])
+    @checks.admin_or_permissions(manage_nicknames=True)
+    async def _set_bot(self, ctx: commands.Context):
+        """Commands for changing [botname]'s metadata."""
+
+    @checks.is_owner()
+    @_set_bot.command(name="description")
+    async def _set_bot_description(self, ctx: commands.Context, *, description: str = ""):
+        """
+        Sets the bot's description.
+
+        Use without a description to reset.
+        This is shown in a few locations, including the help menu.
+
+        The maximum description length is 250 characters to ensure it displays properly.
+
+        The default is "Red V3".
+
+        **Examples:**
+            - `[p]set bot description` - Resets the description to the default setting.
+            - `[p]set bot description MyBot: A Red V3 Bot`
+
+        **Arguments:**
+            - `[description]` - The description to use for this bot. Leave blank to reset to the default.
+        """
+        if not description:
+            await ctx.bot._config.description.clear()
+            ctx.bot.description = "Red V3"
+            await ctx.send(_("Description reset."))
+        elif len(description) > 250:  # While the limit is 256, we bold it adding characters.
+            await ctx.send(
+                _(
+                    "This description is too long to properly display. "
+                    "Please try again with below 250 characters."
+                )
+            )
+        else:
+            await ctx.bot._config.description.set(description)
+            ctx.bot.description = description
+            await ctx.tick()
+
+    @_set_bot.group(name="avatar", invoke_without_command=True)
+    @checks.is_owner()
+    async def _set_bot_avatar(self, ctx: commands.Context, url: str = None):
+        """Sets [botname]'s avatar
+
+        Supports either an attachment or an image URL.
+
+        **Examples:**
+            - `[p]set bot avatar` - With an image attachment, this will set the avatar.
+            - `[p]set bot avatar` - Without an attachment, this will show the command help.
+            - `[p]set bot avatar https://links.flaree.xyz/k95` - Sets the avatar to the provided url.
+
+        **Arguments:**
+            - `[url]` - An image url to be used as an avatar. Leave blank when uploading an attachment.
+        """
+        if len(ctx.message.attachments) > 0:  # Attachments take priority
+            data = await ctx.message.attachments[0].read()
+        elif url is not None:
+            if url.startswith("<") and url.endswith(">"):
+                url = url[1:-1]
+
+            async with aiohttp.ClientSession() as session:
+                try:
+                    async with session.get(url) as r:
+                        data = await r.read()
+                except aiohttp.InvalidURL:
+                    return await ctx.send(_("That URL is invalid."))
+                except aiohttp.ClientError:
+                    return await ctx.send(_("Something went wrong while trying to get the image."))
+        else:
+            await ctx.send_help()
+            return
+
+        try:
+            async with ctx.typing():
+                await ctx.bot.user.edit(avatar=data)
+        except discord.HTTPException:
+            await ctx.send(
+                _(
+                    "Failed. Remember that you can edit my avatar "
+                    "up to two times a hour. The URL or attachment "
+                    "must be a valid image in either JPG or PNG format."
+                )
+            )
+        except ValueError:
+            await ctx.send(_("JPG / PNG format only."))
+        else:
+            await ctx.send(_("Done."))
+
+    @_set_bot_avatar.command(name="remove", aliases=["clear"])
+    @checks.is_owner()
+    async def _set_bot_avatar_remove(self, ctx: commands.Context):
+        """
+        Removes [botname]'s avatar.
+
+        **Example:**
+            - `[p]set bot avatar remove`
+        """
+        async with ctx.typing():
+            await ctx.bot.user.edit(avatar=None)
+        await ctx.send(_("Avatar removed."))
+
+    @_set_bot.command(name="username", aliases=["name"])
+    @checks.is_owner()
+    async def _set_bot_username(self, ctx: commands.Context, *, username: str):
+        """Sets [botname]'s username.
+
+        Maximum length for a username is 32 characters.
+
+        Note: The username of a verified bot cannot be manually changed.
+            Please contact Discord support to change it.
+
+        **Example:**
+            - `[p]set bot username BaguetteBot`
+
+        **Arguments:**
+            - `<username>` - The username to give the bot.
+        """
+        try:
+            if self.bot.user.public_flags.verified_bot:
+                await ctx.send(
+                    _(
+                        "The username of a verified bot cannot be manually changed."
+                        " Please contact Discord support to change it."
+                    )
+                )
+                return
+            if len(username) > 32:
+                await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
+                return
+            async with ctx.typing():
+                await asyncio.wait_for(self._name(name=username), timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(
+                _(
+                    "Changing the username timed out. "
+                    "Remember that you can only do it up to 2 times an hour."
+                    " Use nicknames if you need frequent changes: {command}"
+                ).format(command=inline(f"{ctx.clean_prefix}set bot nickname"))
+            )
+        except discord.HTTPException as e:
+            if e.code == 50035:
+                error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
+                await ctx.send(
+                    _(
+                        "Failed to change the username. "
+                        "Discord returned the following error:\n"
+                        "{error_message}"
+                    ).format(error_message=inline(error_string))
+                )
+            else:
+                log.error(
+                    "Unexpected error occurred when trying to change the username.", exc_info=e
+                )
+                await ctx.send(_("Unexpected error occurred when trying to change the username."))
+        else:
+            await ctx.send(_("Done."))
+
+    @_set_bot.command(name="nickname")
+    @checks.admin_or_permissions(manage_nicknames=True)
+    @commands.guild_only()
+    async def _set_bot_nickname(self, ctx: commands.Context, *, nickname: str = None):
+        """Sets [botname]'s nickname for the current server.
+
+        Maximum length for a nickname is 32 characters.
+
+        **Example:**
+            - `[p]set bot nickname 🎃 SpookyBot 🎃`
+
+        **Arguments:**
+            - `[nickname]` - The nickname to give the bot. Leave blank to clear the current nickname.
+        """
+        try:
+            if nickname and len(nickname) > 32:
+                await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
+                return
+            await ctx.guild.me.edit(nick=nickname)
+        except discord.Forbidden:
+            await ctx.send(_("I lack the permissions to change my own nickname."))
+        else:
+            await ctx.send(_("Done."))
+
+    @_set_bot.command(name="custominfo")
+    @checks.is_owner()
+    async def _set_bot_custominfo(self, ctx: commands.Context, *, text: str = None):
+        """Customizes a section of `[p]info`.
+
+        The maximum amount of allowed characters is 1024.
+        Supports markdown, links and "mentions".
+
+        Link example: `[My link](https://example.com)`
+
+        **Examples:**
+            - `[p]set bot custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
+            - `[p]set bot custominfo Join my [support server](discord.gg/discord)!`
+            - `[p]set bot custominfo` - Removes custom info text.
+
+        **Arguments:**
+            - `[text]` - The custom info text.
+        """
+        if not text:
+            await ctx.bot._config.custom_info.clear()
+            await ctx.send(_("The custom text has been cleared."))
+            return
+        if len(text) <= 1024:
+            await ctx.bot._config.custom_info.set(text)
+            await ctx.send(_("The custom text has been set."))
+            await ctx.invoke(self.info)
+        else:
+            await ctx.send(_("Text must be fewer than 1024 characters long."))
+
+    # -- End Bot Metadata Commands -- ###
+    # -- Bot Status Commands -- ###
+
+    @_set.group(name="status")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status(self, ctx: commands.Context):
+        """Commands for setting [botname]'s status."""
+
+    @_set_status.command(
+        name="streaming", aliases=["stream", "twitch"], usage="[(<streamer> <stream_title>)]"
+    )
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
+        """Sets [botname]'s streaming status to a twitch stream.
+
+        This will appear as `Streaming <stream_title>` or `LIVE ON TWITCH` depending on the context.
+        It will also include a `Watch` button with a twitch.tv url for the provided streamer.
+
+        Maximum length for a stream title is 128 characters.
+
+        Leaving both streamer and stream_title empty will clear it.
+
+        **Examples:**
+            - `[p]set status stream` - Clears the activity status.
+            - `[p]set status stream 26 Twentysix is streaming` - Sets the stream to `https://www.twitch.tv/26`.
+            - `[p]set status stream https://twitch.tv/26 Twentysix is streaming` - Sets the URL manually.
+
+        **Arguments:**
+            - `<streamer>` - The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
+            - `<stream_title>` - The text to follow `Streaming` in the status."""
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
+
+        if stream_title:
+            stream_title = stream_title.strip()
+            if "twitch.tv/" not in streamer:
+                streamer = "https://www.twitch.tv/" + streamer
+            if len(streamer) > 511:
+                await ctx.send(_("The maximum length of the streamer url is 511 characters."))
+                return
+            if len(stream_title) > 128:
+                await ctx.send(_("The maximum length of the stream title is 128 characters."))
+                return
+            activity = discord.Streaming(url=streamer, name=stream_title)
+            await ctx.bot.change_presence(status=status, activity=activity)
+        elif streamer is not None:
+            await ctx.send_help()
+            return
+        else:
+            await ctx.bot.change_presence(activity=None, status=status)
+        await ctx.send(_("Done."))
+
+    @_set_status.command(name="playing", aliases=["game"])
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_game(self, ctx: commands.Context, *, game: str = None):
+        """Sets [botname]'s playing status.
+
+        This will appear as `Playing <game>` or `PLAYING A GAME: <game>` depending on the context.
+
+        Maximum length for a playing status is 128 characters.
+
+        **Examples:**
+            - `[p]set status playing` - Clears the activity status.
+            - `[p]set status playing the keyboard`
+
+        **Arguments:**
+            - `[game]` - The text to follow `Playing`. Leave blank to clear the current activity status.
+        """
+
+        if game:
+            if len(game) > 128:
+                await ctx.send(_("The maximum length of game descriptions is 128 characters."))
+                return
+            game = discord.Game(name=game)
+        else:
+            game = None
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        await ctx.bot.change_presence(status=status, activity=game)
+        if game:
+            await ctx.send(_("Status set to `Playing {game.name}`.").format(game=game))
+        else:
+            await ctx.send(_("Game cleared."))
+
+    @_set_status.command(name="listening")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_listening(self, ctx: commands.Context, *, listening: str = None):
+        """Sets [botname]'s listening status.
+
+        This will appear as `Listening to <listening>`.
+
+        Maximum length for a listening status is 128 characters.
+
+        **Examples:**
+            - `[p]set status listening` - Clears the activity status.
+            - `[p]set status listening jams`
+
+        **Arguments:**
+            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if listening:
+            if len(listening) > 128:
+                await ctx.send(
+                    _("The maximum length of listening descriptions is 128 characters.")
+                )
+                return
+            activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(
+                _("Status set to `Listening to {listening}`.").format(listening=listening)
+            )
+        else:
+            await ctx.send(_("Listening cleared."))
+
+    @_set_status.command(name="watching")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_watching(self, ctx: commands.Context, *, watching: str = None):
+        """Sets [botname]'s watching status.
+
+        This will appear as `Watching <watching>`.
+
+        Maximum length for a watching status is 128 characters.
+
+        **Examples:**
+            - `[p]set status watching` - Clears the activity status.
+            - `[p]set status watching [p]help`
+
+        **Arguments:**
+            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if watching:
+            if len(watching) > 128:
+                await ctx.send(_("The maximum length of watching descriptions is 128 characters."))
+                return
+            activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(_("Status set to `Watching {watching}`.").format(watching=watching))
+        else:
+            await ctx.send(_("Watching cleared."))
+
+    @_set_status.command(name="competing")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_competing(self, ctx: commands.Context, *, competing: str = None):
+        """Sets [botname]'s competing status.
+
+        This will appear as `Competing in <competing>`.
+
+        Maximum length for a competing status is 128 characters.
+
+        **Examples:**
+            - `[p]set status competing` - Clears the activity status.
+            - `[p]set status competing London 2012 Olympic Games`
+
+        **Arguments:**
+            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if competing:
+            if len(competing) > 128:
+                await ctx.send(
+                    _("The maximum length of competing descriptions is 128 characters.")
+                )
+                return
+            activity = discord.Activity(name=competing, type=discord.ActivityType.competing)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(
+                _("Status set to `Competing in {competing}`.").format(competing=competing)
+            )
+        else:
+            await ctx.send(_("Competing cleared."))
+
+    async def _set_my_status(self, ctx: commands.Context, status: discord.Status):
+        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
+        await ctx.bot.change_presence(status=status, activity=game)
+        return await ctx.send(_("Status changed to {}.").format(status))
+
+    @_set_status.command(name="online")
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_online(self, ctx: commands.Context):
+        """Set [botname]'s status to online."""
+        await self._set_my_status(ctx, discord.Status.online)
+
+    @_set_status.command(name="dnd", aliases=["donotdisturb", "busy"])
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_dnd(self, ctx: commands.Context):
+        """Set [botname]'s status to do not disturb."""
+        await self._set_my_status(ctx, discord.Status.do_not_disturb)
+
+    @_set_status.command(name="idle", aliases=["away", "afk"])
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_idle(self, ctx: commands.Context):
+        """Set [botname]'s status to idle."""
+        await self._set_my_status(ctx, discord.Status.idle)
+
+    @_set_status.command(name="invisible", aliases=["offline"])
+    @checks.bot_in_a_guild()
+    @checks.is_owner()
+    async def _set_status_invisible(self, ctx: commands.Context):
+        """Set [botname]'s status to invisible."""
+        await self._set_my_status(ctx, discord.Status.invisible)
+
+    # -- End Bot Status Commands -- ###
+    # -- Bot Roles Commands -- ###
+
+    @_set.group(name="roles")
+    @checks.guildowner()
+    @commands.guild_only()
+    async def _set_roles(self, ctx: commands.Context):
+        """Set server's admin and mod roles for [botname]."""
+
+    @_set_roles.command(name="addadminrole")
+    @checks.guildowner()
+    @commands.guild_only()
+    async def _set_roles_addadminrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Adds an admin role for this server.
+
+        Admins have the same access as Mods, plus additional admin level commands like:
+         - `[p]set serverprefix`
+         - `[p]addrole`
+         - `[p]ban`
+         - `[p]ignore guild`
+
+         And more.
+
+        **Examples:**
+            - `[p]set roles addadminrole @Admins`
+            - `[p]set roles addadminrole Super Admins`
+
+        **Arguments:**
+            - `<role>` - The role to add as an admin.
+        """
+        async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
+            if role.id in roles:
+                return await ctx.send(_("This role is already an admin role."))
+            roles.append(role.id)
+        await ctx.send(_("That role is now considered an admin role."))
+
+    @_set_roles.command(name="addmodrole")
+    @checks.guildowner()
+    @commands.guild_only()
+    async def _set_roles_addmodrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Adds a moderator role for this server.
+
+        This grants access to moderator level commands like:
+         - `[p]mute`
+         - `[p]cleanup`
+         - `[p]customcommand create`
+
+         And more.
+
+        **Examples:**
+            - `[p]set roles addmodrole @Mods`
+            - `[p]set roles addmodrole Loyal Helpers`
+
+        **Arguments:**
+            - `<role>` - The role to add as a moderator.
+        """
+        async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
+            if role.id in roles:
+                return await ctx.send(_("This role is already a mod role."))
+            roles.append(role.id)
+        await ctx.send(_("That role is now considered a mod role."))
+
+    @_set_roles.command(
+        name="removeadminrole", aliases=["remadmindrole", "deladminrole", "deleteadminrole"]
+    )
+    @checks.guildowner()
+    @commands.guild_only()
+    async def _set_roles_removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Removes an admin role for this server.
+
+        **Examples:**
+            - `[p]set roles removeadminrole @Admins`
+            - `[p]set roles removeadminrole Super Admins`
+
+        **Arguments:**
+            - `<role>` - The role to remove from being an admin.
+        """
+        async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
+            if role.id not in roles:
+                return await ctx.send(_("That role was not an admin role to begin with."))
+            roles.remove(role.id)
+        await ctx.send(_("That role is no longer considered an admin role."))
+
+    @_set_roles.command(
+        name="removemodrole", aliases=["remmodrole", "delmodrole", "deletemodrole"]
+    )
+    @checks.guildowner()
+    @commands.guild_only()
+    async def _set_roles_removemodrole(self, ctx: commands.Context, *, role: discord.Role):
+        """
+        Removes a mod role for this server.
+
+        **Examples:**
+            - `[p]set roles removemodrole @Mods`
+            - `[p]set roles removemodrole Loyal Helpers`
+
+        **Arguments:**
+            - `<role>` - The role to remove from being a moderator.
+        """
+        async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
+            if role.id not in roles:
+                return await ctx.send(_("That role was not a mod role to begin with."))
+            roles.remove(role.id)
+        await ctx.send(_("That role is no longer considered a mod role."))
+
+    # -- End Set Roles Commands -- ###
+    # -- Set Locale Commands -- ###
+
+    @_set.group(name="locale", invoke_without_command=True)
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def _set_locale(self, ctx: commands.Context, language_code: str):
+        """
+        Changes [botname]'s locale in this server.
+
+        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
+
+        Use "default" to return to the bot's default set language.
+
+        If you want to change bot's global locale, see `[p]set locale global` command.
+
+        **Examples:**
+            - `[p]set locale en-US`
+            - `[p]set locale de-DE`
+            - `[p]set locale fr-FR`
+            - `[p]set locale pl-PL`
+            - `[p]set locale default` - Resets to the global default locale.
+
+        **Arguments:**
+            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
+        """
+        if ctx.guild is None:
+            await ctx.send_help()
+            return
+        await ctx.invoke(self._set_locale_local, language_code)
+
+    @_set_locale.command(name="global")
+    @checks.is_owner()
+    async def _set_locale_global(self, ctx: commands.Context, language_code: str):
+        """
+        Changes [botname]'s default locale.
+
+        This will be used when a server has not set a locale, or in DMs.
+
+        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
+
+        To reset to English, use "en-US".
+
+        **Examples:**
+            - `[p]set locale global en-US`
+            - `[p]set locale global de-DE`
+            - `[p]set locale global fr-FR`
+            - `[p]set locale global pl-PL`
+
+        **Arguments:**
+            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
+        """
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_locale(standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(None, standardized_locale_name)
+        await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
+        await ctx.send(_("Global locale has been set."))
+
+    @_set_locale.command(name="server", aliases=["local", "guild"])
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def _set_locale_local(self, ctx: commands.Context, language_code: str):
+        """
+        Changes [botname]'s locale in this server.
+
+        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
+
+        Use "default" to return to the bot's default set language.
+
+        **Examples:**
+            - `[p]set locale server en-US`
+            - `[p]set locale server de-DE`
+            - `[p]set locale server fr-FR`
+            - `[p]set locale server pl-PL`
+            - `[p]set locale server default` - Resets to the global default locale.
+
+        **Arguments:**
+            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
+        """
+        if language_code.lower() == "default":
+            global_locale = await self.bot._config.locale()
+            i18n.set_contextual_locale(global_locale)
+            await self.bot._i18n_cache.set_locale(ctx.guild, None)
+            await ctx.send(_("Locale has been set to the default."))
+            return
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_contextual_locale(standardized_locale_name)
+        await self.bot._i18n_cache.set_locale(ctx.guild, standardized_locale_name)
+        await ctx.send(_("Locale has been set."))
+
+    @_set.group(name="regionalformat", aliases=["region"], invoke_without_command=True)
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def _set_regional_format(self, ctx: commands.Context, language_code: str):
+        """
+        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
+
+        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        Pass "reset" to `language_code` to base regional formatting on bot's locale in this server.
+
+        If you want to change bot's global regional format, see `[p]set regionalformat global` command.
+
+        **Examples:**
+            - `[p]set regionalformat en-US`
+            - `[p]set region de-DE`
+            - `[p]set regionalformat reset` - Resets to the locale.
+
+        **Arguments:**
+            - `[language_code]` - The region format to use for the bot in this server.
+        """
+        if ctx.guild is None:
+            await ctx.send_help()
+            return
+        await ctx.invoke(self._set_regional_format_local, language_code)
+
+    @_set_regional_format.command(name="global")
+    @checks.is_owner()
+    async def _set_regional_format_global(self, ctx: commands.Context, language_code: str):
+        """
+        Changes the bot's regional format. This is used for formatting date, time and numbers.
+
+        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        Pass "reset" to `language_code` to base regional formatting on bot's locale.
+
+        **Examples:**
+            - `[p]set regionalformat global en-US`
+            - `[p]set region global de-DE`
+            - `[p]set regionalformat global reset` - Resets to the locale.
+
+        **Arguments:**
+            - `[language_code]` - The default region format to use for the bot.
+        """
+        if language_code.lower() == "reset":
+            i18n.set_regional_format(None)
+            await self.bot._i18n_cache.set_regional_format(None, None)
+            await ctx.send(_("Global regional formatting will now be based on bot's locale."))
+            return
+
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_regional_format(standardized_locale_name)
+        await self.bot._i18n_cache.set_regional_format(None, standardized_locale_name)
+        await ctx.send(
+            _("Global regional formatting will now be based on `{language_code}` locale.").format(
+                language_code=standardized_locale_name
+            )
+        )
+
+    @_set_regional_format.command(name="server", aliases=["local", "guild"])
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(manage_guild=True)
+    async def _set_regional_format_local(self, ctx: commands.Context, language_code: str):
+        """
+        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
+
+        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
+        Pass "reset" to `language_code` to base regional formatting on bot's locale in this server.
+
+        **Examples:**
+            - `[p]set regionalformat server en-US`
+            - `[p]set region local de-DE`
+            - `[p]set regionalformat server reset` - Resets to the locale.
+
+        **Arguments:**
+            - `[language_code]` - The region format to use for the bot in this server.
+        """
+        if language_code.lower() == "reset":
+            i18n.set_contextual_regional_format(None)
+            await self.bot._i18n_cache.set_regional_format(ctx.guild, None)
+            await ctx.send(
+                _("Regional formatting will now be based on bot's locale in this server.")
+            )
+            return
+
+        try:
+            locale = BabelLocale.parse(language_code, sep="-")
+        except (ValueError, UnknownLocaleError):
+            await ctx.send(_("Invalid language code. Use format: `en-US`"))
+            return
+        if locale.territory is None:
+            await ctx.send(
+                _("Invalid format - language code has to include country code, e.g. `en-US`")
+            )
+            return
+        standardized_locale_name = f"{locale.language}-{locale.territory}"
+        i18n.set_contextual_regional_format(standardized_locale_name)
+        await self.bot._i18n_cache.set_regional_format(ctx.guild, standardized_locale_name)
+        await ctx.send(
+            _("Regional formatting will now be based on `{language_code}` locale.").format(
+                language_code=standardized_locale_name
+            )
+        )
+
+    # -- End Set Locale Commands -- ###
+    # -- Set Api Commands -- ###
+
+    @_set.group(name="api", invoke_without_command=True)
+    @checks.is_owner()
+    async def _set_api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
+        """
+        Commands to set, list or remove various external API tokens.
+
+        This setting will be asked for by some 3rd party cogs and some core cogs.
+
+        To add the keys provide the service name and the tokens as a comma separated
+        list of key,values as described by the cog requesting this command.
+
+        Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.
+
+        **Examples:**
+            - `[p]set api spotify redirect_uri localhost`
+            - `[p]set api github client_id,whoops client_secret,whoops`
+
+        **Arguments:**
+            - `<service>` - The service you're adding tokens to.
+            - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
+        """
+        if ctx.channel.permissions_for(ctx.me).manage_messages:
+            await ctx.message.delete()
+        await ctx.bot.set_shared_api_tokens(service, **tokens)
+        await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+
+    @_set_api.command(name="list")
+    async def _set_api_list(self, ctx: commands.Context):
+        """
+        Show all external API services along with their keys that have been set.
+
+        Secrets are not shown.
+
+        **Example:**
+            - `[p]set api list`
+        """
+
+        services: dict = await ctx.bot.get_shared_api_tokens()
+        if not services:
+            await ctx.send(_("No API services have been set yet."))
+            return
+
+        sorted_services = sorted(services.keys(), key=str.lower)
+
+        joined = _("Set API services:\n") if len(services) > 1 else _("Set API service:\n")
+        for service_name in sorted_services:
+            joined += "+ {}\n".format(service_name)
+            for key_name in services[service_name].keys():
+                joined += "  - {}\n".format(key_name)
+        for page in pagify(joined, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
+
+    @_set_api.command(name="remove", require_var_positional=True)
+    async def _set_api_remove(self, ctx: commands.Context, *services: str):
+        """
+        Remove the given services with all their keys and tokens.
+
+        **Examples:**
+            - `[p]set api remove spotify`
+            - `[p]set api remove github youtube`
+
+        **Arguments:**
+            - `<services...>` - The services to remove."""
+        bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
+        services = [s for s in services if s in bot_services]
+
+        if services:
+            await self.bot.remove_shared_api_services(*services)
+            if len(services) > 1:
+                msg = _("Services deleted successfully:\n{services_list}").format(
+                    services_list=humanize_list(services)
+                )
+            else:
+                msg = _("Service deleted successfully: {service_name}").format(
+                    service_name=services[0]
+                )
+            await ctx.send(msg)
+        else:
+            await ctx.send(_("None of the services you provided had any keys set."))
+
+    # -- End Set Api Commands -- ###
+    # -- Set Ownernotifications Commands -- ###
+
+    @checks.is_owner()
+    @_set.group(name="ownernotifications")
+    async def _set_ownernotifications(self, ctx: commands.Context):
+        """
+        Commands for configuring owner notifications.
+
+        Owner notifications include usage of `[p]contact` and available Red updates.
+        """
+        pass
+
+    @_set_ownernotifications.command(name="optin")
+    async def _set_ownernotifications_optin(self, ctx: commands.Context):
+        """
+        Opt-in on receiving owner notifications.
+
+        This is the default state.
+
+        Note: This will only resume sending owner notifications to your DMs.
+            Additional owners and destinations will not be affected.
+
+        **Example:**
+            - `[p]set ownernotifications optin`
+        """
+        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
+            if ctx.author.id in opt_outs:
+                opt_outs.remove(ctx.author.id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(name="optout")
+    async def _set_ownernotifications_optout(self, ctx: commands.Context):
+        """
+        Opt-out of receiving owner notifications.
+
+        Note: This will only stop sending owner notifications to your DMs.
+            Additional owners and destinations will still receive notifications.
+
+        **Example:**
+            - `[p]set ownernotifications optout`
+        """
+        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
+            if ctx.author.id not in opt_outs:
+                opt_outs.append(ctx.author.id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(name="adddestination")
+    async def _set_ownernotifications_adddestination(
+        self, ctx: commands.Context, *, channel: discord.TextChannel
+    ):
+        """
+        Adds a destination text channel to receive owner notifications.
+
+        **Examples:**
+            - `[p]set ownernotifications adddestination #owner-notifications`
+            - `[p]set ownernotifications adddestination 168091848718417920` - Accepts channel IDs.
+
+        **Arguments:**
+            - `<channel>` - The channel to send owner notifications to.
+        """
+        async with ctx.bot._config.extra_owner_destinations() as extras:
+            if channel.id not in extras:
+                extras.append(channel.id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(
+        name="removedestination", aliases=["remdestination", "deletedestination", "deldestination"]
+    )
+    async def _set_ownernotifications_removedestination(
+        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
+    ):
+        """
+        Removes a destination text channel from receiving owner notifications.
+
+        **Examples:**
+            - `[p]set ownernotifications removedestination #owner-notifications`
+            - `[p]set ownernotifications deletedestination 168091848718417920` - Accepts channel IDs.
+
+        **Arguments:**
+            - `<channel>` - The channel to stop sending owner notifications to.
+        """
+
+        try:
+            channel_id = channel.id
+        except AttributeError:
+            channel_id = channel
+
+        async with ctx.bot._config.extra_owner_destinations() as extras:
+            if channel_id in extras:
+                extras.remove(channel_id)
+
+        await ctx.tick()
+
+    @_set_ownernotifications.command(name="listdestinations")
+    async def _set_ownernotifications_listdestinations(self, ctx: commands.Context):
+        """
+        Lists the configured extra destinations for owner notifications.
+
+        **Example:**
+            - `[p]set ownernotifications listdestinations`
+        """
+
+        channel_ids = await ctx.bot._config.extra_owner_destinations()
+
+        if not channel_ids:
+            await ctx.send(_("There are no extra channels being sent to."))
+            return
+
+        data = []
+
+        for channel_id in channel_ids:
+            channel = ctx.bot.get_channel(channel_id)
+            if channel:
+                # This includes the channel name in case the user can't see the channel.
+                data.append(f"{channel.mention} {channel} ({channel.id})")
+            else:
+                data.append(_("Unknown channel with id: {id}").format(id=channel_id))
+
+        output = "\n".join(data)
+        for page in pagify(output):
+            await ctx.send(page)
+
+    # -- End Set Ownernotifications Commands -- ###
+
+    @_set.command(name="showsettings")
+    async def _set_showsettings(self, ctx: commands.Context):
         """
         Show the current settings for [botname].
         """
@@ -1997,10 +3307,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             guild = ctx.guild
             admin_role_ids = guild_data["admin_role"]
             admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
-            admin_roles_str = humanize_list(admin_role_names) if admin_role_names else "Not Set."
+            admin_roles_str = (
+                humanize_list(admin_role_names) if admin_role_names else _("Not Set.")
+            )
             mod_role_ids = guild_data["mod_role"]
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
-            mod_roles_str = humanize_list(mod_role_names) if mod_role_names else "Not Set."
+            mod_roles_str = humanize_list(mod_role_names) if mod_role_names else _("Not Set.")
 
             guild_locale = await i18n.get_locale_from_guild(self.bot, ctx.guild)
             guild_regional_format = (
@@ -2049,7 +3361,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     @_set.command(name="deletedelay")
     @commands.guild_only()
-    async def deletedelay(self, ctx: commands.Context, time: int = None):
+    async def _set_deletedelay(self, ctx: commands.Context, time: int = None):
         """Set the delay until the bot removes the command message.
 
         Must be between -1 and 60.
@@ -2087,141 +3399,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             else:
                 await ctx.send(_("I will not delete command messages."))
 
-    @checks.is_owner()
-    @_set.command(name="description")
-    async def setdescription(self, ctx: commands.Context, *, description: str = ""):
-        """
-        Sets the bot's description.
-
-        Use without a description to reset.
-        This is shown in a few locations, including the help menu.
-
-        The maximum description length is 250 characters to ensure it displays properly.
-
-        The default is "Red V3".
-
-        **Examples:**
-            - `[p]set description` - Resets the description to the default setting.
-            - `[p]set description MyBot: A Red V3 Bot`
-
-        **Arguments:**
-            - `[description]` - The description to use for this bot. Leave blank to reset to the default.
-        """
-        if not description:
-            await ctx.bot._config.description.clear()
-            ctx.bot.description = "Red V3"
-            await ctx.send(_("Description reset."))
-        elif len(description) > 250:  # While the limit is 256, we bold it adding characters.
-            await ctx.send(
-                _(
-                    "This description is too long to properly display. "
-                    "Please try again with below 250 characters."
-                )
-            )
-        else:
-            await ctx.bot._config.description.set(description)
-            ctx.bot.description = description
-            await ctx.tick()
-
-    @_set.command()
+    @_set.command(name="usebotcolour", aliases=["usebotcolor"])
     @checks.guildowner()
     @commands.guild_only()
-    async def addadminrole(self, ctx: commands.Context, *, role: discord.Role):
-        """
-        Adds an admin role for this guild.
-
-        Admins have the same access as Mods, plus additional admin level commands like:
-         - `[p]set serverprefix`
-         - `[p]addrole`
-         - `[p]ban`
-         - `[p]ignore guild`
-
-         And more.
-
-         **Examples:**
-            - `[p]set addadminrole @Admins`
-            - `[p]set addadminrole Super Admins`
-
-        **Arguments:**
-            - `<role>` - The role to add as an admin.
-        """
-        async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
-            if role.id in roles:
-                return await ctx.send(_("This role is already an admin role."))
-            roles.append(role.id)
-        await ctx.send(_("That role is now considered an admin role."))
-
-    @_set.command()
-    @checks.guildowner()
-    @commands.guild_only()
-    async def addmodrole(self, ctx: commands.Context, *, role: discord.Role):
-        """
-        Adds a moderator role for this guild.
-
-        This grants access to moderator level commands like:
-         - `[p]mute`
-         - `[p]cleanup`
-         - `[p]customcommand create`
-
-         And more.
-
-         **Examples:**
-            - `[p]set addmodrole @Mods`
-            - `[p]set addmodrole Loyal Helpers`
-
-        **Arguments:**
-            - `<role>` - The role to add as a moderator.
-        """
-        async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
-            if role.id in roles:
-                return await ctx.send(_("This role is already a mod role."))
-            roles.append(role.id)
-        await ctx.send(_("That role is now considered a mod role."))
-
-    @_set.command(aliases=["remadmindrole", "deladminrole", "deleteadminrole"])
-    @checks.guildowner()
-    @commands.guild_only()
-    async def removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
-        """
-        Removes an admin role for this guild.
-
-        **Examples:**
-            - `[p]set removeadminrole @Admins`
-            - `[p]set removeadminrole Super Admins`
-
-        **Arguments:**
-            - `<role>` - The role to remove from being an admin.
-        """
-        async with ctx.bot._config.guild(ctx.guild).admin_role() as roles:
-            if role.id not in roles:
-                return await ctx.send(_("That role was not an admin role to begin with."))
-            roles.remove(role.id)
-        await ctx.send(_("That role is no longer considered an admin role."))
-
-    @_set.command(aliases=["remmodrole", "delmodrole", "deletemodrole"])
-    @checks.guildowner()
-    @commands.guild_only()
-    async def removemodrole(self, ctx: commands.Context, *, role: discord.Role):
-        """
-        Removes a mod role for this guild.
-
-        **Examples:**
-            - `[p]set removemodrole @Mods`
-            - `[p]set removemodrole Loyal Helpers`
-
-        **Arguments:**
-            - `<role>` - The role to remove from being a moderator.
-        """
-        async with ctx.bot._config.guild(ctx.guild).mod_role() as roles:
-            if role.id not in roles:
-                return await ctx.send(_("That role was not a mod role to begin with."))
-            roles.remove(role.id)
-        await ctx.send(_("That role is no longer considered a mod role."))
-
-    @_set.command(aliases=["usebotcolor"])
-    @checks.guildowner()
-    @commands.guild_only()
-    async def usebotcolour(self, ctx: commands.Context):
+    async def _set_usebotcolour(self, ctx: commands.Context):
         """
         Toggle whether to use the bot owner-configured colour for embeds.
 
@@ -2239,10 +3420,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command()
+    @_set.command(name="serverfuzzy")
     @checks.guildowner()
     @commands.guild_only()
-    async def serverfuzzy(self, ctx: commands.Context):
+    async def _set_serverfuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search for the server.
 
@@ -2263,9 +3444,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command()
+    @_set.command(name="fuzzy")
     @checks.is_owner()
-    async def fuzzy(self, ctx: commands.Context):
+    async def _set_fuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search in DMs.
 
@@ -2284,9 +3465,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command(aliases=["color"])
+    @_set.command(name="colour", aliases=["color"])
     @checks.is_owner()
-    async def colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
+    async def _set_colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
         """
         Sets a default colour to be used for the bot's embeds.
 
@@ -2312,365 +3493,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
 
-    @_set.group(invoke_without_command=True)
-    @checks.is_owner()
-    async def avatar(self, ctx: commands.Context, url: str = None):
-        """Sets [botname]'s avatar
-
-        Supports either an attachment or an image URL.
-
-        **Examples:**
-            - `[p]set avatar` - With an image attachment, this will set the avatar.
-            - `[p]set avatar` - Without an attachment, this will show the command help.
-            - `[p]set avatar https://links.flaree.xyz/k95` - Sets the avatar to the provided url.
-
-        **Arguments:**
-            - `[url]` - An image url to be used as an avatar. Leave blank when uploading an attachment.
-        """
-        if len(ctx.message.attachments) > 0:  # Attachments take priority
-            data = await ctx.message.attachments[0].read()
-        elif url is not None:
-            if url.startswith("<") and url.endswith(">"):
-                url = url[1:-1]
-
-            async with aiohttp.ClientSession() as session:
-                try:
-                    async with session.get(url) as r:
-                        data = await r.read()
-                except aiohttp.InvalidURL:
-                    return await ctx.send(_("That URL is invalid."))
-                except aiohttp.ClientError:
-                    return await ctx.send(_("Something went wrong while trying to get the image."))
-        else:
-            await ctx.send_help()
-            return
-
-        try:
-            async with ctx.typing():
-                await ctx.bot.user.edit(avatar=data)
-        except discord.HTTPException:
-            await ctx.send(
-                _(
-                    "Failed. Remember that you can edit my avatar "
-                    "up to two times a hour. The URL or attachment "
-                    "must be a valid image in either JPG or PNG format."
-                )
-            )
-        except discord.InvalidArgument:
-            await ctx.send(_("JPG / PNG format only."))
-        else:
-            await ctx.send(_("Done."))
-
-    @avatar.command(name="remove", aliases=["clear"])
-    @checks.is_owner()
-    async def avatar_remove(self, ctx: commands.Context):
-        """
-        Removes [botname]'s avatar.
-
-        **Example:**
-            - `[p]set avatar remove`
-        """
-        async with ctx.typing():
-            await ctx.bot.user.edit(avatar=None)
-        await ctx.send(_("Avatar removed."))
-
-    @_set.command(name="playing", aliases=["game"])
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
-    async def _game(self, ctx: commands.Context, *, game: str = None):
-        """Sets [botname]'s playing status.
-
-        This will appear as `Playing <game>` or `PLAYING A GAME: <game>` depending on the context.
-
-        Maximum length for a playing status is 128 characters.
-
-        **Examples:**
-            - `[p]set playing` - Clears the activity status.
-            - `[p]set playing the keyboard`
-
-        **Arguments:**
-            - `[game]` - The text to follow `Playing`. Leave blank to clear the current activity status.
-        """
-
-        if game:
-            if len(game) > 128:
-                await ctx.send(_("The maximum length of game descriptions is 128 characters."))
-                return
-            game = discord.Game(name=game)
-        else:
-            game = None
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
-        await ctx.bot.change_presence(status=status, activity=game)
-        if game:
-            await ctx.send(_("Status set to ``Playing {game.name}``.").format(game=game))
-        else:
-            await ctx.send(_("Game cleared."))
-
-    @_set.command(name="listening")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
-    async def _listening(self, ctx: commands.Context, *, listening: str = None):
-        """Sets [botname]'s listening status.
-
-        This will appear as `Listening to <listening>`.
-
-        Maximum length for a listening status is 128 characters.
-
-        **Examples:**
-            - `[p]set listening` - Clears the activity status.
-            - `[p]set listening jams`
-
-        **Arguments:**
-            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."""
-
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
-        if listening:
-            if len(listening) > 128:
-                await ctx.send(
-                    _("The maximum length of listening descriptions is 128 characters.")
-                )
-                return
-            activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
-        else:
-            activity = None
-        await ctx.bot.change_presence(status=status, activity=activity)
-        if activity:
-            await ctx.send(
-                _("Status set to ``Listening to {listening}``.").format(listening=listening)
-            )
-        else:
-            await ctx.send(_("Listening cleared."))
-
-    @_set.command(name="watching")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
-    async def _watching(self, ctx: commands.Context, *, watching: str = None):
-        """Sets [botname]'s watching status.
-
-        This will appear as `Watching <watching>`.
-
-        Maximum length for a watching status is 128 characters.
-
-        **Examples:**
-            - `[p]set watching` - Clears the activity status.
-            - `[p]set watching [p]help`
-
-        **Arguments:**
-            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."""
-
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
-        if watching:
-            if len(watching) > 128:
-                await ctx.send(_("The maximum length of watching descriptions is 128 characters."))
-                return
-            activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
-        else:
-            activity = None
-        await ctx.bot.change_presence(status=status, activity=activity)
-        if activity:
-            await ctx.send(_("Status set to ``Watching {watching}``.").format(watching=watching))
-        else:
-            await ctx.send(_("Watching cleared."))
-
-    @_set.command(name="competing")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
-    async def _competing(self, ctx: commands.Context, *, competing: str = None):
-        """Sets [botname]'s competing status.
-
-        This will appear as `Competing in <competing>`.
-
-        Maximum length for a competing status is 128 characters.
-
-        **Examples:**
-            - `[p]set competing` - Clears the activity status.
-            - `[p]set competing London 2012 Olympic Games`
-
-        **Arguments:**
-            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."""
-
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
-        if competing:
-            if len(competing) > 128:
-                await ctx.send(
-                    _("The maximum length of competing descriptions is 128 characters.")
-                )
-                return
-            activity = discord.Activity(name=competing, type=discord.ActivityType.competing)
-        else:
-            activity = None
-        await ctx.bot.change_presence(status=status, activity=activity)
-        if activity:
-            await ctx.send(
-                _("Status set to ``Competing in {competing}``.").format(competing=competing)
-            )
-        else:
-            await ctx.send(_("Competing cleared."))
-
-    @_set.command()
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
-    async def status(self, ctx: commands.Context, *, status: str):
-        """Sets [botname]'s status.
-
-        Available statuses:
-            - `online`
-            - `idle`
-            - `dnd`
-            - `invisible`
-
-        **Examples:**
-            - `[p]set status online` - Clears the status.
-            - `[p]set status invisible`
-
-        **Arguments:**
-            - `<status>` - One of the available statuses.
-        """
-
-        statuses = {
-            "online": discord.Status.online,
-            "idle": discord.Status.idle,
-            "dnd": discord.Status.dnd,
-            "invisible": discord.Status.invisible,
-        }
-
-        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
-        try:
-            status = statuses[status.lower()]
-        except KeyError:
-            await ctx.send_help()
-        else:
-            await ctx.bot.change_presence(status=status, activity=game)
-            await ctx.send(_("Status changed to {}.").format(status))
-
     @_set.command(
-        name="streaming", aliases=["stream", "twitch"], usage="[(<streamer> <stream_title>)]"
+        name="prefix",
+        aliases=["prefixes", "globalprefix", "globalprefixes"],
+        require_var_positional=True,
     )
-    @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
-        """Sets [botname]'s streaming status to a twitch stream.
-
-        This will appear as `Streaming <stream_title>` or `LIVE ON TWITCH` depending on the context.
-        It will also include a `Watch` button with a twitch.tv url for the provided streamer.
-
-        Maximum length for a stream title is 128 characters.
-
-        Leaving both streamer and stream_title empty will clear it.
-
-        **Examples:**
-            - `[p]set stream` - Clears the activity status.
-            - `[p]set stream 26 Twentysix is streaming` - Sets the stream to `https://www.twitch.tv/26`.
-            - `[p]set stream https://twitch.tv/26 Twentysix is streaming` - Sets the URL manually.
-
-        **Arguments:**
-            - `<streamer>` - The twitch streamer to provide a link to. This can be their twitch name or the entire URL.
-            - `<stream_title>` - The text to follow `Streaming` in the status."""
-
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
-
-        if stream_title:
-            stream_title = stream_title.strip()
-            if "twitch.tv/" not in streamer:
-                streamer = "https://www.twitch.tv/" + streamer
-            if len(streamer) > 511:
-                await ctx.send(_("The maximum length of the streamer url is 511 characters."))
-                return
-            if len(stream_title) > 128:
-                await ctx.send(_("The maximum length of the stream title is 128 characters."))
-                return
-            activity = discord.Streaming(url=streamer, name=stream_title)
-            await ctx.bot.change_presence(status=status, activity=activity)
-        elif streamer is not None:
-            await ctx.send_help()
-            return
-        else:
-            await ctx.bot.change_presence(activity=None, status=status)
-        await ctx.send(_("Done."))
-
-    @_set.command(name="username", aliases=["name"])
-    @checks.is_owner()
-    async def _username(self, ctx: commands.Context, *, username: str):
-        """Sets [botname]'s username.
-
-        Maximum length for a username is 32 characters.
-
-        Note: The username of a verified bot cannot be manually changed.
-            Please contact Discord support to change it.
-
-        **Example:**
-            - `[p]set username BaguetteBot`
-
-        **Arguments:**
-            - `<username>` - The username to give the bot.
-        """
-        try:
-            if self.bot.user.public_flags.verified_bot:
-                await ctx.send(
-                    _(
-                        "The username of a verified bot cannot be manually changed."
-                        " Please contact Discord support to change it."
-                    )
-                )
-                return
-            if len(username) > 32:
-                await ctx.send(_("Failed to change name. Must be 32 characters or fewer."))
-                return
-            async with ctx.typing():
-                await asyncio.wait_for(self._name(name=username), timeout=30)
-        except asyncio.TimeoutError:
-            await ctx.send(
-                _(
-                    "Changing the username timed out. "
-                    "Remember that you can only do it up to 2 times an hour."
-                    " Use nicknames if you need frequent changes: {command}"
-                ).format(command=inline(f"{ctx.clean_prefix}set nickname"))
-            )
-        except discord.HTTPException as e:
-            if e.code == 50035:
-                error_string = e.text.split("\n")[1]  # Remove the "Invalid Form body"
-                await ctx.send(
-                    _(
-                        "Failed to change the username. "
-                        "Discord returned the following error:\n"
-                        "{error_message}"
-                    ).format(error_message=inline(error_string))
-                )
-            else:
-                log.error(
-                    "Unexpected error occurred when trying to change the username.", exc_info=e
-                )
-                await ctx.send(_("Unexpected error occurred when trying to change the username."))
-        else:
-            await ctx.send(_("Done."))
-
-    @_set.command(name="nickname")
-    @checks.admin_or_permissions(manage_nicknames=True)
-    @commands.guild_only()
-    async def _nickname(self, ctx: commands.Context, *, nickname: str = None):
-        """Sets [botname]'s nickname for the current server.
-
-        Maximum length for a nickname is 32 characters.
-
-        **Example:**
-            - `[p]set nickname 🎃 SpookyBot 🎃`
-
-        **Arguments:**
-            - `[nickname]` - The nickname to give the bot. Leave blank to clear the current nickname.
-        """
-        try:
-            if nickname and len(nickname) > 32:
-                await ctx.send(_("Failed to change nickname. Must be 32 characters or fewer."))
-                return
-            await ctx.guild.me.edit(nick=nickname)
-        except discord.Forbidden:
-            await ctx.send(_("I lack the permissions to change my own nickname."))
-        else:
-            await ctx.send(_("Done."))
-
-    @_set.command(aliases=["prefixes"], require_var_positional=True)
-    @checks.is_owner()
-    async def prefix(self, ctx: commands.Context, *prefixes: str):
+    async def _set_prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es).
 
         Warning: This is not additive. It will replace all current prefixes.
@@ -2689,7 +3518,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(
                 _(
-                    "Warning: A prefix is above the recommended length (20 characters).\n"
+                    "Warning: A prefix is above the recommended length (25 characters).\n"
                     "Do you want to continue?"
                 )
                 + " (yes/no)"
@@ -2710,16 +3539,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Prefixes set."))
 
-    @_set.command(aliases=["serverprefixes"])
+    @_set.command(name="serverprefix", aliases=["serverprefixes"])
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
-    async def serverprefix(self, ctx: commands.Context, *prefixes: str):
+    async def _set_serverprefix(self, ctx: commands.Context, *prefixes: str):
         """
         Sets [botname]'s server prefix(es).
 
         Warning: This will override global prefixes, the bot will not respond to any global prefixes in this server.
             This is not additive. It will replace all current server prefixes.
-            A prefix cannot have more than 20 characters.
+            A prefix cannot have more than 25 characters.
 
         **Examples:**
             - `[p]set serverprefix !`
@@ -2735,7 +3564,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Server prefixes have been reset."))
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
-            await ctx.send(_("You cannot have a prefix longer than 20 characters."))
+            await ctx.send(_("You cannot have a prefix longer than 25 characters."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
@@ -2743,282 +3572,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Server prefix set."))
         else:
             await ctx.send(_("Server prefixes set."))
-
-    @_set.command()
-    @checks.is_owner()
-    async def globallocale(self, ctx: commands.Context, language_code: str):
-        """
-        Changes the bot's default locale.
-
-        This will be used when a server has not set a locale, or in DMs.
-
-        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
-
-        To reset to English, use "en-US".
-
-        **Examples:**
-            - `[p]set locale en-US`
-            - `[p]set locale de-DE`
-            - `[p]set locale fr-FR`
-            - `[p]set locale pl-PL`
-
-        **Arguments:**
-            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
-        """
-        try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
-            await ctx.send(_("Invalid language code. Use format: `en-US`"))
-            return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_locale(standardized_locale_name)
-        await self.bot._i18n_cache.set_locale(None, standardized_locale_name)
-        await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
-        await ctx.send(_("Global locale has been set."))
-
-    @_set.command()
-    @commands.guild_only()
-    @checks.guildowner_or_permissions(manage_guild=True)
-    async def locale(self, ctx: commands.Context, language_code: str):
-        """
-        Changes the bot's locale in this server.
-
-        Go to [Red's Crowdin page](https://translate.discord.red) to see locales that are available with translations.
-
-        Use "default" to return to the bot's default set language.
-        To reset to English, use "en-US".
-
-        **Examples:**
-            - `[p]set locale en-US`
-            - `[p]set locale de-DE`
-            - `[p]set locale fr-FR`
-            - `[p]set locale pl-PL`
-            - `[p]set locale default` - Resets to the global default locale.
-
-        **Arguments:**
-            - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
-        """
-        if language_code.lower() == "default":
-            global_locale = await self.bot._config.locale()
-            i18n.set_contextual_locale(global_locale)
-            await self.bot._i18n_cache.set_locale(ctx.guild, None)
-            await ctx.send(_("Locale has been set to the default."))
-            return
-        try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
-            await ctx.send(_("Invalid language code. Use format: `en-US`"))
-            return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_contextual_locale(standardized_locale_name)
-        await self.bot._i18n_cache.set_locale(ctx.guild, standardized_locale_name)
-        await ctx.send(_("Locale has been set."))
-
-    @_set.command(aliases=["globalregion"])
-    @commands.guild_only()
-    @checks.is_owner()
-    async def globalregionalformat(self, ctx: commands.Context, language_code: str = None):
-        """
-        Changes the bot's regional format. This is used for formatting date, time and numbers.
-
-        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
-        Leave `language_code` empty to base regional formatting on bot's locale.
-
-        **Examples:**
-            - `[p]set globalregionalformat en-US`
-            - `[p]set globalregion de-DE`
-            - `[p]set globalregionalformat` - Resets to the locale.
-
-        **Arguments:**
-            - `[language_code]` - The default region format to use for the bot.
-        """
-        if language_code is None:
-            i18n.set_regional_format(None)
-            await self.bot._i18n_cache.set_regional_format(None, None)
-            await ctx.send(_("Global regional formatting will now be based on bot's locale."))
-            return
-
-        try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
-            await ctx.send(_("Invalid language code. Use format: `en-US`"))
-            return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_regional_format(standardized_locale_name)
-        await self.bot._i18n_cache.set_regional_format(None, standardized_locale_name)
-        await ctx.send(
-            _("Global regional formatting will now be based on `{language_code}` locale.").format(
-                language_code=standardized_locale_name
-            )
-        )
-
-    @_set.command(aliases=["region"])
-    @checks.guildowner_or_permissions(manage_guild=True)
-    async def regionalformat(self, ctx: commands.Context, language_code: str = None):
-        """
-        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
-
-        `language_code` can be any language code with country code included, e.g. `en-US`, `de-DE`, `fr-FR`, `pl-PL`, etc.
-        Leave `language_code` empty to base regional formatting on bot's locale in this server.
-
-        **Examples:**
-            - `[p]set regionalformat en-US`
-            - `[p]set region de-DE`
-            - `[p]set regionalformat` - Resets to the locale.
-
-        **Arguments:**
-            - `[language_code]` - The region format to use for the bot in this server.
-        """
-        if language_code is None:
-            i18n.set_contextual_regional_format(None)
-            await self.bot._i18n_cache.set_regional_format(ctx.guild, None)
-            await ctx.send(
-                _("Regional formatting will now be based on bot's locale in this server.")
-            )
-            return
-
-        try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
-            await ctx.send(_("Invalid language code. Use format: `en-US`"))
-            return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_contextual_regional_format(standardized_locale_name)
-        await self.bot._i18n_cache.set_regional_format(ctx.guild, standardized_locale_name)
-        await ctx.send(
-            _("Regional formatting will now be based on `{language_code}` locale.").format(
-                language_code=standardized_locale_name
-            )
-        )
-
-    @_set.command()
-    @checks.is_owner()
-    async def custominfo(self, ctx: commands.Context, *, text: str = None):
-        """Customizes a section of `[p]info`.
-
-        The maximum amount of allowed characters is 1024.
-        Supports markdown, links and "mentions".
-
-        Link example: `[My link](https://example.com)`
-
-        **Examples:**
-            - `[p]set custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
-            - `[p]set custominfo Join my [support server](discord.gg/discord)!`
-            - `[p]set custominfo` - Removes custom info text.
-
-        **Arguments:**
-            - `[text]` - The custom info text.
-        """
-        if not text:
-            await ctx.bot._config.custom_info.clear()
-            await ctx.send(_("The custom text has been cleared."))
-            return
-        if len(text) <= 1024:
-            await ctx.bot._config.custom_info.set(text)
-            await ctx.send(_("The custom text has been set."))
-            await ctx.invoke(self.info)
-        else:
-            await ctx.send(_("Text must be fewer than 1024 characters long."))
-
-    @_set.group(invoke_without_command=True)
-    @checks.is_owner()
-    async def api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
-        """
-        Commands to set, list or remove various external API tokens.
-
-        This setting will be asked for by some 3rd party cogs and some core cogs.
-
-        To add the keys provide the service name and the tokens as a comma separated
-        list of key,values as described by the cog requesting this command.
-
-        Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.
-
-        **Examples:**
-            - `[p]set api Spotify redirect_uri localhost`
-            - `[p]set api github client_id,whoops client_secret,whoops`
-
-        **Arguments:**
-            - `<service>` - The service you're adding tokens to.
-            - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
-        """
-        if ctx.channel.permissions_for(ctx.me).manage_messages:
-            await ctx.message.delete()
-        await ctx.bot.set_shared_api_tokens(service, **tokens)
-        await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
-
-    @api.command(name="list")
-    async def api_list(self, ctx: commands.Context):
-        """
-        Show all external API services along with their keys that have been set.
-
-        Secrets are not shown.
-
-        **Example:**
-            - `[p]set api list``
-        """
-
-        services: dict = await ctx.bot.get_shared_api_tokens()
-        if not services:
-            await ctx.send(_("No API services have been set yet."))
-            return
-
-        sorted_services = sorted(services.keys(), key=str.lower)
-
-        joined = _("Set API services:\n") if len(services) > 1 else _("Set API service:\n")
-        for service_name in sorted_services:
-            joined += "+ {}\n".format(service_name)
-            for key_name in services[service_name].keys():
-                joined += "  - {}\n".format(key_name)
-        for page in pagify(joined, ["\n"], shorten_by=16):
-            await ctx.send(box(page.lstrip(" "), lang="diff"))
-
-    @api.command(name="remove", require_var_positional=True)
-    async def api_remove(self, ctx: commands.Context, *services: str):
-        """
-        Remove the given services with all their keys and tokens.
-
-        **Examples:**
-            - `[p]set api remove Spotify`
-            - `[p]set api remove github audiodb`
-
-        **Arguments:**
-            - `<services...>` - The services to remove."""
-        bot_services = (await ctx.bot.get_shared_api_tokens()).keys()
-        services = [s for s in services if s in bot_services]
-
-        if services:
-            await self.bot.remove_shared_api_services(*services)
-            if len(services) > 1:
-                msg = _("Services deleted successfully:\n{services_list}").format(
-                    services_list=humanize_list(services)
-                )
-            else:
-                msg = _("Service deleted successfully: {service_name}").format(
-                    service_name=services[0]
-                )
-            await ctx.send(msg)
-        else:
-            await ctx.send(_("None of the services you provided had any keys set."))
 
     @commands.group()
     @checks.is_owner()
@@ -3038,7 +3591,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Warning: These settings may not be accurate if the default formatter is not in use.
 
         **Example:**
-            - `[p]helpset showsettings``
+            - `[p]helpset showsettings`
         """
 
         help_settings = await commands.help.HelpSettings.from_context(ctx)
@@ -3060,7 +3613,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This resets [botname]'s help formatter to the default formatter.
 
         **Example:**
-            - `[p]helpset resetformatter``
+            - `[p]helpset resetformatter`
         """
 
         ctx.bot.reset_help_formatter()
@@ -3080,7 +3633,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This may not have an impact when using custom formatters from 3rd party cogs
 
         **Example:**
-            - `[p]helpset resetsettings``
+            - `[p]helpset resetsettings`
         """
         await ctx.bot._config.help.clear()
         await ctx.send(
@@ -3424,39 +3977,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         successful = False
 
         for destination in destinations:
-
             is_dm = isinstance(destination, discord.User)
-            send_embed = None
+            if not is_dm and not destination.permissions_for(destination.guild.me).send_messages:
+                continue
 
-            if is_dm:
-                send_embed = await ctx.bot._config.user(destination).embeds()
-            else:
-                if not destination.permissions_for(destination.guild.me).send_messages:
-                    continue
-                if destination.permissions_for(destination.guild.me).embed_links:
-                    send_embed = await ctx.bot._config.channel(destination).embeds()
-                    if send_embed is None:
-                        send_embed = await ctx.bot._config.guild(destination.guild).embeds()
-                else:
-                    send_embed = False
-
-            if send_embed is None:
-                send_embed = await ctx.bot._config.embeds()
-
-            if send_embed:
-
-                if not is_dm:
-                    color = await ctx.bot.get_embed_color(destination)
-                else:
-                    color = ctx.bot._color
+            if await ctx.bot.embed_requested(destination, command=ctx.command):
+                color = await ctx.bot.get_embed_color(destination)
 
                 e = discord.Embed(colour=color, description=message)
-                if author.avatar_url:
-                    e.set_author(name=description, icon_url=author.avatar_url)
-                else:
-                    e.set_author(name=description)
-
-                e.set_footer(text=footer)
+                e.set_author(name=description, icon_url=author.display_avatar)
+                e.set_footer(text=f"{footer}\n{content}")
 
                 try:
                     await destination.send(embed=e)
@@ -3470,9 +4000,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     )
                 else:
                     successful = True
-
             else:
-
                 msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
 
                 try:
@@ -3528,10 +4056,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             e = discord.Embed(colour=discord.Colour.red(), description=message)
 
             e.set_footer(text=content)
-            if ctx.bot.user.avatar_url:
-                e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
-            else:
-                e.set_author(name=description)
+            e.set_author(name=description, icon_url=ctx.bot.user.display_avatar)
 
             try:
                 await destination.send(embed=e)
@@ -3566,106 +4091,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def debuginfo(self, ctx: commands.Context):
         """Shows debug information useful for debugging."""
+        from redbot.core._debuginfo import DebugInfo
 
-        if sys.platform == "linux":
-            import distro  # pylint: disable=import-error
-
-        IS_WINDOWS = os.name == "nt"
-        IS_MAC = sys.platform == "darwin"
-        IS_LINUX = sys.platform == "linux"
-
-        python_version = ".".join(map(str, sys.version_info[:3]))
-        pyver = f"{python_version} ({platform.architecture()[0]})"
-        pipver = pip.__version__
-        redver = red_version_info
-        dpy_version = discord.__version__
-        if IS_WINDOWS:
-            os_info = platform.uname()
-            osver = f"{os_info.system} {os_info.release} (version {os_info.version})"
-        elif IS_MAC:
-            os_info = platform.mac_ver()
-            osver = f"Mac OSX {os_info[0]} {os_info[2]}"
-        elif IS_LINUX:
-            osver = f"{distro.name()} {distro.version()}".strip()
-        else:
-            osver = "Could not parse OS, report this on Github."
-        user_who_ran = getpass.getuser()
-        driver = storage_type()
-
-        from redbot.core.data_manager import basic_config, config_file
-
-        data_path = Path(basic_config["DATA_PATH"])
-        disabled_intents = (
-            ", ".join(
-                intent_name.replace("_", " ").title()
-                for intent_name, enabled in self.bot.intents
-                if not enabled
-            )
-            or "None"
-        )
-
-        def _datasize(num: int):
-            for unit in ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"]:
-                if abs(num) < 1024.0:
-                    return "{0:.1f}{1}".format(num, unit)
-                num /= 1024.0
-            return "{0:.1f}{1}".format(num, "YB")
-
-        memory_ram = psutil.virtual_memory()
-        ram_string = "{used}/{total} ({percent}%)".format(
-            used=_datasize(memory_ram.used),
-            total=_datasize(memory_ram.total),
-            percent=memory_ram.percent,
-        )
-
-        owners = []
-        for uid in self.bot.owner_ids:
-            try:
-                u = await self.bot.get_or_fetch_user(uid)
-                owners.append(f"{u.id} ({u})")
-            except discord.HTTPException:
-                owners.append(f"{uid} (Unresolvable)")
-        owners_string = ", ".join(owners) or "None"
-
-        resp_intro = "# Debug Info for Red:"
-        resp_system_intro = "## System Metadata:"
-        resp_system = (
-            f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\nRAM: {ram_string}\n"
-        )
-        resp_os_intro = "## OS Variables:"
-        resp_os = f"OS version: {osver}\nUser: {user_who_ran}\n"  # Ran where off to?!
-        resp_py_metadata = (
-            f"Python executable: {sys.executable}\n"
-            f"Python version: {pyver}\n"
-            f"Pip version: {pipver}\n"
-        )
-        resp_red_metadata = f"Red version: {redver}\nDiscord.py version: {dpy_version}\n"
-        resp_red_vars_intro = "## Red variables:"
-        resp_red_vars = (
-            f"Instance name: {data_manager.instance_name}\n"
-            f"Owner(s): {owners_string}\n"
-            f"Storage type: {driver}\n"
-            f"Disabled intents: {disabled_intents}\n"
-            f"Data path: {data_path}\n"
-            f"Metadata file: {config_file}"
-        )
-
-        response = (
-            box(resp_intro, lang="md"),
-            "\n",
-            box(resp_system_intro, lang="md"),
-            box(resp_system),
-            "\n",
-            box(resp_os_intro, lang="md"),
-            box(resp_os),
-            box(resp_py_metadata),
-            box(resp_red_metadata),
-            "\n",
-            box(resp_red_vars_intro, lang="md"),
-            box(resp_red_vars),
-        )
-
-        await ctx.send("".join(response))
+        await ctx.send(await DebugInfo(self.bot).get_text())
 
     # You may ask why this command is owner-only,
     # cause after all it could be quite useful to guild owners!
@@ -3677,7 +4105,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def diagnoseissues(
         self,
         ctx: commands.Context,
-        channel: Optional[discord.TextChannel],
+        channel: Optional[Union[discord.TextChannel, discord.Thread]],
         member: Union[discord.Member, discord.User],
         *,
         command_name: str,
@@ -3698,8 +4126,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if channel is None:
             channel = ctx.channel
-            if not isinstance(channel, discord.TextChannel):
-                await ctx.send(_("The channel needs to be passed when using this command in DMs."))
+            if not isinstance(channel, (discord.TextChannel, discord.Thread)):
+                await ctx.send(
+                    _(
+                        "The text channel or thread needs to be passed"
+                        " when using this command in DMs."
+                    )
+                )
                 return
 
         command = self.bot.get_command(command_name)
@@ -3716,7 +4149,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 return
             member = maybe_member
 
-        if not channel.permissions_for(member).send_messages:
+        if not can_user_send_messages_in(member, channel):
             # Let's make Flame happy here
             await ctx.send(
                 _(
@@ -4404,9 +4837,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             return
 
-        if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
-            await ctx.send(_("You are not allowed to disable that command."))
-            return
+        if command.requires.privilege_level is not None:
+            if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+                await ctx.send(_("You are not allowed to disable that command."))
+                return
 
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
             if command.qualified_name not in disabled_commands:
@@ -4475,9 +4909,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to enable for the current server.
         """
-        if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
-            await ctx.send(_("You are not allowed to enable that command."))
-            return
+        if command.requires.privilege_level is not None:
+            if command.requires.privilege_level > await PrivilegeLevel.from_ctx(ctx):
+                await ctx.send(_("You are not allowed to enable that command."))
+                return
 
         async with ctx.bot._config.guild(ctx.guild).disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
@@ -4558,7 +4993,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Makes a user or role immune from automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune add @TwentySix` - Adds a user.
+            - `[p]autoimmune add @Twentysix` - Adds a user.
             - `[p]autoimmune add @Mods` - Adds a role.
 
         **Arguments:**
@@ -4578,7 +5013,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Remove a user or role from being immune to automated moderation actions.
 
         **Examples:**
-            - `[p]autoimmune remove @TwentySix` - Removes a user.
+            - `[p]autoimmune remove @Twentysix` - Removes a user.
             - `[p]autoimmune remove @Mods` - Removes a role.
 
         **Arguments:**
@@ -4598,7 +5033,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Checks if a user or role would be considered immune from automated actions.
 
         **Examples:**
-            - `[p]autoimmune isimmune @TwentySix`
+            - `[p]autoimmune isimmune @Twentysix`
             - `[p]autoimmune isimmune @Mods`
 
         **Arguments:**
@@ -4609,133 +5044,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("They are immune."))
         else:
             await ctx.send(_("They are not immune."))
-
-    @checks.is_owner()
-    @_set.group()
-    async def ownernotifications(self, ctx: commands.Context):
-        """
-        Commands for configuring owner notifications.
-
-        Owner notifications include usage of `[p]contact` and available Red updates.
-        """
-        pass
-
-    @ownernotifications.command()
-    async def optin(self, ctx: commands.Context):
-        """
-        Opt-in on receiving owner notifications.
-
-        This is the default state.
-
-        Note: This will only resume sending owner notifications to your DMs.
-            Additional owners and destinations will not be affected.
-
-        **Example:**
-            - `[p]ownernotifications optin`
-        """
-        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
-            if ctx.author.id in opt_outs:
-                opt_outs.remove(ctx.author.id)
-
-        await ctx.tick()
-
-    @ownernotifications.command()
-    async def optout(self, ctx: commands.Context):
-        """
-        Opt-out of receiving owner notifications.
-
-        Note: This will only stop sending owner notifications to your DMs.
-            Additional owners and destinations will still receive notifications.
-
-        **Example:**
-            - `[p]ownernotifications optout`
-        """
-        async with ctx.bot._config.owner_opt_out_list() as opt_outs:
-            if ctx.author.id not in opt_outs:
-                opt_outs.append(ctx.author.id)
-
-        await ctx.tick()
-
-    @ownernotifications.command()
-    async def adddestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
-    ):
-        """
-        Adds a destination text channel to receive owner notifications.
-
-        **Examples:**
-            - `[p]ownernotifications adddestination #owner-notifications`
-            - `[p]ownernotifications adddestination 168091848718417920` - Accepts channel IDs.
-
-        **Arguments:**
-            - `<channel>` - The channel to send owner notifications to.
-        """
-
-        try:
-            channel_id = channel.id
-        except AttributeError:
-            channel_id = channel
-
-        async with ctx.bot._config.extra_owner_destinations() as extras:
-            if channel_id not in extras:
-                extras.append(channel_id)
-
-        await ctx.tick()
-
-    @ownernotifications.command(aliases=["remdestination", "deletedestination", "deldestination"])
-    async def removedestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, int]
-    ):
-        """
-        Removes a destination text channel from receiving owner notifications.
-
-        **Examples:**
-            - `[p]ownernotifications removedestination #owner-notifications`
-            - `[p]ownernotifications deletedestination 168091848718417920` - Accepts channel IDs.
-
-        **Arguments:**
-            - `<channel>` - The channel to stop sending owner notifications to.
-        """
-
-        try:
-            channel_id = channel.id
-        except AttributeError:
-            channel_id = channel
-
-        async with ctx.bot._config.extra_owner_destinations() as extras:
-            if channel_id in extras:
-                extras.remove(channel_id)
-
-        await ctx.tick()
-
-    @ownernotifications.command()
-    async def listdestinations(self, ctx: commands.Context):
-        """
-        Lists the configured extra destinations for owner notifications.
-
-        **Example:**
-            - `[p]ownernotifications listdestinations`
-        """
-
-        channel_ids = await ctx.bot._config.extra_owner_destinations()
-
-        if not channel_ids:
-            await ctx.send(_("There are no extra channels being sent to."))
-            return
-
-        data = []
-
-        for channel_id in channel_ids:
-            channel = ctx.bot.get_channel(channel_id)
-            if channel:
-                # This includes the channel name in case the user can't see the channel.
-                data.append(f"{channel.mention} {channel} ({channel.id})")
-            else:
-                data.append(_("Unknown channel with id: {id}").format(id=channel_id))
-
-        output = "\n".join(data)
-        for page in pagify(output):
-            await ctx.send(page)
 
     # RPC handlers
     async def rpc_load(self, request):
@@ -4752,7 +5060,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def rpc_unload(self, request):
         cog_name = request.params[0]
 
-        self.bot.unload_extension(cog_name)
+        await self.bot.unload_extension(cog_name)
 
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
@@ -4760,7 +5068,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.admin_or_can_manage_channel()
     async def ignore(self, ctx: commands.Context):
         """
         Commands to add servers or channels to the ignore list.
@@ -4785,12 +5093,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def ignore_channel(
         self,
         ctx: commands.Context,
-        channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.CategoryChannel, discord.Thread]
+        ] = None,
     ):
         """
-        Ignore commands in the channel or category.
+        Ignore commands in the channel, thread, or category.
 
-        Defaults to the current channel.
+        Defaults to the current thread or channel.
 
         Note: Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
@@ -4801,7 +5111,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]ignore channel 356236713347252226` - Also accepts IDs.
 
         **Arguments:**
-            - `<channel>` - The channel to ignore. Can be a category channel.
+            - `<channel>` - The channel to ignore. This can also be a thread or category channel.
         """
         if not channel:
             channel = ctx.channel
@@ -4831,7 +5141,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.admin_or_can_manage_channel()
     async def unignore(self, ctx: commands.Context):
         """Commands to remove servers or channels from the ignore list."""
 
@@ -4839,12 +5149,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def unignore_channel(
         self,
         ctx: commands.Context,
-        channel: Optional[Union[discord.TextChannel, discord.CategoryChannel]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.CategoryChannel, discord.Thread]
+        ] = None,
     ):
         """
-        Remove a channel or category from the ignore list.
+        Remove a channel, thread, or category from the ignore list.
 
-        Defaults to the current channel.
+        Defaults to the current thread or channel.
 
         **Examples:**
             - `[p]unignore channel #general` - Unignores commands in the #general channel.
@@ -4853,7 +5165,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]unignore channel 356236713347252226` - Also accepts IDs. Use this method to unignore categories.
 
         **Arguments:**
-            - `<channel>` - The channel to unignore. This can be a category channel.
+            - `<channel>` - The channel to unignore. This can also be a thread or category channel.
         """
         if not channel:
             channel = ctx.channel
@@ -4883,6 +5195,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def count_ignored(self, ctx: commands.Context):
         category_channels: List[discord.CategoryChannel] = []
         text_channels: List[discord.TextChannel] = []
+        threads: List[discord.Thread] = []
         if await self.bot._ignored_cache.get_ignored_guild(ctx.guild):
             return _("This server is currently being ignored.")
         for channel in ctx.guild.text_channels:
@@ -4891,14 +5204,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     category_channels.append(channel.category)
             if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 text_channels.append(channel)
+        for thread in ctx.guild.threads:
+            if await self.bot_ignored_cache.get_ignored_channel(thread, check_category=False):
+                threads.append(thread)
 
         cat_str = (
-            humanize_list([c.name for c in category_channels]) if category_channels else "None"
+            humanize_list([c.name for c in category_channels]) if category_channels else _("None")
         )
-        chan_str = humanize_list([c.mention for c in text_channels]) if text_channels else "None"
-        msg = _("Currently ignored categories: {categories}\nChannels: {channels}").format(
-            categories=cat_str, channels=chan_str
+        chan_str = (
+            humanize_list([c.mention for c in text_channels]) if text_channels else _("None")
         )
+        thread_str = humanize_list([c.mention for c in threads]) if threads else _("None")
+        msg = _(
+            "Currently ignored categories: {categories}\n"
+            "Channels: {channels}\n"
+            "Threads (excluding archived):{threads}"
+        ).format(categories=cat_str, channels=chan_str, threads=thread_str)
         return msg
 
     # Removing this command from forks is a violation of the GPLv3 under which it is licensed.
