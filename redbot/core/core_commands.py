@@ -3592,7 +3592,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if use_buttons is None:
             use_buttons = not await ctx.bot._config.use_buttons()
-        await ctx.bot._config.help.use_buttons.set(use_buttons)
+        await ctx.bot._config.use_buttons.set(use_buttons)
         if use_buttons:
             await ctx.send(_("I will use buttons on basic menus."))
         else:
