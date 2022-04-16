@@ -6,7 +6,7 @@ import asyncio
 import contextlib
 import functools
 from types import MappingProxyType
-from typing import Callable, Iterable, List, Mapping, TypeVar, Union
+from typing import Callable, Iterable, List, Mapping, Optional, TypeVar, Union
 
 import discord
 
@@ -22,7 +22,7 @@ _ControlCallable = Callable[[commands.Context, _PageList, discord.Message, int, 
 async def menu(
     ctx: commands.Context,
     pages: _PageList,
-    controls: Mapping[str, _ControlCallable],
+    controls: Optional[Mapping[str, _ControlCallable]] = None,
     message: discord.Message = None,
     page: int = 0,
     timeout: float = 30.0,
@@ -45,10 +45,12 @@ async def menu(
         The command context
     pages: `list` of `str` or `discord.Embed`
         The pages of the menu.
-    controls: Mapping[str, Callable],
+    controls: Optional[Mapping[str, Callable]]
         A mapping of emoji to the function which handles the action for the
         emoji. The signature of the function should be the same as of this function
         and should additionally accept an ``emoji`` parameter of type `str`.
+        If not passed, `DEFAULT_CONTROLS` is used *or*
+        only a close menu control is shown when ``pages`` is of length 1.
     message: discord.Message
         The message representing the menu. Usually :code:`None` when first opening
         the menu
@@ -68,6 +70,11 @@ async def menu(
         isinstance(x, str) for x in pages
     ):
         raise RuntimeError("All pages must be of the same type")
+    if controls is None:
+        if len(pages) == 1:
+            controls = {"\N{CROSS MARK}": close_menu}
+        else:
+            controls = DEFAULT_CONTROLS
     for key, value in controls.items():
         maybe_coro = value
         if isinstance(value, functools.partial):
@@ -144,6 +151,10 @@ async def next_page(
     timeout: float,
     emoji: str,
 ) -> _T:
+    """
+    Function for showing next page which is suitable
+    for use in ``controls`` mapping that is passed to `menu()`.
+    """
     if page == len(pages) - 1:
         page = 0  # Loop around to the first item
     else:
@@ -160,6 +171,10 @@ async def prev_page(
     timeout: float,
     emoji: str,
 ) -> _T:
+    """
+    Function for showing previous page which is suitable
+    for use in ``controls`` mapping that is passed to `menu()`.
+    """
     if page == 0:
         page = len(pages) - 1  # Loop around to the last item
     else:
@@ -176,6 +191,10 @@ async def close_menu(
     timeout: float,
     emoji: str,
 ) -> None:
+    """
+    Function for closing (deleting) menu which is suitable
+    for use in ``controls`` mapping that is passed to `menu()`.
+    """
     with contextlib.suppress(discord.NotFound):
         await message.delete()
 
@@ -191,7 +210,7 @@ def start_adding_reactions(
 
     This is particularly useful if you wish to start waiting for a
     reaction whilst the reactions are still being added - in fact,
-    this is exactly what `menu` uses to do that.
+    this is exactly what `menu()` uses to do that.
 
     Parameters
     ----------
@@ -216,6 +235,8 @@ def start_adding_reactions(
     return asyncio.create_task(task())
 
 
+#: Default controls for `menu()` that contain controls for
+#: previous page, closing menu, and next page.
 DEFAULT_CONTROLS: Mapping[str, _ControlCallable] = MappingProxyType(
     {
         "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
