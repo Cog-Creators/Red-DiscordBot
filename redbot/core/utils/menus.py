@@ -32,7 +32,7 @@ class _GenericButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         ctx = self.view.ctx
         pages = self.view.source.entries
-        controls = {}
+        controls = None
         message = self.view.message
         page = self.view.current_page
         timeout = self.view.timeout
@@ -89,9 +89,12 @@ async def menu(
     RuntimeError
         If either of the notes above are violated
     """
-    if ctx.message.id in _active_menus:
+    if message is not None and message.id in _active_menus:
         # prevents the expected callback from going any further
-        view = _active_menus[ctx.message.id]
+        # our custom button will always pass the message the view is
+        # attached to, allowing one to send multiple menus on the same
+        # context.
+        view = _active_menus[message.id]
         if pages != view.source.entries:
             view._source = _SimplePageSource(pages)
         new_page = await view.get_page(page)
@@ -151,10 +154,10 @@ async def menu(
                 view.remove_item(view.stop_button)
             for emoji, func in to_add.items():
                 view.add_item(_GenericButton(emoji, func))
-            _active_menus[ctx.message.id] = view
             await view.start(ctx)
+            _active_menus[view.message.id] = view
             await view.wait()
-            del _active_menus[ctx.message.id]
+            del _active_menus[view.message.id]
             return
     current_page = pages[page]
 
