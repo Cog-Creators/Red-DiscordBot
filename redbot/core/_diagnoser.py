@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Awaitable, Callable, Iterable, List, Optional,
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import can_user_send_messages_in
 from redbot.core.utils.chat_formatting import (
     bold,
     escape,
@@ -37,7 +38,7 @@ class IssueDiagnoserBase:
         self,
         bot: Red,
         original_ctx: commands.Context,
-        channel: discord.TextChannel,
+        channel: Union[discord.TextChannel, discord.Thread],
         author: discord.Member,
         command: commands.Command,
     ) -> None:
@@ -59,6 +60,7 @@ class IssueDiagnoserBase:
         self.message.channel = self.channel
         self.message.content = self._original_ctx.prefix + self.command.qualified_name
         # clear the cached properties
+        # DEP-WARN
         for attr in self.message._CACHED_SLOTS:  # type: ignore[attr-defined]
             try:
                 delattr(self.message, attr)
@@ -117,18 +119,27 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
 
     async def _check_can_bot_send_messages(self) -> CheckResult:
         label = _("Check if the bot can send messages in the given channel")
-        if self.channel.permissions_for(self.guild.me).send_messages:
-            return CheckResult(True, label)
-        return CheckResult(
-            False,
-            label,
-            _("Bot doesn't have permission to send messages in the given channel."),
-            _(
-                "To fix this issue, ensure that the permissions setup allows the bot"
-                " to send messages per Discord's role hierarchy:\n"
-                "https://support.discord.com/hc/en-us/articles/206141927"
-            ),
-        )
+        # This is checked by send messages check but this allows us to
+        # give more detailed information.
+        if not self.guild.me.guild_permissions.administrator and self.guild.me.is_timed_out():
+            return CheckResult(
+                False,
+                label,
+                _("Bot is timed out in the given channel."),
+                _("To fix this issue, remove timeout from the bot."),
+            )
+        if not can_user_send_messages_in(self.guild.me, self.channel):
+            return CheckResult(
+                False,
+                label,
+                _("Bot doesn't have permission to send messages in the given channel."),
+                _(
+                    "To fix this issue, ensure that the permissions setup allows the bot"
+                    " to send messages per Discord's role hierarchy:\n"
+                    "https://support.discord.com/hc/en-us/articles/206141927"
+                ),
+            )
+        return CheckResult(True, label)
 
     # While the following 2 checks could show even more precise error message,
     # it would require a usage of private attribute rather than the public API
@@ -139,24 +150,47 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
             return CheckResult(True, label)
 
         if self.channel.category is None:
-            resolution = _(
-                "To fix this issue, check the list returned by the {command} command"
-                " and ensure that the {channel} channel and the server aren't a part of that list."
-            ).format(
-                command=self._format_command_name("ignore list"),
-                channel=self.channel.mention,
-            )
+            if isinstance(self.channel, discord.Thread):
+                resolution = _(
+                    "To fix this issue, check the list returned by the {command} command"
+                    " and ensure that the {thread} thread, its parent channel,"
+                    " and the server aren't a part of that list."
+                ).format(
+                    command=self._format_command_name("ignore list"),
+                    thread=self.channel.mention,
+                )
+            else:
+                resolution = _(
+                    "To fix this issue, check the list returned by the {command} command"
+                    " and ensure that the {channel} channel"
+                    " and the server aren't a part of that list."
+                ).format(
+                    command=self._format_command_name("ignore list"),
+                    channel=self.channel.mention,
+                )
         else:
-            resolution = _(
-                "To fix this issue, check the list returned by the {command} command"
-                " and ensure that the {channel} channel,"
-                " the channel category it belongs to ({channel_category}),"
-                " and the server aren't a part of that list."
-            ).format(
-                command=self._format_command_name("ignore list"),
-                channel=self.channel.mention,
-                channel_category=self.channel.category.mention,
-            )
+            if isinstance(self.channel, discord.Thread):
+                resolution = _(
+                    "To fix this issue, check the list returned by the {command} command"
+                    " and ensure that the {thread} thread, its parent channel,"
+                    " the channel category it belongs to ({channel_category}),"
+                    " and the server aren't a part of that list."
+                ).format(
+                    command=self._format_command_name("ignore list"),
+                    thread=self.channel.mention,
+                    channel_category=self.channel.category.mention,
+                )
+            else:
+                resolution = _(
+                    "To fix this issue, check the list returned by the {command} command"
+                    " and ensure that the {channel} channel,"
+                    " the channel category it belongs to ({channel_category}),"
+                    " and the server aren't a part of that list."
+                ).format(
+                    command=self._format_command_name("ignore list"),
+                    channel=self.channel.mention,
+                    channel_category=self.channel.category.mention,
+                )
 
         return CheckResult(
             False,

@@ -12,7 +12,6 @@ from typing import List, MutableMapping, Optional, Tuple, Union
 import aiohttp
 import discord
 import lavalink
-from discord.embeds import EmptyEmbed
 from lavalink import NodeNotFound
 from red_commons.logging import getLogger
 
@@ -525,7 +524,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink node has failed")
-                desc = EmptyEmbed
+                desc = None
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 await self.send_embed_msg(ctx, title=msg, description=desc)

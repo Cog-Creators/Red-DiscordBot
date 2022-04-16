@@ -18,6 +18,7 @@ from lavalink import NodeNotFound, PlayerNotFound
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import can_user_send_messages_in
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.utils.chat_formatting import box, humanize_list, underline, bold
 
@@ -61,6 +62,16 @@ HUMANIZED_PERM = {
     "manage_roles": _("Manage Roles"),
     "manage_webhooks": _("Manage Webhooks"),
     "manage_emojis": _("Manage Emojis"),
+    "use_slash_commands": _("Use Slash Commands"),
+    "request_to_speak": _("Request to Speak"),
+    "manage_events": _("Manage Events"),
+    "manage_threads": _("Manage Threads"),
+    "create_public_threads": _("Create Public Threads"),
+    "create_private_threads": _("Create Private Threads"),
+    "external_stickers": _("Use External Stickers"),
+    "send_messages_in_threads": _("Send Messages in Threads"),
+    "start_embedded_activities": _("Start Activities"),
+    "moderate_members": _("Moderate Member"),
 }
 
 DANGEROUS_COMMANDS = {
@@ -175,13 +186,31 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 "Not running Audio command due to invalid machine architecture for the managed Lavalink node."
             )
 
-        current_perms = ctx.channel.permissions_for(ctx.me)
         surpass_ignore = (
             isinstance(ctx.channel, discord.abc.PrivateChannel)
             or await ctx.bot.is_owner(ctx.author)
             or await ctx.bot.is_admin(ctx.author)
         )
         guild = ctx.guild
+        if guild and not can_user_send_messages_in(ctx.me, ctx.channel):
+            log.debug(
+                "Missing perms to send messages in %d, Owner ID: %d",
+                guild.id,
+                guild.owner.id,
+            )
+            if not surpass_ignore:
+                text = _(
+                    "I'm missing permissions to send messages in this server. "
+                    "Please address this as soon as possible."
+                )
+                log.info(
+                    "Missing write permission in %d, Owner ID: %d",
+                    guild.id,
+                    guild.owner.id,
+                )
+                raise CheckFailure(message=text)
+
+        current_perms = ctx.channel.permissions_for(ctx.me)
         if guild and not current_perms.is_superset(self.permission_cache):
             current_perms_set = set(iter(current_perms))
             expected_perms_set = set(iter(self.permission_cache))
@@ -207,14 +236,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                         perm=_(HUMANIZED_PERM.get(perm, perm)),
                     )
                 text = text.strip()
-                if current_perms.send_messages and current_perms.read_messages:
-                    await ctx.send(box(text=text, lang="ini"))
-                else:
-                    log.info(
-                        "Missing write permission in %s, Owner ID: %s",
-                        ctx.guild.id,
-                        ctx.guild.owner.id,
-                    )
+                await ctx.send(box(text=text, lang="ini"))
                 raise CheckFailure(message=text)
 
         with contextlib.suppress(Exception):
@@ -312,7 +334,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             )
             if error.send_cmd_help:
                 await ctx.send_help()
-        elif isinstance(error, commands.ConversionFailure):
+        elif isinstance(error, commands.BadArgument):
             handled = True
             if error.args:
                 if match := RE_CONVERSION.search(error.args[0]):
@@ -390,10 +412,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
         if not handled:
             await self.bot.on_command_error(ctx, error, unhandled_by_cog=True)
 
-    def cog_unload(self) -> None:
+    async def cog_unload(self) -> None:
         if not self.cog_cleaned_up:
             self.bot.dispatch("red_audio_unload", self)
-            self.session.detach()
+            await self.session.close()
             if self.player_automated_timer_task:
                 self.player_automated_timer_task.cancel()
 
@@ -408,10 +430,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
 
             lavalink.unregister_event_listener(self.lavalink_event_handler)
             lavalink.unregister_update_listener(self.lavalink_update_handler)
-            asyncio.create_task(lavalink.close(self.bot))
-            asyncio.create_task(self._close_database())
+            await lavalink.close(self.bot)
+            await self._close_database()
             if self.managed_node_controller is not None:
-                asyncio.create_task(self.managed_node_controller.shutdown())
+                await self.managed_node_controller.shutdown()
 
             self.cog_cleaned_up = True
 

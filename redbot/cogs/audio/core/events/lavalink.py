@@ -165,14 +165,14 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 try:
                     await self.api_interface.autoplay(player, self.playlist_api)
                 except DatabaseError:
-                    notify_channel = guild.get_channel(notify_channel_id)
+                    notify_channel = guild.get_channel_or_thread(notify_channel_id)
                     if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel, title=_("Couldn't get a valid track.")
                         )
                     return
                 except TrackEnqueueError:
-                    notify_channel = guild.get_channel(notify_channel_id)
+                    notify_channel = guild.get_channel_or_thread(notify_channel_id)
                     if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
                             notify_channel,
@@ -185,7 +185,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     return
         if event_type == lavalink.LavalinkEvents.TRACK_START and notify:
             notify_channel_id = player.fetch("notify_channel")
-            notify_channel = guild.get_channel(notify_channel_id)
+            notify_channel = guild.get_channel_or_thread(notify_channel_id)
             if notify_channel and self._has_notify_perms(notify_channel):
                 if player.fetch("notify_message") is not None:
                     with contextlib.suppress(discord.HTTPException):
@@ -226,7 +226,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
                 notify_channel_id = player.fetch("notify_channel")
-                notify_channel = guild.get_channel(notify_channel_id)
+                notify_channel = guild.get_channel_or_thread(notify_channel_id)
                 if notify_channel and notify and self._has_notify_perms(notify_channel):
                     await self.send_embed_msg(notify_channel, title=_("Queue ended."))
                 if disconnect:
@@ -282,7 +282,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self._ll_guild_updates.discard(guild_id)
                 self.bot.dispatch("red_audio_audio_disconnect", guild)
             if message_channel:
-                message_channel = guild.get_channel(message_channel)
+                message_channel = guild.get_channel_or_thread(message_channel)
                 if early_exit:
                     log.warning(
                         "Audio detected multiple continuous errors during playback "

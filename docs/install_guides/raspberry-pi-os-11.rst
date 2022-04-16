@@ -4,6 +4,8 @@
 Installing Red on Raspberry Pi OS 11 Bullseye
 =============================================
 
+.. include:: _includes/supported-arch-aarch64+armv7l.rst
+
 .. note::
 
     This guide can only be used with Raspberry Pi OS 11 Bullseye,
