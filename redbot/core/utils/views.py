@@ -155,18 +155,19 @@ class SimpleMenu(discord.ui.View):
             discord.ButtonStyle.red, "\N{HEAVY MULTIPLICATION X}\N{VARIATION SELECTOR-16}"
         )
         self.select_menu = self.get_select_menu()
+        self.add_item(self.stop_button)
         if self.source.is_paginating() and not self.use_select_only:
-            self.add_item(self.stop_button)
             self.add_item(self.first_button)
             self.add_item(self.backward_button)
             self.add_item(self.forward_button)
             self.add_item(self.last_button)
         if self.use_select_menu and self.source.is_paginating():
-            self.add_item(self.select_menu)
             if self.use_select_only:
+                self.remove_item(self.stop_button)
+                self.add_item(self.select_menu)
                 self.add_item(self.stop_button)
-        else:
-            self.add_item(self.stop_button)
+            else:
+                self.add_item(self.select_menu)
 
     @property
     def source(self):
