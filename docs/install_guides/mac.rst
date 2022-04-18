@@ -4,6 +4,8 @@
 Installing Red on macOS
 =======================
 
+.. include:: _includes/supported-arch-x64+aarch64.rst
+
 -------------------------------
 Installing the pre-requirements
 -------------------------------

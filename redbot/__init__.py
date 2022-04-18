@@ -12,8 +12,6 @@ from typing import (
     Union as _Union,
 )
 
-from redbot._version import _get_version
-
 
 MIN_PYTHON_VERSION = (3, 8, 1)
 
@@ -199,6 +197,50 @@ class VersionInfo:
             "dev={dev_release}, local={local_version})"
         ).format(**self.to_json())
 
+    @classmethod
+    def _get_version(cls, *, ignore_installed: bool = False) -> _Tuple[str, "VersionInfo"]:
+        if not _VERSION.endswith(".dev1"):
+            return _VERSION, cls.from_str(_VERSION)
+        try:
+            import os
+
+            path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+            # we only want to do this for editable installs
+            if not os.path.exists(os.path.join(path, ".git")):
+                raise RuntimeError("not a git repository")
+
+            import subprocess
+
+            output = subprocess.check_output(
+                ("git", "describe", "--tags", "--long", "--dirty"),
+                stderr=subprocess.DEVNULL,
+                cwd=path,
+            )
+            _, count, commit, *dirty = output.decode("utf-8").strip().split("-", 3)
+            dirty_suffix = f".{dirty[0]}" if dirty else ""
+            ver = f"{_VERSION[:-1]}{count}+{commit}{dirty_suffix}"
+            return ver, cls.from_str(ver)
+        except Exception:
+            # `ignore_installed` is `True` when building with setuptools.
+            if ignore_installed:
+                # we don't want any failure to raise here but we should print it
+                import traceback
+
+                traceback.print_exc()
+            else:
+                try:
+                    from importlib.metadata import version
+
+                    ver = version("Red-DiscordBot")
+                    return ver, cls.from_str(ver)
+                except Exception:
+                    # we don't want any failure to raise here but we should print it
+                    import traceback
+
+                    traceback.print_exc()
+
+        return _VERSION, cls.from_str(_VERSION)
+
 
 def _update_event_loop_policy():
     if _sys.implementation.name == "cpython":
@@ -245,8 +287,10 @@ def _early_init():
     _ensure_no_colorama()
 
 
-__version__ = _get_version()
-version_info = VersionInfo.from_str(__version__)
+# This is bumped automatically by release workflow (`.github/workflows/scripts/bump_version.py`)
+_VERSION = "3.5.0.dev1"
+
+__version__, version_info = VersionInfo._get_version()
 
 # Filter fuzzywuzzy slow sequence matcher warning
 _warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")

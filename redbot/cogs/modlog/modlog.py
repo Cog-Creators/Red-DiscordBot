@@ -8,7 +8,8 @@ from redbot.core import commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.menus import menu
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("ModLog", __file__)
 
@@ -82,7 +83,7 @@ class ModLog(commands.Cog):
                     )
                     rendered_cases.append(message)
 
-        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+        await menu(ctx, rendered_cases)
 
     @commands.command()
     @commands.guild_only()
@@ -117,7 +118,7 @@ class ModLog(commands.Cog):
                 )
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)
-        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+        await menu(ctx, rendered_cases)
 
     @commands.command()
     @commands.guild_only()
