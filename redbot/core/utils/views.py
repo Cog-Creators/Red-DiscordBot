@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import discord
 
-from typing import TYPE_CHECKING, List, Union, Dict
+from typing import TYPE_CHECKING, Any, List, Optional, Union, Dict
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
 
@@ -118,10 +118,10 @@ class SimpleMenu(discord.ui.View):
         super().__init__(
             timeout=timeout,
         )
-        self.author = None
-        self.message = None
+        self.author: Optional[discord.abc.User] = None
+        self.message: Optional[discord.Message] = None
         self._source = _SimplePageSource(items=pages)
-        self.ctx = None
+        self.ctx: Optional[Context] = None
         self.current_page = page_start
         self.delete_after_timeout = delete_after_timeout
         self.use_select_menu = use_select_menu or use_select_only
@@ -154,7 +154,7 @@ class SimpleMenu(discord.ui.View):
         self.stop_button = _StopButton(
             discord.ButtonStyle.red, "\N{HEAVY MULTIPLICATION X}\N{VARIATION SELECTOR-16}"
         )
-        self.select_menu = self.get_select_menu()
+        self.select_menu = self._get_select_menu()
         self.add_item(self.stop_button)
         if self.source.is_paginating() and not self.use_select_only:
             self.add_item(self.first_button)
@@ -179,7 +179,7 @@ class SimpleMenu(discord.ui.View):
         else:
             await self.message.edit(view=None)
 
-    def get_select_menu(self):
+    def _get_select_menu(self):
         # handles modifying the select menu if more than 25 pages are provided
         # this will show the previous 12 and next 13 pages in the select menu
         # based on the currently displayed page. Once you reach close to the max
@@ -198,7 +198,7 @@ class SimpleMenu(discord.ui.View):
             options = self.select_options[:25]
         return _SelectMenu(options)
 
-    async def start(self, ctx: Context):
+    async def start(self, ctx: Context, *, ephemeral: bool = False):
         """
         Used to start the menu displaying the first page requested.
 
@@ -206,11 +206,16 @@ class SimpleMenu(discord.ui.View):
         ----------
             ctx: `commands.Context`
                 The context to start the menu in.
+            ephemeral: `bool`
+                Send the message ephemerally. This only works
+                if the context is from a slash command interaction.
         """
+        self.author = ctx.author
         self.ctx = ctx
-        await self.send_initial_message(ctx)
+        kwargs = await self.get_page(self.current_page)
+        self.message = await ctx.send(**kwargs, ephemeral=ephemeral)
 
-    async def get_page(self, page_num: int):
+    async def get_page(self, page_num: int) -> Dict[str, Any]:
         try:
             page = await self.source.get_page(page_num)
         except IndexError:
@@ -219,22 +224,17 @@ class SimpleMenu(discord.ui.View):
         value = await self.source.format_page(self, page)
         if self.use_select_menu and len(self.select_options) > 25 and self.source.is_paginating():
             self.remove_item(self.select_menu)
-            self.select_menu = self.get_select_menu()
+            self.select_menu = self._get_select_menu()
             self.add_item(self.select_menu)
-
+        ret = {}
         if isinstance(value, dict):
             value.update({"view": self})
-            return value
+            ret = value
         elif isinstance(value, str):
-            return {"content": value, "embed": None, "view": self}
+            ret = {"content": value, "embed": None, "view": self}
         elif isinstance(value, discord.Embed):
-            return {"embed": value, "content": None, "view": self}
-
-    async def send_initial_message(self, ctx: Context):
-        self.author = ctx.author
-        self.ctx = ctx
-        kwargs = await self.get_page(self.current_page)
-        self.message = await ctx.send(**kwargs)
+            ret = {"embed": value, "content": None, "view": self}
+        return ret
 
     async def interaction_check(self, interaction: discord.Interaction):
         """Ensure only the author is allowed to interact with the menu."""
