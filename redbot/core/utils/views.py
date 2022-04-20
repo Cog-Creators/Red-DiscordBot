@@ -215,7 +215,7 @@ class SimpleMenu(discord.ui.View):
         kwargs = await self.get_page(self.current_page)
         self.message = await ctx.send(**kwargs, ephemeral=ephemeral)
 
-    async def get_page(self, page_num: int) -> Dict[str, Any]:
+    async def get_page(self, page_num: int) -> Dict[str, Optional[Any]]:
         try:
             page = await self.source.get_page(page_num)
         except IndexError:
@@ -226,14 +226,14 @@ class SimpleMenu(discord.ui.View):
             self.remove_item(self.select_menu)
             self.select_menu = self._get_select_menu()
             self.add_item(self.select_menu)
-        ret = {}
+        ret: Dict[str, Optional[Any]] = {"view": self}
         if isinstance(value, dict):
-            value.update({"view": self})
+            ret.update(value)
             ret = value
         elif isinstance(value, str):
-            ret = {"content": value, "embed": None, "view": self}
+            ret.update({"content": value, "embed": None})
         elif isinstance(value, discord.Embed):
-            ret = {"embed": value, "content": None, "view": self}
+            ret.update({"embed": value, "content": None})
         return ret
 
     async def interaction_check(self, interaction: discord.Interaction):
