@@ -174,7 +174,7 @@ class SimpleMenu(discord.ui.View):
         return self._source
 
     async def on_timeout(self):
-        if self.delete_after_timeout:
+        if self.delete_after_timeout and not self.message.flags.ephemeral:
             await self.message.delete()
         else:
             await self.message.edit(view=None)
