@@ -119,7 +119,12 @@ async def menu(
         if not asyncio.iscoroutinefunction(maybe_coro):
             raise RuntimeError("Function must be a coroutine")
 
-    if await ctx.bot.use_buttons():
+    if await ctx.bot.use_buttons() and message is None:
+        # Only send the button version if `message` is None
+        # This is because help deals with this menu in weird ways
+        # where the original message is already sent prior to starting.
+        # This is not normally the way we recommend sending this because
+        # internally we already include the emojis we expect.
         if controls == DEFAULT_CONTROLS:
             view = SimpleMenu(pages)
             await view.start(ctx)
