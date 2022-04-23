@@ -87,6 +87,11 @@ class SimpleMenu(discord.ui.View):
         Whether or not to delete the message after
         the timeout has expired.
         Defaults to False.
+    disable_after_timeout: bool
+        Whether to disable all components on the
+        menu after timeout has expired. By default
+        the view is removed from the message on timeout.
+        Defaults to False.
     use_select_menu: bool
         Whether or not to include a select menu
         to jump specifically between pages.
@@ -112,6 +117,7 @@ class SimpleMenu(discord.ui.View):
         timeout: float = 180.0,
         page_start: int = 0,
         delete_after_timeout: bool = False,
+        disable_after_timeout: bool = False,
         use_select_menu: bool = False,
         use_select_only: bool = False,
     ) -> None:
@@ -124,6 +130,7 @@ class SimpleMenu(discord.ui.View):
         self.ctx: Optional[Context] = None
         self.current_page = page_start
         self.delete_after_timeout = delete_after_timeout
+        self.disable_after_timeout = disable_after_timeout
         self.use_select_menu = use_select_menu or use_select_only
         self.use_select_only = use_select_only
 
@@ -176,6 +183,10 @@ class SimpleMenu(discord.ui.View):
     async def on_timeout(self):
         if self.delete_after_timeout and not self.message.flags.ephemeral:
             await self.message.delete()
+        elif self.disable_after_timeout:
+            for child in self.children:
+                child.disabled = True
+            await self.message.edit(view=self)
         else:
             await self.message.edit(view=None)
 
