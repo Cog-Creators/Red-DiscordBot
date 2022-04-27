@@ -9,7 +9,7 @@ import discord
 from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import menu
 from redbot.core.utils.chat_formatting import (
     bold,
     escape,
@@ -353,23 +353,28 @@ class General(commands.Cog):
 
             features = {
                 "ANIMATED_ICON": _("Animated Icon"),
-                "BANNER": _("Banner Image"),
+                "ANIMATED_BANNER": _("Animated Banner"),
+                "BANNER": _("Banner"),
                 "COMMERCE": _("Commerce"),
                 "COMMUNITY": _("Community"),
-                "DISCOVERABLE": _("Server Discovery"),
+                "DISCOVERABLE": _("Discoverable"),
                 "FEATURABLE": _("Featurable"),
                 "INVITE_SPLASH": _("Splash Invite"),
-                "MEMBER_LIST_DISABLED": _("Member list disabled"),
                 "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
-                "MORE_EMOJI": _("More Emojis"),
-                "NEWS": _("News Channels"),
+                "MONETIZATION_ENABLED": _("Monetization Enabled"),
+                "MORE_STICKERS": _("More Stickers"),
+                "NEWS": _("News"),
                 "PARTNERED": _("Partnered"),
-                "PREVIEW_ENABLED": _("Preview enabled"),
-                "PUBLIC_DISABLED": _("Public disabled"),
-                "VANITY_URL": _("Vanity URL"),
+                "PREVIEW_ENABLED": _("Preview Enabled"),
+                "PRIVATE_THREADS": _("Private Threads"),
+                "ROLE_ICON": _("Role Icon"),
+                "SEVEN_DAY_THREAD_ARCHIVE": _("Seven Day Thread Archive"),
+                "THREE_DAY_THREAD_ARCHIVE": _("Three Day Thread Archive"),
+                "TICKETED_EVENTS_ENABLED": _("Ticketed Events Enabled"),
                 "VERIFIED": _("Verified"),
-                "VIP_REGIONS": _("VIP Voice Servers"),
-                "WELCOME_SCREEN_ENABLED": _("Welcome Screen enabled"),
+                "VANITY_URL": _("Vanity URL"),
+                "VIP_REGIONS": _("VIP Regions"),
+                "WELCOME_SCREEN_ENABLED": _("Welcome Screen Enabled"),
             }
             guild_features_list = [
                 f"\N{WHITE HEAVY CHECK MARK} {name}"
@@ -511,7 +516,6 @@ class General(commands.Cog):
                     await menu(
                         ctx,
                         pages=embeds,
-                        controls=DEFAULT_CONTROLS,
                         message=None,
                         page=0,
                         timeout=30,
@@ -537,7 +541,6 @@ class General(commands.Cog):
                     await menu(
                         ctx,
                         pages=messages,
-                        controls=DEFAULT_CONTROLS,
                         message=None,
                         page=0,
                         timeout=30,
