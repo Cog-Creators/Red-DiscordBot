@@ -3671,11 +3671,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
          **Examples:**
             - `[p]helpset usemenus reactions` - Enables using reaction menus.
             - `[p]helpset usemenus buttons` - Enables using button menus.
+            - `[p]helpset usemenus select` - Enables buttons with a select menu.
+            - `[p]helpset usemensus selectonly` - Enables a select menu only on help.
             - `[p]helpset usemenus disable` - Disables help menus.
 
         **Arguments:**
-            - `<"buttons"|"reactions"|"disable">` - Whether to use `buttons`,
-            `reactons`, or no menus.
+            - `<"buttons"|"reactions"|"select"|"selectonly"|"disable">` - Whether to use `buttons`,
+            `reactons`, `select`, `selectonly`, or no menus.
         """
         if use_menus == "selectonly":
             msg = _("Help will use the select menu only.")
