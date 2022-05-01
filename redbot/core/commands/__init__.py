@@ -12,6 +12,7 @@ from .commands import (
     CogGroupMixin as CogGroupMixin,
     Command as Command,
     Group as Group,
+    GroupCog as GroupCog,
     GroupMixin as GroupMixin,
     command as command,
     HybridCommand as HybridCommand,

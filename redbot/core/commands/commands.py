@@ -14,6 +14,7 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    ClassVar,
     Dict,
     List,
     Literal,
@@ -57,6 +58,7 @@ __all__ = [
     "CogGroupMixin",
     "Command",
     "Group",
+    "GroupCog",
     "GroupMixin",
     "command",
     "group",
@@ -984,6 +986,16 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
         :meta private:
         """
         return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+
+class GroupCog(Cog):
+    """
+    Red's Cog base class with app commands group as the base.
+
+    This class inherits from `Cog` and `discord.ext.commands.GroupCog`
+    """
+
+    __cog_is_app_commands_group__: ClassVar[bool] = True
 
 
 class HybridCommand(Command, DPYHybridCommand):
