@@ -112,6 +112,7 @@ class KickBanMixin(MixinMeta):
         reason: str = None,
         create_modlog_case=False,
     ) -> Tuple[bool, str]:
+        bot = ctx.me
         author = ctx.author
         guild = ctx.guild
 
@@ -121,7 +122,12 @@ class KickBanMixin(MixinMeta):
             return False, _("Invalid days. Must be between 0 and 7.")
 
         if isinstance(user, discord.Member):
-            if author == user:
+            if bot == user:
+                return (
+                    False,
+                    _("I can't ban myself {}").format("\N{PENSIVE FACE}"),
+                )
+            elif author == user:
                 return (
                     False,
                     _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}"),
@@ -295,10 +301,14 @@ class KickBanMixin(MixinMeta):
         If a reason is specified, it will be the reason that shows up
         in the audit log.
         """
+        bot = ctx.me
         author = ctx.author
         guild = ctx.guild
 
-        if author == member:
+        if bot == member:
+            await ctx.send(_("I can't kick myself {emoji}").format(emoji="\N{PENSIVE FACE}"))
+            return
+        elif author == member:
             await ctx.send(
                 _("I cannot let you do that. Self-harm is bad {emoji}").format(
                     emoji="\N{PENSIVE FACE}"
@@ -592,10 +602,14 @@ class KickBanMixin(MixinMeta):
            - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`
             This will ban the user with ID 428675506947227648 for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
         """
+        bot = ctx.me
         guild = ctx.guild
         author = ctx.author
 
-        if author == member:
+        if bot == member:
+            await ctx.send(_("I can't ban myself {emoji}").format(emoji="\N{PENSIVE FACE}"))
+            return
+        elif author == member:
             await ctx.send(
                 _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
@@ -671,10 +685,14 @@ class KickBanMixin(MixinMeta):
     @checks.admin_or_permissions(ban_members=True)
     async def softban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Kick a user and delete 1 day's worth of their messages."""
+        bot = ctx.me
         guild = ctx.guild
         author = ctx.author
 
-        if author == member:
+        if bot == member:
+            await ctx.send(_("I can't softban myself {emoji}").format(emoji="\N{PENSIVE FACE}"))
+            return
+        elif author == member:
             await ctx.send(
                 _("I cannot let you do that. Self-harm is bad {emoji}").format(
                     emoji="\N{PENSIVE FACE}"
