@@ -196,7 +196,7 @@ class MixinMeta(ABC):
     async def is_query_allowed(
         self,
         config: Config,
-        ctx_or_channel: Optional[Union[Context, discord.TextChannel]],
+        ctx_or_channel: Optional[Union[Context, discord.TextChannel, discord.Thread]],
         query: str,
         query_obj: Query,
     ) -> bool:
@@ -250,7 +250,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def _has_notify_perms(self, channel: discord.TextChannel) -> bool:
+    def _has_notify_perms(self, channel: Union[discord.TextChannel, discord.Thread]) -> bool:
         raise NotImplementedError()
 
     @abstractmethod

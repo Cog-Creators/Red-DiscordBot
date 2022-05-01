@@ -84,8 +84,6 @@ class Mod(
         self.tban_expiry_task = asyncio.create_task(self.tempban_expirations_task())
         self.last_case: dict = defaultdict(dict)
 
-        self._ready = asyncio.Event()
-
     async def red_delete_data_for_user(
         self,
         *,
@@ -114,12 +112,8 @@ class Mod(
                         pass
                     # possible with a context switch between here and getting all guilds
 
-    async def initialize(self):
+    async def cog_load(self) -> None:
         await self._maybe_update_config()
-        self._ready.set()
-
-    async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        await self._ready.wait()
 
     def cog_unload(self):
         self.tban_expiry_task.cancel()

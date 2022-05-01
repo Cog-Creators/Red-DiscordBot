@@ -10,6 +10,7 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import can_user_react_in
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
@@ -221,7 +222,7 @@ class Permissions(commands.Cog):
             "multiple global or server rules apply to the case, the order they are checked in is:\n"
             "  1. Rules about a user.\n"
             "  2. Rules about the voice channel a user is in.\n"
-            "  3. Rules about the text channel a command was issued in.\n"
+            "  3. Rules about the text channel or a parent of the thread a command was issued in.\n"
             "  4. Rules about a role the user has (The highest role they have with a rule will be "
             "used).\n"
             "  5. Rules about the server a user is in (Global rules only).\n\n"
@@ -686,7 +687,7 @@ class Permissions(commands.Cog):
     @staticmethod
     async def _confirm(ctx: commands.Context) -> bool:
         """Ask "Are you sure?" and get the response as a bool."""
-        if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+        if ctx.guild is None or can_user_react_in(ctx.guild.me, ctx.channel):
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
             task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
@@ -815,8 +816,8 @@ class Permissions(commands.Cog):
                 elif rule is False:
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
-    def cog_unload(self) -> None:
-        asyncio.create_task(self._unload_all_rules())
+    async def cog_unload(self) -> None:
+        await self._unload_all_rules()
 
     async def _unload_all_rules(self) -> None:
         """Unload all rules set by this cog.

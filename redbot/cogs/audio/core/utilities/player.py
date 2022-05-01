@@ -8,7 +8,6 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from discord.embeds import EmptyEmbed
 from lavalink import NodeNotFound, PlayerNotFound
 
 from redbot.core import commands
@@ -585,7 +584,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             except IndexError:
                 self.update_player_lock(ctx, False)
                 title = _("Nothing found")
-                desc = EmptyEmbed
+                desc = None
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=title, description=desc)
