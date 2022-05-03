@@ -123,7 +123,7 @@ class SetApiModal(discord.ui.Modal):
             )
         else:
             service = self.service_input.value.lower()
-            await self.bot.set_shared_api_tokens(service, **tokens)
+            await interaction.client.set_shared_api_tokens(service, **tokens)
             return await interaction.response.send_message(
                 _("`{service}` API tokens have been set.").format(service=service),
                 ephemeral=True,

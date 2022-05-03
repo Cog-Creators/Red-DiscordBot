@@ -3123,12 +3123,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if service is None:  # Handled in order of missing operations
             await ctx.send(
-                _("Click the button below to set your keys."), view=SetApiView(self.bot)
+                _("Click the button below to set your keys."), view=SetApiView()
             )
         elif tokens is None:
             await ctx.send(
                 _("Click the button below to set your keys."),
-                view=SetApiView(self.bot, default_service=service),
+                view=SetApiView(default_service=service),
             )
         else:
             if ctx.channel.permissions_for(ctx.me).manage_messages:
