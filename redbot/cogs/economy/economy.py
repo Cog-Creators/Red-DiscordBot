@@ -14,7 +14,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import close_menu, menu
 from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
@@ -516,11 +516,7 @@ class Economy(commands.Cog):
                 highscores.append(box(temp_msg, lang="md"))
 
         if highscores:
-            await menu(
-                ctx,
-                highscores,
-                DEFAULT_CONTROLS if len(highscores) > 1 else {"\N{CROSS MARK}": close_menu},
-            )
+            await menu(ctx, highscores)
         else:
             await ctx.send(_("No balances found."))
 
