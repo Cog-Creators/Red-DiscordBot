@@ -1660,7 +1660,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if len(pages) == 1:
             await ctx.send(pages[0])
         else:
-            await menu(ctx, pages, DEFAULT_CONTROLS)
+            await menu(ctx, pages)
 
     @commands.command(require_var_positional=True)
     @checks.is_owner()
