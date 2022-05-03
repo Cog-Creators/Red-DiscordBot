@@ -3,12 +3,9 @@ from __future__ import annotations
 import discord
 
 from discord.ext.commands import BadArgument
-from typing import TYPE_CHECKING, List, Dict, Union, Optional
+from typing import List, Dict, Union, Optional
 from redbot.core.commands.converter import get_dict_converter
 from redbot.core.i18n import Translator
-
-if TYPE_CHECKING:
-    from redbot.core.bot import Red
 
 _ = Translator("UtilsViews", __file__)
 
@@ -23,8 +20,6 @@ class SetApiModal(discord.ui.Modal):
 
     Parameters
     ----------
-    bot: Red
-        The current bot in use.
     default_service: Optional[str]
         The service to add the API keys to.
         If this is omitted the bot owner is allowed to set his own service.
@@ -37,11 +32,9 @@ class SetApiModal(discord.ui.Modal):
 
     def __init__(
         self,
-        bot: Red,
         default_service: Optional[str] = None,
         default_keys: Optional[Dict[str, str]] = None,
     ):
-        self.bot: Red = bot
         self.default_service = default_service
         self.default_keys: List[str] = []
         if default_keys is not None:
@@ -102,7 +95,7 @@ class SetApiModal(discord.ui.Modal):
 
     async def on_submit(self, interaction: discord.Interaction):
         if (
-            await self.bot.is_owner(interaction.user) is False
+            not await interaction.client.is_owner(interaction.user)
         ):  # Prevent non-bot owners from somehow aquiring and saving the modal.
             return await interaction.response.send_message(
                 _("This modal is for bot owners only. Whoops!"), ephemeral=True
@@ -123,7 +116,7 @@ class SetApiModal(discord.ui.Modal):
             )
 
         if self.default_service is not None:  # Check is there is a service set.
-            await self.bot.set_shared_api_tokens(self.default_service, **tokens)
+            await interaction.client.set_shared_api_tokens(self.default_service, **tokens)
             return await interaction.response.send_message(
                 _("`{service}` API tokens have been set.").format(service=self.default_service),
                 ephemeral=True,
@@ -146,8 +139,6 @@ class SetApiView(discord.ui.View):
 
     Parameters
     ----------
-    bot: Red
-        The current bot in use.
     default_service: Optional[str]
         The service to add the API keys to.
         If this is omitted the bot owner is allowed to set his own service.
@@ -160,17 +151,15 @@ class SetApiView(discord.ui.View):
 
     def __init__(
         self,
-        bot: Red,
         default_service: Optional[str] = None,
         default_keys: Optional[Union[str, List[str]]] = None,
     ):
-        self.bot: Red = bot
         self.default_service = default_service
         self.default_keys = default_keys
         super().__init__()
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        if await self.bot.is_owner(interaction.user) is False:
+        if not await interaction.client.is_owner(interaction.user):
             await interaction.response.send_message(
                 _("This button is for bot owners only, oh well."), ephemeral=True
             )
@@ -183,5 +172,5 @@ class SetApiView(discord.ui.View):
     )
     async def auth_button(self, interaction: discord.Interaction, button: discord.Button):
         return await interaction.response.send_modal(
-            SetApiModal(self.bot, self.default_service, self.default_keys)
+            SetApiModal(self.default_service, self.default_keys)
         )
