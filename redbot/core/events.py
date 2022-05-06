@@ -32,7 +32,7 @@ from .utils._internal_utils import (
     send_to_owners_with_prefix_replaced,
     get_converter,
 )
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
+from .utils.chat_formatting import inline, format_perms_list, humanize_timedelta
 
 import rich
 from rich import box
