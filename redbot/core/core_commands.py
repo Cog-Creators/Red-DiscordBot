@@ -3515,7 +3515,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<prefixes...>` - The prefixes the bot will respond to globally.
         """
-        if "/" in prefixes:
+        if any(p.startswith("/") for p in prefixes):
             await ctx.send(
                 _("'/' cannot be set as a prefix, as it conflicts with Discord's slash commands.")
             )
@@ -3568,7 +3568,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Server prefixes have been reset."))
             return
-        if "/" in prefixes:
+        if any(p.startswith("/") for p in prefixes):
             await ctx.send(
                 _("'/' cannot be set as a prefix, as it conflicts with Discord's slash commands.")
             )
