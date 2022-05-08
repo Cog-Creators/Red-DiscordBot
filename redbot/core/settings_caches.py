@@ -47,7 +47,7 @@ class PrefixManager:
             raise TypeError("Prefixes must be a list of strings")
         if any(prefix.startswith("/") for prefix in prefixes):
             raise ValueError(
-                "Prefixes cannot start with a slash ('/'), it conflicts with Discord's slash commands."
+                "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
             )
         prefixes = sorted(prefixes, reverse=True)
         if gid is None:
