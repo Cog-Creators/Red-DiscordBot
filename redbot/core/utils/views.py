@@ -152,7 +152,7 @@ class SetApiView(discord.ui.View):
     def __init__(
         self,
         default_service: Optional[str] = None,
-        default_keys: Optional[Union[str, List[str]]] = None,
+        default_keys: Optional[Dict[str, str]] = None,
     ):
         self.default_service = default_service
         self.default_keys = default_keys
