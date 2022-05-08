@@ -18,7 +18,7 @@ import pip
 import traceback
 from pathlib import Path
 from redbot.core import data_manager
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import menu
 from redbot.core.utils.views import SetApiView
 from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
