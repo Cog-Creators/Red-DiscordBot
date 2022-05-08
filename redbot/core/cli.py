@@ -70,9 +70,9 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
             if len(prefix) > 10:
                 if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
-            if prefix == "/":
+            if prefix.startswith("/"):
                 print(
-                    "'/' cannot be set as a prefix, as it conflicts with Discord's slash commands."
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
                 )
                 prefix = ""
             if prefix:

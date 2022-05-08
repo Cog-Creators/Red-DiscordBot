@@ -3517,7 +3517,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if any(p.startswith("/") for p in prefixes):
             await ctx.send(
-                _("'/' cannot be set as a prefix, as it conflicts with Discord's slash commands.")
+                _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
             )
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
@@ -3570,7 +3570,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         if any(p.startswith("/") for p in prefixes):
             await ctx.send(
-                _("'/' cannot be set as a prefix, as it conflicts with Discord's slash commands.")
+                _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
             )
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):

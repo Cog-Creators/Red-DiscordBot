@@ -138,9 +138,9 @@ async def _edit_prefix(red, prefix, no_prompt):
             if not prefixes:
                 print("You need to pass at least one prefix!")
                 continue
-            if prefix == "/":
+            if prefix.startswith("/"):
                 print(
-                    "'/' cannot be set as a prefix, as it conflicts with Discord's slash commands."
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
                 )
                 continue
             prefixes = sorted(prefixes, reverse=True)
