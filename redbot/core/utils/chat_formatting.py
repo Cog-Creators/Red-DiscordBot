@@ -244,33 +244,32 @@ def pagify(
         Pages of the given text.
 
     """
-    in_text = text
     page_length -= shorten_by
-    while len(in_text) > page_length:
-        this_page_len = page_length
+    start = 0
+    end = len(text)
+    while (end - start) > page_length:
+        stop = start + page_length
         if escape_mass_mentions:
-            this_page_len -= in_text.count("@here", 0, page_length) + in_text.count(
-                "@everyone", 0, page_length
-            )
-        closest_delim = (in_text.rfind(d, 1, this_page_len) for d in delims)
+            stop -= text.count("@here", start, stop) + text.count("@everyone", start, stop)
+        closest_delim = (text.rfind(d, start + 1, stop) for d in delims)
         if priority:
             closest_delim = next((x for x in closest_delim if x > 0), -1)
         else:
             closest_delim = max(closest_delim)
-        closest_delim = closest_delim if closest_delim != -1 else this_page_len
+        stop = closest_delim if closest_delim != -1 else stop
         if escape_mass_mentions:
-            to_send = escape(in_text[:closest_delim], mass_mentions=True)
+            to_send = escape(text[start:stop], mass_mentions=True)
         else:
-            to_send = in_text[:closest_delim]
+            to_send = text[start:stop]
         if len(to_send.strip()) > 0:
             yield to_send
-        in_text = in_text[closest_delim:]
+        start = stop
 
-    if len(in_text.strip()) > 0:
+    if len(text[start:end].strip()) > 0:
         if escape_mass_mentions:
-            yield escape(in_text, mass_mentions=True)
+            yield escape(text[start:end], mass_mentions=True)
         else:
-            yield in_text
+            yield text[start:end]
 
 
 def strikethrough(text: str, escape_formatting: bool = True) -> str:
