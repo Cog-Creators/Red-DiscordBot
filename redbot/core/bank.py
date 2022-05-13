@@ -47,7 +47,7 @@ __all__ = [
     "is_owner_if_bank_global",
 ]
 
-_MAX_BALANCE = 2 ** 63 - 1
+_MAX_BALANCE = 2**63 - 1
 
 _SCHEMA_VERSION = 1
 

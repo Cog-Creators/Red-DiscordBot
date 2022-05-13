@@ -72,7 +72,7 @@ DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable
 
 
 class RedUnhandledAPI(Exception):
-    """ An exception which can be raised to signal a lack of handling specific APIs """
+    """An exception which can be raised to signal a lack of handling specific APIs"""
 
     pass
 
@@ -285,13 +285,6 @@ class Command(CogCommandMixin, DPYCommand):
         (type used will be of the inner type instead)
     """
 
-    def __call__(self, *args, **kwargs):
-        if self.cog:
-            # We need to inject cog as self here
-            return self.callback(self.cog, *args, **kwargs)
-        else:
-            return self.callback(*args, **kwargs)
-
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
         super().__init__(*args, **kwargs)
@@ -323,60 +316,27 @@ class Command(CogCommandMixin, DPYCommand):
 
     @callback.setter
     def callback(self, function):
-        """
-        Below should be mostly the same as discord.py
+        # Below should be mostly the same as discord.py
+        #
+        # Here's the list of cases where the behavior differs:
+        #   - `typing.Optional` behavior is changed
+        #      when `ignore_optional_for_conversion` option is used
+        super(Command, Command).callback.__set__(self, function)
 
-        Currently, we modify behavior for
+        if not self.ignore_optional_for_conversion:
+            return
 
-          - functools.partial support
-          - typing.Optional behavior change as an option
-        """
-        self._callback = function
-        if isinstance(function, functools.partial):
-            self.module = function.func.__module__
-            globals_ = function.func.__globals__
-        else:
-            self.module = function.__module__
-            globals_ = function.__globals__
-
-        signature = inspect.signature(function)
-        self.params = signature.parameters.copy()
-
-        # PEP-563 allows postponing evaluation of annotations with a __future__
-        # import. When postponed, Parameter.annotation will be a string and must
-        # be replaced with the real value for the converters to work later on
+        _NoneType = type(None)
         for key, value in self.params.items():
-            if isinstance(value.annotation, str):
-                self.params[key] = value = value.replace(
-                    annotation=eval(value.annotation, globals_)
-                )
-
-            # fail early for when someone passes an unparameterized Greedy type
-            if value.annotation is Greedy:
-                raise TypeError("Unparameterized Greedy[...] is disallowed in signature.")
-
-            if not self.ignore_optional_for_conversion:
-                continue  # reduces indentation compared to alternative
-
-            try:
-                vtype = value.annotation.__origin__
-                if vtype is Union:
-                    _NoneType = type if TYPE_CHECKING else type(None)
-                    args = value.annotation.__args__
-                    if _NoneType in args:
-                        args = tuple(a for a in args if a is not _NoneType)
-                        if len(args) == 1:
-                            # can't have a union of 1 or 0 items
-                            # 1 prevents this from becoming 0
-                            # we need to prevent 2 become 1
-                            # (Don't change that to becoming, it's intentional :musical_note:)
-                            self.params[key] = value = value.replace(annotation=args[0])
-                        else:
-                            # and mypy wretches at the correct Union[args]
-                            temp_type = type if TYPE_CHECKING else Union[args]
-                            self.params[key] = value = value.replace(annotation=temp_type)
-            except AttributeError:
+            origin = getattr(value.annotation, "__origin__", None)
+            if origin is not Union:
                 continue
+            args = value.annotation.__args__
+            if _NoneType in args:
+                args = tuple(a for a in args if a is not _NoneType)
+                # typing.Union is automatically deduplicated and flattened
+                # so we don't need to anything else here
+                self.params[key] = value = value.replace(annotation=Union[args])
 
     @property
     def help(self):
@@ -420,6 +380,7 @@ class Command(CogCommandMixin, DPYCommand):
     async def can_run(
         self,
         ctx: "Context",
+        /,
         *,
         check_all_parents: bool = False,
         change_permission_state: bool = False,
@@ -476,7 +437,7 @@ class Command(CogCommandMixin, DPYCommand):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
-    async def prepare(self, ctx):
+    async def prepare(self, ctx, /):
         ctx.command = self
 
         if not self.enabled:
@@ -501,39 +462,6 @@ class Command(CogCommandMixin, DPYCommand):
             if self._max_concurrency is not None:
                 await self._max_concurrency.release(ctx)
             raise
-
-    async def do_conversion(
-        self, ctx: "Context", converter, argument: str, param: inspect.Parameter
-    ):
-        """Convert an argument according to its type annotation.
-
-        Raises
-        ------
-        ConversionFailure
-            If doing the conversion failed.
-
-        Returns
-        -------
-        Any
-            The converted argument.
-
-        """
-        # Let's not worry about all of this junk if it's just a str converter
-        if converter is str:
-            return argument
-
-        try:
-            return await super().do_conversion(ctx, converter, argument, param)
-        except BadArgument as exc:
-            raise ConversionFailure(converter, argument, param, *exc.args) from exc
-        except ValueError as exc:
-            # Some common converters need special treatment...
-            if converter in (int, float):
-                message = _('"{argument}" is not a number.').format(argument=argument)
-                raise ConversionFailure(converter, argument, param, message) from exc
-
-            # We should expose anything which might be a bug in the converter
-            raise exc
 
     async def can_see(self, ctx: "Context"):
         """Check if this command is visible in the given context.
@@ -636,7 +564,7 @@ class Command(CogCommandMixin, DPYCommand):
                     break
         return old_rule, new_rule
 
-    def error(self, coro):
+    def error(self, coro, /):
         """
         A decorator that registers a coroutine as a local error handler.
 
@@ -661,7 +589,6 @@ class Command(CogCommandMixin, DPYCommand):
 
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
-
                     if isinstance(error.original, MyErrorType):
                         self.log_exception(error.original)
                     else:
@@ -797,7 +724,7 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
         self.autohelp = kwargs.pop("autohelp", True)
         super().__init__(*args, **kwargs)
 
-    async def invoke(self, ctx: "Context"):
+    async def invoke(self, ctx: "Context", /):
         # we skip prepare in some cases to avoid some things
         # We still always want this part of the behavior though
         ctx.command = self
@@ -972,7 +899,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         raise RedUnhandledAPI()
 
-    async def can_run(self, ctx: "Context", **kwargs) -> bool:
+    async def can_run(self, ctx: "Context", /, **kwargs) -> bool:
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
@@ -1000,7 +927,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         return can_run
 
-    async def can_see(self, ctx: "Context") -> bool:
+    async def can_see(self, ctx: "Context", /) -> bool:
         """Check if this cog is visible in the given context.
 
         In short, this will verify whether
@@ -1113,7 +1040,7 @@ class _AlwaysAvailableMixin:
     This particular class is not supported for 3rd party use
     """
 
-    async def can_run(self, ctx, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
         return not ctx.author.bot
 
     can_see = can_run
@@ -1131,10 +1058,10 @@ class _RuleDropper(CogCommandMixin):
     """
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
-        """ This will do nothing. """
+        """This will do nothing."""
 
     def deny_to(self, model_id: Union[int, str], guild_id: int) -> None:
-        """ This will do nothing. """
+        """This will do nothing."""
 
     def clear_rule_for(
         self, model_id: Union[int, str], guild_id: int
@@ -1146,7 +1073,7 @@ class _RuleDropper(CogCommandMixin):
         return cur_rule, cur_rule
 
     def set_default_rule(self, rule: Optional[bool], guild_id: int) -> None:
-        """ This will do nothing. """
+        """This will do nothing."""
 
 
 class _AlwaysAvailableCommand(_AlwaysAvailableMixin, _RuleDropper, Command):
@@ -1162,7 +1089,7 @@ class _ForgetMeSpecialCommand(_RuleDropper, Command):
     We need special can_run behavior here
     """
 
-    async def can_run(self, ctx, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
         return await ctx.bot._config.datarequests.allow_user_requests()
 
     can_see = can_run
