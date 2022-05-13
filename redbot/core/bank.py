@@ -591,7 +591,7 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
 
     payload = BankPruneInformation(scope, tmp)
 
-    # _bot_ref.dispatch("red_bank_prune_accounts", payload)
+    _bot_ref.dispatch("red_bank_prune_accounts", payload)
 
 
 async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
@@ -754,10 +754,10 @@ async def set_global(global_: bool) -> bool:
 
     if await is_global():
         await _config.clear_all_users()
+        _bot_ref.dispatch("red_bank_wipe", -1)
     else:
         await _config.clear_all_members()
-
-    _bot_ref.dispatch("red_bank_wipe", True)
+        _bot_ref.dispatch("red_bank_wipe", 0)
 
     await _config.is_global.set(global_)
     _cache_is_global = global_
