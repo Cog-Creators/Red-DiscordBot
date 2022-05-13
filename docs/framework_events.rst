@@ -9,7 +9,7 @@ Bank
 
 .. py:method:: red_bank_set_global(global_state: bool)
 
-    Dispatched when the Bank gets toggled between Global and Local. `global_state` will be True if the Bank is being set to Global or False if the bank is being set to Local
+    Dispatched when the Bank gets toggled between Global and Local. :code:`global_state` will be True if the Bank is being set to Global or False if the bank is being set to Local
 
 .. py:method:: red_bank_set_balance(payload: redbot.core.bank.BankSetBalanceInformation)
 
@@ -21,7 +21,7 @@ Bank
 
 .. py:method:: red_bank_wipe(guild_id: int)
     
-    Dispatched when the Bank gets wiped. `guild_id` will be the ID of the Guild that was wiped, 0 if all Guilds were wiped (Bank is Local), or -1 if all Users were wiped (Bank is Global)
+    Dispatched when the Bank gets wiped. :code:`guild_id` will be the ID of the Guild that was wiped, 0 if all Guilds were wiped (Bank is Local), or -1 if all Users were wiped (Bank is Global)
 
 .. py:method:: red_bank_prune_accounts(payload: redbot.core.bank.BankPruneInformation)
 
