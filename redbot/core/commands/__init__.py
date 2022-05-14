@@ -194,4 +194,5 @@ from discord.ext.commands import (
     bot_has_any_role as bot_has_any_role,
     before_invoke as before_invoke,
     after_invoke as after_invoke,
+    HybridCommandError as HybridCommandError,
 )
