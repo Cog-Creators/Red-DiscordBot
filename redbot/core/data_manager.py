@@ -59,6 +59,7 @@ if not config_file.exists() and sys.platform == "darwin":
     # https://platformdirs.readthedocs.io/en/stable/changelog.html#platformdirs-2-0-0
     _old_config_location = appdir.user_data_path / "config.json"
     if _old_config_location.exists():
+        config_dir.mkdir(parents=True, exist_ok=True)
         _old_config_location.rename(config_file)
 
 
