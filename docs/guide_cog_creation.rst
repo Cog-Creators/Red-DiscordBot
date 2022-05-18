@@ -28,7 +28,7 @@ Depending on what your goal is should help determine which version you need.
 Open a terminal or command prompt and type one of the following
     Stable Version: :code:`python3.8 -m pip install -U Red-DiscordBot`
 
-.. note::
+.. attention::
 
   To install the development version, replace ``Red-DiscordBot`` in the above commands with the
   link below. **The development version of the bot contains experimental changes. It is not
