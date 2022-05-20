@@ -19,6 +19,7 @@ import traceback
 from pathlib import Path
 from redbot.core import data_manager
 from redbot.core.utils.menus import menu
+from redbot.core.utils.views import SetApiView
 from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
 from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
@@ -3091,11 +3092,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.group(name="api", invoke_without_command=True)
     @checks.is_owner()
-    async def _set_api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
+    async def _set_api(
+        self,
+        ctx: commands.Context,
+        service: Optional[str] = None,
+        *,
+        tokens: Optional[TokenConverter] = None,
+    ):
         """
         Commands to set, list or remove various external API tokens.
 
         This setting will be asked for by some 3rd party cogs and some core cogs.
+
+        If passed without the `<service>` or `<tokens>` arguments it will allow you to open a modal to set your API keys securely.
 
         To add the keys provide the service name and the tokens as a comma separated
         list of key,values as described by the cog requesting this command.
@@ -3103,6 +3112,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.
 
         **Examples:**
+            - `[p]set api`
+            - `[p]set api spotify
             - `[p]set api spotify redirect_uri localhost`
             - `[p]set api github client_id,whoops client_secret,whoops`
 
@@ -3110,10 +3121,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<service>` - The service you're adding tokens to.
             - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
         """
-        if ctx.channel.permissions_for(ctx.me).manage_messages:
-            await ctx.message.delete()
-        await ctx.bot.set_shared_api_tokens(service, **tokens)
-        await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+        if service is None:  # Handled in order of missing operations
+            await ctx.send(_("Click the button below to set your keys."), view=SetApiView())
+        elif tokens is None:
+            await ctx.send(
+                _("Click the button below to set your keys."),
+                view=SetApiView(default_service=service),
+            )
+        else:
+            if ctx.channel.permissions_for(ctx.me).manage_messages:
+                await ctx.message.delete()
+            await ctx.bot.set_shared_api_tokens(service, **tokens)
+            await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @_set_api.command(name="list")
     async def _set_api_list(self, ctx: commands.Context):
