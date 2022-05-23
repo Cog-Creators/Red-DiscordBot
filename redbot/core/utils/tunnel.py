@@ -57,7 +57,7 @@ class Tunnel(metaclass=TunnelMeta):
     ----------
     sender: `discord.Member`
         The person who opened the tunnel
-    origin: `discord.TextChannel` or `discord.Thread`
+    origin: `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
         The channel in which it was opened
     recipient: `discord.User`
         The user on the other end of the tunnel
@@ -67,7 +67,7 @@ class Tunnel(metaclass=TunnelMeta):
         self,
         *,
         sender: discord.Member,
-        origin: Union[discord.TextChannel, discord.Thread],
+        origin: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
         recipient: discord.User,
     ):
         self.sender = sender
