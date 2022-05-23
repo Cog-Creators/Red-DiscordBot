@@ -5133,7 +5133,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.ForumChannel,
+            discord.CategoryChannel,
+            discord.Thread,
         ] = commands.CurrentChannel,
     ):
         """
@@ -5187,7 +5191,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.ForumChannel,
+            discord.CategoryChannel,
+            discord.Thread,
         ] = commands.CurrentChannel,
     ):
         """
@@ -5228,7 +5236,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     async def count_ignored(self, ctx: commands.Context):
         category_channels: List[discord.CategoryChannel] = []
-        text_and_voice_channels: List[Union[discord.TextChannel, discord.VoiceChannel]] = []
+        channels: List[Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel]] = []
         threads: List[discord.Thread] = []
         if await self.bot._ignored_cache.get_ignored_guild(ctx.guild):
             return _("This server is currently being ignored.")
@@ -5237,13 +5245,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
             if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                text_and_voice_channels.append(channel)
+                channels.append(channel)
         for channel in ctx.guild.voice_channels:
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
             if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                text_and_voice_channels.append(channel)
+                channels.append(channel)
+        for channel in ctx.guild.forum_channels:
+            if channel.category and channel.category not in category_channels:
+                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
+                    category_channels.append(channel.category)
+            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
+                channels.append(channel)
         for thread in ctx.guild.threads:
             if await self.bot._ignored_cache.get_ignored_channel(thread, check_category=False):
                 threads.append(thread)
@@ -5251,11 +5265,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         cat_str = (
             humanize_list([c.name for c in category_channels]) if category_channels else _("None")
         )
-        chan_str = (
-            humanize_list([c.mention for c in text_and_voice_channels])
-            if text_and_voice_channels
-            else _("None")
-        )
+        chan_str = humanize_list([c.mention for c in channels]) if channels else _("None")
         thread_str = humanize_list([c.mention for c in threads]) if threads else _("None")
         msg = _(
             "Currently ignored categories: {categories}\n"
