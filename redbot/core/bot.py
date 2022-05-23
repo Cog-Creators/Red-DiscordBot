@@ -1880,7 +1880,7 @@ class Red(
 
     async def get_owner_notification_destinations(
         self,
-    ) -> List[Union[discord.TextChannel, discord.User]]:
+    ) -> List[Union[discord.TextChannel, discord.VoiceChannel, discord.User]]:
         """
         Gets the users and channels to send to
         """

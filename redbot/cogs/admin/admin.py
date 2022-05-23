@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Tuple
+from typing import Tuple, Union
 
 import discord
 from redbot.core import Config, checks, commands
@@ -349,7 +349,9 @@ class Admin(commands.Cog):
         pass
 
     @announceset.command(name="channel")
-    async def announceset_channel(self, ctx, *, channel: discord.TextChannel):
+    async def announceset_channel(
+        self, ctx, *, channel: Union[discord.TextChannel, discord.VoiceChannel]
+    ):
         """Change the channel where the bot will send announcements."""
         await self.config.guild(ctx.guild).announce_channel.set(channel.id)
         await ctx.send(
