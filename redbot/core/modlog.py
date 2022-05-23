@@ -349,12 +349,12 @@ class Case:
         self.message = message
 
     @property
-    def parent_channel(self) -> Optional[discord.TextChannel]:
+    def parent_channel(self) -> Optional[Union[discord.TextChannel, discord.ForumChannel]]:
         """
-        The parent text channel of the thread in `channel`.
+        The parent text/forum channel of the thread in `channel`.
 
         This will be `None` if `channel` is not a thread
-        and when the parent text channel is not in cache (probably due to removal).
+        and when the parent text/forum channel is not in cache (probably due to removal).
         """
         if self.parent_channel_id is None:
             return None
