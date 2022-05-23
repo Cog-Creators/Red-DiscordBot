@@ -251,28 +251,25 @@ class Filter(commands.Cog):
             await ctx.send(_("I can't send direct messages to you."))
 
     @_filter_channel.command(name="add", require_var_positional=True)
-    async def filter_channel_add(self, ctx: commands.Context, *words: str):
+    async def filter_channel_add(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        *words: str,
+    ):
         """Add words to the filter.
 
         Use double quotes to add sentences.
 
         Examples:
-            - `[p]filter channel add word1 word2 word3`
-            - `[p]filter channel add "This is a sentence"`
+            - `[p]filter channel add #channel word1 word2 word3`
+            - `[p]filter channel add #channel "This is a sentence"`
 
         **Arguments:**
 
+        - `<channel>` The text, voice, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to filter.
         """
-        channel = ctx.channel
-        if isinstance(channel, discord.Thread):
-            await ctx.send(
-                _(
-                    "Threads can't have a filter list set up. If you want to add words to"
-                    " the list of the parent channel, send the command in that channel."
-                )
-            )
-            return
         added = await self.add_to_filter(channel, words)
         if added:
             self.invalidate_cache(ctx.guild, ctx.channel)
@@ -281,28 +278,25 @@ class Filter(commands.Cog):
             await ctx.send(_("Words already in the filter."))
 
     @_filter_channel.command(name="delete", aliases=["remove", "del"], require_var_positional=True)
-    async def filter_channel_remove(self, ctx: commands.Context, *words: str):
+    async def filter_channel_remove(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        *words: str,
+    ):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
 
         Examples:
-            - `[p]filter channel remove word1 word2 word3`
-            - `[p]filter channel remove "This is a sentence"`
+            - `[p]filter channel remove #channel word1 word2 word3`
+            - `[p]filter channel remove #channel "This is a sentence"`
 
         **Arguments:**
 
+        - `<channel>` The text, voice, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to no longer filter.
         """
-        channel = ctx.channel
-        if isinstance(channel, discord.Thread):
-            await ctx.send(
-                _(
-                    "Threads can't have a filter list set up. If you want to remove words from"
-                    " the list of the parent channel, send the command in that channel."
-                )
-            )
-            return
         removed = await self.remove_from_filter(channel, words)
         if removed:
             await ctx.send(_("Words removed from filter."))
@@ -373,7 +367,9 @@ class Filter(commands.Cog):
     def invalidate_cache(
         self,
         guild: discord.Guild,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel]
+        ] = None,
     ) -> None:
         """Invalidate a cached pattern"""
         self.pattern_cache.pop((guild.id, channel and channel.id), None)
@@ -384,7 +380,9 @@ class Filter(commands.Cog):
 
     async def add_to_filter(
         self,
-        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.VoiceChannel],
+        server_or_channel: Union[
+            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.ForumChannel
+        ],
         words: list,
     ) -> bool:
         added = False
@@ -406,7 +404,9 @@ class Filter(commands.Cog):
 
     async def remove_from_filter(
         self,
-        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.VoiceChannel],
+        server_or_channel: Union[
+            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.ForumChannel
+        ],
         words: list,
     ) -> bool:
         removed = False
