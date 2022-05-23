@@ -371,7 +371,9 @@ class Filter(commands.Cog):
             await ctx.send(_("Names and nicknames will now be filtered."))
 
     def invalidate_cache(
-        self, guild: discord.Guild, channel: Optional[discord.TextChannel] = None
+        self,
+        guild: discord.Guild,
+        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel]] = None,
     ) -> None:
         """Invalidate a cached pattern"""
         self.pattern_cache.pop((guild.id, channel and channel.id), None)
@@ -381,7 +383,9 @@ class Filter(commands.Cog):
                     self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
-        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+        self,
+        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.VoiceChannel],
+        words: list,
     ) -> bool:
         added = False
         if isinstance(server_or_channel, discord.Guild):
@@ -391,7 +395,7 @@ class Filter(commands.Cog):
                         cur_list.append(w.lower())
                         added = True
 
-        elif isinstance(server_or_channel, discord.TextChannel):
+        else:
             async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower() not in cur_list and w:
@@ -401,7 +405,9 @@ class Filter(commands.Cog):
         return added
 
     async def remove_from_filter(
-        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+        self,
+        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.VoiceChannel],
+        words: list,
     ) -> bool:
         removed = False
         if isinstance(server_or_channel, discord.Guild):
@@ -411,7 +417,7 @@ class Filter(commands.Cog):
                         cur_list.remove(w.lower())
                         removed = True
 
-        elif isinstance(server_or_channel, discord.TextChannel):
+        else:
             async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower() in cur_list:
@@ -423,7 +429,9 @@ class Filter(commands.Cog):
     async def filter_hits(
         self,
         text: str,
-        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.Thread],
+        server_or_channel: Union[
+            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.Thread
+        ],
     ) -> Set[str]:
         if isinstance(server_or_channel, discord.Guild):
             guild = server_or_channel
