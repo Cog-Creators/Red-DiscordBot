@@ -1349,7 +1349,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @embedset.command(name="channel")
     @checks.guildowner_or_permissions(administrator=True)
     @commands.guild_only()
-    async def embedset_channel(self, ctx: commands.Context, enabled: bool = None):
+    async def embedset_channel(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        enabled: bool = None,
+    ):
         """
         Set's a channel's embed setting.
 
@@ -1361,27 +1366,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         To see full evaluation order of embed settings, run `[p]help embedset`.
 
         **Examples:**
-            - `[p]embedset channel False` - Disables embeds in this channel.
-            - `[p]embedset channel` - Resets value to use guild default.
+            - `[p]embedset channel #text-channel False` - Disables embeds in the #text-channel.
+            - `[p]embedset channel #forum-channel disable` - Disables embeds in the #forum-channel.
+            - `[p]embedset channel #text-channel` - Resets value to use guild default in the #text-channel .
 
         **Arguments:**
+            - `<channel>` - The text, voice, or forum channel to set embed setting for.
             - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.
         """
-        if isinstance(ctx.channel, discord.Thread):
-            await ctx.send(
-                _(
-                    "This setting cannot be set for threads. If you want to set this for"
-                    " the parent channel, send the command in that channel."
-                )
-            )
-            return
-
         if enabled is None:
-            await self.bot._config.channel(ctx.channel).embeds.clear()
+            await self.bot._config.channel(channel).embeds.clear()
             await ctx.send(_("Embeds will now fall back to the global setting."))
             return
 
-        await self.bot._config.channel(ctx.channel).embeds.set(enabled)
+        await self.bot._config.channel(channel).embeds.set(enabled)
         await ctx.send(
             _("Embeds are now {} for this channel.").format(
                 _("enabled") if enabled else _("disabled")
