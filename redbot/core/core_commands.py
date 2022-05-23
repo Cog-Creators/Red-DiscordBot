@@ -4143,8 +4143,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def diagnoseissues(
         self,
         ctx: commands.Context,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]],
-        member: Union[discord.Member, discord.User],
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+        ] = commands.CurrentChannel,
+        # avoid non-default argument following default argument by using empty param()
+        member: Union[discord.Member, discord.User] = commands.param(),
         *,
         command_name: str,
     ) -> None:
@@ -4162,18 +4165,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<member>` - The member that should be considered as the command caller.
             - `<command_name>` - The name of the command to test.
         """
-        if channel is None:
-            channel = ctx.channel
-            if not isinstance(
-                channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)
-            ):
-                await ctx.send(
-                    _(
-                        "A text channel, voice channel, or thread needs to be passed"
-                        " when using this command in DMs."
-                    )
+        if not isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+            await ctx.send(
+                _(
+                    "A text channel, voice channel, or thread needs to be passed"
+                    " when using this command in DMs."
                 )
-                return
+            )
+            return
 
         command = self.bot.get_command(command_name)
         if command is None:
@@ -5133,11 +5132,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def ignore_channel(
         self,
         ctx: commands.Context,
-        channel: Optional[
-            Union[
-                discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel, discord.Thread
-            ]
-        ] = None,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel, discord.Thread
+        ] = commands.CurrentChannel,
     ):
         """
         Ignore commands in the channel, thread, or category.
@@ -5155,8 +5152,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<channel>` - The channel to ignore. This can also be a thread or category channel.
         """
-        if not channel:
-            channel = ctx.channel
         if not await self.bot._ignored_cache.get_ignored_channel(channel):
             await self.bot._ignored_cache.set_ignored_channel(channel, True)
             await ctx.send(_("Channel added to ignore list."))
@@ -5191,11 +5186,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def unignore_channel(
         self,
         ctx: commands.Context,
-        channel: Optional[
-            Union[
-                discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel, discord.Thread
-            ]
-        ] = None,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel, discord.Thread
+        ] = commands.CurrentChannel,
     ):
         """
         Remove a channel, thread, or category from the ignore list.
@@ -5211,9 +5204,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<channel>` - The channel to unignore. This can also be a thread or category channel.
         """
-        if not channel:
-            channel = ctx.channel
-
         if await self.bot._ignored_cache.get_ignored_channel(channel):
             await self.bot._ignored_cache.set_ignored_channel(channel, False)
             await ctx.send(_("Channel removed from ignore list."))

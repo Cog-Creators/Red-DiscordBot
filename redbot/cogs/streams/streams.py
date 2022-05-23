@@ -313,7 +313,9 @@ class Streams(commands.Cog):
         self,
         ctx: commands.Context,
         channel_name: str,
-        discord_channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this or the given channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
@@ -328,7 +330,9 @@ class Streams(commands.Cog):
         self,
         ctx: commands.Context,
         channel_name_or_id: str,
-        discord_channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id, discord_channel)
@@ -338,7 +342,9 @@ class Streams(commands.Cog):
         self,
         ctx: commands.Context,
         channel_name: str,
-        discord_channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a Picarto stream."""
         await self.stream_alert(ctx, PicartoStream, channel_name, discord_channel)
@@ -407,8 +413,6 @@ class Streams(commands.Cog):
             await ctx.send(page)
 
     async def stream_alert(self, ctx: commands.Context, _class, channel_name, discord_channel):
-        if discord_channel is None:
-            discord_channel = ctx.channel
         if isinstance(discord_channel, discord.Thread):
             await ctx.send("Stream alerts cannot be set up in threads.")
             return
