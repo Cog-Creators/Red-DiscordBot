@@ -187,7 +187,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         surpass_ignore = (
-            isinstance(ctx.channel, discord.abc.PrivateChannel)
+            ctx.guild is None
             or await ctx.bot.is_owner(ctx.author)
             or await ctx.bot.is_admin(ctx.author)
         )

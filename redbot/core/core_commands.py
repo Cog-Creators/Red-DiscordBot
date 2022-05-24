@@ -4163,7 +4163,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<member>` - The member that should be considered as the command caller.
             - `<command_name>` - The name of the command to test.
         """
-        if not isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+        if ctx.guild is None:
             await ctx.send(
                 _(
                     "A text channel, voice channel, or thread needs to be passed"

@@ -412,7 +412,7 @@ class Trivia(commands.Cog):
         subcommands for a more customised leaderboard.
         """
         cmd = self.trivia_leaderboard_server
-        if isinstance(ctx.channel, discord.abc.PrivateChannel):
+        if ctx.guild is None:
             cmd = self.trivia_leaderboard_global
         await ctx.invoke(cmd, "wins", 10)
 
