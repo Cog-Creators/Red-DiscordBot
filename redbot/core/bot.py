@@ -220,8 +220,6 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info during startup
-        self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -1207,16 +1205,12 @@ class Red(
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
-    async def _pre_fetch_owners(self) -> None:
-        app_info = await self.application_info()
-
-        if app_info.team:
+    def _setup_owners(self) -> None:
+        if self.application.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in app_info.team.members)
+                self.owner_ids.update(m.id for m in self.application.team.members)
         elif self._owner_id_overwrite is None:
-            self.owner_ids.add(app_info.owner.id)
-
-        self._app_info = app_info
+            self.owner_ids.add(self.application.owner.id)
 
         if not self.owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
@@ -1229,7 +1223,7 @@ class Red(
         await self.connect()
 
     async def setup_hook(self) -> None:
-        await self._pre_fetch_owners()
+        self._setup_owners()
         await self._pre_connect()
 
     async def send_help_for(
@@ -1376,7 +1370,7 @@ class Red(
         scopes = ("bot", "applications.commands") if commands_scope else ("bot",)
         perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(self._app_info.id, permissions=permissions, scopes=scopes)
+        return discord.utils.oauth_url(self.application_id, permissions=permissions, scopes=scopes)
 
     async def is_invite_url_public(self) -> bool:
         """

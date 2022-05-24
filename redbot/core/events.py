@@ -70,7 +70,7 @@ def init_events(bot, cli_flags):
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
-        invite_url = discord.utils.oauth_url(bot._app_info.id, scopes=("bot",))
+        invite_url = discord.utils.oauth_url(bot.application_id, scopes=("bot",))
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
