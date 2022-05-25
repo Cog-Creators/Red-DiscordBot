@@ -34,6 +34,7 @@ from discord.ext.commands import (
     DisabledCommand,
     command as dpy_command_deco,
     Command as DPYCommand,
+    GroupCog as DPYGroupCog,
     HybridCommand as DPYHybridCommand,
     HybridGroup as DPYHybridGroup,
     Cog as DPYCog,
@@ -990,14 +991,12 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
         return {cmd.name: cmd for cmd in self.__cog_commands__}
 
 
-class GroupCog(Cog):
+class GroupCog(Cog, DPYGroupCog):
     """
     Red's Cog base class with app commands group as the base.
 
     This class inherits from `Cog` and `discord.ext.commands.GroupCog`
     """
-
-    __cog_is_app_commands_group__: ClassVar[bool] = True
 
 
 class HybridCommand(Command, DPYHybridCommand):
