@@ -62,6 +62,8 @@ __all__ = [
     "GroupMixin",
     "command",
     "group",
+    "hybrid_command",
+    "hybrid_group",
     "RESERVED_COMMAND_NAMES",
     "RedUnhandledAPI",
 ]
