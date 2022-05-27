@@ -262,9 +262,9 @@ class Permissions(commands.Cog):
                 can = False
 
             out = (
-                _("That user can run the specified command.")
+                "\N{WHITE HEAVY CHECK MARK} " + _("That user can run the specified command.")
                 if can
-                else _("That user can not run the specified command.")
+                else "\N{CROSS MARK} " + _("That user can not run the specified command.")
             )
         await ctx.send(out)
 
