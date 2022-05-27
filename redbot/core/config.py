@@ -1,5 +1,6 @@
 import asyncio
 import collections.abc
+import json
 import logging
 import pickle
 import weakref
@@ -807,7 +808,8 @@ class Config(metaclass=ConfigMeta):
         if key not in self._defaults:
             self._defaults[key] = {}
 
-        data = pickle.loads(pickle.dumps(kwargs, -1))
+        # this serves as a 'deep copy' and verification that the default is serializable to JSON
+        data = json.loads(json.dumps(kwargs))
 
         for k, v in data.items():
             to_add = self._get_defaults_dict(k, v)
@@ -956,7 +958,13 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The guild's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given guild_id parameter is not of type int
         """
+        if type(guild_id) is not int:
+            raise TypeError(f"guild_id should be of type int, not {guild_id.__class__.__name__}")
         return self._get_base_group(self.GUILD, str(guild_id))
 
     def guild(self, guild: discord.Guild) -> Group:
@@ -990,17 +998,25 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The channel's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given channel_id parameter is not of type int
         """
+        if type(channel_id) is not int:
+            raise TypeError(
+                f"channel_id should be of type int, not {channel_id.__class__.__name__}"
+            )
         return self._get_base_group(self.CHANNEL, str(channel_id))
 
-    def channel(self, channel: discord.abc.GuildChannel) -> Group:
+    def channel(self, channel: Union[discord.abc.GuildChannel, discord.Thread]) -> Group:
         """Returns a `Group` for the given channel.
 
         This does not discriminate between text and voice channels.
 
         Parameters
         ----------
-        channel : `discord.abc.GuildChannel`
+        channel : `discord.abc.GuildChannel` or `discord.Thread`
             A channel object.
 
         Returns
@@ -1024,7 +1040,13 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The role's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given role_id parameter is not of type int
         """
+        if type(role_id) is not int:
+            raise TypeError(f"role_id should be of type int, not {role_id.__class__.__name__}")
         return self._get_base_group(self.ROLE, str(role_id))
 
     def role(self, role: discord.Role) -> Group:
@@ -1056,7 +1078,13 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The user's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given user_id parameter is not of type int
         """
+        if type(user_id) is not int:
+            raise TypeError(f"user_id should be of type int, not {user_id.__class__.__name__}")
         return self._get_base_group(self.USER, str(user_id))
 
     def user(self, user: discord.abc.User) -> Group:
@@ -1090,7 +1118,17 @@ class Config(metaclass=ConfigMeta):
         `Group <redbot.core.config.Group>`
             The member's Group object.
 
+        Raises
+        ------
+        TypeError
+            If the given guild_id or member_id parameter is not of type int
         """
+        if type(guild_id) is not int:
+            raise TypeError(f"guild_id should be of type int, not {guild_id.__class__.__name__}")
+
+        if type(member_id) is not int:
+            raise TypeError(f"member_id should be of type int, not {member_id.__class__.__name__}")
+
         return self._get_base_group(self.MEMBER, str(guild_id), str(member_id))
 
     def member(self, member: discord.Member) -> Group:

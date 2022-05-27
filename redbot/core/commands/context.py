@@ -11,7 +11,7 @@ from discord.ext.commands import Context as DPYContext
 from .requires import PermState
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
-from ..utils import common_filters
+from ..utils import can_user_react_in, common_filters
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -93,7 +93,7 @@ class Context(DPYContext):
         return await super().send(content=content, **kwargs)
 
     async def send_help(self, command=None):
-        """ Send the command help message. """
+        """Send the command help message."""
         # This allows people to manually use this similarly
         # to the upstream d.py version, while retaining our use.
         command = command or self.command
@@ -139,7 +139,7 @@ class Context(DPYContext):
             :code:`True` if adding the reaction succeeded.
         """
         try:
-            if not self.channel.permissions_for(self.me).add_reactions:
+            if not can_user_react_in(self.me, self.channel):
                 raise RuntimeError
             await self.message.add_reaction(reaction)
         except (RuntimeError, discord.HTTPException):
@@ -231,17 +231,20 @@ class Context(DPYContext):
 
     async def embed_requested(self):
         """
-        Simple helper to call bot.embed_requested
-        with logic around if embed permissions are available
+        Short-hand for calling bot.embed_requested with permission checks.
+
+        Equivalent to:
+
+        .. code:: python
+
+            await ctx.bot.embed_requested(ctx)
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
-        return await self.bot.embed_requested(
-            self.channel, self.author, command=self.command, check_permissions=True
-        )
+        return await self.bot.embed_requested(self)
 
     async def maybe_send_embed(self, message: str) -> discord.Message:
         """
@@ -279,16 +282,6 @@ class Context(DPYContext):
                 message,
                 allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
             )
-
-    @property
-    def clean_prefix(self) -> str:
-        """
-        str: The command prefix, but with a sanitized version of the bot's mention if it was used as prefix.
-        This can be used in a context where discord user mentions might not render properly.
-        """
-        me = self.me
-        pattern = re.compile(rf"<@!?{me.id}>")
-        return pattern.sub(f"@{me.display_name}".replace("\\", r"\\"), self.prefix)
 
     @property
     def me(self) -> Union[discord.ClientUser, discord.Member]:
@@ -346,7 +339,7 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
             ...
 
         @property
-        def channel(self) -> discord.TextChannel:
+        def channel(self) -> Union[discord.TextChannel, discord.Thread]:
             ...
 
         @property
@@ -356,7 +349,6 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
         @property
         def me(self) -> discord.Member:
             ...
-
 
 else:
     GuildContext = Context

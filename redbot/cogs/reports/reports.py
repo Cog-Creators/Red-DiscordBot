@@ -193,7 +193,6 @@ class Reports(commands.Cog):
             return guild
 
     async def send_report(self, ctx: commands.Context, msg: discord.Message, guild: discord.Guild):
-
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
 
@@ -207,13 +206,13 @@ class Reports(commands.Cog):
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
-        if await self.bot.embed_requested(channel, author):
+        if await self.bot.embed_requested(channel):
             em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
                     author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
                 ),
-                icon_url=author.avatar_url,
+                icon_url=author.display_avatar,
             )
             em.set_footer(text=_("Report #{}").format(ticket_number))
             send_content = None
@@ -357,11 +356,9 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-
         to_remove = []
 
         for k, v in self.tunnel_store.items():
-
             guild, ticket_number = k
             if await self.bot.cog_disabled_in_guild(self, guild):
                 to_remove.append(k)
@@ -394,7 +391,7 @@ class Reports(commands.Cog):
     async def response(self, ctx, ticket_number: int):
         """Open a message tunnel.
 
-        This tunnel will forward things you say in this channel
+        This tunnel will forward things you say in this channel or thread
         to the ticket opener's direct messages.
 
         Tunnels do not persist across bot restarts.
