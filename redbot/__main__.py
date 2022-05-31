@@ -235,7 +235,9 @@ def _edit_data_path(data, instance_name, data_path, copy_data, no_prompt):
             print("Can't copy data to non-empty location. Data location will remain unchanged.")
             data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
     elif not no_prompt and confirm("Would you like to change the data location?", default=False):
-        data["DATA_PATH"] = get_data_dir(instance_name)
+        data["DATA_PATH"] = get_data_dir(
+            instance_name=instance_name, data_path=None, interactive=True
+        )
         if confirm("Do you want to copy the data from old location?", default=True):
             if not _copy_data(data):
                 print("Can't copy the data to non-empty location.")
