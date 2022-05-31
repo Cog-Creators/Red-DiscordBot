@@ -187,7 +187,7 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
                 " run this command with --overwrite-existing-instance flag."
             )
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
-        name = get_name()
+        name = get_name("")
         if name in _get_instance_names():
             print(
                 "WARNING: An instance already exists with this name. "
