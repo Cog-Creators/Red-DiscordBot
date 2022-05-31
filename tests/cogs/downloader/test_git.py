@@ -339,10 +339,33 @@ async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
 
 
 @pytest.mark.skipif(
-    GIT_VERSION < (2, 31), reason="This is test for output from Git 2.31 and newer."
+    GIT_VERSION < (2, 36), reason="This is test for output from Git 2.36 and newer."
 )
 @pytest.mark.asyncio
 async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
+    # 2 ambiguous refs:
+    # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c6f0"
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "error: short object ID c6f0 is ambiguous\n"
+        "hint: The candidates are:\n"
+        "hint:   c6f028f tag 2019-10-24 - ambiguous_tag_66387\n"
+        "hint:   c6f0e5e commit 2019-10-24 - Commit ambiguous with tag.\n"
+        "fatal: Needed a single revision"
+    )
+
+
+@pytest.mark.skipif(
+    not ((2, 31) <= GIT_VERSION < (2, 36)), reason="This is test for output from Git >=2.31,<2.36."
+)
+@pytest.mark.asyncio
+async def test_git_get_full_sha1_from_ambiguous_tag_and_commit_pre_2_36(git_repo):
     # 2 ambiguous refs:
     # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
     # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
@@ -476,8 +499,30 @@ async def test_git_check_if_module_exists_true(git_repo):
     assert p.returncode == 0
 
 
+@pytest.mark.skipif(
+    GIT_VERSION < (2, 36), reason="This is test for output from Git 2.36 and newer."
+)
 @pytest.mark.asyncio
 async def test_git_check_if_module_exists_false(git_repo):
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_CHECK_IF_MODULE_EXISTS,
+            path=git_repo.folder_path,
+            rev="a7120330cc179396914e0d6af80cfa282adc124b",
+            module_name="mycog",
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "fatal: path 'mycog/__init__.py' does not exist in 'a7120330cc179396914e0d6af80cfa282adc124b'"
+    )
+
+
+@pytest.mark.skipif(
+    GIT_VERSION >= (2, 36), reason="This is test for output from Git older than 2.31."
+)
+@pytest.mark.asyncio
+async def test_git_check_if_module_exists_false_pre_2_36(git_repo):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECK_IF_MODULE_EXISTS,
