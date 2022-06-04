@@ -27,6 +27,7 @@ we recommend **Ubuntu 20.04 LTS**.
    raspberry-pi-os-10
    raspberry-pi-os-11
    rhel-8
+   rhel-9
    rocky-linux-8
    ubuntu-1804
    ubuntu-2004
