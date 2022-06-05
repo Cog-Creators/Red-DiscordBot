@@ -1061,7 +1061,7 @@ class Downloader(commands.Cog):
         )
         if pinned_list:
             message = "\n".join(
-                "({}) {}".format(inline(cog.commit[:7] or _('unknown')), cog.name)
+                "({}) {}".format(inline(cog.commit[:7] or _("unknown")), cog.name)
                 for cog in pinned_list
             )
         else:
