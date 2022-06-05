@@ -11,7 +11,7 @@ from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import can_user_react_in
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, error, success
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
 
@@ -262,9 +262,9 @@ class Permissions(commands.Cog):
                 can = False
 
             out = (
-                _("That user can run the specified command.")
+                success(_("That user can run the specified command."))
                 if can
-                else _("That user can not run the specified command.")
+                else error(_("That user can not run the specified command."))
             )
         await ctx.send(out)
 
