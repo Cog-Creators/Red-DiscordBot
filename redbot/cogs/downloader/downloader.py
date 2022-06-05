@@ -1056,24 +1056,20 @@ class Downloader(commands.Cog):
     async def _cog_listpinned(self, ctx: commands.Context):
         """List currently pinned cogs."""
         installed = await self.installed_cogs()
-        pinned_list = sorted([cog for cog in installed if cog.pinned], key=lambda cog: cog.name)
+        pinned_list = sorted([cog for cog in installed if cog.pinned], key=lambda cog: cog.name.lower())
         if pinned_list:
-            message = "\n".join(f"(`{cog.commit[:7]}`) {cog.name}" for cog in pinned_list)
+            message = "\n".join(f"(`{cog.commit[:7] or _('unknown')}`) {cog.name}" for cog in pinned_list)
         else:
             message = _("None.")
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
             for page in pagify(message, page_length=900):
                 name = _("(continued)") if page.startswith("\n") else _("Pinned Cogs:")
-                if page.startswith("\n"):
-                    page = page[2:]
                 embed.add_field(name=name, value=page, inline=False)
             await ctx.send(embed=embed)
         else:
             for page in pagify(message, page_length=1900):
-                if page.startswith("\n"):
-                    page = page[2:]
-                else:
+                if not page.startswith("\n"):
                     page = _("Pinned Cogs: \n") + page
                 await ctx.send(page)
 
