@@ -313,12 +313,22 @@ class ServerManager:
 
     async def _wait_for_launcher(self) -> None:
         log.info("Waiting for Managed Lavalink node to be ready")
+        # Since Lavalink jar 3.4.0_1346, there are two "Started Launcher" lines logged
+        # before Lavalink is ready to receive requests.
+        started_line_seen = False
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
-                self.ready.set()
-                log.info("Managed Lavalink node is ready to receive requests.")
-                break
+                if started_line_seen:
+                    self.ready.set()
+                    log.info("Managed Lavalink node is ready to receive requests.")
+                    break
+                else:
+                    log.debug(
+                        "Seen first 'Started Launcher' line from Managed Lavalink node."
+                        " Waiting for the second one..."
+                    )
+                    started_line_seen = True
             if _FAILED_TO_START.search(line):
                 raise ManagedLavalinkStartFailure(
                     f"Lavalink failed to start: {line.decode().strip()}"
