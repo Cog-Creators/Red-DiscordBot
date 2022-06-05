@@ -262,7 +262,7 @@ class Permissions(commands.Cog):
                 can = False
 
             out = (
-                "\N{WHITE HEAVY CHECK MARK} " + _("That user can run the specified command.")
+                success(_("That user can run the specified command."))
                 if can
                 else "\N{CROSS MARK} " + _("That user can not run the specified command.")
             )
