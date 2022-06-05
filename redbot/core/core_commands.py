@@ -1653,7 +1653,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This command is interactive.
         """
         guilds = sorted(self.bot.guilds, key=lambda s: s.name.lower())
-        msg = "\n".join(f"{guild.name} (`{guild.id}`)\n" for guild in guilds)
+        msg = "\n".join(
+            f"{discord.utils.escape_markdown(guild.name)} (`{guild.id}`)\n" for guild in guilds
+        )
 
         pages = list(pagify(msg, ["\n"], page_length=1000))
 
