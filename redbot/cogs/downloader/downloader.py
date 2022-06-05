@@ -1056,9 +1056,13 @@ class Downloader(commands.Cog):
     async def _cog_listpinned(self, ctx: commands.Context):
         """List currently pinned cogs."""
         installed = await self.installed_cogs()
-        pinned_list = sorted([cog for cog in installed if cog.pinned], key=lambda cog: cog.name.lower())
+        pinned_list = sorted(
+            [cog for cog in installed if cog.pinned], key=lambda cog: cog.name.lower()
+        )
         if pinned_list:
-            message = "\n".join(f"(`{cog.commit[:7] or _('unknown')}`) {cog.name}" for cog in pinned_list)
+            message = "\n".join(
+                f"(`{cog.commit[:7] or _('unknown')}`) {cog.name}" for cog in pinned_list
+            )
         else:
             message = _("None.")
         if await ctx.embed_requested():
