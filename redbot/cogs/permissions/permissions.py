@@ -632,11 +632,23 @@ class Permissions(commands.Cog):
     ) -> None:
         """Set rules from a YAML file and handle response to users too."""
         if not ctx.message.attachments:
-            await ctx.send(_("You must upload a file."))
-            return
+            await ctx.send(_("Supply a file with next message or type anything to cancel."))
+            try:
+                message = await ctx.bot.wait_for(
+                    "message", check=MessagePredicate.same_context(ctx), timeout=30
+                )
+            except asyncio.TimeoutError:
+                await ctx.send(_("You took too long to upload a file."))
+                return
+            if not message.attachments:
+                await ctx.send(_("You have cancelled the upload process."))
+                return
+            parsedfile = message.attachments[0]
+        else:
+            parsedfile = ctx.message.attachments[0]
 
         try:
-            await self._yaml_set_acl(ctx.message.attachments[0], guild_id=guild_id, update=update)
+            await self._yaml_set_acl(parsedfile, guild_id=guild_id, update=update)
         except yaml.MarkedYAMLError as e:
             await ctx.send(_("Invalid syntax: ") + str(e))
         except SchemaError as e:
