@@ -61,6 +61,7 @@ class TriviaSession:
          - ``bot_plays`` (`bool`)
          - ``allow_override`` (`bool`)
          - ``payout_multiplier`` (`float`)
+         - ``use_spoilers`` (`bool`)
     scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
         players are of type `discord.Member`.
@@ -103,8 +104,7 @@ class TriviaSession:
 
         """
         session = cls(ctx, question_list, settings)
-        loop = ctx.bot.loop
-        session._task = loop.create_task(session.run())
+        session._task = asyncio.create_task(session.run())
         session._task.add_done_callback(session._error_handler)
         return session
 
@@ -250,7 +250,9 @@ class TriviaSession:
         answers = tuple(s.lower() for s in answers)
 
         def _pred(message: discord.Message):
-            early_exit = message.channel != self.ctx.channel or message.author == self.ctx.guild.me
+            early_exit = (
+                message.channel.id != self.ctx.channel.id or message.author == self.ctx.guild.me
+            )
             if early_exit:
                 return False
 

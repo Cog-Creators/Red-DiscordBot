@@ -39,7 +39,7 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus
+from ..utils import can_user_react_in, menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import (
@@ -107,7 +107,7 @@ class HelpSettings:
 
     @property
     def pretty(self):
-        """ Returns a discord safe representation of the settings """
+        """Returns a discord safe representation of the settings"""
 
         def bool_transformer(val):
             if val is False:
@@ -306,7 +306,6 @@ class RedHelpFormatter(HelpFormatterABC):
     async def format_command_help(
         self, ctx: Context, obj: commands.Command, help_settings: HelpSettings
     ):
-
         send = help_settings.verify_exists
         if not send:
             async for __ in self.help_filter_func(
@@ -450,7 +449,6 @@ class RedHelpFormatter(HelpFormatterABC):
 
     @staticmethod
     def group_embed_fields(fields: List[EmbedField], max_chars=1000):
-
         curr_group = []
         ret = []
         current_count = 0
@@ -473,7 +471,6 @@ class RedHelpFormatter(HelpFormatterABC):
         return ret
 
     async def make_and_send_embeds(self, ctx, embed_dict: dict, help_settings: HelpSettings):
-
         pages = []
 
         page_char_limit = help_settings.page_char_limit
@@ -481,7 +478,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         author_info = {
             "name": _("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-            "icon_url": ctx.me.avatar_url,
+            "icon_url": ctx.me.display_avatar,
         }
 
         # Offset calculation here is for total embed size limit
@@ -544,7 +541,6 @@ class RedHelpFormatter(HelpFormatterABC):
         await self.send_pages(ctx, pages, embed=True, help_settings=help_settings)
 
     async def format_cog_help(self, ctx: Context, obj: commands.Cog, help_settings: HelpSettings):
-
         coms = await self.get_cog_help_mapping(ctx, obj, help_settings=help_settings)
         if not (coms or help_settings.verify_exists):
             return
@@ -613,7 +609,6 @@ class RedHelpFormatter(HelpFormatterABC):
             await self.send_pages(ctx, pages, embed=False, help_settings=help_settings)
 
     async def format_bot_help(self, ctx: Context, help_settings: HelpSettings):
-
         coms = await self.get_bot_help_mapping(ctx, help_settings=help_settings)
         if not coms:
             return
@@ -622,7 +617,6 @@ class RedHelpFormatter(HelpFormatterABC):
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await self.embed_requested(ctx):
-
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
@@ -630,7 +624,6 @@ class RedHelpFormatter(HelpFormatterABC):
                 emb["embed"]["title"] = f"*{description[:250]}*"
 
             for cog_name, data in coms:
-
                 if cog_name:
                     title = underline(bold(f"{cog_name}:"), escape_formatting=False)
                 else:
@@ -676,7 +669,6 @@ class RedHelpFormatter(HelpFormatterABC):
                     yield nm, doc, max_width - width_gap
 
             for cog_name, data in coms:
-
                 title = f"{cog_name}:" if cog_name else _("No Category:")
                 to_join.append(title)
 
@@ -721,9 +713,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 yield obj
 
     async def embed_requested(self, ctx: Context) -> bool:
-        return await ctx.bot.embed_requested(
-            channel=ctx.channel, user=ctx.author, command=red_help, check_permissions=True
-        )
+        return await ctx.bot.embed_requested(channel=ctx, command=red_help)
 
     async def command_not_found(self, ctx, help_for, help_settings: HelpSettings):
         """
@@ -743,7 +733,7 @@ class RedHelpFormatter(HelpFormatterABC):
             if use_embeds:
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar_url,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -756,7 +746,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar_url,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -775,7 +765,7 @@ class RedHelpFormatter(HelpFormatterABC):
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                icon_url=ctx.me.avatar_url,
+                icon_url=ctx.me.display_avatar,
             )
             tagline = help_settings.tagline or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
@@ -823,16 +813,7 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
-
-        # save on config calls
-        channel_permissions = ctx.channel.permissions_for(ctx.me)
-
-        if not (
-            channel_permissions.add_reactions
-            and channel_permissions.read_message_history
-            and help_settings.use_menus
-        ):
-
+        if not (can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus):
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
@@ -857,18 +838,18 @@ class RedHelpFormatter(HelpFormatterABC):
             if use_DMs and help_settings.use_tick:
                 await ctx.tick()
             # The if statement takes into account that 'destination' will be
-            # the context channel in non-DM context, reusing 'channel_permissions' to avoid
-            # computing the permissions twice.
+            # the context channel in non-DM context.
             if (
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
-                and channel_permissions.manage_messages  # we can manage messages here
+                and ctx.channel.permissions_for(ctx.me).manage_messages  # we can manage messages
             ):
-
                 # We need to wrap this in a task to not block after-sending-help interactions.
-                # The channel has to be TextChannel as we can't bulk-delete from DMs
+                # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs
                 async def _delete_delay_help(
-                    channel: discord.TextChannel, messages: List[discord.Message], delay: int
+                    channel: Union[discord.TextChannel, discord.Thread],
+                    messages: List[discord.Message],
+                    delay: int,
                 ):
                     await asyncio.sleep(delay)
                     await mass_purge(messages, channel)

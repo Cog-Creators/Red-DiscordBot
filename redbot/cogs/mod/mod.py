@@ -84,8 +84,6 @@ class Mod(
         self.tban_expiry_task = asyncio.create_task(self.tempban_expirations_task())
         self.last_case: dict = defaultdict(dict)
 
-        self._ready = asyncio.Event()
-
     async def red_delete_data_for_user(
         self,
         *,
@@ -114,12 +112,8 @@ class Mod(
                         pass
                     # possible with a context switch between here and getting all guilds
 
-    async def initialize(self):
+    async def cog_load(self) -> None:
         await self._maybe_update_config()
-        self._ready.set()
-
-    async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        await self._ready.wait()
 
     def cog_unload(self):
         self.tban_expiry_task.cancel()
@@ -144,7 +138,7 @@ class Mod(
                         "Ignored guilds and channels have been moved. "
                         "Please use {command} to migrate the old settings."
                     ).format(command=inline("[p]moveignoredchannels"))
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     message_sent = True
                     break
             if message_sent is False:
@@ -154,9 +148,7 @@ class Mod(
                             "Ignored guilds and channels have been moved. "
                             "Please use {command} to migrate the old settings."
                         ).format(command=inline("[p]moveignoredchannels"))
-                        self.bot.loop.create_task(
-                            send_to_owners_with_prefix_replaced(self.bot, msg)
-                        )
+                        asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                         break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":
@@ -166,7 +158,7 @@ class Mod(
                         "Delete delay settings have been moved. "
                         "Please use {command} to migrate the old settings."
                     ).format(command=inline("[p]movedeletedelay"))
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
             await self.config.version.set("1.2.0")
         if await self.config.version() < "1.3.0":

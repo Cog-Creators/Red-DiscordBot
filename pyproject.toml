@@ -4,6 +4,7 @@
 
 [tool.black]
     line-length = 99
+    required-version = '22.1.0'
     target-version = ['py38']
     include = '\.py$'
     force-exclude = '''
@@ -11,4 +12,3 @@
         redbot\/vendored
     )/
     '''
-

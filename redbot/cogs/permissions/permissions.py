@@ -10,7 +10,8 @@ from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils import can_user_react_in
+from redbot.core.utils.chat_formatting import box, error, success
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
 
@@ -131,7 +132,6 @@ class Permissions(commands.Cog):
         # there's a below recast to int where needed for guild ids
 
         for typename, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
-
             obj_type_rules = await self.config.custom(typename).all()
 
             count += 1
@@ -139,7 +139,6 @@ class Permissions(commands.Cog):
                 await asyncio.sleep(0)
 
             for obj_name, rules_dict in obj_type_rules.items():
-
                 count += 1
                 if not count % 100:
                     await asyncio.sleep(0)
@@ -147,7 +146,6 @@ class Permissions(commands.Cog):
                 obj = getter(obj_name)
 
                 for guild_id, guild_rules in rules_dict.items():
-
                     count += 1
                     if not count % 100:
                         await asyncio.sleep(0)
@@ -224,7 +222,7 @@ class Permissions(commands.Cog):
             "multiple global or server rules apply to the case, the order they are checked in is:\n"
             "  1. Rules about a user.\n"
             "  2. Rules about the voice channel a user is in.\n"
-            "  3. Rules about the text channel a command was issued in.\n"
+            "  3. Rules about the text channel or a parent of the thread a command was issued in.\n"
             "  4. Rules about a role the user has (The highest role they have with a rule will be "
             "used).\n"
             "  5. Rules about the server a user is in (Global rules only).\n\n"
@@ -264,9 +262,9 @@ class Permissions(commands.Cog):
                 can = False
 
             out = (
-                _("That user can run the specified command.")
+                success(_("That user can run the specified command."))
                 if can
-                else _("That user can not run the specified command.")
+                else error(_("That user can not run the specified command."))
             )
         await ctx.send(out)
 
@@ -634,11 +632,23 @@ class Permissions(commands.Cog):
     ) -> None:
         """Set rules from a YAML file and handle response to users too."""
         if not ctx.message.attachments:
-            await ctx.send(_("You must upload a file."))
-            return
+            await ctx.send(_("Supply a file with next message or type anything to cancel."))
+            try:
+                message = await ctx.bot.wait_for(
+                    "message", check=MessagePredicate.same_context(ctx), timeout=30
+                )
+            except asyncio.TimeoutError:
+                await ctx.send(_("You took too long to upload a file."))
+                return
+            if not message.attachments:
+                await ctx.send(_("You have cancelled the upload process."))
+                return
+            parsedfile = message.attachments[0]
+        else:
+            parsedfile = ctx.message.attachments[0]
 
         try:
-            await self._yaml_set_acl(ctx.message.attachments[0], guild_id=guild_id, update=update)
+            await self._yaml_set_acl(parsedfile, guild_id=guild_id, update=update)
         except yaml.MarkedYAMLError as e:
             await ctx.send(_("Invalid syntax: ") + str(e))
         except SchemaError as e:
@@ -689,7 +699,7 @@ class Permissions(commands.Cog):
     @staticmethod
     async def _confirm(ctx: commands.Context) -> bool:
         """Ask "Are you sure?" and get the response as a bool."""
-        if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+        if ctx.guild is None or can_user_react_in(ctx.guild.me, ctx.channel):
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
             task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
@@ -818,8 +828,8 @@ class Permissions(commands.Cog):
                 elif rule is False:
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
 
-    def cog_unload(self) -> None:
-        self.bot.loop.create_task(self._unload_all_rules())
+    async def cog_unload(self) -> None:
+        await self._unload_all_rules()
 
     async def _unload_all_rules(self) -> None:
         """Unload all rules set by this cog.

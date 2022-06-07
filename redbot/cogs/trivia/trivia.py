@@ -3,7 +3,7 @@ import asyncio
 import math
 import pathlib
 from collections import Counter
-from typing import Any, Dict, List, Literal
+from typing import Any, Dict, List, Literal, Union
 from schema import Schema, Optional, Or, SchemaError
 
 import io
@@ -11,9 +11,10 @@ import yaml
 import discord
 
 from redbot.core import Config, commands, checks, bank
+from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
+from redbot.core.utils import AsyncIter, can_user_react_in
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -36,6 +37,7 @@ TRIVIA_LIST_SCHEMA = Schema(
             Optional("bot_plays"): bool,
             Optional("reveal_answer"): bool,
             Optional("payout_multiplier"): Or(int, float),
+            Optional("use_spoilers"): bool,
         },
         str: [str, int, bool, float],
     }
@@ -54,8 +56,9 @@ class InvalidListError(Exception):
 class Trivia(commands.Cog):
     """Play trivia with friends!"""
 
-    def __init__(self):
+    def __init__(self, bot: Red) -> None:
         super().__init__()
+        self.bot = bot
         self.trivia_sessions = []
         self.config = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -672,7 +675,7 @@ class Trivia(commands.Cog):
                 filename=filename
             )
 
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if not can_react:
                 overwrite_message += " (yes/no)"
 
@@ -706,7 +709,9 @@ class Trivia(commands.Cog):
             fp.write(buffer.read())
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
-    def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
+    def _get_trivia_session(
+        self, channel: Union[discord.TextChannel, discord.Thread]
+    ) -> TriviaSession:
         return next(
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None
         )

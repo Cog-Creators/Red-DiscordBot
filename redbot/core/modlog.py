@@ -98,8 +98,7 @@ async def _init(bot: Red):
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
-
-        if not guild.me.guild_permissions.view_audit_log:
+        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
             return
 
         try:
@@ -107,7 +106,7 @@ async def _init(bot: Red):
         except RuntimeError:
             return  # No modlog channel so no point in continuing
 
-        when = datetime.utcnow()
+        when = datetime.now(timezone.utc)
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
@@ -117,9 +116,12 @@ async def _init(bot: Red):
         while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
-                entry = await guild.audit_logs(
-                    action=discord.AuditLogAction.ban, before=before, after=after
-                ).find(lambda e: e.target.id == member.id and after < e.created_at < before)
+                entry = await discord.utils.find(
+                    lambda e: e.target.id == member.id and after < e.created_at < before,
+                    guild.audit_logs(
+                        action=discord.AuditLogAction.ban, before=before, after=after
+                    ),
+                )
             except discord.Forbidden:
                 break
             except discord.HTTPException:
@@ -129,14 +131,14 @@ async def _init(bot: Red):
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own bans, cogs do this.
                         mod, reason = entry.user, entry.reason
-                        date = entry.created_at.replace(tzinfo=timezone.utc)
+                        date = entry.created_at
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
                     return
 
             await asyncio.sleep(300)
 
     async def on_member_unban(guild: discord.Guild, user: discord.User):
-        if not guild.me.guild_permissions.view_audit_log:
+        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
             return
 
         try:
@@ -144,7 +146,7 @@ async def _init(bot: Red):
         except RuntimeError:
             return  # No modlog channel so no point in continuing
 
-        when = datetime.utcnow()
+        when = datetime.now(timezone.utc)
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
         await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
@@ -154,9 +156,12 @@ async def _init(bot: Red):
         while attempts < 12 and guild.me.guild_permissions.view_audit_log:
             attempts += 1
             try:
-                entry = await guild.audit_logs(
-                    action=discord.AuditLogAction.unban, before=before, after=after
-                ).find(lambda e: e.target.id == user.id and after < e.created_at < before)
+                entry = await discord.utils.find(
+                    lambda e: e.target.id == user.id and after < e.created_at < before,
+                    guild.audit_logs(
+                        action=discord.AuditLogAction.unban, before=before, after=after
+                    ),
+                )
             except discord.Forbidden:
                 break
             except discord.HTTPException:
@@ -166,7 +171,7 @@ async def _init(bot: Red):
                     if entry.user.id != guild.me.id:
                         # Don't create modlog entires for the bot's own unbans, cogs do this.
                         mod, reason = entry.user, entry.reason
-                        date = entry.created_at.replace(tzinfo=timezone.utc)
+                        date = entry.created_at
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
                     return
 
@@ -269,13 +274,16 @@ class Case:
     until: Optional[int]
         The UNIX time the action is in effect until.
         `None` if the action is permanent.
-    channel: Optional[Union[discord.abc.GuildChannel, int]]
+    channel: Optional[Union[discord.abc.GuildChannel, discord.Thread, int]]
         The channel the action was taken in.
         `None` if the action was not related to a channel.
 
         .. note::
             This attribute will be of type `int`
             if the channel seems to no longer exist.
+    parent_channel_id: Optional[int]
+        The parent channel ID of the thread in ``channel``.
+        `None` if the action was not done in a thread.
     amended_by: Optional[Union[discord.abc.User, int]]
         The moderator who made the last change to the case.
         `None` if the case was never edited.
@@ -311,7 +319,8 @@ class Case:
         case_number: int,
         reason: Optional[str] = None,
         until: Optional[int] = None,
-        channel: Optional[Union[discord.abc.GuildChannel, int]] = None,
+        channel: Optional[Union[discord.abc.GuildChannel, discord.Thread, int]] = None,
+        parent_channel_id: Optional[int] = None,
         amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
         modified_at: Optional[float] = None,
         message: Optional[Union[discord.PartialMessage, discord.Message]] = None,
@@ -331,12 +340,25 @@ class Case:
         self.reason = reason
         self.until = until
         self.channel = channel
+        self.parent_channel_id = parent_channel_id
         self.amended_by = amended_by
         if isinstance(amended_by, discord.Object):
             self.amended_by = amended_by.id
         self.modified_at = modified_at
         self.case_number = case_number
         self.message = message
+
+    @property
+    def parent_channel(self) -> Optional[discord.TextChannel]:
+        """
+        The parent text channel of the thread in `channel`.
+
+        This will be `None` if `channel` is not a thread
+        and when the parent text channel is not in cache (probably due to removal).
+        """
+        if self.parent_channel_id is None:
+            return None
+        return self.guild.get_channel(self.parent_channel_id)
 
     async def _set_message(self, message: discord.Message, /) -> None:
         # This should only be used for setting the message right after case creation
@@ -360,6 +382,8 @@ class Case:
         # last username is set based on passed user object
         data.pop("last_known_username", None)
         for item, value in data.items():
+            if item == "channel" and isinstance(value, discord.PartialMessageable):
+                raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")
             if isinstance(value, discord.Object):
                 # probably expensive to call but meh should capture all cases
                 setattr(self, item, value.id)
@@ -370,12 +394,15 @@ class Case:
         if not isinstance(self.user, int):
             self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
 
+        if isinstance(self.channel, discord.Thread):
+            self.parent_channel_id = self.channel.parent_id
+
         await _config.custom(_CASES, str(self.guild.id), str(self.case_number)).set(self.to_json())
         self.bot.dispatch("modlog_case_edit", self)
         if not self.message:
             return
         try:
-            use_embed = await self.bot.embed_requested(self.message.channel, self.guild.me)
+            use_embed = await self.bot.embed_requested(self.message.channel)
             case_content = await self.message_content(use_embed)
             if use_embed:
                 await self.message.edit(embed=case_content)
@@ -397,15 +424,13 @@ class Case:
                 self.guild.id,
             )
             await self.edit({"message": None})
-        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        except Exception:
             log.exception(
                 "Modlog failed to edit the Discord message for"
                 " the case #%s from guild with ID %s due to unexpected error.",
                 self.case_number,
                 self.guild.id,
             )
-        finally:
-            return None
 
     async def message_content(self, embed: bool = True):
         """
@@ -444,7 +469,7 @@ class Case:
         if self.until:
             start = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
             end = datetime.fromtimestamp(self.until, tz=timezone.utc)
-            end_fmt = f"<t:{int(end.timestamp())}>"
+            end_fmt = discord.utils.format_dt(end)
             duration = end - start
             dur_fmt = _strfdelta(duration)
             until = end_fmt
@@ -464,7 +489,9 @@ class Case:
 
         last_modified = None
         if self.modified_at:
-            last_modified = f"<t:{int(self.modified_at)}>"
+            last_modified = discord.utils.format_dt(
+                datetime.fromtimestamp(self.modified_at, tz=timezone.utc)
+            )
 
         if isinstance(self.user, int):
             if self.user == 0xDE1:
@@ -491,6 +518,31 @@ class Case:
                 )
             )  # Invites and spoilers get rendered even in embeds.
 
+        channel_value = None
+        if isinstance(self.channel, int):
+            if self.parent_channel_id is not None:
+                if (parent_channel := self.parent_channel) is not None:
+                    channel_value = _(
+                        "Deleted or archived thread ({thread_id}) in {channel_name}"
+                    ).format(thread_id=self.channel, channel_name=parent_channel)
+                else:
+                    channel_value = _("Thread {thread_id} in {channel_id} (deleted)").format(
+                        thread_id=self.channel, channel_id=self.parent_channel_id
+                    )
+            else:
+                channel_value = _("{channel_id} (deleted)").format(channel_id=self.channel)
+        elif self.channel is not None:
+            channel_value = self.channel.name
+            if self.parent_channel_id is not None:
+                if (parent_channel := self.parent_channel) is not None:
+                    channel_value = _("Thread {thread_name} in {channel_name}").format(
+                        thread_name=self.channel, channel_name=parent_channel
+                    )
+                else:
+                    channel_value = _("Thread {thread_name} in {channel_id} (deleted)").format(
+                        thread_name=self.channel, channel_id=self.parent_channel_id
+                    )
+
         if embed:
             if self.reason:
                 reason = f"{bold(_('Reason:'))} {self.reason}"
@@ -511,20 +563,13 @@ class Case:
             if until and duration:
                 emb.add_field(name=_("Until"), value=until)
                 emb.add_field(name=_("Duration"), value=duration)
-
-            if isinstance(self.channel, int):
-                emb.add_field(
-                    name=_("Channel"),
-                    value=_("{channel} (deleted)").format(channel=self.channel),
-                    inline=False,
-                )
-            elif self.channel is not None:
-                emb.add_field(name=_("Channel"), value=self.channel.name, inline=False)
+            if channel_value:
+                emb.add_field(name=_("Channel"), value=channel_value, inline=False)
             if amended_by:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
                 emb.add_field(name=_("Last modified at"), value=last_modified)
-            emb.timestamp = datetime.utcfromtimestamp(self.created_at)
+            emb.timestamp = datetime.fromtimestamp(self.created_at, tz=timezone.utc)
             return emb
         else:
             if self.reason:
@@ -550,9 +595,9 @@ class Case:
                 case_text += f"{bold(_('Until:'))} {until}\n{bold(_('Duration:'))} {duration}\n"
             if self.channel:
                 if isinstance(self.channel, int):
-                    case_text += f"{bold(_('Channel:'))} {self.channel} {_('(Deleted)')}\n"
+                    case_text += f"{bold(_('Channel:'))} {channel_value}\n"
                 else:
-                    case_text += f"{bold(_('Channel:'))} {self.channel.name}\n"
+                    case_text += f"{bold(_('Channel:'))} {channel_value}\n"
             if amended_by:
                 case_text += f"{bold(_('Amended by:'))} {amended_by}\n"
             if last_modified:
@@ -591,6 +636,7 @@ class Case:
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
+            "parent_channel": self.parent_channel_id,
             "amended_by": amended_by,
             "modified_at": self.modified_at,
             "message": self.message.id if hasattr(self.message, "id") else None,
@@ -651,7 +697,11 @@ class Case:
                     user_object = bot.get_user(user_id) or user_id
             user_objects[user_key] = user_object
 
-        channel = kwargs.get("channel") or guild.get_channel(data["channel"]) or data["channel"]
+        channel = (
+            kwargs.get("channel")
+            or guild.get_channel_or_thread(data["channel"])
+            or data["channel"]
+        )
         case_guild = kwargs.get("guild") or bot.get_guild(data["guild"])
         return cls(
             bot=bot,
@@ -662,6 +712,7 @@ class Case:
             reason=data["reason"],
             until=data["until"],
             channel=channel,
+            parent_channel_id=data.get("parent_channel_id"),
             modified_at=data["modified_at"],
             message=message,
             last_known_username=data.get("last_known_username"),
@@ -918,7 +969,7 @@ async def create_case(
     moderator: Optional[Union[discord.Object, discord.abc.User, int]] = None,
     reason: Optional[str] = None,
     until: Optional[datetime] = None,
-    channel: Optional[discord.abc.GuildChannel] = None,
+    channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]] = None,
     last_known_username: Optional[str] = None,
 ) -> Optional[Case]:
     """
@@ -948,12 +999,17 @@ async def create_case(
         The time the action is in effect until.
         If naive `datetime` object is passed, it's treated as a local time
         (similarly to how Python treats naive `datetime` objects).
-    channel: Optional[discord.abc.GuildChannel]
+    channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]]
         The channel the action was taken in
     last_known_username: Optional[str]
         The last known username of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
+
+    Raises
+    ------
+    TypeError
+        If ``channel`` is of type `discord.PartialMessageable`.
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
@@ -964,6 +1020,11 @@ async def create_case(
 
     if user == bot.user:
         return
+
+    if isinstance(channel, discord.PartialMessageable):
+        raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")
+
+    parent_channel_id = channel.parent_id if isinstance(channel, discord.Thread) else None
 
     async with _config.guild(guild).latest_case_number.get_lock():
         # We're getting the case number from config, incrementing it, awaiting something, then
@@ -981,6 +1042,7 @@ async def create_case(
             reason,
             int(until.timestamp()) if until else None,
             channel,
+            parent_channel_id,
             amended_by=None,
             modified_at=None,
             message=None,
@@ -993,7 +1055,7 @@ async def create_case(
     bot.dispatch("modlog_case_create", case)
     try:
         mod_channel = await get_modlog_channel(case.guild)
-        use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
+        use_embeds = await case.bot.embed_requested(mod_channel)
         case_content = await case.message_content(use_embeds)
         if use_embeds:
             msg = await mod_channel.send(embed=case_content)
@@ -1007,15 +1069,14 @@ async def create_case(
             "Modlog failed to edit the Discord message for"
             " the case #%s from guild with ID due to missing permissions."
         )
-    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+    except Exception:
         log.exception(
             "Modlog failed to send the Discord message for"
             " the case #%s from guild with ID %s due to unexpected error.",
             case.case_number,
             case.guild.id,
         )
-    finally:
-        return case
+    return case
 
 
 async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Optional[CaseType]:

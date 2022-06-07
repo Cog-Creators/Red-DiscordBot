@@ -1,6 +1,6 @@
 import contextlib
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Callable, List, Optional, Set, Union
 
 import discord
@@ -38,7 +38,7 @@ class Cleanup(commands.Cog):
         self.config.register_guild(notify=True)
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     @staticmethod
@@ -75,7 +75,7 @@ class Cleanup(commands.Cog):
     @staticmethod
     async def get_messages_for_deletion(
         *,
-        channel: Union[discord.TextChannel, discord.DMChannel],
+        channel: Union[discord.TextChannel, discord.DMChannel, discord.Thread],
         number: Optional[PositiveInt] = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
         limit: Optional[PositiveInt] = None,
@@ -99,7 +99,7 @@ class Cleanup(commands.Cog):
         """
 
         # This isn't actually two weeks ago to allow some wiggle room on API limits
-        two_weeks_ago = datetime.utcnow() - timedelta(days=14, minutes=-5)
+        two_weeks_ago = datetime.now(timezone.utc) - timedelta(days=14, minutes=-5)
 
         def message_filter(message):
             return (
@@ -129,7 +129,7 @@ class Cleanup(commands.Cog):
     async def send_optional_notification(
         self,
         num: int,
-        channel: Union[discord.TextChannel, discord.DMChannel],
+        channel: Union[discord.TextChannel, discord.DMChannel, discord.Thread],
         *,
         subtract_invoking: bool = False,
     ) -> None:
@@ -149,13 +149,13 @@ class Cleanup(commands.Cog):
 
     @staticmethod
     async def get_message_from_reference(
-        channel: discord.TextChannel, reference: discord.MessageReference
+        channel: Union[discord.TextChannel, discord.Thread], reference: discord.MessageReference
     ) -> Optional[discord.Message]:
         message = None
         resolved = reference.resolved
         if resolved and isinstance(resolved, discord.Message):
             message = resolved
-        elif (message := reference.cached_message) :
+        elif message := reference.cached_message:
             pass
         else:
             try:
@@ -696,7 +696,12 @@ class Cleanup(commands.Cog):
         def check(m):
             if m.attachments:
                 return False
-            c = (m.author.id, m.content, [e.to_dict() for e in m.embeds])
+            c = (
+                m.author.id,
+                m.content,
+                [embed.to_dict() for embed in m.embeds],
+                [sticker.id for sticker in m.stickers],
+            )
             if c in msgs:
                 spam.append(m)
                 return True
