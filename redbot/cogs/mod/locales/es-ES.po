@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-12-23 01:52+0000\n"
+"POT-Creation-Date: 2022-04-03 01:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -39,79 +39,79 @@ msgstr "¡{member}, Por favor, no menciones a la gente!"
 msgid "Mention spam (Autowarn)"
 msgstr "Spam de menciones (Autowarn)"
 
-#: redbot/cogs/mod/kickban.py:92
+#: redbot/cogs/mod/kickban.py:82
 msgid "That user is not in a voice channel."
 msgstr "Ese usuario no está en un canal de voz."
 
-#: redbot/cogs/mod/kickban.py:99
+#: redbot/cogs/mod/kickban.py:89
 msgid "I require the {perms} permission(s) in that user's channel to do that."
 msgstr "Requiero los permisos de {perms} en ese canal del usuario para hacer eso."
 
-#: redbot/cogs/mod/kickban.py:109
+#: redbot/cogs/mod/kickban.py:99
 msgid "You must have the {perms} permission(s) in that user's channel to use this command."
 msgstr "Debes tener los permisos de {perms} en el canal del usuario para usar este comando."
 
-#: redbot/cogs/mod/kickban.py:131 redbot/cogs/mod/kickban.py:463
-#: redbot/cogs/mod/kickban.py:632
+#: redbot/cogs/mod/kickban.py:121 redbot/cogs/mod/kickban.py:456
+#: redbot/cogs/mod/kickban.py:626
 msgid "Invalid days. Must be between 0 and 7."
 msgstr "Días no válidos. Debe estar entre 0 y 7."
 
-#: redbot/cogs/mod/kickban.py:137 redbot/cogs/mod/kickban.py:606
+#: redbot/cogs/mod/kickban.py:127 redbot/cogs/mod/kickban.py:600
 msgid "I cannot let you do that. Self-harm is bad {}"
 msgstr "No puedo dejarte hacer eso. Hacerse daño uno mismo esta mal {}"
 
-#: redbot/cogs/mod/kickban.py:142 redbot/cogs/mod/kickban.py:317
-#: redbot/cogs/mod/kickban.py:611 redbot/cogs/mod/kickban.py:694
-#: redbot/cogs/mod/kickban.py:774 redbot/cogs/mod/names.py:63
+#: redbot/cogs/mod/kickban.py:132 redbot/cogs/mod/kickban.py:310
+#: redbot/cogs/mod/kickban.py:605 redbot/cogs/mod/kickban.py:686
+#: redbot/cogs/mod/kickban.py:764 redbot/cogs/mod/names.py:63
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr "No puedo dejarte hacer eso. No eres más alto que el usuario en la jerarquía de roles."
 
-#: redbot/cogs/mod/kickban.py:149 redbot/cogs/mod/kickban.py:325
-#: redbot/cogs/mod/kickban.py:619
+#: redbot/cogs/mod/kickban.py:139 redbot/cogs/mod/kickban.py:318
+#: redbot/cogs/mod/kickban.py:613
 msgid "I cannot do that due to Discord hierarchy rules."
 msgstr "No puedo hacerlo debido a las normas de jerarquía de Discord."
 
-#: redbot/cogs/mod/kickban.py:155
+#: redbot/cogs/mod/kickban.py:145
 msgid "You have been banned from {guild}."
 msgstr "Has sido baneado de {guild}."
 
-#: redbot/cogs/mod/kickban.py:159 redbot/cogs/mod/kickban.py:336
+#: redbot/cogs/mod/kickban.py:149 redbot/cogs/mod/kickban.py:329
 msgid "**Reason**"
 msgstr "**Razón**"
 
-#: redbot/cogs/mod/kickban.py:160 redbot/cogs/mod/kickban.py:337
+#: redbot/cogs/mod/kickban.py:150 redbot/cogs/mod/kickban.py:330
 msgid "No reason was given."
 msgstr "No se ha dado ninguna razón."
 
-#: redbot/cogs/mod/kickban.py:178 redbot/cogs/mod/kickban.py:479
+#: redbot/cogs/mod/kickban.py:171 redbot/cogs/mod/kickban.py:473
 msgid "User with ID {user_id} is already banned."
 msgstr "El usuario con ID {user_id} ya está baneado."
 
-#: redbot/cogs/mod/kickban.py:191
+#: redbot/cogs/mod/kickban.py:184
 msgid "User with ID {user_id} was upgraded from a temporary to a permanent ban."
 msgstr "El usuario con ID {user_id} fue actualizado de un baneo temporal a permanente."
 
-#: redbot/cogs/mod/kickban.py:203 redbot/cogs/mod/kickban.py:364
+#: redbot/cogs/mod/kickban.py:196 redbot/cogs/mod/kickban.py:357
 msgid "Done. That felt good."
 msgstr "Hecho. Se sintió bien."
 
-#: redbot/cogs/mod/kickban.py:205 redbot/cogs/mod/kickban.py:345
+#: redbot/cogs/mod/kickban.py:198 redbot/cogs/mod/kickban.py:338
 msgid "I'm not allowed to do that."
 msgstr "No estoy autorizado a hacer eso."
 
-#: redbot/cogs/mod/kickban.py:207 redbot/cogs/mod/kickban.py:550
+#: redbot/cogs/mod/kickban.py:200 redbot/cogs/mod/kickban.py:544
 msgid "User with ID {user_id} not found"
 msgstr "Usuario con ID {user_id} no encontrado"
 
-#: redbot/cogs/mod/kickban.py:214
+#: redbot/cogs/mod/kickban.py:207
 msgid "An unexpected error occurred."
 msgstr "Se ha producido un error inesperado."
 
-#: redbot/cogs/mod/kickban.py:268
+#: redbot/cogs/mod/kickban.py:261
 msgid "Tempban finished"
 msgstr "Tempban finalizado"
 
-#: redbot/cogs/mod/kickban.py:293
+#: redbot/cogs/mod/kickban.py:286
 #, docstring
 msgid "\n"
 "        Kick a user.\n\n"
@@ -134,15 +134,15 @@ msgstr "\n"
 "        en el registro de auditoría.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:310 redbot/cogs/mod/kickban.py:687
+#: redbot/cogs/mod/kickban.py:303 redbot/cogs/mod/kickban.py:679
 msgid "I cannot let you do that. Self-harm is bad {emoji}"
 msgstr "No puedo dejarte hacer eso. El auto-daño es malo {emoji}"
 
-#: redbot/cogs/mod/kickban.py:332
+#: redbot/cogs/mod/kickban.py:325
 msgid "You have been kicked from {guild}."
 msgstr "Has sido expulsado de {guild}."
 
-#: redbot/cogs/mod/kickban.py:378
+#: redbot/cogs/mod/kickban.py:371
 #, docstring
 msgid "Ban a user from this server and optionally delete days of messages.\n\n"
 "        `days` is the amount of days of messages to cleanup on ban.\n\n"
@@ -167,7 +167,7 @@ msgstr "Banear a un usuario de este servidor y opcionalmente eliminar los mensaj
 "        Mínimo 0 días, máximo 7. Si no se especifica, se utilizará la configuración de días por defecto en su lugar.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:416
+#: redbot/cogs/mod/kickban.py:409
 #, docstring
 msgid "Mass bans user(s) from the server.\n\n"
 "        `days` is the amount of days of messages to cleanup on massban.\n\n"
@@ -186,35 +186,35 @@ msgstr "Banea en masa a usuarios(s) del servidor.\n\n"
 "        usando este comando.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:432
+#: redbot/cogs/mod/kickban.py:425
 msgid "Banned {num} users from the server."
 msgstr "{num} usuarios baneados del servidor."
 
-#: redbot/cogs/mod/kickban.py:436
+#: redbot/cogs/mod/kickban.py:429
 msgid "\n"
 "Errors:\n"
 msgstr "\n"
 "Errores:\n"
 
-#: redbot/cogs/mod/kickban.py:439
+#: redbot/cogs/mod/kickban.py:432
 msgid "\n"
 "Following user IDs have been upgraded from a temporary to a permanent ban:\n"
 msgstr "\n"
 "Las siguientes IDs de usuario han sido actualizadas de un baneo temporal a permanente:\n"
 
-#: redbot/cogs/mod/kickban.py:467
+#: redbot/cogs/mod/kickban.py:460
 msgid "I lack the permissions to do this."
 msgstr "Carezco de los permisos para ello."
 
-#: redbot/cogs/mod/kickban.py:518 redbot/cogs/mod/kickban.py:522
+#: redbot/cogs/mod/kickban.py:512 redbot/cogs/mod/kickban.py:516
 msgid "Failed to ban user {user_id}: {reason}"
 msgstr "Error al banear al usuario {user_id}: {reason}"
 
-#: redbot/cogs/mod/kickban.py:555
+#: redbot/cogs/mod/kickban.py:549
 msgid "Could not ban user with ID {user_id}: missing permissions."
 msgstr "No se pudo banear al usuario con ID {user_id}: faltan permisos."
 
-#: redbot/cogs/mod/kickban.py:588
+#: redbot/cogs/mod/kickban.py:582
 #, docstring
 msgid "Temporarily ban a user from this server.\n\n"
 "        `duration` is the amount of time the user should be banned for.\n"
@@ -239,97 +239,97 @@ msgstr "Banear temporalmente a un usuario de este servidor.\n\n"
 "            Esto baneará al usuario con ID 428675506947227648 por 1 día 2 horas 15 minutos y eliminará los últimos 5 días de sus mensajes.\n"
 "        "
 
-#: redbot/cogs/mod/kickban.py:644
+#: redbot/cogs/mod/kickban.py:636
 msgid "You have been temporarily banned from {server_name} until {date}."
 msgstr "Has sido temporalmente baneado de {server_name} hasta {date}."
 
-#: redbot/cogs/mod/kickban.py:648
+#: redbot/cogs/mod/kickban.py:640
 msgid "\n\n"
 "**Reason:** {reason}"
 msgstr "\n\n"
 "**Motivo:** {reason}"
 
-#: redbot/cogs/mod/kickban.py:650
+#: redbot/cogs/mod/kickban.py:642
 msgid "\n\n"
 "Here is an invite for when your ban expires: {invite_link}"
 msgstr "\n\n"
 "Aquí tienes una invitación para cuando expire tu baneo: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:660
+#: redbot/cogs/mod/kickban.py:652
 msgid "I can't do that for some reason."
 msgstr "No puedo hacer eso por algunas razones."
 
-#: redbot/cogs/mod/kickban.py:662
+#: redbot/cogs/mod/kickban.py:654
 msgid "Something went wrong while banning."
 msgstr "Algo salió mal al banear."
 
-#: redbot/cogs/mod/kickban.py:674
+#: redbot/cogs/mod/kickban.py:666
 msgid "Done. Enough chaos for now."
 msgstr "Hecho. Suficiente caos por ahora."
 
-#: redbot/cogs/mod/kickban.py:681
+#: redbot/cogs/mod/kickban.py:673
 #, docstring
 msgid "Kick a user and delete 1 day's worth of their messages."
 msgstr "Expulsar a un usuario y eliminar 1 día de sus mensajes."
 
-#: redbot/cogs/mod/kickban.py:710
+#: redbot/cogs/mod/kickban.py:700
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\n"
 "You can now join the server again. {invite_link}"
 msgstr "Has sido baneado y desbaneado como una forma rápida de borrar tus mensajes.\n"
 "Ahora puedes unirte al servidor de nuevo. {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:721
+#: redbot/cogs/mod/kickban.py:711
 msgid "My role is not high enough to softban that user."
 msgstr "Mi rol no es lo suficientemente alto para banear ese usuario."
 
-#: redbot/cogs/mod/kickban.py:757
+#: redbot/cogs/mod/kickban.py:747
 msgid "Done. Enough chaos."
 msgstr "Hecho. Suficiente caos."
 
-#: redbot/cogs/mod/kickban.py:765
+#: redbot/cogs/mod/kickban.py:755
 #, docstring
 msgid "Kick a member from a voice channel."
 msgstr "Expulsar a un miembro de un canal de voz."
 
-#: redbot/cogs/mod/kickban.py:787
+#: redbot/cogs/mod/kickban.py:777
 msgid "I am unable to kick this member from the voice channel."
 msgstr "No puedo expulsar a este miembro del canal de voz."
 
-#: redbot/cogs/mod/kickban.py:790
+#: redbot/cogs/mod/kickban.py:780
 msgid "Something went wrong while attempting to kick that member."
 msgstr "Algo salió mal al intentar expulsar a ese miembro."
 
-#: redbot/cogs/mod/kickban.py:804
+#: redbot/cogs/mod/kickban.py:794
 msgid "User has been kicked from the voice channel."
 msgstr "El usuario ha sido expulsado del canal de voz."
 
-#: redbot/cogs/mod/kickban.py:812
+#: redbot/cogs/mod/kickban.py:802
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
 msgstr "Desbanea que un usuario para que hable y escuche en los canales de voz del servidor."
 
-#: redbot/cogs/mod/kickban.py:831
+#: redbot/cogs/mod/kickban.py:821
 msgid "That user isn't muted or deafened by the server."
 msgstr "Ese usuario no está silenciado o ensordecido por el servidor."
 
-#: redbot/cogs/mod/kickban.py:847
+#: redbot/cogs/mod/kickban.py:837
 msgid "User is now allowed to speak and listen in voice channels."
 msgstr "Ahora se permite al usuario hablar y escuchar en los canales de voz."
 
-#: redbot/cogs/mod/kickban.py:853
+#: redbot/cogs/mod/kickban.py:843
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
 msgstr "Prohíbe que un usuario hable y escuche en los canales de voz del servidor."
 
-#: redbot/cogs/mod/kickban.py:874
+#: redbot/cogs/mod/kickban.py:864
 msgid "That user is already muted and deafened server-wide."
 msgstr "Ese usuario ya está silenciado y ensordecido en el servidor."
 
-#: redbot/cogs/mod/kickban.py:888
+#: redbot/cogs/mod/kickban.py:878
 msgid "User has been banned from speaking or listening in voice channels."
 msgstr "El usuario ha sido baneado de hablar o escuchar en canales de voz."
 
-#: redbot/cogs/mod/kickban.py:897
+#: redbot/cogs/mod/kickban.py:887
 #, docstring
 msgid "Unban a user from this server.\n\n"
 "        Requires specifying the target user's ID. To find this, you may either:\n"
@@ -342,61 +342,61 @@ msgstr "Desbanear a un usuario de este servidor.\n\n"
 "         2. habilitar el modo de desarrollador, ir a Baneos en la configuración de este servidor, derecha-\n"
 "        haga clic en el usuario y seleccione 'Copiar ID'."
 
-#: redbot/cogs/mod/kickban.py:910
+#: redbot/cogs/mod/kickban.py:899
 msgid "It seems that user isn't banned!"
 msgstr "Parece que ese usuario no está baneado!"
 
-#: redbot/cogs/mod/kickban.py:915
+#: redbot/cogs/mod/kickban.py:904
 msgid "Something went wrong while attempting to unban that user."
 msgstr "Algo salió mal al intentar desbanear a ese usuario."
 
-#: redbot/cogs/mod/kickban.py:929
+#: redbot/cogs/mod/kickban.py:918
 msgid "Unbanned that user from this server."
 msgstr "Desbanea a un usuario del servidor."
 
-#: redbot/cogs/mod/kickban.py:935
+#: redbot/cogs/mod/kickban.py:924
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr "No comparto otro servidor con este usuario. No puedo volver a invitarlo."
 
-#: redbot/cogs/mod/kickban.py:943
+#: redbot/cogs/mod/kickban.py:932
 msgid "You've been unbanned from {server}.\n"
 "Here is an invite for that server: {invite_link}"
 msgstr "Has sido desbaneado de {server}.\n"
 "Aquí tienes una invitación para ese servidor: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:950
+#: redbot/cogs/mod/kickban.py:939
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {invite_link}"
 msgstr "No he podido enviar una invitación a ese usuario. ¿Tal vez podrías enviarla por mí?\n"
 "Este es el enlace de invitación: {invite_link}"
 
-#: redbot/cogs/mod/kickban.py:958
+#: redbot/cogs/mod/kickban.py:947
 msgid "Something went wrong when attempting to send that user an invite. Here's the link so you can try: {invite_link}"
-msgstr ""
+msgstr "Algo salió mal al intentar enviar una invitación a ese usuario. Este es el enlace para que puedas intentar: {invite_link}"
 
-#: redbot/cogs/mod/mod.py:45
+#: redbot/cogs/mod/mod.py:46
 #, docstring
 msgid "Moderation tools."
 msgstr "Herramientas de moderación."
 
-#: redbot/cogs/mod/mod.py:142 redbot/cogs/mod/mod.py:152
-msgid "Ignored guilds and channels have been moved. Please use `[p]moveignoredchannels` to migrate the old settings."
-msgstr "Los servidores y canales ignorados han sido movidos. Por favor, usa `[p]moveignoredchannels` para migrar las configuraciones antiguas."
+#: redbot/cogs/mod/mod.py:137 redbot/cogs/mod/mod.py:147
+msgid "Ignored guilds and channels have been moved. Please use {command} to migrate the old settings."
+msgstr "Los servidores y canales ignorados han sido movidos. Por favor, usa `{command}` para migrar las configuraciones antiguas."
 
-#: redbot/cogs/mod/mod.py:164
-msgid "Delete delay settings have been moved. Please use `[p]movedeletedelay` to migrate the old settings."
-msgstr "Se han movido los ajustes de retraso de borrado. Por favor usa `[p]movedeletedelay` para migrar la configuración anterior."
+#: redbot/cogs/mod/mod.py:157
+msgid "Delete delay settings have been moved. Please use {command} to migrate the old settings."
+msgstr "Se han movido los ajustes de retraso. Utilice {command} para migrar los ajustes antiguos."
 
-#: redbot/cogs/mod/mod.py:185
+#: redbot/cogs/mod/mod.py:178
 #, docstring
 msgid "Move ignored channels and servers to core"
 msgstr "Mover canales y servidores ignorados al core"
 
-#: redbot/cogs/mod/mod.py:194
+#: redbot/cogs/mod/mod.py:187
 msgid "Ignored channels and guilds restored."
 msgstr "Canales y servidores ignorados restaurados."
 
-#: redbot/cogs/mod/mod.py:199
+#: redbot/cogs/mod/mod.py:192
 #, docstring
 msgid "\n"
 "        Move deletedelay settings to core\n"
@@ -405,7 +405,7 @@ msgstr "\n"
 "        Mover configuración de retraso de borrado al núcleo\n"
 "        "
 
-#: redbot/cogs/mod/mod.py:208
+#: redbot/cogs/mod/mod.py:201
 msgid "Delete delay settings restored."
 msgstr "Ajustes de retraso de borrado restaurados."
 
@@ -497,72 +497,72 @@ msgstr "Mostrar información sobre un miembro.\n\n"
 "        estos campos serán omitidos.\n"
 "        "
 
-#: redbot/cogs/mod/names.py:213
+#: redbot/cogs/mod/names.py:218
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: redbot/cogs/mod/names.py:225
+#: redbot/cogs/mod/names.py:230
 msgid "Chilling in {} status"
 msgstr "Descansando en estado {}"
 
-#: redbot/cogs/mod/names.py:239
+#: redbot/cogs/mod/names.py:243
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr "y {numeric_number} roles más no mostrados debido a límites del embed."
 
-#: redbot/cogs/mod/names.py:266
+#: redbot/cogs/mod/names.py:270
 msgid "Joined Discord on"
 msgstr "Se unió a Discord el"
 
-#: redbot/cogs/mod/names.py:267
+#: redbot/cogs/mod/names.py:271
 msgid "Joined this server on"
 msgstr "Se unió a este servidor el"
 
-#: redbot/cogs/mod/names.py:270
+#: redbot/cogs/mod/names.py:274
 msgid "Roles"
 msgstr "Roles"
 
-#: redbot/cogs/mod/names.py:270
+#: redbot/cogs/mod/names.py:274
 msgid "Role"
 msgstr "Rol"
 
-#: redbot/cogs/mod/names.py:276
+#: redbot/cogs/mod/names.py:280
 msgid "Previous Names"
 msgstr "Nombres anteriores"
 
-#: redbot/cogs/mod/names.py:276
+#: redbot/cogs/mod/names.py:280
 msgid "Previous Name"
 msgstr "Nombre anterior"
 
-#: redbot/cogs/mod/names.py:284
+#: redbot/cogs/mod/names.py:288
 msgid "Previous Nicknames"
 msgstr "Apodos anteriores"
 
-#: redbot/cogs/mod/names.py:284
+#: redbot/cogs/mod/names.py:288
 msgid "Previous Nickname"
 msgstr "Apodo anterior"
 
-#: redbot/cogs/mod/names.py:290
+#: redbot/cogs/mod/names.py:294
 msgid "Current voice channel"
 msgstr "Canal de voz actual"
 
-#: redbot/cogs/mod/names.py:294
+#: redbot/cogs/mod/names.py:298
 msgid "Member #{} | User ID: {}"
 msgstr "Miembro #{} | ID de usuario: {}"
 
-#: redbot/cogs/mod/names.py:308
+#: redbot/cogs/mod/names.py:312
 #, docstring
 msgid "Show previous names and nicknames of a member."
 msgstr "Muestra nombres y apodos anteriores de un usuario."
 
-#: redbot/cogs/mod/names.py:312
+#: redbot/cogs/mod/names.py:316
 msgid "**Past 20 names**:"
 msgstr "**Últimos 20 nombres**:"
 
-#: redbot/cogs/mod/names.py:318
+#: redbot/cogs/mod/names.py:322
 msgid "**Past 20 nicknames**:"
 msgstr "**Últimos 20 nombres**:"
 
-#: redbot/cogs/mod/names.py:325
+#: redbot/cogs/mod/names.py:329
 msgid "That member doesn't have any recorded name or nickname change."
 msgstr "Ese miembro no tiene ningún cambio de nombre o apodo registrado."
 
@@ -905,11 +905,11 @@ msgstr "Cambia si una invitación será enviada a un usuario cuando sea desbanea
 "        "
 
 #: redbot/cogs/mod/settings.py:339
-msgid "Users unbanned with `{command}` will be reinvited."
+msgid "Users unbanned with {command} will be reinvited."
 msgstr "Los usuarios desbaneados con `{command}` serán reinvitados."
 
 #: redbot/cogs/mod/settings.py:346
-msgid "Users unbanned with `{command}` will not be reinvited."
+msgid "Users unbanned with {command} will not be reinvited."
 msgstr "Los usuarios desbaneados con `{command}` no serán reinvitados."
 
 #: redbot/cogs/mod/settings.py:354
@@ -1058,13 +1058,13 @@ msgstr "Los nombres de usuario y apodos han sido eliminados de la configuración
 
 #: redbot/cogs/mod/slowmode.py:27
 #, docstring
-msgid "Changes channel's slowmode setting.\n\n"
+msgid "Changes thread's or channel's slowmode setting.\n\n"
 "        Interval can be anything from 0 seconds to 6 hours.\n"
 "        Use without parameters to disable.\n"
 "        "
-msgstr "Cambia la configuración del modo lento del canal.\n\n"
+msgstr "Cambia el modo lento del hilo o del canal.\n\n"
 "        El intervalo puede ser de 0 segundos a 6 horas.\n"
-"        Úsalo sin parámetros para deshabilitar.\n"
+"        Úselo sin parámetros para deshabilitar.\n"
 "        "
 
 #: redbot/cogs/mod/slowmode.py:36

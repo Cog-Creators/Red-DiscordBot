@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-12-30 21:31+0000\n"
+"POT-Creation-Date: 2022-06-05 14:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,510 +15,547 @@ msgstr ""
 "X-Crowdin-File-ID: 4\n"
 "Language: zh_TW\n"
 
-#: redbot/core/_diagnoser.py:100
+#: redbot/core/_diagnoser.py:102
 msgid "To fix this issue, you need to do one of these:"
-msgstr ""
+msgstr "要解決此問題，您需要執行以下操作之一："
 
-#: redbot/core/_diagnoser.py:108
+#: redbot/core/_diagnoser.py:110
 msgid "Check if the command caller is not a bot"
-msgstr ""
+msgstr "檢查命令調用者是否不是機器人"
 
-#: redbot/core/_diagnoser.py:114
+#: redbot/core/_diagnoser.py:116
 msgid "The user is a bot which prevents them from running any command."
-msgstr ""
+msgstr "用戶是一個阻止他們運行任何命令的機器人。"
 
-#: redbot/core/_diagnoser.py:115
+#: redbot/core/_diagnoser.py:117
 msgid "This cannot be fixed - bots should not be listening to other bots."
-msgstr ""
+msgstr "這無法修復 - 機器人不應該在聽其他機器人。"
 
-#: redbot/core/_diagnoser.py:119
+#: redbot/core/_diagnoser.py:121
 msgid "Check if the bot can send messages in the given channel"
-msgstr ""
+msgstr "檢查機器人是否可以在給定頻道中發送消息"
 
-#: redbot/core/_diagnoser.py:125
+#: redbot/core/_diagnoser.py:128
+msgid "Bot is timed out in the given channel."
+msgstr "機器人在頻道中超時。"
+
+#: redbot/core/_diagnoser.py:129
+msgid "To fix this issue, remove timeout from the bot."
+msgstr "要解決此問題，請從機器人中刪除超時。"
+
+#: redbot/core/_diagnoser.py:135
 msgid "Bot doesn't have permission to send messages in the given channel."
-msgstr ""
+msgstr "Bot 無權在給定頻道中發送消息。"
 
-#: redbot/core/_diagnoser.py:126
+#: redbot/core/_diagnoser.py:136
 msgid "To fix this issue, ensure that the permissions setup allows the bot to send messages per Discord's role hierarchy:\n"
 "https://support.discord.com/hc/en-us/articles/206141927"
-msgstr ""
+msgstr "要解決此問題，請確保權限設置允許機器人按照 Discord 的角色階級結構發送消息：\n"
+"https://support.discord.com/hc/en-us/articles/206141927"
 
-#: redbot/core/_diagnoser.py:137
+#: redbot/core/_diagnoser.py:148
 msgid "Check if the channel and the server aren't set to be ignored"
-msgstr ""
+msgstr "檢查頻道和服務器是否未設置為忽略"
 
-#: redbot/core/_diagnoser.py:142
+#: redbot/core/_diagnoser.py:154
+msgid "To fix this issue, check the list returned by the {command} command and ensure that the {thread} thread, its parent channel, and the server aren't a part of that list."
+msgstr "要解決此問題，請檢查 {command} 命令返回的列表，並確保 {thread} 線程、其父通道和服務器不屬於該列表。"
+
+#: redbot/core/_diagnoser.py:163
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {channel} channel and the server aren't a part of that list."
-msgstr ""
+msgstr "要解決此問題，請檢查 {command} 命令返回的列表，並確保 {channel} 頻道和服務器不屬於該列表。"
 
-#: redbot/core/_diagnoser.py:150
+#: redbot/core/_diagnoser.py:173
+msgid "To fix this issue, check the list returned by the {command} command and ensure that the {thread} thread, its parent channel, the channel category it belongs to ({channel_category}), and the server aren't a part of that list."
+msgstr "要解決此問題，請檢查 {command} 命令返回的列表，並確保 {thread} 線程、它的父通道、它所屬的通道類別 ({channel_category}) 和服務器不是其中的一部分列表。"
+
+#: redbot/core/_diagnoser.py:184
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {channel} channel, the channel category it belongs to ({channel_category}), and the server aren't a part of that list."
-msgstr ""
+msgstr "要解決此問題，請檢查 {command} 命令返回的列表，並確保 {channel} 頻道、它所屬的頻道類別 ({channel_category}) 和服務器不屬於該列表。"
 
-#: redbot/core/_diagnoser.py:164
+#: redbot/core/_diagnoser.py:198
 msgid "The bot is set to ignore commands in the given channel or this server."
-msgstr ""
+msgstr "機器人設置為忽略給定頻道或此服務器中的命令。"
 
-#: redbot/core/_diagnoser.py:174
+#: redbot/core/_diagnoser.py:208
 msgid "Global allowlist prevents the user from running this command."
-msgstr ""
+msgstr "全局白名單阻止用戶運行此命令。"
 
-#: redbot/core/_diagnoser.py:175
+#: redbot/core/_diagnoser.py:209
 msgid "To fix this issue, you can either add the user to the allowlist, or clear the allowlist.\n"
 "If you want to keep the allowlist, you can run {command_1} which will add {user} to the allowlist.\n"
 "If you instead want to clear the allowlist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "要解決此問題，您可以將用戶添加到白名單，或清除白名單。\n"
+"如果您想保留白名單，您可以運行 {command_1} 將 {user} 添加到白名單。\n"
+"如果您想清除白名單並讓所有用戶自由運行命令，您可以運行 {command_2} 來執行此操作。"
 
-#: redbot/core/_diagnoser.py:191
+#: redbot/core/_diagnoser.py:225
 msgid "Global blocklist prevents the user from running this command."
-msgstr ""
+msgstr "全局黑名單阻止用戶運行此命令。"
 
-#: redbot/core/_diagnoser.py:192
+#: redbot/core/_diagnoser.py:226
 msgid "To fix this issue, you can either remove the user from the blocklist, or clear the blocklist.\n"
 "If you want to keep the blocklist, you can run {command_1} which will remove {user} from the blocklist.\n"
 "If you instead want to clear the blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "要解決此問題，您可以將用戶從黑名單中刪除，或清除黑名單。\n"
+"如果您想保留黑名單，您可以運行 {command_1} 將 {user} 從黑名單中刪除。\n"
+"如果您想清除黑名單並讓所有用戶自由運行命令，您可以運行 {command_2} 來執行此操作。"
 
-#: redbot/core/_diagnoser.py:214
+#: redbot/core/_diagnoser.py:248
 msgid "Local allowlist prevents the user from running this command."
-msgstr ""
+msgstr "本地白名單阻止用戶運行此命令。"
 
-#: redbot/core/_diagnoser.py:215
+#: redbot/core/_diagnoser.py:249
 msgid "To fix this issue, you can either add the user or one of their roles to the local allowlist, or clear the local allowlist.\n"
 "If you want to keep the local allowlist, you can run {command_1} which will add {user} to the local allowlist.\n"
 "If you instead want to clear the local allowlist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "要解決此問題，您可以將用戶或其角色之一添加到本地白名單，或清除本地白名單。\n"
+"如果您想保留本地白名單，您可以運行 {command_1} 將 {user} 添加到本地白名單。\n"
+"如果您想清除本地白名單並讓所有用戶自由運行命令，您可以運行 {command_2} 來執行此操作。"
 
-#: redbot/core/_diagnoser.py:229
+#: redbot/core/_diagnoser.py:263
 msgid "Local blocklist prevents the user from running this command."
-msgstr ""
+msgstr "本地黑名單阻止用戶運行此命令。"
 
-#: redbot/core/_diagnoser.py:244
+#: redbot/core/_diagnoser.py:278
 msgid "To fix this issue, you can either remove the user's roles from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove the user's roles ({roles}) from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "要解決此問題，您可以從本地黑名單中刪除用戶的角色，或清除本地黑名單。\n"
+"如果您想保留本地黑名單，您可以運行 {command_1}，它將從本地黑名單中刪除用戶的角色 ({roles})。\n"
+"如果您想清除本地黑名單並讓所有用戶自由運行命令，您可以運行 {command_2} 來執行此操作。"
 
-#: redbot/core/_diagnoser.py:269
+#: redbot/core/_diagnoser.py:303
 msgid "To fix this issue, you can either remove the user and their roles from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove {user} and their roles ({roles}) from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "要解決此問題，您可以從本地黑名單中刪除用戶及其角色，或清除本地黑名單。\n"
+"如果您想保留本地黑名單，您可以運行 {command_1}，這將從本地黑名單中刪除 {user} 及其角色 ({roles})。\n"
+"如果您想清除本地黑名單並讓所有用戶自由運行命令，您可以運行 {command_2} 來執行此操作。"
 
-#: redbot/core/_diagnoser.py:291
+#: redbot/core/_diagnoser.py:325
 msgid "To fix this issue, you can either remove the user from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove {user} from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "要解決此問題，您可以從本地黑名單中刪除用戶，或清除本地黑名單。\n"
+"如果您想保留本地黑名單，您可以運行 {command_1} 這將從本地黑名單中刪除 {user}。\n"
+"如果您想清除本地黑名單並讓所有用戶自由運行命令，您可以運行 {command_2} 來執行此操作。"
 
-#: redbot/core/_diagnoser.py:306
+#: redbot/core/_diagnoser.py:340
 msgid "Allowlist and blocklist checks"
-msgstr ""
+msgstr "白名單和黑名單檢查"
 
-#: redbot/core/_diagnoser.py:338
+#: redbot/core/_diagnoser.py:372
 msgid "Global, cog and command checks"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:345
-msgid "The given command is disabled in this guild."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:347 redbot/core/_diagnoser.py:824
-msgid "One of the parents of the given command is disabled globally."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:353
-msgid "To fix this issue, you can run {command} which will enable the {affected_command} command in this guild."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:374
-msgid "Other issues related to the checks"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:375
-msgid "There's an issue related to the checks for {command} but we're not able to determine the exact cause."
-msgstr ""
+msgstr "全局、cog 和命令檢查"
 
 #: redbot/core/_diagnoser.py:379
-msgid "To fix this issue, a manual review of the global, cog and command checks is required."
-msgstr ""
+msgid "The given command is disabled in this guild."
+msgstr "給定的命令在這個公會中被禁用。"
+
+#: redbot/core/_diagnoser.py:381 redbot/core/_diagnoser.py:858
+msgid "One of the parents of the given command is disabled globally."
+msgstr "一個父級指令被全局禁用。"
 
 #: redbot/core/_diagnoser.py:387
-msgid "Global checks"
-msgstr ""
+msgid "To fix this issue, you can run {command} which will enable the {affected_command} command in this guild."
+msgstr "要解決此問題，您可以運行 {command} 來啟用此公會中的 {affected_command} 命令。"
 
-#: redbot/core/_diagnoser.py:397
+#: redbot/core/_diagnoser.py:408
+msgid "Other issues related to the checks"
+msgstr "與檢查有關的其他問題"
+
+#: redbot/core/_diagnoser.py:409
+msgid "There's an issue related to the checks for {command} but we're not able to determine the exact cause."
+msgstr "存在與 {command} 檢查相關的問題，但我們無法確定確切原因。"
+
+#: redbot/core/_diagnoser.py:413
+msgid "To fix this issue, a manual review of the global, cog and command checks is required."
+msgstr "要解決此問題，需要手動檢查全局、cog 和命令檢查。"
+
+#: redbot/core/_diagnoser.py:421
+msgid "Global checks"
+msgstr "全局檢查"
+
+#: redbot/core/_diagnoser.py:431
 msgid "One of the global checks for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "命令 {command} 的全局檢查之一失敗並顯示一條消息：\n"
+"{message}"
 
-#: redbot/core/_diagnoser.py:401
+#: redbot/core/_diagnoser.py:435
 msgid "One of the global checks for the command {command} failed without a message."
-msgstr ""
+msgstr "命令 {command} 的全局檢查之一失敗，沒有消息。"
 
-#: redbot/core/_diagnoser.py:405
+#: redbot/core/_diagnoser.py:439
 msgid "Cog check"
-msgstr ""
+msgstr "Cog檢查"
 
-#: redbot/core/_diagnoser.py:422
+#: redbot/core/_diagnoser.py:456
 msgid "The cog check for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "命令 {command} 的 cog 檢查失敗並顯示一條消息：{message}"
 
-#: redbot/core/_diagnoser.py:423
+#: redbot/core/_diagnoser.py:457
 msgid "The cog check for the command {command} failed without a message."
-msgstr ""
+msgstr "命令 {command} 的 cog 檢查失敗，沒有消息。"
 
-#: redbot/core/_diagnoser.py:427
+#: redbot/core/_diagnoser.py:461
 msgid "Command checks"
-msgstr ""
+msgstr "命令檢查"
 
-#: redbot/core/_diagnoser.py:441
+#: redbot/core/_diagnoser.py:475
 msgid "One of the command checks for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "命令 {command} 的命令檢查之一失敗並顯示一條消息：{message}"
 
-#: redbot/core/_diagnoser.py:445
+#: redbot/core/_diagnoser.py:479
 msgid "One of the command checks for the command {command} failed without a message."
-msgstr ""
+msgstr "命令 {command} 的命令檢查之一失敗，沒有消息。"
 
-#: redbot/core/_diagnoser.py:449
+#: redbot/core/_diagnoser.py:483
 msgid "Permissions verification"
-msgstr ""
+msgstr "權限驗證"
 
-#: redbot/core/_diagnoser.py:452
+#: redbot/core/_diagnoser.py:486
 msgid "Permissions verification for {cog} cog"
-msgstr ""
+msgstr "{cog} cog 的權限驗證"
 
-#: redbot/core/_diagnoser.py:469
+#: redbot/core/_diagnoser.py:503
 msgid "The cog of the given command is disabled in this guild."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:470
-msgid "To fix this issue, you can run {command} which will enable the {affected_cog} cog in this guild."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:484
-msgid "Bot is missing some of the channel permissions ({permissions}) required by the {cog} cog."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:492
-msgid "Bot is missing some of the channel permissions ({permissions}) required by the {command} command."
-msgstr ""
+msgstr "給予命令的cog在這個公會中被禁用。"
 
 #: redbot/core/_diagnoser.py:504
+msgid "To fix this issue, you can run {command} which will enable the {affected_cog} cog in this guild."
+msgstr "要解決此問題，您可以運行 {command} 來啟用此公會中的 {affected_cog} cog。"
+
+#: redbot/core/_diagnoser.py:518
+msgid "Bot is missing some of the channel permissions ({permissions}) required by the {cog} cog."
+msgstr "Bot 缺少 {cog} cog 所需的一些頻道權限 ({permissions})。"
+
+#: redbot/core/_diagnoser.py:526
+msgid "Bot is missing some of the channel permissions ({permissions}) required by the {command} command."
+msgstr "Bot is missing some of the channel permissions ({permissions}) required by the {command} command."
+
+#: redbot/core/_diagnoser.py:538
 msgid "To fix this issue, grant the required permissions to the bot through role settings or channel overrides."
-msgstr ""
+msgstr "透過身分組設定或通道覆寫向用戶授予所需的許可權."
 
-#: redbot/core/_diagnoser.py:523 redbot/core/_diagnoser.py:619
+#: redbot/core/_diagnoser.py:557 redbot/core/_diagnoser.py:653
 msgid "Other issues related to the permissions."
-msgstr ""
+msgstr "與檢查有關的其他問題."
 
-#: redbot/core/_diagnoser.py:524
+#: redbot/core/_diagnoser.py:558
 msgid "Fatal error: There's an issue related to the permissions for the {cog} cog but we're not able to determine the exact cause."
-msgstr ""
+msgstr "存在與 {cog} 檢查相關的問題，但我們無法確定確切原因。"
 
-#: redbot/core/_diagnoser.py:529
+#: redbot/core/_diagnoser.py:563
 msgid "Fatal error: There's an issue related to the permissions for the {command} command but we're not able to determine the exact cause."
-msgstr ""
+msgstr "存在與 {command} 檢查相關的問題，但我們無法確定確切原因。"
 
-#: redbot/core/_diagnoser.py:533
+#: redbot/core/_diagnoser.py:567
 msgid "This is an unexpected error, please report it on Red's issue tracker."
-msgstr ""
+msgstr "這是一個意外錯誤，請在Red的問題跟蹤器上報告。"
 
-#: redbot/core/_diagnoser.py:540
+#: redbot/core/_diagnoser.py:574
 msgid "Ensure that the command is not bot owner only"
-msgstr ""
+msgstr "確保命令不只是機器人所有者"
 
-#: redbot/core/_diagnoser.py:548
+#: redbot/core/_diagnoser.py:582
 msgid "The command is bot owner only and the given user is not a bot owner."
-msgstr ""
+msgstr "該命令僅為機器人所有者，使用者不是機器人所有者。"
 
-#: redbot/core/_diagnoser.py:549
+#: redbot/core/_diagnoser.py:583
 msgid "This cannot be fixed - regular users cannot run bot owner only commands."
-msgstr ""
+msgstr "這無法修復——普通使用者不能只執行機器人所有者的命令。"
 
-#: redbot/core/_diagnoser.py:555
+#: redbot/core/_diagnoser.py:589
 msgid "Permission hooks"
-msgstr ""
+msgstr "許可"
 
-#: redbot/core/_diagnoser.py:565
+#: redbot/core/_diagnoser.py:599
 msgid "Fatal error: the result of permission hooks is inconsistent."
-msgstr ""
+msgstr "致命錯誤：許可權的結果不一致。"
 
-#: redbot/core/_diagnoser.py:566 redbot/core/_diagnoser.py:572
-#: redbot/core/_diagnoser.py:810
+#: redbot/core/_diagnoser.py:600 redbot/core/_diagnoser.py:606
+#: redbot/core/_diagnoser.py:844
 msgid "To fix this issue, a manual review of the installed cogs is required."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:571
-msgid "The access has been denied by one of the bot's permissions hooks."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:581
-msgid "User's discord permissions, privilege level and rules from Permissions cog"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:596
-msgid "The access has been denied due to the rules set for the {cog} cog with Permissions cog."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:601
-msgid "The access has been denied due to the rules set for the {command} command with Permissions cog."
-msgstr ""
+msgstr "要解決此問題，需要手動檢查全局、cog 和命令檢查。"
 
 #: redbot/core/_diagnoser.py:605
+msgid "The access has been denied by one of the bot's permissions hooks."
+msgstr "訪問已被機器人的一個許可權拒絕。"
+
+#: redbot/core/_diagnoser.py:615
+msgid "User's discord permissions, privilege level and rules from Permissions cog"
+msgstr "使用者的Discord許可權、許可權級別和許可權cogs規則"
+
+#: redbot/core/_diagnoser.py:630
+msgid "The access has been denied due to the rules set for the {cog} cog with Permissions cog."
+msgstr "由於為帶有許可權{cog} cog設定的規則，訪問已被拒絕。"
+
+#: redbot/core/_diagnoser.py:635
+msgid "The access has been denied due to the rules set for the {command} command with Permissions cog."
+msgstr "由於為帶有許可權cog的{command} 命令設定的規則，訪問已被拒絕。"
+
+#: redbot/core/_diagnoser.py:639
 msgid "To fix the issue, a manual review of the rules is required."
-msgstr ""
+msgstr "要解決此問題，需要手動檢查全局、cog 和命令檢查。"
 
-#: redbot/core/_diagnoser.py:620
+#: redbot/core/_diagnoser.py:654
 msgid "There's an issue related to the permissions of {cog} cog but we're not able to determine the exact cause."
-msgstr ""
+msgstr "存在與 {cog} 檢查相關的問題，但我們無法確定確切原因。"
 
-#: redbot/core/_diagnoser.py:625
+#: redbot/core/_diagnoser.py:659
 msgid "There's an issue related to the permissions of {command} command but we're not able to determine the exact cause."
-msgstr ""
+msgstr "存在與 {command} 檢查相關的問題，但我們無法確定確切原因。"
 
-#: redbot/core/_diagnoser.py:629
+#: redbot/core/_diagnoser.py:663
 msgid "To fix this issue, a manual review of the command is required."
-msgstr ""
+msgstr "要解決此問題，需要手動檢查全局、cog 和命令檢查。"
 
-#: redbot/core/_diagnoser.py:636
+#: redbot/core/_diagnoser.py:670
 msgid "Permission checks"
-msgstr ""
+msgstr "權限檢查"
 
-#: redbot/core/_diagnoser.py:640
+#: redbot/core/_diagnoser.py:674
 msgid "The access has been denied by one of the permissions checks of {cog} cog."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:644
-msgid "The access has been denied by one of the permission checks of {command} command."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:652
-msgid "To fix this issue, a manual review of the permission checks is required."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:658
-msgid "User's discord permissions and privilege level"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:667
-msgid "grant the required permissions to the user through role settings or channel overrides"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:673
-msgid "The user is missing some of the channel permissions ({permissions}) required by the {cog} cog."
-msgstr ""
+msgstr "{cog} cog的許可權檢查之一拒絕了訪問許可權。"
 
 #: redbot/core/_diagnoser.py:678
-msgid "The user is missing some of the channel permissions ({permissions}) required by the {command} command."
-msgstr ""
+msgid "The access has been denied by one of the permission checks of {command} command."
+msgstr "{command} 指令的許可權檢查之一拒絕了訪問許可權。"
 
-#: redbot/core/_diagnoser.py:687
-msgid "the guild owner"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:690
-msgid "the mod role"
-msgstr ""
+#: redbot/core/_diagnoser.py:686
+msgid "To fix this issue, a manual review of the permission checks is required."
+msgstr "要解決此問題，需要手動檢查全局、cog 和命令檢查。"
 
 #: redbot/core/_diagnoser.py:692
+msgid "User's discord permissions and privilege level"
+msgstr "使用者的Discord許可權和許可權級別"
+
+#: redbot/core/_diagnoser.py:701
+msgid "grant the required permissions to the user through role settings or channel overrides"
+msgstr "透過身分組設定或通道覆寫向用戶授予所需的許可權"
+
+#: redbot/core/_diagnoser.py:707
+msgid "The user is missing some of the channel permissions ({permissions}) required by the {cog} cog."
+msgstr "用戶 缺少 {cog} cog 所需的一些頻道權限 ({permissions})。"
+
+#: redbot/core/_diagnoser.py:712
+msgid "The user is missing some of the channel permissions ({permissions}) required by the {command} command."
+msgstr "使用者缺少{command} 命令所需的一些頻道許可權({permissions}) 。"
+
+#: redbot/core/_diagnoser.py:721
+msgid "the guild owner"
+msgstr "公會擁有者"
+
+#: redbot/core/_diagnoser.py:724
+msgid "the mod role"
+msgstr "mod 身分組"
+
+#: redbot/core/_diagnoser.py:726
 msgid "the admin role"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:695
-msgid "assign appropriate role to the user"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:697
-msgid "The user is missing the privilege level ({privilege_level}) required by the {cog} cog."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:704
-msgid "The user is missing the privilege level ({privilege_level}) required by the {command} command."
-msgstr ""
-
-#: redbot/core/_diagnoser.py:717
-msgid "add appropriate rule in the Permissions cog"
-msgstr ""
-
-#: redbot/core/_diagnoser.py:720
-msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {cog} cog."
-msgstr ""
+msgstr "管理者身分組"
 
 #: redbot/core/_diagnoser.py:729
+msgid "assign appropriate role to the user"
+msgstr "為使用者分配適當的身分組"
+
+#: redbot/core/_diagnoser.py:731
+msgid "The user is missing the privilege level ({privilege_level}) required by the {cog} cog."
+msgstr "使用者缺少{cog} 齒格所需的特權級別({privilege_level})。"
+
+#: redbot/core/_diagnoser.py:738
+msgid "The user is missing the privilege level ({privilege_level}) required by the {command} command."
+msgstr "使用者缺少{command} 命令所需的特權級別({privilege_level})"
+
+#: redbot/core/_diagnoser.py:751
+msgid "add appropriate rule in the Permissions cog"
+msgstr "在許可權cog中新增適當的規則"
+
+#: redbot/core/_diagnoser.py:754
+msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {cog} cog."
+msgstr "使用者既沒有{cog} 齒格所需的通道許可權({permissions}) 或特權級別({privilege_level})。"
+
+#: redbot/core/_diagnoser.py:763
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {command} command."
-msgstr ""
+msgstr "用戶既沒有頻道權限 ({permissions}) 也沒有 {command} 命令所需的權限級別 ({privilege_level})。"
 
-#: redbot/core/_diagnoser.py:747
+#: redbot/core/_diagnoser.py:781
 msgid "Checks and permissions verification for the command {command}"
-msgstr ""
+msgstr "命令 {command} 的檢查和權限驗證"
 
-#: redbot/core/_diagnoser.py:770 redbot/core/_diagnoser.py:883
+#: redbot/core/_diagnoser.py:804 redbot/core/_diagnoser.py:917
 msgid "Other command checks"
-msgstr ""
+msgstr "其他命令檢查"
 
-#: redbot/core/_diagnoser.py:771 redbot/core/_diagnoser.py:884
+#: redbot/core/_diagnoser.py:805 redbot/core/_diagnoser.py:918
 msgid "The given command is failing one of the required checks."
-msgstr ""
+msgstr "給的命令沒有透過所需的檢查之一。"
 
-#: redbot/core/_diagnoser.py:772 redbot/core/_diagnoser.py:885
+#: redbot/core/_diagnoser.py:806 redbot/core/_diagnoser.py:919
 msgid "To fix this issue, a manual review of the command's checks is required."
-msgstr ""
+msgstr "要解決此問題，需要手動檢查全局、cog 和命令檢查。"
 
-#: redbot/core/_diagnoser.py:783
+#: redbot/core/_diagnoser.py:817
 msgid "Global 'call once' checks"
-msgstr ""
+msgstr "全局“呼叫一次”檢查"
 
-#: redbot/core/_diagnoser.py:805
+#: redbot/core/_diagnoser.py:839
 msgid "Other global 'call once' checks"
-msgstr ""
+msgstr "其他全局“呼叫一次”檢查"
 
-#: redbot/core/_diagnoser.py:806
+#: redbot/core/_diagnoser.py:840
 msgid "One of the global 'call once' checks implemented by a 3rd-party cog prevents this command from being ran."
-msgstr ""
+msgstr "實施了一個全局“呼叫一次”檢查但第三方cog阻止此命令被執行。"
 
-#: redbot/core/_diagnoser.py:815
+#: redbot/core/_diagnoser.py:849
 msgid "Check if the command is disabled"
-msgstr ""
+msgstr "檢查命令是否被禁用"
 
-#: redbot/core/_diagnoser.py:825 redbot/core/_diagnoser.py:839
+#: redbot/core/_diagnoser.py:859 redbot/core/_diagnoser.py:873
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command globally."
-msgstr ""
+msgstr "要解決此問題，您可以運行 {command}，它將全局啟用 {affected_command} 命令。"
 
-#: redbot/core/_diagnoser.py:838
+#: redbot/core/_diagnoser.py:872
 msgid "The given command is disabled globally."
-msgstr ""
+msgstr "給的命令全局禁用。"
 
-#: redbot/core/_diagnoser.py:851
+#: redbot/core/_diagnoser.py:885
 msgid "Checks and permissions verification"
-msgstr ""
+msgstr "檢查和許可權驗證"
 
-#: redbot/core/_diagnoser.py:902
+#: redbot/core/_diagnoser.py:936
 msgid "Passed"
-msgstr ""
+msgstr "通過"
 
-#: redbot/core/_diagnoser.py:904
+#: redbot/core/_diagnoser.py:938
 msgid "Failed"
-msgstr ""
+msgstr "失敗"
 
-#: redbot/core/_diagnoser.py:933
+#: redbot/core/_diagnoser.py:967
 msgid "All checks passed and no issues were detected. Make sure that the given parameters correspond to the channel, user, and command name that have been problematic.\n\n"
 "If you still can't find the issue, it is likely that one of the 3rd-party cogs you're using adds a global or cog local before invoke hook that prevents the command from getting invoked as this can't be diagnosed with this tool."
-msgstr ""
+msgstr "所有檢查都通過了，沒有檢測到任何問題。 確保給定的引數與有問題的通道、使用者和命令名稱相對應。\n\n"
+"如果您仍然找不到問題，您正在使用的第三方cog之一可能會在呼叫hook之前新增一個全局cog或本地cog，以防止命令被呼叫，因為此工具無法診斷。"
 
-#: redbot/core/_diagnoser.py:944
+#: redbot/core/_diagnoser.py:978
 msgid "The bot has been able to identify the issue."
-msgstr ""
+msgstr "機器人已經能夠識別問題。"
 
-#: redbot/core/_diagnoser.py:947
+#: redbot/core/_diagnoser.py:981
 msgid "Detected issue: "
-msgstr ""
+msgstr "檢測到的問題： "
 
-#: redbot/core/_diagnoser.py:949
+#: redbot/core/_diagnoser.py:983
 msgid "Solution: "
-msgstr ""
+msgstr "解決方案： "
 
-#: redbot/core/_diagnoser.py:951
+#: redbot/core/_diagnoser.py:985
 msgid "\n"
 "Here's a detailed report in case you need it:"
-msgstr ""
+msgstr "\n"
+"這是一份詳細的報告，以備不時之需："
 
-#: redbot/core/_diagnoser.py:952
+#: redbot/core/_diagnoser.py:986
 msgid "Channel: "
-msgstr ""
+msgstr "頻道： "
 
-#: redbot/core/_diagnoser.py:953
+#: redbot/core/_diagnoser.py:987
 msgid "Command caller: "
-msgstr ""
+msgstr "使用命令的人： "
 
-#: redbot/core/_diagnoser.py:954
+#: redbot/core/_diagnoser.py:988
 msgid "Command: "
-msgstr ""
+msgstr "命令： "
 
-#: redbot/core/_diagnoser.py:955
+#: redbot/core/_diagnoser.py:989
 msgid "Tests that have been ran:"
-msgstr ""
+msgstr "已運行的測試："
 
 #: redbot/core/bank.py:1058
 msgid "Can't pay for this command in DM without a global bank."
-msgstr ""
+msgstr "如果沒有全球銀行，就無法在 DM 中支付此命令。　"
 
 #: redbot/core/bank.py:1065
 msgid "You need at least {cost} {currency} to use this command."
-msgstr ""
+msgstr "您至少需要 {cost} {currency} 才能使用此命令。"
 
 #: redbot/core/cog_manager.py:316
 #, docstring
 msgid "Commands to interface with Red's cog manager."
-msgstr ""
+msgstr "與 Red 的 cog 管理器交互的命令。"
 
 #: redbot/core/cog_manager.py:325
 #, docstring
 msgid "\n"
 "        Lists current cog paths in order of priority.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"按優先級順序列出當前 cog 路徑。        "
 
 #: redbot/core/cog_manager.py:333
 msgid "Install Path: {install_path}\n"
 "Core Path: {core_path}\n\n"
-msgstr ""
+msgstr "安裝路徑：{install_path}\n"
+"核心路徑：{core_path}\n\n"
 
 #: redbot/core/cog_manager.py:347
 #, docstring
 msgid "\n"
 "        Add a path to the list of available cog paths.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"將路徑添加到可用 cog 路徑列表中。        "
 
 #: redbot/core/cog_manager.py:351
 msgid "That path does not exist or does not point to a valid directory."
-msgstr ""
+msgstr "該路徑不存在或未指向有效目錄。"
 
 #: redbot/core/cog_manager.py:359
 msgid "Path successfully added."
-msgstr ""
+msgstr "路徑已成功添加。"
 
 #: redbot/core/cog_manager.py:364
 #, docstring
 msgid "\n"
 "        Removes a path from the available cog paths given the `path_number` from `[p]paths`.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"給定來自 `[p]paths` 的 `path_number` 從可用 cog 路徑中刪除路徑。        "
 
 #: redbot/core/cog_manager.py:369 redbot/core/cog_manager.py:392
 msgid "Path numbers must be positive."
-msgstr ""
+msgstr "路徑編號必須為正數。"
 
 #: redbot/core/cog_manager.py:376
 msgid "That is an invalid path number."
-msgstr ""
+msgstr "那是一個無效的路徑號。"
 
 #: redbot/core/cog_manager.py:380
 msgid "Path successfully removed."
-msgstr ""
+msgstr "路徑已成功刪除。"
 
 #: redbot/core/cog_manager.py:385
 #, docstring
 msgid "\n"
 "        Reorders paths internally to allow discovery of different cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"在內部重新排序路徑以允許發現不同的 cog。        "
 
 #: redbot/core/cog_manager.py:399
 msgid "Invalid 'from' index."
-msgstr ""
+msgstr "'from' 索引無效。"
 
 #: redbot/core/cog_manager.py:405
 msgid "Invalid 'to' index."
-msgstr ""
+msgstr "'to' 索引無效。"
 
 #: redbot/core/cog_manager.py:409
 msgid "Paths reordered."
-msgstr ""
+msgstr "路徑重新排序。"
 
 #: redbot/core/cog_manager.py:414
 #, docstring
@@ -528,132 +565,150 @@ msgid "\n"
 "        directory and it must already exist.\n\n"
 "        No installed cogs will be transferred in the process.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"返回當前安裝路徑或設置它（如果提供）。\n\n"
+"        提供的路徑必須是絕對的或相對於機器人的\n"
+"        目錄並且它必須已經存在。\n\n"
+"        在此過程中不會傳輸已安裝的 cog。        "
 
 #: redbot/core/cog_manager.py:428
 msgid "That path does not exist."
-msgstr ""
+msgstr "路徑不存在。"
 
 #: redbot/core/cog_manager.py:433
 msgid "The bot will install new cogs to the `{}` directory."
-msgstr ""
+msgstr "該機器人會將新的 cog 安裝到 `{}` 目錄。"
 
 #: redbot/core/cog_manager.py:439
 #, docstring
 msgid "\n"
 "        Lists all loaded and available cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"列出所有已加載和可用的 cog。        "
 
 #: redbot/core/cog_manager.py:452 redbot/core/cog_manager.py:467
 msgid "**{} loaded:**\n"
-msgstr ""
+msgstr "**{} 已加載:**\n"
 
 #: redbot/core/cog_manager.py:453 redbot/core/cog_manager.py:469
 msgid "**{} unloaded:**\n"
-msgstr ""
+msgstr "**{} 已卸載：**\n"
 
-#: redbot/core/core_commands.py:182
+#: redbot/core/core_commands.py:183
 msgid "Alias {alias_name} is already an existing command or alias in one of the loaded cogs."
-msgstr ""
+msgstr "別名 {alias_name} 已經是一個已加載的 cogs 中的現有命令或別名。"
 
-#: redbot/core/core_commands.py:187
+#: redbot/core/core_commands.py:188
 msgid "Command {command_name} is already an existing command or alias in one of the loaded cogs."
-msgstr ""
+msgstr "命令 {command_name} 已經是一個已加載的 cogs 中的現有命令或別名。"
 
-#: redbot/core/core_commands.py:376
+#: redbot/core/core_commands.py:377
 #, docstring
 msgid "\n"
 "    The Core cog has many commands related to core functions.\n\n"
 "    These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.\n"
 "    "
-msgstr ""
+msgstr "\n"
+"The Core cog has many commands related to core functions.\n\n"
+"    These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.\n"
+"    "
 
-#: redbot/core/core_commands.py:388
+#: redbot/core/core_commands.py:389
 #, docstring
 msgid "Pong."
 msgstr "砰。"
 
-#: redbot/core/core_commands.py:393
+#: redbot/core/core_commands.py:394
 #, docstring
 msgid "Shows info about [botname]."
-msgstr ""
+msgstr "顯示有​​關 [botname] 的信息。"
 
-#: redbot/core/core_commands.py:420
+#: redbot/core/core_commands.py:421
 msgid "This bot is an instance of [Red, an open source Discord bot]({}) created by [Twentysix]({}) and [improved by many]({}).\n\n"
 "Red is backed by a passionate community who contributes and creates content for everyone to enjoy. [Join us today]({}) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr ""
+msgstr "這個機器人是 [Red, an open source Discord bot]({}) 的一個實例，由 [Twentysix]({}) 和 [由 many 改進]({}) 創建。\n\n"
+"Red 得到了一個充滿激情的社區的支持，他們貢獻並創造了供所有人欣賞的內容。 [今天加入我們]({}) 幫助我們改進！\n\n"
+"(c) cog創造者"
 
-#: redbot/core/core_commands.py:431
+#: redbot/core/core_commands.py:432
 msgid "Instance owned by team"
-msgstr ""
+msgstr "團隊擁有的實例"
 
-#: redbot/core/core_commands.py:431
+#: redbot/core/core_commands.py:432
 msgid "Instance owned by"
-msgstr ""
+msgstr "擁有的實例"
 
-#: redbot/core/core_commands.py:436
+#: redbot/core/core_commands.py:437
 msgid "Red version"
 msgstr "Red 版本"
 
-#: redbot/core/core_commands.py:439 redbot/core/core_commands.py:495
+#: redbot/core/core_commands.py:440 redbot/core/core_commands.py:496
 msgid "Yes, {version} is available."
-msgstr ""
+msgstr "是的，{version} 可用"
 
-#: redbot/core/core_commands.py:443 redbot/core/core_commands.py:499
+#: redbot/core/core_commands.py:444 redbot/core/core_commands.py:500
 msgid "Checking for updates failed."
-msgstr ""
+msgstr "檢查更新失敗"
 
-#: redbot/core/core_commands.py:444
+#: redbot/core/core_commands.py:445
 msgid "Outdated"
 msgstr "已過期"
 
-#: redbot/core/core_commands.py:446
+#: redbot/core/core_commands.py:447
 msgid "About this instance"
 msgstr "關於這個實例"
 
-#: redbot/core/core_commands.py:447
+#: redbot/core/core_commands.py:448
 msgid "About Red"
 msgstr "關於 Red"
 
-#: redbot/core/core_commands.py:450 redbot/core/core_commands.py:508
+#: redbot/core/core_commands.py:451 redbot/core/core_commands.py:509
 msgid "Bringing joy since 02 Jan 2016 (over {} days ago!)"
-msgstr ""
+msgstr "自 2016 年 1 月 2 日(過了 {} 天前！)"
 
-#: redbot/core/core_commands.py:458
+#: redbot/core/core_commands.py:459
 msgid "This bot is an instance of Red, an open source Discord bot (1) created by Twentysix (2) and improved by many (3).\n\n"
 "Red is backed by a passionate community who contributes and creates content for everyone to enjoy. Join us today (4) and help us improve!\n\n"
 "(c) Cog Creators"
-msgstr ""
+msgstr "該機器人是 Red 的一個實例，這是一個開源 Discord 機器人 (1)，由 Twentysix (2) 創建並經過許多 (3) 改進。\n\n"
+"Red 得到了一個充滿激情的社區的支持，他們貢獻並創造了供所有人欣賞的內容。今天加入我們 (4) 並幫助我們改進！\n\n"
+"(c) cog創造者"
 
-#: redbot/core/core_commands.py:469
+#: redbot/core/core_commands.py:470
 msgid "Instance owned by team: [{owner}]\n"
 "Python:                 [{python_version}] (5)\n"
 "discord.py:             [{dpy_version}] (6)\n"
 "Red version:            [{red_version}] (7)\n"
-msgstr ""
+msgstr "團隊擁有的實例：[{owner}]\n"
+"Python：[{python_version}] (5)\n"
+"discord.py: [{dpy_version}] (6)\n"
+"Red版本：[{red_version}] (7)\n"
 
-#: redbot/core/core_commands.py:481
+#: redbot/core/core_commands.py:482
 msgid "Instance owned by: [{owner}]\n"
 "Python:            [{python_version}] (5)\n"
 "discord.py:        [{dpy_version}] (6)\n"
 "Red version:       [{red_version}] (7)\n"
-msgstr ""
+msgstr "實例擁有者：[{owner}]\n"
+"Python：[{python_version}] (5)\n"
+"discord.py: [{dpy_version}] (6)\n"
+"Red版本：[{red_version}] (7)\n"
 
-#: redbot/core/core_commands.py:500
+#: redbot/core/core_commands.py:501
 msgid "Outdated:          [{state}]\n"
-msgstr ""
+msgstr "過時：[{state}]\n"
 
-#: redbot/core/core_commands.py:503
+#: redbot/core/core_commands.py:504
 msgid "**About Red**\n"
-msgstr ""
+msgstr "**關於Red**\n"
 
-#: redbot/core/core_commands.py:514
+#: redbot/core/core_commands.py:515
 msgid "**About this instance**\n"
-msgstr ""
+msgstr "**關於這個實例**\n"
 
-#: redbot/core/core_commands.py:516
+#: redbot/core/core_commands.py:517
 msgid "**References**\n"
 "1. <{}>\n"
 "2. <{}>\n"
@@ -662,83 +717,99 @@ msgid "**References**\n"
 "5. <{}>\n"
 "6. <{}>\n"
 "7. <{}>\n"
-msgstr ""
+msgstr "**參考**\n"
+"1. <{}>\n"
+"2. <{}>\n"
+"3. <{}>\n"
+"4. <{}>\n"
+"5. <{}>\n"
+"6. <{}>\n"
+"7. <{}>\n"
 
-#: redbot/core/core_commands.py:532
+#: redbot/core/core_commands.py:533
 #, docstring
 msgid "Shows [botname]'s uptime."
-msgstr ""
+msgstr "顯示 [botname] 的正常運行時間。"
 
-#: redbot/core/core_commands.py:535
+#: redbot/core/core_commands.py:536
 msgid "Less than one second."
-msgstr ""
+msgstr "不到一秒。"
 
-#: redbot/core/core_commands.py:537
-msgid "Been up for: **{time_quantity}** (since {timestamp})"
-msgstr ""
+#: redbot/core/core_commands.py:538
+msgid "I have been up for: **{time_quantity}** (since {timestamp})"
+msgstr "我一直在準備：**{time_quantity}**(自 {timestamp} 起)"
 
-#: redbot/core/core_commands.py:544
+#: redbot/core/core_commands.py:545
 #, docstring
 msgid "\n"
 "        Commands which interact with the data [botname] has about you.\n\n"
 "        More information can be found in the [End User Data Documentation.](https://docs.discord.red/en/stable/red_core_data_statement.html)\n"
 "        "
-msgstr ""
+msgstr "\n"
+"與 [botname] 有關您的數據交互的命令。\n\n"
+"        更多信息可以在 [最終用戶數據文檔](https://docs.discord.red/en/stable/red_core_data_statement.html) 中找到。        "
 
-#: redbot/core/core_commands.py:555
+#: redbot/core/core_commands.py:556
 #, docstring
 msgid "\n"
 "        Find out what type of data [botname] stores and why.\n\n"
 "        **Example:**\n"
 "            - `[p]mydata whatdata`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"找出 [botname] 存儲的數據類型及其原因。\n\n"
+"        **例子：**\n"
+"            -`[p]mydata 什麼數據`        "
 
-#: redbot/core/core_commands.py:565
+#: redbot/core/core_commands.py:566
 msgid "This bot stores some data about users as necessary to function. This is mostly the ID your user is assigned by Discord, linked to a handful of things depending on what you interact with in the bot. There are a few commands which store it to keep track of who created something. (such as playlists) For full details about this as well as more in depth details of what is stored and why, see {link}.\n\n"
 "Additionally, 3rd party addons loaded by the bot's owner may or may not store additional things. You can use `{prefix}mydata 3rdparty` to view the statements provided by each 3rd-party addition."
-msgstr ""
+msgstr "該機器人會根據需要存儲有關用戶的一些數據以發揮作用。 這主要是 Discord 為您的用戶分配的 ID，根據您在 bot 中與之交互的內容與一些事物相關聯。 有一些命令可以存儲它以跟踪誰創建了某些東西。(例如播放列表)有關此內容的完整詳細信息以及有關存儲內容和原因的更多詳細信息，請參閱{link}。\n\n"
+"此外，機器人所有者加載的第 3 方插件可能會或可能不會存儲其他內容。 您可以使用 `{prefix}mydata 3rdparty` 查看每個 3rd-party 添加提供的語句。"
 
-#: redbot/core/core_commands.py:584
+#: redbot/core/core_commands.py:585
 #, docstring
 msgid "View the End User Data statements of each 3rd-party module.\n\n"
 "        This will send an attachment with the End User Data statements of all loaded 3rd party cogs.\n\n"
 "        **Example:**\n"
 "            - `[p]mydata 3rdparty`\n"
 "        "
-msgstr ""
+msgstr "查看每個第 3 方模塊的最終用戶數據聲明。\n\n"
+"         這將發送一個附件，其中包含所有已加載的第 3 方 cogs 的最終用戶數據語句。\n\n"
+"         **例子：**\n"
+"             - `[p]mydata 3rdparty`        "
 
-#: redbot/core/core_commands.py:595
+#: redbot/core/core_commands.py:596
 msgid "I need to be able to attach files (try in DMs?)."
-msgstr ""
+msgstr "我需要能夠附加文件(嘗試在 DM 中？)。"
 
-#: redbot/core/core_commands.py:605
+#: redbot/core/core_commands.py:606
 msgid "This instance does not appear to have any 3rd-party extensions loaded."
-msgstr ""
+msgstr "此實例似乎沒有加載任何第 3 方擴展。"
 
-#: redbot/core/core_commands.py:625
+#: redbot/core/core_commands.py:626
 msgid "3rd party End User Data statements"
-msgstr ""
+msgstr "第 3 方最終用戶數據聲明"
 
-#: redbot/core/core_commands.py:627
+#: redbot/core/core_commands.py:628
 msgid "The following are statements provided by 3rd-party extensions."
-msgstr ""
+msgstr "以下是第 3 方擴展提供的聲明。"
 
-#: redbot/core/core_commands.py:632
+#: redbot/core/core_commands.py:633
 msgid "3rd-party extensions without statements\n"
-msgstr ""
+msgstr "不帶語句的 3rd 方擴展\n"
 
-#: redbot/core/core_commands.py:643
+#: redbot/core/core_commands.py:644
 msgid "Here's a generated page with the statements provided by 3rd-party extensions."
-msgstr ""
+msgstr "這是一個生成的頁面，其中包含第 3 方擴展提供的語句。"
 
 #: redbot/core/core_commands.py:659
 msgid "Did not get confirmation, cancelling."
-msgstr ""
+msgstr "沒有得到確認，取消。"
 
 #: redbot/core/core_commands.py:664
 msgid "Did not get a matching confirmation, cancelling."
-msgstr ""
+msgstr "沒有得到匹配的確認，取消。"
 
 #: redbot/core/core_commands.py:675
 #, docstring
@@ -750,63 +821,77 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]mydata forgetme`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"讓 [botname] 忘記它對你的了解。\n\n"
+"         這可能不會刪除有關您的所有數據，操作所需的數據，\n"
+"         例如命令冷卻時間將一直保留到不再需要為止。\n\n"
+"         與 [botname] 的進一步交互可能會導致它再次了解您。\n\n"
+"         **例子：**\n"
+"             - `[p]mydata forgetme`        "
 
 #: redbot/core/core_commands.py:690
 msgid "This command ({command}) does not support non-interactive usage."
-msgstr ""
+msgstr "此命令 ({command}) 不支持非交互式使用。"
 
 #: redbot/core/core_commands.py:697
 msgid "This will cause the bot to get rid of and/or disassociate data from you. It will not get rid of operational data such as modlog entries, warnings, or mutes. If you are sure this is what you want, please respond with the following:"
-msgstr ""
+msgstr "這將導致機器人擺脫和/或分離與您的數據。 它不會刪除操作數據，例如 modlog 條目、警告或靜音。 如果您確定這是您想要的，請回復以下內容："
 
 #: redbot/core/core_commands.py:707
 msgid "This may take some time."
-msgstr ""
+msgstr "這可能會花上好一段時間"
 
 #: redbot/core/core_commands.py:720
 msgid "I tried to delete all non-operational data about you (that I know how to delete) {mention}, however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}.\n"
 "Please contact the owner of this bot to address this.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除關於您的所有非操作數據(我知道如何刪除){mention}，但是以下模塊出錯：{modules}。 此外，以下 cogs 出錯：{cogs}。\n"
+"請聯繫此機器人的所有者以解決此問題。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:735
 msgid "I tried to delete all non-operational data about you (that I know how to delete) {mention}, however the following cogs errored: {cogs}.\n"
 "Please contact the owner of this bot to address this.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除關於您的所有非操作數據(我知道如何刪除){mention}，但是以下 cogs 出錯：{cogs}。\n"
+"請聯繫此機器人的所有者以解決此問題。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:745
 msgid "I tried to delete all non-operational data about you (that I know how to delete) {mention}, however the following modules errored: {modules}.\n"
 "Please contact the owner of this bot to address this.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除關於您的所有非操作數據(我知道如何刪除){mention}，但是以下模塊出錯：{modules}。 此外，以下 cogs 出錯：。\n"
+"請聯繫此機器人的所有者以解決此問題。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:755
 msgid "I've deleted any non-operational data about you (that I know how to delete) {mention}"
-msgstr ""
+msgstr "我已刪除有關您的所有非操作數據 (我知道如何刪除){mention}"
 
 #: redbot/core/core_commands.py:763 redbot/core/core_commands.py:930
 #: redbot/core/core_commands.py:1016 redbot/core/core_commands.py:1087
 msgid "{mention} The following cogs did not handle deletion:\n"
 "{cogs}."
-msgstr ""
+msgstr "{mention} 以下 cogs 未處理刪除：\n"
+"{cogs}。"
 
 #: redbot/core/core_commands.py:773
 #, docstring
 msgid "[Coming Soon] Get what data [botname] has about you."
-msgstr ""
+msgstr "[即將推出] 獲取 [botname] 擁有的關於您的哪些數據。"
 
 #: redbot/core/core_commands.py:775
 msgid "This command doesn't do anything yet, but we're working on adding support for this."
-msgstr ""
+msgstr "此命令尚未執行任何操作，但我們正在努力添加對此的支持。"
 
 #: redbot/core/core_commands.py:784
 #, docstring
 msgid "\n"
 "        Commands for more complete data handling.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"用於更完整數據處理的命令。        "
 
 #: redbot/core/core_commands.py:790
 #, docstring
@@ -817,11 +902,16 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]mydata ownermanagement allowuserdeletions`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"將機器人設置為允許用戶請求刪除數據。\n\n"
+"         這是默認開啟的。\n"
+"         與`[p]mydata ownermanagement disallowuserdeletions`相反\n\n"
+"         **例子：**\n"
+"            - `[p]mydata ownermanagement allowuserdeletions`        "
 
 #: redbot/core/core_commands.py:801
 msgid "User can delete their own data. This will not include operational data such as blocked users."
-msgstr ""
+msgstr "用戶可以刪除自己的數據。 這不包括操作數據，例如被阻止的用戶。"
 
 #: redbot/core/core_commands.py:809
 #, docstring
@@ -831,11 +921,15 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]mydata ownermanagement disallowuserdeletions`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"將機器人設置為不允許用戶請求刪除數據。\n\n"
+"         與`[p]mydata ownermanagement allowuserdeletions`相反\n\n"
+"         **例子：**\n"
+"             - `[p]mydata ownermanagement disallowuserdeletions`        "
 
 #: redbot/core/core_commands.py:818
 msgid "User can not delete their own data."
-msgstr ""
+msgstr "用戶不能刪除自己的數據。"
 
 #: redbot/core/core_commands.py:822
 #, docstring
@@ -849,15 +943,24 @@ msgid "\n"
 "            - `0`: What users can delete is left entirely up to each cog.\n"
 "            - `1`: Cogs should delete anything the cog doesn't need about the user.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置如何處理用戶刪除。\n\n"
+"         **例子：**\n"
+"             -`[p]mydata ownermanagement setuserdeletionlevel 1`\n\n"
+"         **參數：**\n"
+"             - `<level>` - 用戶刪除的嚴格級別。 請參閱下面的級別指南。\n\n"
+"         等級：\n"
+"              - `0`: What users can delete is left entirely up to each cog.\n"
+"              - `1`: Cogs should delete anything the cog doesn't need about the user.\n"
+"        "
 
 #: redbot/core/core_commands.py:839
 msgid "Cogs will be instructed to remove all non operational data upon a user request."
-msgstr ""
+msgstr "Cogs 將被指示根據用戶請求刪除所有非操作數據。"
 
 #: redbot/core/core_commands.py:847
 msgid "Cogs will be informed a user has made a data deletion request, and the details of what to delete will be left to the discretion of the cog author."
-msgstr ""
+msgstr "Cogs 將被告知用戶已提出數據刪除請求，刪除內容的詳細信息將由 cogs 作者自行決定。"
 
 #: redbot/core/core_commands.py:858
 #, docstring
@@ -870,34 +973,48 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<user_id>` - The id of the user whose data would be deleted.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"處理來自 Discord 的刪除請求。\n\n"
+"         這將導致機器人擺脫或取消與指定用戶 ID 的所有數據的關聯。\n"
+"         除非 Discord 針對已刪除的用戶明確要求這樣做，否則您不應使用它。\n"
+"         這將使用戶擺脫各種反濫用措施。\n"
+"         如果您正在處理來自用戶的手動請求，您可能需要 `[p]mydata ownermanagement deleteforuser` 代替。\n\n"
+"         **參數：**\n"
+"             - `<user_id>` - 數據將被刪除的用戶的 ID。        "
 
 #: redbot/core/core_commands.py:872
 msgid "This will cause the bot to get rid of or disassociate all data from the specified user ID. You should not use this unless Discord has specifically requested this with regard to a deleted user. This will remove the user from various anti-abuse measures. If you are processing a manual request from a user, you may want `{prefix}{command_name}` instead.\n\n"
 "If you are sure this is what you intend to do please respond with the following:"
-msgstr ""
+msgstr "這將導致機器人擺脫或取消與指定用戶 ID 的所有數據的關聯。 除非 Discord 針對已刪除的用戶明確要求這樣做，否則您不應使用它。 這將使用戶擺脫各種反濫用措施。 如果您正在處理來自用戶的手動請求，您可能需要 `{prefix}{command_name}` 代替。\n\n"
+"如果您確定這是您打算做的，請回復以下內容："
 
 #: redbot/core/core_commands.py:890 redbot/core/core_commands.py:1047
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}\n"
 "Please check your logs and contact the creators of these cogs and modules.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除有關該用戶的所有數據(我知道如何刪除) 但是以下模塊出錯：{modules}。 此外，以下 cogs 出錯：{cogs}\n"
+"請檢查您的日誌並聯繫這些 cogs 和模塊的創建者。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:905 redbot/core/core_commands.py:1062
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following cogs errored: {cogs}.\n"
 "Please check your logs and contact the creators of these cogs and modules.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除有關該用戶的所有數據(我知道如何刪除) 但是以下 cogs 出錯：{cogs}。\n"
+"請檢查您的日誌並聯繫這些 cogs 和模塊的創建者。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:916 redbot/core/core_commands.py:1073
 msgid "I tried to delete all data about that user, (that I know how to delete) however the following modules errored: {modules}.\n"
 "Please check your logs and contact the creators of these cogs and modules.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除有關該用戶的所有數據(我知道如何刪除) 但是以下模塊出錯：{modules}。\n"
+"請檢查您的日誌並聯繫這些 cogs 和模塊的創建者。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:926 redbot/core/core_commands.py:1083
 msgid "I've deleted all data about that user that I know how to delete."
-msgstr ""
+msgstr "我已經刪除了有關該用戶的所有我知道如何刪除的數據。"
 
 #: redbot/core/core_commands.py:937
 #, docstring
@@ -908,34 +1025,46 @@ msgid "Delete data [botname] has about a user for a user.\n\n"
 "        **Arguments:**\n"
 "            - `<user_id>` - The id of the user whose data would be deleted.\n"
 "        "
-msgstr ""
+msgstr "為用戶刪除 [botname] 有關用戶的數據。\n\n"
+"         這將導致機器人擺脫或解除與指定用戶的大量非操作數據的關聯。\n"
+"         用戶可以為此訪問不同的命令，除非他們根本無法與機器人交互。\n"
+"         這是一個最安全的操作，但除非處理來自該用戶的請求，否則不應使用它，因為它可能會影響他們對機器人的使用。\n\n"
+"         **參數：**\n"
+"             - `<user_id>` - 數據將被刪除的用戶的 Id。        "
 
 #: redbot/core/core_commands.py:948
 msgid "This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user. Users have access to different command for this unless they can't interact with the bot at all. This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot. \n\n"
 "If you are sure this is what you intend to do please respond with the following:"
-msgstr ""
+msgstr "這將導致機器人擺脫或解除與指定用戶的大量非操作數據的關聯。 用戶可以為此訪問不同的命令，除非他們根本無法與機器人交互。 這是一個最安全的操作，但除非處理來自該用戶的請求，否則不應使用它，因為它可能會影響他們對機器人的使用。\n\n"
+"如果您確定這是您打算做的，請回復以下內容："
 
 #: redbot/core/core_commands.py:971
 msgid "I tried to delete all non-operational data about that user, (that I know how to delete) however the following modules errored: {modules}. Additionally, the following cogs errored: {cogs}\n"
 "Please check your logs and contact the creators of these cogs and modules.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除有關該用戶的所有非操作數據(我知道如何刪除) 但是以下模塊出錯：{modules}。 此外，以下 cogs 出錯：{cogs}\n"
+"請檢查您的日誌並聯繫這些 cogs 和模塊的創建者。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:986
 msgid "I tried to delete all non-operational data about that user, (that I know how to delete) however the following cogs errored: {cogs}.\n"
 "Please check your logs and contact the creators of these cogs and modules.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除有關該用戶的所有非操作數據(我知道如何刪除) 但是以下 cogs 錯誤：{cogs}。\n"
+"請檢查您的日誌並聯繫這些 cogs 和模塊的創建者。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:997
 msgid "I tried to delete all non-operational data about that user, (that I know how to delete) however the following modules errored: {modules}.\n"
 "Please check your logs and contact the creators of these cogs and modules.\n"
 "Note: Outside of these failures, data should have been deleted."
-msgstr ""
+msgstr "我試圖刪除有關該用戶的所有非操作數據(我知道如何刪除) 但是以下 cogs 錯誤：{modules}。\n"
+"請檢查您的日誌並聯繫這些 cogs 和模塊的創建者。\n"
+"注意：在這些故障之外，數據應該已被刪除。"
 
 #: redbot/core/core_commands.py:1008
 msgid "I've deleted all non-operational data about that user that I know how to delete."
-msgstr ""
+msgstr "我已經刪除了有關該用戶的所有我知道如何刪除的數據。"
 
 #: redbot/core/core_commands.py:1023
 #, docstring
@@ -945,12 +1074,17 @@ msgid "Delete data [botname] has about a user.\n\n"
 "        **Arguments:**\n"
 "            - `<user_id>` - The id of the user whose data would be deleted.\n"
 "        "
-msgstr ""
+msgstr "刪除 [botname] 擁有的關於用戶的數據。\n\n"
+"         這將導致機器人擺脫或取消與指定用戶有關的大量數據。\n"
+"         這可能不僅包括最終用戶數據，還包括反濫用記錄。\n\n"
+"         **參數：**\n"
+"             - `<user_id>` - 數據將被刪除的用戶的 Id。        "
 
 #: redbot/core/core_commands.py:1033
 msgid "This will cause the bot to get rid of or disassociate a lot of data about the specified user. This may include more than just end user data, including anti abuse records.\n\n"
 "If you are sure this is what you intend to do please respond with the following:"
-msgstr ""
+msgstr "這將導致機器人擺脫或取消與指定用戶有關的大量數據。 這可能不僅包括最終用戶數據，還包括反濫用記錄。\n\n"
+"如果您確定這是您打算做的，請回復以下內容："
 
 #: redbot/core/core_commands.py:1094
 #, docstring
@@ -970,7 +1104,21 @@ msgid "\n"
 "                2. Global command override - `[p]embedset command global`\n"
 "                3. Global setting - `[p]embedset global`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"用於打開或關閉嵌入的命令。\n\n"
+"         此設置確定是否使用嵌入作為對命令的響應(對於支持它的命令)。\n"
+"         默認是使用嵌入。\n\n"
+"         檢查嵌入設置，直到按以下順序出現第一個 True/False：\n"
+"             - 在公會環境中：\n"
+"                 1. 頻道覆蓋 - `[p]embedset channel`\n"
+"                 2. 服務器命令覆蓋 - `[p]embedset command server`\n"
+"                 3. 服務器覆蓋 - `[p]embedset server`\n"
+"                 4. 全局命令覆蓋 - `[p]embedset command global`\n"
+"                 5.全局設置-`[p]embedset global`\n\n"
+"             - 在 DM 環境中：\n"
+"                 1. 用戶覆蓋 - `[p]embedset user`\n"
+"                 2. 全局命令覆蓋 - `[p]embedset command global`\n"
+"                 3. 全局設置 - `[p]embedset global`        "
 
 #: redbot/core/core_commands.py:1118
 #, docstring
@@ -984,35 +1132,43 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[command]` - Checks this command for command specific embed settings.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"顯示當前的嵌入設置。\n\n"
+"         提供命令名稱以檢查命令特定的嵌入設置。\n\n"
+"         **例子：**\n"
+"             - `[p]embedset showsettings` - 顯示嵌入設置。\n"
+"             - `[p]embedset showsettings info` - 還顯示“info”命令的嵌入設置。\n"
+"             - `[p]embedset showsettings \"ignore list\"` - 檢查子命令需要引號。\n\n"
+"         **參數：**\n"
+"             - `[command]` - 檢查此命令以獲取特定於命令的嵌入設置。        "
 
 #: redbot/core/core_commands.py:1134
 msgid "Embed settings:\n\n"
-msgstr ""
+msgstr "嵌入設置：\n\n"
 
 #: redbot/core/core_commands.py:1136
 msgid "Global default: {value}\n"
-msgstr ""
+msgstr "全局默認值：{value}\n"
 
 #: redbot/core/core_commands.py:1141
 msgid "Global command setting for {command} command: {value}\n"
-msgstr ""
+msgstr "{command} 命令的全局命令設置：{value}\n"
 
 #: redbot/core/core_commands.py:1147
 msgid "Guild setting: {value}\n"
-msgstr ""
+msgstr "伺服器設置：{value}\n"
 
 #: redbot/core/core_commands.py:1152
 msgid "Server command setting for {command} command: {value}\n"
-msgstr ""
+msgstr "{command} 命令的全局命令設置：{value}\n"
 
 #: redbot/core/core_commands.py:1158
 msgid "Channel setting: {value}\n"
-msgstr ""
+msgstr "頻道設置：{value}\n"
 
 #: redbot/core/core_commands.py:1161
 msgid "User setting: {value}"
-msgstr ""
+msgstr "使用者設定: {value}"
 
 #: redbot/core/core_commands.py:1167
 #, docstring
@@ -1024,15 +1180,21 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]embedset global`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"切換全局嵌入設置。\n\n"
+"        如果用戶或公會沒有設置偏好，這將用作後備。\n"
+"        默認是使用嵌入。\n\n"
+"        要查看嵌入設置的完整評估順序，請運行 `[p]help embedset`。\n\n"
+"        **例子：**\n"
+"            - `[p]embedset global``        "
 
 #: redbot/core/core_commands.py:1181
 msgid "Embeds are now disabled by default."
-msgstr ""
+msgstr "現在默認禁用嵌入訊息。"
 
 #: redbot/core/core_commands.py:1184
 msgid "Embeds are now enabled by default."
-msgstr ""
+msgstr "現在默認啟用嵌入訊息。"
 
 #: redbot/core/core_commands.py:1190
 #, docstring
@@ -1048,20 +1210,30 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds on this server. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置服務器的嵌入設置。\n\n"
+"        如果設置，則使用它而不是全局默認值來確定是否使用嵌入。\n"
+"        這用於在服務器中完成的所有命令。\n\n"
+"        如果 enabled 留空，該設置將被取消設置，而是使用全局默認值。\n\n"
+"        要查看嵌入設置的完整評估順序，請運行 `[p]help embedset`。\n\n"
+"        **例子：**\n"
+"            - `[p]embedset server False` - 禁用此服務器上的嵌入。\n"
+"            - `[p]embedset server` - 重置值以使用全局默認值。\n\n"
+"        **參數：**\n"
+"            - `[enabled]` - 是否在此服務器上使用嵌入。留空以重置為默認值。        "
 
 #: redbot/core/core_commands.py:1209 redbot/core/core_commands.py:1287
-#: redbot/core/core_commands.py:1372 redbot/core/core_commands.py:1403
+#: redbot/core/core_commands.py:1381 redbot/core/core_commands.py:1412
 msgid "Embeds will now fall back to the global setting."
-msgstr ""
+msgstr "嵌入訊息現在將回退到全局設置。"
 
 #: redbot/core/core_commands.py:1214
 msgid "Embeds are now enabled for this guild."
-msgstr ""
+msgstr "現在為這個公會啟用了嵌入訊息。"
 
 #: redbot/core/core_commands.py:1216
 msgid "Embeds are now disabled for this guild."
-msgstr ""
+msgstr "該公會現在禁用嵌入訊息。"
 
 #: redbot/core/core_commands.py:1224
 #, docstring
@@ -1078,11 +1250,22 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置命令的嵌入設置。\n\n"
+"        如果您是機器人所有者，默認情況下這將嘗試全局更改命令的嵌入設置。\n"
+"        否則，這將嘗試更改當前服務器上的嵌入設置。\n\n"
+"        如果啟用留空，該設置將被取消。\n\n"
+"        要查看嵌入設置的完整評估順序，請運行 `[p]help embedset`。\n\n"
+"        **例子：**\n"
+"            - `[p]embedset command info` - 清除“info”的命令特定嵌入設置。\n"
+"            - `[p]embedset command info False` - 禁用“信息”的嵌入。\n"
+"            - `[p]embedset command \"ignore list\" True` - 子命令需要引號。\n\n"
+"        **參數：**\n"
+"            - `[enabled]` - 是否為此命令使用嵌入。留空以重置為默認值。        "
 
 #: redbot/core/core_commands.py:1253
 msgid "The passed command requires Embed Links permission and therefore cannot be set to not use embeds."
-msgstr ""
+msgstr "傳遞的命令需要嵌入鏈接權限，因此不能設置為不使用嵌入。"
 
 #: redbot/core/core_commands.py:1264
 #, docstring
@@ -1098,15 +1281,25 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"全局設置命令的嵌入設置。\n\n"
+"        如果設置，則使用它而不是全局默認值來確定是否使用嵌入。\n\n"
+"        如果啟用留空，該設置將被取消。\n\n"
+"        要查看嵌入設置的完整評估順序，請運行 `[p]help embedset`。\n\n"
+"        **例子：**\n"
+"            - `[p]embedset command global info` - 清除“info”的命令特定嵌入設置。\n"
+"            - `[p]embedset command global info False` - 禁用“信息”的嵌入。\n"
+"            - `[p]embedset command global \"ignore list\" True` - 子命令需要引號。\n\n"
+"        **參數：**\n"
+"            - `[enabled]` - 是否為此命令使用嵌入。留空以重置為默認值。        "
 
 #: redbot/core/core_commands.py:1293 redbot/core/core_commands.py:1338
 msgid "Embeds are now enabled for {command_name} command."
-msgstr ""
+msgstr "現在為 {command_name} 命令啟用了嵌入。"
 
 #: redbot/core/core_commands.py:1299 redbot/core/core_commands.py:1344
 msgid "Embeds are now disabled for {command_name} command."
-msgstr ""
+msgstr "{command_name} 命令現在禁用嵌入。"
 
 #: redbot/core/core_commands.py:1309
 #, docstring
@@ -1122,11 +1315,21 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"為當前服務器設置命令的嵌入設置。\n\n"
+"        如果設置，則使用它而不是服務器默認值來確定是否使用嵌入。\n\n"
+"        如果 enabled 留空，該設置將被取消設置，而是使用服務器默認值。\n\n"
+"        要查看嵌入設置的完整評估順序，請運行 `[p]help embedset`。\n\n"
+"        **例子：**\n"
+"            - `[p]embedset command server info` - 清除“info”的命令特定嵌入設置。\n"
+"            - `[p]embedset command server info False` - 禁用“信息”的嵌入。\n"
+"            - `[p]embedset command server \"ignore list\" True` - 子命令需要引號。\n\n"
+"        **參數：**\n"
+"            - `[enabled]` - 是否為此命令使用嵌入。留空以重置為默認值。        "
 
 #: redbot/core/core_commands.py:1332
 msgid "Embeds will now fall back to the server setting."
-msgstr ""
+msgstr "嵌入現在將回退到服務器設置。"
 
 #: redbot/core/core_commands.py:1353
 #, docstring
@@ -1142,25 +1345,39 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Set 是一個頻道的嵌入設置。\n\n"
+"        如果設置，則使用它而不是公會和命令默認值來確定是否使用嵌入。\n"
+"        這用於在通道中完成的所有命令。\n\n"
+"        如果啟用留空，該設置將被取消設置，將使用公會默認值。\n\n"
+"        要查看嵌入設置的完整評估順序，請運行 `[p]help embedset`。\n\n"
+"        **例子：**\n"
+"            - `[p]embedset channel False` - 禁用此頻道中的嵌入。\n"
+"            - `[p]embedset channel` - 重置值以使用公會默認值。\n\n"
+"        **參數：**\n"
+"            - `[enabled]` - 是否在此頻道中使用嵌入。留空以重置為默認值。        "
 
-#: redbot/core/core_commands.py:1377
+#: redbot/core/core_commands.py:1372
+msgid "This setting cannot be set for threads. If you want to set this for the parent channel, send the command in that channel."
+msgstr "無法為線程設置此設置。如果您想為父頻道設置此項，請在該頻道中發送命令。"
+
+#: redbot/core/core_commands.py:1386
 msgid "Embeds are now {} for this channel."
-msgstr ""
+msgstr "嵌入現在是此頻道的 {}。"
 
-#: redbot/core/core_commands.py:1378 redbot/core/core_commands.py:2277
-#: redbot/core/core_commands.py:2291 redbot/core/core_commands.py:3441
-#: redbot/core/core_commands.py:3462
+#: redbot/core/core_commands.py:1387 redbot/core/core_commands.py:2288
+#: redbot/core/core_commands.py:2302 redbot/core/core_commands.py:3464
+#: redbot/core/core_commands.py:3485
 msgid "enabled"
 msgstr "已啟用"
 
-#: redbot/core/core_commands.py:1378 redbot/core/core_commands.py:2277
-#: redbot/core/core_commands.py:2291 redbot/core/core_commands.py:3441
-#: redbot/core/core_commands.py:3462
+#: redbot/core/core_commands.py:1387 redbot/core/core_commands.py:2288
+#: redbot/core/core_commands.py:2302 redbot/core/core_commands.py:3464
+#: redbot/core/core_commands.py:3485
 msgid "disabled"
 msgstr "已停用"
 
-#: redbot/core/core_commands.py:1384
+#: redbot/core/core_commands.py:1393
 #, docstring
 msgid "\n"
 "        Sets personal embed setting for DMs.\n\n"
@@ -1174,17 +1391,27 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[enabled]` - Whether to use embeds in your DMs. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"為 DM 設置個人嵌入設置。\n\n"
+"        如果設置，則使用它而不是全局默認值來確定是否使用嵌入。\n"
+"        這用於在 DM 中使用機器人執行的所有命令。\n\n"
+"        如果 enabled 留空，該設置將被取消設置，而是使用全局默認值。\n\n"
+"        要查看嵌入設置的完整評估順序，請運行 `[p]help embedset`。\n\n"
+"        **例子：**\n"
+"            - `[p]embedset user False` - 在您的 DM 中禁用嵌入。\n"
+"            - `[p]embedset user` - 重置值以使用全局默認值。\n\n"
+"        **參數：**\n"
+"            - `[enabled]` - 是否在您的 DM 中使用嵌入。留空以重置為默認值。        "
 
-#: redbot/core/core_commands.py:1408
+#: redbot/core/core_commands.py:1417
 msgid "Embeds are now enabled for you in DMs."
-msgstr ""
+msgstr "現在在 DM 中為您啟用了嵌入功能。"
 
-#: redbot/core/core_commands.py:1410
+#: redbot/core/core_commands.py:1419
 msgid "Embeds are now disabled for you in DMs."
-msgstr ""
+msgstr "現在，您在 DM 中禁用了嵌入功能。"
 
-#: redbot/core/core_commands.py:1416
+#: redbot/core/core_commands.py:1425
 #, docstring
 msgid "Sends to the owner the last command exception that has occurred.\n\n"
 "        If public (yes is specified), it will be sent to the chat instead.\n\n"
@@ -1195,13 +1422,20 @@ msgid "Sends to the owner the last command exception that has occurred.\n\n"
 "        **Arguments:**\n"
 "            - `[public]` - Whether to send the traceback to the current context. Leave blank to send to your DMs.\n"
 "        "
-msgstr ""
+msgstr "將最後發生的命令異常發送給所有者。\n\n"
+"        如果公開(指定為是)，它將被發送到聊天。\n\n"
+"        警告：公開發送回溯可能會意外洩露有關您的計算機或配置的敏感信息。\n\n"
+"        **例子：**\n"
+"            - `[p]traceback` - 將回溯發送給您的 DM。\n"
+"            - `[p]traceback True` - 發送當前上下文中的最後一個回溯。\n\n"
+"        **參數：**\n"
+"            - `[public]` - 是否將回溯發送到當前上下文。留空以發送給您的 DM。        "
 
-#: redbot/core/core_commands.py:1447
+#: redbot/core/core_commands.py:1456
 msgid "No exception has occurred yet."
-msgstr ""
+msgstr "目前還沒有發生異常。"
 
-#: redbot/core/core_commands.py:1452
+#: redbot/core/core_commands.py:1461
 #, docstring
 msgid "Shows [botname]'s invite url.\n\n"
 "        This will always send the invite to DMs to keep it private.\n\n"
@@ -1209,14 +1443,19 @@ msgid "Shows [botname]'s invite url.\n\n"
 "        **Example:**\n"
 "            - `[p]invite`\n"
 "        "
-msgstr ""
+msgstr "顯示 [botname] 的邀請 url。\n\n"
+"        這將始終將邀請發送給 DM 以保持私密。\n\n"
+"        除非 `[p]inviteset public` 設置為 True，否則此命令將鎖定給所有者。\n\n"
+"        **例子：**\n"
+"            -  `[p]invite`\n"
+"        "
 
-#: redbot/core/core_commands.py:1473
+#: redbot/core/core_commands.py:1482
 #, docstring
 msgid "Commands to setup [botname]'s invite settings."
-msgstr ""
+msgstr "設置 [botname] 的邀請設置的命令。"
 
-#: redbot/core/core_commands.py:1478
+#: redbot/core/core_commands.py:1487
 #, docstring
 msgid "\n"
 "        Toggles if `[p]invite` should be accessible for the average user.\n\n"
@@ -1226,9 +1465,15 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[confirm]` - Required to set to public. Not required to toggle back to private.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"切換 `[p]invite` 是否應該可供普通用戶訪問。\n\n"
+"        該機器人必須在開發人員儀表板中製作為“公共機器人”，以便公開邀請工作。\n\n"
+"        **例子：**\n"
+"            - `[p]inviteset public yes` - 切換公開邀請設置。\n\n"
+"        **參數：**\n"
+"            - `[confirm] - 需要設置為公開。不需要切換回私人。        "
 
-#: redbot/core/core_commands.py:1515
+#: redbot/core/core_commands.py:1524
 #, docstring
 msgid "\n"
 "        Make the bot create its own role with permissions on join.\n\n"
@@ -1241,26 +1486,38 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<level>` - The permission level to require for the bot in the generated invite.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"使機器人創建具有加入權限的自己的角色。\n\n"
+"        bot 將在加入新服務器時創建具有所需權限的自己的角色。這是一個無法從機器人中刪除或移除的特殊角色。\n\n"
+"        為此，您需要提供有效的權限級別。\n"
+"        你可以在這裡生成一個：https://discordapi.com/permissions.html\n\n"
+"        請注意，您可能需要對某些權限進行雙重身份驗證。\n\n"
+"        **例子：**\n"
+"            - `[p]inviteset perms 134217728` - 向邀請添加“管理暱稱”權限要求。\n\n"
+"        **參數：**\n"
+"            - `<level>` - 生成的邀請中機器人所需的權限級別。        "
 
-#: redbot/core/core_commands.py:1536
+#: redbot/core/core_commands.py:1545
 #, docstring
 msgid "\n"
 "        Add the `applications.commands` scope to your invite URL.\n\n"
 "        This allows the usage of slash commands on the servers that invited your bot with that scope.\n\n"
 "        Note that previous servers that invited the bot without the scope cannot have slash commands, they will have to invite the bot a second time.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"將 `applications.commands` 範圍添加到您的邀請 URL。\n\n"
+"        這允許在邀請具有該範圍的機器人的服務器上使用斜杠命令。\n\n"
+"        請注意，在沒有範圍的情況下邀請機器人的先前服務器不能有斜杠命令，他們必須再次邀請機器人。        "
 
-#: redbot/core/core_commands.py:1547
+#: redbot/core/core_commands.py:1556
 msgid "The `applications.commands` scope has been added to the invite URL."
-msgstr ""
+msgstr "`applications.commands` 範圍已添加到邀請 URL。"
 
-#: redbot/core/core_commands.py:1551
+#: redbot/core/core_commands.py:1560
 msgid "The `applications.commands` scope has been removed from the invite URL."
-msgstr ""
+msgstr "`applications.commands` 範圍已從邀請 URL 中刪除。"
 
-#: redbot/core/core_commands.py:1557
+#: redbot/core/core_commands.py:1566
 #, docstring
 msgid "\n"
 "        Leaves servers.\n\n"
@@ -1273,65 +1530,76 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[servers...]` - The servers to leave. When blank, attempts to leave the current server.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"離開服務器。\n\n"
+"        如果沒有傳遞服務器 ID，則將保留本地服務器。\n\n"
+"        注意：此命令是交互式的。\n\n"
+"        **例子：**\n"
+"            - `[p]leave` - 離開當前服務器。\n"
+"            - `[p]leave \"Red - Discord Bot\"` - 當名稱中有空格時，引號是必需的。\n"
+"            - `[p]leave 133049272517001216 240154543684321280` - 使用 ID 離開多個服務器。\n\n"
+"        **參數：**\n"
+"            - `[servers...]` - 要離開的服務器。空白時，嘗試離開當前服務器。        "
 
-#: redbot/core/core_commands.py:1574
+#: redbot/core/core_commands.py:1583
 msgid "You need to specify at least one server ID."
-msgstr ""
+msgstr "您需要至少指定一個服務器 ID。"
 
-#: redbot/core/core_commands.py:1582
+#: redbot/core/core_commands.py:1591
 msgid "You haven't passed any server ID. Do you want me to leave this server?"
-msgstr ""
+msgstr "您尚未傳遞任何服務器 ID。你想讓我離開這個服務器嗎？"
 
-#: redbot/core/core_commands.py:1588
+#: redbot/core/core_commands.py:1597
 msgid "Are you sure you want me to leave these servers?"
-msgstr ""
+msgstr "是否確定要離開此頁面？"
 
-#: redbot/core/core_commands.py:1594
+#: redbot/core/core_commands.py:1603
 msgid "Are you sure you want me to leave this server?"
-msgstr ""
+msgstr "您確定要退出此群組嗎？"
 
-#: redbot/core/core_commands.py:1602
+#: redbot/core/core_commands.py:1611
 msgid "I cannot leave the server `{server_name}`: I am the owner of it."
-msgstr ""
+msgstr "我不能離開服務器`{server_name}`：我是它的所有者。"
 
-#: redbot/core/core_commands.py:1613 redbot/core/core_commands.py:3528
+#: redbot/core/core_commands.py:1622 redbot/core/core_commands.py:3551
 msgid "Response timed out."
-msgstr ""
+msgstr "沒有回應，已逾時"
 
-#: redbot/core/core_commands.py:1618
+#: redbot/core/core_commands.py:1627
 msgid "Alright. Bye :wave:"
-msgstr ""
-
-#: redbot/core/core_commands.py:1622
-msgid "Alright. Leaving {number} servers..."
-msgstr ""
-
-#: redbot/core/core_commands.py:1625
-msgid "Alright. Leaving one server..."
-msgstr ""
+msgstr "好的。再見:wave:"
 
 #: redbot/core/core_commands.py:1631
-msgid "Alright, I'll stay then. :)"
-msgstr ""
+msgid "Alright. Leaving {number} servers..."
+msgstr "好的。正在離開 {number} 個服務器..."
 
 #: redbot/core/core_commands.py:1634
+msgid "Alright. Leaving one server..."
+msgstr "好的。離開一個服務器..."
+
+#: redbot/core/core_commands.py:1640
+msgid "Alright, I'll stay then. :)"
+msgstr "好吧，那我就留下來。 :)"
+
+#: redbot/core/core_commands.py:1643
 msgid "Alright, I'm not leaving those servers."
-msgstr ""
+msgstr "好吧，我不會離開那些服務器"
 
-#: redbot/core/core_commands.py:1636
+#: redbot/core/core_commands.py:1645
 msgid "Alright, I'm not leaving that server."
-msgstr ""
+msgstr "好吧，我不會離開那個服務器。"
 
-#: redbot/core/core_commands.py:1641
+#: redbot/core/core_commands.py:1650
 #, docstring
 msgid "\n"
 "        Lists the servers [botname] is currently in.\n\n"
 "        Note: This command is interactive.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"列出 [botname] 當前所在的服務器。\n\n"
+"        注意：此命令是交互式的。        "
 
-#: redbot/core/core_commands.py:1659
+#: redbot/core/core_commands.py:1670
 #, docstring
 msgid "Loads cog packages from the local paths and installed cogs.\n\n"
 "        See packages available to load with `[p]cogs`.\n\n"
@@ -1342,69 +1610,84 @@ msgid "Loads cog packages from the local paths and installed cogs.\n\n"
 "        **Arguments:**\n"
 "            - `<cogs...>` - The cog packages to load.\n"
 "        "
-msgstr ""
+msgstr "從本地路徑加載 cog 包並安裝 cog。\n\n"
+"        查看可使用 `[p]cogs` 加載的軟件包。\n\n"
+"        可以使用 Downloader 添加額外的 cog，或者使用 `[p]addpath` 從本地路徑添加。\n\n"
+"        **例子：**\n"
+"            - `[p]load general` - 加載`general` cog。\n"
+"            - `[p]load admin mod mutes` - 加載多個齒輪。\n\n"
+"        **參數：**\n"
+"            - `<cogs...>` - 要加載的 cog 包。        "
 
-#: redbot/core/core_commands.py:1680
+#: redbot/core/core_commands.py:1691
 msgid "Loaded {packs}."
-msgstr ""
-
-#: redbot/core/core_commands.py:1685
-msgid "The following package is already loaded: {pack}"
-msgstr ""
-
-#: redbot/core/core_commands.py:1689
-msgid "The following packages are already loaded: {packs}"
-msgstr ""
+msgstr "已加載 {packs}。"
 
 #: redbot/core/core_commands.py:1696
+msgid "The following package is already loaded: {pack}"
+msgstr "以下包已加載：{pack}"
+
+#: redbot/core/core_commands.py:1700
+msgid "The following packages are already loaded: {packs}"
+msgstr "以下包已加載：{packs}"
+
+#: redbot/core/core_commands.py:1707
 msgid "Failed to load the following package: {pack}.\n"
 "Check your console or logs for details."
-msgstr ""
+msgstr "未能加載以下包：{pack}。\n"
+"檢查您的控制台或日誌以獲取詳細信息。"
 
-#: redbot/core/core_commands.py:1701
+#: redbot/core/core_commands.py:1712
 msgid "Failed to load the following packages: {packs}\n"
 "Check your console or logs for details."
-msgstr ""
+msgstr "未能加載以下包：{packs}。\n"
+"檢查您的控制台或日誌以獲取詳細信息。"
 
-#: redbot/core/core_commands.py:1709 redbot/core/core_commands.py:1857
+#: redbot/core/core_commands.py:1720 redbot/core/core_commands.py:1868
 msgid "The following name is not a valid package name: {pack}\n"
 "Package names cannot start with a number and can only contain ascii numbers, letters, and underscores."
-msgstr ""
+msgstr "以下名稱不是有效的包名稱：{pack}\n"
+" 包名不能以數字開頭，只能包含 ascii 數字、字母和下劃線。"
 
-#: redbot/core/core_commands.py:1715 redbot/core/core_commands.py:1863
+#: redbot/core/core_commands.py:1726 redbot/core/core_commands.py:1874
 msgid "The following names are not valid package names: {packs}\n"
 "Package names cannot start with a number and can only contain ascii numbers, letters, and underscores."
-msgstr ""
+msgstr "以下名稱不是有效的包名稱：{packs}\n"
+" 包名不能以數字開頭，只能包含 ascii 數字、字母和下劃線。"
 
-#: redbot/core/core_commands.py:1724 redbot/core/core_commands.py:1872
+#: redbot/core/core_commands.py:1735 redbot/core/core_commands.py:1883
 msgid "The following package was not found in any cog path: {pack}."
-msgstr ""
+msgstr "在任何 cog 路徑中都找不到以下包：{pack}。"
 
-#: redbot/core/core_commands.py:1728 redbot/core/core_commands.py:1876
+#: redbot/core/core_commands.py:1739 redbot/core/core_commands.py:1887
 msgid "The following packages were not found in any cog path: {packs}"
-msgstr ""
-
-#: redbot/core/core_commands.py:1736
-msgid "This package could not be loaded for the following reason:\n\n"
-"{reason}"
-msgstr ""
-
-#: redbot/core/core_commands.py:1740
-msgid "These packages could not be loaded for the following reasons:\n\n"
-"{reasons}"
-msgstr ""
+msgstr "在任何 cog 路徑中都找不到以下包：{packs}。"
 
 #: redbot/core/core_commands.py:1747
+msgid "This package could not be loaded for the following reason:\n\n"
+"{reason}"
+msgstr "由於以下原因，無法加載此包：\n\n"
+" {reason}"
+
+#: redbot/core/core_commands.py:1751
+msgid "These packages could not be loaded for the following reasons:\n\n"
+"{reasons}"
+msgstr "由於以下原因，無法加載此包：\n\n"
+" {reasons}"
+
+#: redbot/core/core_commands.py:1758
 msgid "**WARNING**: The following repo is using shared libs which are marked for removal in the future: {repo}.\n"
 "You should inform maintainer of the repo about this message."
-msgstr ""
+msgstr "**警告**：以下 repo 正在使用標記為將來刪除的共享庫：{repo}。\n"
+" 您應該將此消息通知 repo 的維護者。"
 
-#: redbot/core/core_commands.py:1753 redbot/core/core_commands.py:1901
+#: redbot/core/core_commands.py:1764 redbot/core/core_commands.py:1912
 msgid "**WARNING**: The following repos are using shared libs which are marked for removal in the future: {repos}.\n"
 "You should inform maintainers of these repos about this message."
-msgstr ""
+msgstr "**警告**：以下 repo 正在使用標記為將來刪除的共享庫：{repos}。\n"
+" 您應該將此消息通知 repo 的維護者。"
 
-#: redbot/core/core_commands.py:1772
+#: redbot/core/core_commands.py:1783
 #, docstring
 msgid "Unloads previously loaded cog packages.\n\n"
 "        See packages available to unload with `[p]cogs`.\n\n"
@@ -1414,25 +1697,33 @@ msgid "Unloads previously loaded cog packages.\n\n"
 "        **Arguments:**\n"
 "            - `<cogs...>` - The cog packages to unload.\n"
 "        "
-msgstr ""
-
-#: redbot/core/core_commands.py:1790
-msgid "The following package was unloaded: {pack}."
-msgstr ""
-
-#: redbot/core/core_commands.py:1794
-msgid "The following packages were unloaded: {packs}."
-msgstr ""
+msgstr "卸載以前加載的 cog 包。\n\n"
+"         查看可使用 `[p]cogs` 卸載的軟件包。\n\n"
+"         **例子：**\n"
+"             - `[p]unload general` - 卸載`general` cog。\n"
+"             - `[p]unload admin mod mutes` - 卸載多個齒輪。\n\n"
+"         **參數：**\n"
+"             - `<cogs...>` - 要卸載的 cog 包。\n"
+"        \n"
+" 上下文請求        "
 
 #: redbot/core/core_commands.py:1801
-msgid "The following package was not loaded: {pack}."
-msgstr ""
+msgid "The following package was unloaded: {pack}."
+msgstr "以下包已卸載：{pack}."
 
 #: redbot/core/core_commands.py:1805
-msgid "The following packages were not loaded: {packs}."
-msgstr ""
+msgid "The following packages were unloaded: {packs}."
+msgstr "以下包已卸載：{packs}."
 
-#: redbot/core/core_commands.py:1818
+#: redbot/core/core_commands.py:1812
+msgid "The following package was not loaded: {pack}."
+msgstr "未載入以下軟體包：{pack}。"
+
+#: redbot/core/core_commands.py:1816
+msgid "The following packages were not loaded: {packs}."
+msgstr "未載入以下軟體包：{packs}。"
+
+#: redbot/core/core_commands.py:1829
 #, docstring
 msgid "Reloads cog packages.\n\n"
 "        This will unload and then load the specified cogs.\n\n"
@@ -1443,38 +1734,50 @@ msgid "Reloads cog packages.\n\n"
 "        **Arguments:**\n"
 "            - `<cogs...>` - The cog packages to reload.\n"
 "        "
-msgstr ""
+msgstr "重新加載 cog 包。\n\n"
+"         這將卸載然後加載指定的齒輪。\n\n"
+"         未加載的 Cogs 只會被加載。\n\n"
+"         **例子：**\n"
+"             - `[p]reload general` - 卸載然後加載`general` cog。\n"
+"             - `[p]reload admin mod mutes` - 卸載然後加載多個 cog。\n\n"
+"         **參數：**\n"
+"             - `<cogs...>` - 要重新加載的 cog 包。        "
 
-#: redbot/core/core_commands.py:1839
+#: redbot/core/core_commands.py:1850
 msgid "Reloaded {packs}."
-msgstr ""
+msgstr "重載 {packs}。"
 
-#: redbot/core/core_commands.py:1844
+#: redbot/core/core_commands.py:1855
 msgid "Failed to reload the following package: {pack}.\n"
 "Check your console or logs for details."
-msgstr ""
+msgstr "未能加載以下包：{pack}。\n"
+"檢查您的控制台或日誌以獲取詳細信息。"
 
-#: redbot/core/core_commands.py:1849
+#: redbot/core/core_commands.py:1860
 msgid "Failed to reload the following packages: {packs}\n"
 "Check your console or logs for details."
-msgstr ""
-
-#: redbot/core/core_commands.py:1884
-msgid "This package could not be reloaded for the following reason:\n\n"
-"{reason}"
-msgstr ""
-
-#: redbot/core/core_commands.py:1888
-msgid "These packages could not be reloaded for the following reasons:\n\n"
-"{reasons}"
-msgstr ""
+msgstr "未能加載以下包：{packs}。\n"
+"檢查您的控制台或日誌以獲取詳細信息。"
 
 #: redbot/core/core_commands.py:1895
+msgid "This package could not be reloaded for the following reason:\n\n"
+"{reason}"
+msgstr "由於以下原因，無法加載此包：\n\n"
+" {reason}"
+
+#: redbot/core/core_commands.py:1899
+msgid "These packages could not be reloaded for the following reasons:\n\n"
+"{reasons}"
+msgstr "由於以下原因，無法加載此包：\n\n"
+" {reasons}"
+
+#: redbot/core/core_commands.py:1906
 msgid "**WARNING**: The following repo is using shared libs which are marked for removal in the future: {repo}.\n"
 "You should inform maintainers of these repos about this message."
-msgstr ""
+msgstr "**警告**：以下 repo 正在使用標記為將來刪除的共享庫：{repo}。\n"
+" 您應該將此消息通知 repo 的維護者。"
 
-#: redbot/core/core_commands.py:1916
+#: redbot/core/core_commands.py:1927
 #, docstring
 msgid "Shuts down the bot.\n\n"
 "        Allows [botname] to shut down gracefully.\n\n"
@@ -1485,13 +1788,20 @@ msgid "Shuts down the bot.\n\n"
 "        **Arguments:**\n"
 "            - `[silently]` - Whether to skip sending the shutdown message. Defaults to False.\n"
 "        "
-msgstr ""
+msgstr "關閉機器人。\n\n"
+"         允許 [botname] 正常關閉。\n\n"
+"         這是關閉機器人的推薦方法。\n\n"
+"         **例子：**\n"
+"             - `[p]shutdown `\n"
+"             - `[p]shutdown True` - 靜默關機。\n\n"
+"         **參數：**\n"
+"             - `[silently]` - 是否跳過發送關閉消息。 默認為假。        "
 
-#: redbot/core/core_commands.py:1933
+#: redbot/core/core_commands.py:1944
 msgid "Shutting down... "
-msgstr ""
+msgstr "正在關機…… "
 
-#: redbot/core/core_commands.py:1939
+#: redbot/core/core_commands.py:1950
 #, docstring
 msgid "Attempts to restart [botname].\n\n"
 "        Makes [botname] quit with exit code 26.\n"
@@ -1502,95 +1812,109 @@ msgid "Attempts to restart [botname].\n\n"
 "        **Arguments:**\n"
 "            - `[silently]` - Whether to skip sending the restart message. Defaults to False.\n"
 "        "
-msgstr ""
-
-#: redbot/core/core_commands.py:1953
-msgid "Restarting..."
-msgstr ""
-
-#: redbot/core/core_commands.py:1960
-#, docstring
-msgid "Base command for bank settings."
-msgstr ""
+msgstr "嘗試重新啟動 [botname]。\n\n"
+"         使 [botname] 退出並退出代碼 26。\n"
+"         不能保證重啟：必須由正在使用的進程管理器處理。\n\n"
+"         **例子：**\n"
+"             - `[p]restart`\n"
+"             - `[p]restart True` - 靜默重啟。\n\n"
+"         **參數：**\n"
+"             - `[silently]` - 是否跳過發送重啟消息。 默認為關。        "
 
 #: redbot/core/core_commands.py:1964
+msgid "Restarting..."
+msgstr "正在重新啟動..."
+
+#: redbot/core/core_commands.py:1971
+#, docstring
+msgid "Base command for bank settings."
+msgstr "銀行設定的基本命令。"
+
+#: redbot/core/core_commands.py:1975
 #, docstring
 msgid "Show the current bank settings."
-msgstr ""
+msgstr "顯示當前銀行設定。"
 
-#: redbot/core/core_commands.py:1974
+#: redbot/core/core_commands.py:1985
 msgid "Global"
 msgstr "全域"
 
-#: redbot/core/core_commands.py:1974
+#: redbot/core/core_commands.py:1985
 msgid "Server"
 msgstr "伺服器"
 
-#: redbot/core/core_commands.py:1979
+#: redbot/core/core_commands.py:1990
 msgid "Bank settings:\n\n"
 "Bank name: {bank_name}\n"
 "Bank scope: {bank_scope}\n"
 "Currency: {currency_name}\n"
 "Default balance: {default_balance}\n"
 "Maximum allowed balance: {maximum_bal}\n"
-msgstr ""
+msgstr "銀行設置：\n\n"
+" 銀行名稱：{bank_name}\n"
+" 銀行範圍：{bank_scope}\n"
+" 貨幣：{currency_name}\n"
+" 默認餘額：{default_balance}\n"
+" 最大允許餘額：{maximum_bal}\n"
 
-#: redbot/core/core_commands.py:1995
+#: redbot/core/core_commands.py:2006
 #, docstring
 msgid "Toggle whether the bank is global or not.\n\n"
 "        If the bank is global, it will become per-server.\n"
 "        If the bank is per-server, it will become global.\n"
 "        "
-msgstr ""
+msgstr "切換銀行是否是全局性的。\n\n"
+"如果該銀行是全局性的，它將成為每個伺服器。\n\n"
+"如果該銀行是每個伺服器，它將成為全局性的。        "
 
-#: redbot/core/core_commands.py:2002
+#: redbot/core/core_commands.py:2013
 msgid "per-server"
-msgstr ""
+msgstr "per-server"
 
-#: redbot/core/core_commands.py:2002
+#: redbot/core/core_commands.py:2013
 msgid "global"
-msgstr ""
+msgstr "全局"
 
-#: redbot/core/core_commands.py:2005
+#: redbot/core/core_commands.py:2016
 msgid "This will toggle the bank to be {banktype}, deleting all accounts in the process! If you're sure, type `{command}`"
-msgstr ""
+msgstr "這會將銀行切換為 {banktype}，刪除過程中的所有帳戶！ 如果你確定，輸入`{command}`"
 
-#: redbot/core/core_commands.py:2012
+#: redbot/core/core_commands.py:2023
 msgid "The bank is now {banktype}."
-msgstr ""
+msgstr "銀行現在是 {banktype}。"
 
-#: redbot/core/core_commands.py:2018
+#: redbot/core/core_commands.py:2029
 #, docstring
 msgid "Set the bank's name."
-msgstr ""
+msgstr "設定銀行名稱。"
 
-#: redbot/core/core_commands.py:2020
+#: redbot/core/core_commands.py:2031
 msgid "Bank name has been set to: {name}"
-msgstr ""
+msgstr "銀行名稱已設定為：{name}"
 
-#: redbot/core/core_commands.py:2026
+#: redbot/core/core_commands.py:2037
 #, docstring
 msgid "Set the name for the bank's currency."
-msgstr ""
+msgstr "設定銀行貨幣的名稱。"
 
-#: redbot/core/core_commands.py:2028
+#: redbot/core/core_commands.py:2039
 msgid "Currency name has been set to: {name}"
-msgstr ""
-
-#: redbot/core/core_commands.py:2034
-#, docstring
-msgid "Set the maximum balance a user can get."
-msgstr ""
-
-#: redbot/core/core_commands.py:2040
-msgid "Amount must be greater than zero and less than {max}."
-msgstr ""
+msgstr "銀行名稱已設定為：{name}"
 
 #: redbot/core/core_commands.py:2045
-msgid "Maximum balance has been set to: {amount}"
-msgstr ""
+#, docstring
+msgid "Set the maximum balance a user can get."
+msgstr "設定使用者可以獲得的最大餘額。"
 
-#: redbot/core/core_commands.py:2052
+#: redbot/core/core_commands.py:2051
+msgid "Amount must be greater than zero and less than {max}."
+msgstr "金額必須大於0或小於餘額{max}。"
+
+#: redbot/core/core_commands.py:2056
+msgid "Maximum balance has been set to: {amount}"
+msgstr "最大餘額已設定為：{amount}"
+
+#: redbot/core/core_commands.py:2063
 #, docstring
 msgid "Set the initial balance for new bank accounts.\n\n"
 "        Example:\n"
@@ -1598,17 +1922,21 @@ msgid "Set the initial balance for new bank accounts.\n\n"
 "        **Arguments**\n\n"
 "        - `<creds>` The new initial balance amount. Default is 0.\n"
 "        "
-msgstr ""
+msgstr "設置新銀行賬戶的初始餘額。\n\n"
+"         例子：\n"
+"             -`[p]bankset registeramount 5000`\n\n"
+"         **參數**\n\n"
+"         - `<creds>` 新的初始餘額金額。 默認值為 0。        "
 
-#: redbot/core/core_commands.py:2068
+#: redbot/core/core_commands.py:2079
 msgid "Amount must be greater than or equal to zero and less than {maxbal}."
-msgstr ""
+msgstr "金額必須大於或等於零，小於{maxbal}。"
 
-#: redbot/core/core_commands.py:2073
+#: redbot/core/core_commands.py:2084
 msgid "Registering an account will now give {num} {currency}."
-msgstr ""
+msgstr "註冊帳戶現在將給出{num}{currency}."
 
-#: redbot/core/core_commands.py:2082
+#: redbot/core/core_commands.py:2093
 #, docstring
 msgid "Delete all bank accounts.\n\n"
 "        Examples:\n"
@@ -1617,27 +1945,35 @@ msgid "Delete all bank accounts.\n\n"
 "        **Arguments**\n\n"
 "        - `<confirmation>` This will default to false unless specified.\n"
 "        "
-msgstr ""
-
-#: redbot/core/core_commands.py:2094
-msgid "This will delete all bank accounts for {scope}.\n"
-"If you're sure, type `{prefix}bankset reset yes`"
-msgstr ""
-
-#: redbot/core/core_commands.py:2098 redbot/core/core_commands.py:2106
-msgid "this server"
-msgstr ""
+msgstr "刪除所有銀行帳戶。\n\n"
+"         例子：\n"
+"             - `[p]bankset reset` - 未確認。 顯示幫助信息。\n"
+"             - `[p]bankset 重置是`\n\n"
+"         **參數**\n\n"
+"         - `<confirmation>` 除非指定，否則默認為 false。\n"
+"        \n"
+" 上下文請求        "
 
 #: redbot/core/core_commands.py:2105
-msgid "All bank accounts for {scope} have been deleted."
-msgstr ""
+msgid "This will delete all bank accounts for {scope}.\n"
+"If you're sure, type `{prefix}bankset reset yes`"
+msgstr "這將刪除不再在此服務器中的用戶的所有銀行帳戶{scope}。\n"
+"如果你確定，輸入`{prefix}bankset prune local yes`"
 
-#: redbot/core/core_commands.py:2114
+#: redbot/core/core_commands.py:2109 redbot/core/core_commands.py:2117
+msgid "this server"
+msgstr "這伺服器"
+
+#: redbot/core/core_commands.py:2116
+msgid "All bank accounts for {scope} have been deleted."
+msgstr "{scope} 的所有銀行賬戶都已刪除。"
+
+#: redbot/core/core_commands.py:2125
 #, docstring
 msgid "Base command for pruning bank accounts."
-msgstr ""
+msgstr "設定銀行賬戶的基本命令。"
 
-#: redbot/core/core_commands.py:2121
+#: redbot/core/core_commands.py:2132
 #, docstring
 msgid "Prune bank accounts for users no longer in the server.\n\n"
 "        Cannot be used with a global bank. See `[p]bankset prune global`.\n\n"
@@ -1647,22 +1983,31 @@ msgid "Prune bank accounts for users no longer in the server.\n\n"
 "        **Arguments**\n\n"
 "        - `<confirmation>` This will default to false unless specified.\n"
 "        "
-msgstr ""
+msgstr "為不再在服務器中的用戶修剪銀行帳戶。\n\n"
+"         不能與全球銀行一起使用。 參見`[p]bankset prune global`。\n\n"
+"         例子：\n"
+"             - `[p]bankset prune server` - 未確認。 顯示幫助信息。\n"
+"             -`[p]bankset 修剪服務器是`\n\n"
+"         **參數**\n\n"
+"         - `<confirmation>` 除非指定，否則默認為 false。\n"
+"        \n"
+" 上下文請求        "
 
-#: redbot/core/core_commands.py:2135
+#: redbot/core/core_commands.py:2146
 msgid "This command cannot be used with a global bank."
-msgstr ""
+msgstr "此命令不能與全局銀行一起使用。"
 
-#: redbot/core/core_commands.py:2139
+#: redbot/core/core_commands.py:2150
 msgid "This will delete all bank accounts for users no longer in this server.\n"
 "If you're sure, type `{prefix}bankset prune local yes`"
-msgstr ""
+msgstr "這將刪除不再在此服務器中的用戶的所有銀行帳戶。\n"
+"如果你確定，輸入`{prefix}bankset prune local yes`"
 
-#: redbot/core/core_commands.py:2148
+#: redbot/core/core_commands.py:2159
 msgid "Bank accounts for users no longer in this server have been deleted."
-msgstr ""
+msgstr "不再在此服務器中的用戶的銀行帳戶已被刪除。"
 
-#: redbot/core/core_commands.py:2154
+#: redbot/core/core_commands.py:2165
 #, docstring
 msgid "Prune bank accounts for users who no longer share a server with the bot.\n\n"
 "        Cannot be used without a global bank. See `[p]bankset prune server`.\n\n"
@@ -1672,22 +2017,29 @@ msgid "Prune bank accounts for users who no longer share a server with the bot.\
 "        **Arguments**\n\n"
 "        - `<confirmation>` This will default to false unless specified.\n"
 "        "
-msgstr ""
+msgstr "為不再與機器人共享服務器的用戶修剪銀行賬戶。\n\n"
+"        沒有全球銀行就無法使用。參見`[p]bankset prune server`。\n\n"
+"        例子：\n"
+"            - `[p]bankset prune global` - 未確認。顯示幫助信息。\n"
+"            - `[p]bankset prune global yes`\n\n"
+"        **參數**\n\n"
+"        - `<confirmation>` 除非指定，否則默認為 false。        "
 
-#: redbot/core/core_commands.py:2168
+#: redbot/core/core_commands.py:2179
 msgid "This command cannot be used with a local bank."
-msgstr ""
+msgstr "此命令不能與本地銀行一起使用。"
 
-#: redbot/core/core_commands.py:2172
+#: redbot/core/core_commands.py:2183
 msgid "This will delete all bank accounts for users who no longer share a server with the bot.\n"
 "If you're sure, type `{prefix}bankset prune global yes`"
-msgstr ""
+msgstr "這將刪除不再與機器人共享服務器的用戶的所有銀行賬戶。\n"
+"如果你確定，輸入`{prefix}bankset prune global yes`"
 
-#: redbot/core/core_commands.py:2181
+#: redbot/core/core_commands.py:2192
 msgid "Bank accounts for users who no longer share a server with the bot have been pruned."
-msgstr ""
+msgstr "不再與機器人共享服務器的用戶的銀行賬戶已被刪除。"
 
-#: redbot/core/core_commands.py:2194
+#: redbot/core/core_commands.py:2205
 #, docstring
 msgid "Delete the bank account of a specified user.\n\n"
 "        Examples:\n"
@@ -1697,99 +2049,107 @@ msgid "Delete the bank account of a specified user.\n\n"
 "        - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.\n"
 "        - `<confirmation>` This will default to false unless specified.\n"
 "        "
-msgstr ""
+msgstr "刪除指定用戶的銀行賬戶。\n\n"
+"        例子：\n"
+"            - `[p]bankset prune user @Twentysix` - 未確認。顯示幫助信息。\n"
+"            -`[p]bankset 修剪用戶@Twentysix 是`\n\n"
+"        **參數**\n\n"
+"        - `<user>` 刪除銀行的用戶。接受提及、姓名和用戶 Id。\n"
+"        - `<confirmation>` 除非指定，否則默認為 false。        "
 
-#: redbot/core/core_commands.py:2214
+#: redbot/core/core_commands.py:2225
 msgid "This will delete {name}'s bank account.\n"
 "If you're sure, type `{prefix}bankset prune user {id} yes`"
-msgstr ""
-
-#: redbot/core/core_commands.py:2222
-msgid "The bank account for {name} has been pruned."
-msgstr ""
-
-#: redbot/core/core_commands.py:2227
-#, docstring
-msgid "Manage modlog settings."
-msgstr ""
+msgstr "這將刪除 {name} 的銀行帳戶。\n"
+"如果你確定，輸入`{prefix}bankset prune user {id} yes`"
 
 #: redbot/core/core_commands.py:2233
+msgid "The bank account for {name} has been pruned."
+msgstr "{name} 的銀行帳戶已被刪除。"
+
+#: redbot/core/core_commands.py:2238
+#, docstring
+msgid "Manage modlog settings."
+msgstr "管理 modlog 設置。"
+
+#: redbot/core/core_commands.py:2244
 #, docstring
 msgid "Command to fix misbehaving casetypes."
-msgstr ""
+msgstr "修復行為不為案例類型的命令。"
 
-#: redbot/core/core_commands.py:2240
+#: redbot/core/core_commands.py:2251
 #, docstring
 msgid "Set a channel as the modlog.\n\n"
 "        Omit `[channel]` to disable the modlog.\n"
 "        "
-msgstr ""
+msgstr "將頻道設置為 modlog。\n\n"
+"        省略 `[channel]` 以禁用 modlog。        "
 
-#: redbot/core/core_commands.py:2249
+#: redbot/core/core_commands.py:2260
 msgid "Mod events will be sent to {channel}."
-msgstr ""
-
-#: redbot/core/core_commands.py:2253
-msgid "I do not have permissions to send messages in {channel}!"
-msgstr ""
-
-#: redbot/core/core_commands.py:2261
-msgid "Mod log is already disabled."
-msgstr ""
+msgstr "Mod 事件將被發送到 {channel}。"
 
 #: redbot/core/core_commands.py:2264
-msgid "Mod log deactivated."
-msgstr ""
+msgid "I do not have permissions to send messages in {channel}!"
+msgstr "我沒有在 {channel} 中發送消息的權限！"
 
-#: redbot/core/core_commands.py:2269
-#, docstring
-msgid "Enable or disable case creation for a mod action."
-msgstr ""
+#: redbot/core/core_commands.py:2272
+msgid "Mod log is already disabled."
+msgstr "%s陷入定身狀態！"
+
+#: redbot/core/core_commands.py:2275
+msgid "Mod log deactivated."
+msgstr "模組日誌已停用。"
 
 #: redbot/core/core_commands.py:2280
-msgid "Current settings:\n"
-msgstr ""
-
-#: redbot/core/core_commands.py:2285
-msgid "That action is not registered."
-msgstr ""
-
-#: redbot/core/core_commands.py:2290
-msgid "Case creation for {action_name} actions is now {enabled}."
-msgstr ""
-
-#: redbot/core/core_commands.py:2298
 #, docstring
-msgid "Reset all modlog cases in this server."
-msgstr ""
+msgid "Enable or disable case creation for a mod action."
+msgstr "為 mod 操作啟用或禁用案例創建。"
+
+#: redbot/core/core_commands.py:2291
+msgid "Current settings:\n"
+msgstr "當前的設置\n"
+
+#: redbot/core/core_commands.py:2296
+msgid "That action is not registered."
+msgstr "標籤未註冊"
 
 #: redbot/core/core_commands.py:2301
-msgid "Are you sure you would like to reset all modlog cases in this server?"
-msgstr ""
+msgid "Case creation for {action_name} actions is now {enabled}."
+msgstr "{action_name} 操作的案例創建現已{enabled}."
 
-#: redbot/core/core_commands.py:2308
-msgid "You took too long to respond."
-msgstr ""
+#: redbot/core/core_commands.py:2309
+#, docstring
+msgid "Reset all modlog cases in this server."
+msgstr "重置此服務器中的所有 modlog 案例"
 
 #: redbot/core/core_commands.py:2312
+msgid "Are you sure you would like to reset all modlog cases in this server?"
+msgstr "您確定要重置此服務器中的所有 modlog 案例嗎？"
+
+#: redbot/core/core_commands.py:2319
+msgid "You took too long to respond."
+msgstr "你反應太久了。"
+
+#: redbot/core/core_commands.py:2323
 msgid "Cases have been reset."
-msgstr ""
-
-#: redbot/core/core_commands.py:2314
-msgid "No changes have been made."
-msgstr ""
-
-#: redbot/core/core_commands.py:2318
-#, docstring
-msgid "Commands for changing [botname]'s settings."
-msgstr ""
+msgstr "案件已被重置。"
 
 #: redbot/core/core_commands.py:2325
+msgid "No changes have been made."
+msgstr "沒有作出任何更改"
+
+#: redbot/core/core_commands.py:2329
+#, docstring
+msgid "Commands for changing [botname]'s settings."
+msgstr "用於更改 [botname] 設置的命令。"
+
+#: redbot/core/core_commands.py:2336
 #, docstring
 msgid "Commands for changing [botname]'s metadata."
-msgstr ""
+msgstr "用於更改 [botname] 元數據的命令。"
 
-#: redbot/core/core_commands.py:2330
+#: redbot/core/core_commands.py:2341
 #, docstring
 msgid "\n"
 "        Sets the bot's description.\n\n"
@@ -1803,17 +2163,27 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[description]` - The description to use for this bot. Leave blank to reset to the default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置機器人的描述。\n\n"
+"        使用沒有描述來重置。\n"
+"        這顯示在幾個位置，包括幫助菜單。\n\n"
+"        最大描述長度為 250 個字符，以確保正確顯示。\n\n"
+"        默認為“紅色 V3”。\n\n"
+"        **例子：**\n"
+"            - `[p]set bot description` - 將描述重置為默認設置。\n"
+"            - `[p]set bot description MyBot: A Red V3 Bot`\n\n"
+"        **參數：**\n"
+"            - `[description]` - 用於此機器人的描述。留空以重置為默認值。        "
 
-#: redbot/core/core_commands.py:2350
+#: redbot/core/core_commands.py:2361
 msgid "Description reset."
-msgstr ""
+msgstr "說明重置。"
 
-#: redbot/core/core_commands.py:2353
+#: redbot/core/core_commands.py:2364
 msgid "This description is too long to properly display. Please try again with below 250 characters."
-msgstr ""
+msgstr "此描述太長，無法正確顯示。請在 250 個字符以下重試。"
 
-#: redbot/core/core_commands.py:2366
+#: redbot/core/core_commands.py:2377
 #, docstring
 msgid "Sets [botname]'s avatar\n\n"
 "        Supports either an attachment or an image URL.\n\n"
@@ -1824,43 +2194,53 @@ msgid "Sets [botname]'s avatar\n\n"
 "        **Arguments:**\n"
 "            - `[url]` - An image url to be used as an avatar. Leave blank when uploading an attachment.\n"
 "        "
-msgstr ""
+msgstr "設置 [botname] 的頭像\n\n"
+"        支持附件或圖像 URL。\n\n"
+"        **例子：**\n"
+"            - `[p]set bot avatar` - 帶有圖片附件，這將設置頭像。\n"
+"            - `[p]set bot avatar` - 沒有附件，這將顯示命令幫助。\n"
+"            - `[p]set bot avatar https://links.flaree.xyz/k95` - 將頭像設置為提供的 url。\n\n"
+"        **參數：**\n"
+"            - `[url]` - 用作頭像的圖像 url。上傳附件時留空。        "
 
-#: redbot/core/core_commands.py:2389
+#: redbot/core/core_commands.py:2400
 msgid "That URL is invalid."
-msgstr ""
+msgstr "網址是無效的"
 
-#: redbot/core/core_commands.py:2391
+#: redbot/core/core_commands.py:2402
 msgid "Something went wrong while trying to get the image."
-msgstr ""
+msgstr "嘗試取得圖片時發生錯誤"
 
-#: redbot/core/core_commands.py:2401
+#: redbot/core/core_commands.py:2412
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG or PNG format."
-msgstr ""
+msgstr "失敗的。請記住，您每小時最多可以編輯我的頭像兩次。 URL 或附件必須是 JPG 或 PNG 格式的有效圖像。"
 
-#: redbot/core/core_commands.py:2408
+#: redbot/core/core_commands.py:2419
 msgid "JPG / PNG format only."
-msgstr ""
+msgstr "僅限 JPG / PNG 格式。zaphkiel翻譯"
 
-#: redbot/core/core_commands.py:2410 redbot/core/core_commands.py:2479
-#: redbot/core/core_commands.py:2503 redbot/core/core_commands.py:2585
+#: redbot/core/core_commands.py:2421 redbot/core/core_commands.py:2490
+#: redbot/core/core_commands.py:2514 redbot/core/core_commands.py:2596
 msgid "Done."
 msgstr "完成。"
 
-#: redbot/core/core_commands.py:2415
+#: redbot/core/core_commands.py:2426
 #, docstring
 msgid "\n"
 "        Removes [botname]'s avatar.\n\n"
 "        **Example:**\n"
 "            - `[p]set bot avatar remove`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"移除 [botname] 的頭像。\n\n"
+"        **例子：**\n"
+"            - `[p]set bot avatar remove`        "
 
-#: redbot/core/core_commands.py:2423
+#: redbot/core/core_commands.py:2434
 msgid "Avatar removed."
-msgstr ""
+msgstr "頭像已移除。"
 
-#: redbot/core/core_commands.py:2428
+#: redbot/core/core_commands.py:2439
 #, docstring
 msgid "Sets [botname]'s username.\n\n"
 "        Maximum length for a username is 32 characters.\n\n"
@@ -1871,30 +2251,37 @@ msgid "Sets [botname]'s username.\n\n"
 "        **Arguments:**\n"
 "            - `<username>` - The username to give the bot.\n"
 "        "
-msgstr ""
+msgstr "設置 [botname] 的用戶名。\n\n"
+"        用戶名的最大長度為 32 個字符。\n\n"
+"        注意：無法手動更改已驗證機器人的用戶名。\n"
+"            請聯繫 Discord 支持進行更改。\n\n"
+"        **例子：**\n"
+"            - `[p] 設置機器人用戶名 BaguetteBot`\n\n"
+"        **參數：**\n"
+"            - `<username>` - 給機器人的用戶名。        "
 
-#: redbot/core/core_commands.py:2444
+#: redbot/core/core_commands.py:2455
 msgid "The username of a verified bot cannot be manually changed. Please contact Discord support to change it."
-msgstr ""
+msgstr "無法手動更改已驗證機器人的用戶名。請聯繫 Discord 支持進行更改。"
 
-#: redbot/core/core_commands.py:2451
+#: redbot/core/core_commands.py:2462
 msgid "Failed to change name. Must be 32 characters or fewer."
-msgstr ""
+msgstr "更改名稱失敗。不得超過 32 個字符。"
 
-#: redbot/core/core_commands.py:2457
+#: redbot/core/core_commands.py:2468
 msgid "Changing the username timed out. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes: {command}"
-msgstr ""
+msgstr "更改用戶名超時。請記住，您每小時最多只能執行 2 次。如果您需要頻繁更改，請使用暱稱：{command}"
 
-#: redbot/core/core_commands.py:2467
+#: redbot/core/core_commands.py:2478
 msgid "Failed to change the username. Discord returned the following error:\n"
 "{error_message}"
-msgstr ""
+msgstr "更改用戶名失敗。 Discord 返回以下錯誤：{error_message}"
 
-#: redbot/core/core_commands.py:2477
+#: redbot/core/core_commands.py:2488
 msgid "Unexpected error occurred when trying to change the username."
-msgstr ""
+msgstr "嘗試更改用戶名時發生意外錯誤。"
 
-#: redbot/core/core_commands.py:2485
+#: redbot/core/core_commands.py:2496
 #, docstring
 msgid "Sets [botname]'s nickname for the current server.\n\n"
 "        Maximum length for a nickname is 32 characters.\n\n"
@@ -1903,17 +2290,22 @@ msgid "Sets [botname]'s nickname for the current server.\n\n"
 "        **Arguments:**\n"
 "            - `[nickname]` - The nickname to give the bot. Leave blank to clear the current nickname.\n"
 "        "
-msgstr ""
-
-#: redbot/core/core_commands.py:2497
-msgid "Failed to change nickname. Must be 32 characters or fewer."
-msgstr ""
-
-#: redbot/core/core_commands.py:2501
-msgid "I lack the permissions to change my own nickname."
-msgstr ""
+msgstr "為當前服務器設置 [botname] 的暱稱。\n\n"
+"        暱稱的最大長度為 32 個字符。\n\n"
+"        **例子：**\n"
+"            - `[p]設置機器人暱稱🎃 SpookyBot 🎃`\n\n"
+"        **參數：**\n"
+"            - `[nickname]` - 給機器人的暱稱。留空以清除當前暱稱。        "
 
 #: redbot/core/core_commands.py:2508
+msgid "Failed to change nickname. Must be 32 characters or fewer."
+msgstr "更改暱稱失敗。不得超過 32 個字符。"
+
+#: redbot/core/core_commands.py:2512
+msgid "I lack the permissions to change my own nickname."
+msgstr "我沒有更改自己暱稱的權限。"
+
+#: redbot/core/core_commands.py:2519
 #, docstring
 msgid "Customizes a section of `[p]info`.\n\n"
 "        The maximum amount of allowed characters is 1024.\n"
@@ -1926,26 +2318,35 @@ msgid "Customizes a section of `[p]info`.\n\n"
 "        **Arguments:**\n"
 "            - `[text]` - The custom info text.\n"
 "        "
-msgstr ""
+msgstr "自定義 `[p]info` 的一部分。\n\n"
+"        允許的最大字符數為 1024。\n"
+"        支持降價、鏈接和“提及”。\n\n"
+"        鏈接示例：`[我的鏈接](https://example.com)`\n\n"
+"        **例子：**\n"
+"            - `[p]set bot custominfo >>> 我可以使用 **markdown** 例如引號，||劇透||和多行。`\n"
+"            - `[p]set bot custominfo 加入我的 [支持服務器](discord.gg/discord)！`\n"
+"            - `[p]set bot custominfo` - 刪除自定義信息文本。\n\n"
+"        **參數：**\n"
+"            - `[text]` - 自定義信息文本。        "
 
-#: redbot/core/core_commands.py:2525
+#: redbot/core/core_commands.py:2536
 msgid "The custom text has been cleared."
-msgstr ""
+msgstr "自定義文本已被清除。"
 
-#: redbot/core/core_commands.py:2529
+#: redbot/core/core_commands.py:2540
 msgid "The custom text has been set."
-msgstr ""
+msgstr "自訂欄位已經設置"
 
-#: redbot/core/core_commands.py:2532
+#: redbot/core/core_commands.py:2543
 msgid "Text must be fewer than 1024 characters long."
-msgstr ""
+msgstr "文本長度必須少於 1024 個字符。"
 
-#: redbot/core/core_commands.py:2541
+#: redbot/core/core_commands.py:2552
 #, docstring
 msgid "Commands for setting [botname]'s status."
-msgstr ""
+msgstr "用於設置 [botname] 狀態的命令。"
 
-#: redbot/core/core_commands.py:2549
+#: redbot/core/core_commands.py:2560
 #, docstring
 msgid "Sets [botname]'s streaming status to a twitch stream.\n\n"
 "        This will appear as `Streaming <stream_title>` or `LIVE ON TWITCH` depending on the context.\n"
@@ -1959,17 +2360,28 @@ msgid "Sets [botname]'s streaming status to a twitch stream.\n\n"
 "        **Arguments:**\n"
 "            - `<streamer>` - The twitch streamer to provide a link to. This can be their twitch name or the entire URL.\n"
 "            - `<stream_title>` - The text to follow `Streaming` in the status."
-msgstr ""
+msgstr "將 [botname] 的streaming狀態設置為twitch stream。\n\n"
+"         根據上下文，這將顯示為“Streaming <stream_title>”或“LIVE ON TWITCH”。\n"
+"         它還將包括一個帶有 twitch.tv 網址的“觀看”按鈕，用於提供的streaming。\n"
+"         流標題的最大長度為 128 個字符。\n\n"
+"         將 streamer 和 stream_title 都留空將清除它。\n\n"
+"         **例子：**\n"
+"             - `[p]set status stream` - 清除活動狀態。\n"
+"             - `[p]set status stream 26 Twentysix is streaming` - 將stream設置為`https://www.twitch.tv/26`。\n"
+"             - `[p]set status stream https://twitch.tv/26 Twentysix is streaming` - 手動設置 URL。\n\n"
+"         **參數：**\n"
+"             - `<streamer>` - 要提供鏈接的 twitch stream媒體。 這可以是他們的抽搐名稱或整個 URL。\n"
+"             - `<stream_title>` - 在狀態中跟隨`Streaming`的文本。"
 
-#: redbot/core/core_commands.py:2573
+#: redbot/core/core_commands.py:2584
 msgid "The maximum length of the streamer url is 511 characters."
-msgstr ""
+msgstr "主播 url 的最大長度為 511 個字符。"
 
-#: redbot/core/core_commands.py:2576
+#: redbot/core/core_commands.py:2587
 msgid "The maximum length of the stream title is 128 characters."
-msgstr ""
+msgstr "直播標題的最大長度為 128 個字符。"
 
-#: redbot/core/core_commands.py:2591
+#: redbot/core/core_commands.py:2602
 #, docstring
 msgid "Sets [botname]'s playing status.\n\n"
 "        This will appear as `Playing <game>` or `PLAYING A GAME: <game>` depending on the context.\n\n"
@@ -1980,21 +2392,28 @@ msgid "Sets [botname]'s playing status.\n\n"
 "        **Arguments:**\n"
 "            - `[game]` - The text to follow `Playing`. Leave blank to clear the current activity status.\n"
 "        "
-msgstr ""
+msgstr "設置 [botname] 的播放狀態。\n\n"
+"         根據上下文，這將顯示為 `Playing <game>` 或 `PLAYING A GAME: <game>`。\n\n"
+"         播放狀態的最大長度為 128 個字符。\n\n"
+"         **例子：**\n"
+"             - `[p]set status playing` - 清除活動狀態。\n"
+"             - `[p]set status playing the keyboard`\n\n"
+"         **參數：**\n"
+"             - `[game]` - `Playing` 後面的文本。 留空以清除當前活動狀態。        "
 
-#: redbot/core/core_commands.py:2607
+#: redbot/core/core_commands.py:2618
 msgid "The maximum length of game descriptions is 128 characters."
+msgstr "直播標題的最大長度為 128 個字符。"
+
+#: redbot/core/core_commands.py:2626
+msgid "Status set to `Playing {game.name}`."
 msgstr ""
 
-#: redbot/core/core_commands.py:2615
-msgid "Status set to ``Playing {game.name}``."
-msgstr ""
-
-#: redbot/core/core_commands.py:2617
+#: redbot/core/core_commands.py:2628
 msgid "Game cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:2623
+#: redbot/core/core_commands.py:2634
 #, docstring
 msgid "Sets [botname]'s listening status.\n\n"
 "        This will appear as `Listening to <listening>`.\n\n"
@@ -2006,19 +2425,19 @@ msgid "Sets [botname]'s listening status.\n\n"
 "            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."
 msgstr ""
 
-#: redbot/core/core_commands.py:2640
+#: redbot/core/core_commands.py:2651
 msgid "The maximum length of listening descriptions is 128 characters."
 msgstr ""
 
-#: redbot/core/core_commands.py:2649
-msgid "Status set to ``Listening to {listening}``."
+#: redbot/core/core_commands.py:2660
+msgid "Status set to `Listening to {listening}`."
 msgstr ""
 
-#: redbot/core/core_commands.py:2652
+#: redbot/core/core_commands.py:2663
 msgid "Listening cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:2658
+#: redbot/core/core_commands.py:2669
 #, docstring
 msgid "Sets [botname]'s watching status.\n\n"
 "        This will appear as `Watching <watching>`.\n\n"
@@ -2030,19 +2449,19 @@ msgid "Sets [botname]'s watching status.\n\n"
 "            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."
 msgstr ""
 
-#: redbot/core/core_commands.py:2674
+#: redbot/core/core_commands.py:2685
 msgid "The maximum length of watching descriptions is 128 characters."
 msgstr ""
 
-#: redbot/core/core_commands.py:2681
-msgid "Status set to ``Watching {watching}``."
+#: redbot/core/core_commands.py:2692
+msgid "Status set to `Watching {watching}`."
 msgstr ""
 
-#: redbot/core/core_commands.py:2683
+#: redbot/core/core_commands.py:2694
 msgid "Watching cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:2689
+#: redbot/core/core_commands.py:2700
 #, docstring
 msgid "Sets [botname]'s competing status.\n\n"
 "        This will appear as `Competing in <competing>`.\n\n"
@@ -2054,48 +2473,48 @@ msgid "Sets [botname]'s competing status.\n\n"
 "            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."
 msgstr ""
 
-#: redbot/core/core_commands.py:2706
+#: redbot/core/core_commands.py:2717
 msgid "The maximum length of competing descriptions is 128 characters."
 msgstr ""
 
-#: redbot/core/core_commands.py:2715
-msgid "Status set to ``Competing in {competing}``."
-msgstr ""
-
-#: redbot/core/core_commands.py:2718
-msgid "Competing cleared."
-msgstr ""
-
-#: redbot/core/core_commands.py:2723
-msgid "Status changed to {}."
+#: redbot/core/core_commands.py:2726
+msgid "Status set to `Competing in {competing}`."
 msgstr ""
 
 #: redbot/core/core_commands.py:2729
+msgid "Competing cleared."
+msgstr ""
+
+#: redbot/core/core_commands.py:2734
+msgid "Status changed to {}."
+msgstr ""
+
+#: redbot/core/core_commands.py:2740
 #, docstring
 msgid "Set [botname]'s status to online."
 msgstr ""
 
-#: redbot/core/core_commands.py:2736
+#: redbot/core/core_commands.py:2747
 #, docstring
 msgid "Set [botname]'s status to do not disturb."
 msgstr ""
 
-#: redbot/core/core_commands.py:2743
+#: redbot/core/core_commands.py:2754
 #, docstring
 msgid "Set [botname]'s status to idle."
 msgstr ""
 
-#: redbot/core/core_commands.py:2750
+#: redbot/core/core_commands.py:2761
 #, docstring
 msgid "Set [botname]'s status to invisible."
 msgstr ""
 
-#: redbot/core/core_commands.py:2760
+#: redbot/core/core_commands.py:2771
 #, docstring
 msgid "Set server's admin and mod roles for [botname]."
 msgstr ""
 
-#: redbot/core/core_commands.py:2766
+#: redbot/core/core_commands.py:2777
 #, docstring
 msgid "\n"
 "        Adds an admin role for this server.\n\n"
@@ -2113,15 +2532,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2786
+#: redbot/core/core_commands.py:2797
 msgid "This role is already an admin role."
 msgstr ""
 
-#: redbot/core/core_commands.py:2788
+#: redbot/core/core_commands.py:2799
 msgid "That role is now considered an admin role."
 msgstr ""
 
-#: redbot/core/core_commands.py:2794
+#: redbot/core/core_commands.py:2805
 #, docstring
 msgid "\n"
 "        Adds a moderator role for this server.\n\n"
@@ -2138,15 +2557,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2813
+#: redbot/core/core_commands.py:2824
 msgid "This role is already a mod role."
 msgstr ""
 
-#: redbot/core/core_commands.py:2815
+#: redbot/core/core_commands.py:2826
 msgid "That role is now considered a mod role."
 msgstr ""
 
-#: redbot/core/core_commands.py:2823
+#: redbot/core/core_commands.py:2834
 #, docstring
 msgid "\n"
 "        Removes an admin role for this server.\n\n"
@@ -2158,15 +2577,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2835
+#: redbot/core/core_commands.py:2846
 msgid "That role was not an admin role to begin with."
 msgstr ""
 
-#: redbot/core/core_commands.py:2837
+#: redbot/core/core_commands.py:2848
 msgid "That role is no longer considered an admin role."
 msgstr ""
 
-#: redbot/core/core_commands.py:2845
+#: redbot/core/core_commands.py:2856
 #, docstring
 msgid "\n"
 "        Removes a mod role for this server.\n\n"
@@ -2178,15 +2597,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2857
+#: redbot/core/core_commands.py:2868
 msgid "That role was not a mod role to begin with."
 msgstr ""
 
-#: redbot/core/core_commands.py:2859
+#: redbot/core/core_commands.py:2870
 msgid "That role is no longer considered a mod role."
 msgstr ""
 
-#: redbot/core/core_commands.py:2867
+#: redbot/core/core_commands.py:2878
 #, docstring
 msgid "\n"
 "        Changes [botname]'s locale in this server.\n\n"
@@ -2204,7 +2623,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2894
+#: redbot/core/core_commands.py:2905
 #, docstring
 msgid "\n"
 "        Changes [botname]'s default locale.\n\n"
@@ -2221,21 +2640,21 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2915 redbot/core/core_commands.py:2958
-#: redbot/core/core_commands.py:3020 redbot/core/core_commands.py:3065
+#: redbot/core/core_commands.py:2926 redbot/core/core_commands.py:2969
+#: redbot/core/core_commands.py:3031 redbot/core/core_commands.py:3076
 msgid "Invalid language code. Use format: `en-US`"
 msgstr ""
 
-#: redbot/core/core_commands.py:2919 redbot/core/core_commands.py:2962
-#: redbot/core/core_commands.py:3024 redbot/core/core_commands.py:3069
+#: redbot/core/core_commands.py:2930 redbot/core/core_commands.py:2973
+#: redbot/core/core_commands.py:3035 redbot/core/core_commands.py:3080
 msgid "Invalid format - language code has to include country code, e.g. `en-US`"
 msgstr ""
 
-#: redbot/core/core_commands.py:2926
+#: redbot/core/core_commands.py:2937
 msgid "Global locale has been set."
 msgstr ""
 
-#: redbot/core/core_commands.py:2932
+#: redbot/core/core_commands.py:2943
 #, docstring
 msgid "\n"
 "        Changes [botname]'s locale in this server.\n\n"
@@ -2252,15 +2671,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2953
+#: redbot/core/core_commands.py:2964
 msgid "Locale has been set to the default."
 msgstr ""
 
-#: redbot/core/core_commands.py:2968
+#: redbot/core/core_commands.py:2979
 msgid "Locale has been set."
 msgstr ""
 
-#: redbot/core/core_commands.py:2973
+#: redbot/core/core_commands.py:2984
 #, docstring
 msgid "\n"
 "        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.\n\n"
@@ -2276,7 +2695,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:2997
+#: redbot/core/core_commands.py:3008
 #, docstring
 msgid "\n"
 "        Changes the bot's regional format. This is used for formatting date, time and numbers.\n\n"
@@ -2291,15 +2710,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3014
+#: redbot/core/core_commands.py:3025
 msgid "Global regional formatting will now be based on bot's locale."
 msgstr ""
 
-#: redbot/core/core_commands.py:3031
+#: redbot/core/core_commands.py:3042
 msgid "Global regional formatting will now be based on `{language_code}` locale."
 msgstr ""
 
-#: redbot/core/core_commands.py:3040
+#: redbot/core/core_commands.py:3051
 #, docstring
 msgid "\n"
 "        Changes the bot's regional format in this server. This is used for formatting date, time and numbers.\n\n"
@@ -2312,25 +2731,37 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[language_code]` - The region format to use for the bot in this server.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"更改此服務器中機器人的區域格式。這用於格式化日期、時間和數字。\n\n"
+"        `language_code` 可以是包含國家/地區代碼的任何語言代碼，例如`en-US`、`de-DE`、`fr-FR`、`pl-PL`等。\n"
+"        將“reset”傳遞給 `language_code` 以根據此服務器中機器人的語言環境設置區域格式。\n\n"
+"        **例子：**\n"
+"            - `[p] 設置區域格式服務器 en-US`\n"
+"            - `[p] 設置區域本地 de-DE`\n"
+"            - `[p]set regionformat server reset` - 重置為區域設置。\n\n"
+"        **參數：**\n"
+"            - `[language_code]` - 此服務器中機器人使用的區域格式。        "
 
-#: redbot/core/core_commands.py:3058
+#: redbot/core/core_commands.py:3069
 msgid "Regional formatting will now be based on bot's locale in this server."
-msgstr ""
-
-#: redbot/core/core_commands.py:3076
-msgid "Regional formatting will now be based on `{language_code}` locale."
-msgstr ""
+msgstr "區域格式現在將基於此服務器中機器人的語言環境。"
 
 #: redbot/core/core_commands.py:3087
+msgid "Regional formatting will now be based on `{language_code}` locale."
+msgstr "區域格式現在將基於 `{language_code}` 區域設置。"
+
+#: redbot/core/core_commands.py:3104
 #, docstring
 msgid "\n"
 "        Commands to set, list or remove various external API tokens.\n\n"
 "        This setting will be asked for by some 3rd party cogs and some core cogs.\n\n"
+"        If passed without the `<service>` or `<tokens>` arguments it will allow you to open a modal to set your API keys securely.\n\n"
 "        To add the keys provide the service name and the tokens as a comma separated\n"
 "        list of key,values as described by the cog requesting this command.\n\n"
 "        Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.\n\n"
 "        **Examples:**\n"
+"            - `[p]set api`\n"
+"            - `[p]set api spotify\n"
 "            - `[p]set api spotify redirect_uri localhost`\n"
 "            - `[p]set api github client_id,whoops client_secret,whoops`\n\n"
 "        **Arguments:**\n"
@@ -2339,33 +2770,41 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3108
-msgid "`{service}` API tokens have been set."
+#: redbot/core/core_commands.py:3127 redbot/core/core_commands.py:3130
+msgid "Click the button below to set your keys."
 msgstr ""
 
-#: redbot/core/core_commands.py:3112
+#: redbot/core/core_commands.py:3137
+msgid "`{service}` API tokens have been set."
+msgstr "`{service}` API 令牌已設置。"
+
+#: redbot/core/core_commands.py:3141
 #, docstring
 msgid "\n"
 "        Show all external API services along with their keys that have been set.\n\n"
 "        Secrets are not shown.\n\n"
 "        **Example:**\n"
-"            - `[p]set api list``\n"
+"            - `[p]set api list`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"顯示所有外部 API 服務及其已設置的密鑰。\n\n"
+"         秘密不顯示。\n\n"
+"         **例子：**\n"
+"             - `[p]set api list`        "
 
-#: redbot/core/core_commands.py:3123
+#: redbot/core/core_commands.py:3152
 msgid "No API services have been set yet."
-msgstr ""
+msgstr "尚未設置任何 API 服務。"
 
-#: redbot/core/core_commands.py:3128
+#: redbot/core/core_commands.py:3157
 msgid "Set API services:\n"
-msgstr ""
+msgstr "設置 API 服務：\n"
 
-#: redbot/core/core_commands.py:3128
+#: redbot/core/core_commands.py:3157
 msgid "Set API service:\n"
-msgstr ""
+msgstr "設置 API 服務：\n"
 
-#: redbot/core/core_commands.py:3138
+#: redbot/core/core_commands.py:3167
 #, docstring
 msgid "\n"
 "        Remove the given services with all their keys and tokens.\n\n"
@@ -2374,30 +2813,39 @@ msgid "\n"
 "            - `[p]set api remove github youtube`\n\n"
 "        **Arguments:**\n"
 "            - `<services...>` - The services to remove."
-msgstr ""
+msgstr "\n"
+"刪除給定服務及其所有密鑰和令牌。\n\n"
+"         **例子：**\n"
+"             - `[p] 設置 api 刪除 spotify`\n"
+"             - `[p] 設置 api 刪除 github youtube`\n\n"
+"         **參數：**\n"
+"             - `<services...>` - 要刪除的服務。"
 
-#: redbot/core/core_commands.py:3153
+#: redbot/core/core_commands.py:3182
 msgid "Services deleted successfully:\n"
 "{services_list}"
-msgstr ""
+msgstr "服務刪除成功：\n"
+"{services_list}"
 
-#: redbot/core/core_commands.py:3157
+#: redbot/core/core_commands.py:3186
 msgid "Service deleted successfully: {service_name}"
-msgstr ""
+msgstr "服務刪除成功：{service_name}"
 
-#: redbot/core/core_commands.py:3162
+#: redbot/core/core_commands.py:3191
 msgid "None of the services you provided had any keys set."
-msgstr ""
+msgstr "您提供的所有服務都沒有設置任何密鑰。"
 
-#: redbot/core/core_commands.py:3170
+#: redbot/core/core_commands.py:3199
 #, docstring
 msgid "\n"
 "        Commands for configuring owner notifications.\n\n"
 "        Owner notifications include usage of `[p]contact` and available Red updates.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"用於配置所有者通知的命令。\n\n"
+"         所有者通知包括 `[p]contact` 的使用和可用的 Red 更新。        "
 
-#: redbot/core/core_commands.py:3179
+#: redbot/core/core_commands.py:3208
 #, docstring
 msgid "\n"
 "        Opt-in on receiving owner notifications.\n\n"
@@ -2407,9 +2855,15 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set ownernotifications optin`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"選擇接收所有者通知。\n\n"
+"         這是默認狀態。\n\n"
+"         注意：這只會繼續向您的 DM 發送所有者通知。\n"
+"             其他所有者和目的地不會受到影響。\n\n"
+"         **例子：**\n"
+"             - `[p]set ownernotifications optin`        "
 
-#: redbot/core/core_commands.py:3198
+#: redbot/core/core_commands.py:3227
 #, docstring
 msgid "\n"
 "        Opt-out of receiving owner notifications.\n\n"
@@ -2418,9 +2872,15 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set ownernotifications optout`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Opt-out of receiving owner notifications.\n\n"
+"        Note: This will only stop sending owner notifications to your DMs.\n"
+"            Additional owners and destinations will still receive notifications.\n\n"
+"        **Example:**\n"
+"            - `[p]set ownernotifications optout`\n"
+"        "
 
-#: redbot/core/core_commands.py:3217
+#: redbot/core/core_commands.py:3246
 #, docstring
 msgid "\n"
 "        Adds a destination text channel to receive owner notifications.\n\n"
@@ -2430,9 +2890,15 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<channel>` - The channel to send owner notifications to.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"添加目標文本通道以接收所有者通知。\n\n"
+"         **例子：**\n"
+"             - `[p]set ownernotifications adddestination #owner-notifications`\n"
+"             - `[p]set ownernotifications adddestination 168091848718417920` - 接受頻道 ID。\n\n"
+"         **參數：**\n"
+"             - `<channel>` - 向其發送所有者通知的頻道。        "
 
-#: redbot/core/core_commands.py:3245
+#: redbot/core/core_commands.py:3268
 #, docstring
 msgid "\n"
 "        Removes a destination text channel from receiving owner notifications.\n\n"
@@ -2442,52 +2908,69 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<channel>` - The channel to stop sending owner notifications to.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"從接收所有者通知中刪除目標文本通道。\n\n"
+"         **例子：**\n"
+"             - `[p]set ownernotifications removedestination #owner-notifications`\n"
+"             - `[p]set ownernotifications deletedestination 168091848718417920` - 接受頻道 ID。\n\n"
+"         **參數：**\n"
+"             - `<channel>` - 停止向其發送所有者通知的頻道。        "
 
-#: redbot/core/core_commands.py:3269
+#: redbot/core/core_commands.py:3292
 #, docstring
 msgid "\n"
 "        Lists the configured extra destinations for owner notifications.\n\n"
 "        **Example:**\n"
 "            - `[p]set ownernotifications listdestinations`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"列出所有者通知的已配置額外目標。\n\n"
+"         **例子：**\n"
+"             - `[p]set ownernotifications listdestinations`        "
 
-#: redbot/core/core_commands.py:3279
+#: redbot/core/core_commands.py:3302
 msgid "There are no extra channels being sent to."
-msgstr ""
+msgstr "沒有額外的頻道被發送到。"
 
-#: redbot/core/core_commands.py:3290
+#: redbot/core/core_commands.py:3313
 msgid "Unknown channel with id: {id}"
-msgstr ""
+msgstr "未知頻道：{id}"
 
-#: redbot/core/core_commands.py:3300
+#: redbot/core/core_commands.py:3323
 #, docstring
 msgid "\n"
 "        Show the current settings for [botname].\n"
 "        "
-msgstr ""
+msgstr "\n"
+"顯示 [botname] 的當前設置。        "
 
-#: redbot/core/core_commands.py:3309 redbot/core/core_commands.py:3313
+#: redbot/core/core_commands.py:3332 redbot/core/core_commands.py:3336
 msgid "Not Set."
-msgstr ""
+msgstr "未設定"
 
-#: redbot/core/core_commands.py:3320
+#: redbot/core/core_commands.py:3343
 msgid "Admin roles: {admin}\n"
 "Mod roles: {mod}\n"
 "Locale: {guild_locale}\n"
 "Regional format: {guild_regional_format}\n"
-msgstr ""
+msgstr "管理員角色：{admin}\n"
+"模組角色：{mod}\n"
+"語言環境：{guild_locale}\n"
+"區域格式：{guild_regional_format}\n"
 
-#: redbot/core/core_commands.py:3341
+#: redbot/core/core_commands.py:3364
 msgid "{bot_name} Settings:\n\n"
 "Prefixes: {prefixes}\n"
 "{guild_settings}Global locale: {locale}\n"
 "Global regional format: {regional_format}\n"
 "Default embed colour: {colour}"
-msgstr ""
+msgstr "{bot_name} 設置：\n\n"
+"前綴：{prefixes}\n"
+"{guild_settings}全球語言環境：{locale}\n"
+"全球區域格式：{regional_format}\n"
+"默認嵌入顏色：{colour}"
 
-#: redbot/core/core_commands.py:3363
+#: redbot/core/core_commands.py:3386
 #, docstring
 msgid "Set the delay until the bot removes the command message.\n\n"
 "        Must be between -1 and 60.\n\n"
@@ -2500,25 +2983,34 @@ msgid "Set the delay until the bot removes the command message.\n\n"
 "        **Arguments:**\n"
 "            - `[time]` - The seconds to wait before deleting the command message. Use -1 to disable.\n"
 "        "
-msgstr ""
+msgstr "設置延遲，直到機器人刪除命令消息。\n\n"
+"         必須介於 -1 和 60 之間。\n\n"
+"         設置為 -1 以禁用此功能。\n\n"
+"         這僅適用於當前服務器，而不適用於全局。\n\n"
+"         **例子：**\n"
+"             - `[p]set deletedelay` - 顯示當前刪除延遲設置。\n"
+"             - `[p]set deletedelay 60` - 將刪除延遲設置為最大 60 秒。\n"
+"             - `[p]set deletedelay -1` - 禁止刪除命令消息。\n\n"
+"         **參數：**\n"
+"             - `[time]` - 刪除命令消息前等待的秒數。 使用 -1 禁用。        "
 
-#: redbot/core/core_commands.py:3384
+#: redbot/core/core_commands.py:3407
 msgid "Command deleting disabled."
-msgstr ""
+msgstr "命令刪除已禁用。"
 
-#: redbot/core/core_commands.py:3386
+#: redbot/core/core_commands.py:3409
 msgid "Delete delay set to {num} seconds."
-msgstr ""
+msgstr "刪除延遲設置為 {num} 秒。"
 
-#: redbot/core/core_commands.py:3391
+#: redbot/core/core_commands.py:3414
 msgid "Bot will delete command messages after {num} seconds. Set this value to -1 to stop deleting messages"
-msgstr ""
+msgstr "Bot 將在 {num} 秒後刪除命令消息。 將此值設置為 -1 以停止刪除消息"
 
-#: redbot/core/core_commands.py:3398
+#: redbot/core/core_commands.py:3421
 msgid "I will not delete command messages."
-msgstr ""
+msgstr "我不會刪除命令消息。"
 
-#: redbot/core/core_commands.py:3404
+#: redbot/core/core_commands.py:3427
 #, docstring
 msgid "\n"
 "        Toggle whether to use the bot owner-configured colour for embeds.\n\n"
@@ -2527,21 +3019,26 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set usebotcolour`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"切換是否使用機器人所有者配置的顏色進行嵌入。\n\n"
+"         默認是使用機器人配置的顏色。\n"
+"         否則，使用的顏色將是機器人頂部角色的顏色。\n\n"
+"         **例子：**\n"
+"             -  `[p]set usebotcolour`        "
 
-#: redbot/core/core_commands.py:3416
+#: redbot/core/core_commands.py:3439
 msgid "The bot {} use its configured color for embeds."
-msgstr ""
+msgstr "{} 使用其配置的顏色進行嵌入。"
 
-#: redbot/core/core_commands.py:3417
+#: redbot/core/core_commands.py:3440
 msgid "will not"
-msgstr ""
+msgstr "將不會"
 
-#: redbot/core/core_commands.py:3417
+#: redbot/core/core_commands.py:3440
 msgid "will"
-msgstr ""
+msgstr "將會"
 
-#: redbot/core/core_commands.py:3425
+#: redbot/core/core_commands.py:3448
 #, docstring
 msgid "\n"
 "        Toggle whether to enable fuzzy command search for the server.\n\n"
@@ -2551,13 +3048,19 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set serverfuzzy`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"切換是否為服務器啟用模糊命令搜索。\n\n"
+"         這允許機器人識別潛在的拼寫錯誤的命令並提供更正。\n\n"
+"         注意：這可能是處理器密集型的，可能不適合大型服務器。\n\n"
+"         默認為禁用模糊命令搜索。\n\n"
+"         **例子：**\n"
+"             - `[p]set serverfuzzy`        "
 
-#: redbot/core/core_commands.py:3440
+#: redbot/core/core_commands.py:3463
 msgid "Fuzzy command search has been {} for this server."
-msgstr ""
+msgstr "此服務器的模糊命令搜索已{}。"
 
-#: redbot/core/core_commands.py:3448
+#: redbot/core/core_commands.py:3471
 #, docstring
 msgid "\n"
 "        Toggle whether to enable fuzzy command search in DMs.\n\n"
@@ -2566,13 +3069,18 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]set fuzzy`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"切換是否在 DM 中啟用模糊命令搜索。\n\n"
+"         這允許機器人識別潛在的拼寫錯誤的命令並提供更正。\n\n"
+"         默認為禁用模糊命令搜索。\n\n"
+"         **例子：**\n"
+"             -`[p]set fuzzy`        "
 
-#: redbot/core/core_commands.py:3461
+#: redbot/core/core_commands.py:3484
 msgid "Fuzzy command search has been {} in DMs."
-msgstr ""
+msgstr "DM 中的模糊命令搜索已{}。"
 
-#: redbot/core/core_commands.py:3469
+#: redbot/core/core_commands.py:3492
 #, docstring
 msgid "\n"
 "        Sets a default colour to be used for the bot's embeds.\n\n"
@@ -2587,17 +3095,29 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[colour]` - The colour to use for embeds. Leave blank to set to the default value (red).\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置用於機器人嵌入的默認顏色。\n\n"
+"         顏色參數的可接受值可在以下位置找到：\n\n"
+"         https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter\n\n"
+"         **例子：**\n"
+"            - `[p]set colour dark red`\n"
+"            - `[p]set colour blurple`\n"
+"            - `[p]set colour 0x5DADE2`\n"
+"            - `[p]set color 0x#FDFEFE`\n"
+"            - `[p]set color #7F8C8D`\n\n"
+"         **參數：**\n"
+"            - `[colour]` - The colour to use for embeds. Leave blank to set to the default value (red).\n"
+"        "
 
-#: redbot/core/core_commands.py:3489
+#: redbot/core/core_commands.py:3512
 msgid "The color has been reset."
-msgstr ""
+msgstr "顏色已重置。"
 
-#: redbot/core/core_commands.py:3492
+#: redbot/core/core_commands.py:3515
 msgid "The color has been set."
-msgstr ""
+msgstr "顏色已設置。"
 
-#: redbot/core/core_commands.py:3501
+#: redbot/core/core_commands.py:3524
 #, docstring
 msgid "Sets [botname]'s global prefix(es).\n\n"
 "        Warning: This is not additive. It will replace all current prefixes.\n\n"
@@ -2610,26 +3130,36 @@ msgid "Sets [botname]'s global prefix(es).\n\n"
 "        **Arguments:**\n"
 "            - `<prefixes...>` - The prefixes the bot will respond to globally.\n"
 "        "
-msgstr ""
+msgstr "設置 [botname] 的全局前綴(es)。\n\n"
+"         警告：這不是添加劑。 它將替換所有當前的前綴。\n\n"
+"         另請參閱 `--mentionable` 標誌以啟用將機器人作為前綴提及。\n\n"
+"         **例子：**\n"
+"             - `[p] 設置前綴！`\n"
+"             - `[p]set prefix \"!\"` - 在前綴中使用空格需要引號。\n"
+"             - `[p]set prefix \"@[botname] \"` - 這使用提及作為前綴。 另請參閱 `--mentionable` 標誌。\n"
+"             - `[p] 設置前綴！ ? .` - 設置多個前綴。\n\n"
+"         **參數：**\n"
+"             - `<prefixes...>` - 機器人將全局響應的前綴。        "
 
-#: redbot/core/core_commands.py:3518
+#: redbot/core/core_commands.py:3541
 msgid "Warning: A prefix is above the recommended length (25 characters).\n"
 "Do you want to continue?"
-msgstr ""
+msgstr "警告：前綴超過建議的長度(25 個字符)。\n"
+"你要繼續嗎？"
 
-#: redbot/core/core_commands.py:3532
+#: redbot/core/core_commands.py:3555
 msgid "Cancelled."
 msgstr "已取消。"
 
-#: redbot/core/core_commands.py:3536
+#: redbot/core/core_commands.py:3559
 msgid "Prefix set."
-msgstr ""
+msgstr "前綴設置。"
 
-#: redbot/core/core_commands.py:3538
+#: redbot/core/core_commands.py:3561
 msgid "Prefixes set."
-msgstr ""
+msgstr "前綴設置。"
 
-#: redbot/core/core_commands.py:3544
+#: redbot/core/core_commands.py:3567
 #, docstring
 msgid "\n"
 "        Sets [botname]'s server prefix(es).\n\n"
@@ -2644,74 +3174,98 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置 [botname] 的服務器前綴(es)。\n\n"
+"         警告：這將覆蓋全局前綴，機器人不會響應此服務器中的任何全局前綴。\n"
+"             這不是添加劑。 它將替換所有當前的服務器前綴。\n"
+"             前綴不能超過 25 個字符。\n\n"
+"         **例子：**\n"
+"             - `[p]設置服務器前綴！`\n"
+"             - `[p]set serverprefix \"!\"` - 在前綴中使用空格需要引號。\n"
+"             - `[p]set serverprefix \"@[botname] \"` - 這使用提及作為前綴。\n"
+"             -`[p]set serverprefix ! ? .`  - 設置多個前綴。\n\n"
+"         **參數：**\n"
+"             - `[prefixes...]` - 機器人將在此服務器上響應的前綴。 留空以清除服務器前綴。        "
 
-#: redbot/core/core_commands.py:3562
+#: redbot/core/core_commands.py:3585
 msgid "Server prefixes have been reset."
-msgstr ""
+msgstr "服務器前綴已重置。"
 
-#: redbot/core/core_commands.py:3565
+#: redbot/core/core_commands.py:3588
 msgid "You cannot have a prefix longer than 25 characters."
-msgstr ""
+msgstr "前綴不能超過 25 個字符。"
 
-#: redbot/core/core_commands.py:3570
+#: redbot/core/core_commands.py:3593
 msgid "Server prefix set."
-msgstr ""
+msgstr "服務器前綴設置。"
 
-#: redbot/core/core_commands.py:3572
+#: redbot/core/core_commands.py:3595
 msgid "Server prefixes set."
-msgstr ""
+msgstr "服務器前綴設置。"
 
-#: redbot/core/core_commands.py:3577
+#: redbot/core/core_commands.py:3600
 #, docstring
 msgid "\n"
 "        Commands to manage settings for the help command.\n\n"
 "        All help settings are applied globally.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"管理幫助命令設定的命令。\n\n"
+"所有幫助設定都全域性應用。        "
 
-#: redbot/core/core_commands.py:3586
+#: redbot/core/core_commands.py:3609
 #, docstring
 msgid "\n"
 "        Show the current help settings.\n\n"
 "        Warning: These settings may not be accurate if the default formatter is not in use.\n\n"
 "        **Example:**\n"
-"            - `[p]helpset showsettings``\n"
+"            - `[p]helpset showsettings`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"顯示當前的幫助設定。\n\n"
+"警告：如果不使用預設格式化程式，這些設定可能不準確。\n\n"
+"**示例：**\n\n"
+"- `[p]helpset showsettings`        "
 
-#: redbot/core/core_commands.py:3600
+#: redbot/core/core_commands.py:3623
 msgid "Warning: The default formatter is not in use, these settings may not apply."
-msgstr ""
+msgstr "警告：預設格式化程式未使用，這些設定可能不適用。"
 
-#: redbot/core/core_commands.py:3610
+#: redbot/core/core_commands.py:3633
 #, docstring
 msgid "\n"
 "        This resets [botname]'s help formatter to the default formatter.\n\n"
 "        **Example:**\n"
-"            - `[p]helpset resetformatter``\n"
+"            - `[p]helpset resetformatter`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"這會將 [botname] 的幫助格式化程序重置為默認格式化程序。\n\n"
+"         **例子：**\n"
+"             -`[p]helpset resetformatter`        "
 
-#: redbot/core/core_commands.py:3619
+#: redbot/core/core_commands.py:3642
 msgid "The help formatter has been reset. This will not prevent cogs from modifying help, you may need to remove a cog if this has been an issue."
-msgstr ""
+msgstr "幫助格式化程序已被重置。 這不會阻止 cogs 修改幫助，如果這是一個問題，您可能需要刪除 cog。"
 
-#: redbot/core/core_commands.py:3628
+#: redbot/core/core_commands.py:3651
 #, docstring
 msgid "\n"
 "        This resets [botname]'s help settings to their defaults.\n\n"
 "        This may not have an impact when using custom formatters from 3rd party cogs\n\n"
 "        **Example:**\n"
-"            - `[p]helpset resetsettings``\n"
+"            - `[p]helpset resetsettings`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"這會將 [botname] 的幫助設置重置為其默認值。\n\n"
+"         使用來自 3rd 方 cogs 的自定義格式化程序時，這可能不會產生影響\n\n"
+"         **例子：**\n"
+"             -`[p]helpset resetsettings`        "
 
-#: redbot/core/core_commands.py:3638
+#: redbot/core/core_commands.py:3661
 msgid "The help settings have been reset to their defaults. This may not have an impact when using 3rd party help formatters."
-msgstr ""
+msgstr "幫助設置已重置為默認值。 使用 3rd 方幫助格式化程序時，這可能不會產生影響。"
 
-#: redbot/core/core_commands.py:3646
+#: redbot/core/core_commands.py:3669
 #, docstring
 msgid "\n"
 "        Allows the help command to be sent as a paginated menu instead of separate\n"
@@ -2725,17 +3279,27 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[use_menus]` - Whether to use menus. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"允許將幫助命令作為分頁菜單發送，而不是單獨發送\n"
+"         消息。\n\n"
+"         啟用後，`[p]help` 將一次只顯示一頁，並將使用反應在頁面之間導航。\n\n"
+"         這默認為 False。\n"
+"         在沒有設置的情況下使用它會切換。\n\n"
+"          **例子：**\n"
+"             - `[p]helpset usemenus True` - 啟用使用菜單。\n"
+"             - `[p]helpset usemenus` - 切換值。\n\n"
+"         **參數：**\n"
+"             - `[use_menus]` - 是否使用菜單。 留空以進行切換。        "
 
-#: redbot/core/core_commands.py:3666
+#: redbot/core/core_commands.py:3689
 msgid "Help will use menus."
-msgstr ""
+msgstr "幫助使用菜單。"
 
-#: redbot/core/core_commands.py:3668
+#: redbot/core/core_commands.py:3691
 msgid "Help will not use menus."
-msgstr ""
+msgstr "幫助不使用菜單。"
 
-#: redbot/core/core_commands.py:3672
+#: redbot/core/core_commands.py:3695
 #, docstring
 msgid "\n"
 "        This allows the help command to show hidden commands.\n\n"
@@ -2747,17 +3311,25 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[show_hidden]` - Whether to use show hidden commands in help. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"這允許幫助命令顯示隱藏的命令。\n\n"
+"         這默認為 False。\n"
+"         在沒有設置的情況下使用它會切換。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset showhidden True` - 啟用顯示隱藏命令。\n"
+"             - `[p]helpset showhidden` - 切換值。\n\n"
+"         **參數：**\n"
+"             - `[show_hidden]` - 是否在幫助中使用顯示隱藏命令。 留空以進行切換。        "
 
-#: redbot/core/core_commands.py:3689
+#: redbot/core/core_commands.py:3712
 msgid "Help will not filter hidden commands."
-msgstr ""
+msgstr "幫助不會過濾隱藏的命令。"
 
-#: redbot/core/core_commands.py:3691
+#: redbot/core/core_commands.py:3714
 msgid "Help will filter hidden commands."
-msgstr ""
+msgstr "幫助將過濾隱藏的命令。"
 
-#: redbot/core/core_commands.py:3695
+#: redbot/core/core_commands.py:3718
 #, docstring
 msgid "\n"
 "        This allows the help command to show existing commands aliases if there is any.\n\n"
@@ -2769,17 +3341,25 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[show_aliases]` - Whether to include aliases in help. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"這允許 help 命令顯示現有的命令別名（如果有的話）。\n\n"
+"         這默認為真。\n"
+"         在沒有設置的情況下使用它會切換。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset showaliases False` - 禁用在此服務器上顯示別名。\n"
+"             - `[p]helpset showaliases` - 切換值。\n\n"
+"         **參數：**\n"
+"             - `[show_aliases]` - 是否在幫助中包含別名。 留空以進行切換。        "
 
-#: redbot/core/core_commands.py:3712
+#: redbot/core/core_commands.py:3735
 msgid "Help will now show command aliases."
-msgstr ""
+msgstr "幫助現在將顯示命令別名。"
 
-#: redbot/core/core_commands.py:3714
+#: redbot/core/core_commands.py:3737
 msgid "Help will no longer show command aliases."
-msgstr ""
+msgstr "幫助將不再顯示命令別名。"
 
-#: redbot/core/core_commands.py:3718
+#: redbot/core/core_commands.py:3741
 #, docstring
 msgid "\n"
 "        This allows the help command message to be ticked if help is sent to a DM.\n\n"
@@ -2793,17 +3373,27 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[use_tick]` - Whether to tick the help command when help is sent to DMs. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"如果向 DM 發送幫助，這允許勾選幫助命令消息。\n\n"
+"         滴答是用 ✅ 對幫助信息做出反應。\n\n"
+"         默認為假。\n"
+"         在沒有設置的情況下使用它會切換。\n\n"
+"         注意：這僅在機器人不使用菜單時使用。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset usetick False` - 向 DM 發送幫助時禁用勾選。\n"
+"             - `[p]helpset usetick` - 切換值。\n\n"
+"         **參數：**\n"
+"             - `[use_tick]` - 向 DM 發送幫助時是否勾選幫助命令。 留空以進行切換。        "
 
-#: redbot/core/core_commands.py:3739
+#: redbot/core/core_commands.py:3762
 msgid "Help will now tick the command when sent in a DM."
-msgstr ""
+msgstr "在 DM 中發送時，幫助現在將勾選命令。"
 
-#: redbot/core/core_commands.py:3741
+#: redbot/core/core_commands.py:3764
 msgid "Help will not tick the command when sent in a DM."
-msgstr ""
+msgstr "幫助在 DM 中發送時不會勾選命令。"
 
-#: redbot/core/core_commands.py:3745
+#: redbot/core/core_commands.py:3768
 #, docstring
 msgid "\n"
 "        Sets if commands which can't be run in the current context should be filtered from help.\n\n"
@@ -2815,17 +3405,25 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[verify]` - Whether to hide unusable commands in help. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置是否應從幫助中過濾無法在當前上下文中運行的命令。\n\n"
+"         默認為真。\n"
+"         在沒有設置的情況下使用它會切換。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset verifychecks False` - 允許在幫助中顯示不可用的命令。\n"
+"             - `[p]helpset verifychecks` - 切換值。\n\n"
+"         **參數：**\n"
+"             - `[verify]` - 是否在幫助中隱藏不可用的命令。 留空以進行切換。        "
 
-#: redbot/core/core_commands.py:3762
+#: redbot/core/core_commands.py:3785
 msgid "Help will only show for commands which can be run."
-msgstr ""
+msgstr "幫助只會顯示可以運行的命令。"
 
-#: redbot/core/core_commands.py:3764
+#: redbot/core/core_commands.py:3787
 msgid "Help will show up without checking if the commands can be run."
-msgstr ""
+msgstr "幫助將顯示而不檢查命令是否可以運行。"
 
-#: redbot/core/core_commands.py:3768
+#: redbot/core/core_commands.py:3791
 #, docstring
 msgid "\n"
 "        Sets whether the bot should respond to help commands for nonexistent topics.\n\n"
@@ -2839,17 +3437,27 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[verify]` - Whether to respond to help for nonexistent topics. Leave blank to toggle.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置機器人是否應響應不存在主題的幫助命令。\n\n"
+"         啟用後，這將指示存在幫助主題，即使用戶無法使用它。\n\n"
+"         注意：此設置本身並不能完全阻止命令枚舉。\n\n"
+"         默認為假。\n"
+"         在沒有設置的情況下使用它會切換。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset verifyexists True` - 允許為不存在的主題發送幫助。\n"
+"             - `[p]helpset verifyexists` - 切換值。\n\n"
+"         **參數：**\n"
+"             - `[verify]` - 是否響應不存在主題的幫助。 留空以進行切換。        "
 
-#: redbot/core/core_commands.py:3789
+#: redbot/core/core_commands.py:3812
 msgid "Help will verify the existence of help topics."
-msgstr ""
+msgstr "幫助將驗證幫助主題的存在。"
 
-#: redbot/core/core_commands.py:3792
+#: redbot/core/core_commands.py:3815
 msgid "Help will only verify the existence of help topics via fuzzy help (if enabled)."
-msgstr ""
+msgstr "幫助將僅通過模糊幫助(如果啟用) 驗證幫助主題的存在。"
 
-#: redbot/core/core_commands.py:3800
+#: redbot/core/core_commands.py:3823
 #, docstring
 msgid "Set the character limit for each page in the help message.\n\n"
 "        Note: This setting only applies to embedded help.\n\n"
@@ -2862,17 +3470,26 @@ msgid "Set the character limit for each page in the help message.\n\n"
 "        **Arguments:**\n"
 "            - `<limit>` - The max amount of characters to show per page in the help message.\n"
 "        "
-msgstr ""
+msgstr "設置幫助消息中每頁的字符數限制。\n\n"
+"         注意：此設置僅適用於嵌入式幫助。\n\n"
+"         默認值為 1000 個字符。 最小值為 500。\n"
+"         最大值取決於您提供的內容和不和諧允許的內容中的較低值。\n\n"
+"         請注意，設置相對較小的字符數限制可能\n"
+"         意味著某些頁面將超過此限制。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset pagecharlimit 1500`\n\n"
+"         **參數：**\n"
+"             - `<limit>` - 幫助消息中每頁顯示的最大字符數。        "
 
-#: redbot/core/core_commands.py:3817
+#: redbot/core/core_commands.py:3840
 msgid "You must give a value of at least 500 characters."
-msgstr ""
+msgstr "您必須提供至少 500 個字符的值。"
 
-#: redbot/core/core_commands.py:3821
+#: redbot/core/core_commands.py:3844
 msgid "Done. The character limit per page has been set to {}."
-msgstr ""
+msgstr "完畢。 每頁的字符數限制已設置為 {}。"
 
-#: redbot/core/core_commands.py:3825
+#: redbot/core/core_commands.py:3848
 #, docstring
 msgid "Set the maximum number of help pages sent in a server channel.\n\n"
 "        Note: This setting does not apply to menu help.\n\n"
@@ -2886,17 +3503,27 @@ msgid "Set the maximum number of help pages sent in a server channel.\n\n"
 "        **Arguments:**\n"
 "            - `<limit>` - The max pages allowed to send per help in a server.\n"
 "        "
-msgstr ""
+msgstr "設置在服務器頻道中發送的幫助頁面的最大數量。\n\n"
+"         注意：此設置不適用於菜單幫助。\n\n"
+"         如果幫助消息包含的頁面數超過此值，則幫助消息將\n"
+"         通過 DM 發送給命令作者。 這是為了幫助減少服務器中的垃圾郵件\n"
+"         文字頻道。\n\n"
+"         默認值為 2 頁。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset maxpages 50` - 基本上從不向 DM 發送幫助。\n"
+"             - `[p]helpset maxpages 0` - 始終向 DM 發送幫助。\n\n"
+"         **參數：**\n"
+"             - `<limit>` - 服務器中每個幫助允許發送的最大頁數。        "
 
-#: redbot/core/core_commands.py:3843 redbot/core/core_commands.py:3870
+#: redbot/core/core_commands.py:3866 redbot/core/core_commands.py:3893
 msgid "You must give a value of zero or greater!"
-msgstr ""
+msgstr "您必須給出零或更大的值！"
 
-#: redbot/core/core_commands.py:3847
+#: redbot/core/core_commands.py:3870
 msgid "Done. The page limit has been set to {}."
-msgstr ""
+msgstr "完畢。 每頁的頁數限制已設置為 {}。"
 
-#: redbot/core/core_commands.py:3852
+#: redbot/core/core_commands.py:3875
 #, docstring
 msgid "Set the delay after which help pages will be deleted.\n\n"
 "        The setting is disabled by default, and only applies to non-menu help,\n"
@@ -2911,21 +3538,32 @@ msgid "Set the delay after which help pages will be deleted.\n\n"
 "        **Arguments:**\n"
 "            - `<seconds>` - The seconds to wait before deleting help pages.\n"
 "        "
-msgstr ""
+msgstr "設置刪除幫助頁面的延遲時間。\n\n"
+"         該設置默認禁用，僅適用於非菜單幫助，\n"
+"         在服務器文本通道中發送。\n"
+"         將延遲設置為 0 會禁用此功能。\n\n"
+"         機器人必須擁有 MANAGE_MESSAGES 權限才能工作。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset deletedelay 60` - 一分鐘後刪除幫助頁面。\n"
+"             - `[p]helpset deletedelay 1` - 盡快刪除幫助頁面。\n"
+"             - `[p]helpset deletedelay 1209600` - 刪除前等待的最長時間(14 天)。\n"
+"             - `[p]helpset deletedelay 0` - 禁止刪除幫助頁面。\n\n"
+"         **參數：**\n"
+"             - `<seconds>` - 刪除幫助頁面前等待的秒數。        "
 
-#: redbot/core/core_commands.py:3873
+#: redbot/core/core_commands.py:3896
 msgid "The delay cannot be longer than 14 days!"
-msgstr ""
+msgstr "延遲不能超過14天！"
 
-#: redbot/core/core_commands.py:3878
+#: redbot/core/core_commands.py:3901
 msgid "Done. Help messages will not be deleted now."
-msgstr ""
+msgstr "完畢。 現在不會刪除幫助消息。"
 
-#: redbot/core/core_commands.py:3880
+#: redbot/core/core_commands.py:3903
 msgid "Done. The delete delay has been set to {} seconds."
-msgstr ""
+msgstr "完畢。 刪除延遲已設置為 {} 秒。"
 
-#: redbot/core/core_commands.py:3884
+#: redbot/core/core_commands.py:3907
 #, docstring
 msgid "Set the timeout for reactions, if menus are enabled.\n\n"
 "        The default is 30 seconds.\n"
@@ -2938,21 +3576,30 @@ msgid "Set the timeout for reactions, if menus are enabled.\n\n"
 "        **Arguments:**\n"
 "            - `<seconds>` - The timeout, in seconds, of the reactions.\n"
 "        "
-msgstr ""
+msgstr "如果啟用了菜單，請設置反應超時。\n\n"
+"         默認值為 30 秒。\n"
+"         超時時間必須在 15 到 300 秒之間。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset reacttimeout 30` - 默認超時。\n"
+"             - `[p]helpset reacttimeout 60` - 超時 1 分鐘。\n"
+"             - `[p]helpset reacttimeout 15` - 最小允許超時。\n"
+"             - `[p]helpset reacttimeout 300` - 最大允許超時(5 分鐘)。\n\n"
+"         **參數：**\n"
+"             - `<seconds>` - 反應的超時時間，以秒為單位。        "
 
-#: redbot/core/core_commands.py:3899
+#: redbot/core/core_commands.py:3922
 msgid "You must give a value of at least 15 seconds!"
-msgstr ""
+msgstr "您必須提供至少 15 秒的值。"
 
-#: redbot/core/core_commands.py:3902
+#: redbot/core/core_commands.py:3925
 msgid "The timeout cannot be greater than 5 minutes!"
-msgstr ""
+msgstr "用戶超時不能少於 5 分鐘。"
 
-#: redbot/core/core_commands.py:3906
+#: redbot/core/core_commands.py:3929
 msgid "Done. The reaction timeout has been set to {} seconds."
-msgstr ""
+msgstr "完畢。 反應已設置為 {} 秒。"
 
-#: redbot/core/core_commands.py:3910
+#: redbot/core/core_commands.py:3933
 #, docstring
 msgid "\n"
 "        Set the tagline to be used.\n\n"
@@ -2964,21 +3611,29 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `[tagline]` - The tagline to appear at the bottom of help embeds. Leave blank to reset.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"設置要使用的標語。\n\n"
+"         標語的最大長度為 2048 個字符。\n"
+"         此設置僅適用於嵌入式幫助。 如果未指定標語，則將使用默認標語。\n\n"
+"         **例子：**\n"
+"             - `[p]helpset 標語感謝您使用機器人！`\n"
+"             - `[p]helpset 標語` - 將標語重置為默認值。\n\n"
+"         **參數：**\n"
+"             - `[tagline]` - 出現在幫助嵌入底部的標語。 留空以重置。        "
 
-#: redbot/core/core_commands.py:3925
+#: redbot/core/core_commands.py:3948
 msgid "The tagline has been reset."
-msgstr ""
+msgstr "標語已被重置。"
 
-#: redbot/core/core_commands.py:3929
+#: redbot/core/core_commands.py:3952
 msgid "Your tagline is too long! Please shorten it to be no more than 2048 characters long."
-msgstr ""
+msgstr "你的標語太長了！ 請將其縮短為不超過 2048 個字符。"
 
-#: redbot/core/core_commands.py:3937
+#: redbot/core/core_commands.py:3960
 msgid "The tagline has been set."
-msgstr ""
+msgstr "標語已被設置。"
 
-#: redbot/core/core_commands.py:3942
+#: redbot/core/core_commands.py:3965
 #, docstring
 msgid "Sends a message to the owner.\n\n"
 "        This is limited to one message every 60 seconds per person.\n\n"
@@ -2987,45 +3642,50 @@ msgid "Sends a message to the owner.\n\n"
 "        **Arguments:**\n"
 "            - `[message]` - The message to send to the owner.\n"
 "        "
-msgstr ""
+msgstr "向所有者發送消息。\n\n"
+"         這僅限於每人每 60 秒發送一條消息。\n\n"
+"         **例子：**\n"
+"             - `[p]聯繫幫助！ 機器人已經變得有意識了！`\n\n"
+"         **參數：**\n"
+"             - `[message]` - 發送給所有者的消息。        "
 
-#: redbot/core/core_commands.py:3954
+#: redbot/core/core_commands.py:3977
 msgid "User ID: {}"
-msgstr ""
+msgstr "用戶 ID: {}"
 
-#: redbot/core/core_commands.py:3957
+#: redbot/core/core_commands.py:3980
 msgid "through DM"
-msgstr ""
+msgstr "通過 DM"
 
-#: redbot/core/core_commands.py:3959
+#: redbot/core/core_commands.py:3982
 msgid "from {}"
-msgstr ""
+msgstr "從 {}"
 
-#: redbot/core/core_commands.py:3960
+#: redbot/core/core_commands.py:3983
 msgid " | Server ID: {}"
-msgstr ""
+msgstr " | 伺服器ID: {}"
 
-#: redbot/core/core_commands.py:3965
+#: redbot/core/core_commands.py:3988
 msgid "Use `{}dm {} <text>` to reply to this user"
-msgstr ""
+msgstr "使用 `{}dm {} <text>` 回复此用戶"
 
-#: redbot/core/core_commands.py:3967
+#: redbot/core/core_commands.py:3990
 msgid "Sent by {} {}"
-msgstr ""
+msgstr "由 {} {} 送出"
 
-#: redbot/core/core_commands.py:3972
+#: redbot/core/core_commands.py:3995
 msgid "I've been configured not to send this anywhere."
-msgstr ""
+msgstr "我已被配置為不將其發送到任何地方。"
+
+#: redbot/core/core_commands.py:4041
+msgid "Your message has been sent."
+msgstr "您的訊息已發送。"
 
 #: redbot/core/core_commands.py:4043
-msgid "Your message has been sent."
-msgstr ""
-
-#: redbot/core/core_commands.py:4045
 msgid "I'm unable to deliver your message. Sorry."
-msgstr ""
+msgstr "我無法傳遞你的信息。 對不起。"
 
-#: redbot/core/core_commands.py:4050
+#: redbot/core/core_commands.py:4048
 #, docstring
 msgid "Sends a DM to a user.\n\n"
 "        This command needs a user ID to work.\n\n"
@@ -3036,43 +3696,50 @@ msgid "Sends a DM to a user.\n\n"
 "        **Arguments:**\n"
 "            - `[message]` - The message to dm to the user.\n"
 "        "
-msgstr ""
+msgstr "向用戶發送 DM。\n\n"
+"         此命令需要用戶 ID 才能工作。\n\n"
+"         要獲取用戶 ID，請轉到 Discord 的設置並打開“外觀”選項卡。\n"
+"         啟用“開發者模式”，然後右鍵單擊用戶並單擊“複製 ID”。\n\n"
+"         **例子：**\n"
+"             - `[p]dm 262626262626262626 你喜歡我嗎？ 是/否`\n\n"
+"         **參數：**\n"
+"             - `[message]` - 給用戶的 dm 消息。        "
 
-#: redbot/core/core_commands.py:4066
+#: redbot/core/core_commands.py:4064
 msgid "Invalid ID, user not found, or user is a bot. You can only send messages to people I share a server with."
-msgstr ""
+msgstr "ID 無效、未找到用戶或用戶是機器人。 您只能向與我共享服務器的人發送消息。"
 
-#: redbot/core/core_commands.py:4076
+#: redbot/core/core_commands.py:4074
 msgid "Owner of {}"
-msgstr ""
+msgstr "擁有者 {}"
 
-#: redbot/core/core_commands.py:4077
+#: redbot/core/core_commands.py:4075
 msgid "You can reply to this message with {}contact"
-msgstr ""
+msgstr "您可以通過 {}contact 回覆此消息"
 
-#: redbot/core/core_commands.py:4091 redbot/core/core_commands.py:4101
+#: redbot/core/core_commands.py:4086 redbot/core/core_commands.py:4096
 msgid "Sorry, I couldn't deliver your message to {}"
-msgstr ""
+msgstr "抱歉，我無法將您的消息傳遞給 {}"
 
-#: redbot/core/core_commands.py:4094 redbot/core/core_commands.py:4104
+#: redbot/core/core_commands.py:4089 redbot/core/core_commands.py:4099
 msgid "Message delivered to {}"
-msgstr ""
+msgstr "傳遞給 {} 的消息"
 
-#: redbot/core/core_commands.py:4109
+#: redbot/core/core_commands.py:4104
 #, docstring
 msgid "Prints the bot's data path."
-msgstr ""
+msgstr "打印機器人的數據路徑。"
 
-#: redbot/core/core_commands.py:4113
+#: redbot/core/core_commands.py:4108
 msgid "Data path: {path}"
-msgstr ""
+msgstr "儲存到：{path}"
 
-#: redbot/core/core_commands.py:4119
+#: redbot/core/core_commands.py:4114
 #, docstring
 msgid "Shows debug information useful for debugging."
-msgstr ""
+msgstr "顯示對除錯有用的除錯信息。"
 
-#: redbot/core/core_commands.py:4236
+#: redbot/core/core_commands.py:4134
 #, docstring
 msgid "\n"
 "        Diagnose issues with the command checks with ease!\n\n"
@@ -3085,30 +3752,42 @@ msgid "\n"
 "            - `<member>` - The member that should be considered as the command caller.\n"
 "            - `<command_name>` - The name of the command to test.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"通過命令檢查輕鬆診斷問題！\n\n"
+"         如果您想從不同服務器中的文本通道診斷命令，\n"
+"         您可以使用 DM 中的命令來執行此操作。\n\n"
+"         **例子：**\n"
+"             - `[p]diagnoseissues #general @Slime ban` - 診斷為什麼@Slime 不能在#general 頻道中使用`[p]ban`。\n\n"
+"         **參數：**\n"
+"             - `[channel]` - 應該測試命令的文本通道。 默認為當前頻道。\n"
+"             - `<member>` - 應該被視為命令調用者的成員。\n"
+"             - `<command_name>` - 要測試的命令的名稱。        "
 
-#: redbot/core/core_commands.py:4253
-msgid "The channel needs to be passed when using this command in DMs."
-msgstr ""
+#: redbot/core/core_commands.py:4152
+msgid "The text channel or thread needs to be passed when using this command in DMs."
+msgstr "在 DM 中使用此命令時需要傳遞文本通道或線程。"
 
-#: redbot/core/core_commands.py:4266
+#: redbot/core/core_commands.py:4169
 msgid "The given user is not a member of the diagnosed server."
-msgstr ""
+msgstr "給定用戶不是診斷服務器的成員。"
 
-#: redbot/core/core_commands.py:4273
+#: redbot/core/core_commands.py:4176
 msgid "Don't try to fool me, the given member can't access the {channel} channel!"
-msgstr ""
+msgstr "不要試圖欺騙我，給予的成員無法訪問 {channel} 頻道！"
 
-#: redbot/core/core_commands.py:4284
+#: redbot/core/core_commands.py:4187
 #, docstring
 msgid "\n"
 "        Commands to manage the allowlist.\n\n"
 "        Warning: When the allowlist is in use, the bot will ignore commands from everyone not on the list.\n\n"
 "        Use `[p]allowlist clear` to disable the allowlist\n"
 "        "
-msgstr ""
+msgstr "\n"
+"管理許可名單的命令。\n\n"
+"         警告：當使用許可名單時，機器人將忽略不在名單上的每個人的命令。\n\n"
+"         使用 `[p]allowlist clear` 禁用允許列表        "
 
-#: redbot/core/core_commands.py:4295
+#: redbot/core/core_commands.py:4198
 #, docstring
 msgid "\n"
 "        Adds users to the allowlist.\n\n"
@@ -3118,40 +3797,49 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users...>` - The user or users to add to the allowlist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"將用戶添加到白名單。\n\n"
+"         **例子：**\n"
+"             - `[p]allowlist add @26 @Will` - 將兩個用戶添加到允許列表。\n"
+"             - `[p]allowlist add 262626262626262626` - 按 ID 添加用戶。\n\n"
+"         **參數：**\n"
+"             - `<users...>` - 要添加到白名單的用戶。        "
 
-#: redbot/core/core_commands.py:4307
+#: redbot/core/core_commands.py:4210
 msgid "Users have been added to the allowlist."
-msgstr ""
+msgstr "用戶已被添加到白名單中。"
 
-#: redbot/core/core_commands.py:4309
+#: redbot/core/core_commands.py:4212
 msgid "User has been added to the allowlist."
-msgstr ""
+msgstr "用戶已添加到白名單"
 
-#: redbot/core/core_commands.py:4313
+#: redbot/core/core_commands.py:4216
 #, docstring
 msgid "\n"
 "        Lists users on the allowlist.\n\n"
 "        **Example:**\n"
 "            - `[p]allowlist list`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"列出白名單上的用戶。\n\n"
+"         **例子：**\n"
+"             -`[p]白名單`        "
 
-#: redbot/core/core_commands.py:4325
+#: redbot/core/core_commands.py:4228
 msgid "Users on the allowlist:"
-msgstr ""
+msgstr "白名單上的用戶："
 
-#: redbot/core/core_commands.py:4327
+#: redbot/core/core_commands.py:4230
 msgid "User on the allowlist:"
-msgstr ""
+msgstr "白名單中的用戶："
 
-#: redbot/core/core_commands.py:4331 redbot/core/core_commands.py:4427
-#: redbot/core/modlog.py:431 redbot/core/modlog.py:453
-#: redbot/core/modlog.py:467
+#: redbot/core/core_commands.py:4234 redbot/core/core_commands.py:4330
+#: redbot/core/modlog.py:463 redbot/core/modlog.py:485
+#: redbot/core/modlog.py:501
 msgid "Unknown or Deleted User"
-msgstr ""
+msgstr "未知或已刪除用戶"
 
-#: redbot/core/core_commands.py:4339
+#: redbot/core/core_commands.py:4242
 #, docstring
 msgid "\n"
 "        Removes users from the allowlist.\n\n"
@@ -3162,17 +3850,24 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users...>` - The user or users to remove from the allowlist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"從白名單中刪除用戶。\n\n"
+"         如果所有用戶都被刪除，許可名單將被禁用。\n\n"
+"         **例子：**\n"
+"             - `[p]allowlist remove @26 @Will` - 從允許列表中刪除兩個用戶。\n"
+"             - `[p]allowlist remove 262626262626262626` - 按 ID 刪除用戶。\n\n"
+"         **參數：**\n"
+"             - `<users...>` - 要從允許列表中刪除的用戶。        "
 
-#: redbot/core/core_commands.py:4353
+#: redbot/core/core_commands.py:4256
 msgid "Users have been removed from the allowlist."
-msgstr ""
+msgstr "用戶已從白名單中刪除。"
 
-#: redbot/core/core_commands.py:4355
+#: redbot/core/core_commands.py:4258
 msgid "User has been removed from the allowlist."
-msgstr ""
+msgstr "用戶已從白名單中刪除。"
 
-#: redbot/core/core_commands.py:4359
+#: redbot/core/core_commands.py:4262
 #, docstring
 msgid "\n"
 "        Clears the allowlist.\n\n"
@@ -3180,21 +3875,27 @@ msgid "\n"
 "        **Example:**\n"
 "            - `[p]allowlist clear`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"清除白名單。\n\n"
+"         這將禁用白名單。\n\n"
+"         **例子：**\n"
+"             -- `[p]allowlist clear`        "
 
-#: redbot/core/core_commands.py:4368
+#: redbot/core/core_commands.py:4271
 msgid "Allowlist has been cleared."
-msgstr ""
+msgstr "白名單已被清除。"
 
-#: redbot/core/core_commands.py:4373
+#: redbot/core/core_commands.py:4276
 #, docstring
 msgid "\n"
 "        Commands to manage the blocklist.\n\n"
 "        Use `[p]blocklist clear` to disable the blocklist\n"
 "        "
-msgstr ""
+msgstr "\n"
+"          管理黑名單的命令。\n\n"
+"         使用 `[p]blocklist clear` 禁用黑名單        "
 
-#: redbot/core/core_commands.py:4382
+#: redbot/core/core_commands.py:4285
 #, docstring
 msgid "\n"
 "        Adds users to the blocklist.\n\n"
@@ -3204,38 +3905,47 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users...>` - The user or users to add to the blocklist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"將用戶添加到黑名單。\n\n"
+"         **例子：**\n"
+"             - `[p]blocklist add @26 @Will` - 將兩個用戶添加到黑名單。\n"
+"             - `[p]blocklist add 262626262626262626` - 按 ID 阻止用戶。\n\n"
+"         **參數：**\n"
+"             - `<users...>` - 要添加到黑名單的用戶。        "
 
-#: redbot/core/core_commands.py:4398
+#: redbot/core/core_commands.py:4301
 msgid "You cannot add an owner to the blocklist!"
-msgstr ""
+msgstr "您不能將所有者添加到黑名單！"
 
-#: redbot/core/core_commands.py:4403
+#: redbot/core/core_commands.py:4306
 msgid "Users have been added to the blocklist."
-msgstr ""
+msgstr "用戶已被添加到黑名單中。"
 
-#: redbot/core/core_commands.py:4405
+#: redbot/core/core_commands.py:4308
 msgid "User has been added to the blocklist."
-msgstr ""
+msgstr "用戶已被添加到黑名單"
 
-#: redbot/core/core_commands.py:4409
+#: redbot/core/core_commands.py:4312
 #, docstring
 msgid "\n"
 "        Lists users on the blocklist.\n\n"
 "        **Example:**\n"
 "            - `[p]blocklist list`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"列出黑名單中的用戶。\n\n"
+"         **例子：**\n"
+"             -`[p]blocklist list`        "
 
-#: redbot/core/core_commands.py:4421
+#: redbot/core/core_commands.py:4324
 msgid "Users on the blocklist:"
-msgstr ""
+msgstr "黑名單上的用戶："
 
-#: redbot/core/core_commands.py:4423
+#: redbot/core/core_commands.py:4326
 msgid "User on the blocklist:"
-msgstr ""
+msgstr "黑名單上的用戶："
 
-#: redbot/core/core_commands.py:4435
+#: redbot/core/core_commands.py:4338
 #, docstring
 msgid "\n"
 "        Removes users from the blocklist.\n\n"
@@ -3245,39 +3955,51 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users...>` - The user or users to remove from the blocklist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"從黑名單中刪除用戶。\n\n"
+"         **例子：**\n"
+"             - `[p]blocklist remove @26 @Will` - 從黑名單中刪除兩個用戶。\n"
+"             - `[p]blocklist remove 262626262626262626` - 按 ID 刪除用戶。\n\n"
+"         **參數：**\n"
+"             - `<users...>` - 要從黑名單中刪除的用戶。        "
 
-#: redbot/core/core_commands.py:4447
+#: redbot/core/core_commands.py:4350
 msgid "Users have been removed from the blocklist."
-msgstr ""
+msgstr "用戶已從黑名單中刪除。"
 
-#: redbot/core/core_commands.py:4449
+#: redbot/core/core_commands.py:4352
 msgid "User has been removed from the blocklist."
-msgstr ""
+msgstr "用戶已從黑名單中刪除。"
 
-#: redbot/core/core_commands.py:4453
+#: redbot/core/core_commands.py:4356
 #, docstring
 msgid "\n"
 "        Clears the blocklist.\n\n"
 "        **Example:**\n"
 "            - `[p]blocklist clear`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"清除黑名單。\n\n"
+"         **例子：**\n"
+"             - `[p]blocklist clear`        "
 
-#: redbot/core/core_commands.py:4460
+#: redbot/core/core_commands.py:4363
 msgid "Blocklist has been cleared."
-msgstr ""
+msgstr "黑名單已被清空。"
 
-#: redbot/core/core_commands.py:4466
+#: redbot/core/core_commands.py:4369
 #, docstring
 msgid "\n"
 "        Commands to manage the server specific allowlist.\n\n"
 "        Warning: When the allowlist is in use, the bot will ignore commands from everyone not on the list in the server.\n\n"
 "        Use `[p]localallowlist clear` to disable the allowlist\n"
 "        "
-msgstr ""
+msgstr "\n"
+"用於管理特定於服務器的白名單的命令。\n\n"
+"         警告：當使用白名單時，機器人將忽略服務器中不在列表中的每個人的命令。\n\n"
+"         使用 `[p]localallowlist clear` 禁用白名單        "
 
-#: redbot/core/core_commands.py:4479
+#: redbot/core/core_commands.py:4382
 #, docstring
 msgid "\n"
 "        Adds a user or role to the server allowlist.\n\n"
@@ -3288,42 +4010,52 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users_or_roles...>` - The users or roles to remove from the local allowlist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"將用戶或角色添加到服務器白名單。\n\n"
+"         **例子：**\n"
+"             - `[p]localallowlist add @26 @Will` - 將兩個用戶添加到本地白名單。\n"
+"             - `[p]localallowlist add 262626262626262626` - 通過 ID 允許用戶。\n"
+"             - `[p]localallowlist add \"Super Admins\"` - 允許名稱中帶有空格的角色，無需提及。\n\n"
+"         **參數：**\n"
+"             - `<users_or_roles...>` - 要從本地白名單中刪除的用戶或角色。        "
 
-#: redbot/core/core_commands.py:4498
+#: redbot/core/core_commands.py:4401
 msgid "I cannot allow you to do this, as it would remove your ability to run commands, please ensure to add yourself to the allowlist first."
-msgstr ""
+msgstr "我不能允許你這樣做，因為它會刪除你運行命令的能力，請確保先將自己添加到白名單中。"
 
-#: redbot/core/core_commands.py:4507
+#: redbot/core/core_commands.py:4410
 msgid "Users and/or roles have been added to the allowlist."
-msgstr ""
+msgstr "用戶/角色已添加到白名單中。"
 
-#: redbot/core/core_commands.py:4509
+#: redbot/core/core_commands.py:4412
 msgid "User or role has been added to the allowlist."
-msgstr ""
+msgstr "用戶或角色已添加到白名單。"
 
-#: redbot/core/core_commands.py:4513
+#: redbot/core/core_commands.py:4416
 #, docstring
 msgid "\n"
 "        Lists users and roles on the server allowlist.\n\n"
 "        **Example:**\n"
 "            - `[p]localallowlist list`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"列出服務器白名單上的用戶和角色。\n\n"
+"         **例子：**\n"
+"             -`[p]localallowlist list`        "
 
-#: redbot/core/core_commands.py:4525
+#: redbot/core/core_commands.py:4428
 msgid "Allowed users and/or roles:"
-msgstr ""
+msgstr "允許的用戶/角色："
 
-#: redbot/core/core_commands.py:4527
+#: redbot/core/core_commands.py:4430
 msgid "Allowed user or role:"
-msgstr ""
+msgstr "允許的用戶或角色："
 
-#: redbot/core/core_commands.py:4531 redbot/core/core_commands.py:4651
+#: redbot/core/core_commands.py:4434 redbot/core/core_commands.py:4554
 msgid "Unknown or Deleted User/Role"
-msgstr ""
+msgstr "未知或已刪除的用戶/身分組"
 
-#: redbot/core/core_commands.py:4541
+#: redbot/core/core_commands.py:4444
 #, docstring
 msgid "\n"
 "        Removes user or role from the allowlist.\n\n"
@@ -3335,21 +4067,29 @@ msgid "\n"
 "        **Arguments:**\n"
 "            - `<users_or_roles...>` - The users or roles to remove from the local allowlist.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"從允許列表中刪除用戶或角色。\n\n"
+"         如果所有用戶都被刪除，本地許可名單將被禁用。\n\n"
+"         **例子：**\n"
+"             - `[p]localallowlist remove @26 @Will` - 從本地許可名單中刪除兩個用戶。\n"
+"             - `[p]localallowlist remove 262626262626262626` - 按 ID 刪除用戶。\n"
+"             - `[p]localallowlist remove \"Super Admins\"` - 刪除名稱中帶有空格的角色而不提及。\n\n"
+"         **參數：**\n"
+"             - `<users_or_roles...>` - 要從本地許可名單中刪除的用戶或身分組。        "
 
-#: redbot/core/core_commands.py:4562
+#: redbot/core/core_commands.py:4465
 msgid "I cannot allow you to do this, as it would remove your ability to run commands."
-msgstr ""
+msgstr "我不能允許你這樣做，因為它會刪除你運行命令的能力。"
 
-#: redbot/core/core_commands.py:4570
+#: redbot/core/core_commands.py:4473
 msgid "Users and/or roles have been removed from the server allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4572
+#: redbot/core/core_commands.py:4475
 msgid "User or role has been removed from the server allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4576
+#: redbot/core/core_commands.py:4479
 #, docstring
 msgid "\n"
 "        Clears the allowlist.\n\n"
@@ -3359,11 +4099,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4585
+#: redbot/core/core_commands.py:4488
 msgid "Server allowlist has been cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:4591
+#: redbot/core/core_commands.py:4494
 #, docstring
 msgid "\n"
 "        Commands to manage the server specific blocklist.\n\n"
@@ -3371,7 +4111,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4602
+#: redbot/core/core_commands.py:4505
 #, docstring
 msgid "\n"
 "        Adds a user or role to the local blocklist.\n\n"
@@ -3384,27 +4124,27 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4616
+#: redbot/core/core_commands.py:4519
 msgid "You cannot add yourself to the blocklist!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4619
+#: redbot/core/core_commands.py:4522
 msgid "You cannot add the guild owner to the blocklist!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4622
+#: redbot/core/core_commands.py:4525
 msgid "You cannot add a bot owner to the blocklist!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4627
+#: redbot/core/core_commands.py:4530
 msgid "Users and/or roles have been added from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4629
+#: redbot/core/core_commands.py:4532
 msgid "User or role has been added from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4633
+#: redbot/core/core_commands.py:4536
 #, docstring
 msgid "\n"
 "        Lists users and roles on the server blocklist.\n\n"
@@ -3413,15 +4153,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4645
+#: redbot/core/core_commands.py:4548
 msgid "Blocked users and/or roles:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4647
+#: redbot/core/core_commands.py:4550
 msgid "Blocked user or role:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4661
+#: redbot/core/core_commands.py:4564
 #, docstring
 msgid "\n"
 "        Removes user or role from local blocklist.\n\n"
@@ -3434,15 +4174,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4675
+#: redbot/core/core_commands.py:4578
 msgid "Users and/or roles have been removed from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4677
+#: redbot/core/core_commands.py:4580
 msgid "User or role has been removed from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4681
+#: redbot/core/core_commands.py:4584
 #, docstring
 msgid "\n"
 "        Clears the server blocklist.\n\n"
@@ -3452,16 +4192,16 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4690
+#: redbot/core/core_commands.py:4593
 msgid "Server blocklist has been cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:4695
+#: redbot/core/core_commands.py:4598
 #, docstring
 msgid "Commands to enable and disable commands and cogs."
 msgstr ""
 
-#: redbot/core/core_commands.py:4701
+#: redbot/core/core_commands.py:4604
 #, docstring
 msgid "Set the default state for a cog as disabled.\n\n"
 "        This will disable the cog for all servers by default.\n"
@@ -3475,15 +4215,15 @@ msgid "Set the default state for a cog as disabled.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4717
+#: redbot/core/core_commands.py:4620
 msgid "You can't disable this cog by default."
 msgstr ""
 
-#: redbot/core/core_commands.py:4719
+#: redbot/core/core_commands.py:4622
 msgid "{cogname} has been set as disabled by default."
 msgstr ""
 
-#: redbot/core/core_commands.py:4724
+#: redbot/core/core_commands.py:4627
 #, docstring
 msgid "Set the default state for a cog as enabled.\n\n"
 "        This will re-enable the cog for all servers by default.\n"
@@ -3497,11 +4237,11 @@ msgid "Set the default state for a cog as enabled.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4740
+#: redbot/core/core_commands.py:4643
 msgid "{cogname} has been set as enabled by default."
 msgstr ""
 
-#: redbot/core/core_commands.py:4745
+#: redbot/core/core_commands.py:4648
 #, docstring
 msgid "Disable a cog in this server.\n\n"
 "        Note: This will only work on loaded cogs, and must reference the title-case cog name.\n\n"
@@ -3513,19 +4253,19 @@ msgid "Disable a cog in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4758
+#: redbot/core/core_commands.py:4661
 msgid "You can't disable this cog as you would lock yourself out."
 msgstr ""
 
-#: redbot/core/core_commands.py:4760
+#: redbot/core/core_commands.py:4663
 msgid "{cogname} has been disabled in this guild."
 msgstr ""
 
-#: redbot/core/core_commands.py:4763
+#: redbot/core/core_commands.py:4666
 msgid "{cogname} was already disabled (nothing to do)."
 msgstr ""
 
-#: redbot/core/core_commands.py:4769
+#: redbot/core/core_commands.py:4672
 #, docstring
 msgid "Enable a cog in this server.\n\n"
 "        Note: This will only work on loaded cogs, and must reference the title-case cog name.\n\n"
@@ -3537,19 +4277,19 @@ msgid "Enable a cog in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4781
+#: redbot/core/core_commands.py:4684
 msgid "{cogname} has been enabled in this guild."
 msgstr ""
 
-#: redbot/core/core_commands.py:4786
+#: redbot/core/core_commands.py:4689
 msgid "Cog \"{arg}\" not found."
 msgstr ""
 
-#: redbot/core/core_commands.py:4789
+#: redbot/core/core_commands.py:4692
 msgid "{cogname} was not disabled (nothing to do)."
 msgstr ""
 
-#: redbot/core/core_commands.py:4795
+#: redbot/core/core_commands.py:4698
 #, docstring
 msgid "List the cogs which are disabled in this server.\n\n"
 "        **Example:**\n"
@@ -3557,15 +4297,15 @@ msgid "List the cogs which are disabled in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4808
+#: redbot/core/core_commands.py:4711
 msgid "The following cogs are disabled in this guild:\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:4814
+#: redbot/core/core_commands.py:4717
 msgid "There are no disabled cogs in this guild."
 msgstr ""
 
-#: redbot/core/core_commands.py:4818
+#: redbot/core/core_commands.py:4721
 #, docstring
 msgid "\n"
 "        List disabled commands.\n\n"
@@ -3576,7 +4316,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4835
+#: redbot/core/core_commands.py:4738
 #, docstring
 msgid "List disabled commands globally.\n\n"
 "        **Example:**\n"
@@ -3584,19 +4324,19 @@ msgid "List disabled commands globally.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4842
+#: redbot/core/core_commands.py:4745
 msgid "There aren't any globally disabled commands."
 msgstr ""
 
-#: redbot/core/core_commands.py:4845
+#: redbot/core/core_commands.py:4748
 msgid "{} commands are disabled globally.\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:4849
+#: redbot/core/core_commands.py:4752
 msgid "1 command is disabled globally.\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:4857
+#: redbot/core/core_commands.py:4760
 #, docstring
 msgid "List disabled commands in this server.\n\n"
 "        **Example:**\n"
@@ -3604,19 +4344,19 @@ msgid "List disabled commands in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4864
+#: redbot/core/core_commands.py:4767
 msgid "There aren't any disabled commands in {}."
 msgstr ""
 
-#: redbot/core/core_commands.py:4867
+#: redbot/core/core_commands.py:4770
 msgid "{} commands are disabled in {}.\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:4871
+#: redbot/core/core_commands.py:4774
 msgid "1 command is disabled in {}.\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:4878
+#: redbot/core/core_commands.py:4781
 #, docstring
 msgid "\n"
 "        Disable a command.\n\n"
@@ -3630,7 +4370,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4900
+#: redbot/core/core_commands.py:4803
 #, docstring
 msgid "\n"
 "        Disable a command globally.\n\n"
@@ -3642,19 +4382,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4912 redbot/core/core_commands.py:4948
+#: redbot/core/core_commands.py:4815 redbot/core/core_commands.py:4851
 msgid "The command to disable cannot be `command` or any of its subcommands."
 msgstr ""
 
-#: redbot/core/core_commands.py:4918 redbot/core/core_commands.py:4954
+#: redbot/core/core_commands.py:4821 redbot/core/core_commands.py:4857
 msgid "This command is designated as being always available and cannot be disabled."
 msgstr ""
 
-#: redbot/core/core_commands.py:4927
+#: redbot/core/core_commands.py:4830
 msgid "That command is already disabled globally."
 msgstr ""
 
-#: redbot/core/core_commands.py:4936
+#: redbot/core/core_commands.py:4839
 #, docstring
 msgid "\n"
 "        Disable a command in this server only.\n\n"
@@ -3666,15 +4406,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4960
+#: redbot/core/core_commands.py:4863
 msgid "You are not allowed to disable that command."
 msgstr ""
 
-#: redbot/core/core_commands.py:4970
+#: redbot/core/core_commands.py:4873
 msgid "That command is already disabled in this server."
 msgstr ""
 
-#: redbot/core/core_commands.py:4976
+#: redbot/core/core_commands.py:4879
 #, docstring
 msgid "Enable a command.\n\n"
 "        If you're the bot owner, this will try to enable a globally disabled command by default.\n"
@@ -3687,7 +4427,7 @@ msgid "Enable a command.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4996
+#: redbot/core/core_commands.py:4899
 #, docstring
 msgid "\n"
 "        Enable a command globally.\n\n"
@@ -3699,11 +4439,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5011
+#: redbot/core/core_commands.py:4914
 msgid "That command is already enabled globally."
 msgstr ""
 
-#: redbot/core/core_commands.py:5020
+#: redbot/core/core_commands.py:4923
 #, docstring
 msgid "\n"
 "            Enable a command in this server.\n\n"
@@ -3715,15 +4455,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5032
+#: redbot/core/core_commands.py:4935
 msgid "You are not allowed to enable that command."
 msgstr ""
 
-#: redbot/core/core_commands.py:5042
+#: redbot/core/core_commands.py:4945
 msgid "That command is already enabled in this server."
 msgstr ""
 
-#: redbot/core/core_commands.py:5049
+#: redbot/core/core_commands.py:4952
 #, docstring
 msgid "Set the bot's response to disabled commands.\n\n"
 "        Leave blank to send nothing.\n\n"
@@ -3737,7 +4477,7 @@ msgid "Set the bot's response to disabled commands.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5070
+#: redbot/core/core_commands.py:4973
 #, docstring
 msgid "\n"
 "        Commands to manage server settings for immunity from automated actions.\n\n"
@@ -3745,7 +4485,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5079
+#: redbot/core/core_commands.py:4982
 #, docstring
 msgid "\n"
 "        Gets the current members and roles configured for automatic moderation action immunity.\n\n"
@@ -3754,19 +4494,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5092
+#: redbot/core/core_commands.py:4995
 msgid "Roles immune from automated moderation actions:\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:5097
+#: redbot/core/core_commands.py:5000
 msgid "Members immune from automated moderation actions:\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:5101
+#: redbot/core/core_commands.py:5004
 msgid "No immunity settings here."
 msgstr ""
 
-#: redbot/core/core_commands.py:5110
+#: redbot/core/core_commands.py:5013
 #, docstring
 msgid "\n"
 "        Makes a user or role immune from automated moderation actions.\n\n"
@@ -3778,11 +4518,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5122
+#: redbot/core/core_commands.py:5025
 msgid "Already added."
 msgstr ""
 
-#: redbot/core/core_commands.py:5130
+#: redbot/core/core_commands.py:5033
 #, docstring
 msgid "\n"
 "        Remove a user or role from being immune to automated moderation actions.\n\n"
@@ -3794,11 +4534,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5142
+#: redbot/core/core_commands.py:5045
 msgid "Not in list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5150
+#: redbot/core/core_commands.py:5053
 #, docstring
 msgid "\n"
 "        Checks if a user or role would be considered immune from automated actions.\n\n"
@@ -3810,15 +4550,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5162
+#: redbot/core/core_commands.py:5065
 msgid "They are immune."
 msgstr ""
 
-#: redbot/core/core_commands.py:5164
+#: redbot/core/core_commands.py:5067
 msgid "They are not immune."
 msgstr ""
 
-#: redbot/core/core_commands.py:5191
+#: redbot/core/core_commands.py:5094
 #, docstring
 msgid "\n"
 "        Commands to add servers or channels to the ignore list.\n\n"
@@ -3827,7 +4567,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5201
+#: redbot/core/core_commands.py:5104
 #, docstring
 msgid "\n"
 "        List the currently ignored servers and channels.\n\n"
@@ -3836,11 +4576,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5216
+#: redbot/core/core_commands.py:5121
 #, docstring
 msgid "\n"
-"        Ignore commands in the channel or category.\n\n"
-"        Defaults to the current channel.\n\n"
+"        Ignore commands in the channel, thread, or category.\n\n"
+"        Defaults to the current thread or channel.\n\n"
 "        Note: Owners, Admins, and those with Manage Channel permissions override ignored channels.\n\n"
 "        **Examples:**\n"
 "            - `[p]ignore channel #general` - Ignores commands in the #general channel.\n"
@@ -3848,19 +4588,19 @@ msgid "\n"
 "            - `[p]ignore channel \"General Channels\"` - Use quotes for categories with spaces.\n"
 "            - `[p]ignore channel 356236713347252226` - Also accepts IDs.\n\n"
 "        **Arguments:**\n"
-"            - `<channel>` - The channel to ignore. Can be a category channel.\n"
+"            - `<channel>` - The channel to ignore. This can also be a thread or category channel.\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5236
+#: redbot/core/core_commands.py:5141
 msgid "Channel added to ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5238
+#: redbot/core/core_commands.py:5143
 msgid "Channel already in ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5243
+#: redbot/core/core_commands.py:5148
 #, docstring
 msgid "\n"
 "        Ignore commands in this server.\n\n"
@@ -3870,43 +4610,43 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5254
+#: redbot/core/core_commands.py:5159
 msgid "This server has been added to the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5256
+#: redbot/core/core_commands.py:5161
 msgid "This server is already being ignored."
 msgstr ""
 
-#: redbot/core/core_commands.py:5262
+#: redbot/core/core_commands.py:5167
 #, docstring
 msgid "Commands to remove servers or channels from the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5270
+#: redbot/core/core_commands.py:5177
 #, docstring
 msgid "\n"
-"        Remove a channel or category from the ignore list.\n\n"
-"        Defaults to the current channel.\n\n"
+"        Remove a channel, thread, or category from the ignore list.\n\n"
+"        Defaults to the current thread or channel.\n\n"
 "        **Examples:**\n"
 "            - `[p]unignore channel #general` - Unignores commands in the #general channel.\n"
 "            - `[p]unignore channel` - Unignores commands in the current channel.\n"
 "            - `[p]unignore channel \"General Channels\"` - Use quotes for categories with spaces.\n"
 "            - `[p]unignore channel 356236713347252226` - Also accepts IDs. Use this method to unignore categories.\n\n"
 "        **Arguments:**\n"
-"            - `<channel>` - The channel to unignore. This can be a category channel.\n"
+"            - `<channel>` - The channel to unignore. This can also be a thread or category channel.\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5289
+#: redbot/core/core_commands.py:5196
 msgid "Channel removed from ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5291
+#: redbot/core/core_commands.py:5198
 msgid "That channel is not in the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5296
+#: redbot/core/core_commands.py:5203
 #, docstring
 msgid "\n"
 "        Remove this server from the ignore list.\n\n"
@@ -3915,36 +4655,42 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5305
+#: redbot/core/core_commands.py:5212
 msgid "This server has been removed from the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5307
+#: redbot/core/core_commands.py:5214
 msgid "This server is not in the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5313
+#: redbot/core/core_commands.py:5221
 msgid "This server is currently being ignored."
 msgstr ""
 
-#: redbot/core/core_commands.py:5325
+#: redbot/core/core_commands.py:5233 redbot/core/core_commands.py:5236
+#: redbot/core/core_commands.py:5238
+msgid "None"
+msgstr "無"
+
+#: redbot/core/core_commands.py:5239
 msgid "Currently ignored categories: {categories}\n"
-"Channels: {channels}"
+"Channels: {channels}\n"
+"Threads (excluding archived):{threads}"
 msgstr ""
 
-#: redbot/core/core_commands.py:5340
+#: redbot/core/core_commands.py:5256
 #, docstring
 msgid "\n"
 "        Get info about Red's licenses.\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:36
+#: redbot/core/dev_commands.py:40
 #, docstring
 msgid "Various development focused utilities."
 msgstr ""
 
-#: redbot/core/dev_commands.py:123
+#: redbot/core/dev_commands.py:127
 #, docstring
 msgid "Evaluate a statement of python code.\n\n"
 "        The bot will always respond with the return value of the code.\n"
@@ -3965,7 +4711,7 @@ msgid "Evaluate a statement of python code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:167
+#: redbot/core/dev_commands.py:171
 #, docstring
 msgid "Execute asynchronous code.\n\n"
 "        This command wraps code into the body of an async function and then\n"
@@ -3985,7 +4731,7 @@ msgid "Execute asynchronous code.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:221
+#: redbot/core/dev_commands.py:225
 #, docstring
 msgid "Open an interactive REPL.\n\n"
 "        The REPL will only recognise code as messages which start with a\n"
@@ -3994,51 +4740,51 @@ msgid "Open an interactive REPL.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:230
+#: redbot/core/dev_commands.py:234
 msgid "Already running a REPL session in this channel. Exit it with `quit`."
 msgstr ""
 
-#: redbot/core/dev_commands.py:234
+#: redbot/core/dev_commands.py:238
 msgid "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
 msgstr ""
 
-#: redbot/core/dev_commands.py:245
+#: redbot/core/dev_commands.py:249
 msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
 msgstr ""
 
-#: redbot/core/dev_commands.py:259
+#: redbot/core/dev_commands.py:263
 msgid "Exiting."
 msgstr ""
 
-#: redbot/core/dev_commands.py:310
+#: redbot/core/dev_commands.py:314
 msgid "Unexpected error: `{}`"
 msgstr ""
 
-#: redbot/core/dev_commands.py:314
+#: redbot/core/dev_commands.py:318
 #, docstring
 msgid "Pauses/resumes the REPL running in the current channel"
 msgstr ""
 
-#: redbot/core/dev_commands.py:316
+#: redbot/core/dev_commands.py:320
 msgid "There is no currently running REPL session in this channel."
 msgstr ""
 
-#: redbot/core/dev_commands.py:324
+#: redbot/core/dev_commands.py:328
 msgid "The REPL session in this channel has been resumed."
 msgstr ""
 
-#: redbot/core/dev_commands.py:326
+#: redbot/core/dev_commands.py:330
 msgid "The REPL session in this channel is now paused."
 msgstr ""
 
-#: redbot/core/dev_commands.py:331
+#: redbot/core/dev_commands.py:335
 #, docstring
 msgid "Mock another user invoking a command.\n\n"
 "        The prefix must not be entered.\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:344
+#: redbot/core/dev_commands.py:348
 #, docstring
 msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        Current message is used as a base (including attachments, embeds, etc.),\n"
@@ -4048,17 +4794,17 @@ msgid "Dispatch a message event as if it were sent by a different user.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/dev_commands.py:366
+#: redbot/core/dev_commands.py:369
 #, docstring
 msgid "Give bot owners the ability to bypass cooldowns.\n\n"
 "        Does not persist through restarts."
 msgstr ""
 
-#: redbot/core/dev_commands.py:374
+#: redbot/core/dev_commands.py:377
 msgid "Bot owners will now bypass all commands with cooldowns."
 msgstr ""
 
-#: redbot/core/dev_commands.py:376
+#: redbot/core/dev_commands.py:379
 msgid "Bot owners will no longer bypass all commands with cooldowns."
 msgstr ""
 
@@ -4066,174 +4812,197 @@ msgstr ""
 msgid "{user}'s balance cannot rise above {max} {currency}."
 msgstr ""
 
-#: redbot/core/events.py:100
+#: redbot/core/events.py:101
 msgid "Your Red instance is out of date! {} is the current version, however you are using {}!"
 msgstr ""
 
-#: redbot/core/events.py:110
+#: redbot/core/events.py:111
 msgid "\n\n"
 "While the following command should work in most scenarios as it is based on your current OS, environment, and Python version, **we highly recommend you to read the update docs at <{docs}> and make sure there is nothing else that needs to be done during the update.**"
 msgstr ""
 
-#: redbot/core/events.py:134
+#: redbot/core/events.py:135
 msgid "\n\n"
 "To update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:\n\n"
 msgstr ""
 
-#: redbot/core/events.py:139
+#: redbot/core/events.py:140
 msgid "Command Prompt"
 msgstr ""
 
-#: redbot/core/events.py:141
+#: redbot/core/events.py:142
 msgid "Terminal"
 msgstr ""
 
-#: redbot/core/events.py:148
+#: redbot/core/events.py:149
 msgid "\n"
 "Once you've started up your bot again, if you have any 3rd-party cogs installed we then highly recommend you update them with this command in Discord: `[p]cog update`"
 msgstr ""
 
-#: redbot/core/events.py:155
+#: redbot/core/events.py:156
 msgid "\n\n"
 "You have Python `{py_version}` and this update requires `{req_py}`; you cannot simply run the update command.\n\n"
 "You will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr ""
 
-#: redbot/core/events.py:216
+#: redbot/core/events.py:215
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr ""
 
-#: redbot/core/events.py:241
+#: redbot/core/events.py:228
+msgid "\"{argument}\" is not an integer."
+msgstr ""
+
+#: redbot/core/events.py:231
+msgid "\"{argument}\" is not a number."
+msgstr ""
+
+#: redbot/core/events.py:249
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr ""
 
-#: redbot/core/events.py:266
+#: redbot/core/events.py:274
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:270
+#: redbot/core/events.py:278
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/events.py:278
+#: redbot/core/events.py:286
 msgid "That command is not available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:280
+#: redbot/core/events.py:288
 msgid "That command is only available in DMs."
 msgstr ""
 
-#: redbot/core/events.py:282
+#: redbot/core/events.py:290
 msgid "That command is only available in NSFW channels."
 msgstr ""
 
-#: redbot/core/events.py:292
+#: redbot/core/events.py:300
 msgid "This command is on cooldown. Try again in {delay}."
 msgstr ""
 
-#: redbot/core/events.py:294
+#: redbot/core/events.py:302
 msgid "This command is on cooldown. Try again in 1 second."
 msgstr ""
 
-#: redbot/core/events.py:299
+#: redbot/core/events.py:307
 msgid "Too many people using this command. It can only be used {number} times concurrently."
 msgstr ""
 
-#: redbot/core/events.py:304
+#: redbot/core/events.py:312
 msgid "Too many people using this command. It can only be used once concurrently."
 msgstr ""
 
-#: redbot/core/events.py:310
+#: redbot/core/events.py:318
 msgid "That command is still completing, it can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/events.py:315
+#: redbot/core/events.py:323
 msgid "That command is still completing, it can only be used once per {type} concurrently."
 msgstr ""
 
-#: redbot/core/events.py:321
+#: redbot/core/events.py:329
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/events.py:326
+#: redbot/core/events.py:334
 msgid "Too many people using this command. It can only be used once per {type} concurrently."
 msgstr ""
 
-#: redbot/core/modlog.py:420
+#: redbot/core/modlog.py:452
 msgid "Case #{} | {} {}"
 msgstr ""
 
-#: redbot/core/modlog.py:422
+#: redbot/core/modlog.py:454
 msgid "**Reason:** Use the `reason` command to add it"
 msgstr ""
 
-#: redbot/core/modlog.py:425
+#: redbot/core/modlog.py:457
 msgid "Unknown"
 msgstr "未知"
 
-#: redbot/core/modlog.py:429 redbot/core/modlog.py:451
-#: redbot/core/modlog.py:464
+#: redbot/core/modlog.py:461 redbot/core/modlog.py:483
+#: redbot/core/modlog.py:498
 msgid "Deleted User."
 msgstr ""
 
-#: redbot/core/modlog.py:489 redbot/core/modlog.py:524
-msgid "**Reason:** {}"
+#: redbot/core/modlog.py:525
+msgid "Deleted or archived thread ({thread_id}) in {channel_name}"
 msgstr ""
 
-#: redbot/core/modlog.py:503
+#: redbot/core/modlog.py:529
+msgid "Thread {thread_id} in {channel_id} (deleted)"
+msgstr ""
+
+#: redbot/core/modlog.py:533
+msgid "{channel_id} (deleted)"
+msgstr ""
+
+#: redbot/core/modlog.py:538
+msgid "Thread {thread_name} in {channel_name}"
+msgstr ""
+
+#: redbot/core/modlog.py:542
+msgid "Thread {thread_name} in {channel_id} (deleted)"
+msgstr ""
+
+#: redbot/core/modlog.py:548 redbot/core/modlog.py:576
+msgid "Reason:"
+msgstr ""
+
+#: redbot/core/modlog.py:562
 msgid "Moderator"
 msgstr ""
 
-#: redbot/core/modlog.py:505
+#: redbot/core/modlog.py:564
 msgid "Until"
 msgstr ""
 
-#: redbot/core/modlog.py:506
+#: redbot/core/modlog.py:565
 msgid "Duration"
 msgstr ""
 
-#: redbot/core/modlog.py:510 redbot/core/modlog.py:515
+#: redbot/core/modlog.py:567
 msgid "Channel"
 msgstr ""
 
-#: redbot/core/modlog.py:511
-msgid "{channel} (deleted)"
-msgstr ""
-
-#: redbot/core/modlog.py:517
+#: redbot/core/modlog.py:569
 msgid "Amended by"
 msgstr ""
 
-#: redbot/core/modlog.py:519
+#: redbot/core/modlog.py:571
 msgid "Last modified at"
 msgstr ""
 
-#: redbot/core/modlog.py:539
-msgid "**User:** {}\n"
+#: redbot/core/modlog.py:591
+msgid "User:"
 msgstr ""
 
-#: redbot/core/modlog.py:540
-msgid "**Moderator:** {}\n"
+#: redbot/core/modlog.py:592
+msgid "Moderator:"
 msgstr ""
 
-#: redbot/core/modlog.py:543
-msgid "**Until:** {}\n"
-"**Duration:** {}\n"
-msgstr ""
+#: redbot/core/modlog.py:595
+msgid "Until:"
+msgstr "直到:"
 
-#: redbot/core/modlog.py:546
-msgid "**Channel**: {} (Deleted)\n"
-msgstr ""
+#: redbot/core/modlog.py:595
+msgid "Duration:"
+msgstr "期間："
 
-#: redbot/core/modlog.py:548
-msgid "**Channel**: {}\n"
-msgstr ""
+#: redbot/core/modlog.py:598 redbot/core/modlog.py:600
+msgid "Channel:"
+msgstr "頻道:"
 
-#: redbot/core/modlog.py:550
-msgid "**Amended by:** {}\n"
-msgstr ""
+#: redbot/core/modlog.py:602
+msgid "Amended by:"
+msgstr "修改人："
 
-#: redbot/core/modlog.py:552
-msgid "**Last modified at:** {}\n"
-msgstr ""
+#: redbot/core/modlog.py:604
+msgid "Last modified at:"
+msgstr "最後修改於："
 

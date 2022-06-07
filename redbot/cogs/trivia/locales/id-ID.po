@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-11-25 09:07+0000\n"
+"POT-Creation-Date: 2022-06-05 15:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,115 +15,116 @@ msgstr ""
 "X-Crowdin-File-ID: 45\n"
 "Language: id_ID\n"
 
-#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:377
+#: redbot/cogs/trivia/checks.py:13 redbot/cogs/trivia/trivia.py:380
 msgid "There is no ongoing trivia session in this channel."
-msgstr ""
+msgstr "Tidak ada sesi trivia yang sedang berlangsung di channel ini."
 
 #: redbot/cogs/trivia/converters.py:15
 msgid "`{arg}` is not a number."
-msgstr ""
+msgstr "`{arg}` bukanlah sebuah angka."
 
 #: redbot/cogs/trivia/converters.py:17
 msgid "`{arg}` is not a finite number."
-msgstr ""
+msgstr "`{arg}` bukanlah sebuah angka terbatas."
 
 #: redbot/cogs/trivia/session.py:20
 msgid "I know this one! {answer}!"
-msgstr ""
+msgstr "Aku tahu yang ini! {answer}!"
 
 #: redbot/cogs/trivia/session.py:21
 msgid "Easy: {answer}."
-msgstr ""
+msgstr "Mudah: {answer}."
 
 #: redbot/cogs/trivia/session.py:22
 msgid "Oh really? It's {answer} of course."
-msgstr ""
+msgstr "Oh benarkah? Tentu saja jawabannya {answer}."
 
 #: redbot/cogs/trivia/session.py:26
 msgid "I know this one! ||{answer}!||"
-msgstr ""
+msgstr "Aku tahu yang ini! ||{answer}!||"
 
 #: redbot/cogs/trivia/session.py:27
 msgid "Easy: ||{answer}.||"
-msgstr ""
+msgstr "Mudah: ||{answer}.||"
 
 #: redbot/cogs/trivia/session.py:28
 msgid "Oh really? It's ||{answer}|| of course."
-msgstr ""
+msgstr "Oh benarkah? Tentu saja jawabannya ||{answer}.||"
 
 #: redbot/cogs/trivia/session.py:32
 msgid "To the next one I guess..."
-msgstr ""
+msgstr "Lanjut ke yang berikutnya..."
 
 #: redbot/cogs/trivia/session.py:33
 msgid "Moving on..."
-msgstr ""
+msgstr "Lanjut..."
 
 #: redbot/cogs/trivia/session.py:34
 msgid "I'm sure you'll know the answer of the next one."
-msgstr ""
+msgstr "Aku yakin kamu akan tahu jawaban yang selanjutnya."
 
 #: redbot/cogs/trivia/session.py:35
 msgid "😔 Next one."
-msgstr ""
+msgstr "😔 Selanjutnya."
 
 #: redbot/cogs/trivia/session.py:123
 msgid "An unexpected error occurred in the trivia session.\n"
 "Check your console or logs for details."
-msgstr ""
+msgstr "Error yang tak terduga terjadi selama sesi trivia.\n"
+"Cek konsol atau logs mu untuk detailnya."
 
 #: redbot/cogs/trivia/session.py:144
 msgid "Question number {num}!"
-msgstr ""
+msgstr "Pertanyaan nomor {num}!"
 
 #: redbot/cogs/trivia/session.py:153
 msgid "There are no more questions!"
-msgstr ""
+msgstr "Tidak ada pertanyaan lagi!"
 
 #: redbot/cogs/trivia/session.py:161
 msgid "{trivia_list} (by {author})"
-msgstr ""
+msgstr "{trivia_list} (oleh {author})"
 
 #: redbot/cogs/trivia/session.py:166
 msgid "Starting Trivia: {list_names}"
-msgstr ""
+msgstr "Memulai Trivia: {list_names}"
 
 #: redbot/cogs/trivia/session.py:212
 msgid "Guys...? Well, I guess I'll stop then."
-msgstr ""
+msgstr "Guys...? Sepertinya aku akan berhenti saja."
 
 #: redbot/cogs/trivia/session.py:223
 msgid " **+1** for me!"
-msgstr ""
+msgstr " **+1** untukku!"
 
 #: redbot/cogs/trivia/session.py:228
 msgid "You got it {user}! **+1** to you!"
-msgstr ""
+msgstr "Kamu mendapatkannya {user}! **+1** untukmu!"
 
-#: redbot/cogs/trivia/session.py:331
+#: redbot/cogs/trivia/session.py:333
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
-msgstr ""
+msgstr "Selamat {users}! Kalian semua mendapatkan {num} {currency} sebagai hadiah kemenangan!"
 
-#: redbot/cogs/trivia/session.py:339
+#: redbot/cogs/trivia/session.py:341
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
-msgstr ""
+msgstr "Selamat {user}! Kamu mendapatkan {num} {currency} sebagai hadiah kemenangan!"
 
-#: redbot/cogs/trivia/trivia.py:55
+#: redbot/cogs/trivia/trivia.py:57
 #, docstring
 msgid "Play trivia with friends!"
-msgstr ""
+msgstr "Mainkan trivia dengan teman!"
 
-#: redbot/cogs/trivia/trivia.py:94
+#: redbot/cogs/trivia/trivia.py:97
 #, docstring
 msgid "Manage Trivia settings."
-msgstr ""
+msgstr "Atur settingan Trivia."
 
-#: redbot/cogs/trivia/trivia.py:98
+#: redbot/cogs/trivia/trivia.py:101
 #, docstring
 msgid "Show the current trivia settings."
-msgstr ""
+msgstr "Menunjukkan pengaturan trivia."
 
-#: redbot/cogs/trivia/trivia.py:102
+#: redbot/cogs/trivia/trivia.py:105
 msgid "Current settings\n"
 "Bot gains points: {bot_plays}\n"
 "Answer time limit: {delay} seconds\n"
@@ -133,107 +134,122 @@ msgid "Current settings\n"
 "Payout multiplier: {payout_multiplier}\n"
 "Allow lists to override settings: {allow_override}\n"
 "Use Spoilers in answers: {use_spoilers}"
-msgstr ""
+msgstr "Pengaturan\n"
+"Bot mendapatkan poin: {bot_plays}\n"
+"Limit waktu menjawab: {delay} seconds\n"
+"Waktu tunggu kurangnya tanggapan: {timeout} seconds\n"
+"Poin untuk menang: {max_score}\n"
+"Beritahu jawaban saat waktu habis: {reveal_answer}\n"
+"Pengganda bayaran: {payout_multiplier}\n"
+"Izinkan daftar untuk mengesampingkan settingan: {allow_override}\n"
+"Gunakan Spoiler dalam jawaban: {use_spoilers}"
 
-#: redbot/cogs/trivia/trivia.py:119
+#: redbot/cogs/trivia/trivia.py:122
 #, docstring
 msgid "Set the total points required to win."
-msgstr ""
+msgstr "Atur total poin yang dibutuhkan untuk menang."
 
-#: redbot/cogs/trivia/trivia.py:121
+#: redbot/cogs/trivia/trivia.py:124
 msgid "Score must be greater than 0."
-msgstr ""
+msgstr "Skor harus lebih dari 0."
 
-#: redbot/cogs/trivia/trivia.py:125
+#: redbot/cogs/trivia/trivia.py:128
 msgid "Done. Points required to win set to {num}."
-msgstr ""
+msgstr "Selesai. Poin yang dibutuhkan untuk menang diatur ke {num}."
 
-#: redbot/cogs/trivia/trivia.py:129
+#: redbot/cogs/trivia/trivia.py:132
 #, docstring
 msgid "Set the maximum seconds permitted to answer a question."
-msgstr ""
+msgstr "Atur detik maksimum untuk menjawab sebuah pertanyaan."
 
-#: redbot/cogs/trivia/trivia.py:131
+#: redbot/cogs/trivia/trivia.py:134
 msgid "Must be at least 4 seconds."
-msgstr ""
+msgstr "Harus setidaknya 4 detik."
 
-#: redbot/cogs/trivia/trivia.py:135
+#: redbot/cogs/trivia/trivia.py:138
 msgid "Done. Maximum seconds to answer set to {num}."
-msgstr ""
-
-#: redbot/cogs/trivia/trivia.py:139
-#, docstring
-msgid "Set how long until trivia stops due to no response."
-msgstr ""
+msgstr "Selesai. Detik maksimum untuk menjawab diatur ke {num}."
 
 #: redbot/cogs/trivia/trivia.py:142
+#, docstring
+msgid "Set how long until trivia stops due to no response."
+msgstr "Atur berapa lama sampai trivia berhenti dikarenakan tidak ada respon."
+
+#: redbot/cogs/trivia/trivia.py:145
 msgid "Must be larger than the answer time limit."
-msgstr ""
+msgstr "Harus lebih besar dari limit waktu menjawab."
 
-#: redbot/cogs/trivia/trivia.py:146
+#: redbot/cogs/trivia/trivia.py:149
 msgid "Done. Trivia sessions will now time out after {num} seconds of no responses."
-msgstr ""
+msgstr "Selesai. Sesi trivia akan berhenti setelah {num} detik jika tak ada respon."
 
-#: redbot/cogs/trivia/trivia.py:153
+#: redbot/cogs/trivia/trivia.py:156
 #, docstring
 msgid "Allow/disallow trivia lists to override settings."
-msgstr ""
+msgstr "Izinkan/larang daftar trivia untuk mengesampingkan pengaturan."
 
-#: redbot/cogs/trivia/trivia.py:158
+#: redbot/cogs/trivia/trivia.py:161
 msgid "Done. Trivia lists can now override the trivia settings for this server."
-msgstr ""
+msgstr "Selesai. Daftar trivia akan mengesampingkan pengaturan untuk server ini."
 
-#: redbot/cogs/trivia/trivia.py:162
+#: redbot/cogs/trivia/trivia.py:165
 msgid "Done. Trivia lists can no longer override the trivia settings for this server."
-msgstr ""
+msgstr "Selesai. Daftar trivia tidak akan mengesampingkan pengaturan untuk server ini."
 
-#: redbot/cogs/trivia/trivia.py:170
+#: redbot/cogs/trivia/trivia.py:173
 #, docstring
 msgid "Set if bot will display the answers in spoilers.\n\n"
 "        If enabled, the bot will use spoilers to hide answers.\n"
 "        "
-msgstr ""
+msgstr "Atur jika bot akan menampilkan jawaban dalam spoilers.\n\n"
+"        Jika diaktifkan, bot akan menggunakan spoilers untuk menyembunyikan jawaban.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:177
+#: redbot/cogs/trivia/trivia.py:180
 msgid "Done. I'll put the answers in spoilers next time."
-msgstr ""
+msgstr "Selesai. Aku akan menampilkan jawaban dengan spoilers kedepannya."
 
-#: redbot/cogs/trivia/trivia.py:179
+#: redbot/cogs/trivia/trivia.py:182
 msgid "Alright, I won't use spoilers to hide answers anymore."
-msgstr ""
+msgstr "Baiklah, aku tidak akan lagi menggunakan spoilers untuk menyembunyikan jawaban."
 
-#: redbot/cogs/trivia/trivia.py:183
+#: redbot/cogs/trivia/trivia.py:186
 #, docstring
 msgid "Set whether or not the bot gains points.\n\n"
 "        If enabled, the bot will gain a point if no one guesses correctly.\n"
 "        "
-msgstr ""
+msgstr "Atur agar bot mendapatkan poin atau tidak.\n\n"
+"        Jika diaktifkan, bot akan mendapatkan poin jika tidak ada yang menebak dengan benar.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:190
+#: redbot/cogs/trivia/trivia.py:193
 msgid "Done. I'll now gain a point if users don't answer in time."
-msgstr ""
+msgstr "Selesai. Aku akan mendapatkan poin mulai sekarang jika tidak ada yang menjawab tepat waktu."
 
-#: redbot/cogs/trivia/trivia.py:192
+#: redbot/cogs/trivia/trivia.py:195
 msgid "Alright, I won't embarrass you at trivia anymore."
-msgstr ""
+msgstr "Baiklah, aku tak akan memalukan dirimu lagi dalam trivia."
 
-#: redbot/cogs/trivia/trivia.py:196
+#: redbot/cogs/trivia/trivia.py:199
 #, docstring
 msgid "Set whether or not the answer is revealed.\n\n"
 "        If enabled, the bot will reveal the answer if no one guesses correctly\n"
 "        in time.\n"
 "        "
-msgstr ""
+msgstr "Atur agar jawaban diberitahu atau tidak.\n\n"
+"       Jika diaktifkan, bot akan memberitahu jawaban jika tidak ada yang menebak dengan benar\n"
+"        tepat waktu.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:204
+#: redbot/cogs/trivia/trivia.py:207
 msgid "Done. I'll reveal the answer if no one knows it."
-msgstr ""
+msgstr "Selesai. Aku akan memberitahu jawaban jika tidak ada yang tahu."
 
-#: redbot/cogs/trivia/trivia.py:206
+#: redbot/cogs/trivia/trivia.py:209
 msgid "Alright, I won't reveal the answer to the questions anymore."
-msgstr ""
+msgstr "Baiklah, aku tidak akan memberitahu jawaban untuk pertanyaan lagi."
 
-#: redbot/cogs/trivia/trivia.py:212
+#: redbot/cogs/trivia/trivia.py:215
 #, docstring
 msgid "Set the payout multiplier.\n\n"
 "        This can be any positive decimal number. If a user wins trivia when at\n"
@@ -242,132 +258,145 @@ msgid "Set the payout multiplier.\n\n"
 "        The number of credits is determined by multiplying their total score by\n"
 "        this multiplier.\n"
 "        "
-msgstr ""
+msgstr "Atur pengganda bayaran.\n\n"
+"        Bisa merupakan angka desimal positif apapun. Jika seseorang memenangkan trivia saat\n"
+"        setidaknya 3 orang sedang bermain, mereka akan mendapatkan credits. Atur ke 0 untuk\n"
+"        menonaktifkan.\n\n"
+"        Jumlah credits ditentukan dengan mengalikan total skor dengan\n"
+"        pengganda ini.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:223
+#: redbot/cogs/trivia/trivia.py:226
 msgid "Multiplier must be at least 0."
-msgstr ""
+msgstr "Pengganda harus setidaknya 0."
 
-#: redbot/cogs/trivia/trivia.py:227
+#: redbot/cogs/trivia/trivia.py:230
 msgid "Done. Payout multiplier set to {num}."
-msgstr ""
+msgstr "Selesai. Pengganda bayaran diatur ke {num}."
 
-#: redbot/cogs/trivia/trivia.py:229
+#: redbot/cogs/trivia/trivia.py:232
 msgid "Done. I will no longer reward the winner with a payout."
-msgstr ""
+msgstr "Selesai, aku tidak akan memberikan bayaran kepada pemenang lagi."
 
-#: redbot/cogs/trivia/trivia.py:234
+#: redbot/cogs/trivia/trivia.py:237
 #, docstring
 msgid "Manage Custom Trivia lists."
-msgstr ""
+msgstr "Atur daftar Trivia Kustom."
 
-#: redbot/cogs/trivia/trivia.py:239
+#: redbot/cogs/trivia/trivia.py:242
 #, docstring
 msgid "List uploaded custom trivia."
-msgstr ""
+msgstr "Lihat daftar trivia kustom yang terupload."
 
-#: redbot/cogs/trivia/trivia.py:241
+#: redbot/cogs/trivia/trivia.py:244
 msgid "No custom Trivia lists uploaded."
-msgstr ""
+msgstr "Tidak ada daftar Trivia kustom yang terupload."
 
-#: redbot/cogs/trivia/trivia.py:257 redbot/cogs/trivia/trivia.py:264
+#: redbot/cogs/trivia/trivia.py:260 redbot/cogs/trivia/trivia.py:267
 msgid "Uploaded trivia lists"
-msgstr ""
+msgstr "List trivia terupload"
 
-#: redbot/cogs/trivia/trivia.py:274
+#: redbot/cogs/trivia/trivia.py:277
 #, docstring
 msgid "Upload a trivia file."
-msgstr ""
+msgstr "Upload sebuah file trivia."
 
-#: redbot/cogs/trivia/trivia.py:276
+#: redbot/cogs/trivia/trivia.py:279
 msgid "Supply a file with next message or type anything to cancel."
-msgstr ""
-
-#: redbot/cogs/trivia/trivia.py:282
-msgid "You took too long to upload a list."
-msgstr ""
+msgstr "Berikan sebuah file pada pesan berikutnya atau ketik apapun untuk membatalkan."
 
 #: redbot/cogs/trivia/trivia.py:285
-msgid "You have cancelled the upload process."
-msgstr ""
+msgid "You took too long to upload a list."
+msgstr "Kamu memakan waktu terlalu lama untuk mengupload sebuah daftar."
 
-#: redbot/cogs/trivia/trivia.py:293
-msgid "Invalid syntax: "
-msgstr ""
+#: redbot/cogs/trivia/trivia.py:288
+msgid "You have cancelled the upload process."
+msgstr "Kamu telah membatalkan proses upload."
 
 #: redbot/cogs/trivia/trivia.py:296
-msgid "There was an error parsing the trivia list. See logs for more info."
-msgstr ""
+msgid "Invalid syntax: "
+msgstr "Sintaks tidak valid: "
 
-#: redbot/cogs/trivia/trivia.py:301
+#: redbot/cogs/trivia/trivia.py:299
+msgid "There was an error parsing the trivia list. See logs for more info."
+msgstr "Terjadi sebuah error ketika menguraikan daftar trivia. Lihat logs untuk info lebih lanjut."
+
+#: redbot/cogs/trivia/trivia.py:304
 msgid "The custom trivia list was not saved. The file does not follow the proper data format.\n"
 "{schema_error}"
-msgstr ""
+msgstr "Daftar trivia kustom tidak tersimpan. File tidak mengikuti format data yang sesuai.\n"
+"{schema_error}"
 
-#: redbot/cogs/trivia/trivia.py:310
+#: redbot/cogs/trivia/trivia.py:313
 #, docstring
 msgid "Delete a trivia file."
-msgstr ""
+msgstr "Hapus sebuah file trivia."
 
-#: redbot/cogs/trivia/trivia.py:314
+#: redbot/cogs/trivia/trivia.py:317
 msgid "Trivia {filename} was deleted."
-msgstr ""
+msgstr "Trivia {filename} telah dihapus."
 
-#: redbot/cogs/trivia/trivia.py:316
+#: redbot/cogs/trivia/trivia.py:319
 msgid "Trivia file was not found."
-msgstr ""
+msgstr "File Trivia tak ditemukan."
 
-#: redbot/cogs/trivia/trivia.py:321
+#: redbot/cogs/trivia/trivia.py:324
 #, docstring
 msgid "Start trivia session on the specified category.\n\n"
 "        You may list multiple categories, in which case the trivia will involve\n"
 "        questions from all of them.\n"
 "        "
-msgstr ""
+msgstr "Mulai sesi trivia pada kategori yang telah ditentukan.\n\n"
+"        Kamu bisa menentukan beberapa kategori, trivia akan melibatkan semua\n"
+"        pertanyaan dari kategori-kategori yang ditentukan.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:329
+#: redbot/cogs/trivia/trivia.py:332
 msgid "There is already an ongoing trivia session in this channel."
-msgstr ""
+msgstr "Sudah ada sesi trivia yang berlangsung di channel ini."
 
-#: redbot/cogs/trivia/trivia.py:340
+#: redbot/cogs/trivia/trivia.py:343
 msgid "Invalid category `{name}`. See `{prefix}trivia list` for a list of trivia categories."
-msgstr ""
+msgstr "Kategori `{name}` tidak valid. Lihat `{prefix}trivia list` untuk daftar dari kategori trivia."
 
-#: redbot/cogs/trivia/trivia.py:347
+#: redbot/cogs/trivia/trivia.py:350
 msgid "There was an error parsing the trivia list for the `{name}` category. It may be formatted incorrectly."
-msgstr ""
+msgstr "Terjadi sebuah error ketika menguraikan daftar trivia untuk kategori `{name}`. Kemungkinan itu diformat dengan salah."
 
-#: redbot/cogs/trivia/trivia.py:359
+#: redbot/cogs/trivia/trivia.py:362
 msgid "The trivia list was parsed successfully, however it appears to be empty!"
-msgstr ""
+msgstr "Daftar trivia berhasil diuraikan, namun kelihatannya itu kosong!"
 
-#: redbot/cogs/trivia/trivia.py:374
+#: redbot/cogs/trivia/trivia.py:377
 #, docstring
 msgid "Stop an ongoing trivia session."
-msgstr ""
+msgstr "Hentikan sesi trivia yang sedang berjalan."
 
-#: redbot/cogs/trivia/trivia.py:381
+#: redbot/cogs/trivia/trivia.py:384
 msgid "Trivia stopped."
-msgstr ""
+msgstr "Trivia dihentikan."
 
-#: redbot/cogs/trivia/trivia.py:385
+#: redbot/cogs/trivia/trivia.py:388
 #, docstring
 msgid "List available trivia categories."
-msgstr ""
+msgstr "Daftar dari kategori-kategori trivia yang tersedia."
 
-#: redbot/cogs/trivia/trivia.py:390 redbot/cogs/trivia/trivia.py:396
+#: redbot/cogs/trivia/trivia.py:393 redbot/cogs/trivia/trivia.py:399
 msgid "Available trivia lists"
-msgstr ""
+msgstr "Daftar trivia yang tersedia"
 
-#: redbot/cogs/trivia/trivia.py:406
+#: redbot/cogs/trivia/trivia.py:409
 #, docstring
 msgid "Leaderboard for trivia.\n\n"
 "        Defaults to the top 10 of this server, sorted by total wins. Use\n"
 "        subcommands for a more customised leaderboard.\n"
 "        "
-msgstr ""
+msgstr "Papan peringkat untuk trivia.\n\n"
+"        Default ke 10 teratas di server ini, diurutkan dengan total kemenangan. Gunakan\n"
+"        subcommands untuk papan peringkat yang lebih terkustomisasi.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:421
+#: redbot/cogs/trivia/trivia.py:424
 #, docstring
 msgid "Leaderboard for this server.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -377,13 +406,20 @@ msgid "Leaderboard for this server.\n\n"
 "         - `games` : total games played\n\n"
 "        `<top>` is the number of ranks to show on the leaderboard.\n"
 "        "
-msgstr ""
+msgstr "Papan peringkat untuk server ini.\n\n"
+"        `<sort_by>` bisa merupakan apapun dari bidang ini:\n"
+"         - `wins`  : kemenangan total\n"
+"         - `avg`   : skor rata-rata\n"
+"         - `total` : total jawaban benar\n"
+"         - `games` : total games yang dimainkan\n\n"
+"        `<top>` adalah berapa banyak rank yang akan ditunjukkan di papan peringkat.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:434 redbot/cogs/trivia/trivia.py:463
+#: redbot/cogs/trivia/trivia.py:437 redbot/cogs/trivia/trivia.py:466
 msgid "Unknown field `{field_name}`, see `{prefix}help trivia leaderboard server` for valid fields to sort by."
-msgstr ""
+msgstr "Bidang tak dikenal `{field_name}`, lihat `{prefix}help trivia leaderboard server` untuk bidang yang valid untuk disortir."
 
-#: redbot/cogs/trivia/trivia.py:450
+#: redbot/cogs/trivia/trivia.py:453
 #, docstring
 msgid "Global trivia leaderboard.\n\n"
 "        `<sort_by>` can be any of the following fields:\n"
@@ -393,54 +429,62 @@ msgid "Global trivia leaderboard.\n\n"
 "         - `games` : total games played\n\n"
 "        `<top>` is the number of ranks to show on the leaderboard.\n"
 "        "
-msgstr ""
+msgstr "Papan peringkat trivia global.\n\n"
+"        `<sort_by>` bisa merupakan apapun dari bidang ini:\n"
+"         - `wins`  : kemenangan total\n"
+"         - `avg`   : skor rata-rata\n"
+"         - `total` : total jawaban benar\n"
+"         - `games` : total games yang dimainkan\n\n"
+"        `<top>` adalah berapa banyak rank yang akan ditunjukkan di papan peringkat.\n"
+"        "
 
-#: redbot/cogs/trivia/trivia.py:518
+#: redbot/cogs/trivia/trivia.py:521
 msgid "There are no scores on record!"
-msgstr ""
-
-#: redbot/cogs/trivia/trivia.py:548
-msgid "Rank"
-msgstr ""
-
-#: redbot/cogs/trivia/trivia.py:549
-msgid "Member"
-msgstr ""
-
-#: redbot/cogs/trivia/trivia.py:550
-msgid "Wins"
-msgstr ""
+msgstr "Tidak ada skor di rekor!"
 
 #: redbot/cogs/trivia/trivia.py:551
-msgid "Games Played"
-msgstr ""
+msgid "Rank"
+msgstr "Peringkat"
 
 #: redbot/cogs/trivia/trivia.py:552
-msgid "Total Score"
-msgstr ""
+msgid "Member"
+msgstr "Anggota"
 
 #: redbot/cogs/trivia/trivia.py:553
-msgid "Average Score"
-msgstr ""
+msgid "Wins"
+msgstr "Kemenangan"
 
-#: redbot/cogs/trivia/trivia.py:662
+#: redbot/cogs/trivia/trivia.py:554
+msgid "Games Played"
+msgstr "Permainan Dimainkan"
+
+#: redbot/cogs/trivia/trivia.py:555
+msgid "Total Score"
+msgstr "Total Skor"
+
+#: redbot/cogs/trivia/trivia.py:556
+msgid "Average Score"
+msgstr "Skor rata-rata"
+
+#: redbot/cogs/trivia/trivia.py:665
 msgid "{filename} is a reserved trivia name and cannot be replaced.\n"
 "Choose another name."
-msgstr ""
+msgstr "{filename} adalah nama trivia bawaan dan tak bisa digantikan.\n"
+"Gunakan nama yang lain."
 
-#: redbot/cogs/trivia/trivia.py:671
+#: redbot/cogs/trivia/trivia.py:674
 msgid "{filename} already exists. Do you wish to overwrite?"
-msgstr ""
+msgstr "{filename} sudah ada. Apakah kamu mau menimpanya?"
 
-#: redbot/cogs/trivia/trivia.py:693
+#: redbot/cogs/trivia/trivia.py:696
 msgid "You took too long answering."
-msgstr ""
+msgstr "Kamu memakan waktu terlalu lama untuk menjawab."
 
-#: redbot/cogs/trivia/trivia.py:697
+#: redbot/cogs/trivia/trivia.py:700
 msgid "I am not replacing the existing file."
-msgstr ""
+msgstr "Aku tidak menggantikan file yang sudah ada."
 
-#: redbot/cogs/trivia/trivia.py:707
+#: redbot/cogs/trivia/trivia.py:710
 msgid "Saved Trivia list as {filename}."
-msgstr ""
+msgstr "Daftar Trivia tersimpan dengan nama {filename}."
 

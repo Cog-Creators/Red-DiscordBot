@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-11-25 09:07+0000\n"
+"POT-Creation-Date: 2022-06-05 15:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -26,42 +26,37 @@ msgid "Show the specified case."
 msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:37
-msgid "That case does not exist for that server."
+msgid "That case does not exist for this server."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:43 redbot/cogs/modlog/modlog.py:79
-msgid "{case}\n"
-"**Timestamp:** {timestamp}"
+#: redbot/cogs/modlog/modlog.py:46 redbot/cogs/modlog/modlog.py:83
+#: redbot/cogs/modlog/modlog.py:118
+msgid "Timestamp:"
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:52
+#: redbot/cogs/modlog/modlog.py:53
 #, docstring
 msgid "Display cases for the specified member."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:64 redbot/cogs/modlog/modlog.py:102
+#: redbot/cogs/modlog/modlog.py:65 redbot/cogs/modlog/modlog.py:104
 msgid "That user does not exist."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:67 redbot/cogs/modlog/modlog.py:105
+#: redbot/cogs/modlog/modlog.py:68 redbot/cogs/modlog/modlog.py:107
 msgid "Something unexpected went wrong while fetching that user by ID."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:71 redbot/cogs/modlog/modlog.py:108
+#: redbot/cogs/modlog/modlog.py:72 redbot/cogs/modlog/modlog.py:110
 msgid "That user does not have any cases."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:90
+#: redbot/cogs/modlog/modlog.py:92
 #, docstring
 msgid "List cases for the specified member."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:113
-msgid "{case}\n"
-"**Timestamp:** {timestamp}\n\n"
-msgstr ""
-
-#: redbot/cogs/modlog/modlog.py:124
+#: redbot/cogs/modlog/modlog.py:127
 #, docstring
 msgid "Specify a reason for a modlog case.\n\n"
 "        Please note that you can only edit cases you are\n"
@@ -70,19 +65,19 @@ msgid "Specify a reason for a modlog case.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:137
+#: redbot/cogs/modlog/modlog.py:140
 msgid "There are no modlog cases in this server."
 msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:143
+#: redbot/cogs/modlog/modlog.py:146
 msgid "That case does not exist!"
 msgstr "Kasus tersebut tidak ada!"
 
-#: redbot/cogs/modlog/modlog.py:150
+#: redbot/cogs/modlog/modlog.py:153
 msgid "You are not authorized to modify that case!"
 msgstr "Anda tidak diizinkan untuk mengubah kasus tersebut!"
 
-#: redbot/cogs/modlog/modlog.py:158
+#: redbot/cogs/modlog/modlog.py:161
 msgid "Reason for case #{num} has been updated."
 msgstr ""
 
