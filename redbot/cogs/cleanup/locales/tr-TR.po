@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-12-24 23:55+0000\n"
+"POT-Creation-Date: 2022-04-03 01:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -32,7 +32,7 @@ msgstr "Bu cog mesajları \"temizlemek\" (silmek) için kullanılan komutlar iç
 
 #: redbot/cogs/cleanup/cleanup.py:58
 msgid "Are you sure you want to delete {number} messages?"
-msgstr ""
+msgstr "{number} tane mesajı silmek istediğinize emin misiniz?"
 
 #: redbot/cogs/cleanup/cleanup.py:72
 msgid "Cancelled."
@@ -229,12 +229,12 @@ msgstr "Son X mesajdan aynı olanları siler ve sadece bir tanesini bırakır.\n
 "        - `<number>` Aynıları için denetlenecek mesaj sayısı, pozitif tam sayı olmak zorundadır.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:732
+#: redbot/cogs/cleanup/cleanup.py:737
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr "Temizlik komutu ayarlarını yönetin."
 
-#: redbot/cogs/cleanup/cleanup.py:738
+#: redbot/cogs/cleanup/cleanup.py:743
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -245,11 +245,11 @@ msgstr "Temizlik bildirimlerini açıp kapatın.\n\n"
 "        Bu mesaj 5 saniye sonra silinir.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:746
+#: redbot/cogs/cleanup/cleanup.py:751
 msgid "I will no longer notify of message deletions."
 msgstr "Artık mesajların silindiği haber verilmeyecek."
 
-#: redbot/cogs/cleanup/cleanup.py:749
+#: redbot/cogs/cleanup/cleanup.py:754
 msgid "I will now notify of message deletions."
 msgstr "Mesajların silindiği artık haber verilecek."
 

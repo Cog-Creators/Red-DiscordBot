@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-12-31 01:01+0000\n"
+"POT-Creation-Date: 2022-05-20 19:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,64 +15,60 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: ko_KR\n"
 
-#: redbot/core/commands/commands.py:532
-msgid "\"{argument}\" is not a number."
-msgstr ""
-
-#: redbot/core/commands/converter.py:85
+#: redbot/core/commands/converter.py:83
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr ""
 
-#: redbot/core/commands/converter.py:141 redbot/core/commands/converter.py:203
+#: redbot/core/commands/converter.py:139 redbot/core/commands/converter.py:201
 msgid "The time set is way too high, consider setting something reasonable."
 msgstr ""
 
-#: redbot/core/commands/converter.py:145
+#: redbot/core/commands/converter.py:143
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:151
+#: redbot/core/commands/converter.py:149
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr ""
 
-#: redbot/core/commands/converter.py:232
+#: redbot/core/commands/converter.py:230
 msgid "'{input}' doesn't look like a valid user ID."
 msgstr ""
 
-#: redbot/core/commands/converter.py:265
-msgid "Unexpected key {key}"
+#: redbot/core/commands/converter.py:257
+msgid "Missing a key or value."
 msgstr ""
 
-#: redbot/core/commands/converter.py:507
-msgid "Expected one of: {}"
+#: redbot/core/commands/converter.py:263
+msgid "Unexpected key `{key}`."
 msgstr ""
 
-#: redbot/core/commands/converter.py:530
+#: redbot/core/commands/converter.py:488
 msgid "Command \"{arg}\" not found."
 msgstr ""
 
-#: redbot/core/commands/converter.py:540
+#: redbot/core/commands/converter.py:498
 msgid "Cog \"{arg}\" not found."
 msgstr ""
 
-#: redbot/core/commands/help.py:106
+#: redbot/core/commands/help.py:114
 msgid "No"
 msgstr "아니요"
 
-#: redbot/core/commands/help.py:108
+#: redbot/core/commands/help.py:116
 msgid "Yes"
 msgstr "그래요!"
 
-#: redbot/core/commands/help.py:114
+#: redbot/core/commands/help.py:122
 msgid "Disabled"
 msgstr "비활성화됨"
 
-#: redbot/core/commands/help.py:119
+#: redbot/core/commands/help.py:127
 msgid "\n"
 "Custom Tagline: {tag}"
 msgstr ""
 
-#: redbot/core/commands/help.py:125
+#: redbot/core/commands/help.py:133
 msgid "Maximum characters per page: {page_char_limit}\n"
 "Maximum pages per guild (only used if menus are not used): {max_pages_in_guild}\n"
 "Help is a menu: {use_menus}\n"
@@ -85,89 +81,76 @@ msgid "Maximum characters per page: {page_char_limit}\n"
 "Reaction timeout (only used if menus are used): {react_timeout} seconds{tagline_info}"
 msgstr ""
 
-#: redbot/core/commands/help.py:276
-msgid "Type {ctx.clean_prefix}help <command> for more info on a command. You can also type {ctx.clean_prefix}help <category> for more info on a category."
+#: redbot/core/commands/help.py:284
+msgid "Type {command1} for more info on a command. You can also type {command2} for more info on a category."
 msgstr ""
 
-#: redbot/core/commands/help.py:320
+#: redbot/core/commands/help.py:330
 msgid "Syntax: {command_signature}"
 msgstr ""
 
-#: redbot/core/commands/help.py:326
+#: redbot/core/commands/help.py:336
 msgid "Aliases"
 msgstr ""
 
-#: redbot/core/commands/help.py:326
+#: redbot/core/commands/help.py:336
 msgid "Alias"
 msgstr ""
 
-#: redbot/core/commands/help.py:347
+#: redbot/core/commands/help.py:357
 msgid "{aliases} and {number} more aliases."
 msgstr ""
 
-#: redbot/core/commands/help.py:351
+#: redbot/core/commands/help.py:361
 msgid "{aliases} and one more alias."
 msgstr ""
 
-#: redbot/core/commands/help.py:393
-msgid "**__Subcommands:__**"
-msgstr ""
-
-#: redbot/core/commands/help.py:395
-msgid "**__Subcommands:__** (continued)"
-msgstr ""
-
-#: redbot/core/commands/help.py:406
+#: redbot/core/commands/help.py:403 redbot/core/commands/help.py:405
+#: redbot/core/commands/help.py:418
 msgid "Subcommands:"
 msgstr ""
 
-#: redbot/core/commands/help.py:470 redbot/core/commands/help.py:730
-#: redbot/core/commands/help.py:743 redbot/core/commands/help.py:762
+#: redbot/core/commands/help.py:405 redbot/core/commands/help.py:579
+msgid " (continued)"
+msgstr ""
+
+#: redbot/core/commands/help.py:480 redbot/core/commands/help.py:735
+#: redbot/core/commands/help.py:748 redbot/core/commands/help.py:767
 msgid "{ctx.me.display_name} Help Menu"
 msgstr "{ctx.me.display_name} 도움말"
 
-#: redbot/core/commands/help.py:517
+#: redbot/core/commands/help.py:527
 msgid "*Page {page_num} of {page_count}*\n"
 "{content_description}"
 msgstr ""
 
-#: redbot/core/commands/help.py:568
-msgid "**__Commands:__**"
-msgstr ""
-
-#: redbot/core/commands/help.py:570
-msgid "**__Commands:__** (continued)"
-msgstr ""
-
-#: redbot/core/commands/help.py:580
+#: redbot/core/commands/help.py:577 redbot/core/commands/help.py:579
+#: redbot/core/commands/help.py:591
 msgid "Commands:"
 msgstr "명령어:"
 
-#: redbot/core/commands/help.py:622
-msgid "**__No Category:__**"
-msgstr ""
-
-#: redbot/core/commands/help.py:635
-msgid "{title} (continued)"
-msgstr ""
-
-#: redbot/core/commands/help.py:651 redbot/core/commands/help.py:665
+#: redbot/core/commands/help.py:630 redbot/core/commands/help.py:659
+#: redbot/core/commands/help.py:672
 msgid "No Category:"
 msgstr "카테고리 없음"
 
-#: redbot/core/commands/help.py:739
-msgid "Help topic for *{command_name}* not found."
+#: redbot/core/commands/help.py:643
+msgid "{title} (continued)"
 msgstr ""
 
-#: redbot/core/commands/help.py:756
-msgid "Command *{command_name}* has no subcommand named *{not_found}*."
+#: redbot/core/commands/help.py:744
+msgid "Help topic for {command_name} not found."
 msgstr ""
 
-#: redbot/core/commands/help.py:835
+#: redbot/core/commands/help.py:761
+msgid "Command {command_name} has no subcommand named {not_found}."
+msgstr ""
+
+#: redbot/core/commands/help.py:831
 msgid "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
 msgstr ""
 
-#: redbot/core/commands/help.py:876
+#: redbot/core/commands/help.py:872
 #, docstring
 msgid "\n"
 "    I need somebody\n"

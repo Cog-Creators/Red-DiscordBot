@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-10-17 16:51+0000\n"
+"POT-Creation-Date: 2022-04-03 01:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -56,23 +56,23 @@ msgstr "Jag tillkännager redan något. Om du vill göra ett annat tillkännagiv
 msgid "A collection of server administration utilities."
 msgstr "En samling administrationsverktyg för servern."
 
-#: redbot/cogs/admin/admin.py:165
+#: redbot/cogs/admin/admin.py:158
 msgid "{member.display_name} already has the role {role.name}."
 msgstr "{member.display_name} har redan rollen {role.name}."
 
-#: redbot/cogs/admin/admin.py:185
+#: redbot/cogs/admin/admin.py:178
 msgid "I successfully added {role.name} to {member.display_name}"
 msgstr "Jag lyckades lägga till {role.name} till {member.display_name}"
 
-#: redbot/cogs/admin/admin.py:195
+#: redbot/cogs/admin/admin.py:188
 msgid "{member.display_name} does not have the role {role.name}."
 msgstr "{member.display_name} har inte rollen {role.name}."
 
-#: redbot/cogs/admin/admin.py:215
+#: redbot/cogs/admin/admin.py:208
 msgid "I successfully removed {role.name} from {member.display_name}"
 msgstr "Jag lyckades ta bort {role.name} från {member.display_name}"
 
-#: redbot/cogs/admin/admin.py:226
+#: redbot/cogs/admin/admin.py:219
 #, docstring
 msgid "\n"
 "        Add a role to a user.\n\n"
@@ -85,7 +85,7 @@ msgstr "\n"
 "        Om användaren lämnas tom används som standard skaparen av kommandot.\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:242
+#: redbot/cogs/admin/admin.py:235
 #, docstring
 msgid "\n"
 "        Remove a role from a user.\n\n"
@@ -98,12 +98,12 @@ msgstr "\n"
 "        Om användaren lämnas tom är det standard för skaparen av kommandot.\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:256
+#: redbot/cogs/admin/admin.py:249
 #, docstring
 msgid "Edit role settings."
 msgstr "Redigera rollinställningar."
 
-#: redbot/cogs/admin/admin.py:263
+#: redbot/cogs/admin/admin.py:256
 #, docstring
 msgid "\n"
 "        Edit a role's colour.\n\n"
@@ -124,11 +124,11 @@ msgstr "\n"
 "            `[p]editrole colour Test #ff9900`\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:292 redbot/cogs/admin/admin.py:325
+#: redbot/cogs/admin/admin.py:285 redbot/cogs/admin/admin.py:318
 msgid "Done."
 msgstr "Klart."
 
-#: redbot/cogs/admin/admin.py:296
+#: redbot/cogs/admin/admin.py:289
 #, docstring
 msgid "\n"
 "        Edit a role's name.\n\n"
@@ -143,54 +143,48 @@ msgstr "\n"
 "            `[p]editrole name \"The Transistor\" Test`\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:330
+#: redbot/cogs/admin/admin.py:323
 #, docstring
 msgid "Announce a message to all servers the bot is in."
 msgstr "Meddela ett meddelande till alla servrar som botten är i."
 
-#: redbot/cogs/admin/admin.py:337
+#: redbot/cogs/admin/admin.py:330
 msgid "The announcement has begun."
 msgstr "Tillkännagivandet har börjat."
 
-#: redbot/cogs/admin/admin.py:344
+#: redbot/cogs/admin/admin.py:337
 #, docstring
 msgid "Cancel a running announce."
 msgstr "Avbryt en löpande avisering."
 
-#: redbot/cogs/admin/admin.py:346
+#: redbot/cogs/admin/admin.py:339
 msgid "There is no currently running announcement."
 msgstr "Det finns inget aktivt meddelande för närvarande."
 
-#: redbot/cogs/admin/admin.py:349
+#: redbot/cogs/admin/admin.py:342
 msgid "The current announcement has been cancelled."
 msgstr "Det aktuella meddelandet har avbrutits."
 
-#: redbot/cogs/admin/admin.py:355
+#: redbot/cogs/admin/admin.py:348
 #, docstring
 msgid "Change how announcements are sent in this guild."
 msgstr "Ändra hur meddelanden skickas i detta gille."
 
-#: redbot/cogs/admin/admin.py:360
+#: redbot/cogs/admin/admin.py:353
 #, docstring
-msgid "\n"
-"        Change the channel where the bot will send announcements.\n\n"
-"        If channel is left blank it defaults to the current channel.\n"
-"        "
-msgstr "\n"
-"        Ändra kanalen där botten kommer att skicka meddelanden.\n\n"
-"        Om kanalen lämnas tom används som standard den aktuella kanalen.\n"
-"        "
+msgid "Change the channel where the bot will send announcements."
+msgstr ""
 
-#: redbot/cogs/admin/admin.py:369
+#: redbot/cogs/admin/admin.py:356
 msgid "The announcement channel has been set to {channel.mention}"
 msgstr "Tillkännagivandekanalen har satts till {channel.mention}"
 
-#: redbot/cogs/admin/admin.py:374
+#: redbot/cogs/admin/admin.py:361
 #, docstring
 msgid "Unsets the channel for announcements."
 msgstr "Inaktiverar kanalen för meddelanden."
 
-#: redbot/cogs/admin/admin.py:399
+#: redbot/cogs/admin/admin.py:386
 #, docstring
 msgid "\n"
 "        Add or remove a selfrole from yourself.\n\n"
@@ -203,7 +197,7 @@ msgstr "\n"
 "        OBS: Rollen är skiftlägeskänslig!\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:412
+#: redbot/cogs/admin/admin.py:399
 #, docstring
 msgid "\n"
 "        Add a selfrole to yourself.\n\n"
@@ -216,7 +210,7 @@ msgstr "\n"
 "        OBS: Rollen är skiftlägeskänslig!\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:423
+#: redbot/cogs/admin/admin.py:410
 #, docstring
 msgid "\n"
 "        Remove a selfrole from yourself.\n\n"
@@ -229,7 +223,7 @@ msgstr "\n"
 "        OBS: Rollen är skiftlägeskänslig!\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:434
+#: redbot/cogs/admin/admin.py:421
 #, docstring
 msgid "\n"
 "        Lists all available selfroles.\n"
@@ -238,18 +232,18 @@ msgstr "\n"
 "        Listar alla tillgängliga självroller.\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:444
+#: redbot/cogs/admin/admin.py:431
 msgid "Available Selfroles:\n"
 "{selfroles}"
 msgstr "Tillgängliga Selfroles:\n"
 "{selfroles}"
 
-#: redbot/cogs/admin/admin.py:450
+#: redbot/cogs/admin/admin.py:437
 #, docstring
 msgid "Manage selfroles."
 msgstr "Hantera självroller."
 
-#: redbot/cogs/admin/admin.py:455
+#: redbot/cogs/admin/admin.py:442
 #, docstring
 msgid "\n"
 "        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
@@ -260,23 +254,23 @@ msgstr "\n"
 "        OBS: Rollen är skiftlägeskänslig!\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:464
+#: redbot/cogs/admin/admin.py:451
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Jag kan inte låta dig lägga till {role.name} som en självroll eftersom den rollen är högre än eller lika med din högsta roll i Discord-hierarkin."
 
-#: redbot/cogs/admin/admin.py:474
+#: redbot/cogs/admin/admin.py:461
 msgid "The role \"{role.name}\" is already a selfrole."
 msgstr "Rollen \"{role.name}\" är redan en självroll."
 
-#: redbot/cogs/admin/admin.py:480
+#: redbot/cogs/admin/admin.py:467
 msgid "Added {count} selfroles."
 msgstr "Lade till {count} självroller."
 
-#: redbot/cogs/admin/admin.py:482
+#: redbot/cogs/admin/admin.py:469
 msgid "Added 1 selfrole."
 msgstr "Lade till 1 självroll."
 
-#: redbot/cogs/admin/admin.py:488
+#: redbot/cogs/admin/admin.py:475
 #, docstring
 msgid "\n"
 "        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
@@ -287,57 +281,57 @@ msgstr "\n"
 "        OBS: Rollen är skiftlägeskänslig!\n"
 "        "
 
-#: redbot/cogs/admin/admin.py:497
+#: redbot/cogs/admin/admin.py:484
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Jag kan inte låta dig ta bort {role.name} från att vara en självroll eftersom den rollen är högre än eller lika med din högsta roll i Discord-hierarkin."
 
-#: redbot/cogs/admin/admin.py:507
+#: redbot/cogs/admin/admin.py:494
 msgid "Removed {count} selfroles."
 msgstr "Tog bort {count} självroller."
 
-#: redbot/cogs/admin/admin.py:509
+#: redbot/cogs/admin/admin.py:496
 msgid "Removed 1 selfrole."
 msgstr "Tog bort 1 självroll."
 
-#: redbot/cogs/admin/admin.py:515
+#: redbot/cogs/admin/admin.py:502
 #, docstring
 msgid "Clear the list of available selfroles for this server."
 msgstr "Rensa listan över tillgängliga självroller för denna server."
 
-#: redbot/cogs/admin/admin.py:519
+#: redbot/cogs/admin/admin.py:506
 msgid "There are currently no selfroles."
 msgstr "Det finns för närvarande inga självroller."
 
-#: redbot/cogs/admin/admin.py:522
+#: redbot/cogs/admin/admin.py:509
 msgid "Are you sure you want to clear this server's selfrole list?"
 msgstr "Är du säker på att du vill rensa serverns självrollista?"
 
-#: redbot/cogs/admin/admin.py:528
+#: redbot/cogs/admin/admin.py:515
 msgid "You took too long to respond."
 msgstr "Du tog för lång tid att svara."
 
-#: redbot/cogs/admin/admin.py:537
+#: redbot/cogs/admin/admin.py:524
 msgid "I cannot clear the selfroles because the selfrole '{role.name}' is higher than or equal to your highest role in the Discord hierarchy."
 msgstr "Jag kan inte rensa självrollerna eftersom självrollen'{role.name}' är högre än eller lika med din högsta roll i Discord-hierarkin."
 
-#: redbot/cogs/admin/admin.py:543
+#: redbot/cogs/admin/admin.py:530
 msgid "Selfrole list cleared."
 msgstr "Självrollistan rensad."
 
-#: redbot/cogs/admin/admin.py:545
+#: redbot/cogs/admin/admin.py:532
 msgid "No changes have been made."
 msgstr "Inga ändringar har gjorts."
 
-#: redbot/cogs/admin/admin.py:550
+#: redbot/cogs/admin/admin.py:537
 #, docstring
 msgid "Lock a bot to its current servers only."
 msgstr "Lås en bot till sina nuvarande servrar."
 
-#: redbot/cogs/admin/admin.py:555
+#: redbot/cogs/admin/admin.py:542
 msgid "The bot is no longer serverlocked."
 msgstr "Botten är inte längre serverlåst."
 
-#: redbot/cogs/admin/admin.py:557
+#: redbot/cogs/admin/admin.py:544
 msgid "The bot is now serverlocked."
 msgstr "Botten är nu serverlåst."
 

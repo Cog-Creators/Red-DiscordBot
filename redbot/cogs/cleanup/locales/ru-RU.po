@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-12-24 23:55+0000\n"
+"POT-Creation-Date: 2022-04-03 01:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -232,12 +232,12 @@ msgstr "Удаляет дубликаты сообщений в канале, н
 "        - `<number>` Количество сообщений для проверки на дубликаты. Должно быть положительным целым числом.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:732
+#: redbot/cogs/cleanup/cleanup.py:737
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr "Управление настройками для команды очистки."
 
-#: redbot/cogs/cleanup/cleanup.py:738
+#: redbot/cogs/cleanup/cleanup.py:743
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -248,11 +248,11 @@ msgstr "Переключение настроек уведомления об о
 "        Это сообщение будет удалено через 5 секунд.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:746
+#: redbot/cogs/cleanup/cleanup.py:751
 msgid "I will no longer notify of message deletions."
 msgstr "Я больше не буду уведомлять об удалении сообщений."
 
-#: redbot/cogs/cleanup/cleanup.py:749
+#: redbot/cogs/cleanup/cleanup.py:754
 msgid "I will now notify of message deletions."
 msgstr "Теперь я буду уведомлять об удалении сообщений."
 

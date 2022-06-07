@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-11-25 09:07+0000\n"
+"POT-Creation-Date: 2022-06-05 15:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -26,44 +26,37 @@ msgid "Show the specified case."
 msgstr "Şu anki vakaları göster."
 
 #: redbot/cogs/modlog/modlog.py:37
-msgid "That case does not exist for that server."
-msgstr "O sunucu için öyle bir vaka bulunmamakta."
+msgid "That case does not exist for this server."
+msgstr ""
 
-#: redbot/cogs/modlog/modlog.py:43 redbot/cogs/modlog/modlog.py:79
-msgid "{case}\n"
-"**Timestamp:** {timestamp}"
-msgstr "{case}\n"
-"**Zaman Damgası:** {timestamp}"
+#: redbot/cogs/modlog/modlog.py:46 redbot/cogs/modlog/modlog.py:83
+#: redbot/cogs/modlog/modlog.py:118
+msgid "Timestamp:"
+msgstr "Zaman Bilgisi:"
 
-#: redbot/cogs/modlog/modlog.py:52
+#: redbot/cogs/modlog/modlog.py:53
 #, docstring
 msgid "Display cases for the specified member."
 msgstr "Bir kullanıcının vakalarını kontrol edin."
 
-#: redbot/cogs/modlog/modlog.py:64 redbot/cogs/modlog/modlog.py:102
+#: redbot/cogs/modlog/modlog.py:65 redbot/cogs/modlog/modlog.py:104
 msgid "That user does not exist."
 msgstr "Böyle bir kullanıcı bulunmuyor."
 
-#: redbot/cogs/modlog/modlog.py:67 redbot/cogs/modlog/modlog.py:105
+#: redbot/cogs/modlog/modlog.py:68 redbot/cogs/modlog/modlog.py:107
 msgid "Something unexpected went wrong while fetching that user by ID."
 msgstr "O kullanıcıyı ID ile tanımaya çalışırken beklenmedik bir şey ters gitti."
 
-#: redbot/cogs/modlog/modlog.py:71 redbot/cogs/modlog/modlog.py:108
+#: redbot/cogs/modlog/modlog.py:72 redbot/cogs/modlog/modlog.py:110
 msgid "That user does not have any cases."
 msgstr "Bu kullanıcıyla ilgili herhangi bir vaka yok."
 
-#: redbot/cogs/modlog/modlog.py:90
+#: redbot/cogs/modlog/modlog.py:92
 #, docstring
 msgid "List cases for the specified member."
 msgstr "Belirtilen üye için vakaları incele."
 
-#: redbot/cogs/modlog/modlog.py:113
-msgid "{case}\n"
-"**Timestamp:** {timestamp}\n\n"
-msgstr "{case}\n"
-"**Zaman damgası:** {timestamp}\n\n"
-
-#: redbot/cogs/modlog/modlog.py:124
+#: redbot/cogs/modlog/modlog.py:127
 #, docstring
 msgid "Specify a reason for a modlog case.\n\n"
 "        Please note that you can only edit cases you are\n"
@@ -76,19 +69,19 @@ msgstr "Bir mod vakası için sebep belirt.\n\n"
 "        Eğer bir vaka numarası belirtilmemişse en son vaka kullanılacaktır.\n"
 "        "
 
-#: redbot/cogs/modlog/modlog.py:137
+#: redbot/cogs/modlog/modlog.py:140
 msgid "There are no modlog cases in this server."
 msgstr "Bu sunucuda hiç mod vakası bulunmamakta."
 
-#: redbot/cogs/modlog/modlog.py:143
+#: redbot/cogs/modlog/modlog.py:146
 msgid "That case does not exist!"
 msgstr "Öyle bir vaka yok."
 
-#: redbot/cogs/modlog/modlog.py:150
+#: redbot/cogs/modlog/modlog.py:153
 msgid "You are not authorized to modify that case!"
 msgstr "O vaka üzerinde oynama yapma izniniz yok."
 
-#: redbot/cogs/modlog/modlog.py:158
+#: redbot/cogs/modlog/modlog.py:161
 msgid "Reason for case #{num} has been updated."
 msgstr "#{num} vakasının sebebi güncellendi."
 

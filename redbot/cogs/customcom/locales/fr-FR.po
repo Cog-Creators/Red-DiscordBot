@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-12-31 00:40+0000\n"
+"POT-Creation-Date: 2022-04-03 01:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,39 +15,39 @@ msgstr ""
 "X-Crowdin-File-ID: 41\n"
 "Language: fr_FR\n"
 
-#: redbot/cogs/customcom/customcom.py:82
+#: redbot/cogs/customcom/customcom.py:80
 msgid "Welcome to the interactive random {cc} maker!\n"
 "Every message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
 msgstr "Bienvenue sur le générateur interactif aléatoire {cc}  !\n"
 "Chaque message que vous envoyez sera ajouté comme l'une des réponses aléatoires à choisir une fois que ce {cc} sera déclenché. Pour quitter ce menu interactif, tapez `{quit}`"
 
-#: redbot/cogs/customcom/customcom.py:93
+#: redbot/cogs/customcom/customcom.py:91
 msgid "Add a random response:"
 msgstr "Ajouter une réponse aléatoire :"
 
-#: redbot/cogs/customcom/customcom.py:100
+#: redbot/cogs/customcom/customcom.py:98
 msgid "The text response you're trying to create has more than 2000 characters.\n"
 "I cannot send messages that are longer than 2000 characters, please try again."
 msgstr ""
 
-#: redbot/cogs/customcom/customcom.py:113
+#: redbot/cogs/customcom/customcom.py:111
 msgid "Random responses must take the same arguments!"
 msgstr "Les réponses aléatoires doivent prendre les mêmes arguments !"
 
-#: redbot/cogs/customcom/customcom.py:185
+#: redbot/cogs/customcom/customcom.py:183
 msgid "Do you want to create a 'randomized' custom command?"
 msgstr "Voulez-vous créer une commande personnalisée \"aléatoire\" ?"
 
-#: redbot/cogs/customcom/customcom.py:191
-#: redbot/cogs/customcom/customcom.py:202
+#: redbot/cogs/customcom/customcom.py:189
+#: redbot/cogs/customcom/customcom.py:200
 msgid "Response timed out, please try again later."
 msgstr "Requête expirée, veuillez réessayer ultérieurement."
 
-#: redbot/cogs/customcom/customcom.py:196
+#: redbot/cogs/customcom/customcom.py:194
 msgid "What response do you want?"
 msgstr "Quelle réponse voulez-vous ?"
 
-#: redbot/cogs/customcom/customcom.py:238
+#: redbot/cogs/customcom/customcom.py:236
 #, docstring
 msgid "This cog contains commands for creating and managing custom commands that display text.\n\n"
 "    These are useful for storing information members might need, like FAQ answers or invite links.\n"
@@ -60,12 +60,12 @@ msgstr "Ce cog contient des commandes permettant de créer et de gérer des comm
 "    Les commandes ne peuvent être qu'en minuscules, et ne répondront pas aux lettres majuscules.\n"
 "    "
 
-#: redbot/cogs/customcom/customcom.py:268
+#: redbot/cogs/customcom/customcom.py:266
 #, docstring
 msgid "Base command for Custom Commands management."
 msgstr "Commande de base pour la gestion des commandes personnalisées."
 
-#: redbot/cogs/customcom/customcom.py:273
+#: redbot/cogs/customcom/customcom.py:271
 #, docstring
 msgid "Get the raw response of a custom command, to get the proper markdown.\n\n"
 "        This is helpful for copy and pasting.\n\n"
@@ -76,17 +76,17 @@ msgstr "Obtenez la réponse brute d'une commande personnalisée, pour obtenir le
 "        **Arguments:**\n\n"
 "        - `<command>` La commande personnalisée dont on veut obtenir la réponse brute."
 
-#: redbot/cogs/customcom/customcom.py:298
+#: redbot/cogs/customcom/customcom.py:296
 msgid "Response #{num}/{total}"
 msgstr "Réponse #{num}/{total}"
 
-#: redbot/cogs/customcom/customcom.py:308
+#: redbot/cogs/customcom/customcom.py:306
 msgid "Response #{num}/{total}:\n"
 "{raw}"
 msgstr "Réponse #{num}/{total}:\n"
 "{raw}"
 
-#: redbot/cogs/customcom/customcom.py:319
+#: redbot/cogs/customcom/customcom.py:317
 #, docstring
 msgid "\n"
 "        Searches through custom commands, according to the query.\n\n"
@@ -100,19 +100,19 @@ msgstr "\n"
 "        **Arguments:**\n\n"
 "        - `<query>` La requête à rechercher. Peut être constituée de plusieurs mots.        "
 
-#: redbot/cogs/customcom/customcom.py:339
+#: redbot/cogs/customcom/customcom.py:337
 msgid "No close matches were found."
 msgstr "Aucune correspondance proche n'a été trouvée."
 
-#: redbot/cogs/customcom/customcom.py:344
+#: redbot/cogs/customcom/customcom.py:342
 msgid "Search results"
 msgstr "Résultats de la recherche"
 
-#: redbot/cogs/customcom/customcom.py:349
+#: redbot/cogs/customcom/customcom.py:347
 msgid "The following matches have been found:"
 msgstr "Les correspondances suivantes ont été trouvées:"
 
-#: redbot/cogs/customcom/customcom.py:354
+#: redbot/cogs/customcom/customcom.py:352
 #, docstring
 msgid "Create custom commands.\n\n"
 "        If a type is not specified, a simple CC will be created.\n"
@@ -125,7 +125,7 @@ msgstr "Créer des commandes personnalisées.\n\n"
 "        [here](https://docs. iscord.red/fr/stable/cog_customcom.html).\n"
 "        "
 
-#: redbot/cogs/customcom/customcom.py:365
+#: redbot/cogs/customcom/customcom.py:363
 #, docstring
 msgid "Create a CC where it will randomly choose a response!\n\n"
 "        Note: This command is interactive.\n\n"
@@ -137,38 +137,38 @@ msgstr "Créez un CC qui choisira une réponse au hasard !\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` La commande exécutée pour retourner le texte. Mettre en minuscule.        "
 
-#: redbot/cogs/customcom/customcom.py:375
-#: redbot/cogs/customcom/customcom.py:416
+#: redbot/cogs/customcom/customcom.py:373
+#: redbot/cogs/customcom/customcom.py:414
 msgid "Custom command names cannot have spaces in them."
 msgstr "Les noms de commandes personnalisées ne peuvent pas contenir d'espaces."
 
-#: redbot/cogs/customcom/customcom.py:378
-#: redbot/cogs/customcom/customcom.py:419
+#: redbot/cogs/customcom/customcom.py:376
+#: redbot/cogs/customcom/customcom.py:417
 msgid "There already exists a bot command with the same name."
 msgstr "Il existe déjà une commande du bot avec le même nom."
 
-#: redbot/cogs/customcom/customcom.py:382
+#: redbot/cogs/customcom/customcom.py:380
 msgid "Custom command process cancelled."
 msgstr "Processus de commande personnalisée annulé."
 
-#: redbot/cogs/customcom/customcom.py:386
-#: redbot/cogs/customcom/customcom.py:423
+#: redbot/cogs/customcom/customcom.py:384
+#: redbot/cogs/customcom/customcom.py:421
 msgid "Custom command successfully added."
 msgstr "Commande personnalisée ajoutée avec succès."
 
-#: redbot/cogs/customcom/customcom.py:389
-#: redbot/cogs/customcom/customcom.py:426
+#: redbot/cogs/customcom/customcom.py:387
+#: redbot/cogs/customcom/customcom.py:424
 msgid "This command already exists. Use `{command}` to edit it."
 msgstr "Cette commande existe déjà. Utilisez `{command}` pour la modifier."
 
-#: redbot/cogs/customcom/customcom.py:395
-#: redbot/cogs/customcom/customcom.py:434
-#: redbot/cogs/customcom/customcom.py:537
+#: redbot/cogs/customcom/customcom.py:393
+#: redbot/cogs/customcom/customcom.py:432
+#: redbot/cogs/customcom/customcom.py:535
 msgid "The text response you're trying to create has more than 2000 characters.\n"
 "I cannot send messages that are longer than 2000 characters."
 msgstr ""
 
-#: redbot/cogs/customcom/customcom.py:404
+#: redbot/cogs/customcom/customcom.py:402
 #, docstring
 msgid "Add a simple custom command.\n\n"
 "        Example:\n"
@@ -185,7 +185,7 @@ msgstr "Ajoutez une simple commande personnalisée.\n\n"
 "        - `<text>` Le texte à retourner lors de l'exécution de la commande. Voir le guide pour une utilisation améliorée.\n"
 "        "
 
-#: redbot/cogs/customcom/customcom.py:445
+#: redbot/cogs/customcom/customcom.py:443
 #, docstring
 msgid "Set, edit, or view the cooldown for a custom command.\n\n"
 "        You may set cooldowns per member, channel, or guild. Multiple\n"
@@ -213,33 +213,33 @@ msgstr "Définissez, modifiez ou affichez le délai d'attente d'une commande per
 "        - `<cooldown>` Le nombre de secondes à attendre avant de permettre à la commande d'être invoquée à nouveau. S'il est omis, il retournera les paramètres actuels de cooldown.\n"
 "        - `<per>` Le groupe sur lequel appliquer le cooldown. La valeur par défaut est par membre. Les choix valides sont serveur, guilde, utilisateur, et membre.        "
 
-#: redbot/cogs/customcom/customcom.py:466
-#: redbot/cogs/customcom/customcom.py:507
+#: redbot/cogs/customcom/customcom.py:464
+#: redbot/cogs/customcom/customcom.py:505
 msgid "That command doesn't exist."
 msgstr "Cette commande n'existe pas."
 
-#: redbot/cogs/customcom/customcom.py:471
+#: redbot/cogs/customcom/customcom.py:469
 msgid "A {} may call this command every {} seconds"
 msgstr "Un {} peut appeler cette commande toutes les {} secondes"
 
-#: redbot/cogs/customcom/customcom.py:475
+#: redbot/cogs/customcom/customcom.py:473
 msgid "This command has no cooldown."
 msgstr "Cette commande n'a pas de cooldown."
 
-#: redbot/cogs/customcom/customcom.py:479
+#: redbot/cogs/customcom/customcom.py:477
 msgid "{} must be one of {}"
 msgstr "{} doit être l'un des {}"
 
-#: redbot/cogs/customcom/customcom.py:483
+#: redbot/cogs/customcom/customcom.py:481
 msgid "Custom command cooldown successfully edited."
 msgstr "Le cooldown de commande personnalisé a été modifié avec succès."
 
-#: redbot/cogs/customcom/customcom.py:486
-#: redbot/cogs/customcom/customcom.py:527
+#: redbot/cogs/customcom/customcom.py:484
+#: redbot/cogs/customcom/customcom.py:525
 msgid "That command doesn't exist. Use `{command}` to add it."
 msgstr "Cette commande n'existe pas. Utilisez `{command}` pour l'ajouter."
 
-#: redbot/cogs/customcom/customcom.py:494
+#: redbot/cogs/customcom/customcom.py:492
 #, docstring
 msgid "Delete a custom command.\n\n"
 "        Example:\n"
@@ -254,11 +254,11 @@ msgstr "Supprimer une commande personnalisée.\n\n"
 "        - `<command>` La commande personnalisée à supprimer.\n"
 "        "
 
-#: redbot/cogs/customcom/customcom.py:505
+#: redbot/cogs/customcom/customcom.py:503
 msgid "Custom command successfully deleted."
 msgstr "La commande personnalisée a été supprimée avec succès."
 
-#: redbot/cogs/customcom/customcom.py:512
+#: redbot/cogs/customcom/customcom.py:510
 #, docstring
 msgid "Edit a custom command.\n\n"
 "        Example:\n"
@@ -274,11 +274,11 @@ msgstr "Modifier une commande personnalisée.\n\n"
 "        - `<command>` La commande personnalisée à modifier.\n"
 "        - `<text>` Le nouveau texte à renvoyer lors de l'exécution de la commande.        "
 
-#: redbot/cogs/customcom/customcom.py:524
+#: redbot/cogs/customcom/customcom.py:522
 msgid "Custom command successfully edited."
 msgstr "Commande personnalisée modifiée avec succès."
 
-#: redbot/cogs/customcom/customcom.py:546
+#: redbot/cogs/customcom/customcom.py:544
 #, docstring
 msgid "List all available custom commands.\n\n"
 "        The list displays a preview of each command's response, with\n"
@@ -289,19 +289,19 @@ msgstr "Énumérez toutes les commandes personnalisées disponibles.\n\n"
 "        le code markdown affiché et les nouvelles lignes remplacées par des espaces.\n"
 "        "
 
-#: redbot/cogs/customcom/customcom.py:555
+#: redbot/cogs/customcom/customcom.py:553
 msgid "There are no custom commands in this server. Use `{command}` to start adding some."
 msgstr "Il n'y a pas de commandes personnalisées dans ce serveur. Utilisez `{command}` pour commencer à en ajouter."
 
-#: redbot/cogs/customcom/customcom.py:571
+#: redbot/cogs/customcom/customcom.py:569
 msgid "Custom Command List"
 msgstr "Liste de commandes personnalisées"
 
-#: redbot/cogs/customcom/customcom.py:575
+#: redbot/cogs/customcom/customcom.py:573
 msgid "Page {num}/{total}"
 msgstr "Page {num}/{total}"
 
-#: redbot/cogs/customcom/customcom.py:585
+#: redbot/cogs/customcom/customcom.py:583
 #, docstring
 msgid "Shows a custom command's responses and its settings.\n\n"
 "        **Arguments:**\n\n"
@@ -312,23 +312,23 @@ msgstr "Affiche les réponses d'une commande personnalisée et ses paramètres.\
 "        - `<command_name>` La commande personnalisée à afficher.\n"
 "        "
 
-#: redbot/cogs/customcom/customcom.py:595
+#: redbot/cogs/customcom/customcom.py:593
 msgid "I could not not find that custom command."
 msgstr "Je n'ai pas pu trouver cette commande personnalisée."
 
-#: redbot/cogs/customcom/customcom.py:606
+#: redbot/cogs/customcom/customcom.py:604
 msgid "Deleted User"
 msgstr "Utilisateur supprimé"
 
-#: redbot/cogs/customcom/customcom.py:612
+#: redbot/cogs/customcom/customcom.py:610
 msgid "Random"
 msgstr "Aléatoire"
 
-#: redbot/cogs/customcom/customcom.py:612
+#: redbot/cogs/customcom/customcom.py:610
 msgid "Normal"
 msgstr "Normal"
 
-#: redbot/cogs/customcom/customcom.py:614
+#: redbot/cogs/customcom/customcom.py:612
 msgid "Command: {command_name}\n"
 "Author: {author}\n"
 "Created: {created_at}\n"
@@ -338,15 +338,15 @@ msgstr "Commande : {command_name}\n"
 "Créé le : {created_at}\n"
 "Type : {type}\n"
 
-#: redbot/cogs/customcom/customcom.py:626
+#: redbot/cogs/customcom/customcom.py:624
 msgid "Cooldowns:\n"
 msgstr "Cooldowns :\n"
 
-#: redbot/cogs/customcom/customcom.py:628
+#: redbot/cogs/customcom/customcom.py:626
 msgid "{num} seconds per {period}\n"
 msgstr "{num} secondes par {period}\n"
 
-#: redbot/cogs/customcom/customcom.py:631
+#: redbot/cogs/customcom/customcom.py:629
 msgid "Responses:\n"
 msgstr "Réponses :\n"
 

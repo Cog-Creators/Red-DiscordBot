@@ -28,11 +28,11 @@ msgstr "Basis Befehl für Bank Einstellungen."
 #: redbot/cogs/bank/bank.py:52
 #, docstring
 msgid "Show the current bank settings."
-msgstr "Zeige die aktuellen Bank Einstellungen an."
+msgstr "Zeige die aktuellen Bankeinstellungen an."
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Global"
-msgstr "Überall"
+msgstr "Global"
 
 #: redbot/cogs/bank/bank.py:62
 msgid "Server"
@@ -49,8 +49,8 @@ msgstr "Bankeinstellungen:\n\n"
 "Bankname: {bank_name}\n"
 "Bank bereich: {bank_scope}\n"
 "Währung: {currency_name}\n"
-"Standardbilanze: {default_balance}\n"
-"Maximal zulässiger Bilanzen: {maximum_bal}\n"
+"Standardguthaben: {default_balance}\n"
+"Maximal zulässiges Guthaben: {maximum_bal}\n"
 
 #: redbot/cogs/bank/bank.py:83
 #, docstring
