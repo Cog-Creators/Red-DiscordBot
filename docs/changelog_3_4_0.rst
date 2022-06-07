@@ -1,5 +1,114 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.17 (2022-06-07)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`matcha19`, :ghuser:`mina9999`, :ghuser:`ponte-vecchio`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`untir-l`, :ghuser:`Vexed01`
+
+Read before updating
+--------------------
+
+#. Fedora 34 is no longer supported as it has already reached its end of life.
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.17 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1347>`__.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Fedora 33 is no longer supported as it has already reached its its end of life (:issue:`5701`)
+- Added instructions on how to respond to the message received from ``[p]contact`` in the embed footer of the message sent to the bot owner (:issue:`5528`, :issue:`5529`)
+- Updated ``[p]servers`` command to escape Discord markdown in server names (:issue:`5696`, :issue:`5744`)
+- Fixed a bug that prevented users from changing the name and data location with ``redbot --edit`` command (:issue:`5545`, :issue:`5540`, :issue:`5541`)
+- Fixed grammar in the ``[p]uptime`` command (:issue:`5596`)
+
+Audio
+*****
+
+- Added timestamps to all embeds sent by Audio cog (:issue:`5632`)
+- Improved handling of voice connection close codes received from Discord (:issue:`5712`)
+- Fixed plain word YT searching with ``[p]play`` and ``[p]search`` commands (:issue:`5712`)
+- Fixed YT age-restricted track playback (:issue:`5712`)
+- Fixed the cog not sending any Track Error message on track decoding errors (:issue:`5716`)
+- Fixed the ``UnboundLocalError`` exception happening when using ``[p]playlist list`` with an empty playlist (:issue:`5378`, :issue:`5394`)
+
+Downloader
+**********
+
+- Added information about the commit hash at which the cog is pinned in the output of ``[p]cog listpinned`` command (:issue:`5551`, :issue:`5563`)
+
+Filter
+******
+
+- Fixed a potential memory leak in Filter cog (:issue:`5578`)
+
+General
+*******
+
+- Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`5655`)
+
+Mod
+***
+
+- Updated Red's ban commands to address the breaking change that Discord made in their ban list API endpoint (:issue:`5656`)
+
+Modlog
+******
+
+- Modlog's automated case creation for bans now properly checks that the guild is available before further processing (:issue:`5647`)
+
+Mutes
+*****
+
+- Added proper error handling for VERY long durations in mute commands (:issue:`5605`)
+
+Permissions
+***********
+
+- Updated ``[p]permissions acl setglobal`` and ``[p]permissions acl setserver`` to allow sending the file in a follow-up message (:issue:`5473`, :issue:`5685`)
+- ``[p]permissions canrun`` now prepends an emoji to the response to better differentiate between the positive and negative results (:issue:`5711`)
+
+Trivia
+******
+
+- Allowed passing ``use_spoilers`` setting in the CONFIG section of the trivia list file (:issue:`5566`)
+
+Trivia Lists
+************
+
+- Added a trivia list for the FIFA World Cup with questions based on hosts, placements, venues, continental confederations, number of participants, top goal scorers, qualification shocks, and more (:issue:`5639`)
+- Updated ``geography`` trivia list with up-to-date answers and removed questions that lack sources for their claimed answers (:issue:`5638`)
+- Updated Kazakhstan's capital city in the ``worldcapitals`` trivia list (:issue:`5598`, :issue:`5599`)
+- Fixed spelling error in the answer to one of the questions in ``computers`` trivia list (:issue:`5587`, :issue:`5588`)
+
+
+Developer changelog
+-------------------
+
+- Updated ``discord.ext.menus`` vendor (:issue:`5579`)
+
+
+Documentation changes
+---------------------
+
+- Added CentOS Stream 9, RHEL 9, Alma Linux 9, Oracle Linux 9, and Rocky Linux 9 install guides (:issue:`5537`, :issue:`5721`)
+- Added Ubuntu 22.04 install guide (:issue:`5720`)
+- Changed the recommended operating system for hosting Red from Ubuntu 20.04 LTS to Ubuntu 22.04 LTS (:issue:`5720`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`5719`)
+- Replaced install instructions for discontinued AdoptOpenJDK package with Temurin 11 package in the macOS install guide (:issue:`5718`)
+- Updated Visual Studio Build Tools version in Windows install guide (:issue:`5702`)
+- Updated systemd guide to use the absolute path to ``which`` command to avoid triggering shell aliases on some OSes (:issue:`5547`)
+- Emphasized lines that contain text that needs to be replaced by the user (:issue:`5548`)
+- Prevented Google and other search engines from indexing versioned documentation (:issue:`5549`)
+- Pinned Temurin version on Windows until a fixed version becomes available (:issue:`5717`)
+- Fixed git installation instructions in CentOS 7 install guide (:issue:`5700`)
+
+
 Redbot 3.4.16 (2021-12-31)
 ==========================
 
