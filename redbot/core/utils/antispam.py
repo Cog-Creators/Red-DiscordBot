@@ -8,7 +8,9 @@ AntiSpamInterval = namedtuple("AntiSpamInterval", ["period", "frequency"])
 
 class AntiSpam:
     """
-    An object that counts against intervals to prevent spam.
+    An object that counts against temporary "intervals"
+    to reduce spam. These intervals can be set to incline
+    in duration for each interval that is stamped.
 
     Attributes
     ----------
@@ -45,13 +47,16 @@ class AntiSpam:
     @property
     def spammy(self):
         """
-        Check whether any intervals are active.
+        Whether any antispam intervals are active.
         """
         return any(self.__interval_check(x) for x in self.__intervals)
 
     def stamp(self):
         """
-        Mark an event against the intervals as happening now.
+        Mark against the list of antispam intervals.
+
+        The stamp will last until the corresponding interval duration
+        has expired (set when this AntiSpam object was initiated).
         """
         self.__event_timestamps.append(datetime.utcnow())
         self.__event_timestamps = [
