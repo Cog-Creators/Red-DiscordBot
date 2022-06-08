@@ -10,7 +10,7 @@ from red_commons.logging import getLogger
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from redbot.core.utils.menus import menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...equalizer import Equalizer
@@ -25,7 +25,8 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="eq", invoke_without_command=True)
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_equalizer(self, ctx: commands.Context):
         """Equalizer management.
 
@@ -140,7 +141,7 @@ class EqualizerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 text=_("{num} preset(s)").format(num=humanize_number(len(list(eq_presets.keys()))))
             )
             page_list.append(embed)
-        await menu(ctx, page_list, DEFAULT_CONTROLS)
+        await menu(ctx, page_list)
 
     @command_equalizer.command(name="load")
     async def command_equalizer_load(self, ctx: commands.Context, eq_preset: str):

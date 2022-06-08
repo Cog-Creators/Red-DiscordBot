@@ -14,7 +14,7 @@ from redbot.core import bank, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from redbot.core.utils.menus import menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...audio_dataclasses import LocalPath
@@ -78,7 +78,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_global_whitelist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.url_keyword_whitelist()
@@ -102,7 +102,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_global_whitelist.command(name="clear")
     async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
@@ -172,7 +172,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_global_blacklist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.url_keyword_blacklist()
@@ -196,7 +196,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_global_blacklist.command(name="clear")
     async def command_audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
@@ -268,7 +268,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_whitelist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
@@ -292,7 +292,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_whitelist.command(name="clear")
     async def command_audioset_perms_whitelist_clear(self, ctx: commands.Context):
@@ -361,7 +361,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_blacklist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
@@ -385,7 +385,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_blacklist.command(name="clear")
     async def command_audioset_perms_blacklist_clear(self, ctx: commands.Context):
@@ -453,7 +453,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.set_player_settings(ctx)
 
     @command_audioset_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_autoplay_playlist(
         self,
         ctx: commands.Context,
@@ -496,9 +496,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
-                footer=discord.Embed.Empty
-                if not await self.bot.is_owner(ctx.author)
-                else _("Check your logs."),
+                footer=None if not await self.bot.is_owner(ctx.author) else _("Check your logs."),
             )
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
@@ -782,7 +780,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="localpath")
     @commands.is_owner()
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_localpath(self, ctx: commands.Context, *, local_path=None):
         """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
 

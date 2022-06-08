@@ -14,7 +14,6 @@ from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.menus import (
-    DEFAULT_CONTROLS,
     close_menu,
     menu,
     next_page,
@@ -33,7 +32,8 @@ _ = Translator("Audio", Path(__file__))
 class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.group(name="queue", invoke_without_command=True)
     @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_queue(self, ctx: commands.Context, *, page: int = 1):
         """List the songs in the queue."""
 
@@ -303,7 +303,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         async for page_num in AsyncIter(range(1, len_search_pages + 1)):
             embed = await self._build_queue_search_page(ctx, page_num, search_list)
             search_page_list.append(embed)
-        await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+        await menu(ctx, search_page_list)
 
     @command_queue.command(name="shuffle")
     @commands.cooldown(1, 30, commands.BucketType.guild)

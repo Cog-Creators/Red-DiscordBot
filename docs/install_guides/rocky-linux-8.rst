@@ -4,4 +4,4 @@
 Installing Red on Rocky Linux 8
 ===============================
 
-.. include:: _includes/install-guide-rhel-derivatives.rst
+.. include:: _includes/install-guide-rhel8-derivatives.rst
