@@ -978,7 +978,7 @@ class KickBanMixin(MixinMeta):
             )
             message = await self.config.guild(ctx.guild).unban_message()
             objects = {
-                "user": user,
+                "user": ban_entry.user,
                 "moderator": author,
                 "reason": reason,
                 "guild": guild,
