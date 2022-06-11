@@ -61,7 +61,6 @@ LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(raw_name
 LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
-_RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
 
@@ -315,7 +314,7 @@ class ServerManager:
         log.info("Waiting for Managed Lavalink node to be ready")
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
-            if _RE_READY_LINE.search(line):
+            if b"Lavalink is ready to accept connections." in line:
                 self.ready.set()
                 log.info("Managed Lavalink node is ready to receive requests.")
                 break
