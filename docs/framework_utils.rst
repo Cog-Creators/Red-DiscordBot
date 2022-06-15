@@ -67,6 +67,7 @@ Tunnel
 
 .. automodule:: redbot.core.utils.tunnel
     :members: Tunnel
+    :exclude-members: files_from_attatch
 
 Common Filters
 ==============
