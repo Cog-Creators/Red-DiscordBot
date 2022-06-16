@@ -23,7 +23,7 @@ one-by-one:
 
 .. prompt:: bash
 
-    brew install python@3.9
+    brew install python@3.10
     brew install git
     brew tap homebrew/cask-versions
     brew install --cask temurin11
@@ -34,11 +34,11 @@ To fix this, you should run these commands:
 .. prompt:: bash
 
     profile=$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))
-    echo 'export PATH="$(brew --prefix)/opt/python@3.9/bin:$PATH"' >> "$profile"
+    echo 'export PATH="$(brew --prefix)/opt/python@3.10/bin:$PATH"' >> "$profile"
     source "$profile"
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv.rst
+.. include:: _includes/create-env-with-venv3.10.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst
