@@ -140,12 +140,19 @@ class HelpSettings:
             tagline_info = ""
 
         data["tagline_info"] = tagline_info
+        menus_str = {
+            HelpMenuSetting.disabled: _("No"),
+            HelpMenuSetting.reactions: _("Yes, reactions"),
+            HelpMenuSetting.buttons: _("Yes, buttons"),
+            HelpMenuSetting.select: _("Yes, buttons with select menu"),
+            HelpMenuSetting.selectonly: _("Yes, select menu only")
+        }
+        data["use_menus"] = menus_str[self.use_menus]
 
         return _(
             "Maximum characters per page: {page_char_limit}"
             "\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}"
             "\nHelp is a menu: {use_menus}"
-            "\nHelp is using buttons: {use_buttons}"
             "\nHelp shows hidden commands: {show_hidden}"
             "\nHelp shows commands aliases: {show_aliases}"
             "\nHelp only shows commands which can be used: {verify_checks}"
