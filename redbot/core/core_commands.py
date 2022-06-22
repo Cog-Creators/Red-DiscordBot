@@ -4059,6 +4059,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[message]` - The message to dm to the user.
         """
 
+        if user.bot:
+            await ctx.send(_("Sorry, the user {} is a bot.").format(user))
+            return
         prefixes = await ctx.bot.get_valid_prefixes()
         prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
         description = _("Owner of {}").format(ctx.bot.user)
