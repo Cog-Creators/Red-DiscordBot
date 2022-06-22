@@ -4073,20 +4073,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await user.send(embed=e)
             except discord.HTTPException:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message to {}").format(user)
+                    _("Sorry, I couldn't deliver your message to {}.").format(user)
                 )
             else:
-                await ctx.send(_("Message delivered to {}").format(user))
+                await ctx.send(_("Message delivered to {}.").format(user))
         else:
             response = "{}\nMessage:\n\n{}".format(description, message)
             try:
                 await user.send("{}\n{}".format(box(response), content))
             except discord.HTTPException:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message to {}").format(user)
+                    _("Sorry, I couldn't deliver your message to {}.").format(user)
                 )
             else:
-                await ctx.send(_("Message delivered to {}").format(user))
+                await ctx.send(_("Message delivered to {}.").format(user))
 
     @commands.command(hidden=True)
     @checks.is_owner()
