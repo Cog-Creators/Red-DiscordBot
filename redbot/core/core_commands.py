@@ -4059,8 +4059,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[message]` - The message to dm to the user.
         """
 
-        if user.bot:
-            await ctx.send(_("Sorry, the user {} is a bot.").format(user))
+        if user.bot or not user.mutual_guilds:
+            await ctx.send(
+                _(
+                    "User is a bot, or user not found.. "
+                    "You can only send messages to people I share "
+                    "a server with."
+                )
+            )
             return
         prefixes = await ctx.bot.get_valid_prefixes()
         prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
