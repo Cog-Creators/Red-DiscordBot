@@ -4044,10 +4044,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.command()
     @checks.is_owner()
-    async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
+    async def dm(self, ctx: commands.Context, user: discord.User, *, message: str):
         """Sends a DM to a user.
 
-        This command needs a user ID to work.
+        This command needs a user ID or user name to work.
 
         To get a user ID, go to Discord's settings and open the 'Appearance' tab.
         Enable 'Developer Mode', then right click a user and click on 'Copy ID'.
@@ -4058,16 +4058,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[message]` - The message to dm to the user.
         """
-        destination = self.bot.get_user(user_id)
-        if destination is None or destination.bot:
-            await ctx.send(
-                _(
-                    "Invalid ID, user not found, or user is a bot. "
-                    "You can only send messages to people I share "
-                    "a server with."
-                )
-            )
-            return
 
         prefixes = await ctx.bot.get_valid_prefixes()
         prefix = re.sub(rf"<@!?{ctx.me.id}>", f"@{ctx.me.name}".replace("\\", r"\\"), prefixes[0])
@@ -4080,23 +4070,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             e.set_author(name=description, icon_url=ctx.bot.user.display_avatar)
 
             try:
-                await destination.send(embed=e)
+                await user.send(embed=e)
             except discord.HTTPException:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(user)
                 )
             else:
-                await ctx.send(_("Message delivered to {}").format(destination))
+                await ctx.send(_("Message delivered to {}").format(user))
         else:
             response = "{}\nMessage:\n\n{}".format(description, message)
             try:
-                await destination.send("{}\n{}".format(box(response), content))
+                await user.send("{}\n{}".format(box(response), content))
             except discord.HTTPException:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(user)
                 )
             else:
-                await ctx.send(_("Message delivered to {}").format(destination))
+                await ctx.send(_("Message delivered to {}").format(user))
 
     @commands.command(hidden=True)
     @checks.is_owner()
