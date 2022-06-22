@@ -3090,11 +3090,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Set Api Commands -- ###
 
     @_set.group(name="api", invoke_without_command=True)
-<<<<<<< commands-over-checks
     @commands.is_owner()
-    async def _set_api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
-=======
-    @checks.is_owner()
     async def _set_api(
         self,
         ctx: commands.Context,
@@ -3102,7 +3098,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         *,
         tokens: Optional[TokenConverter] = None,
     ):
->>>>>>> V3/develop
         """
         Commands to set, list or remove various external API tokens.
 
