@@ -22,6 +22,7 @@ we recommend **Ubuntu 22.04 LTS**.
    debian-10
    debian-11
    fedora
+   opensuse-leap-152
    opensuse-leap-15
    opensuse-tumbleweed
    oracle-linux-8
