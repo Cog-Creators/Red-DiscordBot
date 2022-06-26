@@ -355,6 +355,7 @@ class General(commands.Cog):
             features = {
                 "ANIMATED_ICON": _("Animated Icon"),
                 "ANIMATED_BANNER": _("Animated Banner"),
+                "AUTO_MODERATION": _("Auto Moderation"),
                 "BANNER": _("Banner"),
                 "COMMERCE": _("Commerce"),
                 "COMMUNITY": _("Community"),
