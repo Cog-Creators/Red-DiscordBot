@@ -138,6 +138,11 @@ async def _edit_prefix(red, prefix, no_prompt):
             if not prefixes:
                 print("You need to pass at least one prefix!")
                 continue
+            if any(prefix.startswith("/") for prefix in prefixes):
+                print(
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+                )
+                continue
             prefixes = sorted(prefixes, reverse=True)
             await red._config.prefix.set(prefixes)
             print("Prefixes updated.\n")
