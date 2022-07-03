@@ -299,7 +299,10 @@ class Dev(commands.Cog):
             else:
                 value = stdout.getvalue()
                 if result is not None:
-                    msg = "{}{}".format(value, result)
+                    try:
+                        msg = "{}{}".format(value, result)
+                    except:
+                        msg = "{}{}".format(value, traceback.format_exc())
                     env["_"] = result
                 elif value:
                     msg = "{}".format(value)
