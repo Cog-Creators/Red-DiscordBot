@@ -138,6 +138,11 @@ async def _edit_prefix(red, prefix, no_prompt):
             if not prefixes:
                 print("You need to pass at least one prefix!")
                 continue
+            if any(prefix.startswith("/") for prefix in prefixes):
+                print(
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+                )
+                continue
             prefixes = sorted(prefixes, reverse=True)
             await red._config.prefix.set(prefixes)
             print("Prefixes updated.\n")
@@ -187,7 +192,7 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
                 " run this command with --overwrite-existing-instance flag."
             )
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
-        name = get_name()
+        name = get_name("")
         if name in _get_instance_names():
             print(
                 "WARNING: An instance already exists with this name. "
@@ -235,7 +240,9 @@ def _edit_data_path(data, instance_name, data_path, copy_data, no_prompt):
             print("Can't copy data to non-empty location. Data location will remain unchanged.")
             data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
     elif not no_prompt and confirm("Would you like to change the data location?", default=False):
-        data["DATA_PATH"] = get_data_dir(instance_name)
+        data["DATA_PATH"] = get_data_dir(
+            instance_name=instance_name, data_path=None, interactive=True
+        )
         if confirm("Do you want to copy the data from old location?", default=True):
             if not _copy_data(data):
                 print("Can't copy the data to non-empty location.")
