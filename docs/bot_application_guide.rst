@@ -67,9 +67,9 @@ Enabling Privileged Intents
     .. image:: /.resources/bot-guide/discord_bot_tab.png
         :alt: The bot tab in the application page.
 
-5. Scroll down to the "Privileged Gateway Intents" section, enable both privileged intents and save your changes.
+5. Scroll down to the "Privileged Gateway Intents" section, enable all three privileged intents and save your changes. (Note: The "message content" intent must be enabled on or before August 31, 2022, or your bot will cease functioning once Discord begins to enforce it.)
 
-    .. image:: /.resources/bot-guide/discord_privileged_intents.png
+    .. image:: /.resources/bot-guide/discord_privileged_intents_until_aug_31.png
         :alt: The privileged gateway intents selector.
 
 .. warning::
