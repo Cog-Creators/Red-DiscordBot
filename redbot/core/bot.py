@@ -1141,8 +1141,11 @@ class Red(
                 packages.extend(self._cli_flags.load_cogs)
 
             if self._cli_flags.unload_cogs:
-                self._cli_flags.unload_cogs = [x for x in self._cli_flags.unload_cogs if x in packages]
-                packages.remove(*self._cli_flags.unload_cogs)
+                for x in self._cli_flags.unload_cogs:
+                    if x not in self._cli_flags.unload_cogs:
+                        self._cli_flags.unload_cogs.remove(x)
+                        continue
+                    packages.remove(x)
 
         system_changed = False
         machine = platform.machine()
@@ -1202,8 +1205,10 @@ class Red(
                     to_remove.append(package)
             for package in to_remove:
                 packages.remove(package)
-            if packages:
-                log.info("Loaded packages: " + ", ".join(packages))
+        if packages:
+            log.info("Loaded packages: " + ", ".join(packages))
+        else:
+            log.info("No packages were loaded.")
 
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
