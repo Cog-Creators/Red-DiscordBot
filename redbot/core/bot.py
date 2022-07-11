@@ -1140,8 +1140,9 @@ class Red(
             if self._cli_flags.load_cogs:
                 packages.update(dict.fromkeys(self._cli_flags.load_cogs))
             if self._cli_flags.unload_cogs:
-                for package in self._cli_flags.unload_cogs:
-                    packages.pop(package, None)
+                for x in self._cli_flags.unload_cogs:
+                    if x in self._cli_flags.unload_cogs:
+                        del packages[x]
 
         system_changed = False
         machine = platform.machine()
@@ -1172,12 +1173,9 @@ class Red(
         if packages:
             # Load permissions first, for security reasons
             try:
-                del packages["permissions"]
+                packages.move_to_end("permissions", last=False)
             except ValueError:
                 pass
-            else:
-                packages["permissions"] = None
-                packages.move_to_end("permissions", last=False)
 
             to_remove = []
             log.info("Loading packages...")
