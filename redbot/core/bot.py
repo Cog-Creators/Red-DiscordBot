@@ -1140,11 +1140,8 @@ class Red(
             if self._cli_flags.load_cogs:
                 packages.update(dict.fromkeys(self._cli_flags.load_cogs))
             if self._cli_flags.unload_cogs:
-                for x in self._cli_flags.unload_cogs:
-                    if x not in self._cli_flags.unload_cogs:
-                        self._cli_flags.unload_cogs.remove(x)
-                        continue
-                    del packages[x]
+                for package in self._cli_flags.unload_cogs:
+                    packages.pop(package, None)
 
         system_changed = False
         machine = platform.machine()
