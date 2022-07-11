@@ -4046,7 +4046,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         async def convert(self, ctx: commands.Context, argument: str):
             if not self._get_id_match(argument) or re.match(r'<@!?([0-9]{15,20})>$', argument):
                 arg = argument
-                if arg[0] == '@':
+                if arg.startswith('@'):
                     # Remove first character
                     arg = arg[1:]
                 if not (len(arg) > 5 and arg[-5] == '#'):
