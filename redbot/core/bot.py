@@ -1140,6 +1140,10 @@ class Red(
             if self._cli_flags.load_cogs:
                 packages.extend(self._cli_flags.load_cogs)
 
+            if self._cli_flags.unload_cogs:
+                self._cli_flags.unload_cogs = [x for x in self._cli_flags.unload_cogs if x in packages]
+                packages.remove(*self._cli_flags.unload_cogs)
+
         system_changed = False
         machine = platform.machine()
         system = platform.system()
