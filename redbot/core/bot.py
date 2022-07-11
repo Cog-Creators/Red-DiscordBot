@@ -8,7 +8,7 @@ import sys
 import contextlib
 import weakref
 import functools
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
@@ -1109,7 +1109,7 @@ class Red(
         await modlog._init(self)
         await bank._init()
 
-        packages = []
+        packages = OrderedDict()
 
         last_system_info = await self._config.last_system_info()
 
@@ -1135,17 +1135,16 @@ class Red(
                 python_version_changed = True
         else:
             if self._cli_flags.no_cogs is False:
-                packages.extend(await self._config.packages())
+                packages.update(dict.fromkeys(await self._config.packages()))
 
             if self._cli_flags.load_cogs:
-                packages.extend(self._cli_flags.load_cogs)
-
+                packages.update(dict.fromkeys(self._cli_flags.load_cogs))
             if self._cli_flags.unload_cogs:
                 for x in self._cli_flags.unload_cogs:
                     if x not in self._cli_flags.unload_cogs:
                         self._cli_flags.unload_cogs.remove(x)
                         continue
-                    packages.remove(x)
+                    del packages[x]
 
         system_changed = False
         machine = platform.machine()
@@ -1176,11 +1175,12 @@ class Red(
         if packages:
             # Load permissions first, for security reasons
             try:
-                packages.remove("permissions")
+                del packages["permissions"]
             except ValueError:
                 pass
             else:
-                packages.insert(0, "permissions")
+                packages["permissions"] = None
+                packages.move_to_end("permissions", last=False)
 
             to_remove = []
             log.info("Loading packages...")
@@ -1204,9 +1204,9 @@ class Red(
                     await self.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
-                packages.remove(package)
+                del packages[package]
         if packages:
-            log.info("Loaded packages: " + ", ".join(packages))
+            log.info("Loaded packages: " + ", ".join(packages.keys()))
         else:
             log.info("No packages were loaded.")
 
