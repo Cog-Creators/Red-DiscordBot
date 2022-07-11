@@ -1203,7 +1203,7 @@ class Red(
             for package in to_remove:
                 del packages[package]
         if packages:
-            log.info("Loaded packages: " + ", ".join(packages.keys()))
+            log.info("Loaded packages: " + ", ".join(packages))
         else:
             log.info("No packages were loaded.")
 
