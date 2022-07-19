@@ -186,6 +186,9 @@ def parse_cli_flags(args):
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
     parser.add_argument(
+        "--unload-cogs", type=str, nargs="+", help="Force unloading specified cogs."
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "
