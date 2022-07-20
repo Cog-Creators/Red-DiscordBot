@@ -1,10 +1,13 @@
+aiodns
 aiohttp
 aiohttp-json-rpc
-apsw-wheels
+apsw
 babel
+Brotli
 click
 discord.py
 markdown
+orjson
 packaging
 platformdirs
 psutil
