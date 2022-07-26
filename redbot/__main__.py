@@ -32,6 +32,7 @@ from redbot.core import data_manager, drivers
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
+from flask import Flask
 
 log = logging.getLogger("red.main")
 
@@ -41,6 +42,14 @@ log = logging.getLogger("red.main")
 #         Made by Twentysix, improved by many
 #
 
+application_server = Flask(__name__)
+
+@application_server.route('/')
+def serve():
+    return 'Bot is up. Continue pinging this URL to keep the bot alive.';
+
+app.run('0.0.0.0', 4000)
+print("\n\n[CORE:SERVER]: Server is up at https://[yourreplname].[yourusername].repl.co/ (port 4000 locally)\n\n")
 
 def _get_instance_names():
     with data_manager.config_file.open(encoding="utf-8") as fs:
