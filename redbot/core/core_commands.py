@@ -3115,7 +3115,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         **Examples:**
             - `[p]set api`
-            - `[p]set api spotify
+            - `[p]set api spotify`
             - `[p]set api spotify redirect_uri localhost`
             - `[p]set api github client_id,whoops client_secret,whoops`
 
