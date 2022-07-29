@@ -1098,6 +1098,8 @@ class Red(
         """
         This should only be run once, prior to logging in to Discord REST API.
         """
+        await super()._pre_login()
+
         await self._maybe_update_config()
         self.description = await self._config.description()
         self._color = discord.Colour(await self._config.color())
