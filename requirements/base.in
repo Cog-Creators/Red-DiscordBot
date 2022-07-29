@@ -7,14 +7,13 @@ babel
 click
 colorama
 discord.py
-fuzzywuzzy
 markdown
 packaging
 psutil
 python-dateutil
-python-Levenshtein-wheels
 PyNaCl
 PyYAML
+rapidfuzz
 Red-Commons
 Red-Lavalink>=0.11.0rc1
 rich

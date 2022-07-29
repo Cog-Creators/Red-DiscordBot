@@ -7,7 +7,7 @@ from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
 from urllib.parse import quote_plus
 
 import discord
-from fuzzywuzzy import process
+from rapidfuzz import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
@@ -317,7 +317,7 @@ class CustomCommands(commands.Cog):
         """
         Searches through custom commands, according to the query.
 
-        Uses fuzzywuzzy searching to find close matches.
+        Uses fuzzy searching to find close matches.
 
         **Arguments:**
 
