@@ -1,0 +1,54 @@
+name: Bug report
+description: "For bugs that don't involve a command."
+labels: 'Type: Bug'
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thank you for taking the time to fill out an issue. This template is meant for any issues not related to any existing command.
+      If you require help with installing Red we ask that you join our [Discord server](https://discord.gg/red)
+- type: input
+  id: red-version
+  attributes:
+    label: "What Red version are you using?"
+    placeholder: 3.4.5
+  validations:
+    required: true
+- type: textarea
+  id: what-happened
+  attributes:
+    label: "What were you trying to do?"
+  validations:
+    required: true
+- type: textarea
+  id: weh
+  attributes:
+    label: "What did you expect to happen?"
+  validations:
+    required: true
+- type: textarea
+  id: wah
+  attributes:
+    label: "What actually happened?"
+    description:  |
+      If the issue is visual in nature, consider posting a screenshot.
+  validations:
+    required: true
+- type: textarea
+  id: reproduction-steps
+  attributes:
+    label: "How can we reproduce this error?"
+    description: |
+      List of steps required to reproduce the error. If the bug is code related, a minimal code example that reproduces the problem would be a big help.
+    value: |
+      1.
+      2.
+      3.
+      ...
+  validations:
+    required: true
+- type: textarea
+  id: anything-else
+  attributes:
+    label: Anything else?
+    description: Let us know if you have anything else to share.

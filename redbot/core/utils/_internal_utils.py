@@ -2,28 +2,43 @@ from __future__ import annotations
 
 import asyncio
 import collections.abc
+import contextlib
 import json
 import logging
 import os
 import re
 import shutil
 import tarfile
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    AsyncIterable,
     AsyncIterator,
     Awaitable,
     Callable,
+    Generator,
+    Iterable,
     Iterator,
     List,
     Optional,
     Union,
+    TypeVar,
     TYPE_CHECKING,
+    Tuple,
+    cast,
 )
 
+import aiohttp
 import discord
+import pkg_resources
+from discord.ext.commands.converter import get_converter  # DEP-WARN
 from fuzzywuzzy import fuzz, process
+from rich.progress import ProgressColumn
+from rich.progress_bar import ProgressBar
+from red_commons.logging import VERBOSE, TRACE
 
+from redbot import VersionInfo
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -33,7 +48,22 @@ if TYPE_CHECKING:
 
 main_log = logging.getLogger("red")
 
-__all__ = ("safe_delete", "fuzzy_command_search", "format_fuzzy_results", "create_backup")
+__all__ = (
+    "safe_delete",
+    "fuzzy_command_search",
+    "format_fuzzy_results",
+    "create_backup",
+    "send_to_owners_with_preprocessor",
+    "send_to_owners_with_prefix_replaced",
+    "expected_version",
+    "fetch_latest_red_version_info",
+    "deprecated_removed",
+    "RichIndefiniteBarColumn",
+    "cli_level_to_log_level",
+    "get_converter",
+)
+
+_T = TypeVar("_T")
 
 
 def safe_delete(pth: Path):
@@ -198,6 +228,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         os.path.join("Downloader", "lib"),
         os.path.join("CogManager", "cogs"),
         os.path.join("RepoManager", "repos"),
+        os.path.join("Audio", "logs"),
     ]
 
     # Avoiding circular imports
@@ -278,7 +309,67 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
     async def preprocessor(bot: Red, destination: discord.abc.Messageable, content: str) -> str:
         prefixes = await bot.get_valid_prefixes(getattr(destination, "guild", None))
-        prefix = re.sub(rf"<@!?{bot.user.id}>", f"@{bot.user.name}", prefixes[0])
+        prefix = re.sub(
+            rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0]
+        )
         return content.replace("[p]", prefix)
 
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
+
+
+def expected_version(current: str, expected: str) -> bool:
+    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
+    return current in pkg_resources.Requirement.parse(f"x{expected}")
+
+
+async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
+                data = await r.json()
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return None, None
+    else:
+        release = VersionInfo.from_str(data["info"]["version"])
+        required_python = data["info"]["requires_python"]
+
+        return release, required_python
+
+
+def deprecated_removed(
+    deprecation_target: str,
+    deprecation_version: str,
+    minimum_days: int,
+    message: str = "",
+    stacklevel: int = 1,
+) -> None:
+    warnings.warn(
+        f"{deprecation_target} is deprecated since version {deprecation_version}"
+        " and will be removed in the first minor version that gets released"
+        f" after {minimum_days} days since deprecation. {message}",
+        DeprecationWarning,
+        stacklevel=stacklevel + 1,
+    )
+
+
+class RichIndefiniteBarColumn(ProgressColumn):
+    def render(self, task):
+        return ProgressBar(
+            pulse=task.completed < task.total,
+            animation_time=task.get_time(),
+            width=40,
+            total=task.total,
+            completed=task.completed,
+        )
+
+
+def cli_level_to_log_level(level: int) -> int:
+    if level == 0:
+        log_level = logging.INFO
+    elif level == 1:
+        log_level = logging.DEBUG
+    elif level == 2:
+        log_level = VERBOSE
+    else:
+        log_level = TRACE
+    return log_level

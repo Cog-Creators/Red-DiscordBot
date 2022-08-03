@@ -5,6 +5,7 @@ import pytest
 
 from redbot.cogs.downloader.repo_manager import ProcessFormatter, Repo
 from redbot.pytest.downloader import (
+    GIT_VERSION,
     cloned_git_repo,
     git_repo,
     git_repo_with_remote,
@@ -314,8 +315,80 @@ async def test_git_get_full_sha1_from_invalid_ref(git_repo):
     assert p.stderr.decode().strip() == "fatal: Needed a single revision"
 
 
+@pytest.mark.skipif(
+    GIT_VERSION < (2, 31), reason="This is test for output from Git 2.31 and newer."
+)
 @pytest.mark.asyncio
 async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
+    # 2 ambiguous refs:
+    # branch ambiguous_1 - 95da0b576271cb5bee5f3e075074c03ee05fed05
+    # branch ambiguous_2 - 95da0b57a416d9c8ce950554228d1fc195c30b43
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="95da0b57"
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "error: short object ID 95da0b57 is ambiguous\n"
+        "hint: The candidates are:\n"
+        "hint:   95da0b576 commit 2019-10-22 - Ambiguous commit 16955\n"
+        "hint:   95da0b57a commit 2019-10-22 - Ambiguous commit 44414\n"
+        "fatal: Needed a single revision"
+    )
+
+
+@pytest.mark.skipif(
+    GIT_VERSION < (2, 36), reason="This is test for output from Git 2.36 and newer."
+)
+@pytest.mark.asyncio
+async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
+    # 2 ambiguous refs:
+    # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c6f0"
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "error: short object ID c6f0 is ambiguous\n"
+        "hint: The candidates are:\n"
+        "hint:   c6f028f tag 2019-10-24 - ambiguous_tag_66387\n"
+        "hint:   c6f0e5e commit 2019-10-24 - Commit ambiguous with tag.\n"
+        "fatal: Needed a single revision"
+    )
+
+
+@pytest.mark.skipif(
+    not ((2, 31) <= GIT_VERSION < (2, 36)), reason="This is test for output from Git >=2.31,<2.36."
+)
+@pytest.mark.asyncio
+async def test_git_get_full_sha1_from_ambiguous_tag_and_commit_pre_2_36(git_repo):
+    # 2 ambiguous refs:
+    # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_GET_FULL_SHA1, path=git_repo.folder_path, rev="c6f0"
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "error: short object ID c6f0 is ambiguous\n"
+        "hint: The candidates are:\n"
+        "hint:   c6f028f tag ambiguous_tag_66387\n"
+        "hint:   c6f0e5e commit 2019-10-24 - Commit ambiguous with tag.\n"
+        "fatal: Needed a single revision"
+    )
+
+
+@pytest.mark.skipif(
+    GIT_VERSION >= (2, 31), reason="This is test for output from Git older than 2.31."
+)
+@pytest.mark.asyncio
+async def test_git_get_full_sha1_from_ambiguous_commits_pre_2_31(git_repo):
     # 2 ambiguous refs:
     # branch ambiguous_1 - 95da0b576271cb5bee5f3e075074c03ee05fed05
     # branch ambiguous_2 - 95da0b57a416d9c8ce950554228d1fc195c30b43
@@ -334,8 +407,11 @@ async def test_git_get_full_sha1_from_ambiguous_commits(git_repo):
     )
 
 
+@pytest.mark.skipif(
+    GIT_VERSION >= (2, 31), reason="This is test for output from Git older than 2.31."
+)
 @pytest.mark.asyncio
-async def test_git_get_full_sha1_from_ambiguous_tag_and_commit(git_repo):
+async def test_git_get_full_sha1_from_ambiguous_tag_and_commit_pre_2_31(git_repo):
     # 2 ambiguous refs:
     # branch ambiguous_with_tag - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
     # tag ambiguous_tag_66387 - c6f0e5ec04d99bdf8c6c78ff20d66d286eecb3ea
@@ -381,7 +457,7 @@ async def test_git_is_ancestor_false(git_repo):
 
 
 @pytest.mark.asyncio
-async def test_git_is_ancestor_invalid_ref(git_repo):
+async def test_git_is_ancestor_invalid_object(git_repo):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_IS_ANCESTOR,
@@ -392,6 +468,22 @@ async def test_git_is_ancestor_invalid_ref(git_repo):
     )
     assert p.returncode == 128
     assert p.stderr.decode().strip() == "fatal: Not a valid object name invalid1"
+
+
+@pytest.mark.asyncio
+async def test_git_is_ancestor_invalid_commit(git_repo):
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_IS_ANCESTOR,
+            path=git_repo.folder_path,
+            maybe_ancestor_rev="0123456789abcde0123456789abcde0123456789",
+            descendant_rev="c950fc05a540dd76b944719c2a3302da2e2f3090",
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "fatal: Not a valid commit name 0123456789abcde0123456789abcde0123456789"
+    )
 
 
 @pytest.mark.asyncio
@@ -407,8 +499,30 @@ async def test_git_check_if_module_exists_true(git_repo):
     assert p.returncode == 0
 
 
+@pytest.mark.skipif(
+    GIT_VERSION < (2, 36), reason="This is test for output from Git 2.36 and newer."
+)
 @pytest.mark.asyncio
 async def test_git_check_if_module_exists_false(git_repo):
+    p = await git_repo._run(
+        ProcessFormatter().format(
+            git_repo.GIT_CHECK_IF_MODULE_EXISTS,
+            path=git_repo.folder_path,
+            rev="a7120330cc179396914e0d6af80cfa282adc124b",
+            module_name="mycog",
+        )
+    )
+    assert p.returncode == 128
+    assert p.stderr.decode().strip() == (
+        "fatal: path 'mycog/__init__.py' does not exist in 'a7120330cc179396914e0d6af80cfa282adc124b'"
+    )
+
+
+@pytest.mark.skipif(
+    GIT_VERSION >= (2, 36), reason="This is test for output from Git older than 2.31."
+)
+@pytest.mark.asyncio
+async def test_git_check_if_module_exists_false_pre_2_36(git_repo):
     p = await git_repo._run(
         ProcessFormatter().format(
             git_repo.GIT_CHECK_IF_MODULE_EXISTS,

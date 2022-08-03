@@ -1,4 +1,5 @@
 import contextlib
+import keyword
 import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
@@ -126,11 +127,7 @@ class CogManager:
         pathlib.Path
 
         """
-        try:
-            path.exists()
-        except AttributeError:
-            path = Path(path)
-        return path
+        return Path(path)
 
     async def add_path(self, path: Union[Path, str]) -> None:
         """Add a cog path to current list.
@@ -176,7 +173,7 @@ class CogManager:
             Path to remove.
 
         """
-        path = self._ensure_path_obj(path).resolve()
+        path = self._ensure_path_obj(path)
         paths = await self.user_defined_paths()
 
         paths.remove(path)
@@ -214,6 +211,13 @@ class CogManager:
             When no cog with the requested name was found.
 
         """
+        if not name.isidentifier() or keyword.iskeyword(name):
+            # reject package names that can't be valid python identifiers
+            raise NoSuchCog(
+                f"No 3rd party module by the name of '{name}' was found in any available path.",
+                name=name,
+            )
+
         real_paths = list(map(str, [await self.install_path()] + await self.user_defined_paths()))
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
@@ -223,9 +227,7 @@ class CogManager:
                     return spec
 
         raise NoSuchCog(
-            "No 3rd party module by the name of '{}' was found in any available path.".format(
-                name
-            ),
+            f"No 3rd party module by the name of '{name}' was found in any available path.",
             name=name,
         )
 
@@ -291,7 +293,9 @@ class CogManager:
 
         ret = []
         for finder, module_name, _ in pkgutil.iter_modules(paths):
-            ret.append(module_name)
+            # reject package names that can't be valid python identifiers
+            if module_name.isidentifier() and not keyword.iskeyword(module_name):
+                ret.append(module_name)
         return ret
 
     @staticmethod
@@ -310,6 +314,10 @@ _ = Translator("CogManagerUI", __file__)
 @cog_i18n(_)
 class CogManagerUI(commands.Cog):
     """Commands to interface with Red's cog manager."""
+
+    async def red_delete_data_for_user(self, **kwargs):
+        """Nothing to delete (Core Config is handled in a bot method )"""
+        return
 
     @commands.command()
     @checks.is_owner()
@@ -335,7 +343,7 @@ class CogManagerUI(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def addpath(self, ctx: commands.Context, path: Path):
+    async def addpath(self, ctx: commands.Context, *, path: Path):
         """
         Add a path to the list of available cog paths.
         """
@@ -405,8 +413,9 @@ class CogManagerUI(commands.Cog):
     async def installpath(self, ctx: commands.Context, path: Path = None):
         """
         Returns the current install path or sets it if one is provided.
-            The provided path must be absolute or relative to the bot's
-            directory and it must already exist.
+
+        The provided path must be absolute or relative to the bot's
+        directory and it must already exist.
 
         No installed cogs will be transferred in the process.
         """
@@ -444,10 +453,14 @@ class CogManagerUI(commands.Cog):
             unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
 
             for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
                 e = discord.Embed(description=page, colour=discord.Colour.dark_green())
                 await ctx.send(embed=e)
 
             for page in pagify(unloaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
                 e = discord.Embed(description=page, colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
         else:

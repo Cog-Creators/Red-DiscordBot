@@ -5,6 +5,7 @@ import aiohttp
 
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core import checks, Config, commands
+from redbot.core.commands import UserInputOptional
 
 _ = Translator("Image", __file__)
 
@@ -23,16 +24,20 @@ class Image(commands.Cog):
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
-    def cog_unload(self):
-        self.session.detach()
-
-    async def initialize(self) -> None:
+    async def cog_load(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
         imgur_token = await self.config.imgur_client_id()
         if imgur_token is not None:
             if not await self.bot.get_shared_api_tokens("imgur"):
                 await self.bot.set_shared_api_tokens("imgur", client_id=imgur_token)
             await self.config.imgur_client_id.clear()
+
+    async def cog_unload(self):
+        await self.session.close()
+
+    async def red_delete_data_for_user(self, **kwargs):
+        """Nothing to delete"""
+        return
 
     @commands.group(name="imgur")
     async def _imgur(self, ctx):
@@ -42,12 +47,12 @@ class Image(commands.Cog):
         """
         pass
 
-    @_imgur.command(name="search")
-    async def imgur_search(self, ctx, count: Optional[int] = 1, *, term: str):
+    @_imgur.command(name="search", usage="[count] <terms...>")
+    async def imgur_search(self, ctx, count: UserInputOptional[int] = 1, *, term: str):
         """Search Imgur for the specified term.
 
-        Use `count` to choose how many images should be returned.
-        Command can return up to 5 images.
+        - `[count]`: How many images should be returned (maximum 5). Defaults to 1.
+        - `<terms...>`: The terms used to search Imgur.
         """
         if count < 1 or count > 5:
             await ctx.send(_("Image count has to be between 1 and 5."))
@@ -93,10 +98,10 @@ class Image(commands.Cog):
     ):
         """Get images from a subreddit.
 
-        You can customize the search with the following options:
-        - `<count>`: number of images to return (up to 5)
-        - `<sort_type>`: new, top
-        - `<window>`: day, week, month, year, all
+        - `<subreddit>`: The subreddit to get images from.
+        - `[count]`: The number of images to return (maximum 5). Defaults to 1.
+        - `[sort_type]`: New, or top results. Defaults to top.
+        - `[window]`: The timeframe, can be the past day, week, month, year or all. Defaults to day.
         """
         if count < 1 or count > 5:
             await ctx.send(_("Image count has to be between 1 and 5."))
@@ -170,15 +175,12 @@ class Image(commands.Cog):
         await ctx.maybe_send_embed(message)
 
     @commands.guild_only()
-    @commands.command()
-    async def gif(self, ctx, *keywords):
-        """Retrieve the first search result from Giphy."""
-        if keywords:
-            keywords = "+".join(keywords)
-        else:
-            await ctx.send_help()
-            return
+    @commands.command(usage="<keywords...>")
+    async def gif(self, ctx, *, keywords):
+        """Retrieve the first search result from Giphy.
 
+        - `<keywords...>`: The keywords used to search Giphy.
+        """
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(
@@ -188,11 +190,8 @@ class Image(commands.Cog):
             )
             return
 
-        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
-            giphy_api_key, keywords
-        )
-
-        async with self.session.get(url) as r:
+        url = "http://api.giphy.com/v1/gifs/search"
+        async with self.session.get(url, params={"api_key": giphy_api_key, "q": keywords}) as r:
             result = await r.json()
             if r.status == 200:
                 if result["data"]:
@@ -203,15 +202,12 @@ class Image(commands.Cog):
                 await ctx.send(_("Error contacting the Giphy API."))
 
     @commands.guild_only()
-    @commands.command()
-    async def gifr(self, ctx, *keywords):
-        """Retrieve a random GIF from a Giphy search."""
-        if keywords:
-            keywords = "+".join(keywords)
-        else:
-            await ctx.send_help()
-            return
+    @commands.command(usage="<keywords...>")
+    async def gifr(self, ctx, *, keywords):
+        """Retrieve a random GIF from a Giphy search.
 
+        - `<keywords...>`: The keywords used to generate a random GIF.
+        """
         giphy_api_key = (await ctx.bot.get_shared_api_tokens("GIPHY")).get("api_key")
         if not giphy_api_key:
             await ctx.send(
@@ -221,11 +217,8 @@ class Image(commands.Cog):
             )
             return
 
-        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
-            giphy_api_key, keywords
-        )
-
-        async with self.session.get(url) as r:
+        url = "http://api.giphy.com/v1/gifs/random"
+        async with self.session.get(url, params={"api_key": giphy_api_key, "tag": keywords}) as r:
             result = await r.json()
             if r.status == 200:
                 if result["data"]:
@@ -238,17 +231,23 @@ class Image(commands.Cog):
     @checks.is_owner()
     @commands.command()
     async def giphycreds(self, ctx):
-        """Explain how to set Giphy API tokens."""
+        """Explains how to set GIPHY API tokens."""
 
         message = _(
-            "To get a Giphy API Key:\n"
-            "1. Login to a Giphy account.\n"
-            "2. Visit this page https://developers.giphy.com/dashboard.\n"
+            "To get a GIPHY API Key:\n"
+            "1. Login to (or create) a GIPHY account.\n"
+            "2. Visit this page: https://developers.giphy.com/dashboard.\n"
             "3. Press *Create an App*.\n"
-            "4. Write an app name, example: *Red Bot*.\n"
-            "5. Write an app description, example: *Used for Red Bot*.\n"
-            "6. Copy the API key shown.\n"
-            "7. Run the command `{prefix}set api GIPHY api_key <your_api_key_here>`.\n"
-        ).format(prefix=ctx.clean_prefix)
+            "4. Click *Select API*, then *Next Step*.\n"
+            "5. Add an app name, for example *Red*.\n"
+            "6. Add an app description, for example *Used for Red's image cog*.\n"
+            "7. Click *Create App*. You'll need to agree to the GIPHY API Terms.\n"
+            "8. Copy the API Key.\n"
+            "9. In Discord, run the command {command}.\n"
+        ).format(
+            command="`{prefix}set api GIPHY api_key {placeholder}`".format(
+                prefix=ctx.clean_prefix, placeholder=_("<your_api_key_here>")
+            )
+        )
 
         await ctx.maybe_send_embed(message)

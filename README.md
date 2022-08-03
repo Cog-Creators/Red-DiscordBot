@@ -12,31 +12,34 @@
   <a href="https://discord.gg/red">
     <img src="https://discordapp.com/api/guilds/133049272517001216/widget.png?style=shield" alt="Discord Server">
   </a>
-  <a href="https://www.patreon.com/Red_Devs">
-    <img src="https://img.shields.io/badge/Support-Red!-yellow.svg" alt="Support Red on Patreon!">
+  <a href="https://pypi.org/project/Red-DiscordBot/">
+     <img alt="PyPI" src="https://img.shields.io/pypi/v/Red-Discordbot">
   </a>
   <a href="https://www.python.org/downloads/">
-    <img src="https://img.shields.io/badge/Made%20With-Python%203.8-blue.svg?style=for-the-badge" alt="Made with Python 3.8">
-  </a>
-  <a href="https://crowdin.com/project/red-discordbot">
-    <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
+    <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/Red-Discordbot">
   </a>
   <a href="https://github.com/Rapptz/discord.py/">
-      <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
+     <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
+  </a>
+  <a href="https://www.patreon.com/Red_Devs">
+    <img src="https://img.shields.io/badge/Support-Red!-red.svg" alt="Support Red on Patreon!">
   </a>
 </p>
 <p align="center">
   <a href="https://github.com/Cog-Creators/Red-DiscordBot/actions">
-    <img src="https://github.com/Cog-Creators/Red-DiscordBot/workflows/Tests/badge.svg" alt="GitHub Actions">
+    <img src="https://img.shields.io/github/workflow/status/Cog-Creators/Red-Discordbot/Tests?label=tests" alt="GitHub Actions">
   </a>
-  <a href="http://red-discordbot.readthedocs.io/en/stable/?badge=stable">
+  <a href="http://docs.discord.red/en/stable/?badge=stable">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=stable" alt="Red on readthedocs.org">
   </a>
-  <a href="https://github.com/ambv/black">
+  <a href="https://github.com/psf/black">
     <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code Style: Black">
   </a>
   <a href="http://makeapullrequest.com">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
+  </a>
+  <a href="https://crowdin.com/project/red-discordbot">
+    <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg" alt="Localized with Crowdin">
   </a>
 </p>
 
@@ -45,7 +48,7 @@
   •
   <a href="#installation">Installation</a>
   •
-  <a href="http://red-discordbot.readthedocs.io/en/stable/index.html">Documentation</a>
+  <a href="http://docs.discord.red/en/stable/index.html">Documentation</a>
   •
   <a href="#plugins">Plugins</a>
   •
@@ -57,19 +60,19 @@
 # Overview
 
 Red is a fully modular bot – meaning all features and commands can be enabled/disabled to your
-liking, making it completely customizable. This is also a *self-hosted bot* – meaning you will need
+liking, making it completely customizable. This is a *self-hosted bot* – meaning you will need
 to host and maintain your own instance. You can turn Red into an admin bot, music bot, trivia bot,
 new best friend or all of these together!  
 
 [Installation](#installation) is easy, and you do **NOT** need to know anything about coding! Aside
-from installation and updating, every part of the bot can be controlled from within Discord.
+from installing and updating, every part of the bot can be controlled from within Discord.
 
 **The default set of modules includes and is not limited to:**
 
 - Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
 - Trivia (lists are included and can be easily added)
 - Music features (YouTube, SoundCloud, local files, playlists, queues)
-- Stream alerts (Twitch, Youtube, Mixer, Hitbox, Picarto)
+- Stream alerts (Twitch, Youtube, Picarto)
 - Bank (slot machine, user credits)
 - Custom commands
 - Imgur/gif search
@@ -83,9 +86,9 @@ community of cog repositories.**
 
 **The following platforms are officially supported:** 
 
-- [Windows](https://red-discordbot.readthedocs.io/en/stable/install_windows.html)
-- [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [Most major linux distributions](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [Windows](https://docs.discord.red/en/stable/install_guides/windows.html)
+- [MacOS](https://docs.discord.red/en/stable/install_guides/mac.html)
+- [Most major linux distributions](https://docs.discord.red/en/stable/install_guides/index.html)
 
 If after reading the guide you are still experiencing issues, feel free to join the
 [Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.
@@ -104,15 +107,15 @@ plugins directly from Discord! A few examples are:
 - AniList
 - And much, much more!
 
-Feel free to take a [peek](https://cogboard.red/t/approved-repositories/210) at a list of
+Feel free to take a [peek](https://index.discord.red) at a list of
 available 3rd party cogs!
 
 # Join the community!
 
 **Red** is in continuous development, and it’s supported by an active community which produces new
 content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t
-[find](https://cogboard.red/t/approved-repositories/210) the cog you’re looking for,
-consult our [guide](https://red-discordbot.readthedocs.io/en/stable/guide_cog_creation.html) on
+[find](https://index.discord.red) the cog you’re looking for,
+consult our [guide](https://docs.discord.red/en/stable/guide_cog_creation.html) on
 building your own cogs!
 
 Join us on our [Official Discord Server](https://discord.gg/red)!
@@ -126,3 +129,6 @@ Red is named after the main character of "Transistor", a video game by
 
 Artwork created by [Sinlaire](https://sinlaire.deviantart.com/) on Deviant Art for the Red Discord
 Bot Project.
+
+This project vendors [discord.ext.menus](https://github.com/Rapptz/discord-ext-menus) package made by Danny Y. (Rapptz) which is distributed under MIT License.
+A copy of this license can be found in the [discord-ext-menus.LICENSE](redbot/vendored/discord-ext-menus.LICENSE) file in the [redbot/vendored](redbot/vendored) folder of this repository.

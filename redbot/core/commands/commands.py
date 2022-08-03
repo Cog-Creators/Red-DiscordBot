@@ -6,19 +6,23 @@ be used instead of those from the `discord.ext.commands` module.
 from __future__ import annotations
 
 import inspect
+import io
 import re
 import functools
 import weakref
 from typing import (
+    Any,
     Awaitable,
     Callable,
     Dict,
     List,
+    Literal,
     Optional,
     Tuple,
     Union,
     MutableMapping,
     TYPE_CHECKING,
+    cast,
 )
 
 import discord
@@ -55,6 +59,7 @@ __all__ = [
     "command",
     "group",
     "RESERVED_COMMAND_NAMES",
+    "RedUnhandledAPI",
 ]
 
 #: The following names are reserved for various reasons
@@ -64,6 +69,12 @@ RESERVED_COMMAND_NAMES = (
 
 _ = Translator("commands.commands", __file__)
 DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
+
+
+class RedUnhandledAPI(Exception):
+    """An exception which can be raised to signal a lack of handling specific APIs"""
+
+    pass
 
 
 class CogCommandMixin:
@@ -123,7 +134,7 @@ class CogCommandMixin:
                 return ctx.clean_prefix
             if s == "[botname]":
                 return ctx.me.display_name
-            # We shouldnt get here:
+            # We shouldn't get here:
             return s
 
         return formatting_pattern.sub(replacement, text)
@@ -250,6 +261,17 @@ class Command(CogCommandMixin, DPYCommand):
     attributes listed below are simply additions to the ones listed
     with that class.
 
+    .. warning::
+
+        If you subclass this command, attributes and methods
+        must remain compatible.
+
+        None of your methods should start with ``red_`` or
+        be dunder names which start with red (eg. ``__red_test_thing__``)
+        unless to override behavior in a method designed to be overridden,
+        as this prefix is reserved for future methods in order to be
+        able to add features non-breakingly.
+
     Attributes
     ----------
     checks : List[`coroutine function`]
@@ -262,13 +284,6 @@ class Command(CogCommandMixin, DPYCommand):
         argument parsing behavior for ``typing.Optional``
         (type used will be of the inner type instead)
     """
-
-    def __call__(self, *args, **kwargs):
-        if self.cog:
-            # We need to inject cog as self here
-            return self.callback(self.cog, *args, **kwargs)
-        else:
-            return self.callback(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
@@ -301,60 +316,27 @@ class Command(CogCommandMixin, DPYCommand):
 
     @callback.setter
     def callback(self, function):
-        """
-        Below should be mostly the same as discord.py
+        # Below should be mostly the same as discord.py
+        #
+        # Here's the list of cases where the behavior differs:
+        #   - `typing.Optional` behavior is changed
+        #      when `ignore_optional_for_conversion` option is used
+        super(Command, Command).callback.__set__(self, function)
 
-        Currently, we modify behavior for
+        if not self.ignore_optional_for_conversion:
+            return
 
-          - functools.partial support
-          - typing.Optional behavior change as an option
-        """
-        self._callback = function
-        if isinstance(function, functools.partial):
-            self.module = function.func.__module__
-            globals_ = function.func.__globals__
-        else:
-            self.module = function.__module__
-            globals_ = function.__globals__
-
-        signature = inspect.signature(function)
-        self.params = signature.parameters.copy()
-
-        # PEP-563 allows postponing evaluation of annotations with a __future__
-        # import. When postponed, Parameter.annotation will be a string and must
-        # be replaced with the real value for the converters to work later on
+        _NoneType = type(None)
         for key, value in self.params.items():
-            if isinstance(value.annotation, str):
-                self.params[key] = value = value.replace(
-                    annotation=eval(value.annotation, globals_)
-                )
-
-            # fail early for when someone passes an unparameterized Greedy type
-            if value.annotation is Greedy:
-                raise TypeError("Unparameterized Greedy[...] is disallowed in signature.")
-
-            if not self.ignore_optional_for_conversion:
-                continue  # reduces indentation compared to alternative
-
-            try:
-                vtype = value.annotation.__origin__
-                if vtype is Union:
-                    _NoneType = type if TYPE_CHECKING else type(None)
-                    args = value.annotation.__args__
-                    if _NoneType in args:
-                        args = tuple(a for a in args if a is not _NoneType)
-                        if len(args) == 1:
-                            # can't have a union of 1 or 0 items
-                            # 1 prevents this from becoming 0
-                            # we need to prevent 2 become 1
-                            # (Don't change that to becoming, it's intentional :musical_note:)
-                            self.params[key] = value = value.replace(annotation=args[0])
-                        else:
-                            # and mypy wretches at the correct Union[args]
-                            temp_type = type if TYPE_CHECKING else Union[args]
-                            self.params[key] = value = value.replace(annotation=temp_type)
-            except AttributeError:
+            origin = getattr(value.annotation, "__origin__", None)
+            if origin is not Union:
                 continue
+            args = value.annotation.__args__
+            if _NoneType in args:
+                args = tuple(a for a in args if a is not _NoneType)
+                # typing.Union is automatically deduplicated and flattened
+                # so we don't need to anything else here
+                self.params[key] = value = value.replace(annotation=Union[args])
 
     @property
     def help(self):
@@ -398,6 +380,7 @@ class Command(CogCommandMixin, DPYCommand):
     async def can_run(
         self,
         ctx: "Context",
+        /,
         *,
         check_all_parents: bool = False,
         change_permission_state: bool = False,
@@ -454,7 +437,7 @@ class Command(CogCommandMixin, DPYCommand):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
-    async def prepare(self, ctx):
+    async def prepare(self, ctx, /):
         ctx.command = self
 
         if not self.enabled:
@@ -463,48 +446,22 @@ class Command(CogCommandMixin, DPYCommand):
         if not await self.can_run(ctx, change_permission_state=True):
             raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
 
-        if self.cooldown_after_parsing:
-            await self._parse_arguments(ctx)
-            self._prepare_cooldowns(ctx)
-        else:
-            self._prepare_cooldowns(ctx)
-            await self._parse_arguments(ctx)
         if self._max_concurrency is not None:
             await self._max_concurrency.acquire(ctx)
-        await self.call_before_hooks(ctx)
-
-    async def do_conversion(
-        self, ctx: "Context", converter, argument: str, param: inspect.Parameter
-    ):
-        """Convert an argument according to its type annotation.
-
-        Raises
-        ------
-        ConversionFailure
-            If doing the conversion failed.
-
-        Returns
-        -------
-        Any
-            The converted argument.
-
-        """
-        # Let's not worry about all of this junk if it's just a str converter
-        if converter is str:
-            return argument
 
         try:
-            return await super().do_conversion(ctx, converter, argument, param)
-        except BadArgument as exc:
-            raise ConversionFailure(converter, argument, param, *exc.args) from exc
-        except ValueError as exc:
-            # Some common converters need special treatment...
-            if converter in (int, float):
-                message = _('"{argument}" is not a number.').format(argument=argument)
-                raise ConversionFailure(converter, argument, param, message) from exc
+            if self.cooldown_after_parsing:
+                await self._parse_arguments(ctx)
+                self._prepare_cooldowns(ctx)
+            else:
+                self._prepare_cooldowns(ctx)
+                await self._parse_arguments(ctx)
 
-            # We should expose anything which might be a bug in the converter
-            raise exc
+            await self.call_before_hooks(ctx)
+        except:
+            if self._max_concurrency is not None:
+                await self._max_concurrency.release(ctx)
+            raise
 
     async def can_see(self, ctx: "Context"):
         """Check if this command is visible in the given context.
@@ -607,7 +564,7 @@ class Command(CogCommandMixin, DPYCommand):
                     break
         return old_rule, new_rule
 
-    def error(self, coro):
+    def error(self, coro, /):
         """
         A decorator that registers a coroutine as a local error handler.
 
@@ -632,8 +589,7 @@ class Command(CogCommandMixin, DPYCommand):
 
                 @a_command.error
                 async def a_command_error_handler(self, ctx, error):
-
-                    if isinstance(error.original, MyErrrorType):
+                    if isinstance(error.original, MyErrorType):
                         self.log_exception(error.original)
                     else:
                         await ctx.bot.on_command_error(ctx, error.original, unhandled_by_cog=True)
@@ -657,7 +613,7 @@ class Command(CogCommandMixin, DPYCommand):
 
         See ``format_text_for_context`` for the actual implementation details
 
-        Cog creators may override this in their own command classes
+        Cog creators may override this in their own command and cog classes
         as long as the method signature stays the same.
 
         Parameters
@@ -731,6 +687,7 @@ class CogGroupMixin:
             whether or not the rule was changed as a result of this
             call.
 
+        :meta private:
         """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
         if cur_rule not in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
@@ -767,10 +724,11 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
         self.autohelp = kwargs.pop("autohelp", True)
         super().__init__(*args, **kwargs)
 
-    async def invoke(self, ctx: "Context"):
+    async def invoke(self, ctx: "Context", /):
         # we skip prepare in some cases to avoid some things
         # We still always want this part of the behavior though
         ctx.command = self
+        ctx.subcommand_passed = None
         # Our re-ordered behavior below.
         view = ctx.view
         previous = view.index
@@ -786,10 +744,12 @@ class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
             if self.autohelp and not self.invoke_without_command:
                 if not await self.can_run(ctx, change_permission_state=True):
                     raise CheckFailure()
-                await ctx.send_help()
+                # This ordering prevents sending help before checking `before_invoke` hooks
+                await super().invoke(ctx)
+                return await ctx.send_help()
         elif self.invoke_without_command:
             # So invoke_without_command when a subcommand of this group is invoked
-            # will skip the the invokation of *this* command. However, because of
+            # will skip the invocation of *this* command. However, because of
             # how our permissions system works, we don't want it to skip the checks
             # as well.
             if not await self.can_run(ctx, change_permission_state=True):
@@ -809,7 +769,137 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         if doc:
             return inspect.cleandoc(translator(doc))
 
-    async def can_run(self, ctx: "Context", **kwargs) -> bool:
+    async def red_get_data_for_user(self, *, user_id: int) -> MutableMapping[str, io.BytesIO]:
+        """
+
+        .. note::
+
+            This method is documented provisionally
+            and may have minor changes made to it.
+            It is not expected to undergo major changes,
+            but nothing utilizes this method yet and the inclusion of this method
+            in documentation in advance is solely to allow cog creators time to prepare.
+
+
+        This should be overridden by all cogs.
+
+        Overridden implementations should return a mapping of filenames to io.BytesIO
+        containing a human-readable version of the data
+        the cog has about the specified user_id or an empty mapping
+        if the cog does not have end user data.
+
+        The data should be easily understood for what it represents to
+        most users of age to use Discord.
+
+        You may want to include a readme file
+        which explains specifics about the data.
+
+        This method may also be implemented for an extension.
+
+        Parameters
+        ----------
+        user_id: int
+
+        Returns
+        -------
+        MutableMapping[str, io.BytesIO]
+            A mapping of filenames to BytesIO objects
+            suitable to send as a files or as part of an archive to a user.
+
+            This may be empty if you don't have data for users.
+
+        Raises
+        ------
+        RedUnhandledAPI
+            If the method was not overridden,
+            or an overridden implementation is not handling this
+
+        """
+        raise RedUnhandledAPI()
+
+    async def red_delete_data_for_user(
+        self,
+        *,
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"],
+        user_id: int,
+    ):
+        """
+        This should be overridden by all cogs.
+
+        If your cog does not store data, overriding and doing nothing should still
+        be done to indicate that this has been considered.
+
+        .. note::
+                This may receive other strings in the future without warning
+                you should safely handle
+                any string value (log a warning if needed)
+                as additional requester types may be added
+                in the future without prior warning.
+                (see what this method can raise for details)
+
+
+        This method can currently be passed one of these strings:
+
+
+            - ``"discord_deleted_user"``:
+
+                The request should be processed as if
+                Discord has asked for the data removal
+                This then additionally must treat the
+                user ID itself as something to be deleted.
+                The user ID is no longer operational data
+                as the ID no longer refers to a valid user.
+
+            - ``"owner"``:
+
+                The request was made by the bot owner.
+                If removing the data requested by the owner
+                would be an operational hazard
+                (such as removing a user id from a blocked user list)
+                you may elect to inform the user of an alternative way
+                to remove that ID to ensure the process can not be abused
+                by users to bypass anti-abuse measures,
+                but there must remain a way for them to process this request.
+
+            - ``"user_strict"``:
+
+                The request was made by a user,
+                the bot settings allow a user to request their own data
+                be deleted, and the bot is configured to respect this
+                at the cost of functionality.
+                Cogs may retain data needed for anti abuse measures
+                such as IDs and timestamps of interactions,
+                but should not keep EUD such
+                as user nicknames if receiving a request of this nature.
+
+            - ``"user"``:
+
+                The request was made by a user,
+                the bot settings allow a user to request their own data
+                be deleted, and the bot is configured to let cogs keep
+                data needed for operation.
+                Under this case, you may elect to retain data which is
+                essential to the functionality of the cog. This case will
+                only happen if the bot owner has opted into keeping
+                minimal EUD needed for cog functionality.
+
+
+        Parameters
+        ----------
+        requester: Literal["discord_deleted_user", "owner", "user", "user_strict"]
+            See above notes for details about this parameter
+        user_id: int
+            The user ID which needs deletion handling
+
+        Raises
+        ------
+        RedUnhandledAPI
+            If the method was not overridden,
+            or an overridden implementation is not handling this
+        """
+        raise RedUnhandledAPI()
+
+    async def can_run(self, ctx: "Context", /, **kwargs) -> bool:
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
@@ -826,6 +916,8 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         -------
         bool
             ``True`` if this cog is usable in the given context.
+
+        :meta private:
         """
 
         try:
@@ -835,7 +927,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         return can_run
 
-    async def can_see(self, ctx: "Context") -> bool:
+    async def can_see(self, ctx: "Context", /) -> bool:
         """Check if this cog is visible in the given context.
 
         In short, this will verify whether
@@ -854,6 +946,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         bool
             ``True`` if this cog is visible in the given context.
 
+        :meta private:
         """
 
         return await self.can_run(ctx)
@@ -864,6 +957,18 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
     Red's Cog base class
 
     This includes a metaclass from discord.py
+
+    .. warning::
+
+        None of your methods should start with ``red_`` or
+        be dunder names which start with red (eg. ``__red_test_thing__``)
+        unless to override behavior in a method designed to be overridden,
+        as this prefix is reserved for future methods in order to be
+        able to add features non-breakingly.
+
+        Attributes and methods must remain compatible
+        with discord.py and with any of red's methods and attributes.
+
     """
 
     __cog_commands__: Tuple[Command]
@@ -873,6 +978,8 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
         """
         This does not have identical behavior to
         Group.all_commands but should return what you expect
+
+        :meta private:
         """
         return {cmd.name: cmd for cmd in self.__cog_commands__}
 
@@ -917,13 +1024,15 @@ def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitabl
         return disabler
 
 
-# This is intentionally left out of `__all__` as it is not intended for general use
-class _AlwaysAvailableCommand(Command):
+# The below are intentionally left out of `__all__`
+# as they are not intended for general use
+class _AlwaysAvailableMixin:
     """
-    This should be used only for informational commands
+    This should be used for commands
     which should not be disabled or removed
 
-    These commands cannot belong to a cog.
+    These commands cannot belong to any cog except Core (core_commands.py)
+    to prevent issues with the appearance of certain behavior.
 
     These commands do not respect most forms of checks, and
     should only be used with that in mind.
@@ -931,10 +1040,56 @@ class _AlwaysAvailableCommand(Command):
     This particular class is not supported for 3rd party use
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.cog is not None:
-            raise TypeError("This command may not be added to a cog")
-
-    async def can_run(self, ctx, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
         return not ctx.author.bot
+
+    can_see = can_run
+
+
+class _RuleDropper(CogCommandMixin):
+    """
+    Objects inheriting from this, be they command or cog,
+    should not be interfered with operation except by their own rules,
+    or by global checks which are not tailored for these objects but instead
+    on global abuse prevention
+    (such as a check that disallows blocked users and bots from interacting.)
+
+    This should not be used by 3rd-party extensions directly for their own objects.
+    """
+
+    def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
+        """This will do nothing."""
+
+    def deny_to(self, model_id: Union[int, str], guild_id: int) -> None:
+        """This will do nothing."""
+
+    def clear_rule_for(
+        self, model_id: Union[int, str], guild_id: int
+    ) -> Tuple[PermState, PermState]:
+        """
+        This will do nothing, except return a compatible rule
+        """
+        cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
+        return cur_rule, cur_rule
+
+    def set_default_rule(self, rule: Optional[bool], guild_id: int) -> None:
+        """This will do nothing."""
+
+
+class _AlwaysAvailableCommand(_AlwaysAvailableMixin, _RuleDropper, Command):
+    pass
+
+
+class _AlwaysAvailableGroup(_AlwaysAvailableMixin, _RuleDropper, Group):
+    pass
+
+
+class _ForgetMeSpecialCommand(_RuleDropper, Command):
+    """
+    We need special can_run behavior here
+    """
+
+    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
+        return await ctx.bot._config.datarequests.allow_user_requests()
+
+    can_see = can_run
