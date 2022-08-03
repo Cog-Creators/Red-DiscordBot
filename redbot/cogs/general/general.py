@@ -114,9 +114,7 @@ class General(commands.Cog):
                 )
             )
         elif number <= 1:
-            await ctx.send(
-                _("{author.mention} Maybe higher than 1? ;P").format(author=author)
-            )
+            await ctx.send(_("{author.mention} Maybe higher than 1? ;P").format(author=author))
         else:
             await ctx.send(
                 _("{author.mention} Max allowed number is {maxamount}.").format(
@@ -134,9 +132,7 @@ class General(commands.Cog):
             msg = ""
             if user.id == ctx.bot.user.id:
                 user = ctx.author
-                msg = _(
-                    "Nice try. You think this is funny?\n How about *this* instead:\n\n"
-                )
+                msg = _("Nice try. You think this is funny?\n How about *this* instead:\n\n")
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
             table = str.maketrans(char, tran)
@@ -147,9 +143,7 @@ class General(commands.Cog):
             name = name.translate(table)
             await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            await ctx.send(
-                _("*flips a coin and... ") + choice([_("HEADS!*"), _("TAILS!*")])
-            )
+            await ctx.send(_("*flips a coin and... ") + choice([_("HEADS!*"), _("TAILS!*")]))
 
     @commands.command()
     async def rps(self, ctx, your_choice: RPSParser):
@@ -218,8 +212,7 @@ class General(commands.Cog):
             tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
             await ctx.send(
-                author.mention
-                + _(" Stopwatch stopped! Time: **{seconds}**").format(seconds=tmp)
+                author.mention + _(" Stopwatch stopped! Time: **{seconds}**").format(seconds=tmp)
             )
             self.stopwatches.pop(author.id, None)
 
@@ -275,9 +268,7 @@ class General(commands.Cog):
         voice_channels = humanize_number(len(guild.voice_channels))
         stage_channels = humanize_number(len(guild.stage_channels))
         if not details:
-            data = discord.Embed(
-                description=created_at, colour=await ctx.embed_colour()
-            )
+            data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
             data.add_field(
                 name=_("Users online"),
                 value=f"{online}/{total_users}" if total_users else _("Not available"),
@@ -328,8 +319,7 @@ class General(commands.Cog):
                 _(" • Bots: "): lambda x: x.bot,
                 "\N{LARGE GREEN CIRCLE}": lambda x: x.status is discord.Status.online,
                 "\N{LARGE ORANGE CIRCLE}": lambda x: x.status is discord.Status.idle,
-                "\N{LARGE RED CIRCLE}": lambda x: x.status
-                is discord.Status.do_not_disturb,
+                "\N{LARGE RED CIRCLE}": lambda x: x.status is discord.Status.do_not_disturb,
                 "\N{MEDIUM WHITE CIRCLE}\N{VARIATION SELECTOR-16}": lambda x: (
                     x.status is discord.Status.offline
                 ),
@@ -398,14 +388,11 @@ class General(commands.Cog):
             ).format(
                 bot_name=ctx.bot.user.name,
                 bot_join=guild.me.joined_at.strftime("%d %b %Y %H:%M:%S"),
-                since_join=humanize_number(
-                    (ctx.message.created_at - guild.me.joined_at).days
-                ),
+                since_join=humanize_number((ctx.message.created_at - guild.me.joined_at).days),
             )
 
             data = discord.Embed(
-                description=(f"{guild.description}\n\n" if guild.description else "")
-                + created_at,
+                description=(f"{guild.description}\n\n" if guild.description else "") + created_at,
                 colour=await ctx.embed_colour(),
             )
             data.set_author(
@@ -458,9 +445,7 @@ class General(commands.Cog):
                 inline=False,
             )
             if guild_features_list:
-                data.add_field(
-                    name=_("Server features:"), value="\n".join(guild_features_list)
-                )
+                data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
             if guild.premium_tier != 0:
                 nitro_boost = _(
                     "Tier {boostlevel} with {nitroboosters} boosts\n"
@@ -469,9 +454,7 @@ class General(commands.Cog):
                     "VCs max bitrate: {bitrate}"
                 ).format(
                     boostlevel=bold(str(guild.premium_tier)),
-                    nitroboosters=bold(
-                        humanize_number(guild.premium_subscription_count)
-                    ),
+                    nitroboosters=bold(humanize_number(guild.premium_subscription_count)),
                     filelimit=bold(_size(guild.filesize_limit)),
                     emojis_limit=bold(str(guild.emoji_limit)),
                     bitrate=bold(_bitsize(guild.bitrate_limit)),
@@ -503,9 +486,7 @@ class General(commands.Cog):
 
         except aiohttp.ClientError:
             await ctx.send(
-                _(
-                    "No Urban Dictionary entries were found, or there was an error in the process."
-                )
+                _("No Urban Dictionary entries were found, or there was an error in the process.")
             )
             return
 
@@ -525,9 +506,7 @@ class General(commands.Cog):
                     embed.title = title
                     embed.url = ud["permalink"]
 
-                    description = _("{definition}\n\n**Example:** {example}").format(
-                        **ud
-                    )
+                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
                     if len(description) > 2048:
                         description = "{}...".format(description[:2045])
                     embed.description = description
@@ -561,9 +540,7 @@ class General(commands.Cog):
                     )
                     max_desc_len = 2000 - len(message)
 
-                    description = _("{definition}\n\n**Example:** {example}").format(
-                        **ud
-                    )
+                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
                     if len(description) > max_desc_len:
                         description = "{}...".format(description[: max_desc_len - 3])
 
@@ -580,7 +557,5 @@ class General(commands.Cog):
                     )
         else:
             await ctx.send(
-                _(
-                    "No Urban Dictionary entries were found, or there was an error in the process."
-                )
+                _("No Urban Dictionary entries were found, or there was an error in the process.")
             )
