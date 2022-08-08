@@ -201,12 +201,13 @@ class VersionInfo:
     def _get_version(cls, *, ignore_installed: bool = False) -> _Tuple[str, "VersionInfo"]:
         if not _VERSION.endswith(".dev1"):
             return _VERSION, cls.from_str(_VERSION)
-        try:
-            import os
 
-            path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        import os
+
+        project_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        try:
             # we only want to do this for editable installs
-            if not os.path.exists(os.path.join(path, ".git")):
+            if not os.path.exists(os.path.join(project_root, ".git")):
                 raise RuntimeError("not a git repository")
 
             import subprocess
@@ -214,7 +215,7 @@ class VersionInfo:
             output = subprocess.check_output(
                 ("git", "describe", "--tags", "--long", "--dirty"),
                 stderr=subprocess.DEVNULL,
-                cwd=path,
+                cwd=project_root,
             )
             _, count, commit, *dirty = output.decode("utf-8").strip().split("-", 3)
             dirty_suffix = f".{dirty[0]}" if dirty else ""
@@ -223,10 +224,30 @@ class VersionInfo:
         except Exception:
             # `ignore_installed` is `True` when building with setuptools.
             if ignore_installed:
-                # we don't want any failure to raise here but we should print it
-                import traceback
+                try:
+                    with open(
+                        os.path.join(project_root, ".git_archive_info.txt"), encoding="utf-8"
+                    ) as fp:
+                        commit, describe_name = fp.read().splitlines()
+                        if not describe_name:
+                            raise RuntimeError("git archive's describe didn't output anything")
+                        if "%(describe" in describe_name:
+                            # either git-archive was generated with Git < 2.35
+                            # or this is not a git-archive
+                            raise RuntimeError(
+                                "Generated git archive doesn't contain describe name."
+                            )
+                        _, _, suffix = describe_name.partition("-")
+                        if suffix:
+                            count, _, _ = suffix.partition("-")
+                        else:
+                            count = "0"
+                        return f"{_VERSION[:-1]}{count}+g{commit}"
+                except Exception:
+                    # we don't want any failure to raise here but we should print it
+                    import traceback
 
-                traceback.print_exc()
+                    traceback.print_exc()
             else:
                 try:
                     from importlib.metadata import version
