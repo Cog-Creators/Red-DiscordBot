@@ -410,7 +410,7 @@ class General(commands.Cog):
                 name=_("Channels:"),
                 value=_(
                     "\N{SPEECH BALLOON} Text: {text}\n"
-                    "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}"
+                    "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}\n"
                     "\N{STUDIO MICROPHONE} Stage: {stage}"
                 ).format(
                     text=bold(text_channels),
