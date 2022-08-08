@@ -266,6 +266,7 @@ class General(commands.Cog):
         total_users = guild.member_count and humanize_number(guild.member_count)
         text_channels = humanize_number(len(guild.text_channels))
         voice_channels = humanize_number(len(guild.voice_channels))
+        stage_channels = humanize_number(len(guild.stage_channels))
         if not details:
             data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
             data.add_field(
@@ -409,8 +410,13 @@ class General(commands.Cog):
                 name=_("Channels:"),
                 value=_(
                     "\N{SPEECH BALLOON} Text: {text}\n"
-                    "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}"
-                ).format(text=bold(text_channels), voice=bold(voice_channels)),
+                    "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}\n"
+                    "\N{STUDIO MICROPHONE} Stage: {stage}"
+                ).format(
+                    text=bold(text_channels),
+                    voice=bold(voice_channels),
+                    stage=bold(stage_channels),
+                ),
             )
             data.add_field(
                 name=_("Utility:"),
@@ -527,7 +533,11 @@ class General(commands.Cog):
                     message = _(
                         "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
                         "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-                    ).format(word=ud.pop("word").capitalize(), description="{description}", **ud)
+                    ).format(
+                        word=ud.pop("word").capitalize(),
+                        description="{description}",
+                        **ud,
+                    )
                     max_desc_len = 2000 - len(message)
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)
