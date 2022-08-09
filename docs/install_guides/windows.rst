@@ -39,7 +39,7 @@ For Audio support, you should also run the following command before exiting:
 
 .. prompt:: powershell
 
-    choco upgrade temurin11 -y --version 11.0.14.10100
+    choco upgrade temurin11 -y
 
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
