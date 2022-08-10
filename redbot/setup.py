@@ -348,14 +348,14 @@ async def remove_instance_interaction() -> None:
 
 @click.group(invoke_without_command=True)
 @click.option(
-    "--debug", 
-    "--verbose", 
-    "-v", 
+    "--debug",
+    "--verbose",
+    "-v",
     count=True,
     help=(
         "Increase the verbosity of the logs, each usage of this flag increases the verbosity"
         " level by 1"
-    )
+    ),
 )
 @click.option(
     "--no-prompt",
@@ -395,12 +395,10 @@ async def remove_instance_interaction() -> None:
     ),
 )
 @click.option(
-    "--overwrite-existing-instance", 
-    type=bool, 
+    "--overwrite-existing-instance",
+    type=bool,
     is_flag=True,
-    help=(
-        "Overwrites an existing instance."
-    )
+    help=("Overwrites an existing instance."),
 )
 @click.pass_context
 def cli(
