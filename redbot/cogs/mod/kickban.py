@@ -281,6 +281,7 @@ class KickBanMixin(MixinMeta):
         for result in results:
             param = self.transform_parameter(result, objects)
             message = message.replace("{" + result + "}", param)
+        return message
 
     async def _check_guild_tempban_expirations(
         self, guild: discord.Guild, guild_tempbans: List[int]
