@@ -468,7 +468,7 @@ class ModSettings(MixinMeta):
             {days} - number of days of messages deleted.
         """
         guild = ctx.guild
-        await self.config.guild(guild).kick_message.set(message)
+        await self.config.guild(guild).ban_message.set(message)
         await ctx.send(_("Ban message updated."))
 
     @modset.command()
