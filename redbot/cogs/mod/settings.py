@@ -446,8 +446,8 @@ class ModSettings(MixinMeta):
         """Set the message sent when a user is kicked.
 
         Available placeholders:
-            {user} - member that was banned.
-            {moderator} - moderator that banned the member.
+            {user} - member that was kicked.
+            {moderator} - moderator that kicked the member.
             {reason} - reason for the ban.
             {guild} - server name.
         """
@@ -477,8 +477,8 @@ class ModSettings(MixinMeta):
         """Set the message sent when a user is tempbanned.
 
         Available placeholders:
-            {user} - member that was banned.
-            {moderator} - moderator that banned the member.
+            {user} - member that was tempbanned.
+            {moderator} - moderator that tempbanned the member.
             {reason} - reason for the ban.
             {guild} - server name.
             {days} - number of days of messages deleted.
@@ -494,8 +494,8 @@ class ModSettings(MixinMeta):
         """Set the message sent when a user is unbanned.
 
         Available placeholders:
-            {user} - member that was banned.
-            {moderator} - moderator that banned the member.
+            {user} - member that was unbanned.
+            {moderator} - moderator that unbanned the member.
             {reason} - reason for the ban.
             {guild} - server name.
         """
