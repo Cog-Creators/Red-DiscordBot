@@ -1506,7 +1506,7 @@ class Downloader(commands.Cog):
         if newer_python_version:
             message += (
                 _("\nThese cogs require a lower python version than you have: ")
-                if len(newer_python_version)
+                if len(newer_python_version) > 1
                 else _("\nThis cog requires a lower python version than you have: ")
             ) + humanize_list(newer_python_version)
 
