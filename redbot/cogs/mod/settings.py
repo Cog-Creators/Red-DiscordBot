@@ -448,7 +448,7 @@ class ModSettings(MixinMeta):
         Available placeholders:
             {user} - member that was kicked.
             {moderator} - moderator that kicked the member.
-            {reason} - reason for the ban.
+            {reason} - reason for the kick.
             {guild} - server name.
         """
         guild = ctx.guild
@@ -479,7 +479,7 @@ class ModSettings(MixinMeta):
         Available placeholders:
             {user} - member that was tempbanned.
             {moderator} - moderator that tempbanned the member.
-            {reason} - reason for the ban.
+            {reason} - reason for the tempban.
             {guild} - server name.
             {days} - number of days of messages deleted.
             {duration} - duration timedelta of the tempban.
@@ -496,7 +496,7 @@ class ModSettings(MixinMeta):
         Available placeholders:
             {user} - member that was unbanned.
             {moderator} - moderator that unbanned the member.
-            {reason} - reason for the ban.
+            {reason} - reason for the unban.
             {guild} - server name.
         """
         guild = ctx.guild
