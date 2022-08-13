@@ -346,18 +346,16 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             global_data = await self.config.all()
             # We're intentionally not setting entire `global_data` to
             # avoid storing the default values when they were not already set.
-            if "yaml__logging__file__max_history" in global_data:
-                await self.config.yaml__logging__logback__rollingpolicy__max_history.set(
-                    global_data.pop("yaml__logging__file__max_history")
-                )
-            if "yaml__logging__file__max_size" in global_data:
-                await self.config.yaml__logging__logback__rollingpolicy__max_size.set(
-                    guild_data.pop("yaml__logging__file__max_size")
-                )
-            if "yaml__logging__path" in global_data:
-                await self.config.yaml__logging__file__path.set(
-                    guild_data.pop("yaml__logging__path")
-                )
+            logging_data = global_data.get("yaml", {}).get("logging", {})
+            max_history = logging_data.get("file", {}).pop("max_history", ...)
+            if max_history is not ...:
+                await self.config.yaml.logging.logback.rollingpolicy.max_history.set(max_history)
+            max_size = logging_data.get("file", {}).pop("max_size", ...)
+            if max_size is not ...:
+                await self.config.yaml.logging.logback.rollingpolicy.max_size.set(max_size)
+            path = logging_data.pop("path", ...)
+            if path is not ...:
+                await self.config.yaml.logging.file.path.set(path)
             await self.config.schema_version.set(4)
 
         if database_entries:
