@@ -338,6 +338,27 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     await p.save()
                 await self.config.custom(scope).clear()
             await self.config.schema_version.set(3)
+        if from_version < 4 <= to_version:
+            # At the time of the introduction of this schema migration,
+            # none of these were settable by users even though they're registered in Config
+            # so this shouldn't have ever been set but there's no real harm in doing this
+            # and schema migrations are a good practice.
+            global_data = await self.config.all()
+            # We're intentionally not setting entire `global_data` to
+            # avoid storing the default values when they were not already set.
+            if "yaml__logging__file__max_history" in global_data:
+                await self.config.yaml__logging__logback__rollingpolicy__max_history.set(
+                    global_data.pop("yaml__logging__file__max_history")
+                )
+            if "yaml__logging__file__max_size" in global_data:
+                await self.config.yaml__logging__logback__rollingpolicy__max_size.set(
+                    guild_data.pop("yaml__logging__file__max_size")
+                )
+            if "yaml__logging__path" in global_data:
+                await self.config.yaml__logging__file__path.set(
+                    guild_data.pop("yaml__logging__path")
+                )
+            await self.config.schema_version.set(4)
 
         if database_entries:
             await self.api_interface.local_cache_api.lavalink.insert(database_entries)
