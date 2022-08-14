@@ -35,7 +35,6 @@ LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
 BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
 LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
-_RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
 
@@ -230,22 +229,12 @@ class ServerManager:
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
         lastmessage = 0
-        # Since Lavalink jar 3.4.0_1346, there are two "Started Launcher" lines logged
-        # before Lavalink is ready to receive requests.
-        started_line_seen = False
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
-            if _RE_READY_LINE.search(line):
-                if started_line_seen:
-                    self.ready.set()
-                    log.info("Internal Lavalink server is ready to receive requests.")
-                    break
-                else:
-                    log.debug(
-                        "Seen first 'Started Launcher' line from internal Lavalink server."
-                        " Waiting for the second one..."
-                    )
-                    started_line_seen = True
+            if b"Lavalink is ready to accept connections." in line:
+                self.ready.set()
+                log.info("Internal Lavalink server is ready to receive requests.")
+                break
             if _FAILED_TO_START.search(line):
                 raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
