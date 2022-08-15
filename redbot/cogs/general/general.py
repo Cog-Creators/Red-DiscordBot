@@ -414,14 +414,26 @@ class General(commands.Cog):
                 inline=False,
             )
 
+            excluded_features = {
+                # available to everyone since forum channels private beta
+                "THREE_DAY_THREAD_ARCHIVE",
+                "SEVEN_DAY_THREAD_ARCHIVE",
+                # rolled out to everyone already
+                "NEW_THREAD_PERMISSIONS",
+                "TEXT_IN_VOICE_ENABLED",
+                "THREADS_ENABLED",
+            }
             custom_feature_names = {
-                "TEXT_IN_VOICE_ENABLED": "Text in Voice enabled",
                 "VANITY_URL": "Vanity URL",
                 "VIP_REGIONS": "VIP regions",
             }
+            features = sorted(guild.features)
+            if "COMMUNITY" in features:
+                features.remove("NEWS")
             feature_names = [
                 custom_feature_names.get(feature, " ".join(feature.split("_")).capitalize())
-                for feature in sorted(guild.features)
+                for feature in features
+                if feature not in excluded_features
             ]
             if guild.features:
                 data.add_field(
@@ -430,6 +442,7 @@ class General(commands.Cog):
                         f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in feature_names
                     ),
                 )
+
             if guild.premium_tier != 0:
                 nitro_boost = _(
                     "Tier {boostlevel} with {nitroboosters} boosts\n"
