@@ -37,11 +37,11 @@ msgstr "'{input}' ne izgleda kao valjani korisnički ID."
 
 #: redbot/core/commands/converter.py:257
 msgid "Missing a key or value."
-msgstr ""
+msgstr "Nedostaje ključ ili vrijednost."
 
 #: redbot/core/commands/converter.py:263
 msgid "Unexpected key `{key}`."
-msgstr ""
+msgstr "Neočekivan ključ `{key}`."
 
 #: redbot/core/commands/converter.py:488
 msgid "Command \"{arg}\" not found."

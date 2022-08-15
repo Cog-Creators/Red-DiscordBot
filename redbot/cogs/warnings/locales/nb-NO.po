@@ -105,7 +105,9 @@ msgstr "Jeg kommer ikke til å oppgi navnet på moderator som ga advarsel ved se
 msgid "Set the channel where warnings should be sent to.\n\n"
 "        Leave empty to use the channel `[p]warn` command was called in.\n"
 "        "
-msgstr ""
+msgstr "Angi kanalen hvor advarsler skal sendes til.\n\n"
+"        La stå tom for å bruke kanalen `[p]warn` kommandoen ble kalt inn.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:168
 msgid "The warn channel has been set to {channel}."
@@ -142,14 +144,23 @@ msgid "Manage automated actions for Warnings.\n\n"
 "        user is warned enough so that their points go over this\n"
 "        threshold, the action will be executed.\n"
 "        "
-msgstr ""
+msgstr "Administrer automatiserte handlinger for advarsler.\n\n"
+"        Handlinger er i det vesentlige kommandoen makroer. Alle kommandoer kan kjøres\n"
+"        når handlingen først aktiveres, og/eller når handlingen\n"
+"        er løftet.\n"
+"        Handlinger må angis som et navn og en punktterskel. Når en\n"
+"        bruker er advart nok slik at deres poeng går over denne\n"
+"        terskelen handlingen vil bli utført.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:210
 #, docstring
 msgid "Create an automated action.\n\n"
 "        Duplicate action names are not allowed.\n"
 "        "
-msgstr ""
+msgstr "Opprette en automatisk handling.\n\n"
+"        Dupliserte handlingsnavn er ikke tillatt.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:231
 msgid "Duplicate action name found!"
@@ -174,7 +185,10 @@ msgid "Manage warning reasons.\n\n"
 "        Reasons must be given a name, description and points value. The\n"
 "        name of the reason must be given when a user is warned.\n"
 "        "
-msgstr ""
+msgstr "Behandle advarselsgrunner.\n\n"
+"        Årsaker må gis et navn, beskrivelse og poengverdi.\n"
+"        navnet på grunnen må oppgis når en bruker blir advart.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:274
 #, docstring
@@ -263,7 +277,12 @@ msgid "Warn the user for the specified reason.\n\n"
 "        `<reason>` is reason for the warning. This can be a registered reason,\n"
 "        or a custom reason if ``[p]warningset allowcustomreasons`` is set.\n"
 "        "
-msgstr ""
+msgstr "Advar brukeren av en gitt grunn.\n\n"
+"        `<points>` antall poeng advarselen skal være for. Hvis ingen nummer oppgis\n"
+"        1 poeng vil det bli gitt. Forhåndsangi advarsler, se bort fra dette.\n"
+"        `<reason>` er grunn for advarselen. Dette kan være en grunn til å registrere\n"
+"        eller en egendefinert årsak hvis ``[p]warningset allowcustomreasons`` er satt.\n"
+"        "
 
 #: redbot/cogs/warnings/warnings.py:386
 msgid "You cannot warn yourself."

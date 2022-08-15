@@ -19,20 +19,22 @@ msgstr ""
 msgid "You're about to add a 3rd party repository. The creator of Red and its community have no responsibility for any potential damage that the content of 3rd party repositories might cause.\n\n"
 "By typing '{confirmation_message}' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\n\n"
 "You have **30** seconds to reply to this message."
-msgstr ""
+msgstr "Upravo ćete dodati repozitorij treće strane. Tvorac Red-a i njegova zajednica ne snose odgovornost za bilo kakvu potencijalnu štetu koji bi mogao prouzročiti sadržaj repozitorija trećih strana.\n\n"
+"Upisivanjem '{confirmation_message}' izjavljujete da ste pročitali i u potpunosti razumjeli gornju poruku. Ova se poruka neće ponovno prikazati do sljedećeg ponovnog pokretanja.\n\n"
+"Imate **30** sekundi da odgovorite na ovu poruku."
 
 #: redbot/cogs/downloader/checks.py:38
 msgid "Your response has timed out, please try again."
-msgstr ""
+msgstr "Vašem odgovoru je isteklo vrijeme, pokušajte ponovno."
 
 #: redbot/cogs/downloader/converters.py:14
 #: redbot/cogs/downloader/repo_manager.py:176
 msgid "No Downloader cog found."
-msgstr ""
+msgstr "Nije pronađen Downloader Cog."
 
 #: redbot/cogs/downloader/converters.py:19
 msgid "Cog `{cog_name}` is not installed."
-msgstr ""
+msgstr "`{cog_name}` Cog nije instaliran."
 
 #: redbot/cogs/downloader/downloader.py:31
 msgid "\n"
@@ -50,7 +52,14 @@ msgid "Install community cogs made by Cog Creators.\n\n"
 "    using the `[p]repo` command before you can install one or more\n"
 "    cogs from the creator.\n"
 "    "
-msgstr ""
+msgstr "Instalirajte Cogove zajednice koje su izradili Cog Creatorsi.\n\n"
+"    Cogovi zajednice, koji se nazivaju i Cogovi treće strane, nisu \n"
+"    uključeni u zadanu Red instalaciju.\n\n"
+"    Cogovi zajednice dolaze iz repozitorija. Repozitoriji su grupe\n"
+"    Cogova koje možete instalirati. Uvijek morate dodati repozitorij\n"
+"    kreatora koristeći `[p]repo` naredbu prije nego što možete\n"
+"    instalirati jedan ili više Cogova od kreatora.\n"
+"    "
 
 #: redbot/cogs/downloader/downloader.py:485
 #, docstring
@@ -63,7 +72,15 @@ msgid "\n"
 "        **Arguments**\n\n"
 "        - `<deps...>` The package or packages you wish to install.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Instalirajte grupu zavisnosti koristeći pip.\n\n"
+"        Primjeri:\n"
+"            - `[p]pipinstall bs4`\n"
+"            - `[p]pipinstall py-cpuinfo psutil`\n\n"
+"        Neispravno korištenje ove naredbe može slomiti vašeg bota, budite oprezni.\n\n"
+"        **Argumenti**\n\n"
+"        - `<deps...>` Paket/paketi koje želite instalirati.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:503
 msgid "Libraries installed."
@@ -84,7 +101,7 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:519
 #, docstring
 msgid "Base command for repository management."
-msgstr ""
+msgstr "Osnovna naredba za upravljanje repozitorijima."
 
 #: redbot/cogs/downloader/downloader.py:526
 #, docstring
@@ -99,19 +116,29 @@ msgid "Add a new repo.\n\n"
 "        - `<repo_url>` URL to the cog branch. Usually GitHub or GitLab.\n"
 "        - `[branch]` Optional branch to install cogs from.\n"
 "        "
-msgstr ""
+msgstr "Dodajte novi repo.\n\n"
+"        Primjeri:\n"
+"            - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`\n"
+"            - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`\n\n"
+"        Nazivi repozitorija mogu sadržavati samo A-Z znakove, brojeve, podvlake i crtice.\n"
+"        Grana će biti zadana grana ako nije navedena.\n\n"
+"        **Argumenti**\n\n"
+"        - `<name>` Naziv dodijeljen repozitoriju.\n"
+"        - `<repo_url>` URL Cog grane. Obično GitHub ili GitLab.\n"
+"        - `[branch]` Neobavezna grana iz koje se instaliraju Cogovi.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:545
 msgid "Repo names cannot start or end with a dot."
-msgstr ""
+msgstr "Imena repozitorija ne mogu počinjati ni završavati točkom."
 
 #: redbot/cogs/downloader/downloader.py:549
 msgid "Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots."
-msgstr ""
+msgstr "Nazivi repozitorija mogu sadržavati samo A-Z znakove, brojeve, podvlake i crtice."
 
 #: redbot/cogs/downloader/downloader.py:561
 msgid "The repo name you provided is already in use. Please choose another name."
-msgstr ""
+msgstr "Naziv repozitorija koji se dali se već koristi. Odaberite drugo ime."
 
 #: redbot/cogs/downloader/downloader.py:565
 msgid "Something went wrong during the cloning process. See logs for more information."
@@ -211,13 +238,14 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:684
 msgid "Repo update completed successfully."
-msgstr ""
+msgstr "Ažuriranje repozitorija je uspješno dovršeno."
 
 #: redbot/cogs/downloader/downloader.py:685
 #: redbot/cogs/downloader/downloader.py:1609
 msgid "\n"
 "Updated: "
-msgstr ""
+msgstr "\n"
+"Ažurirano: "
 
 #: redbot/cogs/downloader/downloader.py:687
 msgid "All installed repos are already up to date."
@@ -497,11 +525,11 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1099
 msgid "These cogs can be updated: "
-msgstr ""
+msgstr "Ovi Cogovi se mogu ažurirati: "
 
 #: redbot/cogs/downloader/downloader.py:1101
 msgid "This cog can be updated: "
-msgstr ""
+msgstr "Ovaj Cog se može ažurirati: "
 
 #: redbot/cogs/downloader/downloader.py:1106
 msgid "\n"
@@ -736,7 +764,7 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:1598
 msgid "Cog update completed successfully."
-msgstr ""
+msgstr "Ažuriranje Cogova je uspješno dovršeno."
 
 #: redbot/cogs/downloader/downloader.py:1613
 msgid "\n"

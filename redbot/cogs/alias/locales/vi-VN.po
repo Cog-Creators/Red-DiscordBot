@@ -24,12 +24,17 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr "Tạo lỗi tắt cho câu lệnh.\n\n"
-"Dùng để rút ngắn một câu lệnh bằng một từ hoặc chữ cái ngắn gọn hơn. (Chúng sẽ đóng vai trò giống nhau).    "
+msgstr "Tạo lối tắt cho câu lệnh.\n\n"
+"    Lối tắt là một bản rút gọn cho các lệnh khác nhau. Chúng có \n"
+"    thể hoạt động như một lambda (lưu trữ các giá trị để sử dụng\n"
+"    nhiều lần) hoặc chỉ là lối tắt để gọi \"x y z\"\n\n"
+"    Khi chạy, lối tắt sẽ chấp nhận bất cứ giá trị được thêm\n"
+"    vào và nối thêm vào lối tắt được lưu trữ.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:180
 msgid "Aliases:\n"
-msgstr "Bí danh:\n"
+msgstr "Lối tắt:\n"
 
 #: redbot/cogs/alias/alias.py:182
 msgid "\n\n"
@@ -40,21 +45,21 @@ msgstr "\n\n"
 #: redbot/cogs/alias/alias.py:192
 #, docstring
 msgid "Manage command aliases."
-msgstr "Quản lí bí danh hoặc lối tắt của câu lệnh."
+msgstr "Quản lí các lối tắt của câu lệnh."
 
 #: redbot/cogs/alias/alias.py:197
 #, docstring
 msgid "Manage global aliases."
-msgstr "Quản lý bí danh hoặc lối tắt dùng chung."
+msgstr "Quản lý lối tắt toàn hệ thống."
 
 #: redbot/cogs/alias/alias.py:204
 #, docstring
 msgid "Add an alias for a command."
-msgstr "Thêm bí danh hoặc lối tắt cho một câu lệnh."
+msgstr "Thêm lối tắt cho một câu lệnh."
 
 #: redbot/cogs/alias/alias.py:209
 msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
-msgstr "Bạn vừa tạo lỗi tắt {name} nhưng nó đã bị trùng với một câu lệnh có sẵn."
+msgstr "Bạn vừa tạo lối tắt {name} nhưng nó đã bị trùng với một câu lệnh có sẵn."
 
 #: redbot/cogs/alias/alias.py:220
 msgid "You attempted to create a new alias with the name {name} but that alias already exists."
@@ -62,7 +67,7 @@ msgstr "Bạn vừa tạo lối tắt mới có tên {name} nhưng nó đã tồ
 
 #: redbot/cogs/alias/alias.py:231
 msgid "You attempted to create a new alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr "Bạn vừa tạo lối tắt {name} nhưng đó không phải là cách đặt tên lối tắt. Tên của lối tắt không được có dấu cách."
+msgstr "Bạn vừa tạo lối tắt có tên là {name} nhưng đó là một tên lối tắt không hợp lệ. Tên của lối tắt không được có dấu cách."
 
 #: redbot/cogs/alias/alias.py:243 redbot/cogs/alias/alias.py:302
 msgid "You attempted to create a new alias for a command that doesn't exist."
@@ -70,16 +75,16 @@ msgstr "Câu lệnh đó không tồn tại để tạo lối tắt."
 
 #: redbot/cogs/alias/alias.py:257
 msgid "A new alias with the trigger `{name}` has been created."
-msgstr "Một lối tắt với tên `{name}` đã được tạo."
+msgstr "Một lối tắt với kích hoạt là `{name}` đã được tạo."
 
 #: redbot/cogs/alias/alias.py:263
 #, docstring
 msgid "Add a global alias for a command."
-msgstr "Thêm bí danh hoặc lối tắt dùng chung cho một câu lệnh."
+msgstr "Thêm lối tắt toàn hệ thống cho một câu lệnh."
 
 #: redbot/cogs/alias/alias.py:268
 msgid "You attempted to create a new global alias with the name {name} but that name is already a command on this bot."
-msgstr "Bạn vừa tạo lỗi tắt dùng chung với tên {name} nhưng nó đã bị trùng với một câu lệnh có sẵn."
+msgstr "Bạn vừa tạo lối tắt toàn hệ thống với tên {name} nhưng nó đã bị trùng với một câu lệnh trong bot."
 
 #: redbot/cogs/alias/alias.py:279
 msgid "You attempted to create a new global alias with the name {name} but that alias already exists."
@@ -87,16 +92,16 @@ msgstr "Bạn vừa tạo lối tắt dùng chung mới có tên {name} nhưng n
 
 #: redbot/cogs/alias/alias.py:290
 msgid "You attempted to create a new global alias with the name {name} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr "Bạn vừa tạo lối tắt dùng chung với tên {name} nhưng đó không phải là cách đặt tên lối tắt. Tên của lối tắt không được có dấu cách."
+msgstr "Bạn vừa tạo lối tắt toàn hệ thống có tên là {name} nhưng đó là một tên lối tắt không hợp lệ. Tên của lối tắt không được có dấu cách."
 
 #: redbot/cogs/alias/alias.py:313
 msgid "A new global alias with the trigger `{name}` has been created."
-msgstr "Một lối tắt dùng chung với tên `{name}` đã được tạo."
+msgstr "Một lối tắt toàn hệ thống với kích hoạt là `{name}` đã được tạo."
 
 #: redbot/cogs/alias/alias.py:322
 #, docstring
 msgid "Edit an existing alias in this server."
-msgstr "Chỉnh sửa lỗi tắt hoặc bí danh trên server này."
+msgstr "Chỉnh sửa lối tắt trên server này."
 
 #: redbot/cogs/alias/alias.py:327 redbot/cogs/alias/alias.py:362
 msgid "The alias with the name {name} does not exist."
@@ -108,7 +113,7 @@ msgstr "Bạn vừa chỉnh sửa lối tắt của một câu lệnh không t�
 
 #: redbot/cogs/alias/alias.py:342 redbot/cogs/alias/alias.py:375
 msgid "The alias with the trigger `{name}` has been edited sucessfully."
-msgstr "Lối tắt với tên `{name}` đã được tạo thành công."
+msgstr "Lối tắt với kích hoạt là `{name}` đã được tạo thành công."
 
 #: redbot/cogs/alias/alias.py:349 redbot/cogs/alias/alias.py:382
 msgid "Alias with the name `{name}` was not found."
@@ -117,42 +122,42 @@ msgstr "Không tim thấy lối tắt với tên `{name}`."
 #: redbot/cogs/alias/alias.py:357
 #, docstring
 msgid "Edit an existing global alias."
-msgstr "Chỉnh sửa lối tắt dùng chung."
+msgstr "Chỉnh sửa lối tắt toàn hệ thống."
 
 #: redbot/cogs/alias/alias.py:389
 #, docstring
 msgid "Try to execute help for the base command of the alias."
-msgstr "Hãy thử dùng trợ giúp cho câu lệnh cơ bản về lối tắt, bí danh."
+msgstr "Hãy thử dùng trợ giúp của câu lệnh chính của lối tắt."
 
 #: redbot/cogs/alias/alias.py:394
 msgid "No such alias exists."
-msgstr "Không có lối tắt, bí danh này."
+msgstr "Không có lối tắt này."
 
 #: redbot/cogs/alias/alias.py:398
 #, docstring
 msgid "Show what command the alias executes."
-msgstr "Xem lối tắt, bí danh sẽ chạy câu lệnh nào."
+msgstr "Xem lối tắt sẽ chạy câu lệnh nào."
 
 #: redbot/cogs/alias/alias.py:403
 msgid "The `{alias_name}` alias will execute the command `{command}`"
-msgstr "Lối tắt, bí danh `{alias_name}` sẽ chạy câu lệnh `{command}`"
+msgstr "Lối tắt `{alias_name}` sẽ chạy câu lệnh `{command}`"
 
 #: redbot/cogs/alias/alias.py:408
 msgid "There is no alias with the name `{name}`"
-msgstr "Không có lối tắt hay bí danh nào với tên `{name}`"
+msgstr "Không có lối tắt nào với tên `{name}`"
 
 #: redbot/cogs/alias/alias.py:414
 #, docstring
 msgid "Delete an existing alias on this server."
-msgstr "Xóa một lối tắt, bí danh đang tồn tai trên máy chủ này."
+msgstr "Xóa một lối tắt đang tồn tại trên server này."
 
 #: redbot/cogs/alias/alias.py:416 redbot/cogs/alias/alias.py:448
 msgid "There are no aliases on this server."
-msgstr "Không có bất kì lối tắt hay bí danh nào được thiết lập."
+msgstr "Không có bất kì lối tắt nào được thiết lập trên server."
 
 #: redbot/cogs/alias/alias.py:421 redbot/cogs/alias/alias.py:436
 msgid "Alias with the name `{name}` was successfully deleted."
-msgstr "Lối tắt, bí danh với tên `{name}` đã bị xóa."
+msgstr "Lối tắt với tên `{name}` đã bị xóa."
 
 #: redbot/cogs/alias/alias.py:424 redbot/cogs/alias/alias.py:439
 msgid "Alias with name `{name}` was not found."
@@ -161,31 +166,31 @@ msgstr "Không tìm thấy lối tắt `{name}`."
 #: redbot/cogs/alias/alias.py:429
 #, docstring
 msgid "Delete an existing global alias."
-msgstr "Xóa một lối tắt dùng chung."
+msgstr "Xóa một lối tắt toàn hệ thống."
 
 #: redbot/cogs/alias/alias.py:431
 msgid "There are no global aliases on this bot."
-msgstr "Không có bất kì lối tắt hay bí danh dùng chung nào được đặt."
+msgstr "Không có bất kì lối tắt toàn hệ thống nào được đặt trong bot."
 
 #: redbot/cogs/alias/alias.py:445
 #, docstring
 msgid "List the available aliases on this server."
-msgstr "Danh sách tổng hợp những lối tắt, bí danh của câu lệnh tồn tại trên máy chủ này."
+msgstr "Danh sách tổng hợp những lối tắt tồn tại trên server này."
 
 #: redbot/cogs/alias/alias.py:454
 #, docstring
 msgid "List the available global aliases on this bot."
-msgstr "Danh sách tổng hợp những lối tắt, bí danh dùng chung của câu lệnh tồn tại trên máy chủ này."
+msgstr "Danh sách tổng hợp những lối tắt toàn hệ thống tồn tại trong bot."
 
 #: redbot/cogs/alias/alias.py:457
 msgid "There are no global aliases."
-msgstr "Không có lối tắt hay bí danh dùng chung nào."
+msgstr "Không có lối tắt toàn hệ thống nào."
 
 #: redbot/cogs/alias/alias_entry.py:197
 msgid "Arguments must be specified with a number."
-msgstr "Cú pháp phải được ghi rõ ràng bằng một con số."
+msgstr "Giá trị phải được ghi rõ ràng bằng một con số."
 
 #: redbot/cogs/alias/alias_entry.py:204
 msgid "Arguments must be sequential. Missing arguments: "
-msgstr "Cú pháp phải tuần tự. Bị thiếu cú pháp: "
+msgstr "Giá trị phải sắp xếp tuần tự. Bị thiếu cú pháp: "
 

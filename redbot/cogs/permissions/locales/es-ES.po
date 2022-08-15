@@ -333,7 +333,7 @@ msgstr "Suministrar un archivo con el siguiente mensaje o escribir cualquier cos
 
 #: redbot/cogs/permissions/permissions.py:641
 msgid "You took too long to upload a file."
-msgstr ""
+msgstr "Tardaste demasiado en subir un archivo."
 
 #: redbot/cogs/permissions/permissions.py:644
 msgid "You have cancelled the upload process."

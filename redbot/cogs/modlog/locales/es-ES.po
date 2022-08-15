@@ -27,7 +27,7 @@ msgstr "Mostrar el caso especificado."
 
 #: redbot/cogs/modlog/modlog.py:37
 msgid "That case does not exist for this server."
-msgstr ""
+msgstr "Ese caso no existe en ese servidor."
 
 #: redbot/cogs/modlog/modlog.py:46 redbot/cogs/modlog/modlog.py:83
 #: redbot/cogs/modlog/modlog.py:118

@@ -21,39 +21,39 @@ msgstr "Automatische Wiedergabe gestartet."
 
 #: redbot/cogs/audio/core/events/dpy.py:34
 msgid "Create Instant Invite"
-msgstr ""
+msgstr "Soforteinladung erstellen"
 
 #: redbot/cogs/audio/core/events/dpy.py:35
 msgid "Kick Members"
-msgstr ""
+msgstr "Mitglieder kicken"
 
 #: redbot/cogs/audio/core/events/dpy.py:36
 msgid "Ban Members"
-msgstr ""
+msgstr "Mitglieder bannen"
 
 #: redbot/cogs/audio/core/events/dpy.py:37
 msgid "Administrator"
-msgstr ""
+msgstr "Administrator"
 
 #: redbot/cogs/audio/core/events/dpy.py:38
 msgid "Manage Channels"
-msgstr ""
+msgstr "Kanäle verwalten"
 
 #: redbot/cogs/audio/core/events/dpy.py:39
 msgid "Manage Server"
-msgstr ""
+msgstr "Server verwalten"
 
 #: redbot/cogs/audio/core/events/dpy.py:40
 msgid "Add Reactions"
-msgstr ""
+msgstr "Reaktionen hinzufügen"
 
 #: redbot/cogs/audio/core/events/dpy.py:41
 msgid "View Audit Log"
-msgstr ""
+msgstr "Audit-Log einsehen"
 
 #: redbot/cogs/audio/core/events/dpy.py:42
 msgid "Priority Speaker"
-msgstr ""
+msgstr "Priorisierter Sprecher"
 
 #: redbot/cogs/audio/core/events/dpy.py:43
 msgid "Go Live"

@@ -61,7 +61,7 @@ msgstr "Ja"
 
 #: redbot/core/commands/help.py:122
 msgid "Disabled"
-msgstr ""
+msgstr "Uitgeschakeld"
 
 #: redbot/core/commands/help.py:127
 msgid "\n"

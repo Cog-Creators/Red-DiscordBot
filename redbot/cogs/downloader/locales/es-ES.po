@@ -269,7 +269,7 @@ msgstr "La actualización del repositorio se completó correctamente."
 msgid "\n"
 "Updated: "
 msgstr "\n"
-"Actualizado: "
+"Actualizados: "
 
 #: redbot/cogs/downloader/downloader.py:687
 msgid "All installed repos are already up to date."
@@ -443,7 +443,7 @@ msgstr "\n"
 msgid "\n"
 "You can load them using {command_1}. To see end user data statements, you can use {command_2}."
 msgstr "\n"
-"Puedes cargarlos usando {command_1}. Para ver las declaraciones de datos del usuario final, puedes usar {command_2}."
+"Puedes cargarlo(s) usando {command_1}. Para ver las declaraciones de datos del usuario final, puedes usar {command_2}."
 
 #: redbot/cogs/downloader/downloader.py:915
 #, docstring
@@ -581,7 +581,7 @@ msgstr "Lista de engranajes fijados."
 
 #: redbot/cogs/downloader/downloader.py:1065
 msgid "unknown"
-msgstr ""
+msgstr "desconocido"
 
 #: redbot/cogs/downloader/downloader.py:1068
 msgid "None."
@@ -751,7 +751,7 @@ msgstr "Los programas proporcionados ya están actualizados."
 
 #: redbot/cogs/downloader/downloader.py:1288
 msgid "All installed cogs are already up to date."
-msgstr "Todos los programas instalados ya están actualizados."
+msgstr "Todos los cogs instalados ya están al dia."
 
 #: redbot/cogs/downloader/downloader.py:1318
 #, docstring
@@ -1000,7 +1000,7 @@ msgstr "Encuentra de qué cogs viene un comando.\n\n"
 
 #: redbot/cogs/downloader/downloader.py:1737
 msgid "That command doesn't seem to exist."
-msgstr "Ese comando no parece existir."
+msgstr "Parece que ese comando no existe."
 
 #: redbot/cogs/downloader/downloader.py:1752
 #: redbot/cogs/downloader/downloader.py:1757
