@@ -414,11 +414,20 @@ class General(commands.Cog):
                 inline=False,
             )
 
+            custom_feature_names = {
+                "TEXT_IN_VOICE_ENABLED": "Text in Voice enabled",
+                "VANITY_URL": "Vanity URL",
+                "VIP_REGIONS": "VIP regions",
+            }
+            feature_names = [
+                custom_feature_names.get(feature, " ".join(feature.split("_")).capitalize())
+                for feature in sorted(guild.features)
+            ]
             if guild.features:
                 data.add_field(
                     name=_("Server features:"),
                     value="\n".join(
-                        f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in guild.features
+                        f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in feature_names
                     ),
                 )
             if guild.premium_tier != 0:
