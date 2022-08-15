@@ -1,5 +1,43 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.18 (2022-08-15)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`RheingoldRiver`
+
+Read before updating
+--------------------
+
+#. openSUSE Leap 15.2 is no longer supported as it has already reached its end of life.
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    - Red 3.4.18 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1350>`__.
+    - We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.18/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- openSUSE Leap 15.2 is no longer supported as it has already reached its end of life (:issue:`5777`)
+
+Audio
+*****
+
+- Addressed a cipher change that made it impossible to find tracks (:issue:`5822`)
+- Fixed an issue with ``[p]llset external`` making the bot completely unresponsive when switching to an external Lavalink server (:issue:`5804`, :issue:`5828`)
+
+
+Documentation changes
+---------------------
+
+- Updated the screenshot in `bot_application_guide` to include the message content intent (:issue:`5798`)
+- Unpinned Temurin version on Windows as a fixed version is now available (:issue:`5815`)
+
+
 Redbot 3.4.17 (2022-06-07)
 ==========================
 
@@ -21,7 +59,7 @@ End-user changelog
 Core Bot
 ********
 
-- Fedora 33 is no longer supported as it has already reached its its end of life (:issue:`5701`)
+- Fedora 33 is no longer supported as it has already reached its end of life (:issue:`5701`)
 - Added instructions on how to respond to the message received from ``[p]contact`` in the embed footer of the message sent to the bot owner (:issue:`5528`, :issue:`5529`)
 - Updated ``[p]servers`` command to escape Discord markdown in server names (:issue:`5696`, :issue:`5744`)
 - Fixed a bug that prevented users from changing the name and data location with ``redbot --edit`` command (:issue:`5545`, :issue:`5540`, :issue:`5541`)
