@@ -352,37 +352,6 @@ class General(commands.Cog):
                 "highest": _("4 - Highest"),
             }
 
-            features = {
-                "ANIMATED_ICON": _("Animated Icon"),
-                "ANIMATED_BANNER": _("Animated Banner"),
-                "BANNER": _("Banner"),
-                "COMMERCE": _("Commerce"),
-                "COMMUNITY": _("Community"),
-                "DISCOVERABLE": _("Discoverable"),
-                "FEATURABLE": _("Featurable"),
-                "INVITE_SPLASH": _("Splash Invite"),
-                "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
-                "MONETIZATION_ENABLED": _("Monetization Enabled"),
-                "MORE_STICKERS": _("More Stickers"),
-                "NEWS": _("News"),
-                "PARTNERED": _("Partnered"),
-                "PREVIEW_ENABLED": _("Preview Enabled"),
-                "PRIVATE_THREADS": _("Private Threads"),
-                "ROLE_ICON": _("Role Icon"),
-                "SEVEN_DAY_THREAD_ARCHIVE": _("Seven Day Thread Archive"),
-                "THREE_DAY_THREAD_ARCHIVE": _("Three Day Thread Archive"),
-                "TICKETED_EVENTS_ENABLED": _("Ticketed Events Enabled"),
-                "VERIFIED": _("Verified"),
-                "VANITY_URL": _("Vanity URL"),
-                "VIP_REGIONS": _("VIP Regions"),
-                "WELCOME_SCREEN_ENABLED": _("Welcome Screen Enabled"),
-            }
-            guild_features_list = [
-                f"\N{WHITE HEAVY CHECK MARK} {name}"
-                for feature, name in features.items()
-                if feature in guild.features
-            ]
-
             joined_on = _(
                 "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
             ).format(
@@ -444,8 +413,14 @@ class General(commands.Cog):
                 ),
                 inline=False,
             )
-            if guild_features_list:
-                data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
+
+            if guild.features:
+                data.add_field(
+                    name=_("Server features:"),
+                    value="\n".join(
+                        f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in guild.features
+                    ),
+                )
             if guild.premium_tier != 0:
                 nitro_boost = _(
                     "Tier {boostlevel} with {nitroboosters} boosts\n"
