@@ -65,38 +65,39 @@ msgstr "sekundi"
 
 #: redbot/core/utils/views.py:51
 msgid "Set API Keys"
-msgstr ""
+msgstr "Postavi API ključeve"
 
 #: redbot/core/utils/views.py:52
 msgid "Keys and tokens"
-msgstr ""
+msgstr "Ključevi i tokeni"
 
 #: redbot/core/utils/views.py:54
 msgid "Set API Keys for {service}"
-msgstr ""
+msgstr "Postavi API ključeve za {service}"
 
 #: redbot/core/utils/views.py:55
 msgid "Keys and tokens for {service}"
-msgstr ""
+msgstr "Ključevi i tokeni za {service}"
 
 #: redbot/core/utils/views.py:64
 msgid "Service"
-msgstr ""
+msgstr "Usluga"
 
 #: redbot/core/utils/views.py:101
 msgid "This modal is for bot owners only. Whoops!"
-msgstr ""
+msgstr "Ovaj modal je samo za vlasnike bota. Ups!"
 
 #: redbot/core/utils/views.py:114
 msgid "{error_message}\n"
 "Please try again."
-msgstr ""
+msgstr "{error_message}\n"
+"Molim te pokušaj ponovno."
 
 #: redbot/core/utils/views.py:121 redbot/core/utils/views.py:128
 msgid "`{service}` API tokens have been set."
-msgstr ""
+msgstr "`{service}` API tokeni su postavljeni."
 
 #: redbot/core/utils/views.py:164
 msgid "This button is for bot owners only, oh well."
-msgstr ""
+msgstr "Ovaj gumb je samo za vlasnike bota."
 

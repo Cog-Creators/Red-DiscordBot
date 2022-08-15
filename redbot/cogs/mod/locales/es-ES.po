@@ -93,7 +93,7 @@ msgstr "El usuario con ID {user_id} fue actualizado de un baneo temporal a perma
 
 #: redbot/cogs/mod/kickban.py:196 redbot/cogs/mod/kickban.py:357
 msgid "Done. That felt good."
-msgstr "Hecho. Se sintió bien."
+msgstr "Hecho. Eso se sintió bien."
 
 #: redbot/cogs/mod/kickban.py:198 redbot/cogs/mod/kickban.py:338
 msgid "I'm not allowed to do that."
@@ -352,7 +352,7 @@ msgstr "Algo salió mal al intentar desbanear a ese usuario."
 
 #: redbot/cogs/mod/kickban.py:918
 msgid "Unbanned that user from this server."
-msgstr "Desbanea a un usuario del servidor."
+msgstr "He desbaneado a ese usuario de este servidor."
 
 #: redbot/cogs/mod/kickban.py:924
 msgid "I don't share another server with this user. I can't reinvite them."

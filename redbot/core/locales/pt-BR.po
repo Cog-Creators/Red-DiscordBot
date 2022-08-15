@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-06-05 14:20+0000\n"
+"POT-Creation-Date: 2022-07-26 18:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -41,20 +41,21 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:129
 msgid "To fix this issue, remove timeout from the bot."
-msgstr ""
+msgstr "Para corrigir esse problema, remova o tempo limite do bot."
 
 #: redbot/core/_diagnoser.py:135
 msgid "Bot doesn't have permission to send messages in the given channel."
-msgstr ""
+msgstr "O bot não tem permissão para enviar mensagens no canal informado."
 
 #: redbot/core/_diagnoser.py:136
 msgid "To fix this issue, ensure that the permissions setup allows the bot to send messages per Discord's role hierarchy:\n"
 "https://support.discord.com/hc/en-us/articles/206141927"
-msgstr ""
+msgstr "Para corrigir esse problema, certifique-se de que as configurações de permissão permite ao bot enviar mensagens por hierarquia de cargo do Discord:\n"
+"https://support.discord.com/hc/en-us/articles/206141927"
 
 #: redbot/core/_diagnoser.py:148
 msgid "Check if the channel and the server aren't set to be ignored"
-msgstr ""
+msgstr "Verifique se o canal e o servidor não estão configurados para \"silenciado\""
 
 #: redbot/core/_diagnoser.py:154
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {thread} thread, its parent channel, and the server aren't a part of that list."
@@ -74,7 +75,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:198
 msgid "The bot is set to ignore commands in the given channel or this server."
-msgstr ""
+msgstr "O bot está configurado para ignorar comandos neste canal ou neste servidor."
 
 #: redbot/core/_diagnoser.py:208
 msgid "Global allowlist prevents the user from running this command."
@@ -88,7 +89,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:225
 msgid "Global blocklist prevents the user from running this command."
-msgstr ""
+msgstr "A lista de bloqueio global impede o usuário de executar este comando."
 
 #: redbot/core/_diagnoser.py:226
 msgid "To fix this issue, you can either remove the user from the blocklist, or clear the blocklist.\n"
@@ -98,7 +99,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:248
 msgid "Local allowlist prevents the user from running this command."
-msgstr ""
+msgstr "A lista branca local impede o usuário de executar este comando."
 
 #: redbot/core/_diagnoser.py:249
 msgid "To fix this issue, you can either add the user or one of their roles to the local allowlist, or clear the local allowlist.\n"
@@ -108,7 +109,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:263
 msgid "Local blocklist prevents the user from running this command."
-msgstr ""
+msgstr "A lista de bloqueio local impede o usuário de executar este comando."
 
 #: redbot/core/_diagnoser.py:278
 msgid "To fix this issue, you can either remove the user's roles from the local blocklist, or clear the local blocklist.\n"
@@ -130,15 +131,15 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:340
 msgid "Allowlist and blocklist checks"
-msgstr ""
+msgstr "Permitir e verificar lista de bloqueio"
 
 #: redbot/core/_diagnoser.py:372
 msgid "Global, cog and command checks"
-msgstr ""
+msgstr "Verificações globais, do cog, e de comando"
 
 #: redbot/core/_diagnoser.py:379
 msgid "The given command is disabled in this guild."
-msgstr ""
+msgstr "Este comando está desativado neste servidor."
 
 #: redbot/core/_diagnoser.py:381 redbot/core/_diagnoser.py:858
 msgid "One of the parents of the given command is disabled globally."
@@ -150,7 +151,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:408
 msgid "Other issues related to the checks"
-msgstr ""
+msgstr "Outros problemas relacionados com as verificações"
 
 #: redbot/core/_diagnoser.py:409
 msgid "There's an issue related to the checks for {command} but we're not able to determine the exact cause."
@@ -158,11 +159,11 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:413
 msgid "To fix this issue, a manual review of the global, cog and command checks is required."
-msgstr ""
+msgstr "Para corrigir este problema, é necessária uma revisão manual das verificações globais, cog e de comando."
 
 #: redbot/core/_diagnoser.py:421
 msgid "Global checks"
-msgstr ""
+msgstr "Verificações Globais"
 
 #: redbot/core/_diagnoser.py:431
 msgid "One of the global checks for the command {command} failed with a message:\n"
@@ -302,7 +303,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:670
 msgid "Permission checks"
-msgstr ""
+msgstr "Verificações de permissões"
 
 #: redbot/core/_diagnoser.py:674
 msgid "The access has been denied by one of the permissions checks of {cog} cog."
@@ -334,19 +335,19 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:721
 msgid "the guild owner"
-msgstr ""
+msgstr "o proprietário do servidor"
 
 #: redbot/core/_diagnoser.py:724
 msgid "the mod role"
-msgstr ""
+msgstr "o cargo de moderador"
 
 #: redbot/core/_diagnoser.py:726
 msgid "the admin role"
-msgstr ""
+msgstr "o cargo de administrador"
 
 #: redbot/core/_diagnoser.py:729
 msgid "assign appropriate role to the user"
-msgstr ""
+msgstr "atribuir o cargo apropriado para o usuário"
 
 #: redbot/core/_diagnoser.py:731
 msgid "The user is missing the privilege level ({privilege_level}) required by the {cog} cog."
@@ -358,7 +359,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:751
 msgid "add appropriate rule in the Permissions cog"
-msgstr ""
+msgstr "adicionar regra apropriada no cog de Permissões"
 
 #: redbot/core/_diagnoser.py:754
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {cog} cog."
@@ -374,11 +375,11 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:804 redbot/core/_diagnoser.py:917
 msgid "Other command checks"
-msgstr ""
+msgstr "Outras verificações de comando"
 
 #: redbot/core/_diagnoser.py:805 redbot/core/_diagnoser.py:918
 msgid "The given command is failing one of the required checks."
-msgstr ""
+msgstr "O comando fornecido está falhando uma das verificações necessárias."
 
 #: redbot/core/_diagnoser.py:806 redbot/core/_diagnoser.py:919
 msgid "To fix this issue, a manual review of the command's checks is required."
@@ -398,7 +399,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:849
 msgid "Check if the command is disabled"
-msgstr ""
+msgstr "Verifique se o comando está desativado"
 
 #: redbot/core/_diagnoser.py:859 redbot/core/_diagnoser.py:873
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command globally."
@@ -406,19 +407,19 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:872
 msgid "The given command is disabled globally."
-msgstr ""
+msgstr "O comando fornecido está desativado globalmente."
 
 #: redbot/core/_diagnoser.py:885
 msgid "Checks and permissions verification"
-msgstr ""
+msgstr "Verificações de permissões e confirmações"
 
 #: redbot/core/_diagnoser.py:936
 msgid "Passed"
-msgstr ""
+msgstr "Aprovado"
 
 #: redbot/core/_diagnoser.py:938
 msgid "Failed"
-msgstr ""
+msgstr "Falhou"
 
 #: redbot/core/_diagnoser.py:967
 msgid "All checks passed and no issues were detected. Make sure that the given parameters correspond to the channel, user, and command name that have been problematic.\n\n"
@@ -431,20 +432,21 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:981
 msgid "Detected issue: "
-msgstr ""
+msgstr "Problema detectado: "
 
 #: redbot/core/_diagnoser.py:983
 msgid "Solution: "
-msgstr ""
+msgstr "Solução: "
 
 #: redbot/core/_diagnoser.py:985
 msgid "\n"
 "Here's a detailed report in case you need it:"
-msgstr ""
+msgstr "\n"
+"Aqui está um relatório detalhado caso você precise:"
 
 #: redbot/core/_diagnoser.py:986
 msgid "Channel: "
-msgstr ""
+msgstr "Canal: "
 
 #: redbot/core/_diagnoser.py:987
 msgid "Command caller: "
@@ -452,7 +454,7 @@ msgstr ""
 
 #: redbot/core/_diagnoser.py:988
 msgid "Command: "
-msgstr ""
+msgstr "Comando: "
 
 #: redbot/core/_diagnoser.py:989
 msgid "Tests that have been ran:"
@@ -687,11 +689,11 @@ msgstr "Desatualizado: [{state}]\n"
 
 #: redbot/core/core_commands.py:504
 msgid "**About Red**\n"
-msgstr ""
+msgstr "**Sobre o Red**\n"
 
 #: redbot/core/core_commands.py:515
 msgid "**About this instance**\n"
-msgstr ""
+msgstr "**Sobre esta instância**\n"
 
 #: redbot/core/core_commands.py:517
 msgid "**References**\n"
@@ -707,11 +709,11 @@ msgstr ""
 #: redbot/core/core_commands.py:533
 #, docstring
 msgid "Shows [botname]'s uptime."
-msgstr ""
+msgstr "Mostra o uptime de [botname]."
 
 #: redbot/core/core_commands.py:536
 msgid "Less than one second."
-msgstr ""
+msgstr "Menos de um segundo."
 
 #: redbot/core/core_commands.py:538
 msgid "I have been up for: **{time_quantity}** (since {timestamp})"
@@ -875,7 +877,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:818
 msgid "User can not delete their own data."
-msgstr ""
+msgstr "O usuário não pode excluir seus próprios dados."
 
 #: redbot/core/core_commands.py:822
 #, docstring
@@ -937,7 +939,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:926 redbot/core/core_commands.py:1083
 msgid "I've deleted all data about that user that I know how to delete."
-msgstr ""
+msgstr "Eu deletei todos os dados sobre aquele usuário que eu poderia."
 
 #: redbot/core/core_commands.py:937
 #, docstring
@@ -1339,7 +1341,7 @@ msgstr ""
 msgid "I cannot leave the server `{server_name}`: I am the owner of it."
 msgstr ""
 
-#: redbot/core/core_commands.py:1622 redbot/core/core_commands.py:3551
+#: redbot/core/core_commands.py:1622 redbot/core/core_commands.py:3556
 msgid "Response timed out."
 msgstr "Tempo de resposta excedido."
 
@@ -2385,7 +2387,7 @@ msgid "\n"
 "        Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.\n\n"
 "        **Examples:**\n"
 "            - `[p]set api`\n"
-"            - `[p]set api spotify\n"
+"            - `[p]set api spotify`\n"
 "            - `[p]set api spotify redirect_uri localhost`\n"
 "            - `[p]set api github client_id,whoops client_secret,whoops`\n\n"
 "        **Arguments:**\n"
@@ -2671,24 +2673,28 @@ msgid "Sets [botname]'s global prefix(es).\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3541
+#: redbot/core/core_commands.py:3541 redbot/core/core_commands.py:3594
+msgid "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+msgstr ""
+
+#: redbot/core/core_commands.py:3546
 msgid "Warning: A prefix is above the recommended length (25 characters).\n"
 "Do you want to continue?"
 msgstr ""
 
-#: redbot/core/core_commands.py:3555
+#: redbot/core/core_commands.py:3560
 msgid "Cancelled."
 msgstr "Cancelado."
 
-#: redbot/core/core_commands.py:3559
+#: redbot/core/core_commands.py:3564
 msgid "Prefix set."
 msgstr "Prefixo definido."
 
-#: redbot/core/core_commands.py:3561
+#: redbot/core/core_commands.py:3566
 msgid "Prefixes set."
 msgstr ""
 
-#: redbot/core/core_commands.py:3567
+#: redbot/core/core_commands.py:3572
 #, docstring
 msgid "\n"
 "        Sets [botname]'s server prefix(es).\n\n"
@@ -2705,23 +2711,23 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3585
+#: redbot/core/core_commands.py:3590
 msgid "Server prefixes have been reset."
 msgstr ""
 
-#: redbot/core/core_commands.py:3588
+#: redbot/core/core_commands.py:3598
 msgid "You cannot have a prefix longer than 25 characters."
 msgstr ""
 
-#: redbot/core/core_commands.py:3593
+#: redbot/core/core_commands.py:3603
 msgid "Server prefix set."
 msgstr ""
 
-#: redbot/core/core_commands.py:3595
+#: redbot/core/core_commands.py:3605
 msgid "Server prefixes set."
 msgstr ""
 
-#: redbot/core/core_commands.py:3600
+#: redbot/core/core_commands.py:3610
 #, docstring
 msgid "\n"
 "        Commands to manage settings for the help command.\n\n"
@@ -2729,7 +2735,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3609
+#: redbot/core/core_commands.py:3619
 #, docstring
 msgid "\n"
 "        Show the current help settings.\n\n"
@@ -2739,11 +2745,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3623
+#: redbot/core/core_commands.py:3633
 msgid "Warning: The default formatter is not in use, these settings may not apply."
 msgstr ""
 
-#: redbot/core/core_commands.py:3633
+#: redbot/core/core_commands.py:3643
 #, docstring
 msgid "\n"
 "        This resets [botname]'s help formatter to the default formatter.\n\n"
@@ -2752,11 +2758,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3642
+#: redbot/core/core_commands.py:3652
 msgid "The help formatter has been reset. This will not prevent cogs from modifying help, you may need to remove a cog if this has been an issue."
 msgstr ""
 
-#: redbot/core/core_commands.py:3651
+#: redbot/core/core_commands.py:3661
 #, docstring
 msgid "\n"
 "        This resets [botname]'s help settings to their defaults.\n\n"
@@ -2766,11 +2772,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3661
+#: redbot/core/core_commands.py:3671
 msgid "The help settings have been reset to their defaults. This may not have an impact when using 3rd party help formatters."
 msgstr ""
 
-#: redbot/core/core_commands.py:3669
+#: redbot/core/core_commands.py:3679
 #, docstring
 msgid "\n"
 "        Allows the help command to be sent as a paginated menu instead of separate\n"
@@ -2786,15 +2792,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3689
+#: redbot/core/core_commands.py:3699
 msgid "Help will use menus."
 msgstr ""
 
-#: redbot/core/core_commands.py:3691
+#: redbot/core/core_commands.py:3701
 msgid "Help will not use menus."
 msgstr ""
 
-#: redbot/core/core_commands.py:3695
+#: redbot/core/core_commands.py:3705
 #, docstring
 msgid "\n"
 "        This allows the help command to show hidden commands.\n\n"
@@ -2808,15 +2814,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3712
+#: redbot/core/core_commands.py:3722
 msgid "Help will not filter hidden commands."
 msgstr ""
 
-#: redbot/core/core_commands.py:3714
+#: redbot/core/core_commands.py:3724
 msgid "Help will filter hidden commands."
 msgstr ""
 
-#: redbot/core/core_commands.py:3718
+#: redbot/core/core_commands.py:3728
 #, docstring
 msgid "\n"
 "        This allows the help command to show existing commands aliases if there is any.\n\n"
@@ -2830,15 +2836,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3735
+#: redbot/core/core_commands.py:3745
 msgid "Help will now show command aliases."
 msgstr ""
 
-#: redbot/core/core_commands.py:3737
+#: redbot/core/core_commands.py:3747
 msgid "Help will no longer show command aliases."
 msgstr ""
 
-#: redbot/core/core_commands.py:3741
+#: redbot/core/core_commands.py:3751
 #, docstring
 msgid "\n"
 "        This allows the help command message to be ticked if help is sent to a DM.\n\n"
@@ -2854,15 +2860,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3762
+#: redbot/core/core_commands.py:3772
 msgid "Help will now tick the command when sent in a DM."
 msgstr ""
 
-#: redbot/core/core_commands.py:3764
+#: redbot/core/core_commands.py:3774
 msgid "Help will not tick the command when sent in a DM."
 msgstr ""
 
-#: redbot/core/core_commands.py:3768
+#: redbot/core/core_commands.py:3778
 #, docstring
 msgid "\n"
 "        Sets if commands which can't be run in the current context should be filtered from help.\n\n"
@@ -2876,15 +2882,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3785
+#: redbot/core/core_commands.py:3795
 msgid "Help will only show for commands which can be run."
 msgstr ""
 
-#: redbot/core/core_commands.py:3787
+#: redbot/core/core_commands.py:3797
 msgid "Help will show up without checking if the commands can be run."
 msgstr ""
 
-#: redbot/core/core_commands.py:3791
+#: redbot/core/core_commands.py:3801
 #, docstring
 msgid "\n"
 "        Sets whether the bot should respond to help commands for nonexistent topics.\n\n"
@@ -2900,15 +2906,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3812
+#: redbot/core/core_commands.py:3822
 msgid "Help will verify the existence of help topics."
 msgstr ""
 
-#: redbot/core/core_commands.py:3815
+#: redbot/core/core_commands.py:3825
 msgid "Help will only verify the existence of help topics via fuzzy help (if enabled)."
 msgstr ""
 
-#: redbot/core/core_commands.py:3823
+#: redbot/core/core_commands.py:3833
 #, docstring
 msgid "Set the character limit for each page in the help message.\n\n"
 "        Note: This setting only applies to embedded help.\n\n"
@@ -2923,15 +2929,15 @@ msgid "Set the character limit for each page in the help message.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3840
+#: redbot/core/core_commands.py:3850
 msgid "You must give a value of at least 500 characters."
 msgstr ""
 
-#: redbot/core/core_commands.py:3844
+#: redbot/core/core_commands.py:3854
 msgid "Done. The character limit per page has been set to {}."
 msgstr ""
 
-#: redbot/core/core_commands.py:3848
+#: redbot/core/core_commands.py:3858
 #, docstring
 msgid "Set the maximum number of help pages sent in a server channel.\n\n"
 "        Note: This setting does not apply to menu help.\n\n"
@@ -2947,15 +2953,15 @@ msgid "Set the maximum number of help pages sent in a server channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3866 redbot/core/core_commands.py:3893
+#: redbot/core/core_commands.py:3876 redbot/core/core_commands.py:3903
 msgid "You must give a value of zero or greater!"
 msgstr ""
 
-#: redbot/core/core_commands.py:3870
+#: redbot/core/core_commands.py:3880
 msgid "Done. The page limit has been set to {}."
 msgstr ""
 
-#: redbot/core/core_commands.py:3875
+#: redbot/core/core_commands.py:3885
 #, docstring
 msgid "Set the delay after which help pages will be deleted.\n\n"
 "        The setting is disabled by default, and only applies to non-menu help,\n"
@@ -2972,19 +2978,19 @@ msgid "Set the delay after which help pages will be deleted.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3896
+#: redbot/core/core_commands.py:3906
 msgid "The delay cannot be longer than 14 days!"
 msgstr ""
 
-#: redbot/core/core_commands.py:3901
+#: redbot/core/core_commands.py:3911
 msgid "Done. Help messages will not be deleted now."
 msgstr ""
 
-#: redbot/core/core_commands.py:3903
+#: redbot/core/core_commands.py:3913
 msgid "Done. The delete delay has been set to {} seconds."
 msgstr ""
 
-#: redbot/core/core_commands.py:3907
+#: redbot/core/core_commands.py:3917
 #, docstring
 msgid "Set the timeout for reactions, if menus are enabled.\n\n"
 "        The default is 30 seconds.\n"
@@ -2999,19 +3005,19 @@ msgid "Set the timeout for reactions, if menus are enabled.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3922
+#: redbot/core/core_commands.py:3932
 msgid "You must give a value of at least 15 seconds!"
 msgstr ""
 
-#: redbot/core/core_commands.py:3925
+#: redbot/core/core_commands.py:3935
 msgid "The timeout cannot be greater than 5 minutes!"
 msgstr ""
 
-#: redbot/core/core_commands.py:3929
+#: redbot/core/core_commands.py:3939
 msgid "Done. The reaction timeout has been set to {} seconds."
 msgstr ""
 
-#: redbot/core/core_commands.py:3933
+#: redbot/core/core_commands.py:3943
 #, docstring
 msgid "\n"
 "        Set the tagline to be used.\n\n"
@@ -3025,19 +3031,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3948
+#: redbot/core/core_commands.py:3958
 msgid "The tagline has been reset."
 msgstr ""
 
-#: redbot/core/core_commands.py:3952
+#: redbot/core/core_commands.py:3962
 msgid "Your tagline is too long! Please shorten it to be no more than 2048 characters long."
 msgstr ""
 
-#: redbot/core/core_commands.py:3960
+#: redbot/core/core_commands.py:3970
 msgid "The tagline has been set."
 msgstr ""
 
-#: redbot/core/core_commands.py:3965
+#: redbot/core/core_commands.py:3975
 #, docstring
 msgid "Sends a message to the owner.\n\n"
 "        This is limited to one message every 60 seconds per person.\n\n"
@@ -3048,43 +3054,43 @@ msgid "Sends a message to the owner.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:3977
+#: redbot/core/core_commands.py:3987
 msgid "User ID: {}"
 msgstr "ID do usuário: {}"
 
-#: redbot/core/core_commands.py:3980
+#: redbot/core/core_commands.py:3990
 msgid "through DM"
 msgstr "através de DM"
 
-#: redbot/core/core_commands.py:3982
+#: redbot/core/core_commands.py:3992
 msgid "from {}"
 msgstr "de {}"
 
-#: redbot/core/core_commands.py:3983
+#: redbot/core/core_commands.py:3993
 msgid " | Server ID: {}"
 msgstr " | ID do servidor: {}"
 
-#: redbot/core/core_commands.py:3988
+#: redbot/core/core_commands.py:3998
 msgid "Use `{}dm {} <text>` to reply to this user"
 msgstr "Use `{}dm {} <text>` para responder este usuário"
 
-#: redbot/core/core_commands.py:3990
+#: redbot/core/core_commands.py:4000
 msgid "Sent by {} {}"
 msgstr "Enviado por {} {}"
 
-#: redbot/core/core_commands.py:3995
+#: redbot/core/core_commands.py:4005
 msgid "I've been configured not to send this anywhere."
 msgstr ""
 
-#: redbot/core/core_commands.py:4041
+#: redbot/core/core_commands.py:4051
 msgid "Your message has been sent."
 msgstr "Sua mensagem foi enviada."
 
-#: redbot/core/core_commands.py:4043
+#: redbot/core/core_commands.py:4053
 msgid "I'm unable to deliver your message. Sorry."
 msgstr ""
 
-#: redbot/core/core_commands.py:4048
+#: redbot/core/core_commands.py:4058
 #, docstring
 msgid "Sends a DM to a user.\n\n"
 "        This command needs a user ID to work.\n\n"
@@ -3097,41 +3103,41 @@ msgid "Sends a DM to a user.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4064
+#: redbot/core/core_commands.py:4074
 msgid "Invalid ID, user not found, or user is a bot. You can only send messages to people I share a server with."
 msgstr ""
 
-#: redbot/core/core_commands.py:4074
+#: redbot/core/core_commands.py:4084
 msgid "Owner of {}"
 msgstr "Proprietário de {}"
 
-#: redbot/core/core_commands.py:4075
+#: redbot/core/core_commands.py:4085
 msgid "You can reply to this message with {}contact"
 msgstr "Você pode responder a esta mensagem com {}contato"
 
-#: redbot/core/core_commands.py:4086 redbot/core/core_commands.py:4096
+#: redbot/core/core_commands.py:4096 redbot/core/core_commands.py:4106
 msgid "Sorry, I couldn't deliver your message to {}"
 msgstr "Desculpe, não consegui entregar sua mensagem para {}"
 
-#: redbot/core/core_commands.py:4089 redbot/core/core_commands.py:4099
+#: redbot/core/core_commands.py:4099 redbot/core/core_commands.py:4109
 msgid "Message delivered to {}"
 msgstr "Mensagem enviada para {}"
 
-#: redbot/core/core_commands.py:4104
+#: redbot/core/core_commands.py:4114
 #, docstring
 msgid "Prints the bot's data path."
 msgstr "Imprime o caminho de dados do bot."
 
-#: redbot/core/core_commands.py:4108
+#: redbot/core/core_commands.py:4118
 msgid "Data path: {path}"
 msgstr "Caminho dos dados: {path}"
 
-#: redbot/core/core_commands.py:4114
+#: redbot/core/core_commands.py:4124
 #, docstring
 msgid "Shows debug information useful for debugging."
 msgstr ""
 
-#: redbot/core/core_commands.py:4134
+#: redbot/core/core_commands.py:4144
 #, docstring
 msgid "\n"
 "        Diagnose issues with the command checks with ease!\n\n"
@@ -3146,19 +3152,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4152
+#: redbot/core/core_commands.py:4162
 msgid "The text channel or thread needs to be passed when using this command in DMs."
 msgstr ""
 
-#: redbot/core/core_commands.py:4169
+#: redbot/core/core_commands.py:4179
 msgid "The given user is not a member of the diagnosed server."
 msgstr ""
 
-#: redbot/core/core_commands.py:4176
+#: redbot/core/core_commands.py:4186
 msgid "Don't try to fool me, the given member can't access the {channel} channel!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4187
+#: redbot/core/core_commands.py:4197
 #, docstring
 msgid "\n"
 "        Commands to manage the allowlist.\n\n"
@@ -3167,7 +3173,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4198
+#: redbot/core/core_commands.py:4208
 #, docstring
 msgid "\n"
 "        Adds users to the allowlist.\n\n"
@@ -3179,15 +3185,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4210
+#: redbot/core/core_commands.py:4220
 msgid "Users have been added to the allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4212
+#: redbot/core/core_commands.py:4222
 msgid "User has been added to the allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4216
+#: redbot/core/core_commands.py:4226
 #, docstring
 msgid "\n"
 "        Lists users on the allowlist.\n\n"
@@ -3196,21 +3202,21 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4228
+#: redbot/core/core_commands.py:4238
 msgid "Users on the allowlist:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4230
+#: redbot/core/core_commands.py:4240
 msgid "User on the allowlist:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4234 redbot/core/core_commands.py:4330
+#: redbot/core/core_commands.py:4244 redbot/core/core_commands.py:4340
 #: redbot/core/modlog.py:463 redbot/core/modlog.py:485
 #: redbot/core/modlog.py:501
 msgid "Unknown or Deleted User"
 msgstr ""
 
-#: redbot/core/core_commands.py:4242
+#: redbot/core/core_commands.py:4252
 #, docstring
 msgid "\n"
 "        Removes users from the allowlist.\n\n"
@@ -3223,15 +3229,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4256
+#: redbot/core/core_commands.py:4266
 msgid "Users have been removed from the allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4258
+#: redbot/core/core_commands.py:4268
 msgid "User has been removed from the allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4262
+#: redbot/core/core_commands.py:4272
 #, docstring
 msgid "\n"
 "        Clears the allowlist.\n\n"
@@ -3241,11 +3247,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4271
+#: redbot/core/core_commands.py:4281
 msgid "Allowlist has been cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:4276
+#: redbot/core/core_commands.py:4286
 #, docstring
 msgid "\n"
 "        Commands to manage the blocklist.\n\n"
@@ -3253,7 +3259,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4285
+#: redbot/core/core_commands.py:4295
 #, docstring
 msgid "\n"
 "        Adds users to the blocklist.\n\n"
@@ -3265,19 +3271,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4301
+#: redbot/core/core_commands.py:4311
 msgid "You cannot add an owner to the blocklist!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4306
+#: redbot/core/core_commands.py:4316
 msgid "Users have been added to the blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4308
+#: redbot/core/core_commands.py:4318
 msgid "User has been added to the blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4312
+#: redbot/core/core_commands.py:4322
 #, docstring
 msgid "\n"
 "        Lists users on the blocklist.\n\n"
@@ -3286,15 +3292,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4324
+#: redbot/core/core_commands.py:4334
 msgid "Users on the blocklist:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4326
+#: redbot/core/core_commands.py:4336
 msgid "User on the blocklist:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4338
+#: redbot/core/core_commands.py:4348
 #, docstring
 msgid "\n"
 "        Removes users from the blocklist.\n\n"
@@ -3306,15 +3312,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4350
+#: redbot/core/core_commands.py:4360
 msgid "Users have been removed from the blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4352
+#: redbot/core/core_commands.py:4362
 msgid "User has been removed from the blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4356
+#: redbot/core/core_commands.py:4366
 #, docstring
 msgid "\n"
 "        Clears the blocklist.\n\n"
@@ -3323,11 +3329,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4363
+#: redbot/core/core_commands.py:4373
 msgid "Blocklist has been cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:4369
+#: redbot/core/core_commands.py:4379
 #, docstring
 msgid "\n"
 "        Commands to manage the server specific allowlist.\n\n"
@@ -3336,7 +3342,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4382
+#: redbot/core/core_commands.py:4392
 #, docstring
 msgid "\n"
 "        Adds a user or role to the server allowlist.\n\n"
@@ -3349,19 +3355,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4401
+#: redbot/core/core_commands.py:4411
 msgid "I cannot allow you to do this, as it would remove your ability to run commands, please ensure to add yourself to the allowlist first."
 msgstr ""
 
-#: redbot/core/core_commands.py:4410
+#: redbot/core/core_commands.py:4420
 msgid "Users and/or roles have been added to the allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4412
+#: redbot/core/core_commands.py:4422
 msgid "User or role has been added to the allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4416
+#: redbot/core/core_commands.py:4426
 #, docstring
 msgid "\n"
 "        Lists users and roles on the server allowlist.\n\n"
@@ -3370,19 +3376,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4428
+#: redbot/core/core_commands.py:4438
 msgid "Allowed users and/or roles:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4430
+#: redbot/core/core_commands.py:4440
 msgid "Allowed user or role:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4434 redbot/core/core_commands.py:4554
+#: redbot/core/core_commands.py:4444 redbot/core/core_commands.py:4564
 msgid "Unknown or Deleted User/Role"
 msgstr ""
 
-#: redbot/core/core_commands.py:4444
+#: redbot/core/core_commands.py:4454
 #, docstring
 msgid "\n"
 "        Removes user or role from the allowlist.\n\n"
@@ -3396,19 +3402,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4465
+#: redbot/core/core_commands.py:4475
 msgid "I cannot allow you to do this, as it would remove your ability to run commands."
 msgstr ""
 
-#: redbot/core/core_commands.py:4473
+#: redbot/core/core_commands.py:4483
 msgid "Users and/or roles have been removed from the server allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4475
+#: redbot/core/core_commands.py:4485
 msgid "User or role has been removed from the server allowlist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4479
+#: redbot/core/core_commands.py:4489
 #, docstring
 msgid "\n"
 "        Clears the allowlist.\n\n"
@@ -3418,11 +3424,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4488
+#: redbot/core/core_commands.py:4498
 msgid "Server allowlist has been cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:4494
+#: redbot/core/core_commands.py:4504
 #, docstring
 msgid "\n"
 "        Commands to manage the server specific blocklist.\n\n"
@@ -3430,7 +3436,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4505
+#: redbot/core/core_commands.py:4515
 #, docstring
 msgid "\n"
 "        Adds a user or role to the local blocklist.\n\n"
@@ -3443,27 +3449,27 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4519
+#: redbot/core/core_commands.py:4529
 msgid "You cannot add yourself to the blocklist!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4522
+#: redbot/core/core_commands.py:4532
 msgid "You cannot add the guild owner to the blocklist!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4525
+#: redbot/core/core_commands.py:4535
 msgid "You cannot add a bot owner to the blocklist!"
 msgstr ""
 
-#: redbot/core/core_commands.py:4530
+#: redbot/core/core_commands.py:4540
 msgid "Users and/or roles have been added from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4532
+#: redbot/core/core_commands.py:4542
 msgid "User or role has been added from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4536
+#: redbot/core/core_commands.py:4546
 #, docstring
 msgid "\n"
 "        Lists users and roles on the server blocklist.\n\n"
@@ -3472,15 +3478,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4548
+#: redbot/core/core_commands.py:4558
 msgid "Blocked users and/or roles:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4550
+#: redbot/core/core_commands.py:4560
 msgid "Blocked user or role:"
 msgstr ""
 
-#: redbot/core/core_commands.py:4564
+#: redbot/core/core_commands.py:4574
 #, docstring
 msgid "\n"
 "        Removes user or role from local blocklist.\n\n"
@@ -3493,15 +3499,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4578
+#: redbot/core/core_commands.py:4588
 msgid "Users and/or roles have been removed from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4580
+#: redbot/core/core_commands.py:4590
 msgid "User or role has been removed from the server blocklist."
 msgstr ""
 
-#: redbot/core/core_commands.py:4584
+#: redbot/core/core_commands.py:4594
 #, docstring
 msgid "\n"
 "        Clears the server blocklist.\n\n"
@@ -3511,16 +3517,16 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4593
+#: redbot/core/core_commands.py:4603
 msgid "Server blocklist has been cleared."
 msgstr ""
 
-#: redbot/core/core_commands.py:4598
+#: redbot/core/core_commands.py:4608
 #, docstring
 msgid "Commands to enable and disable commands and cogs."
 msgstr ""
 
-#: redbot/core/core_commands.py:4604
+#: redbot/core/core_commands.py:4614
 #, docstring
 msgid "Set the default state for a cog as disabled.\n\n"
 "        This will disable the cog for all servers by default.\n"
@@ -3534,15 +3540,15 @@ msgid "Set the default state for a cog as disabled.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4620
+#: redbot/core/core_commands.py:4630
 msgid "You can't disable this cog by default."
 msgstr ""
 
-#: redbot/core/core_commands.py:4622
+#: redbot/core/core_commands.py:4632
 msgid "{cogname} has been set as disabled by default."
 msgstr ""
 
-#: redbot/core/core_commands.py:4627
+#: redbot/core/core_commands.py:4637
 #, docstring
 msgid "Set the default state for a cog as enabled.\n\n"
 "        This will re-enable the cog for all servers by default.\n"
@@ -3556,11 +3562,11 @@ msgid "Set the default state for a cog as enabled.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4643
+#: redbot/core/core_commands.py:4653
 msgid "{cogname} has been set as enabled by default."
 msgstr ""
 
-#: redbot/core/core_commands.py:4648
+#: redbot/core/core_commands.py:4658
 #, docstring
 msgid "Disable a cog in this server.\n\n"
 "        Note: This will only work on loaded cogs, and must reference the title-case cog name.\n\n"
@@ -3572,19 +3578,19 @@ msgid "Disable a cog in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4661
+#: redbot/core/core_commands.py:4671
 msgid "You can't disable this cog as you would lock yourself out."
 msgstr ""
 
-#: redbot/core/core_commands.py:4663
+#: redbot/core/core_commands.py:4673
 msgid "{cogname} has been disabled in this guild."
 msgstr ""
 
-#: redbot/core/core_commands.py:4666
+#: redbot/core/core_commands.py:4676
 msgid "{cogname} was already disabled (nothing to do)."
 msgstr ""
 
-#: redbot/core/core_commands.py:4672
+#: redbot/core/core_commands.py:4682
 #, docstring
 msgid "Enable a cog in this server.\n\n"
 "        Note: This will only work on loaded cogs, and must reference the title-case cog name.\n\n"
@@ -3596,19 +3602,19 @@ msgid "Enable a cog in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4684
+#: redbot/core/core_commands.py:4694
 msgid "{cogname} has been enabled in this guild."
 msgstr ""
 
-#: redbot/core/core_commands.py:4689
+#: redbot/core/core_commands.py:4699
 msgid "Cog \"{arg}\" not found."
 msgstr ""
 
-#: redbot/core/core_commands.py:4692
+#: redbot/core/core_commands.py:4702
 msgid "{cogname} was not disabled (nothing to do)."
 msgstr ""
 
-#: redbot/core/core_commands.py:4698
+#: redbot/core/core_commands.py:4708
 #, docstring
 msgid "List the cogs which are disabled in this server.\n\n"
 "        **Example:**\n"
@@ -3616,15 +3622,15 @@ msgid "List the cogs which are disabled in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4711
+#: redbot/core/core_commands.py:4721
 msgid "The following cogs are disabled in this guild:\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:4717
+#: redbot/core/core_commands.py:4727
 msgid "There are no disabled cogs in this guild."
 msgstr ""
 
-#: redbot/core/core_commands.py:4721
+#: redbot/core/core_commands.py:4731
 #, docstring
 msgid "\n"
 "        List disabled commands.\n\n"
@@ -3635,7 +3641,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4738
+#: redbot/core/core_commands.py:4748
 #, docstring
 msgid "List disabled commands globally.\n\n"
 "        **Example:**\n"
@@ -3643,19 +3649,19 @@ msgid "List disabled commands globally.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4745
+#: redbot/core/core_commands.py:4755
 msgid "There aren't any globally disabled commands."
 msgstr "Não existem comandos desativados globalmente."
 
-#: redbot/core/core_commands.py:4748
+#: redbot/core/core_commands.py:4758
 msgid "{} commands are disabled globally.\n"
 msgstr "{} comandos estão desativados globalmente.\n"
 
-#: redbot/core/core_commands.py:4752
+#: redbot/core/core_commands.py:4762
 msgid "1 command is disabled globally.\n"
 msgstr "1 comando está desativado globalmente.\n"
 
-#: redbot/core/core_commands.py:4760
+#: redbot/core/core_commands.py:4770
 #, docstring
 msgid "List disabled commands in this server.\n\n"
 "        **Example:**\n"
@@ -3663,19 +3669,19 @@ msgid "List disabled commands in this server.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4767
+#: redbot/core/core_commands.py:4777
 msgid "There aren't any disabled commands in {}."
 msgstr "Não há nenhum comando desativado em {}."
 
-#: redbot/core/core_commands.py:4770
+#: redbot/core/core_commands.py:4780
 msgid "{} commands are disabled in {}.\n"
 msgstr "{} comandos estão desativados em {}.\n"
 
-#: redbot/core/core_commands.py:4774
+#: redbot/core/core_commands.py:4784
 msgid "1 command is disabled in {}.\n"
 msgstr "1 comando está desativado em {}.\n"
 
-#: redbot/core/core_commands.py:4781
+#: redbot/core/core_commands.py:4791
 #, docstring
 msgid "\n"
 "        Disable a command.\n\n"
@@ -3689,7 +3695,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4803
+#: redbot/core/core_commands.py:4813
 #, docstring
 msgid "\n"
 "        Disable a command globally.\n\n"
@@ -3701,19 +3707,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4815 redbot/core/core_commands.py:4851
+#: redbot/core/core_commands.py:4825 redbot/core/core_commands.py:4861
 msgid "The command to disable cannot be `command` or any of its subcommands."
 msgstr ""
 
-#: redbot/core/core_commands.py:4821 redbot/core/core_commands.py:4857
+#: redbot/core/core_commands.py:4831 redbot/core/core_commands.py:4867
 msgid "This command is designated as being always available and cannot be disabled."
 msgstr ""
 
-#: redbot/core/core_commands.py:4830
+#: redbot/core/core_commands.py:4840
 msgid "That command is already disabled globally."
 msgstr ""
 
-#: redbot/core/core_commands.py:4839
+#: redbot/core/core_commands.py:4849
 #, docstring
 msgid "\n"
 "        Disable a command in this server only.\n\n"
@@ -3725,15 +3731,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4863
+#: redbot/core/core_commands.py:4873
 msgid "You are not allowed to disable that command."
 msgstr ""
 
-#: redbot/core/core_commands.py:4873
+#: redbot/core/core_commands.py:4883
 msgid "That command is already disabled in this server."
 msgstr ""
 
-#: redbot/core/core_commands.py:4879
+#: redbot/core/core_commands.py:4889
 #, docstring
 msgid "Enable a command.\n\n"
 "        If you're the bot owner, this will try to enable a globally disabled command by default.\n"
@@ -3746,7 +3752,7 @@ msgid "Enable a command.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4899
+#: redbot/core/core_commands.py:4909
 #, docstring
 msgid "\n"
 "        Enable a command globally.\n\n"
@@ -3758,11 +3764,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4914
+#: redbot/core/core_commands.py:4924
 msgid "That command is already enabled globally."
 msgstr ""
 
-#: redbot/core/core_commands.py:4923
+#: redbot/core/core_commands.py:4933
 #, docstring
 msgid "\n"
 "            Enable a command in this server.\n\n"
@@ -3774,15 +3780,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4935
+#: redbot/core/core_commands.py:4945
 msgid "You are not allowed to enable that command."
 msgstr ""
 
-#: redbot/core/core_commands.py:4945
+#: redbot/core/core_commands.py:4955
 msgid "That command is already enabled in this server."
 msgstr "Esse comando já está habilitado neste servidor."
 
-#: redbot/core/core_commands.py:4952
+#: redbot/core/core_commands.py:4962
 #, docstring
 msgid "Set the bot's response to disabled commands.\n\n"
 "        Leave blank to send nothing.\n\n"
@@ -3796,7 +3802,7 @@ msgid "Set the bot's response to disabled commands.\n\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4973
+#: redbot/core/core_commands.py:4983
 #, docstring
 msgid "\n"
 "        Commands to manage server settings for immunity from automated actions.\n\n"
@@ -3804,7 +3810,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4982
+#: redbot/core/core_commands.py:4992
 #, docstring
 msgid "\n"
 "        Gets the current members and roles configured for automatic moderation action immunity.\n\n"
@@ -3813,19 +3819,19 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:4995
+#: redbot/core/core_commands.py:5005
 msgid "Roles immune from automated moderation actions:\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:5000
+#: redbot/core/core_commands.py:5010
 msgid "Members immune from automated moderation actions:\n"
 msgstr ""
 
-#: redbot/core/core_commands.py:5004
+#: redbot/core/core_commands.py:5014
 msgid "No immunity settings here."
 msgstr ""
 
-#: redbot/core/core_commands.py:5013
+#: redbot/core/core_commands.py:5023
 #, docstring
 msgid "\n"
 "        Makes a user or role immune from automated moderation actions.\n\n"
@@ -3837,11 +3843,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5025
+#: redbot/core/core_commands.py:5035
 msgid "Already added."
 msgstr "Já adicionado."
 
-#: redbot/core/core_commands.py:5033
+#: redbot/core/core_commands.py:5043
 #, docstring
 msgid "\n"
 "        Remove a user or role from being immune to automated moderation actions.\n\n"
@@ -3853,11 +3859,11 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5045
+#: redbot/core/core_commands.py:5055
 msgid "Not in list."
 msgstr "Não está na lista."
 
-#: redbot/core/core_commands.py:5053
+#: redbot/core/core_commands.py:5063
 #, docstring
 msgid "\n"
 "        Checks if a user or role would be considered immune from automated actions.\n\n"
@@ -3869,15 +3875,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5065
+#: redbot/core/core_commands.py:5075
 msgid "They are immune."
 msgstr ""
 
-#: redbot/core/core_commands.py:5067
+#: redbot/core/core_commands.py:5077
 msgid "They are not immune."
 msgstr ""
 
-#: redbot/core/core_commands.py:5094
+#: redbot/core/core_commands.py:5104
 #, docstring
 msgid "\n"
 "        Commands to add servers or channels to the ignore list.\n\n"
@@ -3886,7 +3892,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5104
+#: redbot/core/core_commands.py:5114
 #, docstring
 msgid "\n"
 "        List the currently ignored servers and channels.\n\n"
@@ -3895,7 +3901,7 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5121
+#: redbot/core/core_commands.py:5131
 #, docstring
 msgid "\n"
 "        Ignore commands in the channel, thread, or category.\n\n"
@@ -3911,15 +3917,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5141
+#: redbot/core/core_commands.py:5151
 msgid "Channel added to ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5143
+#: redbot/core/core_commands.py:5153
 msgid "Channel already in ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5148
+#: redbot/core/core_commands.py:5158
 #, docstring
 msgid "\n"
 "        Ignore commands in this server.\n\n"
@@ -3929,20 +3935,20 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5159
+#: redbot/core/core_commands.py:5169
 msgid "This server has been added to the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5161
+#: redbot/core/core_commands.py:5171
 msgid "This server is already being ignored."
 msgstr ""
 
-#: redbot/core/core_commands.py:5167
+#: redbot/core/core_commands.py:5177
 #, docstring
 msgid "Commands to remove servers or channels from the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5177
+#: redbot/core/core_commands.py:5187
 #, docstring
 msgid "\n"
 "        Remove a channel, thread, or category from the ignore list.\n\n"
@@ -3957,15 +3963,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5196
+#: redbot/core/core_commands.py:5206
 msgid "Channel removed from ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5198
+#: redbot/core/core_commands.py:5208
 msgid "That channel is not in the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5203
+#: redbot/core/core_commands.py:5213
 #, docstring
 msgid "\n"
 "        Remove this server from the ignore list.\n\n"
@@ -3974,30 +3980,30 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5212
+#: redbot/core/core_commands.py:5222
 msgid "This server has been removed from the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5214
+#: redbot/core/core_commands.py:5224
 msgid "This server is not in the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5221
+#: redbot/core/core_commands.py:5231
 msgid "This server is currently being ignored."
 msgstr ""
 
-#: redbot/core/core_commands.py:5233 redbot/core/core_commands.py:5236
-#: redbot/core/core_commands.py:5238
+#: redbot/core/core_commands.py:5243 redbot/core/core_commands.py:5246
+#: redbot/core/core_commands.py:5248
 msgid "None"
 msgstr ""
 
-#: redbot/core/core_commands.py:5239
+#: redbot/core/core_commands.py:5249
 msgid "Currently ignored categories: {categories}\n"
 "Channels: {channels}\n"
 "Threads (excluding archived):{threads}"
 msgstr ""
 
-#: redbot/core/core_commands.py:5256
+#: redbot/core/core_commands.py:5266
 #, docstring
 msgid "\n"
 "        Get info about Red's licenses.\n"

@@ -37,11 +37,11 @@ msgstr "'{input}' ser ikke ut som en gyldig bruker-ID."
 
 #: redbot/core/commands/converter.py:257
 msgid "Missing a key or value."
-msgstr ""
+msgstr "Mangler en nøkkel eller verdi."
 
 #: redbot/core/commands/converter.py:263
 msgid "Unexpected key `{key}`."
-msgstr ""
+msgstr "Uventet nøkkel `{key}."
 
 #: redbot/core/commands/converter.py:488
 msgid "Command \"{arg}\" not found."

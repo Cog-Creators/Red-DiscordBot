@@ -171,7 +171,7 @@ msgstr "Anonsların sunucuya nasıl gönderileceğini belirleyin."
 #: redbot/cogs/admin/admin.py:353
 #, docstring
 msgid "Change the channel where the bot will send announcements."
-msgstr ""
+msgstr "Botun duyuru yapacağı kanalı değiştirin."
 
 #: redbot/cogs/admin/admin.py:356
 msgid "The announcement channel has been set to {channel.mention}"

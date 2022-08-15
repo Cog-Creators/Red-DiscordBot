@@ -33,19 +33,19 @@ msgstr "Không thể chỉnh sửa {role.name} vì role đó có quyền cao hơ
 
 #: redbot/cogs/admin/admin.py:42
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Tôi không thể đưa bạn role {role.name} cho {member.display_name} bởi vì role đó cao hơn hoặc bằng với role có rank cao nhất của bạn trong Discord."
 
 #: redbot/cogs/admin/admin.py:48
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Tôi không thể loại bỏ role {role.name} từ {member.display_name} bởi vì role đó cao hơn hoặc bằng với role có rank cao nhất của bạn trong Discord."
 
 #: redbot/cogs/admin/admin.py:54
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Tôi không thể cho phép bạn bạn chỉnh sửa role {role.name} bởi vì role đó cao hơn hoặc bằng với role có rank cao nhất của bạn trong Discord."
 
 #: redbot/cogs/admin/admin.py:60
 msgid "I need the \"Manage Roles\" permission to do that."
-msgstr ""
+msgstr "Tôi cần quyền \"Manage Roles\" để làm việc đó."
 
 #: redbot/cogs/admin/admin.py:62
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -110,7 +110,7 @@ msgstr ""
 
 #: redbot/cogs/admin/admin.py:285 redbot/cogs/admin/admin.py:318
 msgid "Done."
-msgstr "Xong!"
+msgstr "Xong."
 
 #: redbot/cogs/admin/admin.py:289
 #, docstring

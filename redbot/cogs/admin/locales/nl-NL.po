@@ -21,31 +21,31 @@ msgstr "Ik probeerde iets te doen waarvoor Discord me geen toestemming heeft geg
 
 #: redbot/cogs/admin/admin.py:24
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Ik kan {role.name} niet aan {member.display_name} geven omdat die rol hoger of gelijk is aan mijn hoogste rol in de Discord hiërarchie."
+msgstr "Ik kan {role.name} niet aan {member.display_name} geven omdat die rol hoger of gelijk is aan mijn hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:30
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Ik kan {role.name} niet van {member.display_name} verwijderen omdat die rol hoger dan of gelijk is aan mijn hoogste rol in de Discord hiërarchie."
+msgstr "Ik kan {role.name} niet van {member.display_name} verwijderen omdat die rol hoger dan of gelijk is aan mijn hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:36
 msgid "I can not edit {role.name} because that role is higher than my or equal to highest role in the Discord hierarchy."
-msgstr "Ik kan {role.name} niet bewerken omdat die rol hoger is dan mijn of de hoogste rol in de Discord hiërarchie."
+msgstr "Ik kan {role.name} niet bewerken omdat die rol hoger is dan mijn of de hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:42
 msgid "I can not let you give {role.name} to {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Ik kan je {role.name} niet aan {member.display_name} laten geven omdat die rol hoger is dan of gelijk is aan je hoogste rol in de Discord hiërarchie."
+msgstr "Ik kan je {role.name} niet aan {member.display_name} laten geven omdat die rol hoger is dan of gelijk is aan je hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:48
 msgid "I can not let you remove {role.name} from {member.display_name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Ik kan je {role.name} niet van {member.display_name} laten verwijderen omdat die rol hoger dan of gelijk is aan je hoogste rol in de Discord hiërarchie."
+msgstr "Ik kan je {role.name} niet van {member.display_name} laten verwijderen omdat die rol hoger dan of gelijk is aan je hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:54
 msgid "I can not let you edit {role.name} because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Ik kan je {role.name} niet laten bewerken omdat die rol hoger of gelijk is aan je hoogste rol in de Discord hiërarchie."
+msgstr "Ik kan je {role.name} niet laten bewerken omdat die rol hoger of gelijk is aan je hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:60
 msgid "I need the \"Manage Roles\" permission to do that."
-msgstr ""
+msgstr "Ik heb de \"Manage Rollen\" recht nodig om dit te doen."
 
 #: redbot/cogs/admin/admin.py:62
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."
@@ -58,7 +58,7 @@ msgstr "Een collectie van de server administratie voorzieningen."
 
 #: redbot/cogs/admin/admin.py:158
 msgid "{member.display_name} already has the role {role.name}."
-msgstr "{member.display_name} heeft de rol {role.name} al."
+msgstr "{member.display_name} Heeft de rol {role.name} al."
 
 #: redbot/cogs/admin/admin.py:178
 msgid "I successfully added {role.name} to {member.display_name}"
@@ -66,7 +66,7 @@ msgstr "Ik heb succesvol {role.name} toegevoegd aan {member.display_name}"
 
 #: redbot/cogs/admin/admin.py:188
 msgid "{member.display_name} does not have the role {role.name}."
-msgstr "{member.display_name} heeft de rol {role.name} niet."
+msgstr "{member.display_name} Heeft de rol {role.name} niet."
 
 #: redbot/cogs/admin/admin.py:208
 msgid "I successfully removed {role.name} from {member.display_name}"
@@ -173,7 +173,7 @@ msgstr "Verander hoe aankondigingen worden verzonden in deze gilde."
 #: redbot/cogs/admin/admin.py:353
 #, docstring
 msgid "Change the channel where the bot will send announcements."
-msgstr ""
+msgstr "Bewerk het kanaal waar deze bot aankondigingen maakt."
 
 #: redbot/cogs/admin/admin.py:356
 msgid "The announcement channel has been set to {channel.mention}"
@@ -191,7 +191,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Verwijder een zelfrol van jezelf.\n\n"
+"        Server beheerders moeten de rol als gebruiker instelbaar configureren.\n"
+"        Let op: De rol is hoofdlettergevoelig!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:399
 #, docstring
@@ -245,23 +249,26 @@ msgid "\n"
 "        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Voeg een rol toe aan de lijst van beschikbare zelfrollen.\n\n"
+"        Let op: hoofdlettergevoelig!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:451
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Ik kan je {role.name} niet als zelfrol toe laten voegen omdat die rol hoger dan of gelijk is aan je hoogste rol in de Discord hiërarchie."
+msgstr "Ik kan je {role.name} niet als zelfrol toe laten voegen omdat die rol hoger dan of gelijk is aan je hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:461
 msgid "The role \"{role.name}\" is already a selfrole."
-msgstr ""
+msgstr "De rol \"{role.name}\" is al een zelfrol."
 
 #: redbot/cogs/admin/admin.py:467
 msgid "Added {count} selfroles."
-msgstr ""
+msgstr "{count} zelfrollen toegevoegd."
 
 #: redbot/cogs/admin/admin.py:469
 msgid "Added 1 selfrole."
-msgstr ""
+msgstr "1 zelfrol toegevoegd."
 
 #: redbot/cogs/admin/admin.py:475
 #, docstring
@@ -269,48 +276,51 @@ msgid "\n"
 "        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Verwijder een rol van de lijst van beschikbare zelfrollen.\n\n"
+"        OPMERKING: De rol is hoofdlettergevoelig!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:484
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
-msgstr "Ik kan je {role.name} niet uit zelfrol laten verwijderen omdat die rol hoger dan of gelijk is aan je hoogste rol in de Discord-hiërarchie."
+msgstr "Ik kan je {role.name} niet uit zelfrol laten verwijderen omdat die rol hoger dan of gelijk is aan je hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:494
 msgid "Removed {count} selfroles."
-msgstr ""
+msgstr "{count} zelfrollen verwijderd."
 
 #: redbot/cogs/admin/admin.py:496
 msgid "Removed 1 selfrole."
-msgstr ""
+msgstr "1 zelfrol verwijderd."
 
 #: redbot/cogs/admin/admin.py:502
 #, docstring
 msgid "Clear the list of available selfroles for this server."
-msgstr ""
+msgstr "Wis de lijst met beschikbare zelfrollen voor deze server."
 
 #: redbot/cogs/admin/admin.py:506
 msgid "There are currently no selfroles."
-msgstr ""
+msgstr "Er zijn momenteel geen zelfrollen."
 
 #: redbot/cogs/admin/admin.py:509
 msgid "Are you sure you want to clear this server's selfrole list?"
-msgstr ""
+msgstr "Weet je zeker dat je de lijst van zelfrollen van deze server wilt wissen?"
 
 #: redbot/cogs/admin/admin.py:515
 msgid "You took too long to respond."
-msgstr ""
+msgstr "U hebt er te lang over gedaan om te reageren."
 
 #: redbot/cogs/admin/admin.py:524
 msgid "I cannot clear the selfroles because the selfrole '{role.name}' is higher than or equal to your highest role in the Discord hierarchy."
-msgstr ""
+msgstr "Ik kan de zelfrollen niet wissen, omdat de zelfrol '{role.name}' hoger of gelijk is aan je hoogste rol in de Discord rangorde."
 
 #: redbot/cogs/admin/admin.py:530
 msgid "Selfrole list cleared."
-msgstr ""
+msgstr "Zelf rol lijst gewist."
 
 #: redbot/cogs/admin/admin.py:532
 msgid "No changes have been made."
-msgstr ""
+msgstr "Er zijn geen wijzigingen aangebracht."
 
 #: redbot/cogs/admin/admin.py:537
 #, docstring
@@ -339,5 +349,5 @@ msgstr "De admin cog is niet geladen."
 
 #: redbot/cogs/admin/converters.py:21
 msgid "The role \"{role_name}\" is not a valid selfrole."
-msgstr ""
+msgstr "De rol \"{role_name}\" is geen geldige zelfrol."
 

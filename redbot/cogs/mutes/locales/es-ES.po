@@ -445,11 +445,11 @@ msgstr " durante {duration}"
 
 #: redbot/cogs/mutes/mutes.py:1234
 msgid "{users} has been muted in this server{time}."
-msgstr "{users} han sido silenciados en este servidor {time}."
+msgstr "{users} ha(n) sido silenciado(s) en este servidor{time}."
 
 #: redbot/cogs/mutes/mutes.py:1236
 msgid "{users} have been muted in this server{time}."
-msgstr "{users} ha sido silenciado en este servidor {time}."
+msgstr "{users} ha sido silenciado en este servidor{time}."
 
 #: redbot/cogs/mutes/mutes.py:1247
 msgid "{member} could not be (un)muted for the following reasons:\n"
@@ -490,11 +490,11 @@ msgstr "Silencio de Canal"
 
 #: redbot/cogs/mutes/mutes.py:1386 redbot/cogs/mutes/voicemutes.py:155
 msgid "{users} has been muted in this channel{time}."
-msgstr "{users} han sido silenciados en este canal {time}."
+msgstr "{users} han sido silenciados en este canal{time}."
 
 #: redbot/cogs/mutes/mutes.py:1388 redbot/cogs/mutes/voicemutes.py:157
 msgid "{users} have been muted in this channel{time}."
-msgstr "{users} ha sido silenciado en este canal {time}."
+msgstr "{users} ha sido silenciado en este canal{time}."
 
 #: redbot/cogs/mutes/mutes.py:1393 redbot/cogs/mutes/voicemutes.py:162
 msgid "The following users could not be muted\n"

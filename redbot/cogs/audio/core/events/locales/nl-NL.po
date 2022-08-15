@@ -274,11 +274,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:235
 msgid "Enabled"
-msgstr ""
+msgstr "Ingeschakeld"
 
 #: redbot/cogs/audio/core/events/dpy.py:235
 msgid "Disabled"
-msgstr ""
+msgstr "Uitgeschakeld"
 
 #: redbot/cogs/audio/core/events/dpy.py:266
 msgid "You should not be running this command."
