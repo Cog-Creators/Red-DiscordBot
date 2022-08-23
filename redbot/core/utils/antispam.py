@@ -21,7 +21,7 @@ class AntiSpam:
 
     # TODO : Decorator interface for command check using `spammy`
     # with insertion of the antispam element into context
-    # for manual stamping on succesful command completion
+    # for manual stamping on successful command completion
 
     default_intervals = [
         (timedelta(seconds=5), 3),

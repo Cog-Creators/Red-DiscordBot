@@ -1,1 +1,0 @@
-Modlog case registration and modlog event handling was moved to the core bot

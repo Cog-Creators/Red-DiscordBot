@@ -1,1 +1,0 @@
-``Command.can_see`` now works as intended for disabled commands

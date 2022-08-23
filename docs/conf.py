@@ -19,8 +19,10 @@
 #
 import os
 import sys
+import time
 
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("_ext"))
 
 os.environ["BUILDING_DOCS"] = "1"
 
@@ -36,11 +38,14 @@ os.environ["BUILDING_DOCS"] = "1"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinxcontrib_trio",
+    "sphinx-prompt",
+    "deprecated_removed",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -57,7 +62,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Red - Discord Bot"
-copyright = "2018, Cog Creators"
+copyright = f"2018-{time.strftime('%Y')}, Cog Creators"
 author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -65,6 +70,7 @@ author = "Cog Creators"
 # built documents.
 #
 from redbot.core import __version__
+from discord import __version__ as dpy_version, version_info as dpy_version_info
 
 # The short X.Y version.
 version = __version__
@@ -81,10 +87,16 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    # to ensure that include files (partial pages) aren't built, exclude them
+    "**/_includes/**",
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = "default"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -92,6 +104,12 @@ todo_include_todos = False
 # Role which is assigned when you make a simple reference within backticks
 default_role = "any"
 
+# Includes substitutions for all files
+with open("prolog.txt", "r") as file:
+    rst_prolog = file.read()
+
+# Adds d.py version to available substitutions in all files
+rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -100,8 +118,11 @@ default_role = "any"
 #
 html_theme = "sphinx_rtd_theme"
 
-# This will be needed until sphinx_rtd_theme supports the html5 writer
-html4_writer = True
+# Add any extra paths that contain custom files (such as robots.txt or
+# .htaccess) here, relative to this directory. These files are copied
+# directly to the root of the documentation.
+#
+html_extra_path = ["_html"]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -199,15 +220,34 @@ texinfo_documents = [
 # A list of regular expressions that match URIs that should not be
 # checked when doing a linkcheck build.
 linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
+linkcheck_retries = 3
 
 
 # -- Options for extensions -----------------------------------------------
 
+if dpy_version_info.releaselevel == "final":
+    # final release - versioned docs should be available
+    dpy_docs_url = f"https://discordpy.readthedocs.io/en/v{dpy_version}/"
+else:
+    # alpha release - `latest` version of docs should be used
+    dpy_docs_url = "https://discordpy.readthedocs.io/en/latest/"
+
 # Intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dpy": ("https://discordpy.readthedocs.io/en/v1.0.1/", None),
+    "dpy": (dpy_docs_url, None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
+    "babel": ("http://babel.pocoo.org/en/stable/", None),
+    "dateutil": ("https://dateutil.readthedocs.io/en/stable/", None),
+}
+
+# Extlinks
+# This allows to create links to d.py docs with
+# :dpy_docs:`link text <site_name.html>`
+extlinks = {
+    "dpy_docs": (f"{dpy_docs_url}/%s", None),
+    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
+    "ghuser": ("https://github.com/%s", "@"),
 }
 
 # Doctest
@@ -216,5 +256,23 @@ intersphinx_mapping = {
 doctest_test_doctest_blocks = ""
 
 # Autodoc options
-autodoc_default_flags = ["show-inheritance"]
+autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"
+
+
+from docutils import nodes
+from sphinx.transforms import SphinxTransform
+
+
+# d.py's |coro| substitution leaks into our docs because we don't replace some of the docstrings
+class IgnoreCoroSubstitution(SphinxTransform):
+    default_priority = 210
+
+    def apply(self, **kwargs) -> None:
+        for ref in self.document.traverse(nodes.substitution_reference):
+            if ref["refname"] == "coro":
+                ref.replace_self(nodes.Text("", ""))
+
+
+def setup(app):
+    app.add_transform(IgnoreCoroSubstitution)

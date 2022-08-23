@@ -6,10 +6,11 @@ import discord
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 _ = Translator("PermissionsConverters", __file__)
 
-MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
+MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,20})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:
@@ -30,32 +31,32 @@ class GlobalUniqueObjectFinder(commands.Converter):
             if guild is not None:
                 return guild
             channel: discord.abc.GuildChannel = bot.get_channel(_id)
-            if channel is not None:
+            if channel is not None and not isinstance(channel, discord.Thread):
                 return channel
 
             user: discord.User = bot.get_user(_id)
             if user is not None:
                 return user
 
-            for guild in bot.guilds:
+            async for guild in AsyncIter(bot.guilds, steps=100):
                 role: discord.Role = guild.get_role(_id)
                 if role is not None:
                     return role
 
-        objects = itertools.chain(
-            bot.get_all_channels(),
-            bot.users,
-            bot.guilds,
-            *(filter(lambda r: not r.is_default(), guild.roles) for guild in bot.guilds),
-        )
+        all_roles = [
+            filter(lambda r: not r.is_default(), guild.roles)
+            async for guild in AsyncIter(bot.guilds, steps=100)
+        ]
+
+        objects = itertools.chain(bot.get_all_channels(), bot.users, bot.guilds, *all_roles)
 
         maybe_matches = []
-        for obj in objects:
+        async for obj in AsyncIter(objects, steps=100):
             if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
 
         if ctx.guild is not None:
-            for member in ctx.guild.members:
+            async for member in AsyncIter(ctx.guild.members, steps=100):
                 if member.nick == arg and not any(obj.id == member.id for obj in maybe_matches):
                     maybe_matches.append(member)
 
@@ -102,7 +103,7 @@ class GuildUniqueObjectFinder(commands.Converter):
         )
 
         maybe_matches = []
-        for obj in objects:
+        async for obj in AsyncIter(objects, steps=100):
             if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
             try:
@@ -137,12 +138,19 @@ class CogOrCommand(NamedTuple):
     # noinspection PyArgumentList
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> "CogOrCommand":
-        cog = ctx.bot.get_cog(arg)
-        if cog:
-            return cls(type="COG", name=cog.__class__.__name__, obj=cog)
-        cmd = ctx.bot.get_command(arg)
-        if cmd:
-            return cls(type="COMMAND", name=cmd.qualified_name, obj=cmd)
+        ret = None
+        if cog := ctx.bot.get_cog(arg):
+            ret = cls(type="COG", name=cog.qualified_name, obj=cog)
+
+        elif cmd := ctx.bot.get_command(arg):
+            ret = cls(type="COMMAND", name=cmd.qualified_name, obj=cmd)
+
+        if ret:
+            if isinstance(ret.obj, commands.commands._RuleDropper):
+                raise commands.BadArgument(
+                    "You cannot apply permission rules to this cog or command."
+                )
+            return ret
 
         raise commands.BadArgument(
             _(

@@ -1,17 +1,12 @@
 version: 2
 
-formats:
-  - pdf
-
 build:
   image: latest
 
 python:
-  version: 3.7
+  version: 3.8
   install:
-    - requirements: docs/requirements.txt
     - method: pip
       path: .
       extra_requirements:
         - docs
-        - mongo

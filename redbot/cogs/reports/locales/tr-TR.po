@@ -1,147 +1,189 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2019-07-05 22:33+0200\n"
-"PO-Revision-Date: 2019-07-06 16:14\n"
-"Last-Translator: Robert Jansen (Kowlin)\n"
+"POT-Creation-Date: 2021-05-08 00:51+0000\n"
+"Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.0\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: tr\n"
-"X-Crowdin-File: /cogs/reports/locales/messages.pot\n"
+"X-Crowdin-File-ID: 194\n"
 "Language: tr_TR\n"
 
-#: redbot/cogs/reports/reports.py:64
+#: redbot/cogs/reports/reports.py:26
+#, docstring
+msgid "Create user reports that server staff can respond to.\n\n"
+"    Users can open reports using `[p]report`. These are then sent\n"
+"    to a channel in the server for staff, and the report creator\n"
+"    gets a DM. Both can be used to communicate.\n"
+"    "
+msgstr "Sunucu yetkililerinin cevap verebileceği kullanıcı raporları oluştur.\n\n"
+"    Kullanıcılar `[p]report` komutuyla rapor açabilirler. Bunlar daha sonra\n"
+"    yetkililer için sunucudaki bir kanala gönderilir, ve raporu yazan kişi\n"
+"    özelden bir mesaj alır. İletişim için ikisi de kullanılabilir.\n"
+"    "
+
+#: redbot/cogs/reports/reports.py:104
 #, docstring
 msgid "Manage Reports."
-msgstr ""
+msgstr "Raporları Yönet."
 
-#: redbot/cogs/reports/reports.py:70
+#: redbot/cogs/reports/reports.py:110
 #, docstring
 msgid "Set the channel where reports will be sent."
-msgstr ""
+msgstr "Raporların gönderileceği kanalı ayarla."
 
-#: redbot/cogs/reports/reports.py:72
+#: redbot/cogs/reports/reports.py:112
 msgid "The report channel has been set."
-msgstr ""
+msgstr "Rapor kanalı ayarlandı."
 
-#: redbot/cogs/reports/reports.py:77
+#: redbot/cogs/reports/reports.py:117
 #, docstring
-msgid "Enable or Disable reporting for this server."
-msgstr ""
+msgid "Enable or disable reporting for this server."
+msgstr "Bu sunucu için raporlamayı aç veya kapa."
 
-#: redbot/cogs/reports/reports.py:82
+#: redbot/cogs/reports/reports.py:122
 msgid "Reporting is now enabled"
-msgstr ""
+msgstr "Raporlama açıldı"
 
-#: redbot/cogs/reports/reports.py:84
+#: redbot/cogs/reports/reports.py:124
 msgid "Reporting is now disabled."
-msgstr ""
+msgstr "Raporlama kapatıldı."
 
-#: redbot/cogs/reports/reports.py:143
+#: redbot/cogs/reports/reports.py:183
 msgid "You took too long to select. Try again later."
-msgstr ""
+msgstr "Seçim yapmanız çok uzun sürdü. Lütfen daha sonra tekrar deneyin."
 
-#: redbot/cogs/reports/reports.py:150
+#: redbot/cogs/reports/reports.py:190
 msgid "That wasn't a valid choice."
-msgstr ""
+msgstr "O geçerli bir seçim değildi."
 
-#: redbot/cogs/reports/reports.py:173
+#: redbot/cogs/reports/reports.py:213
 msgid "Report from {author}{maybe_nick}"
-msgstr ""
+msgstr "{author}{maybe_nick} tarafından yazılmış rapor"
 
-#: redbot/cogs/reports/reports.py:178
+#: redbot/cogs/reports/reports.py:218
 msgid "Report #{}"
-msgstr ""
+msgstr "Rapor #{}"
 
-#: redbot/cogs/reports/reports.py:182
+#: redbot/cogs/reports/reports.py:222
 msgid "Report from {author.mention} (Ticket #{number})"
-msgstr ""
+msgstr "{author.mention} tarafından yazılmış rapor (Etiket #{number})"
 
-#: redbot/cogs/reports/reports.py:201
+#: redbot/cogs/reports/reports.py:241
 #, docstring
-msgid "Send a report.\\n\\n        Use without arguments for interactive reporting, or do\\n        `[p]report <text>` to use it non-interactively.\\n        "
-msgstr ""
+msgid "Send a report.\n\n"
+"        Use without arguments for interactive reporting, or do\n"
+"        `[p]report [text]` to use it non-interactively.\n"
+"        "
+msgstr "Bir rapor gönder.\n\n"
+"        Etkileşimli raporlama için seçenek olmaksızın kullanın,\n"
+"        veya etkileşimsiz raporlama için `[p]report [text]` kullanın.\n"
+"        "
 
-#: redbot/cogs/reports/reports.py:210
+#: redbot/cogs/reports/reports.py:250
 msgid "Select a server to make a report in by number."
-msgstr ""
+msgstr "Rakamla rapor göndereceğin sunucuyu seç."
 
-#: redbot/cogs/reports/reports.py:216
+#: redbot/cogs/reports/reports.py:256
 msgid "Reporting has not been enabled for this server"
-msgstr ""
+msgstr "Bu sunucuda raporlama kapatılmış"
 
-#: redbot/cogs/reports/reports.py:223
+#: redbot/cogs/reports/reports.py:263
 msgid "You've sent too many reports recently. Please contact a server admin if this is important matter, or please wait and try again later."
-msgstr ""
-
-#: redbot/cogs/reports/reports.py:231
-msgid "Please finish making your prior report before trying to make an additional one!"
-msgstr ""
-
-#: redbot/cogs/reports/reports.py:246
-msgid "Please respond to this message with your Report.\\nYour report should be a single message"
-msgstr ""
-
-#: redbot/cogs/reports/reports.py:252
-msgid "This requires DMs enabled."
-msgstr ""
-
-#: redbot/cogs/reports/reports.py:261
-msgid "You took too long. Try again later."
-msgstr ""
-
-#: redbot/cogs/reports/reports.py:268
-msgid "There was an error sending your report, please contact a server admin."
-msgstr ""
+msgstr "Geçenlerde çok fazla rapor gönderdiniz. Eğer önemli bir konuysa bir sunucu yetkilisiyle görüşün veya bekleyip daha sonra tekrar deneyin."
 
 #: redbot/cogs/reports/reports.py:271
+msgid "Please finish making your prior report before trying to make an additional one!"
+msgstr "Lütfen ek bir tane yazmayı denemeden önce var olan raporunuzu yazmayı bitirin!"
+
+#: redbot/cogs/reports/reports.py:286
+msgid "Please respond to this message with your Report.\n"
+"Your report should be a single message"
+msgstr "Lütfen bu mesajı raporunuz ile yanıtların.\n"
+"Raporunuz tek bir mesajdan oluşmalıdır"
+
+#: redbot/cogs/reports/reports.py:292
+msgid "This requires DMs enabled."
+msgstr "Bu özel mesajların açık olmasını gerektirir."
+
+#: redbot/cogs/reports/reports.py:301
+msgid "You took too long. Try again later."
+msgstr "Çok fazla zaman harcadınız. Lütfen daha sonra tekrar deneyin."
+
+#: redbot/cogs/reports/reports.py:309
+msgid "This server has no reports channel set up. Please contact a server admin."
+msgstr "Bu sunucunun bir report kanalı yok. Lütfen sunucu yetkilisi ile iletişime geçin."
+
+#: redbot/cogs/reports/reports.py:315
+msgid "There was an error sending your report, please contact a server admin."
+msgstr "Raporunuz gönderilirken bir hata ile karşılaşıldı, lütfen bir sunucu yetkilisi ile görüşün."
+
+#: redbot/cogs/reports/reports.py:318
 msgid "Your report was submitted. (Ticket #{})"
-msgstr ""
+msgstr "Raporunuz gönderildi. (Etkiket No #{})"
 
-#: redbot/cogs/reports/reports.py:304
+#: redbot/cogs/reports/reports.py:354
 msgid "{closer} has closed the correspondence"
-msgstr ""
+msgstr "{closer} konuyu kapattı"
 
-#: redbot/cogs/reports/reports.py:311
-msgid "Re: ticket# {1} in {0.name}"
-msgstr ""
+#: redbot/cogs/reports/reports.py:371
+msgid "Re: ticket# {ticket_number} in {guild.name}"
+msgstr "Yanıt: {guild.name} sunucusunda etiket no# {ticket_number}"
 
-#: redbot/cogs/reports/reports.py:321
+#: redbot/cogs/reports/reports.py:384
+msgid "Correspondence about ticket# {ticket_number} in {guild.name} has been ended due to reports being disabled in that server."
+msgstr "{guild.name} sunucusundaki etkiket no# {ticket_number} hakkındaki konu o sunucuda raporların devre dışı bırakılması nedeniyle kapatıldı."
+
+#: redbot/cogs/reports/reports.py:395
 #, docstring
-msgid "Open a message tunnel.\\n\\n        This tunnel will forward things you say in this channel\\n        to the ticket opener's direct messages.\\n\\n        Tunnels do not persist across bot restarts.\\n        "
-msgstr ""
+msgid "Open a message tunnel.\n\n"
+"        This tunnel will forward things you say in this channel\n"
+"        to the ticket opener's direct messages.\n\n"
+"        Tunnels do not persist across bot restarts.\n"
+"        "
+msgstr "Bir mesaj tüneli aç.\n\n"
+"        Bu tünel bu kanalda yazdıklarınızı raporu açan\n"
+"        kişiye özelden atar.\n\n"
+"        Tüneller bot yeniden başlatıldığında kaybolur.\n"
+"        "
 
-#: redbot/cogs/reports/reports.py:335
+#: redbot/cogs/reports/reports.py:409
 msgid "That ticket doesn't seem to exist"
-msgstr ""
+msgstr "Bu etiket yok gibi gözüküyor"
 
-#: redbot/cogs/reports/reports.py:338
+#: redbot/cogs/reports/reports.py:412
 msgid "That user isn't here anymore."
-msgstr ""
+msgstr "O kullanıcı artık burada değil."
 
-#: redbot/cogs/reports/reports.py:344
+#: redbot/cogs/reports/reports.py:418
 msgid "Either you or the user you are trying to reach already has an open communication."
-msgstr ""
+msgstr "Siz veya ulaşmaya çalıştığınız kullanıcı zaten irtibatta."
 
-#: redbot/cogs/reports/reports.py:350
-msgid " Anything you say or upload here (8MB file size limitation on uploads) will be forwarded to them until the communication is closed.\\nYou can close a communication at any point by reacting with the ❎ to the last message recieved.\\nAny message succesfully forwarded will be marked with ✅.\\nTunnels are not persistent across bot restarts."
-msgstr ""
+#: redbot/cogs/reports/reports.py:424
+msgid " Anything you say or upload here (8MB file size limitation on uploads) will be forwarded to them until the communication is closed.\n"
+"You can close a communication at any point by reacting with the ❎ to the last message received.\n"
+"Any message successfully forwarded will be marked with ✅.\n"
+"Tunnels are not persistent across bot restarts."
+msgstr " Burada yazdığınız veya eklediğiniz (eklerde 8MB dosya boyutu sınırı bulunur) konu kapatılana kadar onlara ulaştırılır.\n"
+"Bir konuyu istediğiniz zaman aldığınız son mesaja ❎ tepkisini vererek kapatabilirsiniz.\n"
+"Başarıyla gönderilen mesajlar ✅ ile işaretlenir.\n"
+"Tüneller bot yeniden başlatıldığında kaybolur."
 
-#: redbot/cogs/reports/reports.py:361
+#: redbot/cogs/reports/reports.py:435
 msgid "A moderator in the server `{guild.name}` has opened a 2-way communication about ticket number {ticket_number}."
-msgstr ""
+msgstr "`{guild.name}` sunucusunda bir moderatör etiket numarası {ticket_number} hakkında 2 yönlü tünel açtı."
 
-#: redbot/cogs/reports/reports.py:370
+#: redbot/cogs/reports/reports.py:444
 msgid "That user has DMs disabled."
-msgstr ""
+msgstr "O kullanıcının özel mesajları kapalı."
 
-#: redbot/cogs/reports/reports.py:374
+#: redbot/cogs/reports/reports.py:448
 msgid "You have opened a 2-way communication about ticket number {ticket_number}."
-msgstr ""
+msgstr "Etkiket numarası {ticket_number} hakkında 2 yönlü tünel açtınız."
 

@@ -1,27 +1,27 @@
 import asyncio
-import collections
+import collections.abc
+import json
 import logging
 import pickle
 import weakref
 from typing import (
     Any,
-    Union,
-    Tuple,
-    Dict,
-    Awaitable,
     AsyncContextManager,
-    TypeVar,
+    Awaitable,
+    Dict,
     MutableMapping,
     Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
 )
 
 import discord
 
-from .data_manager import cog_data_path, core_data_path
-from .drivers import get_driver, IdentifierData, BackendType
-from .drivers.red_base import BaseDriver
+from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
 
-__all__ = ["Config", "get_latest_confs"]
+__all__ = ["Config", "get_latest_confs", "migrate"]
 
 log = logging.getLogger("red.config")
 
@@ -29,6 +29,33 @@ _T = TypeVar("_T")
 
 _config_cache = weakref.WeakValueDictionary()
 _retrieved = weakref.WeakSet()
+
+
+class ConfigMeta(type):
+    """
+    We want to prevent re-initializing existing config instances while having a singleton
+    """
+
+    def __call__(
+        cls,
+        cog_name: str,
+        unique_identifier: str,
+        driver: BaseDriver,
+        force_registration: bool = False,
+        defaults: dict = None,
+    ):
+        if cog_name is None:
+            raise ValueError("You must provide either the cog instance or a cog name.")
+
+        key = (cog_name, unique_identifier)
+        if key in _config_cache:
+            return _config_cache[key]
+
+        instance = super(ConfigMeta, cls).__call__(
+            cog_name, unique_identifier, driver, force_registration, defaults
+        )
+        _config_cache[key] = instance
+        return instance
 
 
 def get_latest_confs() -> Tuple["Config"]:
@@ -63,10 +90,10 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disab
         self.__acquire_lock = acquire_lock
         self.__lock = self.value_obj.get_lock()
 
-    def __await__(self):
+    def __await__(self) -> _T:
         return self.coro.__await__()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> _T:
         if self.__acquire_lock is True:
             await self.__lock.acquire()
         self.raw_value = await self
@@ -101,7 +128,7 @@ class Value:
         Information on identifiers for this value.
     default
         The default value for the data element that `identifiers` points at.
-    driver : `redbot.core.drivers.red_base.BaseDriver`
+    driver : `redbot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -171,11 +198,11 @@ class Value:
         -------
         ::
 
-            foo = await conf.guild(some_guild).foo()
+            foo = await config.guild(some_guild).foo()
 
             # Is equivalent to this
 
-            group_obj = conf.guild(some_guild)
+            group_obj = config.guild(some_guild)
             value_obj = group_obj.foo
             foo = await value_obj()
 
@@ -215,10 +242,10 @@ class Value:
         ::
 
             # Sets global value "foo" to False
-            await conf.foo.set(False)
+            await config.foo.set(False)
 
             # Sets guild specific value of "bar" to True
-            await conf.guild(some_guild).bar.set(True)
+            await config.guild(some_guild).bar.set(True)
 
         Parameters
         ----------
@@ -250,7 +277,7 @@ class Group(Value):
         All registered default values for this Group.
     force_registration : `bool`
         Same as `Config.force_registration`.
-    driver : `redbot.core.drivers.red_base.BaseDriver`
+    driver : `redbot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -308,7 +335,7 @@ class Group(Value):
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
-        new_identifiers = self.identifier_data.add_identifier(item)
+        new_identifiers = self.identifier_data.get_child(item)
         if is_group:
             return Group(
                 identifier_data=new_identifiers,
@@ -341,7 +368,7 @@ class Group(Value):
 
         For example::
 
-            await conf.clear_raw("foo", "bar")
+            await config.clear_raw("foo", "bar")
 
             # is equivalent to
 
@@ -355,7 +382,7 @@ class Group(Value):
             dict access. These are casted to `str` for you.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         await self.driver.clear(identifier_data)
 
     def is_group(self, item: Any) -> bool:
@@ -404,7 +431,7 @@ class Group(Value):
                 user = ctx.author
 
                 # Where the value of item is the name of the data field in Config
-                await ctx.send(await self.conf.user(user).get_attr(item).foo())
+                await ctx.send(await self.config.user(user).get_attr(item).foo())
 
         Parameters
         ----------
@@ -429,7 +456,7 @@ class Group(Value):
 
         For example::
 
-            d = await conf.get_raw("foo", "bar")
+            d = await config.get_raw("foo", "bar")
 
             # is equivalent to
 
@@ -438,7 +465,7 @@ class Group(Value):
 
         Note
         ----
-        If retreiving a sub-group, the return value of this method will
+        If retrieving a sub-group, the return value of this method will
         include registered defaults for values which have not yet been set.
 
         Parameters
@@ -473,7 +500,7 @@ class Group(Value):
             else:
                 default = poss_default
 
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         try:
             raw = await self.driver.get(identifier_data)
         except KeyError:
@@ -511,7 +538,7 @@ class Group(Value):
         return self(acquire_lock=acquire_lock)
 
     def nested_update(
-        self, current: collections.Mapping, defaults: Dict[str, Any] = ...
+        self, current: collections.abc.Mapping, defaults: Dict[str, Any] = ...
     ) -> Dict[str, Any]:
         """Robust updater for nested dictionaries
 
@@ -522,7 +549,7 @@ class Group(Value):
             defaults = self.defaults
 
         for key, value in current.items():
-            if isinstance(value, collections.Mapping):
+            if isinstance(value, collections.abc.Mapping):
                 result = self.nested_update(value, defaults.get(key, {}))
                 defaults[key] = result
             else:
@@ -541,7 +568,7 @@ class Group(Value):
 
         For example::
 
-            await conf.set_raw("foo", "bar", value="baz")
+            await config.set_raw("foo", "bar", value="baz")
 
             # is equivalent to
 
@@ -557,13 +584,13 @@ class Group(Value):
             The value to store.
         """
         path = tuple(str(p) for p in nested_path)
-        identifier_data = self.identifier_data.add_identifier(*path)
+        identifier_data = self.identifier_data.get_child(*path)
         if isinstance(value, dict):
             value = _str_key_dict(value)
         await self.driver.set(identifier_data, value=value)
 
 
-class Config:
+class Config(metaclass=ConfigMeta):
     """Configuration manager for cogs and Red.
 
     You should always use `get_conf` to instantiate a Config object. Use
@@ -576,7 +603,7 @@ class Config:
         :python:`global` method because global data is accessed by
         normal attribute access::
 
-            await conf.foo()
+            await config.foo()
 
     Attributes
     ----------
@@ -586,7 +613,7 @@ class Config:
         Unique identifier provided to differentiate cog data when name
         conflicts occur.
     driver
-        An instance of a driver that implements `redbot.core.drivers.red_base.BaseDriver`.
+        An instance of a driver that implements `redbot.core.drivers.BaseDriver`.
     force_registration : `bool`
         Determines if Config should throw an error if a cog attempts to access
         an attribute which has not been previously registered.
@@ -606,19 +633,6 @@ class Config:
     USER = "USER"
     MEMBER = "MEMBER"
 
-    def __new__(cls, cog_name, unique_identifier, *args, **kwargs):
-        key = (cog_name, unique_identifier)
-
-        if key[0] is None:
-            raise ValueError("You must provide either the cog instance or a cog name.")
-
-        if key in _config_cache:
-            conf = _config_cache[key]
-        else:
-            conf = object.__new__(cls)
-            _config_cache[key] = conf
-        return conf
-
     def __init__(
         self,
         cog_name: str,
@@ -634,7 +648,7 @@ class Config:
         self.force_registration = force_registration
         self._defaults = defaults or {}
 
-        self.custom_groups = {}
+        self.custom_groups: Dict[str, int] = {}
         self._lock_cache: MutableMapping[
             IdentifierData, asyncio.Lock
         ] = weakref.WeakValueDictionary()
@@ -643,12 +657,15 @@ class Config:
     def defaults(self):
         return pickle.loads(pickle.dumps(self._defaults, -1))
 
-    @staticmethod
-    def _create_uuid(identifier: int):
-        return str(identifier)
-
     @classmethod
-    def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
+    def get_conf(
+        cls,
+        cog_instance,
+        identifier: int,
+        force_registration=False,
+        cog_name=None,
+        allow_old: bool = False,
+    ):
         """Get a Config instance for your cog.
 
         .. warning::
@@ -671,7 +688,7 @@ class Config:
             Should config require registration of data keys before allowing you
             to get/set values? See `force_registration`.
         cog_name : str, optional
-            Config normally uses ``cog_instance`` to determine tha name of your cog.
+            Config normally uses ``cog_instance`` to determine the name of your cog.
             If you wish you may pass ``None`` to ``cog_instance`` and directly specify
             the name of your cog here.
 
@@ -681,25 +698,17 @@ class Config:
             A new Config object.
 
         """
-        if cog_instance is None and cog_name is not None:
-            cog_path_override = cog_data_path(raw_name=cog_name)
-        else:
-            cog_path_override = cog_data_path(cog_instance=cog_instance)
+        if allow_old:
+            log.warning(
+                "DANGER! This is getting an outdated driver. "
+                "Hopefully this is only being done from convert"
+            )
+        uuid = str(identifier)
+        if cog_name is None:
+            cog_name = type(cog_instance).__name__
 
-        cog_name = cog_path_override.stem
-        # uuid = str(hash(identifier))
-        uuid = cls._create_uuid(identifier)
-
-        # We have to import this here otherwise we have a circular dependency
-        from .data_manager import basic_config
-
-        driver_name = basic_config.get("STORAGE_TYPE", "JSON")
-        driver_details = basic_config.get("STORAGE_DETAILS", {})
-
-        driver = get_driver(
-            driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
-        )
-        if driver_name == BackendType.JSON.value:
+        driver = get_driver(cog_name, uuid, allow_old=allow_old)
+        if hasattr(driver, "migrate_identifier"):
             driver.migrate_identifier(identifier)
 
         conf = cls(
@@ -711,8 +720,8 @@ class Config:
         return conf
 
     @classmethod
-    def get_core_conf(cls, force_registration: bool = False):
-        """Get a Config instance for a core module.
+    def get_core_conf(cls, force_registration: bool = False, allow_old: bool = False):
+        """Get a Config instance for the core bot.
 
         All core modules that require a config instance should use this
         classmethod instead of `get_conf`.
@@ -723,24 +732,13 @@ class Config:
             See `force_registration`.
 
         """
-        core_path = core_data_path()
-
-        # We have to import this here otherwise we have a circular dependency
-        from .data_manager import basic_config
-
-        driver_name = basic_config.get("STORAGE_TYPE", "JSON")
-        driver_details = basic_config.get("STORAGE_DETAILS", {})
-
-        driver = get_driver(
-            driver_name, "Core", "0", data_path_override=core_path, **driver_details
-        )
-        conf = cls(
+        return cls.get_conf(
+            None,
             cog_name="Core",
-            driver=driver,
-            unique_identifier="0",
+            identifier=0,
             force_registration=force_registration,
+            allow_old=allow_old,
         )
-        return conf
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
         """Same as `group.__getattr__` except for global data.
@@ -810,7 +808,8 @@ class Config:
         if key not in self._defaults:
             self._defaults[key] = {}
 
-        data = pickle.loads(pickle.dumps(kwargs, -1))
+        # this serves as a 'deep copy' and verification that the default is serializable to JSON
+        data = json.loads(json.dumps(kwargs))
 
         for k, v in data.items():
             to_add = self._get_defaults_dict(k, v)
@@ -824,11 +823,11 @@ class Config:
         --------
         You can register a single value or multiple values::
 
-            conf.register_global(
+            config.register_global(
                 foo=True
             )
 
-            conf.register_global(
+            config.register_global(
                 bar=False,
                 baz=None
             )
@@ -843,7 +842,7 @@ class Config:
             }
 
             # Will register `foo.bar` == True and `foo.baz` == False
-            conf.register_global(
+            config.register_global(
                 **_defaults
             )
 
@@ -851,7 +850,7 @@ class Config:
         using double underscore as a variable name separator::
 
             # This is equivalent to the previous example
-            conf.register_global(
+            config.register_global(
                 foo__bar=True,
                 foo__baz=False
             )
@@ -910,32 +909,30 @@ class Config:
         """
         Initializes a custom group for usage. This method must be called first!
         """
-        if group_identifier in self.custom_groups:
-            raise ValueError(f"Group identifier already registered: {group_identifier}")
-
-        self.custom_groups[group_identifier] = identifier_count
+        if identifier_count != self.custom_groups.setdefault(group_identifier, identifier_count):
+            raise ValueError(
+                f"Cannot change identifier count of already registered group: {group_identifier}"
+            )
 
     def _get_base_group(self, category: str, *primary_keys: str) -> Group:
-        is_custom = category not in (
-            self.GLOBAL,
-            self.GUILD,
-            self.USER,
-            self.MEMBER,
-            self.ROLE,
-            self.CHANNEL,
-        )
+        """
+        .. warning::
+            :code:`Config._get_base_group()` should not be used to get config groups as
+            this is not a safe operation. Using this could end up corrupting your config file.
+        """
         # noinspection PyTypeChecker
+        pkey_len, is_custom = ConfigCategory.get_pkey_info(category, self.custom_groups)
         identifier_data = IdentifierData(
+            cog_name=self.cog_name,
             uuid=self.unique_identifier,
             category=category,
             primary_key=primary_keys,
             identifiers=(),
-            custom_group_data=self.custom_groups,
+            primary_key_len=pkey_len,
             is_custom=is_custom,
         )
 
-        pkey_len = BaseDriver.get_pkey_len(identifier_data)
-        if len(primary_keys) < pkey_len:
+        if len(primary_keys) < identifier_data.primary_key_len:
             # Don't mix in defaults with groups higher than the document level
             defaults = {}
         else:
@@ -947,6 +944,28 @@ class Config:
             force_registration=self.force_registration,
             config=self,
         )
+
+    def guild_from_id(self, guild_id: int) -> Group:
+        """Returns a `Group` for the given guild id.
+
+        Parameters
+        ----------
+        guild_id : int
+            A guild id.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The guild's Group object.
+
+        Raises
+        ------
+        TypeError
+            If the given guild_id parameter is not of type int
+        """
+        if type(guild_id) is not int:
+            raise TypeError(f"guild_id should be of type int, not {guild_id.__class__.__name__}")
+        return self._get_base_group(self.GUILD, str(guild_id))
 
     def guild(self, guild: discord.Guild) -> Group:
         """Returns a `Group` for the given guild.
@@ -964,14 +983,40 @@ class Config:
         """
         return self._get_base_group(self.GUILD, str(guild.id))
 
-    def channel(self, channel: discord.TextChannel) -> Group:
+    def channel_from_id(self, channel_id: int) -> Group:
+        """Returns a `Group` for the given channel id.
+
+        This does not discriminate between text and voice channels.
+
+        Parameters
+        ----------
+        channel_id : int
+            A channel id.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The channel's Group object.
+
+        Raises
+        ------
+        TypeError
+            If the given channel_id parameter is not of type int
+        """
+        if type(channel_id) is not int:
+            raise TypeError(
+                f"channel_id should be of type int, not {channel_id.__class__.__name__}"
+            )
+        return self._get_base_group(self.CHANNEL, str(channel_id))
+
+    def channel(self, channel: Union[discord.abc.GuildChannel, discord.Thread]) -> Group:
         """Returns a `Group` for the given channel.
 
         This does not discriminate between text and voice channels.
 
         Parameters
         ----------
-        channel : `discord.abc.GuildChannel`
+        channel : `discord.abc.GuildChannel` or `discord.Thread`
             A channel object.
 
         Returns
@@ -981,6 +1026,28 @@ class Config:
 
         """
         return self._get_base_group(self.CHANNEL, str(channel.id))
+
+    def role_from_id(self, role_id: int) -> Group:
+        """Returns a `Group` for the given role id.
+
+        Parameters
+        ----------
+        role_id : int
+            A role id.
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The role's Group object.
+
+        Raises
+        ------
+        TypeError
+            If the given role_id parameter is not of type int
+        """
+        if type(role_id) is not int:
+            raise TypeError(f"role_id should be of type int, not {role_id.__class__.__name__}")
+        return self._get_base_group(self.ROLE, str(role_id))
 
     def role(self, role: discord.Role) -> Group:
         """Returns a `Group` for the given role.
@@ -998,12 +1065,34 @@ class Config:
         """
         return self._get_base_group(self.ROLE, str(role.id))
 
+    def user_from_id(self, user_id: int) -> Group:
+        """Returns a `Group` for the given user id.
+
+        Parameters
+        ----------
+        user_id : int
+            The user's id
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The user's Group object.
+
+        Raises
+        ------
+        TypeError
+            If the given user_id parameter is not of type int
+        """
+        if type(user_id) is not int:
+            raise TypeError(f"user_id should be of type int, not {user_id.__class__.__name__}")
+        return self._get_base_group(self.USER, str(user_id))
+
     def user(self, user: discord.abc.User) -> Group:
         """Returns a `Group` for the given user.
 
         Parameters
         ----------
-        user : discord.User
+        user : discord.abc.User
             A user object.
 
         Returns
@@ -1013,6 +1102,34 @@ class Config:
 
         """
         return self._get_base_group(self.USER, str(user.id))
+
+    def member_from_ids(self, guild_id: int, member_id: int) -> Group:
+        """Returns a `Group` for the ids which represent a member.
+
+        Parameters
+        ----------
+        guild_id : int
+            The id of the guild of the member
+        member_id : int
+            The id of the member
+
+        Returns
+        -------
+        `Group <redbot.core.config.Group>`
+            The member's Group object.
+
+        Raises
+        ------
+        TypeError
+            If the given guild_id or member_id parameter is not of type int
+        """
+        if type(guild_id) is not int:
+            raise TypeError(f"guild_id should be of type int, not {guild_id.__class__.__name__}")
+
+        if type(member_id) is not int:
+            raise TypeError(f"member_id should be of type int, not {member_id.__class__.__name__}")
+
+        return self._get_base_group(self.MEMBER, str(guild_id), str(member_id))
 
     def member(self, member: discord.Member) -> Group:
         """Returns a `Group` for the given member.
@@ -1220,9 +1337,7 @@ class Config:
         """
         if not scopes:
             # noinspection PyTypeChecker
-            identifier_data = IdentifierData(
-                self.unique_identifier, "", (), (), self.custom_groups
-            )
+            identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
             group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
         else:
             cat, *scopes = scopes
@@ -1312,6 +1427,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all guild data.
         """
         return self.get_custom_lock(self.GUILD)
 
@@ -1321,6 +1437,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all channels data.
         """
         return self.get_custom_lock(self.CHANNEL)
 
@@ -1330,6 +1447,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all roles data.
         """
         return self.get_custom_lock(self.ROLE)
 
@@ -1339,6 +1457,7 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all user data.
         """
         return self.get_custom_lock(self.USER)
 
@@ -1354,12 +1473,20 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all member data for the given guild.
+            If ``guild`` is omitted this will give a lock
+            for all data for all members in all guilds.
         """
         if guild is None:
             return self.get_custom_lock(self.GUILD)
         else:
             id_data = IdentifierData(
-                self.unique_identifier, self.MEMBER, (str(guild.id),), (), self.custom_groups
+                self.cog_name,
+                self.unique_identifier,
+                category=self.MEMBER,
+                primary_key=(str(guild.id),),
+                identifiers=(),
+                primary_key_len=2,
             )
             return self._lock_cache.setdefault(id_data, asyncio.Lock())
 
@@ -1374,11 +1501,35 @@ class Config:
         Returns
         -------
         asyncio.Lock
+            A lock for all data in a custom scope with given group identifier.
         """
-        id_data = IdentifierData(
-            self.unique_identifier, group_identifier, (), (), self.custom_groups
-        )
-        return self._lock_cache.setdefault(id_data, asyncio.Lock())
+        try:
+            pkey_len, is_custom = ConfigCategory.get_pkey_info(
+                group_identifier, self.custom_groups
+            )
+        except KeyError:
+            raise ValueError(f"Custom group not initialized: {group_identifier}") from None
+        else:
+            id_data = IdentifierData(
+                self.cog_name,
+                self.unique_identifier,
+                category=group_identifier,
+                primary_key=(),
+                identifiers=(),
+                primary_key_len=pkey_len,
+                is_custom=is_custom,
+            )
+            return self._lock_cache.setdefault(id_data, asyncio.Lock())
+
+
+async def migrate(cur_driver_cls: Type[BaseDriver], new_driver_cls: Type[BaseDriver]) -> None:
+    """Migrate from one driver type to another."""
+    # Get custom group data
+    core_conf = Config.get_core_conf(allow_old=True)
+    core_conf.init_custom("CUSTOM_GROUPS", 2)
+    all_custom_group_data = await core_conf.custom("CUSTOM_GROUPS").all()
+
+    await cur_driver_cls.migrate_to(new_driver_cls, all_custom_group_data)
 
 
 def _str_key_dict(value: Dict[Any, _T]) -> Dict[str, _T]:

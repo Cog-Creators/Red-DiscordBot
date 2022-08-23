@@ -14,7 +14,7 @@ class MixinMeta(ABC):
     """
 
     def __init__(self, *_args):
-        self.settings: Config
+        self.config: Config
         self.bot: Red
         self.cache: dict
 

@@ -11,6 +11,9 @@ Config was introduced in V3 as a way to make data storage easier and safer for a
 It will take some getting used to as the syntax is entirely different from what Red has used before, but we believe
 Config will be extremely beneficial to both cog developers and end users in the long run.
 
+.. note:: While config is great for storing data safely, there are some caveats to writing performant code which uses it.
+          Make sure to read the section on best practices for more of these details.
+
 ***********
 Basic Usage
 ***********
@@ -18,8 +21,9 @@ Basic Usage
 .. code-block:: python
 
     from redbot.core import Config
+    from redbot.core import commands
 
-    class MyCog:
+    class MyCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, identifier=1234567890)
 
@@ -49,7 +53,7 @@ Then, in the class's :code:`__init__` function, you need to get a config instanc
 
 .. code-block:: python
 
-    class MyCog:
+    class MyCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, identifier=1234567890)
 
@@ -65,7 +69,7 @@ After we've gotten that, we need to register default values:
 
 .. code-block:: python
 
-    class MyCog:
+    class MyCog(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, identifier=1234567890)
             default_global = {
@@ -157,7 +161,7 @@ Here is an example of the :code:`async with` syntax:
     * :py:meth:`Config.member` which takes :py:class:`discord.Member`.
     * :py:meth:`Config.user` which takes :py:class:`discord.User`.
     * :py:meth:`Config.role` which takes :py:class:`discord.Role`.
-    * :py:meth:`Config.channel` which takes :py:class:`discord.TextChannel`.
+    * :py:meth:`Config.channel` which takes :py:class:`discord.abc.GuildChannel` or :py:class:`discord.Thread`.
 
 If you need to wipe data from the config, you want to look at :py:meth:`Group.clear`, or :py:meth:`Config.clear_all`
 and similar methods, such as :py:meth:`Config.clear_all_guilds`.
@@ -185,29 +189,130 @@ features within Config to enable developers to work with data how they wish.
 
 This usage guide will cover the following features:
 
+- :py:meth:`Config.init_custom`
+- :py:meth:`Config.register_custom`
+- :py:meth:`Config.custom`
 - :py:meth:`Group.get_raw`
 - :py:meth:`Group.set_raw`
 - :py:meth:`Group.clear_raw`
+
+
+Custom Groups
+^^^^^^^^^^^^^
+While Config has built-in groups for the common discord objects,
+sometimes you need a combination of these or your own defined grouping.
+Config handles this by allowing you to define custom groups.
+
+Let's start by showing how :py:meth:`Config.custom` can be equivalent to :py:meth:`Config.guild` by modifying the above
+Tutorial example.
+
+.. code-block:: python
+
+    from redbot.core import Config, commands
+
+
+    class MyCog(commands.Cog):
+        def __init__(self):
+            self.config = Config.get_conf(self, identifier=1234567890)
+            default_guild = {
+                "blah": [],
+                "baz": 1234567890
+            }
+
+            # self.config.register_guild(**default_guild)
+
+            self.config.init_custom("CustomGuildGroup", 1)
+            self.config.register_custom("CustomGuildGroup", **default_guild)
+
+In the above, we registered the custom group named "CustomGuildGroup" to contain the same defaults
+that :code:`self.config.guild` normally would. First, we initialized the group "CustomGuildGroup" to
+accept one identifier by calling :py:meth:`Config.init_custom` with the argument :code:`1`. Then we used
+:py:meth:`Config.register_custom` to register the default values.
+
+.. important::
+
+    :py:meth:`Config.init_custom` **must** be called prior to using a custom group.
+
+
+Now let's use this custom group:
+
+.. code-block:: python
+
+    @commands.command()
+    async def setbaz(self, ctx, new_value):
+        # await self.config.guild(ctx.guild).baz.set(new_value)
+
+        await self.config.custom("CustomGuildGroup", ctx.guild.id).baz.set(new_value)
+        await ctx.send("Value of baz has been changed!")
+
+    @commands.command()
+    async def checkbaz(self, ctx):
+        # baz_val = await self.config.guild(ctx.guild).baz()
+
+        baz_val = await self.config.custom("CustomGuildGroup", ctx.guild.id).baz()
+        await ctx.send("The value of baz is {}".format("True" if baz_val else "False"))
+
+Here we used :py:meth:`Config.custom` to access our custom group much like we would have used :py:meth:`Config.guild`.
+Since it's a custom group, we need to use :code:`id` attribute of guild to get a unique identifier.
+
+Now let's see an example that uses multiple identifiers:
+
+.. code-block:: python
+
+    from redbot.core import Config, commands, checks
+
+
+    class ChannelAccesss(commands.Cog):
+        def __init__(self):
+            self.config = Config.get_conf(self, identifier=1234567890)
+            default_access = {
+                "allowed": False
+            }
+
+            self.config.init_custom("ChannelAccess", 2)
+            self.config.register_custom("ChannelAccess", **default_access)
+
+        @commands.command()
+        @checks.is_owner()
+        async def grantaccess(self, ctx, channel: discord.TextChannel, member: discord.Member):
+            await self.config.custom("ChannelAccess", channel.id, member.id).allowed.set(True)
+            await ctx.send("Member has been granted access to that channel")
+
+        @commands.command()
+        async def checkaccess(self, ctx, channel: discord.TextChannel):
+            allowed = await self.config.custom("ChannelAccess", channel.id, ctx.author.id).allowed()
+            await ctx.send("Your access to this channel is {}".format("Allowed" if allowed else "Denied"))
+
+In the above example, we defined the custom group "ChannelAccess" to accept two identifiers
+using :py:meth:`Config.init_custom`. Then, we were able to set the default value for any member's
+access to any channel to `False` until the bot owner grants them access.
+
+.. important::
+
+    The ordering of the identifiers matter. :code:`custom("ChannelAccess", channel.id, member.id)` is NOT the same
+    as :code:`custom("ChannelAccess", member.id, channel.id)`
+
+Raw Group Access
+^^^^^^^^^^^^^^^^
 
 For this example let's suppose that we're creating a cog that allows users to buy and own multiple pets using
 the built-in Economy credits::
 
     from redbot.core import bank
-    from redbot.core import Config
-    from discord.ext import commands
+    from redbot.core import Config, commands
 
 
-    class Pets:
+    class Pets(commands.Cog):
         def __init__(self):
-            self.conf = Config.get_conf(self, 1234567890)
+            self.config = Config.get_conf(self, 1234567890)
 
             # Here we'll assign some default costs for the pets
-            self.conf.register_global(
+            self.config.register_global(
                 dog=100,
                 cat=100,
                 bird=50
             )
-            self.conf.register_user(
+            self.config.register_user(
                 pets={}
             )
 
@@ -226,7 +331,7 @@ And now that the cog is set up we'll need to create some commands that allow use
 
             # We will need to use "get_raw"
             try:
-                cost = await self.conf.get_raw(pet_type)
+                cost = await self.config.get_raw(pet_type)
             except KeyError:
                 # KeyError is thrown whenever the data you try to access does not
                 # exist in the registered defaults or in the saved data.
@@ -238,15 +343,15 @@ assign a new pet to the user. This is very easily done using the V3 bank API and
 
     # continued
             if await bank.can_spend(ctx.author, cost):
-                await self.conf.user(ctx.author).pets.set_raw(
+                await self.config.user(ctx.author).pets.set_raw(
                     pet_name, value={'cost': cost, 'hunger': 0}
                 )
 
                 # this is equivalent to doing the following
 
-                pets = await self.conf.user(ctx.author).pets()
+                pets = await self.config.user(ctx.author).pets()
                 pets[pet_name] = {'cost': cost, 'hunger': 0}
-                await self.conf.user(ctx.author).pets.set(pets)
+                await self.config.user(ctx.author).pets.set(pets)
 
 Since the pets can get hungry we're gonna need a command that let's pet owners check how hungry their pets are::
 
@@ -254,7 +359,7 @@ Since the pets can get hungry we're gonna need a command that let's pet owners c
         @commands.command()
         async def hunger(self, ctx, pet_name: str):
             try:
-                hunger = await self.conf.user(ctx.author).pets.get_raw(pet_name, 'hunger')
+                hunger = await self.config.user(ctx.author).pets.get_raw(pet_name, 'hunger')
             except KeyError:
                 # Remember, this is thrown if something in the provided identifiers
                 # is not found in the saved data or the defaults.
@@ -271,7 +376,7 @@ We're responsible pet owners here, so we've also got to have a way to feed our p
             # This is a bit more complicated because we need to check if the pet is
             # owned first.
             try:
-                pet = await self.conf.user(ctx.author).pets.get_raw(pet_name)
+                pet = await self.config.user(ctx.author).pets.get_raw(pet_name)
             except KeyError:
                 # If the given pet name doesn't exist in our data
                 await ctx.send("You don't own that pet!")
@@ -282,12 +387,12 @@ We're responsible pet owners here, so we've also got to have a way to feed our p
             # Determine the new hunger and make sure it doesn't go negative
             new_hunger = max(hunger - food, 0)
 
-            await self.conf.user(ctx.author).pets.set_raw(
+            await self.config.user(ctx.author).pets.set_raw(
                 pet_name, 'hunger', value=new_hunger
             )
 
             # We could accomplish the same thing a slightly different way
-            await self.conf.user(ctx.author).pets.get_attr(pet_name).hunger.set(new_hunger)
+            await self.config.user(ctx.author).pets.get_attr(pet_name).hunger.set(new_hunger)
 
             await ctx.send("Your pet is now at {}/100 hunger!".format(new_hunger)
 
@@ -297,7 +402,7 @@ Of course, if we're less than responsible pet owners, there are consequences::
         @commands.command()
         async def adopt(self, ctx, pet_name: str, *, member: discord.Member):
             try:
-                pet = await self.conf.user(member).pets.get_raw(pet_name)
+                pet = await self.config.user(member).pets.get_raw(pet_name)
             except KeyError:
                 await ctx.send("That person doesn't own that pet!")
                 return
@@ -307,15 +412,15 @@ Of course, if we're less than responsible pet owners, there are consequences::
                 await ctx.send("That pet is too well taken care of to be adopted.")
                 return
 
-            await self.conf.user(member).pets.clear_raw(pet_name)
+            await self.config.user(member).pets.clear_raw(pet_name)
 
             # this is equivalent to doing the following
 
-            pets = await self.conf.user(member).pets()
+            pets = await self.config.user(member).pets()
             del pets[pet_name]
-            await self.conf.user(member).pets.set(pets)
+            await self.config.user(member).pets.set(pets)
 
-            await self.conf.user(ctx.author).pets.set_raw(pet_name, value=pet)
+            await self.config.user(ctx.author).pets.set_raw(pet_name, value=pet)
             await ctx.send(
                 "Your request to adopt this pet has been granted due to "
                 "how poorly it was taken care of."
@@ -343,26 +448,50 @@ much the same way they would in V2. The following examples will demonstrate how 
 
 .. code-block:: python
 
-    from redbot.core import Config
+    from redbot.core import Config, commands
 
 
-    class ExampleCog:
+    class ExampleCog(commands.Cog):
         def __init__(self):
-            self.conf = Config.get_conf(self, 1234567890)
-
+            self.config = Config.get_conf(self, 1234567890)
+            self.config.init_custom("V2", 1)
             self.data = {}
 
         async def load_data(self):
-            self.data = await self.conf.custom("V2", "V2").all()
+            self.data = await self.config.custom("V2", "V2").all()
 
         async def save_data(self):
-            await self.conf.custom("V2", "V2").set(self.data)
+            await self.config.custom("V2", "V2").set(self.data)
 
 
     async def setup(bot):
         cog = ExampleCog()
         await cog.load_data()
-        bot.add_cog(cog)
+        await bot.add_cog(cog)
+
+************************************
+Best practices and performance notes
+************************************
+
+Config prioritizes being a safe data store without developers needing to
+know how end users have configured their bot. 
+
+This does come with some performance costs, so keep the following in mind when choosing to
+develop using config
+
+* Config use in events should be kept minimal and should only occur
+  after confirming the event needs to interact with config
+
+* Caching frequently used things, especially things used by events, 
+  results in faster and less event loop blocking code.
+
+* Only use config's context managers when you intend to modify data.
+
+* While config is a great general use option, it may not always be the right one for you. 
+  As a cog developer, even though config doesn't require one,
+  you can choose to require a database or store to something such as an sqlite
+  database stored within your cog's datapath.
+
 
 *************
 API Reference
@@ -380,13 +509,13 @@ API Reference
     includes keys within a `dict` when one is being set, as well as keys in  nested dictionaries
     within that `dict`. For example::
 
-        >>> conf = Config.get_conf(self, identifier=999)
-        >>> conf.register_global(foo={})
-        >>> await conf.foo.set_raw(123, value=True)
-        >>> await conf.foo()
+        >>> config = Config.get_conf(self, identifier=999)
+        >>> config.register_global(foo={})
+        >>> await config.foo.set_raw(123, value=True)
+        >>> await config.foo()
         {'123': True}
-        >>> await conf.foo.set({123: True, 456: {789: False}}
-        >>> await conf.foo()
+        >>> await config.foo.set({123: True, 456: {789: False}}
+        >>> await config.foo()
         {'123': True, '456': {'789': False}}
 
 .. automodule:: redbot.core.config
@@ -416,20 +545,25 @@ Value
 Driver Reference
 ****************
 
-.. automodule:: redbot.core.drivers
+.. autofunction:: redbot.core.drivers.get_driver
+
+.. autoclass:: redbot.core.drivers.BackendType
+    :members:
+
+.. autoclass:: redbot.core.drivers.ConfigCategory
     :members:
 
 Base Driver
 ^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.red_base.BaseDriver
+.. autoclass:: redbot.core.drivers.BaseDriver
     :members:
 
 JSON Driver
 ^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.red_json.JSON
+.. autoclass:: redbot.core.drivers.JsonDriver
     :members:
 
-Mongo Driver
-^^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.red_mongo.Mongo
+Postgres Driver
+^^^^^^^^^^^^^^^
+.. autoclass:: redbot.core.drivers.PostgresDriver
     :members:

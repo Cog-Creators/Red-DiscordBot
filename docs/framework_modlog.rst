@@ -25,7 +25,7 @@ Basic Usage
         async def ban(self, ctx, user: discord.Member, reason: str = None):
             await ctx.guild.ban(user)
             case = await modlog.create_case(
-                ctx.bot, ctx.guild, ctx.message.created_at, action="ban",
+                ctx.bot, ctx.guild, ctx.message.created_at, action_type="ban",
                 user=user, moderator=ctx.author, reason=reason
             )
             await ctx.send("Done. It was about time.")
@@ -35,8 +35,7 @@ Basic Usage
 Registering Case types
 **********************
 
-To register case types, use an asynchronous ``initialize()`` method and call
-it from your setup function:
+To register case types, use a special ``cog_load()`` method which is called when you add a cog:
 
 .. code-block:: python
 
@@ -46,7 +45,7 @@ it from your setup function:
 
     class MyCog(commands.Cog):
 
-        async def initialize(self):
+        async def cog_load(self):
             await self.register_casetypes()
 
         @staticmethod
@@ -87,8 +86,7 @@ it from your setup function:
 
     async def setup(bot):
         cog = MyCog()
-        await cog.initialize()
-        bot.add_cog(cog)
+        await bot.add_cog(cog)
 
 .. important::
     Image should be the emoji you want to represent your case type with.

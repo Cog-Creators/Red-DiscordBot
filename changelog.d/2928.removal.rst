@@ -1,1 +1,0 @@
-The ``set owner`` and ``set token`` commands have been removed in favor of managing server side. 

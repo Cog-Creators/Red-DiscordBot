@@ -1,20 +1,23 @@
-import json
-import distutils.dir_util
+from __future__ import annotations
+
+import functools
 import shutil
-from enum import Enum
+from enum import IntEnum
 from pathlib import Path
-from typing import MutableMapping, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
 from .log import log
+from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
 from .json_mixins import RepoJSONMixin
 
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
+from redbot.core import VersionInfo
 
 if TYPE_CHECKING:
-    from .repo_manager import RepoManager
+    from .repo_manager import RepoManager, Repo
 
 
-class InstallableType(Enum):
+class InstallableType(IntEnum):
+    # using IntEnum, because hot-reload breaks its identity
     UNKNOWN = 0
     COG = 1
     SHARED_LIBRARY = 2
@@ -34,14 +37,21 @@ class Installable(RepoJSONMixin):
     ----------
     repo_name : `str`
         Name of the repository which this package belongs to.
-    author : `tuple` of `str`, optional
+    repo : Repo, optional
+        Repo object of the Installable, if repo is missing this will be `None`
+    commit : `str`, optional
+        Installable's commit. This is not the same as ``repo.commit``
+    author : `tuple` of `str`
         Name(s) of the author(s).
-    bot_version : `tuple` of `int`
-        The minimum bot version required for this installation. Right now
-        this is always :code:`3.0.0`.
+    end_user_data_statement : `str`
+        End user data statement of the module.
+    min_bot_version : `VersionInfo`
+        The minimum bot version required for this Installable.
+    max_bot_version : `VersionInfo`
+        The maximum bot version required for this Installable.
+        Ignored if `min_bot_version` is newer than `max_bot_version`.
     min_python_version : `tuple` of `int`
-        The minimum python version required for this cog. This field will not
-        apply to repo info.json's.
+        The minimum python version required for this cog.
     hidden : `bool`
         Whether or not this cog will be hidden from the user when they use
         `Downloader`'s commands.
@@ -58,47 +68,47 @@ class Installable(RepoJSONMixin):
 
     """
 
-    def __init__(self, location: Path):
+    def __init__(self, location: Path, repo: Optional[Repo] = None, commit: str = ""):
         """Base installable initializer.
 
         Parameters
         ----------
         location : pathlib.Path
             Location (file or folder) to the installable.
+        repo : Repo, optional
+            Repo object of the Installable, if repo is missing this will be `None`
+        commit : str
+            Installable's commit. This is not the same as ``repo.commit``
 
         """
-        super().__init__(location)
-
         self._location = location
 
+        self.repo = repo
         self.repo_name = self._location.parent.stem
+        self.commit = commit
 
-        self.author = ()
-        self.min_bot_version = red_version_info
-        self.max_bot_version = red_version_info
-        self.min_python_version = (3, 5, 1)
-        self.hidden = False
-        self.disabled = False
-        self.required_cogs = {}  # Cog name -> repo URL
-        self.requirements = ()
-        self.tags = ()
-        self.type = InstallableType.UNKNOWN
+        self.end_user_data_statement: str
+        self.min_bot_version: VersionInfo
+        self.max_bot_version: VersionInfo
+        self.min_python_version: Tuple[int, int, int]
+        self.hidden: bool
+        self.disabled: bool
+        self.required_cogs: Dict[str, str]  # Cog name -> repo URL
+        self.requirements: Tuple[str, ...]
+        self.tags: Tuple[str, ...]
+        self.type: InstallableType
 
-        if self._info_file.exists():
-            self._process_info_file(self._info_file)
+        super().__init__(location)
 
-        if self._info == {}:
-            self.type = InstallableType.COG
-
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         # noinspection PyProtectedMember
         return self._location == other._location
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self._location)
 
     @property
-    def name(self):
+    def name(self) -> str:
         """`str` : The name of this package."""
         return self._location.stem
 
@@ -111,115 +121,72 @@ class Installable(RepoJSONMixin):
         :return: Status of installation
         :rtype: bool
         """
+        copy_func: Callable[..., Any]
         if self._location.is_file():
             copy_func = shutil.copy2
         else:
-            # clear copy_tree's cache to make sure missing directories are created (GH-2690)
-            distutils.dir_util._path_created = {}
-            copy_func = distutils.dir_util.copy_tree
+            copy_func = functools.partial(shutil.copytree, dirs_exist_ok=True)
 
         # noinspection PyBroadException
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
-        except:
-            log.exception("Error occurred when copying path: {}".format(self._location))
+        except:  # noqa: E722
+            log.exception("Error occurred when copying path: %s", self._location)
             return False
         return True
 
-    def _read_info_file(self):
+    def _read_info_file(self) -> None:
         super()._read_info_file()
 
-        if self._info_file.exists():
-            self._process_info_file()
-
-    def _process_info_file(self, info_file_path: Path = None) -> MutableMapping[str, Any]:
-        """
-        Processes an information file. Loads dependencies among other
-        information into this object.
-
-        :type info_file_path:
-        :param info_file_path: Optional path to information file, defaults to `self.__info_file`
-        :return: Raw information dictionary
-        """
-        info_file_path = info_file_path or self._info_file
-        if info_file_path is None or not info_file_path.is_file():
-            raise ValueError("No valid information file path was found.")
-
-        info = {}
-        with info_file_path.open(encoding="utf-8") as f:
-            try:
-                info = json.load(f)
-            except json.JSONDecodeError:
-                info = {}
-                log.exception("Invalid JSON information file at path: {}".format(info_file_path))
-            else:
-                self._info = info
-
-        try:
-            author = tuple(info.get("author", []))
-        except ValueError:
-            author = ()
-        self.author = author
-
-        try:
-            min_bot_version = VersionInfo.from_str(str(info.get("min_bot_version", __version__)))
-        except ValueError:
-            min_bot_version = self.min_bot_version
-        self.min_bot_version = min_bot_version
-
-        try:
-            max_bot_version = VersionInfo.from_str(str(info.get("max_bot_version", __version__)))
-        except ValueError:
-            max_bot_version = self.max_bot_version
-        self.max_bot_version = max_bot_version
-
-        try:
-            min_python_version = tuple(info.get("min_python_version", [3, 5, 1]))
-        except ValueError:
-            min_python_version = self.min_python_version
-        self.min_python_version = min_python_version
-
-        try:
-            hidden = bool(info.get("hidden", False))
-        except ValueError:
-            hidden = False
-        self.hidden = hidden
-
-        try:
-            disabled = bool(info.get("disabled", False))
-        except ValueError:
-            disabled = False
-        self.disabled = disabled
-
-        self.required_cogs = info.get("required_cogs", {})
-
-        self.requirements = info.get("requirements", ())
-
-        try:
-            tags = tuple(info.get("tags", ()))
-        except ValueError:
-            tags = ()
-        self.tags = tags
-
-        installable_type = info.get("type", "")
-        if installable_type in ("", "COG"):
-            self.type = InstallableType.COG
-        elif installable_type == "SHARED_LIBRARY":
-            self.type = InstallableType.SHARED_LIBRARY
+        update_mixin(self, INSTALLABLE_SCHEMA)
+        if self.type == InstallableType.SHARED_LIBRARY:
             self.hidden = True
-        else:
-            self.type = InstallableType.UNKNOWN
 
-        return info
 
-    def to_json(self):
-        return {"repo_name": self.repo_name, "cog_name": self.name}
+class InstalledModule(Installable):
+    """Base class for installed modules,
+    this is basically instance of installed `Installable`
+    used by Downloader.
+
+    Attributes
+    ----------
+    pinned : `bool`
+        Whether or not this cog is pinned, always `False` if module is not a cog.
+    """
+
+    def __init__(
+        self,
+        location: Path,
+        repo: Optional[Repo] = None,
+        commit: str = "",
+        pinned: bool = False,
+        json_repo_name: str = "",
+    ):
+        super().__init__(location=location, repo=repo, commit=commit)
+        self.pinned: bool = pinned if self.type == InstallableType.COG else False
+        # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
+        self._json_repo_name = json_repo_name
+
+    def to_json(self) -> Dict[str, Union[str, bool]]:
+        module_json: Dict[str, Union[str, bool]] = {
+            "repo_name": self.repo_name,
+            "module_name": self.name,
+            "commit": self.commit,
+        }
+        if self.type == InstallableType.COG:
+            module_json["pinned"] = self.pinned
+        return module_json
 
     @classmethod
-    def from_json(cls, data: dict, repo_mgr: "RepoManager"):
-        repo_name = data["repo_name"]
-        cog_name = data["cog_name"]
+    def from_json(
+        cls, data: Dict[str, Union[str, bool]], repo_mgr: RepoManager
+    ) -> InstalledModule:
+        repo_name = cast(str, data["repo_name"])
+        cog_name = cast(str, data["module_name"])
+        commit = cast(str, data.get("commit", ""))
+        pinned = cast(bool, data.get("pinned", False))
 
+        # TypedDict, where are you :/
         repo = repo_mgr.get_repo(repo_name)
         if repo is not None:
             repo_folder = repo.folder_path
@@ -228,4 +195,12 @@ class Installable(RepoJSONMixin):
 
         location = repo_folder / cog_name
 
-        return cls(location=location)
+        return cls(
+            location=location, repo=repo, commit=commit, pinned=pinned, json_repo_name=repo_name
+        )
+
+    @classmethod
+    def from_installable(cls, module: Installable, *, pinned: bool = False) -> InstalledModule:
+        return cls(
+            location=module._location, repo=module.repo, commit=module.commit, pinned=pinned
+        )

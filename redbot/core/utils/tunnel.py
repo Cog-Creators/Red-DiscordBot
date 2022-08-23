@@ -1,9 +1,10 @@
+import asyncio
 import discord
 from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
 import weakref
-from typing import List, Optional
+from typing import List, Optional, Union
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -56,14 +57,18 @@ class Tunnel(metaclass=TunnelMeta):
     ----------
     sender: `discord.Member`
         The person who opened the tunnel
-    origin: `discord.TextChannel`
+    origin: `discord.TextChannel` or `discord.Thread`
         The channel in which it was opened
     recipient: `discord.User`
         The user on the other end of the tunnel
     """
 
     def __init__(
-        self, *, sender: discord.Member, origin: discord.TextChannel, recipient: discord.User
+        self,
+        *,
+        sender: discord.Member,
+        origin: Union[discord.TextChannel, discord.Thread],
+        recipient: discord.User,
     ):
         self.sender = sender
         self.origin = origin
@@ -89,7 +94,7 @@ class Tunnel(metaclass=TunnelMeta):
         destination: discord.abc.Messageable,
         content: str = None,
         embed=None,
-        files: Optional[List[discord.File]] = None
+        files: Optional[List[discord.File]] = None,
     ) -> List[discord.Message]:
         """
         This does the actual sending, use this instead of a full tunnel
@@ -132,7 +137,9 @@ class Tunnel(metaclass=TunnelMeta):
         return rets
 
     @staticmethod
-    async def files_from_attach(m: discord.Message) -> List[discord.File]:
+    async def files_from_attach(
+        m: discord.Message, *, use_cached: bool = False, images_only: bool = False
+    ) -> List[discord.File]:
         """
         makes a list of file objects from a message
         returns an empty list if none, or if the sum of file sizes
@@ -142,6 +149,10 @@ class Tunnel(metaclass=TunnelMeta):
         ---------
         m: `discord.Message`
             A message to get attachments from
+        use_cached: `bool`
+            Whether to use ``proxy_url`` rather than ``url`` when downloading the attachment
+        images_only: `bool`
+            Whether only image attachments should be added to returned list
 
         Returns
         -------
@@ -153,13 +164,34 @@ class Tunnel(metaclass=TunnelMeta):
         max_size = 8 * 1000 * 1000
         if m.attachments and sum(a.size for a in m.attachments) <= max_size:
             for a in m.attachments:
+                if images_only and a.height is None:
+                    # if this is None, it's not an image
+                    continue
                 _fp = io.BytesIO()
-                await a.save(_fp)
+                try:
+                    await a.save(_fp, use_cached=use_cached)
+                except discord.HTTPException as e:
+                    # this is required, because animated webp files aren't cached
+                    if not (e.status == 415 and images_only and use_cached):
+                        raise
                 files.append(discord.File(_fp, filename=a.filename))
         return files
 
     # Backwards-compatible typo fix (GH-2496)
     files_from_attatch = files_from_attach
+
+    async def close_because_disabled(self, close_message: str):
+        """
+        Sends a mesage to both ends of the tunnel that the tunnel is now closed.
+
+        Parameters
+        ----------
+        close_message: str
+            The message to send to both ends of the tunnel.
+        """
+
+        tasks = [destination.send(close_message) for destination in (self.recipient, self.origin)]
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     async def communicate(
         self, *, message: discord.Message, topic: str = None, skip_message_content: bool = False
@@ -191,9 +223,9 @@ class Tunnel(metaclass=TunnelMeta):
             the bot can't upload at the origin channel
             or can't add reactions there.
         """
-        if message.channel == self.origin and message.author == self.sender:
+        if message.channel.id == self.origin.id and message.author == self.sender:
             send_to = self.recipient
-        elif message.author == self.recipient and isinstance(message.channel, discord.DMChannel):
+        elif message.author == self.recipient and message.guild is None:
             send_to = self.origin
         else:
             return None

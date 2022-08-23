@@ -5,6 +5,7 @@ import discord
 
 from .commands import (
     bot_has_permissions,
+    bot_in_a_guild,
     has_permissions,
     is_owner,
     guildowner,
@@ -13,7 +14,6 @@ from .commands import (
     admin_or_permissions,
     mod,
     mod_or_permissions,
-    check as _check_decorator,
 )
 from .utils.mod import (
     is_mod_or_superior as _is_mod_or_superior,
@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "bot_has_permissions",
+    "bot_in_a_guild",
     "has_permissions",
     "is_owner",
     "guildowner",
@@ -37,18 +38,8 @@ __all__ = [
     "mod_or_permissions",
     "is_mod_or_superior",
     "is_admin_or_superior",
-    "bot_in_a_guild",
     "check_permissions",
 ]
-
-
-def bot_in_a_guild():
-    """Deny the command if the bot is not in a guild."""
-
-    async def predicate(ctx):
-        return len(ctx.bot.guilds) > 0
-
-    return _check_decorator(predicate)
 
 
 def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
@@ -56,6 +47,7 @@ def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
         "`redbot.core.checks.is_mod_or_superior` is deprecated and will be removed in a future "
         "release, please use `redbot.core.utils.mod.is_mod_or_superior` instead.",
         category=DeprecationWarning,
+        stacklevel=2,
     )
     return _is_mod_or_superior(ctx.bot, ctx.author)
 
@@ -65,6 +57,7 @@ def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
         "`redbot.core.checks.is_admin_or_superior` is deprecated and will be removed in a future "
         "release, please use `redbot.core.utils.mod.is_admin_or_superior` instead.",
         category=DeprecationWarning,
+        stacklevel=2,
     )
     return _is_admin_or_superior(ctx.bot, ctx.author)
 
@@ -72,6 +65,8 @@ def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
 def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> Awaitable[bool]:
     warnings.warn(
         "`redbot.core.checks.check_permissions` is deprecated and will be removed in a future "
-        "release, please use `redbot.core.utils.mod.check_permissions`."
+        "release, please use `redbot.core.utils.mod.check_permissions`.",
+        DeprecationWarning,
+        stacklevel=2,
     )
     return _check_permissions(ctx, perms)
