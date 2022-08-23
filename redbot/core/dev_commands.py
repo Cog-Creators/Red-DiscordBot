@@ -204,7 +204,7 @@ class Dev(commands.Cog):
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except:
+        except Exception:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -293,7 +293,7 @@ class Dev(commands.Cog):
                     else:
                         result = executor(code, env)
                     result = await self.maybe_await(result)
-            except:
+            except Exception:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
@@ -301,7 +301,7 @@ class Dev(commands.Cog):
                 if result is not None:
                     try:
                         msg = "{}{}".format(value, result)
-                    except:
+                    except Exception:
                         msg = "{}{}".format(value, traceback.format_exc())
                     env["_"] = result
                 elif value:
