@@ -7,8 +7,9 @@ import urllib.parse
 import aiohttp
 import discord
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import menu
 from redbot.core.utils.chat_formatting import (
     bold,
     escape,
@@ -39,7 +40,7 @@ class RPSParser:
             self.choice = None
 
 
-MAX_ROLL: Final[int] = 2 ** 64 - 1
+MAX_ROLL: Final[int] = 2**64 - 1
 
 
 @cog_i18n(_)
@@ -72,20 +73,23 @@ class General(commands.Cog):
     ]
     _ = T_
 
-    def __init__(self):
+    def __init__(self, bot: Red) -> None:
         super().__init__()
+        self.bot = bot
         self.stopwatches = {}
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
-    @commands.command(usage="<choice> <choices...>")
+    @commands.command(usage="<first> <second> [others...]")
     async def choose(self, ctx, *choices):
         """Choose between multiple options.
 
-        To denote options which include whitespace, you should use
-        double quotes.
+        There must be at least 2 options to pick from.
+        Options are separated by spaces.
+
+        To denote options which include whitespace, you should enclose the options in double quotes.
         """
         choices = [escape(c, mass_mentions=True) for c in choices if c]
         if len(choices) < 2:
@@ -216,7 +220,7 @@ class General(commands.Cog):
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
         search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
-        await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
+        await ctx.send("https://lmgtfy.app/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
     @commands.guild_only()
@@ -252,21 +256,23 @@ class General(commands.Cog):
         Default to False.
         """
         guild = ctx.guild
-        passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Created on {date}. That's over {num} days ago!").format(
-            date=guild.created_at.strftime("%d %b %Y %H:%M"),
-            num=humanize_number(passed),
+        created_at = _("Created on {date_and_time}. That's {relative_time}!").format(
+            date_and_time=discord.utils.format_dt(guild.created_at),
+            relative_time=discord.utils.format_dt(guild.created_at, "R"),
         )
         online = humanize_number(
             len([m.status for m in guild.members if m.status != discord.Status.offline])
         )
-        total_users = humanize_number(guild.member_count)
+        total_users = guild.member_count and humanize_number(guild.member_count)
         text_channels = humanize_number(len(guild.text_channels))
         voice_channels = humanize_number(len(guild.voice_channels))
+        stage_channels = humanize_number(len(guild.stage_channels))
         if not details:
             data = discord.Embed(description=created_at, colour=await ctx.embed_colour())
-            data.add_field(name=_("Region"), value=str(guild.region))
-            data.add_field(name=_("Users online"), value=f"{online}/{total_users}")
+            data.add_field(
+                name=_("Users online"),
+                value=f"{online}/{total_users}" if total_users else _("Not available"),
+            )
             data.add_field(name=_("Text Channels"), value=text_channels)
             data.add_field(name=_("Voice Channels"), value=voice_channels)
             data.add_field(name=_("Roles"), value=humanize_number(len(guild.roles)))
@@ -278,9 +284,9 @@ class General(commands.Cog):
                     command=f"{ctx.clean_prefix}serverinfo 1"
                 )
             )
-            if guild.icon_url:
-                data.set_author(name=guild.name, url=guild.icon_url)
-                data.set_thumbnail(url=guild.icon_url)
+            if guild.icon:
+                data.set_author(name=guild.name, url=guild.icon)
+                data.set_thumbnail(url=guild.icon)
             else:
                 data.set_author(name=guild.name)
         else:
@@ -338,58 +344,38 @@ class General(commands.Cog):
                     )
                 count += 1
 
-            vc_regions = {
-                "vip-us-east": _("__VIP__ US East ") + "\U0001F1FA\U0001F1F8",
-                "vip-us-west": _("__VIP__ US West ") + "\U0001F1FA\U0001F1F8",
-                "vip-amsterdam": _("__VIP__ Amsterdam ") + "\U0001F1F3\U0001F1F1",
-                "eu-west": _("EU West ") + "\U0001F1EA\U0001F1FA",
-                "eu-central": _("EU Central ") + "\U0001F1EA\U0001F1FA",
-                "europe": _("Europe ") + "\U0001F1EA\U0001F1FA",
-                "london": _("London ") + "\U0001F1EC\U0001F1E7",
-                "frankfurt": _("Frankfurt ") + "\U0001F1E9\U0001F1EA",
-                "amsterdam": _("Amsterdam ") + "\U0001F1F3\U0001F1F1",
-                "us-west": _("US West ") + "\U0001F1FA\U0001F1F8",
-                "us-east": _("US East ") + "\U0001F1FA\U0001F1F8",
-                "us-south": _("US South ") + "\U0001F1FA\U0001F1F8",
-                "us-central": _("US Central ") + "\U0001F1FA\U0001F1F8",
-                "singapore": _("Singapore ") + "\U0001F1F8\U0001F1EC",
-                "sydney": _("Sydney ") + "\U0001F1E6\U0001F1FA",
-                "brazil": _("Brazil ") + "\U0001F1E7\U0001F1F7",
-                "hongkong": _("Hong Kong ") + "\U0001F1ED\U0001F1F0",
-                "russia": _("Russia ") + "\U0001F1F7\U0001F1FA",
-                "japan": _("Japan ") + "\U0001F1EF\U0001F1F5",
-                "southafrica": _("South Africa ") + "\U0001F1FF\U0001F1E6",
-                "india": _("India ") + "\U0001F1EE\U0001F1F3",
-                "dubai": _("Dubai ") + "\U0001F1E6\U0001F1EA",
-                "south-korea": _("South Korea ") + "\U0001f1f0\U0001f1f7",
-            }
             verif = {
                 "none": _("0 - None"),
                 "low": _("1 - Low"),
                 "medium": _("2 - Medium"),
                 "high": _("3 - High"),
-                "extreme": _("4 - Extreme"),
+                "highest": _("4 - Highest"),
             }
 
             features = {
                 "ANIMATED_ICON": _("Animated Icon"),
-                "BANNER": _("Banner Image"),
+                "ANIMATED_BANNER": _("Animated Banner"),
+                "BANNER": _("Banner"),
                 "COMMERCE": _("Commerce"),
                 "COMMUNITY": _("Community"),
-                "DISCOVERABLE": _("Server Discovery"),
+                "DISCOVERABLE": _("Discoverable"),
                 "FEATURABLE": _("Featurable"),
                 "INVITE_SPLASH": _("Splash Invite"),
-                "MEMBER_LIST_DISABLED": _("Member list disabled"),
                 "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
-                "MORE_EMOJI": _("More Emojis"),
-                "NEWS": _("News Channels"),
+                "MONETIZATION_ENABLED": _("Monetization Enabled"),
+                "MORE_STICKERS": _("More Stickers"),
+                "NEWS": _("News"),
                 "PARTNERED": _("Partnered"),
-                "PREVIEW_ENABLED": _("Preview enabled"),
-                "PUBLIC_DISABLED": _("Public disabled"),
-                "VANITY_URL": _("Vanity URL"),
+                "PREVIEW_ENABLED": _("Preview Enabled"),
+                "PRIVATE_THREADS": _("Private Threads"),
+                "ROLE_ICON": _("Role Icon"),
+                "SEVEN_DAY_THREAD_ARCHIVE": _("Seven Day Thread Archive"),
+                "THREE_DAY_THREAD_ARCHIVE": _("Three Day Thread Archive"),
+                "TICKETED_EVENTS_ENABLED": _("Ticketed Events Enabled"),
                 "VERIFIED": _("Verified"),
-                "VIP_REGIONS": _("VIP Voice Servers"),
-                "WELCOME_SCREEN_ENABLED": _("Welcome Screen enabled"),
+                "VANITY_URL": _("Vanity URL"),
+                "VIP_REGIONS": _("VIP Regions"),
+                "WELCOME_SCREEN_ENABLED": _("Welcome Screen Enabled"),
             }
             guild_features_list = [
                 f"\N{WHITE HEAVY CHECK MARK} {name}"
@@ -415,25 +401,29 @@ class General(commands.Cog):
                 if "VERIFIED" in guild.features
                 else "https://cdn.discordapp.com/emojis/508929941610430464.png"
                 if "PARTNERED" in guild.features
-                else discord.Embed.Empty,
+                else None,
             )
-            if guild.icon_url:
-                data.set_thumbnail(url=guild.icon_url)
+            if guild.icon:
+                data.set_thumbnail(url=guild.icon)
             data.add_field(name=_("Members:"), value=member_msg)
             data.add_field(
                 name=_("Channels:"),
                 value=_(
                     "\N{SPEECH BALLOON} Text: {text}\n"
-                    "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}"
-                ).format(text=bold(text_channels), voice=bold(voice_channels)),
+                    "\N{SPEAKER WITH THREE SOUND WAVES} Voice: {voice}\n"
+                    "\N{STUDIO MICROPHONE} Stage: {stage}"
+                ).format(
+                    text=bold(text_channels),
+                    voice=bold(voice_channels),
+                    stage=bold(stage_channels),
+                ),
             )
             data.add_field(
                 name=_("Utility:"),
                 value=_(
-                    "Owner: {owner}\nVoice region: {region}\nVerif. level: {verif}\nServer ID: {id}{shard_info}"
+                    "Owner: {owner}\nVerif. level: {verif}\nServer ID: {id}{shard_info}"
                 ).format(
                     owner=bold(str(guild.owner)),
-                    region=f"**{vc_regions.get(str(guild.region)) or str(guild.region)}**",
                     verif=bold(verif[str(guild.verification_level)]),
                     id=bold(str(guild.id)),
                     shard_info=shard_info,
@@ -471,7 +461,7 @@ class General(commands.Cog):
                 )
                 data.add_field(name=_("Nitro Boost:"), value=nitro_boost)
             if guild.splash:
-                data.set_image(url=guild.splash_url_as(format="png"))
+                data.set_image(url=guild.splash.replace(format="png"))
             data.set_footer(text=joined_on)
 
         await ctx.send(embed=data)
@@ -507,7 +497,7 @@ class General(commands.Cog):
                 # a list of embeds
                 embeds = []
                 for ud in data["list"]:
-                    embed = discord.Embed()
+                    embed = discord.Embed(color=await ctx.embed_color())
                     title = _("{word} by {author}").format(
                         word=ud["word"].capitalize(), author=ud["author"]
                     )
@@ -532,7 +522,6 @@ class General(commands.Cog):
                     await menu(
                         ctx,
                         pages=embeds,
-                        controls=DEFAULT_CONTROLS,
                         message=None,
                         page=0,
                         timeout=30,
@@ -544,7 +533,11 @@ class General(commands.Cog):
                     message = _(
                         "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
                         "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-                    ).format(word=ud.pop("word").capitalize(), description="{description}", **ud)
+                    ).format(
+                        word=ud.pop("word").capitalize(),
+                        description="{description}",
+                        **ud,
+                    )
                     max_desc_len = 2000 - len(message)
 
                     description = _("{definition}\n\n**Example:** {example}").format(**ud)
@@ -558,7 +551,6 @@ class General(commands.Cog):
                     await menu(
                         ctx,
                         pages=messages,
-                        controls=DEFAULT_CONTROLS,
                         message=None,
                         page=0,
                         timeout=30,

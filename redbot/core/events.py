@@ -5,12 +5,11 @@ import sys
 import codecs
 import logging
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import aiohttp
 import discord
 import pkg_resources
-from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
@@ -30,18 +29,21 @@ from .utils._internal_utils import (
     format_fuzzy_results,
     expected_version,
     fetch_latest_red_version_info,
+    send_to_owners_with_prefix_replaced,
+    get_converter,
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
+import rich
+from rich import box
 from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
 from rich.text import Text
 
 log = logging.getLogger("red")
-init()
 
-INTRO = r"""[red]
+INTRO = r"""
 ______         _           ______ _                       _  ______       _
 | ___ \       | |          |  _  (_)                     | | | ___ \     | |
 | |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_
@@ -69,33 +71,21 @@ def init_events(bot, cli_flags):
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
-        app_info = await bot.application_info()
-
-        if app_info.team:
-            if bot._use_team_features:
-                bot.owner_ids.update(m.id for m in app_info.team.members)
-        elif bot._owner_id_overwrite is None:
-            bot.owner_ids.add(app_info.owner.id)
-        bot._app_owners_fetched = True
-
-        try:
-            invite_url = discord.utils.oauth_url(app_info.id)
-        except:
-            invite_url = "Could not fetch invite url"
+        invite_url = discord.utils.oauth_url(bot._app_info.id, scopes=("bot",))
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        table_general_info = Table(show_edge=False, show_header=False)
+        table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         table_general_info.add_row("Prefixes", ", ".join(prefixes))
         table_general_info.add_row("Language", lang)
         table_general_info.add_row("Red version", red_version)
         table_general_info.add_row("Discord.py version", dpy_version)
         table_general_info.add_row("Storage type", data_manager.storage_type())
 
-        table_counts = Table(show_edge=False, show_header=False)
+        table_counts = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         # String conversion is needed as Rich doesn't deal with ints
         table_counts.add_row("Shards", str(bot.shard_count))
         table_counts.add_row("Servers", str(guilds))
@@ -114,8 +104,8 @@ def init_events(bot, cli_flags):
                 ).format(pypi_version, red_version)
                 rich_outdated_message = (
                     f"[red]Outdated version![/red]\n"
-                    f"[red]!!![/red]Version {pypi_version} is available, "
-                    f"but you're using {red_version}[red]!!![/red]"
+                    f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
+                    f"but you're using [cyan]{red_version}[/][red]!!![/red]"
                 )
                 current_python = platform.python_version()
                 extra_update = _(
@@ -156,6 +146,11 @@ def init_events(bot, cli_flags):
                             python=sys.executable, package_extras=package_extras
                         )
                     )
+                    extra_update += _(
+                        "\nOnce you've started up your bot again, if you have any 3rd-party cogs"
+                        " installed we then highly recommend you update them with this command"
+                        " in Discord: `[p]cog update`"
+                    )
 
                 else:
                     extra_update += _(
@@ -167,9 +162,10 @@ def init_events(bot, cli_flags):
                     ).format(py_version=current_python, req_py=py_version_req)
                 outdated_red_message += extra_update
 
-        bot._rich_console.print(INTRO)
+        rich_console = rich.get_console()
+        rich_console.print(INTRO, style="red", markup=False, highlight=False)
         if guilds:
-            bot._rich_console.print(
+            rich_console.print(
                 Columns(
                     [Panel(table_general_info, title=str(bot.user.name)), Panel(table_counts)],
                     equal=True,
@@ -177,32 +173,25 @@ def init_events(bot, cli_flags):
                 )
             )
         else:
-            bot._rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
+            rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
 
-        bot._rich_console.print(
+        rich_console.print(
             "Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands))
         )
 
         if invite_url:
-            bot._rich_console.print(
-                f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}"
-            )
+            rich_console.print(f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}")
             # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
-            bot._rich_console.print(
+            rich_console.print(
                 f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
         if rich_outdated_message:
-            bot._rich_console.print(rich_outdated_message)
+            rich_console.print(rich_outdated_message)
 
-        if not bot.owner_ids:
-            # we could possibly exit here in future
-            log.warning("Bot doesn't have any owner set!")
-
-        bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
         if outdated_red_message:
-            await bot.send_to_owners(outdated_red_message)
+            await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
 
     @bot.event
     async def on_command_completion(ctx: commands.Context):
@@ -210,13 +199,12 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
-
         if not unhandled_by_cog:
             if hasattr(ctx.command, "on_error"):
                 return
 
             if ctx.cog:
-                if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
+                if ctx.cog.has_error_handler():
                     return
         if not isinstance(error, commands.CommandNotFound):
             asyncio.create_task(bot._delete_delay(ctx))
@@ -232,7 +220,16 @@ def init_events(bot, cli_flags):
             await ctx.send(msg)
             if error.send_cmd_help:
                 await ctx.send_help()
-        elif isinstance(error, commands.ConversionFailure):
+        elif isinstance(error, commands.BadArgument):
+            if isinstance(error.__cause__, ValueError):
+                converter = get_converter(ctx.current_parameter)
+                argument = ctx.current_argument
+                if converter is int:
+                    await ctx.send(_('"{argument}" is not an integer.').format(argument=argument))
+                    return
+                if converter is float:
+                    await ctx.send(_('"{argument}" is not a number.').format(argument=argument))
+                    return
             if error.args:
                 await ctx.send(error.args[0])
             else:
@@ -289,6 +286,8 @@ def init_events(bot, cli_flags):
             await ctx.send(_("That command is not available in DMs."))
         elif isinstance(error, commands.PrivateMessageOnly):
             await ctx.send(_("That command is only available in DMs."))
+        elif isinstance(error, commands.NSFWChannelRequired):
+            await ctx.send(_("That command is only available in NSFW channels."))
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
@@ -341,7 +340,7 @@ def init_events(bot, cli_flags):
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
-    async def on_message(message):
+    async def on_message(message, /):
         await set_contextual_locales_from_guild(bot, message.guild)
 
         await bot.process_commands(message)
@@ -350,7 +349,7 @@ def init_events(bot, cli_flags):
             not bot._checked_time_accuracy
             or (discord_now - timedelta(minutes=60)) > bot._checked_time_accuracy
         ):
-            system_now = datetime.utcnow()
+            system_now = datetime.now(timezone.utc)
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warning(
@@ -389,7 +388,7 @@ def init_events(bot, cli_flags):
         await _guild_added(guild)
 
     @bot.event
-    async def on_guild_leave(guild: discord.Guild):
+    async def on_guild_remove(guild: discord.Guild):
         # Clean up any unneeded checks
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
@@ -404,37 +403,3 @@ def init_events(bot, cli_flags):
             uuid = c.unique_identifier
             group_data = c.custom_groups
             await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
-
-
-def _get_startup_screen_specs():
-    """Get specs for displaying the startup screen on stdout.
-
-    This is so we don't get encoding errors when trying to print unicode
-    emojis to stdout (particularly with Windows Command Prompt).
-
-    Returns
-    -------
-    `tuple`
-        Tuple in the form (`str`, `str`, `bool`) containing (in order) the
-        on symbol, off symbol and whether or not the border should be pure ascii.
-
-    """
-    encoder = codecs.getencoder(sys.stdout.encoding)
-    check_mark = "\N{SQUARE ROOT}"
-    try:
-        encoder(check_mark)
-    except UnicodeEncodeError:
-        on_symbol = "[X]"
-        off_symbol = "[ ]"
-    else:
-        on_symbol = check_mark
-        off_symbol = "X"
-
-    try:
-        encoder("┌┐└┘─│")  # border symbols
-    except UnicodeEncodeError:
-        ascii_border = True
-    else:
-        ascii_border = False
-
-    return on_symbol, off_symbol, ascii_border

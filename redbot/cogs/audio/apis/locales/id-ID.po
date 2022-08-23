@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-22 12:30+0000\n"
+"POT-Creation-Date: 2021-05-18 22:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,60 +15,67 @@ msgstr ""
 "X-Crowdin-File-ID: 698\n"
 "Language: id_ID\n"
 
-#: redbot/cogs/audio/apis/interface.py:273
-#: redbot/cogs/audio/apis/interface.py:595
+#: redbot/cogs/audio/apis/interface.py:276
+#: redbot/cogs/audio/apis/interface.py:606
 msgid "Failing to get tracks, skipping remaining."
 msgstr "Gagal mendapatkan trek, melewatkan sisa."
 
-#: redbot/cogs/audio/apis/interface.py:304
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Kunci Spotify API atau rahasia klien belum disetel dengan benar. \\nGunakan `{prefix} audioset spotifyapi` untuk mendapatkan petunjuk."
+#: redbot/cogs/audio/apis/interface.py:309
+#: redbot/cogs/audio/apis/spotify.py:175
+msgid "The Spotify API key or client secret has not been set properly. \n"
+"Use `{prefix}audioset spotifyapi` for instructions."
+msgstr "Kunci Spotify API atau rahasia klien belum disetel dengan benar.\n"
+"Gunakan `{prefix} audioset spotifyapi` untuk mendapatkan petunjuk."
 
-#: redbot/cogs/audio/apis/interface.py:346
+#: redbot/cogs/audio/apis/interface.py:351
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
 msgstr "Tampaknya ini bukan URL atau kode playlist/album Spotify yang valid."
 
-#: redbot/cogs/audio/apis/interface.py:471
+#: redbot/cogs/audio/apis/interface.py:477
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "Tampaknya ini bukan URL atau kode Spotify yang didukung."
 
-#: redbot/cogs/audio/apis/interface.py:558
+#: redbot/cogs/audio/apis/interface.py:567
 msgid "The connection was reset while loading the playlist."
 msgstr "Sambungan disetel ulang saat memuat daftar putar."
 
-#: redbot/cogs/audio/apis/interface.py:569
+#: redbot/cogs/audio/apis/interface.py:578
 msgid "Player timeout, skipping remaining tracks."
 msgstr "Waktu tunggu pemain, melewatkan trek yang tersisa."
 
-#: redbot/cogs/audio/apis/interface.py:661
+#: redbot/cogs/audio/apis/interface.py:672
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} lagu tidak dapat diantrekan."
 
-#: redbot/cogs/audio/apis/interface.py:669
+#: redbot/cogs/audio/apis/interface.py:680
 msgid "Playlist Enqueued"
 msgstr "Antrean Daftar Putar"
 
-#: redbot/cogs/audio/apis/interface.py:670
+#: redbot/cogs/audio/apis/interface.py:681
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "Menambahkan {num} trek ke antrian. {maxlength_msg}"
 
-#: redbot/cogs/audio/apis/interface.py:676
+#: redbot/cogs/audio/apis/interface.py:687
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "{time} hingga dimulainya pemutaran playlist: dimulai dari #{position} dalam antrian"
 
-#: redbot/cogs/audio/apis/interface.py:687
-msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr "Tidak ada yang ditemukan. \\nKunci API YouTube mungkin tidak valid atau kecepatan Anda mungkin dibatasi di layanan penelusuran YouTube. \\nPeriksa lagi kunci API YouTube dan ikuti petunjuk di `{prefix} audioset youtubeapi`."
-
-#: redbot/cogs/audio/apis/spotify.py:175
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Kunci Spotify API atau rahasia klien belum disetel dengan benar.\\nGunakan `{prefix} audioset spotifyapi` untuk mendapatkan petunjuk."
+#: redbot/cogs/audio/apis/interface.py:698
+msgid "Nothing found.\n"
+"The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
+msgstr "Tidak ada yang ditemukan. \n"
+"Kunci API YouTube mungkin tidak valid atau kecepatan Anda mungkin dibatasi di layanan penelusuran YouTube. \n"
+"Periksa lagi kunci API YouTube dan ikuti petunjuk di `{prefix} audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:62
-msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr "Token API Data YouTube Anda tidak valid. \\nPeriksa kembali kunci API YouTube dan ikuti petunjuk di `{prefix} audioset youtubeapi`."
+msgid "Your YouTube Data API token is invalid.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
+msgstr "Token API Data YouTube Anda tidak valid. \n"
+"Periksa kembali kunci API YouTube dan ikuti petunjuk di `{prefix} audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
-msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr "Kode kesalahan API YouTube: 403\\nKunci API YouTube Anda mungkin telah mencapai batas kueri akun untuk hari ini. Periksa <https://developers.google.com/youtube/v3/getting-started#quota> untuk informasi lebih lanjut."
+msgid "YouTube API error code: 403\n"
+"Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
+msgstr "Kode kesalahan API YouTube: 403\n"
+"Kunci API YouTube Anda mungkin telah mencapai batas kueri akun untuk hari ini. Periksa <https://developers.google.com/youtube/v3/getting-started#quota> untuk informasi lebih lanjut."
 

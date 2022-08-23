@@ -21,6 +21,13 @@ _REVEAL_MESSAGES = (
     _("Easy: {answer}."),
     _("Oh really? It's {answer} of course."),
 )
+
+SPOILER_REVEAL_MESSAGES = (
+    _("I know this one! ||{answer}!||"),
+    _("Easy: ||{answer}.||"),
+    _("Oh really? It's ||{answer}|| of course."),
+)
+
 _FAIL_MESSAGES = (
     _("To the next one I guess..."),
     _("Moving on..."),
@@ -54,6 +61,7 @@ class TriviaSession:
          - ``bot_plays`` (`bool`)
          - ``allow_override`` (`bool`)
          - ``payout_multiplier`` (`float`)
+         - ``use_spoilers`` (`bool`)
     scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
         players are of type `discord.Member`.
@@ -96,8 +104,7 @@ class TriviaSession:
 
         """
         session = cls(ctx, question_list, settings)
-        loop = ctx.bot.loop
-        session._task = loop.create_task(session.run())
+        session._task = asyncio.create_task(session.run())
         session._task.add_done_callback(session._error_handler)
         return session
 
@@ -107,6 +114,8 @@ class TriviaSession:
             fut.result()
         except asyncio.CancelledError:
             pass
+        except (discord.NotFound, discord.Forbidden):
+            self.stop()
         except Exception as exc:
             LOG.error("A trivia session has encountered an error.\n", exc_info=exc)
             asyncio.create_task(
@@ -204,7 +213,10 @@ class TriviaSession:
                 self.stop()
                 return False
             if self.settings["reveal_answer"]:
-                reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
+                if self.settings["use_spoilers"]:
+                    reply = T_(random.choice(SPOILER_REVEAL_MESSAGES)).format(answer=answers[0])
+                else:
+                    reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
             else:
                 reply = T_(random.choice(_FAIL_MESSAGES))
             if self.settings["bot_plays"]:
@@ -238,7 +250,9 @@ class TriviaSession:
         answers = tuple(s.lower() for s in answers)
 
         def _pred(message: discord.Message):
-            early_exit = message.channel != self.ctx.channel or message.author == self.ctx.guild.me
+            early_exit = (
+                message.channel.id != self.ctx.channel.id or message.author == self.ctx.guild.me
+            )
             if early_exit:
                 return False
 

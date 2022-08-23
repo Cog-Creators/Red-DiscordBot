@@ -45,6 +45,10 @@ class PrefixManager:
         prefixes = prefixes or []
         if not isinstance(prefixes, list) and not all(isinstance(pfx, str) for pfx in prefixes):
             raise TypeError("Prefixes must be a list of strings")
+        if any(prefix.startswith("/") for prefix in prefixes):
+            raise ValueError(
+                "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+            )
         prefixes = sorted(prefixes, reverse=True)
         if gid is None:
             if not prefixes:
@@ -150,7 +154,7 @@ class IgnoreManager:
         self._cached_guilds: Dict[int, bool] = {}
 
     async def get_ignored_channel(
-        self, channel: discord.TextChannel, check_category: bool = True
+        self, channel: Union[discord.TextChannel, discord.Thread], check_category: bool = True
     ) -> bool:
         ret: bool
 
@@ -176,9 +180,10 @@ class IgnoreManager:
         return ret
 
     async def set_ignored_channel(
-        self, channel: Union[discord.TextChannel, discord.CategoryChannel], set_to: bool
+        self,
+        channel: Union[discord.TextChannel, discord.Thread, discord.CategoryChannel],
+        set_to: bool,
     ):
-
         cid: int = channel.id
         self._cached_channels[cid] = set_to
         if set_to:
@@ -200,7 +205,6 @@ class IgnoreManager:
         return ret
 
     async def set_ignored_guild(self, guild: discord.Guild, set_to: bool):
-
         gid: int = guild.id
         self._cached_guilds[gid] = set_to
         if set_to:
@@ -221,9 +225,7 @@ class WhitelistBlacklistManager:
         self._access_lock = asyncio.Lock()
 
     async def discord_deleted_user(self, user_id: int):
-
         async with self._access_lock:
-
             async for guild_id_or_none, ids in AsyncIter(
                 self._cached_whitelist.items(), steps=100
             ):
@@ -437,7 +439,7 @@ class DisabledCogCache:
             This should be the cog's qualified name, not necessarily the classname
         """
         await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.set(True)
-        del self._disable_map[cog_name]
+        self._disable_map.pop(cog_name, None)
 
     async def default_enable(self, cog_name: str):
         """
@@ -449,7 +451,7 @@ class DisabledCogCache:
             This should be the cog's qualified name, not necessarily the classname
         """
         await self._config.custom("COG_DISABLE_SETTINGS", cog_name, 0).disabled.clear()
-        del self._disable_map[cog_name]
+        self._disable_map.pop(cog_name, None)
 
     async def disable_cog_in_guild(self, cog_name: str, guild_id: int) -> bool:
         """

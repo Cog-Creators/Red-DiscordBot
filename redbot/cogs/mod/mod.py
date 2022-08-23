@@ -12,6 +12,7 @@ from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
+from redbot.core.utils.chat_formatting import inline
 from .events import Events
 from .kickban import KickBanMixin
 from .names import ModInfo
@@ -44,7 +45,10 @@ class Mod(
 ):
     """Moderation tools."""
 
-    default_global_settings = {"version": ""}
+    default_global_settings = {
+        "version": "",
+        "track_all_names": True,
+    }
 
     default_guild_settings = {
         "mention_spam": {"ban": None, "kick": None, "warn": None, "strict": False},
@@ -57,6 +61,7 @@ class Mod(
         "dm_on_kickban": False,
         "default_days": 0,
         "default_tempban_duration": 60 * 60 * 24,
+        "track_nicknames": True,
     }
 
     default_channel_settings = {"ignored": False}
@@ -76,10 +81,8 @@ class Mod(
         self.config.register_member(**self.default_member_settings)
         self.config.register_user(**self.default_user_settings)
         self.cache: dict = {}
-        self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
+        self.tban_expiry_task = asyncio.create_task(self.tempban_expirations_task())
         self.last_case: dict = defaultdict(dict)
-
-        self._ready = asyncio.Event()
 
     async def red_delete_data_for_user(
         self,
@@ -109,12 +112,8 @@ class Mod(
                         pass
                     # possible with a context switch between here and getting all guilds
 
-    async def initialize(self):
+    async def cog_load(self) -> None:
         await self._maybe_update_config()
-        self._ready.set()
-
-    async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        await self._ready.wait()
 
     def cog_unload(self):
         self.tban_expiry_task.cancel()
@@ -137,9 +136,9 @@ class Mod(
                 if e["ignored"] is not False:
                     msg = _(
                         "Ignored guilds and channels have been moved. "
-                        "Please use `[p]moveignoredchannels` to migrate the old settings."
-                    )
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                        "Please use {command} to migrate the old settings."
+                    ).format(command=inline("[p]moveignoredchannels"))
+                    asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     message_sent = True
                     break
             if message_sent is False:
@@ -147,11 +146,9 @@ class Mod(
                     if e["ignored"] is not False:
                         msg = _(
                             "Ignored guilds and channels have been moved. "
-                            "Please use `[p]moveignoredchannels` to migrate the old settings."
-                        )
-                        self.bot.loop.create_task(
-                            send_to_owners_with_prefix_replaced(self.bot, msg)
-                        )
+                            "Please use {command} to migrate the old settings."
+                        ).format(command=inline("[p]moveignoredchannels"))
+                        asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                         break
             await self.config.version.set("1.1.0")
         if await self.config.version() < "1.2.0":
@@ -159,9 +156,9 @@ class Mod(
                 if e["delete_delay"] != -1:
                     msg = _(
                         "Delete delay settings have been moved. "
-                        "Please use `[p]movedeletedelay` to migrate the old settings."
-                    )
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                        "Please use {command} to migrate the old settings."
+                    ).format(command=inline("[p]movedeletedelay"))
+                    asyncio.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
             await self.config.version.set("1.2.0")
         if await self.config.version() < "1.3.0":

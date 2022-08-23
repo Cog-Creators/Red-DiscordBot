@@ -150,7 +150,7 @@ cleanup bot
 
 **Description**
 
-Clean up command messages and messages from the bot.
+Clean up command messages and messages from the bot in the current channel.
 
 Can only cleanup custom commands and alias commands if those cogs are loaded.
 
@@ -175,7 +175,7 @@ cleanup messages
 
 **Description**
 
-Delete the last X messages.
+Delete the last X messages in the current channel.
 
 Example:
     - ``[p]cleanup messages 26``
@@ -199,7 +199,7 @@ cleanup self
 
 **Description**
 
-Clean up messages owned by the bot.
+Clean up messages owned by the bot in the current channel.
 
 By default, all messages are cleaned. If a second argument is specified,
 it is used for pattern matching - only messages containing the given text will be deleted.
@@ -255,7 +255,7 @@ cleanup text
 
 **Description**
 
-Delete the last X messages matching the specified text.
+Delete the last X messages matching the specified text in the current channel.
 
 Example:
     - ``[p]cleanup text "test" 5``
@@ -283,7 +283,7 @@ cleanup user
 
 **Description**
 
-Delete the last X messages from a specified user.
+Delete the last X messages from a specified user in the current channel.
 
 Examples:
     - ``[p]cleanup user @Twentysix 2``
@@ -294,3 +294,40 @@ Examples:
 - ``<user>`` The user whose messages are to be cleaned up.
 - ``<number>`` The max number of messages to cleanup. Must be a positive integer.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
+.. _cleanup-command-cleanupset:
+
+^^^^^^^^^^
+cleanupset
+^^^^^^^^^^
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanupset 
+
+**Description**
+
+Manage the settings for the cleanup command.
+
+.. _cleanup-command-cleanupset-notify:
+
+"""""""""""""""""
+cleanupset notify
+"""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanupset notify
+
+**Description**
+
+Toggle clean up notification settings.
+
+When enabled, a message will be sent per cleanup, showing how many messages were deleted.
+This message will be deleted after 5 seconds.

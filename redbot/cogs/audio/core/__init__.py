@@ -2,9 +2,9 @@ import asyncio
 import datetime
 import json
 
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Mapping
+from typing import Mapping, Dict
 
 import aiohttp
 import discord
@@ -14,8 +14,14 @@ from redbot.core.bot import Red
 from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.antispam import AntiSpam
 
-from ..utils import PlaylistScope
+from ..utils import (
+    CacheLevel,
+    PlaylistScope,
+    DEFAULT_LAVALINK_YAML,
+    DEFAULT_LAVALINK_SETTINGS,
+)
 from . import abc, cog_utils, commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
 
@@ -33,12 +39,9 @@ class Audio(
 ):
     """Play audio through voice channels."""
 
-    _default_lavalink_settings = {
-        "host": "localhost",
-        "rest_port": 2333,
-        "ws_port": 2333,
-        "password": "youshallnotpass",
-    }
+    llset_captcha_intervals = [
+        (datetime.timedelta(days=1), 1),
+    ]
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -46,7 +49,7 @@ class Audio(
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
         self.api_interface = None
-        self.player_manager = None
+        self.managed_node_controller = None
         self.playlist_api = None
         self.local_folder_current_path = None
         self.db_conn = None
@@ -61,6 +64,7 @@ class Audio(
         self._dj_role_cache = {}
         self.skip_votes = {}
         self.play_lock = {}
+        self.antispam: Dict[int, Dict[str, AntiSpam]] = defaultdict(lambda: defaultdict(AntiSpam))
 
         self.lavalink_connect_task = None
         self._restore_task = None
@@ -70,13 +74,15 @@ class Audio(
         self.permission_cache = discord.Permissions(
             embed_links=True,
             read_messages=True,
-            send_messages=True,
             read_message_history=True,
             add_reactions=True,
         )
 
         self.session = aiohttp.ClientSession(json_serialize=json.dumps)
         self.cog_ready_event = asyncio.Event()
+        self._ws_resume = defaultdict(asyncio.Event)
+        self._ws_op_codes = defaultdict(asyncio.LifoQueue)
+
         self.cog_init_task = None
         self.global_api_user = {
             "fetched": False,
@@ -85,12 +91,14 @@ class Audio(
             "can_delete": False,
         }
         self._ll_guild_updates = set()
+        self._disconnected_shard = set()
         self._last_ll_update = datetime.datetime.now(datetime.timezone.utc)
 
         default_global = dict(
             schema_version=1,
+            bundled_playlist_version=0,
             owner_notification=0,
-            cache_level=0,
+            cache_level=CacheLevel.all().value,
             cache_age=365,
             daily_playlists=False,
             global_db_enabled=False,
@@ -102,13 +110,20 @@ class Audio(
             url_keyword_blacklist=[],
             url_keyword_whitelist=[],
             java_exc_path="java",
-            **self._default_lavalink_settings,
+            **DEFAULT_LAVALINK_YAML,
+            **DEFAULT_LAVALINK_SETTINGS,
         )
 
         default_guild = dict(
             auto_play=False,
+            currently_auto_playing_in=None,
             auto_deafen=True,
-            autoplaylist={"enabled": False, "id": None, "name": None, "scope": None},
+            autoplaylist=dict(
+                enabled=True,
+                id=42069,
+                name="Aikaterna's curated tracks",
+                scope=PlaylistScope.GLOBAL.value,
+            ),
             persist_queue=True,
             disconnect=False,
             dj_enabled=False,
@@ -121,6 +136,7 @@ class Audio(
             jukebox=False,
             jukebox_price=0,
             maxlength=0,
+            max_volume=150,
             notify=False,
             prefer_lyrics=False,
             repeat=False,

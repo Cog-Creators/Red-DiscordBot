@@ -2,16 +2,19 @@ import asyncio
 import contextlib
 import datetime
 import json
-import logging
 import math
+import random
+import time
 from pathlib import Path
 
 from typing import List, MutableMapping, Optional, Tuple, Union
 
+import aiohttp
 import discord
 import lavalink
+from lavalink import NodeNotFound
+from red_commons.logging import getLogger
 
-from discord.embeds import EmptyEmbed
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -19,21 +22,29 @@ from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate
 
-from ...apis.playlist_interface import Playlist, create_playlist
+from ...apis.playlist_interface import Playlist, PlaylistCompat23, create_playlist
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
-from ...audio_logging import debug_exc_log
 from ...errors import TooManyMatches, TrackEnqueueError
 from ...utils import Notifier, PlaylistScope
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.playlists")
+log = getLogger("red.cogs.Audio.cog.Utilities.playlists")
 _ = Translator("Audio", Path(__file__))
+CURRATED_DATA = (
+    "https://gist.githubusercontent.com/aikaterna/4b5de6c420cd6f12b83cb895ca2de16a/raw/json"
+)
 
 
 class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def can_manage_playlist(
-        self, scope: str, playlist: Playlist, ctx: commands.Context, user, guild
+        self,
+        scope: str,
+        playlist: Playlist,
+        ctx: commands.Context,
+        user,
+        guild,
+        bypass: bool = False,
     ) -> bool:
         is_owner = await self.bot.is_owner(ctx.author)
         has_perms = False
@@ -48,8 +59,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         is_different_user = len({playlist.author, user_to_query.id, ctx.author.id}) != 1
         is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
-
-        if is_owner:
+        if getattr(playlist, "id", 0) == 42069:
+            has_perms = bypass
+        elif is_owner:
             has_perms = True
         elif playlist.scope == PlaylistScope.USER.value:
             if not is_different_user:
@@ -386,7 +398,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         uploaded_track_list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         playlist_url: str,
         uploaded_playlist_name: str,
         scope: str,
@@ -412,7 +424,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
-                            "I'm unable to get a track from Lavalink at the moment, "
+                            "I'm unable to get a track from the Lavalink node at the moment, "
                             "try again in a few minutes."
                         ),
                     )
@@ -421,15 +433,15 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     raise e
 
                 track = result.tracks[0]
-            except Exception as err:
-                debug_exc_log(log, err, f"Failed to get track for {song_url}")
+            except Exception as exc:
+                log.verbose("Failed to get track for %r", song_url, exc_info=exc)
                 continue
             try:
                 track_obj = self.get_track_json(player, other_track=track)
                 track_list.append(track_obj)
                 successful_count += 1
-            except Exception as err:
-                debug_exc_log(log, err, f"Failed to create track for {track}")
+            except Exception as exc:
+                log.verbose("Failed to create track for %r", track, exc_info=exc)
                 continue
             if (track_count % 2 == 0) or (track_count == len(uploaded_track_list)):
                 await notifier.notify_user(
@@ -468,8 +480,20 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         await playlist_msg.edit(embed=embed3)
 
     async def _maybe_update_playlist(
-        self, ctx: commands.Context, player: lavalink.player_manager.Player, playlist: Playlist
+        self, ctx: commands.Context, player: lavalink.player.Player, playlist: Playlist
     ) -> Tuple[List[lavalink.Track], List[lavalink.Track], Playlist]:
+        if getattr(playlist, "id", 0) == 42069:
+            _, updated_tracks = await self._get_bundled_playlist_tracks()
+            results = {}
+            old_tracks = playlist.tracks_obj
+            new_tracks = [lavalink.Track(data=track) for track in updated_tracks]
+            removed = list(set(old_tracks) - set(new_tracks))
+            added = list(set(new_tracks) - set(old_tracks))
+            if removed or added:
+                await playlist.edit(results)
+
+            return added, removed, playlist
+
         if playlist.url is None:
             return [], [], playlist
         results = {}
@@ -499,33 +523,35 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _playlist_check(self, ctx: commands.Context) -> bool:
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
-                desc = EmptyEmbed
+                msg = _("Connection to Lavalink node has failed")
+                desc = None
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 await self.send_embed_msg(ctx, title=msg, description=desc)
                 return False
             try:
                 if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    not self.can_join_and_speak(ctx.author.voice.channel)
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                     and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Playlists"),
-                        description=_("I don't have permission to connect to your channel."),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
                     )
                     return False
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
-            except IndexError:
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
+            except NodeNotFound:
                 await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Playlists"),
-                    description=_("Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink node has not yet been established."),
                 )
                 return False
             except AttributeError:
@@ -535,10 +561,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     description=_("Connect to a voice channel first."),
                 )
                 return False
-
         player = lavalink.get_player(ctx.guild.id)
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         if (
             not ctx.author.voice or ctx.author.voice.channel != player.channel
         ) and not await self._can_instaskip(ctx, ctx.author):
@@ -555,7 +579,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def fetch_playlist_tracks(
         self,
         ctx: commands.Context,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         query: Query,
         skip_cache: bool = False,
     ) -> Union[discord.Message, None, List[MutableMapping]]:
@@ -564,7 +588,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if query.is_spotify:
             try:
-                if self.play_lock[ctx.message.guild.id]:
+                if self.play_lock[ctx.guild.id]:
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Tracks"),
@@ -601,7 +625,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
                         "minutes."
                     ),
                 )
@@ -630,7 +654,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink at the moment, try again in a few "
+                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
                         "minutes."
                     ),
                 )
@@ -652,10 +676,58 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     def humanize_scope(
         self, scope: str, ctx: Union[discord.Guild, discord.abc.User, str] = None, the: bool = None
     ) -> Optional[str]:
-
         if scope == PlaylistScope.GLOBAL.value:
             return _("the Global") if the else _("Global")
         elif scope == PlaylistScope.GUILD.value:
             return ctx.name if ctx else _("the Server") if the else _("Server")
         elif scope == PlaylistScope.USER.value:
             return str(ctx) if ctx else _("the User") if the else _("User")
+
+    async def _get_bundled_playlist_tracks(self):
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
+            async with session.get(
+                CURRATED_DATA + f"?timestamp={int(time.time())}",
+                headers={"content-type": "application/json"},
+            ) as response:
+                if response.status != 200:
+                    return 0, []
+                try:
+                    data = json.loads(await response.read())
+                except Exception as exc:
+                    log.error(
+                        "Curated playlist couldn't be parsed, report this error.", exc_info=exc
+                    )
+                    data = {}
+                web_version = data.get("version", 0)
+                entries = data.get("entries", [])
+                if entries:
+                    random.shuffle(entries)
+        tracks = []
+        async for entry in AsyncIter(entries, steps=25):
+            with contextlib.suppress(Exception):
+                tracks.append(self.decode_track(entry))
+        return web_version, tracks
+
+    async def _build_bundled_playlist(self, forced=False):
+        current_version = await self.config.bundled_playlist_version()
+        web_version, tracks = await self._get_bundled_playlist_tracks()
+
+        if not forced and current_version >= web_version:
+            return
+
+        playlist_data = dict()
+        playlist_data["name"] = "Aikaterna's curated tracks"
+        playlist_data["tracks"] = tracks
+
+        playlist = await PlaylistCompat23.from_json(
+            bot=self.bot,
+            playlist_api=self.playlist_api,
+            scope=PlaylistScope.GLOBAL.value,
+            playlist_number=42069,
+            data=playlist_data,
+            guild=None,
+            author=self.bot.user.id,
+        )
+        await playlist.save()
+        await self.config.bundled_playlist_version.set(web_version)
+        log.info("Curated playlist has been updated.")
