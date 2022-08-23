@@ -1,24 +1,34 @@
 import contextlib
-import datetime
-import logging
 import math
-from typing import MutableMapping, Optional
+import time
+from pathlib import Path
+
+from typing import MutableMapping
 
 import discord
 import lavalink
-from discord.embeds import EmptyEmbed
-from redbot.core.utils import AsyncIter
+from red_commons.logging import getLogger
+
+from lavalink import NodeNotFound
 
 from redbot.core import commands
-from redbot.core.utils.menus import DEFAULT_CONTROLS, close_menu, menu, next_page, prev_page
+from redbot.core.commands import UserInputOptional
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
+from redbot.core.utils.menus import close_menu, menu, next_page, prev_page
 
 from ...audio_dataclasses import _PARTIALLY_SUPPORTED_MUSIC_EXT, Query
-from ...audio_logging import IS_DEBUG
-from ...errors import DatabaseError, QueryUnauthorized, SpotifyFetchError, TrackEnqueueError
+from ...errors import (
+    DatabaseError,
+    QueryUnauthorized,
+    SpotifyFetchError,
+    TrackEnqueueError,
+)
 from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass, _
+from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.player")
+log = getLogger("red.cogs.Audio.cog.Commands.player")
+_ = Translator("Audio", Path(__file__))
 
 
 class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -26,7 +36,11 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_play(self, ctx: commands.Context, *, query: str):
-        """Play a URL or search for a track."""
+        """Play the specified track or search for a close match.
+
+        To play a local track, the query should be `<parentfolder>\\<filename>`.
+        If you are the bot owner, use `[p]audioset info` to display your localtracks path.
+        """
         query = Query.process_input(query, self.local_folder_current_path)
         guild_data = await self.config.guild(ctx.guild).all()
         restrict = await self.config.restrict()
@@ -38,43 +52,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("That URL is not allowed."),
                 )
-        elif not await self.is_query_allowed(self.config, ctx.guild, f"{query}", query_obj=query):
+        elif not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
-        if not self._player_check(ctx):
-            if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
-                desc = EmptyEmbed
-                if await self.bot.is_owner(ctx.author):
-                    desc = _("Please check your console or logs for details.")
-                return await self.send_embed_msg(ctx, title=msg, description=desc)
-            try:
-                if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.is_vc_full(ctx.author.voice.channel)
-                ):
-                    return await self.send_embed_msg(
-                        ctx,
-                        title=_("Unable To Play Tracks"),
-                        description=_("I don't have permission to connect to your channel."),
-                    )
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-            except AttributeError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connect to a voice channel first."),
-                )
-            except IndexError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connection to Lavalink has not yet been established."),
-                )
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if guild_data["dj_enabled"] and not can_skip:
             return await self.send_embed_msg(
@@ -82,10 +63,44 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Play Tracks"),
                 description=_("You need the DJ role to queue tracks."),
             )
+        if not self._player_check(ctx):
+            if self.lavalink_connection_aborted:
+                msg = _("Connection to Lavalink node has failed")
+                desc = None
+                if await self.bot.is_owner(ctx.author):
+                    desc = _("Please check your console or logs for details.")
+                return await self.send_embed_msg(ctx, title=msg, description=desc)
+            try:
+                if (
+                    not self.can_join_and_speak(ctx.author.voice.channel)
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self.is_vc_full(ctx.author.voice.channel)
+                ):
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Play Tracks"),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
+                    )
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
+            except AttributeError:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connect to a voice channel first."),
+                )
+            except NodeNotFound:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connection to the Lavalink node has not yet been established."),
+                )
         player = lavalink.get_player(ctx.guild.id)
-
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
@@ -113,16 +128,19 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self._get_spotify_tracks(ctx, query)
         try:
             await self._enqueue_tracks(ctx, query)
-        except QueryUnauthorized as err:
+        except QueryUnauthorized as exc:
             return await self.send_embed_msg(
-                ctx, title=_("Unable To Play Tracks"), description=err.message
+                ctx, title=_("Unable To Play Tracks"), description=exc.message
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
 
     @commands.command(name="bumpplay")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
     async def command_bumpplay(
-        self, ctx: commands.Context, play_now: Optional[bool] = False, *, query: str
+        self, ctx: commands.Context, play_now: UserInputOptional[bool] = False, *, query: str
     ):
         """Force play a URL or search for a track."""
         query = Query.process_input(query, self.local_folder_current_path)
@@ -142,43 +160,10 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     title=_("Unable To Play Tracks"),
                     description=_("That URL is not allowed."),
                 )
-        elif not await self.is_query_allowed(self.config, ctx.guild, f"{query}", query_obj=query):
+        elif not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("That track is not allowed.")
             )
-        if not self._player_check(ctx):
-            if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
-                desc = EmptyEmbed
-                if await self.bot.is_owner(ctx.author):
-                    desc = _("Please check your console or logs for details.")
-                return await self.send_embed_msg(ctx, title=msg, description=desc)
-            try:
-                if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.is_vc_full(ctx.author.voice.channel)
-                ):
-                    return await self.send_embed_msg(
-                        ctx,
-                        title=_("Unable To Play Tracks"),
-                        description=_("I don't have permission to connect to your channel."),
-                    )
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-            except AttributeError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connect to a voice channel first."),
-                )
-            except IndexError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connection to Lavalink has not yet been established."),
-                )
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if guild_data["dj_enabled"] and not can_skip:
             return await self.send_embed_msg(
@@ -186,10 +171,44 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Play Tracks"),
                 description=_("You need the DJ role to queue tracks."),
             )
+        if not self._player_check(ctx):
+            if self.lavalink_connection_aborted:
+                msg = _("Connection to Lavalink node has failed")
+                desc = None
+                if await self.bot.is_owner(ctx.author):
+                    desc = _("Please check your console or logs for details.")
+                return await self.send_embed_msg(ctx, title=msg, description=desc)
+            try:
+                if (
+                    not self.can_join_and_speak(ctx.author.voice.channel)
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self.is_vc_full(ctx.author.voice.channel)
+                ):
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Play Tracks"),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
+                    )
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
+            except AttributeError:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connect to a voice channel first."),
+                )
+            except NodeNotFound:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connection to Lavalink node has not yet been established."),
+                )
         player = lavalink.get_player(ctx.guild.id)
-
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
@@ -218,10 +237,13 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 tracks = await self._get_spotify_tracks(ctx, query)
             else:
                 tracks = await self._enqueue_tracks(ctx, query, enqueue=False)
-        except QueryUnauthorized as err:
+        except QueryUnauthorized as exc:
             return await self.send_embed_msg(
-                ctx, title=_("Unable To Play Tracks"), description=err.message
+                ctx, title=_("Unable To Play Tracks"), description=exc.message
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
         if isinstance(tracks, discord.Message):
             return
         elif not tracks:
@@ -232,15 +254,15 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             if await self.config.use_external_lavalink() and query.is_local:
                 embed.description = _(
                     "Local tracks will not work "
-                    "if the `Lavalink.jar` cannot see the track.\n"
-                    "This may be due to permissions or because Lavalink.jar is being run "
-                    "in a different machine than the local tracks."
+                    "if the managed Lavalink node cannot see the track.\n"
+                    "This may be due to permissions or you are using an external Lavalink node "
+                    "in a different machine than the bot and the local tracks."
                 )
             elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
                 title = _("Track is not playable.")
                 embed = discord.Embed(title=title)
                 embed.description = _(
-                    "**{suffix}** is not a fully supported format and some " "tracks may not play."
+                    "**{suffix}** is not a fully supported format and some tracks may not play."
                 ).format(suffix=query.suffix)
             return await self.send_embed_msg(ctx, embed=embed)
         queue_dur = await self.track_remaining_duration(ctx)
@@ -257,16 +279,14 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         if seek and seek > 0:
             single_track.start_timestamp = seek * 1000
+        query = Query.process_input(single_track, self.local_folder_current_path)
         if not await self.is_query_allowed(
             self.config,
-            ctx.guild,
-            (
-                f"{single_track.title} {single_track.author} {single_track.uri} "
-                f"{str(Query.process_input(single_track, self.local_folder_current_path))}"
-            ),
+            ctx,
+            f"{single_track.title} {single_track.author} {single_track.uri} {str(query)}",
+            query_obj=query,
         ):
-            if IS_DEBUG:
-                log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+            log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx,
@@ -276,10 +296,17 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         elif guild_data["maxlength"] > 0:
             if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
                 single_track.requester = ctx.author
+                single_track.extras.update(
+                    {
+                        "enqueue_time": int(time.time()),
+                        "vc": player.channel.id,
+                        "requester": ctx.author.id,
+                    }
+                )
                 player.queue.insert(0, single_track)
                 player.maybe_shuffle()
                 self.bot.dispatch(
-                    "red_audio_track_enqueue", player.channel.guild, single_track, ctx.author
+                    "red_audio_track_enqueue", player.guild, single_track, ctx.author
                 )
             else:
                 self.update_player_lock(ctx, False)
@@ -292,12 +319,19 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         else:
             single_track.requester = ctx.author
             single_track.extras["bumped"] = True
+            single_track.extras.update(
+                {
+                    "enqueue_time": int(time.time()),
+                    "vc": player.channel.id,
+                    "requester": ctx.author.id,
+                }
+            )
             player.queue.insert(0, single_track)
             player.maybe_shuffle()
-            self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, single_track, ctx.author
-            )
-        description = self.get_track_description(single_track, self.local_folder_current_path)
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, single_track, ctx.author)
+        description = await self.get_track_description(
+            single_track, self.local_folder_current_path
+        )
         footer = None
         if not play_now and not guild_data["shuffle"] and queue_dur > 0:
             footer = _("{time} until track playback: #1 in queue").format(
@@ -358,9 +392,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
             "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
             "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _category_search_menu,
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
         playlist_search_controls = {
             "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
@@ -368,9 +402,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
             "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
             "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _playlist_search_menu,
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
 
         api_data = await self._check_api_tokens()
@@ -394,49 +428,50 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(prefix=ctx.prefix),
             )
         guild_data = await self.config.guild(ctx.guild).all()
-        if not self._player_check(ctx):
-            if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
-                desc = EmptyEmbed
-                if await self.bot.is_owner(ctx.author):
-                    desc = _("Please check your console or logs for details.")
-                return await self.send_embed_msg(ctx, title=msg, description=desc)
-            try:
-                if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.is_vc_full(ctx.author.voice.channel)
-                ):
-                    return await self.send_embed_msg(
-                        ctx,
-                        title=_("Unable To Play Tracks"),
-                        description=_("I don't have permission to connect to your channel."),
-                    )
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-            except AttributeError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connect to a voice channel first."),
-                )
-            except IndexError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connection to Lavalink has not yet been established."),
-                )
         if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
                 description=_("You need the DJ role to queue tracks."),
             )
+        if not self._player_check(ctx):
+            if self.lavalink_connection_aborted:
+                msg = _("Connection to Lavalink node has failed")
+                desc = None
+                if await self.bot.is_owner(ctx.author):
+                    desc = _("Please check your console or logs for details.")
+                return await self.send_embed_msg(ctx, title=msg, description=desc)
+            try:
+                if (
+                    not self.can_join_and_speak(ctx.author.voice.channel)
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self.is_vc_full(ctx.author.voice.channel)
+                ):
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Play Tracks"),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
+                    )
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
+            except AttributeError:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connect to a voice channel first."),
+                )
+            except NodeNotFound:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connection to Lavalink node has not yet been established."),
+                )
         player = lavalink.get_player(ctx.guild.id)
-
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
         if (
@@ -508,39 +543,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.mod_or_permissions(manage_guild=True)
     async def command_autoplay(self, ctx: commands.Context):
         """Starts auto play."""
-        if not self._player_check(ctx):
-            if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed")
-                desc = EmptyEmbed
-                if await self.bot.is_owner(ctx.author):
-                    desc = _("Please check your console or logs for details.")
-                return await self.send_embed_msg(ctx, title=msg, description=desc)
-            try:
-                if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
-                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                    and self.is_vc_full(ctx.author.voice.channel)
-                ):
-                    return await self.send_embed_msg(
-                        ctx,
-                        title=_("Unable To Play Tracks"),
-                        description=_("I don't have permission to connect to your channel."),
-                    )
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-            except AttributeError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connect to a voice channel first."),
-                )
-            except IndexError:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Connection to Lavalink has not yet been established."),
-                )
         guild_data = await self.config.guild(ctx.guild).all()
         if guild_data["dj_enabled"] and not await self._can_instaskip(ctx, ctx.author):
             return await self.send_embed_msg(
@@ -548,10 +550,44 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Play Tracks"),
                 description=_("You need the DJ role to queue tracks."),
             )
+        if not self._player_check(ctx):
+            if self.lavalink_connection_aborted:
+                msg = _("Connection to Lavalink node has failed")
+                desc = None
+                if await self.bot.is_owner(ctx.author):
+                    desc = _("Please check your console or logs for details.")
+                return await self.send_embed_msg(ctx, title=msg, description=desc)
+            try:
+                if (
+                    not self.can_join_and_speak(ctx.author.voice.channel)
+                    or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
+                    and self.is_vc_full(ctx.author.voice.channel)
+                ):
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Play Tracks"),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
+                    )
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
+            except AttributeError:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connect to a voice channel first."),
+                )
+            except NodeNotFound:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Play Tracks"),
+                    description=_("Connection to Lavalink node has not yet been established."),
+                )
         player = lavalink.get_player(ctx.guild.id)
-
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
         if (
@@ -571,9 +607,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         try:
             await self.api_interface.autoplay(player, self.playlist_api)
         except DatabaseError:
-            notify_channel = player.fetch("channel")
+            notify_channel = player.fetch("notify_channel")
             if notify_channel:
-                notify_channel = self.bot.get_channel(notify_channel)
+                notify_channel = ctx.guild.get_channel_or_thread(notify_channel)
                 await self.send_embed_msg(notify_channel, title=_("Couldn't get a valid track."))
             return
         except TrackEnqueueError:
@@ -582,29 +618,36 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Unable to Get Track"),
                 description=_(
-                    "I'm unable get a track from Lavalink at the moment, try again in a few "
+                    "I'm unable to get a track from Lavalink at the moment, try again in a few "
                     "minutes."
                 ),
             )
+        except Exception as e:
+            self.update_player_lock(ctx, False)
+            raise e
 
         if not guild_data["auto_play"]:
             await ctx.invoke(self.command_audioset_autoplay_toggle)
-        if not guild_data["notify"] and (
-            (player.current and not player.current.extras.get("autoplay")) or not player.current
-        ):
-            await self.send_embed_msg(ctx, title=_("Auto play started."))
+        if not guild_data["notify"] and not player.fetch("autoplay_notified", False):
+            pass
         elif player.current:
             await self.send_embed_msg(ctx, title=_("Adding a track to queue."))
 
     @commands.command(name="search")
     @commands.guild_only()
-    @commands.bot_has_permissions(embed_links=True, add_reactions=True)
+    @commands.bot_has_permissions(embed_links=True)
+    @commands.bot_can_react()
     async def command_search(self, ctx: commands.Context, *, query: str):
         """Pick a track with a search.
 
-        Use `[p]search list <search term>` to queue all tracks found on YouTube.
-        Use `[p]search sc <search term>` will search SoundCloud instead of YouTube.
+        Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc
+        <search term>` to search on SoundCloud instead of YouTube.
         """
+
+        if not isinstance(query, (str, list, Query)):
+            raise RuntimeError(
+                f"Expected 'query' to be a string, list or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
+            )
 
         async def _search_menu(
             ctx: commands.Context,
@@ -627,48 +670,50 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             "\N{DIGIT THREE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
             "\N{DIGIT FOUR}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
             "\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}": _search_menu,
-            "\N{LEFTWARDS BLACK ARROW}": prev_page,
+            "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}": prev_page,
             "\N{CROSS MARK}": close_menu,
-            "\N{BLACK RIGHTWARDS ARROW}": next_page,
+            "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}": next_page,
         }
 
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink has failed")
-                desc = EmptyEmbed
+                desc = None
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=desc)
             try:
                 if (
-                    not ctx.author.voice.channel.permissions_for(ctx.me).connect
+                    not self.can_join_and_speak(ctx.author.voice.channel)
                     or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
                     and self.is_vc_full(ctx.author.voice.channel)
                 ):
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Search For Tracks"),
-                        description=_("I don't have permission to connect to your channel."),
+                        description=_(
+                            "I don't have permission to connect and speak in your channel."
+                        ),
                     )
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
             except AttributeError:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Search For Tracks"),
                     description=_("Connect to a voice channel first."),
                 )
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Search For Tracks"),
-                    description=_("Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink node has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
-        player.store("channel", ctx.channel.id)
-        player.store("guild", ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
         if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
             return await self.send_embed_msg(
@@ -692,9 +737,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         title=_("Unable To Play Tracks"),
                         description=_("That URL is not allowed."),
                     )
-            if not await self.is_query_allowed(
-                self.config, ctx.guild, f"{query}", query_obj=query
-            ):
+            if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
@@ -712,10 +755,13 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, "
+                                "I'm unable to get a track from Lavalink at the moment, "
                                 "try again in a few minutes."
                             ),
                         )
+                    except Exception as e:
+                        self.update_player_lock(ctx, False)
+                        raise e
 
                     tracks = result.tracks
                 else:
@@ -728,10 +774,13 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             ctx,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable get a track from Lavalink at the moment, "
+                                "I'm unable to get a track from Lavalink at the moment, "
                                 "try again in a few minutes."
                             ),
                         )
+                    except Exception as e:
+                        self.update_player_lock(ctx, False)
+                        raise e
                 if not tracks:
                     embed = discord.Embed(title=_("Nothing found."))
                     if await self.config.use_external_lavalink() and query.is_local:
@@ -761,29 +810,41 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 async for track in AsyncIter(tracks):
                     if len(player.queue) >= 10000:
                         continue
+                    query = Query.process_input(track, self.local_folder_current_path)
                     if not await self.is_query_allowed(
                         self.config,
-                        ctx.guild,
-                        (
-                            f"{track.title} {track.author} {track.uri} "
-                            f"{str(Query.process_input(track, self.local_folder_current_path))}"
-                        ),
+                        ctx,
+                        f"{track.title} {track.author} {track.uri} " f"{str(query)}",
+                        query_obj=query,
                     ):
-                        if IS_DEBUG:
-                            log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+                        log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                         continue
                     elif guild_data["maxlength"] > 0:
                         if self.is_track_length_allowed(track, guild_data["maxlength"]):
                             track_len += 1
+                            track.extras.update(
+                                {
+                                    "enqueue_time": int(time.time()),
+                                    "vc": player.channel.id,
+                                    "requester": ctx.author.id,
+                                }
+                            )
                             player.add(ctx.author, track)
                             self.bot.dispatch(
-                                "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                                "red_audio_track_enqueue", player.guild, track, ctx.author
                             )
                     else:
                         track_len += 1
+                        track.extras.update(
+                            {
+                                "enqueue_time": int(time.time()),
+                                "vc": player.channel.id,
+                                "requester": ctx.author.id,
+                            }
+                        )
                         player.add(ctx.author, track)
                         self.bot.dispatch(
-                            "red_audio_track_enqueue", player.channel.guild, track, ctx.author
+                            "red_audio_track_enqueue", player.guild, track, ctx.author
                         )
                     if not player.current:
                         await player.play()
@@ -831,10 +892,13 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         ctx,
                         title=_("Unable to Get Track"),
                         description=_(
-                            "I'm unable get a track from Lavalink at the moment,"
+                            "I'm unable to get a track from Lavalink at the moment, "
                             "try again in a few minutes."
                         ),
                     )
+                except Exception as e:
+                    self.update_player_lock(ctx, False)
+                    raise e
                 tracks = result.tracks
             if not tracks:
                 embed = discord.Embed(title=_("Nothing found."))
@@ -866,6 +930,6 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             search_page_list.append(embed)
 
         if dj_enabled and not can_skip:
-            return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+            return await menu(ctx, search_page_list)
 
         await menu(ctx, search_page_list, search_controls)

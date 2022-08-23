@@ -3,20 +3,23 @@ import contextlib
 import platform
 import sys
 import codecs
-import datetime
 import logging
 import traceback
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
 import aiohttp
 import discord
 import pkg_resources
-from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
-from redbot.core.i18n import Translator
+from redbot.core.i18n import (
+    Translator,
+    set_contextual_locale,
+    set_contextual_regional_format,
+    set_contextual_locales_from_guild,
+)
 from .utils import AsyncIter
 from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
 from . import commands
@@ -26,11 +29,19 @@ from .utils._internal_utils import (
     format_fuzzy_results,
     expected_version,
     fetch_latest_red_version_info,
+    send_to_owners_with_prefix_replaced,
+    get_converter,
 )
 from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
 
+import rich
+from rich import box
+from rich.table import Table
+from rich.columns import Columns
+from rich.panel import Panel
+from rich.text import Text
+
 log = logging.getLogger("red")
-init()
 
 INTRO = r"""
 ______         _           ______ _                       _  ______       _
@@ -48,67 +59,54 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
         if bot._uptime is None:
-            print("Connected to Discord. Getting ready...")
+            log.info("Connected to Discord. Getting ready...")
 
     @bot.event
     async def on_ready():
         if bot._uptime is not None:
             return
 
-        bot._uptime = datetime.datetime.utcnow()
+        bot._uptime = datetime.utcnow()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
-        app_info = await bot.application_info()
-
-        if app_info.team:
-            if bot._use_team_features:
-                bot.owner_ids.update(m.id for m in app_info.team.members)
-        elif bot._owner_id_overwrite is None:
-            bot.owner_ids.add(app_info.owner.id)
-        bot._app_owners_fetched = True
-
-        try:
-            invite_url = discord.utils.oauth_url(app_info.id)
-        except:
-            invite_url = "Could not fetch invite url"
+        invite_url = discord.utils.oauth_url(bot._app_info.id, scopes=("bot",))
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        INFO = [
-            str(bot.user),
-            "Prefixes: {}".format(", ".join(prefixes)),
-            "Language: {}".format(lang),
-            "Red Bot Version: {}".format(red_version),
-            "Discord.py Version: {}".format(dpy_version),
-            "Shards: {}".format(bot.shard_count),
-            "Storage type: {}".format(data_manager.storage_type()),
-        ]
+        table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
+        table_general_info.add_row("Prefixes", ", ".join(prefixes))
+        table_general_info.add_row("Language", lang)
+        table_general_info.add_row("Red version", red_version)
+        table_general_info.add_row("Discord.py version", dpy_version)
+        table_general_info.add_row("Storage type", data_manager.storage_type())
 
-        if guilds:
-            INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
-        else:
-            print("Ready. I'm not in any server yet!")
-
-        INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
+        table_counts = Table(show_edge=False, show_header=False, box=box.MINIMAL)
+        # String conversion is needed as Rich doesn't deal with ints
+        table_counts.add_row("Shards", str(bot.shard_count))
+        table_counts.add_row("Servers", str(guilds))
+        if bot.intents.members:  # Lets avoid 0 Unique Users
+            table_counts.add_row("Unique Users", str(users))
 
         outdated_red_message = ""
+        rich_outdated_message = ""
         with contextlib.suppress(aiohttp.ClientError, asyncio.TimeoutError):
             pypi_version, py_version_req = await fetch_latest_red_version_info()
             outdated = pypi_version and pypi_version > red_version_info
             if outdated:
-                INFO.append(
-                    "Outdated version! {} is available "
-                    "but you're using {}".format(pypi_version, red_version)
-                )
                 outdated_red_message = _(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!"
                 ).format(pypi_version, red_version)
+                rich_outdated_message = (
+                    f"[red]Outdated version![/red]\n"
+                    f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
+                    f"but you're using [cyan]{red_version}[/][red]!!![/red]"
+                )
                 current_python = platform.python_version()
                 extra_update = _(
                     "\n\nWhile the following command should work in most scenarios as it is "
@@ -116,11 +114,11 @@ def init_events(bot, cli_flags):
                     "**we highly recommend you to read the update docs at <{docs}> and "
                     "make sure there is nothing else that "
                     "needs to be done during the update.**"
-                ).format(docs="https://docs.discord.red/en/stable/update_red.html",)
+                ).format(docs="https://docs.discord.red/en/stable/update_red.html")
                 if expected_version(current_python, py_version_req):
                     installed_extras = []
                     for extra, reqs in red_pkg._dep_map.items():
-                        if extra is None:
+                        if extra is None or extra in {"dev", "all"}:
                             continue
                         try:
                             pkg_resources.require(req.name for req in reqs)
@@ -143,8 +141,15 @@ def init_events(bot, cli_flags):
                         if platform.system() == "Windows"
                         else _("Terminal")
                     )
-                    extra_update += '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
-                        python=sys.executable, package_extras=package_extras
+                    extra_update += (
+                        '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
+                            python=sys.executable, package_extras=package_extras
+                        )
+                    )
+                    extra_update += _(
+                        "\nOnce you've started up your bot again, if you have any 3rd-party cogs"
+                        " installed we then highly recommend you update them with this command"
+                        " in Discord: `[p]cog update`"
                     )
 
                 else:
@@ -157,50 +162,36 @@ def init_events(bot, cli_flags):
                     ).format(py_version=current_python, req_py=py_version_req)
                 outdated_red_message += extra_update
 
-        INFO2 = []
+        rich_console = rich.get_console()
+        rich_console.print(INTRO, style="red", markup=False, highlight=False)
+        if guilds:
+            rich_console.print(
+                Columns(
+                    [Panel(table_general_info, title=str(bot.user.name)), Panel(table_counts)],
+                    equal=True,
+                    align="center",
+                )
+            )
+        else:
+            rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
 
-        reqs_installed = {"docs": None, "test": None}
-        for key in reqs_installed.keys():
-            reqs = [x.name for x in red_pkg._dep_map[key]]
-            try:
-                pkg_resources.require(reqs)
-            except DistributionNotFound:
-                reqs_installed[key] = False
-            else:
-                reqs_installed[key] = True
-
-        options = (
-            ("Voice", True),
-            ("Docs", reqs_installed["docs"]),
-            ("Tests", reqs_installed["test"]),
+        rich_console.print(
+            "Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands))
         )
 
-        on_symbol, off_symbol, ascii_border = _get_startup_screen_specs()
-
-        for option, enabled in options:
-            enabled = on_symbol if enabled else off_symbol
-            INFO2.append("{} {}".format(enabled, option))
-
-        print(Fore.RED + INTRO)
-        print(Style.RESET_ALL)
-        print(bordered(INFO, INFO2, ascii_border=ascii_border))
-
         if invite_url:
-            print("\nInvite URL: {}\n".format(invite_url))
-
+            rich_console.print(f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}")
+            # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
-            print(
-                "Looking for a quick guide on setting up Red? https://docs.discord.red/en/stable/getting_started.html\n"
+            rich_console.print(
+                f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
+        if rich_outdated_message:
+            rich_console.print(rich_outdated_message)
 
-        if not bot.owner_ids:
-            # we could possibly exit here in future
-            log.warning("Bot doesn't have any owner set!")
-
-        bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
         if outdated_red_message:
-            await bot.send_to_owners(outdated_red_message)
+            await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
 
     @bot.event
     async def on_command_completion(ctx: commands.Context):
@@ -208,13 +199,12 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
-
         if not unhandled_by_cog:
             if hasattr(ctx.command, "on_error"):
                 return
 
             if ctx.cog:
-                if commands.Cog._get_overridden_method(ctx.cog.cog_command_error) is not None:
+                if ctx.cog.has_error_handler():
                     return
         if not isinstance(error, commands.CommandNotFound):
             asyncio.create_task(bot._delete_delay(ctx))
@@ -223,14 +213,23 @@ def init_events(bot, cli_flags):
             await ctx.send_help()
         elif isinstance(error, commands.ArgParserFailure):
             msg = _("`{user_input}` is not a valid value for `{command}`").format(
-                user_input=error.user_input, command=error.cmd,
+                user_input=error.user_input, command=error.cmd
             )
             if error.custom_help_msg:
                 msg += f"\n{error.custom_help_msg}"
             await ctx.send(msg)
             if error.send_cmd_help:
                 await ctx.send_help()
-        elif isinstance(error, commands.ConversionFailure):
+        elif isinstance(error, commands.BadArgument):
+            if isinstance(error.__cause__, ValueError):
+                converter = get_converter(ctx.current_parameter)
+                argument = ctx.current_argument
+                if converter is int:
+                    await ctx.send(_('"{argument}" is not an integer.').format(argument=argument))
+                    return
+                if converter is float:
+                    await ctx.send(_('"{argument}" is not a number.').format(argument=argument))
+                    return
             if error.args:
                 await ctx.send(error.args[0])
             else:
@@ -287,33 +286,70 @@ def init_events(bot, cli_flags):
             await ctx.send(_("That command is not available in DMs."))
         elif isinstance(error, commands.PrivateMessageOnly):
             await ctx.send(_("That command is only available in DMs."))
+        elif isinstance(error, commands.NSFWChannelRequired):
+            await ctx.send(_("That command is only available in NSFW channels."))
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.CommandOnCooldown):
+            if bot._bypass_cooldowns and ctx.author.id in bot.owner_ids:
+                ctx.command.reset_cooldown(ctx)
+                new_ctx = await bot.get_context(ctx.message)
+                await bot.invoke(new_ctx)
+                return
             if delay := humanize_timedelta(seconds=error.retry_after):
                 msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
             else:
                 msg = _("This command is on cooldown. Try again in 1 second.")
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
-            await ctx.send(
-                _(
-                    "Too many people using this command."
-                    " It can only be used {number} time(s) per {type} concurrently."
-                ).format(number=error.number, type=error.per.name)
-            )
+            if error.per is commands.BucketType.default:
+                if error.number > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times concurrently."
+                    ).format(number=error.number)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used once concurrently."
+                    )
+            elif error.per in (commands.BucketType.user, commands.BucketType.member):
+                if error.number > 1:
+                    msg = _(
+                        "That command is still completing,"
+                        " it can only be used {number} times per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+                else:
+                    msg = _(
+                        "That command is still completing,"
+                        " it can only be used once per {type} concurrently."
+                    ).format(type=error.per.name)
+            else:
+                if error.number > 1:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used {number} times per {type} concurrently."
+                    ).format(number=error.number, type=error.per.name)
+                else:
+                    msg = _(
+                        "Too many people using this command."
+                        " It can only be used once per {type} concurrently."
+                    ).format(type=error.per.name)
+            await ctx.send(msg)
         else:
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
-    async def on_message(message):
+    async def on_message(message, /):
+        await set_contextual_locales_from_guild(bot, message.guild)
+
         await bot.process_commands(message)
         discord_now = message.created_at
         if (
             not bot._checked_time_accuracy
             or (discord_now - timedelta(minutes=60)) > bot._checked_time_accuracy
         ):
-            system_now = datetime.datetime.utcnow()
+            system_now = datetime.now(timezone.utc)
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warning(
@@ -352,7 +388,7 @@ def init_events(bot, cli_flags):
         await _guild_added(guild)
 
     @bot.event
-    async def on_guild_leave(guild: discord.Guild):
+    async def on_guild_remove(guild: discord.Guild):
         # Clean up any unneeded checks
         disabled_commands = await bot._config.guild(guild).disabled_commands()
         for command_name in disabled_commands:
@@ -367,37 +403,3 @@ def init_events(bot, cli_flags):
             uuid = c.unique_identifier
             group_data = c.custom_groups
             await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
-
-
-def _get_startup_screen_specs():
-    """Get specs for displaying the startup screen on stdout.
-
-    This is so we don't get encoding errors when trying to print unicode
-    emojis to stdout (particularly with Windows Command Prompt).
-
-    Returns
-    -------
-    `tuple`
-        Tuple in the form (`str`, `str`, `bool`) containing (in order) the
-        on symbol, off symbol and whether or not the border should be pure ascii.
-
-    """
-    encoder = codecs.getencoder(sys.stdout.encoding)
-    check_mark = "\N{SQUARE ROOT}"
-    try:
-        encoder(check_mark)
-    except UnicodeEncodeError:
-        on_symbol = "[X]"
-        off_symbol = "[ ]"
-    else:
-        on_symbol = check_mark
-        off_symbol = "X"
-
-    try:
-        encoder("┌┐└┘─│")  # border symbols
-    except UnicodeEncodeError:
-        ascii_border = True
-    else:
-        ascii_border = False
-
-    return on_symbol, off_symbol, ascii_border

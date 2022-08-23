@@ -2,7 +2,7 @@ from typing import Tuple, Dict, Optional, List, Union
 from re import findall
 
 import discord
-from discord.ext.commands.view import StringView
+from discord.ext.commands.view import StringView  # DEP-WARN
 from redbot.core import commands, Config
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -24,7 +24,7 @@ class AliasEntry:
     uses: int
 
     def __init__(
-        self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int],
+        self, name: str, command: Union[Tuple[str], str], creator: int, guild: Optional[int]
     ):
         super().__init__()
         self.name = name
@@ -67,7 +67,6 @@ class AliasEntry:
         return extra
 
     def to_json(self) -> dict:
-
         return {
             "name": self.name,
             "command": self.command,
@@ -91,7 +90,6 @@ class AliasCache:
         self._aliases: Dict[Optional[int], Dict[str, AliasEntry]] = {None: {}}
 
     async def anonymize_aliases(self, user_id: int):
-
         async with self.config.entries() as global_aliases:
             for a in global_aliases:
                 if a.get("creator", 0) == user_id:
@@ -106,7 +104,7 @@ class AliasCache:
                     break
             else:
                 continue
-            # basically, don't build a context manager wihout a need.
+            # basically, don't build a context manager without a need.
             async with self.config.guild_from_id(guild_id).entries() as entry_list:
                 for a in entry_list:
                     if a.get("creator", 0) == user_id:
@@ -161,7 +159,7 @@ class AliasCache:
         return aliases
 
     async def get_alias(
-        self, guild: Optional[discord.Guild], alias_name: str,
+        self, guild: Optional[discord.Guild], alias_name: str
     ) -> Optional[AliasEntry]:
         """Returns an AliasEntry object if the provided alias_name is a registered alias"""
         server_aliases: List[AliasEntry] = []
@@ -187,9 +185,10 @@ class AliasCache:
 
         return None
 
-    async def add_alias(
-        self, ctx: commands.Context, alias_name: str, command: str, global_: bool = False
-    ) -> AliasEntry:
+    @staticmethod
+    def format_command_for_alias(command: str) -> str:
+        # This was present in add_alias previously
+        # Made this into a separate method so as to reuse the same code in edit_alias
         indices = findall(r"{(\d*)}", command)
         if indices:
             try:
@@ -206,6 +205,12 @@ class AliasCache:
                     + ", ".join(str(i + low) for i in gaps)
                 )
             command = command.format(*(f"{{{i}}}" for i in range(-low, high + low + 1)))
+        return command
+
+    async def add_alias(
+        self, ctx: commands.Context, alias_name: str, command: str, global_: bool = False
+    ) -> AliasEntry:
+        command = self.format_command_for_alias(command)
 
         if global_:
             alias = AliasEntry(alias_name, command, ctx.author.id, None)
@@ -224,6 +229,32 @@ class AliasCache:
             curr_aliases.append(alias.to_json())
 
         return alias
+
+    async def edit_alias(
+        self, ctx: commands.Context, alias_name: str, command: str, global_: bool = False
+    ) -> bool:
+        command = self.format_command_for_alias(command)
+
+        if global_:
+            settings = self.config
+        else:
+            settings = self.config.guild(ctx.guild)
+
+        async with settings.entries() as aliases:
+            for index, alias in enumerate(aliases):
+                if alias["name"] == alias_name:
+                    alias_edited = AliasEntry.from_json(alias)
+                    alias_edited.command = command
+                    aliases[index] = alias_edited.to_json()
+
+                    if self._cache_enabled:
+                        if global_:
+                            self._aliases[None][alias_edited.name] = alias_edited
+                        else:
+                            self._aliases[ctx.guild.id][alias_edited.name] = alias_edited
+                    return True
+
+        return False
 
     async def delete_alias(
         self, ctx: commands.Context, alias_name: str, global_: bool = False

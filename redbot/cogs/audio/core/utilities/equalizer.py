@@ -1,10 +1,12 @@
 import asyncio
 import contextlib
-import logging
+
 from typing import List
 
 import discord
 import lavalink
+from lavalink import NodeNotFound, PlayerNotFound
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
@@ -13,7 +15,7 @@ from ...equalizer import Equalizer
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.equalizer")
+log = getLogger("red.cogs.Audio.cog.Utilities.equalizer")
 
 
 class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
@@ -26,7 +28,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         try:
             await lavalink.get_player(guild_id).node.send({**const})
-        except (KeyError, IndexError):
+        except (NodeNotFound, PlayerNotFound):
             pass
 
     async def _apply_gains(self, guild_id: int, gains: List[float]) -> None:
@@ -38,7 +40,7 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         try:
             await lavalink.get_player(guild_id).node.send({**const})
-        except (KeyError, IndexError):
+        except (NodeNotFound, PlayerNotFound):
             pass
 
     async def _eq_check(self, ctx: commands.Context, player: lavalink.Player) -> None:
@@ -70,16 +72,16 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ) -> None:
         player.store("eq", eq)
         emoji = {
-            "far_left": "\N{BLACK LEFT-POINTING TRIANGLE}",
-            "one_left": "\N{LEFTWARDS BLACK ARROW}",
+            "far_left": "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+            "one_left": "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}",
             "max_output": "\N{BLACK UP-POINTING DOUBLE TRIANGLE}",
             "output_up": "\N{UP-POINTING SMALL RED TRIANGLE}",
             "output_down": "\N{DOWN-POINTING SMALL RED TRIANGLE}",
             "min_output": "\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}",
-            "one_right": "\N{BLACK RIGHTWARDS ARROW}",
-            "far_right": "\N{BLACK RIGHT-POINTING TRIANGLE}",
-            "reset": "\N{BLACK CIRCLE FOR RECORD}",
-            "info": "\N{INFORMATION SOURCE}",
+            "one_right": "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}",
+            "far_right": "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
+            "reset": "\N{BLACK CIRCLE FOR RECORD}\N{VARIATION SELECTOR-16}",
+            "info": "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}",
         }
         selector = f'{" " * 8}{"   " * selected}^^'
         try:
@@ -95,11 +97,11 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await self._clear_react(message, emoji)
 
-        if react_emoji == "\N{LEFTWARDS BLACK ARROW}":
+        if react_emoji == "\N{LEFTWARDS BLACK ARROW}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             await self._eq_interact(ctx, player, eq, message, max(selected - 1, 0))
 
-        if react_emoji == "\N{BLACK RIGHTWARDS ARROW}":
+        if react_emoji == "\N{BLACK RIGHTWARDS ARROW}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             await self._eq_interact(ctx, player, eq, message, min(selected + 1, 14))
 
@@ -131,24 +133,24 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await self._apply_gain(ctx.guild.id, selected, _min)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "\N{BLACK LEFT-POINTING TRIANGLE}":
+        if react_emoji == "\N{BLACK LEFT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             selected = 0
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "\N{BLACK RIGHT-POINTING TRIANGLE}":
+        if react_emoji == "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             selected = 14
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "\N{BLACK CIRCLE FOR RECORD}":
+        if react_emoji == "\N{BLACK CIRCLE FOR RECORD}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             for band in range(eq.band_count):
                 eq.set_gain(band, 0.0)
             await self._apply_gains(ctx.guild.id, eq.bands)
             await self._eq_interact(ctx, player, eq, message, selected)
 
-        if react_emoji == "\N{INFORMATION SOURCE}":
+        if react_emoji == "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16}":
             await self.remove_react(message, react_emoji, react_user)
             await ctx.send_help(self.command_equalizer)
             await self._eq_interact(ctx, player, eq, message, selected)

@@ -199,6 +199,11 @@ class Repo(RepoJSONMixin):
         descendant_rev : `str`
             Descendant revision
 
+        Raises
+        ------
+        .UnknownRevision
+            When git cannot find one of the provided revisions.
+
         Returns
         -------
         bool
@@ -213,10 +218,17 @@ class Repo(RepoJSONMixin):
             maybe_ancestor_rev=maybe_ancestor_rev,
             descendant_rev=descendant_rev,
         )
-        p = await self._run(git_command, valid_exit_codes=valid_exit_codes)
+        p = await self._run(git_command, valid_exit_codes=valid_exit_codes, debug_only=True)
 
         if p.returncode in valid_exit_codes:
             return not bool(p.returncode)
+
+        # this is a plumbing command so we're safe here
+        stderr = p.stderr.decode(**DECODE_PARAMS).strip()
+        if stderr.startswith(("fatal: Not a valid object name", "fatal: Not a valid commit name")):
+            rev, *__ = stderr[31:].split(maxsplit=1)
+            raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
+
         raise errors.GitException(
             f"Git failed to determine if commit {maybe_ancestor_rev}"
             f" is ancestor of {descendant_rev} for repo at path: {self.folder_path}",
@@ -464,11 +476,20 @@ class Repo(RepoJSONMixin):
 
         if p.returncode != 0:
             stderr = p.stderr.decode(**DECODE_PARAMS).strip()
-            ambiguous_error = f"error: short SHA1 {rev} is ambiguous\nhint: The candidates are:\n"
-            if not stderr.startswith(ambiguous_error):
+            ambiguous_errors = (
+                # Git 2.31.0-rc0 and newer
+                f"error: short object ID {rev} is ambiguous\nhint: The candidates are:\n",
+                # Git 2.11.0-rc0 and newer
+                f"error: short SHA1 {rev} is ambiguous\nhint: The candidates are:\n",
+            )
+            for substring in ambiguous_errors:
+                if stderr.startswith(substring):
+                    pos = len(substring)
+                    break
+            else:
                 raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
             candidates = []
-            for match in self.AMBIGUOUS_ERROR_REGEX.finditer(stderr, len(ambiguous_error)):
+            for match in self.AMBIGUOUS_ERROR_REGEX.finditer(stderr, pos):
                 candidates.append(Candidate(match["rev"], match["type"], match["desc"]))
             if candidates:
                 raise errors.AmbiguousRevision(
@@ -1141,11 +1162,11 @@ class RepoManager:
     async def update_repos(
         self, repos: Optional[Iterable[Repo]] = None
     ) -> Tuple[Dict[Repo, Tuple[str, str]], List[str]]:
-        """Calls `Repo.update` on passed repositories and 
+        """Calls `Repo.update` on passed repositories and
         catches failing ones.
-        
+
         Calling without params updates all currently installed repos.
-        
+
         Parameters
         ----------
         repos: Iterable
@@ -1156,7 +1177,7 @@ class RepoManager:
         tuple of Dict and list
             A mapping of `Repo` objects that received new commits to
             a 2-`tuple` of `str` containing old and new commit hashes.
-            
+
             `list` of failed `Repo` names
         """
         failed = []

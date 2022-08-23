@@ -13,7 +13,7 @@ This is a quick start guide for a general usage.
 .. note::
 
     If you haven't installed Red, please do it by following
-    the :ref:`installation guides <main>`.
+    one of the `installation guides <install_guides/index>`.
 
 Assuming you correctly installed Red, you should have a
 window like this:
@@ -26,8 +26,8 @@ window like this:
 Invite Red to your server
 -------------------------
 
-When started, the console will show you ``Invite URL`` (here at
-the bottom of the screenshot).
+When started, the console will show you the ``Invite URL``
+(visible at the bottom of the screenshot above).
 Paste the link into your browser and select the server you want
 to invite the bot in, like any other bot.
 
@@ -63,7 +63,7 @@ example, if your prefix is ``!``, you will execute your command like this:
 The commands
 ~~~~~~~~~~~~
 
-The command you're going to use the most is help. That command will
+The command you're going to use the most is **help**. This command will
 show you **all of the available commands** of the bot with a small description.
 
 .. code-block:: none
@@ -81,18 +81,33 @@ parameters.
 
     [p]help command
 
-The parameters are shown as enclosed in ``< >`` if they're required, or
-``[ ]`` if optional.
-As an example, the ban command will show this in the help message, assuming
-your prefix is ``!``:
-``Syntax: !ban <user> [days] [reason]``
+.. note::
+    Arguments enclosed in ``< >`` are **required** for the command to work.
 
-This means that it is necessary to provide ``user``. However, the
-``days`` value (number of messages to delete) is optional, as well as
-the ``reason`` value, used for the modlog.
+    Arguments enclosed in ``[ ]`` are **optional** for the command;
+    you can decide whether to use them or not.
+    
+    If your argument includes spaces like ``Hello world!``, most of the time
+    you will need to place it in double quotes like this: ``"Hello world!"``.
+    Sometimes (especially for the last argument) these double quotes are not
+    required.
 
-You can use help to show the **categories** too, generally called cogs.
-Just do something like this (notice the capitalization):
+    Arguments followed by an ellipsis ``...`` means that you may provide
+    multiple arguments for the command.
+
+    For example, the command ``[p]cog install`` in the downloader cog has
+    the syntax ``cog install <repo> <cogs...>``, meaning that you can provide
+    1 or more ``cogs`` to install from the ``repo``.
+
+    Arguments followed by ``=value`` means that, if not specified,
+    the argument will be equal to ``value``.
+
+    For example, the command ``[p]cleanup messages`` in the cleanup cog has
+    the syntax ``cleanup messages <number> [delete_pinned=False]``, which means
+    ``delete_pinned`` default will be false, unless you specify it as true.
+
+You can use help to show the **categories** too, generally called cogs,
+by doing the following (notice the capitalization):
 
 .. code-block:: none
 
@@ -107,7 +122,7 @@ To get the description of a subcommand, type this:
 
 When using subcommands, you also need to specify the command group.
 As an example, ``cleanup`` has 6 subcommands. If you want
-to use one, do it like this: ``[p]cleanup messages 10``
+to use one of them, do: ``[p]cleanup messages 10``
 
 .. _getting-started-cogs:
 
@@ -119,7 +134,7 @@ Red is built with cogs, a fancy term for plugins. They are
 modules that add functionality to Red. They contain
 commands to use.
 
-Red comes with 19 cogs containing the basic features, such
+Red comes with 18 cogs containing the basic features, such
 as moderation, utility, music, streams...
 
 You can see your loaded and unloaded cogs with the ``[p]cogs``
@@ -153,14 +168,10 @@ download them using the downloader cog.
 
 You can start using the downloader cog by loading it: ``[p]load downloader``
 
-You can find cogs by searching on ``cogs.red``. Find whatever you want,
+You can find cogs by searching on `<https://index.discord.red>`_. Find whatever you want,
 there are hundreds of cogs available!
 
-.. note:: ``cogs.red``, the website that list all of the cogs is not
-    ready for v3 yet. For now, you can refer to `this post
-    <https://cogboard.red/t/approved-repositories/210>`_.
-
-.. 26-cogs not available, let's use my repo :3
+.. note:: An even better way to discover new cogs and repositories is in the works! Stay tuned!
 
 Cogs come in repositories. A repository is a container of cogs
 that you can install. Let's suppose you want to install the ``say``
@@ -206,7 +217,7 @@ Server owner
 ~~~~~~~~~~~~
 
 The server owner can access all commands on his guild, except the global
-ones or those who can interact with system files (available for the
+ones or those that can interact with system files (available for the
 bot owner).
 
 ~~~~~~~~~~~~~
@@ -214,7 +225,7 @@ Administrator
 ~~~~~~~~~~~~~
 
 The administrator is defined by its roles. You can set multiple admin roles
-with the ``[p]set addadminrole`` and ``[p]set removeadminrole`` commands.
+with the ``[p]set roles addadminrole`` and ``[p]set roles removeadminrole`` commands.
 
 For example, in the mod cog, an admin can use the ``[p]modset`` command
 which defines the cog settings.
@@ -224,14 +235,15 @@ Moderator
 ~~~~~~~~~
 
 A moderator is a step above the average users. You can set multiple moderator
-roles with the ``[p]set addmodrole`` and ``[p]set removemodrole`` commands.
+roles with the ``[p]set roles addmodrole`` and ``[p]set roles removemodrole`` commands.
 
-For example, in the mod cog (again), a mod will be able to mute, kick and ban;
-but he won't be able to modify the cog settings with the ``[p]modset`` command.
+For example, in the filter cog, a mod will be able to use the various commands 
+under ``[p]filter`` (such as adding and removing filtered words), but they will
+not be able to modify the cog settings with the ``[p]filterset`` command.
 
 .. tip::
     If you don't like the default permission settings for some commands or
-    if want to restrict a cog or a command to a channel/member, you can use
+    want to restrict a cog or a command to a channel/member, you can use
     the permissions cog.
 
 .. _getting-started-hosting:
@@ -242,9 +254,9 @@ Hosting
 
 If you are hosting Red on your personal computer, you will soon notice that
 if you close the window or if you shut down you computer, Red will be offline.
-She needs an environment to work and respond.
+It needs an environment to work and respond.
 
-You can try to host Red somewhere she will always be online, like on a virtual
+You can try to host Red somewhere it will always be online, like on a virtual
 private server (VPS) or on a personal server (e.g. Raspberry Pi).
 
 If you want to do it, follow these steps.
@@ -254,15 +266,15 @@ If you want to do it, follow these steps.
     basics of the Unix commands, such as navigating the system files or use
     a terminal text editor.
 
-    You should follow `this guide
+    You should read `DigitalOcean's tutorial: An Introduction to Linux Basics
     <https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics>`_
-    from DigitalOcean which will introduce you to the Linux basics.
+    if you have not used Linux before.
 
 1. **Find a host**
 
   You need to find a server to host Red. You can rent a VPS (it can be free)
-  on an online service. Please check :ref:`this list <host-list>` for
-  quality VPS providers.
+  on an online service. Please check :ref:`this list of hosts <host-list>` for
+  more information.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
   be able to host Red. The model 3 or above is recommended.
@@ -270,10 +282,10 @@ If you want to do it, follow these steps.
 2. **Install Linux**
 
   Most of the VPS providers have tools for installing Linux automatically. If
-  you're a beginner, we recommend **Ubuntu 20.04 LTS**.
+  you're a beginner, we recommend **Ubuntu 22.04 LTS**.
 
   For Raspberry Pi users, just install `Raspbian
-  <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
+  <https://www.raspberrypi.org/software/>`_ on a micro-SD card.
 
 2.1. **Log in**
 
@@ -295,8 +307,8 @@ If you want to do it, follow these steps.
 
 3. **Install and set up Red**
 
-  Just follow one of the Linux installation guide. We provide guides for the
-  most used distributions. Check the :ref:`home page <main>` and search for
+  Follow one of the Linux installation guides. We provide guides for the
+  most used distributions. Check the `list of install guides <install_guides/index>` and search for
   your distribution.
 
 4. **Set up an auto-restart**
@@ -306,7 +318,7 @@ If you want to do it, follow these steps.
   side task and handle fatal errors, so you can just leave your server running
   and enjoy Red!
 
-  For that, just follow :ref:`this guide <systemd-service-guide>`.
+  For that, follow :ref:`the systemd service guide <systemd-service-guide>`.
 
 .. _getting-started-userdocs:
 
@@ -332,9 +344,12 @@ The cog guides are formatted the same. They're divided into 3 sections:
 
     A line that will show how the command must be invoked, with the arguments.
 
-    .. tip:: If the command show something like ``[lavalinkset|llset]``, that means
-        you can invoke the command with ``lavalinkset`` or with ``llset``, this is
-        called an alias.
+  * **Aliases**
+  
+    Each command may have one or more aliases, which are alternative command names
+    you can use to invoke the same command. For example, ``[p]set colour`` can also
+    be invoked with ``[p]set color``. If there are aliases for a command, they will
+    appear just under the syntax.
 
   * **Description**
 
@@ -344,22 +359,3 @@ The cog guides are formatted the same. They're divided into 3 sections:
   * **Arguments**
 
     A list of all arguments needed (or not) for the command, with more details.
-
-    .. tip::
-        Arguments enclosed in ``< >`` means that the argument is **required**
-        for the command to work.
-
-        Arguments enclosed in ``[ ]`` means that the argument is **optional**
-        for the command; you can decide to use it or not.
-        
-        If your argument includes spaces like ``Hello world!``, most of the time
-        you will need to place it in double quotes like this: ``"Hello world!"``.
-        Sometimes (especially for the last argument) these double quotes are not
-        required.
-
-        Arguments followed by ``=something`` means that, if not specified,
-        the argument will be equal to ``something``.
-
-        For example, ``[days=1]`` in the ``ban`` command means that the number
-        of days of messages to be deleted will be equal to ``1`` if not
-        specified.

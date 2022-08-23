@@ -3,12 +3,11 @@ import inspect
 import discord
 from discord.ext import commands
 
-__all__ = [
-    "ConversionFailure",
+__all__ = (
     "BotMissingPermissions",
     "UserFeedbackCheckFailure",
     "ArgParserFailure",
-]
+)
 
 
 class ConversionFailure(commands.BadArgument):
