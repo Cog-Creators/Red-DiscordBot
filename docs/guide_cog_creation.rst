@@ -137,15 +137,16 @@ have successfully created a cog!
     .. code-block:: none
 
         - D:\
-        -- red-env
-        -- red-data
-        -- red-cogs
-        ---- mycog
-        ------ __init__.py
-        ------ mycog.py
-        ---- coolcog
-        ------ __init__.py
-        ------ coolcog.py
+        -- core
+        -- cogs
+        ---- CogManager
+        ------ cogs
+        -------- mycog
+        ---------- __init__.py
+        ---------- mycog.py
+        -------- coolcog
+        ---------- __init__.py
+        ---------- coolcog.py
     
     You would then use :code:`[p]addpath D:\red-cogs` to add the path
     and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
