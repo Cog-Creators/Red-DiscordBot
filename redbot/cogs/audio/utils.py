@@ -78,11 +78,11 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__metrics__prometheus__endpoint": "/metrics",
     "yaml__sentry__dsn": "",
     "yaml__sentry__environment": "",
-    "yaml__logging__file__max_history": 15,
-    "yaml__logging__file__max_size": "10MB",
-    "yaml__logging__path": "./logs/",
+    "yaml__logging__file__path": "./logs/",
     "yaml__logging__level__root": "INFO",
     "yaml__logging__level__lavalink": "INFO",
+    "yaml__logging__logback__rollingpolicy__max_history": 15,
+    "yaml__logging__logback__rollingpolicy__max_size": "10MB",
 }
 
 DEFAULT_LAVALINK_SETTINGS = {
