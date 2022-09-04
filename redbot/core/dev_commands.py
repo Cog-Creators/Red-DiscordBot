@@ -19,6 +19,7 @@ import textwrap
 import traceback
 import types
 import re
+import sys
 from contextlib import redirect_stdout
 from copy import copy
 
@@ -76,17 +77,60 @@ class Dev(commands.Cog):
         # remove `foo`
         return content.strip("` \n")
 
-    @classmethod
-    def get_syntax_error(cls, e):
-        """Format a syntax error to send to the user.
-
-        Returns a string representation of the error formatted as a codeblock.
+    @staticmethod
+    def format_exception(
+        exc: Exception, *, source: str, filename: str, line_offset: int = 0, skip_frames: int = 1
+    ) -> str:
         """
-        if e.text is None:
-            return cls.get_pages("{0.__class__.__name__}: {0}".format(e))
-        return cls.get_pages(
-            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__)
-        )
+        Format an exception to send to the user.
+
+        This function makes a few alterations to the traceback:
+        - First `skip_frames` frames are skipped so that we don't show the frames
+          that are part of Red's code to the user
+        - `FrameSummary` objects that we get from traceback module are updated
+          with the string for the corresponding line of code as otherwise
+          the generated traceback string wouldn't show user's code.
+        - If `line_offset` is passed, this function subtracts it from line numbers
+          in `FrameSummary` objects so that those numbers properly correspond to
+          the code that was provided by the user. This is needed for cases where
+          we wrap user's code in an async function before exec-ing it.
+        """
+        exc_type = type(exc)
+        tb = exc.__traceback__
+        for x in range(skip_frames):
+            tb = tb.tb_next
+        traceback_exc = traceback.TracebackException(exc_type, exc, tb)
+
+        source_lines = source.splitlines(True)
+        py311_or_above = sys.version_info >= (3, 11)
+        stack_summary = traceback_exc.stack
+        for idx, frame_summary in enumerate(stack_summary):
+            if frame_summary.filename != filename:
+                continue
+
+            # line numbers are 1-based, the list indexes are 0-based
+            line = source_lines[frame_summary.lineno - 1]
+            # support for enhanced error locations in tracebacks
+            if py311_or_above:
+                frame_summary = traceback.FrameSummary(
+                    frame_summary.filename,
+                    frame_summary.lineno - line_offset,
+                    frame_summary.name,
+                    line=line,
+                    end_lineno=frame_summary.end_lineno - line_offset,
+                    colno=frame_summary.colno,
+                    end_colno=frame_summary.end_colno,
+                )
+            else:
+                frame_summary = traceback.FrameSummary(
+                    frame_summary.filename,
+                    frame_summary.lineno - line_offset,
+                    frame_summary.name,
+                    line=line,
+                )
+            stack_summary[idx] = frame_summary
+
+        return "".join(traceback_exc.format())
 
     @staticmethod
     def get_pages(msg: str):
@@ -118,9 +162,9 @@ class Dev(commands.Cog):
         for name, value in self.env_extensions.items():
             try:
                 env[name] = value(ctx)
-            except Exception as e:
-                traceback.clear_frames(e.__traceback__)
-                env[name] = e
+            except Exception as exc:
+                traceback.clear_frames(exc.__traceback__)
+                env[name] = exc
         return env
 
     @commands.command()
@@ -152,21 +196,30 @@ class Dev(commands.Cog):
         """
         env = self.get_environment(ctx)
         code = self.cleanup_code(code)
+        filename = "<debug command>"
 
         try:
-            compiled = self.async_compile(code, "<string>", "eval")
-            result = await self.maybe_await(eval(compiled, env))
-        except SyntaxError as e:
-            await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
-            return
-        except Exception as e:
+            compiled = self.async_compile(code, filename, "eval")
+        except SyntaxError as exc:
             await ctx.send_interactive(
-                self.get_pages("{}: {!s}".format(type(e).__name__, e)), box_lang="py"
+                self.get_pages(
+                    self.format_exception(exc, source=code, filename=filename, skip_frames=2)
+                ),
+                box_lang="py",
+            )
+            return
+
+        try:
+            result = await self.maybe_await(eval(compiled, env))
+        except Exception as exc:
+            await ctx.send_interactive(
+                self.get_pages(self.format_exception(exc, source=code, filename=filename)),
+                box_lang="py",
             )
             return
 
         self._last_result = result
-        result = self.sanitize_output(ctx, str(result))
+        result = self.sanitize_output(ctx, result)
 
         await ctx.tick()
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
@@ -199,30 +252,40 @@ class Dev(commands.Cog):
         """
         env = self.get_environment(ctx)
         body = self.cleanup_code(body)
+        filename = "<eval command>"
         stdout = io.StringIO()
 
         to_compile = "async def func():\n%s" % textwrap.indent(body, "  ")
 
         try:
-            compiled = self.async_compile(to_compile, "<string>", "exec")
+            compiled = self.async_compile(to_compile, filename, "exec")
             exec(compiled, env)
-        except SyntaxError as e:
-            return await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
+        except SyntaxError as exc:
+            return await ctx.send_interactive(
+                self.get_pages(
+                    self.format_exception(
+                        exc, source=to_compile, filename=filename, line_offset=1, skip_frames=2
+                    )
+                ),
+                box_lang="py",
+            )
 
         func = env["func"]
         result = None
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except Exception:
-            printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
+        except Exception as exc:
+            printed = stdout.getvalue() + self.format_exception(
+                exc, source=to_compile, filename=filename, line_offset=1
+            )
         else:
             printed = stdout.getvalue()
             await ctx.tick()
 
         if result is not None:
             self._last_result = result
-            msg = "{}{}".format(printed, result)
+            msg = f"{printed}{result}"
         else:
             msg = printed
         msg = self.sanitize_output(ctx, msg)
@@ -268,6 +331,7 @@ class Dev(commands.Cog):
                 )
             return
 
+        filename = "<repl session>"
         env = self.get_environment(ctx)
         env["__builtins__"] = __builtins__
         env["_"] = None
@@ -295,7 +359,7 @@ class Dev(commands.Cog):
             if cleaned.count("\n") == 0:
                 # single statement, potentially 'eval'
                 try:
-                    code = self.async_compile(cleaned, "<repl session>", "eval")
+                    code = self.async_compile(cleaned, filename, "eval")
                 except SyntaxError:
                     pass
                 else:
@@ -303,9 +367,16 @@ class Dev(commands.Cog):
 
             if executor is None:
                 try:
-                    code = self.async_compile(cleaned, "<repl session>", "exec")
-                except SyntaxError as e:
-                    await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
+                    code = self.async_compile(cleaned, filename, "exec")
+                except SyntaxError as exc:
+                    await ctx.send_interactive(
+                        self.get_pages(
+                            self.format_exception(
+                                exc, source=cleaned, filename=filename, skip_frames=2
+                            )
+                        ),
+                        box_lang="py",
+                    )
                     continue
 
             env["message"] = response
@@ -320,19 +391,19 @@ class Dev(commands.Cog):
                     else:
                         result = executor(code, env)
                     result = await self.maybe_await(result)
-            except Exception:
+            except Exception as exc:
                 value = stdout.getvalue()
-                msg = "{}{}".format(value, traceback.format_exc())
+                msg = value + self.format_exception(exc, source=cleaned, filename=filename)
             else:
                 value = stdout.getvalue()
                 if result is not None:
                     try:
-                        msg = "{}{}".format(value, result)
-                    except Exception:
-                        msg = "{}{}".format(value, traceback.format_exc())
+                        msg = f"{value}{result}"
+                    except Exception as exc:
+                        msg = value + self.format_exception(exc, source=cleaned, filename=filename)
                     env["_"] = result
                 elif value:
-                    msg = "{}".format(value)
+                    msg = f"{value}"
 
             msg = self.sanitize_output(ctx, msg)
 
@@ -340,8 +411,8 @@ class Dev(commands.Cog):
                 await ctx.send_interactive(self.get_pages(msg), box_lang="py")
             except discord.Forbidden:
                 pass
-            except discord.HTTPException as e:
-                await ctx.send(_("Unexpected error: `{}`").format(e))
+            except discord.HTTPException as exc:
+                await ctx.send(_("Unexpected error: `{}`").format(exc))
 
     @repl.command(aliases=["resume"])
     async def pause(self, ctx, toggle: Optional[bool] = None):
