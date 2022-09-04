@@ -25,6 +25,8 @@ extend functionalities used throughout the bot, as outlined below.
     
     .. automethod:: red_delete_data_for_user
 
+.. autoclass:: redbot.core.commands.GroupCog
+
 .. autoclass:: redbot.core.commands.Command
     :members:
     :inherited-members: format_help_for_context

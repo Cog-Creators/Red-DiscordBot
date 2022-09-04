@@ -14,7 +14,6 @@ from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.menus import (
-    DEFAULT_CONTROLS,
     close_menu,
     menu,
     next_page,
@@ -304,7 +303,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
         async for page_num in AsyncIter(range(1, len_search_pages + 1)):
             embed = await self._build_queue_search_page(ctx, page_num, search_list)
             search_page_list.append(embed)
-        await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+        await menu(ctx, search_page_list)
 
     @command_queue.command(name="shuffle")
     @commands.cooldown(1, 30, commands.BucketType.guild)

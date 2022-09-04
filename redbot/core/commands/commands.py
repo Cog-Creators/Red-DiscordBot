@@ -14,6 +14,7 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    ClassVar,
     Dict,
     List,
     Literal,
@@ -33,6 +34,7 @@ from discord.ext.commands import (
     DisabledCommand,
     command as dpy_command_deco,
     Command as DPYCommand,
+    GroupCog as DPYGroupCog,
     HybridCommand as DPYHybridCommand,
     HybridGroup as DPYHybridGroup,
     Cog as DPYCog,
@@ -57,9 +59,12 @@ __all__ = [
     "CogGroupMixin",
     "Command",
     "Group",
+    "GroupCog",
     "GroupMixin",
     "command",
     "group",
+    "hybrid_command",
+    "hybrid_group",
     "RESERVED_COMMAND_NAMES",
     "RedUnhandledAPI",
 ]
@@ -984,6 +989,14 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
         :meta private:
         """
         return {cmd.name: cmd for cmd in self.__cog_commands__}
+
+
+class GroupCog(Cog, DPYGroupCog):
+    """
+    Red's Cog base class with app commands group as the base.
+
+    This class inherits from `Cog` and `discord.ext.commands.GroupCog`
+    """
 
 
 class HybridCommand(Command, DPYHybridCommand):

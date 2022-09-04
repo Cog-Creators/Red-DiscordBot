@@ -70,6 +70,11 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
             if len(prefix) > 10:
                 if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
+            if prefix.startswith("/"):
+                print(
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+                )
+                prefix = ""
             if prefix:
                 await red._config.prefix.set([prefix])
 
@@ -179,6 +184,9 @@ def parse_cli_flags(args):
         nargs="+",
         help="Force loading specified cogs from the installed packages. "
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
+    )
+    parser.add_argument(
+        "--unload-cogs", type=str, nargs="+", help="Force unloading specified cogs."
     )
     parser.add_argument(
         "--dry-run",
