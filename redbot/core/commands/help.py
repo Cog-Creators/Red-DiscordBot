@@ -145,7 +145,7 @@ class HelpSettings:
             HelpMenuSetting.reactions: _("Yes, reactions"),
             HelpMenuSetting.buttons: _("Yes, buttons"),
             HelpMenuSetting.select: _("Yes, buttons with select menu"),
-            HelpMenuSetting.selectonly: _("Yes, select menu only")
+            HelpMenuSetting.selectonly: _("Yes, select menu only"),
         }
         data["use_menus"] = menus_str[self.use_menus]
 
