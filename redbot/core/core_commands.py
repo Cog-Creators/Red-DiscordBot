@@ -18,7 +18,8 @@ import pip
 import traceback
 from pathlib import Path
 from redbot.core import data_manager
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import menu
+from redbot.core.utils.views import SetApiView
 from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
 from typing import (
@@ -1664,14 +1665,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: This command is interactive.
         """
         guilds = sorted(self.bot.guilds, key=lambda s: s.name.lower())
-        msg = "\n".join(f"{guild.name} (`{guild.id}`)\n" for guild in guilds)
+        msg = "\n".join(
+            f"{discord.utils.escape_markdown(guild.name)} (`{guild.id}`)\n" for guild in guilds
+        )
 
         pages = list(pagify(msg, ["\n"], page_length=1000))
 
         if len(pages) == 1:
             await ctx.send(pages[0])
         else:
-            await menu(ctx, pages, DEFAULT_CONTROLS)
+            await menu(ctx, pages)
 
     @commands.command(require_var_positional=True)
     @checks.is_owner()
@@ -3103,11 +3106,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.group(name="api", invoke_without_command=True)
     @checks.is_owner()
-    async def _set_api(self, ctx: commands.Context, service: str, *, tokens: TokenConverter):
+    async def _set_api(
+        self,
+        ctx: commands.Context,
+        service: Optional[str] = None,
+        *,
+        tokens: Optional[TokenConverter] = None,
+    ):
         """
         Commands to set, list or remove various external API tokens.
 
         This setting will be asked for by some 3rd party cogs and some core cogs.
+
+        If passed without the `<service>` or `<tokens>` arguments it will allow you to open a modal to set your API keys securely.
 
         To add the keys provide the service name and the tokens as a comma separated
         list of key,values as described by the cog requesting this command.
@@ -3115,6 +3126,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Note: API tokens are sensitive, so this command should only be used in a private channel or in DM with the bot.
 
         **Examples:**
+            - `[p]set api`
+            - `[p]set api spotify`
             - `[p]set api spotify redirect_uri localhost`
             - `[p]set api github client_id,whoops client_secret,whoops`
 
@@ -3122,10 +3135,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<service>` - The service you're adding tokens to.
             - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
         """
-        if ctx.channel.permissions_for(ctx.me).manage_messages:
-            await ctx.message.delete()
-        await ctx.bot.set_shared_api_tokens(service, **tokens)
-        await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+        if service is None:  # Handled in order of missing operations
+            await ctx.send(_("Click the button below to set your keys."), view=SetApiView())
+        elif tokens is None:
+            await ctx.send(
+                _("Click the button below to set your keys."),
+                view=SetApiView(default_service=service),
+            )
+        else:
+            if ctx.channel.permissions_for(ctx.me).manage_messages:
+                await ctx.message.delete()
+            await ctx.bot.set_shared_api_tokens(service, **tokens)
+            await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @_set_api.command(name="list")
     async def _set_api_list(self, ctx: commands.Context):
@@ -3527,6 +3548,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<prefixes...>` - The prefixes the bot will respond to globally.
         """
+        if any(prefix.startswith("/") for prefix in prefixes):
+            await ctx.send(
+                _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
+            )
+            return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(
                 _(
@@ -3574,6 +3600,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not prefixes:
             await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
             await ctx.send(_("Server prefixes have been reset."))
+            return
+        if any(prefix.startswith("/") for prefix in prefixes):
+            await ctx.send(
+                _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
+            )
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(_("You cannot have a prefix longer than 25 characters."))
@@ -4119,106 +4150,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def debuginfo(self, ctx: commands.Context):
         """Shows debug information useful for debugging."""
+        from redbot.core._debuginfo import DebugInfo
 
-        if sys.platform == "linux":
-            import distro  # pylint: disable=import-error
-
-        IS_WINDOWS = os.name == "nt"
-        IS_MAC = sys.platform == "darwin"
-        IS_LINUX = sys.platform == "linux"
-
-        python_version = ".".join(map(str, sys.version_info[:3]))
-        pyver = f"{python_version} ({platform.architecture()[0]})"
-        pipver = pip.__version__
-        redver = red_version_info
-        dpy_version = discord.__version__
-        if IS_WINDOWS:
-            os_info = platform.uname()
-            osver = f"{os_info.system} {os_info.release} (version {os_info.version})"
-        elif IS_MAC:
-            os_info = platform.mac_ver()
-            osver = f"Mac OSX {os_info[0]} {os_info[2]}"
-        elif IS_LINUX:
-            osver = f"{distro.name()} {distro.version()}".strip()
-        else:
-            osver = "Could not parse OS, report this on Github."
-        user_who_ran = getpass.getuser()
-        driver = storage_type()
-
-        from redbot.core.data_manager import basic_config, config_file
-
-        data_path = Path(basic_config["DATA_PATH"])
-        disabled_intents = (
-            ", ".join(
-                intent_name.replace("_", " ").title()
-                for intent_name, enabled in self.bot.intents
-                if not enabled
-            )
-            or "None"
-        )
-
-        def _datasize(num: int):
-            for unit in ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"]:
-                if abs(num) < 1024.0:
-                    return "{0:.1f}{1}".format(num, unit)
-                num /= 1024.0
-            return "{0:.1f}{1}".format(num, "YB")
-
-        memory_ram = psutil.virtual_memory()
-        ram_string = "{used}/{total} ({percent}%)".format(
-            used=_datasize(memory_ram.used),
-            total=_datasize(memory_ram.total),
-            percent=memory_ram.percent,
-        )
-
-        owners = []
-        for uid in self.bot.owner_ids:
-            try:
-                u = await self.bot.get_or_fetch_user(uid)
-                owners.append(f"{u.id} ({u})")
-            except discord.HTTPException:
-                owners.append(f"{uid} (Unresolvable)")
-        owners_string = ", ".join(owners) or "None"
-
-        resp_intro = "# Debug Info for Red:"
-        resp_system_intro = "## System Metadata:"
-        resp_system = (
-            f"CPU Cores: {psutil.cpu_count()} ({platform.machine()})\nRAM: {ram_string}\n"
-        )
-        resp_os_intro = "## OS Variables:"
-        resp_os = f"OS version: {osver}\nUser: {user_who_ran}\n"  # Ran where off to?!
-        resp_py_metadata = (
-            f"Python executable: {sys.executable}\n"
-            f"Python version: {pyver}\n"
-            f"Pip version: {pipver}\n"
-        )
-        resp_red_metadata = f"Red version: {redver}\nDiscord.py version: {dpy_version}\n"
-        resp_red_vars_intro = "## Red variables:"
-        resp_red_vars = (
-            f"Instance name: {data_manager.instance_name}\n"
-            f"Owner(s): {owners_string}\n"
-            f"Storage type: {driver}\n"
-            f"Disabled intents: {disabled_intents}\n"
-            f"Data path: {data_path}\n"
-            f"Metadata file: {config_file}"
-        )
-
-        response = (
-            box(resp_intro, lang="md"),
-            "\n",
-            box(resp_system_intro, lang="md"),
-            box(resp_system),
-            "\n",
-            box(resp_os_intro, lang="md"),
-            box(resp_os),
-            box(resp_py_metadata),
-            box(resp_red_metadata),
-            "\n",
-            box(resp_red_vars_intro, lang="md"),
-            box(resp_red_vars),
-        )
-
-        await ctx.send("".join(response))
+        await ctx.send(await DebugInfo(self.bot).get_text())
 
     # You may ask why this command is owner-only,
     # cause after all it could be quite useful to guild owners!

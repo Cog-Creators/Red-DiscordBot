@@ -1,4 +1,5 @@
 import discord
+from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.bot import Red
 from redbot.core import checks, commands, Config
 from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
@@ -250,7 +251,7 @@ class Streams(commands.Cog):
         except OfflineStream:
             await ctx.send(_("That user is offline."))
         except StreamNotFound:
-            await ctx.send(_("That channel doesn't seem to exist."))
+            await ctx.send(_("That user doesn't seem to exist."))
         except InvalidTwitchCredentials:
             await ctx.send(
                 _("The Twitch token is either invalid or has not been set. See {command}.").format(
@@ -298,29 +299,43 @@ class Streams(commands.Cog):
         pass
 
     @streamalert.group(name="twitch", invoke_without_command=True)
-    async def _twitch(self, ctx: commands.Context, channel_name: str):
+    async def _twitch(
+        self,
+        ctx: commands.Context,
+        channel_name: str,
+        discord_channel: discord.TextChannel = None,
+    ):
         """Manage Twitch stream notifications."""
-        await ctx.invoke(self.twitch_alert_channel, channel_name)
+        await ctx.invoke(self.twitch_alert_channel, channel_name, discord_channel)
 
     @_twitch.command(name="channel")
-    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
-        """Toggle alerts in this channel for a Twitch stream."""
+    async def twitch_alert_channel(
+        self, ctx: commands.Context, channel_name: str, discord_channel: discord.TextChannel = None
+    ):
+        """Toggle alerts in this or the given channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
             await ctx.send(
                 _("Please supply the name of a *Twitch* channel, not a Discord channel.")
             )
             return
-        await self.stream_alert(ctx, TwitchStream, channel_name.lower())
+        await self.stream_alert(ctx, TwitchStream, channel_name.lower(), discord_channel)
 
     @streamalert.command(name="youtube")
-    async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
+    async def youtube_alert(
+        self,
+        ctx: commands.Context,
+        channel_name_or_id: str,
+        discord_channel: discord.TextChannel = None,
+    ):
         """Toggle alerts in this channel for a YouTube stream."""
-        await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
+        await self.stream_alert(ctx, YoutubeStream, channel_name_or_id, discord_channel)
 
     @streamalert.command(name="picarto")
-    async def picarto_alert(self, ctx: commands.Context, channel_name: str):
+    async def picarto_alert(
+        self, ctx: commands.Context, channel_name: str, discord_channel: discord.TextChannel = None
+    ):
         """Toggle alerts in this channel for a Picarto stream."""
-        await self.stream_alert(ctx, PicartoStream, channel_name)
+        await self.stream_alert(ctx, PicartoStream, channel_name, discord_channel)
 
     @streamalert.command(name="stop", usage="[disable_all=No]")
     async def streamalert_stop(self, ctx: commands.Context, _all: bool = False):
@@ -363,28 +378,32 @@ class Streams(commands.Cog):
     @streamalert.command(name="list")
     async def streamalert_list(self, ctx: commands.Context):
         """List all active stream alerts in this server."""
-        streams_list = defaultdict(list)
+        streams_list = defaultdict(lambda: defaultdict(list))
         guild_channels_ids = [c.id for c in ctx.guild.channels]
         msg = _("Active alerts:\n\n")
 
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
-                    streams_list[channel_id].append(stream.name.lower())
+                    streams_list[channel_id][stream.platform_name].append(stream.name.lower())
 
         if not streams_list:
             await ctx.send(_("There are no active alerts in this server."))
             return
 
-        for channel_id, streams in streams_list.items():
-            channel = ctx.guild.get_channel(channel_id)
-            msg += "** - #{}**\n{}\n".format(channel, ", ".join(streams))
+        for channel_id, stream_platform in streams_list.items():
+            msg += f"** - #{ctx.guild.get_channel(channel_id)}**\n"
+            for platform, streams in stream_platform.items():
+                msg += f"\t** - {platform}**\n"
+                msg += f"\t\t{humanize_list(streams)}\n"
 
         for page in pagify(msg):
             await ctx.send(page)
 
-    async def stream_alert(self, ctx: commands.Context, _class, channel_name):
-        if isinstance(ctx.channel, discord.Thread):
+    async def stream_alert(self, ctx: commands.Context, _class, channel_name, discord_channel):
+        if discord_channel is None:
+            discord_channel = ctx.channel
+        if isinstance(discord_channel, discord.Thread):
             await ctx.send("Stream alerts cannot be set up in threads.")
             return
         stream = self.get_stream(_class, channel_name)
@@ -445,10 +464,10 @@ class Streams(commands.Cog):
                 return
             else:
                 if not exists:
-                    await ctx.send(_("That channel doesn't seem to exist."))
+                    await ctx.send(_("That user doesn't seem to exist."))
                     return
 
-        await self.add_or_remove(ctx, stream)
+        await self.add_or_remove(ctx, stream, discord_channel)
 
     @commands.group()
     @checks.mod_or_permissions(manage_channels=True)
@@ -676,24 +695,26 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_schedule.set(True)
             await ctx.send(_("Streams schedules will no longer send an alert."))
 
-    async def add_or_remove(self, ctx: commands.Context, stream):
-        if ctx.channel.id not in stream.channels:
-            stream.channels.append(ctx.channel.id)
+    async def add_or_remove(self, ctx: commands.Context, stream, discord_channel):
+        if discord_channel.id not in stream.channels:
+            stream.channels.append(discord_channel.id)
             if stream not in self.streams:
                 self.streams.append(stream)
             await ctx.send(
                 _(
-                    "I'll now send a notification in this channel when {stream.name} is live."
-                ).format(stream=stream)
+                    "I'll now send a notification in the {channel.mention} channel"
+                    " when {stream.name} is live."
+                ).format(stream=stream, channel=discord_channel)
             )
         else:
-            stream.channels.remove(ctx.channel.id)
+            stream.channels.remove(discord_channel.id)
             if not stream.channels:
                 self.streams.remove(stream)
             await ctx.send(
                 _(
-                    "I won't send notifications about {stream.name} in this channel anymore."
-                ).format(stream=stream)
+                    "I won't send notifications about {stream.name}"
+                    " in the {channel.mention} channel anymore"
+                ).format(stream=stream, channel=discord_channel)
             )
 
         await self.save_streams()

@@ -61,6 +61,7 @@ class TriviaSession:
          - ``bot_plays`` (`bool`)
          - ``allow_override`` (`bool`)
          - ``payout_multiplier`` (`float`)
+         - ``use_spoilers`` (`bool`)
     scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
         players are of type `discord.Member`.

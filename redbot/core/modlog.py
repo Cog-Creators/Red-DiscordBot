@@ -98,7 +98,7 @@ async def _init(bot: Red):
     await register_casetypes(all_generics)
 
     async def on_member_ban(guild: discord.Guild, member: discord.Member):
-        if not guild.me.guild_permissions.view_audit_log:
+        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
             return
 
         try:
@@ -138,7 +138,7 @@ async def _init(bot: Red):
             await asyncio.sleep(300)
 
     async def on_member_unban(guild: discord.Guild, user: discord.User):
-        if not guild.me.guild_permissions.view_audit_log:
+        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
             return
 
         try:
@@ -424,15 +424,13 @@ class Case:
                 self.guild.id,
             )
             await self.edit({"message": None})
-        except Exception:  # `finally` with `return` suppresses unexpected exceptions
+        except Exception:
             log.exception(
                 "Modlog failed to edit the Discord message for"
                 " the case #%s from guild with ID %s due to unexpected error.",
                 self.case_number,
                 self.guild.id,
             )
-        finally:
-            return None
 
     async def message_content(self, embed: bool = True):
         """
@@ -1071,15 +1069,14 @@ async def create_case(
             "Modlog failed to edit the Discord message for"
             " the case #%s from guild with ID due to missing permissions."
         )
-    except Exception:  # `finally` with `return` suppresses unexpected exceptions
+    except Exception:
         log.exception(
             "Modlog failed to send the Discord message for"
             " the case #%s from guild with ID %s due to unexpected error.",
             case.case_number,
             case.guild.id,
         )
-    finally:
-        return case
+    return case
 
 
 async def get_casetype(name: str, guild: Optional[discord.Guild] = None) -> Optional[CaseType]:

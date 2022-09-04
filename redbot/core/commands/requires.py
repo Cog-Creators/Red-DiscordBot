@@ -760,8 +760,8 @@ def bot_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T]
         if ctx.guild is None:
             return False
 
-        if not utils.can_manage_channel_in(
-            ctx.channel, ctx.me, allow_thread_owner=allow_thread_owner
+        if not utils.can_user_manage_channel(
+            ctx.me, ctx.channel, allow_thread_owner=allow_thread_owner
         ):
             if isinstance(ctx.channel, discord.Thread):
                 # This is a slight lie - thread owner *might* also be allowed
@@ -798,8 +798,8 @@ def _can_manage_channel_deco(
     privilege_level: Optional[PrivilegeLevel] = None, allow_thread_owner: bool = False
 ) -> Callable[[_T], _T]:
     async def predicate(ctx: "Context") -> bool:
-        if utils.can_manage_channel_in(
-            ctx.channel, ctx.author, allow_thread_owner=allow_thread_owner
+        if utils.can_user_manage_channel(
+            ctx.author, ctx.channel, allow_thread_owner=allow_thread_owner
         ):
             return True
 
