@@ -4,15 +4,20 @@ import json
 import logging
 import pickle
 import weakref
+
+from collections import (
+    Awaitable,
+    MutableMapping
+)
+from contextlib import AbstractAsyncContextManager
+
 from typing import (
     Any,
-    AsyncContextManager,
-    Awaitable,
     Dict,
-    MutableMapping,
+    Generator,
+    Type,
     Optional,
     Tuple,
-    Type,
     TypeVar,
     Union,
 )
@@ -42,7 +47,7 @@ class ConfigMeta(type):
         unique_identifier: str,
         driver: BaseDriver,
         force_registration: bool = False,
-        defaults: dict = None,
+        defaults: Optional[dict] = None,
     ):
         if cog_name is None:
             raise ValueError("You must provide either the cog instance or a cog name.")
@@ -66,7 +71,7 @@ def get_latest_confs() -> Tuple["Config"]:
     return tuple(ret)
 
 
-class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disable=duplicate-bases
+class _ValueCtxManager(Awaitable[_T], AbstractAsyncContextManager[_T]):  # pylint: disable=duplicate-bases
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
@@ -90,7 +95,7 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disab
         self.__acquire_lock = acquire_lock
         self.__lock = self.value_obj.get_lock()
 
-    def __await__(self) -> _T:
+    def __await__(self) -> Generator[Any, None, _T]:
         return self.coro.__await__()
 
     async def __aenter__(self) -> _T:
@@ -639,7 +644,7 @@ class Config(metaclass=ConfigMeta):
         unique_identifier: str,
         driver: BaseDriver,
         force_registration: bool = False,
-        defaults: dict = None,
+        defaults: Optional[dict] = None,
     ):
         self.cog_name = cog_name
         self.unique_identifier = unique_identifier
@@ -709,7 +714,7 @@ class Config(metaclass=ConfigMeta):
 
         driver = get_driver(cog_name, uuid, allow_old=allow_old)
         if hasattr(driver, "migrate_identifier"):
-            driver.migrate_identifier(identifier)
+            driver.migrate_identifier(identifier)  # type: ignore (Complain about missing attribute)
 
         conf = cls(
             cog_name=cog_name,
@@ -1272,7 +1277,7 @@ class Config(metaclass=ConfigMeta):
             ret[int(member_id)] = new_member_data
         return ret
 
-    async def all_members(self, guild: discord.Guild = None) -> dict:
+    async def all_members(self, guild: Optional[discord.Guild] = None) -> dict:
         """Get data for all members.
 
         If :code:`guild` is specified, only the data for the members of that
@@ -1340,8 +1345,8 @@ class Config(metaclass=ConfigMeta):
             identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
             group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
         else:
-            cat, *scopes = scopes
-            group = self._get_base_group(cat, *scopes)
+            cat, *primary_keys = scopes
+            group = self._get_base_group(cat, *primary_keys)
         await group.clear()
 
     async def clear_all(self):
@@ -1391,7 +1396,7 @@ class Config(metaclass=ConfigMeta):
         """
         await self._clear_scope(self.USER)
 
-    async def clear_all_members(self, guild: discord.Guild = None):
+    async def clear_all_members(self, guild: Optional[discord.Guild] = None):
         """Clear all member data.
 
         This resets all specified member data to its registered defaults.

@@ -1,5 +1,5 @@
 import enum
-from typing import Optional, Type
+from typing import Any, Optional, Type
 
 from .. import data_manager
 from .base import IdentifierData, BaseDriver, ConfigCategory
@@ -78,7 +78,7 @@ def get_driver(
     storage_type: Optional[BackendType] = None,
     *,
     allow_old: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ):
     """Get a driver instance.
 
