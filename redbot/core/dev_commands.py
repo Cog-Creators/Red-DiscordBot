@@ -20,8 +20,9 @@ import traceback
 import types
 import re
 import sys
-from contextlib import redirect_stdout
 from copy import copy
+from typing import Any, Awaitable, Iterator, Literal, Type, TypeVar, Union
+from types import CodeType, TracebackType
 
 import discord
 
@@ -36,50 +37,98 @@ _ = Translator("Dev", __file__)
 
 START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
 
+T = TypeVar("T")
 
-@cog_i18n(_)
-class Dev(commands.Cog):
-    """Various development focused utilities."""
 
-    async def red_delete_data_for_user(self, **kwargs):
-        """
-        Because despite my best efforts to advise otherwise,
-        people use ``--dev`` in production
-        """
-        return
+def get_pages(msg: str) -> Iterator[str]:
+    """Pagify the given message for output to the user."""
+    return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
 
-    def __init__(self):
-        super().__init__()
-        self._last_result = None
-        self.sessions = {}
-        self.env_extensions = {}
 
-    @staticmethod
-    def async_compile(source, filename, mode):
-        return compile(source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0)
+def sanitize_output(ctx: commands.Context, to_sanitize: str) -> str:
+    """Hides the bot's token from a string."""
+    token = ctx.bot.http.token
+    if token:
+        return re.sub(re.escape(token), "[EXPUNGED]", to_sanitize, re.I)
+    return to_sanitize
 
-    @staticmethod
-    async def maybe_await(coro):
-        for i in range(2):
-            if inspect.isawaitable(coro):
-                coro = await coro
-            else:
-                return coro
-        return coro
 
-    @staticmethod
-    def cleanup_code(content):
-        """Automatically removes code blocks from the code."""
-        # remove ```py\n```
-        if content.startswith("```") and content.endswith("```"):
-            return START_CODE_BLOCK_RE.sub("", content)[:-3]
+def async_compile(source: str, filename: str, mode: Literal["eval", "exec"]) -> CodeType:
+    return compile(source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0)
 
-        # remove `foo`
-        return content.strip("` \n")
 
-    @staticmethod
+async def maybe_await(coro: Union[T, Awaitable[T], Awaitable[Awaitable[T]]]) -> T:
+    for i in range(2):
+        if inspect.isawaitable(coro):
+            coro = await coro
+        else:
+            break
+    return coro  # type: ignore
+
+
+def cleanup_code(content: str) -> str:
+    """Automatically removes code blocks from the code."""
+    # remove ```py\n```
+    if content.startswith("```") and content.endswith("```"):
+        return START_CODE_BLOCK_RE.sub("", content)[:-3]
+
+    # remove `foo`
+    return content.strip("` \n")
+
+
+class DevOutput:
+    def __init__(self, ctx: commands.Context, *, source: str, filename: str) -> None:
+        self.ctx = ctx
+        self.source = source
+        self.filename = filename
+        self._stream = io.StringIO()
+        self.formatted_exc = ""
+        self.result: Any = None
+        self._old_streams = []
+
+    def __str__(self) -> str:
+        output = []
+        printed = self._stream.getvalue()
+        if printed:
+            output.append(printed)
+        if self.formatted_exc:
+            output.append(self.formatted_exc)
+        if self.result is not None:
+            try:
+                output.append(str(self.result))
+            except Exception as exc:
+                output.append(self.format_exception(exc))
+        return sanitize_output(self.ctx, "".join(output))
+
+    async def send(self) -> None:
+        await self.ctx.send_interactive(get_pages(str(self)), box_lang="py")
+
+    def set_exception(self, exc: Exception, *, line_offset: int = 0, skip_frames: int = 1) -> None:
+        self.formatted_exc = self.format_exception(
+            exc, line_offset=line_offset, skip_frames=skip_frames
+        )
+
+    def __enter__(self) -> None:
+        self._old_streams.append(sys.stdout)
+        sys.stdout = self._stream
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+        /,
+    ) -> None:
+        sys.stdout = self._old_streams.pop()
+
+    def async_compile_with_exec(self) -> CodeType:
+        return async_compile(self.source, self.filename, "exec")
+
+    def async_compile_with_eval(self) -> CodeType:
+        return async_compile(self.source, self.filename, "eval")
+
     def format_exception(
-        exc: Exception, *, source: str, filename: str, line_offset: int = 0, skip_frames: int = 1
+        self, exc: Exception, *, line_offset: int = 0, skip_frames: int = 1
     ) -> str:
         """
         Format an exception to send to the user.
@@ -101,7 +150,8 @@ class Dev(commands.Cog):
             tb = tb.tb_next
         traceback_exc = traceback.TracebackException(exc_type, exc, tb)
 
-        source_lines = source.splitlines(True)
+        source_lines = self.source.splitlines(True)
+        filename = self.filename
         py311_or_above = sys.version_info >= (3, 11)
         stack_summary = traceback_exc.stack
         for idx, frame_summary in enumerate(stack_summary):
@@ -136,16 +186,23 @@ class Dev(commands.Cog):
 
         return "".join(traceback_exc.format())
 
-    @staticmethod
-    def get_pages(msg: str):
-        """Pagify the given message for output to the user."""
-        return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
 
-    @staticmethod
-    def sanitize_output(ctx: commands.Context, input_: str) -> str:
-        """Hides the bot's token from a string."""
-        token = ctx.bot.http.token
-        return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
+@cog_i18n(_)
+class Dev(commands.Cog):
+    """Various development focused utilities."""
+
+    async def red_delete_data_for_user(self, **kwargs):
+        """
+        Because despite my best efforts to advise otherwise,
+        people use ``--dev`` in production
+        """
+        return
+
+    def __init__(self):
+        super().__init__()
+        self._last_result = None
+        self.sessions = {}
+        self.env_extensions = {}
 
     def get_environment(self, ctx: commands.Context) -> dict:
         env = {
@@ -199,34 +256,27 @@ class Dev(commands.Cog):
             `cf`       - the redbot.core.utils.chat_formatting module
         """
         env = self.get_environment(ctx)
-        code = self.cleanup_code(code)
-        filename = "<debug command>"
+        source = cleanup_code(code)
+        output = DevOutput(ctx, source=source, filename="<debug command>")
 
         try:
-            compiled = self.async_compile(code, filename, "eval")
+            compiled = output.async_compile_with_eval()
         except SyntaxError as exc:
-            await ctx.send_interactive(
-                self.get_pages(
-                    self.format_exception(exc, source=code, filename=filename, skip_frames=2)
-                ),
-                box_lang="py",
-            )
+            output.set_exception(exc, skip_frames=2)
+            await output.send()
             return
 
         try:
-            result = await self.maybe_await(eval(compiled, env))
+            output.result = await maybe_await(eval(compiled, env))
         except Exception as exc:
-            await ctx.send_interactive(
-                self.get_pages(self.format_exception(exc, source=code, filename=filename)),
-                box_lang="py",
-            )
+            output.set_exception(exc)
+            await output.send()
             return
 
-        self._last_result = result
-        result = self.sanitize_output(ctx, result)
+        self._last_result = output.result
 
         await ctx.tick()
-        await ctx.send_interactive(self.get_pages(result), box_lang="py")
+        await output.send()
 
     @commands.command(name="eval")
     @checks.is_owner()
@@ -255,46 +305,31 @@ class Dev(commands.Cog):
             `cf`       - the redbot.core.utils.chat_formatting module
         """
         env = self.get_environment(ctx)
-        body = self.cleanup_code(body)
-        filename = "<eval command>"
-        stdout = io.StringIO()
-
-        to_compile = "async def func():\n%s" % textwrap.indent(body, "  ")
+        body = cleanup_code(body)
+        source = "async def func():\n%s" % textwrap.indent(body, "  ")
+        output = DevOutput(ctx, source=source, filename="<eval command>")
 
         try:
-            compiled = self.async_compile(to_compile, filename, "exec")
+            compiled = output.async_compile_with_exec()
             exec(compiled, env)
         except SyntaxError as exc:
-            return await ctx.send_interactive(
-                self.get_pages(
-                    self.format_exception(
-                        exc, source=to_compile, filename=filename, line_offset=1, skip_frames=2
-                    )
-                ),
-                box_lang="py",
-            )
+            output.set_exception(exc, line_offset=1, skip_frames=2)
+            await output.send()
+            return
 
         func = env["func"]
-        result = None
         try:
-            with redirect_stdout(stdout):
-                result = await func()
+            with output:
+                output.result = await func()
         except Exception as exc:
-            printed = stdout.getvalue() + self.format_exception(
-                exc, source=to_compile, filename=filename, line_offset=1
-            )
+            output.set_exception(exc, line_offset=1)
         else:
-            printed = stdout.getvalue()
             await ctx.tick()
 
-        if result is not None:
-            self._last_result = result
-            msg = f"{printed}{result}"
-        else:
-            msg = printed
-        msg = self.sanitize_output(ctx, msg)
+        if output.result is not None:
+            self._last_result = output.result
 
-        await ctx.send_interactive(self.get_pages(msg), box_lang="py")
+        await output.send()
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
@@ -335,7 +370,6 @@ class Dev(commands.Cog):
                 )
             return
 
-        filename = "<repl session>"
         env = self.get_environment(ctx)
         env["__builtins__"] = __builtins__
         env["_"] = None
@@ -352,18 +386,19 @@ class Dev(commands.Cog):
             if not self.sessions[ctx.channel.id]:
                 continue
 
-            cleaned = self.cleanup_code(response.content)
+            source = cleanup_code(response.content)
 
-            if cleaned in ("quit", "exit", "exit()"):
+            if source in ("quit", "exit", "exit()"):
                 await ctx.send(_("Exiting."))
                 del self.sessions[ctx.channel.id]
                 return
 
             executor = None
-            if cleaned.count("\n") == 0:
+            output = DevOutput(ctx, source=source, filename="<repl session>")
+            if source.count("\n") == 0:
                 # single statement, potentially 'eval'
                 try:
-                    code = self.async_compile(cleaned, filename, "eval")
+                    code = output.async_compile_with_eval()
                 except SyntaxError:
                     pass
                 else:
@@ -371,48 +406,29 @@ class Dev(commands.Cog):
 
             if executor is None:
                 try:
-                    code = self.async_compile(cleaned, filename, "exec")
+                    code = output.async_compile_with_exec()
                 except SyntaxError as exc:
-                    await ctx.send_interactive(
-                        self.get_pages(
-                            self.format_exception(
-                                exc, source=cleaned, filename=filename, skip_frames=2
-                            )
-                        ),
-                        box_lang="py",
-                    )
+                    output.set_exception(exc, skip_frames=2)
+                    await output.send()
                     continue
 
             env["message"] = response
-            stdout = io.StringIO()
-
-            msg = ""
 
             try:
-                with redirect_stdout(stdout):
+                with output:
                     if executor is None:
                         result = types.FunctionType(code, env)()
                     else:
                         result = executor(code, env)
-                    result = await self.maybe_await(result)
+                    output.result = await maybe_await(result)
             except Exception as exc:
-                value = stdout.getvalue()
-                msg = value + self.format_exception(exc, source=cleaned, filename=filename)
+                output.set_exception(exc)
             else:
-                value = stdout.getvalue()
-                if result is not None:
-                    try:
-                        msg = f"{value}{result}"
-                    except Exception as exc:
-                        msg = value + self.format_exception(exc, source=cleaned, filename=filename)
-                    env["_"] = result
-                elif value:
-                    msg = f"{value}"
-
-            msg = self.sanitize_output(ctx, msg)
+                if output.result is not None:
+                    env["_"] = output.result
 
             try:
-                await ctx.send_interactive(self.get_pages(msg), box_lang="py")
+                await output.send()
             except discord.Forbidden:
                 pass
             except discord.HTTPException as exc:
