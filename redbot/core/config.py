@@ -5,16 +5,13 @@ import logging
 import pickle
 import weakref
 
-from collections import (
-    Awaitable,
-    MutableMapping
-)
-from contextlib import AbstractAsyncContextManager
-
 from typing import (
     Any,
+    Awaitable,
+    AsyncContextManager,
     Dict,
     Generator,
+    MutableMapping,
     Type,
     Optional,
     Tuple,
@@ -71,7 +68,9 @@ def get_latest_confs() -> Tuple["Config"]:
     return tuple(ret)
 
 
-class _ValueCtxManager(Awaitable[_T], AbstractAsyncContextManager[_T]):  # pylint: disable=duplicate-bases
+class _ValueCtxManager(
+    Awaitable[_T], AsyncContextManager[_T]
+):  # pylint: disable=duplicate-bases
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
