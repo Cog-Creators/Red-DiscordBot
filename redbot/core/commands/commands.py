@@ -476,7 +476,7 @@ class Command(CogCommandMixin, DPYCommand):
                 await self._parse_arguments(ctx)
 
             await self.call_before_hooks(ctx)
-        except:
+        except:  # noqa: E722
             if self._max_concurrency is not None:
                 await self._max_concurrency.release(ctx)
             raise

@@ -441,7 +441,7 @@ else:
 
 if not TYPE_CHECKING:
 
-    class NoParseOptional:
+    class NoParseOptional:  # noqa: F811
         """
         This can be used instead of `typing.Optional`
         to avoid discord.py special casing the conversion behavior.
@@ -468,7 +468,7 @@ if not TYPE_CHECKING:
     #:
     #: .. warning::
     #:    This converter class is still provisional.
-    UserInputOptional = Optional
+    UserInputOptional = Optional  # noqa: F811
 
 if TYPE_CHECKING:
     CommandConverter = dpy_commands.Command
