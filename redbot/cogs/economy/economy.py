@@ -5,7 +5,7 @@ from collections import defaultdict, deque, namedtuple
 from datetime import datetime, timezone, timedelta
 from enum import Enum
 from math import ceil
-from typing import cast, Iterable, Literal
+from typing import TYPE_CHECKING, cast, Iterable, Literal
 
 import discord
 
@@ -124,6 +124,12 @@ class SetParser:
             self.sum = abs(self.sum)
         else:
             self.operation = "set"
+
+
+if TYPE_CHECKING:
+    Duration = timedelta
+else:
+    Duration = TimedeltaConverter(default_unit="seconds")
 
 
 @cog_i18n(_)
@@ -770,9 +776,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(
-        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
-    ):
+    async def slottime(self, ctx: commands.Context, *, duration: Duration):
         """Set the cooldown for the slot machine.
 
         Examples:
@@ -793,9 +797,7 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(
-        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
-    ):
+    async def paydaytime(self, ctx: commands.Context, *, duration: Duration):
         """Set the cooldown for the payday command.
 
         Examples:
