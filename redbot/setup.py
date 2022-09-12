@@ -12,7 +12,7 @@ import sys
 import re
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional
 
 import click
 
@@ -25,7 +25,7 @@ from redbot.core.utils._internal_utils import (
 from redbot.core import config, data_manager, drivers
 from redbot.core.cli import ExitCodes
 from redbot.core.data_manager import appdir, config_dir, config_file
-from redbot.core.drivers import BackendType, IdentifierData
+from redbot.core.drivers import BackendType
 
 conversion_log = logging.getLogger("red.converter")
 

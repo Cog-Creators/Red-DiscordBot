@@ -1,5 +1,4 @@
 import datetime
-import itertools
 import textwrap
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, SupportsInt, Union

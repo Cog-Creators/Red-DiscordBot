@@ -1,7 +1,5 @@
-import asyncio
-import pathlib
 from collections import namedtuple
-from typing import Any, NamedTuple
+from typing import NamedTuple
 from pathlib import Path
 
 import pytest
@@ -10,11 +8,10 @@ from pytest_mock import MockFixture
 from redbot.pytest.downloader import *
 
 from redbot.cogs.downloader.repo_manager import Installable
-from redbot.cogs.downloader.repo_manager import Candidate, ProcessFormatter, RepoManager, Repo
+from redbot.cogs.downloader.repo_manager import Candidate, ProcessFormatter, Repo
 from redbot.cogs.downloader.errors import (
     AmbiguousRevision,
     ExistingGitRepo,
-    GitException,
     UnknownRevision,
 )
 

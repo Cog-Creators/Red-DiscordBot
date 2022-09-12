@@ -1,5 +1,4 @@
 import logging
-from datetime import timezone
 from collections import defaultdict, deque
 
 import discord

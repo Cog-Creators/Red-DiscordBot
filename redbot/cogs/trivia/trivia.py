@@ -1,6 +1,5 @@
 """Module for Trivia cog."""
 import asyncio
-import math
 import pathlib
 from collections import Counter
 from typing import Any, Dict, List, Literal, Union

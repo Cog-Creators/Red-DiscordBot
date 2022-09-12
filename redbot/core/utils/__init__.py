@@ -23,7 +23,6 @@ from typing import (
     TypeVar,
     Union,
     Generator,
-    Coroutine,
     overload,
 )
 

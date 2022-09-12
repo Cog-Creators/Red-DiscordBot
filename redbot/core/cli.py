@@ -1,6 +1,4 @@
 import argparse
-import asyncio
-import logging
 import sys
 from enum import IntEnum
 from typing import Optional

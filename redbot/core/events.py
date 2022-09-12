@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import platform
 import sys
-import codecs
 import logging
 import traceback
 from datetime import datetime, timedelta, timezone
@@ -17,12 +16,9 @@ from redbot.core import data_manager
 from redbot.core.commands import RedHelpFormatter, HelpSettings
 from redbot.core.i18n import (
     Translator,
-    set_contextual_locale,
-    set_contextual_regional_format,
     set_contextual_locales_from_guild,
 )
-from .utils import AsyncIter
-from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
+from .. import __version__ as red_version, version_info as red_version_info
 from . import commands
 from .config import get_latest_confs
 from .utils._internal_utils import (
@@ -32,7 +28,7 @@ from .utils._internal_utils import (
     fetch_latest_red_version_info,
     send_to_owners_with_prefix_replaced,
 )
-from .utils.chat_formatting import inline, format_perms_list, humanize_timedelta
+from .utils.chat_formatting import inline, format_perms_list
 
 import rich
 from rich import box

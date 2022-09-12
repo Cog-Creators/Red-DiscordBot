@@ -8,7 +8,6 @@ import shutil
 import sys
 import contextlib
 import weakref
-import functools
 from collections import namedtuple, OrderedDict
 from datetime import datetime
 from importlib.machinery import ModuleSpec
@@ -27,7 +26,6 @@ from typing import (
     Any,
     Literal,
     MutableMapping,
-    Set,
     overload,
     TYPE_CHECKING,
 )

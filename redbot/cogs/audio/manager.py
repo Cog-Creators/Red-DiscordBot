@@ -39,7 +39,6 @@ from .utils import (
     get_max_allocation_size,
     replace_p_with_prefix,
 )
-from ...core.utils import AsyncIter
 
 if TYPE_CHECKING:
     from . import Audio

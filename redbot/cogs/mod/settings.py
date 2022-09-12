@@ -1,6 +1,5 @@
 import asyncio
 from collections import defaultdict, deque
-from typing import Optional
 from datetime import timedelta
 
 from redbot.core import commands, i18n, checks

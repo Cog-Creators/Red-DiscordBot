@@ -3,7 +3,7 @@ import logging
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict, List, Literal
+from typing import List, Literal
 
 import discord
 from redbot.core import Config, commands, checks

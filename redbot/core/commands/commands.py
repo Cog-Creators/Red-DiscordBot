@@ -8,13 +8,11 @@ from __future__ import annotations
 import inspect
 import io
 import re
-import functools
 import weakref
 from typing import (
     Any,
     Awaitable,
     Callable,
-    ClassVar,
     Dict,
     List,
     Literal,
@@ -24,12 +22,10 @@ from typing import (
     Union,
     MutableMapping,
     TYPE_CHECKING,
-    cast,
 )
 
 import discord
 from discord.ext.commands import (
-    BadArgument,
     CommandError,
     CheckFailure,
     DisabledCommand,
@@ -41,10 +37,8 @@ from discord.ext.commands import (
     Cog as DPYCog,
     CogMeta as DPYCogMeta,
     Group as DPYGroup,
-    Greedy,
 )
 
-from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
 

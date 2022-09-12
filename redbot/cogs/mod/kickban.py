@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import discord
 from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional, RawUserIdConverter
+from redbot.core.commands import RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
     pagify,

@@ -1,7 +1,6 @@
 import asyncio
 import discord
 import re
-from datetime import timezone
 from typing import Union, Set, Literal, Optional
 
 from redbot.core import checks, Config, modlog, commands

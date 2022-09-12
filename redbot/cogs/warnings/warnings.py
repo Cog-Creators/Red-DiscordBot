@@ -1,9 +1,8 @@
 import asyncio
 import contextlib
-from datetime import timezone
 from collections import namedtuple
 from copy import copy
-from typing import Union, Optional, Literal
+from typing import Union, Literal
 
 import discord
 
@@ -17,8 +16,7 @@ from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import warning, pagify
+from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.menus import menu
 
 

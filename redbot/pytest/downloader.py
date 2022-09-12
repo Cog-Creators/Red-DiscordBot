@@ -6,7 +6,7 @@ import shutil
 
 import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormatter
+from redbot.cogs.downloader.repo_manager import RepoManager, Repo
 from redbot.cogs.downloader.installable import Installable, InstalledModule
 
 __all__ = [

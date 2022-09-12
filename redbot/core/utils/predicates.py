@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Callable, ClassVar, List, Optional, Pattern, Sequence, Tuple, Union, cast
+from typing import Callable, ClassVar, Optional, Pattern, Sequence, Tuple, Union, cast
 
 import discord
 

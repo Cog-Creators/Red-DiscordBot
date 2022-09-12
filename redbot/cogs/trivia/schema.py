@@ -1,7 +1,7 @@
 import itertools
 import math
 import re
-from typing import Any, NoReturn
+from typing import Any
 
 from schema import And, Const, Optional, Schema, SchemaError, SchemaMissingKeyError, Use
 

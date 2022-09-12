@@ -7,19 +7,16 @@ if True:
 
 import asyncio
 import functools
-import getpass
 import json
 import logging
 import os
-import pip
-import platform
 import shutil
 import signal
 import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Awaitable, Callable, NoReturn, Union
+from typing import Any, Awaitable, Callable, Union
 
 import discord
 import rich

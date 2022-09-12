@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import collections.abc
-import contextlib
 import json
 import logging
 import os
@@ -13,12 +12,9 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
-    AsyncIterable,
     AsyncIterator,
     Awaitable,
     Callable,
-    Generator,
-    Iterable,
     Iterator,
     List,
     Optional,
@@ -26,7 +22,6 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
     Tuple,
-    cast,
 )
 
 import aiohttp

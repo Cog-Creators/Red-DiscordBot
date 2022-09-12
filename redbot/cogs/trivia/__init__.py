@@ -1,9 +1,13 @@
 """Package for Trivia cog."""
 from redbot.core.bot import Red
 
-from .trivia import *
-from .session import *
-from .log import *
+from .trivia import InvalidListError, Trivia, get_core_lists, get_list
+
+__all__ = (
+    "InvalidListError",
+    "get_core_lists",
+    "get_list",
+)
 
 
 async def setup(bot: Red) -> None:

@@ -27,6 +27,8 @@ from .cog_utils import CompositeMetaClass
 
 _ = Translator("Audio", Path(__file__))
 
+__all__ = ("abc", "cog_utils", "commands", "events", "tasks", "utilities", "Audio")
+
 
 @cog_i18n(_)
 class Audio(
