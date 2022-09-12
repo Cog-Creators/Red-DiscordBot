@@ -127,7 +127,7 @@ def get_outdated_red_messages(pypi_version: str, py_version_req: str) -> Tuple[s
     ).format(
         console=_("Command Prompt") if platform.system() == "Windows" else _("Terminal"),
         command_1=f'```"{sys.executable}" -m pip install -U "Red-DiscordBot{package_extras}"```',
-        command_2=f"```[p]cog update```",
+        command_2="```[p]cog update```",
     )
     outdated_red_message += extra_update
     return outdated_red_message, rich_outdated_message

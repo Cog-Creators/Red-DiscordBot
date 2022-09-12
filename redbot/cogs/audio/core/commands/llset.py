@@ -343,7 +343,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         to_write.write(playlist_data)
         to_write.seek(0)
         datapath = cog_data_path(raw_name="Audio")
-        temp_file = datapath / f"application.dump.yaml"
+        temp_file = datapath / "application.dump.yaml"
         try:
             with temp_file.open("wb") as application_file:
                 application_file.write(to_write.read())

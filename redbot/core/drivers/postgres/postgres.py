@@ -167,7 +167,7 @@ class PostgresDriver(BaseDriver):
     ) -> Union[int, float]:
         try:
             return await self._execute(
-                f"SELECT red_config.inc($1, $2, $3)",
+                "SELECT red_config.inc($1, $2, $3)",
                 encode_identifier_data(identifier_data),
                 value,
                 default,

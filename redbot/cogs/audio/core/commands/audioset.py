@@ -1249,7 +1249,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_youtubeapi(self, ctx: commands.Context):
         """Instructions to set the YouTube API key."""
         message = _(
-            f"1. Go to Google Developers Console and log in with your Google account.\n"
+            "1. Go to Google Developers Console and log in with your Google account.\n"
             "(https://console.developers.google.com/)\n"
             "2. You should be prompted to create a new project (name does not matter).\n"
             "3. Click on Enable APIs and Services at the top.\n"
