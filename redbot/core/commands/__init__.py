@@ -1,4 +1,5 @@
-########## SENSITIVE SECTION WARNING ###########
+################################################
+#          SENSITIVE SECTION WARNING           #
 ################################################
 # Any edits of any of the exported names       #
 # may result in a breaking change.             #
@@ -76,7 +77,7 @@ from .requires import (
     mod_or_permissions,
 )
 
-### DEP-WARN: Check this *every* discord.py update
+# DEP-WARN: Check this *every* discord.py update
 from discord.ext.commands import (
     BadArgument,
     EmojiConverter,
