@@ -242,7 +242,7 @@ class CoreLogic:
             for name, lib in sys.modules.items()
             if name == module_name or name.startswith(f"{module_name}.")
         }
-        for child_name, lib in children.items():
+        for lib in children.values():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
     async def _unload(self, pkg_names: Iterable[str]) -> Dict[str, List[str]]:

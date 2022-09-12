@@ -92,7 +92,7 @@ class QueueInterface:
                     log.verbose("Failed to complete playlist fetch from database", exc_info=exc)
                     return []
 
-        async for index, row in AsyncIter(row_result).enumerate(start=1):
+        async for row in AsyncIter(row_result):
             output.append(QueueFetchResult(*row))
         return output
 

@@ -624,7 +624,7 @@ class Permissions(commands.Cog):
         self.bot.clear_permission_rules(guild_id, preserve_default_rule=False)
         for category in (COG, COMMAND):
             async with self.config.custom(category).all() as all_rules:
-                for name, rules in all_rules.items():
+                for rules in all_rules.values():
                     rules.pop(str(guild_id), None)
 
     async def _permissions_acl_set(

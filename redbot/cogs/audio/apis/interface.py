@@ -166,7 +166,7 @@ class AudioAPIInterface:
             log.trace("Running pending writes to database")
             try:
                 tasks: MutableMapping = {"update": [], "insert": [], "global": []}
-                async for k, task in AsyncIter(self._tasks.items()):
+                async for task in AsyncIter(self._tasks.values()):
                     async for t, args in AsyncIter(task.items()):
                         tasks[t].append(args)
                 self._tasks = {}

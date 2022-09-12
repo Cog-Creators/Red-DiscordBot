@@ -151,7 +151,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
         all_members = await self.config.all_members()
         for g_id, data in all_members.items():
-            for m_id, mutes in data.items():
+            for m_id in data:
                 if m_id == user_id:
                     await self.config.member_from_ids(g_id, m_id).clear()
 
@@ -197,7 +197,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if (channel := self.bot.get_channel(channel_id)) is None:
                     channel = await self.bot.fetch_channel(channel_id)
                 async with self.config.channel_from_id(channel_id).muted_users() as muted_users:
-                    for mute_id, mute_data in muted_users.items():
+                    for mute_data in muted_users.values():
                         mute_data["guild"] = channel.guild.id
             except (discord.NotFound, discord.Forbidden):
                 await self.config.channel_from_id(channel_id).clear()
@@ -363,7 +363,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """This is where the logic for handling channel unmutes is taken care of"""
         log.debug("Checking channel unmutes")
         multiple_mutes = {}
-        for c_id, c_data in self._channel_mutes.items():
+        for c_id in self._channel_mutes:
             for u_id in self._channel_mutes[c_id]:
                 if (
                     not self._channel_mutes[c_id][u_id]

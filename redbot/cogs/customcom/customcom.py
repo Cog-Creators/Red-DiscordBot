@@ -63,7 +63,7 @@ class CommandObj:
         for guild_id in all_guilds.keys():
             await asyncio.sleep(0)
             async with self.config.guild_from_id(guild_id).commands() as all_commands:
-                async for com_name, com_info in AsyncIter(all_commands.items(), steps=100):
+                async for com_info in AsyncIter(all_commands.values(), steps=100):
                     if not com_info:
                         continue
 
