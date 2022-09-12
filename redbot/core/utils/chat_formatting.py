@@ -328,7 +328,7 @@ def quote(text: str) -> str:
         The marked up text.
 
     """
-    return textwrap.indent(text, "> ", lambda l: True)
+    return textwrap.indent(text, "> ", lambda line: True)
 
 
 def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) -> str:
