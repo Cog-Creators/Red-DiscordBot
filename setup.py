@@ -10,7 +10,7 @@ REQUIREMENTS_FOLDER = ROOT_FOLDER / "requirements"
 # Since we're importing `redbot` package, we have to ensure that it's in sys.path.
 sys.path.insert(0, str(ROOT_FOLDER))
 
-from redbot import VersionInfo
+from redbot import VersionInfo  # noqa: E402
 
 version, _ = VersionInfo._get_version(ignore_installed=True)
 

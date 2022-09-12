@@ -1,7 +1,9 @@
 from redbot import _early_init
 
-# this needs to be called as early as possible
-_early_init()
+# this `if` keeps flake8 happy about doing imports after function call (E402)
+if True:
+    # this needs to be called as early as possible
+    _early_init()
 
 import asyncio
 import json
