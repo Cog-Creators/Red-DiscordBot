@@ -718,18 +718,22 @@ class KickBanMixin(MixinMeta):
             return
         except discord.HTTPException:
             log.exception(
-                "{}({}) attempted to softban {}({}), but an error occurred trying to ban them.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%s(%s) attempted to softban %s(%s), but an error occurred trying to ban them.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
             return
         try:
             await guild.unban(member)
         except discord.HTTPException:
             log.exception(
-                "{}({}) attempted to softban {}({}), but an error occurred trying to unban them.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%s(%s) attempted to softban %s(%s), but an error occurred trying to unban them.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
             return
         else:
