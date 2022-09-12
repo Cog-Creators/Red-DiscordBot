@@ -124,10 +124,7 @@ class Tunnel(metaclass=TunnelMeta):
         if content:
             for page in pagify(content):
                 rets.append(await destination.send(page, files=files, embed=embed))
-                if files:
-                    del files
-                if embed:
-                    del embed
+                files = embed = None
         elif embed or files:
             rets.append(await destination.send(files=files, embed=embed))
         return rets
