@@ -273,7 +273,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
             if task.done():
                 try:
-                    r = task.result()
+                    task.result()
                 except Exception:
                     if is_debug:
                         log.exception("Dead task when trying to unmute")

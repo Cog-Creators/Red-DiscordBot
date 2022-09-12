@@ -250,8 +250,6 @@ def bounded_gather(
     TypeError
         When invalid parameters are passed
     """
-    loop = asyncio.get_running_loop()
-
     if semaphore is None:
         if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")

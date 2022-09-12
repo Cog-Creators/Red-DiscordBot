@@ -389,8 +389,8 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         identifier = reader.read_utf().decode()
         is_stream = reader.read_boolean()
         uri = reader.read_utf().decode() if reader.read_boolean() else None
-        source = reader.read_utf().decode()
-        position = reader.read_long()  # noqa: F841 pylint: disable=unused-variable
+        reader.read_utf().decode()  # source
+        reader.read_long()  # position
 
         track_object = {
             "track": track,

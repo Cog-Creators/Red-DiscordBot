@@ -1633,7 +1633,7 @@ class Red(
 
         try:
             await lib.setup(self)
-        except Exception as e:
+        except Exception:
             await self._remove_module_references(lib.__name__)
             await self._call_module_finalizers(lib, name)
             raise
@@ -2175,7 +2175,7 @@ class Red(
             except commands.commands.RedUnhandledAPI:
                 log.warning(f"{stype}.{sname} did not handle data deletion ")
                 failures["unhandled"].append(sname)
-            except Exception as exc:
+            except Exception:
                 log.exception(f"{stype}.{sname} errored when handling data deletion ")
                 failures[stype].append(sname)
 

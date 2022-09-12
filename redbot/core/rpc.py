@@ -90,7 +90,7 @@ class RPC:
             # and isn't subject to a really really stupid but complex
             # issue on windows with catching specific
             # exceptions related to shutdown conditions in asyncio applications.
-            self._started, _discard, self._site = (
+            self._started, _, self._site = (
                 True,
                 await self._runner.setup(),
                 web.TCPSite(self._runner, host="127.0.0.1", port=port, shutdown_timeout=0),

@@ -623,10 +623,7 @@ class Cleanup(commands.Cog):
                 return
 
         # You can always delete your own messages, this is needed to purge
-        can_mass_purge = False
-        if type(author) is discord.Member:
-            me = ctx.guild.me
-            can_mass_purge = ctx.bot_permissions.manage_messages
+        can_mass_purge = type(author) is discord.Member and ctx.bot_permissions.manage_messages
 
         if match_pattern:
 

@@ -2323,7 +2323,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
-            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+            await ctx.bot.wait_for("message", check=pred, timeout=30)
         except asyncio.TimeoutError:
             await ctx.send(_("You took too long to respond."))
             return
@@ -4493,7 +4493,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
         """
-        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
             current_whitelist = await self.bot.get_whitelist(ctx.guild)
@@ -4557,7 +4556,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
         """
-        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
             current_whitelist = await self.bot.get_whitelist(ctx.guild)
