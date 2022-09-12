@@ -201,7 +201,8 @@ def init_events(bot, cli_flags):
             # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
             rich_console.print(
-                f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
+                "Looking for a quick guide on setting up Red? Checkout",
+                Text("https://start.discord.red", style="link https://start.discord.red"),
             )
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)

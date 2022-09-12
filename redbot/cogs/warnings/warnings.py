@@ -142,13 +142,15 @@ class Warnings(commands.Cog):
         if true_or_false:
             await ctx.send(
                 _(
-                    "I will include the name of the moderator who issued the warning when sending a DM to a user."
+                    "I will include the name of the moderator"
+                    " who issued the warning when sending a DM to a user."
                 )
             )
         else:
             await ctx.send(
                 _(
-                    "I will not include the name of the moderator who issued the warning when sending a DM to a user."
+                    "I will not include the name of the moderator"
+                    " who issued the warning when sending a DM to a user."
                 )
             )
 
@@ -393,7 +395,8 @@ class Warnings(commands.Cog):
         if member.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
             return await ctx.send(
                 _(
-                    "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
+                    "The person you're trying to warn is equal or higher than you"
+                    " in the discord hierarchy, you cannot warn them."
                 )
             )
         guild_settings = await self.config.guild(ctx.guild).all()

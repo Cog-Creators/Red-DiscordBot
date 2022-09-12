@@ -50,7 +50,8 @@ MUTE_UNMUTE_ISSUES = {
     "unknown_channel": _("The channel I tried to mute or unmute the user in isn't found."),
     "role_missing": _("The mute role no longer exists."),
     "voice_mute_permission": _(
-        "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
+        "Because I don't have the Move Members permission,"
+        " this will take into effect when the user rejoins."
     ),
     "is_not_voice_mute": _(
         "That user is channel muted in their current voice channel, not just voice muted."
@@ -807,13 +808,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if true_or_false:
             await ctx.send(
                 _(
-                    "I will include the name of the moderator who issued the mute when sending a DM to a user."
+                    "I will include the name of the moderator"
+                    " who issued the mute when sending a DM to a user."
                 )
             )
         else:
             await ctx.send(
                 _(
-                    "I will not include the name of the moderator who issued the mute when sending a DM to a user."
+                    "I will not include the name of the moderator"
+                    " who issued the mute when sending a DM to a user."
                 )
             )
 
@@ -1592,8 +1595,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
                 ret["reason"] = _(MUTE_UNMUTE_ISSUES["permissions_issue_role"])
                 return ret
-            # This is here to prevent the modlog case from happening on role updates
-            # we need to update the cache early so it's there before we receive the member_update event
+            # This is here to prevent the modlog case from happening on role updates.
+            # We need to update the cache early so it's there
+            # before we receive the member_update event.
             if guild.id not in self._server_mutes:
                 self._server_mutes[guild.id] = {}
 

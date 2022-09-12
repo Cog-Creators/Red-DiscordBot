@@ -289,7 +289,8 @@ def parse_cli_flags(args):
         action="store_true",
         dest="rich_logging",
         default=None,
-        help="Forcefully enables the Rich logging handlers. This is normally enabled for supported active terminals.",
+        help="Forcefully enables the Rich logging handlers."
+        " This is normally enabled for supported active terminals.",
     )
     parser.add_argument(
         "--force-disable-rich-logging",

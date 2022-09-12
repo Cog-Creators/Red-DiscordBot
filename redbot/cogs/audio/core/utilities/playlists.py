@@ -625,8 +625,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
-                        "minutes."
+                        "I'm unable to get a track from Lavalink node at the moment,"
+                        " try again in a few minutes."
                     ),
                 )
             except Exception as e:
@@ -654,8 +654,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
-                        "minutes."
+                        "I'm unable to get a track from Lavalink node at the moment,"
+                        " try again in a few minutes."
                     ),
                 )
             except Exception as e:

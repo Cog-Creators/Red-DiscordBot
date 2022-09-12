@@ -430,7 +430,8 @@ class KickBanMixin(MixinMeta):
                 text += "\n".join(errors.values())
             if upgrades:
                 text += _(
-                    "\nFollowing user IDs have been upgraded from a temporary to a permanent ban:\n"
+                    "\nFollowing user IDs have been upgraded"
+                    " from a temporary to a permanent ban:\n"
                 )
                 text += humanize_list(upgrades)
 
@@ -463,7 +464,8 @@ class KickBanMixin(MixinMeta):
 
         for user_id in user_ids:
             if user_id in tempbans:
-                # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                # We need to check if a user is tempbanned here
+                # because otherwise they won't be processed later on.
                 continue
             try:
                 await guild.fetch_ban(discord.Object(user_id))

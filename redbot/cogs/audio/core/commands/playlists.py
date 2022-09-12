@@ -342,7 +342,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Playlist Copied"),
                 description=_(
-                    "Playlist {name} (`{from_id}`) copied from {from_scope} to {to_scope} (`{to_id}`)."
+                    "Playlist {name} (`{from_id}`) copied from {from_scope}"
+                    " to {to_scope} (`{to_id}`)."
                 ).format(
                     name=from_playlist.name,
                     from_id=from_playlist.id,
@@ -1896,8 +1897,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
-                        "minutes."
+                        "I'm unable to get a track from Lavalink node at the moment,"
+                        " try again in a few minutes."
                     ),
                 )
             except Exception as e:

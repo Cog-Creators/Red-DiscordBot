@@ -311,7 +311,8 @@ class Command(CogCommandMixin, DPYCommand):
             for name in (self.name, *self.aliases):
                 if name in RESERVED_COMMAND_NAMES:
                     raise RuntimeError(
-                        f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
+                        f"The name `{name}` cannot be set as a command name."
+                        " It is reserved for internal use."
                     )
         if len(self.qualified_name) > 60:
             raise RuntimeError(

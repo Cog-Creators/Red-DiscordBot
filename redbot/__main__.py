@@ -377,7 +377,8 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         console.print(
             "Red requires all Privileged Intents to be enabled.\n"
             "You can find out how to enable Privileged Intents with this guide:\n"
-            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
+            "https://docs.discord.red"
+            "/en/stable/bot_application_guide.html#enabling-privileged-intents",
             style="red",
         )
         sys.exit(ExitCodes.CONFIGURATION_ERROR)
@@ -492,8 +493,8 @@ def main():
         if cli_flags.no_instance:
             print(
                 "\033[1m"
-                "Warning: The data will be placed in a temporary folder and removed on next system "
-                "reboot."
+                "Warning: The data will be placed in a temporary folder and removed on next system"
+                " reboot."
                 "\033[0m"
             )
             cli_flags.instance_name = "temporary_red"

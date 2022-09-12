@@ -313,7 +313,8 @@ class General(commands.Cog):
                 if ctx.bot.shard_count > 1
                 else ""
             )
-            # Logic from: https://github.com/TrustyJAID/Trusty-cogs/blob/master/serverstats/serverstats.py#L159
+            # Logic from:
+            # https://github.com/TrustyJAID/Trusty-cogs/blob/master/serverstats/serverstats.py#L159
             online_stats = {
                 _("Humans: "): lambda x: not x.bot,
                 _(" • Bots: "): lambda x: x.bot,
@@ -402,7 +403,10 @@ class General(commands.Cog):
             data.add_field(
                 name=_("Misc:"),
                 value=_(
-                    "AFK channel: {afk_chan}\nAFK timeout: {afk_timeout}\nCustom emojis: {emoji_count}\nRoles: {role_count}"
+                    "AFK channel: {afk_chan}\n"
+                    "AFK timeout: {afk_timeout}\n"
+                    "Custom emojis: {emoji_count}\n"
+                    "Roles: {role_count}"
                 ).format(
                     afk_chan=bold(str(guild.afk_channel))
                     if guild.afk_channel

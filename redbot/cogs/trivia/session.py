@@ -121,7 +121,8 @@ class TriviaSession:
             msg = _("An unexpected error occurred in the trivia session.")
             if self.ctx.author.id in self.ctx.bot.owner_ids:
                 msg = _(
-                    "An unexpected error occurred in the trivia session.\nCheck your console or logs for details."
+                    "An unexpected error occurred in the trivia session.\n"
+                    "Check your console or logs for details."
                 )
             asyncio.create_task(self.ctx.send(msg))
             self.stop()

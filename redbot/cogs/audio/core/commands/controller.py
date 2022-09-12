@@ -88,10 +88,19 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         emoji = {
-            "prev": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+            "prev": (
+                "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}"
+                "\N{VARIATION SELECTOR-16}"
+            ),
             "stop": "\N{BLACK SQUARE FOR STOP}\N{VARIATION SELECTOR-16}",
-            "pause": "\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}",
-            "next": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+            "pause": (
+                "\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}"
+                "\N{VARIATION SELECTOR-16}"
+            ),
+            "next": (
+                "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}"
+                "\N{VARIATION SELECTOR-16}"
+            ),
             "close": "\N{CROSS MARK}",
         }
         expected = tuple(emoji.values())

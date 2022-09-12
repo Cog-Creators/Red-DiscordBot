@@ -502,7 +502,8 @@ class Red(
     @uptime.setter
     def uptime(self, value) -> NoReturn:
         raise RuntimeError(
-            "Hey, we're cool with sharing info about the uptime, but don't try and assign to it please."
+            "Hey, we're cool with sharing info about the uptime,"
+            " but don't try and assign to it please."
         )
 
     @property

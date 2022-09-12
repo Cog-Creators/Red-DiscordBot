@@ -129,8 +129,8 @@ class Streams(commands.Cog):
             "5. Copy your client ID and your client secret into:\n"
             "{command}"
             "\n\n"
-            "Note: These tokens are sensitive and should only be used in a private channel "
-            "or in DM with the bot."
+            "Note: These tokens are sensitive and should only be used in a private channel"
+            " or in DM with the bot."
         ).format(
             link="https://dev.twitch.tv/console/apps",
             command=inline(

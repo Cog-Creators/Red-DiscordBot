@@ -491,7 +491,9 @@ class Admin(commands.Cog):
             if not self.pass_user_hierarchy_check(ctx, role):
                 await ctx.send(
                     _(
-                        "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                        "I cannot let you remove {role.name} from being a selfrole"
+                        " because that role is higher than or equal to your highest role"
+                        " in the Discord hierarchy."
                     ).format(role=role)
                 )
                 return
@@ -531,7 +533,9 @@ class Admin(commands.Cog):
                 if not self.pass_user_hierarchy_check(ctx, role):
                     await ctx.send(
                         _(
-                            "I cannot clear the selfroles because the selfrole '{role.name}' is higher than or equal to your highest role in the Discord hierarchy."
+                            "I cannot clear the selfroles because the selfrole"
+                            " '{role.name}' is higher than or equal to your highest role"
+                            " in the Discord hierarchy."
                         ).format(role=role)
                     )
                     return
@@ -558,8 +562,9 @@ class Admin(commands.Cog):
         if await self.config.serverlocked():
             if len(self.bot.guilds) == 1:  # will be 0 once left
                 log.warning(
-                    f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock. You can "
-                    "temporarily disable serverlock by starting up the bot with the --no-cogs flag."
+                    f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock. You can"
+                    " temporarily disable serverlock by starting up the bot with"
+                    " the --no-cogs flag."
                 )
             else:
                 log.info(f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock.")

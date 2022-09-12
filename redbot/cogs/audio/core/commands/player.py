@@ -646,7 +646,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not isinstance(query, (str, list, Query)):
             raise RuntimeError(
-                f"Expected 'query' to be a string, list or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
+                "Expected 'query' to be a string, list or Query object but received:"
+                f" {type(query)} - this is an unexpected argument type, please report it."
             )
 
         async def _search_menu(

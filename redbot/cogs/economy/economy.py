@@ -301,7 +301,8 @@ class Economy(commands.Cog):
         credits_name = await bank.get_currency_name(ctx.guild)
         if await bank.is_global():  # Role payouts will not be used
 
-            # Gets the latest time the user used the command successfully and adds the global payday time
+            # Gets the latest time the user used the command successfully
+            # and adds the global payday time
             next_payday = (
                 await self.config.user(author).next_payday() + await self.config.PAYDAY_TIME()
             )
@@ -624,7 +625,8 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n"
+                        "{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
                         old_balance=humanize_number(then),
