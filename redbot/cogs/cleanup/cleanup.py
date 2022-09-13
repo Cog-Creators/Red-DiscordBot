@@ -438,19 +438,19 @@ class Cleanup(commands.Cog):
         channel = ctx.channel
         author = ctx.author
         try:
-            mone = await channel.fetch_message(one)
+            after = await channel.fetch_message(one)
         except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=one))
             )
         try:
-            mtwo = await channel.fetch_message(two)
+            before = await channel.fetch_message(two)
         except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=two))
             )
         to_delete = await self.get_messages_for_deletion(
-            channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
+            channel=channel, before=before, after=after, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
         reason = "{}({}) deleted {} messages in channel #{}.".format(

@@ -191,7 +191,7 @@ class KickBanMixin(MixinMeta):
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
-                    "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
+                    "{}({}) {}need {}({}), deleting {} days worth of messages.".format(
                         author.name, author.id, ban_type, username, user.id, str(days)
                     )
                 )

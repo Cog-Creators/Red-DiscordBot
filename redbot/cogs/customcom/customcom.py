@@ -560,7 +560,7 @@ class CustomCommands(commands.Cog):
         results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
-            # We need a space before the newline incase the CC preview ends in link (GH-2295)
+            # We need a space before the newline in case the CC preview ends in link (GH-2295)
             content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
             pages = list(pagify(content, page_length=1024))
             embed_pages = []

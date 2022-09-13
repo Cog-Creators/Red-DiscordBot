@@ -2158,7 +2158,7 @@ localallowlist clear
 
 Clears the allowlist.
 
-This disables the local allowlist and clears all entires.
+This disables the local allowlist and clears all entries.
 
 **Example:**
     - ``[p]localallowlist clear``

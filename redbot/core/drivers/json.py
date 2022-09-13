@@ -229,7 +229,7 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
     If a windows user ends up with tons of temp files, they should consider hosting on
     something POSIX compatible, or using a different backend instead.
 
-    Most users wont encounter this issue, but with high write volumes,
+    Most users won't encounter this issue, but with high write volumes,
     without the fsync on both the temp file, and after the replace on the directory,
     There's no real durability or atomicity guarantee from the filesystem.
 

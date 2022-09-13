@@ -198,7 +198,7 @@ class YoutubeStream(Stream):
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
         log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
         # This is technically redundant since we have the
-        # info from the RSS ... but incase you don't wanna deal with fully rewritting the
+        # info from the RSS ... but in case you don't wanna deal with fully rewriting the
         # code for this part, as this is only a 2 quota query.
         if self.livestreams:
             params = {

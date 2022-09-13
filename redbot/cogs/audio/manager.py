@@ -495,7 +495,7 @@ class ServerManager:
                         should_retry=False,
                     )
                 elif 400 <= response.status < 600:
-                    # Other bad responses should be raised but we should retry just incase
+                    # Other bad responses should be raised but we should retry just in case
                     raise LavalinkDownloadFailed(response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")

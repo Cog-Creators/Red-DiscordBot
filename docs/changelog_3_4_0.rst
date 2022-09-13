@@ -1456,7 +1456,7 @@ Core Bot
 - Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
 - ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 - Added ``[p]helpset showsettings`` command (:issue:`4013`, :issue:`4022`)
-- Updated Red's emoji usage to ensure consistent rendering accross different devices (:issue:`4106`, :issue:`4105`, :issue:`4127`)
+- Updated Red's emoji usage to ensure consistent rendering across different devices (:issue:`4106`, :issue:`4105`, :issue:`4127`)
 - Whitelist and blacklist are now called allowlist and blocklist. Old names have been left as aliases (:issue:`4138`)
 
 .. _important-340-2:
@@ -1517,7 +1517,7 @@ Breaking changes
 
     - see `discord.AllowedMentions` and ``allowed_mentions`` kwarg of ``.send()`` methods, if your cog requires to mention roles or ``@everyone/@here``
 
-- `Context.maybe_send_embed()` now supresses all mentions, including user mentions (:issue:`4192`)
+- `Context.maybe_send_embed()` now suppresses all mentions, including user mentions (:issue:`4192`)
 - The default value of the ``filter`` keyword argument has been changed to ``None`` (:issue:`3845`)
 - Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`__ (:issue:`3605`, :issue:`3679`)
 - Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)

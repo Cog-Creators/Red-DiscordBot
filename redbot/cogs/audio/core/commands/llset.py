@@ -292,7 +292,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Setting Changed"),
                 description=_(
                     "External Lavalink node will no longer connect using the secured "
-                    "{secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
+                    "{secured_protocol} protocol and will use {unsecured_protocol} instead .\n\n"
                     "Run `{p}{cmd}` for it to take effect."
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
                 unsecured_protocol=inline("ws://"),

@@ -956,7 +956,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     name=name, permissions=perms, reason=_("Mute role setup")
                 )
                 await self.config.guild(ctx.guild).mute_role.set(role.id)
-                # save the role early incase of issue later
+                # save the role early in case of issue later
             except discord.errors.Forbidden:
                 return await ctx.send(_("I could not create a muted role in this server."))
             errors = []
@@ -1227,7 +1227,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 if success["success"]:
                     success_list.append(user)
                     if success["channels"]:
-                        # incase we only muted a user in 1 channel not all
+                        # in case we only muted a user in 1 channel not all
                         issue_list.append(success)
                     await modlog.create_case(
                         self.bot,
@@ -1574,7 +1574,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "user": user,
         }
         # TODO: This typing is ugly and should probably be an object on its own
-        # along with this entire method and some othe refactorization
+        # along with this entire method and some other refactorization
         # v1.0.0 is meant to look ugly right :')
         if permissions.administrator:
             ret["reason"] = _(MUTE_UNMUTE_ISSUES["is_admin"])

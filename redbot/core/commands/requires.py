@@ -303,7 +303,7 @@ class Requires:
         required `privilege_level` _or_ `user_perms`.
     bot_perms : discord.Permissions
         The required bot permissions for a command to be executed. This
-        is not overrideable by other conditions.
+        is not overridable by other conditions.
 
     """
 
@@ -637,7 +637,7 @@ class Requires:
 
 
 def permissions_check(predicate: CheckPredicate):
-    """An overwriteable version of `discord.ext.commands.check`.
+    """An overwritable version of `discord.ext.commands.check`.
 
     This has the same behaviour as `discord.ext.commands.check`,
     however this check can be ignored if the command is allowed

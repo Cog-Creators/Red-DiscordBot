@@ -39,7 +39,7 @@ If there are multiple authors, we can separate them with commas.
 
 .. code-block:: yaml
 
-    AUTHOR: Red, Rojo, Rouge
+    AUTHOR: Red, Rojo, Twentysix
 
 ---------------------
 Questions and Answers

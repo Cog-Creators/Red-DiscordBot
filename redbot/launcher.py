@@ -1,5 +1,5 @@
 # This file is retained in it's slimmest form which handles autorestart for users on
-# windows and osx until we have proper autorestart docs for theses oses
+# windows and osx until we have proper autorestart docs for these oses
 # no new features will be added to this file
 # issues in this file are to be met with removal, not with fixes.
 
