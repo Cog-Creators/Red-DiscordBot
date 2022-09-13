@@ -1,0 +1,65 @@
+default_language_version:
+  python: python3.8
+exclude: ^redbot/vendored/
+repos:
+  - repo: https://github.com/psf/black
+    # The `refs/tags/<tag>:refs/tags/<tag>` is needed for black's required-version to work:
+    # https://github.com/psf/black/issues/2493#issuecomment-1081987650
+    rev: 'refs/tags/22.12.0:refs/tags/22.12.0'
+    hooks:
+      - id: black
+  - repo: https://github.com/Pierre-Sassoulas/black-disable-checker
+    rev: 'v1.1.3'
+    hooks:
+      - id: black-disable-checker
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.226'
+    hooks:
+      - id: ruff
+        exclude: ^tests/
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: end-of-file-fixer
+        # po files are auto-generated so let's not touch them
+        exclude_types: [pofile]
+
+      # Trailing whitespace is evil
+      - id: trailing-whitespace
+
+      # Syntax validation
+      - id: check-ast
+      - id: check-json
+      - id: check-toml
+      # can be switched to yamllint when this issue gets resolved:
+      # https://github.com/adrienverge/yamllint/issues/238
+      - id: check-yaml
+
+      # JSON auto-formatter
+      - id: pretty-format-json
+        args:
+          - "--autofix"
+          - "--indent=4"
+          - "--no-sort-keys"
+
+      # Checks for git-related issues
+      - id: check-case-conflict
+      - id: check-merge-conflict
+
+      # Prevent accidental commits to V3/develop
+      - id: no-commit-to-branch
+        args:
+          - "--branch"
+          - "V3/develop"
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.2
+    hooks:
+      - id: codespell
+        exclude_types: [pofile]
+        args:
+          - "-C=1"

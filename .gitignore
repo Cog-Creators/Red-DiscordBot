@@ -142,9 +142,6 @@ ENV/
 # pytest
 .pytest_cache/
 
-# Pre-commit hooks
-/.pre-commit-config.yaml
-
 ### macOS template
 # General
 .DS_Store

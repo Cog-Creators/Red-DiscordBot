@@ -38,6 +38,9 @@
   <a href="https://github.com/charliermarsh/ruff">
     <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json" alt="Linter: Ruff">
   </a>
+  <a href="https://github.com/pre-commit/pre-commit">
+    <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" alt="We use pre-commit!">
+  </a>
   <a href="http://makeapullrequest.com">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
   </a>
