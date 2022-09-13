@@ -63,7 +63,7 @@ dependencies = [
 dynamic = ["version", "requires-python"]
 
 [project.optional-dependencies]
-docs = [
+doc = [
     'alabaster==0.7.12',
     'certifi==2021.5.30',
     'charset-normalizer==2.0.4',
@@ -120,7 +120,7 @@ all = [
     'Red-DiscordBot[postgres]',
 ]
 dev = [
-    'Red-DiscordBot[all,docs,style,test]',
+    'Red-DiscordBot[all,doc,style,test]',
 ]
 
 [project.urls]
