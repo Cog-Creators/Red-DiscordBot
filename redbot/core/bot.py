@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import inspect
 import logging
@@ -58,7 +59,7 @@ from .utils._internal_utils import send_to_owners_with_prefix_replaced
 if TYPE_CHECKING:
     from discord.ext.commands.hybrid import CommandCallback, ContextT, P
     from discord import app_commands
-    from discord.utils import MISSING
+
 
 _T = TypeVar("_T")
 
@@ -1809,7 +1810,7 @@ class Red(
 
     def hybrid_command(
         self,
-        name: Union[str, app_commands.locale_str] = MISSING,
+        name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
         with_app_command: bool = True,
         *args: Any,
         **kwargs: Any,
@@ -1835,7 +1836,7 @@ class Red(
 
     def hybrid_group(
         self,
-        name: Union[str, app_commands.locale_str] = MISSING,
+        name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
         with_app_command: bool = True,
         *args: Any,
         **kwargs: Any,
