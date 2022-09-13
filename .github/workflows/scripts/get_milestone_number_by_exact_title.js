@@ -15,7 +15,7 @@ module.exports = (async function ({github, context}) {
           $repo_owner: String!
           $repo_name: String!
           $milestone_title: String!
-        ) { 
+        ) {
           repository(owner:$repo_owner name:$repo_name) {
             milestones(query:$milestone_title states:OPEN first:100) {
               nodes {

@@ -190,7 +190,7 @@ the content and author of the message are replaced with the given arguments.
 * ``<user>``: The member to mock. |user-input-quotes|
 * ``<content>``: The content used for the message.
 
-.. note:: 
+.. note::
 
         If ``content`` isn't passed, the message needs to contain embeds, attachments,
         or anything else that makes the message non-empty.
@@ -205,7 +205,7 @@ repl
 
 .. code-block:: none
 
-    [p]repl 
+    [p]repl
 
 **Description**
 

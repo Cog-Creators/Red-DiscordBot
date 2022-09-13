@@ -17,20 +17,20 @@ Please read the following prior to updating.
   If you need help updating, our install docs will cover everything you need to know to update.
 
   .. note::
-  
+
     You may get a notification from the downloader cog about needing to refetch dependencies
     This is expected, and it will walk you through everything and do as much as it can for you.
 
 
 - 3.2 dropped support for the MongoDB driver
-  
+
   - If you were not using the MongoDB driver, this does not effect you.
   - If you were using a 3rd party cog which required MongoDB, it probably still does.
   - If you were using the MongoDB driver, prior to launching your instance,
     you will need to run the following commands to convert
 
       .. code::
-        
+
         python -m pip install dnspython~=1.16.0 motor~=2.0.0 pymongo~=3.8.0
         redbot-setup convert [instancename] json
 
@@ -44,7 +44,7 @@ Please read the following prior to updating.
   - We've supplied cog creators with additional tools
 
 
-.. note:: 
-    
+.. note::
+
   The full list of changes is much longer than we can include here,
   but our changelog has the fine details.

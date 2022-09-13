@@ -91,7 +91,7 @@ to keep it in a location which is easy to type out the path to. From now, we'll 
 
 Start with opening a command prompt (open Start, search for "command prompt", then click it).
 
-.. note:: 
+.. note::
 
     You shouldn't run command prompt as administrator when creating your virtual environment, or
     running Red.

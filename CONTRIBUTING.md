@@ -55,7 +55,7 @@ The following requirements must be installed prior to setting up:
  - Python 3.8.1 or greater
  - git
  - pip
- 
+
 If you're not on Windows, you should also have GNU make installed, and you can optionally install [pyenv](https://github.com/pyenv/pyenv), which can help you run tests for different python versions.
 
 1. Fork and clone the repository to a directory on your local machine.

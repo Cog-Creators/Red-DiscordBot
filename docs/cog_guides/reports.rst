@@ -94,7 +94,7 @@ reportset
 
 .. code-block:: none
 
-    [p]reportset 
+    [p]reportset
 
 **Description**
 
@@ -134,8 +134,8 @@ reportset toggle
 
 .. code-block:: none
 
-    [p]reportset toggle 
+    [p]reportset toggle
 
 **Description**
 
-Enable or disable reporting for this server.  
+Enable or disable reporting for this server.

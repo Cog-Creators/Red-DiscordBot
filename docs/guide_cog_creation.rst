@@ -58,7 +58,7 @@ a text editor or IDE (examples include `Sublime Text 3 <https://www.sublimetext.
 `Visual Studio Code <https://code.visualstudio.com/>`_, `Atom <https://atom.io/>`_, and
 `PyCharm <http://www.jetbrains.com/pycharm/>`_).
 
-.. attention:: 
+.. attention::
     While you can intentionally override Red's cogs/extensions, this may break things.
     We would prefer if people wanted custom behavior
     for any core cog/extension, an issue and/or PR is made
@@ -128,8 +128,8 @@ have successfully created a cog!
 
 .. note:: **Package/Folder layout**
 
-    You must make sure you structure your local path correctly or 
-    you get an error about missing the setup function. As cogs are 
+    You must make sure you structure your local path correctly or
+    you get an error about missing the setup function. As cogs are
     considered packages, they are each contained within separate folders.
     The folder you need to add using :code:`[p]addpath` is the parent
     folder of these package folders. Below is an example
@@ -146,11 +146,11 @@ have successfully created a cog!
         ---- coolcog
         ------ __init__.py
         ------ coolcog.py
-    
+
     You would then use :code:`[p]addpath D:\red-cogs` to add the path
     and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
     to load them
-    
+
     You can also take a look at `our cookiecutter <https://github.com/Cog-Creators/cog-cookiecutter>`_, for help creating the right structure.
 
 -------------------

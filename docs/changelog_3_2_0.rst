@@ -28,7 +28,7 @@ Help Formatter
 
 - ``[botname]`` is now replaced with the bot's display name in help text.
 - New features added for cog creators to further customize help behavior.
-  
+
   - Check out our command reference for details on new ``format_help_for_context`` method.
 - Embed settings are now consistent.
 

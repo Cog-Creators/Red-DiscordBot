@@ -40,9 +40,9 @@ checks:
 plugins:
   bandit:
     enabled: false
-  radon: 
+  radon:
     enabled: false
-    config: 
+    config:
       threshold: "D"
   duplication:
     enabled: false

@@ -39,7 +39,7 @@ activemutes
 
 .. code-block:: none
 
-    [p]activemutes 
+    [p]activemutes
 
 **Description**
 
@@ -113,7 +113,7 @@ muteset
 
 .. code-block:: none
 
-    [p]muteset 
+    [p]muteset
 
 **Description**
 
@@ -241,8 +241,8 @@ Sets the role to be applied when muting a user.
 If no role is setup the bot will attempt to mute a user by setting
 channel overwrites in all channels to prevent the user from sending messages.
 
-.. Note:: 
-    
+.. Note::
+
     If no role is setup a user may be able to leave the server
     and rejoin no longer being muted.
 
@@ -284,7 +284,7 @@ muteset settings
 
 .. code-block:: none
 
-    [p]muteset settings 
+    [p]muteset settings
 
 .. tip:: Alias: ``muteset showsettings``
 

@@ -40,7 +40,7 @@ actionlist
 
 .. code-block:: none
 
-    [p]actionlist 
+    [p]actionlist
 
 **Description**
 
@@ -56,7 +56,7 @@ mywarnings
 
 .. code-block:: none
 
-    [p]mywarnings 
+    [p]mywarnings
 
 **Description**
 
@@ -74,7 +74,7 @@ reasonlist
 
 .. code-block:: none
 
-    [p]reasonlist 
+    [p]reasonlist
 
 **Description**
 
@@ -140,7 +140,7 @@ warnaction
 
 .. code-block:: none
 
-    [p]warnaction 
+    [p]warnaction
 
 **Description**
 
@@ -231,7 +231,7 @@ warningset
 
 .. code-block:: none
 
-    [p]warningset 
+    [p]warningset
 
 **Description**
 
@@ -349,7 +349,7 @@ warnreason
 
 .. code-block:: none
 
-    [p]warnreason 
+    [p]warnreason
 
 **Description**
 
@@ -393,7 +393,7 @@ warnreason delete
 .. code-block:: none
 
     [p]warnreason delete <reason_name>
-    
+
 **Description**
 
 Delete a warning reason.

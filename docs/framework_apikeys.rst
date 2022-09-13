@@ -14,7 +14,7 @@ Twitch has a client ID and client secret so a user should be asked to input
 
 ``[p]set api twitch client_id,1234ksdjf client_secret,1234aldlfkd``
 
-and when accessed in the code it should be done by 
+and when accessed in the code it should be done by
 
 .. code-block:: python
 
@@ -26,7 +26,7 @@ Example:
 
 ``[p]set api youtube api_key,1234ksdjf``
 
-and when accessed in the code it should be done by 
+and when accessed in the code it should be done by
 
 .. code-block:: python
 

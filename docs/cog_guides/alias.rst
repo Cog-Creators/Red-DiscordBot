@@ -158,7 +158,7 @@ Here are more examples:
 
 *   *   Full command: ``[p]repo add SinbadCogs
         https://github.com/mikeshardmind/SinbadCogs v3``
-    
+
     *   Alias: ``[p]alias add newrepo repo add {2} https://github.com/{1}/{2}``
     *   Invoked with alias: ``[p]newrepo mikeshardmind SinbadCogs v3``
 
