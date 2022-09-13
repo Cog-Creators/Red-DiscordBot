@@ -1,0 +1,23 @@
+[flake8]
+max-line-length = 99
+select = C,E,F,W
+# E203 whitespace before ':'
+#   incompatible with Black
+# E501 line too long
+#   This would be good to have to automatically check string length as Black doesn't do it.
+#   However, this includes docstrings and Red's handling of command docstrings
+#   sometimes requires long lines to be shown properly in help output.
+# E731 do not assign a lambda expression, use a def - while
+#   while it's generally a bad practice, we do use these a bit with i18n stuff
+# W503 line break before binary operator
+#   incompatible with Black
+ignore = E203, E501, E731, W503
+# excluding tests due to pytest's magic
+# might fix at some point by importing fixtures in conftest.py
+extend-exclude=
+    .venv/,
+    .venvs/,
+    venv/,
+    venvs/,
+    redbot/vendored/,
+    tests/,
