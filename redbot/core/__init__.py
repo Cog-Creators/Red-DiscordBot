@@ -1,6 +1,6 @@
 import discord as _discord
 
-from .. import __version__, version_info, VersionInfo
+from .. import VersionInfo, __version__, version_info
 from .config import Config
 
 __all__ = ["Config", "__version__", "version_info", "VersionInfo"]

@@ -1,4 +1,5 @@
 import pytest
+
 from redbot.core import bank as bank_module
 
 __all__ = ["bank"]

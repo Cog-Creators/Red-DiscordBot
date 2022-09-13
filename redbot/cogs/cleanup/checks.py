@@ -1,5 +1,5 @@
 from redbot.core.commands import Context, permissions_check
-from redbot.core.utils.mod import is_mod_or_superior, check_permissions
+from redbot.core.utils.mod import check_permissions, is_mod_or_superior
 
 
 def check_self_permissions():

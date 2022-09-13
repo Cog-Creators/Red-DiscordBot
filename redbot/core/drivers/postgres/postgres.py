@@ -2,7 +2,7 @@ import getpass
 import json
 import sys
 from pathlib import Path
-from typing import Optional, Any, AsyncIterator, Tuple, Union, Callable, List
+from typing import Any, AsyncIterator, Callable, List, Optional, Tuple, Union
 
 try:
     # pylint: disable=import-error
@@ -11,7 +11,7 @@ except ModuleNotFoundError:
     asyncpg = None
 
 from ... import errors
-from ..base import BaseDriver, IdentifierData, ConfigCategory
+from ..base import BaseDriver, ConfigCategory, IdentifierData
 from ..log import log
 
 __all__ = ["PostgresDriver"]

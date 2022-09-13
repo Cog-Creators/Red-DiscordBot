@@ -2,21 +2,20 @@ from __future__ import annotations
 
 import asyncio
 import datetime
-
 from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import (
-    Set,
     TYPE_CHECKING,
     Any,
+    Dict,
     List,
     Mapping,
     MutableMapping,
     Optional,
+    Set,
     Tuple,
     Union,
-    Dict,
 )
 
 import aiohttp

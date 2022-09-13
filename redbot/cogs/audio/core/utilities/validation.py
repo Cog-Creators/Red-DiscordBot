@@ -1,5 +1,4 @@
 import re
-
 from typing import Final, List, Optional, Pattern, Set, Union
 from urllib.parse import urlparse
 

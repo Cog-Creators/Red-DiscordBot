@@ -1,5 +1,6 @@
-from copy import copy
 import asyncio
+from copy import copy
+
 import discord
 
 from redbot.core import Config, commands

@@ -1,9 +1,9 @@
 import asyncio
-import re
 import random
+import re
 from datetime import datetime, timedelta
 from inspect import Parameter
-from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
+from typing import Dict, Iterable, List, Literal, Mapping, Set, Tuple, Union
 from urllib.parse import quote_plus
 
 import discord
@@ -11,8 +11,8 @@ from rapidfuzz import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import menus, AsyncIter
-from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
+from redbot.core.utils import AsyncIter, menus
+from redbot.core.utils.chat_formatting import box, escape, humanize_list, pagify
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)

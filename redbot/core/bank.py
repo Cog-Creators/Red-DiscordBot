@@ -3,17 +3,17 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Union, List, Optional, TYPE_CHECKING, Literal
 from functools import wraps
+from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
 import discord
 
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
-from . import Config, errors, commands
-from .i18n import Translator
 
+from . import Config, commands, errors
 from .errors import BankPruneError
+from .i18n import Translator
 
 if TYPE_CHECKING:
     from .bot import Red

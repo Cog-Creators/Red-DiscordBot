@@ -3,9 +3,9 @@ from typing import Optional
 
 import aiohttp
 
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core import checks, Config, commands
+from redbot.core import Config, checks, commands
 from redbot.core.commands import UserInputOptional
+from redbot.core.i18n import Translator, cog_i18n
 
 _ = Translator("Image", __file__)
 

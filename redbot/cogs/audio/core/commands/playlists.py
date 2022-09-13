@@ -4,7 +4,6 @@ import math
 import os
 import tarfile
 import time
-
 from io import BytesIO
 from pathlib import Path
 from typing import cast

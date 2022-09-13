@@ -1,11 +1,11 @@
 import logging
 import re
-from typing import Union, Dict
 from datetime import timedelta
+from typing import Dict, Union
 
 from discord.ext.commands.converter import Converter
-from redbot.core import commands
-from redbot.core import i18n
+
+from redbot.core import commands, i18n
 
 log = logging.getLogger("red.cogs.mutes")
 

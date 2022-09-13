@@ -3,11 +3,10 @@ import logging.handlers
 import pathlib
 import re
 import sys
-
-from typing import List, Tuple, Optional
-from logging import LogRecord
 from datetime import datetime  # This clearly never leads to confusion...
+from logging import LogRecord
 from os import isatty
+from typing import List, Optional, Tuple
 
 import rich
 from pygments.styles.monokai import MonokaiStyle  # DEP-WARN
@@ -30,7 +29,6 @@ from rich.syntax import ANSISyntaxTheme, PygmentsSyntaxTheme  # DEP-WARN
 from rich.text import Text
 from rich.theme import Theme
 from rich.traceback import PathHighlighter, Traceback  # DEP-WARN
-
 
 MAX_OLD_LOGS = 8
 

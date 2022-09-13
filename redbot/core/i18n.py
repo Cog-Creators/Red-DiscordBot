@@ -3,15 +3,14 @@ from __future__ import annotations
 import contextlib
 import functools
 import io
-import os
 import logging
-import discord
-
-from pathlib import Path
-from typing import Callable, TYPE_CHECKING, Union, Dict, Optional
+import os
 from contextvars import ContextVar
+from pathlib import Path
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Union
 
 import babel.localedata
+import discord
 from babel.core import Locale
 
 from . import commands

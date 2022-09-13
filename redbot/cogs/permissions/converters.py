@@ -1,6 +1,6 @@
 import itertools
 import re
-from typing import NamedTuple, Union, Optional
+from typing import NamedTuple, Optional, Union
 
 import discord
 

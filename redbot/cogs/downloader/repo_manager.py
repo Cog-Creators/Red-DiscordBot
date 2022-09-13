@@ -5,14 +5,13 @@ import functools
 import keyword
 import os
 import pkgutil
+import re
 import shlex
 import shutil
-import re
-import yarl
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from subprocess import run as sp_run, PIPE, CompletedProcess
 from string import Formatter
+from subprocess import PIPE, CompletedProcess, run as sp_run
 from sys import executable
 from typing import (
     Any,
@@ -28,9 +27,11 @@ from typing import (
 )
 
 import discord
-from redbot.core import data_manager, commands, Config
-from redbot.core.utils._internal_utils import safe_delete
+import yarl
+
+from redbot.core import Config, commands, data_manager
 from redbot.core.i18n import Translator
+from redbot.core.utils._internal_utils import safe_delete
 
 from . import errors
 from .installable import Installable, InstallableType, InstalledModule

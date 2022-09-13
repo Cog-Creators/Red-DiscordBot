@@ -1,5 +1,5 @@
-from importlib.abc import MetaPathFinder
 import warnings
+from importlib.abc import MetaPathFinder
 
 
 class SharedLibDeprecationWarning(DeprecationWarning):

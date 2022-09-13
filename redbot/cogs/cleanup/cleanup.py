@@ -5,13 +5,14 @@ from typing import Callable, List, Optional, Set, Union
 
 import discord
 
-from redbot.core import checks, commands, Config
+from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.commands import RawUserIdConverter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
-from redbot.core.utils.mod import slow_deletion, mass_purge
+from redbot.core.utils.mod import mass_purge, slow_deletion
 from redbot.core.utils.predicates import MessagePredicate
+
 from .checks import check_self_permissions
 from .converters import PositiveInt, RawMessageIds, positive_int
 

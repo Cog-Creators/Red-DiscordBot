@@ -4,26 +4,27 @@ import os
 import re
 import shutil
 import sys
-from pathlib import Path
-from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List, cast
 from collections import defaultdict
+from pathlib import Path
+from typing import Collection, Dict, Iterable, List, Optional, Set, Tuple, Union, cast
 
 import discord
-from redbot.core import checks, commands, Config, version_info as red_version_info
+
+from redbot.core import Config, checks, commands, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import can_user_react_in
-from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
+from redbot.core.utils.chat_formatting import box, humanize_list, inline, pagify
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import errors
 from .checks import do_install_agreement
 from .converters import InstalledCog
-from .installable import InstallableType, Installable, InstalledModule
+from .installable import Installable, InstallableType, InstalledModule
 from .log import log
-from .repo_manager import RepoManager, Repo
+from .repo_manager import Repo, RepoManager
 
 _ = Translator("Downloader", __file__)
 

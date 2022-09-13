@@ -3,7 +3,6 @@ import platform
 import re
 import sys
 import time
-
 from enum import Enum, unique
 from pathlib import Path
 from typing import MutableMapping, Tuple, Union

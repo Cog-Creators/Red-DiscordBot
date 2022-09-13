@@ -1,9 +1,10 @@
-from typing import Tuple, Dict, Optional, List, Union
 from re import findall
+from typing import Dict, List, Optional, Tuple, Union
 
 import discord
 from discord.ext.commands.view import StringView  # DEP-WARN
-from redbot.core import commands, Config
+
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 

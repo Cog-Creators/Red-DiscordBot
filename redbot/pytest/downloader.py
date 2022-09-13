@@ -1,13 +1,13 @@
+import json
+import shutil
+import subprocess as sp
 from collections import namedtuple
 from pathlib import Path
-import json
-import subprocess as sp
-import shutil
 
 import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo
 from redbot.cogs.downloader.installable import Installable, InstalledModule
+from redbot.cogs.downloader.repo_manager import Repo, RepoManager
 
 __all__ = [
     "GIT_VERSION",

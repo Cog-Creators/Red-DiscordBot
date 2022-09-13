@@ -3,7 +3,6 @@ import contextlib
 import os
 import tarfile
 from pathlib import Path
-
 from typing import Union
 
 import discord

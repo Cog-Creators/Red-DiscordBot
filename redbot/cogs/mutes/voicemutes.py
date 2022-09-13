@@ -1,17 +1,18 @@
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Tuple
-from datetime import timezone, timedelta, datetime
-from .abc import MixinMeta
 
 import discord
+
 from redbot.core import commands, i18n, modlog
 from redbot.core.utils.chat_formatting import (
-    humanize_timedelta,
-    humanize_list,
-    pagify,
     format_perms_list,
+    humanize_list,
+    humanize_timedelta,
+    pagify,
 )
 from redbot.core.utils.mod import get_audit_reason
 
+from .abc import MixinMeta
 from .converters import MuteTime
 
 _ = i18n.Translator("Mutes", __file__)

@@ -4,7 +4,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 GITHUB_OUTPUT = os.environ["GITHUB_OUTPUT"]
 REQUIREMENTS_FOLDER = Path(__file__).parents[3].absolute() / "requirements"
 os.chdir(REQUIREMENTS_FOLDER)

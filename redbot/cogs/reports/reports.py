@@ -1,20 +1,20 @@
-import logging
 import asyncio
-from typing import Union, List, Literal
-from datetime import timedelta
-from copy import copy
 import contextlib
+import logging
+from copy import copy
+from datetime import timedelta
+from typing import List, Literal, Union
+
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import pagify, box
-from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
+from redbot.core.utils import AsyncIter
+from redbot.core.utils.antispam import AntiSpam
+from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
-
 
 _ = Translator("Reports", __file__)
 

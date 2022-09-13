@@ -1,14 +1,15 @@
 import asyncio
-import discord
 import re
-from typing import Union, Set, Literal, Optional
+from typing import Literal, Optional, Set, Union
 
-from redbot.core import checks, Config, modlog, commands
+import discord
+
+from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
-from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import pagify, humanize_list
+from redbot.core.utils.chat_formatting import humanize_list, pagify
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Filter", __file__)
 

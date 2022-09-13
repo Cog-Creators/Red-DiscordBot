@@ -1,7 +1,8 @@
-import pytest
-from redbot.core.rpc import RPC, RPCMixin
-
 from unittest.mock import MagicMock
+
+import pytest
+
+from redbot.core.rpc import RPC, RPCMixin
 
 __all__ = ["rpc", "rpcmixin", "cog", "existing_func", "existing_multi_func"]
 

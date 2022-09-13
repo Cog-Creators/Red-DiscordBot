@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import math
 from pathlib import Path
-
 from typing import MutableMapping, Optional
 
 import discord

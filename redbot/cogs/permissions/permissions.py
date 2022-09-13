@@ -2,25 +2,26 @@ import asyncio
 import io
 import textwrap
 from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, Literal, cast
+from typing import Any, Dict, ItemsView, Iterator, List, Literal, Optional, Tuple, Union, cast
 
 import discord
 import yaml
-from schema import And, Or, Schema, SchemaError, Optional as UseOptional
+from schema import And, Optional as UseOptional, Or, Schema, SchemaError
+
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import can_user_react_in
 from redbot.core.utils.chat_formatting import box, error, success
 from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from .converters import (
-    CogOrCommand,
-    RuleType,
     ClearableRuleType,
-    GuildUniqueObjectFinder,
+    CogOrCommand,
     GlobalUniqueObjectFinder,
+    GuildUniqueObjectFinder,
+    RuleType,
 )
 
 _ = Translator("Permissions", __file__)

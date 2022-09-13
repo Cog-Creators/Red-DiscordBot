@@ -1,5 +1,6 @@
-from .alias import Alias
 from redbot.core.bot import Red
+
+from .alias import Alias
 
 
 async def setup(bot: Red) -> None:

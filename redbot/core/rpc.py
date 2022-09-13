@@ -1,12 +1,11 @@
 import asyncio
+import logging
 import sys
 from typing import Optional
 
 from aiohttp import web
 from aiohttp_json_rpc import JsonRpc
 from aiohttp_json_rpc.rpc import JsonRpcMethod
-
-import logging
 
 from redbot.core.cli import ExitCodes
 

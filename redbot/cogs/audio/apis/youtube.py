@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-
 from typing import TYPE_CHECKING, Mapping, Optional, Union
 
 import aiohttp

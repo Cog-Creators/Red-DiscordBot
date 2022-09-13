@@ -19,7 +19,7 @@ from typing import (
 
 import discord
 
-from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
+from .drivers import BaseDriver, ConfigCategory, IdentifierData, get_driver
 
 __all__ = ["Config", "get_latest_confs", "migrate"]
 

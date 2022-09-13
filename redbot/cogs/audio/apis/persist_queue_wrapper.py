@@ -2,7 +2,6 @@ import concurrent
 import json
 import time
 from pathlib import Path
-
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, List, Union
 

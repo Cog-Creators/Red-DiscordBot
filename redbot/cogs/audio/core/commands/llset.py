@@ -12,18 +12,18 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, inline
 
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
 from ...utils import (
-    MAX_JAVA_RAM,
-    DEFAULT_LAVALINK_YAML,
     DEFAULT_LAVALINK_SETTINGS,
+    DEFAULT_LAVALINK_YAML,
+    MAX_JAVA_RAM,
     change_dict_naming_convention,
+    get_max_allocation_size,
     has_managed_server,
     has_unmanaged_server,
     sizeof_fmt,
-    get_max_allocation_size,
 )
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass
 
 log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
 _ = Translator("Audio", Path(__file__))

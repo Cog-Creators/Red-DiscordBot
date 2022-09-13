@@ -1,28 +1,28 @@
 import asyncio
 import contextlib
-import discord
 import logging
-
 from abc import ABC
-from typing import cast, Optional, Dict, List, Tuple, Literal, Union
 from datetime import datetime, timedelta, timezone
+from typing import Dict, List, Literal, Optional, Tuple, Union, cast
 
-from .converters import MuteTime
-from .voicemutes import VoiceMutes
+import discord
 
+from redbot.core import Config, checks, commands, i18n, modlog
 from redbot.core.bot import Red
-from redbot.core import commands, checks, i18n, modlog, Config
 from redbot.core.utils import AsyncIter, bounded_gather, can_user_react_in
 from redbot.core.utils.chat_formatting import (
     bold,
-    humanize_timedelta,
     humanize_list,
+    humanize_timedelta,
     inline,
     pagify,
 )
-from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
+from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+
+from .converters import MuteTime
+from .voicemutes import VoiceMutes
 
 T_ = i18n.Translator("Mutes", __file__)
 

@@ -5,7 +5,6 @@ from typing import List, TextIO
 from packaging.markers import Marker
 from packaging.requirements import Requirement
 
-
 REQUIREMENTS_FOLDER = Path(__file__).parents[3].absolute() / "requirements"
 os.chdir(REQUIREMENTS_FOLDER)
 

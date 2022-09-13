@@ -1,4 +1,4 @@
-from typing import NewType, TYPE_CHECKING
+from typing import TYPE_CHECKING, NewType
 
 from redbot.core.commands import BadArgument
 from redbot.core.i18n import Translator

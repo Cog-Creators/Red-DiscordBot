@@ -3,7 +3,6 @@ import contextlib
 import json
 import time
 from pathlib import Path
-
 from typing import TYPE_CHECKING, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp

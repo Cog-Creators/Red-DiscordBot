@@ -13,7 +13,6 @@ from typing import (
     Union as _Union,
 )
 
-
 MIN_PYTHON_VERSION = (3, 8, 1)
 
 __all__ = [

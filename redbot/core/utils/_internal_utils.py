@@ -12,25 +12,25 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     AsyncIterator,
     Awaitable,
     Callable,
     Iterator,
     List,
     Optional,
-    Union,
-    TypeVar,
-    TYPE_CHECKING,
     Tuple,
+    TypeVar,
+    Union,
 )
 
 import aiohttp
 import discord
 from packaging.requirements import Requirement
 from rapidfuzz import fuzz, process
+from red_commons.logging import TRACE, VERBOSE
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
-from red_commons.logging import VERBOSE, TRACE
 
 from redbot import VersionInfo
 from redbot.core import data_manager

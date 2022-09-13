@@ -1,8 +1,8 @@
+import struct
 from abc import ABC
-from typing import Final
 from base64 import b64decode
 from io import BytesIO
-import struct
+from typing import Final
 
 from redbot import VersionInfo
 from redbot.core import commands

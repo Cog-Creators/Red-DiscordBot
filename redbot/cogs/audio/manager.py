@@ -9,7 +9,7 @@ import re
 import shlex
 import shutil
 import tempfile
-from typing import ClassVar, Final, List, Optional, Pattern, Tuple, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar, Final, List, Optional, Pattern, Tuple, Union
 
 import aiohttp
 import lavalink
@@ -18,21 +18,21 @@ import yaml
 from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
-from redbot.core import data_manager, Config
+from redbot.core import Config, data_manager
 from redbot.core.i18n import Translator
 
 from .errors import (
-    LavalinkDownloadFailed,
-    InvalidArchitectureException,
-    ManagedLavalinkAlreadyRunningException,
-    ManagedLavalinkPreviouslyShutdownException,
-    UnsupportedJavaException,
-    ManagedLavalinkStartFailure,
-    UnexpectedJavaResponseException,
     EarlyExitException,
+    InvalidArchitectureException,
+    LavalinkDownloadFailed,
+    ManagedLavalinkAlreadyRunningException,
     ManagedLavalinkNodeException,
-    NoProcessFound,
+    ManagedLavalinkPreviouslyShutdownException,
+    ManagedLavalinkStartFailure,
     NodeUnhealthy,
+    NoProcessFound,
+    UnexpectedJavaResponseException,
+    UnsupportedJavaException,
 )
 from .utils import (
     change_dict_naming_convention,

@@ -1,17 +1,21 @@
-import discord
-from redbot.core.utils.chat_formatting import humanize_list
-from redbot.core.bot import Red
-from redbot.core import checks, commands, Config
-from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
-from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
-from redbot.core.utils.chat_formatting import escape, inline, pagify
+import asyncio
+import contextlib
+import logging
+import re
+from collections import defaultdict
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple, Union
 
-from .streamtypes import (
-    PicartoStream,
-    Stream,
-    TwitchStream,
-    YoutubeStream,
-)
+import aiohttp
+import discord
+
+from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
+from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
+from redbot.core.utils.chat_formatting import escape, humanize_list, inline, pagify
+
+from . import streamtypes as _streamtypes
 from .errors import (
     APIError,
     InvalidTwitchCredentials,
@@ -21,16 +25,12 @@ from .errors import (
     StreamsError,
     YoutubeQuotaExceeded,
 )
-from . import streamtypes as _streamtypes
-
-import re
-import logging
-import asyncio
-import aiohttp
-import contextlib
-from datetime import datetime
-from collections import defaultdict
-from typing import Optional, List, Tuple, Union, Dict
+from .streamtypes import (
+    PicartoStream,
+    Stream,
+    TwitchStream,
+    YoutubeStream,
+)
 
 MAX_RETRY_COUNT = 10
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import discord
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+import discord
 from discord.ext.commands import BadArgument
-from typing import TYPE_CHECKING, Any, List, Optional, Union, Dict
+
+from redbot.core.commands.converter import get_dict_converter
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
-from redbot.core.commands.converter import get_dict_converter
-
 
 if TYPE_CHECKING:
     from redbot.core.commands import Context

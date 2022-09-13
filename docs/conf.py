@@ -31,9 +31,9 @@ if True:
 
     os.environ["BUILDING_DOCS"] = "1"
 
-from redbot.core import __version__
 from discord import __version__ as dpy_version, version_info as dpy_version_info
 
+from redbot.core import __version__
 
 # -- General configuration ------------------------------------------------
 

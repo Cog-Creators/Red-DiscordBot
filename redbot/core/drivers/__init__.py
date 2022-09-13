@@ -2,7 +2,7 @@ import enum
 from typing import Optional, Type
 
 from .. import data_manager
-from .base import IdentifierData, BaseDriver, ConfigCategory
+from .base import BaseDriver, ConfigCategory, IdentifierData
 from .json import JsonDriver
 from .postgres import PostgresDriver
 

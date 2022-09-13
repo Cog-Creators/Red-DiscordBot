@@ -10,7 +10,7 @@ from typing import Any, AsyncIterator, Dict, Optional, Tuple
 from uuid import uuid4
 
 from .. import data_manager, errors
-from .base import BaseDriver, IdentifierData, ConfigCategory
+from .base import BaseDriver, ConfigCategory, IdentifierData
 
 __all__ = ["JsonDriver"]
 

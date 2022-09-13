@@ -3,10 +3,10 @@
 # no new features will be added to this file
 # issues in this file are to be met with removal, not with fixes.
 
+import argparse
 import os
 import subprocess
 import sys
-import argparse
 
 from redbot import MIN_PYTHON_VERSION
 from redbot.core import __version__

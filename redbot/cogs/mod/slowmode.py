@@ -1,9 +1,12 @@
-import discord
-from .abc import MixinMeta
 from datetime import timedelta
 from typing import TYPE_CHECKING
+
+import discord
+
 from redbot.core import commands, i18n
 from redbot.core.utils.chat_formatting import humanize_timedelta
+
+from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
 

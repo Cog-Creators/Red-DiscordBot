@@ -10,37 +10,37 @@ import io
 import re
 import weakref
 from typing import (
+    TYPE_CHECKING,
     Any,
     Awaitable,
     Callable,
     Dict,
     List,
     Literal,
+    MutableMapping,
     Optional,
     Tuple,
     TypeVar,
     Union,
-    MutableMapping,
-    TYPE_CHECKING,
 )
 
 import discord
 from discord.ext.commands import (
-    CommandError,
     CheckFailure,
-    DisabledCommand,
-    command as dpy_command_deco,
+    Cog as DPYCog,
+    CogMeta as DPYCogMeta,
     Command as DPYCommand,
+    CommandError,
+    DisabledCommand,
+    Group as DPYGroup,
     GroupCog as DPYGroupCog,
     HybridCommand as DPYHybridCommand,
     HybridGroup as DPYHybridGroup,
-    Cog as DPYCog,
-    CogMeta as DPYCogMeta,
-    Group as DPYGroup,
+    command as dpy_command_deco,
 )
 
-from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
+from .requires import PermState, PermStateAllowedStates, PrivilegeLevel, Requires
 
 _T = TypeVar("_T")
 _CogT = TypeVar("_CogT", bound="Cog")
@@ -48,9 +48,10 @@ _CogT = TypeVar("_CogT", bound="Cog")
 
 if TYPE_CHECKING:
     # circular import avoidance
-    from .context import Context
-    from typing_extensions import ParamSpec, Concatenate
     from discord.ext.commands._types import ContextT, Coro
+    from typing_extensions import Concatenate, ParamSpec
+
+    from .context import Context
 
     _P = ParamSpec("_P")
 

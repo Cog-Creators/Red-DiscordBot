@@ -8,18 +8,18 @@ Some of the converters within are included provisionally and are marked as such.
 import functools
 import re
 from datetime import timedelta
-from dateutil.relativedelta import relativedelta
 from typing import (
     TYPE_CHECKING,
+    Dict,
+    List,
     Optional,
     Optional as NoParseOptional,
-    List,
-    Dict,
     Type,
     TypeVar,
     Union as UserInputOptional,
 )
 
+from dateutil.relativedelta import relativedelta
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import BadArgument
 

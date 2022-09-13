@@ -8,24 +8,23 @@ if True:
 import asyncio
 import json
 import logging
-import sys
 import re
+import sys
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 import click
 
-from redbot.core.cli import confirm
-from redbot.core.utils._internal_utils import (
-    safe_delete,
-    create_backup as red_create_backup,
-    cli_level_to_log_level,
-)
 from redbot.core import config, data_manager, drivers
-from redbot.core.cli import ExitCodes
+from redbot.core.cli import ExitCodes, confirm
 from redbot.core.data_manager import appdir, config_dir, config_file
 from redbot.core.drivers import BackendType
+from redbot.core.utils._internal_utils import (
+    cli_level_to_log_level,
+    create_backup as red_create_backup,
+    safe_delete,
+)
 
 conversion_log = logging.getLogger("red.converter")
 

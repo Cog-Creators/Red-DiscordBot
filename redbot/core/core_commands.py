@@ -2,40 +2,42 @@ import asyncio
 import contextlib
 import datetime
 import importlib
+import io
 import itertools
 import keyword
 import logging
-import io
 import random
-import markdown
 import re
 import sys
 import traceback
 from pathlib import Path
-from redbot.core.utils.menus import menu
-from redbot.core.utils.views import SetApiView
-from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, List, Optional, Iterable, Sequence, Dict, Literal
+from typing import TYPE_CHECKING, Dict, Iterable, List, Literal, Optional, Sequence, Union
 
 import aiohttp
 import discord
+import markdown
 from babel import Locale as BabelLocale, UnknownLocaleError
+
+from redbot.core.commands import GuildConverter, RawUserIdConverter
+from redbot.core.utils.menus import menu
+from redbot.core.utils.views import SetApiView
 
 from . import (
     __version__,
-    version_info as red_version_info,
+    bank,
     checks,
     commands,
     errors,
     i18n,
-    bank,
     modlog,
+    version_info as red_version_info,
 )
 from ._diagnoser import IssueDiagnoser
+from .commands import CogConverter, CommandConverter
+from .commands.requires import PrivilegeLevel
 from .utils import AsyncIter, can_user_send_messages_in
 from .utils._internal_utils import fetch_latest_red_version_info
-from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
     humanize_list,
@@ -45,8 +47,7 @@ from .utils.chat_formatting import (
     pagify,
     warning,
 )
-from .commands import CommandConverter, CogConverter
-from .commands.requires import PrivilegeLevel
+from .utils.predicates import MessagePredicate
 
 _entities = {
     "*": "&midast;",

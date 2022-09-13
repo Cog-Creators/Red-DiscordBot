@@ -6,13 +6,14 @@ from string import Formatter
 from typing import List, Literal
 
 import discord
-from redbot.core import Config, commands, checks
+
+from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.menus import menu
 
-from redbot.core.bot import Red
-from .alias_entry import AliasEntry, AliasCache, ArgParseError
+from .alias_entry import AliasCache, AliasEntry, ArgParseError
 
 _ = Translator("Alias", __file__)
 
