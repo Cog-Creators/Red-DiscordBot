@@ -207,11 +207,13 @@ class VersionInfo:
 
         methods = [
             cls._get_version_from_git_repo,
-            # `ignore_installed` is `True` when building with setuptools.
-            cls._get_version_from_git_archive
-            if ignore_installed
-            else cls._get_version_from_package_metadata,
         ]
+        # `ignore_installed` is `True` when building with setuptools.
+        if ignore_installed:
+            methods.append(cls._get_version_from_sdist_pkg_info)
+            methods.append(cls._get_version_from_git_archive)
+        else:
+            methods.append(cls._get_version_from_package_metadata)
         exceptions = []
         for method in methods:
             try:
@@ -263,6 +265,17 @@ class VersionInfo:
             else:
                 count = "0"
             return f"{_VERSION[:-1]}{count}+g{commit}"
+
+    @classmethod
+    def _get_version_from_sdist_pkg_info(cls, project_root: str) -> str:
+        pkg_info_path = _os.path.join(project_root, "PKG-INFO")
+        if not _os.path.exists(pkg_info_path):
+            raise RuntimeError("not an sdist")
+
+        import email
+
+        with open(pkg_info_path, encoding="utf-8") as fp:
+            return email.message_from_file(fp)["Version"]
 
     @classmethod
     def _get_version_from_package_metadata(cls, project_root: str) -> str:
