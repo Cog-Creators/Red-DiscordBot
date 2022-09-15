@@ -17,9 +17,11 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
+    overload,
 )
 
 import discord
+from discord.ext.commands.cog import Cog
 
 from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
 
@@ -68,9 +70,7 @@ def get_latest_confs() -> Tuple["Config"]:
     return tuple(ret)
 
 
-class _ValueCtxManager(
-    Awaitable[_T], AsyncContextManager[_T]
-):  # pylint: disable=duplicate-bases
+class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disable=duplicate-bases
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
@@ -94,7 +94,7 @@ class _ValueCtxManager(
         self.__acquire_lock = acquire_lock
         self.__lock = self.value_obj.get_lock()
 
-    def __await__(self) -> Generator[Any, None, _T]:
+    def __await__(self) -> Generator[None, None, _T]:
         return self.coro.__await__()
 
     async def __aenter__(self) -> _T:
@@ -661,15 +661,39 @@ class Config(metaclass=ConfigMeta):
     def defaults(self):
         return pickle.loads(pickle.dumps(self._defaults, -1))
 
+    @overload
     @classmethod
     def get_conf(
         cls,
-        cog_instance,
+        cog_instance: Cog,
         identifier: int,
-        force_registration=False,
-        cog_name=None,
+        force_registration: bool = False,
+        cog_name: Optional[str] = None,
         allow_old: bool = False,
-    ):
+    ) -> "Config":
+        ...
+
+    @overload
+    @classmethod
+    def get_conf(
+        cls,
+        cog_instance: Optional[Cog],
+        identifier: int,
+        force_registration: bool = False,
+        cog_name: str = "",  # The bool of an empty string is False
+        allow_old: bool = False,
+    ) -> "Config":
+        ...
+
+    @classmethod
+    def get_conf(
+        cls,
+        cog_instance: Optional[Cog],
+        identifier: int,
+        force_registration: bool = False,
+        cog_name: Optional[str] = None,
+        allow_old: bool = False,
+    ) -> "Config":
         """Get a Config instance for your cog.
 
         .. warning::
@@ -708,7 +732,7 @@ class Config(metaclass=ConfigMeta):
                 "Hopefully this is only being done from convert"
             )
         uuid = str(identifier)
-        if cog_name is None:
+        if not cog_name:
             cog_name = type(cog_instance).__name__
 
         driver = get_driver(cog_name, uuid, allow_old=allow_old)
