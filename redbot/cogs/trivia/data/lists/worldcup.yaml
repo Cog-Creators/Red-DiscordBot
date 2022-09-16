@@ -1,0 +1,434 @@
+AUTHOR: Kreusada
+
+# Notices
+
+# The following are countries that can represent previous placements by former countries in answers:
+#   - Serbia -> Yugoslavia, and Serbia and Montenegro
+#   - Czech Republic (czechia) -> Czechoslovakia
+#   - Germany -> West Germany
+#   - Russia -> Soviet Union
+
+# Source responsible for most data: https://en.wikipedia.org/wiki/FIFA_World_Cup
+
+# Hosts
+
+Who are the hosts of the 2022 World Cup?:
+- Qatar
+Who were the hosts of the 2018 World Cup?:
+- Russia
+Who were the hosts of the 2014 World Cup?:
+- Brazil
+Who were the hosts of the 2010 World Cup?:
+- South Africa
+- Republic of South Africa
+Who were the hosts of the 2006 World Cup?:
+- Germany
+Who were the two hosts of the 2002 World Cup?:
+- Japan and South Korea
+- South Korea and Japan
+- Japan, South Korea
+- South Korea, Japan
+Who were the hosts of the 1998 World Cup?:
+- France
+Who were the hosts of the 1994 World Cup?:
+- United States of America
+- USA
+- U.S.A
+- US
+- U.S.
+- United States
+Who were the hosts of the 1990 World Cup?:
+- Italy
+Who were the hosts of the 1986 World Cup?:
+- Mexico
+Who were the hosts of the 1982 World Cup?:
+- Spain
+Who were the hosts of the 1978 World Cup?:
+- Argentina
+Who were the hosts of the 1974 World Cup?:
+- West Germany
+- Germany
+Who were the hosts of the 1970 World Cup?:
+- Mexico
+Who were the hosts of the 1966 World Cup?:
+- England
+Who were the hosts of the 1962 World Cup?:
+- Chile
+Who were the hosts of the 1958 World Cup?:
+- Sweden
+Who were the hosts of the 1954 World Cup?:
+- Switzerland
+Who were the hosts of the 1950 World Cup?:
+- Brazil
+Who were the hosts of the 1938 World Cup?:
+- France
+Who were the hosts of the 1934 World Cup?:
+- Italy
+Who were the hosts of the 1930 World Cup?:
+- Uruguay
+
+# Champions
+
+Who were the champions of the 2018 World Cup?:
+- France
+Who were the champions of the 2014 World Cup?:
+- Germany
+Who were the champions of the 2010 World Cup?:
+- Spain
+Who were the champions of the 2006 World Cup?:
+- Italy
+Who were the champions of the 2002 World Cup?:
+- Brazil
+Who were the champions of the 1998 World Cup?:
+- France
+Who were the champions of the 1994 World Cup?:
+- Brazil
+Who were the champions of the 1990 World Cup?:
+- West Germany
+- Germany
+Who were the champions of the 1986 World Cup?:
+- Argentina
+Who were the champions of the 1982 World Cup?:
+- Italy
+Who were the champions of the 1978 World Cup?:
+- Argentina
+Who were the champions of the 1974 World Cup?:
+- West Germany
+- Germany
+Who were the champions of the 1970 World Cup?:
+- Brazil
+Who were the champions of the 1966 World Cup?:
+- England
+Who were the champions of the 1962 World Cup?:
+- Brazil
+Who were the champions of the 1958 World Cup?:
+- Brazil
+Who were the champions of the 1954 World Cup?:
+- West Germany
+- Germany
+Who were the champions of the 1950 World Cup?:
+- Uruguay
+Who were the champions of the 1938 World Cup?:
+- Italy
+Who were the champions of the 1934 World Cup?:
+- Italy
+Who were the champions of the 1930 World Cup?:
+- Uruguay
+
+# Runner ups
+
+Who were the runner ups of the 2018 World Cup?:
+- Croatia
+Who were the runner ups of the 2014 World Cup?:
+- Argentina
+Who were the runner ups of the 2010 World Cup?:
+- The Netherlands
+- Netherlands
+- Holland
+Who were the runner ups of the 2006 World Cup?:
+- France
+Who were the runner ups of the 2002 World Cup?:
+- Germany
+Who were the runner ups of the 1998 World Cup?:
+- Brazil
+Who were the runner ups of the 1994 World Cup?:
+- Italy
+Who were the runner ups of the 1990 World Cup?:
+- Argentina
+Who were the runner ups of the 1986 World Cup?:
+- West Germany
+- Germany
+Who were the runner ups of the 1982 World Cup?:
+- West Germany
+- Germany
+Who were the runner ups of the 1978 World Cup?:
+- The Netherlands
+- Netherlands
+- Holland
+Who were the runner ups of the 1974 World Cup?:
+- The Netherlands
+- Netherlands
+- Holland
+Who were the runner ups of the 1970 World Cup?:
+- Italy
+Who were the runner ups of the 1966 World Cup?:
+- West Germany
+- Germany
+Who were the runner ups of the 1962 World Cup?:
+- Czechoslovakia
+- Czechia
+- Czech Republic
+Who were the runner ups of the 1958 World Cup?:
+- Sweden
+Who were the runner ups of the 1954 World Cup?:
+- Hungary
+Who were the runner ups of the 1950 World Cup?:
+- Brazil
+Who were the runner ups of the 1938 World Cup?:
+- Hungary
+Who were the runner ups of the 1934 World Cup?:
+- Czechoslovakia
+- Czechia
+- Czech Republic
+Who were the runner ups of the 1930 World Cup?:
+- Argentina
+
+# Third places
+
+Who placed third in the 2018 World Cup?:
+- Belgium
+Who placed third in the 2014 World Cup?:
+- The Netherlands
+- Netherlands
+- Holland
+Who placed third in the 2010 World Cup?:
+- Germany
+Who placed third in the 2006 World Cup?:
+- Germany
+Who placed third in the 2002 World Cup?:
+- Türkiye
+- Turkiye
+- Turkey
+Who placed third in the 1998 World Cup?:
+- Croatia
+Who placed third in the 1994 World Cup?:
+- Sweden
+Who placed third in the 1990 World Cup?:
+- Italy
+Who placed third in the 1986 World Cup?:
+- France
+Who placed third in the 1982 World Cup?:
+- Poland
+Who placed third in the 1978 World Cup?:
+- Brazil
+Who placed third in the 1974 World Cup?:
+- Poland
+Who placed third in the 1970 World Cup?:
+- West Germany
+- Germany
+Who placed third in the 1966 World Cup?:
+- Portugal
+Who placed third in the 1962 World Cup?:
+- Chile
+Who placed third in the 1958 World Cup?:
+- France
+Who placed third in the 1954 World Cup?:
+- Austria
+Who placed third in the 1950 World Cup?:
+- Sweden
+Who placed third in the 1938 World Cup?:
+- Brazil
+Who placed third in the 1934 World Cup?:
+- Germany
+Who placed third in the 1930 World Cup?:
+- United States of America
+- USA
+- U.S.A
+- US
+- U.S.
+- United States
+
+# Fourth Places
+
+Who placed fourth in the 2018 World Cup?:
+- England
+Who placed fourth in the 2014 World Cup?:
+- Brazil
+Who placed fourth in the 2010 World Cup?:
+- Uruguay
+Who placed fourth in the 2006 World Cup?:
+- Portugal
+Who placed fourth in the 2002 World Cup?:
+- South Korea
+Who placed fourth in the 1998 World Cup?:
+- The Netherlands
+- Netherlands
+- Holland
+Who placed fourth in the 1994 World Cup?:
+- Bulgaria
+Who placed fourth in the 1990 World Cup?:
+- England
+Who placed fourth in the 1986 World Cup?:
+- Belgium
+Who placed fourth in the 1982 World Cup?:
+- France
+Who placed fourth in the 1978 World Cup?:
+- Italy
+Who placed fourth in the 1974 World Cup?:
+- Brazil
+Who placed fourth in the 1970 World Cup?:
+- Uruguay
+Who placed fourth in the 1966 World Cup?:
+- Soviet Union
+- Russia
+Who placed fourth in the 1962 World Cup?:
+- Yugoslavia
+- Serbia
+Who placed fourth in the 1958 World Cup?:
+- West Germany
+- Germany
+Who placed fourth in the 1954 World Cup?:
+- Uruguay
+Who placed fourth in the 1950 World Cup?:
+- Spain
+Who placed fourth in the 1938 World Cup?:
+- Sweden
+Who placed fourth in the 1934 World Cup?:
+- Austria
+Who placed fourth in the 1930 World Cup?:
+- Yugoslavia
+- Serbia
+
+# Stadiums
+
+"What was the name of the stadium where the 2018 World Cup final was held? (clue: the hosts were Russia)":
+- Luzhniki Stadium
+- Luzhniki
+- Grand Sports Arena of the Luzhniki Olympic Complex
+"What was the name of the stadium where the 2014 World Cup final was held? (clue: the hosts were Brazil)":
+- Maracanã
+- Maracana
+- Estádio Jornalista Mário Filho
+"What was the name of the stadium where the 2010 World Cup final was held? (clue: the hosts were South Africa)":
+- Soccer City
+- FNB Stadium
+- First National Bank Stadium
+- The Calabash
+"What was the name of the stadium where the 2006 World Cup final was held? (clue: the hosts were Germany)":
+- Olympiastadion
+"What was the name of the stadium where the 2002 World Cup final was held? (clue: the hosts were South Korea and Japan)":
+- International Stadium
+- International Stadium Yokohama
+- Nissan Stadium
+"What was the name of the stadium where the 1998 World Cup final was held? (clue: the hosts were France)": 
+- Stade de France
+"What was the name of the stadium where the 1994 World Cup final was held? (clue: the hosts were United States)":
+- Rose Bowl
+"What was the name of the stadium where the 1990 World Cup final was held? (clue: the hosts were Italy)":
+- Stadio Olympico
+"What was the name of the stadium where the 1986 World Cup final was held? (clue: the hosts were Mexico)":
+- Estadio Azteca
+"What was the name of the stadium where the 1982 World Cup final was held? (clue: the hosts were Spain)":
+- Santiago Bernabéu
+- Santiago Bernabeu
+"What was the name of the stadium where the 1978 World Cup final was held? (clue: the hosts were Argentina)":
+- Monumental de Núñez
+- Monumental de Nunez
+- River Plate Stadium
+- El Monumental
+"What was the name of the stadium where the 1974 World Cup final was held? (clue: the hosts were West Germany)":
+- Olympiastadion
+"What was the name of the stadium where the 1970 World Cup final was held? (clue: the hosts were Mexico)":
+- Estadio Azteca
+"What was the name of the stadium where the 1966 World Cup final was held? (clue: the hosts were England)":
+- Wembley Stadium
+- Wembley
+- Empire Stadium
+"What was the name of the stadium where the 1962 World Cup final was held? (clue: the hosts were Chile)":
+- Estadio Nacional
+- Estadio Nacional Julio Martínez Prádanos
+"What was the name of the stadium where the 1958 World Cup final was held? (clue: the hosts were Sweden)":
+- Råsundastadion
+- Rasundastadion
+- Råsunda Stadium
+- Rasunda Stadium
+- Råsunda Fotbollsstadion
+- Rasunda Fotbollsstadion
+- Råsunda Football Stadium
+- Rasunda Football Stadium
+- Råsunda
+- Rasunda
+"What was the name of the stadium where the 1954 World Cup final was held? (clue: the hosts were Switzerland)":
+- Wankdorfstadion
+"What was the name of the stadium where the 1950 World Cup final was held? (clue: the hosts were Brazil)":
+- Maracanã
+- Maracana
+- Maracanã Stadium
+- Maracana Stadium
+- Estádio Jornalista Mário Filho
+"What was the name of the stadium where the 1938 World Cup final was held? (clue: the hosts were France)":
+- Stade de Colombes
+- Stade Yves-du-Manoir
+- Stade olympique Yves-du-Manoir
+- Stade olympique de Colombes
+- Colombes
+"What was the name of the stadium where the 1934 World Cup final was held? (clue: the hosts were Italy)":
+- Stadio Nazionale PNF
+"What was the name of the stadium where the 1930 World Cup final was held? (clue: the hosts were Uruguay)":
+- Estadio Centenario
+
+# Continental confederations of international association football or NGBs
+
+The continental confederation "CONCACAF" governs sport in which continent so that their member nations can qualify for the world cup?:
+- North America
+The continental confederation "CONMEBOL" governs sport in which continent so that their member nations can qualify for the world cup?:
+- South America
+The continental confederation "UEFA" governs sport in which continent so that their member nations can qualify for the world cup?:
+- Europe
+The continental confederation "CAF" governs sport in which continent so that their member nations can qualify for the world cup?:
+- Africa
+The continental confederation "AFC" governs sport in which continent so that their member nations can qualify for the world cup?:
+- Asia
+The continental confederation "OFC" governs sport in which continent so that their member nations can qualify for the world cup?:
+- Australasia and Oceania
+- Australasia
+- Oceania
+
+# Number of teams
+
+From 2026 into the forseeable future, the tournaments will include how many teams?:
+- 48
+From 2002 to 2022, the tournaments included how many teams?:
+- 32
+From 1982 to 1994, the tournaments included how many teams?:
+- 24
+From 1954 to 1978, the tournaments included how many teams?:
+- 16
+How many teams were included in the 1950 World Cup hosted by Brazil?:
+- 13
+How many teams were included in the 1938 World Cup hosted by France?:
+- 15
+How many teams were included in the 1934 World Cup hosted by Italy?:
+- 16
+How many teams were included in the 1930 World Cup hosted by Uruguay?:
+- 13
+
+# General
+
+In which year was the World Cup founded?:
+- 1930
+By which organization is the World Cup governed by?:
+- FIFA
+Which country has the most World Cup titles?:
+- Brazil
+The World Cup has ran every four years since its inauguration, apart from the years ____ and ____ (due to World War Two).:
+- 1942 and 1946
+- 1946 and 1942
+- 1942, 1946
+- 1946, 1942
+- "1942 1946"
+- "1946 1942"
+The 2026 World Cup will be jointly hosted by ______, United States, and Mexico.:
+- Canada
+Which player captained the England National Team to their first and only World Cup victory in 1966?:
+- Bobby Moore
+Who is the all-time World Cup top goal scorer?:
+- Miroslav Klose
+- Klose
+Who is the only player to win the World Cup three times?:
+- Pelé
+- Pele
+Which country has scored the most goals in the World Cup since its inauguration in 1930?:
+- Brazil
+Which country is the only country that has participated in every World Cup tournament?:
+- Brazil
+How many countries have won the World Cup at least once?:
+- 8
+In 2022, European champions Italy lose 1-0 to who, failing to qualify for the world cup for a *second* consecutive time?:
+- North Macedonia
+In 1994, France failed to qualify after losing to Israel and *who* in the group stages?:
+- Bulgaria
+In 2018, Italy failed to qualify after losing to *who* 1-0?:
+- Sweden
+In 2002, Netherlands failed to qualify after losing to Republic of Ireland. What was the goal difference in this qualification decider?:
+- 1

@@ -11,7 +11,7 @@ from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
 
@@ -90,7 +90,7 @@ class Reports(commands.Cog):
                 r["user_id"] = 0xDE1
                 # this might include EUD, and a report of a deleted user
                 # that's been unhandled for long enough for the
-                # user to be deleted and the bot recieve a request like this...
+                # user to be deleted and the bot receive a request like this...
                 r["report"] = "[REPORT DELETED DUE TO DISCORD REQUEST]"
 
     @property
@@ -114,7 +114,7 @@ class Reports(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggle", aliases=["toggleactive"])
     async def reportset_toggle(self, ctx: commands.Context):
-        """Enable or Disable reporting for this server."""
+        """Enable or disable reporting for this server."""
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)
@@ -192,8 +192,7 @@ class Reports(commands.Cog):
         else:
             return guild
 
-    async def send_report(self, msg: discord.Message, guild: discord.Guild):
-
+    async def send_report(self, ctx: commands.Context, msg: discord.Message, guild: discord.Guild):
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
 
@@ -207,13 +206,13 @@ class Reports(commands.Cog):
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
-        if await self.bot.embed_requested(channel, author):
-            em = discord.Embed(description=report)
+        if await self.bot.embed_requested(channel):
+            em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
                     author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
                 ),
-                icon_url=author.avatar_url,
+                icon_url=author.display_avatar,
             )
             em.set_footer(text=_("Report #{}").format(ticket_number))
             send_content = None
@@ -236,12 +235,12 @@ class Reports(commands.Cog):
         )
         return ticket_number
 
-    @commands.group(name="report", invoke_without_command=True)
+    @commands.group(name="report", usage="[text]", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """Send a report.
 
         Use without arguments for interactive reporting, or do
-        `[p]report <text>` to use it non-interactively.
+        `[p]report [text]` to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild
@@ -279,7 +278,7 @@ class Reports(commands.Cog):
             _m = copy(ctx.message)
             _m.content = _report
             _m.content = _m.clean_content
-            val = await self.send_report(_m, guild)
+            val = await self.send_report(ctx, _m, guild)
         else:
             try:
                 await author.send(
@@ -300,7 +299,7 @@ class Reports(commands.Cog):
             except asyncio.TimeoutError:
                 return await author.send(_("You took too long. Try again later."))
             else:
-                val = await self.send_report(message, guild)
+                val = await self.send_report(ctx, message, guild)
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
@@ -346,8 +345,10 @@ class Reports(commands.Cog):
 
         if t is None:
             return
+        guild = t[0][0]
         tun = t[1]["tun"]
         if payload.user_id in [x.id for x in tun.members]:
+            await set_contextual_locales_from_guild(self.bot, guild)
             await tun.react_close(
                 uid=payload.user_id, message=_("{closer} has closed the correspondence")
             )
@@ -355,16 +356,15 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-
         to_remove = []
 
         for k, v in self.tunnel_store.items():
-
             guild, ticket_number = k
             if await self.bot.cog_disabled_in_guild(self, guild):
                 to_remove.append(k)
                 continue
 
+            await set_contextual_locales_from_guild(self.bot, guild)
             topic = _("Re: ticket# {ticket_number} in {guild.name}").format(
                 ticket_number=ticket_number, guild=guild
             )
@@ -376,6 +376,7 @@ class Reports(commands.Cog):
         for key in to_remove:
             if tun := self.tunnel_store.pop(key, None):
                 guild, ticket = key
+                await set_contextual_locales_from_guild(self.bot, guild)
                 await tun["tun"].close_because_disabled(
                     _(
                         "Correspondence about ticket# {ticket_number} in "
@@ -390,7 +391,7 @@ class Reports(commands.Cog):
     async def response(self, ctx, ticket_number: int):
         """Open a message tunnel.
 
-        This tunnel will forward things you say in this channel
+        This tunnel will forward things you say in this channel or thread
         to the ticket opener's direct messages.
 
         Tunnels do not persist across bot restarts.
@@ -422,8 +423,8 @@ class Reports(commands.Cog):
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
-            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
-            "Any message succesfully forwarded will be marked with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message received.\n"
+            "Any message successfully forwarded will be marked with "
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )

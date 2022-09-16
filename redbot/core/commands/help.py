@@ -39,10 +39,18 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus
+from ..utils import can_user_react_in, menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
-from ..utils.chat_formatting import box, pagify, humanize_timedelta
+from ..utils.chat_formatting import (
+    bold,
+    box,
+    humanize_list,
+    humanize_number,
+    humanize_timedelta,
+    pagify,
+    underline,
+)
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
@@ -72,10 +80,13 @@ class HelpSettings:
     max_pages_in_guild: int = 2
     use_menus: bool = False
     show_hidden: bool = False
+    show_aliases: bool = True
     verify_checks: bool = True
     verify_exists: bool = False
     tagline: str = ""
     delete_delay: int = 0
+    use_tick: bool = False
+    react_timeout: int = 30
 
     # Contrib Note: This is intentional to not accept the bot object
     # There are plans to allow guild and user specific help settings
@@ -96,7 +107,7 @@ class HelpSettings:
 
     @property
     def pretty(self):
-        """ Returns a discord safe representation of the settings """
+        """Returns a discord safe representation of the settings"""
 
         def bool_transformer(val):
             if val is False:
@@ -124,9 +135,12 @@ class HelpSettings:
             "\nMaximum pages per guild (only used if menus are not used): {max_pages_in_guild}"
             "\nHelp is a menu: {use_menus}"
             "\nHelp shows hidden commands: {show_hidden}"
+            "\nHelp shows commands aliases: {show_aliases}"
             "\nHelp only shows commands which can be used: {verify_checks}"
             "\nHelp shows unusable commands when asked directly: {verify_exists}"
             "\nDelete delay: {delete_delay}"
+            "\nReact with a checkmark when help is sent via DM: {use_tick}"
+            "\nReaction timeout (only used if menus are used): {react_timeout} seconds"
             "{tagline_info}"
         ).format_map(data)
 
@@ -268,14 +282,30 @@ class RedHelpFormatter(HelpFormatterABC):
     @staticmethod
     def get_default_tagline(ctx: Context):
         return _(
-            "Type {ctx.clean_prefix}help <command> for more info on a command. "
-            "You can also type {ctx.clean_prefix}help <category> for more info on a category."
-        ).format(ctx=ctx)
+            "Type {command1} for more info on a command. "
+            "You can also type {command2} for more info on a category."
+        ).format(
+            command1=f"{ctx.clean_prefix}help <command>",
+            command2=f"{ctx.clean_prefix}help <category>",
+        )
+
+    @staticmethod
+    def get_command_signature(ctx: Context, command: commands.Command) -> str:
+        parent = command.parent
+        entries = []
+        while parent is not None:
+            if not parent.signature or parent.invoke_without_command:
+                entries.append(parent.name)
+            else:
+                entries.append(parent.name + " " + parent.signature)
+            parent = parent.parent
+        parent_sig = (" ".join(reversed(entries)) + " ") if entries else ""
+
+        return f"{ctx.clean_prefix}{parent_sig}{command.name} {command.signature}"
 
     async def format_command_help(
         self, ctx: Context, obj: commands.Command, help_settings: HelpSettings
     ):
-
         send = help_settings.verify_exists
         if not send:
             async for __ in self.help_filter_func(
@@ -297,23 +327,55 @@ class RedHelpFormatter(HelpFormatterABC):
         description = command.description or ""
 
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
-        signature = _(
-            "`Syntax: {ctx.clean_prefix}{command.qualified_name} {command.signature}`"
-        ).format(ctx=ctx, command=command)
-        subcommands = None
+        signature = _("Syntax: {command_signature}").format(
+            command_signature=self.get_command_signature(ctx, command)
+        )
 
+        aliases = command.aliases
+        if help_settings.show_aliases and aliases:
+            alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
+            aliases = sorted(aliases, key=len)
+
+            a_counter = 0
+            valid_alias_list = []
+            for alias in aliases:
+                if (a_counter := a_counter + len(alias)) < 500:
+                    valid_alias_list.append(alias)
+                else:
+                    break
+
+            a_diff = len(aliases) - len(valid_alias_list)
+            aliases_list = [
+                f"{ctx.clean_prefix}{command.parent.qualified_name + ' ' if command.parent else ''}{alias}"
+                for alias in valid_alias_list
+            ]
+            if len(valid_alias_list) < 10:
+                aliases_content = humanize_list(aliases_list)
+            else:
+                aliases_formatted_list = ", ".join(aliases_list)
+                if a_diff > 1:
+                    aliases_content = _("{aliases} and {number} more aliases.").format(
+                        aliases=aliases_formatted_list, number=humanize_number(a_diff)
+                    )
+                else:
+                    aliases_content = _("{aliases} and one more alias.").format(
+                        aliases=aliases_formatted_list
+                    )
+            signature += f"\n{alias_fmt}: {aliases_content}"
+
+        subcommands = None
         if hasattr(command, "all_commands"):
             grp = cast(commands.Group, command)
             subcommands = await self.get_group_help_mapping(ctx, grp, help_settings=help_settings)
 
-        if await ctx.embed_requested():
+        if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             if description:
                 emb["embed"]["title"] = f"*{description[:250]}*"
 
             emb["footer"]["text"] = tagline
-            emb["embed"]["description"] = signature
+            emb["embed"]["description"] = box(signature)
 
             command_help = command.format_help_for_context(ctx)
             if command_help:
@@ -330,7 +392,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
-                    return a_line[:67] + "..."
+                    return a_line[:67].rstrip() + "..."
 
                 subtext = "\n".join(
                     shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
@@ -338,9 +400,11 @@ class RedHelpFormatter(HelpFormatterABC):
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = _("**__Subcommands:__**")
+                        title = bold(underline(_("Subcommands:")), escape_formatting=False)
                     else:
-                        title = _("**__Subcommands:__** (continued)")
+                        title = bold(underline(_("Subcommands:")), escape_formatting=False) + _(
+                            " (continued)"
+                        )
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -360,7 +424,7 @@ class RedHelpFormatter(HelpFormatterABC):
                         width_gap = discord.utils._string_width(nm) - len(nm)
                         doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
-                            doc = doc[: doc_max_width - 3] + "..."
+                            doc = doc[: doc_max_width - 3].rstrip() + "..."
                         yield nm, doc, max_width - width_gap
 
                 subtext = "\n".join(
@@ -373,7 +437,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     None,
                     (
                         description,
-                        signature[1:-1],
+                        signature,
                         command.format_help_for_context(ctx),
                         subtext_header,
                         subtext,
@@ -385,7 +449,6 @@ class RedHelpFormatter(HelpFormatterABC):
 
     @staticmethod
     def group_embed_fields(fields: List[EmbedField], max_chars=1000):
-
         curr_group = []
         ret = []
         current_count = 0
@@ -408,7 +471,6 @@ class RedHelpFormatter(HelpFormatterABC):
         return ret
 
     async def make_and_send_embeds(self, ctx, embed_dict: dict, help_settings: HelpSettings):
-
         pages = []
 
         page_char_limit = help_settings.page_char_limit
@@ -416,7 +478,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         author_info = {
             "name": _("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-            "icon_url": ctx.me.avatar_url,
+            "icon_url": ctx.me.display_avatar,
         }
 
         # Offset calculation here is for total embed size limit
@@ -428,17 +490,17 @@ class RedHelpFormatter(HelpFormatterABC):
         offset += len(embed_dict["embed"]["description"])
         offset += len(embed_dict["embed"]["title"])
 
-        # In order to only change the size of embeds when neccessary for this rather
+        # In order to only change the size of embeds when necessary for this rather
         # than change the existing behavior for people uneffected by this
         # we're only modifying the page char limit should they be impacted.
         # We could consider changing this to always just subtract the offset,
         # But based on when this is being handled (very end of 3.2 release)
         # I'd rather not stick a major visual behavior change in at the last moment.
         if page_char_limit + offset > 5500:
-            # This is still neccessary with the max interaction above
+            # This is still necessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
-            # *only* when neccessary, by the exact neccessary amount
+            # *only* when necessary, by the exact neccessary amount
             # To retain a visual match with prior behavior.
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:
@@ -479,7 +541,6 @@ class RedHelpFormatter(HelpFormatterABC):
         await self.send_pages(ctx, pages, embed=True, help_settings=help_settings)
 
     async def format_cog_help(self, ctx: Context, obj: commands.Cog, help_settings: HelpSettings):
-
         coms = await self.get_cog_help_mapping(ctx, obj, help_settings=help_settings)
         if not (coms or help_settings.verify_exists):
             return
@@ -487,7 +548,7 @@ class RedHelpFormatter(HelpFormatterABC):
         description = obj.format_help_for_context(ctx)
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
 
-        if await ctx.embed_requested():
+        if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
@@ -505,17 +566,19 @@ class RedHelpFormatter(HelpFormatterABC):
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
-                    return a_line[:67] + "..."
+                    return a_line[:67].rstrip() + "..."
 
                 command_text = "\n".join(
-                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
+                    shorten_line(f"{bold(name)} {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(coms.items())
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = _("**__Commands:__**")
+                        title = underline(bold(_("Commands:")), escape_formatting=False)
                     else:
-                        title = _("**__Commands:__** (continued)")
+                        title = underline(bold(_("Commands:")), escape_formatting=False) + _(
+                            " (continued)"
+                        )
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -534,7 +597,7 @@ class RedHelpFormatter(HelpFormatterABC):
                         width_gap = discord.utils._string_width(nm) - len(nm)
                         doc = com.format_shortdoc_for_context(ctx)
                         if len(doc) > doc_max_width:
-                            doc = doc[: doc_max_width - 3] + "..."
+                            doc = doc[: doc_max_width - 3].rstrip() + "..."
                         yield nm, doc, max_width - width_gap
 
                 subtext = "\n".join(
@@ -546,7 +609,6 @@ class RedHelpFormatter(HelpFormatterABC):
             await self.send_pages(ctx, pages, embed=False, help_settings=help_settings)
 
     async def format_bot_help(self, ctx: Context, help_settings: HelpSettings):
-
         coms = await self.get_bot_help_mapping(ctx, help_settings=help_settings)
         if not coms:
             return
@@ -554,8 +616,7 @@ class RedHelpFormatter(HelpFormatterABC):
         description = ctx.bot.description or ""
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
 
-        if await ctx.embed_requested():
-
+        if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
@@ -563,16 +624,15 @@ class RedHelpFormatter(HelpFormatterABC):
                 emb["embed"]["title"] = f"*{description[:250]}*"
 
             for cog_name, data in coms:
-
                 if cog_name:
-                    title = f"**__{cog_name}:__**"
+                    title = underline(bold(f"{cog_name}:"), escape_formatting=False)
                 else:
-                    title = _("**__No Category:__**")
+                    title = underline(bold(_("No Category:")), escape_formatting=False)
 
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
                         return a_line
-                    return a_line[:67] + "..."
+                    return a_line[:67].rstrip() + "..."
 
                 cog_text = "\n".join(
                     shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
@@ -605,11 +665,10 @@ class RedHelpFormatter(HelpFormatterABC):
                     width_gap = discord.utils._string_width(nm) - len(nm)
                     doc = com.format_shortdoc_for_context(ctx)
                     if len(doc) > doc_max_width:
-                        doc = doc[: doc_max_width - 3] + "..."
+                        doc = doc[: doc_max_width - 3].rstrip() + "..."
                     yield nm, doc, max_width - width_gap
 
             for cog_name, data in coms:
-
                 title = f"{cog_name}:" if cog_name else _("No Category:")
                 to_join.append(title)
 
@@ -653,6 +712,9 @@ class RedHelpFormatter(HelpFormatterABC):
             else:
                 yield obj
 
+    async def embed_requested(self, ctx: Context) -> bool:
+        return await ctx.bot.embed_requested(channel=ctx, command=red_help)
+
     async def command_not_found(self, ctx, help_for, help_settings: HelpSettings):
         """
         Sends an error, fuzzy help, or stays quiet based on settings
@@ -665,13 +727,13 @@ class RedHelpFormatter(HelpFormatterABC):
             ),
             min_score=75,
         )
-        use_embeds = await ctx.embed_requested()
+        use_embeds = await self.embed_requested(ctx)
         if fuzzy_commands:
             ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
             if use_embeds:
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar_url,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -679,12 +741,12 @@ class RedHelpFormatter(HelpFormatterABC):
             else:
                 await ctx.send(ret)
         elif help_settings.verify_exists:
-            ret = _("Help topic for *{command_name}* not found.").format(command_name=help_for)
+            ret = _("Help topic for {command_name} not found.").format(command_name=bold(help_for))
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar_url,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -696,14 +758,14 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends an error
         """
-        ret = _("Command *{command_name}* has no subcommand named *{not_found}*.").format(
-            command_name=command.qualified_name, not_found=not_found[0]
+        ret = _("Command {command_name} has no subcommand named {not_found}.").format(
+            command_name=bold(command.qualified_name), not_found=bold(not_found[0])
         )
-        if await ctx.embed_requested():
+        if await self.embed_requested(ctx):
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                icon_url=ctx.me.avatar_url,
+                icon_url=ctx.me.display_avatar,
             )
             tagline = help_settings.tagline or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
@@ -751,12 +813,7 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
-
-        # save on config calls
-        channel_permissions = ctx.channel.permissions_for(ctx.me)
-
-        if not (channel_permissions.add_reactions and help_settings.use_menus):
-
+        if not (can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus):
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
@@ -778,20 +835,21 @@ class RedHelpFormatter(HelpFormatterABC):
                     )
                 else:
                     messages.append(msg)
-
+            if use_DMs and help_settings.use_tick:
+                await ctx.tick()
             # The if statement takes into account that 'destination' will be
-            # the context channel in non-DM context, reusing 'channel_permissions' to avoid
-            # computing the permissions twice.
+            # the context channel in non-DM context.
             if (
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
-                and channel_permissions.manage_messages  # we can manage messages here
+                and ctx.channel.permissions_for(ctx.me).manage_messages  # we can manage messages
             ):
-
                 # We need to wrap this in a task to not block after-sending-help interactions.
-                # The channel has to be TextChannel as we can't bulk-delete from DMs
+                # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs
                 async def _delete_delay_help(
-                    channel: discord.TextChannel, messages: List[discord.Message], delay: int
+                    channel: Union[discord.TextChannel, discord.Thread],
+                    messages: List[discord.Message],
+                    delay: int,
                 ):
                     await asyncio.sleep(delay)
                     await mass_purge(messages, channel)
@@ -802,8 +860,10 @@ class RedHelpFormatter(HelpFormatterABC):
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
-            asyncio.create_task(menus.menu(ctx, pages, c, message=m))
-            # menu needs reactions added manually since we fed it a messsage
+            asyncio.create_task(
+                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+            )
+            # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
 
 

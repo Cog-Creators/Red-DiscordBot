@@ -19,7 +19,7 @@ from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import warning, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import menu
 
 
 _ = Translator("Warnings", __file__)
@@ -47,7 +47,9 @@ class Warnings(commands.Cog):
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
-        self.registration_task = self.bot.loop.create_task(self.register_warningtype())
+
+    async def cog_load(self) -> None:
+        await self.register_warningtype()
 
     async def red_delete_data_for_user(
         self,
@@ -126,12 +128,10 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def toggledm(self, ctx: commands.Context):
-        """Toggle whether warnings should be sent to users in DMs."""
-        guild = ctx.guild
-        toggle = not await self.config.guild(guild).toggle_dm()
-        await self.config.guild(guild).toggle_dm.set(toggle)
-        if toggle:
+    async def senddm(self, ctx: commands.Context, true_or_false: bool):
+        """Set whether warnings should be sent to users in DMs."""
+        await self.config.guild(ctx.guild).toggle_dm.set(true_or_false)
+        if true_or_false:
             await ctx.send(_("I will now try to send warnings to users DMs."))
         else:
             await ctx.send(_("Warnings will no longer be sent to users DMs."))
@@ -173,15 +173,13 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def togglechannel(self, ctx: commands.Context):
+    async def usewarnchannel(self, ctx: commands.Context, true_or_false: bool):
         """
-        Toggle if warnings should be sent to a channel set with `[p]warningset warnchannel`.
+        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.
         """
-        guild = ctx.guild
-        toggle = await self.config.guild(guild).toggle_channel()
-        await self.config.guild(guild).toggle_channel.set(not toggle)
-        channel = self.bot.get_channel(await self.config.guild(guild).warn_channel())
-        if not toggle:
+        await self.config.guild(ctx.guild).toggle_channel.set(true_or_false)
+        channel = self.bot.get_channel(await self.config.guild(ctx.guild).warn_channel())
+        if true_or_false:
             if channel:
                 await ctx.send(
                     _("Warnings will now be sent to {channel}.").format(channel=channel.mention)
@@ -200,7 +198,6 @@ class Warnings(commands.Cog):
         Actions are essentially command macros. Any command can be run
         when the action is initially triggered, and/or when the action
         is lifted.
-
         Actions must be given a name and a points threshold. When a
         user is warned enough so that their points go over this
         threshold, the action will be executed.
@@ -316,6 +313,7 @@ class Warnings(commands.Cog):
                     em = discord.Embed(
                         title=_("Reason: {name}").format(name=r),
                         description=v["description"],
+                        color=await ctx.embed_colour(),
                     )
                     em.add_field(name=_("Points"), value=str(v["points"]))
                     msg_list.append(em)
@@ -326,7 +324,7 @@ class Warnings(commands.Cog):
                         ).format(reason_name=r, **v)
                     )
         if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
+            await menu(ctx, msg_list)
         else:
             await ctx.send(_("There are no reasons configured!"))
 
@@ -341,7 +339,10 @@ class Warnings(commands.Cog):
         async with guild_settings.actions() as registered_actions:
             for r in registered_actions:
                 if await ctx.embed_requested():
-                    em = discord.Embed(title=_("Action: {name}").format(name=r["action_name"]))
+                    em = discord.Embed(
+                        title=_("Action: {name}").format(name=r["action_name"]),
+                        color=await ctx.embed_colour(),
+                    )
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
                     em.add_field(
                         name=_("Exceed command"),
@@ -358,7 +359,7 @@ class Warnings(commands.Cog):
                         ).format(**r)
                     )
         if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
+            await menu(ctx, msg_list)
         else:
             await ctx.send(_("There are no actions configured!"))
 
@@ -368,7 +369,7 @@ class Warnings(commands.Cog):
     async def warn(
         self,
         ctx: commands.Context,
-        user: discord.Member,
+        member: discord.Member,
         points: UserInputOptional[int] = 1,
         *,
         reason: str,
@@ -377,17 +378,17 @@ class Warnings(commands.Cog):
 
         `<points>` number of points the warning should be for. If no number is supplied
         1 point will be given. Pre-set warnings disregard this.
-        `<reason>` can be a registered reason if it exists or a custom one
-        is created by default.
+        `<reason>` is reason for the warning. This can be a registered reason,
+        or a custom reason if ``[p]warningset allowcustomreasons`` is set.
         """
         guild = ctx.guild
-        if user == ctx.author:
+        if member == ctx.author:
             return await ctx.send(_("You cannot warn yourself."))
-        if user.bot:
+        if member.bot:
             return await ctx.send(_("You cannot warn other bots."))
-        if user == ctx.guild.owner:
+        if member == ctx.guild.owner:
             return await ctx.send(_("You cannot warn the server owner."))
-        if user.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
+        if member.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
             return await ctx.send(
                 _(
                     "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
@@ -401,6 +402,8 @@ class Warnings(commands.Cog):
             if (reason_type := registered_reasons.get(reason.lower())) is None:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
+                    if points < 0:
+                        return await ctx.send(_("You cannot apply negative points."))
                     reason_type = {"description": reason, "points": points}
                 else:
                     # logic taken from `[p]permissions canrun`
@@ -421,7 +424,7 @@ class Warnings(commands.Cog):
                     return await ctx.send(msg)
         if reason_type is None:
             return
-        member_settings = self.config.member(user)
+        member_settings = self.config.member(member)
         current_point_count = await member_settings.total_points()
         warning_to_add = {
             str(ctx.message.id): {
@@ -430,12 +433,6 @@ class Warnings(commands.Cog):
                 "mod": ctx.author.id,
             }
         }
-        async with member_settings.warnings() as user_warnings:
-            user_warnings.update(warning_to_add)
-        current_point_count += reason_type["points"]
-        await member_settings.total_points.set(current_point_count)
-
-        await warning_points_add_check(self.config, ctx, user, current_point_count)
         dm = guild_settings["toggle_dm"]
         showmod = guild_settings["show_mod"]
         dm_failed = False
@@ -445,12 +442,11 @@ class Warnings(commands.Cog):
             else:
                 title = _("Warning")
             em = discord.Embed(
-                title=title,
-                description=reason_type["description"],
+                title=title, description=reason_type["description"], color=await ctx.embed_colour()
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             try:
-                await user.send(
+                await member.send(
                     _("You have received a warning in {guild_name}.").format(
                         guild_name=ctx.guild.name
                     ),
@@ -464,8 +460,13 @@ class Warnings(commands.Cog):
                 _(
                     "A warning for {user} has been issued,"
                     " but I wasn't able to send them a warn message."
-                ).format(user=user.mention)
+                ).format(user=member.mention)
             )
+        async with member_settings.warnings() as user_warnings:
+            user_warnings.update(warning_to_add)
+        current_point_count += reason_type["points"]
+        await member_settings.total_points.set(current_point_count)
+        await warning_points_add_check(self.config, ctx, member, current_point_count)
 
         toggle_channel = guild_settings["toggle_channel"]
         if toggle_channel:
@@ -474,8 +475,7 @@ class Warnings(commands.Cog):
             else:
                 title = _("Warning")
             em = discord.Embed(
-                title=title,
-                description=reason_type["description"],
+                title=title, description=reason_type["description"], color=await ctx.embed_colour()
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
             warn_channel = self.bot.get_channel(guild_settings["warn_channel"])
@@ -483,7 +483,7 @@ class Warnings(commands.Cog):
                 if warn_channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
                         await warn_channel.send(
-                            _("{user} has been warned.").format(user=user.mention),
+                            _("{user} has been warned.").format(user=member.mention),
                             embed=em,
                         )
 
@@ -492,7 +492,7 @@ class Warnings(commands.Cog):
                     await ctx.tick()
                 else:
                     await ctx.send(
-                        _("{user} has been warned.").format(user=user.mention), embed=em
+                        _("{user} has been warned.").format(user=member.mention), embed=em
                     )
         else:
             if not dm_failed:
@@ -504,15 +504,15 @@ class Warnings(commands.Cog):
                 description=reason_type["description"], points=reason_type["points"]
             ),
             prefix=ctx.clean_prefix,
-            user=user.id,
+            user=member.id,
             message=ctx.message.id,
         )
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            ctx.message.created_at,
             "warning",
-            user,
+            member,
             ctx.message.author,
             reason_msg,
             until=None,
@@ -522,18 +522,18 @@ class Warnings(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @checks.admin()
-    async def warnings(self, ctx: commands.Context, user: Union[discord.Member, int]):
+    async def warnings(self, ctx: commands.Context, member: Union[discord.Member, int]):
         """List the warnings for the specified user."""
 
         try:
-            userid: int = user.id
+            userid: int = member.id
         except AttributeError:
-            userid: int = user
-            user = ctx.guild.get_member(userid)
-            user = user or namedtuple("Member", "id guild")(userid, ctx.guild)
+            userid: int = member
+            member = ctx.guild.get_member(userid)
+            member = member or namedtuple("Member", "id guild")(userid, ctx.guild)
 
         msg = ""
-        member_settings = self.config.member(user)
+        member_settings = self.config.member(member)
         async with member_settings.warnings() as user_warnings:
             if not user_warnings.keys():  # no warnings for the user
                 await ctx.send(_("That user has no warnings!"))
@@ -556,7 +556,9 @@ class Warnings(commands.Cog):
                     )
                 await ctx.send_interactive(
                     pagify(msg, shorten_by=58),
-                    box_lang=_("Warnings for {user}").format(user=user),
+                    box_lang=_("Warnings for {user}").format(
+                        user=member if isinstance(member, discord.Member) else member.id
+                    ),
                 )
 
     @commands.command()
@@ -599,7 +601,7 @@ class Warnings(commands.Cog):
     async def unwarn(
         self,
         ctx: commands.Context,
-        user: Union[discord.Member, int],
+        member: Union[discord.Member, int],
         warn_id: str,
         *,
         reason: str = None,
@@ -609,10 +611,10 @@ class Warnings(commands.Cog):
         guild = ctx.guild
 
         try:
-            user_id = user.id
-            member = user
+            user_id = member.id
+            member = member
         except AttributeError:
-            user_id = user
+            user_id = member
             member = guild.get_member(user_id)
             member = member or namedtuple("Member", "guild id")(guild, user_id)
 
@@ -632,7 +634,7 @@ class Warnings(commands.Cog):
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            ctx.message.created_at,
             "unwarned",
             member,
             ctx.message.author,

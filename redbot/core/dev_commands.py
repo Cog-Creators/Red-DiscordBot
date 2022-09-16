@@ -1,3 +1,15 @@
+"""
+The original implementation of this cog was heavily based on
+RoboDanny's REPL cog which can be found here:
+https://github.com/Rapptz/RoboDanny/blob/f13e1c9a6a7205e50de6f91fa5326fc7113332d3/cogs/repl.py
+
+Copyright (c) 2017-present Cog Creators
+Copyright (c) 2016-2017 Rapptz
+
+The original copy was distributed under MIT License and this derivative work
+is distributed under GNU GPL Version 3.
+"""
+
 import ast
 import asyncio
 import aiohttp
@@ -14,23 +26,16 @@ import discord
 
 from . import checks, commands
 from .commands import NoParseOptional as Optional
-from .i18n import Translator
-from .utils.chat_formatting import box, pagify
+from .i18n import Translator, cog_i18n
+from .utils.chat_formatting import pagify
 from .utils.predicates import MessagePredicate
-
-"""
-Notice:
-
-95% of the below code came from R.Danny which can be found here:
-
-https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
-"""
 
 _ = Translator("Dev", __file__)
 
-START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
+START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
 
 
+@cog_i18n(_)
 class Dev(commands.Cog):
     """Various development focused utilities."""
 
@@ -45,6 +50,7 @@ class Dev(commands.Cog):
         super().__init__()
         self._last_result = None
         self.sessions = {}
+        self.env_extensions = {}
 
     @staticmethod
     def async_compile(source, filename, mode):
@@ -69,16 +75,16 @@ class Dev(commands.Cog):
         # remove `foo`
         return content.strip("` \n")
 
-    @staticmethod
-    def get_syntax_error(e):
+    @classmethod
+    def get_syntax_error(cls, e):
         """Format a syntax error to send to the user.
 
         Returns a string representation of the error formatted as a codeblock.
         """
         if e.text is None:
-            return box("{0.__class__.__name__}: {0}".format(e), lang="py")
-        return box(
-            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py"
+            return cls.get_pages("{0.__class__.__name__}: {0}".format(e))
+        return cls.get_pages(
+            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__)
         )
 
     @staticmethod
@@ -91,6 +97,29 @@ class Dev(commands.Cog):
         """Hides the bot's token from a string."""
         token = ctx.bot.http.token
         return re.sub(re.escape(token), "[EXPUNGED]", input_, re.I)
+
+    def get_environment(self, ctx: commands.Context) -> dict:
+        env = {
+            "bot": ctx.bot,
+            "ctx": ctx,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message,
+            "asyncio": asyncio,
+            "aiohttp": aiohttp,
+            "discord": discord,
+            "commands": commands,
+            "_": self._last_result,
+            "__name__": "__main__",
+        }
+        for name, value in self.env_extensions.items():
+            try:
+                env[name] = value(ctx)
+            except Exception as e:
+                traceback.clear_frames(e.__traceback__)
+                env[name] = e
+        return env
 
     @commands.command()
     @checks.is_owner()
@@ -106,7 +135,7 @@ class Dev(commands.Cog):
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -115,36 +144,25 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
-
+        env = self.get_environment(ctx)
         code = self.cleanup_code(code)
 
         try:
             compiled = self.async_compile(code, "<string>", "eval")
             result = await self.maybe_await(eval(compiled, env))
         except SyntaxError as e:
-            await ctx.send(self.get_syntax_error(e))
+            await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
             return
         except Exception as e:
-            await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
+            await ctx.send_interactive(
+                self.get_pages("{}: {!s}".format(type(e).__name__, e)), box_lang="py"
+            )
             return
 
         self._last_result = result
         result = self.sanitize_output(ctx, str(result))
 
+        await ctx.tick()
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name="eval")
@@ -160,7 +178,7 @@ class Dev(commands.Cog):
         as they are not mixed and they are formatted correctly.
 
         Environment Variables:
-            ctx      - command invokation context
+            ctx      - command invocation context
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
@@ -169,21 +187,7 @@ class Dev(commands.Cog):
             commands - redbot.core.commands
             _        - The result of the last dev command.
         """
-        env = {
-            "bot": ctx.bot,
-            "ctx": ctx,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "guild": ctx.guild,
-            "message": ctx.message,
-            "asyncio": asyncio,
-            "aiohttp": aiohttp,
-            "discord": discord,
-            "commands": commands,
-            "_": self._last_result,
-            "__name__": "__main__",
-        }
-
+        env = self.get_environment(ctx)
         body = self.cleanup_code(body)
         stdout = io.StringIO()
 
@@ -193,14 +197,14 @@ class Dev(commands.Cog):
             compiled = self.async_compile(to_compile, "<string>", "exec")
             exec(compiled, env)
         except SyntaxError as e:
-            return await ctx.send(self.get_syntax_error(e))
+            return await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
 
         func = env["func"]
         result = None
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except:
+        except Exception:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -224,19 +228,6 @@ class Dev(commands.Cog):
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
         """
-        variables = {
-            "ctx": ctx,
-            "bot": ctx.bot,
-            "message": ctx.message,
-            "guild": ctx.guild,
-            "channel": ctx.channel,
-            "author": ctx.author,
-            "asyncio": asyncio,
-            "_": None,
-            "__builtins__": __builtins__,
-            "__name__": "__main__",
-        }
-
         if ctx.channel.id in self.sessions:
             if self.sessions[ctx.channel.id]:
                 await ctx.send(
@@ -250,6 +241,9 @@ class Dev(commands.Cog):
                 )
             return
 
+        env = self.get_environment(ctx)
+        env["__builtins__"] = __builtins__
+        env["_"] = None
         self.sessions[ctx.channel.id] = True
         await ctx.send(
             _(
@@ -284,11 +278,10 @@ class Dev(commands.Cog):
                 try:
                     code = self.async_compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
-                    await ctx.send(self.get_syntax_error(e))
+                    await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
                     continue
 
-            variables["message"] = response
-
+            env["message"] = response
             stdout = io.StringIO()
 
             msg = ""
@@ -296,18 +289,21 @@ class Dev(commands.Cog):
             try:
                 with redirect_stdout(stdout):
                     if executor is None:
-                        result = types.FunctionType(code, variables)()
+                        result = types.FunctionType(code, env)()
                     else:
-                        result = executor(code, variables)
+                        result = executor(code, env)
                     result = await self.maybe_await(result)
-            except:
+            except Exception:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
                 value = stdout.getvalue()
                 if result is not None:
-                    msg = "{}{}".format(value, result)
-                    variables["_"] = result
+                    try:
+                        msg = "{}{}".format(value, result)
+                    except Exception:
+                        msg = "{}{}".format(value, traceback.format_exc())
+                    env["_"] = result
                 elif value:
                     msg = "{}".format(value)
 
@@ -351,21 +347,36 @@ class Dev(commands.Cog):
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.Member, *, content: str):
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
         """Dispatch a message event as if it were sent by a different user.
 
-        Only reads the raw content of the message. Attachments, embeds etc. are
-        ignored.
+        Current message is used as a base (including attachments, embeds, etc.),
+        the content and author of the message are replaced with the given arguments.
+
+        Note: If `content` isn't passed, the message needs to contain embeds, attachments,
+        or anything else that makes the message non-empty.
         """
-        old_author = ctx.author
-        old_content = ctx.message.content
-        ctx.message.author = user
-        ctx.message.content = content
+        msg = ctx.message
+        if not content and not msg.embeds and not msg.attachments and not msg.stickers:
+            await ctx.send_help()
+            return
+        msg = copy(msg)
+        msg.author = user
+        msg.content = content
 
-        ctx.bot.dispatch("message", ctx.message)
+        ctx.bot.dispatch("message", msg)
 
-        # If we change the author and content back too quickly,
-        # the bot won't process the mocked message in time.
-        await asyncio.sleep(2)
-        ctx.message.author = old_author
-        ctx.message.content = old_content
+    @commands.command()
+    @checks.is_owner()
+    async def bypasscooldowns(self, ctx, toggle: Optional[bool] = None):
+        """Give bot owners the ability to bypass cooldowns.
+
+        Does not persist through restarts."""
+        if toggle is None:
+            toggle = not ctx.bot._bypass_cooldowns
+        ctx.bot._bypass_cooldowns = toggle
+
+        if toggle:
+            await ctx.send(_("Bot owners will now bypass all commands with cooldowns."))
+        else:
+            await ctx.send(_("Bot owners will no longer bypass all commands with cooldowns."))
