@@ -1092,7 +1092,7 @@ class Config(metaclass=ConfigMeta):
 
         Parameters
         ----------
-        user : discord.User
+        user : discord.abc.User
             A user object.
 
         Returns
