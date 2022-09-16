@@ -4,7 +4,7 @@ from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
 import weakref
-from typing import List, Optional
+from typing import List, Optional, Union
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -57,14 +57,18 @@ class Tunnel(metaclass=TunnelMeta):
     ----------
     sender: `discord.Member`
         The person who opened the tunnel
-    origin: `discord.TextChannel`
+    origin: `discord.TextChannel` or `discord.Thread`
         The channel in which it was opened
     recipient: `discord.User`
         The user on the other end of the tunnel
     """
 
     def __init__(
-        self, *, sender: discord.Member, origin: discord.TextChannel, recipient: discord.User
+        self,
+        *,
+        sender: discord.Member,
+        origin: Union[discord.TextChannel, discord.Thread],
+        recipient: discord.User,
     ):
         self.sender = sender
         self.origin = origin
@@ -124,10 +128,7 @@ class Tunnel(metaclass=TunnelMeta):
         if content:
             for page in pagify(content):
                 rets.append(await destination.send(page, files=files, embed=embed))
-                if files:
-                    del files
-                if embed:
-                    del embed
+                files = embed = None
         elif embed or files:
             rets.append(await destination.send(files=files, embed=embed))
         return rets
@@ -219,9 +220,9 @@ class Tunnel(metaclass=TunnelMeta):
             the bot can't upload at the origin channel
             or can't add reactions there.
         """
-        if message.channel == self.origin and message.author == self.sender:
+        if message.channel.id == self.origin.id and message.author == self.sender:
             send_to = self.recipient
-        elif message.author == self.recipient and isinstance(message.channel, discord.DMChannel):
+        elif message.author == self.recipient and message.guild is None:
             send_to = self.origin
         else:
             return None

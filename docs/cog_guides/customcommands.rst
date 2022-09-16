@@ -68,7 +68,7 @@ customcom cooldown
 
 Set, edit, or view the cooldown for a custom command.
 
-You may set cooldowns per member, channel, or guild. Multiple
+You may set cooldowns per member, thread/channel, or guild. Multiple
 cooldowns may be set. All cooldowns must be cooled to call the
 custom command.
 
@@ -105,7 +105,7 @@ Create custom commands.
 
 If a type is not specified, a simple CC will be created.
 CCs can be enhanced with arguments, see the guide
-here: https://docs.discord.red/en/stable/cog_customcom.html.
+:ref:`here <cog_customcom>`.
 
 .. _customcommands-command-customcom-create-random:
 
@@ -291,4 +291,4 @@ Shows a custom command's responses and its settings.
 
 **Arguments:**
 
-- ``<command>`` The custom command to show.
+- ``<command_name>`` The custom command to show.

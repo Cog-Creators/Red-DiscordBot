@@ -253,7 +253,7 @@ Developer changelog
 Core Bot
 ********
 
-- Added `bot.set_prefixes() <RedBase.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
+- Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
@@ -650,7 +650,7 @@ Dev Cog
 Documentation changes
 ---------------------
 
-- Fixed install instructions for Mac in `install_linux_mac` (:issue:`3675`, :issue:`3436`)
+- Fixed install instructions for Mac (:issue:`3675`, :issue:`3436`)
 - Windows install instructions now use ``choco upgrade`` commands instead of ``choco install`` to ensure up-to-date packages (:issue:`3684`)
 
 

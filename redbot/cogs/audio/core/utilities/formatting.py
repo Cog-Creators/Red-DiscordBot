@@ -1,5 +1,3 @@
-import datetime
-import logging
 import math
 import re
 import time
@@ -9,19 +7,20 @@ from typing import List, Optional
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
-from discord.embeds import EmptyEmbed
+from lavalink import NodeNotFound
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, escape
 
 from ...audio_dataclasses import LocalPath, Query
-from ...audio_logging import IS_DEBUG
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.formatting")
+log = getLogger("red.cogs.Audio.cog.Utilities.formatting")
 _ = Translator("Audio", Path(__file__))
 RE_SQUARE = re.compile(r"[\[\]]")
 
@@ -93,23 +92,24 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
-                msg = _("Connection to Lavalink has failed.")
-                description = EmptyEmbed
+                msg = _("Connection to Lavalink node has failed")
+                description = None
                 if await self.bot.is_owner(ctx.author):
                     description = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
-                await lavalink.connect(ctx.author.voice.channel)
-                player = lavalink.get_player(ctx.guild.id)
-                player.store("connect", datetime.datetime.utcnow())
-                await self.self_deafen(player)
+                await lavalink.connect(
+                    ctx.author.voice.channel,
+                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                )
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
-            except IndexError:
+            except NodeNotFound:
                 return await self.send_embed_msg(
-                    ctx, title=_("Connection to Lavalink has not yet been established.")
+                    ctx, title=_("Connection to Lavalink node has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
+        player.store("notify_channel", ctx.channel.id)
         guild_data = await self.config.guild(ctx.guild).all()
         if len(player.queue) >= 10000:
             return await self.send_embed_msg(
@@ -162,14 +162,12 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             f"{search_choice.title} {search_choice.author} {search_choice.uri} {str(query)}",
             query_obj=query,
         ):
-            if IS_DEBUG:
-                log.debug(f"Query is not allowed in {ctx.guild} ({ctx.guild.id})")
+            log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
             )
         elif guild_data["maxlength"] > 0:
-
             if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
                 search_choice.extras.update(
                     {
@@ -181,7 +179,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 player.add(ctx.author, search_choice)
                 player.maybe_shuffle()
                 self.bot.dispatch(
-                    "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
+                    "red_audio_track_enqueue", player.guild, search_choice, ctx.author
                 )
             else:
                 return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
@@ -195,9 +193,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
-            self.bot.dispatch(
-                "red_audio_track_enqueue", player.channel.guild, search_choice, ctx.author
-            )
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
         if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(
@@ -239,24 +235,26 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if query.is_local:
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
-                        track.title,
-                        LocalPath(track.uri, self.local_folder_current_path).to_string_user(),
+                        discord.utils.escape_markdown(track.title),
+                        discord.utils.escape_markdown(
+                            LocalPath(track.uri, self.local_folder_current_path).to_string_user()
+                        ),
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(
-                        search_track_num, track.title, track.uri
+                        search_track_num, discord.utils.escape_markdown(track.title), track.uri
                     )
             except AttributeError:
                 track = Query.process_input(track, self.local_folder_current_path)
                 if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, track.to_string_user()
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
                     if track.is_album:
                         folder = True
                 else:
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, track.to_string_user()
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
         if hasattr(tracks[0], "uri") and hasattr(tracks[0], "track_identifier"):
             title = _("Tracks Found:")

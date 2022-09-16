@@ -1,6 +1,5 @@
 import asyncio
 import contextlib
-import logging
 import os
 import tarfile
 from pathlib import Path
@@ -9,22 +8,23 @@ from typing import Union
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core import bank, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from redbot.core.utils.menus import menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...audio_dataclasses import LocalPath
 from ...converters import ScopeParser
 from ...errors import MissingGuild, TooManyMatches
-from ...utils import CacheLevel, PlaylistScope, has_internal_server
+from ...utils import CacheLevel, PlaylistScope, has_managed_server
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass, PlaylistConverter, __version__
 
-log = logging.getLogger("red.cogs.Audio.cog.Commands.audioset")
+log = getLogger("red.cogs.Audio.cog.Commands.audioset")
 
 _ = Translator("Audio", Path(__file__))
 
@@ -78,7 +78,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_global_whitelist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_global_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.url_keyword_whitelist()
@@ -102,7 +102,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_global_whitelist.command(name="clear")
     async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
@@ -172,7 +172,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_global_blacklist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_global_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.url_keyword_blacklist()
@@ -196,7 +196,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_global_blacklist.command(name="clear")
     async def command_audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
@@ -268,7 +268,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_whitelist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_whitelist_list(self, ctx: commands.Context):
         """List all keywords added to the whitelist."""
         whitelist = await self.config.guild(ctx.guild).url_keyword_whitelist()
@@ -292,7 +292,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_whitelist.command(name="clear")
     async def command_audioset_perms_whitelist_clear(self, ctx: commands.Context):
@@ -361,7 +361,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     @command_audioset_perms_blacklist.command(name="list")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_perms_blacklist_list(self, ctx: commands.Context):
         """List all keywords added to the blacklist."""
         blacklist = await self.config.guild(ctx.guild).url_keyword_blacklist()
@@ -385,7 +385,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_blacklist.command(name="clear")
     async def command_audioset_perms_blacklist_clear(self, ctx: commands.Context):
@@ -453,7 +453,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.set_player_settings(ctx)
 
     @command_audioset_autoplay.command(name="playlist", usage="<playlist_name_OR_id> [args]")
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_autoplay_playlist(
         self,
         ctx: commands.Context,
@@ -496,9 +496,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Playlists Are Not Available"),
                 description=_("The playlist section of Audio is currently unavailable"),
-                footer=discord.Embed.Empty
-                if not await self.bot.is_owner(ctx.author)
-                else _("Check your logs."),
+                footer=None if not await self.bot.is_owner(ctx.author) else _("Check your logs."),
             )
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
@@ -558,7 +556,13 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_autoplay.command(name="reset")
     async def command_audioset_autoplay_reset(self, ctx: commands.Context):
         """Resets auto-play to the default playlist."""
-        playlist_data = dict(enabled=False, id=None, name=None, scope=None)
+        playlist_data = dict(
+            enabled=True,
+            id=42069,
+            name="Aikaterna's curated tracks",
+            scope=PlaylistScope.GLOBAL.value,
+        )
+
         await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
         return await self.send_embed_msg(
             ctx,
@@ -776,7 +780,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="localpath")
     @commands.is_owner()
-    @commands.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def command_audioset_localpath(self, ctx: commands.Context, *, local_path=None):
         """Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
 
@@ -917,7 +921,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Toggle the domain restriction on Audio.
 
         When toggled off, users will be able to play songs from non-commercial websites and links.
-        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and
+        When toggled on, users are restricted to YouTube, SoundCloud, Vimeo, Twitch, and
         Bandcamp links.
         """
         restrict = await self.config.restrict()
@@ -954,6 +958,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         is_owner = await self.bot.is_owner(ctx.author)
         global_data = await self.config.all()
         data = await self.config.guild(ctx.guild).all()
+
+        auto_deafen = _("Enabled") if data["auto_deafen"] else _("Disabled")
         dj_role_obj = ctx.guild.get_role(data["dj_role"])
         dj_enabled = data["dj_enabled"]
         emptydc_enabled = data["emptydc_enabled"]
@@ -966,6 +972,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         dc = data["disconnect"]
         autoplay = data["auto_play"]
         maxlength = data["maxlength"]
+        maxvolume = data["max_volume"]
         vote_percent = data["vote_percent"]
         current_level = CacheLevel(global_data["cache_level"])
         song_repeat = _("Enabled") if data["repeat"] else _("Disabled")
@@ -974,7 +981,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
         persist_queue = _("Enabled") if data["persist_queue"] else _("Disabled")
-        auto_deafen = _("Enabled") if data["auto_deafen"] else _("Disabled")
 
         countrycode = data["country_code"]
 
@@ -988,6 +994,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         autoplaylist = data["autoplaylist"]
         vote_enabled = data["vote_enabled"]
         msg = "----" + _("Server Settings") + "----        \n"
+        msg += _("Auto-deafen:      [{auto_deafen}]\n").format(
+            auto_deafen=auto_deafen,
+        )
         msg += _("Auto-disconnect:  [{dc}]\n").format(dc=_("Enabled") if dc else _("Disabled"))
         msg += _("Auto-play:        [{autoplay}]\n").format(
             autoplay=_("Enabled") if autoplay else _("Disabled")
@@ -1012,23 +1021,23 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 tracklength=self.get_time_string(maxlength)
             )
         msg += _(
+            "Max volume:       [{max_volume}%]\n"
+            "Persist queue:    [{persist_queue}]\n"
             "Repeat:           [{repeat}]\n"
             "Shuffle:          [{shuffle}]\n"
             "Shuffle bumped:   [{bumpped_shuffle}]\n"
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n"
-            "Persist queue:    [{persist_queue}]\n"
             "Spotify search:   [{countrycode}]\n"
-            "Auto-Deafen:      [{auto_deafen}]\n"
         ).format(
+            max_volume=maxvolume,
             countrycode=countrycode,
+            persist_queue=persist_queue,
             repeat=song_repeat,
             shuffle=song_shuffle,
             notify=song_notify,
             status=song_status,
             bumpped_shuffle=bumpped_shuffle,
-            persist_queue=persist_queue,
-            auto_deafen=auto_deafen,
         )
         if thumbnail:
             msg += _("Thumbnails:       [{0}]\n").format(
@@ -1079,15 +1088,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Local Spotify cache:    [{spotify_status}]\n")
                 + _("Local Youtube cache:    [{youtube_status}]\n")
                 + _("Local Lavalink cache:   [{lavalink_status}]\n")
-                + _("Global cache status:    [{global_cache}]\n")
-                + _("Global timeout:         [{num_seconds}]\n")
             ).format(
                 max_age=str(await self.config.cache_age()) + " " + _("days"),
                 spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
                 youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
                 lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
-                global_cache=_("Enabled") if global_data["global_db_enabled"] else _("Disabled"),
-                num_seconds=self.get_time_string(global_data["global_db_get_timeout"]),
             )
         msg += (
             "\n---"
@@ -1110,7 +1115,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             if global_data["use_external_lavalink"]
             else _("Disabled"),
         )
-        if is_owner and not global_data["use_external_lavalink"] and self.player_manager.ll_build:
+        if (
+            is_owner
+            and not global_data["use_external_lavalink"]
+            and self.managed_node_controller.ll_build
+        ):
             msg += _(
                 "Lavalink build:         [{llbuild}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
@@ -1118,13 +1127,17 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Lavaplayer version:     [{lavaplayer}]\n"
                 "Java version:           [{jvm}]\n"
                 "Java Executable:        [{jv_exec}]\n"
+                "Initial Heapsize:       [{xms}]\n"
+                "Max Heapsize:           [{xmx}]\n"
             ).format(
-                build_time=self.player_manager.build_time,
-                llbuild=self.player_manager.ll_build,
-                llbranch=self.player_manager.ll_branch,
-                lavaplayer=self.player_manager.lavaplayer,
-                jvm=self.player_manager.jvm,
-                jv_exec=self.player_manager.path,
+                build_time=self.managed_node_controller.build_time,
+                llbuild=self.managed_node_controller.ll_build,
+                llbranch=self.managed_node_controller.ll_branch,
+                lavaplayer=self.managed_node_controller.lavaplayer,
+                jvm=self.managed_node_controller.jvm,
+                jv_exec=self.managed_node_controller.path,
+                xms=global_data["java"]["Xms"],
+                xmx=global_data["java"]["Xmx"],
             )
         if is_owner:
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
@@ -1133,10 +1146,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
 
     @command_audioset.command(name="logs")
     @commands.is_owner()
-    @has_internal_server()
     @commands.guild_only()
+    @has_managed_server()
     async def command_audioset_logs(self, ctx: commands.Context):
-        """Sends the Lavalink server logs to your DMs."""
+        """Sends the managed Lavalink node logs to your DMs."""
         datapath = cog_data_path(raw_name="Audio")
         logs = datapath / "logs" / "spring.log"
         zip_name = None
@@ -1416,37 +1429,6 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.config.cache_age.set(age)
         await self.send_embed_msg(ctx, title=_("Setting Changed"), description=msg)
 
-    @commands.is_owner()
-    @command_audioset.group(name="globalapi")
-    async def command_audioset_audiodb(self, ctx: commands.Context):
-        """Change globalapi settings."""
-
-    @command_audioset_audiodb.command(name="toggle")
-    async def command_audioset_audiodb_toggle(self, ctx: commands.Context):
-        """Toggle the server settings.
-
-        Default is OFF
-        """
-        state = await self.config.global_db_enabled()
-        await self.config.global_db_enabled.set(not state)
-        if not state:  # Ensure a call is made if the API is enabled to update user perms
-            self.global_api_user = await self.api_interface.global_cache_api.get_perms()
-        await ctx.send(
-            _("Global DB is {status}").format(status=_("enabled") if not state else _("disabled"))
-        )
-
-    @command_audioset_audiodb.command(name="timeout")
-    async def command_audioset_audiodb_timeout(
-        self, ctx: commands.Context, timeout: Union[float, int]
-    ):
-        """Set GET request timeout.
-
-        Example: 0.1 = 100ms 1 = 1 second
-        """
-
-        await self.config.global_db_get_timeout.set(timeout)
-        await ctx.send(_("Request timeout set to {time} second(s)").format(time=timeout))
-
     @command_audioset.command(name="persistqueue")
     @commands.admin()
     async def command_audioset_persist_queue(self, ctx: commands.Context):
@@ -1472,14 +1454,60 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_restart(self, ctx: commands.Context):
         """Restarts the lavalink connection."""
         async with ctx.typing():
-            await lavalink.close()
-            if self.player_manager is not None:
-                await self.player_manager.shutdown()
-
-            self.lavalink_restart_connect()
+            try:
+                await lavalink.close(self.bot)
+                self.lavalink_restart_connect(manual=True)
+            except ProcessLookupError:
+                await self.send_embed_msg(
+                    ctx,
+                    title=_("Failed To Shutdown Lavalink Node"),
+                    description=_("Please reload Audio (`{prefix}reload audio`).").format(
+                        prefix=ctx.prefix
+                    ),
+                )
 
             await self.send_embed_msg(
                 ctx,
                 title=_("Restarting Lavalink"),
                 description=_("It can take a couple of minutes for Lavalink to fully start up."),
             )
+
+    @command_audioset.command(usage="<maximum volume>", name="maxvolume")
+    @commands.guild_only()
+    @commands.admin_or_permissions(manage_roles=True)
+    async def command_audioset_maxvolume(self, ctx: commands.Context, max_volume: int):
+        """Set the maximum volume allowed in this server."""
+        if max_volume < 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Error"),
+                description=_(
+                    "Music without sound isn't music at all. Try setting the volume higher then 0%."
+                ),
+            )
+        elif max_volume > 150:
+            max_volume = 150
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting changed"),
+                description=_(
+                    "The maximum volume has been limited to 150%, be easy on your ears."
+                ),
+            )
+        else:
+            await self.send_embed_msg(
+                ctx,
+                title=_("Setting changed"),
+                description=_("The maximum volume has been limited to {max_volume}%.").format(
+                    max_volume=max_volume
+                ),
+            )
+        current_volume = await self.config.guild(ctx.guild).volume()
+        if current_volume > max_volume:
+            await self.config.guild(ctx.guild).volume.set(max_volume)
+            if self._player_check(ctx):
+                player = lavalink.get_player(ctx.guild.id)
+                await player.set_volume(max_volume)
+                player.store("notify_channel", ctx.channel.id)
+
+        await self.config.guild(ctx.guild).max_volume.set(max_volume)

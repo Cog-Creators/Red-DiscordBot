@@ -1,13 +1,13 @@
 import base64
 import contextlib
 import json
-import logging
 import time
 from pathlib import Path
 
 from typing import TYPE_CHECKING, List, Mapping, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
+from red_commons.logging import getLogger
 
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 _ = Translator("Audio", Path(__file__))
 
-log = logging.getLogger("red.cogs.Audio.api.Spotify")
+log = getLogger("red.cogs.Audio.api.Spotify")
 
 
 CATEGORY_ENDPOINT = "https://api.spotify.com/v1/browse/categories"
@@ -102,7 +102,7 @@ class SpotifyWrapper:
         async with self.session.request("GET", url, params=params, headers=headers) as r:
             data = await r.json(loads=json.loads)
             if r.status != 200:
-                log.debug(f"Issue making GET request to {url}: [{r.status}] {data}")
+                log.verbose("Issue making GET request to %r: [%s] %r", url, r.status, data)
             return data
 
     async def update_token(self, new_token: Mapping[str, str]):
@@ -146,7 +146,7 @@ class SpotifyWrapper:
         except KeyError:
             return None
         self.spotify_token = token
-        log.debug(f"Created a new access token for Spotify: {token}")
+        log.debug("Created a new access token for Spotify: %s", token)
         return self.spotify_token["access_token"]
 
     async def post(
@@ -156,7 +156,7 @@ class SpotifyWrapper:
         async with self.session.post(url, data=payload, headers=headers) as r:
             data = await r.json(loads=json.loads)
             if r.status != 200:
-                log.debug(f"Issue making POST request to {url}: [{r.status}] {data}")
+                log.verbose("Issue making POST request to %r: [%s] %r", url, r.status, data)
             return data
 
     async def make_get_call(self, url: str, params: MutableMapping) -> MutableMapping:

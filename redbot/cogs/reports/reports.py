@@ -114,7 +114,7 @@ class Reports(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggle", aliases=["toggleactive"])
     async def reportset_toggle(self, ctx: commands.Context):
-        """Enable or Disable reporting for this server."""
+        """Enable or disable reporting for this server."""
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)
@@ -192,8 +192,7 @@ class Reports(commands.Cog):
         else:
             return guild
 
-    async def send_report(self, msg: discord.Message, guild: discord.Guild):
-
+    async def send_report(self, ctx: commands.Context, msg: discord.Message, guild: discord.Guild):
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
 
@@ -207,13 +206,13 @@ class Reports(commands.Cog):
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
-        if await self.bot.embed_requested(channel, author):
-            em = discord.Embed(description=report)
+        if await self.bot.embed_requested(channel):
+            em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
                     author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
                 ),
-                icon_url=author.avatar_url,
+                icon_url=author.display_avatar,
             )
             em.set_footer(text=_("Report #{}").format(ticket_number))
             send_content = None
@@ -236,12 +235,12 @@ class Reports(commands.Cog):
         )
         return ticket_number
 
-    @commands.group(name="report", invoke_without_command=True)
+    @commands.group(name="report", usage="[text]", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """Send a report.
 
         Use without arguments for interactive reporting, or do
-        `[p]report <text>` to use it non-interactively.
+        `[p]report [text]` to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild
@@ -279,7 +278,7 @@ class Reports(commands.Cog):
             _m = copy(ctx.message)
             _m.content = _report
             _m.content = _m.clean_content
-            val = await self.send_report(_m, guild)
+            val = await self.send_report(ctx, _m, guild)
         else:
             try:
                 await author.send(
@@ -300,7 +299,7 @@ class Reports(commands.Cog):
             except asyncio.TimeoutError:
                 return await author.send(_("You took too long. Try again later."))
             else:
-                val = await self.send_report(message, guild)
+                val = await self.send_report(ctx, message, guild)
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
@@ -357,11 +356,9 @@ class Reports(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-
         to_remove = []
 
         for k, v in self.tunnel_store.items():
-
             guild, ticket_number = k
             if await self.bot.cog_disabled_in_guild(self, guild):
                 to_remove.append(k)
@@ -394,7 +391,7 @@ class Reports(commands.Cog):
     async def response(self, ctx, ticket_number: int):
         """Open a message tunnel.
 
-        This tunnel will forward things you say in this channel
+        This tunnel will forward things you say in this channel or thread
         to the ticket opener's direct messages.
 
         Tunnels do not persist across bot restarts.

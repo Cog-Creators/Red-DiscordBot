@@ -381,7 +381,7 @@ class MongoDriver(BaseDriver):
             while True:
                 resp = input("> ")
                 try:
-                    drop_db = bool(options.index(resp))
+                    drop_db = not bool(options.index(resp))
                 except ValueError:
                     print("Please type a number corresponding to one of the options.")
                 else:
