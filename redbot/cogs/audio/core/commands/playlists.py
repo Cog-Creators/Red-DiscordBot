@@ -1447,9 +1447,12 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         if scope_data is None:
             scope_data = [None, ctx.author, ctx.guild, False]
         scope, author, guild, specified_user = scope_data
-        dj_enabled = self._dj_status_cache.setdefault(
-            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-        )
+
+        guild_data = await self.config.guild(ctx.guild).all()
+        if ctx.guild.id in self._dj_status_cache:
+            dj_enabled = self._dj_status_cache[ctx.guild.id]
+        else:
+            dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
         if dj_enabled and not await self._can_instaskip(ctx, ctx.author):
             ctx.command.reset_cooldown(ctx)
             await self.send_embed_msg(
@@ -1479,11 +1482,10 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             if not await self._playlist_check(ctx):
                 ctx.command.reset_cooldown(ctx)
                 return
-            jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-            if not await self.maybe_charge_requester(ctx, jukebox_price):
+            if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
                 ctx.command.reset_cooldown(ctx)
                 return
-            maxlength = await self.config.guild(ctx.guild).maxlength()
+            maxlength = guild_data["maxlength"]
             author_obj = self.bot.get_user(ctx.author.id)
             track_len = 0
             try:

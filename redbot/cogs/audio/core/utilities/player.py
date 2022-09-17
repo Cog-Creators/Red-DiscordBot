@@ -675,13 +675,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def set_player_settings(self, ctx: commands.Context) -> None:
         player = lavalink.get_player(ctx.guild.id)
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        volume = await self.config.guild(ctx.guild).volume()
-        shuffle_bumped = await self.config.guild(ctx.guild).shuffle_bumped()
-        player.repeat = repeat
-        player.shuffle = shuffle
-        player.shuffle_bumped = shuffle_bumped
+        guild_data = await self.config.guild(ctx.guild).all()
+        volume = guild_data["volume"]
+        player.repeat = guild_data["repeat"]
+        player.shuffle = guild_data["shuffle"]
+        player.shuffle_bumped = guild_data["shuffle_bumped"]
         if player.volume != volume:
             await player.set_volume(volume)
 

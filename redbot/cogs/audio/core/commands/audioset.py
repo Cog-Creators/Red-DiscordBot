@@ -434,9 +434,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     @command_audioset_autoplay.command(name="toggle")
     async def command_audioset_autoplay_toggle(self, ctx: commands.Context):
         """Toggle auto-play when there no songs in queue."""
-        autoplay = await self.config.guild(ctx.guild).auto_play()
-        repeat = await self.config.guild(ctx.guild).repeat()
-        disconnect = await self.config.guild(ctx.guild).disconnect()
+        guild_data = await self.config.guild(ctx.guild).all()
+        autoplay = guild_data["auto_play"]
+        repeat = guild_data["repeat"]
+        disconnect = guild_data["disconnect"]
         msg = _("Auto-play when queue ends: {true_or_false}.").format(
             true_or_false=_("Enabled") if not autoplay else _("Disabled")
         )
