@@ -54,6 +54,7 @@ from .utils.chat_formatting import (
 )
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
+from copy import copy
 
 _entities = {
     "*": "&midast;",
@@ -1435,21 +1436,28 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[public]` - Whether to send the traceback to the current context. Leave blank to send to your DMs.
         """
-        if not public:
-            destination = ctx.author
-        else:
-            destination = ctx.channel
+
+        copied_ctx = copy(ctx)
+        copied_ctx.channel = (
+            ctx.channel
+            if public
+            else (
+                discord.utils.get(ctx.bot.private_channels, recipient=ctx.author)
+                if ctx.author.dm_channel
+                else await ctx.author._get_channel()
+            )
+        )
 
         if self.bot._last_exception:
-            for page in pagify(self.bot._last_exception, shorten_by=10):
-                try:
-                    await destination.send(box(page, lang="py"))
-                except discord.HTTPException:
-                    await ctx.channel.send(
-                        "I couldn't send the traceback message to you in DM. "
-                        "Either you blocked me or you disabled DMs in this server."
-                    )
-                    return
+            try:
+                await copied_ctx.send_interactive(
+                    pagify(self.bot._last_exception, shorten_by=10), box_lang="py"
+                )
+            except discord.HTTPException:
+                await ctx.channel.send(
+                    "I couldn't send the traceback message to you in DM. "
+                    "Either you blocked me or you disabled DMs in this server."
+                )
             if not public:
                 await ctx.tick()
         else:
