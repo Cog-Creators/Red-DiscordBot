@@ -1442,9 +1442,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             ctx.channel
             if public
             else (
-                discord.utils.get(ctx.bot.private_channels, recipient=ctx.author)
-                if ctx.author.dm_channel
-                else await ctx.author._get_channel()
+                ctx.author.dm_channel if ctx.author.dm_channel else await ctx.author._get_channel()
             )
         )
 
