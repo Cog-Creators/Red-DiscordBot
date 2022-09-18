@@ -1458,6 +1458,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "I couldn't send the traceback message to you in DM. "
                     "Either you blocked me or you disabled DMs in this server."
                 )
+                return
             if not public:
                 await ctx.tick()
         else:
