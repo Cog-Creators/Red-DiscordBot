@@ -308,7 +308,6 @@ class Streams(commands.Cog):
     @checks.mod_or_permissions(manage_channels=True)
     async def streamalert(self, ctx: commands.Context):
         """Manage automated stream alerts."""
-        pass
 
     @streamalert.group(name="twitch", invoke_without_command=True)
     async def _twitch(
@@ -497,7 +496,6 @@ class Streams(commands.Cog):
     @checks.mod_or_permissions(manage_channels=True)
     async def streamset(self, ctx: commands.Context):
         """Manage stream alert settings."""
-        pass
 
     @streamset.command(name="timer")
     @checks.is_owner()
@@ -569,7 +567,6 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def message(self, ctx: commands.Context):
         """Manage custom messages for stream alerts."""
-        pass
 
     @message.command(name="mention")
     @commands.guild_only()
@@ -613,7 +610,6 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def mention(self, ctx: commands.Context):
         """Manage mention settings for stream alerts."""
-        pass
 
     @mention.command(aliases=["everyone"])
     @commands.guild_only()

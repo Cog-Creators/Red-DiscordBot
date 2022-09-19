@@ -102,7 +102,6 @@ class Reports(commands.Cog):
     @commands.group(name="reportset")
     async def reportset(self, ctx: commands.Context):
         """Manage Reports."""
-        pass
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")

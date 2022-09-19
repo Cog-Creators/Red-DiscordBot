@@ -186,7 +186,6 @@ class Economy(commands.Cog):
     @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
         """Base command to manage the bank."""
-        pass
 
     @_bank.command()
     async def balance(self, ctx: commands.Context, user: discord.Member = commands.Author):

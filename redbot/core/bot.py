@@ -400,7 +400,6 @@ class Red(
     @_before_invoke.setter
     def _before_invoke(self, val):  # DEP-WARN
         """Prevent this from being overwritten in super().__init__"""
-        pass
 
     async def _red_before_invoke_method(self, ctx):
         await self.wait_until_red_ready()

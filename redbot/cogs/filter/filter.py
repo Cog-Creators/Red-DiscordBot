@@ -83,7 +83,6 @@ class Filter(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
         """Base command to manage filter settings."""
-        pass
 
     @filterset.command(name="defaultname")
     async def filter_default_name(self, ctx: commands.Context, name: str):
@@ -150,7 +149,6 @@ class Filter(commands.Cog):
 
         Use double quotes to add or remove sentences.
         """
-        pass
 
     @_filter.command(name="clear")
     async def _filter_clear(self, ctx: commands.Context):
@@ -199,7 +197,6 @@ class Filter(commands.Cog):
 
         Use double quotes to add or remove sentences.
         """
-        pass
 
     @_filter_channel.command(name="clear")
     async def _channel_clear(self, ctx: commands.Context):

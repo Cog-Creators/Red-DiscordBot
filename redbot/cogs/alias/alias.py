@@ -191,12 +191,10 @@ class Alias(commands.Cog):
     @commands.group()
     async def alias(self, ctx: commands.Context):
         """Manage command aliases."""
-        pass
 
     @alias.group(name="global")
     async def global_(self, ctx: commands.Context):
         """Manage global aliases."""
-        pass
 
     @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="add")

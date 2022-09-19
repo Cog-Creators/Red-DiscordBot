@@ -92,8 +92,6 @@ DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable
 class RedUnhandledAPI(Exception):
     """An exception which can be raised to signal a lack of handling specific APIs"""
 
-    pass
-
 
 class CogCommandMixin:
     """A mixin for cogs and commands."""
@@ -101,7 +99,6 @@ class CogCommandMixin:
     @property
     def help(self) -> str:
         """To be defined by subclasses"""
-        ...
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

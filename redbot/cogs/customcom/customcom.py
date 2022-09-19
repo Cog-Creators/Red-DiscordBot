@@ -264,7 +264,6 @@ class CustomCommands(commands.Cog):
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
         """Base command for Custom Commands management."""
-        pass
 
     @customcom.command(name="raw")
     async def cc_raw(self, ctx: commands.Context, command: str.lower):
@@ -680,14 +679,13 @@ class CustomCommands(commands.Cog):
         if not ctx.command_failed:
             await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
 
+    # fake command to take advantage of discord.py's parsing and events
     async def cc_callback(self, *args, **kwargs) -> None:
         """
         Custom command.
 
         Created via the CustomCom cog. See `[p]customcom` for more details.
         """
-        # fake command to take advantage of discord.py's parsing and events
-        pass
 
     async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
         cc_args = (*cc_args, *cc_kwargs.values())

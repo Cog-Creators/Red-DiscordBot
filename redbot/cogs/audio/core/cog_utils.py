@@ -24,8 +24,6 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     coexist with discord.py's metaclass
     """
 
-    pass
-
 
 # Both DataReader and DataWriter are taken from https://github.com/Devoxin/Lavalink.py/blob/master/lavalink/datarw.py
 # These are licenced under MIT, Thanks Devoxin for putting these together!

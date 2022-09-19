@@ -27,8 +27,6 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     coexist with discord.py's metaclass
     """
 
-    pass
-
 
 @cog_i18n(_)
 class Mod(

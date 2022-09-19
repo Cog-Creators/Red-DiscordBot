@@ -207,7 +207,6 @@ class HelpFormatterABC(abc.ABC):
 
         The types subclasses must handle are defined as ``HelpTarget``
         """
-        ...
 
 
 class RedHelpFormatter(HelpFormatterABC):

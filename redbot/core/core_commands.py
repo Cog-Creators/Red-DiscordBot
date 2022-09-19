@@ -1480,7 +1480,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def inviteset(self, ctx):
         """Commands to setup [botname]'s invite settings."""
-        pass
 
     @inviteset.command()
     async def public(self, ctx, confirm: bool = False):
@@ -2123,7 +2122,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @bankset.group(name="prune")
     async def bankset_prune(self, ctx):
         """Base command for pruning bank accounts."""
-        pass
 
     @bankset_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
@@ -2236,7 +2234,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
         """Manage modlog settings."""
-        pass
 
     @checks.is_owner()
     @modlogset.command(hidden=True, name="fixcasetypes")
@@ -3211,7 +3208,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Owner notifications include usage of `[p]contact` and available Red updates.
         """
-        pass
 
     @_set_ownernotifications.command(name="optin")
     async def _set_ownernotifications_optin(self, ctx: commands.Context):
@@ -3688,7 +3684,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         All help settings are applied globally.
         """
-        pass
 
     @helpset.command(name="showsettings")
     async def helpset_showsettings(self, ctx: commands.Context):
@@ -4295,7 +4290,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]allowlist clear` to disable the allowlist
         """
-        pass
 
     @allowlist.command(name="add", require_var_positional=True)
     async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
@@ -4382,7 +4376,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]blocklist clear` to disable the blocklist
         """
-        pass
 
     @blocklist.command(name="add", require_var_positional=True)
     async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
@@ -4477,7 +4470,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]localallowlist clear` to disable the allowlist
         """
-        pass
 
     @localallowlist.command(name="add", require_var_positional=True)
     async def localallowlist_add(
@@ -4598,7 +4590,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]localblocklist clear` to disable the blocklist
         """
-        pass
 
     @localblocklist.command(name="add", require_var_positional=True)
     async def localblocklist_add(
@@ -4698,7 +4689,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.group(name="command")
     async def command_manager(self, ctx: commands.Context):
         """Commands to enable and disable commands and cogs."""
-        pass
 
     @checks.is_owner()
     @command_manager.command(name="defaultdisablecog")
@@ -5077,7 +5067,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This includes duplicate message deletion and mention spam from the Mod cog, and filters from the Filter cog.
         """
-        pass
 
     @autoimmune_group.command(name="list")
     async def autoimmune_list(self, ctx: commands.Context):

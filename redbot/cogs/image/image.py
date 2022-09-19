@@ -45,7 +45,6 @@ class Image(commands.Cog):
 
         Make sure to set the Client ID using `[p]imgurcreds`.
         """
-        pass
 
     @_imgur.command(name="search", usage="[count] <terms...>")
     async def imgur_search(self, ctx, count: UserInputOptional[int] = 1, *, term: str):

@@ -255,7 +255,6 @@ class Admin(commands.Cog):
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
         """Edit role settings."""
-        pass
 
     @editrole.command(name="colour", aliases=["color"])
     async def editrole_colour(
@@ -354,7 +353,6 @@ class Admin(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def announceset(self, ctx):
         """Change how announcements are sent in this guild."""
-        pass
 
     @announceset.command(name="channel")
     async def announceset_channel(
@@ -445,7 +443,6 @@ class Admin(commands.Cog):
     @checks.admin_or_permissions(manage_roles=True)
     async def selfroleset(self, ctx: commands.Context):
         """Manage selfroles."""
-        pass
 
     @selfroleset.command(name="add")
     async def selfroleset_add(self, ctx: commands.Context, *roles: discord.Role):

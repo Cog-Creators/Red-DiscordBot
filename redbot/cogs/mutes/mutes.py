@@ -72,8 +72,6 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     coexist with discord.py's metaclass
     """
 
-    pass
-
 
 @i18n.cog_i18n(_)
 class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
@@ -786,7 +784,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.guild_only()
     async def muteset(self, ctx: commands.Context):
         """Mute settings."""
-        pass
 
     @muteset.command()
     @commands.guild_only()

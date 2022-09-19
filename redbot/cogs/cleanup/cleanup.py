@@ -173,7 +173,6 @@ class Cleanup(commands.Cog):
     @commands.group()
     async def cleanup(self, ctx: commands.Context):
         """Base command for deleting messages."""
-        pass
 
     @cleanup.command()
     @commands.guild_only()
@@ -738,7 +737,6 @@ class Cleanup(commands.Cog):
     @commands.admin_or_permissions(manage_messages=True)
     async def cleanupset(self, ctx: commands.Context):
         """Manage the settings for the cleanup command."""
-        pass
 
     @commands.guild_only()
     @cleanupset.command(name="notify")

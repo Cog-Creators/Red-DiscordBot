@@ -518,7 +518,6 @@ class Downloader(commands.Cog):
     @checks.is_owner()
     async def repo(self, ctx: commands.Context) -> None:
         """Base command for repository management."""
-        pass
 
     @repo.command(name="add")
     async def _repo_add(
@@ -702,7 +701,6 @@ class Downloader(commands.Cog):
     @checks.is_owner()
     async def cog(self, ctx: commands.Context) -> None:
         """Base command for cog installation management commands."""
-        pass
 
     @cog.command(name="reinstallreqs", hidden=True)
     async def _cog_reinstallreqs(self, ctx: commands.Context) -> None:

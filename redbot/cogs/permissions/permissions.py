@@ -204,7 +204,6 @@ class Permissions(commands.Cog):
     @commands.group()
     async def permissions(self, ctx: commands.Context):
         """Command permission management tools."""
-        pass
 
     @permissions.command(name="explain")
     async def permissions_explain(self, ctx: commands.Context):

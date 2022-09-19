@@ -33,8 +33,6 @@ _ = Translator("Trivia", __file__)
 class InvalidListError(Exception):
     """A Trivia list file is in invalid format."""
 
-    pass
-
 
 @cog_i18n(_)
 class Trivia(commands.Cog):
@@ -219,7 +217,6 @@ class Trivia(commands.Cog):
     @commands.is_owner()
     async def triviaset_custom(self, ctx: commands.Context):
         """Manage Custom Trivia lists."""
-        pass
 
     @triviaset_custom.command(name="list")
     async def custom_trivia_list(self, ctx: commands.Context):

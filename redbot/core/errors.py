@@ -28,8 +28,6 @@ class CogLoadError(RedError):
     """Raised by a cog when it cannot load itself.
     The message will be sent to the user."""
 
-    pass
-
 
 class BankError(RedError):
     """Base error class for bank-related errors."""

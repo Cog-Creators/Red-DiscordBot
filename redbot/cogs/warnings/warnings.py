@@ -110,7 +110,6 @@ class Warnings(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def warningset(self, ctx: commands.Context):
         """Manage settings for Warnings."""
-        pass
 
     @warningset.command()
     @commands.guild_only()
@@ -205,7 +204,6 @@ class Warnings(commands.Cog):
         user is warned enough so that their points go over this
         threshold, the action will be executed.
         """
-        pass
 
     @warnaction.command(name="add")
     @commands.guild_only()
@@ -267,7 +265,6 @@ class Warnings(commands.Cog):
         Reasons must be given a name, description and points value. The
         name of the reason must be given when a user is warned.
         """
-        pass
 
     @warnreason.command(name="create", aliases=["add"])
     @commands.guild_only()
