@@ -4110,12 +4110,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 try:
                     await destination.send(embed=e)
                 except discord.Forbidden:
-                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    log.exception("Contact failed to %r (%r)", destination, destination.id)
                     # Should this automatically opt them out?
                 except discord.HTTPException:
                     log.exception(
-                        f"An unexpected error happened while attempting to"
-                        f" send contact to {destination}({destination.id})"
+                        "An unexpected error happened while attempting to send contact to %r (%r)",
+                        destination,
+                        destination.id,
                     )
                 else:
                     successful = True
@@ -4125,12 +4126,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 try:
                     await destination.send("{}\n{}".format(content, box(msg_text)))
                 except discord.Forbidden:
-                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    log.exception("Contact failed to %r (%r)", destination, destination.id)
                     # Should this automatically opt them out?
                 except discord.HTTPException:
                     log.exception(
-                        f"An unexpected error happened while attempting to"
-                        f" send contact to {destination}({destination.id})"
+                        "An unexpected error happened while attempting to send contact to %r (%r)",
+                        destination,
+                        destination.id,
                     )
                 else:
                     successful = True
