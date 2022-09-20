@@ -98,3 +98,92 @@ extend-exclude = [
 
 [tool.pytest.ini_options]
 asyncio_mode = 'auto'
+
+[tool.pylint.main]
+py-version = "3.8.1"
+# speed up the run on most computers by using 2 processes
+# while keeping it conservative for less beefy machines
+jobs = 2
+load-plugins = [
+    "pylint.extensions.docparams",
+    "pylint.extensions.overlapping_exceptions",
+]
+
+[tool.pylint.variables]
+allowed-redefined-builtins = ["id"]
+
+[tool.pylint.messages_control]
+enable = [
+    # pylint internal errors
+    "F",
+    # code errors
+    "E",
+    # code warnings
+    "W",
+    # reported when pylint comment is unused
+    "useless-option-value",
+    # reported when invalid pylint error name is used
+    "unknown-option-value",
+
+    # report invalid pylint comments
+    "bad-inline-option",
+    # report usage of deprecated pylint pragmas
+    "deprecated-pragma",
+    # report when a whole file is ignored with a pylint comment
+    "file-ignored",
+    # report usage of message IDs instead of message names
+    "use-symbolic-message-instead",
+    # report unnecessary suppression of pylint message
+    "useless-suppression",
+]
+disable = [
+    "C",  # TODO
+    "R",  # TODO
+
+    # flake8/ruff's errors
+    "bad-indentation",  # E999
+    "bare-except",  # E722
+    "f-string-without-interpolation",  # F541
+    "function-redefined",  # F811
+    "misplaced-future",  # F404
+    "reimported",  # F811
+    "return-outside-function",  # F706
+    "undefined-all-variable",  # F822
+    "undefined-variable",  # F821
+    "unused-import",  # F401
+    "unused-variable",  # F841 (note: pylint can set a dummy variable regex)
+    "unused-wildcard-import",  # F403 (note: pylint can actually infer usage)
+    "used-before-assignment",  # F823
+    "wildcard-import",  # F403
+
+    # Black reformats these away.
+    "inconsistent-quotes",
+    "unnecessary-semicolon",
+
+    # Used a lot in our code base, perhaps we should try to minimize it in the future.
+    "broad-except",
+    # pylint doesn't lint C extension modules which triggers this
+    "c-extension-no-member",
+    # To preserve current TODOs, we can't use this.
+    "fixme",
+    # Global statements may be discouraged but they have valid use cases.
+    "global-statement",
+    # A lot of false positives on async generators and d.py's maybe-async methods.
+    # ref: https://github.com/PyCQA/pylint/issues/5761
+    "invalid-overridden-method",
+    # Seems to be pointless: https://github.com/PyCQA/pylint/issues/7396
+    "keyword-arg-before-vararg",
+    # Causes too many false positives due to no support for decorators.
+    # ref: https://github.com/PyCQA/pylint/issues/1694
+    "no-member",
+    # We have a lot of APIs that are private to cog creators but not to us.
+    "protected-access",
+    # A lot of "false positives" due to pytest usage.
+    "redefined-outer-name",
+    # This is fine when exit code is checked after.
+    "subprocess-run-check",
+    # __permissions_hook is considered a private member and is part of Red's cog interface.
+    "unused-private-member",
+    # `if True/False` can be useful to shut up linters.
+    "using-constant-test",
+]
