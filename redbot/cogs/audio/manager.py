@@ -350,7 +350,7 @@ class ServerManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
-        with open(LAVALINK_APP_YML, "w") as f:
+        with open(LAVALINK_APP_YML, "w", encoding="utf-8") as f:
             yaml.safe_dump(data, f)
 
     async def _get_jar_args(self) -> Tuple[List[str], Optional[str]]:
