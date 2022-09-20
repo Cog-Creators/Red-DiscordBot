@@ -4904,7 +4904,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable globally.
         """
-        if self.command_manager in command.parents or self.command_manager == command:
+        if self.command_manager in command.parents or self.command_manager is command:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
             )
@@ -4940,7 +4940,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable for the current server.
         """
-        if self.command_manager in command.parents or self.command_manager == command:
+        if self.command_manager in command.parents or self.command_manager is command:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
             )
