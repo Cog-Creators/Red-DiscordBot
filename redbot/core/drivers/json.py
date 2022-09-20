@@ -252,7 +252,7 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
     tmp_path.replace(path)
 
     try:
-        flag = os.O_DIRECTORY  # pylint: disable=no-member
+        flag = os.O_DIRECTORY
     except AttributeError:
         pass
     else:

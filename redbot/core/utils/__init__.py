@@ -67,8 +67,7 @@ def deduplicate_iterables(*iterables):
     return list(dict.fromkeys(chain.from_iterable(iterables)))
 
 
-# https://github.com/PyCQA/pylint/issues/2717
-class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
     """Class returned by `async_filter`. See that function for details.
 
     We don't recommend instantiating this class directly.
@@ -263,7 +262,7 @@ def bounded_gather(
     return asyncio.gather(*tasks, return_exceptions=return_exceptions)
 
 
-class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):
     """Asynchronous iterator yielding items from ``iterable``
     that sleeps for ``delay`` seconds every ``steps`` items.
 

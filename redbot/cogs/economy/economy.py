@@ -601,9 +601,7 @@ class Economy(commands.Cog):
             sign = "  "
             if i == 1:
                 sign = ">"
-            slot += "{}{} {} {}\n".format(
-                sign, *[c.value for c in row]  # pylint: disable=no-member
-            )
+            slot += "{}{} {} {}\n".format(sign, *[c.value for c in row])
 
         payout = PAYOUTS.get(rows[1])
         if not payout:

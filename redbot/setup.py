@@ -559,7 +559,8 @@ def backup(instance: str, destination_folder: Path) -> None:
 def run_cli():
     # Setuptools entry point script stuff...
     try:
-        cli()  # pylint: disable=no-value-for-parameter  # click
+        # https://github.com/PyCQA/pylint/issues/1694
+        cli()  # pylint: disable=no-value-for-parameter
     except KeyboardInterrupt:
         print("Exiting...")
     else:

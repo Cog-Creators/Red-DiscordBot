@@ -256,7 +256,7 @@ class ServerManager:
     def __init__(self, config: Config, cog: "Audio", timeout: Optional[int] = None) -> None:
         self.ready: asyncio.Event = asyncio.Event()
         self._config = config
-        self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
+        self._proc: Optional[asyncio.subprocess.Process] = None
         self._shutdown: bool = False
         self.start_monitor_task = None
         self.timeout = timeout
@@ -326,13 +326,11 @@ class ServerManager:
                 )
             )
         try:
-            self._proc = (
-                await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
-                    *args,
-                    cwd=str(LAVALINK_DOWNLOAD_DIR),
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.STDOUT,
-                )
+            self._proc = await asyncio.subprocess.create_subprocess_exec(
+                *args,
+                cwd=str(LAVALINK_DOWNLOAD_DIR),
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.STDOUT,
             )
             log.info("Managed Lavalink node started. PID: %s", self._proc.pid)
             try:
@@ -413,13 +411,11 @@ class ServerManager:
 
     async def _get_java_version(self) -> Tuple[int, int]:
         """This assumes we've already checked that java exists."""
-        _proc: asyncio.subprocess.Process = (
-            await asyncio.create_subprocess_exec(  # pylint:disable=no-member
-                self._java_exc,
-                "-version",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
+        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
+            self._java_exc,
+            "-version",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
         # java -version outputs to stderr
         _, err = await _proc.communicate()
@@ -533,7 +529,7 @@ class ServerManager:
             return True
         args, _ = await self._get_jar_args()
         args.append("--version")
-        _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
+        _proc = await asyncio.subprocess.create_subprocess_exec(
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,

@@ -458,8 +458,8 @@ class Requires:
         This will clear all rules, including defaults. It also resets
         the `Requires.ready_event`.
         """
-        self._guild_rules.clear()  # pylint: disable=no-member
-        self._global_rules.clear()  # pylint: disable=no-member
+        self._guild_rules.clear()
+        self._global_rules.clear()
         self.ready_event.clear()
 
     async def verify(self, ctx: "Context") -> bool:
@@ -922,12 +922,12 @@ class _IntKeyDict(Dict[int, _T]):
     def __getitem__(self, key: Any) -> _T:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__getitem__(key)  # pylint: disable=no-member
+        return super().__getitem__(key)
 
     def __setitem__(self, key: Any, value: _T) -> None:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
-        return super().__setitem__(key, value)  # pylint: disable=no-member
+        return super().__setitem__(key, value)
 
 
 class _RulesDict(Dict[Union[int, str], PermState]):
@@ -939,12 +939,12 @@ class _RulesDict(Dict[Union[int, str], PermState]):
     def __getitem__(self, key: Any) -> PermState:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__getitem__(key)  # pylint: disable=no-member
+        return super().__getitem__(key)
 
     def __setitem__(self, key: Any, value: PermState) -> None:
         if key != Requires.DEFAULT and not isinstance(key, int):
             raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
-        return super().__setitem__(key, value)  # pylint: disable=no-member
+        return super().__setitem__(key, value)
 
 
 def _validate_perms_dict(perms: Dict[str, bool]) -> None:

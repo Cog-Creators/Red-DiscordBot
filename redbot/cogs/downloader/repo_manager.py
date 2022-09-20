@@ -53,9 +53,7 @@ class Candidate(NamedTuple):
     description: str
 
 
-class _RepoCheckoutCtxManager(
-    Awaitable[None], AsyncContextManager[None]
-):  # pylint: disable=duplicate-bases
+class _RepoCheckoutCtxManager(Awaitable[None], AsyncContextManager[None]):
     def __init__(
         self,
         repo: Repo,

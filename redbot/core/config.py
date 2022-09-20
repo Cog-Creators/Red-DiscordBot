@@ -66,7 +66,7 @@ def get_latest_confs() -> Tuple["Config"]:
     return tuple(ret)
 
 
-class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disable=duplicate-bases
+class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
