@@ -1236,8 +1236,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
             pass
         else:
             type_list.append(ct)
-    else:
-        return type_list
+    return type_list
 
 
 async def get_modlog_channel(

@@ -484,9 +484,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 ret.append(curr_group)
                 current_count = f_len
                 curr_group = [f]
-        else:
-            if curr_group:
-                ret.append(curr_group)
+
+        if curr_group:
+            ret.append(curr_group)
 
         return ret
 

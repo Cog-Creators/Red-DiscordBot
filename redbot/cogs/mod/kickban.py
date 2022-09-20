@@ -48,21 +48,22 @@ class KickBanMixin(MixinMeta):
                 # doesn't grant temporary membership
                 # (i.e. they won't be kicked on disconnect)
                 return inv.url
-        else:  # No existing invite found that is valid
-            channels_and_perms = (
-                (channel, channel.permissions_for(guild.me)) for channel in guild.text_channels
-            )
-            channel = next(
-                (channel for channel, perms in channels_and_perms if perms.create_instant_invite),
-                None,
-            )
-            if channel is None:
-                return ""
-            try:
-                # Create invite that expires after max_age
-                return (await channel.create_invite(max_age=max_age)).url
-            except discord.HTTPException:
-                return ""
+
+        # No existing invite found that is valid
+        channels_and_perms = (
+            (channel, channel.permissions_for(guild.me)) for channel in guild.text_channels
+        )
+        channel = next(
+            (channel for channel, perms in channels_and_perms if perms.create_instant_invite),
+            None,
+        )
+        if channel is None:
+            return ""
+        try:
+            # Create invite that expires after max_age
+            return (await channel.create_invite(max_age=max_age)).url
+        except discord.HTTPException:
+            return ""
 
     @staticmethod
     async def _voice_perm_check(
