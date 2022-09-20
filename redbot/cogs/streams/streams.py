@@ -152,11 +152,12 @@ class Streams(commands.Cog):
             )
             try:
                 tokens["client_secret"]
-                if notified_owner_missing_twitch_secret is True:
-                    await self.config.notified_owner_missing_twitch_secret.set(False)
             except KeyError:
                 if notified_owner_missing_twitch_secret is False:
                     asyncio.create_task(self._notify_owner_about_missing_twitch_secret())
+            else:
+                if notified_owner_missing_twitch_secret is True:
+                    await self.config.notified_owner_missing_twitch_secret.set(False)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
