@@ -50,7 +50,6 @@ class AliasEntry:
             Whitespace will be trimmed from both ends.
         :param message:
         :param prefix:
-        :param alias:
         :return:
         """
         known_content_length = len(prefix) + len(self.name)

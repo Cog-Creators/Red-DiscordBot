@@ -1141,7 +1141,7 @@ class RepoManager:
         except KeyError:
             pass
 
-    async def update_repo(self, repo_name: str) -> Tuple[Repo, Tuple[str, str]]:
+    async def update_repo(self, name: str) -> Tuple[Repo, Tuple[str, str]]:
         """Update repo with provided name.
 
         Parameters
@@ -1155,7 +1155,7 @@ class RepoManager:
             A 2-`tuple` with Repo object and a 2-`tuple` of `str`
             containing old and new commit hashes.
         """
-        repo = self._repos[repo_name]
+        repo = self._repos[name]
         old, new = await repo.update()
         return (repo, (old, new))
 
