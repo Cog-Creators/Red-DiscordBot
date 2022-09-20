@@ -403,7 +403,7 @@ class Query:
     def process_input(
         cls,
         query: Union[LocalPath, lavalink.Track, "Query", str],
-        _local_folder_current_path: Path,
+        local_folder_current_path: Path,
         **kwargs,
     ) -> "Query":
         """Process the input query into its type.
@@ -412,8 +412,10 @@ class Query:
         ----------
         query : Union[Query, LocalPath, lavalink.Track, str]
             The query string or LocalPath object.
-        _local_folder_current_path: Path
+        local_folder_current_path: Path
             The Current Local Track folder
+        **kwargs
+            Keyword arguments that will be passed through to Query constructor after parsing.
         Returns
         -------
         Query
@@ -439,11 +441,11 @@ class Query:
             query = query.uri
 
         possible_values.update(dict(**kwargs))
-        possible_values.update(cls._parse(query, _local_folder_current_path, **kwargs))
-        return cls(query, _local_folder_current_path, **possible_values)
+        possible_values.update(cls._parse(query, local_folder_current_path, **kwargs))
+        return cls(query, local_folder_current_path, **possible_values)
 
     @staticmethod
-    def _parse(track, _local_folder_current_path: Path, **kwargs) -> MutableMapping:
+    def _parse(track, local_folder_current_path: Path, **kwargs) -> MutableMapping:
         """Parse a track into all the relevant metadata."""
         returning: MutableMapping = {}
         if (
@@ -485,7 +487,7 @@ class Query:
                 track = _RE_REMOVE_START.sub("", track, 1)
                 returning["queryforced"] = track
 
-            _localtrack = LocalPath(track, _local_folder_current_path)
+            _localtrack = LocalPath(track, local_folder_current_path)
             if _localtrack.exists():
                 if _localtrack.is_file():
                     returning["local"] = True
