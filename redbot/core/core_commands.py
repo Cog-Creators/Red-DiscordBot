@@ -5236,7 +5236,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 text_channels.append(channel)
         for thread in ctx.guild.threads:
-            if await self.bot_ignored_cache.get_ignored_channel(thread, check_category=False):
+            if await self.bot._ignored_cache.get_ignored_channel(thread, check_category=False):
                 threads.append(thread)
 
         cat_str = (
