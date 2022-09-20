@@ -20,9 +20,9 @@ Examples
 
 .. code-block:: Python
 
-    def setup(bot):
+    async def setup(bot):
         c = Cog()
-        bot.add_cog(c)
+        await bot.add_cog(c)
         bot.register_rpc_handler(c.rpc_method)
 
 *******************************
@@ -64,4 +64,4 @@ All cog-based methods expect their parameter list to take one argument, a JSON o
 API Reference
 *************
 
-Please see the :class:`redbot.core.bot.RedBase` class for details on the RPC handler register and unregister methods.
+Please see the :class:`redbot.core.bot.Red` class for details on the RPC handler register and unregister methods.

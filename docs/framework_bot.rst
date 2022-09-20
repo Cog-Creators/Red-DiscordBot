@@ -6,18 +6,12 @@ Bot
 
 .. automodule:: redbot.core.bot
 
-RedBase
-^^^^^^^
-
-.. autoclass:: RedBase
-    :members:
-    :exclude-members: get_context
-
-    .. automethod:: register_rpc_handler
-    .. automethod:: unregister_rpc_handler
-
 Red
 ^^^
 
 .. autoclass:: Red
     :members:
+    :exclude-members: get_context, get_embed_color
+
+    .. automethod:: register_rpc_handler
+    .. automethod:: unregister_rpc_handler

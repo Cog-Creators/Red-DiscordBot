@@ -253,7 +253,7 @@ Developer changelog
 Core Bot
 ********
 
-- Added `bot.set_prefixes() <RedBase.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
+- Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
@@ -553,7 +553,7 @@ Core Bot
 - Fixed various bugs with blacklist and whitelist (:issue:`3643`, :issue:`3642`)
 - Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
 - ``[p]set locale`` allows any valid locale now, not just locales for which Red has translations (:issue:`3676`, :issue:`3596`)
-- Permissions for commands in Bank, Economy and Trivia cogs can now be overriden by Permissions cog (:issue:`3672`, :issue:`3233`)
+- Permissions for commands in Bank, Economy and Trivia cogs can now be overridden by Permissions cog (:issue:`3672`, :issue:`3233`)
 - Outages of ``pypi.org`` no longer prevent the bot from starting (:issue:`3663`)
 - Fixed formatting of help strings in fuzzy search results (:issue:`3673`, :issue:`3507`)
 - Fixed few deprecation warnings related to menus and uvloop (:issue:`3644`, :issue:`3700`)
@@ -650,7 +650,7 @@ Dev Cog
 Documentation changes
 ---------------------
 
-- Fixed install instructions for Mac in `install_linux_mac` (:issue:`3675`, :issue:`3436`)
+- Fixed install instructions for Mac (:issue:`3675`, :issue:`3436`)
 - Windows install instructions now use ``choco upgrade`` commands instead of ``choco install`` to ensure up-to-date packages (:issue:`3684`)
 
 

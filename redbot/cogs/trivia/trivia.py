@@ -3,17 +3,18 @@ import asyncio
 import math
 import pathlib
 from collections import Counter
-from typing import List, Literal
+from typing import Any, Dict, List, Literal, Union
+from schema import Schema, Optional, Or, SchemaError
 
 import io
 import yaml
 import discord
 
-from redbot.core import Config, commands, checks
-from redbot.cogs.bank import is_owner_if_bank_global
+from redbot.core import Config, commands, checks, bank
+from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
+from redbot.core.utils import AsyncIter, can_user_react_in
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -23,9 +24,24 @@ from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
 
-__all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
+__all__ = ("Trivia", "UNIQUE_ID", "InvalidListError", "get_core_lists", "get_list")
 
 UNIQUE_ID = 0xB3C0E453
+TRIVIA_LIST_SCHEMA = Schema(
+    {
+        Optional("AUTHOR"): str,
+        Optional("CONFIG"): {
+            Optional("max_score"): int,
+            Optional("timeout"): Or(int, float),
+            Optional("delay"): Or(int, float),
+            Optional("bot_plays"): bool,
+            Optional("reveal_answer"): bool,
+            Optional("payout_multiplier"): Or(int, float),
+            Optional("use_spoilers"): bool,
+        },
+        str: [str, int, bool, float],
+    }
+)
 
 _ = Translator("Trivia", __file__)
 
@@ -40,8 +56,9 @@ class InvalidListError(Exception):
 class Trivia(commands.Cog):
     """Play trivia with friends!"""
 
-    def __init__(self):
+    def __init__(self, bot: Red) -> None:
         super().__init__()
+        self.bot = bot
         self.trivia_sessions = []
         self.config = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -53,6 +70,7 @@ class Trivia(commands.Cog):
             reveal_answer=True,
             payout_multiplier=0.0,
             allow_override=True,
+            use_spoilers=False,
         )
 
         self.config.register_member(wins=0, games=0, total_score=0)
@@ -92,7 +110,8 @@ class Trivia(commands.Cog):
                 "Points to win: {max_score}\n"
                 "Reveal answer on timeout: {reveal_answer}\n"
                 "Payout multiplier: {payout_multiplier}\n"
-                "Allow lists to override settings: {allow_override}"
+                "Allow lists to override settings: {allow_override}\n"
+                "Use Spoilers in answers: {use_spoilers}"
             ).format(**settings_dict),
             lang="py",
         )
@@ -149,6 +168,19 @@ class Trivia(commands.Cog):
                 )
             )
 
+    @triviaset.command(name="usespoilers", usage="<true_or_false>")
+    async def trivaset_use_spoilers(self, ctx: commands.Context, enabled: bool):
+        """Set if bot will display the answers in spoilers.
+
+        If enabled, the bot will use spoilers to hide answers.
+        """
+        settings = self.config.guild(ctx.guild)
+        await settings.use_spoilers.set(enabled)
+        if enabled:
+            await ctx.send(_("Done. I'll put the answers in spoilers next time."))
+        else:
+            await ctx.send(_("Alright, I won't use spoilers to hide answers anymore."))
+
     @triviaset.command(name="botplays", usage="<true_or_false>")
     async def trivaset_bot_plays(self, ctx: commands.Context, enabled: bool):
         """Set whether or not the bot gains points.
@@ -160,7 +192,7 @@ class Trivia(commands.Cog):
         if enabled:
             await ctx.send(_("Done. I'll now gain a point if users don't answer in time."))
         else:
-            await ctx.send(_("Alright, I won't embarass you at trivia anymore."))
+            await ctx.send(_("Alright, I won't embarrass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer", usage="<true_or_false>")
     async def trivaset_reveal_answer(self, ctx: commands.Context, enabled: bool):
@@ -176,7 +208,7 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
-    @is_owner_if_bank_global()
+    @bank.is_owner_if_bank_global()
     @checks.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
@@ -267,6 +299,13 @@ class Trivia(commands.Cog):
                 _("There was an error parsing the trivia list. See logs for more info.")
             )
             LOG.exception("Custom Trivia file %s failed to upload", parsedfile.filename)
+        except SchemaError as e:
+            await ctx.send(
+                _(
+                    "The custom trivia list was not saved."
+                    " The file does not follow the proper data format.\n{schema_error}"
+                ).format(schema_error=box(e))
+            )
 
     @commands.is_owner()
     @triviaset_custom.command(name="delete", aliases=["remove"])
@@ -279,7 +318,7 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Trivia file was not found."))
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, require_var_positional=True)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
         """Start trivia session on the specified category.
@@ -287,9 +326,6 @@ class Trivia(commands.Cog):
         You may list multiple categories, in which case the trivia will involve
         questions from all of them.
         """
-        if not categories:
-            await ctx.send_help()
-            return
         categories = [c.lower() for c in categories]
         session = self._get_trivia_session(ctx.channel)
         if session is not None:
@@ -603,13 +639,7 @@ class Trivia(commands.Cog):
         except StopIteration:
             raise FileNotFoundError("Could not find the `{}` category.".format(category))
 
-        with path.open(encoding="utf-8") as file:
-            try:
-                dict_ = yaml.safe_load(file)
-            except yaml.error.YAMLError as exc:
-                raise InvalidListError("YAML parsing failed.") from exc
-            else:
-                return dict_
+        return get_list(path)
 
     async def _save_trivia_list(
         self, ctx: commands.Context, attachment: discord.Attachment
@@ -625,7 +655,7 @@ class Trivia(commands.Cog):
         -------
         None
         """
-        filename = attachment.filename.rsplit(".", 1)[0]
+        filename = attachment.filename.rsplit(".", 1)[0].casefold()
 
         # Check if trivia filename exists in core files or if it is a command
         if filename in self.trivia.all_commands or any(
@@ -645,9 +675,9 @@ class Trivia(commands.Cog):
                 filename=filename
             )
 
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if not can_react:
-                overwrite_message += " (y/n)"
+                overwrite_message += " (yes/no)"
 
             overwrite_message_object: discord.Message = await ctx.send(overwrite_message)
             if can_react:
@@ -671,14 +701,17 @@ class Trivia(commands.Cog):
                 return
 
         buffer = io.BytesIO(await attachment.read())
-        yaml.safe_load(buffer)
-        buffer.seek(0)
+        trivia_dict = yaml.safe_load(buffer)
+        TRIVIA_LIST_SCHEMA.validate(trivia_dict)
 
+        buffer.seek(0)
         with file.open("wb") as fp:
             fp.write(buffer.read())
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
-    def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
+    def _get_trivia_session(
+        self, channel: Union[discord.TextChannel, discord.Thread]
+    ) -> TriviaSession:
         return next(
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None
         )
@@ -697,3 +730,27 @@ def get_core_lists() -> List[pathlib.Path]:
     """Return a list of paths for all trivia lists packaged with the bot."""
     core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
     return list(core_lists_path.glob("*.yaml"))
+
+
+def get_list(path: pathlib.Path) -> Dict[str, Any]:
+    """
+    Returns a trivia list dictionary from the given path.
+
+    Raises
+    ------
+    InvalidListError
+        Parsing of list's YAML file failed.
+    SchemaError
+        The list does not adhere to the schema.
+    """
+    with path.open(encoding="utf-8") as file:
+        try:
+            trivia_dict = yaml.safe_load(file)
+        except yaml.error.YAMLError as exc:
+            raise InvalidListError("YAML parsing failed.") from exc
+
+    try:
+        TRIVIA_LIST_SCHEMA.validate(trivia_dict)
+    except SchemaError as exc:
+        raise InvalidListError("The list does not adhere to the schema.") from exc
+    return trivia_dict
