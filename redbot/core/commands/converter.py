@@ -282,6 +282,8 @@ else:
                 type(DictConverter).__call__, *expected_keys, delims=delims
             )
 
+        # pylint checks `if TYPE_CHECKING`'s definition of `DictConverter`
+        # pylint: disable-next=invalid-metaclass
         class ValidatedConverter(DictConverter, metaclass=PartialMeta):
             pass
 
@@ -395,6 +397,8 @@ else:
                 maximum=maximum,
             )
 
+        # pylint checks `if TYPE_CHECKING`'s definition of `DictConverter`
+        # pylint: disable-next=invalid-metaclass
         class ValidatedConverter(TimedeltaConverter, metaclass=PartialMeta):
             pass
 
