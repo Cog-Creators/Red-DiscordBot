@@ -127,10 +127,9 @@ class Installable(RepoJSONMixin):
         else:
             copy_func = functools.partial(shutil.copytree, dirs_exist_ok=True)
 
-        # noinspection PyBroadException
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.name))
-        except:  # noqa: E722
+        except OSError:
             log.exception("Error occurred when copying path: %s", self._location)
             return False
         return True
