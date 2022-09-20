@@ -613,7 +613,6 @@ class Warnings(commands.Cog):
 
         try:
             user_id = member.id
-            member = member
         except AttributeError:
             user_id = member
             member = guild.get_member(user_id)

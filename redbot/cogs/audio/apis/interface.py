@@ -847,7 +847,7 @@ class AudioAPIInterface:
                     valid_global_entry = True
                 if valid_global_entry:
                     log.trace("Querying Global DB api for %r", query)
-                    results, called_api = results, False
+                    called_api = False
         if valid_global_entry:
             pass
         elif lazy is True:
