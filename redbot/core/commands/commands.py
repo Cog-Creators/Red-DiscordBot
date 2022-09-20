@@ -785,6 +785,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         if doc:
             return inspect.cleandoc(translator(doc))
 
+    # pylint: disable-next=redundant-returns-doc
     async def red_get_data_for_user(self, *, user_id: int) -> MutableMapping[str, io.BytesIO]:
         """
 

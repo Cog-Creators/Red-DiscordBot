@@ -166,9 +166,9 @@ async def async_enumerate(
     start : int
         The index to start from. Defaults to 0.
 
-    Returns
-    -------
-    AsyncIterator[Tuple[int, T]]
+    Yields
+    ------
+    Tuple[int, T]
         An async iterator of tuples in the form of ``(index, item)``.
 
     """

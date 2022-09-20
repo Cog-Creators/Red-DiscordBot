@@ -185,10 +185,7 @@ def basic_setup(
     interactive: bool,
     overwrite_existing_instance: bool,
 ):
-    """
-    Creates the data storage folder.
-    :return:
-    """
+    """Creates the data storage folder."""
     if not interactive and not name:
         print(
             "Providing instance name through --instance-name is required"

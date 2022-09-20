@@ -27,7 +27,6 @@ class Announcer:
     def start(self):
         """
         Starts an announcement.
-        :return:
         """
         if self.active is None:
             self.active = True
@@ -36,7 +35,6 @@ class Announcer:
     def cancel(self):
         """
         Cancels a running announcement.
-        :return:
         """
         self.active = False
 
