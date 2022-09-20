@@ -275,7 +275,6 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return f"{day}{hour}{minutes}{sec}"
 
     async def get_lyrics_status(self, ctx: Context) -> bool:
-        global _prefer_lyrics_cache
         prefer_lyrics = _prefer_lyrics_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).prefer_lyrics()
         )

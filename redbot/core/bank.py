@@ -751,7 +751,6 @@ async def get_bank_name(guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        global _cache
         if _cache["bank_name"] is None:
             _cache["bank_name"] = await _config.bank_name()
         return _cache["bank_name"]
@@ -785,7 +784,6 @@ async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
     """
     if await is_global():
         await _config.bank_name.set(name)
-        global _cache
         _cache["bank_name"] = name
     elif guild is not None:
         await _config.guild(guild).bank_name.set(name)
@@ -815,7 +813,6 @@ async def get_currency_name(guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        global _cache
         if _cache["currency"] is None:
             _cache["currency"] = await _config.currency()
         return _cache["currency"]
@@ -849,7 +846,6 @@ async def set_currency_name(name: str, guild: discord.Guild = None) -> str:
     """
     if await is_global():
         await _config.currency.set(name)
-        global _cache
         _cache["currency"] = name
     elif guild is not None:
         await _config.guild(guild).currency.set(name)
@@ -927,7 +923,6 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
 
     if await is_global():
         await _config.max_balance.set(amount)
-        global _cache
         _cache["max_balance"] = amount
     elif guild is not None:
         await _config.guild(guild).max_balance.set(amount)
@@ -1007,7 +1002,6 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
 
     if await is_global():
         await _config.default_balance.set(amount)
-        global _cache
         _cache["default_balance"] = amount
     elif guild is not None:
         await _config.guild(guild).default_balance.set(amount)
