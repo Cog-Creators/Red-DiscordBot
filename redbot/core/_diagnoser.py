@@ -373,6 +373,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         label = _("Global, cog and command checks")
         command = self.ctx.command
         try:
+            # pylint: disable-next=bad-super-call
             if await super(commands.Command, command).can_run(self.ctx):
                 return CheckResult(True, label)
         except commands.DisabledCommand:
