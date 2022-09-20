@@ -618,7 +618,7 @@ class Trivia(commands.Cog):
         try:
             path = next(p for p in self._all_lists() if p.stem == category)
         except StopIteration:
-            raise FileNotFoundError("Could not find the `{}` category.".format(category))
+            raise FileNotFoundError("Could not find the `{}` category.".format(category)) from None
 
         return get_list(path)
 
