@@ -1220,7 +1220,7 @@ class Red(
             for package in to_remove:
                 del packages[package]
         if packages:
-            log.info("Loaded packages: " + ", ".join(packages))
+            log.info("Loaded packages: %s", ", ".join(packages))
         else:
             log.info("No packages were loaded.")
 
@@ -2040,7 +2040,7 @@ class Red(
         async def _delete_helper(m):
             with contextlib.suppress(discord.HTTPException):
                 await m.delete()
-                log.debug("Deleted command msg {}".format(m.id))
+                log.debug("Deleted command msg %s", m.id)
 
         await asyncio.sleep(delay)
         await _delete_helper(message)
@@ -2173,10 +2173,10 @@ class Red(
             try:
                 await func(requester=requester, user_id=user_id)
             except commands.commands.RedUnhandledAPI:
-                log.warning(f"{stype}.{sname} did not handle data deletion ")
+                log.warning("%s.%s did not handle data deletion ", stype, sname)
                 failures["unhandled"].append(sname)
             except Exception:
-                log.exception(f"{stype}.{sname} errored when handling data deletion ")
+                log.exception("%s.%s errored when handling data deletion ", stype, sname)
                 failures[stype].append(sname)
 
         handlers = [

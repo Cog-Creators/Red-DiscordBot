@@ -179,9 +179,10 @@ class KickBanMixin(MixinMeta):
 
         if removed_temp:
             log.info(
-                "{}({}) upgraded the tempban for {} to a permaban.".format(
-                    author.name, author.id, user.id
-                )
+                "%r (%r) upgraded the tempban for %r to a permaban.",
+                author.name,
+                author.id,
+                user.id,
             )
             success_message = _(
                 "User with ID {user_id} was upgraded from a temporary to a permanent ban."
@@ -191,9 +192,13 @@ class KickBanMixin(MixinMeta):
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
-                    "{}({}) {}need {}({}), deleting {} days worth of messages.".format(
-                        author.name, author.id, ban_type, username, user.id, str(days)
-                    )
+                    "%r (%r) %sned %r (%r), deleting %r days worth of messages.",
+                    author.name,
+                    author.id,
+                    ban_type,
+                    username,
+                    user.id,
+                    days,
                 )
                 success_message = _("Done. That felt good.")
             except discord.Forbidden:
@@ -202,9 +207,12 @@ class KickBanMixin(MixinMeta):
                 return False, _("User with ID {user_id} not found").format(user_id=user.id)
             except Exception:
                 log.exception(
-                    "{}({}) attempted to {} {}({}), but an error occurred.".format(
-                        author.name, author.id, ban_type, username, user.id
-                    )
+                    "%r (%r) attempted to %s %r (%r) but an error occurred.",
+                    author.name,
+                    author.id,
+                    ban_type,
+                    username,
+                    user.id,
                 )
                 return False, _("An unexpected error occurred.")
 
@@ -269,11 +277,13 @@ class KickBanMixin(MixinMeta):
                     # 50013: Missing permissions error code or 403: Forbidden status
                     if e.code == 50013 or e.status == 403:
                         log.info(
-                            f"Failed to unban ({uid}) user from "
-                            f"{guild.name}({guild.id}) guild due to permissions."
+                            "Failed to unban (%r) user from %r (%r) guild due to permissions.",
+                            uid,
+                            guild.name,
+                            guild.id,
                         )
                         break  # skip the rest of this guild
-                    log.info(f"Failed to unban member: error code: {e.code}")
+                    log.info("Failed to unban member: error code: %r", e.code)
                 else:
                     # user unbanned successfully
                     guild_tempbans.remove(uid)
@@ -335,14 +345,16 @@ class KickBanMixin(MixinMeta):
                 await member.send(embed=em)
         try:
             await guild.kick(member, reason=audit_reason)
-            log.info("{}({}) kicked {}({})".format(author.name, author.id, member.name, member.id))
+            log.info("%r (%r) kicked %r (%r)", author.name, author.id, member.name, member.id)
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception:
             log.exception(
-                "{}({}) attempted to kick {}({}), but an error occurred.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%r (%r) attempted to kick %r (%r) but an error occurred.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
         else:
             await modlog.create_case(
@@ -535,9 +547,10 @@ class KickBanMixin(MixinMeta):
                     tempbans.remove(user_id)
                     upgrades.append(str(user_id))
                     log.info(
-                        "{}({}) upgraded the tempban for {} to a permaban.".format(
-                            author.name, author.id, user_id
-                        )
+                        "%r (%r) upgraded the tempban for %r to a permaban.",
+                        author.name,
+                        author.id,
+                        user_id,
                     )
                     banned.append(user_id)
                 else:
@@ -545,7 +558,7 @@ class KickBanMixin(MixinMeta):
                         await guild.ban(
                             user, reason=audit_reason, delete_message_seconds=days * 86400
                         )
-                        log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
+                        log.info("%r (%r) hackbanned %r", author.name, author.id, user_id)
                     except discord.NotFound:
                         errors[user_id] = _("User with ID {user_id} not found").format(
                             user_id=user_id
@@ -720,7 +733,7 @@ class KickBanMixin(MixinMeta):
             return
         except discord.HTTPException:
             log.exception(
-                "%s(%s) attempted to softban %s(%s), but an error occurred trying to ban them.",
+                "%r (%r) attempted to softban %r (%r) but an error occurred trying to ban them.",
                 author.name,
                 author.id,
                 member.name,
@@ -731,7 +744,7 @@ class KickBanMixin(MixinMeta):
             await guild.unban(member)
         except discord.HTTPException:
             log.exception(
-                "%s(%s) attempted to softban %s(%s), but an error occurred trying to unban them.",
+                "%r (%r) attempted to softban %r (%r) but an error occurred trying to unban them.",
                 author.name,
                 author.id,
                 member.name,
@@ -740,8 +753,11 @@ class KickBanMixin(MixinMeta):
             return
         else:
             log.info(
-                "{}({}) softbanned {}({}), deleting 1 day worth "
-                "of messages.".format(author.name, author.id, member.name, member.id)
+                "%r (%r) softbanned %r (%r), deleting 1 day worth of messages.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
             await modlog.create_case(
                 self.bot,

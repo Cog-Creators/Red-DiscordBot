@@ -260,7 +260,8 @@ def init_events(bot, cli_flags):
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
             log.exception(
-                "Exception in command '{}'".format(ctx.command.qualified_name),
+                "Exception in command %r",
+                ctx.command.qualified_name,
                 exc_info=error.original,
             )
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)

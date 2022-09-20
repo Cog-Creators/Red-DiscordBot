@@ -969,9 +969,8 @@ class Repo(RepoJSONMixin):
 
         if p.returncode != 0:
             log.error(
-                "Something went wrong when installing"
-                " the following requirements:"
-                " {}".format(", ".join(requirements))
+                "Something went wrong when installing the following requirements: %s",
+                ", ".join(requirements),
             )
             return False
         return True

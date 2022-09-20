@@ -538,10 +538,10 @@ def convert(instance: str, backend: str) -> None:
         default_dirs["STORAGE_TYPE"] = target.value
         default_dirs["STORAGE_DETAILS"] = new_storage_details
         save_config(instance, default_dirs)
-        conversion_log.info(f"Conversion to {target} complete.")
+        conversion_log.info("Conversion to %s complete.", target)
     else:
         conversion_log.info(
-            f"Cannot convert {current_backend.value} to {target.value} at this time."
+            "Cannot convert %s to %s at this time.", current_backend.value, target.value
         )
 
 

@@ -560,12 +560,14 @@ class Admin(commands.Cog):
         if await self.config.serverlocked():
             if len(self.bot.guilds) == 1:  # will be 0 once left
                 log.warning(
-                    f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock. You can"
+                    "Leaving guild %r (%r) due to serverlock. You can"
                     " temporarily disable serverlock by starting up the bot with"
-                    " the --no-cogs flag."
+                    " the --no-cogs flag.",
+                    guild.name,
+                    guild.id,
                 )
             else:
-                log.info(f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock.")
+                log.info("Leaving guild %r (%r) due to serverlock.", guild.name, guild.id)
             await guild.leave()
 
 

@@ -146,9 +146,9 @@ class YoutubeStream(Stream):
 
         for video_id in get_video_ids_from_feed(rssdata):
             if video_id in self.not_livestreams:
-                log.debug(f"video_id in not_livestreams: {video_id}")
+                log.debug("video_id in not_livestreams: %s", video_id)
                 continue
-            log.debug(f"video_id not in not_livestreams: {video_id}")
+            log.debug("video_id not in not_livestreams: %s", video_id)
             params = {
                 "key": self._token["api_key"],
                 "id": video_id,
@@ -175,7 +175,7 @@ class YoutubeStream(Stream):
                         continue
                     video_data = data.get("items", [{}])[0]
                     stream_data = video_data.get("liveStreamingDetails", {})
-                    log.debug(f"stream_data for {video_id}: {stream_data}")
+                    log.debug("stream_data for %s: %r", video_id, stream_data)
                     if (
                         stream_data
                         and stream_data != "None"
@@ -195,8 +195,8 @@ class YoutubeStream(Stream):
                         self.not_livestreams.append(video_id)
                         if video_id in self.livestreams:
                             self.livestreams.remove(video_id)
-        log.debug(f"livestreams for {self.name}: {self.livestreams}")
-        log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
+        log.debug("livestreams for %s: %r", self.name, self.livestreams)
+        log.debug("not_livestreams for %s: %r", self.name, self.not_livestreams)
         # This is technically redundant since we have the
         # info from the RSS ... but in case you don't wanna deal with fully rewriting the
         # code for this part, as this is only a 2 quota query.

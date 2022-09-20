@@ -296,7 +296,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     task_name = f"server-unmute-{g_id}-{u_id}"
                     if task_name in self._unmute_tasks:
                         continue
-                    log.debug(f"Creating task: {task_name}")
+                    log.debug("Creating task: %s", task_name)
                     self._unmute_tasks[task_name] = asyncio.create_task(
                         self._auto_unmute_user(guild, self._server_mutes[guild.id][u_id])
                     )
@@ -390,7 +390,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     task_name = f"server-unmute-channels-{guild.id}-{user}"
                     if task_name in self._unmute_tasks:
                         continue
-                    log.debug(f"Creating task: {task_name}")
+                    log.debug("Creating task: %s", task_name)
                     member = guild.get_member(user)
                     self._unmute_tasks[task_name] = asyncio.create_task(
                         self._auto_channel_unmute_user_multi(member, guild, channels)
@@ -399,7 +399,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 else:
                     for channel, mute_data in channels.items():
                         task_name = f"channel-unmute-{channel}-{user}"
-                        log.debug(f"Creating task: {task_name}")
+                        log.debug("Creating task: %s", task_name)
                         if task_name in self._unmute_tasks:
                             continue
                         self._unmute_tasks[task_name] = asyncio.create_task(
@@ -719,7 +719,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     if not user:
                         send_dm_notification = False
                         user = discord.Object(id=user_id)
-                    log.debug(f"{user} - {type(user)}")
+                    log.debug("%s - %s", user, type(user))
                     to_del.append(user_id)
                     log.debug("creating case")
                     if voice_mute:
