@@ -144,7 +144,7 @@ class Alias(commands.Cog):
         """
         content = message.content
         prefix_list = await self.bot.command_prefix(self.bot, message)
-        prefixes = sorted(prefix_list, key=lambda pfx: len(pfx), reverse=True)
+        prefixes = sorted(prefix_list, key=len, reverse=True)
         for p in prefixes:
             if content.startswith(p):
                 return p
