@@ -91,6 +91,7 @@ class LocalPath:
     _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
 
     def __init__(self, path, localtrack_folder, **kwargs):
+        self._hash = None
         self._localtrack_folder = localtrack_folder
         self._path = path
         if isinstance(path, (Path, WindowsPath, PosixPath, LocalPath)):
@@ -282,11 +283,9 @@ class LocalPath:
         return NotImplemented
 
     def __hash__(self):
-        try:
-            return self._hash
-        except AttributeError:
+        if self._hash is None:
             self._hash = hash(tuple(self.path._cparts))
-            return self._hash
+        return self._hash
 
     def __lt__(self, other):
         if isinstance(other, LocalPath):

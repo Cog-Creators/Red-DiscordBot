@@ -224,6 +224,7 @@ class Red(
         kwargs["max_messages"] = message_cache_size
         self._max_messages = message_cache_size
 
+        self._color = discord.Colour.default()
         self._uptime = None
         self._checked_time_accuracy = None
 
