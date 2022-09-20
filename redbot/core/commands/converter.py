@@ -268,6 +268,7 @@ if TYPE_CHECKING:
 
     def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
         del expected_keys, delims
+        return DictConverter
 
 else:
 
@@ -347,6 +348,7 @@ if TYPE_CHECKING:
         allowed_units: Optional[List[str]] = None,
     ) -> Type[timedelta]:
         del default_unit, maximum, minimum, allowed_units
+        return TimedeltaConverter
 
 else:
 
