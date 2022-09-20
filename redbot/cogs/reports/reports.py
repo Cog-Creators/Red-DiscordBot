@@ -81,8 +81,8 @@ class Reports(commands.Cog):
                 if not steps % 100:
                     await asyncio.sleep(0)  # yield context
 
-            if ticket.get("report", {}).get("user_id", 0) == user_id:
-                paths.append((guild_id_str, ticket_number))
+                if ticket.get("report", {}).get("user_id", 0) == user_id:
+                    paths.append((guild_id_str, ticket_number))
 
         async with self.config.custom("REPORT").all() as all_reports:
             async for guild_id_str, ticket_number in AsyncIter(paths, steps=100):
