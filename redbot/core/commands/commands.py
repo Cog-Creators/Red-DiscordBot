@@ -580,6 +580,7 @@ class Command(CogCommandMixin, DPYCommand):
                     break
         return old_rule, new_rule
 
+    # pylint: disable-next=useless-parent-delegation
     def error(self, coro, /):
         """
         A decorator that registers a coroutine as a local error handler.
