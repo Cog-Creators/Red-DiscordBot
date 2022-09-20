@@ -319,7 +319,7 @@ def _ensure_no_colorama():
 
         colorama.deinit()
 
-        def _colorama_wrap_stream(stream, *args, **kwargs):
+        def _colorama_wrap_stream(stream, *_args, **_kwargs):
             return stream
 
         colorama.wrap_stream = _colorama_wrap_stream

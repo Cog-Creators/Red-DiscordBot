@@ -25,6 +25,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def on_red_audio_track_start(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
+        del requester
         if not (track and guild):
             return
 
@@ -148,6 +149,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def on_red_audio_queue_end(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
+        del requester
         if not (track and guild):
             return
         if self.api_interface is not None and self.playlist_api is not None:
@@ -162,6 +164,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def on_red_audio_track_enqueue(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
+        del requester
         if not (track and guild):
             return
         persist_cache = self._persist_queue_cache.setdefault(
@@ -176,6 +179,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def on_red_audio_track_end(
         self, guild: discord.Guild, track: lavalink.Track, requester: discord.Member
     ):
+        del requester
         if not (track and guild):
             return
         if self.api_interface is not None and self.playlist_api is not None:
@@ -194,6 +198,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
         requester: discord.Member,
         player: lavalink.Player,
     ):
+        del track, requester
         if not guild:
             return
         notify_channel = guild.get_channel_or_thread(player.fetch("notify_channel"))

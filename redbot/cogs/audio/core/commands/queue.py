@@ -49,6 +49,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, page, timeout, emoji
             if message:
                 await ctx.send_help(self.command_queue)
                 with contextlib.suppress(discord.HTTPException):

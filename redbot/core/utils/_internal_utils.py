@@ -292,7 +292,7 @@ async def send_to_owners_with_preprocessor(
     await asyncio.gather(*sends)
 
 
-async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
+async def send_to_owners_with_prefix_replaced(bot: Red, content: str):
     """
     This sends something to all owners and their configured extra destinations.
 

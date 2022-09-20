@@ -38,7 +38,7 @@ class Cleanup(commands.Cog):
         self.config = Config.get_conf(self, 8927348724, force_registration=True)
         self.config.register_guild(notify=True)
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 

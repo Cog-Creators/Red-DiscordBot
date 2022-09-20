@@ -80,6 +80,7 @@ class AudioAPIInterface:
 
     async def get_random_track_from_db(self, tries=0) -> Optional[MutableMapping]:
         """Get a random track from the local database and return it."""
+        del tries
         track: Optional[MutableMapping] = {}
         try:
             query_data = {}
@@ -287,7 +288,7 @@ class AudioAPIInterface:
         ctx: Context = None,
     ) -> Union[List[MutableMapping], List[str]]:
         """Gets track info from spotify API."""
-
+        del ctx
         if recursive is False:
             (call, params) = self.spotify_api.spotify_format_call(query_type, uri)
             results = await self.spotify_api.make_get_call(call, params)

@@ -60,7 +60,7 @@ def list_instances():
         sys.exit(ExitCodes.SHUTDOWN)
 
 
-async def debug_info(*args: Any) -> None:
+async def debug_info(*_args: Any) -> None:
     """Shows debug information useful for debugging."""
     print(await DebugInfo().get_text())
 
@@ -441,7 +441,7 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         await asyncio.gather(*pending, return_exceptions=True)
 
 
-def global_exception_handler(red, loop, context):
+def global_exception_handler(_loop, context):
     """
     Logs unhandled exceptions in other tasks
     """
@@ -512,8 +512,7 @@ def main():
                     s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
                 )
 
-        exc_handler = functools.partial(global_exception_handler, red)
-        loop.set_exception_handler(exc_handler)
+        loop.set_exception_handler(global_exception_handler)
         # We actually can't (just) use asyncio.run here
         # We probably could if we didn't support windows, but we might run into
         # a scenario where this isn't true if anyone works on RPC more in the future

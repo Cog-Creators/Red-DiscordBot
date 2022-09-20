@@ -585,7 +585,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         )
 
     async def _check_requires_permission_hooks(
-        self, cog_or_command: commands.CogCommandMixin
+        self, _cog_or_command: commands.CogCommandMixin
     ) -> CheckResult:
         label = _("Permission hooks")
         result = await self.bot.verify_permissions_hooks(self.ctx)

@@ -16,7 +16,7 @@ from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
 
 
-def noop_box(text: str, **kwargs) -> str:
+def noop_box(text: str, **_kwargs) -> str:
     return text
 
 

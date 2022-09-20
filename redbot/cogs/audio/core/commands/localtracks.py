@@ -94,6 +94,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 with contextlib.suppress(discord.HTTPException):
                     await message.delete()

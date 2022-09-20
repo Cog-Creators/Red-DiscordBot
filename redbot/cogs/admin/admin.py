@@ -90,7 +90,7 @@ class Admin(commands.Cog):
     async def cog_load(self) -> None:
         await self.handle_migrations()
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 

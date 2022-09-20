@@ -427,6 +427,7 @@ class SetApiView(discord.ui.View):
         style=discord.ButtonStyle.grey,
     )
     async def auth_button(self, interaction: discord.Interaction, button: discord.Button):
+        del button
         return await interaction.response.send_modal(
             SetApiModal(self.default_service, self.default_keys)
         )

@@ -32,6 +32,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     async def lavalink_attempt_connect(self, timeout: int = 50, manual: bool = False) -> None:
+        del manual
         self.lavalink_connection_aborted = False
         max_retries = 5
         retry_count = 0

@@ -254,7 +254,7 @@ class CacheLevel:
 
 class Notifier:
     def __init__(
-        self, ctx: commands.Context, message: discord.Message, updates: MutableMapping, **kwargs
+        self, ctx: commands.Context, message: discord.Message, updates: MutableMapping, **_kwargs
     ):
         self.context = ctx
         self.message = message

@@ -20,7 +20,7 @@ class ModLog(commands.Cog):
         super().__init__()
         self.bot = bot
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 

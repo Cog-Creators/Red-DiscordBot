@@ -374,7 +374,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.
     """
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete (Core Config is handled in a bot method)"""
         return
 

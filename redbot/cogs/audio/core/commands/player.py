@@ -361,6 +361,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 output = await self._genre_search_button_action(ctx, category_list, emoji, page)
                 with contextlib.suppress(discord.HTTPException):
@@ -376,6 +377,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 output = await self._genre_search_button_action(
                     ctx, playlists_list, emoji, page, playlist=True
@@ -657,6 +659,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 await self._search_button_action(ctx, tracks, emoji, page)
                 with contextlib.suppress(discord.HTTPException):

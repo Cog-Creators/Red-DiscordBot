@@ -915,7 +915,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         raise RedUnhandledAPI()
 
-    async def can_run(self, ctx: "Context", /, **kwargs) -> bool:
+    async def can_run(self, ctx: "Context", /, **_kwargs) -> bool:
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
@@ -1181,7 +1181,7 @@ class _AlwaysAvailableMixin:
     This particular class is not supported for 3rd party use
     """
 
-    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *_args, **_kwargs) -> bool:
         return not ctx.author.bot
 
     can_see = can_run
@@ -1230,7 +1230,7 @@ class _ForgetMeSpecialCommand(_RuleDropper, Command):
     We need special can_run behavior here
     """
 
-    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *_args, **_kwargs) -> bool:
         return await ctx.bot._config.datarequests.allow_user_requests()
 
     can_see = can_run
