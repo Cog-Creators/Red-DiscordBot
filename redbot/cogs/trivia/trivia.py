@@ -525,6 +525,8 @@ class Trivia(commands.Cog):
         priority.append(key)
         items = data.items()
         for key in priority:
+            # https://github.com/PyCQA/pylint/issues/7100#issuecomment-1171283909
+            # pylint: disable-next=cell-var-from-loop
             items = sorted(items, key=lambda t: t[1][key], reverse=True)
         max_name_len = max(map(lambda m: len(str(m)), data.keys()))
         # Headers
