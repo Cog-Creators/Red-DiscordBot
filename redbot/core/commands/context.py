@@ -307,7 +307,7 @@ class Context(DPYContext):
             return self.bot.user
 
 
-if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
+if TYPE_CHECKING or os.getenv("BUILDING_DOCS"):
 
     class DMContext(Context):
         """

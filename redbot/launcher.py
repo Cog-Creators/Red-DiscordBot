@@ -20,7 +20,7 @@ INTRO = "==========================\nRed Discord Bot - Launcher\n===============
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
 
-PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv("READTHEDOCS", False)
+PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv("READTHEDOCS")
 
 
 def is_venv():

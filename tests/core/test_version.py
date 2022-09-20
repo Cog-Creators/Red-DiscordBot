@@ -73,7 +73,7 @@ def test_python_version_has_lower_bound():
 
 
 @pytest.mark.skipif(
-    os.getenv("TOX_RED", False) and sys.version_info >= (3, 12),
+    os.getenv("TOX_RED") and sys.version_info >= (3, 12),
     reason="Testing on yet to be supported Python version.",
 )
 def test_python_version_has_upper_bound():
