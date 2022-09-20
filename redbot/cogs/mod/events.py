@@ -103,14 +103,14 @@ class Events(MixinMeta):
             if mentions >= mention_spam["warn"]:
                 try:
                     await author.send(_("Please do not mass mention people!"))
-                except (discord.HTTPException, discord.Forbidden):
+                except discord.HTTPException:
                     try:
                         await message.channel.send(
                             _("{member}, Please do not mass mention people!").format(
                                 member=author.mention
                             )
                         )
-                    except (discord.HTTPException, discord.Forbidden):
+                    except discord.HTTPException:
                         log.warning(
                             "Failed to warn a member (%s) for mention spam in server %s.",
                             author.id,

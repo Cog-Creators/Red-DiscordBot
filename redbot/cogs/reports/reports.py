@@ -228,7 +228,7 @@ class Reports(commands.Cog):
             await Tunnel.message_forwarder(
                 destination=channel, content=send_content, embed=em, files=files
             )
-        except (discord.Forbidden, discord.HTTPException):
+        except discord.HTTPException:
             return None
 
         await self.config.custom("REPORT", guild.id, ticket_number).report.set(
