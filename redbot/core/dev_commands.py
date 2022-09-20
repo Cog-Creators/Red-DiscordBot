@@ -10,6 +10,8 @@ The original copy was distributed under MIT License and this derivative work
 is distributed under GNU GPL Version 3.
 """
 
+# pylint: disable=eval-used,exec-used
+
 import ast
 import asyncio
 import inspect
