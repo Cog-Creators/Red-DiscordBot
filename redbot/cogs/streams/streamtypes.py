@@ -345,7 +345,10 @@ class TwitchStream(Stream):
                 wait_time = reset_time - current_time + 0.1
                 await asyncio.sleep(wait_time)
 
-    async def get_data(self, url: str, params: dict = {}) -> Tuple[Optional[int], dict]:
+    async def get_data(
+        self, url: str, params: Optional[dict] = None
+    ) -> Tuple[Optional[int], dict]:
+        params = params or {}
         header = {"Client-ID": str(self._client_id)}
         if self._bearer is not None:
             header["Authorization"] = f"Bearer {self._bearer}"

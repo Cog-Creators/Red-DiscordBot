@@ -1176,7 +1176,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         ctx: commands.Context,
         users: commands.Greedy[discord.Member],
         *,
-        time_and_reason: MuteTime = {},
+        time_and_reason: MuteTime = None,
     ):
         """Mute users.
 
@@ -1190,6 +1190,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         `[p]mute @member1 3 days`
 
         """
+        time_and_reason = time_and_reason or {}
         if not users:
             return await ctx.send_help()
         if ctx.me in users:
@@ -1328,7 +1329,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         ctx: commands.Context,
         users: commands.Greedy[discord.Member],
         *,
-        time_and_reason: MuteTime = {},
+        time_and_reason: MuteTime = None,
     ):
         """Mute a user in the current text channel (or in the parent of the current thread).
 
@@ -1341,6 +1342,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         `[p]mutechannel @member1 @member2 spam 5 hours`
         `[p]mutechannel @member1 3 days`
         """
+        time_and_reason = time_and_reason or {}
         if not users:
             return await ctx.send_help()
         if ctx.me in users:

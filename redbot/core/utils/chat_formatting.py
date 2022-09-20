@@ -201,7 +201,7 @@ def spoiler(text: str, escape_formatting: bool = True) -> str:
 
 def pagify(
     text: str,
-    delims: Sequence[str] = ["\n"],
+    delims: Sequence[str] = ("\n",),
     *,
     priority: bool = False,
     escape_mass_mentions: bool = True,

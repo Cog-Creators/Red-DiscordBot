@@ -71,7 +71,7 @@ class VoiceMutes(MixinMeta):
         ctx: commands.Context,
         users: commands.Greedy[discord.Member],
         *,
-        time_and_reason: MuteTime = {},
+        time_and_reason: MuteTime = None,
     ):
         """Mute a user in their current voice channel.
 
@@ -83,6 +83,7 @@ class VoiceMutes(MixinMeta):
         Examples:
         `[p]voicemute @member1 @member2 spam 5 hours`
         `[p]voicemute @member1 3 days`"""
+        time_and_reason = time_and_reason or {}
         if not users:
             return await ctx.send_help()
         if ctx.me in users:
