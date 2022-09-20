@@ -629,16 +629,13 @@ async def get_leaderboard_position(
         guild = None
     else:
         guild = member.guild if hasattr(member, "guild") else None
-    try:
-        leaderboard = await get_leaderboard(None, guild)
-    except TypeError:
-        raise
+
+    leaderboard = await get_leaderboard(None, guild)
+    pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
+    if pos is None:
+        return None
     else:
-        pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
-        if pos is None:
-            return None
-        else:
-            return pos[0]
+        return pos[0]
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:

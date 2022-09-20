@@ -22,7 +22,6 @@ from .errors import (
     InvalidYoutubeCredentials,
     OfflineStream,
     StreamNotFound,
-    StreamsError,
     YoutubeQuotaExceeded,
 )
 from .streamtypes import (
@@ -778,8 +777,6 @@ class Streams(commands.Cog):
             pass
         except StreamNotFound:
             return False
-        except StreamsError:
-            raise
         return True
 
     async def _stream_alerts(self):
