@@ -76,7 +76,7 @@ class Stream:
     async def is_online(self):
         raise NotImplementedError()
 
-    def make_embed(self):
+    def make_embed(self, data):
         raise NotImplementedError()
 
     def iter_messages(self):

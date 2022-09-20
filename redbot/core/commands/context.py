@@ -92,7 +92,7 @@ class Context(DPYContext):
 
         return await super().send(content=content, **kwargs)
 
-    async def send_help(self, command=None):
+    async def send_help(self, command=None):  # pylint: disable=arguments-differ
         """Send the command help message."""
         # This allows people to manually use this similarly
         # to the upstream d.py version, while retaining our use.

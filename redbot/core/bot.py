@@ -1621,6 +1621,7 @@ class Red(
             while pkg_name in curr_pkgs:
                 curr_pkgs.remove(pkg_name)
 
+    # pylint: disable-next=arguments-differ,arguments-renamed
     async def load_extension(self, spec: ModuleSpec):
         # NB: this completely bypasses `discord.ext.commands.Bot._load_from_module_spec`
         name = spec.name.split(".")[-1]

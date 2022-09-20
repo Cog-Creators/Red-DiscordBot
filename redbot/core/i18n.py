@@ -7,7 +7,7 @@ import logging
 import os
 from contextvars import ContextVar
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Union
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import babel.localedata
 import discord
@@ -216,7 +216,7 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
     return cog_folder / "locales" / "{}.{}".format(get_locale(), extension)
 
 
-class Translator(Callable[[str], str]):
+class Translator:
     """Function to get translated strings at runtime."""
 
     def __init__(self, name: str, file_location: Union[str, Path, os.PathLike]):
