@@ -19,8 +19,8 @@ log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
 
-def get_max_allocation_size(exec) -> Tuple[int, bool]:
-    if platform.architecture(exec)[0] == "64bit":
+def get_max_allocation_size(executable: str) -> Tuple[int, bool]:
+    if platform.architecture(executable)[0] == "64bit":
         max_heap_allowed = psutil.virtual_memory().total
         thinks_is_64_bit = True
     else:
