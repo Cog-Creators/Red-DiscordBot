@@ -274,10 +274,10 @@ class CustomCommands(commands.Cog):
         **Arguments:**
 
         - `<command>` The custom command to get the raw response of."""
-        commands = await self.config.guild(ctx.guild).commands()
-        if command not in commands:
+        commands_ = await self.config.guild(ctx.guild).commands()
+        if command not in commands_:
             return await ctx.send("That command doesn't exist.")
-        command = commands[command]
+        command = commands_[command]
         if isinstance(command["response"], str):
             raw = discord.utils.escape_markdown(command["response"])
             if len(raw) > 2000:
