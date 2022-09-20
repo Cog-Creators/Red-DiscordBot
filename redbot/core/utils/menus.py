@@ -208,7 +208,7 @@ async def menu(
             ):
                 await message.clear_reactions()
             else:
-                raise RuntimeError
+                raise RuntimeError from None
         except (discord.Forbidden, RuntimeError):  # cannot remove all reactions
             for key in controls.keys():
                 try:

@@ -134,7 +134,7 @@ def parse_timedelta(
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
-            )
+            ) from None
         if maximum and maximum < delta:
             raise BadArgument(
                 _(
@@ -196,7 +196,7 @@ def parse_relativedelta(
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
-            )
+            ) from None
         return delta
     return None
 

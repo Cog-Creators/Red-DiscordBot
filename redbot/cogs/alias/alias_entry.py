@@ -194,7 +194,7 @@ class AliasCache:
             try:
                 indices = [int(a[0]) for a in indices]
             except IndexError:
-                raise ArgParseError(_("Arguments must be specified with a number."))
+                raise ArgParseError(_("Arguments must be specified with a number.")) from None
             low = min(indices)
             indices = [a - low for a in indices]
             high = max(indices)

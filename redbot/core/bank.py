@@ -1059,13 +1059,13 @@ def cost(amount: int):
                 )
             try:
                 await withdraw_credits(context.author, amount)
-            except Exception:
+            except Exception as exc:
                 credits_name = await get_currency_name(context.guild)
                 raise commands.UserFeedbackCheckFailure(
                     _("You need at least {cost} {currency} to use this command.").format(
                         cost=humanize_number(amount), currency=credits_name
                     )
-                )
+                ) from exc
             else:
                 try:
                     return await coro(*args, **kwargs)

@@ -149,9 +149,9 @@ class JsonDriver(BaseDriver):
             for i in full_identifiers[:-1]:
                 try:
                     partial = partial.setdefault(i, {})
-                except AttributeError:
+                except AttributeError as exc:
                     # Tried to set sub-field of non-object
-                    raise errors.CannotSetSubfield
+                    raise errors.CannotSetSubfield from exc
 
             partial[full_identifiers[-1]] = value_copy
             await self._save()

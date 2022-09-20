@@ -343,7 +343,7 @@ class AudioAPIInterface:
             except KeyError:
                 raise SpotifyFetchError(
                     _("This doesn't seem to be a valid Spotify playlist/album URL or code.")
-                )
+                ) from None
         return tracks
 
     async def spotify_query(
@@ -870,8 +870,8 @@ class AudioAPIInterface:
                 results = await player.load_tracks(query_string)
             except KeyError:
                 results = None
-            except RuntimeError:
-                raise TrackEnqueueError
+            except RuntimeError as exc:
+                raise TrackEnqueueError from exc
         if results is None:
             results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
             valid_global_entry = False

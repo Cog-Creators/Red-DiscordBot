@@ -520,7 +520,7 @@ class Trivia(commands.Cog):
         try:
             priority.remove(key)
         except ValueError:
-            raise ValueError(f"{key} is not a valid key.")
+            raise ValueError(f"{key} is not a valid key.") from None
         # Put key last in reverse priority
         priority.append(key)
         items = data.items()

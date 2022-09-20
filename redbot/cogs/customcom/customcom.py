@@ -185,9 +185,9 @@ class CommandObj:
             pred = MessagePredicate.yes_or_no(ctx)
             try:
                 await self.bot.wait_for("message", check=pred, timeout=30)
-            except asyncio.TimeoutError:
+            except asyncio.TimeoutError as exc:
                 await ctx.send(_("Response timed out, please try again later."))
-                raise CommandNotEdited()
+                raise CommandNotEdited() from exc
             if pred.result is True:
                 response = await self.get_responses(ctx=ctx)
             else:
@@ -196,9 +196,9 @@ class CommandObj:
                     resp = await self.bot.wait_for(
                         "message", check=MessagePredicate.same_context(ctx), timeout=180
                     )
-                except asyncio.TimeoutError:
+                except asyncio.TimeoutError as exc:
                     await ctx.send(_("Response timed out, please try again later."))
-                    raise CommandNotEdited()
+                    raise CommandNotEdited() from exc
                 response = resp.content
 
         if response:

@@ -626,7 +626,7 @@ class ServerManager:
                             return  # lavalink_restart_connect will cause a new monitor task to be created.
                     except Exception as exc:
                         log.debug(exc, exc_info=exc)
-                        raise NodeUnhealthy(str(exc))
+                        raise NodeUnhealthy(str(exc)) from exc
             except NoProcessFound:
                 await self._partial_shutdown()
             except asyncio.TimeoutError:

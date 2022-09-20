@@ -309,8 +309,8 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
     async def __anext__(self) -> _T:
         try:
             item = next(self._iterator)
-        except StopIteration:
-            raise StopAsyncIteration
+        except StopIteration as exc:
+            raise StopAsyncIteration from exc
         if self._i == self._steps:
             self._i = 0
             await asyncio.sleep(self._delay)

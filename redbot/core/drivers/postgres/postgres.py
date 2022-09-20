@@ -156,8 +156,8 @@ class PostgresDriver(BaseDriver):
                 encode_identifier_data(identifier_data),
                 json.dumps(value),
             )
-        except asyncpg.ErrorInAssignmentError:
-            raise errors.CannotSetSubfield
+        except asyncpg.ErrorInAssignmentError as exc:
+            raise errors.CannotSetSubfield from exc
 
     async def clear(self, identifier_data: IdentifierData):
         await self._execute("SELECT red_config.clear($1)", encode_identifier_data(identifier_data))

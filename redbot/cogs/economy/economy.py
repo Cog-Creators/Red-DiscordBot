@@ -109,7 +109,7 @@ class SetParser:
                     "Invalid value, the argument must be an integer,"
                     " optionally preceded with a `+` or `-` sign."
                 )
-            )
+            ) from None
         if argument and argument[0] in allowed:
             if self.sum < 0:
                 self.operation = "withdraw"

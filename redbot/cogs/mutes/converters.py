@@ -58,6 +58,6 @@ class MuteTime(Converter):
             except OverflowError:
                 raise commands.BadArgument(
                     _("The time provided is too long; use a more reasonable time.")
-                )
+                ) from None
         result["reason"] = argument.strip()
         return result

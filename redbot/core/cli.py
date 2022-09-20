@@ -102,7 +102,7 @@ def non_negative_int(arg: str) -> int:
     try:
         x = int(arg)
     except ValueError:
-        raise argparse.ArgumentTypeError("The argument has to be a number.")
+        raise argparse.ArgumentTypeError("The argument has to be a number.") from None
     if x < 0:
         raise argparse.ArgumentTypeError("The argument has to be a non-negative integer.")
     if x > sys.maxsize:

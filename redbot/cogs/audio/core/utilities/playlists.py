@@ -269,12 +269,12 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
         try:
             await context.bot.wait_for("reaction_add", check=pred, timeout=60)
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as exc:
             with contextlib.suppress(discord.HTTPException):
                 await msg.delete()
             raise TooManyMatches(
                 _("Too many matches found and you did not select which one you wanted.")
-            )
+            ) from exc
         if emojis[pred.result] == "\N{CROSS MARK}":
             with contextlib.suppress(discord.HTTPException):
                 await msg.delete()

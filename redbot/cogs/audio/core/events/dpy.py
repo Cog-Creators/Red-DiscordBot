@@ -280,10 +280,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                         and m.author.id == ctx.author.id,
                         timeout=120,
                     )
-                except asyncio.TimeoutError:
+                except asyncio.TimeoutError as exc:
                     with contextlib.suppress(discord.HTTPException):
                         await sent.add_reaction("\N{CROSS MARK}")
-                    raise commands.CheckFailure
+                    raise commands.CheckFailure from exc
                 else:
                     if message.content.strip() != token:
                         with contextlib.suppress(discord.HTTPException):

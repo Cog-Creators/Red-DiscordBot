@@ -480,7 +480,7 @@ def humanize_timedelta(
     try:
         obj = seconds if seconds is not None else timedelta.total_seconds()
     except AttributeError:
-        raise ValueError("You must provide either a timedelta or a number of seconds")
+        raise ValueError("You must provide either a timedelta or a number of seconds") from None
 
     seconds = int(obj)
     periods = [
