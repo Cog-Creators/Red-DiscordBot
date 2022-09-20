@@ -318,7 +318,8 @@ class Dev(commands.Cog):
             try:
                 with redirect_stdout(stdout):
                     if executor is None:
-                        result = types.FunctionType(code, env)()
+                        # https://github.com/PyCQA/pylint/issues/7500
+                        result = types.FunctionType(code, env)()  # pylint: disable=not-callable
                     else:
                         result = executor(code, env)
                     result = await self.maybe_await(result)
