@@ -35,7 +35,7 @@ def finalize_driver(cog_name):
         if cog_name in _locks:
             del _locks[cog_name]
 
-    for f in _finalizers:
+    for f in reversed(_finalizers):
         if not f.alive:
             _finalizers.remove(f)
 
