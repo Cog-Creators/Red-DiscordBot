@@ -506,17 +506,6 @@ class Repo(RepoJSONMixin):
         :return: List of available modules.
         """
         curr_modules = []
-        """
-        for name in self.folder_path.iterdir():
-            if name.is_dir():
-                spec = importlib.util.spec_from_file_location(
-                    name.stem, location=str(name.parent)
-                )
-                if spec is not None:
-                    curr_modules.append(
-                        Installable(location=name)
-                    )
-        """
         for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
             if not name.isidentifier() or keyword.iskeyword(name):
                 # reject package names that can't be valid python identifiers
