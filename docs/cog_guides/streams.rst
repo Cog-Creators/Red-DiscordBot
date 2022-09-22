@@ -324,7 +324,7 @@ Explains how to set the Twitch token.
 
 To set the Twitch API tokens, follow these steps:
 
-1. Go to this page: https://dev.twitch.tv/dashboard/apps.
+1. Go to this page: https://dev.twitch.tv/console/apps/create.
 
 2. Click Register Your Application.
 
