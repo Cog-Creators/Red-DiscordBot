@@ -1642,7 +1642,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if not role:
                 ret.reason = _(MUTE_UNMUTE_ISSUES["role_missing"])
                 return ret
-            if role in user.roles:
+            if role not in user.roles:
                 ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
                 return ret
 
