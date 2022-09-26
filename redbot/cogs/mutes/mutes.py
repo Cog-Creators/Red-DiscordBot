@@ -1583,6 +1583,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if guild.id not in self._server_mutes:
                 self._server_mutes[guild.id] = {}
 
+            # This is here in the event that the author tries to update the mute duration of user.
+            # we must check if there is an automatic unmute task in the self._server_mutes cache, for the specific guild.id and user.id.
+            # if there is, then we cancel the automatic unmute task.
+            if user.id in self._server_mutes[guild.id]:
+                task_name = f"server-unmute-{guild.id}-{user.id}"
+                if task_name in self._unmute_tasks:
+                    self._unmute_tasks[task_name].cancel()
+
             self._server_mutes[guild.id][user.id] = {
                 "author": author.id,
                 "member": user.id,
@@ -1721,12 +1729,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         overwrites.update(**new_overs)
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
+
+        # This is here in the event that the author tries to update the channel mute duration of user.
+        # we must check if there is an automatic unmute task in the self._channel_mutes cache, for the specific channel.id and user.id.
+        # if there is, then we cancel the automatic unmute task.
         if user.id in self._channel_mutes[channel.id]:
-            return {
-                "success": False,
-                "channel": channel,
-                "reason": _(MUTE_UNMUTE_ISSUES["already_muted"]),
-            }
+            task_name = f"channel-unmute-{channel.id}-{user.id}"
+            if task_name in self._unmute_tasks:
+                self._unmute_tasks[task_name].cancel()
+
         if not channel.permissions_for(guild.me).manage_permissions:
             return {
                 "success": False,
