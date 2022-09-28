@@ -40,7 +40,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "CheckPredicate",
-    "DM_PERMS",
     "GlobalPermissionModel",
     "GuildPermissionModel",
     "PermissionModel",
@@ -91,25 +90,6 @@ GuildPermissionModel = Union[
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
-
-# Here we are trying to model DM permissions as closely as possible. The only
-# discrepancy I've found is that users can pin messages, but they cannot delete them.
-# This means manage_messages is only half True, so it's left as False.
-# This is also the same as the permissions returned when `permissions_for` is used in DM.
-DM_PERMS = discord.Permissions.none()
-# DEP-WARN: Ensure that any new relevant perms are put here.
-DM_PERMS.update(
-    add_reactions=True,
-    attach_files=True,
-    embed_links=True,
-    external_emojis=True,
-    external_stickers=True,
-    mention_everyone=True,
-    read_message_history=True,
-    read_messages=True,
-    send_messages=True,
-    use_application_commands=True,
-)
 
 
 class PrivilegeLevel(enum.IntEnum):

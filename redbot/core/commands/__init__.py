@@ -45,7 +45,6 @@ from .help import (
 )
 from .requires import (
     CheckPredicate as CheckPredicate,
-    DM_PERMS as DM_PERMS,
     GlobalPermissionModel as GlobalPermissionModel,
     GuildPermissionModel as GuildPermissionModel,
     PermissionModel as PermissionModel,
