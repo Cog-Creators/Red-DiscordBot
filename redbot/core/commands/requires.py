@@ -97,15 +97,18 @@ CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[
 # This means manage_messages is only half True, so it's left as False.
 # This is also the same as the permissions returned when `permissions_for` is used in DM.
 DM_PERMS = discord.Permissions.none()
+# DEP-WARN: Ensure that any new relevant perms are put here.
 DM_PERMS.update(
     add_reactions=True,
     attach_files=True,
     embed_links=True,
     external_emojis=True,
+    external_stickers=True,
     mention_everyone=True,
     read_message_history=True,
     read_messages=True,
     send_messages=True,
+    use_application_commands=True,
 )
 
 
