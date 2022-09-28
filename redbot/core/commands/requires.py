@@ -639,17 +639,6 @@ class Requires:
         return await discord.utils.async_all(check(ctx) for check in self.checks)
 
     @staticmethod
-    def _get_perms_for(ctx: "Context", user: discord.abc.User) -> discord.Permissions:
-        if ctx.guild is None:
-            return DM_PERMS
-        else:
-            return ctx.channel.permissions_for(user)
-
-    @classmethod
-    def _get_bot_perms(cls, ctx: "Context") -> discord.Permissions:
-        return cls._get_perms_for(ctx, ctx.guild.me if ctx.guild else ctx.bot.user)
-
-    @staticmethod
     def _missing_perms(
         required: discord.Permissions, actual: discord.Permissions
     ) -> discord.Permissions:
@@ -660,13 +649,6 @@ class Requires:
         #   complement/difference of A with respect to R.
         relative_complement = required.value & ~actual.value
         return discord.Permissions(relative_complement)
-
-    @staticmethod
-    def _member_as_user(member: discord.abc.User) -> discord.User:
-        if isinstance(member, discord.Member):
-            # noinspection PyProtectedMember
-            return member._user
-        return member
 
     def __repr__(self) -> str:
         return (
