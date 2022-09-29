@@ -248,7 +248,7 @@ async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:
         return True
     elif not perms:
         return False
-    resolved = ctx.channel.permissions_for(ctx.author)
+    resolved = ctx.permissions
 
     return resolved.administrator or all(
         getattr(resolved, name, None) == value for name, value in perms.items()

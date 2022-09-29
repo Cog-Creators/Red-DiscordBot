@@ -505,15 +505,11 @@ class Requires:
         return await self._transition_state(ctx)
 
     async def _verify_bot(self, ctx: "Context") -> None:
-        if ctx.guild is None:
-            bot_user = ctx.bot.user
-        else:
-            bot_user = ctx.guild.me
-            cog = ctx.cog
-            if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
-                raise discord.ext.commands.DisabledCommand()
+        cog = ctx.cog
+        if ctx.guild is not None and cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
+            raise discord.ext.commands.DisabledCommand()
 
-        bot_perms = ctx.channel.permissions_for(bot_user)
+        bot_perms = ctx.bot_permissions
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
             raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
 
@@ -559,7 +555,7 @@ class Requires:
             return False
 
         if self.user_perms is not None:
-            user_perms = ctx.channel.permissions_for(ctx.author)
+            user_perms = ctx.permissions
             if user_perms.administrator or user_perms >= self.user_perms:
                 return True
 

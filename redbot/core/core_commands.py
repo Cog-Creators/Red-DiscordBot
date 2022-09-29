@@ -591,7 +591,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
         # Can't check this as a command check, and want to prompt DMs as an option.
-        if not ctx.channel.permissions_for(ctx.me).attach_files:
+        if not ctx.bot_permissions.attach_files:
             ctx.command.reset_cooldown(ctx)
             return await ctx.send(_("I need to be able to attach files (try in DMs?)."))
 
@@ -3133,7 +3133,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 view=SetApiView(default_service=service),
             )
         else:
-            if ctx.channel.permissions_for(ctx.me).manage_messages:
+            if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
             await ctx.bot.set_shared_api_tokens(service, **tokens)
             await ctx.send(_("`{service}` API tokens have been set.").format(service=service))

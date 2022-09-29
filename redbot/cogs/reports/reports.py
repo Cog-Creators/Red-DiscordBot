@@ -327,7 +327,7 @@ class Reports(commands.Cog):
         if ctx.author.id in self.user_cache:
             self.user_cache.remove(ctx.author.id)
         if ctx.guild and ctx.invoked_subcommand is None:
-            if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+            if ctx.bot_permissions.manage_messages:
                 try:
                     await ctx.message.delete()
                 except discord.NotFound:

@@ -626,7 +626,7 @@ class Cleanup(commands.Cog):
         can_mass_purge = False
         if type(author) is discord.Member:
             me = ctx.guild.me
-            can_mass_purge = channel.permissions_for(me).manage_messages
+            can_mass_purge = ctx.bot_permissions.manage_messages
 
         if match_pattern:
 

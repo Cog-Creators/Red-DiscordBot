@@ -210,7 +210,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 raise CheckFailure(message=text)
 
-        current_perms = ctx.channel.permissions_for(ctx.me)
+        current_perms = ctx.bot_permissions
         if guild and not current_perms.is_superset(self.permission_cache):
             current_perms_set = set(iter(current_perms))
             expected_perms_set = set(iter(self.permission_cache))
