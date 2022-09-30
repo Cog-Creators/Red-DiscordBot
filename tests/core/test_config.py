@@ -660,3 +660,12 @@ async def test_config_custom_partial_pkeys_set(config, pkeys, raw_args, result):
     group = config.custom("TEST", *pkeys)
     await group.set_raw(*raw_args, value=result)
     assert await group.get_raw(*raw_args) == result
+
+
+@pytest.mark.asyncio
+async def test_config_custom_get_raw_with_default_on_whole_scope(config):
+    config.init_custom("TEST", 3)
+    config.register_custom("TEST")
+
+    group = config.custom("TEST")
+    assert await group.get_raw(default=True) is True
