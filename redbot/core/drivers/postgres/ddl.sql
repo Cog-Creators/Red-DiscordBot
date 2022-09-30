@@ -140,6 +140,8 @@ CREATE OR REPLACE FUNCTION
     missing_pkey_columns text;
 
   BEGIN
+    PERFORM red_config.maybe_create_table(id_data);
+
     IF num_missing_pkeys <= 0 THEN
       -- No missing primary keys: we're getting all or part of a document.
       EXECUTE format(
