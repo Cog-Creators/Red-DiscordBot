@@ -137,10 +137,18 @@ CREATE OR REPLACE FUNCTION
     pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
     whereclause CONSTANT text := red_utils.gen_whereclause(num_pkeys, pkey_type);
 
+    table_exists CONSTANT boolean := exists(
+      SELECT 1
+      FROM information_schema.tables
+      WHERE table_schema = schemaname AND table_name = id_data.category);
+
     missing_pkey_columns text;
 
   BEGIN
-    IF num_missing_pkeys <= 0 THEN
+    IF NOT table_exists THEN
+      -- If the table doesn't exist, just don't do anything to prevent PostgreSQL server
+      -- from logging an error about non-existent relation.
+    ELSIF num_missing_pkeys <= 0 THEN
       -- No missing primary keys: we're getting all or part of a document.
       EXECUTE format(
         'SELECT json_data #> $2 FROM %I.%I WHERE %s',
