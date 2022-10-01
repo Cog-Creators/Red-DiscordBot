@@ -376,7 +376,7 @@ class ModSettings(MixinMeta):
             await ctx.send(
                 _("Bot will no longer attempt to send a DM to user before kick and ban.")
             )
-            
+
     @dm.command()
     @commands.guild_only()
     async def message(self, ctx: commands.Context, *, message: str = None):
@@ -389,7 +389,9 @@ class ModSettings(MixinMeta):
         if message in [None, "None"]:
             await self.config.guild(guild).msg_on_kickban.set(None)
             await ctx.send(
-                _("DM message when kicked/banned has been reset to default.").format(message=message)
+                _("DM message when kicked/banned has been reset to default.").format(
+                    message=message
+                )
             )
             return
         await self.config.guild(guild).msg_on_kickban.set(message)
