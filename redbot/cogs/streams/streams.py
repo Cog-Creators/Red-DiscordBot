@@ -59,6 +59,7 @@ class Streams(commands.Cog):
         "mention_here": False,
         "live_message_mention": False,
         "live_message_nomention": False,
+        "live_message_button": False,
         "ignore_reruns": False,
         "ignore_schedule": False,
     }
@@ -281,15 +282,32 @@ class Streams(commands.Cog):
                 _("Something went wrong whilst trying to contact the stream service's API.")
             )
         else:
+            live_message_button = await self.config.guild(ctx.channel.guild).live_message_button()
             if isinstance(info, tuple):
                 embed, is_rerun = info
+                if live_message_button:
+                    stream_url = embed.url
+                    view = discord.ui.View()
+                    view.add_item(
+                        discord.ui.Button(
+                            label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
+                        )
+                    )
                 ignore_reruns = await self.config.guild(ctx.channel.guild).ignore_reruns()
                 if ignore_reruns and is_rerun:
                     await ctx.send(_("That user is offline."))
                     return
             else:
                 embed = info
-            await ctx.send(embed=embed)
+                if live_message_button:
+                    stream_url = embed.url
+                    view = discord.ui.View()
+                    view.add_item(
+                        discord.ui.Button(
+                            label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
+                        )
+                    )
+            await ctx.send(embed=embed, view=view if live_message_button else None)
 
     @commands.group()
     @commands.guild_only()
@@ -695,6 +713,21 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_schedule.set(True)
             await ctx.send(_("Streams schedules will no longer send an alert."))
 
+    @streamset.command(name="livebutton")
+    @commands.guild_only()
+    async def live_button(self, ctx: commands.Context):
+        """Toggle the "Open Stream" button for alerts."""
+        guild = ctx.guild
+        current_setting = await self.config.guild(guild).live_message_button()
+        if current_setting:
+            await self.config.guild(guild).live_message_button.set(False)
+            await ctx.send(_("The `Open Stream` button will no longer be shown in stream alerts."))
+        else:
+            await self.config.guild(guild).live_message_button.set(True)
+            await ctx.send(
+                _("When a stream is live, a button linking to the stream will be shown.")
+            )
+
     async def add_or_remove(self, ctx: commands.Context, stream, discord_channel):
         if discord_channel.id not in stream.channels:
             stream.channels.append(discord_channel.id)
@@ -763,10 +796,20 @@ class Streams(commands.Cog):
         *,
         is_schedule: bool = False,
     ):
+        live_message_button = await self.config.guild(channel.guild).live_message_button()
+        if live_message_button:
+            stream_url = embed.url
+            view = discord.ui.View()
+            view.add_item(
+                discord.ui.Button(
+                    label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
+                )
+            )
         m = await channel.send(
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+            view=view if live_message_button else None,
         )
         message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
         if is_schedule:
