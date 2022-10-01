@@ -146,8 +146,7 @@ CREATE OR REPLACE FUNCTION
 
   BEGIN
     IF NOT table_exists THEN
-      -- If the table doesn't exist, just don't do anything to prevent PostgreSQL server
-      -- from logging an error about non-existent relation.
+      -- If the table doesn't exist, just don't do anything to prevent SQL errors.
     ELSIF num_missing_pkeys <= 0 THEN
       -- No missing primary keys: we're getting all or part of a document.
       EXECUTE format(
@@ -298,10 +297,25 @@ CREATE OR REPLACE FUNCTION
     num_identifiers CONSTANT integer := coalesce(array_length(id_data.identifiers, 1), 0);
     pkey_type CONSTANT text := red_utils.get_pkey_type(id_data.is_custom);
 
+    schema_exists CONSTANT boolean := exists(
+      SELECT 1
+      FROM red_config.red_cogs t
+      WHERE t.cog_name = id_data.cog_name AND t.cog_id = id_data.cog_id);
+    table_exists CONSTANT boolean := schema_exists AND exists(
+      SELECT 1
+      FROM information_schema.tables
+      WHERE table_schema = schemaname AND table_name = id_data.category);
+
     whereclause text;
 
   BEGIN
-    IF num_identifiers > 0 THEN
+    -- If the schema or table doesn't exist, just don't do anything to prevent SQL errors.
+    IF NOT schema_exists THEN
+      -- pass
+    ELSIF num_identifiers > 0 THEN
+      IF NOT table_exists THEN
+        RETURN;
+      END IF;
       -- Popping a key from a document or nested document.
       whereclause := red_utils.gen_whereclause(num_pkeys, pkey_type);
 
@@ -318,6 +332,9 @@ CREATE OR REPLACE FUNCTION
       USING id_data.pkeys, id_data.identifiers;
 
     ELSIF num_pkeys > 0 THEN
+      IF NOT table_exists THEN
+        RETURN;
+      END IF;
       -- Deleting one or many documents
       whereclause := red_utils.gen_whereclause(num_pkeys, pkey_type);
 
@@ -325,6 +342,9 @@ CREATE OR REPLACE FUNCTION
       USING id_data.pkeys;
 
     ELSIF id_data.category IS NOT NULL AND id_data.category != '' THEN
+      IF NOT table_exists THEN
+        RETURN;
+      END IF;
       -- Deleting an entire category
       EXECUTE format('DROP TABLE %I.%I CASCADE', schemaname, id_data.category);
 
