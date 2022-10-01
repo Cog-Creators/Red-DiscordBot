@@ -392,7 +392,7 @@ class ModSettings(MixinMeta):
                 _("DM message when kicked/banned is currently set to: {message}").format(message=message)
             )
             return
-        await self.config.guild(guild).dm_message.set(message)
+        await self.config.guild(guild).msg_on_kickban.set(message)
         await ctx.send(_("DM message when kicked/banned has been updated."))
 
     @modset.command()

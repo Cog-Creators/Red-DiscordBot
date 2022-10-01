@@ -146,7 +146,7 @@ class KickBanMixin(MixinMeta):
                     title=bold(_("You have been banned from {guild}.").format(guild=guild)),
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=title,
+                        title=str(title[0]),
                         color=await self.bot.get_embed_color(user),
                     )
                     em.add_field(
