@@ -386,10 +386,10 @@ class ModSettings(MixinMeta):
         Set to "None" to reset to the default message.
         """
         guild = ctx.guild
-        if message is None:
-            await self.config.guild(guild).msg_on_kickban.set(message)
+        if message in [None, "None"]:
+            await self.config.guild(guild).msg_on_kickban.set(None)
             await ctx.send(
-                _("DM message when kicked/banned is currently set to: {message}").format(message=message)
+                _("DM message when kicked/banned has been reset to default.").format(message=message)
             )
             return
         await self.config.guild(guild).msg_on_kickban.set(message)
