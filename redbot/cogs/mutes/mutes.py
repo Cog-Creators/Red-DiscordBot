@@ -944,6 +944,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 send_messages_in_threads=False,
                 create_public_threads=False,
                 create_private_threads=False,
+                use_application_commands=False,
                 speak=False,
                 add_reactions=False,
             )
@@ -991,6 +992,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         overs.send_messages_in_threads = False
         overs.create_public_threads = False
         overs.create_private_threads = False
+        overs.use_application_commands = False
         overs.add_reactions = False
         overs.speak = False
         try:
@@ -1745,6 +1747,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 send_messages_in_threads=False,
                 create_public_threads=False,
                 create_private_threads=False,
+                use_application_commands=False,
                 add_reactions=False,
             )
         old_overs = {k: getattr(overwrites, k) for k in new_overs}
@@ -1838,6 +1841,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "send_messages_in_threads": None,
                 "create_public_threads": None,
                 "create_private_threads": None,
+                "use_application_commands": None,
                 "add_reactions": None,
                 "speak": None,
             }
