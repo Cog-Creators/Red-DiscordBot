@@ -15,7 +15,7 @@ from .config import Config
 from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
 
-from .utils.chat_formatting import box, pagify
+from .utils.chat_formatting import box, pagify, inline
 
 __all__ = ["CogManager"]
 
@@ -360,24 +360,46 @@ class CogManagerUI(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def removepath(self, ctx: commands.Context, path_number: int):
+    async def removepath(self, ctx: commands.Context, *paths_number: int):
         """
-        Removes a path from the available cog paths given the `path_number` from `[p]paths`.
+        Removes one or more paths from the available cog paths given the `path_number` from `[p]paths`.
         """
-        path_number -= 1
-        if path_number < 0:
-            await ctx.send(_("Path numbers must be positive."))
+        if not paths_number:
+            await ctx.send_help()
             return
 
-        cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
-        try:
-            to_remove = cog_paths.pop(path_number)
-        except IndexError:
-            await ctx.send(_("That is an invalid path number."))
-            return
+        message = ""
+        valid: List[int] = []
+        invalid: List[int] = []
 
-        await ctx.bot._cog_mgr.remove_path(to_remove)
-        await ctx.send(_("Path successfully removed."))
+        for path_number in paths_number:
+            path_number -= 1
+            if path_number < 0:
+                await ctx.send(_("All paths numbers must be positive."))
+                return
+
+            cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
+            try:
+                to_remove = cog_paths.pop(path_number)
+                await ctx.bot._cog_mgr.remove_path(to_remove)
+                valid.append(path_number)
+            except IndexError:
+                invalid.append(path_number)
+
+        if valid:
+            message += _(
+                "The following paths number were removed:\n{paths}\n".format(
+                    paths=", ".join([inline(str(path)) for path in valid])
+                )
+            )
+        if invalid:
+            message += _(
+                "The following paths number are invalid: \n{paths}".format(
+                    paths=", ".join([inline(str(path)) for path in invalid])
+                )
+            )
+
+        await ctx.send(message)
 
     @commands.command()
     @checks.is_owner()
