@@ -153,7 +153,7 @@ class Admin(commands.Cog):
     async def _addrole(
         self, ctx: commands.Context, member: discord.Member, role: discord.Role, *, check_user=True
     ):
-        if role in member.roles:
+        if member.get_role(role.id) is not None:
             await ctx.send(
                 _("{member.display_name} already has the role {role.name}.").format(
                     role=role, member=member
@@ -183,7 +183,7 @@ class Admin(commands.Cog):
     async def _removerole(
         self, ctx: commands.Context, member: discord.Member, role: discord.Role, *, check_user=True
     ):
-        if role not in member.roles:
+        if member.get_role(role.id) is None:
             await ctx.send(
                 _("{member.display_name} does not have the role {role.name}.").format(
                     role=role, member=member
@@ -395,7 +395,7 @@ class Admin(commands.Cog):
         Server admins must have configured the role as user settable.
         NOTE: The role is case sensitive!
         """
-        if selfrole in ctx.author.roles:
+        if ctx.author.get_role(selfrole.id) is not None:
             return await self._removerole(ctx, ctx.author, selfrole, check_user=False)
         else:
             return await self._addrole(ctx, ctx.author, selfrole, check_user=False)

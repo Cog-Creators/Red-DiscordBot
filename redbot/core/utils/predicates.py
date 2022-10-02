@@ -491,7 +491,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
                 return False
 
             role = self._find_role(guild, m.content)
-            if role is None or role not in user.roles:
+            if role is None or user.get_role(role.id) is None:
                 return False
 
             self.result = role
