@@ -813,7 +813,7 @@ class Red(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))
+            assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
             if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
