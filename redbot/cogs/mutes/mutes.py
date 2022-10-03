@@ -52,6 +52,11 @@ MUTE_UNMUTE_ISSUES = {
     "voice_mute_permission": _(
         "Because I don't have the Move Members permission, this will take into effect when the user rejoins."
     ),
+    "is_not_voice_mute": _(
+        "That user is channel muted in their current voice channel, not just voice muted."
+        " If you want to fully unmute this user in the channel,"
+        " use {command} in their voice channel's text channel instead."
+    ),
 }
 _ = T_
 
@@ -503,7 +508,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 del muted_users[str(member.id)]
         if success["success"]:
             if create_case:
-                if isinstance(channel, discord.VoiceChannel):
+                if data.get("voice_mute", False):
                     unmute_type = "vunmute"
                     notification_title = _("Voice unmute")
                 else:
@@ -692,16 +697,21 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 o.id: {name: attr for name, attr in p} for o, p in after.overwrites.items()
             }
             to_del: List[int] = []
-            for user_id in self._channel_mutes[after.id].keys():
+            for user_id, mute_data in self._channel_mutes[after.id].items():
                 unmuted = False
+                voice_mute = mute_data.get("voice_mute", False)
                 if user_id in after_perms:
-                    for perm_name in (
-                        "send_messages",
-                        "send_messages_in_threads",
-                        "create_public_threads",
-                        "create_private_threads",
-                        "speak",
-                    ):
+                    perms_to_check = ["speak"]
+                    if not voice_mute:
+                        perms_to_check.extend(
+                            (
+                                "send_messages",
+                                "send_messages_in_threads",
+                                "create_public_threads",
+                                "create_private_threads",
+                            )
+                        )
+                    for perm_name in perms_to_check:
                         unmuted = unmuted or after_perms[user_id][perm_name] is not False
                 # explicit is better than implicit :thinkies:
                 if user_id in before_perms and (user_id not in after_perms or unmuted):
@@ -713,7 +723,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     log.debug(f"{user} - {type(user)}")
                     to_del.append(user_id)
                     log.debug("creating case")
-                    if isinstance(after, discord.VoiceChannel):
+                    if voice_mute:
                         unmute_type = "vunmute"
                         notification_title = _("Voice unmute")
                     else:
@@ -848,7 +858,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command(name="notification")
     @checks.admin_or_permissions(manage_channels=True)
     async def notification_channel_set(
-        self, ctx: commands.Context, channel: Optional[discord.TextChannel] = None
+        self,
+        ctx: commands.Context,
+        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel]] = None,
     ):
         """
         Set the notification channel for automatic unmute issues.
@@ -932,6 +944,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 send_messages_in_threads=False,
                 create_public_threads=False,
                 create_private_threads=False,
+                use_application_commands=False,
                 speak=False,
                 add_reactions=False,
             )
@@ -979,6 +992,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         overs.send_messages_in_threads = False
         overs.create_public_threads = False
         overs.create_private_threads = False
+        overs.use_application_commands = False
         overs.add_reactions = False
         overs.speak = False
         try:
@@ -1681,6 +1695,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         user: discord.Member,
         until: Optional[datetime] = None,
         reason: Optional[str] = None,
+        *,
+        voice_mute: bool = False,
     ) -> Dict[str, Optional[Union[discord.abc.GuildChannel, str, bool]]]:
         """Mutes the specified user in the specified channel"""
         overwrites = channel.overwrites_for(user)
@@ -1693,16 +1709,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "reason": _(MUTE_UNMUTE_ISSUES["is_admin"]),
             }
 
-        new_overs: dict = {}
         move_channel = False
-        new_overs.update(
-            send_messages=False,
-            send_messages_in_threads=False,
-            create_public_threads=False,
-            create_private_threads=False,
-            add_reactions=False,
-            speak=False,
-        )
         send_reason = None
         if user.voice and user.voice.channel:
             if channel.permissions_for(guild.me).move_members:
@@ -1717,16 +1724,38 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "reason": _(MUTE_UNMUTE_ISSUES["hierarchy_problem"]),
             }
 
-        old_overs = {k: getattr(overwrites, k) for k in new_overs}
-        overwrites.update(**new_overs)
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
-        if user.id in self._channel_mutes[channel.id]:
+        current_mute = self._channel_mutes.get(channel.id)
+
+        # Determine if this is voice mute -> channel mute upgrade
+        is_mute_upgrade = (
+            current_mute is not None and not voice_mute and current_mute.get("voice_mute", False)
+        )
+        # We want to continue if this is a new mute or a mute upgrade,
+        # otherwise we should return with failure.
+        if current_mute is not None and not is_mute_upgrade:
             return {
                 "success": False,
                 "channel": channel,
                 "reason": _(MUTE_UNMUTE_ISSUES["already_muted"]),
             }
+        new_overs: Dict[str, Optional[bool]] = {"speak": False}
+        if not voice_mute:
+            new_overs.update(
+                send_messages=False,
+                send_messages_in_threads=False,
+                create_public_threads=False,
+                create_private_threads=False,
+                use_application_commands=False,
+                add_reactions=False,
+            )
+        old_overs = {k: getattr(overwrites, k) for k in new_overs}
+        if is_mute_upgrade:
+            perms_cache = await self.config.member(user).perms_cache()
+            if "speak" in perms_cache:
+                old_overs["speak"] = perms_cache["speak"]
+        overwrites.update(**new_overs)
         if not channel.permissions_for(guild.me).manage_permissions:
             return {
                 "success": False,
@@ -1738,6 +1767,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "guild": guild.id,
             "member": user.id,
             "until": until.timestamp() if until else None,
+            "voice_mute": voice_mute,
         }
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
@@ -1795,6 +1825,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         author: discord.Member,
         user: discord.Member,
         reason: Optional[str] = None,
+        *,
+        voice_mute: bool = False,
     ) -> Dict[str, Optional[Union[discord.abc.GuildChannel, str, bool]]]:
         """Unmutes the specified user in a specified channel"""
         overwrites = channel.overwrites_for(user)
@@ -1809,6 +1841,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "send_messages_in_threads": None,
                 "create_public_threads": None,
                 "create_private_threads": None,
+                "use_application_commands": None,
                 "add_reactions": None,
                 "speak": None,
             }
@@ -1826,12 +1859,20 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         overwrites.update(**old_values)
         if channel.id in self._channel_mutes and user.id in self._channel_mutes[channel.id]:
-            del self._channel_mutes[channel.id][user.id]
+            current_mute = self._channel_mutes[channel.id].pop(user.id)
         else:
             return {
                 "success": False,
                 "channel": channel,
                 "reason": _(MUTE_UNMUTE_ISSUES["already_unmuted"]),
+            }
+        if not current_mute["voice_mute"] and voice_mute:
+            return {
+                "success": False,
+                "channel": channel,
+                "reason": _(MUTE_UNMUTE_ISSUES["is_not_voice_mute"]).format(
+                    command=inline("unmutechannel")
+                ),
             }
         if not channel.permissions_for(guild.me).manage_permissions:
             return {

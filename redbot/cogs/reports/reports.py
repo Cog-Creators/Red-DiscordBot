@@ -106,7 +106,9 @@ class Reports(commands.Cog):
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
-    async def reportset_output(self, ctx: commands.Context, channel: discord.TextChannel):
+    async def reportset_output(
+        self, ctx: commands.Context, channel: Union[discord.TextChannel, discord.VoiceChannel]
+    ):
         """Set the channel where reports will be sent."""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
         await ctx.send(_("The report channel has been set."))
@@ -325,7 +327,7 @@ class Reports(commands.Cog):
         if ctx.author.id in self.user_cache:
             self.user_cache.remove(ctx.author.id)
         if ctx.guild and ctx.invoked_subcommand is None:
-            if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+            if ctx.bot_permissions.manage_messages:
                 try:
                     await ctx.message.delete()
                 except discord.NotFound:
