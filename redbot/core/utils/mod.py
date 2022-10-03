@@ -12,7 +12,8 @@ if TYPE_CHECKING:
 async def mass_purge(
     messages: List[discord.Message],
     channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
-    reason: str = None,
+    *,
+    reason: Optional[str] = None,
 ):
     """Bulk delete messages from a channel.
 
