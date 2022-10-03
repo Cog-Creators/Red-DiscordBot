@@ -9,7 +9,7 @@ import discord
 from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import menu
 
 from redbot.core.bot import Red
 from .alias_entry import AliasEntry, AliasCache, ArgParseError
@@ -185,7 +185,7 @@ class Alias(commands.Cog):
         if len(alias_list) == 1:
             await ctx.send(alias_list[0])
             return
-        await menu(ctx, alias_list, DEFAULT_CONTROLS)
+        await menu(ctx, alias_list)
 
     @commands.group()
     async def alias(self, ctx: commands.Context):

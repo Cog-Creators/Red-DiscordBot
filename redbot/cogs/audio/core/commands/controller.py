@@ -657,7 +657,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             if not self._player_check(ctx):
                 player = await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
                 player.store("notify_channel", ctx.channel.id)
             else:
@@ -675,7 +675,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await player.move_to(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             await ctx.tick()
         except AttributeError:

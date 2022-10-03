@@ -56,6 +56,7 @@ def get_video_ids_from_feed(feed):
 class Stream:
 
     token_name: ClassVar[Optional[str]] = None
+    platform_name: ClassVar[Optional[str]] = None
 
     def __init__(self, **kwargs):
         self._bot = kwargs.pop("_bot")
@@ -107,6 +108,7 @@ class Stream:
 class YoutubeStream(Stream):
 
     token_name = "youtube"
+    platform_name = "YouTube"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
@@ -306,6 +308,7 @@ class YoutubeStream(Stream):
 class TwitchStream(Stream):
 
     token_name = "twitch"
+    platform_name = "Twitch"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
@@ -463,6 +466,7 @@ class TwitchStream(Stream):
 class PicartoStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
+    platform_name = "Picarto"
 
     async def is_online(self):
         url = "https://api.picarto.tv/api/v1/channel/name/" + self.name
