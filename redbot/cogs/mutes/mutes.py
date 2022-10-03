@@ -1711,7 +1711,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         move_channel = False
         send_reason = None
-        if user.voice and user.voice.channel:
+        if user.voice and user.voice.channel == channel:
             if channel.permissions_for(guild.me).move_members:
                 move_channel = True
             else:
@@ -1846,7 +1846,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "speak": None,
             }
 
-        if user.voice and user.voice.channel:
+        if user.voice and user.voice.channel == channel:
             if channel.permissions_for(guild.me).move_members:
                 move_channel = True
 
