@@ -31,7 +31,7 @@ async def mass_purge(
         The messages to bulk delete.
     channel : `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
         The channel to delete messages from.
-    reason : `str` or `None` - Optional
+    reason : `str` - Optional
         The reason for bulk deletion, which will appear in the audit log.
 
     Raises
