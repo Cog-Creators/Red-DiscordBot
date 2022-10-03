@@ -565,11 +565,11 @@ class Warnings(commands.Cog):
                     ),
                 )
 
-    @warnings.command(name="guild")
+    @warnings.command(name="server", aliases=["guild"])
     @commands.guild_only()
     @checks.admin()
-    async def warnings_guild(self, ctx: commands.Context):
-        """List all members with warnings in this guild."""
+    async def warnings_server(self, ctx: commands.Context):
+        """List all members with warnings in this server."""
         settings = await self.config.all_members(guild=ctx.guild)
         body = ""
         pages = []
@@ -593,6 +593,9 @@ class Warnings(commands.Cog):
         )
         for page in pagify(body, shorten_by=len(header) + 20):
             pages.append(box(header + page, lang="md"))
+        if not pages:
+            await ctx.send(_("This server has no warnings yet."))
+            return
         await menu(ctx, pages)
 
     @commands.command()
