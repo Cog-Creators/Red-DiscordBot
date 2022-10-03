@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 async def mass_purge(
     messages: List[discord.Message],
     channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+    reason: str = None,
 ):
     """Bulk delete messages from a channel.
 
@@ -29,6 +30,8 @@ async def mass_purge(
         The messages to bulk delete.
     channel : `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
         The channel to delete messages from.
+    reason : `str` or `None` - Optional
+        The reason for bulk deletion, which will appear in the audit log.
 
     Raises
     ------
@@ -43,7 +46,7 @@ async def mass_purge(
         # discord.NotFound can be raised when `len(messages) == 1` and the message does not exist.
         # As a result of this obscure behavior, this error needs to be caught just in case.
         try:
-            await channel.delete_messages(messages[:100])
+            await channel.delete_messages(messages[:100], reason=reason)
         except discord.errors.HTTPException:
             pass
         messages = messages[100:]
