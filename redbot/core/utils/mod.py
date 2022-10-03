@@ -1,6 +1,6 @@
 import asyncio
 from datetime import timedelta
-from typing import List, Iterable, Union, TYPE_CHECKING, Dict
+from typing import List, Iterable, Union, TYPE_CHECKING, Dict, Optional
 
 import discord
 
