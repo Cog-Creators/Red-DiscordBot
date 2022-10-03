@@ -1702,14 +1702,20 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         overwrites = channel.overwrites_for(user)
         permissions = channel.permissions_for(user)
 
-        ret = ChannelMuteResponse(success=False, channel=channel, reason=None, user=user)
+        ret = ChannelMuteResponse(
+            success=False,
+            channel=channel,
+            reason=None,
+            user=user,
+            old_overs={},
+            voice_mute=voice_mute,
+        )
 
         if permissions.administrator:
             ret.reason = _(MUTE_UNMUTE_ISSUES["is_admin"])
             return ret
 
         move_channel = False
-        send_reason = None
         if user.voice and user.voice.channel == channel:
             if channel.permissions_for(guild.me).move_members:
                 move_channel = True
@@ -1731,11 +1737,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         # We want to continue if this is a new mute or a mute upgrade,
         # otherwise we should return with failure.
         if current_mute is not None and not is_mute_upgrade:
-            return {
-                "success": False,
-                "channel": channel,
-                "reason": _(MUTE_UNMUTE_ISSUES["already_muted"]),
-            }
+            ret.reason = _(MUTE_UNMUTE_ISSUES["already_muted"])
+            return ret
         new_overs: Dict[str, Optional[bool]] = {"speak": False}
         if not voice_mute:
             new_overs.update(
@@ -1751,8 +1754,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             perms_cache = await self.config.member(user).perms_cache()
             if "speak" in perms_cache:
                 old_overs["speak"] = perms_cache["speak"]
+        ret.old_overs = old_overs
         overwrites.update(**new_overs)
-
         if not channel.permissions_for(guild.me).manage_permissions:
             ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"])
             return ret
@@ -1819,7 +1822,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         overwrites = channel.overwrites_for(user)
         perms_cache = await self.config.member(user).perms_cache()
 
-        ret = ChannelMuteResponse(success=False, reason=None, user=user, channel=channel)
+        ret = ChannelMuteResponse(
+            success=False,
+            reason=None,
+            user=user,
+            channel=channel,
+            old_overs={},
+            voice_mute=voice_mute,
+        )
 
         move_channel = False
         if channel.id in perms_cache:
@@ -1849,9 +1859,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
             return ret
+
         if not current_mute["voice_mute"] and voice_mute:
             ret.reason = _(MUTE_UNMUTE_ISSUES["is_not_voice_mute"]).format(
-                    command=inline("unmutechannel")
+                command=inline("unmutechannel")
+            )
             return ret
 
         if not channel.permissions_for(guild.me).manage_permissions:

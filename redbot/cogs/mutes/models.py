@@ -16,3 +16,4 @@ class MuteResponse:
 class ChannelMuteResponse(MuteResponse):
     channel: discord.abc.GuildChannel
     old_overs: Optional[Dict[str, bool]]
+    voice_mute: bool

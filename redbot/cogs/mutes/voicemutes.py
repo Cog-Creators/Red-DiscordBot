@@ -125,7 +125,6 @@ class VoiceMutes(MixinMeta):
 
                 result = await self.channel_mute_user(
                     guild, channel, author, user, until, audit_reason, voice_mute=True
-
                 )
 
                 if result.success:
