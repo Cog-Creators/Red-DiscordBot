@@ -345,7 +345,9 @@ class Warnings(commands.Cog):
                     )
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
                     em.add_field(
-                        name=_("Exceed command"), value=r["exceed_command"], inline=False,
+                        name=_("Exceed command"),
+                        value=r["exceed_command"],
+                        inline=False,
                     )
                     em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
                     msg_list.append(em)
@@ -481,7 +483,8 @@ class Warnings(commands.Cog):
                 if warn_channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
                         await warn_channel.send(
-                            _("{user} has been warned.").format(user=member.mention), embed=em,
+                            _("{user} has been warned.").format(user=member.mention),
+                            embed=em,
                         )
 
             if not dm_failed:
