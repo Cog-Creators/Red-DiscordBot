@@ -18,7 +18,7 @@ from redbot.core.bot import Red
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import warning, pagify
+from redbot.core.utils.chat_formatting import box, pagify, warning
 from redbot.core.utils.menus import menu
 
 
@@ -345,9 +345,7 @@ class Warnings(commands.Cog):
                     )
                     em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
                     em.add_field(
-                        name=_("Exceed command"),
-                        value=r["exceed_command"],
-                        inline=False,
+                        name=_("Exceed command"), value=r["exceed_command"], inline=False,
                     )
                     em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
                     msg_list.append(em)
@@ -483,8 +481,7 @@ class Warnings(commands.Cog):
                 if warn_channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
                         await warn_channel.send(
-                            _("{user} has been warned.").format(user=member.mention),
-                            embed=em,
+                            _("{user} has been warned.").format(user=member.mention), embed=em,
                         )
 
             if not dm_failed:
@@ -519,7 +516,7 @@ class Warnings(commands.Cog):
             channel=None,
         )
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     @commands.guild_only()
     @checks.admin()
     async def warnings(self, ctx: commands.Context, member: Union[discord.Member, int]):
@@ -560,6 +557,36 @@ class Warnings(commands.Cog):
                         user=member if isinstance(member, discord.Member) else member.id
                     ),
                 )
+
+    @warnings.command(name="guild")
+    @commands.guild_only()
+    @checks.admin()
+    async def warnings_guild(self, ctx: commands.Context):
+        """List all members with warnings in this guild."""
+        settings = await self.config.all_members(guild=ctx.guild)
+        body = ""
+        pages = []
+        count_len = len(_("Count")) + 2
+        points_len = len(_("Points")) + 2
+        for member_id, warnings in settings.items():
+            count_len = max(count_len, len(str(len(warnings["warnings"]))))
+            points_len = max(points_len, len(str(warnings["total_points"])))
+        for member_id, warnings in settings.items():
+            member = ctx.guild.get_member(member_id)
+            member_formatted = member_formatted = member.display_name if member else str(member_id)
+            count = len(warnings["warnings"])
+            points = warnings["total_points"]
+            body += f"  {count:<{count_len}}{points:<{points_len}}{member_formatted:2}\n"
+        header = "# {count:{count_len}}{point:{points_len}}{name:2}\n".format(
+            count=_("Count"),
+            count_len=count_len,
+            point=_("Points"),
+            points_len=points_len,
+            name=_("Name"),
+        )
+        for page in pagify(body, shorten_by=len(header) + 20):
+            pages.append(box(header + page, lang="md"))
+        await menu(ctx, pages)
 
     @commands.command()
     @commands.guild_only()
