@@ -178,6 +178,7 @@ class Red(
 
         if "command_prefix" in kwargs:
             kwarg_prefix = kwargs["command_prefix"]
+
             async def prefix_manager(bot, message) -> List[str]:
                 # The licenseinfo command must always be available, even in a slash only bot.
                 # To get around not having the message content intent, a mention prefix
@@ -185,13 +186,17 @@ class Red(
                 for m in (f"<@{bot.user.id}> ", f"<@!{bot.user.id}> "):
                     if message.content.startswith(m):
                         possible_command = message.content[len(m):].strip()
-                        if any(possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")):
+                        if any(
+                            possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")
+                        ):
                             return m
                 if callable(kwarg_prefix):
                     return await discord.utils.maybe_coroutine(kwarg_prefix, bot, message)
                 return kwarg_prefix
+
             kwargs["command_prefix"] = prefix_manager
         else:
+
             async def prefix_manager(bot, message) -> List[str]:
                 prefixes = await self._prefix_cache.get_prefixes(message.guild)
                 if cli_flags.mentionable:
@@ -202,9 +207,12 @@ class Red(
                 for m in (f"<@{bot.user.id}> ", f"<@!{bot.user.id}> "):
                     if message.content.startswith(m):
                         possible_command = message.content[len(m):].strip()
-                        if any(possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")):
+                        if any(
+                            possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")
+                        ):
                             return m
                 return prefixes
+
             kwargs["command_prefix"] = prefix_manager
 
         if "owner_id" in kwargs:
