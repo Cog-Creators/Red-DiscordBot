@@ -185,7 +185,7 @@ class Red(
                 # will always work for it.
                 for m in (f"<@{bot.user.id}> ", f"<@!{bot.user.id}> "):
                     if message.content.startswith(m):
-                        possible_command = message.content[len(m):].strip()
+                        possible_command = message.content[len(m) :].strip()
                         if any(
                             possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")
                         ):
@@ -206,7 +206,7 @@ class Red(
                 # will always work for it.
                 for m in (f"<@{bot.user.id}> ", f"<@!{bot.user.id}> "):
                     if message.content.startswith(m):
-                        possible_command = message.content[len(m):].strip()
+                        possible_command = message.content[len(m) :].strip()
                         if any(
                             possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")
                         ):
