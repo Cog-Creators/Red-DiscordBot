@@ -18,11 +18,6 @@
   - redbot/core/bank.py
   # Docs
   - docs/framework_bank.rst
-"Category: Bank Cog":
-  # Source
-  - redbot/cogs/bank/*
-  # Docs
-  - docs/cog_guides/bank.rst
 "Category: Bot Core":
   # Source
   - redbot/*

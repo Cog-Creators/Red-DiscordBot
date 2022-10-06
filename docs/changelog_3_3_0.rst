@@ -253,7 +253,7 @@ Developer changelog
 Core Bot
 ********
 
-- Added `bot.set_prefixes() <RedBase.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
+- Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes

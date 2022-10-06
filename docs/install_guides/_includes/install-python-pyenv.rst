@@ -6,18 +6,11 @@ On distributions where Python 3.9 needs to be compiled from source, we recommend
 This simplifies the compilation process and has the added bonus of simplifying setting up Red in a
 virtual environment.
 
-.. prompt:: bash
-
-    command -v pyenv && pyenv update || curl https://pyenv.run | bash
-
-**After this command, you may see a warning about 'pyenv' not being in the load path. Follow the
-instructions given to fix that, then close and reopen your shell.**
-
-Then run the following command:
+.. include:: _includes/_install-pyenv-and-setup-path.rst
 
 .. prompt:: bash
 
-    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.9.7 -v
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.9.9 -v
 
 This may take a long time to complete, depending on your hardware. For some machines (such as
 Raspberry Pis and micro-tier VPSes), it may take over an hour; in this case, you may wish to remove
@@ -29,6 +22,6 @@ After that is finished, run:
 
 .. prompt:: bash
 
-    pyenv global 3.9.7
+    pyenv global 3.9.9
 
 Pyenv is now installed and your system should be configured to run Python 3.9.
