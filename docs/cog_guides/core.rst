@@ -1842,9 +1842,9 @@ ignore channel
 
 **Description**
 
-Ignore commands in the channel or category.
+Ignore commands in the channel, thread, or category.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 .. Note:: Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
@@ -1856,7 +1856,7 @@ Defaults to the current channel.
     - ``[p]ignore channel 356236713347252226`` - Also accepts IDs.
 
 **Arguments:**
-    - ``<channel>`` - The channel to ignore. Can be a category channel.
+    - ``<channel>`` - The channel to ignore. This can also be a thread or category channel.
 
 .. _core-command-ignore-list:
 
@@ -4045,9 +4045,9 @@ unignore channel
 
 **Description**
 
-Remove a channel or category from the ignore list.
+Remove a channel, thread, or category from the ignore list.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 **Examples:**
     - ``[p]unignore channel #general`` - Unignores commands in the #general channel.
@@ -4056,7 +4056,7 @@ Defaults to the current channel.
     - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to unignore categories.
 
 **Arguments:**
-    - ``<channel>`` - The channel to unignore. This can be a category channel.
+    - ``<channel>`` - The channel to unignore. This can also be a thread or category channel.
 
 .. _core-command-unignore-server:
 

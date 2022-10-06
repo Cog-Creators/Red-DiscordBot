@@ -9,7 +9,10 @@ if TYPE_CHECKING:
     from ..commands import Context
 
 
-async def mass_purge(messages: List[discord.Message], channel: discord.TextChannel):
+async def mass_purge(
+    messages: List[discord.Message],
+    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+):
     """Bulk delete messages from a channel.
 
     If more than 100 messages are supplied, the bot will delete 100 messages at
@@ -24,7 +27,7 @@ async def mass_purge(messages: List[discord.Message], channel: discord.TextChann
     ----------
     messages : `list` of `discord.Message`
         The messages to bulk delete.
-    channel : discord.TextChannel
+    channel : `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
         The channel to delete messages from.
 
     Raises
@@ -245,7 +248,7 @@ async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:
         return True
     elif not perms:
         return False
-    resolved = ctx.channel.permissions_for(ctx.author)
+    resolved = ctx.permissions
 
     return resolved.administrator or all(
         getattr(resolved, name, None) == value for name, value in perms.items()

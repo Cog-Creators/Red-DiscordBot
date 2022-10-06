@@ -8,7 +8,7 @@ import sys
 import contextlib
 import weakref
 import functools
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
@@ -51,7 +51,7 @@ from .settings_caches import (
     I18nManager,
 )
 from .rpc import RPCMixin
-from .utils import common_filters, AsyncIter
+from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
@@ -216,13 +216,10 @@ class Red(
 
         self._uptime = None
         self._checked_time_accuracy = None
-        self._color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info during startup
-        self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -376,12 +373,12 @@ class Red(
             return
         del dev.env_extensions[name]
 
-    def get_command(self, name: str) -> Optional[commands.Command]:
+    def get_command(self, name: str, /) -> Optional[commands.Command]:
         com = super().get_command(name)
         assert com is None or isinstance(com, commands.Command)
         return com
 
-    def get_cog(self, name: str) -> Optional[commands.Cog]:
+    def get_cog(self, name: str, /) -> Optional[commands.Cog]:
         cog = super().get_cog(name)
         assert cog is None or isinstance(cog, commands.Cog)
         return cog
@@ -445,7 +442,7 @@ class Red(
         """
         self._red_before_invoke_objs.discard(coro)
 
-    def before_invoke(self, coro: T_BIC) -> T_BIC:
+    def before_invoke(self, coro: T_BIC, /) -> T_BIC:
         """
         Overridden decorator method for Red's ``before_invoke`` behavior.
 
@@ -490,7 +487,7 @@ class Red(
 
     @property
     def uptime(self) -> datetime:
-        """ Allow access to the value, but we don't want cog creators setting it """
+        """Allow access to the value, but we don't want cog creators setting it"""
         return self._uptime
 
     @uptime.setter
@@ -810,9 +807,14 @@ class Red(
         if message.author.bot:
             return False
 
+        # We do not consider messages with PartialMessageable channel as eligible.
+        # See `process_commands()` for our handling of it.
+        if isinstance(channel, discord.PartialMessageable):
+            return False
+
         if guild:
-            assert isinstance(channel, discord.abc.GuildChannel)  # nosec
-            if not channel.permissions_for(guild.me).send_messages:
+            assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
+            if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
                 return False
@@ -839,7 +841,14 @@ class Red(
         -------
         bool
             `True` if commands are allowed in the channel, `False` otherwise
+
+        Raises
+        ------
+        TypeError
+            ``ctx.channel`` is of `discord.PartialMessageable` type.
         """
+        if isinstance(ctx.channel, discord.PartialMessageable):
+            raise TypeError("Can't check permissions for PartialMessageable.")
         perms = ctx.channel.permissions_for(ctx.author)
         surpass_ignore = (
             isinstance(ctx.channel, discord.abc.PrivateChannel)
@@ -847,11 +856,38 @@ class Red(
             or await self.is_owner(ctx.author)
             or await self.is_admin(ctx.author)
         )
+        # guild-wide checks
         if surpass_ignore:
             return True
         guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
-        chann_ignored = await self._ignored_cache.get_ignored_channel(ctx.channel)
-        return not (guild_ignored or chann_ignored and not perms.manage_channels)
+        if guild_ignored:
+            return False
+
+        # (parent) channel checks
+        if perms.manage_channels:
+            return True
+
+        if isinstance(ctx.channel, discord.Thread):
+            channel = ctx.channel.parent
+            thread = ctx.channel
+        else:
+            channel = ctx.channel
+            thread = None
+
+        chann_ignored = await self._ignored_cache.get_ignored_channel(channel)
+        if chann_ignored:
+            return False
+        if thread is None:
+            return True
+
+        # thread checks
+        if perms.manage_threads:
+            return True
+        thread_ignored = await self._ignored_cache.get_ignored_channel(
+            thread,
+            check_category=False,  # already checked for parent
+        )
+        return not thread_ignored
 
     async def get_valid_prefixes(self, guild: Optional[discord.Guild] = None) -> List[str]:
         """
@@ -1044,6 +1080,7 @@ class Red(
         """
         await self._maybe_update_config()
         self.description = await self._config.description()
+        self._color = discord.Colour(await self._config.color())
 
         init_global_checks(self)
         init_events(self, self._cli_flags)
@@ -1062,15 +1099,15 @@ class Red(
         """
         This should only be run once, prior to connecting to Discord gateway.
         """
-        self.add_cog(Core(self))
-        self.add_cog(CogManagerUI())
+        await self.add_cog(Core(self))
+        await self.add_cog(CogManagerUI())
         if self._cli_flags.dev:
-            self.add_cog(Dev())
+            await self.add_cog(Dev())
 
         await modlog._init(self)
         await bank._init()
 
-        packages = []
+        packages = OrderedDict()
 
         last_system_info = await self._config.last_system_info()
 
@@ -1082,7 +1119,7 @@ class Red(
             if any(LIB_PATH.iterdir()):
                 shutil.rmtree(str(LIB_PATH))
                 LIB_PATH.mkdir()
-                self.loop.create_task(
+                asyncio.create_task(
                     send_to_owners_with_prefix_replaced(
                         self,
                         "We detected a change in minor Python version"
@@ -1096,10 +1133,13 @@ class Red(
                 python_version_changed = True
         else:
             if self._cli_flags.no_cogs is False:
-                packages.extend(await self._config.packages())
+                packages.update(dict.fromkeys(await self._config.packages()))
 
             if self._cli_flags.load_cogs:
-                packages.extend(self._cli_flags.load_cogs)
+                packages.update(dict.fromkeys(self._cli_flags.load_cogs))
+            if self._cli_flags.unload_cogs:
+                for package in self._cli_flags.unload_cogs:
+                    packages.pop(package, None)
 
         system_changed = False
         machine = platform.machine()
@@ -1117,7 +1157,7 @@ class Red(
             system_changed = True
 
         if system_changed and not python_version_changed:
-            self.loop.create_task(
+            asyncio.create_task(
                 send_to_owners_with_prefix_replaced(
                     self,
                     "We detected a possible change in machine's operating system"
@@ -1130,11 +1170,9 @@ class Red(
         if packages:
             # Load permissions first, for security reasons
             try:
-                packages.remove("permissions")
-            except ValueError:
+                packages.move_to_end("permissions", last=False)
+            except KeyError:
                 pass
-            else:
-                packages.insert(0, "permissions")
 
             to_remove = []
             log.info("Loading packages...")
@@ -1158,36 +1196,35 @@ class Red(
                     await self.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
-                packages.remove(package)
-            if packages:
-                log.info("Loaded packages: " + ", ".join(packages))
+                del packages[package]
+        if packages:
+            log.info("Loaded packages: " + ", ".join(packages))
+        else:
+            log.info("No packages were loaded.")
 
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
-    async def _pre_fetch_owners(self) -> None:
-        app_info = await self.application_info()
-
-        if app_info.team:
+    def _setup_owners(self) -> None:
+        if self.application.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in app_info.team.members)
+                self.owner_ids.update(m.id for m in self.application.team.members)
         elif self._owner_id_overwrite is None:
-            self.owner_ids.add(app_info.owner.id)
-
-        self._app_info = app_info
+            self.owner_ids.add(self.application.owner.id)
 
         if not self.owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
 
-    async def start(self, *args, **kwargs):
-        """
-        Overridden start which ensures that cog load and other pre-connection tasks are handled.
-        """
+    async def start(self, token: str) -> None:
+        # Overriding start to call _pre_login() before login()
         await self._pre_login()
-        await self.login(*args)
-        await self._pre_fetch_owners()
-        await self._pre_connect()
+        await self.login(token)
+        # Pre-connect actions are done by setup_hook() which is called at the end of d.py's login()
         await self.connect()
+
+    async def setup_hook(self) -> None:
+        self._setup_owners()
+        await self._pre_connect()
 
     async def send_help_for(
         self,
@@ -1205,26 +1242,31 @@ class Red(
 
     async def embed_requested(
         self,
-        channel: Union[discord.abc.GuildChannel, discord.abc.PrivateChannel],
-        user: discord.abc.User,
-        command: Optional[commands.Command] = None,
+        channel: Union[
+            discord.TextChannel,
+            discord.VoiceChannel,
+            commands.Context,
+            discord.User,
+            discord.Member,
+            discord.Thread,
+        ],
         *,
-        check_permissions: bool = False,
+        command: Optional[commands.Command] = None,
+        check_permissions: bool = True,
     ) -> bool:
         """
         Determine if an embed is requested for a response.
 
         Arguments
         ---------
-        channel : `discord.abc.GuildChannel` or `discord.abc.PrivateChannel`
-            The channel to check embed settings for.
-        user : `discord.abc.User`
-            The user to check embed settings for.
-        command : `redbot.core.commands.Command`, optional
-            The command ran.
+        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
+            The target messageable object to check embed settings for.
 
         Keyword Arguments
         -----------------
+        command : `redbot.core.commands.Command`, optional
+            The command ran.
+            This is auto-filled when ``channel`` is passed with command context.
         check_permissions : `bool`
             If ``True``, this method will also check whether the bot can send embeds
             in the given channel and if it can't, it will return ``False`` regardless of
@@ -1234,6 +1276,12 @@ class Red(
         -------
         bool
             :code:`True` if an embed is requested
+
+        Raises
+        ------
+        TypeError
+            When the passed channel is of type `discord.GroupChannel`,
+            `discord.DMChannel`, or `discord.PartialMessageable`.
         """
 
         async def get_command_setting(guild_id: int) -> Optional[bool]:
@@ -1242,14 +1290,30 @@ class Red(
             scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
             return await scope.embeds()
 
-        if isinstance(channel, discord.abc.PrivateChannel):
-            if (user_setting := await self._config.user(user).embeds()) is not None:
-                return user_setting
-        else:
+        # using dpy_commands.Context to keep the Messageable contract in full
+        if isinstance(channel, dpy_commands.Context):
+            command = command or channel.command
+            channel = (
+                channel.author
+                if isinstance(channel.channel, discord.DMChannel)
+                else channel.channel
+            )
+
+        if isinstance(
+            channel, (discord.GroupChannel, discord.DMChannel, discord.PartialMessageable)
+        ):
+            raise TypeError(
+                "You cannot pass a GroupChannel, DMChannel, or PartialMessageable to this method."
+            )
+
+        if isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+            channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
+
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
                 return False
 
-            if (channel_setting := await self._config.channel(channel).embeds()) is not None:
+            channel_setting = await self._config.channel_from_id(channel_id).embeds()
+            if channel_setting is not None:
                 return channel_setting
 
             if (command_setting := await get_command_setting(channel.guild.id)) is not None:
@@ -1257,15 +1321,18 @@ class Red(
 
             if (guild_setting := await self._config.guild(channel.guild).embeds()) is not None:
                 return guild_setting
+        else:
+            user = channel
+            if (user_setting := await self._config.user(user).embeds()) is not None:
+                return user_setting
 
-        # XXX: maybe this should be checked before guild setting?
         if (global_command_setting := await get_command_setting(0)) is not None:
             return global_command_setting
 
         global_setting = await self._config.embeds()
         return global_setting
 
-    async def is_owner(self, user: Union[discord.User, discord.Member]) -> bool:
+    async def is_owner(self, user: Union[discord.User, discord.Member], /) -> bool:
         """
         Determines if the user should be considered a bot owner.
 
@@ -1300,10 +1367,10 @@ class Red(
         """
         data = await self._config.all()
         commands_scope = data["invite_commands_scope"]
-        scopes = ("bot", "applications.commands") if commands_scope else None
+        scopes = ("bot", "applications.commands") if commands_scope else ("bot",)
         perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(self._app_info.id, permissions, scopes=scopes)
+        return discord.utils.oauth_url(self.application_id, permissions=permissions, scopes=scopes)
 
     async def is_invite_url_public(self) -> bool:
         """
@@ -1319,9 +1386,8 @@ class Red(
     async def is_admin(self, member: discord.Member) -> bool:
         """Checks if a member is an admin of their guild."""
         try:
-            member_snowflakes = member._roles  # DEP-WARN
             for snowflake in await self._config.guild(member.guild).admin_role():
-                if member_snowflakes.has(snowflake):  # Dep-WARN
+                if member.get_role(snowflake):
                     return True
         except AttributeError:  # someone passed a webhook to this
             pass
@@ -1330,12 +1396,11 @@ class Red(
     async def is_mod(self, member: discord.Member) -> bool:
         """Checks if a member is a mod or admin of their guild."""
         try:
-            member_snowflakes = member._roles  # DEP-WARN
             for snowflake in await self._config.guild(member.guild).admin_role():
-                if member_snowflakes.has(snowflake):  # DEP-WARN
+                if member.get_role(snowflake):
                     return True
             for snowflake in await self._config.guild(member.guild).mod_role():
-                if member_snowflakes.has(snowflake):  # DEP-WARN
+                if member.get_role(snowflake):
                     return True
         except AttributeError:  # someone passed a webhook to this
             pass
@@ -1478,10 +1543,10 @@ class Red(
         for service in service_names:
             self.dispatch("red_api_tokens_update", service, MappingProxyType({}))
 
-    async def get_context(self, message, *, cls=commands.Context):
+    async def get_context(self, message, /, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
-    async def process_commands(self, message: discord.Message):
+    async def process_commands(self, message: discord.Message, /):
         """
         Same as base method, but dispatches an additional event for cogs
         which want to handle normal messages differently to command
@@ -1490,7 +1555,14 @@ class Red(
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            await self.invoke(ctx)
+            if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
+                log.warning(
+                    "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
+                    message.id,
+                    message.channel,
+                )
+            else:
+                await self.invoke(ctx)
         else:
             ctx = None
 
@@ -1527,18 +1599,22 @@ class Red(
             raise discord.ClientException(f"extension {name} does not have a setup function")
 
         try:
-            if asyncio.iscoroutinefunction(lib.setup):
-                await lib.setup(self)
-            else:
-                lib.setup(self)
+            await lib.setup(self)
         except Exception as e:
-            self._remove_module_references(lib.__name__)
-            self._call_module_finalizers(lib, name)
+            await self._remove_module_references(lib.__name__)
+            await self._call_module_finalizers(lib, name)
             raise
         else:
             self._BotBase__extensions[name] = lib
 
-    def remove_cog(self, cogname: str):
+    async def remove_cog(
+        self,
+        cogname: str,
+        /,
+        *,
+        guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
+        guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
+    ) -> Optional[commands.Cog]:
         cog = self.get_cog(cogname)
         if cog is None:
             return
@@ -1551,12 +1627,14 @@ class Red(
             else:
                 self.remove_permissions_hook(hook)
 
-        super().remove_cog(cogname)
+        await super().remove_cog(cogname, guild=guild, guilds=guilds)
 
         cog.requires.reset()
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
+
+        return cog
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
@@ -1639,15 +1717,27 @@ class Red(
 
         return await destination.send(content=content, **kwargs)
 
-    def add_cog(self, cog: commands.Cog):
+    async def add_cog(
+        self,
+        cog: commands.Cog,
+        /,
+        *,
+        override: bool = False,
+        guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
+        guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
+    ) -> None:
         if not isinstance(cog, commands.Cog):
             raise RuntimeError(
                 f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
                 f"not inherit from the commands.Cog base class. The cog author must update "
                 f"the cog to adhere to this requirement."
             )
-        if cog.__cog_name__ in self.cogs:
-            raise RuntimeError(f"There is already a cog named {cog.__cog_name__} loaded.")
+        cog_name = cog.__cog_name__
+        if cog_name in self.cogs:
+            if not override:
+                raise discord.ClientException(f"Cog named {cog_name!r} already loaded")
+            await self.remove_cog(cog_name, guild=guild, guilds=guilds)
+
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
 
@@ -1663,7 +1753,7 @@ class Red(
                     self.add_permissions_hook(hook)
                     added_hooks.append(hook)
 
-            super().add_cog(cog)
+            await super().add_cog(cog, guild=guild, guilds=guilds)
             self.dispatch("cog_add", cog)
             if "permissions" not in self.extensions:
                 cog.requires.ready_event.set()
@@ -1680,7 +1770,7 @@ class Red(
             del cog
             raise
 
-    def add_command(self, command: commands.Command) -> None:
+    def add_command(self, command: commands.Command, /) -> None:
         if not isinstance(command, commands.Command):
             raise RuntimeError("Commands must be instances of `redbot.core.commands.Command`")
 
@@ -1696,7 +1786,7 @@ class Red(
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
 
-    def remove_command(self, name: str) -> Optional[commands.Command]:
+    def remove_command(self, name: str, /) -> Optional[commands.Command]:
         command = super().remove_command(name)
         if command is None:
             return None
@@ -1785,7 +1875,9 @@ class Red(
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
 
-    async def get_owner_notification_destinations(self) -> List[discord.abc.Messageable]:
+    async def get_owner_notification_destinations(
+        self,
+    ) -> List[Union[discord.TextChannel, discord.VoiceChannel, discord.User]]:
         """
         Gets the users and channels to send to
         """

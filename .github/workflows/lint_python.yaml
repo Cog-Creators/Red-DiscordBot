@@ -14,10 +14,10 @@ jobs:
     name: Lint Python
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ env.ref }}
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.8"
       - run: "python -m pip install git+https://github.com/pycqa/pyflakes@1911c20#egg=pyflakes git+https://github.com/pycqa/pycodestyle@d219c68#egg=pycodestyle git+https://gitlab.com/pycqa/flake8@3.7.9#egg=flake8"

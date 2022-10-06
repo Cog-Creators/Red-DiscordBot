@@ -4,6 +4,8 @@
 Installing Red on Debian 10 Buster
 ==================================
 
+.. include:: _includes/supported-arch-x64+aarch64+armv7l.rst
+
 .. include:: _includes/linux-preamble.rst
 
 -------------------------------
