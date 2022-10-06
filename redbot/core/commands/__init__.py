@@ -45,7 +45,6 @@ from .help import (
 )
 from .requires import (
     CheckPredicate as CheckPredicate,
-    DM_PERMS as DM_PERMS,
     GlobalPermissionModel as GlobalPermissionModel,
     GuildPermissionModel as GuildPermissionModel,
     PermissionModel as PermissionModel,
@@ -189,4 +188,14 @@ from discord.ext.commands import (
     bot_has_any_role as bot_has_any_role,
     before_invoke as before_invoke,
     after_invoke as after_invoke,
+    CurrentChannel as CurrentChannel,
+    Author as Author,
+    param as param,
+    MissingRequiredAttachment as MissingRequiredAttachment,
+    Parameter as Parameter,
+    ForumChannelConverter as ForumChannelConverter,
+    CurrentGuild as CurrentGuild,
+    Range as Range,
+    RangeError as RangeError,
+    parameter as parameter,
 )

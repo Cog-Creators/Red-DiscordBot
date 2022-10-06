@@ -34,7 +34,9 @@ from discord.utils import maybe_coroutine
 from redbot.core import commands
 
 if TYPE_CHECKING:
-    GuildMessageable = Union[commands.GuildContext, discord.abc.GuildChannel, discord.Thread]
+    GuildMessageable = Union[
+        commands.GuildContext, discord.TextChannel, discord.VoiceChannel, discord.Thread
+    ]
     DMMessageable = Union[commands.DMContext, discord.Member, discord.User, discord.DMChannel]
 
 __all__ = (

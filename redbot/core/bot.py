@@ -220,8 +220,6 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info during startup
-        self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -815,7 +813,7 @@ class Red(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))
+            assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
             if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
@@ -1207,16 +1205,12 @@ class Red(
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
-    async def _pre_fetch_owners(self) -> None:
-        app_info = await self.application_info()
-
-        if app_info.team:
+    def _setup_owners(self) -> None:
+        if self.application.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in app_info.team.members)
+                self.owner_ids.update(m.id for m in self.application.team.members)
         elif self._owner_id_overwrite is None:
-            self.owner_ids.add(app_info.owner.id)
-
-        self._app_info = app_info
+            self.owner_ids.add(self.application.owner.id)
 
         if not self.owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
@@ -1229,7 +1223,7 @@ class Red(
         await self.connect()
 
     async def setup_hook(self) -> None:
-        await self._pre_fetch_owners()
+        self._setup_owners()
         await self._pre_connect()
 
     async def send_help_for(
@@ -1249,7 +1243,12 @@ class Red(
     async def embed_requested(
         self,
         channel: Union[
-            discord.TextChannel, commands.Context, discord.User, discord.Member, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            commands.Context,
+            discord.User,
+            discord.Member,
+            discord.Thread,
         ],
         *,
         command: Optional[commands.Command] = None,
@@ -1260,7 +1259,7 @@ class Red(
 
         Arguments
         ---------
-        channel : Union[`discord.TextChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
+        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
             The target messageable object to check embed settings for.
 
         Keyword Arguments
@@ -1307,7 +1306,7 @@ class Red(
                 "You cannot pass a GroupChannel, DMChannel, or PartialMessageable to this method."
             )
 
-        if isinstance(channel, (discord.TextChannel, discord.Thread)):
+        if isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
             channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
 
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
@@ -1371,7 +1370,7 @@ class Red(
         scopes = ("bot", "applications.commands") if commands_scope else ("bot",)
         perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(self._app_info.id, permissions=permissions, scopes=scopes)
+        return discord.utils.oauth_url(self.application_id, permissions=permissions, scopes=scopes)
 
     async def is_invite_url_public(self) -> bool:
         """
@@ -1613,7 +1612,6 @@ class Red(
         cogname: str,
         /,
         *,
-        # DEP-WARN: MISSING is implementation detail
         guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
         guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
     ) -> Optional[commands.Cog]:
@@ -1725,7 +1723,6 @@ class Red(
         /,
         *,
         override: bool = False,
-        # DEP-WARN: MISSING is implementation detail
         guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
         guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
     ) -> None:
@@ -1880,7 +1877,7 @@ class Red(
 
     async def get_owner_notification_destinations(
         self,
-    ) -> List[Union[discord.TextChannel, discord.User]]:
+    ) -> List[Union[discord.TextChannel, discord.VoiceChannel, discord.User]]:
         """
         Gets the users and channels to send to
         """
