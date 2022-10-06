@@ -658,6 +658,8 @@ class Case:
         ----------
         mod_channel: `discord.TextChannel` or `discord.VoiceChannel`
             The mod log channel for the guild
+        guild: `discord.Guild`
+            The guild the case was recorded in.
         bot: Red
             The bot's instance. Needed to get the target user
         case_number: int
@@ -904,9 +906,12 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
     """
     cases = await _config.custom(_CASES, str(guild.id)).all()
-    mod_channel = await get_modlog_channel(guild)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
     return [
-        await Case.from_json(mod_channel, bot, case_number, case_data)
+        await Case.from_json(mod_channel, bot, case_number, case_data, guild=guild)
         for case_number, case_data in cases.items()
     ]
 
