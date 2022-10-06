@@ -658,8 +658,6 @@ class Case:
         ----------
         mod_channel: `discord.TextChannel` or `discord.VoiceChannel`
             The mod log channel for the guild
-        guild: `discord.Guild`
-            The guild the case was recorded in.
         bot: Red
             The bot's instance. Needed to get the target user
         case_number: int
