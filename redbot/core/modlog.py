@@ -860,10 +860,9 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
     try:
         mod_channel = await get_modlog_channel(guild)
-        return await Case.from_json(mod_channel, bot, case_number, case)
     except RuntimeError:
         mod_channel = None
-        return await Case.from_json(mod_channel, bot, case_number, case, guild=guild)
+    return await Case.from_json(mod_channel, bot, case_number, case, guild=guild)
 
 
 async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
