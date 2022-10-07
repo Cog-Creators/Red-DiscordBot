@@ -135,17 +135,17 @@ class Dev(commands.Cog):
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
-            ctx      - command invocation context
-            bot      - bot object
+            ctx      - the command invocation context
+            bot      - the bot object
             channel  - the current channel object
-            author   - command author's member object
+            author   - the command author's member object
             guild    - the current guild object
             message  - the command's message object
-            aiohttp  - aiohttp library
-            asyncio  - asyncio library
-            discord  - discord.py library
-            commands - redbot.core.commands
-            _        - The result of the last dev command.
+            aiohttp  - the aiohttp library
+            asyncio  - the asyncio library
+            discord  - the discord.py library
+            commands - the redbot.core.commands module
+            _        - the result of the last dev command
         """
         env = self.get_environment(ctx)
         code = self.cleanup_code(code)
@@ -181,17 +181,17 @@ class Dev(commands.Cog):
         as they are not mixed and they are formatted correctly.
 
         Environment Variables:
-            ctx      - command invocation context
-            bot      - bot object
+            ctx      - the command invocation context
+            bot      - the bot object
             channel  - the current channel object
-            author   - command author's member object
+            author   - the command author's member object
             guild    - the current guild object
             message  - the command's message object
-            aiohttp  - aiohttp library
-            asyncio  - asyncio library
-            discord  - discord.py library
-            commands - redbot.core.commands
-            _        - The result of the last dev command.
+            aiohttp  - the aiohttp library
+            asyncio  - the asyncio library
+            discord  - the discord.py library
+            commands - the redbot.core.commands module
+            _        - the result of the last dev command
         """
         env = self.get_environment(ctx)
         body = self.cleanup_code(body)

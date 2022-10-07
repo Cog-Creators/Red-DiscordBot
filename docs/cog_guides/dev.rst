@@ -90,17 +90,17 @@ lines or asynchronous code, see [p]repl or [p]eval.
 
 **Environment Variables**
 
-* ``ctx``: command invocation context
-* ``bot``: the bot object
-* ``channel``: the current channel object
-* ``author``: the current author's member object
-* ``guild``: the current guild object
-* ``message``: the command's message object
-* ``aiohttp``: the aiohttp library
-* ``asyncio``: the asyncio library
-* ``discord``: the discord.py library
-* ``commands``: the redbot.core.commands module
-* ``_``: The result from the last dev command.
+* ``ctx``: Command invocation context
+* ``bot``: The bot object
+* ``channel``: The current channel object
+* ``author``: The current author's member object
+* ``guild``: The current guild object
+* ``message``: The command's message object
+* ``aiohttp``: The aiohttp library
+* ``asyncio``: The asyncio library
+* ``discord``: The discord.py library
+* ``commands``: The redbot.core.commands module
+* ``_``: The result from the last dev command
 
 **Arguments**
 
@@ -131,17 +131,17 @@ as they are not mixed and they are formatted correctly.
 
 **Environment Variables**
 
-* ``ctx``: command invocation context
-* ``bot``: the bot object
-* ``channel``: the current channel object
-* ``author``: the current author's member object
-* ``guild``: the current guild object
-* ``message``: the command's message object
-* ``aiohttp``: the aiohttp library
-* ``asyncio``: the asyncio library
-* ``discord``: the discord.py library
-* ``commands``: the redbot.core.commands module
-* ``_``: The result from the last dev command.
+* ``ctx``: Command invocation context
+* ``bot``: The bot object
+* ``channel``: The current channel object
+* ``author``: The current author's member object
+* ``guild``: The current guild object
+* ``message``: The command's message object
+* ``aiohttp``: The aiohttp library
+* ``asyncio``: The asyncio library
+* ``discord``: The discord.py library
+* ``commands``: The redbot.core.commands module
+* ``_``: The result from the last dev command
 
 **Arguments**
 
