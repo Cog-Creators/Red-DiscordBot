@@ -94,7 +94,10 @@ lines or asynchronous code, see [p]repl or [p]eval.
 * ``bot``: the bot object
 * ``channel``: the current channel object
 * ``author``: the current author's member object
+* ``guild``: the current guild object
 * ``message``: the command's message object
+* ``aiohttp``: the aiohttp library
+* ``asyncio``: the asyncio library
 * ``discord``: the discord.py library
 * ``commands``: the redbot.core.commands module
 * ``_``: The result from the last dev command.
@@ -132,7 +135,10 @@ as they are not mixed and they are formatted correctly.
 * ``bot``: the bot object
 * ``channel``: the current channel object
 * ``author``: the current author's member object
+* ``guild``: the current guild object
 * ``message``: the command's message object
+* ``aiohttp``: the aiohttp library
+* ``asyncio``: the asyncio library
 * ``discord``: the discord.py library
 * ``commands``: the redbot.core.commands module
 * ``_``: The result from the last dev command.
