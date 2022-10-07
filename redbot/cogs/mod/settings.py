@@ -76,9 +76,9 @@ class ModSettings(MixinMeta):
             else _("No")
         )
         if days_mention_spam:
-            msg += _("Message history delete on mention spam ban: Previous {num_days} days\n").format(
-                num_days=days_mention_spam
-            )
+            msg += _(
+                "Message history delete on mention spam ban: Previous {num_days} days\n"
+            ).format(num_days=days_mention_spam)
         else:
             msg += _("Message history delete on mention spam ban: Don't delete any\n")
         msg += (
@@ -287,13 +287,13 @@ class ModSettings(MixinMeta):
                 "in a single message will be autobanned.\n{mismatch_message}"
             ).format(max_mentions=max_mentions, mismatch_message=mismatch_message)
         )
-    
+
     @mentionspam.command(name="days")
     @commands.guild_only()
-    async def mentionspam_days(self, ctx: commands.Context, days: int=1):
+    async def mentionspam_days(self, ctx: commands.Context, days: int = 1):
         """
         Set the number of days worth of messages to be deleted when a user is banned for mention spam.
-        
+
         The number of days must be between 0 and 7.
         """
         guild = ctx.guild
@@ -301,9 +301,9 @@ class ModSettings(MixinMeta):
             return await ctx.send(_("Invalid number of days. Must be between 0 and 7."))
         await self.config.guild(guild).mention_spam.ban_days.set(days)
         await ctx.send(
-            _("{days} days worth of messages will be deleted when a user is banned for spamming mentions.").format(
-                days=days
-            )
+            _(
+                "{days} days worth of messages will be deleted when a user is banned for spamming mentions."
+            ).format(days=days)
         )
         
 
