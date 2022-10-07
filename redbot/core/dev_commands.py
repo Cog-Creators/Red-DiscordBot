@@ -139,7 +139,10 @@ class Dev(commands.Cog):
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
+            guild    - the current guild object
             message  - the command's message object
+            aiohttp  - aiohttp library
+            asyncio  - asyncio library
             discord  - discord.py library
             commands - redbot.core.commands
             _        - The result of the last dev command.
@@ -182,7 +185,10 @@ class Dev(commands.Cog):
             bot      - bot object
             channel  - the current channel object
             author   - command author's member object
+            guild    - the current guild object
             message  - the command's message object
+            aiohttp  - aiohttp library
+            asyncio  - asyncio library
             discord  - discord.py library
             commands - redbot.core.commands
             _        - The result of the last dev command.
@@ -318,7 +324,7 @@ class Dev(commands.Cog):
 
     @repl.command(aliases=["resume"])
     async def pause(self, ctx, toggle: Optional[bool] = None):
-        """Pauses/resumes the REPL running in the current channel"""
+        """Pauses/resumes the REPL running in the current channel."""
         if ctx.channel.id not in self.sessions:
             await ctx.send(_("There is no currently running REPL session in this channel."))
             return
@@ -334,21 +340,21 @@ class Dev(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def mock(self, ctx, user: discord.Member, *, command):
-        """Mock another user invoking a command.
+    async def mock(self, ctx, member: discord.Member, *, command):
+        """Mock another member invoking a command.
 
         The prefix must not be entered.
         """
         msg = copy(ctx.message)
-        msg.author = user
+        msg.author = member
         msg.content = ctx.prefix + command
 
         ctx.bot.dispatch("message", msg)
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
-        """Dispatch a message event as if it were sent by a different user.
+    async def mock_msg(self, ctx, member: discord.Member, *, content: str = ""):
+        """Dispatch a message event as if it were sent by a different member.
 
         Current message is used as a base (including attachments, embeds, etc.),
         the content and author of the message are replaced with the given arguments.
@@ -361,7 +367,7 @@ class Dev(commands.Cog):
             await ctx.send_help()
             return
         msg = copy(msg)
-        msg.author = user
+        msg.author = member
         msg.content = content
 
         ctx.bot.dispatch("message", msg)
