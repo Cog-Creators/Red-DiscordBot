@@ -24,7 +24,8 @@ restricted to the bot owners.
 
 .. note::
 
-    Unlike other built-in cogs, the Dev cog requires the ``--dev`` flag.
+    Unlike other cogs, the Dev cog is only loaded if the bot is
+    started with the ``--dev`` flag.
 
     .. warning::
 
