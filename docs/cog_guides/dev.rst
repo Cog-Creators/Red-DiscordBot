@@ -153,15 +153,15 @@ mock
 
 .. code-block:: none
 
-    [p]mock <member> <command>
+    [p]mock <user> <command>
 
 **Description**
 
-Mock another member invoking a command. The prefix must not be entered.
+Mock another user invoking a command. The prefix must not be entered.
 
 **Arguments**
 
-* ``<member>``: The member to mock. |member-input-quotes|
+* ``<member>``: The user to mock. |user-input-quotes|
 * ``<command>``: The command to invoke.
 
 .. _dev-command-mockmsg:
@@ -174,18 +174,18 @@ mockmsg
 
 .. code-block:: none
 
-    [p]mockmsg <member> <content>
+    [p]mockmsg <user> <content>
 
 **Description**
 
-Dispatch a message event as if it were sent by a different member.
+Dispatch a message event as if it were sent by a different user.
 
 Only reads the raw content of the message. Attachments, embeds etc. are
 ignored.
 
 **Arguments**
 
-* ``<member>``: The member to mock. |member-input-quotes|
+* ``<user>``: The member to mock. |user-input-quotes|
 * ``<content>``: The content used for the message.
 
 .. note:: 
