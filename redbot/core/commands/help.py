@@ -842,12 +842,12 @@ class RedHelpFormatter(HelpFormatterABC):
             if (
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
-                and ctx.channel.permissions_for(ctx.me).manage_messages  # we can manage messages
+                and ctx.bot_permissions.manage_messages  # we can manage messages
             ):
                 # We need to wrap this in a task to not block after-sending-help interactions.
                 # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs
                 async def _delete_delay_help(
-                    channel: Union[discord.TextChannel, discord.Thread],
+                    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
                     messages: List[discord.Message],
                     delay: int,
                 ):

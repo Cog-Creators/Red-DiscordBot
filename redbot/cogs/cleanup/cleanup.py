@@ -75,7 +75,9 @@ class Cleanup(commands.Cog):
     @staticmethod
     async def get_messages_for_deletion(
         *,
-        channel: Union[discord.TextChannel, discord.DMChannel, discord.Thread],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.DMChannel, discord.Thread
+        ],
         number: Optional[PositiveInt] = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
         limit: Optional[PositiveInt] = None,
@@ -129,7 +131,9 @@ class Cleanup(commands.Cog):
     async def send_optional_notification(
         self,
         num: int,
-        channel: Union[discord.TextChannel, discord.DMChannel, discord.Thread],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.DMChannel, discord.Thread
+        ],
         *,
         subtract_invoking: bool = False,
     ) -> None:
@@ -149,7 +153,8 @@ class Cleanup(commands.Cog):
 
     @staticmethod
     async def get_message_from_reference(
-        channel: Union[discord.TextChannel, discord.Thread], reference: discord.MessageReference
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+        reference: discord.MessageReference,
     ) -> Optional[discord.Message]:
         message = None
         resolved = reference.resolved
@@ -621,7 +626,7 @@ class Cleanup(commands.Cog):
         can_mass_purge = False
         if type(author) is discord.Member:
             me = ctx.guild.me
-            can_mass_purge = channel.permissions_for(me).manage_messages
+            can_mass_purge = ctx.bot_permissions.manage_messages
 
         if match_pattern:
 
