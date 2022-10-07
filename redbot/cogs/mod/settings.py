@@ -305,7 +305,6 @@ class ModSettings(MixinMeta):
                 "{days} days worth of messages will be deleted when a user is banned for spamming mentions."
             ).format(days=days)
         )
-        
 
     @modset.command()
     @commands.guild_only()
