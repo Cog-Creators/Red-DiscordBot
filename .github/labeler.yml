@@ -73,7 +73,7 @@
   - docs/cog_guides/customcommands.rst
 "Category: Dev Cog":
   # Source
-  - redbot/core/dev_commands.p
+  - redbot/core/dev_commands.py
   # Docs
   - docs/cog_guides/dev.rst
 "Category: Docs":
