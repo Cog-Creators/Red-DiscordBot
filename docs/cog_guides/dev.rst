@@ -32,11 +32,6 @@ restricted to the bot owners.
         of these cog's commands may cause down-the-line complications if
         not used appropriately.
 
-        For example, cooldowns are often implemented by cog developers to prevent
-        the rate-limiting of a resource, or to prevent other complications caused by
-        excessive repetitive use of the command. By using ``[p]bypasscooldowns``,
-        you could be directly damaging your bot or a significant resource.
-
 .. _dev-commands:
 
 --------
