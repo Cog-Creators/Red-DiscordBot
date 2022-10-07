@@ -72,7 +72,10 @@
   - docs/cog_customcom.rst
   - docs/cog_guides/customcommands.rst
 "Category: Dev Cog":
-  - redbot/core/dev_commands.py
+  # Source
+  - redbot/core/dev_commands.p
+  # Docs
+  - docs/cog_guides/dev.rst
 "Category: Docs":
   - docs/**/*
 "Category: Downloader":
