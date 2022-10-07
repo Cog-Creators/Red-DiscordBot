@@ -48,7 +48,7 @@ bypasscooldowns
 
 .. code-block:: none
 
-    [p]debug [toggle]
+    [p]bypasscooldowns [toggle]
 
 **Description**
 
