@@ -433,11 +433,309 @@ Obtaining the latest Lavalink.jar on a Red update
 
 5. Start up your bots
 
+.. _remote-lavalink:
+
 ---------------------------------------------
-Setting up Lavalink on a remote vps or server
+Setting up Lavalink on a remote VPS or server
 ---------------------------------------------
 
-x
+.. attention::
+
+    Changes have been made to this guide since, but it is with thanks
+    to BreezeQS who originally wrote the bare-bones of this guide on a
+    separate gist.
+
+This guide explains how to set up an external Lavalink node on a separate server running Ubuntu 20.04 LTS.
+It is assumed your bot currently uses an internally managed Lavalink server (Red's default). If you run
+into any issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`_.
+
+.. warning::
+
+    For security purposes DO NOT follow this guide while logged in as the root user. You should create
+    a separate non-root user instead. You can follow
+    `this guide <https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu-20-04-quickstart>`_
+    from DigitalOcean if you need help about how this is done.
+
+^^^^^^^^^^^^^^^^^^^^^^^^^
+Prerequisite Installation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We will first install Lavalink and lay the foundation for our finished server. There are some prequisites
+that must be installed on the server you aim to use for running Lavalink. To set those up, run each of the
+following commands one by one.
+
+.. code-block:: sh
+
+    sudo apt update
+    sudo apt upgrade -y
+    sudo apt install openjdk-11-jre-headless curl nano -y
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Setting Up The Lavalink Folder
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Lavalink itself, its configuration, and its logs will all be kept in a single directory. In this guide,
+we will simply call this directory lavalink and it will be located in the home directory of the user you
+are logged in as.
+
+We need to create a new directory called **lavalink**, and then switch to it as the upcoming sections of
+this guide require your current directory to be the **lavalink** folder. We can achieve this by running
+the following commands one by one:
+
+.. code-block:: sh
+
+    cd
+    mkdir lavalink
+    cd lavalink
+
+^^^^^^^^^^^^^^^^^^^
+Installing Lavalink
+^^^^^^^^^^^^^^^^^^^
+
+The Lavalink executable used in Red-Discordbot is slightly modified and is not the same as stock Lavalink,
+it ensures proper operation when used with Red-Discordbot and compatibility with systems and libraries that
+Red uses to operate. It's required to use this Lavalink jar when running external Lavalink servers to not
+void your privilege to recieve support. Assuming your current directory is the lavalink folder as you ran
+the ``cd lavalink`` command in the previous section, you can run the following commands one by one to install it:
+
+.. code-block:: sh
+
+    curl https://raw.githubusercontent.com/freyacodes/Lavalink/master/LavalinkServer/application.yml.example > application.yml
+    curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
+
+If you did it properly, the files ``Lavalink.jar`` and ``application.yml`` will show up when we run ``ls``, the Linux command
+to list the contents of current directory.
+
+^^^^^^^^^^^^^^^^^^^^
+Configuring Lavalink
+^^^^^^^^^^^^^^^^^^^^
+
+Lavalink stores its settings inside the ``application.yml`` file located in the same directory as the executable jar itself.
+You have to edit this file and change some settings for security purposes.
+
+First, let's open the file. You can use any text editor you want, but in this guide we will use nano.
+Run the following command:
+
+.. code-block:: sh
+    
+    nano application.yml
+
+You will be dropped into the nano text editor with ``application.yml`` opened. The two important fields that we will modify
+are the ``port`` and ``password`` fields.
+
+The ``port`` field is the TCP port your Lavalink server will be accessible at. The default value is 2333, and you can set this
+to any positive integer smaller than 65535 and greater than 1000. It is advised to change it to aid in security.
+
+The ``password`` field is the password that will be required for accessing your Lavalink server and by default the password is
+``youshallnotpass``. You should absolutely change this to a secure password.
+
+Those two fields are important and you should note the new values you entered in them somewhere you will not forget as
+they will be later required to connect your bot to the Lavalink server.
+
+At the bottom of the screen, the nano text editor displays some keys that can be used to carry out various tasks.
+In this case, we want to save and exit. Keys prefixed with the caret (^) sign means they are used in conjunction
+with the ctrl key. So we press Ctrl+X to exit.
+
+Nano will ask if you want to save the changes that were made. Answer with ``y`` and hit enter to exit.
+
+^^^^^^^^^^^^^^^^^
+Starting Lavalink
+^^^^^^^^^^^^^^^^^
+
+Now that Lavalink has been installed and configured, we can start it up. To do so, run the following command, making sure
+that you are inside the lavalink folder, of course:
+
+.. code-block:: sh
+    
+    java -Djdk.tls.client.protocols=TLSv1.2 -jar Lavalink.jar
+
+On successful start, Lavalink will greet you with a line mentioning that it is ready to accept connections and you can now
+try connecting to it with your bot. 
+
+Since we did not configure autostart for Lavalink, you will have to keep the console window open or it will be shut down
+and all connections will be dropped. This is similar to how it happens in Red-Discordbot itself.
+
+This also means that you will have to restart Lavalink manually each time you log on. This is often done in testing environments.
+You can restart Lavalink manually by running the following commands one by one:
+
+.. code-block:: sh
+
+    cd
+    cd lavalink
+    java -Djdk.tls.client.protocols=TLSv1.2 -jar Lavalink.jar
+
+You can stop Lavalink and reclaim the console by hitting ``CTRL+C``.
+
+^^^^^^^^^^^^^^^^^
+Updating Lavalink
+^^^^^^^^^^^^^^^^^
+
+With new releases of Red-Discordbot, sometimes new Lavalink jars are also released. Using a obselete version of Lavalink
+with newer versions of Red-Discordbot can cause all sorts of problems.
+
+Normally, users do not have to worry about this as when Red-Discordbot is configured to use a internal Lavalink server
+(the default setting) Lavalink is automatically updated when a new release comes out.
+
+However, since you are running a external Lavalink instance yourself you are responsible for keeping it up to date.
+When a new release of Red-Discordbot also requires a update to the Lavalink jar, you will be informed in the changelogs
+posted in our documentation.
+
+When a new Lavalink.jar comes out, you can easily update the existing one. First, you should stop Lavalink if it's currently
+running. And switch to your lavalink folder. We have discussed how this was done using the ``cd`` command in the previous sections.
+
+Then, you can run the following command to replace your existing Lavalink jar with the new one:
+
+.. code-block:: sh
+
+    curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
+
+In the next section we will see how you can configure Lavalink to automatically update, automatically start, and run as
+a background process which is much more convenient for non-testing deployments.
+
+^^^^^^^^^^^^^^^^^^^^^^
+Setting up Auto Update
+^^^^^^^^^^^^^^^^^^^^^^
+
+As previously covered, running Lavalink in a simple terminal session is fragile. Not only does it need you to manually
+intervene each time you login, reboot, or just have to restart Lavalink for any reason you also have to update it manually
+when a new Lavalink jar comes out.
+
+First of all, we will configure a script for updating Lavalink that runs before each time Lavalink starts. This step is
+highly recommended. But if you know what you are doing, you can skip it if you want to update Lavalink manually.
+
+First, run the following commands:
+
+.. code-block:: sh
+    
+    cd
+    cd lavalink
+    nano auto_update.sh
+
+You'll see that running nano has opened a file. Paste the following code into the file:
+
+.. code-block:: sh
+
+    #!/bin/sh
+    curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
+
+Now save the file and exit (``CTRL+X``, then ``y``).
+
+Now, run the following command, which will make the script possible to run:
+
+.. code-block:: sh
+    
+    chmod a+rx auto_update.sh
+    
+If you did it right, the command itself will not output anything. And when running ``ls``, the script will show up in green.
+
+""""""""""""""""""""""""""""""
+Setting Up the Systemd Service
+""""""""""""""""""""""""""""""
+
+We will now register Lavalink as a system service, allowing it to run in the background without user intervention.
+But before that, we need to gather some information. While in the lavalink folder, run the following commands one by one
+and note their output somewhere, because we will need them:
+
+.. code-block:: sh
+
+    pwd
+    which java
+    echo "$USER"
+
+Now run the following command:
+
+.. code-block:: sh
+
+    sudo -e /etc/systemd/system/lavalink.service
+
+On new systems it may ask for a choice of editor. Nano is the best choice. To select it, press 1 and hit enter.
+The nano text editor will now open. Now copy and paste the following text into it:
+
+.. code-block:: ini
+
+    [Unit]
+    Description=lavalink
+    After=multi-user.target
+
+    [Service]
+    ExecStart=< Java executable path > -Djdk.tls.client.protocols=TLSv1.2 -jar < Lavalink path >/Lavalink.jar
+    WorkingDirectory=< Lavalink path >
+    User=< username >
+    Group=< username >
+    ExecStartPre=/bin/bash < Lavalink path >/auto_update.sh # Comment this line out if you did not create the auto_update.sh
+    Type=idle
+    Restart=always
+    RestartSec=15
+
+    [Install]
+    WantedBy=multi-user.target
+
+* Replace all occurances of ``< Lavalink path >`` with the output of ``pwd`` you noted earlier.
+* Replace all occurances of ``< Java executable path >`` with the output of ``which java`` you noted earlier.
+* Replace all occurances of ``< username >`` with the output of echo ``"$USER"`` you noted earlier.
+
+Hit ``CTRL+X``, ``y`` and then ENTER to save and exit. We have now registered Lavalink as a service.
+
+""""""""""""""""""""""""""""""""""""""""""
+Starting and Enabling the Lavalink Service
+""""""""""""""""""""""""""""""""""""""""""
+
+Now run the following command to start the Lavalink service and wait for 10-15 seconds: 
+
+.. code-block:: sh
+    
+    sudo systemctl start lavalink
+
+You can check the service status with the following command:
+
+.. code-block:: sh
+    
+    sudo journalctl -u lavalink.
+
+Keep in mind this will occupy your terminal and you have to hit CTRL+C to stop it before doing something else.
+This will only close the log viewer, Lavalink itself will continue to run in the background.
+
+You may now run the following to make Lavalink auto-restart each boot:
+
+.. code-block:: sh
+
+    sudo systemctl enable lavalink
+
+.. tip::
+
+    You can stop the Lavalink service with the following when you need to e.g. for troubleshooting:
+
+    .. code-block:: sh
+
+        sudo systemctl stop lavalink
+
+    You can also check the logs Lavalink persists by checking the ``spring.log`` file in the ``lavalink/logs/`` folder.
+
+Congratulations, you are almost ready.
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Connecting to Your New Lavalink Server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If your Red instance and Lavalink server will communicate over the Internet, make sure the Lavalink port is accessible
+from the internet. Click `here <https://www.yougetsignal.com/tools/open-ports/>`_ and test if the port you set in the ``application.yml``
+is accessible on the public ip address of your Lavalink server. This step isn't necessary if your Lavalink server and Red
+instance will communicate over LAN. If you get connectivity errors, make sure there are no firewalls blocking the port and
+you are using the correct port.
+
+If successful, run each of the following commands one by one on your bot. Replace ``"yourlavalinkip"`` with the ip of your Lavalink server.
+Change ``"port"`` with the port you set up in the application.yml. Change `"password"` with the password you set up in the application.yml.
+
+.. code-block:: none
+
+    [p]llset external
+    [p]llset host "yourlavalinkip"
+    [p]llset wsport "port"
+    [p]llset password "password"
+
+Reload audio with ``[p]reload audio`` and give it a few seconds to connect.
+
+You now (hopefully) have a functioning Lavalink server on a machine seperate to the one running your Red instance. Good luck!
 
 .. _audio-commands:
 
