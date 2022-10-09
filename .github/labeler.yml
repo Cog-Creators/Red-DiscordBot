@@ -11,6 +11,7 @@
 "Category: Audio Cog":
   - any:
       - redbot/cogs/audio/**/*
+      - docs/cog_guides/audio.rst
     all:
       - "!redbot/cogs/audio/**/locales/*"
 "Category: Bank API":
