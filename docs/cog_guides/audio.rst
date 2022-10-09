@@ -288,13 +288,13 @@ You can try the following to resolve poor sound quality:
 * Try to listen on a different Discord server or server region.
 * If not everyone is experiencing the issue, it's a discord client issue.
 
-=========================
+-------------------------
 Lavalink - Advanced Usage
-=========================
+-------------------------
 
---------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Setting up Multiple Red Instances with Audio
---------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you are wanting to use multiple bots with Audio on the same machine, you'll need to make a few
 necessary modifications.
@@ -336,9 +336,9 @@ for your bots). Once Lavalink says it has fully started, you can start your bots
 
 .. linux-audio-autorestart::
 
----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Linux Lavalink Auto-Restart
----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Auto-restarting Lavalink is possible on Linux with systemd, for externally-run Lavalink backends.
 
@@ -404,9 +404,9 @@ Finally, you can run the following to retrieve logs for the service, when you ne
 	
 	sudo journalctl -u lavalink
 
--------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Obtaining the latest Lavalink.jar on a Red update
--------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **To manually download the jar**
 
