@@ -334,7 +334,7 @@ for your bots). Once Lavalink says it has fully started, you can start your bots
 	By running multiple bots on Audio, the responsibility for keeping the Lavalink.jar updated will now be
 	in your hands, as Red will no longer manage it through the Audio cog. See :ref:`here<obtaining-the-latest-lavalink>` for guidance.
 
-.. linux-audio-autorestart::
+.. _linux-audio-autorestart:
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Linux Lavalink Auto-Restart
@@ -403,6 +403,8 @@ Finally, you can run the following to retrieve logs for the service, when you ne
 .. code-block:: sh
 	
 	sudo journalctl -u lavalink
+
+.. _obtaining-the-latest-lavalink:
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Obtaining the latest Lavalink.jar on a Red update
@@ -724,7 +726,7 @@ instance will communicate over LAN. If you get connectivity errors, make sure th
 you are using the correct port.
 
 If successful, run each of the following commands one by one on your bot. Replace ``"yourlavalinkip"`` with the ip of your Lavalink server.
-Change ``"port"`` with the port you set up in the application.yml. Change `"password"` with the password you set up in the application.yml.
+Change ``"port"`` with the port you set up in the application.yml. Change ``"password"`` with the password you set up in the application.yml.
 
 .. code-block:: none
 
