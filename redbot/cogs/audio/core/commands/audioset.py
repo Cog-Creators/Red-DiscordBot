@@ -1118,10 +1118,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if (
             is_owner
             and not global_data["use_external_lavalink"]
-            and self.managed_node_controller.ll_build
+            and self.managed_node_controller.ll_version
         ):
             msg += _(
-                "Lavalink build:         [{llbuild}]\n"
+                "Lavalink version:       [{llversion}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
                 "Release date:           [{build_time}]\n"
                 "Lavaplayer version:     [{lavaplayer}]\n"
@@ -1131,7 +1131,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Max Heapsize:           [{xmx}]\n"
             ).format(
                 build_time=self.managed_node_controller.build_time,
-                llbuild=self.managed_node_controller.ll_build,
+                llversion=self.managed_node_controller.ll_version,
                 llbranch=self.managed_node_controller.ll_branch,
                 lavaplayer=self.managed_node_controller.lavaplayer,
                 jvm=self.managed_node_controller.jvm,
