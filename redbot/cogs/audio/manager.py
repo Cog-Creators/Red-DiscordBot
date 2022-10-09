@@ -121,6 +121,8 @@ LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
         # Before LL 3.6, when patch version == 0, it was stripped from the version string
         (?:\.(?P<patch>0|[1-9]\d*))?
         (?:-rc(?P<rc>0|[1-9]\d*))?
+        # only used by our downstream Lavalink if we need to make a release before upstream
+        (?:_red(?P<red>[1-9]\d*))?
     )
     $
     """,
@@ -180,19 +182,24 @@ class LavalinkVersion:
         patch: int = 0,
         *,
         rc: Optional[int] = None,
+        red: int = 0,
     ) -> None:
         self.major = major
         self.minor = minor
         self.patch = patch
         self.rc = rc
+        self.red = red
 
     def __str__(self) -> None:
-        if self.rc is None:
-            return f"{self.major}.{self.minor}.{self.patch}"
-        return f"{self.major}.{self.minor}.{self.patch}-rc{self.rc}"
+        version = f"{self.major}.{self.minor}.{self.patch}"
+        if self.rc is not None:
+            version += f"-rc{self.rc}"
+        if self.red:
+            version += f"_red{self.red}"
+        return version
 
-    def _get_comparison_tuple(self) -> Tuple[int, int, int, bool, int]:
-        return self.major, self.minor, self.patch, self.rc is None, self.rc or 0
+    def _get_comparison_tuple(self) -> Tuple[int, int, int, bool, int, int]:
+        return self.major, self.minor, self.patch, self.rc is None, self.rc or 0, self.red
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, LavalinkVersion):
@@ -561,6 +568,7 @@ class ServerManager:
                 minor=int(version["minor"]),
                 patch=int(version["patch"] or 0),
                 rc=int(version["rc"]) if version["rc"] is not None else None,
+                red=int(version["red"] or 0),
             )
         else:
             # Output is unexpected, suspect corrupted jarfile
