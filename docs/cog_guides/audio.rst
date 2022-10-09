@@ -288,9 +288,31 @@ You can try the following to resolve poor sound quality:
 * Try to listen on a different Discord server or server region.
 * If not everyone is experiencing the issue, it's a discord client issue.
 
+.. _no-sound:
+
+^^^^^^^^
+No Sound
+^^^^^^^^
+
+If the bot's speaking light is active, but there is no sound, troubleshoot the following:
+
+1. Is the bot's user volume turned up? (right click on the bot in discord, see the slider).
+2. Is the bot muted or deafened? Are you deafened? Are you deaf?
+3. Check Discord audio device settings and volume (cog icon next to your username in the bottom left, click "Voice and Video").
+4. Try dragging and dropping the bot back to the voice channel.
+5. Check system audio device settings and volume.
+6. Ask another member to come into the voice channel to confirm that it's not just you.
+
+If the track progress is stuck on 00:00 when you run ``[p]now``:
+
+1. Try to run ``[p]disconnect`` and replay the song.
+2. Try to reload the audio cog with ``[p]audioset restart``.
+
 -------------------------
 Lavalink - Advanced Usage
 -------------------------
+
+.. _multibots:
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Setting up Multiple Red Instances with Audio
