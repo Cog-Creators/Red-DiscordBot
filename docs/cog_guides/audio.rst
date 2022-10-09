@@ -413,7 +413,7 @@ Obtaining the latest Lavalink.jar on a Red update
 **To manually download the jar**
 
 1. Stop your bot.
-2. Click `here <https://github.com/Cog-Creators/Lavalink-Jars/releases/latest>`_.
+2. Click `here <https://github.com/Cog-Creators/Lavalink-Jars/releases/latest>`__.
 3. Download the Lavalink.jar file.
 
 **If you are not running an external instance of Lavalink**
@@ -449,13 +449,13 @@ Setting up Lavalink on a remote VPS or server
 
 This guide explains how to set up an external Lavalink node on a separate server running Ubuntu 20.04 LTS.
 It is assumed your bot currently uses an internally managed Lavalink server (Red's default). If you run
-into any issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`_.
+into any issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`__.
 
 .. warning::
 
     For security purposes DO NOT follow this guide while logged in as the root user. You should create
     a separate non-root user instead. You can follow
-    `this guide <https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu-20-04-quickstart>`_
+    `this guide <https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu-20-04-quickstart>`__
     from DigitalOcean if you need help about how this is done.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -720,7 +720,7 @@ Connecting to Your New Lavalink Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If your Red instance and Lavalink server will communicate over the Internet, make sure the Lavalink port is accessible
-from the internet. Click `here <https://www.yougetsignal.com/tools/open-ports/>`_ and test if the port you set in the ``application.yml``
+from the internet. Click `here <https://www.yougetsignal.com/tools/open-ports/>`__ and test if the port you set in the ``application.yml``
 is accessible on the public ip address of your Lavalink server. This step isn't necessary if your Lavalink server and Red
 instance will communicate over LAN. If you get connectivity errors, make sure there are no firewalls blocking the port and
 you are using the correct port.
