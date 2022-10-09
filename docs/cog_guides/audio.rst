@@ -813,42 +813,13 @@ Set a playlist to auto-play songs from.
 
 **Args**
 
-    The following are all optional:
+|audio-playlist-arg-info|
 
-        --scope <scope>
+**Example Usage**
 
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-    ​Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]audioset autoplay MyGuildPlaylist``
-
-    ``[p]audioset autoplay MyGlobalPlaylist --scope Global``
-
-    ``[p]audioset autoplay PersonalPlaylist --scope User --author Draper``
+* ``[p]audioset autoplay MyGuildPlaylist``
+* ``[p]audioset autoplay MyGlobalPlaylist --scope Global``
+* ``[p]audioset autoplay PersonalPlaylist --scope User --author Draper``
 
 .. _audio-command-audioset-autoplay-reset:
 
@@ -902,11 +873,11 @@ Sets the caching level.
 
 Level can be one of the following:
 
-* 0: Disables all caching
-* 1: Enables Spotify Cache
-* 2: Enables YouTube Cache
-* 3: Enables Lavalink Cache
-* 5: Enables all Caches
+* ``0``: Disables all caching
+* ``1``: Enables Spotify Cache
+* ``2``: Enables YouTube Cache
+* ``3``: Enables Lavalink Cache
+* ``5``: Enables all Caches
 
 If you wish to disable a specific cache use a negative number.
 
@@ -926,10 +897,8 @@ audioset cacheage
 
 **Description**
 
-Sets the cache max age.
-
-This commands allows you to set the max number of days before an entry in the cache becomes
-invalid.
+Sets the cache max age. This commands allows you to set the max number of
+days before an entry in the cache becomes invalid.
 
 .. _audio-command-audioset-countrycode:
 
@@ -965,9 +934,7 @@ audioset dailyqueue
 
 **Description**
 
-Toggle daily queues.
-
-Daily queues creates a playlist for all tracks played today.
+Toggle daily queues. Daily queues creates a playlist for all tracks played today.
 
 .. _audio-command-audioset-dc:
 
@@ -985,9 +952,8 @@ audioset dc
 
 **Description**
 
-Toggle the bot auto-disconnecting when done playing.
-
-This setting takes precedence over ``[p]audioset emptydisconnect``.
+Toggle the bot auto-disconnecting when done playing. This setting takes precedence
+over ``[p]audioset emptydisconnect``.
 
 .. _audio-command-audioset-dj:
 
@@ -1005,9 +971,7 @@ audioset dj
 
 **Description**
 
-Toggle DJ mode.
-
-DJ mode allows users with the DJ role to use audio commands.
+Toggle DJ mode. DJ mode allows users with the DJ role to use audio commands.
 
 .. _audio-command-audioset-emptydisconnect:
 
@@ -1026,7 +990,6 @@ audioset emptydisconnect
 **Description**
 
 Auto-disconnect from channel when bot is alone in it for x seconds, 0 to disable.
-
 ``[p]audioset dc`` takes precedence over this setting.
 
 .. _audio-command-audioset-emptypause:
@@ -1063,9 +1026,8 @@ audioset globaldailyqueue
 
 **Description**
 
-Toggle global daily queues.
-
-Global daily queues creates a playlist for all tracks played today.
+Toggle global daily queues. Global daily queues creates a playlist
+for all tracks played today.
 
 .. _audio-command-audioset-jukebox:
 
@@ -1102,7 +1064,6 @@ audioset localpath
 **Description**
 
 Set the localtracks path if the Lavalink.jar is not run from the Audio data folder.
-
 Leave the path blank to reset the path to the default, the Audio data directory.
 
 .. _audio-command-audioset-logs:
@@ -1157,10 +1118,9 @@ audioset maxlength
 
 **Description**
 
-Max length of a track to queue in seconds, 0 to disable.
-
-Accepts seconds or a value formatted like 00:00:00 (``hh:mm:ss``) or 00:00 (``mm:ss``). Invalid
-input will turn the max length setting off.
+Max length of a track to queue in seconds, 0 to disable. Accepts seconds or a value
+formatted like 00:00:00 (``hh:mm:ss``) or 00:00 (``mm:ss``). Invalid input will turn
+the max length setting off.
 
 .. _audio-command-audioset-maxvolume:
 
@@ -1230,9 +1190,8 @@ audioset persistqueue
 
 **Description**
 
-Toggle persistent queues.
-
-Persistent queues allows the current queue to be restored when the queue closes.
+Toggle persistent queues. Persistent queues allows the current queue
+to be restored when the queue closes.
 
 .. _audio-command-audioset-restart:
 
@@ -1352,8 +1311,6 @@ audioset restrictions blacklist delete
 
     [p]audioset restrictions blacklist delete <keyword>
 
-.. tip:: Aliases: ``audioset restrictions blacklist del``, ``audioset restrictions blacklist remove``
-
 **Description**
 
 Removes a keyword from the blacklist.
@@ -1452,8 +1409,6 @@ audioset restrictions global blacklist delete
 
     [p]audioset restrictions global blacklist delete <keyword>
 
-.. tip:: Aliases: ``audioset restrictions global blacklist del``, ``audioset restrictions global blacklist remove``
-
 **Description**
 
 Removes a keyword from the blacklist.
@@ -1504,9 +1459,8 @@ audioset restrictions global whitelist add
 
 **Description**
 
-Adds a keyword to the whitelist.
-
-If anything is added to whitelist, it will blacklist everything else.
+Adds a keyword to the whitelist. If anything is added to whitelist,
+it will blacklist everything else.
 
 .. _audio-command-audioset-restrictions-global-whitelist-clear:
 
@@ -1535,8 +1489,6 @@ audioset restrictions global whitelist delete
 .. code-block:: none
 
     [p]audioset restrictions global whitelist delete <keyword>
-
-.. tip:: Aliases: ``audioset restrictions global whitelist del``, ``audioset restrictions global whitelist remove``
 
 **Description**
 
@@ -1588,9 +1540,8 @@ audioset restrictions whitelist add
 
 **Description**
 
-Adds a keyword to the whitelist.
-
-If anything is added to whitelist, it will blacklist everything else.
+Adds a keyword to the whitelist. If anything is added to whitelist,
+it will blacklist everything else.
 
 .. _audio-command-audioset-restrictions-whitelist-clear:
 
@@ -1619,8 +1570,6 @@ audioset restrictions whitelist delete
 .. code-block:: none
 
     [p]audioset restrictions whitelist delete <keyword>
-
-.. tip:: Aliases: ``audioset restrictions whitelist del``, ``audioset restrictions whitelist remove``
 
 **Description**
 
@@ -1671,8 +1620,6 @@ audioset settings
 .. code-block:: none
 
     [p]audioset settings 
-
-.. tip:: Alias: ``audioset info``
 
 **Description**
 
@@ -1885,8 +1832,6 @@ eq delete
 
     [p]eq delete <eq_preset>
 
-.. tip:: Aliases: ``eq del``, ``eq remove``
-
 **Description**
 
 Delete a saved eq preset.
@@ -2006,8 +1951,6 @@ llsetup
 
     [p]llsetup 
 
-.. tip:: Alias: ``llset``
-
 **Description**
 
 Lavalink server configuration options.
@@ -2056,8 +1999,6 @@ llsetup info
 
     [p]llsetup info 
 
-.. tip:: Alias: ``llsetup settings``
-
 **Description**
 
 Display Lavalink connection settings.
@@ -2076,9 +2017,7 @@ llsetup java
 
 **Description**
 
-Change your Java executable path
-
-Enter nothing to reset to default.
+Change your Java executable path. Enter nothing to reset to default.
 
 .. _audio-command-llsetup-password:
 
@@ -2140,22 +2079,14 @@ local folder
 
     [p]local folder [folder]
 
-.. tip:: Alias: ``local start``
-
 **Description**
 
 Play all songs in a localtracks folder.
 
-**Usage**:
+**Example usage**
 
-    ``[p]local folder``
-
-        Open a menu to pick a folder to queue.
-
-
-​ ​ ``[p]local folder folder_name``
-
-        Queues all of the tracks inside the folder_name folder.
+* ``[p]local folder`` - Open a menu to pick a folder to queue.
+* ``[p]local folder folder_name`` - Queues all of the tracks inside the folder_name folder.
 
 .. _audio-command-local-play:
 
@@ -2173,21 +2104,14 @@ local play
 
 Play a local track.
 
-To play a local track, either use the menu to choose a track or enter in the track path directly with the play command.
-To play an entire folder, use ``[p]help local folder`` for instructions.
+To play a local track, either use the menu to choose a track or enter in the track path directly
+with the play command. To play an entire folder, use ``[p]help local folder`` for instructions.
 
-**Usage**:
+**Example usage**
 
-    ``[p]local play``
-
-        Open a menu to pick a track.
-
-
-    ``[p]play localtracks\album_folder\song_name.mp3``
-
-    ``[p]play album_folder\song_name.mp3``
-
-        Use a direct link relative to the localtracks folder.
+* ``[p]local play`` - Open a menu to pick a track.
+* ``[p]play localtracks\album_folder\song_name.mp3``
+* ``[p]play album_folder\song_name.mp3`` - Use a direct link relative to the localtracks folder.
 
 .. _audio-command-local-search:
 
@@ -2288,25 +2212,12 @@ playlist
 
 Playlist configuration options.
 
-Scope info:
+**Scope information**
 
-    **Global**:
-
-        Visible to all users of this bot.
-
-        Only editable by bot owner.
-
-    **Guild**:
-
-        Visible to all users in this guild.
-
-        Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.
-
-    **User**:
-
-        Visible to all bot users, if --author is passed.
-
-        Editable by bot owner and creator.
+* Global: Visible to all users of this bot. Only editable by bot owner.
+* Guild: Visible to all users in this guild. Editable by bot owner, guild owner,
+  guild admins, guild mods, DJ role and playlist creator.
+* User: Visible to all bot users, if ``--author`` is passed. Editable by bot owner and playlist creator.
 
 .. _audio-command-playlist-append:
 
@@ -2322,53 +2233,18 @@ playlist append
 
 **Description**
 
-Add a track URL, playlist link, or quick search to a playlist.
+Add a track URL, playlist link, or quick search to a playlist. The track(s) will be
+appended to the end of the playlist.
 
-The track(s) will be appended to the end of the playlist.
+**Args**
 
-**Usage**:
+|audio-playlist-arg-info|
 
-    ``[p]playlist append playlist_name_OR_id track_name_OR_url [args]``
+**Example usage**
 
-**Args**:
-
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist append MyGuildPlaylist Hello by Adele``
-
-    ``[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global``
-
-    ``[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666``
+* ``[p]playlist append MyGuildPlaylist Hello by Adele``
+* ``[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global``
+* ``[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666``
 
 .. _audio-command-playlist-copy:
 
@@ -2386,56 +2262,39 @@ playlist copy
 
 Copy a playlist from one scope to another.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist copy playlist_name_OR_id [args]``
+The following are all optional:
 
-**Args**:
-
-    The following are all optional:
-
-        --from-scope <scope>
-
-        --from-author [user]
-
-        --from-guild [guild] **Only the bot owner can use this**
-
-
-        --to-scope <scope>
-
-        --to-author [user]
-
-        --to-guild [guild] **Only the bot owner can use this**
+* --from-scope <scope>
+* --from-author [user]
+* --from-guild [guild] (**only the bot owner can use this**)
+* --to-scope <scope>
+* --to-author [user]
+* --to-guild [guild] (**only the bot owner can use this**)
 
 **Scope** is one of the following:
 
-    Global
-
-    Guild
-
-    User
+* Global
+* Guild
+* User
 
 **Author** can be one of the following:
 
-    User ID
-
-    User Mention
-
-    User Name#123
+* User ID
+* User Mention
+* User Name#123
 
 **Guild** can be one of the following:
 
-    Guild ID
+* Guild ID
+* Exact guild name
 
-    Exact guild name
+**Example usage**
 
-Example use:
-
-    ``[p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global``
-
-    ``[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User``
-
-    ``[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot``
+* ``[p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global``
+* ``[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User``
+* ``[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot``
 
 .. _audio-command-playlist-create:
 
@@ -2453,49 +2312,15 @@ playlist create
 
 Create an empty playlist.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist create playlist_name [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist create MyGuildPlaylist``
-
-    ``[p]playlist create MyGlobalPlaylist --scope Global``
-
-    ``[p]playlist create MyPersonalPlaylist --scope User``
+* ``[p]playlist create MyGuildPlaylist``
+* ``[p]playlist create MyGlobalPlaylist --scope Global``
+* ``[p]playlist create MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-dedupe:
 
@@ -2513,49 +2338,15 @@ playlist dedupe
 
 Remove duplicate tracks from a saved playlist.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist dedupe playlist_name_OR_id [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist dedupe MyGuildPlaylist``
-
-    ``[p]playlist dedupe MyGlobalPlaylist --scope Global``
-
-    ``[p]playlist dedupe MyPersonalPlaylist --scope User``
+* ``[p]playlist dedupe MyGuildPlaylist``
+* ``[p]playlist dedupe MyGlobalPlaylist --scope Global``
+* ``[p]playlist dedupe MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-delete:
 
@@ -2569,55 +2360,19 @@ playlist delete
 
     [p]playlist delete <playlist_name_OR_id> [args]
 
-.. tip:: Alias: ``playlist del``
-
 **Description**
 
 Delete a saved playlist.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist delete playlist_name_OR_id [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist delete MyGuildPlaylist``
-
-    ``[p]playlist delete MyGlobalPlaylist --scope Global``
-
-    ``[p]playlist delete MyPersonalPlaylist --scope User``
+* ``[p]playlist delete MyGuildPlaylist``
+* ``[p]playlist delete MyGlobalPlaylist --scope Global``
+* ``[p]playlist delete MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-download:
 
@@ -2641,49 +2396,15 @@ These files can be used with the ``[p]playlist upload`` command.
 Red v2-compatible playlists can be generated by passing True
 for the v2 variable.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist download MyGuildPlaylist True``
-
-    ``[p]playlist download MyGlobalPlaylist False --scope Global``
-
-    ``[p]playlist download MyPersonalPlaylist --scope User``
+* ``[p]playlist download MyGuildPlaylist True``
+* ``[p]playlist download MyGlobalPlaylist False --scope Global``
+* ``[p]playlist download MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-info:
 
@@ -2701,49 +2422,15 @@ playlist info
 
 Retrieve information from a saved playlist.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist info playlist_name_OR_id [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist info MyGuildPlaylist``
-
-    ``[p]playlist info MyGlobalPlaylist --scope Global``
-
-    ``[p]playlist info MyPersonalPlaylist --scope User``
+* ``[p]playlist info MyGuildPlaylist``
+* ``[p]playlist info MyGlobalPlaylist --scope Global``
+* ``[p]playlist info MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-list:
 
@@ -2761,49 +2448,15 @@ playlist list
 
 List saved playlists.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist list [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist list``
-
-    ``[p]playlist list --scope Global``
-
-    ``[p]playlist list --scope User``
+* ``[p]playlist list``
+* ``[p]playlist list --scope Global``
+* ``[p]playlist list --scope User``
 
 .. _audio-command-playlist-queue:
 
@@ -2821,49 +2474,15 @@ playlist queue
 
 Save the queue to a playlist.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist queue playlist_name [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist queue MyGuildPlaylist``
-
-    ``[p]playlist queue MyGlobalPlaylist --scope Global``
-
-    ``[p]playlist queue MyPersonalPlaylist --scope User``
+* ``[p]playlist queue MyGuildPlaylist``
+* ``[p]playlist queue MyGlobalPlaylist --scope Global``
+* ``[p]playlist queue MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-remove:
 
@@ -2879,51 +2498,17 @@ playlist remove
 
 **Description**
 
-Remove a track from a playlist by url.
+Remove a track from a playlist by URL.
 
- **Usage**:
+**Args**
 
-    ``[p]playlist remove playlist_name_OR_id url [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU``
-
-    ``[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global``
-
-    ``[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User``
+* ``[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU``
+* ``[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global``
+* ``[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User``
 
 .. _audio-command-playlist-rename:
 
@@ -2941,49 +2526,15 @@ playlist rename
 
 Rename an existing playlist.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist rename playlist_name_OR_id new_name [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist``
-
-    ``[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global``
-
-    ``[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User``
+* ``[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist``
+* ``[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global``
+* ``[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-save:
 
@@ -2999,51 +2550,15 @@ playlist save
 
 **Description**
 
-Save a playlist from a url.
+Save a playlist from a URL.
 
-**Usage**:
+|audio-playlist-arg-info|
 
-    ``[p]playlist save name url [args]``
+**Example usage**
 
-**Args**:
-
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM``
-
-    ``[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global``
-
-    ``[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User``
+* ``[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM``
+* ``[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global``
+* ``[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User``
 
 .. _audio-command-playlist-start:
 
@@ -3057,55 +2572,19 @@ playlist start
 
     [p]playlist start <playlist_name_OR_id> [args]
 
-.. tip:: Alias: ``playlist play``
-
 **Description**
 
 Load a playlist into the queue.
 
-**Usage**:
+**Args**
 
-​ ​ ​ ​`` [p]playlist start playlist_name_OR_id [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist start MyGuildPlaylist``
-
-    ``[p]playlist start MyGlobalPlaylist --scope Global``
-
-    ``[p]playlist start MyPersonalPlaylist --scope User``
+* ``[p]playlist start MyGuildPlaylist``
+* ``[p]playlist start MyGlobalPlaylist --scope Global``
+* ``[p]playlist start MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-update:
 
@@ -3123,49 +2602,15 @@ playlist update
 
 Updates all tracks in a playlist.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist update playlist_name_OR_id [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist update MyGuildPlaylist``
-
-    ``[p]playlist update MyGlobalPlaylist --scope Global``
-
-    ``[p]playlist update MyPersonalPlaylist --scope User``
+* ``[p]playlist update MyGuildPlaylist``
+* ``[p]playlist update MyGlobalPlaylist --scope Global``
+* ``[p]playlist update MyPersonalPlaylist --scope User``
 
 .. _audio-command-playlist-upload:
 
@@ -3188,49 +2633,15 @@ Uploads a playlist file as a playlist for the bot.
 V2 and old V3 playlist will be slow.
 V3 Playlist made with ``[p]playlist download`` will load a lot faster.
 
-**Usage**:
+**Args**
 
-    ``[p]playlist upload [args]``
+|audio-playlist-arg-info|
 
-**Args**:
+**Example usage**
 
-    The following are all optional:
-
-        --scope <scope>
-
-        --author [user]
-
-        --guild [guild] **Only the bot owner can use this**
-
-**Scope** is one of the following:
-
-    Global
-
-    Guild
-
-    User
-
-**Author** can be one of the following:
-
-    User ID
-
-    User Mention
-
-    User Name#123
-
-**Guild** can be one of the following:
-
-    Guild ID
-
-    Exact guild name
-
-Example use:
-
-    ``[p]playlist upload``
-
-    ``[p]playlist upload --scope Global``
-
-    ``[p]playlist upload --scope User``
+* ``[p]playlist upload``
+* ``[p]playlist upload --scope Global``
+* ``[p]playlist upload --scope User``
 
 .. _audio-command-prev:
 
@@ -3409,9 +2820,8 @@ seek
 
 **Description**
 
-Seek ahead or behind on a track by seconds or to a specific time.
-
-Accepts seconds or a value formatted like 00:00:00 (``hh:mm:ss``) or 00:00 (``mm:ss``).
+Seek ahead or behind on a track by seconds or to a specific time. Accepts seconds or
+a value formatted like 00:00:00 (``hh:mm:ss``) or 00:00 (``mm:ss``).
 
 .. _audio-command-shuffle:
 
