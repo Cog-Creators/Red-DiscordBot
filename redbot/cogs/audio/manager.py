@@ -106,22 +106,10 @@ LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(
 )
 # present until Lavalink 3.5-rc4
 LAVALINK_BUILD_LINE: Final[Pattern] = re.compile(rb"^Build:\s+(?P<build>\d+)$", re.MULTILINE)
-# used for versions before 3.5-rc4
+# we don't actually care about what the version format before 3.5-rc4 is exactly
+# as the comparison is based entirely on the build number
 LAVALINK_VERSION_LINE_PRE35: Final[Pattern] = re.compile(
-    rb"""
-    ^
-    Version:\s+
-    (?P<version>
-        (?P<api>0|[1-9]\d*)\.(?P<major>0|[1-9]\d*)
-        (?:
-            \.(?P<minor>0|[1-9]\d*)
-            (?:\.(?P<patch>0|[1-9]\d*))?
-        )?
-        (?:-rc(?P<rc>0|[1-9]\d*))?
-    )
-    $
-    """,
-    re.MULTILINE | re.VERBOSE,
+    rb"^Version:\s+(?P<version>\S+)$", re.MULTILINE | re.VERBOSE
 )
 # used for LL 3.5-rc4 and newer
 LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
@@ -141,27 +129,12 @@ LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
 
 
 class LavalinkOldVersion:
-    def __init__(
-        self,
-        api: int,
-        major: int,
-        minor: int = 0,
-        patch: int = 0,
-        *,
-        rc: Optional[int] = None,
-        build_number: int,
-    ) -> None:
-        self.api = api
-        self.major = major
-        self.minor = minor
-        self.patch = patch
-        self.rc = rc
+    def __init__(self, raw_version: str, *, build_number: int) -> None:
+        self.raw_version = raw_version
         self.build_number = build_number
 
     def __str__(self) -> None:
-        if self.rc is None:
-            return "{0.api}.{0.major}.{0.minor}.{0.patch}_{0.build_number}".format(self)
-        return "{0.api}.{0.major}.{0.minor}.{0.patch}-rc{0.rc}_{0.build_number}".format(self)
+        return f"{self.raw_version}_{self.build_number}"
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, LavalinkOldVersion):
@@ -258,7 +231,7 @@ class LavalinkVersion:
 
 
 class ServerManager:
-    JAR_VERSION: Final[str] = LavalinkOldVersion(3, 4, 0, build_number=1350)
+    JAR_VERSION: Final[str] = LavalinkOldVersion("3.4.0", build_number=1350)
     LAVALINK_DOWNLOAD_URL: Final[str] = (
         "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
         f"{JAR_VERSION}/"
@@ -579,11 +552,7 @@ class ServerManager:
                 # Output is unexpected, suspect corrupted jarfile
                 return False
             self._lavalink_version = LavalinkOldVersion(
-                api=int(version["api"]),
-                major=int(version["major"]),
-                minor=int(version["minor"] or 0),
-                patch=int(version["patch"] or 0),
-                rc=int(version["rc"]) if version["rc"] is not None else None,
+                raw_version=version["version"].decode(),
                 build_number=int(build["build"]),
             )
         elif (version := LAVALINK_VERSION_LINE.search(stdout)) is not None:
