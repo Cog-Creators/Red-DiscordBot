@@ -22,7 +22,7 @@ class SetApiModal(discord.ui.Modal):
     ----------
     default_service: Optional[str]
         The service to add the API keys to.
-        If this is omitted the bot owner is allowed to set his own service.
+        If this is omitted the bot owner is allowed to set their own service.
         Defaults to ``None``.
     default_keys: Optional[Dict[str, str]]
         The API keys the service is expecting.
@@ -141,7 +141,7 @@ class SetApiView(discord.ui.View):
     ----------
     default_service: Optional[str]
         The service to add the API keys to.
-        If this is omitted the bot owner is allowed to set his own service.
+        If this is omitted the bot owner is allowed to set their own service.
         Defaults to ``None``.
     default_keys: Optional[Dict[str, str]]
         The API keys the service is expecting.
