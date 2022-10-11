@@ -242,7 +242,6 @@ class SimpleMenu(discord.ui.View):
         ret: Dict[str, Optional[Any]] = {"view": self}
         if isinstance(value, dict):
             ret.update(value)
-            ret = value
         elif isinstance(value, str):
             ret.update({"content": value, "embed": None})
         elif isinstance(value, discord.Embed):
