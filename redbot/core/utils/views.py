@@ -79,7 +79,7 @@ class SimpleMenu(discord.ui.View):
     pages: `list` of `str`, `discord.Embed`, or `dict`.
         The pages of the menu.
         if the page is a `dict` its keys must be valid messageable args.
-        e,g. `{"content": "My content", "embed": discord.Embed(description="hello")}`
+        e,g. "content", "embed", etc.
     page_start: int
         The page to start the menu at.
     timeout: float
@@ -107,10 +107,18 @@ class SimpleMenu(discord.ui.View):
 
     Examples
     --------
-        from redbot.core.utils.views import SimpleMenu
+        You can provide a list of strings::
 
-        pages = ["Hello", "Hi", "Bonjour", "Salut"]
-        await SimpleMenu(pages).start(ctx)
+            from redbot.core.utils.views import SimpleMenu
+
+            pages = ["Hello", "Hi", "Bonjour", "Salut"]
+            await SimpleMenu(pages).start(ctx)
+
+        You can provide a list of dicts::
+
+            from redbot.core.utils.views import SimpleMenu
+            pages = [{"content": "My content", "embed": discord.Embed(description="hello")}]
+            await SimpleMenu(pages).start(ctx)
     """
 
     def __init__(
