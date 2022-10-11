@@ -284,6 +284,7 @@ class SetApiModal(discord.ui.Modal):
         The API keys the service is expecting.
         This will only allow the bot owner to set keys the Modal is expecting.
         Defaults to ``None``.
+
     """
 
     def __init__(
@@ -401,6 +402,7 @@ class SetApiView(discord.ui.View):
         The API keys the service is expecting.
         This will only allow the bot owner to set keys the Modal is expecting.
         Defaults to ``None``.
+
     """
 
     def __init__(
