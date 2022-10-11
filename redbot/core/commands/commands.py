@@ -20,6 +20,7 @@ from typing import (
     Literal,
     Optional,
     Tuple,
+    TypeVar,
     Union,
     MutableMapping,
     TYPE_CHECKING,
@@ -47,9 +48,24 @@ from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
 
+_T = TypeVar("_T")
+_CogT = TypeVar("_CogT", bound="Cog")
+
+
 if TYPE_CHECKING:
     # circular import avoidance
     from .context import Context
+    from typing_extensions import ParamSpec, Concatenate
+    from discord.ext.commands._types import ContextT, Coro
+
+    _P = ParamSpec("_P")
+
+    CommandCallback = Union[
+        Callable[Concatenate[_CogT, ContextT, _P], Coro[_T]],
+        Callable[Concatenate[ContextT, _P], Coro[_T]],
+    ]
+else:
+    _P = TypeVar("_P")
 
 
 __all__ = [
@@ -999,7 +1015,7 @@ class GroupCog(Cog, DPYGroupCog):
     """
 
 
-class HybridCommand(Command, DPYHybridCommand):
+class HybridCommand(Command, DPYHybridCommand[_CogT, _P, _T]):
     """HybridCommand class for Red.
 
     This should not be created directly, and instead via the decorator.
@@ -1012,7 +1028,7 @@ class HybridCommand(Command, DPYHybridCommand):
     """
 
 
-class HybridGroup(Group, DPYHybridGroup):
+class HybridGroup(Group, DPYHybridGroup[_CogT, _P, _T]):
     """HybridGroup command class for Red.
 
     This should not be created directly, and instead via the decorator.
@@ -1076,32 +1092,42 @@ class HybridGroup(Group, DPYHybridGroup):
         return decorator
 
 
-def hybrid_command(name: str = discord.utils.MISSING, **attrs: Any):
+def hybrid_command(
+    name: Union[str, discord.app_commands.locale_str] = discord.utils.MISSING,
+    *,
+    with_app_command: bool = True,
+    **attrs: Any,
+) -> Callable[[CommandCallback[_CogT, ContextT, _P, _T]], HybridCommand[_CogT, _P, _T]]:
     """A decorator which transforms an async function into a `HybridCommand`.
 
     Same interface as `discord.ext.commands.hybrid_command`.
     """
 
-    def decorator(func):
+    def decorator(func: CommandCallback[_CogT, ContextT, _P, _T]) -> HybridCommand[_CogT, _P, _T]:
         if isinstance(func, Command):
             raise TypeError("callback is already a command.")
         attrs["help_override"] = attrs.pop("help", None)
-        return HybridCommand(func, name=name, **attrs)
+        return HybridCommand(func, name=name, with_app_command=with_app_command, **attrs)
 
     return decorator
 
 
-def hybrid_group(name: str = discord.utils.MISSING, **attrs: Any):
+def hybrid_group(
+    name: Union[str, discord.app_commands.locale_str] = discord.utils.MISSING,
+    *,
+    with_app_command: bool = True,
+    **attrs: Any,
+) -> Callable[[CommandCallback[_CogT, ContextT, _P, _T]], HybridGroup[_CogT, _P, _T]]:
     """A decorator which transforms an async function into a `HybridGroup`.
 
     Same interface as `discord.ext.commands.hybrid_group`.
     """
 
-    def decorator(func):
+    def decorator(func: CommandCallback[_CogT, ContextT, _P, _T]):
         if isinstance(func, Command):
             raise TypeError("callback is already a command.")
         attrs["help_override"] = attrs.pop("help", None)
-        return HybridGroup(func, name=name, **attrs)
+        return HybridGroup(func, name=name, with_app_command=with_app_command, **attrs)
 
     return decorator
 
