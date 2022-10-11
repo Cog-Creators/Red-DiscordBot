@@ -119,6 +119,7 @@ class SimpleMenu(discord.ui.View):
             from redbot.core.utils.views import SimpleMenu
             pages = [{"content": "My content", "embed": discord.Embed(description="hello")}]
             await SimpleMenu(pages).start(ctx)
+
     """
 
     def __init__(
