@@ -4089,7 +4089,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         description = _("Owner of {}").format(ctx.bot.user)
         content = _("You can reply to this message with {}contact").format(prefix)
         if await ctx.embed_requested():
-            e = discord.Embed(colour=discord.Colour.red(), description=message)
+            e = discord.Embed(colour=await ctx.embed_colour(), description=message)
 
             e.set_footer(text=content)
             e.set_author(name=description, icon_url=ctx.bot.user.display_avatar)
