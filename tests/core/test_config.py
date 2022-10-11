@@ -593,6 +593,18 @@ async def test_raw_with_partial_primary_keys(config):
     assert await config.custom("CUSTOM", "primary_key").identifier() is False
 
 
+@pytest.mark.asyncio
+async def test_cast_subclass_default(config):
+    from collections import Counter
+    config.register_global(foo=Counter({}))
+    stored_value = await config.foo()
+    assert type(stored_value) is dict
+    assert stored_value == {}
+    await config.foo.set(Counter({"bar": 1}))
+    stored_value = await config.foo()
+    assert type(stored_value) is dict
+    assert stored_value == {"bar": 1}
+
 """
 Following PARAMS can be generated with:
 from functools import reduce
