@@ -38,7 +38,7 @@ class IssueDiagnoserBase:
         self,
         bot: Red,
         original_ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.Thread],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
         author: discord.Member,
         command: commands.Command,
     ) -> None:

@@ -11,7 +11,7 @@ from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import can_user_react_in
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, error, success
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
 
@@ -221,8 +221,8 @@ class Permissions(commands.Cog):
             "Global rules (set by the owner) are checked first, then rules set for servers. If "
             "multiple global or server rules apply to the case, the order they are checked in is:\n"
             "  1. Rules about a user.\n"
-            "  2. Rules about the voice channel a user is in.\n"
-            "  3. Rules about the text channel or a parent of the thread a command was issued in.\n"
+            "  2. Rules about the voice channel a user is connected to.\n"
+            "  3. Rules about the channel or a parent of the thread a command was issued in.\n"
             "  4. Rules about a role the user has (The highest role they have with a rule will be "
             "used).\n"
             "  5. Rules about the server a user is in (Global rules only).\n\n"
@@ -262,9 +262,9 @@ class Permissions(commands.Cog):
                 can = False
 
             out = (
-                _("That user can run the specified command.")
+                success(_("That user can run the specified command."))
                 if can
-                else _("That user can not run the specified command.")
+                else error(_("That user can not run the specified command."))
             )
         await ctx.send(out)
 
@@ -330,7 +330,7 @@ class Permissions(commands.Cog):
         except discord.Forbidden:
             await ctx.send(_("I'm not allowed to DM you."))
         else:
-            if not isinstance(ctx.channel, discord.DMChannel):
+            if ctx.guild is not None:
                 await ctx.send(_("I've just sent the file to you via DM."))
         finally:
             file.close()
@@ -632,11 +632,23 @@ class Permissions(commands.Cog):
     ) -> None:
         """Set rules from a YAML file and handle response to users too."""
         if not ctx.message.attachments:
-            await ctx.send(_("You must upload a file."))
-            return
+            await ctx.send(_("Supply a file with next message or type anything to cancel."))
+            try:
+                message = await ctx.bot.wait_for(
+                    "message", check=MessagePredicate.same_context(ctx), timeout=30
+                )
+            except asyncio.TimeoutError:
+                await ctx.send(_("You took too long to upload a file."))
+                return
+            if not message.attachments:
+                await ctx.send(_("You have cancelled the upload process."))
+                return
+            parsedfile = message.attachments[0]
+        else:
+            parsedfile = ctx.message.attachments[0]
 
         try:
-            await self._yaml_set_acl(ctx.message.attachments[0], guild_id=guild_id, update=update)
+            await self._yaml_set_acl(parsedfile, guild_id=guild_id, update=update)
         except yaml.MarkedYAMLError as e:
             await ctx.send(_("Invalid syntax: ") + str(e))
         except SchemaError as e:

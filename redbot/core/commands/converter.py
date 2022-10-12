@@ -254,13 +254,13 @@ else:
             args = self.pattern.split(argument)
 
             if len(args) % 2 != 0:
-                raise BadArgument()
+                raise BadArgument(_("Missing a key or value."))
 
             iterator = iter(args)
 
             for key in iterator:
                 if self.expected_keys and key not in self.expected_keys:
-                    raise BadArgument(_("Unexpected key {key}").format(key=key))
+                    raise BadArgument(_("Unexpected key `{key}`.").format(key=key))
 
                 ret[key] = next(iterator)
 

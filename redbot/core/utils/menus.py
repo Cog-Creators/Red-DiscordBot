@@ -238,7 +238,7 @@ async def next_page(
     Function for showing next page which is suitable
     for use in ``controls`` mapping that is passed to `menu()`.
     """
-    if page == len(pages) - 1:
+    if page >= len(pages) - 1:
         page = 0  # Loop around to the first item
     else:
         page = page + 1
@@ -258,7 +258,7 @@ async def prev_page(
     Function for showing previous page which is suitable
     for use in ``controls`` mapping that is passed to `menu()`.
     """
-    if page == 0:
+    if page <= 0:
         page = len(pages) - 1  # Loop around to the last item
     else:
         page = page - 1
