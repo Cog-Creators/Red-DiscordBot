@@ -271,9 +271,11 @@ class SimpleMenu(discord.ui.View):
 class SetApiModal(discord.ui.Modal):
     """
     A secure ``discord.ui.Modal`` used to set API keys.
+
     This Modal can either be used standalone with its own ``discord.ui.View``
     for custom implementations, or created via ``SetApiView``
     to have an easy to implemement secure way of setting API keys.
+
     Parameters
     ----------
     default_service: Optional[str]
@@ -284,7 +286,6 @@ class SetApiModal(discord.ui.Modal):
         The API keys the service is expecting.
         This will only allow the bot owner to set keys the Modal is expecting.
         Defaults to ``None``.
-
     """
 
     def __init__(
@@ -390,8 +391,10 @@ class SetApiModal(discord.ui.Modal):
 class SetApiView(discord.ui.View):
     """
     A secure ``discord.ui.View`` used to set API keys.
+
     This view is an standalone, easy to implement ``discord.ui.View``
     to allow an bot owner to securely set API keys in a public environment.
+
     Parameters
     ----------
     default_service: Optional[str]
@@ -402,7 +405,6 @@ class SetApiView(discord.ui.View):
         The API keys the service is expecting.
         This will only allow the bot owner to set keys the Modal is expecting.
         Defaults to ``None``.
-
     """
 
     def __init__(
