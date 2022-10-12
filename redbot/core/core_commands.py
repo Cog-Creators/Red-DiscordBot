@@ -22,7 +22,18 @@ from redbot.core.utils.menus import menu
 from redbot.core.utils.views import SetApiView
 from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
-from typing import TYPE_CHECKING, Union, Tuple, List, Optional, Iterable, Sequence, Dict, Set
+from typing import (
+    TYPE_CHECKING,
+    Union,
+    Tuple,
+    List,
+    Optional,
+    Iterable,
+    Sequence,
+    Dict,
+    Set,
+    Literal,
+)
 
 import aiohttp
 import discord
@@ -54,6 +65,7 @@ from .utils.chat_formatting import (
 )
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
+from .commands.help import HelpMenuSetting
 
 _entities = {
     "*": "&midast;",
@@ -3680,30 +3692,47 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @helpset.command(name="usemenus")
-    async def helpset_usemenus(self, ctx: commands.Context, use_menus: bool = None):
+    async def helpset_usemenus(
+        self,
+        ctx: commands.Context,
+        use_menus: Literal["buttons", "reactions", "select", "selectonly", "disable"],
+    ):
         """
         Allows the help command to be sent as a paginated menu instead of separate
         messages.
 
-        When enabled, `[p]help` will only show one page at a time and will use reactions to navigate between pages.
-
-        This defaults to False.
-        Using this without a setting will toggle.
+        When "reactions", "buttons", "select", or "selectonly" is passed,
+         `[p]help` will only show one page at a time
+        and will use the associated control scheme to navigate between pages.
 
          **Examples:**
-            - `[p]helpset usemenus True` - Enables using menus.
-            - `[p]helpset usemenus` - Toggles the value.
+            - `[p]helpset usemenus reactions` - Enables using reaction menus.
+            - `[p]helpset usemenus buttons` - Enables using button menus.
+            - `[p]helpset usemenus select` - Enables buttons with a select menu.
+            - `[p]helpset usemenus selectonly` - Enables a select menu only on help.
+            - `[p]helpset usemenus disable` - Disables help menus.
 
         **Arguments:**
-            - `[use_menus]` - Whether to use menus. Leave blank to toggle.
+            - `<"buttons"|"reactions"|"select"|"selectonly"|"disable">` - Whether to use `buttons`,
+            `reactions`, `select`, `selectonly`, or no menus.
         """
-        if use_menus is None:
-            use_menus = not await ctx.bot._config.help.use_menus()
-        await ctx.bot._config.help.use_menus.set(use_menus)
-        if use_menus:
-            await ctx.send(_("Help will use menus."))
-        else:
-            await ctx.send(_("Help will not use menus."))
+        if use_menus == "selectonly":
+            msg = _("Help will use the select menu only.")
+            await ctx.bot._config.help.use_menus.set(4)
+        if use_menus == "select":
+            msg = _("Help will use button menus and add a select menu.")
+            await ctx.bot._config.help.use_menus.set(3)
+        if use_menus == "buttons":
+            msg = _("Help will use button menus.")
+            await ctx.bot._config.help.use_menus.set(2)
+        if use_menus == "reactions":
+            msg = _("Help will use reaction menus.")
+            await ctx.bot._config.help.use_menus.set(1)
+        if use_menus == "disabled":
+            msg = _("Help will not use menus.")
+            await ctx.bot._config.help.use_menus.set(0)
+
+        await ctx.send(msg)
 
     @helpset.command(name="showhidden")
     async def helpset_showhidden(self, ctx: commands.Context, show_hidden: bool = None):
