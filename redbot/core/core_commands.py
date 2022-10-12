@@ -3622,6 +3622,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Server prefixes set."))
 
     @_set.command(name="usebuttons")
+    @checks.is_owner()
     async def use_buttons(self, ctx: commands.Context, use_buttons: bool = None):
         """
         Set a global bot variable for using buttons in menus.
