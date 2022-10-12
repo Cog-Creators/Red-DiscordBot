@@ -227,7 +227,7 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, channel, reason=reason)
         await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
@@ -298,7 +298,7 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, channel, reason=reason)
         await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
@@ -351,7 +351,7 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, channel, reason=reason)
         await self.send_optional_notification(len(to_delete), channel)
 
     @cleanup.command()
@@ -407,7 +407,7 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, channel, reason=reason)
         await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
@@ -460,7 +460,7 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, channel, reason=reason)
         await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command()
@@ -499,7 +499,7 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, channel, reason=reason)
         await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command(name="bot")
@@ -586,7 +586,7 @@ class Cleanup(commands.Cog):
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
+        await mass_purge(to_delete, channel, reason=reason)
         await self.send_optional_notification(len(to_delete), channel, subtract_invoking=True)
 
     @cleanup.command(name="self")
@@ -673,7 +673,7 @@ class Cleanup(commands.Cog):
         log.info(reason)
 
         if can_mass_purge:
-            await mass_purge(to_delete, channel)
+            await mass_purge(to_delete, channel, reason=reason)
         else:
             await slow_deletion(to_delete)
         await self.send_optional_notification(
@@ -733,7 +733,7 @@ class Cleanup(commands.Cog):
         )
 
         to_delete.append(ctx.message)
-        await mass_purge(to_delete, ctx.channel)
+        await mass_purge(to_delete, ctx.channel, "Duplicate message cleanup")
         await self.send_optional_notification(len(to_delete), ctx.channel, subtract_invoking=True)
 
     @commands.group()
