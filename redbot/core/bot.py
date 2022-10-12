@@ -142,6 +142,7 @@ class Red(
             schema_version=0,
             datarequests__allow_user_requests=True,
             datarequests__user_requests_are_strict=True,
+            use_buttons=False,
         )
 
         self._config.register_guild(
@@ -1350,6 +1351,17 @@ class Red(
 
         global_setting = await self._config.embeds()
         return global_setting
+
+    async def use_buttons(self) -> bool:
+        """
+        Determines whether the bot owner has enabled use of buttons instead of
+        reactions for basic menus.
+
+        Returns
+        -------
+        bool
+        """
+        return await self._config.use_buttons()
 
     async def is_owner(self, user: Union[discord.User, discord.Member], /) -> bool:
         """

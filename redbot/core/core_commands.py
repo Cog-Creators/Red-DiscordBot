@@ -3621,6 +3621,31 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Server prefixes set."))
 
+    @_set.command(name="usebuttons")
+    async def use_buttons(self, ctx: commands.Context, use_buttons: bool = None):
+        """
+        Set a global bot variable for using buttons in menus.
+
+        When enabled, all usage of cores menus API will use buttons instead of reactions.
+
+        This defaults to False.
+        Using this without a setting will toggle.
+
+         **Examples:**
+            - `[p]set usebuttons True` - Enables using buttons.
+            - `[p]helpset usebuttons` - Toggles the value.
+
+        **Arguments:**
+            - `[use_buttons]` - Whether to use buttons. Leave blank to toggle.
+        """
+        if use_buttons is None:
+            use_buttons = not await ctx.bot._config.use_buttons()
+        await ctx.bot._config.use_buttons.set(use_buttons)
+        if use_buttons:
+            await ctx.send(_("I will use buttons on basic menus."))
+        else:
+            await ctx.send(_("I will not use buttons on basic menus."))
+
     @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
