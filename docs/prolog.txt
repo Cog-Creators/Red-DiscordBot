@@ -55,4 +55,4 @@
 
 .. This is for Audio as this explanation is repeated through most playlist commands.
 
-.. |audio-playlist-arg-info| replace:: The following are all optional:||* --scope <scope>|* --author [user]|* --guild [guild] (**only the bot owner can use this**)||**Scope** is one of the following:||* Global|* Guild|* User||**Author** can be one of the following:||* User ID|* User Mention|* User Name#123||**Guild** can be one of the following:||* Guild ID|* Exact guild name
+.. |audio-playlist-arg-info| replace:: The following are all optional:\n\n* --scope <scope>\n* --author [user]\n* --guild [guild] (**only the bot owner can use this**)\n\n**Scope** is one of the following:\n\n* Global\n* Guild\n* User\n\n**Author** can be one of the following:\n\n* User ID\n* User Mention\n* User Name#123\n\n**Guild** can be one of the following:\n\n* Guild ID\n* Exact guild name
