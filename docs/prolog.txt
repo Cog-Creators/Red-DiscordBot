@@ -52,5 +52,3 @@
 .. These are the comments for parameter types such as `bool`.
 
 .. |bool-input| replace:: You should provide either 'true' or 'false'.
-
-.. This is for Audio as this explanation is repeated through most playlist commands.
