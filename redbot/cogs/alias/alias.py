@@ -3,7 +3,7 @@ import logging
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict, List, Literal
+from typing import List, Literal
 
 import discord
 from redbot.core import Config, commands, checks
@@ -47,6 +47,14 @@ class Alias(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 8927348724)
 
+        default_alias = {
+            "command": None,
+            "creator": None,
+            "uses": 0,
+        }
+
+        self.config.init_custom("Alias", 2)
+        self.config.register_custom("Alias", **default_alias)
         self.config.register_global(entries=[], handled_string_creator=False)
         self.config.register_guild(entries=[])
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
