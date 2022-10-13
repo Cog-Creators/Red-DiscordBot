@@ -91,8 +91,27 @@ Q: How do I turn off autoplay?
 	Use the ``[p]audioset autoplay toggle`` command.
 
 Q: How do I use localtracks?
-	
+
 	See the :ref:`local tracks section<local-tracks>`.
+    
+Q: My console is saying that "Port 2333 is already in use". How can I fix this?
+
+    If you are trying to run multiple bots with Audio, you should follow our guide on
+    :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another external process
+    is using the port, so you need to figure out what is using port 2333 and terminate/disconnect it yourself.
+    
+Q: My terminal is saying that I "must install Java 11 for Lavalink to run". How can I fix this?
+
+    You are getting this error because you have a different version of Java installed, or you don't have
+    Java installed at all. As the error states, Java 11 is required, and can be installed from
+    `here <https://adoptium.net/temurin/releases/?version=11>`_.
+    
+    Use ``[p]llset java <path_to_java_11_executable>``, to make Audio launch Lavalink with a
+    specific Java binary. To do this, you will need to locate your ``java.exe``/``java`` file
+    in your **Java 11 install**.
+    
+    Alternatively, update your PATH settings so that Java 11 is the one used by ``java``. However,
+    you should confirm that nothing other than Red is running on the machine that requires Java.
 
 .. _queue_commands:
 
