@@ -55,12 +55,12 @@ class Alias(commands.Cog):
 
         self.config.init_custom("Alias", 2)
         self.config.register_custom("Alias", **default_alias)
-        self.config.register_global(entries=[], handled_string_creator=False)
-        self.config.register_guild(entries=[])
+        self.config.register_global(handled_string_creator=False, using_custom_group=False)
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
 
     async def cog_load(self) -> None:
         await self._maybe_handle_string_keys()
+        await self._maybe_migrate_config_to_custom_group()
 
         if not self._aliases._loaded:
             await self._aliases.load_aliases()
@@ -127,6 +127,32 @@ class Alias(commands.Cog):
             # hit.
 
         await self.config.handled_string_creator.set(True)
+
+    async def _maybe_migrate_config_to_custom_group(self):
+        if await self.config.using_custom_group():
+            return
+
+        if await self.config.entries():
+            async with self.config.entries() as global_alias_list:
+                for a in global_alias_list:
+                    await self.config.custom("Alias", None, a["name"]).command.set(a["command"])
+                    await self.config.custom("Alias", None, a["name"]).creator.set(a["creator"])
+                global_alias_list.clear()
+
+        all_guild_aliases = await self.config.all_guilds()
+        for guild_id, guild_data in all_guild_aliases:
+            try:
+                for a in guild_data["entries"]:
+                    await self.config.custom("Alias", guild_id, a["name"]).command.set(
+                        a["command"]
+                    )
+                    await self.config.custom("Alias", guild_id, a["name"]).creator.set(
+                        a["creator"]
+                    )
+                await self.config.guild_from_id(guild_id).entries.clear()
+            except KeyError:
+                continue
+        await self.config.using_custom_group.set(True)
 
     def is_command(self, alias_name: str) -> bool:
         """
