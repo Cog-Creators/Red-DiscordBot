@@ -341,7 +341,7 @@ bankset maxbal
 
 Defines the maximum amount of money a user can have with the bot.
 
-If an user reaches this limit, he will be unable to gain more money.
+If a user reaches this limit, they will be unable to gain more money.
 
 **Arguments**
 

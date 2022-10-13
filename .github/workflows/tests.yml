@@ -91,3 +91,13 @@ jobs:
             PGPASSWORD: postgres
             PGPORT: 5432
           run: tox
+        - name: Verify no errors in PostgreSQL logs.
+          run: |
+            logs="$(docker logs "${{ job.services.postgresql.id }}" 2>&1)"
+            echo "---- PostgreSQL logs ----"
+            echo "$logs"
+            echo "---- PostgreSQL logs ----"
+            error_count="$(echo "$logs" | { grep -c 'ERROR: ' || true; })"
+            if [[ $error_count -gt 0 ]]; then
+              exit 1
+            fi
