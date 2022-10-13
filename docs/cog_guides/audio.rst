@@ -856,7 +856,28 @@ Set a playlist to auto-play songs from.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example Usage**
 
@@ -2281,7 +2302,28 @@ appended to the end of the playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2357,7 +2399,28 @@ Create an empty playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2383,7 +2446,28 @@ Remove duplicate tracks from a saved playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2409,7 +2493,28 @@ Delete a saved playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2441,7 +2546,28 @@ for the v2 variable.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2467,7 +2593,28 @@ Retrieve information from a saved playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2493,7 +2640,28 @@ List saved playlists.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2519,7 +2687,28 @@ Save the queue to a playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2545,7 +2734,28 @@ Remove a track from a playlist by URL.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2571,7 +2781,28 @@ Rename an existing playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2595,7 +2826,28 @@ playlist save
 
 Save a playlist from a URL.
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2621,7 +2873,28 @@ Load a playlist into the queue.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2647,7 +2920,28 @@ Updates all tracks in a playlist.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
@@ -2678,7 +2972,28 @@ V3 Playlist made with ``[p]playlist download`` will load a lot faster.
 
 **Args**
 
-|audio-playlist-arg-info|
+The following are all optional:
+
+* --scope <scope>
+* --author [user]
+* --guild [guild] (**only the bot owner can use this**)
+
+**Scope** is one of the following:
+
+* Global
+* Guild
+* User
+
+**Author** can be one of the following:
+
+* User ID
+* User Mention
+* User Name#123
+
+**Guild** can be one of the following:
+
+* Guild ID
+* Exact guild name
 
 **Example usage**
 
