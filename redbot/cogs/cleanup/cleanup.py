@@ -733,7 +733,7 @@ class Cleanup(commands.Cog):
         )
 
         to_delete.append(ctx.message)
-        await mass_purge(to_delete, ctx.channel, "Duplicate message cleanup")
+        await mass_purge(to_delete, ctx.channel, reason="Duplicate message cleanup")
         await self.send_optional_notification(len(to_delete), ctx.channel, subtract_invoking=True)
 
     @commands.group()
