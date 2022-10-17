@@ -1,4 +1,3 @@
-from ast import alias
 from typing import Tuple, Dict, Optional, List, Union
 from re import findall
 
@@ -152,17 +151,17 @@ class AliasCache:
                         return self._aliases[guild_id][alias_name]
         else:
             if guild:
-                alias_config = self.config.custom("Alias", guild.id, alias_name)
+                alias_config = self.config.custom("Alias", guild.id, alias_name).all()
                 alias = AliasEntry(
                     alias_name,
-                    await alias_config.command(),
-                    await alias_config.creator(),
+                    alias_config["command"],
+                    alias_config["creator"],
                     guild.id,
                 )
             else:
                 alias_config = self.config.custom("Alias", None, alias_name)
                 alias = AliasEntry(
-                    alias_name, await alias_config.command(), await alias_config.creator(), None
+                    alias_name, alias_config["command"], alias_config["creator"], None
                 )
             return alias
 

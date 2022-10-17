@@ -10,4 +10,6 @@ __all__ = ["alias"]
 def alias(config, monkeypatch):
     with monkeypatch.context() as m:
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
-        return Alias(None)
+        cog = Alias(None)
+        cog._aliases._aliases = {"None": {}}
+        return
