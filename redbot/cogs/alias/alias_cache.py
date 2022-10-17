@@ -143,7 +143,7 @@ class AliasCache:
 
         if self._cache_enabled:
             if alias_name in self._aliases[str(None)]:
-                return self._aliases[(None)][alias_name]
+                return self._aliases[str(None)][alias_name]
             if guild is not None:
                 guild_id = str(guild.id)
                 if guild_id in self._aliases:
