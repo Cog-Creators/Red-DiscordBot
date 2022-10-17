@@ -133,14 +133,13 @@ class Alias(commands.Cog):
             return
 
         if await self.config.entries():
-            async with self.config.entries() as global_alias_list:
-                for a in global_alias_list:
-                    await self.config.custom("Alias", None, a["name"]).command.set(a["command"])
-                    await self.config.custom("Alias", None, a["name"]).creator.set(a["creator"])
-                global_alias_list.clear()
+            async for a in self.config.entries():
+                await self.config.custom("Alias", None, a["name"]).command.set(a["command"])
+                await self.config.custom("Alias", None, a["name"]).creator.set(a["creator"])
+            await self.config.entries.clear()
 
         all_guild_aliases = await self.config.all_guilds()
-        for guild_id, guild_data in all_guild_aliases:
+        for guild_id, guild_data in all_guild_aliases.items():
             try:
                 for a in guild_data["entries"]:
                     await self.config.custom("Alias", guild_id, a["name"]).command.set(

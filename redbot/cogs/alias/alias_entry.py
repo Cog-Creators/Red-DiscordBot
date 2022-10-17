@@ -89,10 +89,10 @@ class AliasCache:
             self._loaded = True
             return
 
-        async for guild_id, guild_data in self.config.custom("Alias").all():
+        for guild_id, guild_data in (await self.config.custom("Alias").all()).items():
             if guild_id not in self._aliases:
                 self._aliases[guild_id] = {}
-            for alias_name, alias_data in guild_data:
+            for alias_name, alias_data in guild_data.items():
                 self._aliases[guild_id][alias_name] = AliasEntry(
                     alias_name, alias_data["command"], alias_data["creator"], guild_id
                 )
@@ -112,11 +112,12 @@ class AliasCache:
         aliases: List[AliasEntry] = []
 
         if self._cache_enabled:
-            if guild.id in self._aliases:
-                for _, alias in self._aliases[guild.id].items():
+            guild_id = str(guild.id)
+            if guild_id in self._aliases:
+                for _, alias in self._aliases[guild_id].items():
                     aliases.append(alias)
         else:
-            async for alias_name, alias_data in self.config.custom("Alias", guild.id).all():
+            for alias_name, alias_data in await self.config.custom("Alias", guild.id).all():
                 aliases.append(
                     AliasEntry(alias_name, alias_data["command"], alias_data["creator"], guild.id)
                 )
@@ -126,11 +127,11 @@ class AliasCache:
         """Returns all global specific aliases"""
         aliases: List[AliasEntry] = []
         if self._cache_enabled:
-            for _, alias in self._aliases[None].items():
+            for _, alias in self._aliases[str(None)].items():
                 aliases.append(alias)
         else:
             aliases = []
-            async for alias_name, alias_data in self.config.custom("Alias", None).all():
+            for alias_name, alias_data in await self.config.custom("Alias", None).all():
                 aliases.append(
                     AliasEntry(alias_name, alias_data["command"], alias_data["creator"], None)
                 )
@@ -142,12 +143,13 @@ class AliasCache:
         """Returns an AliasEntry object if the provided alias_name is a registered alias"""  #
 
         if self._cache_enabled:
-            if alias_name in self._aliases[None]:
-                return self._aliases[None][alias_name]
+            if alias_name in self._aliases[str(None)]:
+                return self._aliases[(None)][alias_name]
             if guild is not None:
-                if guild.id in self._aliases:
-                    if alias_name in self._aliases[guild.id]:
-                        return self._aliases[guild.id][alias_name]
+                guild_id = str(guild.id)
+                if guild_id in self._aliases:
+                    if alias_name in self._aliases[guild_id]:
+                        return self._aliases[guild_id][alias_name]
         else:
             if guild:
                 alias_config = self.config.custom("Alias", guild.id, alias_name)
@@ -195,14 +197,14 @@ class AliasCache:
             alias = AliasEntry(alias_name, command, ctx.author.id, None)
             settings = self.config.custom("Alias", None, alias_name)
             if self._cache_enabled:
-                self._aliases[None][alias.name] = alias
+                self._aliases[str(None)][alias.name] = alias
         else:
             alias = AliasEntry(alias_name, command, ctx.author.id, ctx.guild.id)
             settings = self.config.custom("Alias", ctx.guild.id, alias_name)
             if self._cache_enabled:
                 if ctx.guild.id not in self._aliases:
-                    self._aliases[ctx.guild.id] = {}
-                self._aliases[ctx.guild.id][alias.name] = alias
+                    self._aliases[str(ctx.guild.id)] = {}
+                self._aliases[str(ctx.guild.id)][alias.name] = alias
 
         await settings.command.set(command)
         await settings.creator.set(ctx.author.id)
@@ -222,9 +224,9 @@ class AliasCache:
         await settings.command.set(command)
         if self._cache_enabled:
             if global_:
-                self._aliases[None][alias_name].command = command
+                self._aliases[str(None)][alias_name].command = command
             else:
-                self._aliases[ctx.guild.id][alias_name].command = command
+                self._aliases[str(ctx.guild.id)][alias_name].command = command
         return True
 
     async def delete_alias(
@@ -238,7 +240,7 @@ class AliasCache:
         await settings.clear()
         if self._cache_enabled:
             if global_:
-                del self._aliases[None][alias_name]
+                del self._aliases[str(None)][alias_name]
             else:
-                del self._aliases[ctx.guild.id][alias_name]
+                del self._aliases[str(ctx.guild.id)][alias_name]
         return True
