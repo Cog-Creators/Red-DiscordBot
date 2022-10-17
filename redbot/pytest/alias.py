@@ -12,4 +12,4 @@ def alias(config, monkeypatch):
         m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
         cog = Alias(None)
         cog._aliases._aliases = {"None": {}}
-        return
+        return cog
