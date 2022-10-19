@@ -2019,6 +2019,11 @@ llsetup
 
 Lavalink server configuration options.
 
+.. note::
+
+    ``[p]llset`` commands are used for advanced management of Lavalink servers.
+    A normal Red user should never have to use these commands unless they are :ref:`managing multiple Red bots with Audio<multibots>`.
+
 .. _audio-command-llsetup-external:
 
 """"""""""""""""
