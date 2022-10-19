@@ -59,7 +59,7 @@ The following commands are used for controlling the audio being played, such as 
 	* HTTPS Shoutcast Streams
 	* Local file playback (:ref:`see here<local-tracks>`)
 	* SoundCloud
-	* Spotify links via YouTube (:ref:`see here for more info<spotify-playback-and-api-keys>`)
+	* Spotify links via YouTube (:ref:`see here<spotify-playback-and-api-keys>`)
 	* Twitch
 	* Vimeo
 	* YouTube
@@ -194,11 +194,11 @@ first day the Spotify playlist URL is used with Audio, then the next day it will
 from the local cache, and use the API credits to look up the next 100 songs. After 5 days of playing the Spotify playlist
 through Audio, that playlist will be fully cached locally and will not require any API credits to play songs.
 
-``[p]genre`` will let users pick a Spotify music genre to queue music from.
+The following commands are relevant:
 
-``[p]audioset countrycode`` will let guild owners specify what country code to prefer for Spotify searches, for the guild.
-
-``[p]audioset mycountrycode`` will let individual users pick what country code to prefer for Spotify searches of their own.
+* ``[p]genre`` - Lets users pick a Spotify music genre to queue music from.
+* ``[p]audioset countrycode`` - Lets guild owners specify what country code to prefer for Spotify searches, for the guild.
+* ``[p]audioset mycountrycode`` - Lets individual users pick what country code to prefer for Spotify searches of their own.
 
 .. _local-tracks:
 
@@ -216,15 +216,11 @@ To use this feature:
 3. Create/move/copy/symblink your album folders (Subfolders containing your tracks) to the folder created in Step 1.
 4. Put any of Audio's supported files in the following folders:
 
-   ``localtracks/<parent folder>/song.mp3``
+   * ``localtracks/<parent folder>/song.mp3``
+   * ``localtracks/<parent folder>/<child folder>/song.mp3``
 
-   ``localtracks/<parent folder>/<child folder>/song.mp3``
-
-When using this localtracks feature, use ``[p]local`` commands.
-
-Use ``[p]play <parent folder>/song.mp3`` to play single songs.
-
-Use ``[p]local folder <parent folder>/<child folder>`` to play the entire folder.
+When using this localtracks feature, use ``[p]local`` commands. Use ``[p]play <parent folder>/song.mp3`` to play
+single songs. Use ``[p]local folder <parent folder>/<child folder>`` to play the entire folder.
 
 The following formats are supported:
 
@@ -2019,9 +2015,11 @@ llsetup
 
 Lavalink server configuration options.
 
+.. tip:: This command has the alias of ``llset``.
+
 .. note::
 
-    ``[p]llset`` commands are used for advanced management of Lavalink servers.
+    ``[p]llsetup`` commands are used for advanced management of Lavalink servers.
     A normal Red user should never have to use these commands unless they are :ref:`managing multiple Red bots with Audio<multibots>`.
 
 .. _audio-command-llsetup-external:
@@ -2034,7 +2032,7 @@ llsetup external
 
 .. code-block:: none
 
-    [p]llsetup external 
+    [p]llsetup external
 
 **Description**
 
