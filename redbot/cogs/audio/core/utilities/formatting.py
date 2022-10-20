@@ -9,7 +9,6 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from discord.embeds import EmptyEmbed
 from lavalink import NodeNotFound
 
 from redbot.core import commands
@@ -94,14 +93,14 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             if self.lavalink_connection_aborted:
                 msg = _("Connection to Lavalink node has failed")
-                description = EmptyEmbed
+                description = None
                 if await self.bot.is_owner(ctx.author):
                     description = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except AttributeError:
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))

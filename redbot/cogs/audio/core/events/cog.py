@@ -197,7 +197,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
     ):
         if not guild:
             return
-        notify_channel = guild.get_channel(player.fetch("notify_channel"))
+        notify_channel = guild.get_channel_or_thread(player.fetch("notify_channel"))
         has_perms = self._has_notify_perms(notify_channel)
         tries = 0
         while not player._is_playing:

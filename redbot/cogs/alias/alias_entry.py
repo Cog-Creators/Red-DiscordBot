@@ -2,7 +2,7 @@ from typing import Tuple, Dict, Optional, List, Union
 from re import findall
 
 import discord
-from discord.ext.commands.view import StringView
+from discord.ext.commands.view import StringView  # DEP-WARN
 from redbot.core import commands, Config
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter

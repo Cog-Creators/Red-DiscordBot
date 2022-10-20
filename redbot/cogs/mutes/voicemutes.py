@@ -124,7 +124,7 @@ class VoiceMutes(MixinMeta):
                 audit_reason = get_audit_reason(author, reason, shorten=True)
 
                 success = await self.channel_mute_user(
-                    guild, channel, author, user, until, audit_reason
+                    guild, channel, author, user, until, audit_reason, voice_mute=True
                 )
 
                 if success["success"]:
@@ -135,7 +135,7 @@ class VoiceMutes(MixinMeta):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "vmute",
                         user,
                         author,
@@ -200,7 +200,7 @@ class VoiceMutes(MixinMeta):
                 audit_reason = get_audit_reason(author, reason, shorten=True)
 
                 success = await self.channel_unmute_user(
-                    guild, channel, author, user, audit_reason
+                    guild, channel, author, user, audit_reason, voice_mute=True
                 )
 
                 if success["success"]:
@@ -211,7 +211,7 @@ class VoiceMutes(MixinMeta):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        ctx.message.created_at.replace(tzinfo=timezone.utc),
+                        ctx.message.created_at,
                         "vunmute",
                         user,
                         author,

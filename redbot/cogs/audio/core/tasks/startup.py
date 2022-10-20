@@ -138,7 +138,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if not (perms.connect and perms.speak):
                                 vc = None
                                 break
-                            player = await lavalink.connect(vc, deafen=auto_deafen)
+                            player = await lavalink.connect(vc, self_deaf=auto_deafen)
                             player.store("notify_channel", notify_channel_id)
                             break
                         except NodeNotFound:
@@ -222,7 +222,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         if not (perms.connect and perms.speak):
                             vc = None
                             break
-                        player = await lavalink.connect(vc, deafen=auto_deafen)
+                        player = await lavalink.connect(vc, self_deaf=auto_deafen)
                         player.store("notify_channel", notify_channel_id)
                         break
                     except NodeNotFound:
@@ -267,14 +267,14 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     try:
                         await self.api_interface.autoplay(player, self.playlist_api)
                     except DatabaseError:
-                        notify_channel = guild.get_channel(notify_channel)
+                        notify_channel = guild.get_channel_or_thread(notify_channel)
                         if notify_channel:
                             await self.send_embed_msg(
                                 notify_channel, title=_("Couldn't get a valid track.")
                             )
                         return
                     except TrackEnqueueError:
-                        notify_channel = guild.get_channel(notify_channel)
+                        notify_channel = guild.get_channel_or_thread(notify_channel)
                         if notify_channel:
                             await self.send_embed_msg(
                                 notify_channel,

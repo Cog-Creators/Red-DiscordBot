@@ -8,7 +8,6 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from discord.embeds import EmptyEmbed
 from lavalink import NodeNotFound, PlayerNotFound
 
 from redbot.core import commands
@@ -115,8 +114,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         dj_role = self._dj_role_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
         )
-        dj_role_obj = ctx.guild.get_role(dj_role)
-        return dj_role_obj in ctx.guild.get_member(member.id).roles
+        return member.get_role(dj_role) is not None
 
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
@@ -585,7 +583,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             except IndexError:
                 self.update_player_lock(ctx, False)
                 title = _("Nothing found")
-                desc = EmptyEmbed
+                desc = None
                 if await self.bot.is_owner(ctx.author):
                     desc = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=title, description=desc)
@@ -712,7 +710,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 await player.move_to(
                     user_channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
                 return True
         else:

@@ -13,6 +13,7 @@ from redbot.core import checks, commands, Config, version_info as red_version_in
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import can_user_react_in
 from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -933,7 +934,7 @@ class Downloader(commands.Cog):
                 poss_installed_path = (await self.cog_install_path()) / real_name
                 if poss_installed_path.exists():
                     with contextlib.suppress(commands.ExtensionNotLoaded):
-                        ctx.bot.unload_extension(real_name)
+                        await ctx.bot.unload_extension(real_name)
                         await ctx.bot.remove_loaded_package(real_name)
                     await self._delete_cog(poss_installed_path)
                     uninstalled_cogs.append(inline(real_name))
@@ -1056,26 +1057,26 @@ class Downloader(commands.Cog):
     async def _cog_listpinned(self, ctx: commands.Context):
         """List currently pinned cogs."""
         installed = await self.installed_cogs()
-        pinned_list = sorted([cog.name for cog in installed if cog.pinned], key=str.lower)
+        pinned_list = sorted(
+            [cog for cog in installed if cog.pinned], key=lambda cog: cog.name.lower()
+        )
         if pinned_list:
-            message = humanize_list(pinned_list)
+            message = "\n".join(
+                f"({inline(cog.commit[:7] or _('unknown'))}) {cog.name}" for cog in pinned_list
+            )
         else:
             message = _("None.")
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            for page in pagify(message, delims=[", "], page_length=900):
-                name = _("(continued)") if page.startswith(", ") else _("Pinned Cogs:")
-                if page.startswith(", "):
-                    page = page[2:]
+            for page in pagify(message, page_length=900):
+                name = _("(continued)") if page.startswith("\n") else _("Pinned Cogs:")
                 embed.add_field(name=name, value=page, inline=False)
             await ctx.send(embed=embed)
         else:
-            for page in pagify(message, delims=[", "], page_length=1900):
-                if page.startswith(", "):
-                    page = page[2:]
-                else:
+            for page in pagify(message, page_length=1900):
+                if not page.startswith("\n"):
                     page = _("Pinned Cogs: \n") + page
-                await ctx.send(box(page))
+                await ctx.send(page)
 
     @cog.command(name="checkforupdates")
     async def _cog_checkforupdates(self, ctx: commands.Context) -> None:
@@ -1665,7 +1666,7 @@ class Downloader(commands.Cog):
                 if len(updated_cognames) > 1
                 else _("Would you like to reload the updated cog?")
             )
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if not can_react:
                 message += " (yes/no)"
             query: discord.Message = await ctx.send(message)

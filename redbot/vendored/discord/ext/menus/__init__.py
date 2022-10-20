@@ -514,7 +514,14 @@ class Menu(metaclass=_MenuMeta):
         return len(self.buttons)
 
     def _verify_permissions(self, ctx, channel, permissions):
-        if not permissions.send_messages:
+        is_thread = isinstance(channel, discord.Thread)
+        if is_thread:
+            if (
+                not permissions.send_messages_in_threads
+                or (channel.locked and not permissions.manage_threads)
+            ):
+                raise CannotSendMessages()
+        elif not permissions.send_messages:
             raise CannotSendMessages()
 
         if self.check_embeds and not permissions.embed_links:
@@ -522,7 +529,7 @@ class Menu(metaclass=_MenuMeta):
 
         self._can_remove_reactions = permissions.manage_messages
         if self.should_add_reactions():
-            if not permissions.add_reactions:
+            if not permissions.add_reactions or (is_thread and channel.archived):
                 raise CannotAddReactions()
             if not permissions.read_message_history:
                 raise CannotReadMessageHistory()
