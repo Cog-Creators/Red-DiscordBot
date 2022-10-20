@@ -42,7 +42,7 @@ Unsure of how to get started contributing to Red? Please take a look at the Issu
 * beginner - issues that can normally be fixed in just a few lines of code and maybe a test or two.
 * help-wanted - issues that are currently unassigned to anyone and may be a bit more involved/complex than issues tagged with beginner.
 
-**Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
+**Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github)
 
 At this point you're ready to start making changes. Feel free to ask for help; everyone was a beginner at some point!
 

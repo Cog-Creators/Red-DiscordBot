@@ -161,7 +161,7 @@ Here is an example of the :code:`async with` syntax:
     * :py:meth:`Config.member` which takes :py:class:`discord.Member`.
     * :py:meth:`Config.user` which takes :py:class:`discord.User`.
     * :py:meth:`Config.role` which takes :py:class:`discord.Role`.
-    * :py:meth:`Config.channel` which takes :py:class:`discord.TextChannel`.
+    * :py:meth:`Config.channel` which takes :py:class:`discord.abc.GuildChannel` or :py:class:`discord.Thread`.
 
 If you need to wipe data from the config, you want to look at :py:meth:`Group.clear`, or :py:meth:`Config.clear_all`
 and similar methods, such as :py:meth:`Config.clear_all_guilds`.
@@ -467,7 +467,7 @@ much the same way they would in V2. The following examples will demonstrate how 
     async def setup(bot):
         cog = ExampleCog()
         await cog.load_data()
-        bot.add_cog(cog)
+        await bot.add_cog(cog)
 
 ************************************
 Best practices and performance notes

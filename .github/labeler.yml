@@ -18,15 +18,12 @@
   - redbot/core/bank.py
   # Docs
   - docs/framework_bank.rst
-"Category: Bank Cog":
-  # Source
-  - redbot/cogs/bank/*
-  # Docs
-  - docs/cog_guides/bank.rst
 "Category: Bot Core":
   # Source
   - redbot/*
   - redbot/core/__init__.py
+  - redbot/core/_debuginfo.py
+  - redbot/core/_diagnoser.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/bot.py
   - redbot/core/checks.py
@@ -121,7 +118,10 @@
   - schema/*
   - tools/*
 "Category: Mod Cog":
+  # Source
   - redbot/cogs/mod/*
+  # Docs
+  - docs/cog_guides/mod.rst
 "Category: Modlog API":
   # Source
   - redbot/core/generic_casetypes.py
@@ -129,16 +129,26 @@
   # Docs
   - docs/framework_modlog.rst
 "Category: Modlog Cog":
+  # Source
   - redbot/cogs/modlog/*
+  # Docs
+  - docs/cog_guides/modlog.rst
 "Category: Mutes Cog":
+  # Source
   - redbot/cogs/mutes/*
+  # Docs
+  - docs/cog_guides/mutes.rst
 "Category: Permissions":
   # Source
   - redbot/cogs/permissions/*
   # Docs
+  - docs/cog_guides/permissions.rst
   - docs/cog_permissions.rst
 "Category: Reports Cog":
+  # Source
   - redbot/cogs/reports/*
+  # Docs
+  - docs/cog_guides/reports.rst
 "Category: RPC/ZMQ API":
   # Source
   - redbot/core/rpc.py
@@ -157,6 +167,7 @@
   - redbot/cogs/trivia/*
   # Docs
   - docs/cog_guides/trivia.rst
+  - docs/guide_trivia_list_creation.rst
 "Category: Trivia Lists":
   - redbot/cogs/trivia/data/lists/*
 "Category: Utility Functions":
@@ -165,4 +176,7 @@
   # Docs
   - docs/framework_utils.rst
 "Category: Warnings":
+  # Source
   - redbot/cogs/warnings/*
+  # Docs
+  - docs/cog_guides/warnings.rst

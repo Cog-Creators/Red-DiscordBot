@@ -122,6 +122,22 @@ Examples:
 
 - ``[words...]`` The words or sentences to filter.
 
+.. _filter-command-filter-channel-clear:
+
+""""""""""""""""""""
+filter channel clear
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]filter channel clear
+
+**Description**
+
+Clears this channel's filter list.
+
 .. _filter-command-filter-channel-list:
 
 """""""""""""""""""
@@ -163,6 +179,22 @@ Examples:
 **Arguments:**
 
 - ``[words...]`` The words or sentences to no longer filter.
+
+.. _filter-command-filter-clear:
+
+""""""""""""
+filter clear
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]filter clear
+
+**Description**
+
+Clears this server's filter list.
 
 .. _filter-command-filter-delete:
 

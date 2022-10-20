@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-04-03 22:00+0000\n"
+"POT-Creation-Date: 2021-05-18 21:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -158,7 +158,7 @@ msgid "Mass bans user(s) from the server.\n\n"
 "        `days` is the amount of days of messages to cleanup on massban.\n\n"
 "        Example:\n"
 "           - `[p]massban 345628097929936898 57287406247743488 7 they broke all rules.`\n"
-"            This will ban all the added userids and delete 7 days of worth messages.\n\n"
+"            This will ban all the added userids and delete 7 days worth of their messages.\n\n"
 "        User IDs need to be provided in order to ban\n"
 "        using this command.\n"
 "        "
@@ -256,33 +256,33 @@ msgstr ""
 msgid "Something went wrong while attempting to kick that member."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:806
+#: redbot/cogs/mod/kickban.py:808
 #, docstring
 msgid "Unban a user from speaking and listening in the server's voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:825
+#: redbot/cogs/mod/kickban.py:827
 msgid "That user isn't muted or deafened by the server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:841
+#: redbot/cogs/mod/kickban.py:843
 msgid "User is now allowed to speak and listen in voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:847
+#: redbot/cogs/mod/kickban.py:849
 #, docstring
 msgid "Ban a user from speaking and listening in the server's voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:868
+#: redbot/cogs/mod/kickban.py:870
 msgid "That user is already muted and deafened server-wide."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:882
+#: redbot/cogs/mod/kickban.py:884
 msgid "User has been banned from speaking or listening in voice channels."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:889
+#: redbot/cogs/mod/kickban.py:891
 #, docstring
 msgid "Unban a user from this server.\n\n"
 "        Requires specifying the target user's ID. To find this, you may either:\n"
@@ -291,33 +291,33 @@ msgid "Unban a user from this server.\n\n"
 "        click the user and select 'Copy ID'."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:902
+#: redbot/cogs/mod/kickban.py:904
 msgid "It seems that user isn't banned!"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:907
+#: redbot/cogs/mod/kickban.py:909
 msgid "Something went wrong while attempting to unban that user."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:921
+#: redbot/cogs/mod/kickban.py:923
 msgid "Unbanned that user from this server."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:927
+#: redbot/cogs/mod/kickban.py:929
 msgid "I don't share another server with this user. I can't reinvite them."
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:935
+#: redbot/cogs/mod/kickban.py:937
 msgid "You've been unbanned from {server}.\n"
 "Here is an invite for that server: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:942
+#: redbot/cogs/mod/kickban.py:944
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {invite_link}"
 msgstr ""
 
-#: redbot/cogs/mod/kickban.py:950
+#: redbot/cogs/mod/kickban.py:952
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {invite_link}"
 msgstr ""
 
@@ -356,7 +356,7 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:36
 #, docstring
-msgid "Change a user's nickname.\n\n"
+msgid "Change a member's nickname.\n\n"
 "        Leaving the nickname empty will remove it.\n"
 "        "
 msgstr ""
@@ -427,10 +427,10 @@ msgstr ""
 
 #: redbot/cogs/mod/names.py:164
 #, docstring
-msgid "Show information about a user.\n\n"
+msgid "Show information about a member.\n\n"
 "        This includes fields for status, discord join date, server\n"
 "        join date, voice state and previous names/nicknames.\n\n"
-"        If the user has no roles, previous names or previous nicknames,\n"
+"        If the member has no roles, previous names or previous nicknames,\n"
 "        these fields will be omitted.\n"
 "        "
 msgstr ""
@@ -439,74 +439,74 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:200 redbot/cogs/mod/names.py:201
+#: redbot/cogs/mod/names.py:202 redbot/cogs/mod/names.py:203
 msgid "{}\n"
 "({} days ago)"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:213
+#: redbot/cogs/mod/names.py:215
 msgid "Chilling in {} status"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:227
+#: redbot/cogs/mod/names.py:229
 msgid "and {numeric_number} more roles not displayed due to embed limits."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:254
+#: redbot/cogs/mod/names.py:256
 msgid "Joined Discord on"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:255
+#: redbot/cogs/mod/names.py:257
 msgid "Joined this server on"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:258
+#: redbot/cogs/mod/names.py:260
 msgid "Roles"
 msgstr "Roller"
 
-#: redbot/cogs/mod/names.py:258
+#: redbot/cogs/mod/names.py:260
 msgid "Role"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:264
+#: redbot/cogs/mod/names.py:266
 msgid "Previous Names"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:264
+#: redbot/cogs/mod/names.py:266
 msgid "Previous Name"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:272
+#: redbot/cogs/mod/names.py:274
 msgid "Previous Nicknames"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:272
+#: redbot/cogs/mod/names.py:274
 msgid "Previous Nickname"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:278
+#: redbot/cogs/mod/names.py:280
 msgid "Current voice channel"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:282
+#: redbot/cogs/mod/names.py:284
 msgid "Member #{} | User ID: {}"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:296
+#: redbot/cogs/mod/names.py:298
 #, docstring
-msgid "Show previous names and nicknames of a user."
+msgid "Show previous names and nicknames of a member."
 msgstr ""
 
-#: redbot/cogs/mod/names.py:300
+#: redbot/cogs/mod/names.py:302
 msgid "**Past 20 names**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:306
+#: redbot/cogs/mod/names.py:308
 msgid "**Past 20 nicknames**:"
 msgstr ""
 
-#: redbot/cogs/mod/names.py:313
-msgid "That user doesn't have any recorded name or nickname change."
+#: redbot/cogs/mod/names.py:315
+msgid "That member doesn't have any recorded name or nickname change."
 msgstr ""
 
 #: redbot/cogs/mod/settings.py:23
