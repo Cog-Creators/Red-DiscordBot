@@ -7,6 +7,8 @@ from typing import Optional
 import discord
 from discord import __version__ as discord_version
 
+from redbot.core.utils._internal_utils import cli_level_to_log_level
+
 
 def confirm(text: str, default: Optional[bool] = None) -> bool:
     if default is None:
@@ -68,6 +70,11 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
             if len(prefix) > 10:
                 if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
+            if prefix.startswith("/"):
+                print(
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+                )
+                prefix = ""
             if prefix:
                 await red._config.prefix.set([prefix])
 
@@ -179,6 +186,9 @@ def parse_cli_flags(args):
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
     parser.add_argument(
+        "--unload-cogs", type=str, nargs="+", help="Force unloading specified cogs."
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "
@@ -186,12 +196,13 @@ def parse_cli_flags(args):
         "process.",
     )
     parser.add_argument(
+        "-v",
+        "--verbose",
         "--debug",
-        action="store_const",
+        action="count",
+        default=0,
         dest="logging_level",
-        const=logging.DEBUG,
-        default=logging.INFO,
-        help="Sets the loggers level as debug",
+        help="Increase the verbosity of the logs, each usage of this flag increases the verbosity level by 1.",
     )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
@@ -291,5 +302,6 @@ def parse_cli_flags(args):
         args.prefix = sorted(args.prefix, reverse=True)
     else:
         args.prefix = []
+    args.logging_level = cli_level_to_log_level(args.logging_level)
 
     return args
