@@ -19,8 +19,6 @@ from typing import (
     Dict,
     Type,
     TypeVar,
-    Literal as Literal,
-    Any,
     Union as UserInputOptional,
 )
 
@@ -35,6 +33,7 @@ if TYPE_CHECKING:
     from .context import Context
 
 __all__ = [
+    "RawUserIdConverter",
     "DictConverter",
     "UserInputOptional",
     "NoParseOptional",
@@ -44,7 +43,6 @@ __all__ = [
     "get_timedelta_converter",
     "parse_relativedelta",
     "parse_timedelta",
-    "Literal",
     "CommandConverter",
     "CogConverter",
 ]
@@ -52,6 +50,7 @@ __all__ = [
 _ = Translator("commands.converter", __file__)
 
 ID_REGEX = re.compile(r"([0-9]{15,20})")
+USER_MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 
 
 # Taken with permission from
@@ -75,7 +74,7 @@ def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional
     """
     Local utility function to match TIME_RE string above to user input for both parse_timedelta and parse_relativedelta
     """
-    matches = TIME_RE.match(string_to_match)
+    matches = TIME_RE.fullmatch(string_to_match)
     if matches:
         params = {k: int(v) for k, v in matches.groupdict().items() if v is not None}
         for k in params.keys():
@@ -205,46 +204,30 @@ def parse_relativedelta(
     return None
 
 
-class _GuildConverter(discord.Guild):
-    """Converts to a `discord.Guild` object.
+class RawUserIdConverter(dpy_commands.Converter):
+    """
+    Converts ID or user mention to an `int`.
 
-    The lookup strategy is as follows (in order):
+    Useful for commands like ``[p]ban`` or ``[p]unban`` where the bot is not necessarily
+    going to share any servers with the user that a moderator wants to ban/unban.
 
-    1. Lookup by ID.
-    2. Lookup by name.
+    This converter doesn't check if the ID/mention points to an actual user
+    but it won't match IDs and mentions that couldn't possibly be valid.
 
-    .. deprecated-removed:: 3.4.8 60
-        ``GuildConverter`` is now only provided within ``redbot.core.commands`` namespace.
+    For example, the converter will not match on "123" because the number doesn't have
+    enough digits to be valid ID but, it will match on "12345678901234567" even though
+    there is no user with such ID.
     """
 
-    @classmethod
-    async def convert(cls, ctx: "Context", argument: str) -> discord.Guild:
-        return await dpy_commands.GuildConverter().convert(ctx, argument)
+    async def convert(self, ctx: "Context", argument: str) -> int:
+        # This is for the hackban and unban commands, where we receive IDs that
+        # are most likely not in the guild.
+        # Mentions are supported, but most likely won't ever be in cache.
 
+        if match := ID_REGEX.match(argument) or USER_MENTION_REGEX.match(argument):
+            return int(match.group(1))
 
-_GuildConverter.__name__ = "GuildConverter"
-
-
-def __getattr__(name: str, *, stacklevel: int = 2) -> Any:
-    # Let me just say it one more time... This is awesome! (PEP-562)
-    if name == "GuildConverter":
-        # let's not waste time on importing this when we don't need it
-        # (and let's not put in the public API)
-        from redbot.core.utils._internal_utils import deprecated_removed
-
-        deprecated_removed(
-            "`GuildConverter` from `redbot.core.commands.converter` namespace",
-            "3.4.8",
-            60,
-            "Use `GuildConverter` from `redbot.core.commands` namespace instead.",
-            stacklevel=2,
-        )
-        return globals()["_GuildConverter"]
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
-def __dir__() -> List[str]:
-    return [*globals().keys(), "GuildConverter"]
+        raise BadArgument(_("'{input}' doesn't look like a valid user ID.").format(input=argument))
 
 
 # Below this line are a lot of lies for mypy about things that *end up* correct when
@@ -271,13 +254,13 @@ else:
             args = self.pattern.split(argument)
 
             if len(args) % 2 != 0:
-                raise BadArgument()
+                raise BadArgument(_("Missing a key or value."))
 
             iterator = iter(args)
 
             for key in iterator:
                 if self.expected_keys and key not in self.expected_keys:
-                    raise BadArgument(_("Unexpected key {key}").format(key=key))
+                    raise BadArgument(_("Unexpected key `{key}`.").format(key=key))
 
                 ret[key] = next(iterator)
 
@@ -289,7 +272,6 @@ if TYPE_CHECKING:
     def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
         ...
 
-
 else:
 
     def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
@@ -297,7 +279,7 @@ else:
         Returns a typechecking safe `DictConverter` suitable for use with discord.py
         """
 
-        class PartialMeta(type):
+        class PartialMeta(type(DictConverter)):
             __call__ = functools.partialmethod(
                 type(DictConverter).__call__, *expected_keys, delims=delims
             )
@@ -369,7 +351,6 @@ if TYPE_CHECKING:
     ) -> Type[timedelta]:
         ...
 
-
 else:
 
     def get_timedelta_converter(
@@ -406,7 +387,7 @@ else:
             The converter class, which will be a subclass of `TimedeltaConverter`
         """
 
-        class PartialMeta(type):
+        class PartialMeta(type(DictConverter)):
             __call__ = functools.partialmethod(
                 type(DictConverter).__call__,
                 allowed_units=allowed_units,
@@ -491,44 +472,6 @@ if not TYPE_CHECKING:
     #: .. warning::
     #:    This converter class is still provisional.
     UserInputOptional = Optional
-
-
-if not TYPE_CHECKING:
-
-    class Literal(dpy_commands.Converter):
-        """
-        This can be used as a converter for `typing.Literal`.
-
-        In a type checking context it is `typing.Literal`.
-        In a runtime context, it's a converter which only matches the literals it was given.
-
-
-        .. warning::
-            This converter class is still provisional.
-        """
-
-        def __init__(self, valid_names: Tuple[str]):
-            self.valid_names = valid_names
-
-        def __call__(self, ctx, arg):
-            # Callable's are treated as valid types:
-            # https://github.com/python/cpython/blob/3.8/Lib/typing.py#L148
-            # Without this, ``typing.Union[Literal["clear"], bool]`` would fail
-            return self.convert(ctx, arg)
-
-        async def convert(self, ctx, arg):
-            if arg in self.valid_names:
-                return arg
-            raise BadArgument(_("Expected one of: {}").format(humanize_list(self.valid_names)))
-
-        def __class_getitem__(cls, k):
-            if not k:
-                raise ValueError("Need at least one value for Literal")
-            if isinstance(k, tuple):
-                return cls(k)
-            else:
-                return cls((k,))
-
 
 if TYPE_CHECKING:
     CommandConverter = dpy_commands.Command

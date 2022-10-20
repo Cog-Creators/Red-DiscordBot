@@ -160,6 +160,22 @@ Add a role, or a selection of roles, to the list of available selfroles.
 
 * ``<role>``: The role to add to the list. |role-input|
 
+.. _admin-command-selfroleset-clear:
+
+"""""""""""""""""
+selfroleset clear
+"""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]selfroleset clear
+
+**Description**
+
+Clear the list of available selfroles for this server.
+
 .. _admin-command-selfroleset-remove:
 
 """"""""""""""""""
@@ -373,7 +389,7 @@ announceset channel
 
 .. code-block:: none
 
-    [p]announceset channel [channel]
+    [p]announceset channel <channel>
 
 **Description**
 
@@ -381,8 +397,8 @@ Sets the channel where the bot owner announcements will be sent.
 
 **Arguments**
 
-* ``[channel]``: The channel that will be used for bot announcements.
-  |channel-input| Defaults to where you typed the command.
+* ``<channel>``: The channel that will be used for bot announcements.
+  |channel-input|
 
 .. _admin-command-announceset-clearchannel:
 

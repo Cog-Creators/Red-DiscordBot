@@ -68,133 +68,6 @@ Example:
 
 - ``<user>`` The user to check the balance of. If omitted, defaults to your own balance.
 
-.. _economy-command-bank-prune:
-
-""""""""""
-bank prune
-""""""""""
-
-.. note:: |admin-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]bank prune 
-
-**Description**
-
-Base command for pruning bank accounts.
-
-.. _economy-command-bank-prune-global:
-
-"""""""""""""""""
-bank prune global
-"""""""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]bank prune global [confirmation=False]
-
-**Description**
-
-Prune bank accounts for users who no longer share a server with the bot.
-
-Cannot be used without a global bank. See ``[p]bank prune server``.
-
-Examples:
-    - ``[p]bank prune global`` - Did not confirm. Shows the help message.
-    - ``[p]bank prune global yes``
-
-**Arguments**
-
-- ``<confirmation>`` This will default to false unless specified.
-
-.. _economy-command-bank-prune-server:
-
-"""""""""""""""""
-bank prune server
-"""""""""""""""""
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]bank prune server [confirmation=False]
-
-.. tip:: Aliases: ``bank prune guild``, ``bank prune local``
-
-**Description**
-
-Prune bank accounts for users no longer in the server.
-
-Cannot be used with a global bank. See ``[p]bank prune global``.
-
-Examples:
-    - ``[p]bank prune server`` - Did not confirm. Shows the help message.
-    - ``[p]bank prune server yes``
-
-**Arguments**
-
-- ``<confirmation>`` This will default to false unless specified.
-
-.. _economy-command-bank-prune-user:
-
-"""""""""""""""
-bank prune user
-"""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]bank prune user <user> [confirmation=False]
-
-**Description**
-
-Delete the bank account of a specified user.
-
-Examples:
-    - ``[p]bank prune user @TwentySix`` - Did not confirm. Shows the help message.
-    - ``[p]bank prune user @TwentySix yes``
-
-**Arguments**
-
-- ``<user>`` The user to delete the bank of. Takes mentions, names, and user ids.
-- ``<confirmation>`` This will default to false unless specified.
-
-.. _economy-command-bank-reset:
-
-""""""""""
-bank reset
-""""""""""
-
-.. note:: |guildowner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]bank reset [confirmation=False]
-
-**Description**
-
-Delete all bank accounts.
-
-Examples:
-    - ``[p]bank reset`` - Did not confirm. Shows the help message.
-    - ``[p]bank reset yes``
-
-**Arguments**
-
-- ``<confirmation>`` This will default to false unless specified.
-
 .. _economy-command-bank-set:
 
 """"""""
@@ -317,29 +190,6 @@ Examples:
 - | ``<duration>`` The new duration to wait in between uses of payday. Default is 5 minutes.
   | Accepts: seconds, minutes, hours, days, weeks (if no unit is specified, the duration is assumed to be given in seconds)
 
-.. _economy-command-economyset-registeramount:
-
-"""""""""""""""""""""""""
-economyset registeramount
-"""""""""""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]economyset registeramount <creds>
-
-**Description**
-
-Set the initial balance for new bank accounts.
-
-Example:
-    - ``[p]economyset registeramount 5000``
-
-**Arguments**
-
-- ``<creds>`` The new initial balance amount. Default is 0.
-
 .. _economy-command-economyset-rolepaydayamount:
 
 """""""""""""""""""""""""""
@@ -354,7 +204,9 @@ economyset rolepaydayamount
 
 **Description**
 
-Set the amount earned each payday for a role. Setting to 0 will remove the custom payday for that role instead.
+Set the amount earned each payday for a role.
+
+Set to 0 will remove the custom payday for that role instead.
 
 Only available when not using a global bank.
 
