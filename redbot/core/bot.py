@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import inspect
 import logging
@@ -8,7 +9,7 @@ import sys
 import contextlib
 import weakref
 import functools
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from datetime import datetime
 from enum import IntEnum
 from importlib.machinery import ModuleSpec
@@ -29,6 +30,7 @@ from typing import (
     MutableMapping,
     Set,
     overload,
+    TYPE_CHECKING,
 )
 from types import MappingProxyType
 
@@ -53,6 +55,13 @@ from .settings_caches import (
 from .rpc import RPCMixin
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
+
+if TYPE_CHECKING:
+    from discord.ext.commands.hybrid import CommandCallback, ContextT, P
+    from discord import app_commands
+
+
+_T = TypeVar("_T")
 
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
@@ -111,7 +120,7 @@ class Red(
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__delete_delay=0,
-            help__use_menus=False,
+            help__use_menus=0,
             help__show_hidden=False,
             help__show_aliases=True,
             help__verify_checks=True,
@@ -133,6 +142,7 @@ class Red(
             schema_version=0,
             datarequests__allow_user_requests=True,
             datarequests__user_requests_are_strict=True,
+            use_buttons=False,
         )
 
         self._config.register_guild(
@@ -220,8 +230,6 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        # to prevent multiple calls to app info during startup
-        self._app_info = None
         super().__init__(*args, help_command=None, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
@@ -815,7 +823,7 @@ class Red(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))
+            assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
             if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
@@ -1038,6 +1046,16 @@ class Red(
             await self._schema_1_to_2()
             schema_version += 1
             await self._config.schema_version.set(schema_version)
+        if schema_version == 2:
+            await self._schema_2_to_3()
+            schema_version += 1
+            await self._config.schema_version.set(schema_version)
+
+    async def _schema_2_to_3(self):
+        log.info("Migrating help menus to enum values")
+        old = await self._config.help__use_menus()
+        if old is not None:
+            await self._config.help__use_menus.set(int(old))
 
     async def _schema_1_to_2(self):
         """
@@ -1109,7 +1127,7 @@ class Red(
         await modlog._init(self)
         await bank._init(self)
 
-        packages = []
+        packages = OrderedDict()
 
         last_system_info = await self._config.last_system_info()
 
@@ -1135,10 +1153,13 @@ class Red(
                 python_version_changed = True
         else:
             if self._cli_flags.no_cogs is False:
-                packages.extend(await self._config.packages())
+                packages.update(dict.fromkeys(await self._config.packages()))
 
             if self._cli_flags.load_cogs:
-                packages.extend(self._cli_flags.load_cogs)
+                packages.update(dict.fromkeys(self._cli_flags.load_cogs))
+            if self._cli_flags.unload_cogs:
+                for package in self._cli_flags.unload_cogs:
+                    packages.pop(package, None)
 
         system_changed = False
         machine = platform.machine()
@@ -1169,11 +1190,9 @@ class Red(
         if packages:
             # Load permissions first, for security reasons
             try:
-                packages.remove("permissions")
-            except ValueError:
+                packages.move_to_end("permissions", last=False)
+            except KeyError:
                 pass
-            else:
-                packages.insert(0, "permissions")
 
             to_remove = []
             log.info("Loading packages...")
@@ -1197,23 +1216,21 @@ class Red(
                     await self.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
-                packages.remove(package)
-            if packages:
-                log.info("Loaded packages: " + ", ".join(packages))
+                del packages[package]
+        if packages:
+            log.info("Loaded packages: " + ", ".join(packages))
+        else:
+            log.info("No packages were loaded.")
 
         if self.rpc_enabled:
             await self.rpc.initialize(self.rpc_port)
 
-    async def _pre_fetch_owners(self) -> None:
-        app_info = await self.application_info()
-
-        if app_info.team:
+    def _setup_owners(self) -> None:
+        if self.application.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in app_info.team.members)
+                self.owner_ids.update(m.id for m in self.application.team.members)
         elif self._owner_id_overwrite is None:
-            self.owner_ids.add(app_info.owner.id)
-
-        self._app_info = app_info
+            self.owner_ids.add(self.application.owner.id)
 
         if not self.owner_ids:
             raise _NoOwnerSet("Bot doesn't have any owner set!")
@@ -1226,7 +1243,7 @@ class Red(
         await self.connect()
 
     async def setup_hook(self) -> None:
-        await self._pre_fetch_owners()
+        self._setup_owners()
         await self._pre_connect()
 
     async def send_help_for(
@@ -1246,7 +1263,12 @@ class Red(
     async def embed_requested(
         self,
         channel: Union[
-            discord.TextChannel, commands.Context, discord.User, discord.Member, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            commands.Context,
+            discord.User,
+            discord.Member,
+            discord.Thread,
         ],
         *,
         command: Optional[commands.Command] = None,
@@ -1257,7 +1279,7 @@ class Red(
 
         Arguments
         ---------
-        channel : Union[`discord.TextChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
+        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
             The target messageable object to check embed settings for.
 
         Keyword Arguments
@@ -1304,7 +1326,7 @@ class Red(
                 "You cannot pass a GroupChannel, DMChannel, or PartialMessageable to this method."
             )
 
-        if isinstance(channel, (discord.TextChannel, discord.Thread)):
+        if isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
             channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
 
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
@@ -1329,6 +1351,17 @@ class Red(
 
         global_setting = await self._config.embeds()
         return global_setting
+
+    async def use_buttons(self) -> bool:
+        """
+        Determines whether the bot owner has enabled use of buttons instead of
+        reactions for basic menus.
+
+        Returns
+        -------
+        bool
+        """
+        return await self._config.use_buttons()
 
     async def is_owner(self, user: Union[discord.User, discord.Member], /) -> bool:
         """
@@ -1368,7 +1401,7 @@ class Red(
         scopes = ("bot", "applications.commands") if commands_scope else ("bot",)
         perms_int = data["invite_perm"]
         permissions = discord.Permissions(perms_int)
-        return discord.utils.oauth_url(self._app_info.id, permissions=permissions, scopes=scopes)
+        return discord.utils.oauth_url(self.application_id, permissions=permissions, scopes=scopes)
 
     async def is_invite_url_public(self) -> bool:
         """
@@ -1610,7 +1643,6 @@ class Red(
         cogname: str,
         /,
         *,
-        # DEP-WARN: MISSING is implementation detail
         guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
         guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
     ) -> Optional[commands.Cog]:
@@ -1722,7 +1754,6 @@ class Red(
         /,
         *,
         override: bool = False,
-        # DEP-WARN: MISSING is implementation detail
         guild: Optional[discord.abc.Snowflake] = discord.utils.MISSING,
         guilds: List[discord.abc.Snowflake] = discord.utils.MISSING,
     ) -> None:
@@ -1795,6 +1826,58 @@ class Red(
             for subcommand in command.walk_commands():
                 subcommand.requires.reset()
         return command
+
+    def hybrid_command(
+        self,
+        name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
+        with_app_command: bool = True,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Callable[[CommandCallback[Any, ContextT, P, _T]], commands.HybridCommand[Any, P, _T]]:
+        """A shortcut decorator that invokes :func:`~redbot.core.commands.hybrid_command` and adds it to
+        the internal command list via :meth:`add_command`.
+
+        Returns
+        --------
+        Callable[..., :class:`HybridCommand`]
+            A decorator that converts the provided method into a Command, adds it to the bot, then returns it.
+        """
+
+        def decorator(func: CommandCallback[Any, ContextT, P, _T]):
+            kwargs.setdefault("parent", self)
+            result = commands.hybrid_command(
+                name=name, *args, with_app_command=with_app_command, **kwargs
+            )(func)
+            self.add_command(result)
+            return result
+
+        return decorator
+
+    def hybrid_group(
+        self,
+        name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
+        with_app_command: bool = True,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Callable[[CommandCallback[Any, ContextT, P, _T]], commands.HybridGroup[Any, P, _T]]:
+        """A shortcut decorator that invokes :func:`~redbot.core.commands.hybrid_group` and adds it to
+        the internal command list via :meth:`add_command`.
+
+        Returns
+        --------
+        Callable[..., :class:`HybridGroup`]
+            A decorator that converts the provided method into a Group, adds it to the bot, then returns it.
+        """
+
+        def decorator(func: CommandCallback[Any, ContextT, P, _T]):
+            kwargs.setdefault("parent", self)
+            result = commands.hybrid_group(
+                name=name, *args, with_app_command=with_app_command, **kwargs
+            )(func)
+            self.add_command(result)
+            return result
+
+        return decorator
 
     def clear_permission_rules(self, guild_id: Optional[int], **kwargs) -> None:
         """Clear all permission overrides in a scope.
@@ -1877,7 +1960,7 @@ class Red(
 
     async def get_owner_notification_destinations(
         self,
-    ) -> List[Union[discord.TextChannel, discord.User]]:
+    ) -> List[Union[discord.TextChannel, discord.VoiceChannel, discord.User]]:
         """
         Gets the users and channels to send to
         """
