@@ -1,4 +1,7 @@
-#!/usr/bin/env python
+from redbot import _early_init
+
+# this needs to be called as early as possible
+_early_init()
 
 import asyncio
 import functools
@@ -15,23 +18,18 @@ import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import NoReturn
+from typing import Any, Awaitable, Callable, NoReturn, Union
 
 import discord
 import rich
 
-# Set the event loop policies here so any subsequent `new_event_loop()`
-# calls, in particular those as a result of the following imports,
-# return the correct loop object.
-from redbot import _early_init, __version__
-
-_early_init()
-
 import redbot.logging
+from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
+from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
 
@@ -65,42 +63,9 @@ def list_instances():
         sys.exit(0)
 
 
-def debug_info():
+async def debug_info(*args: Any) -> None:
     """Shows debug information useful for debugging."""
-    if sys.platform == "linux":
-        import distro  # pylint: disable=import-error
-
-    IS_WINDOWS = os.name == "nt"
-    IS_MAC = sys.platform == "darwin"
-    IS_LINUX = sys.platform == "linux"
-
-    pyver = sys.version
-    pipver = pip.__version__
-    redver = __version__
-    dpy_version = discord.__version__
-    if IS_WINDOWS:
-        os_info = platform.uname()
-        osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
-    elif IS_MAC:
-        os_info = platform.mac_ver()
-        osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
-    else:
-        osver = f"{distro.name()} {distro.version()}".strip()
-    user_who_ran = getpass.getuser()
-    info = (
-        "Debug Info for Red\n\n"
-        + "Red version: {}\n".format(redver)
-        + "Python version: {}\n".format(pyver)
-        + "Python executable: {}\n".format(sys.executable)
-        + "Discord.py version: {}\n".format(dpy_version)
-        + "Pip version: {}\n".format(pipver)
-        + "OS version: {}\n".format(osver)
-        + "System arch: {}\n".format(platform.machine())
-        + "User: {}\n".format(user_who_ran)
-        + "Metadata file: {}\n".format(data_manager.config_file)
-    )
-    print(info)
-    sys.exit(0)
+    print(await DebugInfo().get_text())
 
 
 async def edit_instance(red, cli_flags):
@@ -173,6 +138,11 @@ async def _edit_prefix(red, prefix, no_prompt):
             if not prefixes:
                 print("You need to pass at least one prefix!")
                 continue
+            if any(prefix.startswith("/") for prefix in prefixes):
+                print(
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+                )
+                continue
             prefixes = sorted(prefixes, reverse=True)
             await red._config.prefix.set(prefixes)
             print("Prefixes updated.\n")
@@ -222,7 +192,7 @@ def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
                 " run this command with --overwrite-existing-instance flag."
             )
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
-        name = get_name()
+        name = get_name("")
         if name in _get_instance_names():
             print(
                 "WARNING: An instance already exists with this name. "
@@ -270,7 +240,9 @@ def _edit_data_path(data, instance_name, data_path, copy_data, no_prompt):
             print("Can't copy data to non-empty location. Data location will remain unchanged.")
             data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
     elif not no_prompt and confirm("Would you like to change the data location?", default=False):
-        data["DATA_PATH"] = get_data_dir(instance_name)
+        data["DATA_PATH"] = get_data_dir(
+            instance_name=instance_name, data_path=None, interactive=True
+        )
         if confirm("Do you want to copy the data from old location?", default=True):
             if not _copy_data(data):
                 print("Can't copy the data to non-empty location.")
@@ -294,18 +266,25 @@ def _copy_data(data):
     return True
 
 
-def handle_edit(cli_flags: Namespace):
+def early_exit_runner(
+    cli_flags: Namespace,
+    func: Union[Callable[[], Awaitable[Any]], Callable[[Red, Namespace], Awaitable[Any]]],
+) -> None:
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    data_manager.load_basic_configuration(cli_flags.instance_name)
-    red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
     try:
+        if not cli_flags.instance_name:
+            loop.run_until_complete(func())
+            return
+
+        data_manager.load_basic_configuration(cli_flags.instance_name)
+        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
         driver_cls = drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
-        loop.run_until_complete(edit_instance(red, cli_flags))
+        loop.run_until_complete(func(red, cli_flags))
         loop.run_until_complete(driver_cls.teardown())
     except (KeyboardInterrupt, EOFError):
         print("Aborted!")
@@ -314,7 +293,6 @@ def handle_edit(cli_flags: Namespace):
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
-        sys.exit(0)
 
 
 async def run_bot(red: Red, cli_flags: Namespace) -> None:
@@ -381,10 +359,10 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             sys.exit(1)
 
     if cli_flags.dry_run:
-        await red.http.close()
         sys.exit(0)
     try:
-        await red.start(token, bot=True)
+        # `async with red:` is unnecessary here because we call red.close() in shutdown handler
+        await red.start(token)
     except discord.LoginFailure:
         log.critical("This token doesn't seem to be valid.")
         db_token = await red._config.token()
@@ -433,7 +411,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
         print("Current Version: {}".format(__version__))
         sys.exit(0)
     elif cli_flags.debuginfo:
-        debug_info()
+        early_exit_runner(cli_flags, debug_info)
     elif not cli_flags.instance_name and (not cli_flags.no_instance or cli_flags.edit):
         print("Error: No instance name was provided!")
         sys.exit(1)
@@ -454,7 +432,8 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         red._shutdown_mode = exit_code
 
     try:
-        await red.close()
+        if not red.is_closed():
+            await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
@@ -496,7 +475,7 @@ def red_exception_handler(red, red_task: asyncio.Future):
     except Exception as exc:
         log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
-        red.loop.create_task(shutdown_handler(red))
+        asyncio.create_task(shutdown_handler(red))
 
 
 def main():
@@ -504,7 +483,7 @@ def main():
     cli_flags = parse_cli_flags(sys.argv[1:])
     handle_early_exit_flags(cli_flags)
     if cli_flags.edit:
-        handle_edit(cli_flags)
+        early_exit_runner(cli_flags, edit_instance)
         return
     try:
         loop = asyncio.new_event_loop()
@@ -573,8 +552,8 @@ def main():
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
-        exit_code = red._shutdown_mode if red is not None else 1
-        sys.exit(exit_code)
+    exit_code = red._shutdown_mode if red is not None else 1
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

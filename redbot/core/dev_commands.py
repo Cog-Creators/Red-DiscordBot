@@ -1,3 +1,15 @@
+"""
+The original implementation of this cog was heavily based on
+RoboDanny's REPL cog which can be found here:
+https://github.com/Rapptz/RoboDanny/blob/f13e1c9a6a7205e50de6f91fa5326fc7113332d3/cogs/repl.py
+
+Copyright (c) 2017-present Cog Creators
+Copyright (c) 2016-2017 Rapptz
+
+The original copy was distributed under MIT License and this derivative work
+is distributed under GNU GPL Version 3.
+"""
+
 import ast
 import asyncio
 import aiohttp
@@ -17,14 +29,6 @@ from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
 from .utils.chat_formatting import pagify
 from .utils.predicates import MessagePredicate
-
-"""
-Notice:
-
-95% of the below code came from R.Danny which can be found here:
-
-https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
-"""
 
 _ = Translator("Dev", __file__)
 
@@ -200,7 +204,7 @@ class Dev(commands.Cog):
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except:
+        except Exception:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -289,13 +293,16 @@ class Dev(commands.Cog):
                     else:
                         result = executor(code, env)
                     result = await self.maybe_await(result)
-            except:
+            except Exception:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
                 value = stdout.getvalue()
                 if result is not None:
-                    msg = "{}{}".format(value, result)
+                    try:
+                        msg = "{}{}".format(value, result)
+                    except Exception:
+                        msg = "{}{}".format(value, traceback.format_exc())
                     env["_"] = result
                 elif value:
                     msg = "{}".format(value)
@@ -340,24 +347,24 @@ class Dev(commands.Cog):
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.Member, *, content: str):
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
         """Dispatch a message event as if it were sent by a different user.
 
-        Only reads the raw content of the message. Attachments, embeds etc. are
-        ignored.
+        Current message is used as a base (including attachments, embeds, etc.),
+        the content and author of the message are replaced with the given arguments.
+
+        Note: If `content` isn't passed, the message needs to contain embeds, attachments,
+        or anything else that makes the message non-empty.
         """
-        old_author = ctx.author
-        old_content = ctx.message.content
-        ctx.message.author = user
-        ctx.message.content = content
+        msg = ctx.message
+        if not content and not msg.embeds and not msg.attachments and not msg.stickers:
+            await ctx.send_help()
+            return
+        msg = copy(msg)
+        msg.author = user
+        msg.content = content
 
-        ctx.bot.dispatch("message", ctx.message)
-
-        # If we change the author and content back too quickly,
-        # the bot won't process the mocked message in time.
-        await asyncio.sleep(2)
-        ctx.message.author = old_author
-        ctx.message.content = old_content
+        ctx.bot.dispatch("message", msg)
 
     @commands.command()
     @checks.is_owner()

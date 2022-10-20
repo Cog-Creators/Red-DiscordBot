@@ -29,7 +29,7 @@
   <a href="https://github.com/Cog-Creators/Red-DiscordBot/actions">
     <img src="https://img.shields.io/github/workflow/status/Cog-Creators/Red-Discordbot/Tests?label=tests" alt="GitHub Actions">
   </a>
-  <a href="http://red-discordbot.readthedocs.io/en/stable/?badge=stable">
+  <a href="http://docs.discord.red/en/stable/?badge=stable">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=stable" alt="Red on readthedocs.org">
   </a>
   <a href="https://github.com/psf/black">
@@ -48,7 +48,7 @@
   •
   <a href="#installation">Installation</a>
   •
-  <a href="http://red-discordbot.readthedocs.io/en/stable/index.html">Documentation</a>
+  <a href="http://docs.discord.red/en/stable/index.html">Documentation</a>
   •
   <a href="#plugins">Plugins</a>
   •
@@ -86,9 +86,9 @@ community of cog repositories.**
 
 **The following platforms are officially supported:** 
 
-- [Windows](https://red-discordbot.readthedocs.io/en/stable/install_windows.html)
-- [MacOS](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
-- [Most major linux distributions](https://red-discordbot.readthedocs.io/en/stable/install_linux_mac.html)
+- [Windows](https://docs.discord.red/en/stable/install_guides/windows.html)
+- [MacOS](https://docs.discord.red/en/stable/install_guides/mac.html)
+- [Most major linux distributions](https://docs.discord.red/en/stable/install_guides/index.html)
 
 If after reading the guide you are still experiencing issues, feel free to join the
 [Official Discord Server](https://discord.gg/red) and ask in the **#support** channel for help.
@@ -115,7 +115,7 @@ available 3rd party cogs!
 **Red** is in continuous development, and it’s supported by an active community which produces new
 content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t
 [find](https://index.discord.red) the cog you’re looking for,
-consult our [guide](https://red-discordbot.readthedocs.io/en/stable/guide_cog_creation.html) on
+consult our [guide](https://docs.discord.red/en/stable/guide_cog_creation.html) on
 building your own cogs!
 
 Join us on our [Official Discord Server](https://discord.gg/red)!

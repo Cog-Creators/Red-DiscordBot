@@ -341,7 +341,7 @@ bankset maxbal
 
 Defines the maximum amount of money a user can have with the bot.
 
-If an user reaches this limit, he will be unable to gain more money.
+If a user reaches this limit, they will be unable to gain more money.
 
 **Arguments**
 
@@ -1842,9 +1842,9 @@ ignore channel
 
 **Description**
 
-Ignore commands in the channel or category.
+Ignore commands in the channel, thread, or category.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 .. Note:: Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
@@ -1856,7 +1856,7 @@ Defaults to the current channel.
     - ``[p]ignore channel 356236713347252226`` - Also accepts IDs.
 
 **Arguments:**
-    - ``<channel>`` - The channel to ignore. Can be a category channel.
+    - ``<channel>`` - The channel to ignore. This can also be a thread or category channel.
 
 .. _core-command-ignore-list:
 
@@ -2767,7 +2767,7 @@ list of key,values as described by the cog requesting this command.
 
 
 **Examples:**
-    - ``[p]set api Spotify redirect_uri localhost``
+    - ``[p]set api spotify redirect_uri localhost``
     - ``[p]set api github client_id,whoops client_secret,whoops``
 
 **Arguments:**
@@ -2812,8 +2812,8 @@ set api remove
 Remove the given services with all their keys and tokens.
 
 **Examples:**
-    - ``[p]set api remove Spotify``
-    - ``[p]set api remove github audiodb``
+    - ``[p]set api remove spotify``
+    - ``[p]set api remove github youtube``
 
 **Arguments:**
     - ``<services...>`` - The services to remove.
@@ -3651,7 +3651,7 @@ Sets Red's server prefix(es).
 
     This is not additive. It will replace all current server prefixes.
 
-    You cannot have a prefix with more than 20 characters.
+    You cannot have a prefix with more than 25 characters.
 
 **Examples:**
     - ``[p]set serverprefix !``
@@ -4045,9 +4045,9 @@ unignore channel
 
 **Description**
 
-Remove a channel or category from the ignore list.
+Remove a channel, thread, or category from the ignore list.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 **Examples:**
     - ``[p]unignore channel #general`` - Unignores commands in the #general channel.
@@ -4056,7 +4056,7 @@ Defaults to the current channel.
     - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to unignore categories.
 
 **Arguments:**
-    - ``<channel>`` - The channel to unignore. This can be a category channel.
+    - ``<channel>`` - The channel to unignore. This can also be a thread or category channel.
 
 .. _core-command-unignore-server:
 

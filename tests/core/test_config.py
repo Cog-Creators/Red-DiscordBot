@@ -660,3 +660,70 @@ async def test_config_custom_partial_pkeys_set(config, pkeys, raw_args, result):
     group = config.custom("TEST", *pkeys)
     await group.set_raw(*raw_args, value=result)
     assert await group.get_raw(*raw_args) == result
+
+
+@pytest.mark.asyncio
+async def test_config_custom_get_raw_with_default_on_whole_scope(config):
+    config.init_custom("TEST", 3)
+    config.register_custom("TEST")
+
+    group = config.custom("TEST")
+    assert await group.get_raw(default=True) is True
+
+
+@pytest.mark.parametrize(
+    "pkeys,raw_args,to_set",
+    (
+        # no config data for (cog_name, cog_id) is present
+        ((), (), None),
+        ((1,), (), None),
+        ((1, 2), (), None),
+        ((1, 2, 3), (), None),
+        ((1, 2, 3), ("key1",), None),
+        ((1, 2, 3), ("key1", "key2"), None),
+        # config data for (cog_name, cog_id) is present but scope does not exist
+        ((), (), ()),
+        ((1,), (), ()),
+        ((1, 2), (), ()),
+        ((1, 2, 3), (), ()),
+        ((1, 2, 3), ("key1",), ()),
+        ((1, 2, 3), ("key1", "key2"), ()),
+        # the scope exists with no records
+        ((1,), (), ("1",)),
+        ((1, 2), (), ("1",)),
+        ((1, 2, 3), (), ("1",)),
+        ((1, 2, 3), ("key1",), ("1",)),
+        ((1, 2, 3), ("key1", "key2"), ("1",)),
+        # scope with partial primary key (1,) exists
+        ((1, 2), (), ("1", "2")),
+        ((1, 2, 3), (), ("1", "2")),
+        ((1, 2, 3), ("key1",), ("1", "2")),
+        ((1, 2, 3), ("key1", "key2"), ("1", "2")),
+        # scope with partial primary key (1, 2) exists
+        ((1, 2, 3), (), ("1", "2", "3")),
+        ((1, 2, 3), ("key1",), ("1", "2", "3")),
+        ((1, 2, 3), ("key1", "key2"), ("1", "2", "3")),
+        # scope with full primary key (1, 2, 3)
+        ((1, 2, 3), ("key1",), ("1", "2", "3", "key1")),
+        ((1, 2, 3), ("key1", "key2"), ("1", "2", "3", "key1")),
+        # scope with full primary key (1, 2, 3) and a group named "key1" exists
+        ((1, 2, 3), ("key1", "key2"), ("1", "2", "3", "key1", "key2")),
+    ),
+)
+@pytest.mark.asyncio
+async def test_config_custom_clear_identifiers_that_do_not_exist(config, pkeys, raw_args, to_set):
+    config.init_custom("TEST", 3)
+    config.register_custom("TEST")
+
+    group = config.custom("TEST", *pkeys)
+    if to_set is not None:
+        data = {}
+        partial = data
+        for key in to_set:
+            partial[key] = {}
+            partial = partial[key]
+        scope = config.custom("TEST")
+        await scope.set(data)
+        # Clear needed to be able to differ between missing config data and missing scope data
+        await scope.clear_raw(*to_set)
+    await group.clear_raw(*raw_args)
