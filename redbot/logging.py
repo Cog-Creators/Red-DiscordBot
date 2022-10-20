@@ -171,43 +171,30 @@ class RedLogRender(LogRender):
         link_path=None,
         logger_name=None,
     ):
-        output = Table.grid(padding=(0, 1))
-        output.expand = True
-        if self.show_time:
-            output.add_column(style="log.time")
-        if self.show_level:
-            output.add_column(style="log.level", width=self.level_width)
-        output.add_column(ratio=1, style="log.message", overflow="fold")
-        if self.show_path and path:
-            output.add_column(style="log.path")
-        if logger_name:
-            output.add_column()
-        row = []
+        output = Text()
         if self.show_time:
             log_time = log_time or console.get_datetime()
             log_time_display = log_time.strftime(time_format or self.time_format)
             if log_time_display == self._last_time:
-                row.append(Text(" " * len(log_time_display)))
+                output.append(" " * (len(log_time_display) + 1))
             else:
-                row.append(Text(log_time_display))
+                output.append(f"{log_time_display} ", style="log.time")
                 self._last_time = log_time_display
         if self.show_level:
-            row.append(level)
+            # The space needs to be added separately so that log level is colored by
+            # Rich.
+            output.append(level)
+            output.append(" ")
+        if logger_name:
+            output.append(f"[{logger_name}] ", style="bright_black")
 
-        row.append(Renderables(renderables))
+        output.append(*renderables)
         if self.show_path and path:
             path_text = Text()
             path_text.append(path, style=f"link file://{link_path}" if link_path else "")
             if line_no:
                 path_text.append(f":{line_no}")
-            row.append(path_text)
-
-        if logger_name:
-            logger_name_text = Text()
-            logger_name_text.append(f"[{logger_name}]", style="bright_black")
-            row.append(logger_name_text)
-
-        output.add_row(*row)
+            output.append(path_text)
         return output
 
 
@@ -286,7 +273,8 @@ class RedRichHandler(RichHandler):
                 line_no=record.lineno,
                 link_path=record.pathname if self.enable_link_path else None,
                 logger_name=record.name,
-            )
+            ),
+            soft_wrap=True,
         )
         if traceback:
             self.console.print(traceback)
@@ -294,13 +282,10 @@ class RedRichHandler(RichHandler):
 
 def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespace) -> None:
     root_logger = logging.getLogger()
-
-    base_logger = logging.getLogger("red")
-    base_logger.setLevel(level)
+    root_logger.setLevel(level)
+    # DEBUG logging for discord.py is a bit too ridiculous :)
     dpy_logger = logging.getLogger("discord")
-    dpy_logger.setLevel(logging.WARNING)
-    warnings_logger = logging.getLogger("py.warnings")
-    warnings_logger.setLevel(logging.WARNING)
+    dpy_logger.setLevel(logging.INFO)
 
     rich_console = rich.get_console()
     rich.reconfigure(tab_size=4)
@@ -310,6 +295,8 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
                 "log.time": Style(dim=True),
                 "logging.level.warning": Style(color="yellow"),
                 "logging.level.critical": Style(color="white", bgcolor="red"),
+                "logging.level.verbose": Style(color="magenta", italic=True, dim=True),
+                "logging.level.trace": Style(color="white", italic=True, dim=True),
                 "repr.number": Style(color="cyan"),
                 "repr.url": Style(underline=True, italic=True, bold=False, color="cyan"),
             }

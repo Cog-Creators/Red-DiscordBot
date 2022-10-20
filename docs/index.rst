@@ -12,14 +12,12 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 1
     :caption: Installation Guides:
 
-    install_windows
-    install_linux_mac
+    install_guides/index
     bot_application_guide
     update_red
     about_venv
     autostart_systemd
     autostart_mac
-    autostart_pm2
 
 .. toctree::
     :maxdepth: 2
@@ -27,15 +25,16 @@ Welcome to Red - Discord Bot's documentation!
 
     cog_customcom
     cog_permissions
+    guide_trivia_list_creation
 
 .. toctree::
     :maxdepth: 2
     :caption: User guides:
 
     getting_started
+    intents
     cog_guides/admin
     cog_guides/alias
-    cog_guides/bank
     cog_guides/cleanup
     cog_guides/cog_manager_ui
     cog_guides/core
@@ -45,9 +44,14 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/filter
     cog_guides/general
     cog_guides/image
+    cog_guides/permissions
+    cog_guides/mod
+    cog_guides/modlog
+    cog_guides/mutes
     cog_guides/reports
     cog_guides/streams
     cog_guides/trivia
+    cog_guides/warnings
     red_core_data_statement
 
 .. toctree::

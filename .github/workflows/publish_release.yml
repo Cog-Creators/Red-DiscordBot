@@ -5,15 +5,63 @@ on:
       - "*"
 
 jobs:
-  release_to_pypi:
+  release_information:
     if: github.repository == 'Cog-Creators/Red-DiscordBot'
+    name: GO HERE BEFORE APPROVING
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: V3/develop
+      # Checkout repository and install Python
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      # Get version to release
+      - name: Get version to release
+        id: version_to_release
+        run: |
+          python .github/workflows/scripts/bump_version.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
+          JUST_RETURN_VERSION: '1'
+
+      # Print release information
+      - name: REVIEW OUTPUT OF THIS STEP BEFORE APPROVING
+        env:
+          TAG_BASE_BRANCH: ${{ github.event.base_ref }}
+          TAG_REF_NAME: ${{ github.ref }}
+          RELEASE_VERSION: ${{ steps.version_to_release.outputs.version }}
+        run: |
+          echo 'Release information:'
+          echo "- Branch the tag was based off: ${TAG_BASE_BRANCH#'refs/heads/'}"
+          echo "- Tag name: ${TAG_REF_NAME#'refs/tags/'}"
+          echo "- Release version: $RELEASE_VERSION"
+
+          echo "TAG_NAME=${TAG_REF_NAME#'refs/tags/'}" >> $GITHUB_ENV
+
+      - name: Ensure the tag name corresponds to the released version
+        env:
+          RELEASE_VERSION: ${{ steps.version_to_release.outputs.version }}
+        run: |
+          if [[ "$TAG_NAME" != "$RELEASE_VERSION" ]]; then
+              echo -n "The tag name ($TAG_NAME) is not the same as"
+              echo " the release version ($RELEASE_VERSION)!"
+              exit 1
+          else
+              echo "The tag name and the release version are the same ($TAG_NAME)."
+              echo 'Continuing...'
+          fi
+
+  release_to_pypi:
+    needs: release_information
+    environment: Release
+    name: Release to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
       - name: Install dependencies
@@ -33,11 +81,20 @@ jobs:
       contents: write
       pull-requests: write
     needs: release_to_pypi
+    name: Update Red version number to dev
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Get base branch
+        env:
+          TAG_BASE_BRANCH: ${{ github.event.base_ref }}
+        run: |
+          echo "BASE_BRANCH=${TAG_BASE_BRANCH#'refs/heads/'}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BASE_BRANCH }}
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
 
@@ -53,7 +110,7 @@ jobs:
       # Get milestone number of the milestone for the old version
       - name: Get milestone number
         id: get_milestone_number
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         env:
           MILESTONE_TITLE: ${{ steps.bump_version_dev.outputs.old_version }}
         with:
@@ -65,7 +122,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr_bump_dev
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
@@ -77,9 +134,10 @@ jobs:
           branch: "automated/pr_bumps/${{ steps.bump_version_dev.outputs.new_version }}"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           milestone: ${{ steps.get_milestone_number.outputs.result }}
+          base: ${{ env.BASE_BRANCH }}
 
       - name: Close and reopen the PR with different token to trigger CI
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         env:
           PR_NUMBER: ${{ steps.cpr_bump_dev.outputs.pull-request-number }}
           PR_OPERATION: ${{ steps.cpr_bump_dev.outputs.pull-request-operation }}

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-04-04 09:34+0000\n"
+"POT-Creation-Date: 2021-05-23 14:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -40,7 +40,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:154
 #, docstring
-msgid "Delete the last X messages matching the specified text.\n\n"
+msgid "Delete the last X messages matching the specified text in the current channel.\n\n"
 "        Example:\n"
 "            - `[p]cleanup text \"test\" 5`\n\n"
 "        Remember to use double quotes.\n\n"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:209
 #, docstring
-msgid "Delete the last X messages from a specified user.\n\n"
+msgid "Delete the last X messages from a specified user in the current channel.\n\n"
 "        Examples:\n"
 "            - `[p]cleanup user @Twentysix 2`\n"
 "            - `[p]cleanup user Red 6`\n\n"
@@ -109,7 +109,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:438
 #, docstring
-msgid "Delete the last X messages.\n\n"
+msgid "Delete the last X messages in the current channel.\n\n"
 "        Example:\n"
 "            - `[p]cleanup messages 26`\n\n"
 "        **Arguments:**\n\n"
@@ -120,7 +120,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:476
 #, docstring
-msgid "Clean up command messages and messages from the bot.\n\n"
+msgid "Clean up command messages and messages from the bot in the current channel.\n\n"
 "        Can only cleanup custom commands and alias commands if those cogs are loaded.\n\n"
 "        **Arguments:**\n\n"
 "        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
@@ -130,7 +130,7 @@ msgstr ""
 
 #: redbot/cogs/cleanup/cleanup.py:564
 #, docstring
-msgid "Clean up messages owned by the bot.\n\n"
+msgid "Clean up messages owned by the bot in the current channel.\n\n"
 "        By default, all messages are cleaned. If a second argument is specified,\n"
 "        it is used for pattern matching - only messages containing the given text will be deleted.\n\n"
 "        Examples:\n"

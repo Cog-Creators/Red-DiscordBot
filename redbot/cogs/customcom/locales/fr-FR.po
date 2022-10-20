@@ -54,7 +54,7 @@ msgstr ""
 #: redbot/cogs/customcom/customcom.py:247
 #, docstring
 msgid "Base command for Custom Commands management."
-msgstr ""
+msgstr "Commande de base pour la gestion des commandes personnalisées."
 
 #: redbot/cogs/customcom/customcom.py:252
 #, docstring

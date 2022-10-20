@@ -41,15 +41,15 @@ msgstr "¿Oh, en serio? Es {answer}, por supuesto."
 
 #: redbot/cogs/trivia/session.py:26
 msgid "I know this one! ||{answer}!||"
-msgstr ""
+msgstr "¡Esta me la sé! ||{answer}!||"
 
 #: redbot/cogs/trivia/session.py:27
 msgid "Easy: ||{answer}.||"
-msgstr ""
+msgstr "Fácil: ||{answer}.||"
 
 #: redbot/cogs/trivia/session.py:28
 msgid "Oh really? It's ||{answer}|| of course."
-msgstr ""
+msgstr "¿Oh, en serio? Es ||{answer}|| por supuesto."
 
 #: redbot/cogs/trivia/session.py:32
 msgid "To the next one I guess..."
@@ -103,11 +103,11 @@ msgstr "¡Lo tienes, {user}! ¡**+1** para ti!"
 
 #: redbot/cogs/trivia/session.py:329
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
-msgstr ""
+msgstr "¡Enhorabuena {users}! ¡Cada uno ha recibido {num} {currency} por ganar!"
 
 #: redbot/cogs/trivia/session.py:337
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
-msgstr ""
+msgstr "¡Enhorabuena {user}! ¡Has recibido {num} {currency} por ganar!"
 
 #: redbot/cogs/trivia/trivia.py:41
 #, docstring
@@ -134,7 +134,15 @@ msgid "Current settings\n"
 "Payout multiplier: {payout_multiplier}\n"
 "Allow lists to override settings: {allow_override}\n"
 "Use Spoilers in answers: {use_spoilers}"
-msgstr ""
+msgstr "Configuración actual\n"
+"Bot gana puntos: {bot_plays}\n"
+"Tiempo de respuesta: {delay} segundos\n"
+"Falta de tiempo de respuesta: {timeout} segundos\n"
+"Puntos para ganar: {max_score}\n"
+"Revela respuesta al finalizar el tiempo: {reveal_answer}\n"
+"Multiplicador de pago: {payout_multiplier}\n"
+"Permitir a las listas anular la configuración: {allow_override}\n"
+"Utilizar spoilers en respuestas: {use_spoilers}"
 
 #: redbot/cogs/trivia/trivia.py:105
 #, docstring
@@ -193,15 +201,17 @@ msgstr "Hecho. Las listas de Trivial ya no pueden reemplazar la configuración d
 msgid "Set if bot will display the answers in spoilers.\n\n"
 "        If enabled, the bot will use spoilers to hide answers.\n"
 "        "
-msgstr ""
+msgstr "Establece si el bot mostrará las respuestas en spoilers.\n\n"
+"        Si está habilitado, el bot usará spoilers para ocultar las respuestas.\n"
+"        "
 
 #: redbot/cogs/trivia/trivia.py:163
 msgid "Done. I'll put the answers in spoilers next time."
-msgstr ""
+msgstr "Listo. La próxima vez pondré las respuestas en spoilers."
 
 #: redbot/cogs/trivia/trivia.py:165
 msgid "Alright, I won't use spoilers to hide answers anymore."
-msgstr ""
+msgstr "De acuerdo, ya no usaré spoilers para ocultar las respuestas."
 
 #: redbot/cogs/trivia/trivia.py:169
 #, docstring

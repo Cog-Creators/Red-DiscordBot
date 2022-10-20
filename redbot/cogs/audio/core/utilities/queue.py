@@ -1,4 +1,3 @@
-import logging
 import math
 from pathlib import Path
 
@@ -6,6 +5,7 @@ from typing import List, Tuple
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
 from fuzzywuzzy import process
 from redbot.core import commands
@@ -17,7 +17,7 @@ from ...audio_dataclasses import LocalPath, Query
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.queue")
+log = getLogger("red.cogs.Audio.cog.Utilities.queue")
 _ = Translator("Audio", Path(__file__))
 
 
@@ -26,7 +26,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         queue: list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         page_num: int,
     ) -> discord.Embed:
         shuffle = await self.config.guild(ctx.guild).shuffle()

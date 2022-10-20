@@ -57,7 +57,7 @@ msgstr "minuti"
 
 #: redbot/core/utils/chat_formatting.py:527
 msgid "second"
-msgstr "secondi"
+msgstr "secondo"
 
 #: redbot/core/utils/chat_formatting.py:527
 msgid "seconds"

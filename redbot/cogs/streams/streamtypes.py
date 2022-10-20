@@ -56,6 +56,7 @@ def get_video_ids_from_feed(feed):
 class Stream:
 
     token_name: ClassVar[Optional[str]] = None
+    platform_name: ClassVar[Optional[str]] = None
 
     def __init__(self, **kwargs):
         self._bot = kwargs.pop("_bot")
@@ -64,6 +65,13 @@ class Stream:
         # self.already_online = kwargs.pop("already_online", False)
         self.messages = kwargs.pop("messages", [])
         self.type = self.__class__.__name__
+        # Keep track of how many failed consecutive attempts we had at checking
+        # if the stream's channel actually exists.
+        self.retry_count = 0
+
+    @property
+    def display_name(self) -> Optional[str]:
+        return self.name
 
     async def is_online(self):
         raise NotImplementedError()
@@ -80,8 +88,10 @@ class Stream:
                 channel = guild and guild.get_channel(msg_data["channel"])
             else:
                 channel = self._bot.get_channel(msg_data["channel"])
-            if channel is not None:
-                data["partial_message"] = channel.get_partial_message(data["message"])
+
+            data["partial_message"] = (
+                channel.get_partial_message(data["message"]) if channel is not None else None
+            )
             yield data
 
     def export(self):
@@ -98,6 +108,7 @@ class Stream:
 class YoutubeStream(Stream):
 
     token_name = "youtube"
+    platform_name = "YouTube"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
@@ -122,6 +133,10 @@ class YoutubeStream(Stream):
                 if r.status == 404:
                     raise StreamNotFound()
                 rssdata = await r.text()
+
+        # Reset the retry count since we successfully got information about this
+        # channel's streams
+        self.retry_count = 0
 
         if self.not_livestreams:
             self.not_livestreams = list(dict.fromkeys(self.not_livestreams))
@@ -250,7 +265,6 @@ class YoutubeStream(Stream):
         return snippet["title"]
 
     async def _fetch_channel_resource(self, resource: str):
-
         params = {"key": self._token["api_key"], "part": resource}
         if resource == "id":
             params["forUsername"] = self.name
@@ -272,7 +286,7 @@ class YoutubeStream(Stream):
             and data["pageInfo"]["totalResults"] < 1
         ):
             raise StreamNotFound()
-        raise APIError(data)
+        raise APIError(r.status, data)
 
     def _check_api_errors(self, data: dict):
         if "error" in data:
@@ -285,7 +299,7 @@ class YoutubeStream(Stream):
                 "rateLimitExceeded",
             ):
                 raise YoutubeQuotaExceeded()
-            raise APIError(data)
+            raise APIError(error_code, data)
 
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
@@ -294,14 +308,24 @@ class YoutubeStream(Stream):
 class TwitchStream(Stream):
 
     token_name = "twitch"
+    platform_name = "Twitch"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
+        self._display_name = None
         self._client_id = kwargs.pop("token", None)
         self._bearer = kwargs.pop("bearer", None)
         self._rate_limit_resets: set = set()
         self._rate_limit_remaining: int = 0
         super().__init__(**kwargs)
+
+    @property
+    def display_name(self) -> Optional[str]:
+        return self._display_name or self.name
+
+    @display_name.setter
+    def display_name(self, value: str) -> None:
+        self._display_name = value
 
     async def wait_for_rate_limit_reset(self) -> None:
         """Check rate limits in response header and ensure we're following them.
@@ -312,8 +336,8 @@ class TwitchStream(Stream):
         """
         current_time = int(time.time())
         self._rate_limit_resets = {x for x in self._rate_limit_resets if x > current_time}
-        if self._rate_limit_remaining == 0:
 
+        if self._rate_limit_remaining == 0:
             if self._rate_limit_resets:
                 reset_time = next(iter(self._rate_limit_resets))
                 # Calculate wait time and add 0.1s to the wait time to allow Twitch to reset
@@ -376,7 +400,7 @@ class TwitchStream(Stream):
                 final_data["view_count"] = user_profile_data["view_count"]
 
             stream_data = stream_data["data"][0]
-            final_data["user_name"] = self.name = stream_data["user_name"]
+            final_data["user_name"] = self.display_name = stream_data["user_name"]
             final_data["game_name"] = stream_data["game_name"]
             final_data["thumbnail_url"] = stream_data["thumbnail_url"]
             final_data["title"] = stream_data["title"]
@@ -386,13 +410,17 @@ class TwitchStream(Stream):
             if follows_data:
                 final_data["followers"] = follows_data["total"]
 
+            # Reset the retry count since we successfully got information about this
+            # channel's streams
+            self.retry_count = 0
+
             return self.make_embed(final_data), final_data["type"] == "rerun"
         elif stream_code == 400:
             raise InvalidTwitchCredentials()
         elif stream_code == 404:
             raise StreamNotFound()
         else:
-            raise APIError(stream_data)
+            raise APIError(stream_code, stream_data)
 
     async def _fetch_user_profile(self):
         code, data = await self.get_data(TWITCH_ID_ENDPOINT, {"login": self.name})
@@ -407,7 +435,7 @@ class TwitchStream(Stream):
         elif code == 401:
             raise InvalidTwitchCredentials()
         else:
-            raise APIError(data)
+            raise APIError(code, data)
 
     def make_embed(self, data):
         is_rerun = data["type"] == "rerun"
@@ -435,48 +463,10 @@ class TwitchStream(Stream):
         return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
 
 
-class HitboxStream(Stream):
-
-    token_name = None  # This streaming services don't currently require an API key
-
-    async def is_online(self):
-        url = "https://api.smashcast.tv/media/live/" + self.name
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                # data = await r.json(encoding='utf-8')
-                data = await r.text()
-        data = json.loads(data, strict=False)
-        if "livestream" not in data:
-            raise StreamNotFound()
-        elif data["livestream"][0]["media_is_live"] == "0":
-            # self.already_online = False
-            raise OfflineStream()
-        elif data["livestream"][0]["media_is_live"] == "1":
-            # self.already_online = True
-            return self.make_embed(data)
-
-        raise APIError(data)
-
-    def make_embed(self, data):
-        base_url = "https://edge.sf.hitbox.tv"
-        livestream = data["livestream"][0]
-        channel = livestream["channel"]
-        url = channel["channel_link"]
-        embed = discord.Embed(title=livestream["media_status"], url=url, color=0x98CB00)
-        embed.set_author(name=livestream["media_name"])
-        embed.add_field(name=_("Followers"), value=humanize_number(channel["followers"]))
-        embed.set_thumbnail(url=base_url + channel["user_logo"])
-        if livestream["media_thumbnail"]:
-            embed.set_image(url=rnd(base_url + livestream["media_thumbnail"]))
-        embed.set_footer(text=_("Playing: ") + livestream["category_name"])
-
-        return embed
-
-
 class PicartoStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
+    platform_name = "Picarto"
 
     async def is_online(self):
         url = "https://api.picarto.tv/api/v1/channel/name/" + self.name
@@ -486,6 +476,9 @@ class PicartoStream(Stream):
                 data = await r.text(encoding="utf-8")
         if r.status == 200:
             data = json.loads(data)
+            # Reset the retry count since we successfully got information about this
+            # channel's streams
+            self.retry_count = 0
             if data["online"] is True:
                 # self.already_online = True
                 return self.make_embed(data)
@@ -495,7 +488,7 @@ class PicartoStream(Stream):
         elif r.status == 404:
             raise StreamNotFound()
         else:
-            raise APIError(data)
+            raise APIError(r.status, data)
 
     def make_embed(self, data):
         avatar = rnd(

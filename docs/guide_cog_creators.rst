@@ -17,7 +17,7 @@ Creating a Cog Creator Application
   You will need to have created and published your cogs before you create a Cog Creator Application!
   See `guide_cog_creation` and `guide_publish_cogs` for more information.
 
-Cog Creator Applications are hosted on the `cogboard <https://cogboard.red/c/apps/12>`__.
+Cog Creator Applications are hosted on the `cogboard <https://cogboard.discord.red/c/apps/12>`__.
 To create an application, start a new topic in the "Applications" category and fill out all of the required information.
 QA reviews Cog Creator Applications for security and functionality on a first come, first serve basis.
 Once your application is reviewed, you will have 14 days to make any requested changes, or to check in with the member of QA who is reviewing your application.
@@ -145,7 +145,7 @@ While not required for approved Cog Creators, they are still recommended in orde
   - Values provided make sense. (eg. no negative numbers for payday)
   - Don't unsafely use user input for things like database input.
 
-- Check events against `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`\
+- Check events against `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`\
 
   - Not all events need to be checked, only those that interact with a guild.
   - Some discretion may apply, for example,

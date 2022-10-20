@@ -2,7 +2,9 @@ import abc
 import enum
 from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type
 
-from redbot.core.utils._internal_utils import async_tqdm
+import rich.progress
+
+from redbot.core.utils._internal_utils import RichIndefiniteBarColumn
 
 __all__ = ["BaseDriver", "IdentifierData", "ConfigCategory"]
 
@@ -282,22 +284,27 @@ class BaseDriver(abc.ABC):
 
         """
         # Backend-agnostic method of migrating from one driver to another.
-        cogs_progress_bar = async_tqdm(
-            (tup async for tup in cls.aiter_cogs()),
-            desc="Migration progress",
-            unit=" cogs",
-            bar_format="{desc}: {n_fmt}{unit} [{elapsed},{rate_noinv_fmt}{postfix}]",
-            leave=False,
-            dynamic_ncols=True,
-            miniters=1,
-        )
-        async for cog_name, cog_id in cogs_progress_bar:
-            cogs_progress_bar.set_postfix_str(f"Working on {cog_name}...")
-            this_driver = cls(cog_name, cog_id)
-            other_driver = new_driver_cls(cog_name, cog_id)
-            custom_group_data = all_custom_group_data.get(cog_name, {}).get(cog_id, {})
-            exported_data = await this_driver.export_data(custom_group_data)
-            await other_driver.import_data(exported_data, custom_group_data)
+        with rich.progress.Progress(
+            rich.progress.SpinnerColumn(),
+            rich.progress.TextColumn("[progress.description]{task.description}"),
+            RichIndefiniteBarColumn(),
+            rich.progress.TextColumn("{task.completed} cogs processed"),
+            rich.progress.TimeElapsedColumn(),
+        ) as progress:
+            cog_count = 0
+            tid = progress.add_task("[yellow]Migrating", completed=cog_count, total=cog_count + 1)
+            async for cog_name, cog_id in cls.aiter_cogs():
+                progress.console.print(f"Working on {cog_name}...")
+
+                this_driver = cls(cog_name, cog_id)
+                other_driver = new_driver_cls(cog_name, cog_id)
+                custom_group_data = all_custom_group_data.get(cog_name, {}).get(cog_id, {})
+                exported_data = await this_driver.export_data(custom_group_data)
+                await other_driver.import_data(exported_data, custom_group_data)
+
+                cog_count += 1
+                progress.update(tid, completed=cog_count, total=cog_count + 1)
+            progress.update(tid, total=cog_count)
         print()
 
     @classmethod

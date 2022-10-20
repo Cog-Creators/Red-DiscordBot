@@ -68,7 +68,7 @@ customcom cooldown
 
 Set, edit, or view the cooldown for a custom command.
 
-You may set cooldowns per member, channel, or guild. Multiple
+You may set cooldowns per member, thread/channel, or guild. Multiple
 cooldowns may be set. All cooldowns must be cooled to call the
 custom command.
 
@@ -291,4 +291,4 @@ Shows a custom command's responses and its settings.
 
 **Arguments:**
 
-- ``<command>`` The custom command to show.
+- ``<command_name>`` The custom command to show.

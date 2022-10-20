@@ -40,7 +40,7 @@ msgstr "Alias:\n"
 msgid "\n\n"
 "Page {page}/{total}"
 msgstr "\n\n"
-"Pagina {page}/{total}"
+"Página {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring
