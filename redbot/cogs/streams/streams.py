@@ -59,9 +59,9 @@ class Streams(commands.Cog):
         "mention_here": False,
         "live_message_mention": False,
         "live_message_nomention": False,
-        "live_message_button": False,
         "ignore_reruns": False,
         "ignore_schedule": False,
+        "use_buttons": False,
     }
 
     role_defaults = {"mention": False}
@@ -282,10 +282,10 @@ class Streams(commands.Cog):
                 _("Something went wrong whilst trying to contact the stream service's API.")
             )
         else:
-            live_message_button = await self.config.guild(ctx.channel.guild).live_message_button()
+            use_buttons: bool = await self.config.guild(ctx.channel.guild).use_buttons()
             if isinstance(info, tuple):
                 embed, is_rerun = info
-                if live_message_button:
+                if use_buttons:
                     stream_url = embed.url
                     view = discord.ui.View()
                     view.add_item(
@@ -299,7 +299,7 @@ class Streams(commands.Cog):
                     return
             else:
                 embed = info
-                if live_message_button:
+                if use_buttons:
                     stream_url = embed.url
                     view = discord.ui.View()
                     view.add_item(
@@ -307,7 +307,7 @@ class Streams(commands.Cog):
                             label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
                         )
                     )
-            await ctx.send(embed=embed, view=view if live_message_button else None)
+            await ctx.send(embed=embed, view=view if use_buttons else None)
 
     @commands.group()
     @commands.guild_only()
@@ -723,20 +723,18 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_schedule.set(True)
             await ctx.send(_("Streams schedules will no longer send an alert."))
 
-    @streamset.command(name="livebutton")
+    @streamset.command(name="usebuttons")
     @commands.guild_only()
-    async def live_button(self, ctx: commands.Context):
-        """Toggle the "Open Stream" button for alerts."""
+    async def use_buttons(self, ctx: commands.Context):
+        """Toggle whether to use buttons for stream alerts."""
         guild = ctx.guild
-        current_setting = await self.config.guild(guild).live_message_button()
+        current_setting: bool = await self.config.guild(guild).use_buttons()
         if current_setting:
-            await self.config.guild(guild).live_message_button.set(False)
-            await ctx.send(_("The `Open Stream` button will no longer be shown in stream alerts."))
+            await self.config.guild(guild).use_buttons.set(False)
+            await ctx.send(_("I will not use buttons in stream alerts."))
         else:
-            await self.config.guild(guild).live_message_button.set(True)
-            await ctx.send(
-                _("When a stream is live, a button linking to the stream will be shown.")
-            )
+            await self.config.guild(guild).use_buttons.set(True)
+            await ctx.send(_("I will use buttons in stream alerts."))
 
     async def add_or_remove(self, ctx: commands.Context, stream, discord_channel):
         if discord_channel.id not in stream.channels:
@@ -806,8 +804,8 @@ class Streams(commands.Cog):
         *,
         is_schedule: bool = False,
     ):
-        live_message_button = await self.config.guild(channel.guild).live_message_button()
-        if live_message_button:
+        use_buttons: bool = await self.config.guild(channel.guild).use_buttons()
+        if use_buttons:
             stream_url = embed.url
             view = discord.ui.View()
             view.add_item(
@@ -819,7 +817,7 @@ class Streams(commands.Cog):
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
-            view=view if live_message_button else None,
+            view=view if use_buttons else None,
         )
         message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
         if is_schedule:
