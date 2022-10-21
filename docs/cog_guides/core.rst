@@ -1698,7 +1698,7 @@ helpset usemenus
 
 .. code-block:: none
 
-    [p]helpset usemenus <use_menus>
+    [p]helpset usemenus <"buttons"|"reactions"|"select"|"selectonly"|"disable">
 
 **Description**
 
@@ -1716,7 +1716,7 @@ only show one page at a time and will use the associated control scheme to navig
     - ``[p]helpset usemenus disable`` - Disables help menus.
 
 **Arguments:**
-    - ``use_menus`` - (``<"buttons"|"reactions"|"select"|"selectonly"|"disable">``) Whether to use ``buttons``,
+    - ``<"buttons"|"reactions"|"select"|"selectonly"|"disable">`` - Whether to use ``buttons``,
       ``reactions``, ``select``, ``selectonly``, or no menus.
 
 .. _core-command-helpset-usetick:
