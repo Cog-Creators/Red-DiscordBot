@@ -36,7 +36,7 @@ Embed Helpers
     :exclude-members: randomize_color
 
 Menus
-==============
+=====
 
 .. automodule:: redbot.core.utils.menus
     :members:
