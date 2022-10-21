@@ -35,7 +35,7 @@ Embed Helpers
     :members:
     :exclude-members: randomize_color
 
-Reaction Menus
+Menus
 ==============
 
 .. automodule:: redbot.core.utils.menus
@@ -67,6 +67,7 @@ Tunnel
 
 .. automodule:: redbot.core.utils.tunnel
     :members: Tunnel
+    :exclude-members: files_from_attatch
 
 Common Filters
 ==============
