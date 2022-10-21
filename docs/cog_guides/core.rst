@@ -1709,15 +1709,15 @@ When "reactions", "buttons", "select", or "selectonly" is passed, ``[p]help`` wi
 only show one page at a time and will use the associated control scheme to navigate between pages.
 
 **Examples:**
-    - `[p]helpset usemenus reactions` - Enables using reaction menus.
-    - `[p]helpset usemenus buttons` - Enables using button menus.
-    - `[p]helpset usemenus select` - Enables buttons with a select menu.
-    - `[p]helpset usemenus selectonly` - Enables a select menu only on help.
-    - `[p]helpset usemenus disable` - Disables help menus.
+    - ``[p]helpset usemenus reactions`` - Enables using reaction menus.
+    - ``[p]helpset usemenus buttons`` - Enables using button menus.
+    - ``[p]helpset usemenus select`` - Enables buttons with a select menu.
+    - ``[p]helpset usemenus selectonly`` - Enables a select menu only on help.
+    - ``[p]helpset usemenus disable`` - Disables help menus.
 
 **Arguments:**
-    - ``use_menus`` - (`<"buttons"|"reactions"|"select"|"selectonly"|"disable">`) Whether to use `buttons`,
-      `reactions`, `select`, `selectonly`, or no menus.
+    - ``use_menus`` - (``<"buttons"|"reactions"|"select"|"selectonly"|"disable">``) Whether to use ``buttons``,
+      ``reactions``, ``select``, ``selectonly``, or no menus.
 
 .. _core-command-helpset-usetick:
 
