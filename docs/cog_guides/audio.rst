@@ -778,9 +778,9 @@ You now (hopefully) have a functioning Lavalink server on a machine seperate to 
 
 .. _audio-commands:
 
---------
+========
 Commands
---------
+========
 
 .. _audio-command-audioset:
 
@@ -1133,6 +1133,10 @@ audioset logs
 """""""""""""
 
 .. note:: |owner-lock|
+
+.. note::
+
+    This command is only available for managed Lavalink servers.
 
 **Syntax**
 
@@ -1996,127 +2000,6 @@ genre
 **Description**
 
 Pick a Spotify playlist from a list of categories to start playing.
-
-.. _audio-command-llsetup:
-
-^^^^^^^
-llsetup
-^^^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]llsetup 
-
-**Description**
-
-Lavalink server configuration options.
-
-.. tip:: This command has the alias of ``llset``.
-
-.. note::
-
-    ``[p]llsetup`` commands are used for advanced management of Lavalink servers.
-    A normal Red user should never have to use these commands unless they are :ref:`managing multiple Red bots with Audio<multibots>`.
-
-.. _audio-command-llsetup-external:
-
-""""""""""""""""
-llsetup external
-""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]llsetup external
-
-**Description**
-
-Toggle using external Lavalink servers.
-
-.. _audio-command-llsetup-host:
-
-""""""""""""
-llsetup host
-""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]llsetup host <host>
-
-**Description**
-
-Set the Lavalink server host.
-
-.. _audio-command-llsetup-info:
-
-""""""""""""
-llsetup info
-""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]llsetup info 
-
-**Description**
-
-Display Lavalink connection settings.
-
-.. _audio-command-llsetup-java:
-
-""""""""""""
-llsetup java
-""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]llsetup java [java_path]
-
-**Description**
-
-Change your Java executable path. Enter nothing to reset to default.
-
-.. _audio-command-llsetup-password:
-
-""""""""""""""""
-llsetup password
-""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]llsetup password <password>
-
-**Description**
-
-Set the Lavalink server password.
-
-.. _audio-command-llsetup-wsport:
-
-""""""""""""""
-llsetup wsport
-""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]llsetup wsport <ws_port>
-
-**Description**
-
-Set the Lavalink websocket server port.
 
 .. _audio-command-local:
 
@@ -3298,3 +3181,536 @@ volume
 **Description**
 
 Set the volume, 1% - 150%.
+
+.. _llset-commands:
+
+=======================
+Lavalink Setup Commands
+=======================
+
+``[p]llsetup`` commands are used for advanced management of Lavalink servers. They are
+available dynamically dependent on whether you are managing your Lavalink node internally or externally.
+
+Commands specifically for internal/managed Lavalink nodes can be found in
+:ref:`this section<internal-node-management-commands>`, whilst commands for external
+Lavalink nodes can be found :ref:`here<external-node-management-commands>`
+
+.. _audio-command-llsetup:
+
+^^^^^^^
+llsetup
+^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup 
+
+**Description**
+
+Manage Lavalink node configuration settings. This command holds all commands to
+manage an external or managed Lavalink node.
+
+.. warning::
+
+    You should not mess with any command in here unless you have a valid reason to,
+    i.e. been told by someone in the Red-Discord Bot support server to do so.
+    All the commands in here have the potential to break the Audio cog.
+
+""""""""""""""""
+llsetup external
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup external
+
+**Description**
+
+Toggle using external Lavalink nodes - requires an existing external Lavalink node for
+Audio to work, if enabled. This command disables the managed Lavalink server, if you do
+not have an external Lavalink node you will be unable to use Audio while this is enabled.
+
+""""""""""""
+llsetup info
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup info
+
+**Description**
+
+Display Lavalink connection settings.
+
+"""""""""""""
+llsetup reset
+"""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup reset
+
+**Description**
+
+Reset all ``[p]llset`` changes back to their default values.
+
+.. _internal-node-management-commands:
+
+---------------------------------
+Internal Node Management Commands
+---------------------------------
+
+.. _audio-command-llsetup-config:
+
+""""""""""""""
+llsetup config
+""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config
+
+**Description**
+
+Configure the managed Lavalink node runtime options.
+
+All settings under this group will likely cause Audio to malfunction if changed
+from their defaults, only change settings here if you have been advised to by #support.
+
+.. _audio-command-llsetup-config-bind:
+
+"""""""""""""""""""
+llsetup config bind
+"""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config bind [host=localhost]
+
+**Description**
+
+Set the managed Lavalink node's binding IP address.
+
+**Arguments**
+
+* ``[host]``: The node's binding IP address, defaulting to "localhost".
+
+.. _audio-command-llsetup-config-port:
+
+"""""""""""""""""""
+llsetup config port
+"""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config port [port=2333]
+
+**Description**
+
+Set the managed Lavalink node's connection port.
+
+This port is the port the managed Lavalink node binds to, you should
+only change this if there is a conflict with the default port because
+you already have an application using port 2333 on this device.
+
+**Arguments**
+
+* ``[port]``: The node's connection port, defaulting to 2333.
+
+.. _audio-command-llsetup-config-server:
+
+"""""""""""""""""""""
+llsetup config server
+"""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config server
+
+**Description**
+
+Configure the managed node authorization and connection settings.
+
+.. _audio-command-llsetup-config-server-buffer:
+
+""""""""""""""""""""""""""""
+llsetup config server buffer
+""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config server buffer [milliseconds=400]
+
+**Description**
+
+Set the managed Lavalink node NAS buffer size. Only
+change this if you have been directly advised to,
+changing it can cause significant playback issues.
+
+**Arguments**
+
+* ``[milliseconds]`` - The buffer size, defaults to 400.
+
+.. _audio-command-llsetup-config-server-framebuffer:
+
+"""""""""""""""""""""""""""""""""
+llsetup config server framebuffer
+"""""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config server framebuffer [milliseconds=1000]
+
+**Description**
+
+Set the managed Lavalink node framebuffer size. Only
+change this if you have been directly advised to,
+changing it can cause significant playback issues.
+
+**Arguments**
+
+* ``[milliseconds]`` - The framebuffer size, defaults to 1000.
+
+.. _audio-command-llsetup-config-source:
+
+"""""""""""""""""""""
+llsetup config source 
+"""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source
+
+**Description**
+
+Toggle audio sources on/off.
+
+By default, all sources are enabled, you should only use commands here to
+disable a specific source if you have been advised to, disabling sources
+without background knowledge can cause Audio to break.
+
+.. _audio-command-llsetup-config-source-bandcamp:
+
+""""""""""""""""""""""""""""""
+llsetup config source bandcamp
+""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source bandcamp
+
+**Description**
+
+Toggle Bandcamp source on or off. This toggle controls the playback
+of all Bandcamp related content.
+
+.. _audio-command-llsetup-config-source-http:
+
+""""""""""""""""""""""""""
+llsetup config source http
+""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source http
+
+**Description**
+
+Toggle HTTP direct URL usage on or off. This source is used to
+allow playback from direct HTTP streams (this does not affect direct URL
+playback for the other sources).
+
+.. _audio-command-llsetup-config-source-local:
+
+"""""""""""""""""""""""""""
+llsetup config source local
+"""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source local
+
+**Description**
+
+Toggle local file usage on or off.
+This toggle controls the playback of all local track content,
+usually found inside the ``localtracks`` folder.
+
+.. _audio-command-llsetup-config-source-soundcloud:
+
+""""""""""""""""""""""""""""""""
+llsetup config source soundcloud
+""""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source soundcloud
+
+**Description**
+
+Toggle SoundCloud source on or off.
+This toggle controls the playback of all SoundCloud related content.
+
+.. _audio-command-llsetup-config-source-twitch:
+
+""""""""""""""""""""""""""""
+llsetup config source twitch
+""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source twitch
+
+**Description**
+
+Toggle Twitch source on or off.
+This toggle controls the playback of all Twitch related content.
+
+.. _audio-command-llsetup-config-source-vimeo:
+
+"""""""""""""""""""""""""""
+llsetup config source vimeo
+"""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source vimeo
+
+**Description**
+
+Toggle Vimeo source on or off.
+This toggle controls the playback of all Vimeo related content.
+
+.. _audio-command-llsetup-config-source-youtube:
+
+"""""""""""""""""""""""""""""
+llsetup config source youtube
+"""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config source youtube
+
+**Description**
+
+Toggle YouTube source on or off (**this includes Spotify**).
+This toggle controls the playback of all YouTube and Spotify related content.
+
+.. _audio-command-llsetup-config-token:
+
+""""""""""""""""""""
+llsetup config token
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup config token [password=youshallnotpass]
+
+**Description**
+
+Set the managed Lavalink node's connection password.
+This is the password required for Audio to connect to the managed Lavalink node.
+The value by default is ``youshallnotpass``.
+
+**Arguments**
+
+* ``[password]`` - The node's connection password, defaulting to ``youshallnotpass``.
+
+.. _audio-command-llsetup-heapsize:
+
+""""""""""""""""
+llsetup heapsize
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup heapsize [size=3G]
+
+**Description**
+
+Set the managed Lavalink node maximum heap-size.
+
+By default, this value is 50% of available RAM in the host machine
+represented by [1-1024][M|G] (256M, 256G for example).
+
+This value only represents the maximum amount of RAM allowed to be
+used at any given point, and does not mean that the managed Lavalink
+node will always use this amount of RAM.
+
+**Arguments**
+
+* ``[size]`` - The node's maximum heap-size, defaulting to ``3G``.
+
+.. _audio-command-llsetup-java:
+
+""""""""""""
+llsetup java
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup java [javapath]
+
+**Description**
+
+Change your Java executable path.
+
+This command shouldn't need to be used most of the time,
+and is only useful if the host machine has conflicting Java versions.
+
+If changing this make sure that the java you set is supported by Audio.
+The current supported version is Java 11.
+
+**Arguments**
+
+* ``[java]`` - The java executable path, leave blank to reset it back to default.
+
+.. _audio-command-llsetup-yaml:
+
+""""""""""""
+llsetup yaml
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup yaml
+
+**Description**
+
+Uploads a copy of the application.yml file used by the managed Lavalink node.
+
+.. _external-node-management-commands:
+
+---------------------------------
+External Node Management Commands
+---------------------------------
+
+.. note::
+
+    A normal Red user should never have to use these commands unless they are :ref:`managing multiple Red bots with Audio<multibots>`.
+
+.. _audio-command-llsetup-host:
+
+""""""""""""
+llsetup host
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup host [host=localhost]
+
+**Description**
+
+Set the Lavalink node host. This command sets the connection host which
+Audio will use to connect to an external Lavalink node.
+
+**Arguments**
+
+* ``[host]`` - The connection host, defaulting to "localhost".
+
+.. _audio-command-llsetup-password:
+
+""""""""""""""""
+llsetup password
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup password [password=youshallnotpass]
+
+**Description**
+
+Set the Lavalink node password. This command sets the connection password which
+Audio will use to connect to an external Lavalink node.
+
+**Arguments**
+
+* ``[password]`` - The connection password, defaulting to "youshallnotpass".
+
+.. _audio-command-llsetup-port:
+
+""""""""""""
+llsetup port
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup port [port=2333]
+
+**Description**
+
+Set the Lavalink node port. This command sets the connection port which
+Audio will use to connect to an external Lavalink node.
+
+**Arguments**
+
+* ``[password]`` - The connection password, defaulting to 2333.
+
+.. _audio-command-llsetup-secured:
+
+"""""""""""""""
+llsetup secured
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]llsetup secured
+
+**Description**
+
+Set the Lavalink node connection to secured. This command sets the connection type
+to secured when connecting to an external Lavalink node.
