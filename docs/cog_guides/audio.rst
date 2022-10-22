@@ -3272,9 +3272,9 @@ Internal Node Management Commands
 
 .. _audio-command-llsetup-config:
 
-""""""""""""""
+^^^^^^^^^^^^^^
 llsetup config
-""""""""""""""
+^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3291,9 +3291,9 @@ from their defaults, only change settings here if you have been advised to by #s
 
 .. _audio-command-llsetup-config-bind:
 
-"""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^
 llsetup config bind
-"""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3311,9 +3311,9 @@ Set the managed Lavalink node's binding IP address.
 
 .. _audio-command-llsetup-config-port:
 
-"""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^
 llsetup config port
-"""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3335,9 +3335,9 @@ you already have an application using port 2333 on this device.
 
 .. _audio-command-llsetup-config-server:
 
-"""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^
 llsetup config server
-"""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3351,9 +3351,9 @@ Configure the managed node authorization and connection settings.
 
 .. _audio-command-llsetup-config-server-buffer:
 
-""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config server buffer
-""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3373,9 +3373,9 @@ changing it can cause significant playback issues.
 
 .. _audio-command-llsetup-config-server-framebuffer:
 
-"""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config server framebuffer
-"""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3395,9 +3395,9 @@ changing it can cause significant playback issues.
 
 .. _audio-command-llsetup-config-source:
 
-"""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^
 llsetup config source 
-"""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3415,9 +3415,9 @@ without background knowledge can cause Audio to break.
 
 .. _audio-command-llsetup-config-source-bandcamp:
 
-""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config source bandcamp
-""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3432,9 +3432,9 @@ of all Bandcamp related content.
 
 .. _audio-command-llsetup-config-source-http:
 
-""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config source http
-""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3450,9 +3450,9 @@ playback for the other sources).
 
 .. _audio-command-llsetup-config-source-local:
 
-"""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config source local
-"""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3468,9 +3468,9 @@ usually found inside the ``localtracks`` folder.
 
 .. _audio-command-llsetup-config-source-soundcloud:
 
-""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config source soundcloud
-""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3485,9 +3485,9 @@ This toggle controls the playback of all SoundCloud related content.
 
 .. _audio-command-llsetup-config-source-twitch:
 
-""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config source twitch
-""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3502,9 +3502,9 @@ This toggle controls the playback of all Twitch related content.
 
 .. _audio-command-llsetup-config-source-vimeo:
 
-"""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config source vimeo
-"""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3519,9 +3519,9 @@ This toggle controls the playback of all Vimeo related content.
 
 .. _audio-command-llsetup-config-source-youtube:
 
-"""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 llsetup config source youtube
-"""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3536,9 +3536,9 @@ This toggle controls the playback of all YouTube and Spotify related content.
 
 .. _audio-command-llsetup-config-token:
 
-""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^
 llsetup config token
-""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3558,9 +3558,9 @@ The value by default is ``youshallnotpass``.
 
 .. _audio-command-llsetup-heapsize:
 
-""""""""""""""""
+^^^^^^^^^^^^^^^^
 llsetup heapsize
-""""""""""""""""
+^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3585,9 +3585,9 @@ node will always use this amount of RAM.
 
 .. _audio-command-llsetup-java:
 
-""""""""""""
+^^^^^^^^^^^^
 llsetup java
-""""""""""""
+^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3611,9 +3611,9 @@ The current supported version is Java 11.
 
 .. _audio-command-llsetup-yaml:
 
-""""""""""""
+^^^^^^^^^^^^
 llsetup yaml
-""""""""""""
+^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3637,9 +3637,9 @@ External Node Management Commands
 
 .. _audio-command-llsetup-host:
 
-""""""""""""
+^^^^^^^^^^^^
 llsetup host
-""""""""""""
+^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3658,9 +3658,9 @@ Audio will use to connect to an external Lavalink node.
 
 .. _audio-command-llsetup-password:
 
-""""""""""""""""
+^^^^^^^^^^^^^^^^
 llsetup password
-""""""""""""""""
+^^^^^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3679,9 +3679,9 @@ Audio will use to connect to an external Lavalink node.
 
 .. _audio-command-llsetup-port:
 
-""""""""""""
+^^^^^^^^^^^^
 llsetup port
-""""""""""""
+^^^^^^^^^^^^
 
 **Syntax**
 
@@ -3700,9 +3700,9 @@ Audio will use to connect to an external Lavalink node.
 
 .. _audio-command-llsetup-secured:
 
-"""""""""""""""
+^^^^^^^^^^^^^^^
 llsetup secured
-"""""""""""""""
+^^^^^^^^^^^^^^^
 
 **Syntax**
 

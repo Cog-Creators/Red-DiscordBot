@@ -457,7 +457,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_source_http(self, ctx: commands.Context):
         """Toggle HTTP direct URL usage on or off.
 
-        This source is used to allow playback from direct http streams (This does not affect direct url playback for the other sources)
+        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).
         """
         state = await self.config.yaml.lavalink.server.sources.http()
         await self.config.yaml.lavalink.server.sources.http.set(not state)
