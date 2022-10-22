@@ -538,7 +538,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_source_soundcloud(self, ctx: commands.Context):
         """Toggle Soundcloud source on or off.
 
-        This toggle controls the playback of all Soundcloud related content.
+        This toggle controls the playback of all SoundCloud related content.
         """
         state = await self.config.yaml.lavalink.server.sources.soundcloud()
         await self.config.yaml.lavalink.server.sources.soundcloud.set(not state)
