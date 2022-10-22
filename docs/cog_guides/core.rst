@@ -1698,24 +1698,26 @@ helpset usemenus
 
 .. code-block:: none
 
-    [p]helpset usemenus [use_menus]
+    [p]helpset usemenus <"buttons"|"reactions"|"select"|"selectonly"|"disable">
 
 **Description**
 
 Allows the help command to be sent as a paginated menu instead of separate
 messages.
 
-When enabled, ``[p]help`` will only show one page at a time and will use reactions to navigate between pages.
+When "reactions", "buttons", "select", or "selectonly" is passed, ``[p]help`` will
+only show one page at a time and will use the associated control scheme to navigate between pages.
 
-This defaults to False.
-Using this without a setting will toggle.
-
- **Examples:**
-    - ``[p]helpset usemenues True`` - Enables using menus.
-    - ``[p]helpset usemenues`` - Toggles the value.
+**Examples:**
+    - ``[p]helpset usemenus reactions`` - Enables using reaction menus.
+    - ``[p]helpset usemenus buttons`` - Enables using button menus.
+    - ``[p]helpset usemenus select`` - Enables buttons with a select menu.
+    - ``[p]helpset usemenus selectonly`` - Enables a select menu only on help.
+    - ``[p]helpset usemenus disable`` - Disables help menus.
 
 **Arguments:**
-    - ``[use_menus]`` - Whether to use menus. Leave blank to toggle.
+    - ``<"buttons"|"reactions"|"select"|"selectonly"|"disable">`` - Whether to use ``buttons``,
+      ``reactions``, ``select``, ``selectonly``, or no menus.
 
 .. _core-command-helpset-usetick:
 
