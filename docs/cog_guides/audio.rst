@@ -778,9 +778,9 @@ You now (hopefully) have a functioning Lavalink server on a machine seperate to 
 
 .. _audio-commands:
 
-========
+--------
 Commands
-========
+--------
 
 .. _audio-command-audioset:
 
@@ -3184,9 +3184,9 @@ Set the volume, 1% - 150%.
 
 .. _llset-commands:
 
-=======================
+-----------------------
 Lavalink Setup Commands
-=======================
+-----------------------
 
 ``[p]llsetup`` commands are used for advanced management of Lavalink servers. They are
 available dynamically dependent on whether you are managing your Lavalink node internally or externally.
