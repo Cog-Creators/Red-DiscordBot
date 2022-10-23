@@ -709,9 +709,9 @@ The nano text editor will now open. Now copy and paste the following text into i
     [Install]
     WantedBy=multi-user.target
 
-* Replace all occurances of ``< Lavalink path >`` with the output of ``pwd`` you noted earlier.
-* Replace all occurances of ``< Java executable path >`` with the output of ``which java`` you noted earlier.
-* Replace all occurances of ``< username >`` with the output of echo ``"$USER"`` you noted earlier.
+* Replace all occurrences of ``< Lavalink path >`` with the output of ``pwd`` you noted earlier.
+* Replace all occurrences of ``< Java executable path >`` with the output of ``which java`` you noted earlier.
+* Replace all occurrences of ``< username >`` with the output of echo ``"$USER"`` you noted earlier.
 
 Hit ``CTRL+X``, ``y`` and then ENTER to save and exit. We have now registered Lavalink as a service.
 
