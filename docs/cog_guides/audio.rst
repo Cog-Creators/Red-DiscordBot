@@ -182,10 +182,10 @@ Guild-based Audioset Commands
 Spotify Playback and API Keys
 ------------------------------
 
-Audio can play single tracks or playlists from Spotify by looking up the song(s) on YouTube and playing those tracks instead.
-We will never be able to play directly from Spotify itself as it is against their Terms of Service. This is possible by
-providing your bot with a YouTube API key and a Spotify API key. Instructions for setting both can be found under
-``[p]audioset youtubeapi`` and ``[p]audioset spotifyapi``.
+We will never be able to play directly from Spotify itself as it is against their Terms of Service. Audio can play 
+single tracks or playlists from Spotify by looking up the song(s) on YouTube and playing those tracks instead.
+This is possible by providing your bot with a YouTube API key and a Spotify API key. Instructions for setting both 
+can be found under ``[p]audioset youtubeapi`` and ``[p]audioset spotifyapi``.
 
 The YouTube API keys that are being given out these days only have 10000 units of quota per day, which is equivalent to
 100 Spotify song lookups. There is a local metadata cache that Audio uses to be able to retain information about song
