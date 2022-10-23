@@ -213,7 +213,7 @@ To use this feature:
 
 1. Create a "localtracks" folder anywhere where Lavalink/your bot user has permissions to access, on the system.
 2. Use ``[p]audioset localpath <localtracks path>`` command to set the folder created above as local tracks folder.
-3. Create/move/copy/symblink your album folders (Subfolders containing your tracks) to the folder created in Step 1.
+3. Create/move/copy/symlink your album folders (Subfolders containing your tracks) to the folder created in Step 1.
 4. Put any of Audio's supported files in the following folders:
 
    * ``localtracks/<parent folder>/song.mp3``
