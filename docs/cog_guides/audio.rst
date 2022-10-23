@@ -82,13 +82,21 @@ How can I use this playlist link with playlist commands in audio?
 
 	Red Audio uses Red playlists in its commands that take playlist arguments. 
 	These playlists can be created and modified using the ``[p]playlist`` group command.
-	When a playlist or song(s) are saved as a Red playlist, it is assinged an ID automatically,
+	When a playlist or song(s) are saved as a Red playlist, it is assigned an ID automatically,
 	and it is also assigned the one-word name you provided it when creating the playlist.
 	Either one of these identifiers can be used with playlist-related commands.
 
 Q: How do I turn off autoplay?
 
 	Use the ``[p]audioset autoplay toggle`` command.
+
+Q: How do I get the bot to disconnect from the channel when it's done playing?
+
+	``[p]audioset dc`` will make the bot auto-disconnect when playback completes and the 
+	queue is empty. 
+	``[p]audioset emptydisconnect`` with a seconds argument greater than 0 will make the bot 
+	auto-disconnect once it's alone in the channel, after the amount of seconds given to the 
+	command. This setting takes precedence over ``[p]audioset dc`` if both settings are active.
 
 Q: How do I use localtracks?
 
@@ -182,10 +190,10 @@ Guild-based Audioset Commands
 Spotify Playback and API Keys
 ------------------------------
 
-Audio can play single tracks or playlists from Spotify by looking up the song(s) on YouTube and playing those tracks instead.
-We will never be able to play directly from Spotify itself as it is against their Terms of Service. This is possible by
-providing your bot with a YouTube API key and a Spotify API key. Instructions for setting both can be found under
-``[p]audioset youtubeapi`` and ``[p]audioset spotifyapi``.
+We will never be able to play directly from Spotify itself as it is against their Terms of Service. Audio can play 
+single tracks or playlists from Spotify by looking up the song(s) on YouTube and playing those tracks instead.
+This is possible by providing your bot with a YouTube API key and a Spotify API key. Instructions for setting both 
+can be found under ``[p]audioset youtubeapi`` and ``[p]audioset spotifyapi``.
 
 The YouTube API keys that are being given out these days only have 10000 units of quota per day, which is equivalent to
 100 Spotify song lookups. There is a local metadata cache that Audio uses to be able to retain information about song
@@ -213,7 +221,7 @@ To use this feature:
 
 1. Create a "localtracks" folder anywhere where Lavalink/your bot user has permissions to access, on the system.
 2. Use ``[p]audioset localpath <localtracks path>`` command to set the folder created above as local tracks folder.
-3. Create/move/copy/symblink your album folders (Subfolders containing your tracks) to the folder created in Step 1.
+3. Create/move/copy/symlink your album folders (Subfolders containing your tracks) to the folder created in Step 1.
 4. Put any of Audio's supported files in the following folders:
 
    * ``localtracks/<parent folder>/song.mp3``
@@ -276,10 +284,10 @@ Audio has an internal permissions system for restrictions to audio commands whil
 music with the bot. Bot owners, server admins and mods bypass these restrictions when they are in use.
 
 ``[p]audioset dj`` will turn on the DJ role restriction system, ``[p]audioset role`` will let you choose or
-reassign the DJ role, and if you wish to make non-privledged users vote to skip songs, voteskip can be enabled
+reassign the DJ role, and if you wish to make non-privileged users vote to skip songs, voteskip can be enabled
 with ``[p]audioset vote``.
 
-If a non-prilvedged user is listening to music alone in the channel, they can use commands without restrictions,
+If a non-privileged user is listening to music alone in the channel, they can use commands without restrictions,
 even if DJ role or voteskip settings are active.
 
 .. _sound-quality-issues:
@@ -322,6 +330,7 @@ If the track progress is stuck on 00:00 when you run ``[p]now``:
 
 1. Try to run ``[p]disconnect`` and replay the song.
 2. Try to reload the audio cog with ``[p]audioset restart``.
+3. Make sure the firewall on the host is configured properly.
 
 -------------------------
 Lavalink - Advanced Usage
@@ -351,7 +360,7 @@ restricted to perhaps 384MB -> 768MB, depending on the cogs you have installed. 
 RAM available, a good amount may be 512MB -> 1GB. 
 
 Run the following command, where ``Xms`` specifies the initial memory allocation pool and ``Xmx`` is the
-maximum memory allocation pool. Use the RAM values you have just determinined. The MB suffix is M and
+maximum memory allocation pool. Use the RAM values you have just determined. The MB suffix is M and
 the GB suffix is G.
 
 .. code-block:: ini
@@ -709,9 +718,9 @@ The nano text editor will now open. Now copy and paste the following text into i
     [Install]
     WantedBy=multi-user.target
 
-* Replace all occurances of ``< Lavalink path >`` with the output of ``pwd`` you noted earlier.
-* Replace all occurances of ``< Java executable path >`` with the output of ``which java`` you noted earlier.
-* Replace all occurances of ``< username >`` with the output of echo ``"$USER"`` you noted earlier.
+* Replace all occurrences of ``< Lavalink path >`` with the output of ``pwd`` you noted earlier.
+* Replace all occurrences of ``< Java executable path >`` with the output of ``which java`` you noted earlier.
+* Replace all occurrences of ``< username >`` with the output of echo ``"$USER"`` you noted earlier.
 
 Hit ``CTRL+X``, ``y`` and then ENTER to save and exit. We have now registered Lavalink as a service.
 
@@ -764,12 +773,13 @@ you are using the correct port.
 
 If successful, run each of the following commands one by one on your bot. Replace ``"yourlavalinkip"`` with the ip of your Lavalink server.
 Change ``"port"`` with the port you set up in the application.yml. Change ``"password"`` with the password you set up in the application.yml.
+Do not use quotes in these commands. For example, ``[p]llset host 192.168.10.101`` or ``[p]llset password ahyesverysecure``.
 
 .. code-block:: none
 
     [p]llset external
     [p]llset host "yourlavalinkip"
-    [p]llset wsport "port"
+    [p]llset port "port"
     [p]llset password "password"
 
 Reload audio with ``[p]reload audio`` and give it a few seconds to connect.
