@@ -769,7 +769,7 @@ Change ``"port"`` with the port you set up in the application.yml. Change ``"pas
 
     [p]llset external
     [p]llset host "yourlavalinkip"
-    [p]llset wsport "port"
+    [p]llset port "port"
     [p]llset password "password"
 
 Reload audio with ``[p]reload audio`` and give it a few seconds to connect.
