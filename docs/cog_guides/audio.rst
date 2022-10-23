@@ -279,7 +279,7 @@ music with the bot. Bot owners, server admins and mods bypass these restrictions
 reassign the DJ role, and if you wish to make non-privledged users vote to skip songs, voteskip can be enabled
 with ``[p]audioset vote``.
 
-If a non-prilvedged user is listening to music alone in the channel, they can use commands without restrictions,
+If a non-privileged user is listening to music alone in the channel, they can use commands without restrictions,
 even if DJ role or voteskip settings are active.
 
 .. _sound-quality-issues:
