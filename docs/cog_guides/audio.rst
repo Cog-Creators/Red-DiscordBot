@@ -104,7 +104,7 @@ Q: My terminal is saying that I "must install Java 11 for Lavalink to run". How 
 
     You are getting this error because you have a different version of Java installed, or you don't have
     Java installed at all. As the error states, Java 11 is required, and can be installed from
-    `here <https://adoptium.net/temurin/releases/?version=11>`_.
+    `here <|java-install-url|>`_.
     
     Use ``[p]llset java <path_to_java_11_executable>``, to make Audio launch Lavalink with a
     specific Java binary. To do this, you will need to locate your ``java.exe``/``java`` file

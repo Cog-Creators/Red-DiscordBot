@@ -52,3 +52,7 @@
 .. These are the comments for parameter types such as `bool`.
 
 .. |bool-input| replace:: You should provide either 'true' or 'false'.
+
+.. Testing
+
+.. |java-install-url| replace:: https://adoptium.net/temurin/releases/?version=11
