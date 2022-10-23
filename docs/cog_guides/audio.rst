@@ -276,7 +276,7 @@ Audio has an internal permissions system for restrictions to audio commands whil
 music with the bot. Bot owners, server admins and mods bypass these restrictions when they are in use.
 
 ``[p]audioset dj`` will turn on the DJ role restriction system, ``[p]audioset role`` will let you choose or
-reassign the DJ role, and if you wish to make non-privledged users vote to skip songs, voteskip can be enabled
+reassign the DJ role, and if you wish to make non-privileged users vote to skip songs, voteskip can be enabled
 with ``[p]audioset vote``.
 
 If a non-privileged user is listening to music alone in the channel, they can use commands without restrictions,
