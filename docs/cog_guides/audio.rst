@@ -764,6 +764,7 @@ you are using the correct port.
 
 If successful, run each of the following commands one by one on your bot. Replace ``"yourlavalinkip"`` with the ip of your Lavalink server.
 Change ``"port"`` with the port you set up in the application.yml. Change ``"password"`` with the password you set up in the application.yml.
+Do not use quotes in these commands. For example, ``[p]llset host 192.168.10.101`` or ``[p]llset password ahyesverysecure``.
 
 .. code-block:: none
 
