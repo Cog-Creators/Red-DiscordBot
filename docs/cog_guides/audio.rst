@@ -322,6 +322,7 @@ If the track progress is stuck on 00:00 when you run ``[p]now``:
 
 1. Try to run ``[p]disconnect`` and replay the song.
 2. Try to reload the audio cog with ``[p]audioset restart``.
+3. Make sure the firewall on the host is configured properly.
 
 -------------------------
 Lavalink - Advanced Usage
