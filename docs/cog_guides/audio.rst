@@ -82,7 +82,7 @@ How can I use this playlist link with playlist commands in audio?
 
 	Red Audio uses Red playlists in its commands that take playlist arguments. 
 	These playlists can be created and modified using the ``[p]playlist`` group command.
-	When a playlist or song(s) are saved as a Red playlist, it is assinged an ID automatically,
+	When a playlist or song(s) are saved as a Red playlist, it is assigned an ID automatically,
 	and it is also assigned the one-word name you provided it when creating the playlist.
 	Either one of these identifiers can be used with playlist-related commands.
 
