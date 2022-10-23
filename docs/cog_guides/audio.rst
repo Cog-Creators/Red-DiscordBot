@@ -90,6 +90,14 @@ Q: How do I turn off autoplay?
 
 	Use the ``[p]audioset autoplay toggle`` command.
 
+Q: How do I get the bot to disconnect from the channel when it's done playing?
+
+	``[p]audioset dc`` will make the bot auto-disconnect when playback completes and the 
+	queue is empty. 
+	``[p]audioset emptydisconnect`` with a seconds argument greater than 0 will make the bot 
+	auto-disconnect once it's alone in the channel, after the amount of seconds given to the 
+	command. This setting takes precedence over ``[p]audioset dc`` if both settings are active.
+
 Q: How do I use localtracks?
 
 	See the :ref:`local tracks section<local-tracks>`.
