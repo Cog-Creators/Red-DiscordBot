@@ -351,7 +351,7 @@ restricted to perhaps 384MB -> 768MB, depending on the cogs you have installed. 
 RAM available, a good amount may be 512MB -> 1GB. 
 
 Run the following command, where ``Xms`` specifies the initial memory allocation pool and ``Xmx`` is the
-maximum memory allocation pool. Use the RAM values you have just determinined. The MB suffix is M and
+maximum memory allocation pool. Use the RAM values you have just determined. The MB suffix is M and
 the GB suffix is G.
 
 .. code-block:: ini
