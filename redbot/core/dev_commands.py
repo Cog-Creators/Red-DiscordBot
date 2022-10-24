@@ -27,6 +27,7 @@ import discord
 from . import checks, commands
 from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
+from .utils import chat_formatting
 from .utils.chat_formatting import pagify
 from .utils.predicates import MessagePredicate
 
@@ -110,6 +111,7 @@ class Dev(commands.Cog):
             "aiohttp": aiohttp,
             "discord": discord,
             "commands": commands,
+            "cf": chat_formatting,
             "_": self._last_result,
             "__name__": "__main__",
         }
@@ -233,6 +235,20 @@ class Dev(commands.Cog):
         The REPL will only recognise code as messages which start with a
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
+
+        Environment Variables:
+            ctx      - the command invocation context
+            bot      - the bot object
+            channel  - the current channel object
+            author   - the command author's member object
+            guild    - the current guild object
+            message  - the command's message object
+            aiohttp  - the aiohttp library
+            asyncio  - the asyncio library
+            discord  - the discord.py library
+            commands - the redbot.core.commands module
+            cf       - the redbot.core.utils.chat_formatting module
+            _        - the result of the last dev command
         """
         if ctx.channel.id in self.sessions:
             if self.sessions[ctx.channel.id]:

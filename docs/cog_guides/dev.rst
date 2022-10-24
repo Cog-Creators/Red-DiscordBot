@@ -96,6 +96,7 @@ lines or asynchronous code, see [p]repl or [p]eval.
 * ``asyncio``: The asyncio library
 * ``discord``: The discord.py library
 * ``commands``: The redbot.core.commands module
+* ``cf``: The redbot.core.utils.chat_formatting module
 * ``_``: The result from the last dev command
 
 **Arguments**
@@ -137,6 +138,7 @@ as they are not mixed and they are formatted correctly.
 * ``asyncio``: The asyncio library
 * ``discord``: The discord.py library
 * ``commands``: The redbot.core.commands module
+* ``cf``: The redbot.core.utils.chat_formatting module
 * ``_``: The result from the last dev command
 
 **Arguments**
@@ -212,6 +214,21 @@ Open an interactive REPL.
 The REPL will only recognise code as messages which start with a
 backtick. This includes codeblocks, and as such multiple lines can be
 evaluated.
+
+**Environment Variables**
+
+* ``ctx``: Command invocation context
+* ``bot``: The bot object
+* ``channel``: The current channel object
+* ``author``: The current author's member object
+* ``guild``: The current guild object
+* ``message``: The command's message object
+* ``aiohttp``: The aiohttp library
+* ``asyncio``: The asyncio library
+* ``discord``: The discord.py library
+* ``commands``: The redbot.core.commands module
+* ``cf``: The redbot.core.utils.chat_formatting module
+* ``_``: The result from the last dev command
 
 .. _dev-command-repl-pause:
 
