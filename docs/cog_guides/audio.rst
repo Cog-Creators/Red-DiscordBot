@@ -364,7 +364,7 @@ Now you need to determine your RAM needs. If your bot has 1GB RAM available, Lav
 to perhaps 384MB -> 768MB, depending on the cogs you have installed. If your bot has 2GB of RAM available, 
 a good amount may be 512MB -> 1GB. 
 
-Run the following command, where ``Xmx`` specifies the RAM values you have just determined. The MB suffix 
+Run the following command, where ``Xmx`` specifies the RAM value you have just determined. The MB suffix 
 is M and the GB suffix is G.
 
 .. code-block:: ini
