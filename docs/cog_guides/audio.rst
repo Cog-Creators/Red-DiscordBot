@@ -466,7 +466,7 @@ Obtaining the latest Lavalink.jar on a Red update
 2. Click `here <https://github.com/Cog-Creators/Lavalink-Jars/releases/latest>`__.
 3. Download the Lavalink.jar file.
 
-**If you are not running an external instance of Lavalink**
+**If you are not running your own instance of Lavalink**
 
 1. Stop your bot by running ``[p]shutdown``.
 2. Move the Lavalink.jar to your ``<datapath>/cogs/Audio/`` folder.
