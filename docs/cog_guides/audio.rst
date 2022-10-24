@@ -933,7 +933,7 @@ audioset autoplay toggle
 
 **Description**
 
-Toggle auto-play when there no songs in queue.
+Toggle auto-play when there are no songs in the queue.
 
 .. _audio-command-audioset-cache:
 
