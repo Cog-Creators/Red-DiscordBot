@@ -20,7 +20,8 @@ command name, like ``[p]help playlist append``.
 In this guide, you will see references to "Lavalink" or the "Lavalink.jar". `Lavalink <https://github.com/freyacodes/Lavalink/>`_ is the
 Java-based audio backend we use to be able to play music through the bot. Most users will
 not have to worry much about Lavalink or what it is, as Audio manages this process for you
-by default. Advanced users can read more about Lavalink and special cases under the Lavalink - Advanced Usage section below.
+by default. Advanced users can read more about Lavalink and special cases under the 
+:ref:`Lavalink - Advanced Usage<advanced-usage>` section below.
 
 You will also see references to ``managed`` or ``unmanaged`` in regards to the Lavalink.jar.
 The default is ``managed``, as Audio manages the Lavalink.jar in this state. If it is run as an
@@ -130,7 +131,8 @@ Queue Related Commands
 * ``[p]queue`` - Shows the queue of playing songs and current settings for the server for shuffle and repeat.
 * ``[p]remove`` - Remove a song from the queue. This command uses the track position in the queue for identification, e.g. ``[p]remove 10`` will remove
   the 10th song in the queue.
-* ``[p]shuffle`` - Toggle random song playback from the queue, and shuffles the queue.
+* ``[p]shuffle`` - Toggle random song playback from the queue.
+* ``[p]queue shuffle`` - Shuffles the queue.
 * ``[p]repeat`` - Toggle adding songs back into the queue when they are finished playing.
 * ``[p]playlist queue`` - Save the current queue to a Red playlist.
 * ``[p]audioset persistqueue`` - Can be used to reinstate existing queues when the bot is restarted. This is an owner-only command.
@@ -200,7 +202,8 @@ The YouTube API keys that are being given out these days only have 10000 units o
 lookups, though. For example, with a 500 song Spotify playlist, the bot will be able to fetch the first 100 songs the
 first day the Spotify playlist URL is used with Audio, then the next day it will be able to use the first 100 lookups
 from the local cache, and use the API credits to look up the next 100 songs. After 5 days of playing the Spotify playlist
-through Audio, that playlist will be fully cached locally and will not require any API credits to play songs.
+through Audio, that playlist will be fully cached locally until the cached entries are set to expire and will not require  
+any API credits to play songs.
 
 The following commands are relevant:
 
@@ -298,7 +301,7 @@ Sound Quality Issues
 
 Laggy audio is most likely caused by:
 
-* A problem with the connection between the host machine of your bot to the Discord server.
+* A problem with the connection between the machine that is hosting Lavalink and the Discord voice server.
 * Issues with Discord.
 
 You can try the following to resolve poor sound quality:
