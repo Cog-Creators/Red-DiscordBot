@@ -555,7 +555,7 @@ Installing Lavalink
 The Lavalink executable used in Red-Discordbot is slightly modified and is not the same as stock Lavalink,
 it ensures proper operation when used with Red-Discordbot and compatibility with systems and libraries that
 Red uses to operate. It's required to use this Lavalink jar when running unmanaged Lavalink servers to not
-void your privilege to recieve support. Assuming your current directory is the lavalink folder as you ran
+void your privilege to receive support. Assuming your current directory is the lavalink folder as you ran
 the ``cd lavalink`` command in the previous section, you can run the following commands one by one to install it:
 
 .. code-block:: sh
