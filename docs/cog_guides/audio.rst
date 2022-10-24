@@ -299,7 +299,7 @@ Sound Quality Issues
 
 Laggy audio is most likely caused by:
 
-* A problem with the connection between the host machine of your bot to the Discord server.
+* A problem with the connection between the machine that is hosting Lavalink and the Discord voice server.
 * Issues with Discord.
 
 You can try the following to resolve poor sound quality:
