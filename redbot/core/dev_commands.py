@@ -147,6 +147,7 @@ class Dev(commands.Cog):
             asyncio  - the asyncio library
             discord  - the discord.py library
             commands - the redbot.core.commands module
+            cf       - the redbot.core.utils.chat_formatting module
             _        - the result of the last dev command
         """
         env = self.get_environment(ctx)
@@ -193,6 +194,7 @@ class Dev(commands.Cog):
             asyncio  - the asyncio library
             discord  - the discord.py library
             commands - the redbot.core.commands module
+            cf       - the redbot.core.utils.chat_formatting module
             _        - the result of the last dev command
         """
         env = self.get_environment(ctx)
