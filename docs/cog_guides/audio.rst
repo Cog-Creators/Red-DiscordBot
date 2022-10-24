@@ -131,7 +131,8 @@ Queue Related Commands
 * ``[p]queue`` - Shows the queue of playing songs and current settings for the server for shuffle and repeat.
 * ``[p]remove`` - Remove a song from the queue. This command uses the track position in the queue for identification, e.g. ``[p]remove 10`` will remove
   the 10th song in the queue.
-* ``[p]shuffle`` - Toggle random song playback from the queue, and shuffles the queue.
+* ``[p]shuffle`` - Toggle random song playback from the queue.
+* ``[p]queue shuffle`` - Shuffles the queue.
 * ``[p]repeat`` - Toggle adding songs back into the queue when they are finished playing.
 * ``[p]playlist queue`` - Save the current queue to a Red playlist.
 * ``[p]audioset persistqueue`` - Can be used to reinstate existing queues when the bot is restarted. This is an owner-only command.
