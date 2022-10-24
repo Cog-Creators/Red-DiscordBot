@@ -472,7 +472,7 @@ Obtaining the latest Lavalink.jar on a Red update
 2. Move the Lavalink.jar to your ``<datapath>/cogs/Audio/`` folder.
 3. Start your bot.
 
-**If you are running an external instance of Lavalink**
+**If you are running your own instance of Lavalink**
 
 1. Stop all instances of Red running on the host.
 2. Stop the Lavalink process.
