@@ -493,9 +493,7 @@ Setting up an unmanaged Lavalink node on a remote VPS or server
 
 .. attention::
 
-    Changes have been made to this guide since, but it is with thanks
-    to BreezeQS who originally wrote the bare-bones of this guide on a
-    separate gist.
+    We'd like to thank BreezeQS, as this guide is a supersession of their unofficial bare-bones guide.
 
 This guide explains how to set up an unmanaged Lavalink node on a separate server running Ubuntu 20.04 LTS.
 It is assumed your bot currently uses a managed Lavalink server (Red's default). If you run into any
@@ -591,7 +589,7 @@ to any positive integer smaller than 65535 and greater than 1000. It is advised 
 The ``password`` field is the password that will be required for accessing your Lavalink server and by default the password is
 ``youshallnotpass``. You should absolutely change this to a secure password.
 
-Those two fields are important and you should note the new values you entered in them somewhere you will not forget as
+Those two fields are important and you should take note of the new values you entered, as
 they will be later required to connect your bot to the Lavalink server.
 
 At the bottom of the screen, the nano text editor displays some keys that can be used to carry out various tasks.
