@@ -355,17 +355,16 @@ Next, open a command prompt/terminal window. Navigate to ``<datapath>/cogs/Audio
 instances - it doesn't matter which bot as all your bots will now use this single instance of Lavalink.
 You can find your ``<datapath>`` with the ``[p]datapath`` command.
 
-Now you need to smartly determine your RAM needs. If your bot has 1GB RAM available, Lavalink should be
-restricted to perhaps 384MB -> 768MB, depending on the cogs you have installed. If your bot has 2GB of
-RAM available, a good amount may be 512MB -> 1GB. 
+Now you need to determine your RAM needs. If your bot has 1GB RAM available, Lavalink should be restricted 
+to perhaps 384MB -> 768MB, depending on the cogs you have installed. If your bot has 2GB of RAM available, 
+a good amount may be 512MB -> 1GB. 
 
-Run the following command, where ``Xms`` specifies the initial memory allocation pool and ``Xmx`` is the
-maximum memory allocation pool. Use the RAM values you have just determined. The MB suffix is M and
-the GB suffix is G.
+Run the following command, where ``Xmx`` specifies the RAM values you have just determined. The MB suffix 
+is M and the GB suffix is G.
 
 .. code-block:: ini
 
-	java -jar -Xms512M -Xmx768M Lavalink.jar -Djdk.tls.client.protocols=TLSv1.2
+	java -jar -Xmx768M Lavalink.jar -Djdk.tls.client.protocols=TLSv1.2
 
 Leave this command prompt/terminal window open (you will need to do this every time you want to start Lavalink
 for your bots). Once Lavalink says it has fully started, you can start your bots back up.
