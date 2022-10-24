@@ -390,7 +390,7 @@ for your bots). Once Lavalink says it has fully started, you can start your bots
 Linux Lavalink Auto-Restart
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Auto-restarting Lavalink is possible on Linux with systemd, for externally-run Lavalink backends.
+Auto-restarting Lavalink is possible on Linux with systemd, for unmanaged Lavalink backends.
 
 Firstly, find out what your datapath is with the ``[p]datapath`` command. Your Lavalink path is
 ``<datapath>/cogs/Audio``. Create a file named ``auto_update.sh`` in your Lavalink path.
