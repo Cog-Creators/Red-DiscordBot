@@ -510,7 +510,7 @@ issues, feel free to ask for help in the `Red Support Server <https://discord.gg
 Prerequisite Installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We will first install Lavalink and lay the foundation for our finished server. There are some prequisites
+We will first install Lavalink and lay the foundation for our finished server. There are some prerequisites
 that must be installed on the server you aim to use for running Lavalink. To set those up, run each of the
 following commands one by one.
 
