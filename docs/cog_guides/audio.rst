@@ -309,7 +309,7 @@ You can try the following to resolve poor sound quality:
 * Restart your bot.
 * Check to make sure it's not just a bad quality song (try a different song).
 * Try to listen on a different Discord server or server region.
-* If not everyone is experiencing the issue, it's a discord client issue.
+* If not everyone is experiencing the issue, it's a Discord client issue.
 
 .. _no-sound:
 
