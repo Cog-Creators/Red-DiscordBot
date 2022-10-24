@@ -3275,11 +3275,11 @@ llsetup reset
 
 Reset all ``[p]llset`` changes back to their default values.
 
-.. _internal-node-management-commands:
+.. _managed-node-management-commands:
 
----------------------------------
-Internal Node Management Commands
----------------------------------
+--------------------------------
+Managed Node Management Commands
+--------------------------------
 
 .. _audio-command-llsetup-config:
 
