@@ -376,7 +376,7 @@ for your bots). Once Lavalink says it has fully started, you can start your bots
 
 .. note::
 
-	If you are on Linux, this process can be automated using systemd, for externally-run
+	If you are on Linux, this process can be automated using systemd, for unmanaged
 	Lavalink backends **only**. See :ref:`here<linux-audio-autorestart>` for details.
 
 .. warning::
