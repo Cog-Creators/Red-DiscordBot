@@ -182,8 +182,8 @@ mockmsg
 
 Dispatch a message event as if it were sent by a different user.
 
-Only reads the raw content of the message. Attachments, embeds etc. are
-ignored.
+Current message is used as a base (including attachments, embeds, etc.),
+the content and author of the message are replaced with the given arguments.
 
 **Arguments**
 
