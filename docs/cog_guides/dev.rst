@@ -101,7 +101,7 @@ lines or asynchronous code, see [p]repl or [p]eval.
 
 **Arguments**
 
-* ``<code>``: The code to debug.
+* ``<code>``: The statement to run.
 
 .. _dev-command-eval:
 
@@ -163,7 +163,7 @@ Mock another user invoking a command. The prefix must not be entered.
 
 **Arguments**
 
-* ``<member>``: The user to mock. |user-input-quotes|
+* ``<user>``: The user to mock. |user-input-quotes|
 * ``<command>``: The command to invoke.
 
 .. _dev-command-mockmsg:
