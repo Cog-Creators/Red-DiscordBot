@@ -484,9 +484,9 @@ Obtaining the latest Lavalink.jar on a Red update
 
 .. _remote-lavalink:
 
----------------------------------------------
-Setting up Lavalink on a remote VPS or server
----------------------------------------------
+---------------------------------------------------------------
+Setting up an unmanaged Lavalink node on a remote VPS or server
+---------------------------------------------------------------
 
 .. attention::
 
