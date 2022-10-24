@@ -630,7 +630,7 @@ You can stop Lavalink and reclaim the console by hitting ``CTRL+C``.
 Updating Lavalink
 ^^^^^^^^^^^^^^^^^
 
-With new releases of Red-Discordbot, sometimes new Lavalink jars are also released. Using a obselete version of Lavalink
+With new releases of Red-Discordbot, sometimes new Lavalink jars are also released. Using an obsolete version of Lavalink
 with newer versions of Red-Discordbot can cause all sorts of problems.
 
 Normally, users do not have to worry about this as when Red-Discordbot is configured to use a managed Lavalink server
