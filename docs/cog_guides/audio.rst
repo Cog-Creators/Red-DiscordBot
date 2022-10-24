@@ -49,7 +49,7 @@ The following commands are used for controlling the audio being played, such as 
 * ``[p]skip`` - Skip to the next song in the queue, if there is one.
 * ``[p]seek`` - Seek ahead to a specific track time, or seek ahead by seconds.
 * ``[p]now`` - Show what song is currently playing.
-* ``[p]volume`` - Set the volume from 0 to 150. 100 is the default. Discord server owners can set a limit to the volume with ``[p]audioset maxvolume``.
+* ``[p]volume`` - Set the volume from 0% to 150%. 100% is the default. Discord server owners can set a limit to the volume with ``[p]audioset maxvolume``.
 
 .. note::
 
