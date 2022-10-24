@@ -796,7 +796,7 @@ Do not use quotes in these commands. For example, ``[p]llset host 192.168.10.101
 
 Reload audio with ``[p]reload audio`` and give it a few seconds to connect.
 
-You now (hopefully) have a functioning Lavalink server on a machine seperate to the one running your Red instance. Good luck!
+You now (hopefully) have a functioning Lavalink server on a machine separate to the one running your Red instance. Good luck!
 
 .. _audio-commands:
 
