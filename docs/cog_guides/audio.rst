@@ -106,8 +106,8 @@ Q: How do I use localtracks?
 Q: My console is saying that "Port 2333 is already in use". How can I fix this?
 
     If you are trying to run multiple bots with Audio, you should follow our guide on
-    :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another external process
-    is using the port, so you need to figure out what is using port 2333 and terminate/disconnect it yourself.
+    :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another process is using the 
+    port, so you need to figure out what is using port 2333 and terminate/disconnect it yourself.
     
 Q: My terminal is saying that I "must install Java 11 for Lavalink to run". How can I fix this?
 
