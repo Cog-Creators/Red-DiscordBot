@@ -9,7 +9,7 @@ find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
-.. note:: To use this cog, load it by typing this::
+.. note:: To use this cog, load it by typing this:
 
     	[p]load audio
 
