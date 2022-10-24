@@ -20,7 +20,8 @@ command name, like ``[p]help playlist append``.
 In this guide, you will see references to "Lavalink" or the "Lavalink.jar". `Lavalink <https://github.com/freyacodes/Lavalink/>`_ is the
 Java-based audio backend we use to be able to play music through the bot. Most users will
 not have to worry much about Lavalink or what it is, as Audio manages this process for you
-by default. Advanced users can read more about Lavalink and special cases under the Lavalink - Advanced Usage section below.
+by default. Advanced users can read more about Lavalink and special cases under the 
+:ref:`Lavalink - Advanced Usage<advanced-usage>` section below.
 
 You will also see references to ``managed`` or ``unmanaged`` in regards to the Lavalink.jar.
 The default is ``managed``, as Audio manages the Lavalink.jar in this state. If it is run as an
