@@ -202,7 +202,8 @@ The YouTube API keys that are being given out these days only have 10000 units o
 lookups, though. For example, with a 500 song Spotify playlist, the bot will be able to fetch the first 100 songs the
 first day the Spotify playlist URL is used with Audio, then the next day it will be able to use the first 100 lookups
 from the local cache, and use the API credits to look up the next 100 songs. After 5 days of playing the Spotify playlist
-through Audio, that playlist will be fully cached locally and will not require any API credits to play songs.
+through Audio, that playlist will be fully cached locally until the cached entries are set to expire and will not require  
+any API credits to play songs.
 
 The following commands are relevant:
 
