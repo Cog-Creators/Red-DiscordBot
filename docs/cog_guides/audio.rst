@@ -494,8 +494,8 @@ Setting up Lavalink on a remote VPS or server
     separate gist.
 
 This guide explains how to set up an external Lavalink node on a separate server running Ubuntu 20.04 LTS.
-It is assumed your bot currently uses an internally managed Lavalink server (Red's default). If you run
-into any issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`__.
+It is assumed your bot currently uses a managed Lavalink server (Red's default). If you run into any
+issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`__.
 
 .. warning::
 
