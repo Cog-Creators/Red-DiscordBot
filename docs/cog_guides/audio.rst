@@ -564,7 +564,7 @@ the ``cd lavalink`` command in the previous section, you can run the following c
     curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
 
 If you did it properly, the files ``Lavalink.jar`` and ``application.yml`` will show up when we run ``ls``, the Linux command
-to list the contents of current directory.
+to list the contents of the current directory.
 
 ^^^^^^^^^^^^^^^^^^^^
 Configuring Lavalink
