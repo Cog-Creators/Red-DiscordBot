@@ -381,7 +381,7 @@ for your bots). Once Lavalink says it has fully started, you can start your bots
 
 .. warning::
 
-	By running multiple bots on Audio, the responsibility for keeping the Lavalink.jar updated will now be
+	By running multiple bots that use Audio, the responsibility for keeping the Lavalink.jar updated will now be
 	in your hands, as Red will no longer manage it through the Audio cog. See :ref:`here<obtaining-the-latest-lavalink>` for guidance.
 
 .. _linux-audio-autorestart:
