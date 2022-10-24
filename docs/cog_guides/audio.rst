@@ -22,9 +22,9 @@ Java-based audio backend we use to be able to play music through the bot. Most u
 not have to worry much about Lavalink or what it is, as Audio manages this process for you
 by default. Advanced users can read more about Lavalink and special cases under the Lavalink - Advanced Usage section below.
 
-You will also see references to ``internal`` or ``external`` in regards to the Lavalink.jar.
-The default is ``internal``, as Audio manages the Lavalink.jar in this state. If it is run as an
-``external`` process, this means you as the bot owner will be managing the Lavalink process yourself.
+You will also see references to ``managed`` or ``unmanaged`` in regards to the Lavalink.jar.
+The default is ``managed``, as Audio manages the Lavalink.jar in this state. If it is run as an
+``unmanaged`` process, this means you as the bot owner will be managing the Lavalink process yourself.
 
 When the Audio cog is first loaded, it will contact GitHub and download the newest Lavalink.jar file
 for your bot to use. Any time Red is updated, and you update your bot, most likely it will download a new,
