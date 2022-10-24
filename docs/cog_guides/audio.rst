@@ -624,7 +624,7 @@ with newer versions of Red-Discordbot can cause all sorts of problems.
 Normally, users do not have to worry about this as when Red-Discordbot is configured to use a managed Lavalink server
 (the default setting) Lavalink is automatically updated when a new release comes out.
 
-However, since you are running a external Lavalink instance yourself you are responsible for keeping it up to date.
+However, since you are running a Lavalink instance yourself you are responsible for keeping it up to date.
 When a new release of Red-Discordbot also requires a update to the Lavalink jar, you will be informed in the changelogs
 posted in our documentation.
 
