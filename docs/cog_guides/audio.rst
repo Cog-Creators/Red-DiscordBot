@@ -306,7 +306,7 @@ Laggy audio is most likely caused by:
 
 You can try the following to resolve poor sound quality:
 
-* Don't host on home internet, especially over a WiFi connection, try hosting your bot elsewhere.
+* Don't host on home internet, especially over a WiFi connection. Try hosting your bot elsewhere.
 * Try the web browser instead of the desktop client for listening.
 * Simply wait, as audio quality may improve in due course.
 * Restart your bot.
