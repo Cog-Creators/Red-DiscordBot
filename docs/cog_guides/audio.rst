@@ -520,7 +520,17 @@ following commands one by one.
 
     sudo apt update
     sudo apt upgrade -y
-    sudo apt install openjdk-11-jre-headless curl nano -y
+    sudo apt install curl nano -y
+
+If you have no preference in which Java version you install on your target system, Red 
+uses OpenJDK 11 in the managed Lavalink configuration. It can be installed by running:
+
+.. code-block:: sh
+
+    sudo apt install openjdk-11-jre-headless -y
+
+Otherwise, Lavalink works well with most versions of Java 11, 13, 15, 16, 17, and 18. Azul 
+Zulu builds are suggested, see `here <https://github.com/freyacodes/Lavalink/#requirements>`_ for more information.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Setting Up The Lavalink Folder
