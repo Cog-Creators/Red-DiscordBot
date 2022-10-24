@@ -3198,8 +3198,10 @@ Set the volume, 1% - 150%.
 Lavalink Setup Commands
 -----------------------
 
-``[p]llsetup`` commands are used for advanced management of Lavalink servers. They are
-available dynamically dependent on whether you are managing your Lavalink node internally or externally.
+``[p]llsetup`` group commands are used for advanced management of the connection to the Lavalink 
+server. The subcommands are dynamically available depending on whether Red is managing your 
+Lavalink node or if you are connecting to one you manage yourself, or a service that offers Lavalink
+nodes.
 
 Commands specifically for internal/managed Lavalink nodes can be found in
 :ref:`this section<internal-node-management-commands>`, whilst commands for external
