@@ -3636,11 +3636,11 @@ llsetup yaml
 
 Uploads a copy of the application.yml file used by the managed Lavalink node.
 
-.. _external-node-management-commands:
+.. _unmanaged-node-management-commands:
 
----------------------------------
-External Node Management Commands
----------------------------------
+----------------------------------
+Unmanaged Node Management Commands
+----------------------------------
 
 .. note::
 
