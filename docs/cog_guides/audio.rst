@@ -1090,7 +1090,7 @@ audioset emptypause
 
 **Description**
 
-Auto-pause after x seconds when room is empty, 0 to disable.
+Auto-pause after x seconds when the channel is empty, 0 to disable.
 
 .. _audio-command-audioset-globaldailyqueue:
 
