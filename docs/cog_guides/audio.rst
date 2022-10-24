@@ -3203,9 +3203,8 @@ server. The subcommands are dynamically available depending on whether Red is m
 Lavalink node or if you are connecting to one you manage yourself, or a service that offers Lavalink
 nodes.
 
-Commands specifically for internal/managed Lavalink nodes can be found in
-:ref:`this section<internal-node-management-commands>`, whilst commands for external
-Lavalink nodes can be found :ref:`here<external-node-management-commands>`
+Commands specifically for managed Lavalink nodes can be found in :ref:`this section<managed-node-management-commands>`, 
+whilst commands for unmanaged Lavalink nodes can be found :ref:`here<unmanaged-node-management-commands>`
 
 .. _audio-command-llsetup:
 
