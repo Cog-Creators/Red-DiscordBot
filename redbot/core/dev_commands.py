@@ -238,6 +238,9 @@ class Dev(commands.Cog):
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
 
+        Use `exit()` or `quit` to exit the REPL session, prefixed with
+        a backtick so they may be interpreted.
+
         Environment Variables:
             ctx      - the command invocation context
             bot      - the bot object

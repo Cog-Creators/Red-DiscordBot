@@ -215,6 +215,9 @@ The REPL will only recognise code as messages which start with a
 backtick. This includes codeblocks, and as such multiple lines can be
 evaluated.
 
+Use ``exit()`` or ``quit`` to exit the REPL session, prefixed with
+a backtick so they may be interpreted.
+
 **Environment Variables**
 
 * ``ctx``: Command invocation context
