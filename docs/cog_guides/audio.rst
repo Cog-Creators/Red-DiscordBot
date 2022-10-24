@@ -17,7 +17,7 @@ find detailed docs about usage and commands.
 You can see additional help for any command in this guide by using ``[p]help`` with the
 command name, like ``[p]help playlist append``.
 
-In this guide, you will see references to "Lavalink" or the "Lavalink.jar". Lavalink is the
+In this guide, you will see references to "Lavalink" or the "Lavalink.jar". `Lavalink <https://github.com/freyacodes/Lavalink/>`_ is the
 Java-based audio backend we use to be able to play music through the bot. Most users will
 not have to worry much about Lavalink or what it is, as Audio manages this process for you
 by default. Advanced users can read more about Lavalink and special cases under the Lavalink - Advanced Usage section below.
