@@ -407,7 +407,7 @@ Run the following, replacing ``<Lavalink path>`` with the Lavalink path you gene
 
 	chmod a+rx <Lavalink path>/auto_update.sh
 
-Now we need to create a service file so that systemd can do it's magic. Run the following command:
+Now we need to create a service file so that systemd can do its magic. Run the following command:
 
 .. code-block:: sh
 
