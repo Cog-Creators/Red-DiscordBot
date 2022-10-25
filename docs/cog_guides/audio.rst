@@ -486,6 +486,12 @@ Obtaining the latest Lavalink.jar on a Red update
 2. Click `here <https://github.com/Cog-Creators/Lavalink-Jars/releases/latest>`__.
 3. Download the Lavalink.jar file.
 
+Alternatively, the Lavalink.jar can be downloaded by using the command:
+
+.. code-block:: sh
+
+    curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
+
 1. Stop all instances of Red running on the host.
 2. Stop the Lavalink process.
 3. Move the Lavalink.jar to where your old Lavalink.jar is located and overwrite the old file.
