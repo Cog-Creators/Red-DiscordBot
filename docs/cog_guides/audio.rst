@@ -486,9 +486,7 @@ Obtaining the latest Lavalink.jar on a Red update
 2. Click `here <https://github.com/Cog-Creators/Lavalink-Jars/releases/latest>`__.
 3. Download the Lavalink.jar file.
 
-Alternatively, the Lavalink.jar can be downloaded by using the command:
-
-.. code-block:: sh
+.. tip:: Alternatively, the Lavalink.jar can be downloaded by using the command::
 
     curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
 
