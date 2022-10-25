@@ -516,8 +516,13 @@ Setting up an unmanaged Lavalink node on a remote VPS or server
     We'd like to thank BreezeQS, as this guide is a supersession of their unofficial bare-bones guide.
 
 This guide explains how to set up an unmanaged Lavalink node on a separate server running Ubuntu 20.04 LTS.
-It is assumed your bot currently uses a managed Lavalink server (Red's default). If you run into any
-issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`__.
+It is assumed your bot currently uses a managed Lavalink server (Red's default). 
+
+.. warning::
+
+    This guide is provided for advice on this topic and this is generally not a supported configuration for 
+    Red's usage of Lavalink, as it involves system administration and network configuration. However, if you
+    run into any issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`__, in the #general channel.
 
 .. warning::
 
