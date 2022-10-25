@@ -3648,7 +3648,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("I will not use buttons on basic menus."))
 
     @commands.group()
-    @checks.is_owner()
+    @checks.admin()
     async def helpset(self, ctx: commands.Context):
         """
         Commands to manage settings for the help command.
@@ -3681,6 +3681,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(message):
             await ctx.send(page)
 
+    @commands.is_owner()
     @helpset.command(name="resetformatter")
     async def helpset_resetformatter(self, ctx: commands.Context):
         """
@@ -3699,6 +3700,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
+    @commands.is_owner()
     @helpset.command(name="resetsettings")
     async def helpset_resetsettings(self, ctx: commands.Context):
         """
@@ -3717,6 +3719,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
+    @commands.is_owner()
     @helpset.command(name="usemenus")
     async def helpset_usemenus(
         self,
@@ -3760,6 +3763,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         await ctx.send(msg)
 
+    @commands.is_owner()
     @helpset.command(name="showhidden")
     async def helpset_showhidden(self, ctx: commands.Context, show_hidden: bool = None):
         """
@@ -3783,6 +3787,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Help will filter hidden commands."))
 
+    @commands.is_owner()
     @helpset.command(name="showaliases")
     async def helpset_showaliases(self, ctx: commands.Context, show_aliases: bool = None):
         """
@@ -3806,6 +3811,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Help will no longer show command aliases."))
 
+    @commands.is_owner()
     @helpset.command(name="usetick")
     async def helpset_usetick(self, ctx: commands.Context, use_tick: bool = None):
         """
@@ -3833,6 +3839,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Help will not tick the command when sent in a DM."))
 
+    @commands.is_owner()
     @helpset.command(name="verifychecks")
     async def helpset_permfilter(self, ctx: commands.Context, verify: bool = None):
         """
@@ -3856,6 +3863,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Help will show up without checking if the commands can be run."))
 
+    @commands.is_owner()
     @helpset.command(name="verifyexists")
     async def helpset_verifyexists(self, ctx: commands.Context, verify: bool = None):
         """
@@ -3888,6 +3896,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             )
 
+    @commands.is_owner()
     @helpset.command(name="pagecharlimit")
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
         """Set the character limit for each page in the help message.
@@ -3913,11 +3922,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot._config.help.page_char_limit.set(limit)
         await ctx.send(_("Done. The character limit per page has been set to {}.").format(limit))
 
-    @helpset.command(name="maxpages")
-    async def helpset_maxpages(self, ctx: commands.Context, pages: int):
+    @helpset.group(name="maxpages")
+    async def helpset_maxpages(self, ctx):
+        """Set the maximum number of help pages."""
+        pass
+
+    @commands.guild_only()
+    @helpset_maxpages.command(name="guild")
+    async def helpset_maxpages_guild(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
         Note: This setting does not apply to menu help.
+        To use the global value for maxpages instead, use `-1`.
 
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
@@ -3926,8 +3942,38 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         The default value is 2 pages.
 
         **Examples:**
-            - `[p]helpset maxpages 50` - Basically never send help to DMs.
-            - `[p]helpset maxpages 0` - Always send help to DMs.
+            - `[p]helpset maxpages guild 50` - Basically never send help to DMs.
+            - `[p]helpset maxpages guild 0` - Always send help to DMs.
+
+        **Arguments:**
+            - `<limit>` - The max pages allowed to send per help in a server.
+        """
+        if pages < 0:
+            await ctx.send(
+                _("The maximum amount of pages sent will now follow the global settings.")
+            )
+            return
+
+        await ctx.bot._config.guild(ctx.guild).help_pages.set(pages)
+        await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
+
+    @commands.is_owner()
+    @helpset_maxpages.command(name="global")
+    async def helpset_maxpages_global(self, ctx: commands.Context, pages: int):
+        """Set the maximum number of help pages sent in a server channel.
+
+        Note: This setting does not apply to menu help.
+        This setting applies **globally**.
+
+        If a help message contains more pages than this value, the help message will
+        be sent to the command author via DM. This is to help reduce spam in server
+        text channels.
+
+        The default value is 2 pages.
+
+        **Examples:**
+            - `[p]helpset maxpages global 50` - Basically never send help to DMs.
+            - `[p]helpset maxpages global 0` - Always send help to DMs.
 
         **Arguments:**
             - `<limit>` - The max pages allowed to send per help in a server.
@@ -3937,8 +3983,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
 
         await ctx.bot._config.help.max_pages_in_guild.set(pages)
-        await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
+        await ctx.send(_("Done. The global page limit has been set to {}.").format(pages))
 
+    @commands.is_owner()
     @helpset.command(name="deletedelay")
     @commands.bot_has_permissions(manage_messages=True)
     async def helpset_deletedelay(self, ctx: commands.Context, seconds: int):
@@ -3972,6 +4019,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done. The delete delay has been set to {} seconds.").format(seconds))
 
+    @commands.is_owner()
     @helpset.command(name="reacttimeout")
     async def helpset_reacttimeout(self, ctx: commands.Context, seconds: int):
         """Set the timeout for reactions, if menus are enabled.
@@ -3998,6 +4046,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot._config.help.react_timeout.set(seconds)
         await ctx.send(_("Done. The reaction timeout has been set to {} seconds.").format(seconds))
 
+    @commands.is_owner()
     @helpset.command(name="tagline")
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """
