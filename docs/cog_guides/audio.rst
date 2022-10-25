@@ -31,7 +31,9 @@ When the Audio cog is first loaded, it will contact GitHub and download the newe
 for your bot to use. Any time Red is updated, and you update your bot, most likely it will download a new,
 updated Lavalink.jar for your bot. It is important to keep your bot updated as fixes are provided for Lavalink frequently.
 
-All commands should be used in a Discord server, and not in Direct Messages as Audio is not available there.
+.. warning::
+    
+    All commands should be used in a Discord server, and not in Direct Messages as Audio is not available there.
 
 .. _basic-audio-use:
 
