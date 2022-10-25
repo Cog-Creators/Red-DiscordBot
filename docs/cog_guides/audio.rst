@@ -122,6 +122,7 @@ How can I use this playlist link with playlist commands in audio?**
     Java installed at all. As the error states, Java 11 is required, and can be installed from
     `here <https://adoptium.net/temurin/releases/?version=11>`__.
     
+    If you have Java 11 installed, and are still getting this error, you will have to manually tell Audio where your Java install is located.
     Use ``[p]llset java <path_to_java_11_executable>``, to make Audio launch Lavalink with a
     specific Java binary. To do this, you will need to locate your ``java.exe``/``java`` file
     in your **Java 11 install**.
