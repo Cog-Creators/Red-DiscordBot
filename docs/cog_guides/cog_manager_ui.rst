@@ -171,16 +171,16 @@ removepath
 
 .. code-block:: none
 
-    [p]removepath <path_number>
+    [p]removepath <path_number...>
 
 **Description**
 
-Removes a path from the list of available paths. Its cogs won't be accessible
-anymore.
+Removes one or more path from the list of available paths. Its cogs won't be
+accessible anymore.
 
 **Arguments**
 
-*   ``<path_number>``: The number of the path to remove. You can get it with
+*   ``<path_number>``: The number of the path(s) to remove. You can get it with
     the :ref:`paths <cogmanagerui>` command.
 
 .. _cogmanagerui-command-reorderpath:
