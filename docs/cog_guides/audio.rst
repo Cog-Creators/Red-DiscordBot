@@ -80,8 +80,8 @@ The following commands are used for controlling the audio being played, such as 
 Frequently Asked Questions
 --------------------------
 
-Q: I used a playlist link with some of the playlist related commands and it tells me that it can't find it. 
-How can I use this playlist link with playlist commands in audio?
+**Q: I used a playlist link with some of the playlist related commands and it tells me that it can't find it. 
+How can I use this playlist link with playlist commands in audio?**
 
 	Red Audio uses Red playlists in its commands that take playlist arguments. 
 	These playlists can be created and modified using the ``[p]playlist`` group command.
@@ -89,11 +89,11 @@ How can I use this playlist link with playlist commands in audio?
 	and it is also assigned the one-word name you provided it when creating the playlist.
 	Either one of these identifiers can be used with playlist-related commands.
 
-Q: How do I turn off autoplay?
+**Q: How do I turn off autoplay?**
 
 	Use the ``[p]audioset autoplay toggle`` command.
 
-Q: How do I get the bot to disconnect from the channel when it's done playing?
+**Q: How do I get the bot to disconnect from the channel when it's done playing?**
 
 	``[p]audioset dc`` will make the bot auto-disconnect when playback completes and the 
 	queue is empty. 
@@ -101,17 +101,17 @@ Q: How do I get the bot to disconnect from the channel when it's done playing?
 	auto-disconnect once it's alone in the channel, after the amount of seconds given to the 
 	command. This setting takes precedence over ``[p]audioset dc`` if both settings are active.
 
-Q: How do I use localtracks?
+**Q: How do I use localtracks?**
 
 	See the :ref:`local tracks section<local-tracks>`.
     
-Q: My console is saying that "Port 2333 is already in use". How can I fix this?
+**Q: My console is saying that "Port 2333 is already in use". How can I fix this?**
 
     If you are trying to run multiple bots with Audio, you should follow our guide on
     :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another process is using the 
     port, so you need to figure out what is using port 2333 and terminate/disconnect it yourself.
     
-Q: My terminal is saying that I "must install Java 11 for Lavalink to run". How can I fix this?
+**Q: My terminal is saying that I "must install Java 11 for Lavalink to run". How can I fix this?**
 
     You are getting this error because you have a different version of Java installed, or you don't have
     Java installed at all. As the error states, Java 11 is required, and can be installed from
