@@ -143,12 +143,12 @@ class Dev(commands.Cog):
             `author`   - the command author's member object
             `guild`    - the current guild object
             `message`  - the command's message object
+            `_`        - the result of the last dev command
             `aiohttp`  - the aiohttp library
             `asyncio`  - the asyncio library
             `discord`  - the discord.py library
             `commands` - the redbot.core.commands module
             `cf`       - the redbot.core.utils.chat_formatting module
-            `_`        - the result of the last dev command
         """
         env = self.get_environment(ctx)
         code = self.cleanup_code(code)
@@ -190,12 +190,12 @@ class Dev(commands.Cog):
             `author`   - the command author's member object
             `guild`    - the current guild object
             `message`  - the command's message object
+            `_`        - the result of the last dev command
             `aiohttp`  - the aiohttp library
             `asyncio`  - the asyncio library
             `discord`  - the discord.py library
             `commands` - the redbot.core.commands module
             `cf`       - the redbot.core.utils.chat_formatting module
-            `_`        - the result of the last dev command
         """
         env = self.get_environment(ctx)
         body = self.cleanup_code(body)
@@ -248,12 +248,12 @@ class Dev(commands.Cog):
             `author`   - the command author's member object
             `guild`    - the current guild object
             `message`  - the command's message object
+            `_`        - the result of the last dev command
             `aiohttp`  - the aiohttp library
             `asyncio`  - the asyncio library
             `discord`  - the discord.py library
             `commands` - the redbot.core.commands module
             `cf`       - the redbot.core.utils.chat_formatting module
-            `_`        - the result of the last dev command
         """
         if ctx.channel.id in self.sessions:
             if self.sessions[ctx.channel.id]:
