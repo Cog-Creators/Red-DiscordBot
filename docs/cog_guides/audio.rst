@@ -89,6 +89,11 @@ How can I use this playlist link with playlist commands in audio?**
 	and it is also assigned the one-word name you provided it when creating the playlist.
 	Either one of these identifiers can be used with playlist-related commands.
 
+    .. tip::
+
+        If you have a playlist URL, use ``[p]playlist save <url>`` to save it as a Playlist
+        with Red Audio.
+
 **Q: How do I turn off autoplay?**
 
 	Use the ``[p]audioset autoplay toggle`` command.
