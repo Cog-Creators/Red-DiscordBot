@@ -345,9 +345,9 @@ If the track progress is stuck on 00:00 when you run ``[p]now``:
 
 .. _advanced-usage:
 
--------------------------
+-------------------------------------------------
 Lavalink - Red Community-Supported Advanced Usage
--------------------------
+-------------------------------------------------
 
 .. _multibots:
 
