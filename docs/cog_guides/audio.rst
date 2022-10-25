@@ -355,6 +355,18 @@ Lavalink - Red Community-Supported Advanced Usage
 Setting up Multiple Red Instances with Audio on the Same Host
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. warning::
+
+    This section provides instructions for setting up an unmanaged Lavalink node that is on the same machine 
+    as the Red bot(s) that need to connect to it. This configuration is supported by the Red community, so 
+    if you need additional help, feel free to join the `Red Support Server <https://discord.gg/red>`__ and ask in the #support channel.
+
+    If you are looking to set up a remote, unmanaged Lavalink node on a different vps or host than the Red 
+    bot(s) that will connect to it, we provide basic instructions in this guide :ref:`here<remote-lavalink>`, but that 
+    configuration is partially unsupported as we do not provide help with network configuration or system 
+    administration. You will be responsible for configuring your network, firewall, and other system 
+    properties to enable playback and for the bot to connect to the remote unmanaged Lavalink server.
+
 If you are wanting to use multiple bots with Audio on the same machine, you'll need to make a few
 necessary modifications.
 
