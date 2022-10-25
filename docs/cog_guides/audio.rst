@@ -488,7 +488,7 @@ Obtaining the latest Lavalink.jar on a Red update
 
 .. tip:: Alternatively, the Lavalink.jar can be downloaded by using the command::
 
-    curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
+        curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
 
 4. Stop all instances of Red running on the host.
 5. Stop the Lavalink process.
@@ -779,8 +779,6 @@ You may now run the following to make Lavalink auto-restart each boot:
 .. tip::
 
     You can stop the Lavalink service with the following when you need to e.g. for troubleshooting:
-
-    .. code-block:: sh
 
         sudo systemctl stop lavalink
 
