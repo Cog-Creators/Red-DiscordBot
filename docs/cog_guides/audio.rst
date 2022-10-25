@@ -664,13 +664,7 @@ When a new release of Red-Discordbot also requires a update to the Lavalink jar,
 posted in our documentation.
 
 When a new Lavalink.jar comes out, you can easily update the existing one. First, you should stop Lavalink if it's currently
-running. And switch to your lavalink folder. We have discussed how this was done using the ``cd`` command in the previous sections.
-
-Then, you can run the following command to replace your existing Lavalink jar with the new one:
-
-.. code-block:: sh
-
-    curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
+running. Once you have done this, you can follow the instructions on how to :ref:`obtain the latest Lavalink.jar on a Red update<obtaining-the-latest-lavalink>`.
 
 In the next section we will see how you can configure Lavalink to automatically update, automatically start, and run as
 a background process which is much more convenient for non-testing deployments.
