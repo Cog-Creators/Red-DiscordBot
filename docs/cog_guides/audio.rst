@@ -492,16 +492,16 @@ Alternatively, the Lavalink.jar can be downloaded by using the command:
 
     curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
 
-1. Stop all instances of Red running on the host.
-2. Stop the Lavalink process.
-3. Move the Lavalink.jar to where your old Lavalink.jar is located and overwrite the old file.
-4. Start up the new Lavalink.jar process via a process manager like systemd, or by running:
+4. Stop all instances of Red running on the host.
+5. Stop the Lavalink process.
+6. Move the Lavalink.jar to where your old Lavalink.jar is located and overwrite the old file.
+7. Start up the new Lavalink.jar process via a process manager like systemd, or by running:
 
-   .. code-block:: sh
-   
-	   java -jar Lavalink.jar -Djdk.tls.client.protocols=TLSv1.2
+.. code-block:: sh
 
-5. Start up your bots
+    java -jar Lavalink.jar -Djdk.tls.client.protocols=TLSv1.2
+
+8. Start up your bots
 
 .. _remote-lavalink:
 
