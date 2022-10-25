@@ -351,9 +351,9 @@ Lavalink - Red Community-Supported Advanced Usage
 
 .. _multibots:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Setting up Multiple Red Instances with Audio
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Setting up Multiple Red Instances with Audio on the Same Host
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you are wanting to use multiple bots with Audio on the same machine, you'll need to make a few
 necessary modifications.
