@@ -156,7 +156,11 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
+    async def warnchannel(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+    ):
         """Set the channel where warnings should be sent to.
 
         Leave empty to use the channel `[p]warn` command was called in.

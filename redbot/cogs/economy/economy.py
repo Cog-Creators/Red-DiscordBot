@@ -181,7 +181,7 @@ class Economy(commands.Cog):
         pass
 
     @_bank.command()
-    async def balance(self, ctx: commands.Context, user: discord.Member = None):
+    async def balance(self, ctx: commands.Context, user: discord.Member = commands.Author):
         """Show the user's account balance.
 
         Example:
@@ -192,9 +192,6 @@ class Economy(commands.Cog):
 
         - `<user>` The user to check the balance of. If omitted, defaults to your own balance.
         """
-        if user is None:
-            user = ctx.author
-
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
         max_bal = await bank.get_max_balance(ctx.guild)
