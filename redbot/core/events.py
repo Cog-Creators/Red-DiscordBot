@@ -251,8 +251,7 @@ def init_events(bot, cli_flags):
             bot._last_exception = exception_log
 
             message = await bot._config.invoke_error_msg()
-            message.replace("{command}", ctx.command.qualified_name)
-            await ctx.send(message)
+            await ctx.send(message.replace("{command}", ctx.command.qualified_name))
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
