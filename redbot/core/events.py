@@ -31,7 +31,7 @@ from .utils._internal_utils import (
     fetch_latest_red_version_info,
     send_to_owners_with_prefix_replaced,
 )
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
+from .utils.chat_formatting import bordered, format_perms_list, humanize_timedelta
 
 import rich
 from rich import box
@@ -252,7 +252,7 @@ def init_events(bot, cli_flags):
 
             message = await bot._config.invoke_error_msg()
             message.replace("{command}", ctx.command.qualified_name)
-            await ctx.send(inline(message))
+            await ctx.send(message)
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
