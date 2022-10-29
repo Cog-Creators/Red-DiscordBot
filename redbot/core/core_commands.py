@@ -3647,6 +3647,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("I will not use buttons on basic menus."))
 
+    @_set.command(name="errormsg")
+    @commands.is_owner()
+    async def errormsg(self, ctx: commands.Context, msg: Optional[str] = None):
+        """Set the message that will be sent on uncaught bot errors.
+
+        The message must be less than 1000 characters.
+        Use `{command}` to pass the command name in the message.
+        """
+        if msg is not None and len(msg) >= 1000:
+            return await ctx.send(_("The message must be less than 1000 characters."))
+
+        if msg is not None:
+            await self.bot._config.invoke_error_msg.set(msg)
+            content = _("Succesfully updated the error message.")
+        else:
+            await self.bot._config.invoke_error_msg.clear()
+            content = _("Successfully updated the error message back to the default one.")
+
+        await ctx.send(content)
+
     @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):

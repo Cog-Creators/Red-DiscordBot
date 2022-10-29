@@ -244,15 +244,14 @@ def init_events(bot, cli_flags):
                 "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
-
-            message = _(
-                "Error in command '{command}'. Check your console or logs for details."
-            ).format(command=ctx.command.qualified_name)
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
             bot._last_exception = exception_log
+
+            message = await bot._config.invoke_error_msg()
+            message.replace("{command}", ctx.command.qualified_name)
             await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
