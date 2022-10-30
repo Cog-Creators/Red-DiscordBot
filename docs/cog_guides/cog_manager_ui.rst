@@ -180,7 +180,7 @@ accessible anymore.
 
 **Arguments**
 
-*   ``<path_number>``: The number of the path(s) to remove. You can get it with
+*   ``<path_numbers>``: The number of the path(s) to remove. You can get it with
     the :ref:`paths <cogmanagerui>` command.
 
 .. _cogmanagerui-command-reorderpath:
