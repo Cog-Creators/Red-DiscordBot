@@ -364,7 +364,7 @@ class CogManagerUI(commands.Cog):
         """
         Removes one or more paths from the available cog paths given the `path_number` from `[p]paths`.
         """
-        if not paths_number:
+        if not path_numbers:
             await ctx.send_help()
             return
 
