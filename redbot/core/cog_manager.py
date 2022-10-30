@@ -372,7 +372,7 @@ class CogManagerUI(commands.Cog):
         valid: List[int] = []
         invalid: List[int] = []
 
-        for path_number in paths_number:
+        for path_number in path_numbers:
             path_number -= 1
             if path_number < 0:
                 await ctx.send(_("All paths numbers must be positive."))
