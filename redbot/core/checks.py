@@ -5,6 +5,7 @@ import discord
 
 from .commands import (
     bot_has_permissions,
+    bot_in_a_guild,
     has_permissions,
     is_owner,
     guildowner,
@@ -13,7 +14,6 @@ from .commands import (
     admin_or_permissions,
     mod,
     mod_or_permissions,
-    check as _check_decorator,
 )
 from .utils.mod import (
     is_mod_or_superior as _is_mod_or_superior,
@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "bot_has_permissions",
+    "bot_in_a_guild",
     "has_permissions",
     "is_owner",
     "guildowner",
@@ -37,18 +38,8 @@ __all__ = [
     "mod_or_permissions",
     "is_mod_or_superior",
     "is_admin_or_superior",
-    "bot_in_a_guild",
     "check_permissions",
 ]
-
-
-def bot_in_a_guild():
-    """Deny the command if the bot is not in a guild."""
-
-    async def predicate(ctx):
-        return len(ctx.bot.guilds) > 0
-
-    return _check_decorator(predicate)
 
 
 def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:

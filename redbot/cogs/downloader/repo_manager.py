@@ -476,11 +476,20 @@ class Repo(RepoJSONMixin):
 
         if p.returncode != 0:
             stderr = p.stderr.decode(**DECODE_PARAMS).strip()
-            ambiguous_error = f"error: short SHA1 {rev} is ambiguous\nhint: The candidates are:\n"
-            if not stderr.startswith(ambiguous_error):
+            ambiguous_errors = (
+                # Git 2.31.0-rc0 and newer
+                f"error: short object ID {rev} is ambiguous\nhint: The candidates are:\n",
+                # Git 2.11.0-rc0 and newer
+                f"error: short SHA1 {rev} is ambiguous\nhint: The candidates are:\n",
+            )
+            for substring in ambiguous_errors:
+                if stderr.startswith(substring):
+                    pos = len(substring)
+                    break
+            else:
                 raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
             candidates = []
-            for match in self.AMBIGUOUS_ERROR_REGEX.finditer(stderr, len(ambiguous_error)):
+            for match in self.AMBIGUOUS_ERROR_REGEX.finditer(stderr, pos):
                 candidates.append(Candidate(match["rev"], match["type"], match["desc"]))
             if candidates:
                 raise errors.AmbiguousRevision(

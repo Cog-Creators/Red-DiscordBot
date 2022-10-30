@@ -1,19 +1,23 @@
-import logging
+from pathlib import Path
+
 from typing import List, MutableMapping, Optional, Union
 
 import discord
 import lavalink
-from redbot.core.utils import AsyncIter
+from red_commons.logging import getLogger
 
 from redbot.core import Config, commands
 from redbot.core.bot import Red
+from redbot.core.i18n import Translator
+from redbot.core.utils import AsyncIter
 
 from ..errors import NotAllowed
 from ..utils import PlaylistScope
 from .api_utils import PlaylistFetchResult, prepare_config_scope, standardize_scope
 from .playlist_wrapper import PlaylistWrapper
 
-log = logging.getLogger("red.cogs.Audio.api.PlaylistsInterface")
+log = getLogger("red.cogs.Audio.api.PlaylistsInterface")
+_ = Translator("Audio", Path(__file__))
 
 
 class Playlist:
@@ -178,7 +182,6 @@ class PlaylistCompat23:
         tracks: Optional[List[MutableMapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
-
         self.bot = bot
         self.guild = guild
         self.scope = standardize_scope(scope)
@@ -231,7 +234,7 @@ class PlaylistCompat23:
             Trying to access the User scope without an user id.
         """
         guild = data.get("guild") or kwargs.get("guild")
-        author: int = data.get("author") or 0
+        author: int = data.get("author") or kwargs.get("author") or 0
         playlist_id = data.get("id") or playlist_number
         name = data.get("name", "Unnamed")
         playlist_url = data.get("playlist_url", None)

@@ -20,21 +20,21 @@ class SelfRole(commands.Converter):
             role = ctx.guild.get_role(role_id)
             if role is None:
                 continue
-            if role.name.lower() == arg.lower():
+            if role.name.casefold() == arg.casefold():
                 pool.add(role)
 
         if not pool:
             role = await role_converter.convert(ctx, arg)
             if role.id not in selfroles:
-                raise commands.BadArgument(_("The provided role is not a valid selfrole."))
+                _('The role "{role_name}" is not a valid selfrole.').format(role_name=role.name)
         elif len(pool) > 1:
             raise commands.BadArgument(
                 _(
-                    "This selfrole has more than one capitalization"
-                    " possibilities.  Please inform a moderator."
+                    "This selfrole has more than one case insensitive match. "
+                    "Please ask a moderator to resolve the ambiguity, or "
+                    "use the role ID to reference the role."
                 )
             )
         else:
             role = pool.pop()
-
         return role

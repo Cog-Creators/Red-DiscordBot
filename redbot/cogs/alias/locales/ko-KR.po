@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-08-06 12:19+0000\n"
+"POT-Creation-Date: 2021-02-11 12:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -17,20 +17,29 @@ msgstr ""
 
 #: redbot/cogs/alias/alias.py:35
 #, docstring
-msgid "Create aliases for commands.\\n\\n    Aliases are alternative names shortcuts for commands. They\\n    can act as both a lambda (storing arguments for repeated use)\\n    or as simply a shortcut to saying \\\"x y z\\\".\\n\\n    When run, aliases will accept any additional arguments\\n    and append them to the stored alias.\\n    "
-msgstr "명령어에 대한 별칭을 만들어주세요.\\n\\n    별칭들은 해당 명령어들을 바로 실행할 수 있는 대체적인 이름들이에요. 그것들은\\n    람다(반복되어 사용되는 인수를 저장)\\n    또는 단순히 \\\"x y z\\\"라고 말하는 바로가기 역할을 할 수 있어요.\\n\\n    실행할 시, 별칭들은 추가된 인수들을 승인할거예요.\\n    그리고 저장된 별칭들에 추가할거예요.    "
-
-#: redbot/cogs/alias/alias.py:173
-msgid "No prefix found."
-msgstr "접두사가 발견되지 않았습니다."
+msgid "Create aliases for commands.\n\n"
+"    Aliases are alternative names shortcuts for commands. They\n"
+"    can act as both a lambda (storing arguments for repeated use)\n"
+"    or as simply a shortcut to saying \"x y z\".\n\n"
+"    When run, aliases will accept any additional arguments\n"
+"    and append them to the stored alias.\n"
+"    "
+msgstr "명령어에 대한 별칭을 만들어주세요.\n\n"
+"    별칭들은 해당 명령어들을 바로 실행할 수 있는 대체적인 이름들이에요. 그것들은\n"
+"    람다(반복되어 사용되는 인수를 저장)\n"
+"    또는 단순히 \"x y z\"라고 말하는 바로가기 역할을 할 수 있어요.\n\n"
+"    실행할 시, 별칭들은 추가된 인수들을 승인할거예요.\n"
+"    그리고 저장된 별칭들에 추가할거예요.    "
 
 #: redbot/cogs/alias/alias.py:203
-msgid "Aliases:\\n"
-msgstr ""
+msgid "Aliases:\n"
+msgstr "별칭:\n"
 
 #: redbot/cogs/alias/alias.py:205
-msgid "\\n\\nPage {page}/{total}"
-msgstr ""
+msgid "\n\n"
+"Page {page}/{total}"
+msgstr "\n\n"
+"페이지 {page}/{total}"
 
 #: redbot/cogs/alias/alias.py:215
 #, docstring
@@ -148,7 +157,7 @@ msgstr "이 봇에서 사용할 수 있는 글로벌 별칭들을 나열해주�
 
 #: redbot/cogs/alias/alias.py:411
 msgid "There are no global aliases."
-msgstr ""
+msgstr "전역적인 별칭이 없어요."
 
 #: redbot/cogs/alias/alias_entry.py:198
 msgid "Arguments must be specified with a number."

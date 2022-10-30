@@ -42,7 +42,7 @@ Unsure of how to get started contributing to Red? Please take a look at the Issu
 * beginner - issues that can normally be fixed in just a few lines of code and maybe a test or two.
 * help-wanted - issues that are currently unassigned to anyone and may be a bit more involved/complex than issues tagged with beginner.
 
-**Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
+**Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github)
 
 At this point you're ready to start making changes. Feel free to ask for help; everyone was a beginner at some point!
 
@@ -83,7 +83,7 @@ We're using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's 
 Currently, tox does the following, creating its own virtual environments for each stage:
 - Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.8 (test environment `py38`)
 - Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test environment `docs`)
-- Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test environment `style`)
+- Ensures that the code meets our style guide with [black](https://github.com/psf/black) (test environment `style`)
 
 To run all of these tests, just run the command `tox` in the project directory.
 
@@ -92,9 +92,9 @@ To run a subset of these tests, use the command `tox -e <env>`, where `<env>` is
 Your PR will not be merged until all of these tests pass.
 
 ### 4.3 Style
-Our style checker of choice, [black](https://github.com/ambv/black), actually happens to be an auto-formatter. The checking functionality simply detects whether or not it would try to reformat something in your code, should you run the formatter on it. For this reason, we recommend using this tool as a formatter, regardless of any disagreements you might have with the style it enforces.
+Our style checker of choice, [black](https://github.com/psf/black), actually happens to be an auto-formatter. The checking functionality simply detects whether or not it would try to reformat something in your code, should you run the formatter on it. For this reason, we recommend using this tool as a formatter, regardless of any disagreements you might have with the style it enforces.
 
-Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. This is already set in `pyproject.toml` configuration file in the repo so you can simply format code with Black like so: `black <src>`.
+Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/psf/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. This is already set in `pyproject.toml` configuration file in the repo so you can simply format code with Black like so: `black <src>`.
 
 ### 4.4 Make
 You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do a few things with them:

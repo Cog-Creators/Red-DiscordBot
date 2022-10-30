@@ -1,16 +1,20 @@
 import asyncio
 from datetime import timedelta
-from typing import List, Iterable, Union, TYPE_CHECKING, Dict
+from typing import List, Iterable, Union, TYPE_CHECKING, Dict, Optional
 
 import discord
 
 if TYPE_CHECKING:
-    from .. import Config
     from ..bot import Red
     from ..commands import Context
 
 
-async def mass_purge(messages: List[discord.Message], channel: discord.TextChannel):
+async def mass_purge(
+    messages: List[discord.Message],
+    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+    *,
+    reason: Optional[str] = None,
+):
     """Bulk delete messages from a channel.
 
     If more than 100 messages are supplied, the bot will delete 100 messages at
@@ -25,8 +29,10 @@ async def mass_purge(messages: List[discord.Message], channel: discord.TextChann
     ----------
     messages : `list` of `discord.Message`
         The messages to bulk delete.
-    channel : discord.TextChannel
+    channel : `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
         The channel to delete messages from.
+    reason : `str`, optional
+        The reason for bulk deletion, which will appear in the audit log.
 
     Raises
     ------
@@ -41,7 +47,7 @@ async def mass_purge(messages: List[discord.Message], channel: discord.TextChann
         # discord.NotFound can be raised when `len(messages) == 1` and the message does not exist.
         # As a result of this obscure behavior, this error needs to be caught just in case.
         try:
-            await channel.delete_messages(messages[:100])
+            await channel.delete_messages(messages[:100], reason=reason)
         except discord.errors.HTTPException:
             pass
         messages = messages[100:]
@@ -66,7 +72,7 @@ async def slow_deletion(messages: Iterable[discord.Message]):
             pass
 
 
-def get_audit_reason(author: discord.Member, reason: str = None):
+def get_audit_reason(author: discord.Member, reason: str = None, *, shorten: bool = False):
     """Construct a reason to appear in the audit log.
 
     Parameters
@@ -75,6 +81,9 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The author behind the audit log action.
     reason : str
         The reason behind the audit log action.
+    shorten : bool
+        When set to ``True``, the returned audit reason string will be
+        shortened to fit the max length allowed by Discord audit logs.
 
     Returns
     -------
@@ -82,20 +91,14 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The formatted audit log reason.
 
     """
-    return (
+    audit_reason = (
         "Action requested by {} (ID {}). Reason: {}".format(author, author.id, reason)
         if reason
         else "Action requested by {} (ID {}).".format(author, author.id)
     )
-
-
-async def is_allowed_by_hierarchy(
-    bot: "Red", settings: "Config", guild: discord.Guild, mod: discord.Member, user: discord.Member
-):
-    if not await settings.guild(guild).respect_hierarchy():
-        return True
-    is_special = mod == guild.owner or await bot.is_owner(mod)
-    return mod.top_role.position > user.top_role.position or is_special
+    if shorten and len(audit_reason) > 512:
+        audit_reason = f"{audit_reason[:509]}..."
+    return audit_reason
 
 
 async def is_mod_or_superior(
@@ -233,7 +236,7 @@ async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:
     Parameters
     ----------
     ctx : Context
-        The command invokation context to check.
+        The command invocation context to check.
     perms : Dict[str, bool]
         A dictionary mapping permissions to their required states.
         Valid permission names are those listed as properties of
@@ -249,7 +252,7 @@ async def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> bool:
         return True
     elif not perms:
         return False
-    resolved = ctx.channel.permissions_for(ctx.author)
+    resolved = ctx.permissions
 
     return resolved.administrator or all(
         getattr(resolved, name, None) == value for name, value in perms.items()

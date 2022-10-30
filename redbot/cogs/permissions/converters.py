@@ -10,7 +10,7 @@ from redbot.core.utils import AsyncIter
 
 _ = Translator("PermissionsConverters", __file__)
 
-MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
+MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,20})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:
@@ -31,7 +31,7 @@ class GlobalUniqueObjectFinder(commands.Converter):
             if guild is not None:
                 return guild
             channel: discord.abc.GuildChannel = bot.get_channel(_id)
-            if channel is not None:
+            if channel is not None and not isinstance(channel, discord.Thread):
                 return channel
 
             user: discord.User = bot.get_user(_id)

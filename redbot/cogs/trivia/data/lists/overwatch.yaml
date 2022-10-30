@@ -6,11 +6,11 @@ During the ARG which company's CEO did the hero want to "take down"?:
 How many Heroes were available to play at launch?:
 - 21
 How many competitive points are gained for a match that ended in a draw?:
-- Three
-- 3
+- Five
+- 5
 How many competitive points are gained for wining a match?:
-- Ten
-- 10
+- Fifteen
+- 15
 How many competitive points does it cost for golden weapons?:
 - 3000
 - three thousand
@@ -21,7 +21,8 @@ How many glowing dots does Zenyatta have on his head?:
 - 9
 - nine
 How many seconds does Ana's sleep dart last?:
-- "5.5"
+- 6
+- six
 How much Total health does Ana have?:
 - 200
 How much Total health does Bastion have?:
@@ -39,19 +40,19 @@ How much Total health does Junkrat have?:
 How much Total health does Lúcio have?:
 - 200
 How much Total health does McCree have?:
-- 200
+- 225
 How much Total health does Mei have?:
 - 250
 How much Total health does Mercy have?:
 - 200
 How much Total health does Orisa have?:
-- 400
+- 450
 How much Total health does Pharah have?:
 - 200
 How much Total health does Reaper have?:
 - 250
 How much Total health does Reinhardt have?:
-- 500
+- 550
 How much Total health does Roadhog have?:
 - 600
 "How much Total health does Soldier: 76 have?":
@@ -59,11 +60,11 @@ How much Total health does Roadhog have?:
 How much Total health does Sombra have?:
 - 200
 How much Total health does Torbjörn have?:
-- 200
+- 250
 How much Total health does Tracer have?:
 - 150
 How much Total health does Widowmaker have?:
-- 200
+- 175
 How much Total health does Winston have?:
 - 500
 How much Total health does Zarya have?:
@@ -181,13 +182,8 @@ The Overwatch short Recall, featuring Winston and Reaper, was set on which map?:
 - Gibraltar
 The founding of Numbani is celebrated with which event?:
 - Unity Day
-What are Symmetra's Ultimates called?:
-- Teleporter and Shield Generator
-- Teleporter & Shield Generator
-- Teleporter Shield Generator
-- Shield Generator Teleporter
-- Shield Generator & Teleporter
-- Shield Generator and Teleporter
+What is Symmetra's Ultimate called?:
+- Photon Barrier
 What colour was the box in the comic Train Hopper?:
 - Purple
 What company does Pharah work for?:
@@ -221,6 +217,15 @@ What does Pharah say when she uses her ultimate?:
 What does Tracer say when using her ultimate?:
 - Time's up
 - times up
+- Gotcha
+- Locked on
+- Nailed it
+- Right on target
+- You need a time out
+- Bombs away
+- Here ya go
+- Here you go
+- Wait for it
 What game can be seen on the monitor in the security room of Hollywood?:
 - Hearthstone
 What is Ana's Ultimate called?:
@@ -280,7 +285,7 @@ What is Mei's full name?:
 What is Mei's robot called?:
 - Snowball
 What is Mercy's Ultimate called?:
-- Resurrect
+- Valkyrie
 What is Mercy's real name?:
 - Angela Ziegler
 What is Orisa's Ultimate called?:
@@ -353,20 +358,20 @@ What is the cooldown in seconds for Genji's Dash?:
 - 8
 - eight
 What is the cooldown in seconds for Hanzo's Sonic Arrow?:
-- 20
-- twenty
-What is the cooldown in seconds for Mcree's Roll?:
-- 8
-- eight
-What is the cooldown in seconds for Orisa's Fortify?:
 - 12
-- Twelve
+- twelve
+What is the cooldown in seconds for Mcree's Roll?:
+- 6
+- six
+What is the cooldown in seconds for Orisa's Fortify?:
+- 8
+- Eight
 What is the cooldown in seconds for Reapers Shadow Step?:
 - 10
 - Ten
 What is the cooldown in seconds for Sombra's Translocator?:
-- 4
-- Four
+- 6
+- Six
 What is the cooldown in seconds for Tracer's Recall?:
 - 12
 - twelve
@@ -502,8 +507,6 @@ What was the first seasonal event in Overwatch called?:
 - Summer Games
 What was the name of the Christmas themed event in Overwatch?:
 - Winter Wonderland
-What was the name of the Lunar New Year themed event in Overwatch?:
-- Year of the Rooster
 What was the name of the Lunar base that Winston lived at?:
 - Horizan Lunar Colony
 What was the name of the war between humans and omnics:
@@ -523,7 +526,7 @@ Which Omnic Organization were Zenyatta and Mondatta formerly a part of?:
 Which Overwatch hero used to be part of the "Deadlock Gang"?:
 - McCree
 Which character class has the most heroes?:
-- Offense
+- Damage
 Which character has the quote "What's An Aimbot?"?:
 - Widowmaker
 Which character says "It's high noon" when his/her ultimate is used?:

@@ -34,7 +34,7 @@ class ContextManagerMixin(ProvidesCursor):
         """
         Wraps a cursor as a context manager for a transaction
         which is rolled back on unhandled exception,
-        or commited on non-exception exit
+        or committed on non-exception exit
         """
         c = self.cursor()  # pylint: disable=assignment-from-no-return
         try:

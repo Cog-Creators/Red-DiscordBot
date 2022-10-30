@@ -3,7 +3,7 @@ commands.requires
 =================
 This module manages the logic of resolving command permissions and
 requirements. This includes rules which override those requirements,
-as well as custom checks which can be overriden, and some special
+as well as custom checks which can be overridden, and some special
 checks like bot permissions checks.
 """
 import asyncio
@@ -11,24 +11,26 @@ import enum
 import inspect
 from collections import ChainMap
 from typing import (
-    Union,
-    Optional,
-    List,
-    Callable,
-    Awaitable,
-    Dict,
-    Any,
     TYPE_CHECKING,
-    TypeVar,
-    Tuple,
+    Any,
+    Awaitable,
+    Callable,
     ClassVar,
+    Dict,
+    List,
     Mapping,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
 )
 
 import discord
 
-from .converter import GuildConverter
+from discord.ext.commands import check
 from .errors import BotMissingPermissions
+
+from redbot.core import utils
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -38,7 +40,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "CheckPredicate",
-    "DM_PERMS",
     "GlobalPermissionModel",
     "GuildPermissionModel",
     "PermissionModel",
@@ -47,14 +48,21 @@ __all__ = [
     "Requires",
     "permissions_check",
     "bot_has_permissions",
+    "bot_in_a_guild",
+    "bot_can_manage_channel",
+    "bot_can_react",
     "has_permissions",
+    "can_manage_channel",
     "has_guild_permissions",
     "is_owner",
     "guildowner",
+    "guildowner_or_can_manage_channel",
     "guildowner_or_permissions",
     "admin",
+    "admin_or_can_manage_channel",
     "admin_or_permissions",
     "mod",
+    "mod_or_can_manage_channel",
     "mod_or_permissions",
     "transition_permstate_to",
     "PermStateTransitions",
@@ -66,36 +74,22 @@ GlobalPermissionModel = Union[
     discord.User,
     discord.VoiceChannel,
     discord.TextChannel,
+    discord.ForumChannel,
     discord.CategoryChannel,
     discord.Role,
-    GuildConverter,  # Unfortunately this will have to do for now
+    discord.Guild,
 ]
 GuildPermissionModel = Union[
     discord.Member,
     discord.VoiceChannel,
     discord.TextChannel,
+    discord.ForumChannel,
     discord.CategoryChannel,
     discord.Role,
-    GuildConverter,
+    discord.Guild,
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
-
-# Here we are trying to model DM permissions as closely as possible. The only
-# discrepancy I've found is that users can pin messages, but they cannot delete them.
-# This means manage_messages is only half True, so it's left as False.
-# This is also the same as the permissions returned when `permissions_for` is used in DM.
-DM_PERMS = discord.Permissions.none()
-DM_PERMS.update(
-    add_reactions=True,
-    attach_files=True,
-    embed_links=True,
-    external_emojis=True,
-    mention_everyone=True,
-    read_message_history=True,
-    read_messages=True,
-    send_messages=True,
-)
 
 
 class PrivilegeLevel(enum.IntEnum):
@@ -134,12 +128,11 @@ class PrivilegeLevel(enum.IntEnum):
         # admin or mod role.
         guild_settings = ctx.bot._config.guild(ctx.guild)
 
-        member_snowflakes = ctx.author._roles  # DEP-WARN
         for snowflake in await guild_settings.admin_role():
-            if member_snowflakes.has(snowflake):  # DEP-WARN
+            if ctx.author.get_role(snowflake):
                 return cls.ADMIN
         for snowflake in await guild_settings.mod_role():
-            if member_snowflakes.has(snowflake):  # DEP-WARN
+            if ctx.author.get_role(snowflake):
                 return cls.MOD
 
         return cls.NONE
@@ -267,7 +260,6 @@ PermStateAllowedStates = (
 
 
 def transition_permstate_to(prev: PermState, next_state: PermState) -> TransitionResult:
-
     # Transforms here are used so that the
     # informational ALLOWED_BY_HOOK/DENIED_BY_HOOK
     # remain, while retaining the behavior desired.
@@ -360,14 +352,20 @@ class Requires:
         def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
             if inspect.iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
-                func.__requires_user_perms__ = user_perms
+                if user_perms is None:
+                    func.__requires_user_perms__ = None
+                else:
+                    if getattr(func, "__requires_user_perms__", None) is None:
+                        func.__requires_user_perms__ = discord.Permissions.none()
+                    func.__requires_user_perms__.update(**user_perms)
             else:
                 func.requires.privilege_level = privilege_level
                 if user_perms is None:
                     func.requires.user_perms = None
                 else:
                     _validate_perms_dict(user_perms)
-                    assert func.requires.user_perms is not None
+                    if func.requires.user_perms is None:
+                        func.requires.user_perms = discord.Permissions.none()
                     func.requires.user_perms.update(**user_perms)
             return func
 
@@ -385,7 +383,7 @@ class Requires:
             The ID of the guild for the rule's scope. Set to
             `Requires.GLOBAL` for a global rule.
             If a global rule is set for a model,
-            it will be prefered over the guild rule.
+            it will be preferred over the guild rule.
 
         Returns
         -------
@@ -473,7 +471,7 @@ class Requires:
         Parameters
         ----------
         ctx : "Context"
-            The invkokation context to check with.
+            The invocation context to check with.
 
         Returns
         -------
@@ -486,7 +484,7 @@ class Requires:
             If the bot is missing required permissions to run the
             command.
         CommandError
-            Propogated from any permissions checks.
+            Propagated from any permissions checks.
 
         """
         if not self.ready_event.is_set():
@@ -507,39 +505,24 @@ class Requires:
         return await self._transition_state(ctx)
 
     async def _verify_bot(self, ctx: "Context") -> None:
-        if ctx.guild is None:
-            bot_user = ctx.bot.user
-        else:
-            bot_user = ctx.guild.me
-            cog = ctx.cog
-            if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
-                raise discord.ext.commands.DisabledCommand()
+        cog = ctx.cog
+        if ctx.guild is not None and cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
+            raise discord.ext.commands.DisabledCommand()
 
-        bot_perms = ctx.channel.permissions_for(bot_user)
+        bot_perms = ctx.bot_permissions
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
             raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
 
     async def _transition_state(self, ctx: "Context") -> bool:
-        prev_state = ctx.permission_state
-        cur_state = self._get_rule_from_ctx(ctx)
-        should_invoke, next_state = transition_permstate_to(prev_state, cur_state)
+        should_invoke, next_state = self._get_transitioned_state(ctx)
         if should_invoke is None:
-            # NORMAL invokation, we simply follow standard procedure
+            # NORMAL invocation, we simply follow standard procedure
             should_invoke = await self._verify_user(ctx)
         elif isinstance(next_state, dict):
             # NORMAL to PASSIVE_ALLOW; should we proceed as normal or transition?
             # We must check what would happen normally, if no explicit rules were set.
-            default_rule = PermState.NORMAL
-            if ctx.guild is not None:
-                default_rule = self.get_rule(self.DEFAULT, guild_id=ctx.guild.id)
-            if default_rule is PermState.NORMAL:
-                default_rule = self.get_rule(self.DEFAULT, self.GLOBAL)
-
-            if default_rule == PermState.ACTIVE_DENY:
-                would_invoke = False
-            elif default_rule == PermState.ACTIVE_ALLOW:
-                would_invoke = True
-            else:
+            would_invoke = self._get_would_invoke(ctx)
+            if would_invoke is None:
                 would_invoke = await self._verify_user(ctx)
             next_state = next_state[would_invoke]
 
@@ -547,13 +530,32 @@ class Requires:
         ctx.permission_state = next_state
         return should_invoke
 
+    def _get_transitioned_state(self, ctx: "Context") -> TransitionResult:
+        prev_state = ctx.permission_state
+        cur_state = self._get_rule_from_ctx(ctx)
+        return transition_permstate_to(prev_state, cur_state)
+
+    def _get_would_invoke(self, ctx: "Context") -> Optional[bool]:
+        default_rule = PermState.NORMAL
+        if ctx.guild is not None:
+            default_rule = self.get_rule(self.DEFAULT, guild_id=ctx.guild.id)
+        if default_rule is PermState.NORMAL:
+            default_rule = self.get_rule(self.DEFAULT, self.GLOBAL)
+
+        if default_rule == PermState.ACTIVE_DENY:
+            return False
+        elif default_rule == PermState.ACTIVE_ALLOW:
+            return True
+        else:
+            return None
+
     async def _verify_user(self, ctx: "Context") -> bool:
         checks_pass = await self._verify_checks(ctx)
         if checks_pass is False:
             return False
 
         if self.user_perms is not None:
-            user_perms = ctx.channel.permissions_for(ctx.author)
+            user_perms = ctx.permissions
             if user_perms.administrator or user_perms >= self.user_perms:
                 return True
 
@@ -582,7 +584,10 @@ class Requires:
         channels = []
         if author.voice is not None:
             channels.append(author.voice.channel)
-        channels.append(ctx.channel)
+        if isinstance(ctx.channel, discord.Thread):
+            channels.append(ctx.channel.parent)
+        else:
+            channels.append(ctx.channel)
         category = ctx.channel.category
         if category is not None:
             channels.append(category)
@@ -610,17 +615,6 @@ class Requires:
         return await discord.utils.async_all(check(ctx) for check in self.checks)
 
     @staticmethod
-    def _get_perms_for(ctx: "Context", user: discord.abc.User) -> discord.Permissions:
-        if ctx.guild is None:
-            return DM_PERMS
-        else:
-            return ctx.channel.permissions_for(user)
-
-    @classmethod
-    def _get_bot_perms(cls, ctx: "Context") -> discord.Permissions:
-        return cls._get_perms_for(ctx, ctx.guild.me if ctx.guild else ctx.bot.user)
-
-    @staticmethod
     def _missing_perms(
         required: discord.Permissions, actual: discord.Permissions
     ) -> discord.Permissions:
@@ -631,13 +625,6 @@ class Requires:
         #   complement/difference of A with respect to R.
         relative_complement = required.value & ~actual.value
         return discord.Permissions(relative_complement)
-
-    @staticmethod
-    def _member_as_user(member: discord.abc.User) -> discord.User:
-        if isinstance(member, discord.Member):
-            # noinspection PyProtectedMember
-            return member._user
-        return member
 
     def __repr__(self) -> str:
         return (
@@ -696,13 +683,96 @@ def bot_has_permissions(**perms: bool):
 
     def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
         if asyncio.iscoroutinefunction(func):
-            func.__requires_bot_perms__ = perms
+            if not hasattr(func, "__requires_bot_perms__"):
+                func.__requires_bot_perms__ = discord.Permissions.none()
+            _validate_perms_dict(perms)
+            func.__requires_bot_perms__.update(**perms)
         else:
             _validate_perms_dict(perms)
             func.requires.bot_perms.update(**perms)
         return func
 
     return decorator
+
+
+def bot_in_a_guild():
+    """Deny the command if the bot is not in a guild."""
+
+    async def predicate(ctx):
+        return len(ctx.bot.guilds) > 0
+
+    return check(predicate)
+
+
+def bot_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T]:
+    """
+    Complain if the bot is missing permissions to manage channel.
+
+    This check properly resolves the permissions for `discord.Thread` as well.
+
+    Parameters
+    ----------
+    allow_thread_owner: bool
+        If ``True``, the command will also be allowed to run if the bot is a thread owner.
+        This can, for example, be useful to check if the bot can edit a channel/thread's name
+        as that, in addition to members with manage channel/threads permission,
+        can also be done by the thread owner.
+    """
+
+    def predicate(ctx: "Context") -> bool:
+        if ctx.guild is None:
+            return False
+
+        if not utils.can_user_manage_channel(
+            ctx.me, ctx.channel, allow_thread_owner=allow_thread_owner
+        ):
+            if isinstance(ctx.channel, discord.Thread):
+                # This is a slight lie - thread owner *might* also be allowed
+                # but we just say that bot is missing the Manage Threads permission.
+                missing = discord.Permissions(manage_threads=True)
+            else:
+                missing = discord.Permissions(manage_channels=True)
+            raise BotMissingPermissions(missing=missing)
+
+        return True
+
+    return check(predicate)
+
+
+def bot_can_react() -> Callable[[_T], _T]:
+    """
+    Complain if the bot is missing permissions to react.
+
+    This check properly resolves the permissions for `discord.Thread` as well.
+    """
+
+    async def predicate(ctx: "Context") -> bool:
+        return not (isinstance(ctx.channel, discord.Thread) and ctx.channel.archived)
+
+    def decorator(func: _T) -> _T:
+        func = bot_has_permissions(read_message_history=True, add_reactions=True)(func)
+        func = check(predicate)(func)
+        return func
+
+    return decorator
+
+
+def _can_manage_channel_deco(
+    privilege_level: Optional[PrivilegeLevel] = None, allow_thread_owner: bool = False
+) -> Callable[[_T], _T]:
+    async def predicate(ctx: "Context") -> bool:
+        if utils.can_user_manage_channel(
+            ctx.author, ctx.channel, allow_thread_owner=allow_thread_owner
+        ):
+            return True
+
+        if privilege_level is not None:
+            if await PrivilegeLevel.from_ctx(ctx) >= privilege_level:
+                return True
+
+        return False
+
+    return permissions_check(predicate)
 
 
 def has_permissions(**perms: bool):
@@ -713,6 +783,24 @@ def has_permissions(**perms: bool):
     if perms is None:
         raise TypeError("Must provide at least one keyword argument to has_permissions")
     return Requires.get_decorator(None, perms)
+
+
+def can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T]:
+    """Restrict the command to users with permissions to manage channel.
+
+    This check properly resolves the permissions for `discord.Thread` as well.
+
+    This check can be overridden by rules.
+
+    Parameters
+    ----------
+    allow_thread_owner: bool
+        If ``True``, the command will also be allowed to run if the author is a thread owner.
+        This can, for example, be useful to check if the author can edit a channel/thread's name
+        as that, in addition to members with manage channel/threads permission,
+        can also be done by the thread owner.
+    """
+    return _can_manage_channel_deco(allow_thread_owner)
 
 
 def is_owner():
@@ -731,6 +819,24 @@ def guildowner_or_permissions(**perms: bool):
     return Requires.get_decorator(PrivilegeLevel.GUILD_OWNER, perms)
 
 
+def guildowner_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T]:
+    """Restrict the command to the guild owner or user with permissions to manage channel.
+
+    This check properly resolves the permissions for `discord.Thread` as well.
+
+    This check can be overridden by rules.
+
+    Parameters
+    ----------
+    allow_thread_owner: bool
+        If ``True``, the command will also be allowed to run if the author is a thread owner.
+        This can, for example, be useful to check if the author can edit a channel/thread's name
+        as that, in addition to members with manage channel/threads permission,
+        can also be done by the thread owner.
+    """
+    return _can_manage_channel_deco(PrivilegeLevel.GUILD_OWNER, allow_thread_owner)
+
+
 def guildowner():
     """Restrict the command to the guild owner.
 
@@ -747,6 +853,24 @@ def admin_or_permissions(**perms: bool):
     return Requires.get_decorator(PrivilegeLevel.ADMIN, perms)
 
 
+def admin_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T]:
+    """Restrict the command to users with the admin role or permissions to manage channel.
+
+    This check properly resolves the permissions for `discord.Thread` as well.
+
+    This check can be overridden by rules.
+
+    Parameters
+    ----------
+    allow_thread_owner: bool
+        If ``True``, the command will also be allowed to run if the author is a thread owner.
+        This can, for example, be useful to check if the author can edit a channel/thread's name
+        as that, in addition to members with manage channel/threads permission,
+        can also be done by the thread owner.
+    """
+    return _can_manage_channel_deco(PrivilegeLevel.ADMIN, allow_thread_owner)
+
+
 def admin():
     """Restrict the command to users with the admin role.
 
@@ -761,6 +885,24 @@ def mod_or_permissions(**perms: bool):
     This check can be overridden by rules.
     """
     return Requires.get_decorator(PrivilegeLevel.MOD, perms)
+
+
+def mod_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T]:
+    """Restrict the command to users with the mod role or permissions to manage channel.
+
+    This check properly resolves the permissions for `discord.Thread` as well.
+
+    This check can be overridden by rules.
+
+    Parameters
+    ----------
+    allow_thread_owner: bool
+        If ``True``, the command will also be allowed to run if the author is a thread owner.
+        This can, for example, be useful to check if the author can edit a channel/thread's name
+        as that, in addition to members with manage channel/threads permission,
+        can also be done by the thread owner.
+    """
+    return _can_manage_channel_deco(PrivilegeLevel.MOD, allow_thread_owner)
 
 
 def mod():
