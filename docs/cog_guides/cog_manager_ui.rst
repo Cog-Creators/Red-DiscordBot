@@ -171,7 +171,7 @@ removepath
 
 .. code-block:: none
 
-    [p]removepath <path_number...>
+    [p]removepath <path_numbers...>
 
 **Description**
 
