@@ -26,7 +26,9 @@ class SelfRole(commands.Converter):
         if not pool:
             role = await role_converter.convert(ctx, arg)
             if role.id not in selfroles:
-                _('The role "{role_name}" is not a valid selfrole.').format(role_name=role.name)
+                raise commands.BadArgument(
+                    _('The role "{role_name}" is not a valid selfrole.').format(role_name=role.name)
+                )
         elif len(pool) > 1:
             raise commands.BadArgument(
                 _(
