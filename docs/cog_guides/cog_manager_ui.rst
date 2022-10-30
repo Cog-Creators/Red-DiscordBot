@@ -175,7 +175,7 @@ removepath
 
 **Description**
 
-Removes one or more path from the list of available paths. Its cogs won't be
+Removes one or more paths from the list of available paths. Its cogs won't be
 accessible anymore.
 
 **Arguments**
