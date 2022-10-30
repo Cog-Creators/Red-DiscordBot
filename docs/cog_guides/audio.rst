@@ -913,9 +913,9 @@ The following are all optional:
 
 **Example Usage**
 
-* ``[p]audioset autoplay MyGuildPlaylist``
-* ``[p]audioset autoplay MyGlobalPlaylist --scope Global``
-* ``[p]audioset autoplay PersonalPlaylist --scope User --author Draper``
+* ``[p]audioset autoplay playlist MyGuildPlaylist``
+* ``[p]audioset autoplay playlist MyGlobalPlaylist --scope Global``
+* ``[p]audioset autoplay playlist PersonalPlaylist --scope User --author Draper``
 
 .. _audio-command-audioset-autoplay-reset:
 
