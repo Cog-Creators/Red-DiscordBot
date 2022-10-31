@@ -133,9 +133,9 @@ DANGEROUS_COMMANDS = {
         "disabling this will make the bot unable to play any local track content."
     ),
     "command_llsetup_config_source_soundcloud": _(
-        "This command toggles the support of Soundcloud playback. "
+        "This command toggles the support of SoundCloud playback. "
         "An example is <https://soundcloud.com/user-103858850/tilla>; "
-        "disabling this will make the bot unable to play any Soundcloud content."
+        "disabling this will make the bot unable to play any SoundCloud content."
     ),
     "command_llsetup_config_source_youtube": _(
         "This command toggles the support of YouTube playback (Spotify depends on YouTube). "

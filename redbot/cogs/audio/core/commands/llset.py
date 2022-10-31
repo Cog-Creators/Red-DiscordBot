@@ -152,7 +152,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="external")
+    @command_llsetup.command(name="external", aliases=["unmanaged"])
     async def command_llsetup_external(self, ctx: commands.Context):
         """Toggle using external Lavalink nodes - requires an existing external Lavalink node for Audio to work, if enabled.
 
@@ -457,7 +457,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_source_http(self, ctx: commands.Context):
         """Toggle HTTP direct URL usage on or off.
 
-        This source is used to allow playback from direct http streams (This does not affect direct url playback for the other sources)
+        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).
         """
         state = await self.config.yaml.lavalink.server.sources.http()
         await self.config.yaml.lavalink.server.sources.http.set(not state)
@@ -538,7 +538,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_source_soundcloud(self, ctx: commands.Context):
         """Toggle Soundcloud source on or off.
 
-        This toggle controls the playback of all Soundcloud related content.
+        This toggle controls the playback of all SoundCloud related content.
         """
         state = await self.config.yaml.lavalink.server.sources.soundcloud()
         await self.config.yaml.lavalink.server.sources.soundcloud.set(not state)
