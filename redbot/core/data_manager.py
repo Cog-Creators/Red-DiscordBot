@@ -36,14 +36,37 @@ basic_config_default: Dict[str, Any] = {
     "CORE_PATH_APPEND": "core",
 }
 
-config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
-if sys.platform == "linux":
-    if 0 < os.getuid() < 1000:  # pylint: disable=no-member
+config_dir = Path(appdir.user_config_dir)
+_system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
+if _system_user:
+    if Path.home().exists():
+        # We don't want to break someone just because they created home dir
+        # but were already using the site_data_dir.
+        #
+        # But otherwise, we do want Red to use user_config_dir if home dir exists.
+        _maybe_config_file = Path(appdir.site_data_dir) / "config.json"
+        if _maybe_config_file.exists():
+            config_dir = _maybe_config_file.parent
+    else:
         config_dir = Path(appdir.site_data_dir)
-if not config_dir:
-    config_dir = Path(appdir.user_config_dir)
+
 config_file = config_dir / "config.json"
+
+
+def load_existing_config():
+    """Get the contents of the config file, or an empty dictionary if it does not exist.
+
+    Returns
+    -------
+    dict
+        The config data.
+    """
+    if not config_file.exists():
+        return {}
+
+    with config_file.open(encoding="utf-8") as fs:
+        return json.load(fs)
 
 
 def create_temp_config():
@@ -61,8 +84,7 @@ def create_temp_config():
     default_dirs["STORAGE_TYPE"] = "JSON"
     default_dirs["STORAGE_DETAILS"] = {}
 
-    with config_file.open("r", encoding="utf-8") as fs:
-        config = json.load(fs)
+    config = load_existing_config()
 
     config[name] = default_dirs
 
