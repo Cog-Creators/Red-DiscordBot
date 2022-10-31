@@ -28,7 +28,7 @@ The default is ``managed``, as Audio manages the Lavalink.jar in this state. If 
 ``unmanaged`` process, this means you as the bot owner will be managing the Lavalink process yourself.
 
 When the Audio cog is first loaded, it will contact GitHub and download the newest Lavalink.jar file
-for your bot to use. Any time Red is updated, and you update your bot, most likely it will download a new,
+for your bot to use. Any time Red is updated and you update your bot, it will probably download a new,
 updated Lavalink.jar for your bot. It is important to keep your bot updated as fixes are provided for Lavalink frequently.
 
 .. warning::
@@ -83,7 +83,7 @@ Frequently Asked Questions
 **Q: I used a playlist link with some of the playlist related commands and it tells me that it can't find it. 
 How can I use this playlist link with playlist commands in audio?**
 
-	Red Audio uses Red playlists in its commands that take playlist arguments. 
+	Audio uses Red playlists in its commands that take playlist arguments. 
 	These playlists can be created and modified using the ``[p]playlist`` group command.
 	When a playlist or song(s) are saved as a Red playlist, it is assigned an ID automatically,
 	and it is also assigned the one-word name you provided it when creating the playlist.
@@ -92,7 +92,7 @@ How can I use this playlist link with playlist commands in audio?**
     .. tip::
 
         If you have a playlist URL, use ``[p]playlist save <url>`` to save it as a Playlist
-        with Red Audio.
+        with Audio.
 
 **Q: How do I turn off autoplay?**
 
@@ -156,7 +156,7 @@ Playlists can be saved locally on the bot in a variety of different scopes:
 
 * Global - The playlist will be available on all servers.
 * Guild (default scope) - The playlist will be available only in a specified guild.
-* User - The playlist will be available for a specified user in any guild in which they share the bot with.
+* User - The playlist will be available in any guild that the user shares with the bot.
 
 Some of the most relevant playlist commands include:
 
@@ -188,7 +188,11 @@ Owner-Only Audioset Commands
 Guild-based Audioset Commands
 -----------------------------
 
-* ``[p]audioset notify`` - Toggle extra messages, like a notification message when a track starts, showing the song title, artist, etc.
+* ``[p]audioset notify`` - Toggle extra messages: Audio will display a notification message when a track starts, 
+showing the song title, artist, and the thumbnail (if enabled and present). This notify message follows the last 
+invoking Audio command - if an Audio command is used in one channel and this setting is on, the notify messages 
+will start to appear in the channel where the command was used. If another Audio command is used in another 
+channel, notify messages will start appearing in the second channel instead of the first command channel.
 * ``[p]audioset maxvolume`` - Set the max volume for the guild.
 * ``[p]audioset autodeafen`` - Toggle the bot being auto-deafened upon voice channel join.
 * ``[p]audioset restrictions`` - Manage the keyword blocklist/allowlist for the guild.
@@ -205,9 +209,9 @@ single tracks or playlists from Spotify by looking up the song(s) on YouTube and
 This is possible by providing your bot with a YouTube API key and a Spotify API key. Instructions for setting both 
 can be found under ``[p]audioset youtubeapi`` and ``[p]audioset spotifyapi``.
 
-The YouTube API keys that are being given out these days only have 10000 units of quota per day, which is equivalent to
+The YouTube API keys that are being given out currently only have 10000 units of quota per day, which is equivalent to
 100 Spotify song lookups. There is a local metadata cache that Audio uses to be able to retain information about song
-lookups, though. For example, with a 500 song Spotify playlist, the bot will be able to fetch the first 100 songs the
+lookups. For example, with a 500 song Spotify playlist, the bot will be able to fetch the first 100 songs the
 first day the Spotify playlist URL is used with Audio, then the next day it will be able to use the first 100 lookups
 from the local cache, and use the API credits to look up the next 100 songs. After 5 days of playing the Spotify playlist
 through Audio, that playlist will be fully cached locally until the cached entries are set to expire and will not require  
@@ -231,7 +235,7 @@ if your bot and your Lavalink.jar are on the same host, which is the default set
 To use this feature:
 
 1. Create a "localtracks" folder anywhere where Lavalink/your bot user has permissions to access, on the system.
-2. Use ``[p]audioset localpath <localtracks path>`` command to set the folder created above as local tracks folder.
+2. Use ``[p]audioset localpath <localtracks path>`` to set the folder created above as the localtracks folder.
 3. Create/move/copy/symlink your album folders (Subfolders containing your tracks) to the folder created in Step 1.
 4. Put any of Audio's supported files in the following folders:
 
@@ -245,7 +249,6 @@ The following formats are supported:
 
 * MP3
 * FLAC
-* WAV
 * Matroska/WebM (AAC, Opus or Vorbis codecs)
 * MP4/M4A (AAC codec)
 * OGG streams (Opus, Vorbis and FLAC codecs)
@@ -330,7 +333,7 @@ No Sound
 
 If the bot's speaking light is active, but there is no sound, troubleshoot the following:
 
-1. Is the bot's user volume turned up? (right click on the bot in discord, see the slider).
+1. Is the bot's user volume turned up? (right click on the bot in Discord, see the slider).
 2. Is the bot muted or deafened? Are you deafened? Are you deaf?
 3. Check Discord audio device settings and volume (cog icon next to your username in the bottom left, click "Voice and Video").
 4. Try dragging and dropping the bot back to the voice channel.
@@ -764,7 +767,7 @@ You can check the service status with the following command:
 
 .. code-block:: sh
     
-    sudo journalctl -u lavalink.
+    sudo journalctl -u lavalink
 
 Keep in mind this will occupy your terminal and you have to hit CTRL+C to stop it before doing something else.
 This will only close the log viewer, Lavalink itself will continue to run in the background.
@@ -3230,7 +3233,7 @@ Lavalink node or if you are connecting to one you manage yourself, or a service 
 nodes.
 
 Commands specifically for managed Lavalink nodes can be found in :ref:`this section<managed-node-management-commands>`, 
-whilst commands for unmanaged Lavalink nodes can be found :ref:`here<unmanaged-node-management-commands>`
+whilst commands for unmanaged Lavalink nodes can be found :ref:`here<unmanaged-node-management-commands>`.
 
 .. _audio-command-llsetup:
 
@@ -3249,13 +3252,14 @@ llsetup
 **Description**
 
 Manage Lavalink node configuration settings. This command holds all commands to
-manage an external or managed Lavalink node.
+manage an unmanaged (external) or managed Lavalink node.
 
 .. warning::
 
-    You should not mess with any command in here unless you have a valid reason to,
-    i.e. been told by someone in the Red-Discord Bot support server to do so.
-    All the commands in here have the potential to break the Audio cog.
+    You should not change any command settings in this group command unless you 
+    have a valid reason to, e.g. been told by someone in the Red-Discord Bot support 
+    server to do so. Changing llsetup command settings have the potential to break 
+    Audio cog connection and playback if the wrong settings are used.
 
 """"""""""""""""
 llsetup external
@@ -3270,7 +3274,7 @@ llsetup external
 **Description**
 
 Toggle using external Lavalink nodes - requires an existing external Lavalink node for
-Audio to work, if enabled. This command disables the managed Lavalink server, if you do
+Audio to work, if enabled. This command disables the managed Lavalink server: if you do
 not have an external Lavalink node you will be unable to use Audio while this is enabled.
 
 """"""""""""
@@ -3400,7 +3404,7 @@ llsetup config server buffer
 
 **Description**
 
-Set the managed Lavalink node NAS buffer size. Only
+Set the managed Lavalink node JDA-NAS buffer size. Only
 change this if you have been directly advised to,
 changing it can cause significant playback issues.
 
@@ -3639,7 +3643,7 @@ Change your Java executable path.
 This command shouldn't need to be used most of the time,
 and is only useful if the host machine has conflicting Java versions.
 
-If changing this make sure that the java you set is supported by Audio.
+If changing this make sure that the Java executable you set is supported by Audio.
 The current supported version is Java 11.
 
 **Arguments**
@@ -3749,5 +3753,5 @@ llsetup secured
 
 **Description**
 
-Set the Lavalink node connection to secured. This command sets the connection type
-to secured when connecting to an external Lavalink node.
+Set the Lavalink node connection to secured. This toggle sets the connection type
+to secured or unsecured when connecting to an external Lavalink node.
