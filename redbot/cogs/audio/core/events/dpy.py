@@ -119,46 +119,46 @@ DANGEROUS_COMMANDS = {
     ),
     "command_llsetup_config_source_http": _(
         "This command toggles the support of direct url streams like Icecast or Shoutcast streams. "
-        "An example is <http://ice6.somafm.com/gsclassic-128-mp3>; "
-        "Disabling this will make the bot unable to play any direct url steam content."
+        "An example is <http://ice1.somafm.com/gsclassic-128-mp3>; "
+        "disabling this will make the bot unable to play any direct url steam content."
     ),
     "command_llsetup_config_source_bandcamp": _(
         "This command toggles the support of Bandcamp audio playback. "
         "An example is <http://deaddiskdrive.bandcamp.com/track/crystal-glass>; "
-        "Disabling this will make the bot unable to play any Bandcamp content",
+        "disabling this will make the bot unable to play any Bandcamp content",
     ),
     "command_llsetup_config_source_local": _(
         "This command toggles the support of local track audio playback. "
-        "for example `/mnt/data/my_super_funky_track.mp3`; "
-        "Disabling this will make the bot unable to play any local track content."
+        "An example is `/mnt/data/my_super_funky_track.mp3`; "
+        "disabling this will make the bot unable to play any local track content."
     ),
     "command_llsetup_config_source_soundcloud": _(
         "This command toggles the support of Soundcloud playback. "
         "An example is <https://soundcloud.com/user-103858850/tilla>; "
-        "Disabling this will make the bot unable to play any Soundcloud content."
+        "disabling this will make the bot unable to play any Soundcloud content."
     ),
     "command_llsetup_config_source_youtube": _(
         "This command toggles the support of YouTube playback (Spotify depends on YouTube). "
-        "Disabling this will make the bot unable to play any YouTube content, "
+        "Disabling this will make the bot unable to play any YouTube content: "
         "this includes Spotify."
     ),
     "command_llsetup_config_source_twitch": _(
         "This command toggles the support of Twitch playback. "
         "An example of this is <https://twitch.tv/monstercat>; "
-        "Disabling this will make the bot unable to play any Twitch content."
+        "disabling this will make the bot unable to play any Twitch content."
     ),
     "command_llsetup_config_source_vimeo": _(
         "This command toggles the support of Vimeo playback. "
         "An example of this is <https://vimeo.com/157743578>; "
-        "Disabling this will make the bot unable to play any Vimeo content."
+        "disabling this will make the bot unable to play any Vimeo content."
     ),
     "command_llsetup_config_server_framebuffer": _(
-        "This setting controls the managed nodes framebuffer, "
-        "Do not change this unless instructed."
+        "This setting controls the managed node's framebuffer, "
+        "do not change this unless instructed."
     ),
     "command_llsetup_config_server_buffer": _(
-        "This setting controls the managed nodes NAS buffer, "
-        "Do not change this unless instructed."
+        "This setting controls the managed node's JDA-NAS buffer, "
+        "do not change this unless instructed."
     ),
     "command_llsetup_reset": _("This command will reset every setting changed by `[p]llset`."),
 }
