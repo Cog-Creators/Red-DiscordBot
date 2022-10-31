@@ -120,12 +120,12 @@ DANGEROUS_COMMANDS = {
     "command_llsetup_config_source_http": _(
         "This command toggles the support of direct url streams like Icecast or Shoutcast streams. "
         "An example is <http://ice1.somafm.com/gsclassic-128-mp3>; "
-        "Disabling this will make the bot unable to play any direct url steam content."
+        "disabling this will make the bot unable to play any direct url steam content."
     ),
     "command_llsetup_config_source_bandcamp": _(
         "This command toggles the support of Bandcamp audio playback. "
         "An example is <http://deaddiskdrive.bandcamp.com/track/crystal-glass>; "
-        "Disabling this will make the bot unable to play any Bandcamp content",
+        "disabling this will make the bot unable to play any Bandcamp content",
     ),
     "command_llsetup_config_source_local": _(
         "This command toggles the support of local track audio playback. "
