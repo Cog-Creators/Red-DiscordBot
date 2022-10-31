@@ -189,10 +189,10 @@ Guild-based Audioset Commands
 -----------------------------
 
 * ``[p]audioset notify`` - Toggle extra messages: Audio will display a notification message when a track starts, 
-showing the song title, artist, and the thumbnail (if enabled and present). This notify message follows the last 
-invoking Audio command - if an Audio command is used in one channel and this setting is on, the notify messages 
-will start to appear in the channel where the command was used. If another Audio command is used in another 
-channel, notify messages will start appearing in the second channel instead of the first command channel.
+  showing the song title, artist, and the thumbnail (if enabled and present). This notify message follows the last 
+  invoking Audio command - if an Audio command is used in one channel and this setting is on, the notify messages
+  will start to appear in the channel where the command was used. If another Audio command is used in another 
+  channel, notify messages will start appearing in the second channel instead of the first command channel.
 * ``[p]audioset maxvolume`` - Set the max volume for the guild.
 * ``[p]audioset autodeafen`` - Toggle the bot being auto-deafened upon voice channel join.
 * ``[p]audioset restrictions`` - Manage the keyword blocklist/allowlist for the guild.
