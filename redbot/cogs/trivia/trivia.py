@@ -9,13 +9,14 @@ from schema import Schema, Optional, Or, SchemaError
 import io
 import yaml
 import discord
+from operator import itemgetter
 
 from redbot.core import Config, commands, checks, bank
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter, can_user_react_in
-from redbot.core.utils.chat_formatting import box, pagify, bold
+from redbot.core.utils.chat_formatting import box, pagify, bold, italics
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
@@ -422,7 +423,45 @@ class Trivia(commands.Cog):
                     "may be formatted incorrectly."
                 ).format(name=category)
             )
-        await ctx.send(data)
+
+        default_config = await self.config.guild(ctx.guild).all()
+        if "CONFIG" in data:
+            config_settings = {}
+            config = data.pop("CONFIG")
+            for setting in default_config:
+                config_settings[setting] = config.get(setting, default_config[setting])
+        else:
+            config_settings = default_config
+
+        config_settings = dict(sorted(config_settings.items(), key=itemgetter(0)))
+
+        embed = discord.Embed(
+            title=f'"{category}" Category Details',
+            color=await ctx.embed_colour(),
+        )
+        embed.add_field(
+            name=_("Author"), value=data.pop("AUTHOR", italics("Not provided."))
+        )
+        embed.add_field(name=_("Question count"), value=len(data))
+        embed.add_field(
+            name=_("Description"),
+            value=data.pop(
+                "DESCRIPTION", italics("No description provided for this category.")
+            ),
+            inline=False,
+        )
+        embed.add_field(
+            name=_("Config"),
+            value=box(
+                "\n".join(
+                    f"{k.replace('_', ' ').capitalize()}: {v}"
+                    for k, v in config_settings.items()
+                ),
+                lang="yaml",
+            ),
+            inline=False,
+        )
+        await ctx.send(embed=embed)
 
     @trivia.group(
         name="leaderboard", aliases=["lboard"], autohelp=False, invoke_without_command=True
