@@ -514,7 +514,14 @@ class Menu(metaclass=_MenuMeta):
         return len(self.buttons)
 
     def _verify_permissions(self, ctx, channel, permissions):
-        if not permissions.send_messages:
+        is_thread = isinstance(channel, discord.Thread)
+        if is_thread:
+            if (
+                not permissions.send_messages_in_threads
+                or (channel.locked and not permissions.manage_threads)
+            ):
+                raise CannotSendMessages()
+        elif not permissions.send_messages:
             raise CannotSendMessages()
 
         if self.check_embeds and not permissions.embed_links:
@@ -522,7 +529,7 @@ class Menu(metaclass=_MenuMeta):
 
         self._can_remove_reactions = permissions.manage_messages
         if self.should_add_reactions():
-            if not permissions.add_reactions:
+            if not permissions.add_reactions or (is_thread and channel.archived):
                 raise CannotAddReactions()
             if not permissions.read_message_history:
                 raise CannotReadMessageHistory()
@@ -553,13 +560,12 @@ class Menu(metaclass=_MenuMeta):
     async def _internal_loop(self):
         try:
             self.__timed_out = False
-            loop = self.bot.loop
             # Ensure the name exists for the cancellation handling
             tasks = []
             while self._running:
                 tasks = [
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check)),
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
+                    asyncio.create_task(self.bot.wait_for('raw_reaction_add', check=self.reaction_check)),
+                    asyncio.create_task(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
                 ]
                 done, pending = await asyncio.wait(tasks, timeout=self.timeout, return_when=asyncio.FIRST_COMPLETED)
                 for task in pending:
@@ -570,7 +576,7 @@ class Menu(metaclass=_MenuMeta):
 
                 # Exception will propagate if e.g. cancelled or timed out
                 payload = done.pop().result()
-                loop.create_task(self.update(payload))
+                asyncio.create_task(self.update(payload))
 
                 # NOTE: Removing the reaction ourselves after it's been done when
                 # mixed with the checks above is incredibly racy.
@@ -712,12 +718,12 @@ class Menu(metaclass=_MenuMeta):
             self.__tasks.clear()
 
             self._running = True
-            self.__tasks.append(bot.loop.create_task(self._internal_loop()))
+            self.__tasks.append(asyncio.create_task(self._internal_loop()))
 
             async def add_reactions_task():
                 for emoji in self.buttons:
                     await msg.add_reaction(emoji)
-            self.__tasks.append(bot.loop.create_task(add_reactions_task()))
+            self.__tasks.append(asyncio.create_task(add_reactions_task()))
 
             if wait:
                 await self._event.wait()

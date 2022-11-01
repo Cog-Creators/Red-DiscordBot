@@ -4,6 +4,8 @@
 Installing Red on Windows
 =========================
 
+.. include:: _includes/supported-arch-x64.rst
+
 -------------------------------
 Installing the pre-requirements
 -------------------------------
@@ -30,7 +32,7 @@ Then run each of the following commands:
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
-    choco upgrade visualstudio2019-workload-vctools -y
+    choco upgrade visualstudio2022-workload-vctools -y
     choco upgrade python3 -y --version 3.9.9
 
 For Audio support, you should also run the following command before exiting:
@@ -64,7 +66,7 @@ Manually installing dependencies
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java 11 <https://adoptium.net/?variant=openjdk11>`_ - needed for Audio
+* `Java 11 <https://adoptium.net/temurin/releases/?version=11>`_ - needed for Audio
 
 From here, continue onto `creating-venv-windows`.
 

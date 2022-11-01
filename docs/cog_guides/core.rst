@@ -341,7 +341,7 @@ bankset maxbal
 
 Defines the maximum amount of money a user can have with the bot.
 
-If an user reaches this limit, he will be unable to gain more money.
+If a user reaches this limit, they will be unable to gain more money.
 
 **Arguments**
 
@@ -1698,24 +1698,26 @@ helpset usemenus
 
 .. code-block:: none
 
-    [p]helpset usemenus [use_menus]
+    [p]helpset usemenus <"buttons"|"reactions"|"select"|"selectonly"|"disable">
 
 **Description**
 
 Allows the help command to be sent as a paginated menu instead of separate
 messages.
 
-When enabled, ``[p]help`` will only show one page at a time and will use reactions to navigate between pages.
+When "reactions", "buttons", "select", or "selectonly" is passed, ``[p]help`` will
+only show one page at a time and will use the associated control scheme to navigate between pages.
 
-This defaults to False.
-Using this without a setting will toggle.
-
- **Examples:**
-    - ``[p]helpset usemenues True`` - Enables using menus.
-    - ``[p]helpset usemenues`` - Toggles the value.
+**Examples:**
+    - ``[p]helpset usemenus reactions`` - Enables using reaction menus.
+    - ``[p]helpset usemenus buttons`` - Enables using button menus.
+    - ``[p]helpset usemenus select`` - Enables buttons with a select menu.
+    - ``[p]helpset usemenus selectonly`` - Enables a select menu only on help.
+    - ``[p]helpset usemenus disable`` - Disables help menus.
 
 **Arguments:**
-    - ``[use_menus]`` - Whether to use menus. Leave blank to toggle.
+    - ``<"buttons"|"reactions"|"select"|"selectonly"|"disable">`` - Whether to use ``buttons``,
+      ``reactions``, ``select``, ``selectonly``, or no menus.
 
 .. _core-command-helpset-usetick:
 
@@ -1842,9 +1844,9 @@ ignore channel
 
 **Description**
 
-Ignore commands in the channel or category.
+Ignore commands in the channel, thread, or category.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 .. Note:: Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
@@ -1856,7 +1858,7 @@ Defaults to the current channel.
     - ``[p]ignore channel 356236713347252226`` - Also accepts IDs.
 
 **Arguments:**
-    - ``<channel>`` - The channel to ignore. Can be a category channel.
+    - ``<channel>`` - The channel to ignore. This can also be a thread or category channel.
 
 .. _core-command-ignore-list:
 
@@ -2348,11 +2350,15 @@ modlogset cases
 
 **Description**
 
-Enable or disable case creation for a mod action.
+Enable or disable case creation for a mod action, like disabling warnings, enabling bans, etc.
 
-**Arguments**
+**Examples:**
+    - ``[p]modlogset cases kick`` - Enables/disables modlog messages for kicks.
+    - ``[p]modlogset cases ban`` - Enables/disables modlog messages for bans.
 
-* ``[action]``: The action to enable or disable case creation for.
+**Arguments:**
+    - ``[action]`` - The type of mod action to be enabled/disabled for case creation.
+
 
 .. _core-command-modlogset-modlog:
 
@@ -3953,6 +3959,33 @@ Otherwise, the colour used will be the colour of the bot's top role.
 
 **Example:**
     - ``[p]set usebotcolour``
+    
+.. _core-command-set-usebuttons:
+
+""""""""""""""
+set usebuttons
+""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set usebuttons [use_buttons]
+    
+**Description**
+
+Set a global bot variable for using buttons in menus. When enabled, all usage of
+cores menus API will use buttons instead of reactions. This defaults to False.
+Using this without a setting will toggle.
+
+**Examples:**
+- ``[p]set usebuttons True`` - Enables using buttons.
+- ``[p]helpset usebuttons`` - Toggles the value.
+
+**Arguments:**
+    - ``[use_buttons]`` - Whether to use buttons. Leave blank to toggle.
 
 .. _core-command-shutdown:
 
@@ -4045,9 +4078,9 @@ unignore channel
 
 **Description**
 
-Remove a channel or category from the ignore list.
+Remove a channel, thread, or category from the ignore list.
 
-Defaults to the current channel.
+Defaults to the current thread or channel.
 
 **Examples:**
     - ``[p]unignore channel #general`` - Unignores commands in the #general channel.
@@ -4056,7 +4089,7 @@ Defaults to the current channel.
     - ``[p]unignore channel 356236713347252226`` - Also accepts IDs. Use this method to unignore categories.
 
 **Arguments:**
-    - ``<channel>`` - The channel to unignore. This can be a category channel.
+    - ``<channel>`` - The channel to unignore. This can also be a thread or category channel.
 
 .. _core-command-unignore-server:
 
