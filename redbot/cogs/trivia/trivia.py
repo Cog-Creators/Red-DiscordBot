@@ -30,6 +30,7 @@ UNIQUE_ID = 0xB3C0E453
 TRIVIA_LIST_SCHEMA = Schema(
     {
         Optional("AUTHOR"): str,
+        Optional("DESCRIPTION"): str,
         Optional("CONFIG"): {
             Optional("max_score"): int,
             Optional("timeout"): Or(int, float),
@@ -401,6 +402,27 @@ class Trivia(commands.Cog):
                 await ctx.author.send(msg)
             else:
                 await ctx.send(msg)
+
+    @trivia.command(name="info")
+    async def trivia_info(self, ctx: commands.Context, category: str.lower):
+        """Get information about a trivia category."""
+        try:
+            data = self.get_trivia_list(category)
+        except FileNotFoundError:
+            await ctx.send(
+                _(
+                    "Invalid category `{name}`. See `{prefix}trivia list` for a list of "
+                    "trivia categories."
+                ).format(name=category, prefix=ctx.clean_prefix)
+            )
+        except InvalidListError:
+            await ctx.send(
+                _(
+                    "There was an error parsing the trivia list for the `{name}` category. It "
+                    "may be formatted incorrectly."
+                ).format(name=category)
+            )
+        await ctx.send(data)
 
     @trivia.group(
         name="leaderboard", aliases=["lboard"], autohelp=False, invoke_without_command=True
