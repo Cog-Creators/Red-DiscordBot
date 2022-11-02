@@ -410,14 +410,14 @@ class Trivia(commands.Cog):
         try:
             data = self.get_trivia_list(category)
         except FileNotFoundError:
-            await ctx.send(
+            return await ctx.send(
                 _(
                     "Invalid category `{name}`. See `{prefix}trivia list` for a list of "
                     "trivia categories."
                 ).format(name=category, prefix=ctx.clean_prefix)
             )
         except InvalidListError:
-            await ctx.send(
+            return await ctx.send(
                 _(
                     "There was an error parsing the trivia list for the `{name}` category. It "
                     "may be formatted incorrectly."
@@ -439,25 +439,19 @@ class Trivia(commands.Cog):
             title=f'"{category}" Category Details',
             color=await ctx.embed_colour(),
         )
-        embed.add_field(
-            name=_("Author"), value=data.pop("AUTHOR", italics("Not provided."))
-        )
+        embed.add_field(name=_("Author"), value=data.pop("AUTHOR", italics("Not provided.")))
         embed.add_field(name=_("Question count"), value=len(data))
+        embed.add_field(name=_("Custom"), value=category in [p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
         embed.add_field(
             name=_("Description"),
-            value=data.pop(
-                "DESCRIPTION", italics("No description provided for this category.")
-            ),
+            value=data.pop("DESCRIPTION", italics("No description provided for this category.")),
             inline=False,
         )
         embed.add_field(
             name=_("Config"),
             value=box(
-                "\n".join(
-                    f"{k.replace('_', ' ').capitalize()}: {v}"
-                    for k, v in config_settings.items()
-                ),
-                lang="yaml",
+                "\n".join(f"{k.replace('_', ' ').capitalize()}: {v}" for k, v in config_settings.items()),
+                lang="yaml"
             ),
             inline=False,
         )
