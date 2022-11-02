@@ -357,6 +357,7 @@ class Trivia(commands.Cog):
             else:
                 trivia_dict.update(dict_)
                 authors.append(trivia_dict.pop("AUTHOR", None))
+                trivia_dict.pop("DESCRIPTION", None)
                 continue
             return
         if not trivia_dict:
@@ -758,6 +759,14 @@ class Trivia(commands.Cog):
         buffer = io.BytesIO(await attachment.read())
         trivia_dict = yaml.safe_load(buffer)
         TRIVIA_LIST_SCHEMA.validate(trivia_dict)
+
+        for key in ("AUTHOR", "DESCRIPTION"):
+            if len(trivia_dict.get(key, "")) > 1024:
+                return await ctx.send(
+                    _("Trivia list {key} must be under 1024 characters.").format(
+                       key=key
+                    )
+                )
 
         buffer.seek(0)
         with file.open("wb") as fp:
