@@ -442,7 +442,10 @@ class Trivia(commands.Cog):
         )
         embed.add_field(name=_("Author"), value=data.pop("AUTHOR", italics("Not provided.")))
         embed.add_field(name=_("Question count"), value=len(data))
-        embed.add_field(name=_("Custom"), value=category in [p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
+        embed.add_field(
+            name=_("Custom"),
+            value=category in [p.resolve().stem for p in cog_data_path(self).glob("*.yaml")],
+        )
         embed.add_field(
             name=_("Description"),
             value=data.pop("DESCRIPTION", italics("No description provided for this category.")),
@@ -451,8 +454,10 @@ class Trivia(commands.Cog):
         embed.add_field(
             name=_("Config"),
             value=box(
-                "\n".join(f"{k.replace('_', ' ').capitalize()}: {v}" for k, v in config_settings.items()),
-                lang="yaml"
+                "\n".join(
+                    f"{k.replace('_', ' ').capitalize()}: {v}" for k, v in config_settings.items()
+                ),
+                lang="yaml",
             ),
             inline=False,
         )
@@ -763,9 +768,7 @@ class Trivia(commands.Cog):
         for key in ("AUTHOR", "DESCRIPTION"):
             if len(trivia_dict.get(key, "")) > 1024:
                 return await ctx.send(
-                    _("Trivia list {key} must be under 1024 characters.").format(
-                       key=key
-                    )
+                    _("Trivia list {key} must be under 1024 characters.").format(key=key)
                 )
 
         buffer.seek(0)
