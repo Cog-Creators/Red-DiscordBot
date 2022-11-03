@@ -126,7 +126,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
-          title: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
+          title: ${{ github.repository }} Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
           body: |
             This is an automated PR.
             Please ensure that there are no errors or invalid files are in the PR.
