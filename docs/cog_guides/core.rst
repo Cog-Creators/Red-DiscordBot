@@ -2350,11 +2350,15 @@ modlogset cases
 
 **Description**
 
-Enable or disable case creation for a mod action.
+Enable or disable case creation for a mod action, like disabling warnings, enabling bans, etc.
 
-**Arguments**
+**Examples:**
+    - ``[p]modlogset cases kick`` - Enables/disables modlog messages for kicks.
+    - ``[p]modlogset cases ban`` - Enables/disables modlog messages for bans.
 
-* ``[action]``: The action to enable or disable case creation for.
+**Arguments:**
+    - ``[action]`` - The type of mod action to be enabled/disabled for case creation.
+
 
 .. _core-command-modlogset-modlog:
 
@@ -3955,6 +3959,33 @@ Otherwise, the colour used will be the colour of the bot's top role.
 
 **Example:**
     - ``[p]set usebotcolour``
+    
+.. _core-command-set-usebuttons:
+
+""""""""""""""
+set usebuttons
+""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set usebuttons [use_buttons]
+    
+**Description**
+
+Set a global bot variable for using buttons in menus. When enabled, all usage of
+cores menus API will use buttons instead of reactions. This defaults to False.
+Using this without a setting will toggle.
+
+**Examples:**
+- ``[p]set usebuttons True`` - Enables using buttons.
+- ``[p]helpset usebuttons`` - Toggles the value.
+
+**Arguments:**
+    - ``[use_buttons]`` - Whether to use buttons. Leave blank to toggle.
 
 .. _core-command-shutdown:
 

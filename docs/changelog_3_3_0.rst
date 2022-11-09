@@ -423,7 +423,7 @@ Audio
 *****
 
 - Age-restricted tracks, live streams, and mix playlists from YouTube should work in Audio again (:issue:`3791`)
-- Soundcloud's sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
+- SoundCloud sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
 
 CustomCommands
 **************

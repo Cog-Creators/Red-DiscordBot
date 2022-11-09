@@ -226,7 +226,7 @@ Audio
 - Enabled JDA-NAS on all system architectures which should limit stuttering/buffering issues on some machines (:issue:`5474`)
 - The bot will now disconnect from the voice channel when all members are bots if the auto-disconnect setting is enabled (:issue:`5421`)
 - Fixed an issue with resuming playback after changing voice channels (:issue:`5170`)
-- Fixed issues with Soundcloud private playlists and mobile links (:issue:`5474`)
+- Fixed issues with SoundCloud private playlists and mobile links (:issue:`5474`)
 - Fixed searching music with some of the queries containing quotes or backslashes (:issue:`5474`)
 - Fixed an exception caused by unavailable YT tracks in Mix playlists (:issue:`5474`)
 - Fixed ``IndexError`` in ``[p]queue`` command which occurred when the user provides negative integer as the page number (:issue:`5429`)
@@ -576,7 +576,7 @@ Audio
 - The cog will now check whether it has speak permissions in the channel before performing any actions (:issue:`5012`)
 - Fixed an issue with Audio failing when it's missing permissions to send a message in the notification channel (:issue:`4960`)
 - Fixed fetching of age-restricted tracks (:issue:`5085`)
-- Fixed an issue with Soundcloud URLs that ended with a slash (``/``) character (:issue:`5085`)
+- Fixed an issue with SoundCloud URLs that ended with a slash (``/``) character (:issue:`5085`)
 
 Custom Commands
 ***************
@@ -1046,7 +1046,7 @@ Audio
 *****
 
 - Fixed ``[p]llset java`` failing to set the Java executable path (:issue:`4621`, :issue:`4624`)
-- Fixed Soundcloud playback (:issue:`4683`)
+- Fixed SoundCloud playback (:issue:`4683`)
 - Fixed YouTube age-restricted track playback (:issue:`4683`)
 - Added more friendly messages for 429 errors to let users know they have been temporarily banned from accessing the service instead of a generic Lavalink error (:issue:`4683`)
 - Environment information will now be appended to Lavalink tracebacks in the spring.log (:issue:`4683`)
