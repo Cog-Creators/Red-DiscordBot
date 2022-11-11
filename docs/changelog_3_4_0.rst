@@ -1,5 +1,152 @@
 .. 3.4.x Changelogs
 
+Redbot 3.4.18 (2022-08-15)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`RheingoldRiver`
+
+Read before updating
+--------------------
+
+#. openSUSE Leap 15.2 is no longer supported as it has already reached its end of life.
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    - Red 3.4.18 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1350>`__.
+    - We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.18/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- openSUSE Leap 15.2 is no longer supported as it has already reached its end of life (:issue:`5777`)
+
+Audio
+*****
+
+- Addressed a cipher change that made it impossible to find tracks (:issue:`5822`)
+- Fixed an issue with ``[p]llset external`` making the bot completely unresponsive when switching to an external Lavalink server (:issue:`5804`, :issue:`5828`)
+
+
+Documentation changes
+---------------------
+
+- Updated the screenshot in `bot_application_guide` to include the message content intent (:issue:`5798`)
+- Unpinned Temurin version on Windows as a fixed version is now available (:issue:`5815`)
+
+
+Redbot 3.4.17 (2022-06-07)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`matcha19`, :ghuser:`mina9999`, :ghuser:`ponte-vecchio`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`untir-l`, :ghuser:`Vexed01`
+
+Read before updating
+--------------------
+
+#. Fedora 34 is no longer supported as it has already reached its end of life.
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.4.17 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1347>`__.
+
+
+End-user changelog
+------------------
+
+Core Bot
+********
+
+- Fedora 33 is no longer supported as it has already reached its end of life (:issue:`5701`)
+- Added instructions on how to respond to the message received from ``[p]contact`` in the embed footer of the message sent to the bot owner (:issue:`5528`, :issue:`5529`)
+- Updated ``[p]servers`` command to escape Discord markdown in server names (:issue:`5696`, :issue:`5744`)
+- Fixed a bug that prevented users from changing the name and data location with ``redbot --edit`` command (:issue:`5545`, :issue:`5540`, :issue:`5541`)
+- Fixed grammar in the ``[p]uptime`` command (:issue:`5596`)
+
+Audio
+*****
+
+- Added timestamps to all embeds sent by Audio cog (:issue:`5632`)
+- Improved handling of voice connection close codes received from Discord (:issue:`5712`)
+- Fixed plain word YT searching with ``[p]play`` and ``[p]search`` commands (:issue:`5712`)
+- Fixed YT age-restricted track playback (:issue:`5712`)
+- Fixed the cog not sending any Track Error message on track decoding errors (:issue:`5716`)
+- Fixed the ``UnboundLocalError`` exception happening when using ``[p]playlist list`` with an empty playlist (:issue:`5378`, :issue:`5394`)
+
+Downloader
+**********
+
+- Added information about the commit hash at which the cog is pinned in the output of ``[p]cog listpinned`` command (:issue:`5551`, :issue:`5563`)
+
+Filter
+******
+
+- Fixed a potential memory leak in Filter cog (:issue:`5578`)
+
+General
+*******
+
+- Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`5655`)
+
+Mod
+***
+
+- Updated Red's ban commands to address the breaking change that Discord made in their ban list API endpoint (:issue:`5656`)
+
+Modlog
+******
+
+- Modlog's automated case creation for bans now properly checks that the guild is available before further processing (:issue:`5647`)
+
+Mutes
+*****
+
+- Added proper error handling for VERY long durations in mute commands (:issue:`5605`)
+
+Permissions
+***********
+
+- Updated ``[p]permissions acl setglobal`` and ``[p]permissions acl setserver`` to allow sending the file in a follow-up message (:issue:`5473`, :issue:`5685`)
+- ``[p]permissions canrun`` now prepends an emoji to the response to better differentiate between the positive and negative results (:issue:`5711`)
+
+Trivia
+******
+
+- Allowed passing ``use_spoilers`` setting in the CONFIG section of the trivia list file (:issue:`5566`)
+
+Trivia Lists
+************
+
+- Added a trivia list for the FIFA World Cup with questions based on hosts, placements, venues, continental confederations, number of participants, top goal scorers, qualification shocks, and more (:issue:`5639`)
+- Updated ``geography`` trivia list with up-to-date answers and removed questions that lack sources for their claimed answers (:issue:`5638`)
+- Updated Kazakhstan's capital city in the ``worldcapitals`` trivia list (:issue:`5598`, :issue:`5599`)
+- Fixed spelling error in the answer to one of the questions in ``computers`` trivia list (:issue:`5587`, :issue:`5588`)
+
+
+Developer changelog
+-------------------
+
+- Updated ``discord.ext.menus`` vendor (:issue:`5579`)
+
+
+Documentation changes
+---------------------
+
+- Added CentOS Stream 9, RHEL 9, Alma Linux 9, Oracle Linux 9, and Rocky Linux 9 install guides (:issue:`5537`, :issue:`5721`)
+- Added Ubuntu 22.04 install guide (:issue:`5720`)
+- Changed the recommended operating system for hosting Red from Ubuntu 20.04 LTS to Ubuntu 22.04 LTS (:issue:`5720`)
+- Updated Python version in ``pyenv`` and Windows instructions (:issue:`5719`)
+- Replaced install instructions for discontinued AdoptOpenJDK package with Temurin 11 package in the macOS install guide (:issue:`5718`)
+- Updated Visual Studio Build Tools version in Windows install guide (:issue:`5702`)
+- Updated systemd guide to use the absolute path to ``which`` command to avoid triggering shell aliases on some OSes (:issue:`5547`)
+- Emphasized lines that contain text that needs to be replaced by the user (:issue:`5548`)
+- Prevented Google and other search engines from indexing versioned documentation (:issue:`5549`)
+- Pinned Temurin version on Windows until a fixed version becomes available (:issue:`5717`)
+- Fixed git installation instructions in CentOS 7 install guide (:issue:`5700`)
+
+
 Redbot 3.4.16 (2021-12-31)
 ==========================
 
@@ -79,7 +226,7 @@ Audio
 - Enabled JDA-NAS on all system architectures which should limit stuttering/buffering issues on some machines (:issue:`5474`)
 - The bot will now disconnect from the voice channel when all members are bots if the auto-disconnect setting is enabled (:issue:`5421`)
 - Fixed an issue with resuming playback after changing voice channels (:issue:`5170`)
-- Fixed issues with Soundcloud private playlists and mobile links (:issue:`5474`)
+- Fixed issues with SoundCloud private playlists and mobile links (:issue:`5474`)
 - Fixed searching music with some of the queries containing quotes or backslashes (:issue:`5474`)
 - Fixed an exception caused by unavailable YT tracks in Mix playlists (:issue:`5474`)
 - Fixed ``IndexError`` in ``[p]queue`` command which occurred when the user provides negative integer as the page number (:issue:`5429`)
@@ -429,7 +576,7 @@ Audio
 - The cog will now check whether it has speak permissions in the channel before performing any actions (:issue:`5012`)
 - Fixed an issue with Audio failing when it's missing permissions to send a message in the notification channel (:issue:`4960`)
 - Fixed fetching of age-restricted tracks (:issue:`5085`)
-- Fixed an issue with Soundcloud URLs that ended with a slash (``/``) character (:issue:`5085`)
+- Fixed an issue with SoundCloud URLs that ended with a slash (``/``) character (:issue:`5085`)
 
 Custom Commands
 ***************
@@ -899,7 +1046,7 @@ Audio
 *****
 
 - Fixed ``[p]llset java`` failing to set the Java executable path (:issue:`4621`, :issue:`4624`)
-- Fixed Soundcloud playback (:issue:`4683`)
+- Fixed SoundCloud playback (:issue:`4683`)
 - Fixed YouTube age-restricted track playback (:issue:`4683`)
 - Added more friendly messages for 429 errors to let users know they have been temporarily banned from accessing the service instead of a generic Lavalink error (:issue:`4683`)
 - Environment information will now be appended to Lavalink tracebacks in the spring.log (:issue:`4683`)
@@ -1433,5 +1580,5 @@ Miscellaneous
 - Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4116`)
 - Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
 - ``[p]set nickname``, ``[p]set serverprefix``, ``[p]streamalert``, and ``[p]streamset`` commands now can be run by users with permissions related to the actions they're making (:issue:`4109`)
-- `bordered()` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
+- ``bordered()`` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
 - Fixed timestamp storage in few places in Red (:issue:`4017`)

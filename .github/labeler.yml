@@ -10,7 +10,10 @@
   - docs/cog_guides/alias.rst
 "Category: Audio Cog":
   - any:
+      # Source
       - redbot/cogs/audio/**/*
+      # Docs
+      - docs/cog_guides/audio.rst
     all:
       - "!redbot/cogs/audio/**/locales/*"
 "Category: Bank API":
@@ -22,6 +25,7 @@
   # Source
   - redbot/*
   - redbot/core/__init__.py
+  - redbot/core/_debuginfo.py
   - redbot/core/_diagnoser.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/bot.py
@@ -72,7 +76,10 @@
   - docs/cog_customcom.rst
   - docs/cog_guides/customcommands.rst
 "Category: Dev Cog":
+  # Source
   - redbot/core/dev_commands.py
+  # Docs
+  - docs/cog_guides/dev.rst
 "Category: Docs":
   - docs/**/*
 "Category: Downloader":
