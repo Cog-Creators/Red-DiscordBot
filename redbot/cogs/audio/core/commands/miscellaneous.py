@@ -12,7 +12,7 @@ from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.menus import menu
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -92,7 +92,7 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             pages += 1
             servers_embed.append(em)
 
-        await menu(ctx, servers_embed, DEFAULT_CONTROLS)
+        await menu(ctx, servers_embed)
 
     @commands.command(name="percent")
     @commands.guild_only()

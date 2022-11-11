@@ -36,7 +36,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup(self, ctx: commands.Context):
         """`Dangerous commands` Manage Lavalink node configuration settings.
 
-        This command block holds all commands to manage an external or managed Lavalink node.
+        This command block holds all commands to manage an unmanaged (external) or managed Lavalink node.
 
         You should not mess with any command in here unless you have a valid reason to,
         i.e. been told by someone in the Red-Discord Bot support server to do so.
@@ -50,7 +50,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         This command shouldn't need to be used most of the time, and is only useful if the host machine has conflicting Java versions.
 
-        If changing this make sure that the java you set is supported by Audio.
+        If changing this make sure that the Java executable you set is supported by Audio.
         The current supported version is Java 11.
 
         Enter nothing or "java" to reset it back to default.
@@ -152,7 +152,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="external")
+    @command_llsetup.command(name="external", aliases=["unmanaged"])
     async def command_llsetup_external(self, ctx: commands.Context):
         """Toggle using external Lavalink nodes - requires an existing external Lavalink node for Audio to work, if enabled.
 
@@ -271,7 +271,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_secured(self, ctx: commands.Context):
         """Set the Lavalink node connection to secured.
 
-        This command sets the connection type to secured when connecting to an external Lavalink node.
+        This toggle sets the connection type to secured or unsecured when connecting to an external Lavalink node.
         """
         state = await self.config.secured_ws()
         await self.config.secured_ws.set(not state)
@@ -460,7 +460,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_source_http(self, ctx: commands.Context):
         """Toggle HTTP direct URL usage on or off.
 
-        This source is used to allow playback from direct http streams (This does not affect direct url playback for the other sources)
+        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).
         """
         state = await self.config.yaml.lavalink.server.sources.http()
         await self.config.yaml.lavalink.server.sources.http.set(not state)
@@ -541,7 +541,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_config_source_soundcloud(self, ctx: commands.Context):
         """Toggle Soundcloud source on or off.
 
-        This toggle controls the playback of all Soundcloud related content.
+        This toggle controls the playback of all SoundCloud related content.
         """
         state = await self.config.yaml.lavalink.server.sources.soundcloud()
         await self.config.yaml.lavalink.server.sources.soundcloud.set(not state)
@@ -683,7 +683,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         *,
         milliseconds: int = DEFAULT_LAVALINK_YAML["yaml__lavalink__server__bufferDurationMs"],
     ):
-        """`Dangerous command`  Set the managed Lavalink node NAS buffer size.
+        """`Dangerous command`  Set the managed Lavalink node JDA-NAS buffer size.
 
         Only change this if you have been directly advised to, changing it can cause significant playback issues.
         """

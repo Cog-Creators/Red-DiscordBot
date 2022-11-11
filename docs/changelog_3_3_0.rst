@@ -130,7 +130,7 @@ Mod
 - Added the ability to permanently ban a temporary banned user with ``[p]hackban`` (:issue:`4025`)
 - Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
 - Fixed invite being sent with ``[p]tempban`` even when no invite was set (:issue:`3991`)
-- Prevented an issue whereby the author may lock him self out of using the bot via whitelists (:issue:`3903`)
+- Prevented an issue whereby the author may lock themself out of using the bot via whitelists (:issue:`3903`)
 - Reduced the number of API calls made to the storage APIs (:issue:`3910`)
 
 Permissions
@@ -423,7 +423,7 @@ Audio
 *****
 
 - Age-restricted tracks, live streams, and mix playlists from YouTube should work in Audio again (:issue:`3791`)
-- Soundcloud's sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
+- SoundCloud sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
 
 CustomCommands
 **************
