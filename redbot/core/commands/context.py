@@ -4,6 +4,7 @@ import asyncio
 import contextlib
 import os
 import re
+from io import StringIO
 from typing import Iterable, List, Union, Optional, TYPE_CHECKING
 import discord
 from discord.ext.commands import Context as DPYContext
@@ -189,13 +190,13 @@ class Context(DPYContext):
                     is_are = "are"
                 query = await self.send(
                     "There {} still {} message{} remaining. "
-                    "Type `more` to continue."
+                    "Type `more` to continue or `file` to upload all contents as a file."
                     "".format(is_are, n_remaining, plural)
                 )
                 try:
                     resp = await self.bot.wait_for(
                         "message",
-                        check=MessagePredicate.lower_equal_to("more", self),
+                        check=MessagePredicate.lower_contained_in(("more", "file"), self),
                         timeout=timeout,
                     )
                 except asyncio.TimeoutError:
@@ -211,6 +212,12 @@ class Context(DPYContext):
                         # or channel is a DM
                         with contextlib.suppress(discord.HTTPException):
                             await query.delete()
+                    if resp.content == "file":
+                        msg = StringIO()
+                        msg.write("".join(i for i in messages))
+                        msg.seek(0)
+                        await self.send(file=discord.File(msg, filename="file.txt"))
+                        break
         return ret
 
     async def embed_colour(self):
