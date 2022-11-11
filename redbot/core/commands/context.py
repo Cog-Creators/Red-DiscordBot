@@ -4,13 +4,12 @@ import asyncio
 import contextlib
 import os
 import re
-from io import StringIO
 from typing import Iterable, List, Union, Optional, TYPE_CHECKING
 import discord
 from discord.ext.commands import Context as DPYContext
 
 from .requires import PermState
-from ..utils.chat_formatting import box
+from ..utils.chat_formatting import box, text_to_file
 from ..utils.predicates import MessagePredicate
 from ..utils import can_user_react_in, common_filters
 
@@ -213,10 +212,7 @@ class Context(DPYContext):
                         with contextlib.suppress(discord.HTTPException):
                             await query.delete()
                     if resp.content == "file":
-                        msg = StringIO()
-                        msg.write("".join(i for i in messages))
-                        msg.seek(0)
-                        await self.send(file=discord.File(msg, filename="file.txt"))
+                        await self.send(file=text_to_file("".join(messages)))
                         break
         return ret
 
