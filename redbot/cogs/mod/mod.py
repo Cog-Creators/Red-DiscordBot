@@ -84,8 +84,6 @@ class Mod(
         self.tban_expiry_task = asyncio.create_task(self.tempban_expirations_task())
         self.last_case: dict = defaultdict(dict)
 
-        self._ready = asyncio.Event()
-
     async def red_delete_data_for_user(
         self,
         *,
@@ -114,12 +112,8 @@ class Mod(
                         pass
                     # possible with a context switch between here and getting all guilds
 
-    async def initialize(self):
+    async def cog_load(self) -> None:
         await self._maybe_update_config()
-        self._ready.set()
-
-    async def cog_before_invoke(self, ctx: commands.Context) -> None:
-        await self._ready.wait()
 
     def cog_unload(self):
         self.tban_expiry_task.cancel()
@@ -178,7 +172,7 @@ class Mod(
                         guild_data["mention_spam"]["ban"] = current_state
             await self.config.version.set("1.3.0")
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def moveignoredchannels(self, ctx: commands.Context) -> None:
         """Move ignored channels and servers to core"""
@@ -192,7 +186,7 @@ class Mod(
             await self.config.channel_from_id(channel_id).clear()
         await ctx.send(_("Ignored channels and guilds restored."))
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def movedeletedelay(self, ctx: commands.Context) -> None:
         """

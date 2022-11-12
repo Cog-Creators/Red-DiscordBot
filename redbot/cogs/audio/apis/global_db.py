@@ -76,7 +76,7 @@ class GlobalCacheWrapper:
                 ) as r:
                     search_response = await r.json(loads=json.loads)
                     log.trace(
-                        "GET || Ping %s || Status code %d || %s",
+                        "GET || Ping %s || Status code %s || %s",
                         r.headers.get("x-process-time"),
                         r.status,
                         query,
@@ -107,7 +107,7 @@ class GlobalCacheWrapper:
                 ) as r:
                     search_response = await r.json(loads=json.loads)
                     log.trace(
-                        "GET/spotify || Ping %s || Status code %d || %s - %s",
+                        "GET/spotify || Ping %s || Status code %s || %s - %s",
                         r.headers.get("x-process-time"),
                         r.status,
                         title,
@@ -143,7 +143,7 @@ class GlobalCacheWrapper:
             ) as r:
                 await r.read()
                 log.trace(
-                    "GET || Ping %s || Status code %d || %s",
+                    "GET || Ping %s || Status code %s || %s",
                     r.headers.get("x-process-time"),
                     r.status,
                     query,

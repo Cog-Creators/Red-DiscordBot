@@ -4,6 +4,8 @@
 Installing Red on Ubuntu 18.04 LTS
 ==================================
 
+.. include:: _includes/supported-arch-x64+aarch64.rst
+
 .. include:: _includes/linux-preamble.rst
 
 -------------------------------

@@ -182,7 +182,6 @@ class PlaylistCompat23:
         tracks: Optional[List[MutableMapping]] = None,
         guild: Union[discord.Guild, int, None] = None,
     ):
-
         self.bot = bot
         self.guild = guild
         self.scope = standardize_scope(scope)

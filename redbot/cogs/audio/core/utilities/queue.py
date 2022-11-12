@@ -26,7 +26,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         ctx: commands.Context,
         queue: list,
-        player: lavalink.player_manager.Player,
+        player: lavalink.player.Player,
         page_num: int,
     ) -> discord.Embed:
         shuffle = await self.config.guild(ctx.guild).shuffle()
