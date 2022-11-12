@@ -137,14 +137,11 @@ class PostgresDriver(BaseDriver):
         }
 
     async def get(self, identifier_data: IdentifierData):
-        try:
-            result = await self._execute(
-                "SELECT red_config.get($1)",
-                encode_identifier_data(identifier_data),
-                method=self._pool.fetchval,
-            )
-        except asyncpg.UndefinedTableError:
-            raise KeyError from None
+        result = await self._execute(
+            "SELECT red_config.get($1)",
+            encode_identifier_data(identifier_data),
+            method=self._pool.fetchval,
+        )
 
         if result is None:
             # The result is None both when postgres yields no results, or when it yields a NULL row
@@ -163,12 +160,7 @@ class PostgresDriver(BaseDriver):
             raise errors.CannotSetSubfield
 
     async def clear(self, identifier_data: IdentifierData):
-        try:
-            await self._execute(
-                "SELECT red_config.clear($1)", encode_identifier_data(identifier_data)
-            )
-        except asyncpg.UndefinedTableError:
-            pass
+        await self._execute("SELECT red_config.clear($1)", encode_identifier_data(identifier_data))
 
     async def inc(
         self, identifier_data: IdentifierData, value: Union[int, float], default: Union[int, float]
