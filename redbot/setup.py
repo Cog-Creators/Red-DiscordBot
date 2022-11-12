@@ -129,7 +129,7 @@ def get_name(name: str) -> str:
         r"""
         [a-z0-9]              # starts with letter or digit
         (?:
-            (?!.*[_\.\-]{2})  # ensure no consecutive dots, hyphens, or undrescores
+            (?!.*[_\.\-]{2})  # ensure no consecutive dots, hyphens, or underscores
             [a-z0-9_\.\-]*    # match allowed characters
             [a-z0-9]          # ensure string ends with letter or digit
         )?                    # optional to allow strings of length 1
