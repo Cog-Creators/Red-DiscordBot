@@ -267,6 +267,7 @@ class ServerManager:
         self.timeout = timeout
         self.cog = cog
         self._args = []
+        self._pipe_task = None
 
     @property
     def path(self) -> Optional[str]:
@@ -291,6 +292,11 @@ class ServerManager:
     @property
     def build_time(self) -> Optional[str]:
         return self._buildtime
+
+    async def _pipe_output(self):
+        with contextlib.suppress(asyncio.CancelledError):
+            async for __ in self._proc.stdout:
+                pass
 
     async def _start(self, java_path: str) -> None:
         arch_name = platform.machine()
@@ -450,6 +456,7 @@ class ServerManager:
             if b"Lavalink is ready to accept connections." in line:
                 self.ready.set()
                 log.info("Managed Lavalink node is ready to receive requests.")
+                self._pipe_task = asyncio.create_task(self._pipe_output())
                 break
             if _FAILED_TO_START.search(line):
                 raise ManagedLavalinkStartFailure(
@@ -474,6 +481,8 @@ class ServerManager:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
             return
+        if self._pipe_task:
+            self._pipe_task.cancel()
         if self._node_pid:
             with contextlib.suppress(psutil.Error):
                 p = psutil.Process(self._node_pid)
