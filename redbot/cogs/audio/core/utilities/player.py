@@ -114,8 +114,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         dj_role = self._dj_role_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_role()
         )
-        dj_role_obj = ctx.guild.get_role(dj_role)
-        return dj_role_obj in ctx.guild.get_member(member.id).roles
+        return member.get_role(dj_role) is not None
 
     async def is_requester(self, ctx: commands.Context, member: discord.Member) -> bool:
         try:
@@ -436,7 +435,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # a list of Tracks where all should be enqueued
             # this is a Spotify playlist already made into a list of Tracks or a
             # url where Lavalink handles providing all Track objects to use, like a
-            # YouTube or Soundcloud playlist
+            # YouTube or SoundCloud playlist
             if len(player.queue) >= 10000:
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0
@@ -711,7 +710,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 await player.move_to(
                     user_channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
                 return True
         else:

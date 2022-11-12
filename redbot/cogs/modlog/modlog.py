@@ -9,7 +9,7 @@ from redbot.core import checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.menus import menu
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("ModLog", __file__)
@@ -34,7 +34,7 @@ class ModLog(commands.Cog):
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
-            await ctx.send(_("That case does not exist for that server."))
+            await ctx.send(_("That case does not exist for this server."))
             return
         else:
             if await ctx.embed_requested():
@@ -84,7 +84,7 @@ class ModLog(commands.Cog):
                     )
                     rendered_cases.append(message)
 
-        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+        await menu(ctx, rendered_cases)
 
     @commands.command()
     @commands.guild_only()
@@ -115,11 +115,11 @@ class ModLog(commands.Cog):
                 created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
                 message += (
                     f"{await case.message_content(embed=False)}\n"
-                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
+                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}\n\n"
                 )
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)
-        await menu(ctx, rendered_cases, DEFAULT_CONTROLS)
+        await menu(ctx, rendered_cases)
 
     @commands.command()
     @commands.guild_only()

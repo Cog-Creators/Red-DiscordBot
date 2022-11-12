@@ -37,6 +37,7 @@ TRIVIA_LIST_SCHEMA = Schema(
             Optional("bot_plays"): bool,
             Optional("reveal_answer"): bool,
             Optional("payout_multiplier"): Or(int, float),
+            Optional("use_spoilers"): bool,
         },
         str: [str, int, bool, float],
     }
@@ -411,7 +412,7 @@ class Trivia(commands.Cog):
         subcommands for a more customised leaderboard.
         """
         cmd = self.trivia_leaderboard_server
-        if isinstance(ctx.channel, discord.abc.PrivateChannel):
+        if ctx.guild is None:
             cmd = self.trivia_leaderboard_global
         await ctx.invoke(cmd, "wins", 10)
 
@@ -709,7 +710,7 @@ class Trivia(commands.Cog):
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(
-        self, channel: Union[discord.TextChannel, discord.Thread]
+        self, channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
     ) -> TriviaSession:
         return next(
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None

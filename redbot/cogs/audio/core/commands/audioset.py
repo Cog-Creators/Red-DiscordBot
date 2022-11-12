@@ -14,7 +14,7 @@ from redbot.core import bank, commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import DEFAULT_CONTROLS, menu, start_adding_reactions
+from redbot.core.utils.menus import menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from ...audio_dataclasses import LocalPath
@@ -102,7 +102,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_global_whitelist.command(name="clear")
     async def command_audioset_perms_global_whitelist_clear(self, ctx: commands.Context):
@@ -196,7 +196,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Global Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_global_blacklist.command(name="clear")
     async def command_audioset_perms_global_blacklist_clear(self, ctx: commands.Context):
@@ -292,7 +292,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Whitelist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_whitelist.command(name="clear")
     async def command_audioset_perms_whitelist_clear(self, ctx: commands.Context):
@@ -385,7 +385,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             discord.Embed(title=_("Blacklist"), description=page, colour=embed_colour)
             for page in pages
         )
-        await menu(ctx, pages, DEFAULT_CONTROLS)
+        await menu(ctx, pages)
 
     @command_audioset_perms_blacklist.command(name="clear")
     async def command_audioset_perms_blacklist_clear(self, ctx: commands.Context):
@@ -464,7 +464,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`
+        ​ ​ ​ ​ `[p]audioset autoplay playlist playlist_name_OR_id [args]`
 
         **Args**:
         ​ ​ ​ ​ The following are all optional:
@@ -487,9 +487,9 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`
+        ​ ​ ​ ​ `[p]audioset autoplay playlist MyGuildPlaylist`
+        ​ ​ ​ ​ `[p]audioset autoplay playlist MyGlobalPlaylist --scope Global`
+        ​ ​ ​ ​ `[p]audioset autoplay playlist PersonalPlaylist --scope User --author Draper`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1118,10 +1118,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if (
             is_owner
             and not global_data["use_external_lavalink"]
-            and self.managed_node_controller.ll_build
+            and self.managed_node_controller.ll_version
         ):
             msg += _(
-                "Lavalink build:         [{llbuild}]\n"
+                "Lavalink version:       [{llversion}]\n"
                 "Lavalink branch:        [{llbranch}]\n"
                 "Release date:           [{build_time}]\n"
                 "Lavaplayer version:     [{lavaplayer}]\n"
@@ -1131,7 +1131,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 "Max Heapsize:           [{xmx}]\n"
             ).format(
                 build_time=self.managed_node_controller.build_time,
-                llbuild=self.managed_node_controller.ll_build,
+                llversion=self.managed_node_controller.ll_version,
                 llbranch=self.managed_node_controller.ll_branch,
                 lavaplayer=self.managed_node_controller.lavaplayer,
                 jvm=self.managed_node_controller.jvm,

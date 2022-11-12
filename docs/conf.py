@@ -228,11 +228,8 @@ linkcheck_retries = 3
 if dpy_version_info.releaselevel == "final":
     # final release - versioned docs should be available
     dpy_docs_url = f"https://discordpy.readthedocs.io/en/v{dpy_version}/"
-elif dpy_version_info.minor == dpy_version_info.micro == 0:
-    # alpha release of a new major version - `master` version of docs should be used
-    dpy_docs_url = "https://discordpy.readthedocs.io/en/master/"
 else:
-    # alpha release of a new minor or micro version - `latest` version of docs should be used
+    # alpha release - `latest` version of docs should be used
     dpy_docs_url = "https://discordpy.readthedocs.io/en/latest/"
 
 # Intersphinx
