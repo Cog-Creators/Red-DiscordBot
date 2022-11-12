@@ -172,7 +172,7 @@ What is the Java implementation of Python popularly known as ?:
 If you wanted to capitalize the first letter of each word in a string in PHP, which function would you use?:
 - ucwords()
 How would I decorate a class method if I wanted to use it without initializing a class?:
-- @staticmethod
+- "@staticmethod"
 What does the acronym SMTP represent?:
 - Simple Mail Transport Protocol
 In 1982 which port was established as the main default transmission channel for email?:
