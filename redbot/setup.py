@@ -139,8 +139,9 @@ def get_name(name: str) -> str:
     if name:
         if INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
-                "ERROR: Instance names can only include characters A-z, numbers, "
-                "underscores (_) and periods (.)."
+                "ERROR: Instance names need to start and end with a letter or a number"
+                " and can only include characters A-z, numbers,"
+                " and non-consecutive underscores (_) and periods (.)."
             )
             sys.exit(1)
         return name
@@ -149,16 +150,18 @@ def get_name(name: str) -> str:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
-            "This name is case-sensitive and should only include characters"
-            " A-z, numbers, underscores (_) and periods (.)."
+            "This name is case-sensitive, needs to start and end with a letter or a number"
+            " and should only include characters A-z, numbers,"
+            " and non-consecutive underscores (_) and periods (.)."
         )
         name = input("> ")
         if not name:
             pass
         elif INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
-                "ERROR: Instance names can only include characters A-z, numbers, "
-                "underscores (_) and periods (.)."
+                "ERROR: Instance names need to start and end with a letter or a number"
+                " and can only include characters A-z, numbers,"
+                " and non-consecutive underscores (_) and periods (.)."
             )
             name = ""
         elif "-" in name and not confirm(
