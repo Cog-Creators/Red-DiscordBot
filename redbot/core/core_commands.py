@@ -3760,7 +3760,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if use_menus == "reactions":
             msg = _("Help will use reaction menus.")
             await ctx.bot._config.help.use_menus.set(1)
-        if use_menus == "disabled":
+        if use_menus == "disable":
             msg = _("Help will not use menus.")
             await ctx.bot._config.help.use_menus.set(0)
 
