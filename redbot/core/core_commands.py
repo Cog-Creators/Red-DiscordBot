@@ -2291,7 +2291,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @modlogset.command(name="cases")
     @commands.guild_only()
     async def modlogset_cases(self, ctx: commands.Context, action: str = None):
-        """Enable or disable case creation for a mod action."""
+        """
+        Enable or disable case creation for a mod action.
+
+        An action can be enabling or disabling specific cases. (Ban, kick, mute, etc.)
+
+        Example: `[p]modlogset cases kick enabled`
+        """
         guild = ctx.guild
 
         if action is None:  # No args given
@@ -3754,7 +3760,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if use_menus == "reactions":
             msg = _("Help will use reaction menus.")
             await ctx.bot._config.help.use_menus.set(1)
-        if use_menus == "disabled":
+        if use_menus == "disable":
             msg = _("Help will not use menus.")
             await ctx.bot._config.help.use_menus.set(0)
 

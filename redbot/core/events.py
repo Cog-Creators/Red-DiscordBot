@@ -31,7 +31,7 @@ from .utils._internal_utils import (
     fetch_latest_red_version_info,
     send_to_owners_with_prefix_replaced,
 )
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
+from .utils.chat_formatting import inline, format_perms_list, humanize_timedelta
 
 import rich
 from rich import box
