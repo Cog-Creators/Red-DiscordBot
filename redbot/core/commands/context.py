@@ -361,7 +361,6 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
         def me(self) -> discord.Member:
             ...
 
-
 else:
     GuildContext = Context
     DMContext = Context
