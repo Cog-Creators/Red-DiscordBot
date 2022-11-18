@@ -150,7 +150,11 @@ class Context(DPYContext):
             return True
 
     async def send_interactive(
-        self, messages: Iterable[str], box_lang: str = None, timeout: int = 15
+        self,
+        messages: Iterable[str],
+        box_lang: str = None,
+        timeout: int = 15,
+        join_character: str = "",
     ) -> List[discord.Message]:
         """Send multiple messages interactively.
 
@@ -168,6 +172,9 @@ class Context(DPYContext):
         timeout : int
             How long the user has to respond to the prompt before it times out.
             After timing out, the bot deletes its prompt message.
+        join_character : str
+            The character used to join all the messages when the file output
+            is selected.
 
         """
         messages = tuple(messages)
@@ -213,7 +220,7 @@ class Context(DPYContext):
                         with contextlib.suppress(discord.HTTPException):
                             await query.delete()
                     if pred.result == 1:
-                        await self.send(file=text_to_file("".join(messages)))
+                        await self.send(file=text_to_file(join_character.join(messages)))
                         break
         return ret
 
@@ -353,6 +360,7 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
         @property
         def me(self) -> discord.Member:
             ...
+
 
 else:
     GuildContext = Context
