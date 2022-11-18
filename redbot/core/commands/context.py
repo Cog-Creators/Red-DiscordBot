@@ -192,10 +192,11 @@ class Context(DPYContext):
                     "Type `more` to continue or `file` to upload all contents as a file."
                     "".format(is_are, n_remaining, plural)
                 )
+                pred = MessagePredicate.lower_contained_in(("more", "file"), self)
                 try:
                     resp = await self.bot.wait_for(
                         "message",
-                        check=MessagePredicate.lower_contained_in(("more", "file"), self),
+                        check=pred,
                         timeout=timeout,
                     )
                 except asyncio.TimeoutError:
@@ -211,7 +212,7 @@ class Context(DPYContext):
                         # or channel is a DM
                         with contextlib.suppress(discord.HTTPException):
                             await query.delete()
-                    if resp.content == "file":
+                    if pred.result == 1:
                         await self.send(file=text_to_file("".join(messages)))
                         break
         return ret
