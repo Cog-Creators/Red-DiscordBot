@@ -12,7 +12,7 @@ class AntiSpam:
     to reduce spam. These intervals can be set to incline
     in duration for each interval that is stamped.
 
-    Attributes
+    Parameters
     ----------
     intervals : List[Tuple[datetime.timedelta, int]]
         A list of tuples in the format (timedelta, int),
