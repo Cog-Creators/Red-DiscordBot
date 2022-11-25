@@ -45,6 +45,10 @@ class PrefixManager:
         prefixes = prefixes or []
         if not isinstance(prefixes, list) and not all(isinstance(pfx, str) for pfx in prefixes):
             raise TypeError("Prefixes must be a list of strings")
+        if any(prefix.startswith("/") for prefix in prefixes):
+            raise ValueError(
+                "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+            )
         prefixes = sorted(prefixes, reverse=True)
         if gid is None:
             if not prefixes:
@@ -150,7 +154,11 @@ class IgnoreManager:
         self._cached_guilds: Dict[int, bool] = {}
 
     async def get_ignored_channel(
-        self, channel: Union[discord.TextChannel, discord.Thread], check_category: bool = True
+        self,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.ForumChannel, discord.Thread
+        ],
+        check_category: bool = True,
     ) -> bool:
         ret: bool
 
@@ -177,7 +185,13 @@ class IgnoreManager:
 
     async def set_ignored_channel(
         self,
-        channel: Union[discord.TextChannel, discord.Thread, discord.CategoryChannel],
+        channel: Union[
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.Thread,
+            discord.ForumChannel,
+            discord.CategoryChannel,
+        ],
         set_to: bool,
     ):
         cid: int = channel.id

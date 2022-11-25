@@ -39,7 +39,7 @@ For Audio support, you should also run the following command before exiting:
 
 .. prompt:: powershell
 
-    choco upgrade temurin11 -y --version 11.0.14.10100
+    choco upgrade temurin11 -y
 
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
@@ -66,7 +66,7 @@ Manually installing dependencies
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java 11 <https://adoptium.net/?variant=openjdk11>`_ - needed for Audio
+* `Java 11 <https://adoptium.net/temurin/releases/?version=11>`_ - needed for Audio
 
 From here, continue onto `creating-venv-windows`.
 

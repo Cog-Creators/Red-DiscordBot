@@ -35,10 +35,12 @@ Welcome to Red - Discord Bot's documentation!
     intents
     cog_guides/admin
     cog_guides/alias
+    cog_guides/audio
     cog_guides/cleanup
     cog_guides/cog_manager_ui
     cog_guides/core
     cog_guides/customcommands
+    cog_guides/dev
     cog_guides/downloader
     cog_guides/economy
     cog_guides/filter
