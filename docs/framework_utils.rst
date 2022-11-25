@@ -74,14 +74,12 @@ Common Filters
 .. automodule:: redbot.core.utils.common_filters
     :members:
 
-==========
 Utility UI
 ==========
 
 .. automodule:: redbot.core.utils.views
     :members:
 
-========
 AntiSpam
 ========
 
