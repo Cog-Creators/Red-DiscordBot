@@ -8,9 +8,64 @@ AntiSpamInterval = namedtuple("AntiSpamInterval", ["period", "frequency"])
 
 class AntiSpam:
     """
-    An object that counts against temporary "intervals"
-    to reduce spam. These intervals can be set to incline
-    in duration for each interval that is stamped.
+    A class that can be used to count the number of events that happened
+    within specified intervals. Later, it can be checked whether the specified
+    maximum count for any of the specified intervals has been exceeded.
+
+    Examples
+    --------
+    Tracking whether the number of reports sent by a user within a single guild is spammy:
+
+    .. code-block:: python
+
+        class MyCog(commands.Cog):
+            INTERVALS = [
+                # More than one report within last 5 seconds is considered spam.
+                (datetime.timedelta(seconds=5), 1),
+                # More than 3 reports within the last 5 minutes are considered spam.
+                (datetime.timedelta(minutes=5), 3),
+                # More than 10 reports within the last hour are considered spam.
+                (datetime.timedelta(hours=1), 10),
+                # More than 24 reports within a single day (last 24 hours) are considered spam.
+                (datetime.timedelta(days=1), 24),
+            ]
+
+            def __init__(self, bot):
+                self.bot = bot
+                self.antispam = {}
+
+            @commands.guild_only()
+            @commands.command()
+            async def report(self, ctx, content):
+                # We want to track whether a single user within a single guild
+                # sends a spammy number of reports.
+                key = (ctx.guild.id, ctx.author.id)
+
+                if key not in self.antispam:
+                    # Create an instance of the AntiSpam class with given intervals.
+                    self.antispam[key] = AntiSpam(self.INTERVALS)
+                    # If you want to use the default intervals, you can use: AntiSpam([])
+
+                # Check if the user sent too many reports recently.
+                # The `AntiSpam.spammy` property is `True` if, for any interval,
+                # the number of events that happened within that interval
+                # exceeds the number specified for that interval.
+                if self.antispam[key].spammy:
+                    await ctx.send(
+                        "You've sent too many reports recently, please try again later."
+                    )
+                    return
+
+                # Make any other early-return checks.
+
+                # Record the event.
+                self.antispam[key].stamp()
+
+                # Save the report.
+                # self.config...
+
+                # Send a message to the user.
+                await ctx.send("Your report has been submitted.")
 
     Parameters
     ----------
