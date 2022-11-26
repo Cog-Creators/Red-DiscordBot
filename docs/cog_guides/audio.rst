@@ -3206,7 +3206,7 @@ summon
 Summon the bot to a voice channel.
 
 You can specify a personalised voice room with an ID. Otherwise, the bot will join the voice room you are in.
-To learn how to get a channel ID please `this help article <https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID>`__.
+To learn how to get a channel ID please read `this help article <https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID>`__.
 
 .. _audio-command-volume:
 
