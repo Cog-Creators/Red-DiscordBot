@@ -172,7 +172,7 @@ class Mod(
                         guild_data["mention_spam"]["ban"] = current_state
             await self.config.version.set("1.3.0")
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def moveignoredchannels(self, ctx: commands.Context) -> None:
         """Move ignored channels and servers to core"""
@@ -186,7 +186,7 @@ class Mod(
             await self.config.channel_from_id(channel_id).clear()
         await ctx.send(_("Ignored channels and guilds restored."))
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def movedeletedelay(self, ctx: commands.Context) -> None:
         """

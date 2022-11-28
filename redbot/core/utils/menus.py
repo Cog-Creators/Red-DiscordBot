@@ -6,17 +6,42 @@ import asyncio
 import contextlib
 import functools
 from types import MappingProxyType
-from typing import Callable, Iterable, List, Mapping, Optional, TypeVar, Union
+from typing import Callable, Dict, Iterable, List, Mapping, Optional, TypeVar, Union
 
 import discord
 
 from .. import commands
 from .predicates import ReactionPredicate
+from .views import SimpleMenu, _SimplePageSource
 
 _T = TypeVar("_T")
 _PageList = TypeVar("_PageList", List[str], List[discord.Embed])
 _ReactableEmoji = Union[str, discord.Emoji]
 _ControlCallable = Callable[[commands.Context, _PageList, discord.Message, int, float, str], _T]
+
+_active_menus: Dict[int, SimpleMenu] = {}
+
+
+class _GenericButton(discord.ui.Button):
+    def __init__(self, emoji: Union[str, discord.PartialEmoji], func):
+        super().__init__(
+            emoji=discord.PartialEmoji.from_str(emoji), style=discord.ButtonStyle.grey
+        )
+        self.func = func
+
+    async def callback(self, interaction: discord.Interaction):
+        ctx = self.view.ctx
+        pages = self.view.source.entries
+        controls = None
+        message = self.view.message
+        page = self.view.current_page
+        timeout = self.view.timeout
+        emoji = self.emoji
+        try:
+            await self.func(ctx, pages, controls, message, page, timeout, emoji)
+        except Exception:
+            pass
+        await interaction.response.defer()
 
 
 async def menu(
@@ -64,6 +89,18 @@ async def menu(
     RuntimeError
         If either of the notes above are violated
     """
+    if message is not None and message.id in _active_menus:
+        # prevents the expected callback from going any further
+        # our custom button will always pass the message the view is
+        # attached to, allowing one to send multiple menus on the same
+        # context.
+        view = _active_menus[message.id]
+        if pages != view.source.entries:
+            view._source = _SimplePageSource(pages)
+        new_page = await view.get_page(page)
+        view.current_page = page
+        await view.message.edit(**new_page)
+        return
     if not isinstance(pages[0], (discord.Embed, str)):
         raise RuntimeError("Pages must be of type discord.Embed or str")
     if not all(isinstance(x, discord.Embed) for x in pages) and not all(
@@ -81,6 +118,52 @@ async def menu(
             maybe_coro = value.func
         if not asyncio.iscoroutinefunction(maybe_coro):
             raise RuntimeError("Function must be a coroutine")
+
+    if await ctx.bot.use_buttons() and message is None:
+        # Only send the button version if `message` is None
+        # This is because help deals with this menu in weird ways
+        # where the original message is already sent prior to starting.
+        # This is not normally the way we recommend sending this because
+        # internally we already include the emojis we expect.
+        if controls == DEFAULT_CONTROLS:
+            view = SimpleMenu(pages)
+            await view.start(ctx)
+            await view.wait()
+            return
+        else:
+            view = SimpleMenu(pages)
+            view.remove_item(view.last_button)
+            view.remove_item(view.first_button)
+            has_next = False
+            has_prev = False
+            has_close = False
+            to_add = {}
+            for emoji, func in controls.items():
+                if func == next_page:
+                    has_next = True
+                    if emoji != view.forward_button.emoji:
+                        view.forward_button.emoji = discord.PartialEmoji.from_str(emoji)
+                elif func == prev_page:
+                    has_prev = True
+                    if emoji != view.backward_button.emoji:
+                        view.backward_button.emoji = discord.PartialEmoji.from_str(emoji)
+                elif func == close_menu:
+                    has_close = True
+                else:
+                    to_add[emoji] = func
+            if not has_next:
+                view.remove_item(view.forward_button)
+            if not has_prev:
+                view.remove_item(view.backward_button)
+            if not has_close:
+                view.remove_item(view.stop_button)
+            for emoji, func in to_add.items():
+                view.add_item(_GenericButton(emoji, func))
+            await view.start(ctx)
+            _active_menus[view.message.id] = view
+            await view.wait()
+            del _active_menus[view.message.id]
+            return
     current_page = pages[page]
 
     if not message:
