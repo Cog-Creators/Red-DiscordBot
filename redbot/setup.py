@@ -125,12 +125,23 @@ def get_storage_type(backend: Optional[str], *, interactive: bool):
 
 
 def get_name(name: str) -> str:
-    INSTANCE_NAME_RE = re.compile(r"[A-Za-z0-9_\.\-]*")
+    INSTANCE_NAME_RE = re.compile(
+        r"""
+        [a-z0-9]              # starts with letter or digit
+        (?:
+            (?!.*[_\.\-]{2})  # ensure no consecutive dots, hyphens, or underscores
+            [a-z0-9_\.\-]*    # match allowed characters
+            [a-z0-9]          # ensure string ends with letter or digit
+        )?                    # optional to allow strings of length 1
+        """,
+        re.VERBOSE | re.IGNORECASE,
+    )
     if name:
         if INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
-                "ERROR: Instance names can only include characters A-z, numbers, "
-                "underscores (_) and periods (.)."
+                "ERROR: Instance names need to start and end with a letter or a number"
+                " and can only include characters A-z, numbers,"
+                " and non-consecutive underscores (_) and periods (.)."
             )
             sys.exit(1)
         return name
@@ -139,14 +150,18 @@ def get_name(name: str) -> str:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
-            "This name is case-sensitive and should only include characters"
-            " A-z, numbers, underscores (_) and periods (.)."
+            "This name is case-sensitive, needs to start and end with a letter or a number"
+            " and should only include characters A-z, numbers,"
+            " and non-consecutive underscores (_) and periods (.)."
         )
         name = input("> ")
-        if INSTANCE_NAME_RE.fullmatch(name) is None:
+        if not name:
+            pass
+        elif INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
-                "ERROR: Instance names can only include characters A-z, numbers, "
-                "underscores (_) and periods (.)."
+                "ERROR: Instance names need to start and end with a letter or a number"
+                " and can only include characters A-z, numbers,"
+                " and non-consecutive underscores (_) and periods (.)."
             )
             name = ""
         elif "-" in name and not confirm(
