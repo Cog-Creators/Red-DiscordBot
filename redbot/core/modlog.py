@@ -689,7 +689,8 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                message = mod_channel.get_partial_message(message_id)
+                if mod_channel is not None:
+                    message = mod_channel.get_partial_message(message_id)
 
         user_objects = {"user": None, "moderator": None, "amended_by": None}
         for user_key in tuple(user_objects):
