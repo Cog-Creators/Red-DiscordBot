@@ -3351,10 +3351,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- End Set Ownernotifications Commands -- ###
 
     @_set.command(name="showsettings")
-    async def _set_showsettings(self, ctx: commands.Context):
+    async def _set_showsettings(
+        self, ctx: commands.Context, specified_guild: discord.Guild = None
+    ):
         """
-        Show the current settings for [botname].
+        Show the current settings for [botname]. Accepts optional guild parameter in case must recover prefix.
         """
+        if specified_guild is not None:
+            # override ctx.guild if a guild is provided as an argument
+            ctx.guild = specified_guild
+
         if ctx.guild:
             guild_data = await ctx.bot._config.guild(ctx.guild).all()
             guild = ctx.guild
