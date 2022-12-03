@@ -1,0 +1,18 @@
+[Unit]
+Description=%I redbot
+After=multi-user.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/opt/venvs/red-discordbot/bin/redbot -O -m redbot %I --no-prompt
+User=$USER
+Group=$GROUP
+Type=idle
+Restart=always
+RestartSec=15
+RestartPreventExitStatus=0
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

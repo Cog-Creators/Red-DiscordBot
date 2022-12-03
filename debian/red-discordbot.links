@@ -1,0 +1,3 @@
+/opt/venvs/red-discordbot/bin/redbot /usr/bin/redbot
+/opt/venvs/red-discordbot/bin/redbot-setup /usr/bin/redbot-setup
+/opt/venvs/red-discordbot/bin/redbot-launcher /usr/bin/redbot-launcher

@@ -1,0 +1,43 @@
+name: Build packages
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  debian:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:20.10
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.ref }}
+      - name: Install dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt update
+          apt install -y build-essential debhelper devscripts equivs python3-all \
+            python3-setuptools python3.8-dev python3-pip dh-python git openjdk-11-jre-headless \
+            python3-virtualenv python3-sphinx-rtd-theme python3-sphinx dh-virtualenv
+      # - name: Check version number
+      #   run: make checkdebian
+      - name: Install requirements
+        run: |
+          mkdir debian/pypi
+          python3 setup.py --requires | pip3 install --download debian/pypi
+      - name: Build Debian package
+        run: dpkg-buildpackage -us -uc -F
+      - name: Move packages
+        run: |
+          mkdir artifacts
+          cd ..
+          mv -t Red-DiscordBot/artifacts red-discordbot*.dsc red-discordbot*.tar.gz \
+            red-discordbot*.buildinfo red-discordbot*.changes \
+            red-discordbot*.deb red-discordbot*.ddeb
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Debian packaging output
+          path: artifacts/
