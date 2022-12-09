@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 
+GITHUB_OUTPUT = os.environ["GITHUB_OUTPUT"]
 REQUIREMENTS_FOLDER = Path(__file__).parents[3].absolute() / "requirements"
 os.chdir(REQUIREMENTS_FOLDER)
 
@@ -30,4 +31,5 @@ shutil.copyfile(f"{sys.platform}-base.txt", "base.txt")
 for file in REQUIREMENTS_FOLDER.glob("extra-*.in"):
     pip_compile(file.stem)
 
-print(f"::set-output name=sys_platform::{sys.platform}")
+with open(GITHUB_OUTPUT, "a", encoding="utf-8") as fp:
+    fp.write(f"sys_platform={sys.platform}\n")
