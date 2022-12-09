@@ -134,7 +134,7 @@ Run **one** of the following set of commands, depending on what extras you want 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
-        python -m pip install -U pip setuptools wheel
+        python -m pip install -U pip wheel
         python -m pip install -U Red-DiscordBot
 
   * With PostgreSQL support:
@@ -142,7 +142,7 @@ Run **one** of the following set of commands, depending on what extras you want 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
-        python -m pip install -U pip setuptools wheel
+        python -m pip install -U pip wheel
         python -m pip install -U Red-DiscordBot[postgres]
 
 --------------------------

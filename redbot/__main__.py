@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import pip
-import pkg_resources
 import platform
 import shutil
 import signal
@@ -335,7 +334,9 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         # `sys.path`, you must invoke the appropriate methods on the `working_set` instance
         # to keep it in sync."
         # Source: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#workingset-objects
-        pkg_resources.working_set.add_entry(str(LIB_PATH))
+        pkg_resources = sys.modules.get("pkg_resources")
+        if pkg_resources is not None:
+            pkg_resources.working_set.add_entry(str(LIB_PATH))
     sys.meta_path.insert(0, SharedLibImportWarner())
 
     if cli_flags.token:

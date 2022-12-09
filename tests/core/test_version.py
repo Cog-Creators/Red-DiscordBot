@@ -1,7 +1,7 @@
 import importlib.metadata
-import pkg_resources
 import os
 import sys
+from packaging.requirements import Requirement
 
 import pytest
 
@@ -55,9 +55,9 @@ def test_python_version_has_lower_bound():
     requires_python = importlib.metadata.metadata("Red-DiscordBot")["Requires-Python"]
     assert requires_python is not None
 
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
-    req = pkg_resources.Requirement.parse(f"x{requires_python}")
-    assert any(op in (">", ">=") for op, version in req.specs)
+    # Requirement needs a regular requirement string, so "x" serves as requirement's name here
+    req = Requirement(f"x{requires_python}")
+    assert any(spec.operator in (">", ">=") for spec in req.specifier)
 
 
 @pytest.mark.skipif(
@@ -72,6 +72,6 @@ def test_python_version_has_upper_bound():
     requires_python = importlib.metadata.metadata("Red-DiscordBot")["Requires-Python"]
     assert requires_python is not None
 
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
-    req = pkg_resources.Requirement.parse(f"x{requires_python}")
-    assert any(op in ("<", "<=") for op, version in req.specs)
+    # Requirement needs a regular requirement string, so "x" serves as requirement's name here
+    req = Requirement(f"x{requires_python}")
+    assert any(spec.operator in ("<", "<=") for spec in req.specifier)
