@@ -17,7 +17,7 @@ them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python3.10 git java-11-openjdk-headless @development-tools nano
+    sudo dnf -y install python3.10 python3.10-devel git java-11-openjdk-headless @development-tools nano
 
 .. Include common instructions:
 
