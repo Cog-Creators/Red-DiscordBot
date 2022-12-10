@@ -45,7 +45,10 @@ Raspberry Pi OS. This guide will tell you how. First, run the following commands
 
 .. Include common instructions:
 
-.. include:: _includes/install-python-pyenv.rst
+.. We should only build and install even versions of Python on Raspberry Pi OS as odd
+.. versions are part of piwheels and can cause installs of pip packages that won't work.
+
+.. include:: _includes/install-python310-pyenv.rst
 
 .. include:: _includes/create-env-with-pyenv-virtualenv.rst
 
