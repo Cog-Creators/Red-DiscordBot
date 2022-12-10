@@ -13,7 +13,7 @@ Install them with dnf:
 
     sudo dnf -y update
     sudo dnf -y group install development
-    sudo dnf -y install python39 python39-pip python39-devel java-11-openjdk-headless nano git
+    sudo dnf -y install python39 python39-devel java-11-openjdk-headless nano git
 
 Set ``java`` executable to point to Java 11:
 
