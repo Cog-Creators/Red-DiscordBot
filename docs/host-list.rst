@@ -115,7 +115,7 @@ Average Providers
  discussed and curated, often with lower costs and less known providers.
 
 | `AlphaVps <https://alphavps.com>`_ is a Bulgaria VPS and dedicated server provider 
-with locations in Los Angeles, New York, England, Germany and Bulgaria.
+ with locations in Los Angeles, New York, England, Germany and Bulgaria.
 
 --------------------
 Higher End Providers
