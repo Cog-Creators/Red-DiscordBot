@@ -203,7 +203,7 @@ class Admin(commands.Cog):
             return
         try:
             reason = get_audit_reason(ctx.author)
-            await member.remove_roles(role)
+            await member.remove_roles(role, reason=reason)
         except discord.Forbidden:
             await ctx.send(_(GENERIC_FORBIDDEN))
         else:
