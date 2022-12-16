@@ -27,7 +27,7 @@ vulnerability.
 To open a vulnerability report please fill out [this form](https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/new)
 
 You will be asked to provide a summary, details and proof of concept for your vulnerability report.
-We ask that you fill out these details to the best of your ability, with as many details as possible.
+We ask that you fill out this form to the best of your ability, with as many details as possible.
 Furthermore, you'll be asked to provide affected products and severity.
 These fields are optional and will be filled appropriately by the maintainers if not provided.
 
