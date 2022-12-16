@@ -33,5 +33,5 @@ These fields are optional and will be filled appropriately by the maintainers if
 
 ### Timeline
 
-We will try to answer your report within 3 days. If you haven't received a answer we suggest you reach
+We will try to answer your report within 3 days. If you haven't received an answer by then, we suggest you reach
 out to us privately. This can best be done via our [Discord server](https://discord.gg/red).
