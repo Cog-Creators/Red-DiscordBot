@@ -28,8 +28,8 @@ To open a vulnerability report please fill out [this form](https://github.com/Co
 
 You will be asked to provide a summary, details and proof of concept for your vulnerability report.
 We ask that you fill out these details to the best of your ability, with as many details as possible.
-Furthermore you'll be asked to provide affected products and severity. These are optional to fill out.
-And will be handled by the maintainers.
+Furthermore, you'll be asked to provide affected products and severity.
+These fields are optional and will be filled appropriately by the maintainers if not provided.
 
 ### Timeline
 
