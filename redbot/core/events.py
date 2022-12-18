@@ -6,11 +6,12 @@ import codecs
 import logging
 import traceback
 from datetime import datetime, timedelta, timezone
+from typing import Tuple
 
 import aiohttp
 import discord
-import pkg_resources
-from pkg_resources import DistributionNotFound
+import importlib.metadata
+from packaging.requirements import Requirement
 from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
@@ -54,6 +55,88 @@ ______         _           ______ _                       _  ______       _
 _ = Translator(__name__, __file__)
 
 
+def get_outdated_red_messages(pypi_version: str, py_version_req: str) -> Tuple[str, str]:
+    outdated_red_message = _(
+        "Your Red instance is out of date! {} is the current version, however you are using {}!"
+    ).format(pypi_version, red_version)
+    rich_outdated_message = (
+        f"[red]Outdated version![/red]\n"
+        f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
+        f"but you're using [cyan]{red_version}[/][red]!!![/red]"
+    )
+    current_python = platform.python_version()
+    extra_update = _(
+        "\n\nWhile the following command should work in most scenarios as it is "
+        "based on your current OS, environment, and Python version, "
+        "**we highly recommend you to read the update docs at <{docs}> and "
+        "make sure there is nothing else that "
+        "needs to be done during the update.**"
+    ).format(docs="https://docs.discord.red/en/stable/update_red.html")
+
+    if not expected_version(current_python, py_version_req):
+        extra_update += _(
+            "\n\nYou have Python `{py_version}` and this update "
+            "requires `{req_py}`; you cannot simply run the update command.\n\n"
+            "You will need to follow the update instructions in our docs above, "
+            "if you still need help updating after following the docs go to our "
+            "#support channel in <https://discord.gg/red>"
+        ).format(py_version=current_python, req_py=py_version_req)
+        outdated_red_message += extra_update
+        return outdated_red_message, rich_outdated_message
+
+    red_dist = importlib.metadata.distribution("Red-DiscordBot")
+    installed_extras = red_dist.metadata.get_all("Provides-Extra")
+    installed_extras.remove("dev")
+    installed_extras.remove("all")
+    distributions = {}
+    for req_str in red_dist.requires:
+        req = Requirement(req_str)
+        if req.marker is None or req.marker.evaluate():
+            continue
+        for extra in reversed(installed_extras):
+            if not req.marker.evaluate({"extra": extra}):
+                continue
+
+            # Check that the requirement is met.
+            # This is a bit simplified for our purposes and does not check
+            # whether the requirements of our requirements are met as well.
+            # This could potentially be an issue if we'll ever depend on
+            # a dependency's extra in our extra when we already depend on that
+            # in our base dependencies. However, considering that right now, all
+            # our dependencies are also fully pinned, this should not ever matter.
+            if req.name in distributions:
+                dist = distributions[req.name]
+            else:
+                try:
+                    dist = importlib.metadata.distribution(req.name)
+                except importlib.metadata.PackageNotFoundError:
+                    installed_extras.remove(extra)
+                    dist = None
+                distributions[req.name] = dist
+            if dist is None or not req.specifier.contains(dist.version, prereleases=True):
+                installed_extras.remove(extra)
+
+    if installed_extras:
+        package_extras = f"[{','.join(installed_extras)}]"
+    else:
+        package_extras = ""
+
+    extra_update += _(
+        "\n\nTo update your bot, first shutdown your bot"
+        " then open a window of {console} (Not as admin) and run the following:"
+        "{command_1}\n"
+        "Once you've started up your bot again, we recommend that"
+        " you update any installed 3rd-party cogs with this command in Discord:"
+        "{command_2}"
+    ).format(
+        console=_("Command Prompt") if platform.system() == "Windows" else _("Terminal"),
+        command_1=f'```"{sys.executable}" -m pip install -U "Red-DiscordBot{package_extras}"```',
+        command_2=f"```[p]cog update```",
+    )
+    outdated_red_message += extra_update
+    return outdated_red_message, rich_outdated_message
+
+
 def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
@@ -74,7 +157,6 @@ def init_events(bot, cli_flags):
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
-        red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
         table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
@@ -97,69 +179,9 @@ def init_events(bot, cli_flags):
             pypi_version, py_version_req = await fetch_latest_red_version_info()
             outdated = pypi_version and pypi_version > red_version_info
             if outdated:
-                outdated_red_message = _(
-                    "Your Red instance is out of date! {} is the current "
-                    "version, however you are using {}!"
-                ).format(pypi_version, red_version)
-                rich_outdated_message = (
-                    f"[red]Outdated version![/red]\n"
-                    f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
-                    f"but you're using [cyan]{red_version}[/][red]!!![/red]"
+                outdated_red_message, rich_outdated_message = get_outdated_red_messages(
+                    pypi_version, py_version_req
                 )
-                current_python = platform.python_version()
-                extra_update = _(
-                    "\n\nWhile the following command should work in most scenarios as it is "
-                    "based on your current OS, environment, and Python version, "
-                    "**we highly recommend you to read the update docs at <{docs}> and "
-                    "make sure there is nothing else that "
-                    "needs to be done during the update.**"
-                ).format(docs="https://docs.discord.red/en/stable/update_red.html")
-                if expected_version(current_python, py_version_req):
-                    installed_extras = []
-                    for extra, reqs in red_pkg._dep_map.items():
-                        if extra is None or extra in {"dev", "all"}:
-                            continue
-                        try:
-                            pkg_resources.require(req.name for req in reqs)
-                        except pkg_resources.DistributionNotFound:
-                            pass
-                        else:
-                            installed_extras.append(extra)
-
-                    if installed_extras:
-                        package_extras = f"[{','.join(installed_extras)}]"
-                    else:
-                        package_extras = ""
-
-                    extra_update += _(
-                        "\n\nTo update your bot, first shutdown your "
-                        "bot then open a window of {console} (Not as admin) and "
-                        "run the following:\n\n"
-                    ).format(
-                        console=_("Command Prompt")
-                        if platform.system() == "Windows"
-                        else _("Terminal")
-                    )
-                    extra_update += (
-                        '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
-                            python=sys.executable, package_extras=package_extras
-                        )
-                    )
-                    extra_update += _(
-                        "\nOnce you've started up your bot again, if you have any 3rd-party cogs"
-                        " installed we then highly recommend you update them with this command"
-                        " in Discord: `[p]cog update`"
-                    )
-
-                else:
-                    extra_update += _(
-                        "\n\nYou have Python `{py_version}` and this update "
-                        "requires `{req_py}`; you cannot simply run the update command.\n\n"
-                        "You will need to follow the update instructions in our docs above, "
-                        "if you still need help updating after following the docs go to our "
-                        "#support channel in <https://discord.gg/red>"
-                    ).format(py_version=current_python, req_py=py_version_req)
-                outdated_red_message += extra_update
 
         rich_console = rich.get_console()
         rich_console.print(INTRO, style="red", markup=False, highlight=False)
