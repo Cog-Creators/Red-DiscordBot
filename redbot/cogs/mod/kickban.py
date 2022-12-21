@@ -187,7 +187,7 @@ class KickBanMixin(MixinMeta):
         else:
             username = user.name if hasattr(user, "name") else "Unknown"
             try:
-                await guild.ban(user, reason=audit_reason, delete_message_days=days)
+                await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
                     "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
                         author.name, author.id, ban_type, username, user.id, str(days)
@@ -538,7 +538,9 @@ class KickBanMixin(MixinMeta):
                     banned.append(user_id)
                 else:
                     try:
-                        await guild.ban(user, reason=audit_reason, delete_message_days=days)
+                        await guild.ban(
+                            user, reason=audit_reason, delete_message_seconds=days * 86400
+                        )
                         log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
                     except discord.NotFound:
                         errors[user_id] = _("User with ID {user_id} not found").format(
@@ -647,7 +649,7 @@ class KickBanMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
         try:
-            await guild.ban(member, reason=audit_reason, delete_message_days=days)
+            await guild.ban(member, reason=audit_reason, delete_message_seconds=days * 86400)
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
@@ -706,7 +708,7 @@ class KickBanMixin(MixinMeta):
         except discord.HTTPException:
             msg = None
         try:
-            await guild.ban(member, reason=audit_reason, delete_message_days=1)
+            await guild.ban(member, reason=audit_reason, delete_message_seconds=86400)
         except discord.errors.Forbidden:
             await ctx.send(_("My role is not high enough to softban that user."))
             if msg is not None:
