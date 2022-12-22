@@ -108,7 +108,8 @@ class AntiSpam:
     @property
     def spammy(self):
         """
-        Whether any antispam intervals are active.
+        Whether, for any interval, the number of events that happened
+        within that interval exceeds the number specified for that interval.
         """
         return any(self.__interval_check(x) for x in self.__intervals)
 
