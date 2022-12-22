@@ -12,7 +12,6 @@ import argparse
 import asyncio
 import aiohttp
 
-import pkg_resources
 from redbot import MIN_PYTHON_VERSION
 from redbot.setup import (
     basic_setup,
