@@ -115,7 +115,8 @@ class AntiSpam:
 
     def stamp(self):
         """
-        Mark against the list of antispam intervals.
+        Mark an event timestamp against the list of antispam intervals happening right now.
+        Use this after all checks have passed, and your action is taking place.
 
         The stamp will last until the corresponding interval duration
         has expired (set when this AntiSpam object was initiated).
