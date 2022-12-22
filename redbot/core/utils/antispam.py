@@ -76,10 +76,10 @@ class AntiSpam:
         can happen within that interval.
 
         If an empty list is provided, the following defaults will be used:
-        - 3 per 5 seconds
-        - 5 per 1 minute
-        - 10 per 1 hour
-        - 24 per 1 day
+        * 3 per 5 seconds
+        * 5 per 1 minute
+        * 10 per 1 hour
+        * 24 per 1 day
     """
 
     # TODO : Decorator interface for command check using `spammy`
