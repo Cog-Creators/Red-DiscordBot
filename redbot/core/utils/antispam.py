@@ -74,6 +74,12 @@ class AntiSpam:
         where the timedelta represents the length of the interval,
         and the int represents the maximum number of times something
         can happen within that interval.
+        
+        If an empty list is provided, the following defaults will be used:
+        - 3 per 5 seconds
+        - 5 per 1 minute
+        - 10 per 1 hour
+        - 24 per 1 day
     """
 
     # TODO : Decorator interface for command check using `spammy`
