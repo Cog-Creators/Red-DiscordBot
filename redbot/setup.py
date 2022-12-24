@@ -31,7 +31,7 @@ try:
     config_dir.mkdir(parents=True, exist_ok=True)
 except PermissionError:
     print("You don't have permission to write to '{}'\nExiting...".format(config_dir))
-    sys.exit(ExitCodes.CRITICAL)
+    sys.exit(ExitCodes.CONFIGURATION_ERROR)
 
 instance_data = data_manager.load_existing_config()
 if instance_data is None:
@@ -78,7 +78,7 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
             "We were unable to check your chosen directory."
             " Provided path may contain an invalid character."
         )
-        sys.exit(ExitCodes.CRITICAL)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     if not exists:
         try:

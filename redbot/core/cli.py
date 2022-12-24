@@ -39,7 +39,10 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
     while True:
         try:
             value = input(f"{text}: [{options}] ").lower().strip()
-        except (KeyboardInterrupt, EOFError):
+        except KeyboardInterrupt:
+            print("\nAborted!")
+            sys.exit(ExitCodes.SHUTDOWN)
+        except EOFError:
             print("\nAborted!")
             sys.exit(ExitCodes.INVALID_CLI_USAGE)
         if value in ("y", "yes"):
