@@ -162,7 +162,7 @@ class Red(
             regional_format=None,
         )
 
-        self._config.register_channel(embeds=None, ignored=False)
+        self._config.register_channel(embeds=None, ignored=False, disabled_commands=[])
         self._config.register_user(embeds=None)
 
         self._config.init_custom("COG_DISABLE_SETTINGS", 2)

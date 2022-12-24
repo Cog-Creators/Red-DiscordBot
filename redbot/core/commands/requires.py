@@ -29,6 +29,7 @@ import discord
 
 from discord.ext.commands import check
 from .errors import BotMissingPermissions
+from ..i18n import Translator
 
 from redbot.core import utils
 
@@ -68,6 +69,8 @@ __all__ = [
     "PermStateTransitions",
     "PermStateAllowedStates",
 ]
+
+_ = Translator("commands.requires", __file__)
 
 _T = TypeVar("_T")
 GlobalPermissionModel = Union[
@@ -505,9 +508,17 @@ class Requires:
         return await self._transition_state(ctx)
 
     async def _verify_bot(self, ctx: "Context") -> None:
-        cog = ctx.cog
-        if ctx.guild is not None and cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
-            raise discord.ext.commands.DisabledCommand()
+        if ctx.guild is None:
+            bot_user = ctx.bot.user
+        else:
+            bot_user = ctx.guild.me
+            cog = ctx.cog
+            if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
+                disabled_msg = await ctx.bot._config.disabled_command_msg()
+                disabled_msg = disabled_msg.replace("{command}", ctx.invoked_with).replace(
+                    "{origin}", _("in this guild")
+                )
+                raise discord.ext.commands.DisabledCommand(disabled_msg)
 
         bot_perms = ctx.bot_permissions
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
