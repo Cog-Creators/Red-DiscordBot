@@ -86,8 +86,8 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
         except OSError:
             print(
                 "We were unable to create your chosen directory."
-                " You may need to restart this process with admin"
-                " privileges."
+                " You may need to create the directory and set proper permissions"
+                " for it manually before it can be used as the data directory."
             )
             sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
