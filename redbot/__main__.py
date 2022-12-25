@@ -53,13 +53,13 @@ def list_instances():
             "No instances have been configured! Configure one "
             "using `redbot-setup` before trying to run the bot!"
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.CONFIGURATION_ERROR)
     else:
         text = "Configured Instances:\n\n"
         for instance_name in _get_instance_names():
             text += "{}\n".format(instance_name)
         print(text)
-        sys.exit(0)
+        sys.exit(ExitCodes.SHUTDOWN)
 
 
 async def debug_info(*args: Any) -> None:
@@ -80,10 +80,10 @@ async def edit_instance(red, cli_flags):
 
     if data_path is None and copy_data:
         print("--copy-data can't be used without --edit-data-path argument")
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
     if new_name is None and confirm_overwrite:
         print("--overwrite-existing-instance can't be used without --edit-instance-name argument")
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
     if (
         no_prompt
         and all(to_change is None for to_change in (token, owner, new_name, data_path))
@@ -94,7 +94,7 @@ async def edit_instance(red, cli_flags):
             " Available arguments (check help for more information):"
             " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix"
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     await _edit_token(red, token, no_prompt)
     await _edit_prefix(red, prefix, no_prompt)
@@ -357,10 +357,10 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
                 token = new_token
         else:
             log.critical("Token and prefix must be set in order to login.")
-            sys.exit(1)
+            sys.exit(ExitCodes.CONFIGURATION_ERROR)
 
     if cli_flags.dry_run:
-        sys.exit(0)
+        sys.exit(ExitCodes.SHUTDOWN)
     try:
         # `async with red:` is unnecessary here because we call red.close() in shutdown handler
         await red.start(token)
@@ -371,8 +371,8 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             if confirm("\nDo you want to reset the token?"):
                 await red._config.token.set("")
                 print("Token has been reset.")
-                sys.exit(0)
-        sys.exit(1)
+                sys.exit(ExitCodes.SHUTDOWN)
+        sys.exit(ExitCodes.CONFIGURATION_ERROR)
     except discord.PrivilegedIntentsRequired:
         console = rich.get_console()
         console.print(
@@ -381,7 +381,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
             style="red",
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.CONFIGURATION_ERROR)
     except _NoOwnerSet:
         print(
             "Bot doesn't have any owner set!\n"
@@ -399,7 +399,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             "c) pass owner ID(s) when launching Red with --owner"
             " (and --co-owner if you need more than one) flag\n"
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.CONFIGURATION_ERROR)
 
     return None
 
@@ -410,12 +410,12 @@ def handle_early_exit_flags(cli_flags: Namespace):
     elif cli_flags.version:
         print("Red V3")
         print("Current Version: {}".format(__version__))
-        sys.exit(0)
+        sys.exit(ExitCodes.SHUTDOWN)
     elif cli_flags.debuginfo:
         early_exit_runner(cli_flags, debug_info)
     elif not cli_flags.instance_name and (not cli_flags.no_instance or cli_flags.edit):
         print("Error: No instance name was provided!")
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
 
 async def shutdown_handler(red, signal_type=None, exit_code=None):
@@ -553,7 +553,7 @@ def main():
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
-    exit_code = red._shutdown_mode if red is not None else 1
+    exit_code = red._shutdown_mode if red is not None else ExitCodes.CRITICAL
     sys.exit(exit_code)
 
 

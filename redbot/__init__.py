@@ -27,7 +27,7 @@ if _sys.version_info < MIN_PYTHON_VERSION:
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
         f"{_sys.version}! Please update Python."
     )
-    _sys.exit(1)
+    _sys.exit(78)
 
 
 class VersionInfo:
