@@ -326,10 +326,10 @@ class CustomCommands(commands.Cog):
         cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
         extracted = process.extract(query, list(cc_commands.keys()))
         accepted = []
-        for entry in extracted:
-            if entry[1] > 60:
+        for key, score, __ in extracted:
+            if score > 60:
                 # Match was decently strong
-                accepted.append((entry[0], cc_commands[entry[0]]))
+                accepted.append((key, cc_commands[key]))
             else:
                 # Match wasn't strong enough
                 pass
