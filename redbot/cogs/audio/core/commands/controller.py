@@ -901,3 +901,51 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.send_embed_msg(
             ctx, title=_("Moved track to the top of the queue."), description=description
         )
+
+    @commands.command(name="move")
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    async def command_move(self, ctx: commands.Context, from_index: int, to_index: int):
+        """Move a track number to another place in the queue."""
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        if not self._player_check(ctx):
+            return await self.send_embed_msg(ctx, title=_("Nothing playing."))
+        player = lavalink.get_player(ctx.guild.id)
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Move Track"),
+                description=_("You must be in the voice channel to move a track."),
+            )
+        if dj_enabled and not can_skip:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Move Track"),
+                description=_("You need the DJ role to move tracks."),
+            )
+        if from_index > len(player.queue) or from_index < 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Move Track"),
+                description=_("Song number must be greater than 1 and within the queue limit."),
+            )
+        if to_index > len(player.queue) or to_index < 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Move Track"),
+                description=_(
+                    "Move target number must be greater than 1 and within the queue limit."
+                ),
+            )
+        player.store("notify_channel", ctx.channel.id)
+        removed = player.queue.pop(from_index - 1)
+        player.queue.insert(to_index - 1, removed)
+        description = await self.get_track_description(removed, self.local_folder_current_path)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Moved track to the position {to_index}.").format(to_index=to_index),
+            description=description,
+        )
