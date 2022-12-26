@@ -314,3 +314,13 @@ if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
         module="asyncio",
         message="The loop argument is deprecated since Python 3.8",
     )
+    # DEP-WARN - d.py currently uses audioop module, Danny is aware of the deprecation
+    #
+    # DeprecationWarning: 'audioop' is deprecated and slated for removal in Python 3.13
+    #   import audioop
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="discord",
+        message="'audioop' is deprecated and slated for removal",
+    )
