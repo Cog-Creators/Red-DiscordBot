@@ -528,7 +528,8 @@ class Downloader(commands.Cog):
             - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`
             - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`
 
-        Repo names can only contain characters A-z, numbers, underscores, and hyphens.
+        Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots (but they cannot start or end with a dot).
+
         The branch will be the default branch if not specified.
 
         **Arguments**
