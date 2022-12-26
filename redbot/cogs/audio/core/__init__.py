@@ -134,6 +134,7 @@ class Audio(
             prefer_lyrics=False,
             repeat=False,
             shuffle=False,
+            keep_in_queue=False,
             shuffle_bumped=True,
             thumbnail=False,
             volume=100,

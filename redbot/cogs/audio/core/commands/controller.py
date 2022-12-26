@@ -124,6 +124,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         shuffle = guild_data["shuffle"]
         repeat = guild_data["repeat"]
         autoplay = guild_data["auto_play"]
+        keep_in_queue = guild_data["keep_in_queue"]
         text = ""
         text += (
             _("Auto-Play")
@@ -147,6 +148,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("Repeat Current")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if player.repeat_current else "\N{CROSS MARK}")
+        )
+        text += (
+            (" | " if text else "")
+            + _("Keep in Queue")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if keep_in_queue else "\N{CROSS MARK}")
         )
 
         message = await self.send_embed_msg(ctx, embed=embed, footer=text)
@@ -608,6 +615,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             if eq:
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             player.queue = []
+            player.next_queue_position = 0
             player.store("playing_song", None)
             player.store("prev_requester", None)
             player.store("prev_song", None)
@@ -830,6 +838,46 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         embed = discord.Embed(title=_("Setting Changed"), description=msg)
         await self.send_embed_msg(ctx, embed=embed)
 
+    @commands.command(name="keepinqueue")
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    async def command_keepinqueue(self, ctx: commands.Context):
+        """Toggle keep in queue."""
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if dj_enabled and not can_skip and not await self._has_dj_role(ctx, ctx.author):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Toggle Keep In Queue"),
+                description=_("You need the DJ role to toggle keep in queue."),
+            )
+        if self._player_check(ctx):
+            await self.set_player_settings(ctx)
+            player = lavalink.get_player(ctx.guild.id)
+            if (
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
+            ) and not can_skip:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable To Toggle Keep In Queue"),
+                    description=_("You must be in the voice channel to toggle keep in queue."),
+                )
+            player.store("notify_channel", ctx.channel.id)
+
+        keep_in_queue = await self.config.guild(ctx.guild).keep_in_queue()
+        msg = ""
+        msg += _("Keep tracks in queue: {true_or_false}.").format(
+            true_or_false=_("Enabled") if not keep_in_queue else _("Disabled")
+        )
+        await self.config.guild(ctx.guild).keep_in_queue.set(not keep_in_queue)
+
+        embed = discord.Embed(title=_("Setting Changed"), description=msg)
+        await self.send_embed_msg(ctx, embed=embed)
+        if self._player_check(ctx):
+            await self.set_player_settings(ctx)
+
     @commands.command(name="remove")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
@@ -868,6 +916,9 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             index_or_url -= 1
             removed = player.queue.pop(index_or_url)
+            if index_or_url < player.next_queue_position:
+                player.next_queue_position -= 1
+
             await self.api_interface.persistent_queue_api.played(
                 ctx.guild.id, removed.extras.get("enqueue_time")
             )
@@ -989,6 +1040,11 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         player.store("notify_channel", ctx.channel.id)
         removed = player.queue.pop(from_index - 1)
         player.queue.insert(to_index - 1, removed)
+        original_next = player.next_queue_position
+        if from_index - 1 < original_next:
+            player.next_queue_position -= 1
+        if to_index - 1 < original_next:
+            player.next_queue_position += 1
         description = await self.get_track_description(removed, self.local_folder_current_path)
         await self.send_embed_msg(
             ctx,

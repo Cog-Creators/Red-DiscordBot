@@ -88,6 +88,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             shuffle = guild_data["shuffle"]
             repeat = guild_data["repeat"]
             autoplay = guild_data["auto_play"]
+            keep_in_queue = guild_data["keep_in_queue"]
             text = ""
             text += (
                 _("Auto-Play")
@@ -111,6 +112,12 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Repeat Current")
                 + ": "
                 + ("\N{WHITE HEAVY CHECK MARK}" if player.repeat_current else "\N{CROSS MARK}")
+            )
+            text += (
+                (" | " if text else "")
+                + _("Keep in Queue")
+                + ": "
+                + ("\N{WHITE HEAVY CHECK MARK}" if keep_in_queue else "\N{CROSS MARK}")
             )
             embed.set_footer(text=text)
             message = await self.send_embed_msg(ctx, embed=embed)
