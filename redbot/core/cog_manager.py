@@ -358,16 +358,12 @@ class CogManagerUI(commands.Cog):
         else:
             await ctx.send(_("Path successfully added."))
 
-    @commands.command()
+    @commands.command(require_var_positional=True)
     @checks.is_owner()
     async def removepath(self, ctx: commands.Context, *path_numbers: int):
         """
         Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.
         """
-        if not path_numbers:
-            await ctx.send_help()
-            return
-
         message = ""
         valid: List[int] = []
         invalid: List[int] = []
