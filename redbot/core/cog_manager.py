@@ -404,8 +404,8 @@ class CogManagerUI(commands.Cog):
             )
         if invalid:
             parts.append(
-                _("The following path numbers did not exist: {paths}").format(
-                    paths=humanize_list([inline(str(path)) for path in invalid])
+                _("The following path numbers did not exist: {path_numbers}").format(
+                    path_numbers=humanize_list([inline(str(path)) for path in invalid])
                 )
             )
 
