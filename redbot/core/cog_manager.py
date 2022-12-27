@@ -4,9 +4,10 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Union, List, Optional
+from typing import TYPE_CHECKING, Union, List, Optional
 
 import redbot.cogs
+from redbot.core.commands import BadArgument
 from redbot.core.utils import deduplicate_iterables
 import discord
 
@@ -18,6 +19,21 @@ from .data_manager import cog_data_path
 from .utils.chat_formatting import box, pagify, inline
 
 __all__ = ["CogManager"]
+
+
+# Duplicate of redbot.cogs.cleanup.converters.positive_int
+if TYPE_CHECKING:
+    positive_int = int
+else:
+
+    def positive_int(arg: str) -> int:
+        try:
+            ret = int(arg)
+        except ValueError:
+            raise BadArgument(_("{arg} is not an integer.").format(arg=inline(arg)))
+        if ret <= 0:
+            raise BadArgument(_("{arg} is not a positive integer.").format(arg=inline(arg)))
+        return ret
 
 
 class NoSuchCog(ImportError):
@@ -360,7 +376,7 @@ class CogManagerUI(commands.Cog):
 
     @commands.command(require_var_positional=True)
     @checks.is_owner()
-    async def removepath(self, ctx: commands.Context, *path_numbers: int):
+    async def removepath(self, ctx: commands.Context, *path_numbers: positive_int):
         """
         Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.
         """
@@ -370,10 +386,6 @@ class CogManagerUI(commands.Cog):
 
         for path_number in path_numbers:
             path_number -= 1
-            if path_number < 0:
-                await ctx.send(_("All paths numbers must be positive."))
-                return
-
             cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
             try:
                 to_remove = cog_paths.pop(path_number)
@@ -399,16 +411,13 @@ class CogManagerUI(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def reorderpath(self, ctx: commands.Context, from_: int, to: int):
+    async def reorderpath(self, ctx: commands.Context, from_: positive_int, to: positive_int):
         """
         Reorders paths internally to allow discovery of different cogs.
         """
         # Doing this because in the paths command they're 1 indexed
         from_ -= 1
         to -= 1
-        if from_ < 0 or to < 0:
-            await ctx.send(_("Path numbers must be positive."))
-            return
 
         all_paths = await ctx.bot._cog_mgr.user_defined_paths()
         try:
