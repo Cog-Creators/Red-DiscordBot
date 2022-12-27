@@ -16,7 +16,7 @@ from .config import Config
 from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
 
-from .utils.chat_formatting import box, pagify, inline
+from .utils.chat_formatting import box, pagify, humanize_list, inline
 
 __all__ = ["CogManager"]
 
@@ -380,7 +380,6 @@ class CogManagerUI(commands.Cog):
         """
         Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.
         """
-        message = ""
         valid: List[Path] = []
         invalid: List[int] = []
 
@@ -395,16 +394,22 @@ class CogManagerUI(commands.Cog):
                 await ctx.bot._cog_mgr.remove_path(to_remove)
                 valid.append(to_remove)
 
+        parts = []
         if valid:
-            message += _("The following paths were removed:\n{paths}\n").format(
-                paths=", ".join([inline(str(path)) for path in valid])
+            parts.append(
+                _("The following paths were removed: {paths}").format(
+                    paths=humanize_list([inline(str(path)) for path in valid])
+                )
             )
         if invalid:
-            message += _("The following paths number are invalid: \n{paths}").format(
-                paths=", ".join([inline(str(path)) for path in invalid])
+            parts.append(
+                _("The following path numbers did not exist: {paths}").format(
+                    paths=humanize_list([inline(str(path)) for path in invalid])
+                )
             )
 
-        await ctx.send(message)
+        for page in pagify("\n\n".join(parts), ["\n", " "]):
+            await ctx.send(page)
 
     @commands.command()
     @checks.is_owner()
