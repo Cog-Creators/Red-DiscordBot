@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import datetime
 import itertools
+import math
 import textwrap
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
@@ -200,16 +203,10 @@ def spoiler(text: str, escape_formatting: bool = True) -> str:
     return f"||{escape(text, formatting=escape_formatting)}||"
 
 
-def pagify(
-    text: str,
-    delims: Sequence[str] = ["\n"],
-    *,
-    priority: bool = False,
-    escape_mass_mentions: bool = True,
-    shorten_by: int = 8,
-    page_length: int = 2000,
-) -> Iterator[str]:
+class pagify(Iterator[str]):
     """Generate multiple pages from the given text.
+
+    The returned iterator supports length estimation with :func:`operator.length_hint()`.
 
     Note
     ----
@@ -244,32 +241,65 @@ def pagify(
         Pages of the given text.
 
     """
-    page_length -= shorten_by
-    start = 0
-    end = len(text)
-    while (end - start) > page_length:
-        stop = start + page_length
-        if escape_mass_mentions:
-            stop -= text.count("@here", start, stop) + text.count("@everyone", start, stop)
-        closest_delim = (text.rfind(d, start + 1, stop) for d in delims)
-        if priority:
-            closest_delim = next((x for x in closest_delim if x > 0), -1)
-        else:
-            closest_delim = max(closest_delim)
-        stop = closest_delim if closest_delim != -1 else stop
-        if escape_mass_mentions:
-            to_send = escape(text[start:stop], mass_mentions=True)
-        else:
-            to_send = text[start:stop]
-        if len(to_send.strip()) > 0:
-            yield to_send
-        start = stop
 
-    if len(text[start:end].strip()) > 0:
-        if escape_mass_mentions:
-            yield escape(text[start:end], mass_mentions=True)
-        else:
-            yield text[start:end]
+    def __init__(
+        self,
+        text: str,
+        delims: Sequence[str] = ("\n",),
+        *,
+        priority: bool = False,
+        escape_mass_mentions: bool = True,
+        shorten_by: int = 8,
+        page_length: int = 2000,
+    ) -> None:
+        self._text = text
+        self._delims = delims
+        self._priority = priority
+        self._escape_mass_mentions = escape_mass_mentions
+        self._page_length = page_length - shorten_by
+
+        self._start = 0
+        self._end = len(text)
+
+    def __length_hint__(self) -> int:
+        return math.ceil((self._end - self._start) / self._page_length)
+
+    def __iter__(self) -> pagify:
+        return self
+
+    def __next__(self) -> str:
+        text = self._text
+        escape_mass_mentions = self._escape_mass_mentions
+        page_length = self._page_length
+        start = self._start
+        end = self._end
+
+        while (end - start) > page_length:
+            stop = start + page_length
+            if escape_mass_mentions:
+                stop -= text.count("@here", start, stop) + text.count("@everyone", start, stop)
+            closest_delim_it = (text.rfind(d, start + 1, stop) for d in self._delims)
+            if self._priority:
+                closest_delim = next((x for x in closest_delim_it if x > 0), -1)
+            else:
+                closest_delim = max(closest_delim_it)
+            stop = closest_delim if closest_delim != -1 else stop
+            if escape_mass_mentions:
+                to_send = escape(text[start:stop], mass_mentions=True)
+            else:
+                to_send = text[start:stop]
+            start = self._start = stop
+            if len(to_send.strip()) > 0:
+                return to_send
+
+        if len(text[start:end].strip()) > 0:
+            self._start = end
+            if escape_mass_mentions:
+                return escape(text[start:end], mass_mentions=True)
+            else:
+                return text[start:end]
+
+        raise StopIteration
 
 
 def strikethrough(text: str, escape_formatting: bool = True) -> str:

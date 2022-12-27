@@ -1,5 +1,6 @@
 import asyncio
 import pytest
+import operator
 import random
 from redbot.core.utils import (
     bounded_gather,
@@ -247,3 +248,16 @@ def test_pagify_priority(text: str, pages: List[str], page_length: int):
         result.append(page)
 
     assert pages == result
+
+
+def test_pagify_length_hint():
+    it = pagify("A" * 100, shorten_by=0, page_length=10)
+    remaining = 100 // 10
+
+    assert operator.length_hint(it) == remaining
+
+    for page in it:
+        remaining -= 1
+        assert operator.length_hint(it) == remaining
+
+    assert operator.length_hint(it) == 0
