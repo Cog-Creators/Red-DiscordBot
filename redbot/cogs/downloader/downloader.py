@@ -1759,17 +1759,21 @@ class Downloader(commands.Cog):
                     if cog_installable.repo is None
                     else cog_installable.repo.name
                 )
-                cog_name = f"{cog_installable.name} ({cog.__class__.__name__})"
+                cog_name = cog_installable.name
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
-                cog_name = cog.__class__.__name__
+                module_fragments = cog.__module__.split(".")
+                if module_fragments[1] == "core":
+                    cog_name = "N/A - Built-in commands"
+                else:
+                    cog_name = module_fragments[2]
                 repo_name = "Red-DiscordBot"
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
-                cog_name = cog.__class__.__name__
                 repo_name = _("Unknown")
+            cog_name = f"{cog_name} ({cog.__class__.__name__})"
         else:
             msg = _("This command is not provided by a cog.")
             await ctx.send(msg)
