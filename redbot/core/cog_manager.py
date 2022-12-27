@@ -384,7 +384,8 @@ class CogManagerUI(commands.Cog):
         invalid: List[int] = []
 
         cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
-        for path_number in path_numbers:
+        # dict.fromkeys removes duplicates while preserving the order
+        for path_number in dict.fromkeys(sorted(path_numbers)):
             idx = path_number - 1
             try:
                 to_remove = cog_paths[idx]
