@@ -21,7 +21,7 @@ def test_trivia_lists():
                 problem_lists.append((l.stem, f"YAML error:\n{e!s}"))
 
     if problem_lists:
-        msg = ""
-        for name, error in problem_lists:
-            msg += f"- {name}:\n{textwrap.indent(error, '    ')}"
+        msg = "\n".join(
+            f"- {name}:\n{textwrap.indent(error, '    ')}" for name, error in problem_lists
+        )
         raise TypeError("The following lists contain errors:\n" + msg)

@@ -282,12 +282,10 @@ class RedRichHandler(RichHandler):
 
 def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespace) -> None:
     root_logger = logging.getLogger()
-    base_logger = logging.getLogger("red")
-    base_logger.setLevel(level)
+    root_logger.setLevel(level)
+    # DEBUG logging for discord.py is a bit too ridiculous :)
     dpy_logger = logging.getLogger("discord")
-    dpy_logger.setLevel(logging.WARNING)
-    warnings_logger = logging.getLogger("py.warnings")
-    warnings_logger.setLevel(logging.WARNING)
+    dpy_logger.setLevel(logging.INFO)
 
     rich_console = rich.get_console()
     rich.reconfigure(tab_size=4)

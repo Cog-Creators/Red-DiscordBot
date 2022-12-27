@@ -1,0 +1,33 @@
+astroid==2.7.3
+    # via pylint
+iniconfig==1.1.1
+    # via pytest
+isort==5.9.3
+    # via pylint
+lazy-object-proxy==1.6.0
+    # via astroid
+mccabe==0.6.1
+    # via pylint
+platformdirs==2.3.0
+    # via pylint
+pluggy==1.0.0
+    # via pytest
+py==1.10.0
+    # via pytest
+pylint==2.10.2
+    # via -r extra-test.in
+pytest==6.2.5
+    # via
+    #   -r extra-test.in
+    #   pytest-asyncio
+    #   pytest-mock
+pytest-asyncio==0.15.1
+    # via -r extra-test.in
+pytest-mock==3.6.1
+    # via -r extra-test.in
+toml==0.10.2
+    # via
+    #   pylint
+    #   pytest
+wrapt==1.12.1
+    # via astroid

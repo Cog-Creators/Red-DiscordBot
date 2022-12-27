@@ -1,0 +1,12 @@
+black==22.1.0
+    # via -r extra-style.in
+mypy-extensions==0.4.3
+    # via black
+pathspec==0.9.0
+    # via black
+regex==2021.8.28
+    # via black
+toml==0.10.2
+    # via black
+typed-ast==1.4.3
+    # via black
