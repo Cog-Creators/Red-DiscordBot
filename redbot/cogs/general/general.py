@@ -410,6 +410,8 @@ class General(commands.Cog):
                 "NEW_THREAD_PERMISSIONS",
                 "TEXT_IN_VOICE_ENABLED",
                 "THREADS_ENABLED",
+                # available to everyone sometime after forum channel release
+                "PRIVATE_THREADS",
             }
             custom_feature_names = {
                 "VANITY_URL": "Vanity URL",
