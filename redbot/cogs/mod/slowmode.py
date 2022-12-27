@@ -1,3 +1,4 @@
+import discord
 import re
 from .abc import MixinMeta
 from datetime import timedelta
@@ -14,8 +15,8 @@ class Slowmode(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_channels=True)
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.bot_can_manage_channel()
+    @commands.admin_or_can_manage_channel()
     async def slowmode(
         self,
         ctx,
@@ -24,11 +25,14 @@ class Slowmode(MixinMeta):
             minimum=timedelta(seconds=0), maximum=timedelta(hours=6), default_unit="seconds"
         ) = timedelta(seconds=0),
     ):
-        """Changes channel's slowmode setting.
+        """Changes thread's or text channel's slowmode setting.
 
         Interval can be anything from 0 seconds to 6 hours.
         Use without parameters to disable.
         """
+        if not isinstance(ctx.channel, (discord.TextChannel, discord.Thread)):
+            await ctx.send(_("Slowmode can only be set in text channels and threads."))
+            return
         seconds = interval.total_seconds()
         await ctx.channel.edit(slowmode_delay=seconds)
         if seconds > 0:

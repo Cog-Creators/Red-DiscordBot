@@ -320,7 +320,7 @@ msgstr "你已经达到了 {currency} 的最大金额！请多花点钱 😬\n\n
 msgid "{author.mention} Here, take some {currency}. Enjoy! (+{amount} {currency}!)\n\n"
 "You currently have {new_balance} {currency}.\n\n"
 "You are currently #{pos} on the global leaderboard!"
-msgstr "{author.mention}这里, 拿走一些 {currency}去享受吧！(+{amount} {currency}!)\n\n"
+msgstr "{author.mention}, 拿走一些 {currency}去享受吧！(+{amount} {currency}!)\n\n"
 "你目前有 {new_balance} {currency}\n\n"
 "你目前在全球排行榜上排名第 #{pos}！"
 

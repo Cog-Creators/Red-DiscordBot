@@ -56,6 +56,7 @@ def get_video_ids_from_feed(feed):
 class Stream:
 
     token_name: ClassVar[Optional[str]] = None
+    platform_name: ClassVar[Optional[str]] = None
 
     def __init__(self, **kwargs):
         self._bot = kwargs.pop("_bot")
@@ -64,6 +65,9 @@ class Stream:
         # self.already_online = kwargs.pop("already_online", False)
         self.messages = kwargs.pop("messages", [])
         self.type = self.__class__.__name__
+        # Keep track of how many failed consecutive attempts we had at checking
+        # if the stream's channel actually exists.
+        self.retry_count = 0
 
     @property
     def display_name(self) -> Optional[str]:
@@ -104,6 +108,7 @@ class Stream:
 class YoutubeStream(Stream):
 
     token_name = "youtube"
+    platform_name = "YouTube"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
@@ -128,6 +133,10 @@ class YoutubeStream(Stream):
                 if r.status == 404:
                     raise StreamNotFound()
                 rssdata = await r.text()
+
+        # Reset the retry count since we successfully got information about this
+        # channel's streams
+        self.retry_count = 0
 
         if self.not_livestreams:
             self.not_livestreams = list(dict.fromkeys(self.not_livestreams))
@@ -256,7 +265,6 @@ class YoutubeStream(Stream):
         return snippet["title"]
 
     async def _fetch_channel_resource(self, resource: str):
-
         params = {"key": self._token["api_key"], "part": resource}
         if resource == "id":
             params["forUsername"] = self.name
@@ -300,6 +308,7 @@ class YoutubeStream(Stream):
 class TwitchStream(Stream):
 
     token_name = "twitch"
+    platform_name = "Twitch"
 
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
@@ -327,8 +336,8 @@ class TwitchStream(Stream):
         """
         current_time = int(time.time())
         self._rate_limit_resets = {x for x in self._rate_limit_resets if x > current_time}
-        if self._rate_limit_remaining == 0:
 
+        if self._rate_limit_remaining == 0:
             if self._rate_limit_resets:
                 reset_time = next(iter(self._rate_limit_resets))
                 # Calculate wait time and add 0.1s to the wait time to allow Twitch to reset
@@ -401,6 +410,10 @@ class TwitchStream(Stream):
             if follows_data:
                 final_data["followers"] = follows_data["total"]
 
+            # Reset the retry count since we successfully got information about this
+            # channel's streams
+            self.retry_count = 0
+
             return self.make_embed(final_data), final_data["type"] == "rerun"
         elif stream_code == 400:
             raise InvalidTwitchCredentials()
@@ -453,6 +466,7 @@ class TwitchStream(Stream):
 class PicartoStream(Stream):
 
     token_name = None  # This streaming services don't currently require an API key
+    platform_name = "Picarto"
 
     async def is_online(self):
         url = "https://api.picarto.tv/api/v1/channel/name/" + self.name
@@ -462,6 +476,9 @@ class PicartoStream(Stream):
                 data = await r.text(encoding="utf-8")
         if r.status == 200:
             data = json.loads(data)
+            # Reset the retry count since we successfully got information about this
+            # channel's streams
+            self.retry_count = 0
             if data["online"] is True:
                 # self.already_online = True
                 return self.make_embed(data)

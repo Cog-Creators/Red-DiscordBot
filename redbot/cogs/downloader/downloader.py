@@ -13,6 +13,7 @@ from redbot.core import checks, commands, Config, version_info as red_version_in
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import can_user_react_in
 from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -92,7 +93,7 @@ class Downloader(commands.Cog):
             self._init_task.cancel()
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete """
+        """Nothing to delete"""
         return
 
     def create_init_task(self):
@@ -528,7 +529,8 @@ class Downloader(commands.Cog):
             - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`
             - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`
 
-        Repo names can only contain characters A-z, numbers, underscores, and hyphens.
+        Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots (but they cannot start or end with a dot).
+
         The branch will be the default branch if not specified.
 
         **Arguments**
@@ -540,9 +542,15 @@ class Downloader(commands.Cog):
         agreed = await do_install_agreement(ctx)
         if not agreed:
             return
-        if re.match(r"^[a-zA-Z0-9_\-]*$", name) is None:
+        if name.startswith(".") or name.endswith("."):
+            await ctx.send(_("Repo names cannot start or end with a dot."))
+            return
+        if re.match(r"^[a-zA-Z0-9_\-\.]+$", name) is None:
             await ctx.send(
-                _("Repo names can only contain characters A-z, numbers, underscores, and hyphens.")
+                _(
+                    "Repo names can only contain characters A-z, numbers, underscores, hyphens,"
+                    " and dots."
+                )
             )
             return
         try:
@@ -927,7 +935,7 @@ class Downloader(commands.Cog):
                 poss_installed_path = (await self.cog_install_path()) / real_name
                 if poss_installed_path.exists():
                     with contextlib.suppress(commands.ExtensionNotLoaded):
-                        ctx.bot.unload_extension(real_name)
+                        await ctx.bot.unload_extension(real_name)
                         await ctx.bot.remove_loaded_package(real_name)
                     await self._delete_cog(poss_installed_path)
                     uninstalled_cogs.append(inline(real_name))
@@ -1050,26 +1058,26 @@ class Downloader(commands.Cog):
     async def _cog_listpinned(self, ctx: commands.Context):
         """List currently pinned cogs."""
         installed = await self.installed_cogs()
-        pinned_list = sorted([cog.name for cog in installed if cog.pinned], key=str.lower)
+        pinned_list = sorted(
+            [cog for cog in installed if cog.pinned], key=lambda cog: cog.name.lower()
+        )
         if pinned_list:
-            message = humanize_list(pinned_list)
+            message = "\n".join(
+                f"({inline(cog.commit[:7] or _('unknown'))}) {cog.name}" for cog in pinned_list
+            )
         else:
             message = _("None.")
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            for page in pagify(message, delims=[", "], page_length=900):
-                name = _("(continued)") if page.startswith(", ") else _("Pinned Cogs:")
-                if page.startswith(", "):
-                    page = page[2:]
+            for page in pagify(message, page_length=900):
+                name = _("(continued)") if page.startswith("\n") else _("Pinned Cogs:")
                 embed.add_field(name=name, value=page, inline=False)
             await ctx.send(embed=embed)
         else:
-            for page in pagify(message, delims=[", "], page_length=1900):
-                if page.startswith(", "):
-                    page = page[2:]
-                else:
+            for page in pagify(message, page_length=1900):
+                if not page.startswith("\n"):
                     page = _("Pinned Cogs: \n") + page
-                await ctx.send(box(page))
+                await ctx.send(page)
 
     @cog.command(name="checkforupdates")
     async def _cog_checkforupdates(self, ctx: commands.Context) -> None:
@@ -1113,36 +1121,54 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, message)
 
     @cog.command(name="update")
-    async def _cog_update(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
+    async def _cog_update(
+        self, ctx: commands.Context, reload: Optional[bool], *cogs: InstalledCog
+    ) -> None:
         """Update all cogs, or ones of your choosing.
 
         Examples:
             - `[p]cog update`
+            - `[p]cog update True`
             - `[p]cog update defender`
+            - `[p]cog update True defender`
 
         **Arguments**
 
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `[cogs...]` The cog or cogs to update. If omitted, all cogs are updated.
         """
+        if reload:
+            ctx.assume_yes = True
         await self._cog_update_logic(ctx, cogs=cogs)
 
     @cog.command(name="updateallfromrepos", require_var_positional=True)
-    async def _cog_updateallfromrepos(self, ctx: commands.Context, *repos: Repo) -> None:
+    async def _cog_updateallfromrepos(
+        self, ctx: commands.Context, reload: Optional[bool], *repos: Repo
+    ) -> None:
         """Update all cogs from repos of your choosing.
 
         Examples:
             - `[p]cog updateallfromrepos 26-Cogs`
+            - `[p]cog updateallfromrepos True 26-Cogs`
             - `[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs`
 
         **Arguments**
 
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `<repos...>` The repo or repos to update all cogs from.
         """
+        if reload:
+            ctx.assume_yes = True
         await self._cog_update_logic(ctx, repos=repos)
 
     @cog.command(name="updatetoversion")
     async def _cog_updatetoversion(
-        self, ctx: commands.Context, repo: Repo, revision: str, *cogs: InstalledCog
+        self,
+        ctx: commands.Context,
+        reload: Optional[bool],
+        repo: Repo,
+        revision: str,
+        *cogs: InstalledCog,
     ) -> None:
         """Update all cogs, or ones of your choosing to chosen revision of one repo.
 
@@ -1152,15 +1178,19 @@ class Downloader(commands.Cog):
 
         See `[p]cog installversion` for an explanation of `revision`.
 
-        Example:
+        Examples:
             - `[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`
+            - `[p]cog updatetoversion True Broken-Repo 6107c0770ad391f1d3a6131b216991e862cc897e cog_name`
 
         **Arguments**
 
+        - `[reload]` Whether to reload cogs immediately after update or not.
         - `<repo>` The repo or repos to update all cogs from.
         - `<revision>` The revision to update to.
         - `[cogs...]` The cog or cogs to update.
         """
+        if reload:
+            ctx.assume_yes = True
         await self._cog_update_logic(ctx, repo=repo, rev=revision, cogs=cogs)
 
     async def _cog_update_logic(
@@ -1441,7 +1471,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nSome cogs with these names are already installed from different repos: ")
                 if len(name_already_used) > 1
-                else _("Cog with this name is already installed from a different repo.")
+                else _("\nCog with this name is already installed from a different repo: ")
             ) + humanize_list(name_already_used)
         correct_cogs, add_to_message = self._filter_incorrect_cogs(cogs)
         if add_to_message:
@@ -1486,7 +1516,7 @@ class Downloader(commands.Cog):
             message += (
                 _("\nThese cogs require higher python version than you have: ")
                 if len(outdated_python_version)
-                else _("This cog requires higher python version than you have: ")
+                else _("\nThis cog requires higher python version than you have: ")
             ) + humanize_list(outdated_python_version)
         if outdated_bot_version:
             message += (
@@ -1496,7 +1526,7 @@ class Downloader(commands.Cog):
                 )
                 if len(outdated_bot_version) > 1
                 else _(
-                    "This cog requires different Red version than you currently "
+                    "\nThis cog requires different Red version than you currently "
                     "have ({current_version}): "
                 )
             ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
@@ -1589,7 +1619,7 @@ class Downloader(commands.Cog):
                     )
                 else:
                     message += (
-                        _("End user data statement of this cog has changed:")
+                        _("\nEnd user data statement of this cog has changed:")
                         + inline(next(iter(cogs_with_changed_eud_statement)))
                         + _("\nYou can use {command} to see the updated statement.\n").format(
                             command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
@@ -1637,9 +1667,9 @@ class Downloader(commands.Cog):
                 if len(updated_cognames) > 1
                 else _("Would you like to reload the updated cog?")
             )
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if not can_react:
-                message += " (y/n)"
+                message += " (yes/no)"
             query: discord.Message = await ctx.send(message)
             if can_react:
                 # noinspection PyAsyncCall
@@ -1652,12 +1682,14 @@ class Downloader(commands.Cog):
             try:
                 await ctx.bot.wait_for(event, check=pred, timeout=30)
             except asyncio.TimeoutError:
-                await query.delete()
+                with contextlib.suppress(discord.NotFound):
+                    await query.delete()
                 return
 
             if not pred.result:
                 if can_react:
-                    await query.delete()
+                    with contextlib.suppress(discord.NotFound):
+                        await query.delete()
                 else:
                     await ctx.send(_("OK then."))
                 return
@@ -1722,15 +1754,22 @@ class Downloader(commands.Cog):
                     if cog_installable.repo is None
                     else cog_installable.repo.clean_url
                 )
+                repo_name = (
+                    _("Missing from installed repos")
+                    if cog_installable.repo is None
+                    else cog_installable.repo.name
+                )
                 cog_name = cog_installable.name
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
                 cog_name = cog.__class__.__name__
+                repo_name = "Red-DiscordBot"
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
                 cog_name = cog.__class__.__name__
+                repo_name = _("Unknown")
         else:
             msg = _("This command is not provided by a cog.")
             await ctx.send(msg)
@@ -1739,8 +1778,9 @@ class Downloader(commands.Cog):
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(name=_("Command:"), value=command_name, inline=False)
-            embed.add_field(name=_("Cog Name:"), value=cog_name, inline=False)
+            embed.add_field(name=_("Cog name:"), value=cog_name, inline=False)
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
+            embed.add_field(name=_("Repo name:"), value=repo_name, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
             if installed and cog_installable.repo is not None and cog_installable.repo.branch:
                 embed.add_field(
@@ -1750,8 +1790,14 @@ class Downloader(commands.Cog):
 
         else:
             msg = _(
-                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo URL: {repo_url}\n"
-            ).format(command=command_name, author=made_by, repo_url=repo_url, cog=cog_name)
+                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo name: {repo_name}\nRepo URL: {repo_url}\n"
+            ).format(
+                command=command_name,
+                author=made_by,
+                repo_url=repo_url,
+                cog=cog_name,
+                repo_name=repo_name,
+            )
             if installed and cog_installable.repo is not None and cog_installable.repo.branch:
                 msg += _("Repo branch: {branch_name}\n").format(
                     branch_name=cog_installable.repo.branch

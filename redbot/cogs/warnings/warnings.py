@@ -19,7 +19,7 @@ from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import warning, pagify
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import menu
 
 
 _ = Translator("Warnings", __file__)
@@ -47,7 +47,9 @@ class Warnings(commands.Cog):
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
-        self.registration_task = self.bot.loop.create_task(self.register_warningtype())
+
+    async def cog_load(self) -> None:
+        await self.register_warningtype()
 
     async def red_delete_data_for_user(
         self,
@@ -154,8 +156,13 @@ class Warnings(commands.Cog):
 
     @warningset.command()
     @commands.guild_only()
-    async def warnchannel(self, ctx: commands.Context, channel: discord.TextChannel = None):
+    async def warnchannel(
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+    ):
         """Set the channel where warnings should be sent to.
+
         Leave empty to use the channel `[p]warn` command was called in.
         """
         guild = ctx.guild
@@ -191,6 +198,7 @@ class Warnings(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
         """Manage automated actions for Warnings.
+
         Actions are essentially command macros. Any command can be run
         when the action is initially triggered, and/or when the action
         is lifted.
@@ -204,6 +212,7 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     async def action_add(self, ctx: commands.Context, name: str, points: int):
         """Create an automated action.
+
         Duplicate action names are not allowed.
         """
         guild = ctx.guild
@@ -255,6 +264,7 @@ class Warnings(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):
         """Manage warning reasons.
+
         Reasons must be given a name, description and points value. The
         name of the reason must be given when a user is warned.
         """
@@ -318,7 +328,7 @@ class Warnings(commands.Cog):
                         ).format(reason_name=r, **v)
                     )
         if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
+            await menu(ctx, msg_list)
         else:
             await ctx.send(_("There are no reasons configured!"))
 
@@ -353,7 +363,7 @@ class Warnings(commands.Cog):
                         ).format(**r)
                     )
         if msg_list:
-            await menu(ctx, msg_list, DEFAULT_CONTROLS)
+            await menu(ctx, msg_list)
         else:
             await ctx.send(_("There are no actions configured!"))
 
@@ -369,6 +379,7 @@ class Warnings(commands.Cog):
         reason: str,
     ):
         """Warn the user for the specified reason.
+
         `<points>` number of points the warning should be for. If no number is supplied
         1 point will be given. Pre-set warnings disregard this.
         `<reason>` is reason for the warning. This can be a registered reason,
@@ -395,8 +406,8 @@ class Warnings(commands.Cog):
             if (reason_type := registered_reasons.get(reason.lower())) is None:
                 msg = _("That is not a registered reason!")
                 if custom_allowed:
-                    if points <= 0:
-                        return await ctx.send(_("You cannot apply 0 or less points."))
+                    if points < 0:
+                        return await ctx.send(_("You cannot apply negative points."))
                     reason_type = {"description": reason, "points": points}
                 else:
                     # logic taken from `[p]permissions canrun`
@@ -503,7 +514,7 @@ class Warnings(commands.Cog):
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            ctx.message.created_at,
             "warning",
             member,
             ctx.message.author,
@@ -627,7 +638,7 @@ class Warnings(commands.Cog):
         await modlog.create_case(
             self.bot,
             ctx.guild,
-            ctx.message.created_at.replace(tzinfo=timezone.utc),
+            ctx.message.created_at,
             "unwarned",
             member,
             ctx.message.author,

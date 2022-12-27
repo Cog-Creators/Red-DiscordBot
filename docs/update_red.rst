@@ -31,7 +31,7 @@ Red 3.2.0 or newer
 Windows
 -------
 
-If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
+If you have Red 3.2.0 or newer, you can upgrade by following these steps:
 
 1. Shut your bot down.
 
@@ -59,7 +59,7 @@ If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
 Linux & Mac
 -----------
 
-If you have Red 3.2.0 or newer, you can upgrade by following these 4 easy steps:
+If you have Red 3.2.0 or newer, you can upgrade by following these steps:
 
 1. Shut your bot down.
 
@@ -97,10 +97,7 @@ Red 3.1.X
 
 If you have Red 3.1.X, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
-- `Windows <install_windows>`
-- `Linux & Mac <install_linux_mac>`
-
-Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
+Go to the `install_guides/index` guide and follow every step to ensure you have all dependencies up-to-date and only skip the ``redbot-setup`` step as you already have a bot instance.
 
 **If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**
 
@@ -139,9 +136,6 @@ Red 3.0.2 and older
 
 If you have Red 3.0.2 or older, you will need to follow the install instructions for your operating system. Make sure that you turn your bot off first.
 
-- `Windows <install_windows>`
-- `Linux & Mac <install_linux_mac>`
-
-Follow every step to ensure you have all dependencies up-to-date and only skip ``redbot-setup`` step as you already have a bot instance.
+Go to the `install_guides/index` guide and follow every step to ensure you have all dependencies up-to-date and only skip the ``redbot-setup`` step as you already have a bot instance.
 
 **If you already have Red installed in a virtual environment, you will need to delete it before starting this process.**

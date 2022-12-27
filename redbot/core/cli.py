@@ -2,10 +2,28 @@ import argparse
 import asyncio
 import logging
 import sys
+from enum import IntEnum
 from typing import Optional
 
 import discord
 from discord import __version__ as discord_version
+
+from redbot.core.utils._internal_utils import cli_level_to_log_level
+
+
+# This needs to be an int enum to be used
+# with sys.exit
+class ExitCodes(IntEnum):
+    #: Clean shutdown (through signals, keyboard interrupt, [p]shutdown, etc.).
+    SHUTDOWN = 0
+    #: An unrecoverable error occurred during application's runtime.
+    CRITICAL = 1
+    #: The CLI command was used incorrectly, such as when the wrong number of arguments are given.
+    INVALID_CLI_USAGE = 2
+    #: Restart was requested by the bot owner (probably through [p]restart command).
+    RESTART = 26
+    #: Some kind of configuration error occurred.
+    CONFIGURATION_ERROR = 78  # Exit code borrowed from os.EX_CONFIG.
 
 
 def confirm(text: str, default: Optional[bool] = None) -> bool:
@@ -21,9 +39,12 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
     while True:
         try:
             value = input(f"{text}: [{options}] ").lower().strip()
-        except (KeyboardInterrupt, EOFError):
+        except KeyboardInterrupt:
             print("\nAborted!")
-            sys.exit(1)
+            sys.exit(ExitCodes.SHUTDOWN)
+        except EOFError:
+            print("\nAborted!")
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
         if value in ("y", "yes"):
             return True
         if value in ("n", "no"):
@@ -68,6 +89,11 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
             if len(prefix) > 10:
                 if not confirm("Your prefix seems overly long. Are you sure that it's correct?"):
                     prefix = ""
+            if prefix.startswith("/"):
+                print(
+                    "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
+                )
+                prefix = ""
             if prefix:
                 await red._config.prefix.set([prefix])
 
@@ -179,6 +205,9 @@ def parse_cli_flags(args):
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
     parser.add_argument(
+        "--unload-cogs", type=str, nargs="+", help="Force unloading specified cogs."
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "
@@ -186,12 +215,13 @@ def parse_cli_flags(args):
         "process.",
     )
     parser.add_argument(
+        "-v",
+        "--verbose",
         "--debug",
-        action="store_const",
+        action="count",
+        default=0,
         dest="logging_level",
-        const=logging.DEBUG,
-        default=logging.INFO,
-        help="Sets the loggers level as debug",
+        help="Increase the verbosity of the logs, each usage of this flag increases the verbosity level by 1.",
     )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
@@ -291,5 +321,6 @@ def parse_cli_flags(args):
         args.prefix = sorted(args.prefix, reverse=True)
     else:
         args.prefix = []
+    args.logging_level = cli_level_to_log_level(args.logging_level)
 
     return args

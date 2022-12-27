@@ -45,7 +45,7 @@ msgstr "Du darfst nicht die Rolle „{role.name}“ bearbeiten, weil diese Rolle
 
 #: redbot/cogs/admin/admin.py:59
 msgid "I need the \"Manage Roles\" permission to do that."
-msgstr ""
+msgstr "Ich brauche dafür die Bereichtigung „Rollen verwalten“."
 
 #: redbot/cogs/admin/admin.py:61
 msgid "I am already announcing something. If you would like to make a different announcement please use `{prefix}announce cancel` first."

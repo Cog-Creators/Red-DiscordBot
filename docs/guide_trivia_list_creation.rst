@@ -118,7 +118,7 @@ As you've added more questions, your file should look something like this:
     - $25000
 
 You can keep adding questions until you are satisfied, and then you can upload and
-play your very own trivia! See :ref:`here <trivia-command-triviaset-custom>` for more details.
+play your very own trivia! See :ref:`[p]triviaset custom <trivia-command-triviaset-custom>` for more information.
 
 Still stuck? Take a look at 
 `the core trivia lists <https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop/redbot/cogs/trivia/data/lists>`_
