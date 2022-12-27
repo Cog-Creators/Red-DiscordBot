@@ -381,7 +381,7 @@ class CogManagerUI(commands.Cog):
         Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.
         """
         message = ""
-        valid: List[int] = []
+        valid: List[Path] = []
         invalid: List[int] = []
 
         cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
@@ -393,11 +393,11 @@ class CogManagerUI(commands.Cog):
                 invalid.append(path_number)
             else:
                 await ctx.bot._cog_mgr.remove_path(to_remove)
-                valid.append(path_number)
+                valid.append(to_remove)
 
         if valid:
             message += _(
-                "The following paths number were removed:\n{paths}\n".format(
+                "The following paths were removed:\n{paths}\n".format(
                     paths=", ".join([inline(str(path)) for path in valid])
                 )
             )
