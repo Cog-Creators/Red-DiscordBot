@@ -396,16 +396,12 @@ class CogManagerUI(commands.Cog):
                 valid.append(to_remove)
 
         if valid:
-            message += _(
-                "The following paths were removed:\n{paths}\n".format(
-                    paths=", ".join([inline(str(path)) for path in valid])
-                )
+            message += _("The following paths were removed:\n{paths}\n").format(
+                paths=", ".join([inline(str(path)) for path in valid])
             )
         if invalid:
-            message += _(
-                "The following paths number are invalid: \n{paths}".format(
-                    paths=", ".join([inline(str(path)) for path in invalid])
-                )
+            message += _("The following paths number are invalid: \n{paths}").format(
+                paths=", ".join([inline(str(path)) for path in invalid])
             )
 
         await ctx.send(message)
