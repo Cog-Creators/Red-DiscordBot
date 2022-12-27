@@ -316,7 +316,7 @@ class CogManagerUI(commands.Cog):
     """Commands to interface with Red's cog manager."""
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete (Core Config is handled in a bot method ) """
+        """Nothing to delete (Core Config is handled in a bot method )"""
         return
 
     @commands.command()
@@ -413,8 +413,9 @@ class CogManagerUI(commands.Cog):
     async def installpath(self, ctx: commands.Context, path: Path = None):
         """
         Returns the current install path or sets it if one is provided.
-            The provided path must be absolute or relative to the bot's
-            directory and it must already exist.
+
+        The provided path must be absolute or relative to the bot's
+        directory and it must already exist.
 
         No installed cogs will be transferred in the process.
         """

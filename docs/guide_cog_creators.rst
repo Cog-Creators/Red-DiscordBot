@@ -145,7 +145,7 @@ While not required for approved Cog Creators, they are still recommended in orde
   - Values provided make sense. (eg. no negative numbers for payday)
   - Don't unsafely use user input for things like database input.
 
-- Check events against `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`\
+- Check events against `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`\
 
   - Not all events need to be checked, only those that interact with a guild.
   - Some discretion may apply, for example,
