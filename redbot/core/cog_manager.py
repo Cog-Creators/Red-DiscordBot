@@ -384,15 +384,16 @@ class CogManagerUI(commands.Cog):
         valid: List[int] = []
         invalid: List[int] = []
 
+        cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
         for path_number in path_numbers:
-            path_number -= 1
-            cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
+            idx = path_number - 1
             try:
-                to_remove = cog_paths.pop(path_number)
-                await ctx.bot._cog_mgr.remove_path(to_remove)
-                valid.append(path_number)
+                to_remove = cog_paths[idx]
             except IndexError:
                 invalid.append(path_number)
+            else:
+                await ctx.bot._cog_mgr.remove_path(to_remove)
+                valid.append(path_number)
 
         if valid:
             message += _(
