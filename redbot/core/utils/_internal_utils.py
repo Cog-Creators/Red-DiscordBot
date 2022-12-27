@@ -31,7 +31,7 @@ from typing import (
 
 import aiohttp
 import discord
-import pkg_resources
+from packaging.requirements import Requirement
 from fuzzywuzzy import fuzz, process
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
@@ -316,8 +316,8 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
 
 def expected_version(current: str, expected: str) -> bool:
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
-    return current in pkg_resources.Requirement.parse(f"x{expected}")
+    # Requirement needs a regular requirement string, so "x" serves as requirement's name here
+    return Requirement(f"x{expected}").specifier.contains(current, prereleases=True)
 
 
 async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
