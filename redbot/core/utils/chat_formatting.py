@@ -261,6 +261,18 @@ class pagify(Iterator[str]):
         self._start = 0
         self._end = len(text)
 
+    def __repr__(self) -> str:
+        return (
+            "pagify("
+            f" {self._text!r},"
+            f" {self._delims!r},"
+            f" priority={self._priority!r},"
+            f" escape_mass_mentions={self._escape_mass_mentions!r},"
+            " shorten_by=0,"
+            f" page_length={self._page_length!r}"
+            ")"
+        )
+
     def __length_hint__(self) -> int:
         return math.ceil((self._end - self._start) / self._page_length)
 
