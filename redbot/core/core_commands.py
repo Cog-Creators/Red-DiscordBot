@@ -55,6 +55,7 @@ from .utils.chat_formatting import (
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
 from copy import copy
+from .utils.prompt import send_interactive
 
 _entities = {
     "*": "&midast;",
@@ -1436,9 +1437,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[public]` - Whether to send the traceback to the current context. Leave blank to send to your DMs.
         """
-
-        copied_ctx = copy(ctx)
-        copied_ctx.channel = (
+        channel = (
             ctx.channel
             if public
             else (
@@ -1448,8 +1447,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if self.bot._last_exception:
             try:
-                await copied_ctx.send_interactive(
-                    pagify(self.bot._last_exception, shorten_by=10), box_lang="py"
+                await send_interactive(
+                    self.bot,
+                    channel=channel,
+                    messages=pagify(self.bot._last_exception, shorten_by=10),
+                    box_lang="py",
                 )
             except discord.HTTPException:
                 await ctx.channel.send(

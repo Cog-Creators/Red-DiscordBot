@@ -12,6 +12,7 @@ from .requires import PermState
 from ..utils.chat_formatting import box
 from ..utils.predicates import MessagePredicate
 from ..utils import can_user_react_in, common_filters
+from ..utils.prompt import send_interactive
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -170,48 +171,9 @@ class Context(DPYContext):
             After timing out, the bot deletes its prompt message.
 
         """
-        messages = tuple(messages)
-        ret = []
-
-        for idx, page in enumerate(messages, 1):
-            if box_lang is None:
-                msg = await self.send(page)
-            else:
-                msg = await self.send(box(page, lang=box_lang))
-            ret.append(msg)
-            n_remaining = len(messages) - idx
-            if n_remaining > 0:
-                if n_remaining == 1:
-                    plural = ""
-                    is_are = "is"
-                else:
-                    plural = "s"
-                    is_are = "are"
-                query = await self.send(
-                    "There {} still {} message{} remaining. "
-                    "Type `more` to continue."
-                    "".format(is_are, n_remaining, plural)
-                )
-                try:
-                    resp = await self.bot.wait_for(
-                        "message",
-                        check=MessagePredicate.lower_equal_to("more", self),
-                        timeout=timeout,
-                    )
-                except asyncio.TimeoutError:
-                    with contextlib.suppress(discord.HTTPException):
-                        await query.delete()
-                    break
-                else:
-                    try:
-                        await self.channel.delete_messages((query, resp))
-                    except (discord.HTTPException, AttributeError):
-                        # In case the bot can't delete other users' messages,
-                        # or is not a bot account
-                        # or channel is a DM
-                        with contextlib.suppress(discord.HTTPException):
-                            await query.delete()
-        return ret
+        return await send_interactive(
+            self.bot, channel=self.channel, messages=messages, box_lang=box_lang, timeout=timeout
+        )
 
     async def embed_colour(self):
         """
