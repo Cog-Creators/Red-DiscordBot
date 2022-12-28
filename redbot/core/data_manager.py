@@ -12,6 +12,7 @@ import appdirs
 from discord.utils import deprecated
 
 from . import commands
+from .cli import ExitCodes
 
 __all__ = [
     "create_temp_config",
@@ -36,13 +37,21 @@ basic_config_default: Dict[str, Any] = {
     "CORE_PATH_APPEND": "core",
 }
 
-config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
-if sys.platform == "linux":
-    if 0 < os.getuid() < 1000:  # pylint: disable=no-member
+config_dir = Path(appdir.user_config_dir)
+_system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
+if _system_user:
+    if Path.home().exists():
+        # We don't want to break someone just because they created home dir
+        # but were already using the site_data_dir.
+        #
+        # But otherwise, we do want Red to use user_config_dir if home dir exists.
+        _maybe_config_file = Path(appdir.site_data_dir) / "config.json"
+        if _maybe_config_file.exists():
+            config_dir = _maybe_config_file.parent
+    else:
         config_dir = Path(appdir.site_data_dir)
-if not config_dir:
-    config_dir = Path(appdir.user_config_dir)
+
 config_file = config_dir / "config.json"
 
 
@@ -110,7 +119,7 @@ def load_basic_configuration(instance_name_: str):
             "You need to configure the bot instance using `redbot-setup`"
             " prior to running the bot."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.CONFIGURATION_ERROR)
     try:
         basic_config = config[instance_name]
     except KeyError:
@@ -118,7 +127,7 @@ def load_basic_configuration(instance_name_: str):
             "Instance with this name doesn't exist."
             " You can create new instance using `redbot-setup` prior to running the bot."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
 
 def _base_data_path() -> Path:

@@ -4,6 +4,8 @@
 Installing Red on Raspberry Pi OS (Legacy) 10 Buster
 ====================================================
 
+.. include:: _includes/supported-arch-armv7l.rst
+
 .. note::
 
     While we do provide support and install instructions for running Red

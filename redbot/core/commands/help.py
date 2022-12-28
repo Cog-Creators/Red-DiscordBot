@@ -31,6 +31,7 @@ import abc
 import asyncio
 from collections import namedtuple
 from dataclasses import dataclass, asdict as dc_asdict
+from enum import Enum
 from typing import Union, List, AsyncIterator, Iterable, cast
 
 import discord
@@ -39,7 +40,8 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
-from ..utils import menus
+from ..utils.views import SimpleMenu
+from ..utils import can_user_react_in, menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
 from ..utils.chat_formatting import (
@@ -65,6 +67,14 @@ EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
 
 
+class HelpMenuSetting(Enum):
+    disabled = 0
+    reactions = 1
+    buttons = 2
+    select = 3
+    selectonly = 4
+
+
 @dataclass(frozen=True)
 class HelpSettings:
     """
@@ -78,7 +88,7 @@ class HelpSettings:
 
     page_char_limit: int = 1000
     max_pages_in_guild: int = 2
-    use_menus: bool = False
+    use_menus: HelpMenuSetting = HelpMenuSetting(0)
     show_hidden: bool = False
     show_aliases: bool = True
     verify_checks: bool = True
@@ -103,11 +113,12 @@ class HelpSettings:
         Get the HelpSettings for the current context
         """
         settings = await context.bot._config.help.all()
-        return cls(**settings)
+        menus = settings.pop("use_menus", 0)
+        return cls(**settings, use_menus=HelpMenuSetting(menus))
 
     @property
     def pretty(self):
-        """ Returns a discord safe representation of the settings """
+        """Returns a discord safe representation of the settings"""
 
         def bool_transformer(val):
             if val is False:
@@ -129,6 +140,14 @@ class HelpSettings:
             tagline_info = ""
 
         data["tagline_info"] = tagline_info
+        menus_str = {
+            HelpMenuSetting.disabled: _("No"),
+            HelpMenuSetting.reactions: _("Yes, reactions"),
+            HelpMenuSetting.buttons: _("Yes, buttons"),
+            HelpMenuSetting.select: _("Yes, buttons with select menu"),
+            HelpMenuSetting.selectonly: _("Yes, select menu only"),
+        }
+        data["use_menus"] = menus_str[self.use_menus]
 
         return _(
             "Maximum characters per page: {page_char_limit}"
@@ -306,7 +325,6 @@ class RedHelpFormatter(HelpFormatterABC):
     async def format_command_help(
         self, ctx: Context, obj: commands.Command, help_settings: HelpSettings
     ):
-
         send = help_settings.verify_exists
         if not send:
             async for __ in self.help_filter_func(
@@ -401,9 +419,11 @@ class RedHelpFormatter(HelpFormatterABC):
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = bold(underline(_("Subcommands:")))
+                        title = bold(underline(_("Subcommands:")), escape_formatting=False)
                     else:
-                        title = bold(underline(_("Subcommands: (continued)")))
+                        title = bold(underline(_("Subcommands:")), escape_formatting=False) + _(
+                            " (continued)"
+                        )
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -448,7 +468,6 @@ class RedHelpFormatter(HelpFormatterABC):
 
     @staticmethod
     def group_embed_fields(fields: List[EmbedField], max_chars=1000):
-
         curr_group = []
         ret = []
         current_count = 0
@@ -471,7 +490,6 @@ class RedHelpFormatter(HelpFormatterABC):
         return ret
 
     async def make_and_send_embeds(self, ctx, embed_dict: dict, help_settings: HelpSettings):
-
         pages = []
 
         page_char_limit = help_settings.page_char_limit
@@ -479,7 +497,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         author_info = {
             "name": _("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-            "icon_url": ctx.me.avatar_url,
+            "icon_url": ctx.me.display_avatar,
         }
 
         # Offset calculation here is for total embed size limit
@@ -542,7 +560,6 @@ class RedHelpFormatter(HelpFormatterABC):
         await self.send_pages(ctx, pages, embed=True, help_settings=help_settings)
 
     async def format_cog_help(self, ctx: Context, obj: commands.Cog, help_settings: HelpSettings):
-
         coms = await self.get_cog_help_mapping(ctx, obj, help_settings=help_settings)
         if not (coms or help_settings.verify_exists):
             return
@@ -576,9 +593,11 @@ class RedHelpFormatter(HelpFormatterABC):
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
                     if i == 0:
-                        title = f"{underline(bold(_('Commands:')))}"
+                        title = underline(bold(_("Commands:")), escape_formatting=False)
                     else:
-                        title = f"{underline(bold(_('Commands: (continued)')))}"
+                        title = underline(bold(_("Commands:")), escape_formatting=False) + _(
+                            " (continued)"
+                        )
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -609,7 +628,6 @@ class RedHelpFormatter(HelpFormatterABC):
             await self.send_pages(ctx, pages, embed=False, help_settings=help_settings)
 
     async def format_bot_help(self, ctx: Context, help_settings: HelpSettings):
-
         coms = await self.get_bot_help_mapping(ctx, help_settings=help_settings)
         if not coms:
             return
@@ -618,7 +636,6 @@ class RedHelpFormatter(HelpFormatterABC):
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await self.embed_requested(ctx):
-
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
@@ -626,11 +643,10 @@ class RedHelpFormatter(HelpFormatterABC):
                 emb["embed"]["title"] = f"*{description[:250]}*"
 
             for cog_name, data in coms:
-
                 if cog_name:
-                    title = f"{underline(bold(cog_name))}:"
+                    title = underline(bold(f"{cog_name}:"), escape_formatting=False)
                 else:
-                    title = f"{underline(bold(_('No Category:')))}"
+                    title = underline(bold(_("No Category:")), escape_formatting=False)
 
                 def shorten_line(a_line: str) -> str:
                     if len(a_line) < 70:  # embed max width needs to be lower
@@ -672,7 +688,6 @@ class RedHelpFormatter(HelpFormatterABC):
                     yield nm, doc, max_width - width_gap
 
             for cog_name, data in coms:
-
                 title = f"{cog_name}:" if cog_name else _("No Category:")
                 to_join.append(title)
 
@@ -717,9 +732,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 yield obj
 
     async def embed_requested(self, ctx: Context) -> bool:
-        return await ctx.bot.embed_requested(
-            channel=ctx.channel, user=ctx.author, command=red_help, check_permissions=True
-        )
+        return await ctx.bot.embed_requested(channel=ctx, command=red_help)
 
     async def command_not_found(self, ctx, help_for, help_settings: HelpSettings):
         """
@@ -739,7 +752,7 @@ class RedHelpFormatter(HelpFormatterABC):
             if use_embeds:
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar_url,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -752,7 +765,7 @@ class RedHelpFormatter(HelpFormatterABC):
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                    icon_url=ctx.me.avatar_url,
+                    icon_url=ctx.me.display_avatar,
                 )
                 tagline = help_settings.tagline or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
@@ -771,7 +784,7 @@ class RedHelpFormatter(HelpFormatterABC):
             ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
             ret.set_author(
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
-                icon_url=ctx.me.avatar_url,
+                icon_url=ctx.me.display_avatar,
             )
             tagline = help_settings.tagline or self.get_default_tagline(ctx)
             ret.set_footer(text=tagline)
@@ -819,16 +832,31 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
+        if help_settings.use_menus.value >= HelpMenuSetting.buttons.value:
+            use_select = help_settings.use_menus.value == 3
+            select_only = help_settings.use_menus.value == 4
+            await SimpleMenu(
+                pages,
+                timeout=help_settings.react_timeout,
+                use_select_menu=use_select,
+                use_select_only=select_only,
+            ).start(ctx)
 
-        # save on config calls
-        channel_permissions = ctx.channel.permissions_for(ctx.me)
-
-        if not (
-            channel_permissions.add_reactions
-            and channel_permissions.read_message_history
-            and help_settings.use_menus
+        elif (
+            can_user_react_in(ctx.me, ctx.channel)
+            and help_settings.use_menus is HelpMenuSetting.reactions
         ):
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(
+                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+            )
+            # menu needs reactions added manually since we fed it a message
+            menus.start_adding_reactions(m, c.keys())
 
+        else:
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
@@ -853,33 +881,23 @@ class RedHelpFormatter(HelpFormatterABC):
             if use_DMs and help_settings.use_tick:
                 await ctx.tick()
             # The if statement takes into account that 'destination' will be
-            # the context channel in non-DM context, reusing 'channel_permissions' to avoid
-            # computing the permissions twice.
+            # the context channel in non-DM context.
             if (
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
-                and channel_permissions.manage_messages  # we can manage messages here
+                and ctx.bot_permissions.manage_messages  # we can manage messages
             ):
-
                 # We need to wrap this in a task to not block after-sending-help interactions.
-                # The channel has to be TextChannel as we can't bulk-delete from DMs
+                # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs
                 async def _delete_delay_help(
-                    channel: discord.TextChannel, messages: List[discord.Message], delay: int
+                    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+                    messages: List[discord.Message],
+                    delay: int,
                 ):
                     await asyncio.sleep(delay)
                     await mass_purge(messages, channel)
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
-        else:
-            # Specifically ensuring the menu's message is sent prior to returning
-            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
-            # Allow other things to happen during menu timeout/interaction.
-            asyncio.create_task(
-                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
-            )
-            # menu needs reactions added manually since we fed it a message
-            menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=_)

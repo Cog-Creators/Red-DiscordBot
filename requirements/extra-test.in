@@ -1,0 +1,6 @@
+-c base.txt
+
+pylint
+pytest
+pytest-asyncio
+pytest-mock
