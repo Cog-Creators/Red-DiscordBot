@@ -9,7 +9,7 @@ import discord
 from discord.ext.commands import Context as DPYContext
 
 from .requires import PermState
-from ..utils.chat_formatting import box
+from ..utils.chat_formatting import box, text_to_file
 from ..utils.predicates import MessagePredicate
 from ..utils import can_user_react_in, common_filters
 from ..utils.prompt import send_interactive
@@ -151,7 +151,11 @@ class Context(DPYContext):
             return True
 
     async def send_interactive(
-        self, messages: Iterable[str], box_lang: str = None, timeout: int = 15
+        self,
+        messages: Iterable[str],
+        box_lang: str = None,
+        timeout: int = 15,
+        join_character: str = "",
     ) -> List[discord.Message]:
         """Send multiple messages interactively.
 
@@ -169,6 +173,9 @@ class Context(DPYContext):
         timeout : int
             How long the user has to respond to the prompt before it times out.
             After timing out, the bot deletes its prompt message.
+        join_character : str
+            The character used to join all the messages when the file output
+            is selected.
 
         """
         return await send_interactive(
@@ -301,7 +308,7 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
             ...
 
         @property
-        def channel(self) -> Union[discord.TextChannel, discord.Thread]:
+        def channel(self) -> Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]:
             ...
 
         @property

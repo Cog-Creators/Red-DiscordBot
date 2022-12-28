@@ -27,7 +27,7 @@ if _sys.version_info < MIN_PYTHON_VERSION:
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
         f"{_sys.version}! Please update Python."
     )
-    _sys.exit(1)
+    _sys.exit(78)
 
 
 class VersionInfo:
@@ -149,12 +149,20 @@ class VersionInfo:
             ]
         ] = []
         for obj in (self, other):
+            if (
+                obj.releaselevel == obj.FINAL
+                and obj.post_release is None
+                and obj.dev_release is not None
+            ):
+                releaselevel = -1
+            else:
+                releaselevel = obj._RELEASE_LEVELS.index(obj.releaselevel)
             tups.append(
                 (
                     obj.major,
                     obj.minor,
                     obj.micro,
-                    obj._RELEASE_LEVELS.index(obj.releaselevel),
+                    releaselevel,
                     obj.serial if obj.serial is not None else _inf,
                     obj.post_release if obj.post_release is not None else -_inf,
                     obj.dev_release if obj.dev_release is not None else _inf,

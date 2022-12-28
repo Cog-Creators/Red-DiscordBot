@@ -40,7 +40,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "CheckPredicate",
-    "DM_PERMS",
     "GlobalPermissionModel",
     "GuildPermissionModel",
     "PermissionModel",
@@ -75,6 +74,7 @@ GlobalPermissionModel = Union[
     discord.User,
     discord.VoiceChannel,
     discord.TextChannel,
+    discord.ForumChannel,
     discord.CategoryChannel,
     discord.Role,
     discord.Guild,
@@ -83,28 +83,13 @@ GuildPermissionModel = Union[
     discord.Member,
     discord.VoiceChannel,
     discord.TextChannel,
+    discord.ForumChannel,
     discord.CategoryChannel,
     discord.Role,
     discord.Guild,
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
-
-# Here we are trying to model DM permissions as closely as possible. The only
-# discrepancy I've found is that users can pin messages, but they cannot delete them.
-# This means manage_messages is only half True, so it's left as False.
-# This is also the same as the permissions returned when `permissions_for` is used in DM.
-DM_PERMS = discord.Permissions.none()
-DM_PERMS.update(
-    add_reactions=True,
-    attach_files=True,
-    embed_links=True,
-    external_emojis=True,
-    mention_everyone=True,
-    read_message_history=True,
-    read_messages=True,
-    send_messages=True,
-)
 
 
 class PrivilegeLevel(enum.IntEnum):
@@ -520,15 +505,11 @@ class Requires:
         return await self._transition_state(ctx)
 
     async def _verify_bot(self, ctx: "Context") -> None:
-        if ctx.guild is None:
-            bot_user = ctx.bot.user
-        else:
-            bot_user = ctx.guild.me
-            cog = ctx.cog
-            if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
-                raise discord.ext.commands.DisabledCommand()
+        cog = ctx.cog
+        if ctx.guild is not None and cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
+            raise discord.ext.commands.DisabledCommand()
 
-        bot_perms = ctx.channel.permissions_for(bot_user)
+        bot_perms = ctx.bot_permissions
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
             raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
 
@@ -574,7 +555,7 @@ class Requires:
             return False
 
         if self.user_perms is not None:
-            user_perms = ctx.channel.permissions_for(ctx.author)
+            user_perms = ctx.permissions
             if user_perms.administrator or user_perms >= self.user_perms:
                 return True
 
@@ -634,17 +615,6 @@ class Requires:
         return await discord.utils.async_all(check(ctx) for check in self.checks)
 
     @staticmethod
-    def _get_perms_for(ctx: "Context", user: discord.abc.User) -> discord.Permissions:
-        if ctx.guild is None:
-            return DM_PERMS
-        else:
-            return ctx.channel.permissions_for(user)
-
-    @classmethod
-    def _get_bot_perms(cls, ctx: "Context") -> discord.Permissions:
-        return cls._get_perms_for(ctx, ctx.guild.me if ctx.guild else ctx.bot.user)
-
-    @staticmethod
     def _missing_perms(
         required: discord.Permissions, actual: discord.Permissions
     ) -> discord.Permissions:
@@ -655,13 +625,6 @@ class Requires:
         #   complement/difference of A with respect to R.
         relative_complement = required.value & ~actual.value
         return discord.Permissions(relative_complement)
-
-    @staticmethod
-    def _member_as_user(member: discord.abc.User) -> discord.User:
-        if isinstance(member, discord.Member):
-            # noinspection PyProtectedMember
-            return member._user
-        return member
 
     def __repr__(self) -> str:
         return (
