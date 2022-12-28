@@ -54,7 +54,6 @@ from .utils.chat_formatting import (
 )
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
-from copy import copy
 from .utils.prompt import send_interactive
 
 _entities = {
