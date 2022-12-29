@@ -420,9 +420,9 @@ class Trivia(commands.Cog):
         except InvalidListError:
             return await ctx.send(
                 _(
-                    "There was an error parsing the trivia list for the `{name}` category. It "
-                    "may be formatted incorrectly."
-                ).format(name=category)
+                    "There was an error parsing the trivia list for the {name} category."
+                    " It may be formatted incorrectly."
+                ).format(name=inline(category))
             )
 
         default_config = await self.config.guild(ctx.guild).all()
