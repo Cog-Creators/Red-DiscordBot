@@ -56,9 +56,10 @@ create a description like this:
 .. code-block:: yaml
 
     AUTHOR: Kreusada
-    DESCRIPTION: A quiz to test your logo knowledge to the limit. This trivia
-        will send image URLs, and you have to identify the company's name from
-        the logo that is sent.
+    DESCRIPTION: >-
+      A quiz to test your logo knowledge to the limit. This trivia
+      will send image URLs and ask you to identify the company's name
+      from the logo that is sent.
 
 ---------------------
 Questions and Answers
