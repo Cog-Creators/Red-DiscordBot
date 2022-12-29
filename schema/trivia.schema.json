@@ -25,7 +25,8 @@
                 },
                 "max_score": {
                     "type": "integer",
-                    "description": "Number of points required in order win the trivia, must be positive integer. Defaults to 10.",
+                    "description": "Number of points required in order to win the trivia, must be a positive integer. Defaults to 10.",
+                    "exclusiveMinimum": 0,
                     "default": 10
                 },
                 "payout_multiplier": {
