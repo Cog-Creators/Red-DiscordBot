@@ -1,0 +1,23 @@
+aiohttp
+aiohttp-json-rpc
+aiosqlite
+appdirs
+apsw-wheels
+babel
+click
+colorama
+discord.py
+fuzzywuzzy
+markdown
+packaging
+psutil
+python-dateutil
+python-Levenshtein-wheels
+PyNaCl
+PyYAML
+Red-Commons
+Red-Lavalink>=0.11.0rc1
+rich
+schema
+distro; sys_platform == "linux"
+uvloop; sys_platform != "win32" and platform_python_implementation == "CPython"

@@ -1,6 +1,7 @@
 import asyncio
 from unittest.mock import patch
 import pytest
+from collections import Counter
 
 
 # region Register Tests
@@ -591,6 +592,21 @@ async def test_raw_with_partial_primary_keys(config):
     assert await config.custom("CUSTOM", "primary_key").identifier() is True
     await config.custom("CUSTOM").set_raw(value={"primary_key": {"identifier": False}})
     assert await config.custom("CUSTOM", "primary_key").identifier() is False
+
+
+@pytest.mark.asyncio
+async def test_cast_subclass_default(config):
+    # regression test for GH-5557/GH-5585
+    config.register_global(foo=Counter({}))
+    assert type(config.defaults["GLOBAL"]["foo"]) is dict
+    assert config.defaults["GLOBAL"]["foo"] == {}
+    stored_value = await config.foo()
+    assert type(stored_value) is dict
+    assert stored_value == {}
+    await config.foo.set(Counter({"bar": 1}))
+    stored_value = await config.foo()
+    assert type(stored_value) is dict
+    assert stored_value == {"bar": 1}
 
 
 """

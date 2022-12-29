@@ -435,7 +435,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # a list of Tracks where all should be enqueued
             # this is a Spotify playlist already made into a list of Tracks or a
             # url where Lavalink handles providing all Track objects to use, like a
-            # YouTube or Soundcloud playlist
+            # YouTube or SoundCloud playlist
             if len(player.queue) >= 10000:
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0

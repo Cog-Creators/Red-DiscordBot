@@ -30,7 +30,7 @@ Then run each of the following commands:
 
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2022-workload-vctools -y
     choco upgrade python3 -y --version 3.9.9
@@ -66,7 +66,7 @@ Manually installing dependencies
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java 11 <https://adoptium.net/?variant=openjdk11>`_ - needed for Audio
+* `Java 11 <https://adoptium.net/temurin/releases/?version=11>`_ - needed for Audio
 
 From here, continue onto `creating-venv-windows`.
 
@@ -134,7 +134,7 @@ Run **one** of the following set of commands, depending on what extras you want 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
-        python -m pip install -U pip setuptools wheel
+        python -m pip install -U pip wheel
         python -m pip install -U Red-DiscordBot
 
   * With PostgreSQL support:
@@ -142,7 +142,7 @@ Run **one** of the following set of commands, depending on what extras you want 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
-        python -m pip install -U pip setuptools wheel
+        python -m pip install -U pip wheel
         python -m pip install -U Red-DiscordBot[postgres]
 
 --------------------------

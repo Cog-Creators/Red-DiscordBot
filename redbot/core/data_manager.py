@@ -12,6 +12,7 @@ import appdirs
 from discord.utils import deprecated
 
 from . import commands
+from .cli import ExitCodes
 
 __all__ = [
     "create_temp_config",
@@ -118,7 +119,7 @@ def load_basic_configuration(instance_name_: str):
             "You need to configure the bot instance using `redbot-setup`"
             " prior to running the bot."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.CONFIGURATION_ERROR)
     try:
         basic_config = config[instance_name]
     except KeyError:
@@ -126,7 +127,7 @@ def load_basic_configuration(instance_name_: str):
             "Instance with this name doesn't exist."
             " You can create new instance using `redbot-setup` prior to running the bot."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
 
 def _base_data_path() -> Path:

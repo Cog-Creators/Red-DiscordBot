@@ -80,3 +80,9 @@ Utility UI
 
 .. automodule:: redbot.core.utils.views
     :members:
+
+AntiSpam
+========
+
+.. automodule:: redbot.core.utils.antispam
+    :members:

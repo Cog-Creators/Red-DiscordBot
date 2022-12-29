@@ -8,6 +8,8 @@ from aiohttp_json_rpc.rpc import JsonRpcMethod
 
 import logging
 
+from redbot.core.cli import ExitCodes
+
 log = logging.getLogger("red.rpc")
 
 __all__ = ["RPC", "RPCMixin", "get_name"]
@@ -89,7 +91,7 @@ class RPC:
             )
         except Exception as exc:
             log.exception("RPC setup failure", exc_info=exc)
-            sys.exit(1)
+            sys.exit(ExitCodes.CRITICAL)
         else:
             await self._site.start()
             log.debug("Created RPC server listener on port %s", port)
