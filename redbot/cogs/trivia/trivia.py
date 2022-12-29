@@ -437,7 +437,7 @@ class Trivia(commands.Cog):
         config_settings = dict(sorted(config_settings.items(), key=itemgetter(0)))
 
         embed = discord.Embed(
-            title=f'"{category}" Category Details',
+            title=_('"{category}" Category Details').format(category=category),
             color=await ctx.embed_colour(),
         )
         embed.add_field(
