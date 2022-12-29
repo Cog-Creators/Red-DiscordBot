@@ -295,7 +295,7 @@ class Streams(commands.Cog):
             view = None
             if use_buttons:
                 stream_url = embed.url
-                view = discord.ui.View(timeout=None)
+                view = discord.ui.View()
                 view.add_item(
                     discord.ui.Button(
                         label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
@@ -802,7 +802,7 @@ class Streams(commands.Cog):
         view = None
         if use_buttons:
             stream_url = embed.url
-            view = discord.ui.View(timeout=None)
+            view = discord.ui.View()
             view.add_item(
                 discord.ui.Button(
                     label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
