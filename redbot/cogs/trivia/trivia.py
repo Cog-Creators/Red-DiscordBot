@@ -16,7 +16,7 @@ from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter, can_user_react_in
-from redbot.core.utils.chat_formatting import box, pagify, bold, italics
+from redbot.core.utils.chat_formatting import box, pagify, bold, inline, italics
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
