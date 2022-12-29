@@ -19,7 +19,8 @@
                 },
                 "delay": {
                     "type": ["integer", "number"],
-                    "description": "Answer time limit in seconds, must be positive number greater than 0.0. Defaults to 15.0.",
+                    "description": "The maximum number of seconds permitted to answer a question, must be a positive number greater than or equal to 4.0. Defaults to 15.0.",
+                    "minimum": 4.0,
                     "default": 15.0
                 },
                 "max_score": {
