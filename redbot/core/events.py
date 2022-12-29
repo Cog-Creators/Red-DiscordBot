@@ -317,10 +317,12 @@ def init_events(bot, cli_flags):
                 new_ctx = await bot.get_context(ctx.message)
                 await bot.invoke(new_ctx)
                 return
-            if delay := humanize_timedelta(seconds=error.retry_after):
-                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
-            else:
-                msg = _("This command is on cooldown. Try again in 1 second.")
+            relative_time = discord.utils.format_dt(
+                datetime.now(timezone.utc) + timedelta(seconds=error.retry_after), "R"
+            )
+            msg = _("This command is on cooldown. Try again {relative_time}.").format(
+                relative_time=relative_time
+            )
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             if error.per is commands.BucketType.default:
