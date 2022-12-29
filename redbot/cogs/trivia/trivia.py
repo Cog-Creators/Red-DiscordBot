@@ -456,14 +456,21 @@ class Trivia(commands.Cog):
             ),
             inline=False,
         )
+
+        msg = _(
+            "Bot gains points: {bot_plays}\n"
+            "Answer time limit: {delay} seconds\n"
+            "Lack of response timeout: {timeout} seconds\n"
+            "Points to win: {max_score}\n"
+            "Reveal answer on timeout: {reveal_answer}\n"
+            "Payout multiplier: {payout_multiplier}\n"
+            "Allow lists to override settings: {allow_override}\n"
+            "Use Spoilers in answers: {use_spoilers}"
+        ).format(**config_settings),
+
         embed.add_field(
             name=_("Config"),
-            value=box(
-                "\n".join(
-                    f"{k.replace('_', ' ').capitalize()}: {v}" for k, v in config_settings.items()
-                ),
-                lang="yaml",
-            ),
+            value=box(msg, lang="yaml"),
             inline=False,
         )
         await ctx.send(embed=embed)
