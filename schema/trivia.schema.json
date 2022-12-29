@@ -47,7 +47,8 @@
                     "description": "Whether to use spoiler markdown when revealing question answers. Defaults to false.",
                     "default": false
                 }
-            }
+            },
+            "additionalProperties": false
         }
     }
 }
