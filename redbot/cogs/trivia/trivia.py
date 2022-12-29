@@ -448,7 +448,10 @@ class Trivia(commands.Cog):
         )
         embed.add_field(
             name=_("Description"),
-            value=data.pop("DESCRIPTION", italics("No description provided for this category.")),
+            value=(
+                data.pop("DESCRIPTION", "").strip()
+                or italics(_("No description provided for this category."))
+            ),
             inline=False,
         )
         embed.add_field(
