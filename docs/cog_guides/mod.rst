@@ -574,14 +574,14 @@ slowmode
 
 **Description**
 
-Changes channel's slowmode setting.
+Changes thread's or channel's slowmode setting.
 
 Interval can be anything from 0 seconds to 6 hours.
 Use without parameters to disable.
 
 **Arguments**
 
-* ``[interval=0:00:00]``: The time for the channel's slowmode settings.
+* ``[interval=0:00:00]``: The time for the thread's/channel's slowmode settings.
 
 .. note::
     Interval can be anything from 0 seconds to 6 hours.

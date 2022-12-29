@@ -8,7 +8,7 @@ General Utility
 ===============
 
 .. automodule:: redbot.core.utils
-    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter, get_end_user_data_statement, get_end_user_data_statement_or_raise
+    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter, get_end_user_data_statement, get_end_user_data_statement_or_raise, can_user_send_messages_in, can_user_manage_channel, can_user_react_in
 
 .. autoclass:: AsyncIter
     :members:
@@ -35,8 +35,8 @@ Embed Helpers
     :members:
     :exclude-members: randomize_color
 
-Reaction Menus
-==============
+Menus
+=====
 
 .. automodule:: redbot.core.utils.menus
     :members:
@@ -67,9 +67,22 @@ Tunnel
 
 .. automodule:: redbot.core.utils.tunnel
     :members: Tunnel
+    :exclude-members: files_from_attatch
 
 Common Filters
 ==============
 
 .. automodule:: redbot.core.utils.common_filters
+    :members:
+
+Utility UI
+==========
+
+.. automodule:: redbot.core.utils.views
+    :members:
+
+AntiSpam
+========
+
+.. automodule:: redbot.core.utils.antispam
     :members:
