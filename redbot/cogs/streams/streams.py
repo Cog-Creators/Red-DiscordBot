@@ -298,7 +298,7 @@ class Streams(commands.Cog):
                 view = discord.ui.View()
                 view.add_item(
                     discord.ui.Button(
-                        label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
+                        label=_("Watch the stream"), style=discord.ButtonStyle.link, url=stream_url
                     )
                 )
             await ctx.send(embed=embed, view=view)
