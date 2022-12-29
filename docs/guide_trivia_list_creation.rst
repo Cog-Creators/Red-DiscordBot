@@ -46,7 +46,7 @@ Description Field
 -----------------
 
 We can also add an optional ``DESCRIPTION`` to our trivia list, which
-will show from the output of ``[p]trivia info <category>``. THe
+will show from the output of ``[p]trivia info <category>``. The
 description should indicate to the user what the trivia list is
 about and what kind of questions they can expect to face.
 
