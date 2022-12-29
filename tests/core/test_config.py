@@ -595,9 +595,12 @@ async def test_raw_with_partial_primary_keys(config):
 
 @pytest.mark.asyncio
 async def test_cast_subclass_default(config):
+    # regression test for GH-5557/GH-5585
     from collections import Counter
 
     config.register_global(foo=Counter({}))
+    assert type(config.defaults["GLOBAL"]["foo"]) is dict
+    assert config.defaults["GLOBAL"]["foo"] == {}
     stored_value = await config.foo()
     assert type(stored_value) is dict
     assert stored_value == {}
