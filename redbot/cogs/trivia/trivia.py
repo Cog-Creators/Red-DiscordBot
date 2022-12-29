@@ -413,16 +413,16 @@ class Trivia(commands.Cog):
         except FileNotFoundError:
             return await ctx.send(
                 _(
-                    "Invalid category `{name}`. See `{prefix}trivia list` for a list of "
-                    "trivia categories."
-                ).format(name=category, prefix=ctx.clean_prefix)
+                    "Category {name} does not exist."
+                    " See {command} for the list of available trivia categories."
+                ).format(name=inline(category), command=inline(f"{ctx.clean_prefix}trivia list"))
             )
         except InvalidListError:
             return await ctx.send(
                 _(
-                    "There was an error parsing the trivia list for the `{name}` category. It "
-                    "may be formatted incorrectly."
-                ).format(name=category)
+                    "There was an error parsing the trivia list for the {name} category."
+                    " It may be formatted incorrectly."
+                ).format(name=inline(category))
             )
 
         default_config = await self.config.guild(ctx.guild).all()
