@@ -382,14 +382,10 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_add(command: commands.Command):
-        disabled_commands = await bot._config.disabled_commands()
-        if command.qualified_name in disabled_commands:
-            command.enabled = False
-        guild_data = await bot._config.all_guilds()
-        async for guild_id, data in AsyncIter(guild_data.items(), steps=100):
-            disabled_commands = data.get("disabled_commands", [])
-            if command.qualified_name in disabled_commands:
-                command.disable_in(discord.Object(id=guild_id))
+        if command.cog is not None:
+            return
+
+        await _disable_command_no_cog(command)
 
     async def _guild_added(guild: discord.Guild):
         disabled_commands = await bot._config.guild(guild).disabled_commands()
@@ -424,3 +420,26 @@ def init_events(bot, cli_flags):
             uuid = c.unique_identifier
             group_data = c.custom_groups
             await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
+
+        await _disable_commands_cog(cog)
+
+    async def _disable_command(
+        command: commands.Command, global_disabled: list, guilds_data: dict
+    ):
+        if command.qualified_name in global_disabled:
+            command.enabled = False
+        for guild_id, data in guilds_data.items():
+            guild_disabled_cmds = data.get("disabled_commands", [])
+            if command.qualified_name in guild_disabled_cmds:
+                command.disable_in(discord.Object(id=guild_id))
+
+    async def _disable_commands_cog(cog: commands.Cog):
+        global_disabled = await bot._config.disabled_commands()
+        guilds_data = await bot._config.all_guilds()
+        for command in cog.walk_commands():
+            await _disable_command(command, global_disabled, guilds_data)
+
+    async def _disable_command_no_cog(command: commands.Command):
+        global_disabled = await bot._config.disabled_commands()
+        guilds_data = await bot._config.all_guilds()
+        await _disable_command(command, global_disabled, guilds_data)
