@@ -193,7 +193,7 @@ reorderpath
 
 .. code-block:: none
 
-    [p]reorderpath <from_> <to>
+    [p]reorderpath <from> <to>
 
 **Description**
 
@@ -221,7 +221,7 @@ have to put the 3rd path higher than the 2nd path, let's swap them! Type
 
 **Arguments**
 
-*   ``<from_>``: The index of the path you want to move.
+*   ``<from>``: The index of the path you want to move.
 *   ``<to>``: The location where you want to insert the path.
 
 .. _cogmanagerui-command-installpath:
