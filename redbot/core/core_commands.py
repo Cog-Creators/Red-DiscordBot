@@ -3646,7 +3646,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command(name="usebuttons")
     @checks.is_owner()
-    async def use_buttons(self, ctx: commands.Context, use_buttons: bool = None):
+    async def _set_usebuttons(self, ctx: commands.Context, use_buttons: bool = None):
         """
         Set a global bot variable for using buttons in menus.
 
@@ -3672,7 +3672,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command(name="errormsg")
     @commands.is_owner()
-    async def errormsg(self, ctx: commands.Context, msg: Optional[str] = None):
+    async def _set_errormsg(self, ctx: commands.Context, msg: Optional[str] = None):
         """Set the message that will be sent on uncaught bot errors.
 
         The message must be less than 1000 characters.
