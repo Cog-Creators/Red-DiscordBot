@@ -274,7 +274,7 @@ class SetApiModal(discord.ui.Modal):
 
     This Modal can either be used standalone with its own ``discord.ui.View``
     for custom implementations, or created via ``SetApiView``
-    to have an easy to implemement secure way of setting API keys.
+    to have an easy to implement secure way of setting API keys.
 
     Parameters
     ----------
@@ -299,12 +299,10 @@ class SetApiModal(discord.ui.Modal):
             self.default_keys = list(default_keys.keys())
         self.default_keys_fmt = self._format_keys(default_keys)
 
+        _placeholder_token = "client_id YOUR_CLIENT_ID\nclient_secret YOUR_CLIENT_SECRET"
         _placeholder_service = "service"
         if self.default_service is not None:
             _placeholder_service = self.default_service
-        _placeholder_token = "client_id YOUR_CLIENT_ID\nclient_secret YOUR_CLIENT_SECRET"
-        if self.default_keys_fmt is not None:
-            _placeholder_token = self.default_keys_fmt
 
         self.title = _("Set API Keys")
         self.keys_label = _("Keys and tokens")

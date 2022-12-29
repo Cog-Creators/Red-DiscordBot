@@ -1,3 +1,2 @@
-packaging
-tox
+tox<4
 -e .[dev]
