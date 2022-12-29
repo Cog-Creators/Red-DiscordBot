@@ -61,6 +61,7 @@ class Streams(commands.Cog):
         "live_message_nomention": False,
         "ignore_reruns": False,
         "ignore_schedule": False,
+        "use_buttons": False,
     }
 
     role_defaults = {"mention": False}
@@ -289,7 +290,18 @@ class Streams(commands.Cog):
                     return
             else:
                 embed = info
-            await ctx.send(embed=embed)
+
+            use_buttons: bool = await self.config.guild(ctx.channel.guild).use_buttons()
+            view = None
+            if use_buttons:
+                stream_url = embed.url
+                view = discord.ui.View()
+                view.add_item(
+                    discord.ui.Button(
+                        label=_("Watch the stream"), style=discord.ButtonStyle.link, url=stream_url
+                    )
+                )
+            await ctx.send(embed=embed, view=view)
 
     @commands.group()
     @commands.guild_only()
@@ -705,6 +717,19 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_schedule.set(True)
             await ctx.send(_("Streams schedules will no longer send an alert."))
 
+    @streamset.command(name="usebuttons")
+    @commands.guild_only()
+    async def use_buttons(self, ctx: commands.Context):
+        """Toggle whether to use buttons for stream alerts."""
+        guild = ctx.guild
+        current_setting: bool = await self.config.guild(guild).use_buttons()
+        if current_setting:
+            await self.config.guild(guild).use_buttons.set(False)
+            await ctx.send(_("I will no longer use buttons in stream alerts."))
+        else:
+            await self.config.guild(guild).use_buttons.set(True)
+            await ctx.send(_("I will use buttons in stream alerts."))
+
     async def add_or_remove(self, ctx: commands.Context, stream, discord_channel):
         if discord_channel.id not in stream.channels:
             stream.channels.append(discord_channel.id)
@@ -773,10 +798,21 @@ class Streams(commands.Cog):
         *,
         is_schedule: bool = False,
     ):
+        use_buttons: bool = await self.config.guild(channel.guild).use_buttons()
+        view = None
+        if use_buttons:
+            stream_url = embed.url
+            view = discord.ui.View()
+            view.add_item(
+                discord.ui.Button(
+                    label=_("Watch the stream"), style=discord.ButtonStyle.link, url=stream_url
+                )
+            )
         m = await channel.send(
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+            view=view,
         )
         message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
         if is_schedule:
