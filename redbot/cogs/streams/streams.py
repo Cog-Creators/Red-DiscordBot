@@ -282,7 +282,6 @@ class Streams(commands.Cog):
                 _("Something went wrong whilst trying to contact the stream service's API.")
             )
         else:
-            use_buttons: bool = await self.config.guild(ctx.channel.guild).use_buttons()
             if isinstance(info, tuple):
                 embed, is_rerun = info
                 ignore_reruns = await self.config.guild(ctx.channel.guild).ignore_reruns()
@@ -291,6 +290,8 @@ class Streams(commands.Cog):
                     return
             else:
                 embed = info
+
+            use_buttons: bool = await self.config.guild(ctx.channel.guild).use_buttons()
             view = None
             if use_buttons:
                 stream_url = embed.url
