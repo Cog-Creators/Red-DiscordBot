@@ -285,29 +285,22 @@ class Streams(commands.Cog):
             use_buttons: bool = await self.config.guild(ctx.channel.guild).use_buttons()
             if isinstance(info, tuple):
                 embed, is_rerun = info
-                if use_buttons:
-                    stream_url = embed.url
-                    view = discord.ui.View()
-                    view.add_item(
-                        discord.ui.Button(
-                            label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
-                        )
-                    )
                 ignore_reruns = await self.config.guild(ctx.channel.guild).ignore_reruns()
                 if ignore_reruns and is_rerun:
                     await ctx.send(_("That user is offline."))
                     return
             else:
                 embed = info
-                if use_buttons:
-                    stream_url = embed.url
-                    view = discord.ui.View()
-                    view.add_item(
-                        discord.ui.Button(
-                            label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
-                        )
+            view = None
+            if use_buttons:
+                stream_url = embed.url
+                view = discord.ui.View(timeout=None)
+                view.add_item(
+                    discord.ui.Button(
+                        label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
                     )
-            await ctx.send(embed=embed, view=view if use_buttons else None)
+                )
+            await ctx.send(embed=embed, view=view)
 
     @commands.group()
     @commands.guild_only()
@@ -731,7 +724,7 @@ class Streams(commands.Cog):
         current_setting: bool = await self.config.guild(guild).use_buttons()
         if current_setting:
             await self.config.guild(guild).use_buttons.set(False)
-            await ctx.send(_("I will not use buttons in stream alerts."))
+            await ctx.send(_("I will no longer use buttons in stream alerts."))
         else:
             await self.config.guild(guild).use_buttons.set(True)
             await ctx.send(_("I will use buttons in stream alerts."))
@@ -805,9 +798,10 @@ class Streams(commands.Cog):
         is_schedule: bool = False,
     ):
         use_buttons: bool = await self.config.guild(channel.guild).use_buttons()
+        view = None
         if use_buttons:
             stream_url = embed.url
-            view = discord.ui.View()
+            view = discord.ui.View(timeout=None)
             view.add_item(
                 discord.ui.Button(
                     label=_("Open Stream"), style=discord.ButtonStyle.link, url=stream_url
@@ -817,7 +811,7 @@ class Streams(commands.Cog):
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
-            view=view if use_buttons else None,
+            view=view,
         )
         message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
         if is_schedule:
