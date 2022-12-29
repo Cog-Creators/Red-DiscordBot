@@ -440,7 +440,9 @@ class Trivia(commands.Cog):
             title=f'"{category}" Category Details',
             color=await ctx.embed_colour(),
         )
-        embed.add_field(name=_("Author"), value=data.pop("AUTHOR", italics("Not provided.")))
+        embed.add_field(
+            name=_("Authors"), value=data.pop("AUTHOR", "").strip() or italics(_("Not provided."))
+        )
         embed.add_field(name=_("Question count"), value=len(data))
         embed.add_field(
             name=_("Custom"),
