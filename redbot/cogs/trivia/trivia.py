@@ -780,7 +780,9 @@ class Trivia(commands.Cog):
         for key in ("AUTHOR", "DESCRIPTION"):
             if len(trivia_dict.get(key, "")) > 1024:
                 return await ctx.send(
-                    _("Trivia list {key} must be under 1024 characters.").format(key=key)
+                    _("Trivia list's {key} key must be under 1024 characters.").format(
+                        key=inline(key)
+                    )
                 )
 
         buffer.seek(0)
