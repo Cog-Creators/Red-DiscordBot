@@ -3686,7 +3686,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             content = _("Succesfully updated the error message.")
         else:
             await self.bot._config.invoke_error_msg.clear()
-            content = _("Successfully updated the error message back to the default one.")
+            content = _("Successfully reset the error message back to the default one.")
 
         await ctx.send(content)
 
