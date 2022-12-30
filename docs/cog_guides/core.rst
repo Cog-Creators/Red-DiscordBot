@@ -3102,6 +3102,13 @@ The message must be less than 1000 characters
 Use ``{command}`` to pass the command name in the message.
 If you omit the ``msg`` argument, the message will be reset to the default one.
 
+**Examples:**
+    - ``[p]set errormsg`` - Resets the error message back to default, as "Error in command '{command}'. Check your console or logs for details.". Do note that the "Check your console..." part will be sent only if the command author is a owner of the bot.
+    - ``[p]set errormsg Oops, the command {command} has failed! Please try again later.`` - Sets the error message to a custom one.
+
+**Arguments:**
+    - ``[msg]`` - The custom error message. Omit to reset to the default one.
+
 .. _core-command-set-fuzzy:
 
 """""""""
