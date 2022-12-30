@@ -3677,6 +3677,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The message must be less than 1000 characters.
         Use `{command}` to pass the command name in the message.
+        If you omit the `msg` argument, the message will be reset to the default one.
         """
         if msg is not None and len(msg) >= 1000:
             return await ctx.send(_("The message must be less than 1000 characters."))
