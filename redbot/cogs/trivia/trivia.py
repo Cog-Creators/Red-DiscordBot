@@ -4,7 +4,7 @@ import math
 import pathlib
 from collections import Counter
 from typing import Any, Dict, List, Literal, Union
-from schema import Schema, Optional, SchemaError, Or, And, Const
+import schema
 
 import io
 import yaml
@@ -23,44 +23,11 @@ from .checks import trivia_stop_check
 from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
+from .schema import TRIVIA_LIST_SCHEMA
 
 __all__ = ("Trivia", "UNIQUE_ID", "InvalidListError", "get_core_lists", "get_list")
 
 UNIQUE_ID = 0xB3C0E453
-TRIVIA_LIST_SCHEMA = Schema(
-    {
-        Optional("AUTHOR"): str,
-        Optional("CONFIG"): {
-            Optional("max_score"): And(
-                int, lambda n: n >= 1, error="max_score must be a positive integer"
-            ),
-            Optional("timeout"): And(
-                Or(int, float),
-                lambda n: n > 0.0,
-                error="timeout must be a positive number",
-            ),
-            Optional("delay"): And(
-                Or(int, float),
-                lambda n: n >= 4.0,
-                error="delay must be a positive number greater than or equal to 4",
-            ),
-            Optional("bot_plays"): Const(bool, error="bot_plays must be either true or false"),
-            Optional("reveal_answer"): Const(
-                bool, error="reveal_answer must be either true or false"
-            ),
-            Optional("payout_multiplier"): And(
-                Or(int, float),
-                lambda n: n >= 0.0,
-                error="payout_multiplier must be a non-negative number",
-            ),
-            Optional("use_spoilers"): Const(
-                bool, error="use_spoilers must be either true or false"
-            ),
-        },
-        str: [str, int, bool, float],
-    }
-)
-
 _ = Translator("Trivia", __file__)
 
 
@@ -317,7 +284,7 @@ class Trivia(commands.Cog):
                 _("There was an error parsing the trivia list. See logs for more info.")
             )
             LOG.exception("Custom Trivia file %s failed to upload", parsedfile.filename)
-        except SchemaError as e:
+        except schema.SchemaError as exc:
             await ctx.send(
                 _(
                     "The custom trivia list was not saved."
@@ -758,8 +725,6 @@ def get_list(path: pathlib.Path) -> Dict[str, Any]:
     ------
     InvalidListError
         Parsing of list's YAML file failed.
-    SchemaError
-        The list does not adhere to the schema.
     """
     with path.open(encoding="utf-8") as file:
         try:
@@ -769,6 +734,6 @@ def get_list(path: pathlib.Path) -> Dict[str, Any]:
 
     try:
         TRIVIA_LIST_SCHEMA.validate(trivia_dict)
-    except SchemaError as exc:
+    except schema.SchemaError as exc:
         raise InvalidListError("The list does not adhere to the schema.") from exc
     return trivia_dict
