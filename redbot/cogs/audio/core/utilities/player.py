@@ -495,7 +495,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             title = _("Playlist Enqueued") if not query.is_album else _("Album Enqueued")
             embed = discord.Embed(
-                description=f"[{playlist_name}]({playlist_url})"
+                description=bold(f"[{playlist_name}]({playlist_url})")
                 if playlist_url
                 else playlist_name,
                 title=title,
