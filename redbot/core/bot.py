@@ -134,7 +134,7 @@ class Red(
             invite_commands_scope=False,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
-            invoke_error_msg="`Error in command {command}. Check your console or logs for details.`",
+            invoke_error_msg=None,
             extra_owner_destinations=[],
             owner_opt_out_list=[],
             last_system_info__python_version=[3, 7],
