@@ -3655,7 +3655,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This defaults to False.
         Using this without a setting will toggle.
 
-         **Examples:**
+        **Examples:**
             - `[p]set usebuttons True` - Enables using buttons.
             - `[p]helpset usebuttons` - Toggles the value.
 
@@ -3673,11 +3673,19 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command(name="errormsg")
     @commands.is_owner()
     async def _set_errormsg(self, ctx: commands.Context, *, msg: str = None):
-        """Set the message that will be sent on uncaught bot errors.
+        """
+        Set the message that will be sent on uncaught bot errors.
 
-        The message must be less than 1000 characters.
-        Use `{command}` to pass the command name in the message.
+        To include the command name in the message, use the `{command}` placeholder.
+
         If you omit the `msg` argument, the message will be reset to the default one.
+
+        **Examples:**
+            - `[p]set errormsg` - Resets the error message back to the default: "Error in command '{command}'.". If the command invoker is one of the bot owners, the message will also include "Check your console or logs for details.".
+            - `[p]set errormsg Oops, the command {command} has failed! Please try again later.` - Sets the error message to a custom one.
+
+        **Arguments:**
+            - `[msg]` - The custom error message. Must be less than 1000 characters. Omit to reset to the default one.
         """
         if msg is not None and len(msg) >= 1000:
             return await ctx.send(_("The message must be less than 1000 characters."))

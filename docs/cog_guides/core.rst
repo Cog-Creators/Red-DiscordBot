@@ -3098,16 +3098,16 @@ set errormsg
 
 Set the message that will be sent on uncaught bot errors.
 
-The message must be less than 1000 characters
-Use ``{command}`` to pass the command name in the message.
+To include the command name in the message, use the ``{command}`` placeholder.
+
 If you omit the ``msg`` argument, the message will be reset to the default one.
 
 **Examples:**
-    - ``[p]set errormsg`` - Resets the error message back to default, as "Error in command '{command}'. Check your console or logs for details.". Do note that the "Check your console..." part will be sent only if the command author is a owner of the bot.
+    - ``[p]set errormsg`` - Resets the error message back to the default: "Error in command '{command}'.". If the command invoker is one of the bot owners, the message will also include "Check your console or logs for details.".
     - ``[p]set errormsg Oops, the command {command} has failed! Please try again later.`` - Sets the error message to a custom one.
 
 **Arguments:**
-    - ``[msg]`` - The custom error message. Omit to reset to the default one.
+    - ``[msg]`` - The custom error message. Must be less than 1000 characters. Omit to reset to the default one.
 
 .. _core-command-set-fuzzy:
 
