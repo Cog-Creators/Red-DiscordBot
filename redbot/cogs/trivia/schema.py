@@ -27,40 +27,43 @@ _ = SchemaErrorMessage
 TRIVIA_LIST_SCHEMA = Schema(
     {
         Optional("AUTHOR"): And(str, error=_("{key} key must be a text value.")),
-        Optional("CONFIG"): {
-            Optional("max_score"): And(
-                int,
-                lambda n: n >= 1,
-                error=_("{key} key in {parent_key} must be a positive integer."),
-            ),
-            Optional("timeout"): And(
-                Use(int_or_float),
-                lambda n: n > 0.0,
-                error=_("{key} key in {parent_key} must be a positive number."),
-            ),
-            Optional("delay"): And(
-                Use(int_or_float),
-                lambda n: n >= 4.0,
-                error=_(
-                    "{key} key in {parent_key} must be a positive number"
-                    " greater than or equal to 4."
+        Optional("CONFIG"): And(
+            {
+                Optional("max_score"): And(
+                    int,
+                    lambda n: n >= 1,
+                    error=_("{key} key in {parent_key} must be a positive integer."),
                 ),
-            ),
-            Optional("bot_plays"): Const(
-                bool, error=_("{key} key in {parent_key} must be either true or false.")
-            ),
-            Optional("reveal_answer"): Const(
-                bool, error=_("{key} key in {parent_key} must be either true or false.")
-            ),
-            Optional("payout_multiplier"): And(
-                Use(int_or_float),
-                lambda n: n >= 0.0,
-                error=_("{key} key in {parent_key} must be a non-negative number."),
-            ),
-            Optional("use_spoilers"): Const(
-                bool, error=_("{key} key in {parent_key} must be either true or false.")
-            ),
-        },
+                Optional("timeout"): And(
+                    Use(int_or_float),
+                    lambda n: n > 0.0,
+                    error=_("{key} key in {parent_key} must be a positive number."),
+                ),
+                Optional("delay"): And(
+                    Use(int_or_float),
+                    lambda n: n >= 4.0,
+                    error=_(
+                        "{key} key in {parent_key} must be a positive number"
+                        " greater than or equal to 4."
+                    ),
+                ),
+                Optional("bot_plays"): Const(
+                    bool, error=_("{key} key in {parent_key} must be either true or false.")
+                ),
+                Optional("reveal_answer"): Const(
+                    bool, error=_("{key} key in {parent_key} must be either true or false.")
+                ),
+                Optional("payout_multiplier"): And(
+                    Use(int_or_float),
+                    lambda n: n >= 0.0,
+                    error=_("{key} key in {parent_key} must be a non-negative number."),
+                ),
+                Optional("use_spoilers"): Const(
+                    bool, error=_("{key} key in {parent_key} must be either true or false.")
+                ),
+            },
+            error=_("{key} should be a 'key: value' mapping."),
+        ),
         str: And(
             [str, int, bool, float],
             error=_("Value of question {key} is not a list of text values (answers)."),
