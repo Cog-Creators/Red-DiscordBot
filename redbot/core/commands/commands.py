@@ -309,7 +309,6 @@ class Command(CogCommandMixin, DPYCommand):
 
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
-        super().__init__(*args, **kwargs)
         self._disabled_in: discord.utils.SnowflakeList = discord.utils.SnowflakeList([])
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
