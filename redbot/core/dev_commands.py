@@ -27,6 +27,7 @@ import discord
 from . import checks, commands
 from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
+from .utils import chat_formatting
 from .utils.chat_formatting import pagify
 from .utils.predicates import MessagePredicate
 
@@ -110,6 +111,7 @@ class Dev(commands.Cog):
             "aiohttp": aiohttp,
             "discord": discord,
             "commands": commands,
+            "cf": chat_formatting,
             "_": self._last_result,
             "__name__": "__main__",
         }
@@ -135,14 +137,18 @@ class Dev(commands.Cog):
         lines or asynchronous code, see [p]repl or [p]eval.
 
         Environment Variables:
-            ctx      - command invocation context
-            bot      - bot object
-            channel  - the current channel object
-            author   - command author's member object
-            message  - the command's message object
-            discord  - discord.py library
-            commands - redbot.core.commands
-            _        - The result of the last dev command.
+            `ctx`      - the command invocation context
+            `bot`      - the bot object
+            `channel`  - the current channel object
+            `author`   - the command author's member object
+            `guild`    - the current guild object
+            `message`  - the command's message object
+            `_`        - the result of the last dev command
+            `aiohttp`  - the aiohttp library
+            `asyncio`  - the asyncio library
+            `discord`  - the discord.py library
+            `commands` - the redbot.core.commands module
+            `cf`       - the redbot.core.utils.chat_formatting module
         """
         env = self.get_environment(ctx)
         code = self.cleanup_code(code)
@@ -178,14 +184,18 @@ class Dev(commands.Cog):
         as they are not mixed and they are formatted correctly.
 
         Environment Variables:
-            ctx      - command invocation context
-            bot      - bot object
-            channel  - the current channel object
-            author   - command author's member object
-            message  - the command's message object
-            discord  - discord.py library
-            commands - redbot.core.commands
-            _        - The result of the last dev command.
+            `ctx`      - the command invocation context
+            `bot`      - the bot object
+            `channel`  - the current channel object
+            `author`   - the command author's member object
+            `guild`    - the current guild object
+            `message`  - the command's message object
+            `_`        - the result of the last dev command
+            `aiohttp`  - the aiohttp library
+            `asyncio`  - the asyncio library
+            `discord`  - the discord.py library
+            `commands` - the redbot.core.commands module
+            `cf`       - the redbot.core.utils.chat_formatting module
         """
         env = self.get_environment(ctx)
         body = self.cleanup_code(body)
@@ -204,7 +214,7 @@ class Dev(commands.Cog):
         try:
             with redirect_stdout(stdout):
                 result = await func()
-        except:
+        except Exception:
             printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
             printed = stdout.getvalue()
@@ -227,6 +237,23 @@ class Dev(commands.Cog):
         The REPL will only recognise code as messages which start with a
         backtick. This includes codeblocks, and as such multiple lines can be
         evaluated.
+
+        Use `exit()` or `quit` to exit the REPL session, prefixed with
+        a backtick so they may be interpreted.
+
+        Environment Variables:
+            `ctx`      - the command invocation context
+            `bot`      - the bot object
+            `channel`  - the current channel object
+            `author`   - the command author's member object
+            `guild`    - the current guild object
+            `message`  - the command's message object
+            `_`        - the result of the last dev command
+            `aiohttp`  - the aiohttp library
+            `asyncio`  - the asyncio library
+            `discord`  - the discord.py library
+            `commands` - the redbot.core.commands module
+            `cf`       - the redbot.core.utils.chat_formatting module
         """
         if ctx.channel.id in self.sessions:
             if self.sessions[ctx.channel.id]:
@@ -293,13 +320,16 @@ class Dev(commands.Cog):
                     else:
                         result = executor(code, env)
                     result = await self.maybe_await(result)
-            except:
+            except Exception:
                 value = stdout.getvalue()
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
                 value = stdout.getvalue()
                 if result is not None:
-                    msg = "{}{}".format(value, result)
+                    try:
+                        msg = "{}{}".format(value, result)
+                    except Exception:
+                        msg = "{}{}".format(value, traceback.format_exc())
                     env["_"] = result
                 elif value:
                     msg = "{}".format(value)
@@ -315,7 +345,7 @@ class Dev(commands.Cog):
 
     @repl.command(aliases=["resume"])
     async def pause(self, ctx, toggle: Optional[bool] = None):
-        """Pauses/resumes the REPL running in the current channel"""
+        """Pauses/resumes the REPL running in the current channel."""
         if ctx.channel.id not in self.sessions:
             await ctx.send(_("There is no currently running REPL session in this channel."))
             return
@@ -329,6 +359,7 @@ class Dev(commands.Cog):
         else:
             await ctx.send(_("The REPL session in this channel is now paused."))
 
+    @commands.guild_only()
     @commands.command()
     @checks.is_owner()
     async def mock(self, ctx, user: discord.Member, *, command):
@@ -342,6 +373,7 @@ class Dev(commands.Cog):
 
         ctx.bot.dispatch("message", msg)
 
+    @commands.guild_only()
     @commands.command(name="mockmsg")
     @checks.is_owner()
     async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
