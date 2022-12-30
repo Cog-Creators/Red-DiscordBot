@@ -256,6 +256,7 @@ class pagify(Iterator[str]):
         self._delims = delims
         self._priority = priority
         self._escape_mass_mentions = escape_mass_mentions
+        self._shorten_by = shorten_by
         self._page_length = page_length - shorten_by
 
         self._start = 0
@@ -271,8 +272,8 @@ class pagify(Iterator[str]):
             f" {self._delims!r},"
             f" priority={self._priority!r},"
             f" escape_mass_mentions={self._escape_mass_mentions!r},"
-            " shorten_by=0,"
-            f" page_length={self._page_length!r}"
+            f" shorten_by={self._shorten_by!r},"
+            f" page_length={self._page_length + self._shorten_by!r}"
             ")"
         )
 
