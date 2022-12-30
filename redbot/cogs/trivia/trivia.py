@@ -284,6 +284,10 @@ class Trivia(commands.Cog):
                 _("There was an error parsing the trivia list. See logs for more info.")
             )
             LOG.exception("Custom Trivia file %s failed to upload", parsedfile.filename)
+        except schema.SchemaMissingKeyError:
+            await ctx.send(
+                "The custom trivia list was not saved. The file does not contain any questions."
+            )
         except schema.SchemaError as exc:
             await ctx.send(
                 _(
