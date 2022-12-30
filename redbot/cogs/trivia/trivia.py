@@ -278,7 +278,7 @@ class Trivia(commands.Cog):
         try:
             await self._save_trivia_list(ctx=ctx, attachment=parsedfile)
         except yaml.error.MarkedYAMLError as exc:
-            await ctx.send(_("Invalid syntax: ") + str(exc))
+            await ctx.send(_("Invalid syntax:\n") + box(str(exc)))
         except yaml.error.YAMLError:
             await ctx.send(
                 _("There was an error parsing the trivia list. See logs for more info.")
