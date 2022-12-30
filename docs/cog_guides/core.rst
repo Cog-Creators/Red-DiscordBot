@@ -3099,8 +3099,8 @@ set errormsg
 Set the message that will be sent on uncaught bot errors.
 
 The message must be less than 1000 characters
-Use `{command}` to pass the command name in the message.
-If you omit the `msg` argument, the message will be reset to the default one.
+Use ``{command}`` to pass the command name in the message.
+If you omit the ``msg`` argument, the message will be reset to the default one.
 
 .. _core-command-set-fuzzy:
 
