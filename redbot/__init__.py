@@ -1,3 +1,4 @@
+import os as _os
 import re as _re
 import sys as _sys
 import warnings as _warnings
@@ -209,45 +210,86 @@ class VersionInfo:
     def _get_version(cls, *, ignore_installed: bool = False) -> _Tuple[str, "VersionInfo"]:
         if not _VERSION.endswith(".dev1"):
             return _VERSION, cls.from_str(_VERSION)
-        try:
-            import os
 
-            path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-            # we only want to do this for editable installs
-            if not os.path.exists(os.path.join(path, ".git")):
-                raise RuntimeError("not a git repository")
+        project_root = _os.path.abspath(_os.path.dirname(_os.path.dirname(__file__)))
 
-            import subprocess
-
-            output = subprocess.check_output(
-                ("git", "describe", "--tags", "--long", "--dirty"),
-                stderr=subprocess.DEVNULL,
-                cwd=path,
-            )
-            _, count, commit, *dirty = output.decode("utf-8").strip().split("-", 3)
-            dirty_suffix = f".{dirty[0]}" if dirty else ""
-            ver = f"{_VERSION[:-1]}{count}+{commit}{dirty_suffix}"
-            return ver, cls.from_str(ver)
-        except Exception:
-            # `ignore_installed` is `True` when building with setuptools.
-            if ignore_installed:
-                # we don't want any failure to raise here but we should print it
-                import traceback
-
-                traceback.print_exc()
+        methods = [
+            cls._get_version_from_git_repo,
+        ]
+        # `ignore_installed` is `True` when building with setuptools.
+        if ignore_installed:
+            methods.append(cls._get_version_from_sdist_pkg_info)
+            methods.append(cls._get_version_from_git_archive)
+        else:
+            methods.append(cls._get_version_from_package_metadata)
+        exceptions = []
+        for method in methods:
+            try:
+                version = method(project_root)
+            except Exception as exc:
+                exceptions.append(exc)
             else:
-                try:
-                    from importlib.metadata import version
+                break
+        else:
+            import traceback
 
-                    ver = version("Red-DiscordBot")
-                    return ver, cls.from_str(ver)
-                except Exception:
-                    # we don't want any failure to raise here but we should print it
-                    import traceback
+            for exc in exceptions:
+                traceback.print_exception(None, exc, exc.__traceback__)
+                exc.__traceback__ = None
 
-                    traceback.print_exc()
+            version = _VERSION
 
-        return _VERSION, cls.from_str(_VERSION)
+        return version, cls.from_str(version)
+
+    @classmethod
+    def _get_version_from_git_repo(cls, project_root: str) -> str:
+        # we only want to do this for editable installs
+        if not _os.path.exists(_os.path.join(project_root, ".git")):
+            raise RuntimeError("not a git repository")
+
+        import subprocess
+
+        output = subprocess.check_output(
+            ("git", "describe", "--tags", "--long", "--dirty"),
+            stderr=subprocess.DEVNULL,
+            cwd=project_root,
+        )
+        _, count, commit, *dirty = output.decode("utf-8").strip().split("-", 3)
+        dirty_suffix = f".{dirty[0]}" if dirty else ""
+        return f"{_VERSION[:-1]}{count}+{commit}{dirty_suffix}"
+
+    @classmethod
+    def _get_version_from_git_archive(cls, project_root: str) -> str:
+        with open(_os.path.join(project_root, ".git_archive_info.txt"), encoding="utf-8") as fp:
+            commit, describe_name = fp.read().splitlines()
+            if not describe_name:
+                raise RuntimeError("git archive's describe didn't output anything")
+            if "%(describe" in describe_name:
+                # either git-archive was generated with Git < 2.35 or this is not a git-archive
+                raise RuntimeError("git archive did not support describe output")
+            _, _, suffix = describe_name.partition("-")
+            if suffix:
+                count, _, _ = suffix.partition("-")
+            else:
+                count = "0"
+            return f"{_VERSION[:-1]}{count}+g{commit}"
+
+    @classmethod
+    def _get_version_from_sdist_pkg_info(cls, project_root: str) -> str:
+        pkg_info_path = _os.path.join(project_root, "PKG-INFO")
+        if not _os.path.exists(pkg_info_path):
+            raise RuntimeError("not an sdist")
+
+        import email
+
+        with open(pkg_info_path, encoding="utf-8") as fp:
+            return email.message_from_file(fp)["Version"]
+
+    @classmethod
+    def _get_version_from_package_metadata(cls, project_root: str) -> str:
+        from importlib.metadata import version
+
+        return version("Red-DiscordBot")
 
 
 def _update_event_loop_policy():
