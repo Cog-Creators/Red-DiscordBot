@@ -23,7 +23,15 @@ def int_or_float(value: Any) -> float:
     return float(value)
 
 
+def not_str(value: Any) -> float:
+    if isinstance(value, str):
+        raise TypeError("Value needs to not be a string.")
+    return value
+
+
 _ = SchemaErrorMessage
+ALWAYS_MATCH = Optional(Use(lambda x: x))
+MATCH_ALL_BUT_STR = Optional(Use(not_str))
 TRIVIA_LIST_SCHEMA = Schema(
     {
         Optional("AUTHOR"): And(str, error=_("{key} key must be a text value.")),
@@ -61,12 +69,24 @@ TRIVIA_LIST_SCHEMA = Schema(
                 Optional("use_spoilers"): Const(
                     bool, error=_("{key} key in {parent_key} must be either true or false.")
                 ),
+                # This matches any extra key and always fails validation
+                # for the purpose of better error messages.
+                ALWAYS_MATCH: And(
+                    lambda __: False,
+                    error=_("{key} is not a key that can be specified in {parent_key}."),
+                ),
             },
             error=_("{key} should be a 'key: value' mapping."),
         ),
         str: And(
             [str, int, bool, float],
             error=_("Value of question {key} is not a list of text values (answers)."),
+        ),
+        # This matches any extra key and always fails validation
+        # for the purpose of better error messages.
+        MATCH_ALL_BUT_STR: And(
+            lambda __: False,
+            error=_("A key of question {key} is not a text value."),
         ),
     },
     error=_("A trivia list should be a 'key: value' mapping."),
