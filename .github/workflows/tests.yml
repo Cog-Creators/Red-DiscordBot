@@ -27,8 +27,11 @@ jobs:
               python_version: "3.9"
               friendly_name: Python 3.9 - Tests
             - tox_env: py310
-              python_version: "3.10-dev"
-              friendly_name: Python 3.10-dev - Tests
+              python_version: "3.10"
+              friendly_name: Python 3.10 - Tests
+            - tox_env: py311
+              python_version: "3.11"
+              friendly_name: Python 3.11 - Tests
             - tox_env: style
               friendly_name: Style
             - tox_env: docs
@@ -59,7 +62,8 @@ jobs:
           python_version:
             - "3.8"
             - "3.9"
-            - "3.10-dev"
+            - "3.10"
+            - "3.11"
         fail-fast: false
       name: Tox - Postgres
       services:

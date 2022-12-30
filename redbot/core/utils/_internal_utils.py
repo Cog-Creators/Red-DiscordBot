@@ -31,8 +31,8 @@ from typing import (
 
 import aiohttp
 import discord
-import pkg_resources
-from fuzzywuzzy import fuzz, process
+from packaging.requirements import Requirement
+from rapidfuzz import fuzz, process
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 from red_commons.logging import VERBOSE, TRACE
@@ -147,20 +147,20 @@ async def fuzzy_command_search(
             return None
 
     if commands is None:
-        choices = set(ctx.bot.walk_commands())
+        choices = {c: c.qualified_name for c in ctx.bot.walk_commands()}
     elif isinstance(commands, collections.abc.AsyncIterator):
-        choices = {c async for c in commands}
+        choices = {c: c.qualified_name async for c in commands}
     else:
-        choices = set(commands)
+        choices = {c: c.qualified_name for c in commands}
 
-    # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
+    # Do the scoring. `extracted` is a list of tuples in the form `(cmd_name, score, cmd)`
     extracted = process.extract(term, choices, limit=5, scorer=fuzz.QRatio)
     if not extracted:
         return None
 
     # Filter through the fuzzy-matched commands.
     matched_commands = []
-    for command, score in extracted:
+    for __, score, command in extracted:
         if score < min_score:
             # Since the list is in decreasing order of score, we can exit early.
             break
@@ -316,8 +316,8 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
 
 def expected_version(current: str, expected: str) -> bool:
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
-    return current in pkg_resources.Requirement.parse(f"x{expected}")
+    # Requirement needs a regular requirement string, so "x" serves as requirement's name here
+    return Requirement(f"x{expected}").specifier.contains(current, prereleases=True)
 
 
 async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
