@@ -4,7 +4,7 @@ import math
 import pathlib
 from collections import Counter
 from typing import Any, Dict, List, Literal, Union
-from schema import Schema, Optional, Or, SchemaError
+from schema import Schema, Optional, SchemaError, And, Const
 
 import io
 import yaml
@@ -31,13 +31,13 @@ TRIVIA_LIST_SCHEMA = Schema(
     {
         Optional("AUTHOR"): str,
         Optional("CONFIG"): {
-            Optional("max_score"): int,
-            Optional("timeout"): Or(int, float),
-            Optional("delay"): Or(int, float),
-            Optional("bot_plays"): bool,
-            Optional("reveal_answer"): bool,
-            Optional("payout_multiplier"): Or(int, float),
-            Optional("use_spoilers"): bool,
+            Optional("max_score"): And(int, lambda n: n >= 1, error="max_score must be a positive integer"),
+            Optional("timeout"): And(float, lambda n: n > 0.0, error="timeout must be a positive decimal number"),
+            Optional("delay"): And(float, lambda n: n > 4.0, error="delay must be a positive decimal number greater than 4"),
+            Optional("bot_plays"): Const(bool, error="bot_plays must be either true or false"),
+            Optional("reveal_answer"): Const(bool, error="reveal_answer must be either true or false"),
+            Optional("payout_multiplier"): And(float, lambda n: n >= 0.0, error="payout_multiplier must a positive decimal number"),
+            Optional("use_spoilers"): Const(bool, error="use_spoilers must be either true or false"),
         },
         str: [str, int, bool, float],
     }
@@ -120,7 +120,7 @@ class Trivia(commands.Cog):
     @triviaset.command(name="maxscore")
     async def triviaset_max_score(self, ctx: commands.Context, score: int):
         """Set the total points required to win."""
-        if score < 0:
+        if score <= 0:
             await ctx.send(_("Score must be greater than 0."))
             return
         settings = self.config.guild(ctx.guild)
