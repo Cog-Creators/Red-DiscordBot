@@ -315,7 +315,9 @@ class Streams(commands.Cog):
         self,
         ctx: commands.Context,
         channel_name: str,
-        discord_channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Manage Twitch stream notifications."""
         await ctx.invoke(self.twitch_alert_channel, channel_name, discord_channel)
