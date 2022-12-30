@@ -15,7 +15,6 @@ def test_deduplicate_iterables():
     assert deduplicate_iterables(*inputs) == expected
 
 
-@pytest.mark.asyncio
 async def test_bounded_gather():
     status = [0, 0]  # num_running, max_running
 
@@ -52,7 +51,6 @@ async def test_bounded_gather():
     assert num_fail == num_failed
 
 
-@pytest.mark.asyncio
 async def test_bounded_gather_iter():
     status = [0, 0]  # num_running, max_running
 
@@ -91,7 +89,6 @@ async def test_bounded_gather_iter():
 
 
 @pytest.mark.skip(reason="spams logs with pending task warnings")
-@pytest.mark.asyncio
 async def test_bounded_gather_iter_cancel():
     status = [0, 0, 0]  # num_running, max_running, num_ran
 

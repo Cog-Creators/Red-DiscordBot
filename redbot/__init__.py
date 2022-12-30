@@ -269,8 +269,12 @@ def _ensure_no_colorama():
     from rich.console import detect_legacy_windows
 
     if not detect_legacy_windows():
-        import colorama
-        import colorama.initialise
+        try:
+            import colorama
+            import colorama.initialise
+        except ModuleNotFoundError:
+            # colorama is not Red's primary dependency so it might not be present
+            return
 
         colorama.deinit()
 
@@ -300,8 +304,6 @@ _VERSION = "3.5.0.dev1"
 
 __version__, version_info = VersionInfo._get_version()
 
-# Filter fuzzywuzzy slow sequence matcher warning
-_warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
 # Show DeprecationWarning
 _warnings.filterwarnings("default", category=DeprecationWarning)
 
@@ -319,4 +321,14 @@ if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
         category=DeprecationWarning,
         module="asyncio",
         message="The loop argument is deprecated since Python 3.8",
+    )
+    # DEP-WARN - d.py currently uses audioop module, Danny is aware of the deprecation
+    #
+    # DeprecationWarning: 'audioop' is deprecated and slated for removal in Python 3.13
+    #   import audioop
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="discord",
+        message="'audioop' is deprecated and slated for removal",
     )

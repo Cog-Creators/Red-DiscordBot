@@ -3,14 +3,12 @@ import pytest
 from redbot.pytest.mod import *
 
 
-@pytest.mark.asyncio
 async def test_modlog_register_casetype(mod):
     ct = {"name": "ban", "default_setting": True, "image": ":hammer:", "case_str": "Ban"}
     casetype = await mod.register_casetype(**ct)
     assert casetype is not None
 
 
-@pytest.mark.asyncio
 async def test_modlog_case_create(mod, ctx, member_factory):
     from datetime import datetime, timezone
 
@@ -33,7 +31,6 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     assert case.created_at == int(created_at.timestamp())
 
 
-@pytest.mark.asyncio
 async def test_modlog_set_modlog_channel(mod, ctx):
     await mod.set_modlog_channel(ctx.guild, ctx.channel)
     assert await mod.get_modlog_channel(ctx.guild) == ctx.channel.id
