@@ -272,10 +272,12 @@ def init_events(bot, cli_flags):
             )
             bot._last_exception = exception_log
 
-            message = (
-                await bot._config.invoke_error_msg()
-                or "`Error in command {command}. Check your console or logs for details.`"
-            )
+            message = await bot._config.invoke_error_msg()
+            if not message:
+                if ctx.author.id in bot.owner_ids:
+                    message = inline(_("Error in command {command}. Check your console or logs for details."))
+                else:
+                    message = inline(_("Error in command {command}."))
             await ctx.send(message.replace("{command}", ctx.command.qualified_name))
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
