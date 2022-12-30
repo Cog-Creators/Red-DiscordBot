@@ -276,10 +276,10 @@ def init_events(bot, cli_flags):
             if not message:
                 if ctx.author.id in bot.owner_ids:
                     message = inline(
-                        _("Error in command {command}. Check your console or logs for details.")
+                        _("Error in command '{command}'. Check your console or logs for details.")
                     )
                 else:
-                    message = inline(_("Error in command {command}."))
+                    message = inline(_("Error in command '{command}'."))
             await ctx.send(message.replace("{command}", ctx.command.qualified_name))
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
