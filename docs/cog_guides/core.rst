@@ -3080,6 +3080,28 @@ This is only applied to the current server and not globally.
 **Arguments:**
     - ``[time]`` - The seconds to wait before deleting the command message. Use -1 to disable.
 
+.. _core-command-set-errormsg:
+
+"""""""""""""""
+set errormsg
+"""""""""""""""
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set errormsg [msg]
+
+**Description**
+
+Set the message that will be sent on uncaught bot errors.
+
+The message must be less than 1000 characters
+Use `{command}` to pass the command name in the message.
+If you omit the `msg` argument, the message will be reset to the default one.
+
 .. _core-command-set-fuzzy:
 
 """""""""
