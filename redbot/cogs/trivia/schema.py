@@ -1,6 +1,12 @@
-from schema import And, Const, Or, Optional, Schema
+from schema import And, Const, Optional, Schema, Use
 
 __all__ = ("TRIVIA_LIST_SCHEMA")
+
+
+def int_or_float(value: Any) -> float:
+    if not isinstance(value, (float, int)):
+        raise TypeError("Value needs to be an integer or a float.")
+    return float(value)
 
 
 TRIVIA_LIST_SCHEMA = Schema(
@@ -11,12 +17,12 @@ TRIVIA_LIST_SCHEMA = Schema(
                 int, lambda n: n >= 1, error="'max_score' must be a positive integer",
             ),
             Optional("timeout"): And(
-                Or(int, float),
+                Use(int_or_float),
                 lambda n: n > 0.0,
                 error="'timeout' must be a positive number",
             ),
             Optional("delay"): And(
-                Or(int, float),
+                Use(int_or_float),
                 lambda n: n >= 4.0,
                 error="'delay' must be a positive number greater than or equal to 4",
             ),
@@ -25,7 +31,7 @@ TRIVIA_LIST_SCHEMA = Schema(
                 bool, error="'reveal_answer' must be either true or false"
             ),
             Optional("payout_multiplier"): And(
-                Or(int, float),
+                Use(int_or_float),
                 lambda n: n >= 0.0,
                 error="'payout_multiplier' must be a non-negative number",
             ),
