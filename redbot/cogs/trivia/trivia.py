@@ -4,7 +4,7 @@ import math
 import pathlib
 from collections import Counter
 from typing import Any, Dict, List, Literal, Union
-from schema import Schema, Optional, SchemaError, And, Const
+from schema import Schema, Optional, SchemaError, Or, And, Const
 
 import io
 import yaml
@@ -35,10 +35,12 @@ TRIVIA_LIST_SCHEMA = Schema(
                 int, lambda n: n >= 1, error="max_score must be a positive integer"
             ),
             Optional("timeout"): And(
-                float, lambda n: n > 0.0, error="timeout must be a positive decimal number"
+                Or(int, float),
+                lambda n: n > 0.0,
+                error="timeout must be a positive decimal number",
             ),
             Optional("delay"): And(
-                float,
+                Or(int, float),
                 lambda n: n > 4.0,
                 error="delay must be a positive decimal number greater than 4",
             ),
@@ -47,7 +49,9 @@ TRIVIA_LIST_SCHEMA = Schema(
                 bool, error="reveal_answer must be either true or false"
             ),
             Optional("payout_multiplier"): And(
-                float, lambda n: n >= 0.0, error="payout_multiplier must a positive decimal number"
+                Or(int, float),
+                lambda n: n >= 0.0,
+                error="payout_multiplier must a positive decimal number",
             ),
             Optional("use_spoilers"): Const(
                 bool, error="use_spoilers must be either true or false"
