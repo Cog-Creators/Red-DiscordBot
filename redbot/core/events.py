@@ -275,7 +275,9 @@ def init_events(bot, cli_flags):
             message = await bot._config.invoke_error_msg()
             if not message:
                 if ctx.author.id in bot.owner_ids:
-                    message = inline(_("Error in command {command}. Check your console or logs for details."))
+                    message = inline(
+                        _("Error in command {command}. Check your console or logs for details.")
+                    )
                 else:
                     message = inline(_("Error in command {command}."))
             await ctx.send(message.replace("{command}", ctx.command.qualified_name))
