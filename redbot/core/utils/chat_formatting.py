@@ -262,9 +262,12 @@ class pagify(Iterator[str]):
         self._end = len(text)
 
     def __repr__(self) -> str:
+        text = self._text
+        if len(text) > 20:
+            text = f"{text[:19]}\N{HORIZONTAL ELLIPSIS}"
         return (
             "pagify("
-            f" {self._text!r},"
+            f"{text!r},"
             f" {self._delims!r},"
             f" priority={self._priority!r},"
             f" escape_mass_mentions={self._escape_mass_mentions!r},"
