@@ -23,7 +23,7 @@ from .checks import trivia_stop_check
 from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
-from .schema import TRIVIA_LIST_SCHEMA
+from .schema import TRIVIA_LIST_SCHEMA, format_schema_error
 
 __all__ = ("Trivia", "UNIQUE_ID", "InvalidListError", "get_core_lists", "get_list")
 
@@ -293,7 +293,7 @@ class Trivia(commands.Cog):
                 _(
                     "The custom trivia list was not saved."
                     " The file does not follow the proper data format.\n{schema_error}"
-                ).format(schema_error=box(e))
+                ).format(schema_error=box(format_schema_error(exc)))
             )
 
     @commands.is_owner()
