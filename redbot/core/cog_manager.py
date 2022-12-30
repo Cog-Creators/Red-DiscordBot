@@ -379,7 +379,7 @@ class CogManagerUI(commands.Cog):
         await ctx.bot._cog_mgr.remove_path(to_remove)
         await ctx.send(_("Path successfully removed."))
 
-    @commands.command()
+    @commands.command(usage="<from> <to>")
     @checks.is_owner()
     async def reorderpath(self, ctx: commands.Context, from_: int, to: int):
         """
