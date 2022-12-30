@@ -3086,7 +3086,7 @@ This is only applied to the current server and not globally.
 set errormsg
 """""""""""""""
 
-.. note:: |guildowner-lock|
+.. note:: |owner-lock|
 
 **Syntax**
 
