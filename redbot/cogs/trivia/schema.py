@@ -5,7 +5,7 @@ __all__ = ("TRIVIA_LIST_SCHEMA")
 
 TRIVIA_LIST_SCHEMA = Schema(
     {
-        Optional("AUTHOR"): str,
+        Optional("AUTHOR"): And(str, error="'AUTHOR' key must be a text value."),
         Optional("CONFIG"): {
             Optional("max_score"): And(
                 int, lambda n: n >= 1, error="'max_score' must be a positive integer",
