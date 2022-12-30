@@ -37,12 +37,12 @@ TRIVIA_LIST_SCHEMA = Schema(
             Optional("timeout"): And(
                 Or(int, float),
                 lambda n: n > 0.0,
-                error="timeout must be a positive decimal number",
+                error="timeout must be a positive number",
             ),
             Optional("delay"): And(
                 Or(int, float),
-                lambda n: n > 4.0,
-                error="delay must be a positive decimal number greater than 4",
+                lambda n: n >= 4.0,
+                error="delay must be a positive number greater than or equal to 4",
             ),
             Optional("bot_plays"): Const(bool, error="bot_plays must be either true or false"),
             Optional("reveal_answer"): Const(
@@ -51,7 +51,7 @@ TRIVIA_LIST_SCHEMA = Schema(
             Optional("payout_multiplier"): And(
                 Or(int, float),
                 lambda n: n >= 0.0,
-                error="payout_multiplier must a positive decimal number",
+                error="payout_multiplier must be a non-negative number",
             ),
             Optional("use_spoilers"): Const(
                 bool, error="use_spoilers must be either true or false"
