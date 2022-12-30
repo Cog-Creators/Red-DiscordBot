@@ -3082,9 +3082,9 @@ This is only applied to the current server and not globally.
 
 .. _core-command-set-errormsg:
 
-"""""""""""""""
+""""""""""""
 set errormsg
-"""""""""""""""
+""""""""""""
 
 .. note:: |owner-lock|
 
