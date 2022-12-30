@@ -3,11 +3,12 @@ from typing import Any
 
 import pytest
 import yaml
-from schema import And, Optional, SchemaError, SchemaMissingKeyError
+from schema import And, Optional, SchemaError
 
 from redbot.cogs.trivia.schema import (
     ALWAYS_MATCH,
     MATCH_ALL_BUT_STR,
+    NO_QUESTIONS_ERROR_MSG,
     TRIVIA_LIST_SCHEMA,
     format_schema_error,
 )
@@ -64,6 +65,7 @@ def _get_error_message(*keys: Any, key: str = "UNKNOWN", parent_key: str = "UNKN
                 Optional("CONFIG"), Optional("bot_plays"), key="bot_plays", parent_key="CONFIG"
             ),
         ),
+        ({"AUTHOR": "Correct type but no questions."}, NO_QUESTIONS_ERROR_MSG),
         ({"Question": "wrong type"}, _get_error_message(str, key="Question")),
         ({"Question": [{"wrong": "type"}]}, _get_error_message(str, key="Question")),
         ({123: "wrong key type"}, _get_error_message(MATCH_ALL_BUT_STR, key="123")),
@@ -74,8 +76,3 @@ def test_trivia_schema_error_messages(data: Any, error_msg: str):
         TRIVIA_LIST_SCHEMA.validate(data)
 
     assert format_schema_error(exc.value) == error_msg
-
-
-def test_trivia_schema_no_questions():
-    with pytest.raises(SchemaMissingKeyError):
-        TRIVIA_LIST_SCHEMA.validate({"AUTHOR": "Correct type but no questions."})

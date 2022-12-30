@@ -2,7 +2,7 @@ import itertools
 import re
 from typing import Any, NoReturn
 
-from schema import And, Const, Optional, Schema, SchemaError, Use
+from schema import And, Const, Optional, Schema, SchemaError, SchemaMissingKeyError, Use
 
 from redbot.core.i18n import Translator
 
@@ -30,6 +30,7 @@ def not_str(value: Any) -> float:
 
 
 _ = SchemaErrorMessage
+NO_QUESTIONS_ERROR_MSG = _("The trivia list does not contain any questions.")
 ALWAYS_MATCH = Optional(Use(lambda x: x))
 MATCH_ALL_BUT_STR = Optional(Use(not_str))
 TRIVIA_LIST_SCHEMA = Schema(
@@ -94,6 +95,9 @@ TRIVIA_LIST_SCHEMA = Schema(
 
 
 def format_schema_error(exc: SchemaError) -> str:
+    if isinstance(exc, SchemaMissingKeyError):
+        return NO_QUESTIONS_ERROR_MSG.format()
+
     # dict.fromkeys is used for de-duplication with order preservation
     errors = {idx: msg for idx, msg in enumerate(exc.errors) if msg is not None}
     if not errors:
