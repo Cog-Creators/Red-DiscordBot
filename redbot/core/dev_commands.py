@@ -37,7 +37,10 @@ from .utils.predicates import MessagePredicate
 
 _ = Translator("Dev", __file__)
 
-START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
+# we want to match either:
+# - "```lang\n"
+# - or "```" and potentially also strip a single "\n" if it follows it immediately
+START_CODE_BLOCK_RE = re.compile(r"^((```[\w.+\-]+\n+(?!```))|(```\n*))")
 
 T = TypeVar("T")
 
@@ -72,7 +75,7 @@ def cleanup_code(content: str) -> str:
     """Automatically removes code blocks from the code."""
     # remove ```py\n```
     if content.startswith("```") and content.endswith("```"):
-        return START_CODE_BLOCK_RE.sub("", content)[:-3]
+        return START_CODE_BLOCK_RE.sub("", content)[:-3].rstrip("\n")
 
     # remove `foo`
     return content.strip("` \n")
