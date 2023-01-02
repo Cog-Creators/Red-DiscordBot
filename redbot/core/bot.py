@@ -134,6 +134,7 @@ class Red(
             invite_commands_scope=False,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
+            invoke_error_msg=None,
             extra_owner_destinations=[],
             owner_opt_out_list=[],
             last_system_info__python_version=[3, 7],
@@ -1098,6 +1099,8 @@ class Red(
         """
         This should only be run once, prior to logging in to Discord REST API.
         """
+        await super()._pre_login()
+
         await self._maybe_update_config()
         self.description = await self._config.description()
         self._color = discord.Colour(await self._config.color())

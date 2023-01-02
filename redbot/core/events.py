@@ -266,16 +266,21 @@ def init_events(bot, cli_flags):
                 "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
-
-            message = _(
-                "Error in command '{command}'. Check your console or logs for details."
-            ).format(command=ctx.command.qualified_name)
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
             bot._last_exception = exception_log
-            await ctx.send(inline(message))
+
+            message = await bot._config.invoke_error_msg()
+            if not message:
+                if ctx.author.id in bot.owner_ids:
+                    message = inline(
+                        _("Error in command '{command}'. Check your console or logs for details.")
+                    )
+                else:
+                    message = inline(_("Error in command '{command}'."))
+            await ctx.send(message.replace("{command}", ctx.command.qualified_name))
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
@@ -317,10 +322,12 @@ def init_events(bot, cli_flags):
                 new_ctx = await bot.get_context(ctx.message)
                 await bot.invoke(new_ctx)
                 return
-            if delay := humanize_timedelta(seconds=error.retry_after):
-                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
-            else:
-                msg = _("This command is on cooldown. Try again in 1 second.")
+            relative_time = discord.utils.format_dt(
+                datetime.now(timezone.utc) + timedelta(seconds=error.retry_after), "R"
+            )
+            msg = _("This command is on cooldown. Try again {relative_time}.").format(
+                relative_time=relative_time
+            )
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             if error.per is commands.BucketType.default:
