@@ -1,23 +1,24 @@
+aiodns
 aiohttp
 aiohttp-json-rpc
-aiosqlite
-appdirs
-apsw-wheels
+apsw
 babel
+Brotli
 click
-colorama
 discord.py
-fuzzywuzzy
 markdown
+orjson
 packaging
+platformdirs
 psutil
 python-dateutil
-python-Levenshtein-wheels
-PyNaCl
 PyYAML
+rapidfuzz
 Red-Commons
 Red-Lavalink>=0.11.0rc1
 rich
 schema
+typing_extensions
+yarl
 distro; sys_platform == "linux"
 uvloop; sys_platform != "win32" and platform_python_implementation == "CPython"

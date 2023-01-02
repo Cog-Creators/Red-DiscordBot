@@ -17,11 +17,11 @@ with zypper:
 
 .. prompt:: bash
 
-    sudo zypper -n install python39-base python39-pip git-core java-11-openjdk-headless nano
+    sudo zypper -n install python311 python311-devel git-core java-11-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv.rst
+.. include:: _includes/create-env-with-venv3.11.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst

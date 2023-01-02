@@ -1741,8 +1741,8 @@ class Downloader(commands.Cog):
         # Check if in installed cogs
         cog = command.cog
         if cog:
-            cog_name = self.cog_name_from_instance(cog)
-            installed, cog_installable = await self.is_installed(cog_name)
+            cog_pkg_name = self.cog_name_from_instance(cog)
+            installed, cog_installable = await self.is_installed(cog_pkg_name)
             if installed:
                 made_by = (
                     humanize_list(cog_installable.author)
@@ -1759,17 +1759,21 @@ class Downloader(commands.Cog):
                     if cog_installable.repo is None
                     else cog_installable.repo.name
                 )
-                cog_name = cog_installable.name
+                cog_pkg_name = cog_installable.name
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
-                cog_name = cog.__class__.__name__
+                module_fragments = cog.__module__.split(".")
+                if module_fragments[1] == "core":
+                    cog_pkg_name = "N/A - Built-in commands"
+                else:
+                    cog_pkg_name = module_fragments[2]
                 repo_name = "Red-DiscordBot"
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
-                cog_name = cog.__class__.__name__
                 repo_name = _("Unknown")
+            cog_name = cog.__class__.__name__
         else:
             msg = _("This command is not provided by a cog.")
             await ctx.send(msg)
@@ -1778,7 +1782,8 @@ class Downloader(commands.Cog):
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(name=_("Command:"), value=command_name, inline=False)
-            embed.add_field(name=_("Cog name:"), value=cog_name, inline=False)
+            embed.add_field(name=_("Cog package name:"), value=cog_pkg_name, inline=True)
+            embed.add_field(name=_("Cog name:"), value=cog_name, inline=True)
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo name:"), value=repo_name, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
@@ -1790,12 +1795,18 @@ class Downloader(commands.Cog):
 
         else:
             msg = _(
-                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo name: {repo_name}\nRepo URL: {repo_url}\n"
+                "Command:          {command}\n"
+                "Cog package name: {cog_pkg}\n"
+                "Cog name:         {cog}\n"
+                "Made by:          {author}\n"
+                "Repo name:        {repo_name}\n"
+                "Repo URL:         {repo_url}\n"
             ).format(
                 command=command_name,
+                cog_pkg=cog_pkg_name,
+                cog=cog_name,
                 author=made_by,
                 repo_url=repo_url,
-                cog=cog_name,
                 repo_name=repo_name,
             )
             if installed and cog_installable.repo is not None and cog_installable.repo.branch:
