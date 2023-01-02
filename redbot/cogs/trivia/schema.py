@@ -1,4 +1,5 @@
 import itertools
+import math
 import re
 from typing import Any, NoReturn
 
@@ -18,8 +19,8 @@ class SchemaErrorMessage(str):
 
 
 def int_or_float(value: Any) -> float:
-    if not isinstance(value, (float, int)):
-        raise TypeError("Value needs to be an integer or a float.")
+    if not isinstance(value, (float, int)) or not math.isfinite(value):
+        raise TypeError("Value needs to be an integer or a finite float.")
     return float(value)
 
 
