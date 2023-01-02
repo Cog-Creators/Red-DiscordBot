@@ -141,7 +141,7 @@ Here are all the overrides available:
     CONFIG:
         bot_plays: true or false  # bot gains points if no one answers correctly
         delay: positive number  # answer time limit (seconds), must be greater than or equal to 4
-        timeout: positive number  # timeout for no responses (seconds)
+        timeout: positive number  # timeout for no responses (seconds), must be greater than delay
         max_score: positive integer  # points required to win
         reveal_answer: true or false  # reveal answer on timeout
         payout_multiplier: non-negative number  # payout multiplier
