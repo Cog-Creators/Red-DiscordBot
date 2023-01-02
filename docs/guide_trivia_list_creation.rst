@@ -111,11 +111,11 @@ As you've added more questions, your file should look something like this:
     - Chelsea
     - chelsea f.c.
     How much money is a US Olympic gold medallist awarded?:
-    - $25,000
-    - 25,000
-    - 25k
-    - 25000
-    - $25000
+    - $37,500
+    - 37,500
+    - 37.5k
+    - 37500
+    - $37500
 
 You can keep adding questions until you are satisfied, and then you can upload and
 play your very own trivia! See :ref:`[p]triviaset custom <trivia-command-triviaset-custom>` for more information.
@@ -131,24 +131,21 @@ Optional: Custom Overrides
 Once you've got the hang of the question-answer format,
 you might want to add some custom overrides with the CONFIG key - in a similar way to the AUTHOR key.
 These will override the settings set with :ref:`[p]triviaset <trivia-command-triviaset>`.
-Therefore, you could make a custom list with less time to answer and a higher score needed
-to win than all the other trivia lists.
-
-If you don't specify an override, then the default or what was set with
-:ref:`[p]triviaset <trivia-command-triviaset>` will be used instead.
+For example, with a trivia list which has questions that are quick to answer you could decrease the time limit
+and require a higher score to win.
 
 Here are all the overrides available:
 
 .. code-block:: yaml
 
     CONFIG:
-        bot_plays: true or false  # bot gains points, default true
-        delay: number  # answer time limit in seconds, default 15.0
-        timeout: number  # lack of response timeout in seconds, default 120.0
-        max_score: whole number  # points to win, must be a whole number, default 10
-        reveal_answer: true or false  # reveal answer on timeout, default true
-        payout_multiplier: number  # payout multiplier, default 0.0
-        use_spoilers: true or false  # use spoilers in answers, default false
+        bot_plays: true or false  # bot gains points if no one answers correctly
+        delay: positive number  # answer time limit (seconds), must be greater than or equal to 4
+        timeout: positive number  # timeout for no responses (seconds)
+        max_score: positive integer  # points required to win
+        reveal_answer: true or false  # reveal answer on timeout
+        payout_multiplier: non-negative number  # payout multiplier
+        use_spoilers: true or false  # use spoilers in answers
 
 So, your final file might look something like this:
 
@@ -172,8 +169,8 @@ So, your final file might look something like this:
     - Chelsea
     - chelsea f.c.
     How much money is a US Olympic gold medallist awarded?:
-    - $25,000
-    - 25,000
-    - 25k
-    - 25000
-    - $25000
+    - $37,500
+    - 37,500
+    - 37.5k
+    - 37500
+    - $37500
