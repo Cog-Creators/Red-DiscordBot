@@ -10,6 +10,8 @@ The original copy was distributed under MIT License and this derivative work
 is distributed under GNU GPL Version 3.
 """
 
+from __future__ import annotations
+
 import ast
 import asyncio
 import aiohttp
@@ -21,7 +23,7 @@ import types
 import re
 import sys
 from copy import copy
-from typing import Any, Awaitable, Iterator, Literal, Type, TypeVar, Union
+from typing import Any, Awaitable, Dict, Iterator, Literal, Type, TypeVar, Union
 from types import CodeType, TracebackType
 
 import discord
@@ -77,14 +79,26 @@ def cleanup_code(content: str) -> str:
 
 
 class DevOutput:
-    def __init__(self, ctx: commands.Context, *, source: str, filename: str) -> None:
+    def __init__(
+        self, ctx: commands.Context, *, source: str, filename: str, env: Dict[str, Any]
+    ) -> None:
         self.ctx = ctx
         self.source = source
         self.filename = filename
+        self.env = env
+        self.always_include_result = False
         self._stream = io.StringIO()
         self.formatted_exc = ""
         self.result: Any = None
         self._old_streams = []
+
+    @property
+    def source(self) -> str:
+        return self._original_source
+
+    @source.setter
+    def source(self, value: str) -> None:
+        self._source = self._original_source = value
 
     def __str__(self) -> str:
         output = []
@@ -93,15 +107,17 @@ class DevOutput:
             output.append(printed)
         if self.formatted_exc:
             output.append(self.formatted_exc)
-        if self.result is not None:
+        elif self.always_include_result or self.result is not None:
             try:
                 output.append(str(self.result))
             except Exception as exc:
                 output.append(self.format_exception(exc))
         return sanitize_output(self.ctx, "".join(output))
 
-    async def send(self) -> None:
+    async def send(self, *, tick: bool = True) -> None:
         await self.ctx.send_interactive(get_pages(str(self)), box_lang="py")
+        if tick and not self.formatted_exc:
+            await self.ctx.tick()
 
     def set_exception(self, exc: Exception, *, line_offset: int = 0, skip_frames: int = 1) -> None:
         self.formatted_exc = self.format_exception(
@@ -121,11 +137,93 @@ class DevOutput:
     ) -> None:
         sys.stdout = self._old_streams.pop()
 
+    @classmethod
+    async def from_debug(cls, ctx, *, source: str, env: Dict[str, Any]) -> DevOutput:
+        output = cls(ctx, source=source, filename="<debug command>", env=env)
+        await output.run_debug()
+        return output
+
+    @classmethod
+    async def from_eval(cls, ctx, *, source: str, env: Dict[str, Any]) -> DevOutput:
+        output = cls(ctx, source=source, filename="<eval command>", env=env)
+        await output.run_eval()
+        return output
+
+    @classmethod
+    async def from_repl(cls, ctx, *, source: str, env: Dict[str, Any]) -> DevOutput:
+        output = cls(ctx, source=source, filename="<repl session>", env=env)
+        await output.run_repl()
+        return output
+
+    async def run_debug(self) -> None:
+        self.always_include_result = True
+        self._source = self.source
+        try:
+            compiled = self.async_compile_with_eval()
+        except SyntaxError as exc:
+            self.set_exception(exc, skip_frames=3)
+            return
+
+        try:
+            self.result = await maybe_await(eval(compiled, self.env))
+        except Exception as exc:
+            self.set_exception(exc)
+
+    async def run_eval(self) -> None:
+        self.always_include_result = False
+        self._source = "async def func():\n%s" % textwrap.indent(self.source, "  ")
+        try:
+            compiled = self.async_compile_with_exec()
+            exec(compiled, self.env)
+        except SyntaxError as exc:
+            self.set_exception(exc, line_offset=1, skip_frames=3)
+            return
+
+        func = self.env["func"]
+        try:
+            with self:
+                self.result = await func()
+        except Exception as exc:
+            self.set_exception(exc, line_offset=1)
+
+    async def run_repl(self) -> None:
+        self.always_include_result = False
+        self._source = self.source
+        executor = None
+        if self.source.count("\n") == 0:
+            # single statement, potentially 'eval'
+            try:
+                code = self.async_compile_with_eval()
+            except SyntaxError:
+                pass
+            else:
+                executor = eval
+
+        if executor is None:
+            try:
+                code = self.async_compile_with_exec()
+            except SyntaxError as exc:
+                self.set_exception(exc, skip_frames=3)
+                return
+
+        try:
+            with self:
+                if executor is None:
+                    result = types.FunctionType(code, self.env)()
+                else:
+                    result = executor(code, self.env)
+                self.result = await maybe_await(result)
+        except Exception as exc:
+            self.set_exception(exc)
+        else:
+            if self.result is not None:
+                self.env["_"] = self.result
+
     def async_compile_with_exec(self) -> CodeType:
-        return async_compile(self.source, self.filename, "exec")
+        return async_compile(self._source, self.filename, "exec")
 
     def async_compile_with_eval(self) -> CodeType:
-        return async_compile(self.source, self.filename, "eval")
+        return async_compile(self._source, self.filename, "eval")
 
     def format_exception(
         self, exc: Exception, *, line_offset: int = 0, skip_frames: int = 1
@@ -147,10 +245,12 @@ class DevOutput:
         exc_type = type(exc)
         tb = exc.__traceback__
         for x in range(skip_frames):
+            if tb is None:
+                break
             tb = tb.tb_next
         traceback_exc = traceback.TracebackException(exc_type, exc, tb)
 
-        source_lines = self.source.splitlines(True)
+        source_lines = self._source.splitlines(True)
         filename = self.filename
         py311_or_above = sys.version_info >= (3, 11)
         stack_summary = traceback_exc.stack
@@ -257,25 +357,9 @@ class Dev(commands.Cog):
         """
         env = self.get_environment(ctx)
         source = cleanup_code(code)
-        output = DevOutput(ctx, source=source, filename="<debug command>")
 
-        try:
-            compiled = output.async_compile_with_eval()
-        except SyntaxError as exc:
-            output.set_exception(exc, skip_frames=2)
-            await output.send()
-            return
-
-        try:
-            output.result = await maybe_await(eval(compiled, env))
-        except Exception as exc:
-            output.set_exception(exc)
-            await output.send()
-            return
-
+        output = await DevOutput.from_debug(ctx, source=source, env=env)
         self._last_result = output.result
-
-        await ctx.tick()
         await output.send()
 
     @commands.command(name="eval")
@@ -305,30 +389,11 @@ class Dev(commands.Cog):
             `cf`       - the redbot.core.utils.chat_formatting module
         """
         env = self.get_environment(ctx)
-        body = cleanup_code(body)
-        source = "async def func():\n%s" % textwrap.indent(body, "  ")
-        output = DevOutput(ctx, source=source, filename="<eval command>")
+        source = cleanup_code(body)
 
-        try:
-            compiled = output.async_compile_with_exec()
-            exec(compiled, env)
-        except SyntaxError as exc:
-            output.set_exception(exc, line_offset=1, skip_frames=2)
-            await output.send()
-            return
-
-        func = env["func"]
-        try:
-            with output:
-                output.result = await func()
-        except Exception as exc:
-            output.set_exception(exc, line_offset=1)
-        else:
-            await ctx.tick()
-
+        output = await DevOutput.from_eval(ctx, source=source, env=env)
         if output.result is not None:
             self._last_result = output.result
-
         await output.send()
 
     @commands.group(invoke_without_command=True)
@@ -382,6 +447,7 @@ class Dev(commands.Cog):
 
         while True:
             response = await ctx.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
+            env["message"] = response
 
             if not self.sessions[ctx.channel.id]:
                 continue
@@ -393,46 +459,13 @@ class Dev(commands.Cog):
                 del self.sessions[ctx.channel.id]
                 return
 
-            executor = None
-            output = DevOutput(ctx, source=source, filename="<repl session>")
-            if source.count("\n") == 0:
-                # single statement, potentially 'eval'
-                try:
-                    code = output.async_compile_with_eval()
-                except SyntaxError:
-                    pass
-                else:
-                    executor = eval
-
-            if executor is None:
-                try:
-                    code = output.async_compile_with_exec()
-                except SyntaxError as exc:
-                    output.set_exception(exc, skip_frames=2)
-                    await output.send()
-                    continue
-
-            env["message"] = response
-
+            output = await DevOutput.from_repl(ctx, source=source, env=env)
             try:
-                with output:
-                    if executor is None:
-                        result = types.FunctionType(code, env)()
-                    else:
-                        result = executor(code, env)
-                    output.result = await maybe_await(result)
-            except Exception as exc:
-                output.set_exception(exc)
-            else:
-                if output.result is not None:
-                    env["_"] = output.result
-
-            try:
-                await output.send()
+                await output.send(tick=False)
             except discord.Forbidden:
                 pass
             except discord.HTTPException as exc:
-                await ctx.send(_("Unexpected error: `{}`").format(exc))
+                await ctx.send(_("Unexpected error: ") + str(exc))
 
     @repl.command(aliases=["resume"])
     async def pause(self, ctx, toggle: Optional[bool] = None):
