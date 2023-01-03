@@ -278,7 +278,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Changed"),
                 description=_(
-                    "Managed Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
+                    "External Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
                     "Run `{p}{cmd}` for it to take effect."
                 ).format(
                     p=ctx.prefix,
@@ -291,7 +291,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Changed"),
                 description=_(
-                    "Managed Lavalink node will no longer connect using the secured "
+                    "External Lavalink node will no longer connect using the secured "
                     "{secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
                     "Run `{p}{cmd}` for it to take effect."
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),

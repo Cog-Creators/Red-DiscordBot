@@ -412,7 +412,7 @@ class CogManagerUI(commands.Cog):
         for page in pagify("\n\n".join(parts), ["\n", " "]):
             await ctx.send(page)
 
-    @commands.command()
+    @commands.command(usage="<from> <to>")
     @checks.is_owner()
     async def reorderpath(self, ctx: commands.Context, from_: positive_int, to: positive_int):
         """
