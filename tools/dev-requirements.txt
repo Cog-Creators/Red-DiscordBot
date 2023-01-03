@@ -1,2 +1,2 @@
-tox<4
+tox
 -e .[dev]

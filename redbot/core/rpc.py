@@ -64,14 +64,20 @@ class RPC:
     RPC server manager.
     """
 
+    app: web.Application
+    _rpc: RedRpc
+    _runner: web.AppRunner
+
     def __init__(self):
+        self._site: Optional[web.TCPSite] = None
+        self._started = False
+
+    async def _pre_login(self) -> None:
         self.app = web.Application()
         self._rpc = RedRpc()
         self.app.router.add_route("*", "/", self._rpc.handle_request)
 
         self._runner = web.AppRunner(self.app)
-        self._site: Optional[web.TCPSite] = None
-        self._started = False
 
     async def initialize(self, port: int):
         """
@@ -133,6 +139,9 @@ class RPCMixin:
         self.rpc = RPC()
 
         self.rpc_handlers = {}  # Uppercase cog name to method
+
+    async def _pre_login(self) -> None:
+        await self.rpc._pre_login()
 
     def register_rpc_handler(self, method):
         """
