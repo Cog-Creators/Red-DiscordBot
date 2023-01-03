@@ -252,7 +252,9 @@ class DevOutput:
                 break
             tb = tb.tb_next
 
-        source_lines = self._source.splitlines(True)
+        # To mimic linecache module's behavior,
+        # all lines (including the last one) should end with \n.
+        source_lines = [f"{line}\n" for line in self._source.splitlines()]
         filename = self.filename
         # sometimes SyntaxError.text is None, sometimes it isn't
         if (
