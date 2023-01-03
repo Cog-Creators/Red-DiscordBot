@@ -107,26 +107,30 @@ class Dev(commands.Cog):
         for idx, frame_summary in enumerate(stack_summary):
             if frame_summary.filename != filename:
                 continue
+            lineno = frame_summary.lineno
+            if lineno is None:
+                continue
 
             # line numbers are 1-based, the list indexes are 0-based
-            line = source_lines[frame_summary.lineno - 1]
+            line = source_lines[lineno - 1]
+            lineno -= line_offset
             # support for enhanced error locations in tracebacks
             if py311_or_above:
+                end_lineno = frame_summary.end_lineno
+                if end_lineno is not None:
+                    end_lineno -= line_offset
                 frame_summary = traceback.FrameSummary(
                     frame_summary.filename,
-                    frame_summary.lineno - line_offset,
+                    lineno,
                     frame_summary.name,
                     line=line,
-                    end_lineno=frame_summary.end_lineno - line_offset,
+                    end_lineno=end_lineno,
                     colno=frame_summary.colno,
                     end_colno=frame_summary.end_colno,
                 )
             else:
                 frame_summary = traceback.FrameSummary(
-                    frame_summary.filename,
-                    frame_summary.lineno - line_offset,
-                    frame_summary.name,
-                    line=line,
+                    frame_summary.filename, lineno, frame_summary.name, line=line
                 )
             stack_summary[idx] = frame_summary
 
