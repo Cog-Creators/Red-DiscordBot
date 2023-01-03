@@ -694,12 +694,14 @@ class Trivia(commands.Cog):
             with file.open("wb") as fp:
                 fp.write(buffer.read())
         except FileNotFoundError as e:
-            await ctx.send(_(
-                "There was an error saving the file.\n"
-                "Please check the filename and try again, as it could be longer than your system supports."
-                ))
+            await ctx.send(
+                _(
+                    "There was an error saving the file.\n"
+                    "Please check the filename and try again, as it could be longer than your system supports."
+                )
+            )
             return
-        
+
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(
