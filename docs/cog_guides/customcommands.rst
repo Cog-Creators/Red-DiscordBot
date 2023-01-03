@@ -267,7 +267,7 @@ customcom search
 
 Searches through custom commands, according to the query.
 
-Uses fuzzywuzzy searching to find close matches.
+Uses fuzzy searching to find close matches.
 
 **Arguments:**
 
