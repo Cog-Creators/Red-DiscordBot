@@ -425,16 +425,7 @@ class Trivia(commands.Cog):
                 ).format(name=inline(category))
             )
 
-        default_config = await self.config.guild(ctx.guild).all()
-        if "CONFIG" in data:
-            config_settings = {}
-            config = data.pop("CONFIG")
-            for setting in default_config:
-                config_settings[setting] = config.get(setting, default_config[setting])
-        else:
-            config_settings = default_config
-
-        config_settings = dict(sorted(config_settings.items(), key=itemgetter(0)))
+        config_overrides = data.pop("CONFIG", None)
 
         embed = discord.Embed(
             title=_('"{category}" Category Details').format(category=category),
@@ -457,22 +448,23 @@ class Trivia(commands.Cog):
             inline=False,
         )
 
-        msg = _(
-            "Bot gains points: {bot_plays}\n"
-            "Answer time limit: {delay} seconds\n"
-            "Lack of response timeout: {timeout} seconds\n"
-            "Points to win: {max_score}\n"
-            "Reveal answer on timeout: {reveal_answer}\n"
-            "Payout multiplier: {payout_multiplier}\n"
-            "Allow lists to override settings: {allow_override}\n"
-            "Use Spoilers in answers: {use_spoilers}"
-        ).format(**config_settings)
+        if config_overrides:
+            msg = _(
+                "Bot gains points: {bot_plays}\n"
+                "Answer time limit: {delay} seconds\n"
+                "Lack of response timeout: {timeout} seconds\n"
+                "Points to win: {max_score}\n"
+                "Reveal answer on timeout: {reveal_answer}\n"
+                "Payout multiplier: {payout_multiplier}\n"
+                "Allow lists to override settings: {allow_override}\n"
+                "Use Spoilers in answers: {use_spoilers}"
+            ).format(**config_settings)
 
-        embed.add_field(
-            name=_("Config"),
-            value=box(msg, lang="yaml"),
-            inline=False,
-        )
+            embed.add_field(
+                name=_("Config"),
+                value=box(msg, lang="yaml"),
+                inline=False,
+            )
         await ctx.send(embed=embed)
 
     @trivia.group(
