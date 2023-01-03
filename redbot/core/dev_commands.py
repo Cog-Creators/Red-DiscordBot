@@ -251,10 +251,21 @@ class DevOutput:
             if tb is None:
                 break
             tb = tb.tb_next
-        traceback_exc = traceback.TracebackException(exc_type, exc, tb)
 
         source_lines = self._source.splitlines(True)
         filename = self.filename
+        # sometimes SyntaxError.text is None, sometimes it isn't
+        if (
+            issubclass(exc_type, SyntaxError)
+            and exc.filename == filename
+            and exc.lineno is not None
+        ):
+            if exc.text is None:
+                # line numbers are 1-based, the list indexes are 0-based
+                exc.text = source_lines[exc.lineno - 1]
+            exc.lineno -= line_offset
+
+        traceback_exc = traceback.TracebackException(exc_type, exc, tb)
         py311_or_above = sys.version_info >= (3, 11)
         stack_summary = traceback_exc.stack
         for idx, frame_summary in enumerate(stack_summary):
