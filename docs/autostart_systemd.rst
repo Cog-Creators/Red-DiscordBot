@@ -52,9 +52,10 @@ Paste the following in the file, and replace all instances of :code:`username` w
     User=username
     Group=username
     Type=idle
-    Restart=always
+    Restart=on-abnormal
     RestartSec=15
-    RestartPreventExitStatus=0
+    RestartForceExitStatus=1
+    RestartForceExitStatus=26
     TimeoutStopSec=10
 
     [Install]

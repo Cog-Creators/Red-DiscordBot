@@ -99,7 +99,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 embed.set_author(name=name)
         return await ctx.send(embed=embed)
 
-    def _has_notify_perms(self, channel: Union[discord.TextChannel, discord.Thread]) -> bool:
+    def _has_notify_perms(
+        self, channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+    ) -> bool:
         perms = channel.permissions_for(channel.guild.me)
         return all((can_user_send_messages_in(channel.guild.me, channel), perms.embed_links))
 
@@ -338,6 +340,25 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     await p.save()
                 await self.config.custom(scope).clear()
             await self.config.schema_version.set(3)
+        if from_version < 4 <= to_version:
+            # At the time of the introduction of this schema migration,
+            # none of these were settable by users even though they're registered in Config
+            # so this shouldn't have ever been set but there's no real harm in doing this
+            # and schema migrations are a good practice.
+            global_data = await self.config.all()
+            # We're intentionally not setting entire `global_data` to
+            # avoid storing the default values when they were not already set.
+            logging_data = global_data.get("yaml", {}).get("logging", {})
+            max_history = logging_data.get("file", {}).pop("max_history", ...)
+            if max_history is not ...:
+                await self.config.yaml.logging.logback.rollingpolicy.max_history.set(max_history)
+            max_size = logging_data.get("file", {}).pop("max_size", ...)
+            if max_size is not ...:
+                await self.config.yaml.logging.logback.rollingpolicy.max_size.set(max_size)
+            path = logging_data.pop("path", ...)
+            if path is not ...:
+                await self.config.yaml.logging.file.path.set(path)
+            await self.config.schema_version.set(4)
 
         if database_entries:
             await self.api_interface.local_cache_api.lavalink.insert(database_entries)
