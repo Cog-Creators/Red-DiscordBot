@@ -36,7 +36,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup(self, ctx: commands.Context):
         """`Dangerous commands` Manage Lavalink node configuration settings.
 
-        This command block holds all commands to manage an unmanaged (external) or managed Lavalink node.
+        This command block holds all commands to configure an unmanaged (user maintained) or managed (bot maintained) Lavalink node.
 
         You should not mess with any command in here unless you have a valid reason to,
         i.e. been told by someone in the Red-Discord Bot support server to do so.
