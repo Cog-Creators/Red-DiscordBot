@@ -164,7 +164,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             if external:
                 embed = discord.Embed(
                     title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
+                    description=_("Unmanaged Lavalink server: {true_or_false}.").format(
                         true_or_false=inline(_("Enabled") if not external else _("Disabled"))
                     ),
                 )
@@ -173,7 +173,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(
                     ctx,
                     title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
+                    description=_("Unmanaged Lavalink server: {true_or_false}.").format(
                         true_or_false=inline(_("Enabled") if not external else _("Disabled"))
                     ),
                 )
@@ -196,14 +196,14 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node host.
 
-        This command sets the connection host which Audio will use to connect to an external Lavalink node.
+        This command sets the connection host which Audio will use to connect to an unmanaged Lavalink node.
         """
         await self.config.host.set(host)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node host set to {host}. "
+                "Unmanaged Lavalink node host set to {host}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 host=inline(host), p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name
@@ -217,7 +217,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node password.
 
-        This command sets the connection password which Audio will use to connect to an external Lavalink node.
+        This command sets the connection password which Audio will use to connect to an unmanaged Lavalink node.
         """
 
         await self.config.password.set(str(password))
@@ -225,7 +225,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node password set to {password}. "
+                "Unmanaged Lavalink node password set to {password}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 password=inline(password),
@@ -241,7 +241,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     ):
         """Set the Lavalink node port.
 
-        This command sets the connection port which Audio will use to connect to an external Lavalink node.
+        This command sets the connection port which Audio will use to connect to an unmanaged Lavalink node.
         """
         if port < 0 or port > 65535:
             return await self.send_embed_msg(
@@ -254,7 +254,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node port set to {port}. "
+                "Unmanaged Lavalink node port set to {port}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 port=inline(str(port)),
@@ -268,7 +268,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_llsetup_secured(self, ctx: commands.Context):
         """Set the Lavalink node connection to secured.
 
-        This toggle sets the connection type to secured or unsecured when connecting to an external Lavalink node.
+        This toggle sets the connection type to secured or unsecured when connecting to an unmanaged Lavalink node.
         """
         state = await self.config.secured_ws()
         await self.config.secured_ws.set(not state)
@@ -278,7 +278,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Changed"),
                 description=_(
-                    "External Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
+                    "Unmanaged Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
                     "Run `{p}{cmd}` for it to take effect."
                 ).format(
                     p=ctx.prefix,
@@ -291,7 +291,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Changed"),
                 description=_(
-                    "External Lavalink node will no longer connect using the secured "
+                    "Unmanaged Lavalink node will no longer connect using the secured "
                     "{secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
                     "Run `{p}{cmd}` for it to take effect."
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
