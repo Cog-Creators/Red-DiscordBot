@@ -62,6 +62,7 @@ from .utils.chat_formatting import (
     humanize_timedelta,
     inline,
     pagify,
+    warning,
 )
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
@@ -1477,8 +1478,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]invite`
         """
+        message = await self.bot.get_invite_url()
+        if (admin := self.bot.get_cog("Admin")) and await admin.config.serverlocked():
+            message += "\n\n" + warning(
+                _(
+                    "This bot is currently **serverlocked**, meaning that it is locked "
+                    "to its current servers and will leave any server it joins."
+                )
+            )
         try:
-            await ctx.author.send(await self.bot.get_invite_url())
+            await ctx.author.send(message)
             await ctx.tick()
         except discord.errors.Forbidden:
             await ctx.send(
@@ -3342,13 +3351,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- End Set Ownernotifications Commands -- ###
 
     @_set.command(name="showsettings")
-    async def _set_showsettings(self, ctx: commands.Context):
+    async def _set_showsettings(self, ctx: commands.Context, server: discord.Guild = None):
         """
-        Show the current settings for [botname].
+        Show the current settings for [botname]. Accepts optional guild parameter if its prefix must be recovered.
         """
-        if ctx.guild:
-            guild_data = await ctx.bot._config.guild(ctx.guild).all()
-            guild = ctx.guild
+        if server is None:
+            server = ctx.guild
+
+        if server:
+            guild_data = await ctx.bot._config.guild(server).all()
+            guild = server
             admin_role_ids = guild_data["admin_role"]
             admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
             admin_roles_str = (
@@ -3358,9 +3370,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else _("Not Set.")
 
-            guild_locale = await i18n.get_locale_from_guild(self.bot, ctx.guild)
+            guild_locale = await i18n.get_locale_from_guild(self.bot, server)
             guild_regional_format = (
-                await i18n.get_regional_format_from_guild(self.bot, ctx.guild) or guild_locale
+                await i18n.get_regional_format_from_guild(self.bot, server) or guild_locale
             )
 
             guild_settings = _(
@@ -3377,7 +3389,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             guild_settings = ""
 
-        prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
+        prefixes = await ctx.bot._prefix_cache.get_prefixes(server)
         global_data = await ctx.bot._config.all()
         locale = global_data["locale"]
         regional_format = global_data["regional_format"] or locale
@@ -3590,8 +3602,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command(name="serverprefix", aliases=["serverprefixes"])
     @checks.admin_or_permissions(manage_guild=True)
-    @commands.guild_only()
-    async def _set_serverprefix(self, ctx: commands.Context, *prefixes: str):
+    async def _set_serverprefix(
+        self, ctx: commands.Context, server: Optional[discord.Guild], *prefixes: str
+    ):
         """
         Sets [botname]'s server prefix(es).
 
@@ -3604,12 +3617,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set serverprefix "! "` - Quotes are needed to use spaces in prefixes.
             - `[p]set serverprefix "@[botname] "` - This uses a mention as the prefix.
             - `[p]set serverprefix ! ? .` - Sets multiple prefixes.
+            - `[p]set serverprefix "Red - Discord Bot" ? - Sets the prefix for a specific server. Quotes are needed to use spaces in the server name.
 
         **Arguments:**
             - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
         """
+        if server is None:
+            server = ctx.guild
+
         if not prefixes:
-            await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
+            await ctx.bot.set_prefixes(guild=server, prefixes=[])
             await ctx.send(_("Server prefixes have been reset."))
             return
         if any(prefix.startswith("/") for prefix in prefixes):
@@ -3621,7 +3638,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("You cannot have a prefix longer than 25 characters."))
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
+        await ctx.bot.set_prefixes(guild=server, prefixes=prefixes)
         if len(prefixes) == 1:
             await ctx.send(_("Server prefix set."))
         else:
@@ -3629,7 +3646,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command(name="usebuttons")
     @checks.is_owner()
-    async def use_buttons(self, ctx: commands.Context, use_buttons: bool = None):
+    async def _set_usebuttons(self, ctx: commands.Context, use_buttons: bool = None):
         """
         Set a global bot variable for using buttons in menus.
 
@@ -3638,7 +3655,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This defaults to False.
         Using this without a setting will toggle.
 
-         **Examples:**
+        **Examples:**
             - `[p]set usebuttons True` - Enables using buttons.
             - `[p]helpset usebuttons` - Toggles the value.
 
@@ -3652,6 +3669,35 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("I will use buttons on basic menus."))
         else:
             await ctx.send(_("I will not use buttons on basic menus."))
+
+    @_set.command(name="errormsg")
+    @commands.is_owner()
+    async def _set_errormsg(self, ctx: commands.Context, *, msg: str = None):
+        """
+        Set the message that will be sent on uncaught bot errors.
+
+        To include the command name in the message, use the `{command}` placeholder.
+
+        If you omit the `msg` argument, the message will be reset to the default one.
+
+        **Examples:**
+            - `[p]set errormsg` - Resets the error message back to the default: "Error in command '{command}'.". If the command invoker is one of the bot owners, the message will also include "Check your console or logs for details.".
+            - `[p]set errormsg Oops, the command {command} has failed! Please try again later.` - Sets the error message to a custom one.
+
+        **Arguments:**
+            - `[msg]` - The custom error message. Must be less than 1000 characters. Omit to reset to the default one.
+        """
+        if msg is not None and len(msg) >= 1000:
+            return await ctx.send(_("The message must be less than 1000 characters."))
+
+        if msg is not None:
+            await self.bot._config.invoke_error_msg.set(msg)
+            content = _("Succesfully updated the error message.")
+        else:
+            await self.bot._config.invoke_error_msg.clear()
+            content = _("Successfully reset the error message back to the default one.")
+
+        await ctx.send(content)
 
     @commands.group()
     @checks.is_owner()
@@ -3760,7 +3806,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if use_menus == "reactions":
             msg = _("Help will use reaction menus.")
             await ctx.bot._config.help.use_menus.set(1)
-        if use_menus == "disabled":
+        if use_menus == "disable":
             msg = _("Help will not use menus.")
             await ctx.bot._config.help.use_menus.set(0)
 

@@ -1,13 +1,20 @@
 import os
 import re
 import sys
-from typing import Match
+from typing import Any, Match
 
 import redbot
 
+GITHUB_OUTPUT = os.environ["GITHUB_OUTPUT"]
+
+
+def set_output(name: str, value: Any) -> None:
+    with open(GITHUB_OUTPUT, "a", encoding="utf-8") as fp:
+        fp.write(f"{name}={value}\n")
+
 
 if int(os.environ.get("JUST_RETURN_VERSION", 0)):
-    print(f"::set-output name=version::{redbot._VERSION}")
+    set_output("version", redbot._VERSION)
     sys.exit(0)
 
 
@@ -17,7 +24,7 @@ version_info = None
 def repl(match: Match[str]) -> str:
     global version_info
 
-    print(f"::set-output name=old_version::{match.group('version')}")
+    set_output("old_version", match.group("version"))
 
     new_stable_version = os.environ.get("NEW_STABLE_VERSION", "auto")
     if new_stable_version == "auto":
@@ -49,4 +56,4 @@ if not found:
 with open("redbot/__init__.py", "w", encoding="utf-8", newline="\n") as fp:
     fp.write(new_contents)
 
-print(f"::set-output name=new_version::{version_info}")
+set_output("new_version", version_info)

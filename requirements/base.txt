@@ -1,0 +1,100 @@
+aiodns==3.0.0
+    # via -r base.in
+aiohttp==3.8.3
+    # via
+    #   -r base.in
+    #   aiohttp-json-rpc
+    #   discord-py
+    #   red-lavalink
+aiohttp-json-rpc==0.13.3
+    # via -r base.in
+aiosignal==1.3.1
+    # via aiohttp
+apsw==3.40.0.0
+    # via -r base.in
+async-timeout==4.0.2
+    # via aiohttp
+attrs==22.2.0
+    # via aiohttp
+babel==2.11.0
+    # via -r base.in
+brotli==1.0.9
+    # via -r base.in
+cffi==1.15.1
+    # via pycares
+charset-normalizer==2.1.1
+    # via aiohttp
+click==8.1.3
+    # via -r base.in
+commonmark==0.9.1
+    # via rich
+contextlib2==21.6.0
+    # via schema
+discord-py==2.1.0
+    # via
+    #   -r base.in
+    #   red-lavalink
+frozenlist==1.3.3
+    # via
+    #   aiohttp
+    #   aiosignal
+idna==3.4
+    # via yarl
+importlib-metadata==5.2.0
+    # via markdown
+markdown==3.4.1
+    # via -r base.in
+multidict==6.0.4
+    # via
+    #   aiohttp
+    #   yarl
+orjson==3.8.3
+    # via -r base.in
+packaging==22.0
+    # via -r base.in
+platformdirs==2.6.0
+    # via -r base.in
+psutil==5.9.4
+    # via -r base.in
+pycares==4.3.0
+    # via aiodns
+pycparser==2.21
+    # via cffi
+pygments==2.13.0
+    # via rich
+python-dateutil==2.8.2
+    # via -r base.in
+pytz==2022.7
+    # via babel
+pyyaml==6.0
+    # via -r base.in
+rapidfuzz==2.13.7
+    # via -r base.in
+red-commons==1.0.0
+    # via
+    #   -r base.in
+    #   red-lavalink
+red-lavalink==0.11.0rc1
+    # via -r base.in
+rich==12.6.0
+    # via -r base.in
+schema==0.7.5
+    # via -r base.in
+six==1.16.0
+    # via python-dateutil
+typing-extensions==4.4.0
+    # via
+    #   -r base.in
+    #   rich
+yarl==1.8.2
+    # via
+    #   -r base.in
+    #   aiohttp
+zipp==3.11.0
+    # via importlib-metadata
+colorama==0.4.6; sys_platform == "win32"
+    # via click
+distro==1.8.0; sys_platform == "linux" and sys_platform == "linux"
+    # via -r base.in
+uvloop==0.17.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
+    # via -r base.in
