@@ -354,7 +354,7 @@ async def remove_instance_interaction() -> None:
     count=True,
     help=(
         "Increase the verbosity of the logs, each usage of this flag increases the verbosity"
-        " level by 1"
+        " level by 1."
     ),
 )
 @click.option(
