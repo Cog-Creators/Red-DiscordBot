@@ -398,7 +398,10 @@ async def remove_instance_interaction() -> None:
     "--overwrite-existing-instance",
     type=bool,
     is_flag=True,
-    help=("Overwrites an existing instance."),
+    help=(
+        "Overwrites an existing instance.\n",
+        "Note: Using this can erase all the data related to the existing instance."
+    ),
 )
 @click.pass_context
 def cli(
