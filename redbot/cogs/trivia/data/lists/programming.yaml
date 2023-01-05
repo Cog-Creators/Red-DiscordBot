@@ -47,7 +47,7 @@ What was the original name for Java?:
 - Oak
 What is the name of the inventor (or father) of Java?:
 - James Gosling
-The Java API intended for business and server 3-tier applications is called?:
+What is the Java API intended for business and server 3-tier applications is called?:
 - Java 2, Enterprise Edition
 - Java 2
 - Enterprise Edition
@@ -79,7 +79,7 @@ Which operating system, originally developed by Linus Torvalds, was licensed und
 What does CSS actually stand for?:
 - Cascading Style Sheets
 What keyword is given to a rule to prevent other conflicting rules from overriding it?:
-- !important
+- "!important"
 When elements are positioned absolutely, they can be layered on top of one another. What property determines the stacking order for layered elements?:
 - Z-index
 - Z index
@@ -89,13 +89,16 @@ Once the character or object is built in the program, what is the process called
 - Texturing
 Basic shapes, such as cubes, cylinders and circles that are used to build an object are called what?:
 - Primitives
-A collection of computers linked together to render different frames of a single animation are referred to as what?:
+What are the collection of computers linked together to render different frames of a single animation referred to as?:
 - Render farm
-How big is the standard CD?:
+How big (size) is the standard CD?:
 - 12 cm
 - twelve centimeters
 - twelve cm
 - 12 centimeters
+- 4.72 inches
+- Four point seven two inches
+- Four point seventy two inches
 When they were first introduced, how many minutes of music could be stored on a CD?:
 - 74
 - Seventy four
@@ -186,9 +189,9 @@ Variables in PHP start with what symbol?:
 - $
 When released in 1995, the name PHP originally stood for?:
 - Personal Home Page Tools
-If you wanted to draw a hard, straight edge line in GIMP, what tool would you use?:
+If someone wanted to draw a hard, straight edge line in GIMP, what tool would they use?:
 - Pencil Tool
-If you wanted to select a connected area of a picture based on color, what tool would you use?:
+If someone wanted to select a connected area of a picture based on color, what tool would they use?:
 - Fuzzy Select Tool
 What is the official name for the dog-like mascot of GIMP?:
 - Wilber
@@ -198,8 +201,7 @@ Who is the creator and primary maintainer of Perl?:
 - Larry Wall
 What is the file type associated with a Crystal Report?:
 - .rpt
-Crystal Decisions was formerly called:
+What were Crystal Decisions formerly called?:
 - Seagate Software
-Crystal Decisions main Canadian office is located in:
+Where is Crystal Decisions main Canadian office located?:
 - Vancouver
-
