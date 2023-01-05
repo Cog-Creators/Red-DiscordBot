@@ -14,3 +14,8 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           sync-labels: ""  # this is a temporary workaround, see #4844
+
+      - name: Label documentation-only changes.
+        uses: Jackenmen/label-doconly-changes@v1
+        env:
+          LDC_LABELS: Docs-only
