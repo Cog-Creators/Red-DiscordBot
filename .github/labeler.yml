@@ -9,13 +9,12 @@
   # Docs
   - docs/cog_guides/alias.rst
 "Category: Audio Cog":
+  # Source
   - any:
-      # Source
       - redbot/cogs/audio/**/*
-      # Docs
-      - docs/cog_guides/audio.rst
-    all:
       - "!redbot/cogs/audio/**/locales/*"
+  # Docs
+  - docs/cog_guides/audio.rst
 "Category: Bank API":
   # Source
   - redbot/core/bank.py
@@ -47,7 +46,7 @@
   - docs/cog_guides/cog_manager_ui.rst
   - docs/cog_guides/core.rst
 "Category: CI":
-  - .github/workflows/*
+  - .github/workflows/**/*
 "Category: Cleanup Cog":
   # Source
   - redbot/cogs/cleanup/*
@@ -56,13 +55,11 @@
 "Category: Command Module":
   # Source
   - any:
-      # Source
       - redbot/core/commands/*
-      # Docs
-      - docs/framework_checks.rst
-      - docs/framework_commands.rst
-    all:
       - "!redbot/core/commands/help.py"
+  # Docs
+  - docs/framework_checks.rst
+  - docs/framework_commands.rst
 "Category: Config":
   # Source
   - redbot/core/drivers/*
@@ -117,7 +114,7 @@
   # Docs
   - docs/cog_guides/image.rst
 "Category: Meta":
-  - ./*
+  - '*'
   - .github/*
   - .github/ISSUE_TEMPLATE/*
   - .github/PULL_REQUEST_TEMPLATE/*
