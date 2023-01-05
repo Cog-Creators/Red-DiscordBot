@@ -1,68 +1,12 @@
 import asyncio
 import pytest
 import random
-import textwrap
 from redbot.core.utils import (
-    chat_formatting,
     bounded_gather,
     bounded_gather_iter,
     deduplicate_iterables,
     common_filters,
 )
-
-
-def test_bordered_symmetrical():
-    expected = textwrap.dedent(
-        """\
-    ┌──────────────┐    ┌─────────────┐
-    │one           │    │four         │
-    │two           │    │five         │
-    │three         │    │six          │
-    └──────────────┘    └─────────────┘"""
-    )
-    col1, col2 = ["one", "two", "three"], ["four", "five", "six"]
-    assert chat_formatting.bordered(col1, col2) == expected
-
-
-def test_bordered_asymmetrical():
-    expected = textwrap.dedent(
-        """\
-    ┌──────────────┐    ┌──────────────┐
-    │one           │    │four          │
-    │two           │    │five          │
-    │three         │    │six           │
-    └──────────────┘    │seven         │
-                        └──────────────┘"""
-    )
-    col1, col2 = ["one", "two", "three"], ["four", "five", "six", "seven"]
-    assert chat_formatting.bordered(col1, col2) == expected
-
-
-def test_bordered_asymmetrical_2():
-    expected = textwrap.dedent(
-        """\
-    ┌──────────────┐    ┌─────────────┐
-    │one           │    │five         │
-    │two           │    │six          │
-    │three         │    └─────────────┘
-    │four          │                   
-    └──────────────┘                   """
-    )
-    col1, col2 = ["one", "two", "three", "four"], ["five", "six"]
-    assert chat_formatting.bordered(col1, col2) == expected
-
-
-def test_bordered_ascii():
-    expected = textwrap.dedent(
-        """\
-    +--------------+    +-------------+
-    |one           |    |four         |
-    |two           |    |five         |
-    |three         |    |six          |
-    +--------------+    +-------------+"""
-    )
-    col1, col2 = ["one", "two", "three"], ["four", "five", "six"]
-    assert chat_formatting.bordered(col1, col2, ascii_border=True) == expected
 
 
 def test_deduplicate_iterables():
@@ -71,7 +15,6 @@ def test_deduplicate_iterables():
     assert deduplicate_iterables(*inputs) == expected
 
 
-@pytest.mark.asyncio
 async def test_bounded_gather():
     status = [0, 0]  # num_running, max_running
 
@@ -108,7 +51,6 @@ async def test_bounded_gather():
     assert num_fail == num_failed
 
 
-@pytest.mark.asyncio
 async def test_bounded_gather_iter():
     status = [0, 0]  # num_running, max_running
 
@@ -147,7 +89,6 @@ async def test_bounded_gather_iter():
 
 
 @pytest.mark.skip(reason="spams logs with pending task warnings")
-@pytest.mark.asyncio
 async def test_bounded_gather_iter_cancel():
     status = [0, 0, 0]  # num_running, max_running, num_ran
 

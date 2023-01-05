@@ -1,0 +1,44 @@
+alabaster==0.7.12
+    # via sphinx
+certifi==2022.12.7
+    # via requests
+docutils==0.17.1
+    # via
+    #   sphinx
+    #   sphinx-rtd-theme
+imagesize==1.4.1
+    # via sphinx
+jinja2==3.1.2
+    # via sphinx
+markupsafe==2.1.1
+    # via jinja2
+requests==2.28.1
+    # via sphinx
+snowballstemmer==2.2.0
+    # via sphinx
+sphinx==5.3.0
+    # via
+    #   -r extra-doc.in
+    #   sphinx-prompt
+    #   sphinx-rtd-theme
+    #   sphinxcontrib-trio
+sphinx-prompt==1.5.0
+    # via -r extra-doc.in
+sphinx-rtd-theme==1.1.1
+    # via -r extra-doc.in
+sphinxcontrib-applehelp==1.0.2
+    # via sphinx
+sphinxcontrib-devhelp==1.0.2
+    # via sphinx
+sphinxcontrib-htmlhelp==2.0.0
+    # via sphinx
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-qthelp==1.0.3
+    # via sphinx
+sphinxcontrib-serializinghtml==1.1.5
+    # via sphinx
+sphinxcontrib-trio==1.1.2
+    # via -r extra-doc.in
+urllib3==1.26.13
+    # via requests

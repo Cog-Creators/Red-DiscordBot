@@ -57,7 +57,7 @@ class Tunnel(metaclass=TunnelMeta):
     ----------
     sender: `discord.Member`
         The person who opened the tunnel
-    origin: `discord.TextChannel` or `discord.Thread`
+    origin: `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
         The channel in which it was opened
     recipient: `discord.User`
         The user on the other end of the tunnel
@@ -67,7 +67,7 @@ class Tunnel(metaclass=TunnelMeta):
         self,
         *,
         sender: discord.Member,
-        origin: Union[discord.TextChannel, discord.Thread],
+        origin: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
         recipient: discord.User,
     ):
         self.sender = sender
@@ -164,14 +164,14 @@ class Tunnel(metaclass=TunnelMeta):
                 if images_only and a.height is None:
                     # if this is None, it's not an image
                     continue
-                _fp = io.BytesIO()
                 try:
-                    await a.save(_fp, use_cached=use_cached)
+                    file = await a.to_file()
                 except discord.HTTPException as e:
                     # this is required, because animated webp files aren't cached
                     if not (e.status == 415 and images_only and use_cached):
                         raise
-                files.append(discord.File(_fp, filename=a.filename))
+                else:
+                    files.append(file)
         return files
 
     # Backwards-compatible typo fix (GH-2496)
