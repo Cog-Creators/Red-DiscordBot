@@ -13,7 +13,7 @@ jobs:
         uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          sync-labels: ""  # this is a temporary workaround, see #4844
+          sync-labels: true
 
       - name: Label documentation-only changes.
         uses: Jackenmen/label-doconly-changes@v1
