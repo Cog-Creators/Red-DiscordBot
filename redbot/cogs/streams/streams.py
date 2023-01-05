@@ -61,6 +61,7 @@ class Streams(commands.Cog):
         "live_message_nomention": False,
         "ignore_reruns": False,
         "ignore_schedule": False,
+        "use_buttons": False,
     }
 
     role_defaults = {"mention": False}
@@ -289,7 +290,18 @@ class Streams(commands.Cog):
                     return
             else:
                 embed = info
-            await ctx.send(embed=embed)
+
+            use_buttons: bool = await self.config.guild(ctx.channel.guild).use_buttons()
+            view = None
+            if use_buttons:
+                stream_url = embed.url
+                view = discord.ui.View()
+                view.add_item(
+                    discord.ui.Button(
+                        label=_("Watch the stream"), style=discord.ButtonStyle.link, url=stream_url
+                    )
+                )
+            await ctx.send(embed=embed, view=view)
 
     @commands.group()
     @commands.guild_only()
@@ -303,14 +315,21 @@ class Streams(commands.Cog):
         self,
         ctx: commands.Context,
         channel_name: str,
-        discord_channel: discord.TextChannel = None,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Manage Twitch stream notifications."""
         await ctx.invoke(self.twitch_alert_channel, channel_name, discord_channel)
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(
-        self, ctx: commands.Context, channel_name: str, discord_channel: discord.TextChannel = None
+        self,
+        ctx: commands.Context,
+        channel_name: str,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this or the given channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
@@ -325,14 +344,21 @@ class Streams(commands.Cog):
         self,
         ctx: commands.Context,
         channel_name_or_id: str,
-        discord_channel: discord.TextChannel = None,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id, discord_channel)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(
-        self, ctx: commands.Context, channel_name: str, discord_channel: discord.TextChannel = None
+        self,
+        ctx: commands.Context,
+        channel_name: str,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel
+        ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a Picarto stream."""
         await self.stream_alert(ctx, PicartoStream, channel_name, discord_channel)
@@ -401,8 +427,6 @@ class Streams(commands.Cog):
             await ctx.send(page)
 
     async def stream_alert(self, ctx: commands.Context, _class, channel_name, discord_channel):
-        if discord_channel is None:
-            discord_channel = ctx.channel
         if isinstance(discord_channel, discord.Thread):
             await ctx.send("Stream alerts cannot be set up in threads.")
             return
@@ -695,6 +719,19 @@ class Streams(commands.Cog):
             await self.config.guild(guild).ignore_schedule.set(True)
             await ctx.send(_("Streams schedules will no longer send an alert."))
 
+    @streamset.command(name="usebuttons")
+    @commands.guild_only()
+    async def use_buttons(self, ctx: commands.Context):
+        """Toggle whether to use buttons for stream alerts."""
+        guild = ctx.guild
+        current_setting: bool = await self.config.guild(guild).use_buttons()
+        if current_setting:
+            await self.config.guild(guild).use_buttons.set(False)
+            await ctx.send(_("I will no longer use buttons in stream alerts."))
+        else:
+            await self.config.guild(guild).use_buttons.set(True)
+            await ctx.send(_("I will use buttons in stream alerts."))
+
     async def add_or_remove(self, ctx: commands.Context, stream, discord_channel):
         if discord_channel.id not in stream.channels:
             stream.channels.append(discord_channel.id)
@@ -757,16 +794,27 @@ class Streams(commands.Cog):
     async def _send_stream_alert(
         self,
         stream,
-        channel: discord.TextChannel,
+        channel: Union[discord.TextChannel, discord.VoiceChannel],
         embed: discord.Embed,
         content: str = None,
         *,
         is_schedule: bool = False,
     ):
+        use_buttons: bool = await self.config.guild(channel.guild).use_buttons()
+        view = None
+        if use_buttons:
+            stream_url = embed.url
+            view = discord.ui.View()
+            view.add_item(
+                discord.ui.Button(
+                    label=_("Watch the stream"), style=discord.ButtonStyle.link, url=stream_url
+                )
+            )
         m = await channel.send(
             content,
             embed=embed,
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+            view=view,
         )
         message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
         if is_schedule:
@@ -904,7 +952,10 @@ class Streams(commands.Cog):
             await self.save_streams()
 
     async def _get_mention_str(
-        self, guild: discord.Guild, channel: discord.TextChannel, guild_data: dict
+        self,
+        guild: discord.Guild,
+        channel: Union[discord.TextChannel, discord.VoiceChannel],
+        guild_data: dict,
     ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
         all roles which need to have their `mentionable` property set back to False.
@@ -930,7 +981,9 @@ class Streams(commands.Cog):
                 mentions.append(role.mention)
         return " ".join(mentions), edited_roles
 
-    async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
+    async def filter_streams(
+        self, streams: list, channel: Union[discord.TextChannel, discord.VoiceChannel]
+    ) -> list:
         filtered = []
         for stream in streams:
             tw_id = str(stream["channel"]["_id"])

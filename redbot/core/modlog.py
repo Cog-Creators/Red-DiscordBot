@@ -349,12 +349,12 @@ class Case:
         self.message = message
 
     @property
-    def parent_channel(self) -> Optional[discord.TextChannel]:
+    def parent_channel(self) -> Optional[Union[discord.TextChannel, discord.ForumChannel]]:
         """
-        The parent text channel of the thread in `channel`.
+        The parent text/forum channel of the thread in `channel`.
 
         This will be `None` if `channel` is not a thread
-        and when the parent text channel is not in cache (probably due to removal).
+        and when the parent text/forum channel is not in cache (probably due to removal).
         """
         if self.parent_channel_id is None:
             return None
@@ -645,13 +645,18 @@ class Case:
 
     @classmethod
     async def from_json(
-        cls, mod_channel: discord.TextChannel, bot: Red, case_number: int, data: dict, **kwargs
+        cls,
+        mod_channel: Union[discord.TextChannel, discord.VoiceChannel],
+        bot: Red,
+        case_number: int,
+        data: dict,
+        **kwargs,
     ):
         """Get a Case object from the provided information
 
         Parameters
         ----------
-        mod_channel: discord.TextChannel
+        mod_channel: `discord.TextChannel` or `discord.VoiceChannel`
             The mod log channel for the guild
         bot: Red
             The bot's instance. Needed to get the target user
@@ -684,7 +689,8 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                message = mod_channel.get_partial_message(message_id)
+                if mod_channel is not None:
+                    message = mod_channel.get_partial_message(message_id)
 
         user_objects = {"user": None, "moderator": None, "amended_by": None}
         for user_key in tuple(user_objects):
@@ -853,8 +859,11 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     case = await _config.custom(_CASES, str(guild.id), str(case_number)).all()
     if not case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
-    mod_channel = await get_modlog_channel(guild)
-    return await Case.from_json(mod_channel, bot, case_number, case)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
+    return await Case.from_json(mod_channel, bot, case_number, case, guild=guild)
 
 
 async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
@@ -896,9 +905,12 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
     """
     cases = await _config.custom(_CASES, str(guild.id)).all()
-    mod_channel = await get_modlog_channel(guild)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
     return [
-        await Case.from_json(mod_channel, bot, case_number, case_data)
+        await Case.from_json(mod_channel, bot, case_number, case_data, guild=guild)
         for case_number, case_data in cases.items()
     ]
 
@@ -1228,7 +1240,9 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         return type_list
 
 
-async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
+async def get_modlog_channel(
+    guild: discord.Guild,
+) -> Union[discord.TextChannel, discord.VoiceChannel]:
     """
     Get the current modlog channel.
 
@@ -1239,7 +1253,7 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
 
     Returns
     -------
-    `discord.TextChannel`
+    `discord.TextChannel` or `discord.VoiceChannel`
         The channel object representing the modlog channel.
 
     Raises
@@ -1259,7 +1273,7 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
 
 
 async def set_modlog_channel(
-    guild: discord.Guild, channel: Union[discord.TextChannel, None]
+    guild: discord.Guild, channel: Union[discord.TextChannel, discord.VoiceChannel, None]
 ) -> bool:
     """
     Changes the modlog channel
@@ -1268,7 +1282,7 @@ async def set_modlog_channel(
     ----------
     guild: `discord.Guild`
         The guild to set a mod log channel for
-    channel: `discord.TextChannel` or `None`
+    channel: `discord.TextChannel`, `discord.VoiceChannel`, or `None`
         The channel to be set as modlog channel
 
     Returns
