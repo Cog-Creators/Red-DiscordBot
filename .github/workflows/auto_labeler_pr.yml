@@ -6,7 +6,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
+  label_pull_requests:
     runs-on: ubuntu-latest
     steps:
       - name: Apply Type Label
