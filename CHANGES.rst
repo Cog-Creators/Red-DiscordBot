@@ -27,7 +27,7 @@ Removals
 Fixes
 *****
 
-- **Cogs - Audio** - Addressed a cipher change that made it impossible to find tracks (:issue:`5822`)
+- |cool| **Cogs - Audio** - Addressed a cipher change that made it impossible to find tracks (:issue:`5822`)
 - **Cogs - Audio** - Fixed an issue with ``[p]llset external`` making the bot completely unresponsive when switching to an external Lavalink server (:issue:`5804`, :issue:`5828`)
 
 
@@ -71,7 +71,7 @@ Changes
 - **Core - Bot Commands** - Updated ``[p]servers`` command to escape Discord markdown in server names (:issue:`5696`, :issue:`5744`)
 - **Cogs - Audio** - Added timestamps to all embeds sent by Audio cog (:issue:`5632`)
 - **Cogs - Audio** - Improved handling of voice connection close codes received from Discord (:issue:`5712`)
-- **Cogs - Downloader** - Added information about the commit hash at which the cog is pinned in the output of ``[p]cog listpinned`` command (:issue:`5551`, :issue:`5563`)
+- |cool| **Cogs - Downloader** - Added information about the commit hash at which the cog is pinned in the output of ``[p]cog listpinned`` command (:issue:`5551`, :issue:`5563`)
 - **Cogs - General** - Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`5655`)
 - **Cogs - Mod** - Updated Red's ban commands to address the breaking change that Discord made in their ban list API endpoint (:issue:`5656`)
 - **Cogs - Mutes** - Added proper error handling for VERY long durations in mute commands (:issue:`5605`)
@@ -91,8 +91,8 @@ Fixes
 
 - **Core - Bot Commands** - Fixed grammar in the ``[p]uptime`` command (:issue:`5596`)
 - **Core - Command-line Interfaces** - Fixed a bug that prevented users from changing the name and data location with ``redbot --edit`` command (:issue:`5545`, :issue:`5540`, :issue:`5541`)
-- **Cogs - Audio** - Fixed plain word YT searching with ``[p]play`` and ``[p]search`` commands (:issue:`5712`)
-- **Cogs - Audio** - Fixed YT age-restricted track playback (:issue:`5712`)
+- |cool| **Cogs - Audio** - Fixed plain word YT searching with ``[p]play`` and ``[p]search`` commands (:issue:`5712`)
+- |cool| **Cogs - Audio** - Fixed YT age-restricted track playback (:issue:`5712`)
 - **Cogs - Audio** - Fixed the cog not sending any Track Error message on track decoding errors (:issue:`5716`)
 - **Cogs - Audio** - Fixed the ``UnboundLocalError`` exception happening when using ``[p]playlist list`` with an empty playlist (:issue:`5378`, :issue:`5394`)
 - **Cogs - Filter** - Fixed a potential memory leak in Filter cog (:issue:`5578`)
@@ -193,7 +193,7 @@ End-user changelog
 Additions
 *********
 
-- **Core - Command-line Interfaces** - Added new CLI options for non-interactive usage of ``redbot-setup`` (:issue:`2396`, :issue:`5448`)
+- |cool| **Core - Command-line Interfaces** - Added new CLI options for non-interactive usage of ``redbot-setup`` (:issue:`2396`, :issue:`5448`)
 
     See output of ``redbot-setup --help`` for more information.
 
@@ -214,7 +214,7 @@ Changes
 - **Cogs - CustomCommands** - Added 2000 character limit for custom command responses to prevent Nitro users from adding longer responses than a Discord bot can send (:issue:`5499`)
 - **Cogs - Downloader** - Added repo name to the response of ``[p]findcog`` command (:issue:`5382`, :issue:`5383`)
 - **Cogs - Mod** - ``[p]voicekick`` now sends a response when the action succeeds (:issue:`5367`)
-- **Cogs - Modlog** - Added the new native Discord timestamps in ``[p]case``, ``[p]casesfor``, and ``[p]listcases`` commands (:issue:`5395`)
+- |cool| **Cogs - Modlog** - Added the new native Discord timestamps in ``[p]case``, ``[p]casesfor``, and ``[p]listcases`` commands (:issue:`5395`)
 
 Removals
 ********
@@ -232,10 +232,10 @@ Fixes
 - **Core - Command-line Interfaces** - Fixed an issue with instance backup failing for non-JSON storage backends (:issue:`5315`)
 - **Core - Command-line Interfaces** - Running Red with ``--no-instance`` CLI flag no longer fails when no instance was ever created by the user (:issue:`5415`, :issue:`5416`)
 - **Core - Modlog** - Fixed issues with rendering of modlog cases with usernames written in a right-to-left language (:issue:`5422`)
-- **Cogs - Audio** - Fixed an issue with resuming playback after changing voice channels (:issue:`5170`)
-- **Cogs - Audio** - Fixed issues with Soundcloud private playlists and mobile links (:issue:`5474`)
-- **Cogs - Audio** - Fixed searching music with some of the queries containing quotes or backslashes (:issue:`5474`)
-- **Cogs - Audio** - Fixed an exception caused by unavailable YT tracks in Mix playlists (:issue:`5474`)
+- |cool| **Cogs - Audio** - Fixed an issue with resuming playback after changing voice channels (:issue:`5170`)
+- |cool| **Cogs - Audio** - Fixed issues with Soundcloud private playlists and mobile links (:issue:`5474`)
+- |cool| **Cogs - Audio** - Fixed searching music with some of the queries containing quotes or backslashes (:issue:`5474`)
+- |cool| **Cogs - Audio** - Fixed an exception caused by unavailable YT tracks in Mix playlists (:issue:`5474`)
 - **Cogs - Audio** - Fixed ``IndexError`` in ``[p]queue`` command which occurred when the user provides negative integer as the page number (:issue:`5429`)
 - **Cogs - Cleanup** - Restricted ``[p]cleanupset notify`` to only be invokable in server channels (:issue:`5466`)
 - **Cogs - Economy** - ``[p]economyset showsettings`` now includes configured role payday amounts (:issue:`5455`, :issue:`5457`)
@@ -252,8 +252,8 @@ Additions
 *********
 
 - **Core** - Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
-- **Core** - Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
-- **Commands Package** - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
+- |cool| **Core** - Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
+- |cool| **Commands Package** - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
 
 Changes
 *******
@@ -268,7 +268,7 @@ Documentation changes
 Additions
 *********
 
-- Added install guide for Alma Linux 8.4-8.x and Raspberry Pi OS 11 Bullseye (:issue:`5440`)
+- |cool| Added install guide for Alma Linux 8.4-8.x and Raspberry Pi OS 11 Bullseye (:issue:`5440`)
 - Specified that Red currently requires Python 3.8.1 - 3.9.x (:issue:`5403`)
 
 Changes
@@ -307,7 +307,7 @@ End-user changelog
 Additions
 *********
 
-- **Core - Bot Commands** - Added the new native Discord timestamp in the ``[p]uptime`` command (:issue:`5323`)
+- |cool| **Core - Bot Commands** - Added the new native Discord timestamp in the ``[p]uptime`` command (:issue:`5323`)
 
 Changes
 *******
@@ -317,7 +317,7 @@ Changes
 Fixes
 *****
 
-- **Cogs - Audio** - Fixed intermittent 403 Forbidden errors (:issue:`5329`)
+- |cool| **Cogs - Audio** - Fixed intermittent 403 Forbidden errors (:issue:`5329`)
 - **Cogs - Modlog** - Fixed formatting of **Last modified at** field in Modlog cases (:issue:`5317`)
 
 
@@ -327,12 +327,12 @@ Documentation changes
 Additions
 *********
 
-- Added install guide for CentOS Stream 8, Oracle Linux 8.4-8.x, and Rocky Linux 8 (:issue:`5328`)
+- |cool| Added install guide for CentOS Stream 8, Oracle Linux 8.4-8.x, and Rocky Linux 8 (:issue:`5328`)
 
 Changes
 *******
 
-- Each operating system now has a dedicated install guide (:issue:`5328`)
+- |cool| Each operating system now has a dedicated install guide (:issue:`5328`)
 - Install guides for RHEL derivatives no longer require the use of pyenv (:issue:`5328`)
 
 Fixes
@@ -363,8 +363,8 @@ End-user changelog
 Additions
 *********
 
-- **Core** - Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
-- **Core - Bot Commands** - Added a new ``[p]diagnoseissues`` command to allow the bot owners to diagnose issues with various command checks with ease (:issue:`4717`, :issue:`5243`)
+- |cool| **Core** - Red 3.4.13 is the first release to (finally) support Python 3.9! (:issue:`4655`, :issue:`5121`)
+- |cool| **Core - Bot Commands** - Added a new ``[p]diagnoseissues`` command to allow the bot owners to diagnose issues with various command checks with ease (:issue:`4717`, :issue:`5243`)
 
     Since some of us are pretty excited about this feature, here's a very small teaser showing a part of what it can do:
 
@@ -376,7 +376,7 @@ Additions
 - **Cogs - Audio** - Added a per-guild max volume setting (:issue:`5165`)
 
     This can be changed with the ``[p]audioset maxvolume`` command
-- **Cogs - Cleanup** - All ``[p]cleanup`` commands will now send a notification with the number of deleted messages. The notification is deleted automatically after 5 seconds (:issue:`5218`)
+- |cool| **Cogs - Cleanup** - All ``[p]cleanup`` commands will now send a notification with the number of deleted messages. The notification is deleted automatically after 5 seconds (:issue:`5218`)
 
     This can be disabled with the ``[p]cleanupset notify`` command
 - **Cogs - Filter** - Added ``[p]filter clear`` and ``[p]filter channel clear`` commands for clearing the server's/channel's filter list (:issue:`4841`, :issue:`4981`)
@@ -387,16 +387,16 @@ Changes
 - **Core - Bot Commands** - Revamped the ``[p]debuginfo`` to make it more useful for... You guessed it, debugging! (:issue:`4997`, :issue:`5156`)
 
     More specifically, added information about CPU and RAM, bot's instance name and owners
-- **Core - Bot Commands** - Added the new native Discord timestamps in Modlog cases, ``[p]userinfo``, ``[p]serverinfo``, and ``[p]tempban`` (:issue:`5155`, :issue:`5241`)
+- |cool| **Core - Bot Commands** - Added the new native Discord timestamps in Modlog cases, ``[p]userinfo``, ``[p]serverinfo``, and ``[p]tempban`` (:issue:`5155`, :issue:`5241`)
 - **Core - Bot Commands** - The ``[p]invite`` command will now add a tick reaction after it DMs an invite link to the user (:issue:`5184`)
-- **Core - Command-line Interfaces** - The formatting of Red's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
+- |cool| **Core - Command-line Interfaces** - The formatting of Red's console logs has been updated to make it more copy-paste friendly (:issue:`4868`, :issue:`5181`)
 - **Core - Command-line Interfaces** - The console error about missing Privileged Intents stands out more now (:issue:`5184`)
 - **Core - Dependencies** - Upgraded all Red's dependencies (:issue:`5121`)
 - **Cogs - Admin** - The ``[p]selfroleset add`` and ``[p]selfroleset remove`` commands can now be used to add multiple selfroles at once (:issue:`5237`, :issue:`5238`)
 - **Cogs - Audio** - ``[p]summon`` will now indicate that it has succeeded or failed to summon the bot (:issue:`5186`)
-- **Cogs - Cleanup** - The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
+- |cool| **Cogs - Cleanup** - The ``[p]cleanup user`` command can now be used to clean messages of a user that is no longer in the server (:issue:`5169`)
 - **Cogs - Downloader** - The dot character (``.``) can now be used in repo names. No more issues with adding repositories using the commands provided by the Cog Index! (:issue:`5214`)
-- **Cogs - Mod** - The DM message from the ``[p]tempban`` command will now include the ban reason if ``[p]modset dm`` setting is enabled (:issue:`4836`, :issue:`4837`)
+- |cool| **Cogs - Mod** - The DM message from the ``[p]tempban`` command will now include the ban reason if ``[p]modset dm`` setting is enabled (:issue:`4836`, :issue:`4837`)
 - **Cogs - Streams** - Made small optimizations in regards to stream alerts (:issue:`4968`)
 - **Cogs - Trivia** - Added schema validation of the custom trivia files (:issue:`4571`, :issue:`4659`)
 
@@ -410,14 +410,14 @@ Fixes
 
 - **Core - Bot Commands** - Fixed a bunch of errors related to the missing permissions and channels/messages no longer existing (:issue:`5109`, :issue:`5163`, :issue:`5172`, :issue:`5191`)
 - **Cogs - Audio** - Fixed an issue with short clips being cutoff when auto-disconnect on queue end is enabled (:issue:`5158`, :issue:`5188`)
-- **Cogs - Audio** - Fixed fetching of age-restricted tracks (:issue:`5233`)
-- **Cogs - Audio** - Fixed searching of YT Music (:issue:`5233`)
-- **Cogs - Audio** - Fixed playback from SoundCloud (:issue:`5233`)
+- |cool| **Cogs - Audio** - Fixed fetching of age-restricted tracks (:issue:`5233`)
+- |cool| **Cogs - Audio** - Fixed searching of YT Music (:issue:`5233`)
+- |cool| **Cogs - Audio** - Fixed playback from SoundCloud (:issue:`5233`)
 - **Cogs - Downloader** - Added a few missing line breaks (:issue:`5185`, :issue:`5187`)
 - **Cogs - Mod** - Fixed an error with handling of temporary ban expirations while the guild is unavailable due to Discord outage (:issue:`5173`)
 - **Cogs - Mod** - The ``[p]rename`` command will no longer permit changing nicknames of members that are not lower in the role hierarchy than the command caller (:issue:`5187`, :issue:`5211`)
 - **Cogs - Streams** - Fixed an issue with some YouTube streamers getting removed from stream alerts after a while (:issue:`5195`, :issue:`5223`)
-- **Cogs - Warnings** - 0 point warnings are, once again, allowed. (:issue:`5177`, :issue:`5178`)
+- |cool| **Cogs - Warnings** - 0 point warnings are, once again, allowed. (:issue:`5177`, :issue:`5178`)
 
 
 Developer changelog
@@ -426,7 +426,7 @@ Developer changelog
 Additions
 *********
 
-- **Core** - Added more APIs for allowlists and blocklists (:issue:`5206`)
+- |cool| **Core** - Added more APIs for allowlists and blocklists (:issue:`5206`)
 
     Here's the list of the methods that were added to the ``bot`` object:
 
@@ -438,7 +438,7 @@ Additions
         - `Red.remove_from_whitelist()`
         - `Red.get_whitelist()`
         - `Red.clear_whitelist()`
-- **Commands Package** - Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
+- |cool| **Commands Package** - Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
 
     This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
     In addition to regular timedelta arguments, it also accepts months and years!
@@ -452,13 +452,13 @@ Additions
 *********
 
 - Added a document about (privileged) intents and our stance regarding "public bots" (:issue:`5216`, :issue:`5221`)
-- Added install instructions for Debian 11 Bullseye (:issue:`5213`, :issue:`5217`)
+- |cool| Added install instructions for Debian 11 Bullseye (:issue:`5213`, :issue:`5217`)
 - Added Oracle Cloud's Always Free offering to the :ref:`host-list` (:issue:`5225`)
 
 Changes
 *******
 
-- Updated the commands in the install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
+- |cool| Updated the commands in the install guide for Mac OS to work properly on Apple Silicon devices (:issue:`5234`)
 
 Fixes
 *****
@@ -488,7 +488,7 @@ Changes
 
 - **Core - Bot Commands** - ``[p]set serverprefix`` command will now prevent the user from setting a prefix with length greater than 20 characters (:issue:`5091`, :issue:`5117`)
 - **Core - Bot Commands** - ``[p]set prefix`` command will now warn the user when trying to set a prefix with length greater than 20 characters (:issue:`5091`, :issue:`5117`)
-- **Cogs - Audio** - All local caches are now enabled by default (:issue:`5140`)
+- |cool| **Cogs - Audio** - All local caches are now enabled by default (:issue:`5140`)
 
 Removals
 ********
@@ -509,6 +509,7 @@ Changes
 *******
 
 - **Cogs - Dev** - ``[p]debug`` command will now confirm the code finished running with a tick reaction (:issue:`5107`)
+
 
 Redbot 3.4.11 (2021-06-12)
 ==========================
@@ -596,23 +597,23 @@ Fixes
 - **Core - Bot Commands** - Fixed a bug in ``[p]embedset user`` that made it impossible to reset the user's embed setting (:issue:`4962`)
 - **Core - Bot Commands** - ``[p]embedset command`` and its subcommands now properly check whether any of the passed command's parents require Embed Links permission (:issue:`4962`)
 - **Core - Bot Commands** - Fixed an issue with Red reloading unrelated modules when using ``[p]load`` and ``[p]reload`` (:issue:`4956`, :issue:`4958`)
-- **Core - Command-line Interfaces** - Fixed terminal colors on Windows (:issue:`5063`)
+- |cool| **Core - Command-line Interfaces** - Fixed terminal colors on Windows (:issue:`5063`)
 - **Core - Command-line Interfaces** - Fixed the ``--rich-traceback-extra-lines`` flag (:issue:`5028`)
 - **Cogs - Audio** - Fixed an issue that made it possible to remove Aikaterna's curated tracks playlist (:issue:`5018`)
-- **Cogs - Audio** - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
+- |cool| **Cogs - Audio** - Fixed auto-resume of auto play after Lavalink restart (:issue:`5051`)
 - **Cogs - Audio** - Fixed an error with ``[p]audiostats`` caused by players not always having their connection time stored (:issue:`5046`)
 - **Cogs - Audio** - Fixed track resuming in a certain edge case (:issue:`4996`)
 - **Cogs - Audio** - Fixed an error in ``[p]audioset restart`` (:issue:`4987`)
 - **Cogs - Audio** - Fixed an issue with Audio failing when it's missing permissions to send a message in the notification channel (:issue:`4960`)
-- **Cogs - Audio** - Fixed fetching of age-restricted tracks (:issue:`5085`)
+- |cool| **Cogs - Audio** - Fixed fetching of age-restricted tracks (:issue:`5085`)
 - **Cogs - Audio** - Fixed an issue with SoundCloud URLs that ended with a slash (``/``) character (:issue:`5085`)
 - **Cogs - CustomCommands** - ``[p]customcom create simple`` no longer errors for a few specific names (:issue:`5026`, :issue:`5027`)
 - **Cogs - Downloader** - ``[p]cog install`` now properly shows the repo name rather than ``{repo.name}`` (:issue:`4954`)
 - **Cogs - Mod** - ``[p]mute`` no longer errors on muting a bot user if the ``senddm`` option is enabled (:issue:`5071`)
 - **Cogs - Mutes** - Forbidden errors during the channel mute are now handled properly in a rare edge case (:issue:`4994`)
-- **Cogs - Streams** - Fixed Picarto support (:issue:`4969`, :issue:`4970`)
+- |cool| **Cogs - Streams** - Fixed Picarto support (:issue:`4969`, :issue:`4970`)
 - **Cogs - Streams** - ``[p]twitchstream``, ``[p]youtubestream``, and ``[p]picarto`` commands can no longer be run in DMs (:issue:`5036`, :issue:`5035`)
-- **Cogs - Streams** - Fixed Twitch stream alerts for streams that use localized display names (:issue:`5050`, :issue:`5066`)
+- |cool| **Cogs - Streams** - Fixed Twitch stream alerts for streams that use localized display names (:issue:`5050`, :issue:`5066`)
 - **Cogs - Streams** - The cog no longer errors when trying to delete a cached message from a channel that no longer exists (:issue:`5032`, :issue:`5031`)
 - **Cogs - Warnings** - The warn action is now taken *after* sending the warn message to the member (:issue:`4713`, :issue:`5004`)
 
@@ -639,15 +640,15 @@ Documentation changes
 Additions
 *********
 
-- Added `a guide for making auto-restart service on Mac <autostart_mac>` (:issue:`4082`, :issue:`5020`)
-- Added `cog guide for core commands <cog_guides/core>` (:issue:`1734`, :issue:`4597`)
-- Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`1734`, :issue:`4886`)
-- Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`1734`, :issue:`4919`)
-- Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`1734`, :issue:`4875`)
-- Added `cog guide for Permissions cog <cog_guides/permissions>` (:issue:`1734`, :issue:`4985`)
-- Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`1734`, :issue:`4882`)
-- Added `cog guide for Warnings cog <cog_guides/warnings>` (:issue:`1734`, :issue:`4920`)
-- Added :ref:`a guide about Trivia list creation <guide_trivia_list_creation>` (:issue:`4595`, :issue:`5023`)
+- |cool| Added `a guide for making auto-restart service on Mac <autostart_mac>` (:issue:`4082`, :issue:`5020`)
+- |cool| Added `cog guide for core commands <cog_guides/core>` (:issue:`1734`, :issue:`4597`)
+- |cool| Added `cog guide for Mod cog <cog_guides/mod>` (:issue:`1734`, :issue:`4886`)
+- |cool| Added `cog guide for Modlog cog <cog_guides/modlog>` (:issue:`1734`, :issue:`4919`)
+- |cool| Added `cog guide for Mutes cog <cog_guides/mutes>` (:issue:`1734`, :issue:`4875`)
+- |cool| Added `cog guide for Permissions cog <cog_guides/permissions>` (:issue:`1734`, :issue:`4985`)
+- |cool| Added `cog guide for Reports cog <cog_guides/reports>` (:issue:`1734`, :issue:`4882`)
+- |cool| Added `cog guide for Warnings cog <cog_guides/warnings>` (:issue:`1734`, :issue:`4920`)
+- |cool| Added :ref:`a guide about Trivia list creation <guide_trivia_list_creation>` (:issue:`4595`, :issue:`5023`)
 - Added the documentation for `redbot.core.modlog.Case` (:issue:`4979`)
 - Added information on how to set the bot not to start on boot anymore to auto-restart docs (:issue:`5020`)
 
@@ -695,24 +696,24 @@ End-user changelog
 Additions
 *********
 
-- **Core** - Added per-command embed settings (:issue:`4049`)
+- |cool| **Core** - Added per-command embed settings (:issue:`4049`)
 
     - See help of ``[p]embedset`` and ``[p]embedset command`` command group for more information
 - **Core** - An error message will now be shown when a command that is only available in NSFW channels is used in a non-NSFW channel (:issue:`4933`)
-- **Core - Bot Commands** - ``[p]leave`` accepts server IDs now (:issue:`4831`)
-- **Cogs - Trivia** - Added a new option for hiding the answer to the Trivia answer in a spoiler (:issue:`4700`, :issue:`4877`)
+- |cool| **Core - Bot Commands** - ``[p]leave`` accepts server IDs now (:issue:`4831`)
+- |cool| **Cogs - Trivia** - Added a new option for hiding the answer to the Trivia answer in a spoiler (:issue:`4700`, :issue:`4877`)
 
     - ``[p]triviaset usespoilers`` command can be used to enable/disable this option
 
 Changes
 *******
 
-- **Core - Bot Commands** - The ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
-- **Core - Bot Commands** - Commands for listing global and local allowlists and blocklists will now, in addition to IDs, contain user/role names (:issue:`4839`)
+- |cool| **Core - Bot Commands** - The ``[p]servers`` command uses menus now (:issue:`4720`, :issue:`4831`)
+- |cool| **Core - Bot Commands** - Commands for listing global and local allowlists and blocklists will now, in addition to IDs, contain user/role names (:issue:`4839`)
 - **Core - Bot Commands** - Added more singular and plural forms in a bunch of commands in the bot (:issue:`4004`, :issue:`4898`)
-- **Core - Command-line Interfaces** - Added a progress bar to ``redbot-setup convert`` (:issue:`2952`)
+- |cool| **Core - Command-line Interfaces** - Added a progress bar to ``redbot-setup convert`` (:issue:`2952`)
 - **Cogs - Audio** - Improved playlist extraction (:issue:`4932`)
-- **Cogs - Cleanup** - ``[p]cleanup before`` and ``[p]cleanup after`` commands can now be used without a message ID if the invocation message replies to some message (:issue:`4790`)
+- |cool| **Cogs - Cleanup** - ``[p]cleanup before`` and ``[p]cleanup after`` commands can now be used without a message ID if the invocation message replies to some message (:issue:`4790`)
 - **Cogs - Filter** - Added meaningful error messages for incorrect arguments in the ``[p]bank set`` command (:issue:`4789`, :issue:`4801`)
 - **Cogs - Mod** - Improved performance of checking tempban expirations (:issue:`4907`)
 - **Cogs - Mutes** - Vastly improved performance of automatic unmute handling (:issue:`4906`)
@@ -729,14 +730,14 @@ Removals
 Fixes
 *****
 
-- **Core** - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
+- |cool| **Core** - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
 - **Core** - Fixed how the command signature is shown in help for subcommands that have group args (:issue:`4928`)
 - **Cogs - Alias** - Fixed issues with command aliases for commands that take an arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
-- **Cogs - Audio** - Fixed stuttering (:issue:`4565`)
-- **Cogs - Audio** - Fixed random disconnects (:issue:`4565`)
-- **Cogs - Audio** - Fixed the issues causing the player to be stuck on 00:00 (:issue:`4565`)
-- **Cogs - Audio** - Fixed ghost players (:issue:`4565`)
-- **Cogs - Audio** - Audio will no longer stop playing after a while (:issue:`4565`)
+- |cool| **Cogs - Audio** - Fixed stuttering (:issue:`4565`)
+- |cool| **Cogs - Audio** - Fixed random disconnects (:issue:`4565`)
+- |cool| **Cogs - Audio** - Fixed the issues causing the player to be stuck on 00:00 (:issue:`4565`)
+- |cool| **Cogs - Audio** - Fixed ghost players (:issue:`4565`)
+- |cool| **Cogs - Audio** - Audio will no longer stop playing after a while (:issue:`4565`)
 - **Cogs - Audio** - Fixed playlist loading for playlists with over 100 songs (:issue:`4932`)
 - **Cogs - Audio** - Fixed an issue with alerts causing errors in playlists being loaded (:issue:`4932`)
 - **Cogs - Audio** - Fixed an issue with consent pages appearing while trying to load songs or playlists (:issue:`4932`)
@@ -778,7 +779,7 @@ Documentation changes
 Additions
 *********
 
-- Added `cog guide for Image cog <cog_guides/image>` (:issue:`4821`)
+- |cool| Added `cog guide for Image cog <cog_guides/image>` (:issue:`4821`)
 
 Changes
 *******
@@ -830,8 +831,8 @@ Documentation changes
 Additions
 *********
 
-- Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
-- Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
+- |cool| Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
+- |cool| Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
 
 
 Redbot 3.4.6 (2021-02-16)
@@ -859,7 +860,7 @@ Security
 Additions
 *********
 
-- **Core** - Help now includes command aliases in the command help (:issue:`3040`)
+- |cool| **Core** - Help now includes command aliases in the command help (:issue:`3040`)
 
     - This can be disabled with ``[p]helpset showaliases`` command
 - **Cogs - Mod** - Added two new settings for disabling username and nickname tracking (:issue:`4799`)
@@ -868,7 +869,7 @@ Additions
     - Added a command ``[p]modset tracknicknames`` that disables nickname tracking in a specific guild
 - **Cogs - Mod** - Added a command ``[p]modset deletenames`` that deletes all stored usernames and nicknames (:issue:`4827`)
 - **Cogs - Modlog** - Added a command ``[p]listcases`` that allows you to see multiple cases for a user at once (:issue:`4426`)
-- **Cogs - Mutes** - A DM can now be sent to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
+- |cool| **Cogs - Mutes** - A DM can now be sent to the (un)muted user on mute and unmute (:issue:`3752`, :issue:`4563`)
 
     - Added ``[p]muteset senddm`` to set whether the DM should be sent (function disabled by default)
     - Added ``[p]muteset showmoderator`` to set whether the DM sent to the user should include the name of the moderator that muted the user (function disabled by default)
@@ -878,7 +879,7 @@ Changes
 *******
 
 - **Core - Bot Commands** - Added a friendly error message to ``[p]load`` that is shown when trying to load a cog with a command name that is already taken by a different cog (:issue:`3870`)
-- **Core - Command-line Interfaces** - Improvements and fixes for our new (colorful) logging (:issue:`4702`, :issue:`4726`)
+- |cool| **Core - Command-line Interfaces** - Improvements and fixes for our new (colorful) logging (:issue:`4702`, :issue:`4726`)
 
     - The colors used have been adjusted to be readable on many more terminal applications
     - The ``NO_COLOR`` environment variable can now be set to forcefully disable all colors in the console output
@@ -911,7 +912,7 @@ Fixes
 *****
 
 - Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4763`, :issue:`4788`, :issue:`4792`, :issue:`4810`)
-- **Core** - Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
+- |cool| **Core** - Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - **Core - Bot Commands** - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
 - **Core - Bot Commands** - Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
 - **Core - Bot Commands** - ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
@@ -933,7 +934,7 @@ Additions
 *********
 
 - **Core** - Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
-- **Cogs - Dev** - Cogs can now add their own variables to the environment of ``[p]debug``, ``[p]eval``, and ``[p]repl`` commands (:issue:`4667`)
+- |cool| **Cogs - Dev** - Cogs can now add their own variables to the environment of ``[p]debug``, ``[p]eval``, and ``[p]repl`` commands (:issue:`4667`)
 
     - Variables can be added and removed from the environment of Dev cog using two new methods:
 
@@ -957,7 +958,7 @@ Documentation changes
 Additions
 *********
 
-- Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
+- |cool| Added `cog guide for Filter cog <cog_guides/filter>` (:issue:`4579`)
 
 Changes
 *******
@@ -1014,8 +1015,8 @@ End-user changelog
 Additions
 *********
 
-- **Core - Command-line Interfaces** - Red's logging will now shine in your terminal more than ever (:issue:`4577`)
-- **Cogs - Streams** - YouTube stream schedules are now announced before the stream (:issue:`4615`)
+- |cool| **Core - Command-line Interfaces** - Red's logging will now shine in your terminal more than ever (:issue:`4577`)
+- |cool| **Cogs - Streams** - YouTube stream schedules are now announced before the stream (:issue:`4615`)
 
     - Alerts about YouTube stream schedules can be disabled with a new ``[p]streamset ignoreschedule`` command (:issue:`4615`)
 - **Cogs - Trivia - Lists** - Added ``whosthatpokemon5`` trivia list containing Pokémon from the 5th generation (:issue:`4646`)
@@ -1038,10 +1039,10 @@ Fixes
 
 - **Core - Bot Commands** - Fixed an error when removing path from a different operating system than the bot is currently running on with ``[p]removepath`` (:issue:`2609`, :issue:`4662`, :issue:`4466`)
 - **Cogs - Audio** - Fixed ``[p]llset java`` failing to set the Java executable path (:issue:`4621`, :issue:`4624`)
-- **Cogs - Audio** - Fixed SoundCloud playback (:issue:`4683`)
-- **Cogs - Audio** - Fixed YouTube age-restricted track playback (:issue:`4683`)
+- |cool| **Cogs - Audio** - Fixed SoundCloud playback (:issue:`4683`)
+- |cool| **Cogs - Audio** - Fixed YouTube age-restricted track playback (:issue:`4683`)
 - **Cogs - Mod** - ``[p]ban`` command will no longer error out when the given reason is too long (:issue:`4187`, :issue:`4189`)
-- **Cogs - Streams** - Scheduled YouTube streams now work properly with the cog (:issue:`3691`, :issue:`4615`)
+- |cool| **Cogs - Streams** - Scheduled YouTube streams now work properly with the cog (:issue:`3691`, :issue:`4615`)
 
 
 Developer changelog
@@ -1050,7 +1051,7 @@ Developer changelog
 Additions
 *********
 
-- **Cogs - Dev** - Added new ``[p]bypasscooldown`` command that allows owners to bypass command cooldowns (:issue:`4440`)
+- |cool| **Cogs - Dev** - Added new ``[p]bypasscooldown`` command that allows owners to bypass command cooldowns (:issue:`4440`)
 - **Utilities** - `get_audit_reason()` can now be passed a ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
 
 Changes
@@ -1065,9 +1066,9 @@ Documentation changes
 Additions
 *********
 
-- Added `cog guide for Downloader cog <cog_guides/downloader>` (:issue:`4511`)
-- Added `cog guide for Economy cog <cog_guides/economy>` (:issue:`4519`)
-- Added `cog guide for Streams cog <cog_guides/streams>` (:issue:`4521`)
+- |cool| Added `cog guide for Downloader cog <cog_guides/downloader>` (:issue:`4511`)
+- |cool| Added `cog guide for Economy cog <cog_guides/economy>` (:issue:`4519`)
+- |cool| Added `cog guide for Streams cog <cog_guides/streams>` (:issue:`4521`)
 - Added `guide_cog_creators` document (:issue:`4637`)
 
 Removals
@@ -1096,7 +1097,7 @@ Additions
 *********
 
 - **Core - Bot Commands** - Added ``[p]set competing`` command that allows users to set the bot's competing status (:issue:`4607`, :issue:`4609`)
-- **Cogs - Audio** - Added support for SoundCloud HLS streams (:issue:`4608`)
+- |cool| **Cogs - Audio** - Added support for SoundCloud HLS streams (:issue:`4608`)
 
 Changes
 *******
@@ -1108,9 +1109,9 @@ Fixes
 *****
 
 - **Cogs - Audio** - Volume changes on ARM systems running a 64 bit OS will now work again (:issue:`4608`)
-- **Cogs - Audio** - Fixed only 100 results being returned on a Youtube playlist (:issue:`4608`)
-- **Cogs - Audio** - Fixed YouTube VOD duration being set to unknown (:issue:`3885`, :issue:`4608`)
-- **Cogs - Audio** - Fixed some YouTube livestreams getting stuck (:issue:`4608`)
+- |cool| **Cogs - Audio** - Fixed only 100 results being returned on a Youtube playlist (:issue:`4608`)
+- |cool| **Cogs - Audio** - Fixed YouTube VOD duration being set to unknown (:issue:`3885`, :issue:`4608`)
+- |cool| **Cogs - Audio** - Fixed some YouTube livestreams getting stuck (:issue:`4608`)
 - **Cogs - Audio** - Fixed internal Lavalink manager failing for Java with untypical version formats (:issue:`4608`)
 - **Cogs - Economy** - The ``[p]leaderboard`` command no longer fails in DMs when a global bank is used (:issue:`4569`)
 - **Cogs - Mod** - The ban reason is now properly set in the audit log and modlog when using the ``[p]massban`` command (:issue:`4575`)
@@ -1134,8 +1135,8 @@ Documentation changes
 Additions
 *********
 
-- Added `guide for Cog Manager UI <cogmanagerui>` (:issue:`4152`)
-- Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
+- |cool| Added `guide for Cog Manager UI <cogmanagerui>` (:issue:`4152`)
+- |cool| Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
 
 
 Redbot 3.4.2 (2020-10-28)
@@ -1166,7 +1167,7 @@ Fixes
 *****
 
 - **Cogs - Audio** - Fixed the ``[p]local search`` command (:issue:`4553`)
-- **Cogs - Audio** - Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
+- |cool| **Cogs - Audio** - Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
 - **Cogs - Mod** - Fixed ``[p]massban`` not working for banning members that are in the server (:issue:`4556`, :issue:`4555`)
 
 
@@ -1176,7 +1177,7 @@ Documentation changes
 Additions
 *********
 
-- Added `cog guide for Cleanup cog <cleanup>` (:issue:`4488`)
+- |cool| Added `cog guide for Cleanup cog <cleanup>` (:issue:`4488`)
 
 Changes
 *******
@@ -1216,24 +1217,24 @@ Security
 Additions
 *********
 
-- **Core** - Locales and regional formats can now be set in individual guilds using ``[p]set locale`` and ``[p]set regionalformat`` (:issue:`3896`, :issue:`1970`)
+- |cool| **Core** - Locales and regional formats can now be set in individual guilds using ``[p]set locale`` and ``[p]set regionalformat`` (:issue:`3896`, :issue:`1970`)
 
     - Global locale and regional format setters have been renamed to ``[p]set globallocale`` and ``[p]set globalregionalformat``
 - **Core - Bot Commands** - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - **Core - Bot Commands** - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 - **Core - Bot Commands** - Added ``[p]helpset usetick``, toggling command message being ticked when help is sent to DM (:issue:`4467`, :issue:`4075`)
 - **Cogs - Audio** - Added the Global Audio API, to cut down on Youtube 429 errors and allow Spotify playback past user's quota. (:issue:`4446`)
-- **Cogs - Audio** - Added persistent queues, allowing for queues to be restored on a bot restart or cog reload (:issue:`4446`)
+- |cool| **Cogs - Audio** - Added persistent queues, allowing for queues to be restored on a bot restart or cog reload (:issue:`4446`)
 - **Cogs - Audio** - Added ``[p]audioset restart``, allowing for Lavalink connection to be restarted (:issue:`4446`)
-- **Cogs - Audio** - Added ``[p]audioset autodeafen``, allowing for bot to auto-deafen itself when entering voice channel (:issue:`4446`)
+- |cool| **Cogs - Audio** - Added ``[p]audioset autodeafen``, allowing for bot to auto-deafen itself when entering voice channel (:issue:`4446`)
 - **Cogs - Audio** - Added ``[p]audioset mycountrycode``, allowing Spotify search locale per user (:issue:`4446`)
 - **Cogs - Audio** - Added ``[p]llset java``, allowing for a custom Java executable path (:issue:`4446`)
 - **Cogs - Audio** - Added ``[p]llset info`` to show Lavalink settings (:issue:`4527`)
 - **Cogs - Audio** - Added ``[p]audioset logs`` to download Lavalink logs if the Lavalink server is set to internal (:issue:`4527`)
 - **Cogs - Mod** - Added ``[p]modset mentionspam strict`` allowing for duplicated mentions to count towards the mention spam cap (:issue:`4359`)
-- **Cogs - Mod** - Added a default tempban duration for ``[p]tempban`` (:issue:`4473`, :issue:`3992`)
-- **Cogs - Mutes** - Added ``[p]muteset forcerole`` to make mutes role based, instead of permission based (:issue:`3634`)
-- **Cogs - Mutes** - Added an optional time argument to all mutes, to specify when the user should be unmuted (:issue:`3634`)
+- |cool| **Cogs - Mod** - Added a default tempban duration for ``[p]tempban`` (:issue:`4473`, :issue:`3992`)
+- |cool| **Cogs - Mutes** - Added ``[p]muteset forcerole`` to make mutes role based, instead of permission based (:issue:`3634`)
+- |cool| **Cogs - Mutes** - Added an optional time argument to all mutes, to specify when the user should be unmuted (:issue:`3634`)
 - **Cogs - Trivia - Lists** - Added new MLB trivia list (:issue:`4455`)
 - **Cogs - Trivia - Lists** - Added new Who's That Pokémon - Gen. IV trivia list (:issue:`4434`)
 - **Cogs - Trivia - Lists** - Added new Hockey trivia list (:issue:`4384`)
@@ -1250,10 +1251,10 @@ Changes
 - **Cogs - Audio** - Removed stream durations from being in queue duration (:issue:`4513`)
 - **Cogs - Cleanup** - Allowed ``[p]cleanup self`` to work in DMs for all users (:issue:`4481`)
 - **Cogs - Economy** - Added an embed option for ``[p]leaderboard`` (:issue:`4184`, :issue:`4104`)
-- **Cogs - Mod** - Added an option to ban users not in the guild to ``[p]ban`` (:issue:`4422`, :issue:`4419`)
+- |cool| **Cogs - Mod** - Added an option to ban users not in the guild to ``[p]ban`` (:issue:`4422`, :issue:`4419`)
 - **Cogs - Mod** - Renamed ``[p]hackban`` to ``[p]massban``, keeping ``[p]hackban`` as an alias, allowing for multiple users to be banned at once (:issue:`4422`, :issue:`4419`)
 - **Cogs - Mutes** - Changed ``[p]mute`` to only handle serverwide muting, ``[p]mute voice`` and ``[p]mute channel`` have been moved to separate commands called ``[p]mutechannel`` and ``[p]mutevoice`` (:issue:`3634`)
-- **Cogs - Mutes** - Mute commands can now take multiple user arguments, to mute multiple users at a time (:issue:`3634`)
+- |cool| **Cogs - Mutes** - Mute commands can now take multiple user arguments, to mute multiple users at a time (:issue:`3634`)
 - **Cogs - Warnings** - Added bool arguments to toggle commands to improve consistency (:issue:`4409`)
 
 .. _important-341-1:
@@ -1279,12 +1280,12 @@ Fixes
 - **Core - Bot Commands** - Fixed info missing on the non-embed version of ``[p]debuginfo`` (:issue:`4524`)
 - **Core - Dependencies** - Properly define supported Python versions to be lower than 3.9 (:issue:`4538`)
 - **Cogs - Audio** - Scattered grammar and typo fixes (:issue:`4446`)
-- **Cogs - Audio** - Fixed Bandcamp playback (:issue:`4504`)
-- **Cogs - Audio** - Fixed YouTube playlist playback (:issue:`4504`)
-- **Cogs - Audio** - Fixed YouTube searching issues (:issue:`4504`)
-- **Cogs - Audio** - Fixed YouTube age restricted track playback (:issue:`4504`)
+- |cool| **Cogs - Audio** - Fixed Bandcamp playback (:issue:`4504`)
+- |cool| **Cogs - Audio** - Fixed YouTube playlist playback (:issue:`4504`)
+- |cool| **Cogs - Audio** - Fixed YouTube searching issues (:issue:`4504`)
+- |cool| **Cogs - Audio** - Fixed YouTube age restricted track playback (:issue:`4504`)
 - **Cogs - Audio** - Fixed the Audio cog not being translated when setting locale (:issue:`4492`, :issue:`4495`)
-- **Cogs - Audio** - Fixed tracks getting stuck at 0:00 after long player sessions (:issue:`4529`)
+- |cool| **Cogs - Audio** - Fixed tracks getting stuck at 0:00 after long player sessions (:issue:`4529`)
 - **Cogs - CustomCommands** - Fixed an ungraceful error being thrown on ``[p]cc edit`` (:issue:`4325`)
 - **Cogs - General** - Fixed issues with text not being properly URL encoded (:issue:`4024`)
 - **Cogs - General** - Fixed an ungraceful error occurring when a title is longer than 256 characters in ``[p]urban`` (:issue:`4474`)
@@ -1310,16 +1311,16 @@ Additions
 
 - **Core** - Added ``[all]`` and ``[dev]`` extras to the ``Red-DiscordBot`` package (:issue:`4443`)
 - **Core** - Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
-- **Cogs - Dev** - Added ``[p]repl pause`` to pause/resume the REPL session in the current channel (:issue:`4366`)
+- |cool| **Cogs - Dev** - Added ``[p]repl pause`` to pause/resume the REPL session in the current channel (:issue:`4366`)
 - **API Tokens** - Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
 - **API Tokens** - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
-- **Downloader** - Added JSON schema files for ``info.json`` files (:issue:`4375`)
-- **i18n API** - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
+- |cool| **Downloader** - Added JSON schema files for ``info.json`` files (:issue:`4375`)
+- |cool| **i18n API** - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
 
     - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
     - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 - **Modlog API** - Added ``last_known_username`` parameter to `modlog.create_case()` function (:issue:`4326`)
-- **Utilities** - Added `redbot.core.utils.get_end_user_data_statement()` and `redbot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
+- |cool| **Utilities** - Added `redbot.core.utils.get_end_user_data_statement()` and `redbot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
 - **Utilities** - Added `redbot.core.utils.chat_formatting.quote()` to quote text in a message (:issue:`4425`)
 
 Changes
@@ -1327,7 +1328,7 @@ Changes
 
 - **Core** - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
 - **Bank API** - Bank API methods now consistently throw TypeError if a non-integer amount is supplied (:issue:`4376`)
-- **Modlog API** - Added an option to accept a ``discord.Object`` in `modlog.create_case()` (:issue:`4326`)
+- |cool| **Modlog API** - Added an option to accept a ``discord.Object`` in `modlog.create_case()` (:issue:`4326`)
 
 Deprecations
 ************
@@ -1383,14 +1384,14 @@ Security
 Additions
 *********
 
-- **Core** - Added per-guild cog disabling (:issue:`4043`, :issue:`3945`)
+- |cool| **Core** - Added per-guild cog disabling (:issue:`4043`, :issue:`3945`)
 
     - Bot owners can set the default state for a cog using ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands
     - Guild owners can enable/disable cogs for their guild using ``[p]command disablecog`` and ``[p]command enablecog`` commands
     - Cogs disabled in the guild can be listed with ``[p]command listdisabledcogs``
-- **Core** - Added support for data deletion requests; see `red_core_data_statement` for more information (:issue:`4045`)
+- |cool| **Core** - Added support for data deletion requests; see `red_core_data_statement` for more information (:issue:`4045`)
 - **Core - Bot Commands** - Added ``[p]helpset showsettings`` command (:issue:`4013`, :issue:`4022`)
-- **Cogs - Mod** - Users can now set mention spam triggers which will warn or kick the user. See ``[p]modset mentionspam`` for more information (:issue:`3786`, :issue:`4038`)
+- |cool| **Cogs - Mod** - Users can now set mention spam triggers which will warn or kick the user. See ``[p]modset mentionspam`` for more information (:issue:`3786`, :issue:`4038`)
 - **Cogs - Trivia - Lists** - Added ``whosthatpokemon2`` trivia containing Pokémons from 2nd generation (:issue:`4102`)
 - **Cogs - Trivia - Lists** - Added ``whosthatpokemon3`` trivia containing Pokémons from 3rd generation (:issue:`4141`)
 
@@ -1404,13 +1405,13 @@ Changes
 - **Core - Bot Commands** - ``[p]licenseinfo`` now has a 3 minute cooldown to prevent a single user from spamming channel by using it (:issue:`4110`)
 - **Core - Bot Commands** - Whitelist and blacklist are now called allowlist and blocklist. Old names have been left as aliases (:issue:`4138`)
 - **Core - Command-line Interfaces** - Red now logs clearer error if it can't find package to load in any cog path during bot startup (:issue:`4079`)
-- **Cogs - Admin** - ``[p]announce`` will now only send announcements to guilds that have explicitly configured text channel to send announcements to using ``[p]announceset channel`` command (:issue:`4088`, :issue:`4089`)
-- **Cogs - Downloader** - ``[p]cog info`` command now shows end user data statement made by the cog creator (:issue:`4169`)
-- **Cogs - Downloader** - ``[p]cog update`` command will now notify the user if cog's end user data statement has changed since last update (:issue:`4169`)
+- |cool| **Cogs - Admin** - ``[p]announce`` will now only send announcements to guilds that have explicitly configured text channel to send announcements to using ``[p]announceset channel`` command (:issue:`4088`, :issue:`4089`)
+- |cool| **Cogs - Downloader** - ``[p]cog info`` command now shows end user data statement made by the cog creator (:issue:`4169`)
+- |cool| **Cogs - Downloader** - ``[p]cog update`` command will now notify the user if cog's end user data statement has changed since last update (:issue:`4169`)
 - **Cogs - General** - Updated features list in ``[p]serverinfo`` with the latest changes from Discord (:issue:`4116`)
 - **Cogs - General** - Simple version of ``[p]serverinfo`` now shows info about more detailed ``[p]serverinfo 1`` (:issue:`4121`)
 - **Cogs - Mod** - ``[p]tempban`` now respects default days setting (``[p]modset defaultdays``) (:issue:`3993`)
-- **Cogs - Mod** - ``[p]mute voice`` and ``[p]unmute voice`` now take action instantly if bot has Move Members permission (:issue:`4064`)
+- |cool| **Cogs - Mod** - ``[p]mute voice`` and ``[p]unmute voice`` now take action instantly if bot has Move Members permission (:issue:`4064`)
 - **Cogs - Mod** - Added typing to ``[p](un)mute guild`` to indicate that mute is being processed (:issue:`4066`, :issue:`4172`)
 - **Cogs - Modlog** - Added timestamp to text version of ``[p]casesfor`` and ``[p]case`` commands (:issue:`4118`, :issue:`4137`)
 - **Cogs - Streams** - Stream alerts will no longer make roles temporarily mentionable if bot has "Mention @everyone, @here, and All Roles" permission in the channel (:issue:`4182`)
@@ -1440,7 +1441,7 @@ Developer changelog
 Breaking Changes
 ****************
 
-- By default, none of the ``.send()`` methods mention roles or ``@everyone/@here`` (:issue:`3845`)
+- |cool| By default, none of the ``.send()`` methods mention roles or ``@everyone/@here`` (:issue:`3845`)
 
     - see `discord.AllowedMentions` and ``allowed_mentions`` kwarg of ``.send()`` methods, if your cog requires to mention roles or ``@everyone/@here``
 - Method/attribute names starting with ``red_`` or being in the form of ``__red_*__`` are now reserved. See `version_guarantees` for more information (:issue:`4085`)
@@ -1458,27 +1459,27 @@ Breaking Changes
 Additions
 *********
 
-- **Core** - Added cog disabling API (:issue:`4043`, :issue:`3945`)
+- |cool| **Core** - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
     - New methods added: `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <Red.cog_disabled_in_guild_raw()>`
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
-- **Core** - Added data request API (:issue:`4045`,  :issue:`4169`)
+- |cool| **Core** - Added data request API (:issue:`4045`,  :issue:`4169`)
 
     - New special methods added to `redbot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 - **Core** - Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
-- **Commands Package** - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
+- |cool| **Commands Package** - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
 - **Commands Package** - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
 
 Changes
 *******
 
 - **Core** - `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
-- **Commands Package** - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
+- |cool| **Commands Package** - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
 - **Utilities** - `humanize_list()` now accepts ``locale`` and ``style`` keyword arguments. See its documentation for more information (:issue:`2982`)
-- **Utilities** - `humanize_list()` is now properly localized (:issue:`2906`, :issue:`2982`)
+- |cool| **Utilities** - `humanize_list()` is now properly localized (:issue:`2906`, :issue:`2982`)
 - **Utilities** - `humanize_list()` now accepts empty sequences (:issue:`2982`)
 - **Utilities** - ``bordered()`` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
 - **Vendored Packages** - Updated ``discord.ext.menus`` vendor (:issue:`4167`)
@@ -1496,9 +1497,9 @@ Documentation changes
 Additions
 *********
 
-- Added admin user guide (:issue:`3081`)
-- Added alias user guide (:issue:`3084`)
-- Added bank user guide (:issue:`4149`)
+- |cool| Added admin user guide (:issue:`3081`)
+- |cool| Added alias user guide (:issue:`3084`)
+- |cool| Added bank user guide (:issue:`4149`)
 
 Removals
 ********
