@@ -31,7 +31,7 @@ Then run each of the following commands:
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2022-workload-vctools -y
-    choco upgrade python3 -y --version 3.9.13
+    choco upgrade python39 -y
 
 For Audio support, you should also run the following command before exiting:
 
