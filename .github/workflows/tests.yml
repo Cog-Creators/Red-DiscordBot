@@ -36,17 +36,17 @@ jobs:
         fail-fast: false
       name: Tox - ${{ matrix.friendly_name }}
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3
           with:
             ref: ${{ env.ref }}
         - name: Set up Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@v4
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox
           run: |
             python -m pip install --upgrade pip
-            pip install tox
+            pip install "tox<4"
         - name: Tox test
           env:
             TOXENV: ${{ matrix.tox_env }}
@@ -72,17 +72,17 @@ jobs:
             POSTGRES_PASSWORD: postgres
             POSTGRES_USER: postgres
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3
           with:
             ref: ${{ env.ref }}
         - name: Set up Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@v4
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox
           run: |
             python -m pip install --upgrade pip
-            pip install tox
+            pip install "tox<4"
         - name: Tox test
           env:
             TOXENV: postgres
