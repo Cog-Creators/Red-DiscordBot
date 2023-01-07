@@ -46,12 +46,12 @@ class Events(MixinMeta):
         mention_spam = await self.config.guild(guild).mention_spam.all()
 
         if mention_spam["strict"]:  # if strict is enabled
-            mentions = message.raw_mentions
+            mentions = len(message.raw_mentions) + len(message.raw_role_mentions)
         else:  # if not enabled
-            mentions = set(message.mentions)
+            mentions = len(set(message.mentions)) + len(set(message.role_mentions))
 
         if mention_spam["ban"]:
-            if len(mentions) >= mention_spam["ban"]:
+            if mentions >= mention_spam["ban"]:
                 try:
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
@@ -64,7 +64,7 @@ class Events(MixinMeta):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        message.created_at.replace(tzinfo=timezone.utc),
+                        message.created_at,
                         "ban",
                         author,
                         guild.me,
@@ -75,7 +75,7 @@ class Events(MixinMeta):
                     return True
 
         if mention_spam["kick"]:
-            if len(mentions) >= mention_spam["kick"]:
+            if mentions >= mention_spam["kick"]:
                 try:
                     await guild.kick(author, reason=_("Mention Spam (Autokick)"))
                 except discord.HTTPException:
@@ -88,7 +88,7 @@ class Events(MixinMeta):
                     await modlog.create_case(
                         self.bot,
                         guild,
-                        message.created_at.replace(tzinfo=timezone.utc),
+                        message.created_at,
                         "kick",
                         author,
                         guild.me,
@@ -99,7 +99,7 @@ class Events(MixinMeta):
                     return True
 
         if mention_spam["warn"]:
-            if len(mentions) >= mention_spam["warn"]:
+            if mentions >= mention_spam["warn"]:
                 try:
                     await author.send(_("Please do not mass mention people!"))
                 except (discord.HTTPException, discord.Forbidden):
@@ -120,7 +120,7 @@ class Events(MixinMeta):
                 await modlog.create_case(
                     self.bot,
                     guild,
-                    message.created_at.replace(tzinfo=timezone.utc),
+                    message.created_at,
                     "warning",
                     author,
                     guild.me,

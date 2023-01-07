@@ -12,8 +12,7 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 1
     :caption: Installation Guides:
 
-    install_windows
-    install_linux_mac
+    install_guides/index
     bot_application_guide
     update_red
     about_venv
@@ -33,13 +32,15 @@ Welcome to Red - Discord Bot's documentation!
     :caption: User guides:
 
     getting_started
+    intents
     cog_guides/admin
     cog_guides/alias
-    cog_guides/bank
+    cog_guides/audio
     cog_guides/cleanup
     cog_guides/cog_manager_ui
     cog_guides/core
     cog_guides/customcommands
+    cog_guides/dev
     cog_guides/downloader
     cog_guides/economy
     cog_guides/filter

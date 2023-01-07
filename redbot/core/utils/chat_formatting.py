@@ -16,49 +16,86 @@ _ = Translator("UtilsChatFormatting", __file__)
 def error(text: str) -> str:
     """Get text prefixed with an error emoji.
 
+    Parameters
+    ----------
+    text : str
+        The text to be prefixed.
+
     Returns
     -------
     str
         The new message.
 
     """
-    return "\N{NO ENTRY SIGN} {}".format(text)
+    return f"\N{NO ENTRY SIGN} {text}"
 
 
 def warning(text: str) -> str:
     """Get text prefixed with a warning emoji.
 
+    Parameters
+    ----------
+    text : str
+        The text to be prefixed.
+
     Returns
     -------
     str
         The new message.
 
     """
-    return "\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {}".format(text)
+    return f"\N{WARNING SIGN}\N{VARIATION SELECTOR-16} {text}"
 
 
 def info(text: str) -> str:
     """Get text prefixed with an info emoji.
 
+    Parameters
+    ----------
+    text : str
+        The text to be prefixed.
+
     Returns
     -------
     str
         The new message.
 
     """
-    return "\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16} {}".format(text)
+    return f"\N{INFORMATION SOURCE}\N{VARIATION SELECTOR-16} {text}"
+
+
+def success(text: str) -> str:
+    """Get text prefixed with a success emoji.
+
+    Parameters
+    ----------
+    text : str
+        The text to be prefixed.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
+    return f"\N{WHITE HEAVY CHECK MARK} {text}"
 
 
 def question(text: str) -> str:
     """Get text prefixed with a question emoji.
 
+    Parameters
+    ----------
+    text : str
+        The text to be prefixed.
+
     Returns
     -------
     str
         The new message.
 
     """
-    return "\N{BLACK QUESTION MARK ORNAMENT}\N{VARIATION SELECTOR-16} {}".format(text)
+    return f"\N{BLACK QUESTION MARK ORNAMENT}\N{VARIATION SELECTOR-16} {text}"
 
 
 def bold(text: str, escape_formatting: bool = True) -> str:
@@ -79,8 +116,7 @@ def bold(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "**{}**".format(text)
+    return f"**{escape(text, formatting=escape_formatting)}**"
 
 
 def box(text: str, lang: str = "") -> str:
@@ -99,8 +135,7 @@ def box(text: str, lang: str = "") -> str:
         The marked up text.
 
     """
-    ret = "```{}\n{}\n```".format(lang, text)
-    return ret
+    return f"```{lang}\n{text}\n```"
 
 
 def inline(text: str) -> str:
@@ -118,9 +153,9 @@ def inline(text: str) -> str:
 
     """
     if "`" in text:
-        return "``{}``".format(text)
+        return f"``{text}``"
     else:
-        return "`{}`".format(text)
+        return f"`{text}`"
 
 
 def italics(text: str, escape_formatting: bool = True) -> str:
@@ -141,8 +176,7 @@ def italics(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "*{}*".format(text)
+    return f"*{escape(text, formatting=escape_formatting)}*"
 
 
 def spoiler(text: str, escape_formatting: bool = True) -> str:
@@ -163,73 +197,7 @@ def spoiler(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "||{}||".format(text)
-
-
-def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
-    """Get two blocks of text inside borders.
-
-    Note
-    ----
-    This will only work with a monospaced font.
-
-    Parameters
-    ----------
-    *columns : `sequence` of `str`
-        The columns of text, each being a list of lines in that column.
-    ascii_border : bool
-        Whether or not the border should be pure ASCII.
-
-    Returns
-    -------
-    str
-        The bordered text.
-
-    """
-    borders = {
-        "TL": "+" if ascii_border else "┌",  # Top-left
-        "TR": "+" if ascii_border else "┐",  # Top-right
-        "BL": "+" if ascii_border else "└",  # Bottom-left
-        "BR": "+" if ascii_border else "┘",  # Bottom-right
-        "HZ": "-" if ascii_border else "─",  # Horizontal
-        "VT": "|" if ascii_border else "│",  # Vertical
-    }
-
-    sep = " " * 4  # Separator between boxes
-    widths = tuple(max(len(row) for row in column) + 9 for column in columns)  # width of each col
-    colsdone = [False] * len(columns)  # whether or not each column is done
-    lines = [sep.join("{TL}" + "{HZ}" * width + "{TR}" for width in widths)]
-
-    for line in itertools.zip_longest(*columns):
-        row = []
-        for colidx, column in enumerate(line):
-            width = widths[colidx]
-            done = colsdone[colidx]
-            if column is None:
-                if not done:
-                    # bottom border of column
-                    column = "{HZ}" * width
-                    row.append("{BL}" + column + "{BR}")
-                    colsdone[colidx] = True  # mark column as done
-                else:
-                    # leave empty
-                    row.append(" " * (width + 2))
-            else:
-                column += " " * (width - len(column))  # append padded spaces
-                row.append("{VT}" + column + "{VT}")
-
-        lines.append(sep.join(row))
-
-    final_row = []
-    for width, done in zip(widths, colsdone):
-        if not done:
-            final_row.append("{BL}" + "{HZ}" * width + "{BR}")
-        else:
-            final_row.append(" " * (width + 2))
-    lines.append(sep.join(final_row))
-
-    return "\n".join(lines).format(**borders)
+    return f"||{escape(text, formatting=escape_formatting)}||"
 
 
 def pagify(
@@ -323,8 +291,7 @@ def strikethrough(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "~~{}~~".format(text)
+    return f"~~{escape(text, formatting=escape_formatting)}~~"
 
 
 def underline(text: str, escape_formatting: bool = True) -> str:
@@ -345,8 +312,7 @@ def underline(text: str, escape_formatting: bool = True) -> str:
         The marked up text.
 
     """
-    text = escape(text, formatting=escape_formatting)
-    return "__{}__".format(text)
+    return f"__{escape(text, formatting=escape_formatting)}__"
 
 
 def quote(text: str) -> str:

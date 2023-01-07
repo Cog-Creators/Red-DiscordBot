@@ -3,17 +3,18 @@ import asyncio
 import math
 import pathlib
 from collections import Counter
-from typing import List, Literal
+from typing import Any, Dict, List, Literal, Union
+import schema
 
 import io
 import yaml
 import discord
 
-from redbot.core import Config, commands, checks
-from redbot.cogs.bank import is_owner_if_bank_global
+from redbot.core import Config, commands, checks, bank
+from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
+from redbot.core.utils import AsyncIter, can_user_react_in
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -22,11 +23,11 @@ from .checks import trivia_stop_check
 from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
+from .schema import TRIVIA_LIST_SCHEMA, format_schema_error
 
-__all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
+__all__ = ("Trivia", "UNIQUE_ID", "InvalidListError", "get_core_lists", "get_list")
 
 UNIQUE_ID = 0xB3C0E453
-
 _ = Translator("Trivia", __file__)
 
 
@@ -40,8 +41,9 @@ class InvalidListError(Exception):
 class Trivia(commands.Cog):
     """Play trivia with friends!"""
 
-    def __init__(self):
+    def __init__(self, bot: Red) -> None:
         super().__init__()
+        self.bot = bot
         self.trivia_sessions = []
         self.config = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -103,7 +105,7 @@ class Trivia(commands.Cog):
     @triviaset.command(name="maxscore")
     async def triviaset_max_score(self, ctx: commands.Context, score: int):
         """Set the total points required to win."""
-        if score < 0:
+        if score <= 0:
             await ctx.send(_("Score must be greater than 0."))
             return
         settings = self.config.guild(ctx.guild)
@@ -191,7 +193,7 @@ class Trivia(commands.Cog):
         else:
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
-    @is_owner_if_bank_global()
+    @bank.is_owner_if_bank_global()
     @checks.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
@@ -276,12 +278,19 @@ class Trivia(commands.Cog):
         try:
             await self._save_trivia_list(ctx=ctx, attachment=parsedfile)
         except yaml.error.MarkedYAMLError as exc:
-            await ctx.send(_("Invalid syntax: ") + str(exc))
+            await ctx.send(_("Invalid syntax:\n") + box(str(exc)))
         except yaml.error.YAMLError:
             await ctx.send(
                 _("There was an error parsing the trivia list. See logs for more info.")
             )
             LOG.exception("Custom Trivia file %s failed to upload", parsedfile.filename)
+        except schema.SchemaError as exc:
+            await ctx.send(
+                _(
+                    "The custom trivia list was not saved."
+                    " The file does not follow the proper data format.\n{schema_error}"
+                ).format(schema_error=box(format_schema_error(exc)))
+            )
 
     @commands.is_owner()
     @triviaset_custom.command(name="delete", aliases=["remove"])
@@ -388,7 +397,7 @@ class Trivia(commands.Cog):
         subcommands for a more customised leaderboard.
         """
         cmd = self.trivia_leaderboard_server
-        if isinstance(ctx.channel, discord.abc.PrivateChannel):
+        if ctx.guild is None:
             cmd = self.trivia_leaderboard_global
         await ctx.invoke(cmd, "wins", 10)
 
@@ -615,13 +624,7 @@ class Trivia(commands.Cog):
         except StopIteration:
             raise FileNotFoundError("Could not find the `{}` category.".format(category))
 
-        with path.open(encoding="utf-8") as file:
-            try:
-                dict_ = yaml.safe_load(file)
-            except yaml.error.YAMLError as exc:
-                raise InvalidListError("YAML parsing failed.") from exc
-            else:
-                return dict_
+        return get_list(path)
 
     async def _save_trivia_list(
         self, ctx: commands.Context, attachment: discord.Attachment
@@ -657,9 +660,9 @@ class Trivia(commands.Cog):
                 filename=filename
             )
 
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+            can_react = can_user_react_in(ctx.me, ctx.channel)
             if not can_react:
-                overwrite_message += " (y/n)"
+                overwrite_message += " (yes/no)"
 
             overwrite_message_object: discord.Message = await ctx.send(overwrite_message)
             if can_react:
@@ -683,14 +686,17 @@ class Trivia(commands.Cog):
                 return
 
         buffer = io.BytesIO(await attachment.read())
-        yaml.safe_load(buffer)
-        buffer.seek(0)
+        trivia_dict = yaml.safe_load(buffer)
+        TRIVIA_LIST_SCHEMA.validate(trivia_dict)
 
+        buffer.seek(0)
         with file.open("wb") as fp:
             fp.write(buffer.read())
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
-    def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
+    def _get_trivia_session(
+        self, channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+    ) -> TriviaSession:
         return next(
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None
         )
@@ -709,3 +715,25 @@ def get_core_lists() -> List[pathlib.Path]:
     """Return a list of paths for all trivia lists packaged with the bot."""
     core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
     return list(core_lists_path.glob("*.yaml"))
+
+
+def get_list(path: pathlib.Path) -> Dict[str, Any]:
+    """
+    Returns a trivia list dictionary from the given path.
+
+    Raises
+    ------
+    InvalidListError
+        Parsing of list's YAML file failed.
+    """
+    with path.open(encoding="utf-8") as file:
+        try:
+            trivia_dict = yaml.safe_load(file)
+        except yaml.error.YAMLError as exc:
+            raise InvalidListError("YAML parsing failed.") from exc
+
+    try:
+        TRIVIA_LIST_SCHEMA.validate(trivia_dict)
+    except schema.SchemaError as exc:
+        raise InvalidListError("The list does not adhere to the schema.") from exc
+    return trivia_dict

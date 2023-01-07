@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout repository and install Python
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
 
@@ -59,9 +59,9 @@ jobs:
     name: Release to PyPI
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
       - name: Install dependencies
@@ -84,11 +84,17 @@ jobs:
     name: Update Red version number to dev
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Get base branch
+        env:
+          TAG_BASE_BRANCH: ${{ github.event.base_ref }}
+        run: |
+          echo "BASE_BRANCH=${TAG_BASE_BRANCH#'refs/heads/'}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.base_ref }}
+          ref: ${{ env.BASE_BRANCH }}
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
 
@@ -104,7 +110,7 @@ jobs:
       # Get milestone number of the milestone for the old version
       - name: Get milestone number
         id: get_milestone_number
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         env:
           MILESTONE_TITLE: ${{ steps.bump_version_dev.outputs.old_version }}
         with:
@@ -116,7 +122,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr_bump_dev
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
@@ -128,10 +134,10 @@ jobs:
           branch: "automated/pr_bumps/${{ steps.bump_version_dev.outputs.new_version }}"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           milestone: ${{ steps.get_milestone_number.outputs.result }}
-          base: V3/develop
+          base: ${{ env.BASE_BRANCH }}
 
       - name: Close and reopen the PR with different token to trigger CI
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         env:
           PR_NUMBER: ${{ steps.cpr_bump_dev.outputs.pull-request-number }}
           PR_OPERATION: ${{ steps.cpr_bump_dev.outputs.pull-request-operation }}

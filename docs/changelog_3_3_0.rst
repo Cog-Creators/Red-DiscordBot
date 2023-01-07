@@ -130,7 +130,7 @@ Mod
 - Added the ability to permanently ban a temporary banned user with ``[p]hackban`` (:issue:`4025`)
 - Fixed the passed reason not being used when using ``[p]tempban`` (:issue:`3958`)
 - Fixed invite being sent with ``[p]tempban`` even when no invite was set (:issue:`3991`)
-- Prevented an issue whereby the author may lock him self out of using the bot via whitelists (:issue:`3903`)
+- Prevented an issue whereby the author may lock themself out of using the bot via whitelists (:issue:`3903`)
 - Reduced the number of API calls made to the storage APIs (:issue:`3910`)
 
 Permissions
@@ -253,7 +253,7 @@ Developer changelog
 Core Bot
 ********
 
-- Added `bot.set_prefixes() <RedBase.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
+- Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
@@ -423,7 +423,7 @@ Audio
 *****
 
 - Age-restricted tracks, live streams, and mix playlists from YouTube should work in Audio again (:issue:`3791`)
-- Soundcloud's sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
+- SoundCloud sets and playlists with more than 50 tracks should work in Audio again (:issue:`3791`)
 
 CustomCommands
 **************
@@ -650,7 +650,7 @@ Dev Cog
 Documentation changes
 ---------------------
 
-- Fixed install instructions for Mac in `install_linux_mac` (:issue:`3675`, :issue:`3436`)
+- Fixed install instructions for Mac (:issue:`3675`, :issue:`3436`)
 - Windows install instructions now use ``choco upgrade`` commands instead of ``choco install`` to ensure up-to-date packages (:issue:`3684`)
 
 
