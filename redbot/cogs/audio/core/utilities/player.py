@@ -455,21 +455,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ):
                     log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     continue
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(track, guild_data["maxlength"]):
-                        track_len += 1
-                        track.extras.update(
-                            {
-                                "enqueue_time": int(time.time()),
-                                "vc": player.channel.id,
-                                "requester": ctx.author.id,
-                            }
-                        )
-                        player.add(ctx.author, track)
-                        self.bot.dispatch(
-                            "red_audio_track_enqueue", player.guild, track, ctx.author
-                        )
-
+                elif guild_data["maxlength"] > 0 and not self.is_track_length_allowed(
+                    track, guild_data["maxlength"]
+                ):
+                    continue
                 else:
                     track_len += 1
                     track.extras.update(
@@ -548,29 +537,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
-                        single_track.extras.update(
-                            {
-                                "enqueue_time": int(time.time()),
-                                "vc": player.channel.id,
-                                "requester": ctx.author.id,
-                            }
-                        )
-                        player.add(ctx.author, single_track)
-                        player.maybe_shuffle()
-                        self.bot.dispatch(
-                            "red_audio_track_enqueue",
-                            player.guild,
-                            single_track,
-                            ctx.author,
-                        )
-                    else:
-                        self.update_player_lock(ctx, False)
-                        return await self.send_embed_msg(
-                            ctx, title=_("Track exceeds maximum length.")
-                        )
-
+                elif guild_data["maxlength"] > 0 and not self.is_track_length_allowed(
+                    single_track, guild_data["maxlength"]
+                ):
+                    self.update_player_lock(ctx, False)
+                    return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
                 else:
                     single_track.extras.update(
                         {
