@@ -416,7 +416,7 @@ async def remove_instance_interaction() -> None:
     is_flag=True,
     help=(
         "Overwrites an existing instance.\n",
-        "Note: Using this can erase all the data related to the existing instance."
+        "Note: Using this can erase all data related to the existing instance.",
     ),
 )
 @click.pass_context
