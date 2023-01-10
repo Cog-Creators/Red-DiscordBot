@@ -59,7 +59,9 @@ def sanitize_output(ctx: commands.Context, to_sanitize: str) -> str:
 
 
 def async_compile(source: str, filename: str, mode: Literal["eval", "exec"]) -> CodeType:
-    return compile(source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0)
+    return compile(
+        source, filename, mode, flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT, optimize=0, dont_inherit=True
+    )
 
 
 async def maybe_await(coro: Union[T, Awaitable[T], Awaitable[Awaitable[T]]]) -> T:
