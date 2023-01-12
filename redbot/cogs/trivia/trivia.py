@@ -433,16 +433,21 @@ class Trivia(commands.Cog):
         )
 
         if config_overrides:
-            msg = _(
-                "Bot gains points: {bot_plays}\n"
-                "Answer time limit: {delay} seconds\n"
-                "Lack of response timeout: {timeout} seconds\n"
-                "Points to win: {max_score}\n"
-                "Reveal answer on timeout: {reveal_answer}\n"
-                "Payout multiplier: {payout_multiplier}\n"
-                "Allow lists to override settings: {allow_override}\n"
-                "Use Spoilers in answers: {use_spoilers}"
-            ).format(**config_settings)
+            setting_mapping = {
+                "bot_plays": _("Bot gains points"),
+                "delay": _("Answer time limit"),
+                "timeout": _("Lack of response timeout"),
+                "max_score": _("Points to win"),
+                "reveal_answer": _("Reveal answer on timeout"),
+                "payout_multiplier": _("Payout multiplier"),
+                "allow_override": _("Allow lists to override settings"),
+                "use_spoilers": _("Use spoilers in answers"),
+            }
+
+            msg = "\n".join(
+                "{setting}: {value}".format(setting=setting_mapping[setting], value=value)
+                for setting, value in config_overrides.items()
+            )
 
             embed.add_field(
                 name=_("Config"),
