@@ -152,7 +152,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llset.command(name="unmanaged", aliases=["external"])
+    @command_llset.command(name="external", aliases=["unmanaged"])
     async def command_llset_external(self, ctx: commands.Context):
         """Toggle using external Lavalink nodes - requires an existing external Lavalink node for Audio to work, if enabled.
 
