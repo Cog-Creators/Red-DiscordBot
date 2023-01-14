@@ -16,7 +16,7 @@ from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter, can_user_react_in
-from redbot.core.utils.chat_formatting import box, pagify, bold, inline, italics
+from redbot.core.utils.chat_formatting import box, pagify, bold, inline, italics, humanize_number
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
@@ -36,6 +36,38 @@ class InvalidListError(Exception):
     """A Trivia list file is in invalid format."""
 
     pass
+
+
+def _format_setting_value(key: str, value: Union[float, bool]) -> str:
+    # handle bools
+    if value is True:
+        return _("Yes")
+    if value is False:
+        return _("No")
+    # handle numbers
+    value = humanize_number(value)
+    if key in ("delay", "timeout"):
+        return _("{seconds} seconds").format(seconds=value)
+    return str(value)
+
+
+def format_settings(settings: Dict[str, Union[float, bool]]) -> str:
+    setting_names = {
+        "bot_plays": _("Bot gains points"),
+        "delay": _("Answer time limit"),
+        "timeout": _("Lack of response timeout"),
+        "max_score": _("Points to win"),
+        "reveal_answer": _("Answers are revealed on timeout"),
+        "payout_multiplier": _("Payout multiplier"),
+        "allow_override": _("Lists are allowed to override settings"),
+        "use_spoilers": _("Answers use spoilers"),
+    }
+
+    return "\n".join(
+        f"{setting_name}: {_format_setting_value(key, settings[key])}"
+        for key, setting_name in setting_names.items()
+        if key in settings
+    )
 
 
 @cog_i18n(_)
@@ -85,22 +117,8 @@ class Trivia(commands.Cog):
     @triviaset.command(name="showsettings")
     async def triviaset_showsettings(self, ctx: commands.Context):
         """Show the current trivia settings."""
-        settings = self.config.guild(ctx.guild)
-        settings_dict = await settings.all()
-        msg = box(
-            _(
-                "Current settings\n"
-                "Bot gains points: {bot_plays}\n"
-                "Answer time limit: {delay} seconds\n"
-                "Lack of response timeout: {timeout} seconds\n"
-                "Points to win: {max_score}\n"
-                "Reveal answer on timeout: {reveal_answer}\n"
-                "Payout multiplier: {payout_multiplier}\n"
-                "Allow lists to override settings: {allow_override}\n"
-                "Use Spoilers in answers: {use_spoilers}"
-            ).format(**settings_dict),
-            lang="py",
-        )
+        settings = await self.config.guild(ctx.guild).all()
+        msg = box(_("Current settings:\n\n") + format_settings(settings))
         await ctx.send(msg)
 
     @triviaset.command(name="maxscore")
@@ -433,25 +451,9 @@ class Trivia(commands.Cog):
         )
 
         if config_overrides:
-            setting_mapping = {
-                "bot_plays": _("Bot gains points"),
-                "delay": _("Answer time limit"),
-                "timeout": _("Lack of response timeout"),
-                "max_score": _("Points to win"),
-                "reveal_answer": _("Reveal answer on timeout"),
-                "payout_multiplier": _("Payout multiplier"),
-                "allow_override": _("Allow lists to override settings"),
-                "use_spoilers": _("Use spoilers in answers"),
-            }
-
-            msg = "\n".join(
-                "{setting}: {value}".format(setting=setting_mapping[setting], value=value)
-                for setting, value in config_overrides.items()
-            )
-
             embed.add_field(
                 name=_("Config"),
-                value=box(msg, lang="yaml"),
+                value=box(format_settings(config_overrides)),
                 inline=False,
             )
         await ctx.send(embed=embed)
