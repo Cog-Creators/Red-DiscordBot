@@ -363,7 +363,16 @@ async def remove_instance_interaction() -> None:
 
 
 @click.group(invoke_without_command=True)
-@click.option("--debug", "--verbose", "-v", count=True)
+@click.option(
+    "--debug",
+    "--verbose",
+    "-v",
+    count=True,
+    help=(
+        "Increase the verbosity of the logs, each usage of this flag increases the verbosity"
+        " level by 1."
+    ),
+)
 @click.option(
     "--no-prompt",
     "interactive",
@@ -401,7 +410,15 @@ async def remove_instance_interaction() -> None:
         "Note: Choosing PostgreSQL will prevent the setup from being completely non-interactive."
     ),
 )
-@click.option("--overwrite-existing-instance", type=bool, is_flag=True)
+@click.option(
+    "--overwrite-existing-instance",
+    type=bool,
+    is_flag=True,
+    help=(
+        "Confirm overwriting of existing instance.\n"
+        "Note: This removes *metadata* about the existing instance with that name."
+    ),
+)
 @click.pass_context
 def cli(
     ctx: click.Context,
