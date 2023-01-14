@@ -3261,15 +3261,15 @@ manage an unmanaged (user-managed) or managed (bot-managed) Lavalink node.
     server to do so. Changing llset command settings have the potential to break 
     Audio cog connection and playback if the wrong settings are used.
 
-""""""""""""""
-llset external
-""""""""""""""
+"""""""""""""""
+llset unmanaged
+"""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llset external
+    [p]llset unmanaged
 
 or 
 

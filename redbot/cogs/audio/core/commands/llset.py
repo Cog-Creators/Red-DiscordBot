@@ -152,8 +152,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llset.command(name="external", aliases=["unmanaged"])
-    async def command_llset_external(self, ctx: commands.Context):
+    @command_llset.command(name="unmanaged", aliases=["external"])
+    async def command_llset_unmanaged(self, ctx: commands.Context):
         """Toggle using external (unmanaged) Lavalink nodes - requires an existing Lavalink node for Audio to work, if enabled.
 
         This command disables the managed Lavalink server. If you do not have another Lavalink node to access, you will be unable to use Audio while this is enabled.
