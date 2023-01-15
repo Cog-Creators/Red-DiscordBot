@@ -2414,6 +2414,21 @@ Redbot 3.2.0 (2020-01-09)
 | Thanks to all these amazing people that contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Aurorum`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`DJtheRedstoner`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`jerbob`, :ghuser:`jonasbohmann`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`RealFriesi`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`Vexed01`, :ghuser:`wereii`, :ghuser:`yamikaitou`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
 
+Read before updating
+--------------------
+
+#. Red 3.2 dropped support for the MongoDB driver. When updating your instance from an older version, be sure to use instructions for **your current version** from the `document about updating Red <update_red>` to be able to still start your instance after the update.
+#. Red 3.2 requires Python 3.8.1 or newer. In order to be able to update, you'll first have to install appropriate versions of your dependencies so be sure to use instructions for **your current version** from the `document about updating Red <update_red>`.
+
+   .. note::
+
+      You may get a notification from the downloader cog about needing to refetch dependencies.
+      This is expected and it will walk you through everything and do as much as it can for you.
+
+#. Red 3.2 comes with improvements which required breaking changes for 3rd party cogs. When you update to 3.2, your cogs may not be compatible if the author has not handled
+   the changes yet. If you're a cog creator, you can look at `Developer changelog <important-320-1>` for full details.
+
+
 End-user changelog
 ------------------
 
@@ -2640,6 +2655,8 @@ Fixes
 - **Cogs - Trivia - Lists** - Fixed a question in the Overwatch trivia list that accepted blank responses (:issue:`2996`)
 - **Cogs - Trivia - Lists** - Fixed questions and answers that were incorrect in the Clash Royale trivia list (:issue:`3236`)
 
+
+.. _important-320-1:
 
 Developer changelog
 -------------------
