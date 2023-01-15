@@ -1281,7 +1281,7 @@ Audio
 - Added ``[p]audioset restart``, allowing for Lavalink connection to be restarted (:issue:`4446`)
 - Added ``[p]audioset autodeafen``, allowing for bot to auto-deafen itself when entering voice channel (:issue:`4446`)
 - Added ``[p]audioset mycountrycode``, allowing Spotify search locale per user (:issue:`4446`)
-- Added ``[p]llsetup java``, allowing for a custom Java executable path (:issue:`4446`)
+- Added ``[p]llset java``, allowing for a custom Java executable path (:issue:`4446`)
 - Added ``[p]llset info`` to show Lavalink settings (:issue:`4527`)
 - Added ``[p]audioset logs`` to download Lavalink logs if the Lavalink server is set to internal (:issue:`4527`)
 
