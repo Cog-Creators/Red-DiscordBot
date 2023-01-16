@@ -529,25 +529,24 @@ class PicartoStream(Stream):
 
 
 class TwitchTeam(TwitchMeta):
-
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._display_name = None
         super().__init__(**kwargs)
-    
-    async def _request_team_member_data(self, team_members: List[dict]) -> List[Tuple[discord.Embed, bool]]:
+
+    async def _request_team_member_data(
+        self, team_members: List[dict]
+    ) -> List[Tuple[discord.Embed, bool]]:
         user_ids = []
         orig = team_members
         for member in team_members:
             user_ids.append(member["user_id"])
-        
+
         embeds = []
-        
+
         while user_ids:
             current = user_ids[:100]
-            users_code, users_data = await self.get_data(
-                TWITCH_ID_ENDPOINT, {"id": current}
-            )
+            users_code, users_data = await self.get_data(TWITCH_ID_ENDPOINT, {"id": current})
             streams_code, streams_data = await self.get_data(
                 TWITCH_STREAMS_ENDPOINT, {"user_id": current}
             )
@@ -575,26 +574,27 @@ class TwitchTeam(TwitchMeta):
                     final_data["title"] = stream_data["title"]
                     final_data["type"] = stream_data["type"]
 
-                    __, follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": user["id"]})
+                    __, follows_data = await self.get_data(
+                        TWITCH_FOLLOWS_ENDPOINT, {"to_id": user["id"]}
+                    )
                     if follows_data:
                         final_data["followers"] = follows_data["total"]
 
-                    embeds.append((TwitchStream.make_embed(final_data), final_data["type"] == "rerun"))
+                    embeds.append(
+                        (TwitchStream.make_embed(final_data), final_data["type"] == "rerun")
+                    )
                 user_ids = user_ids[100:]
             elif users_code == 401 or streams_code == 401:
                 raise InvalidTwitchCredentials()
             else:
                 raise APIError(users_code, users_data)
-        
-        return embeds
 
+        return embeds
 
     async def check_online_team(self):
         team_members = []
 
-        team_code, team_data = await self.get_data(
-            TWITCH_TEAMS_ENDPOINT, {"name": self.name}
-        )
+        team_code, team_data = await self.get_data(TWITCH_TEAMS_ENDPOINT, {"name": self.name})
         if team_code == 200:
             team_data = team_data["data"][0]
             final_data = dict.fromkeys(
