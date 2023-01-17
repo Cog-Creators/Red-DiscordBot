@@ -51,9 +51,9 @@ Operating system version           Supported architectures   Ideally supported u
 ================================   =======================   ============================================================
 Windows 10                         x86-64                    `End/Retirement Date <https://docs.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro>`__
 Windows 11                         x86-64                    `Retirement Date <https://docs.microsoft.com/en-us/lifecycle/products/windows-11-home-and-pro-version-21h2>`__
-macOS 10.15 (Catalina)             x86-64                    ~2022-10
 macOS 11 (Big Sur)                 x86-64, aarch64           ~2023-10
 macOS 12 (Monterey)                x86-64, aarch64           ~2024-10
+macOS 13 (Ventura)                 x86-64, aarch64           ~2025-10
 Alma Linux 8                       x86-64, aarch64           2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-cloudlinux-support-almalinux>`__)
 Alma Linux 9                       x86-64, aarch64           2032-05-31
 Arch Linux                         x86-64                    forever (support is only provided for an up-to-date system)
