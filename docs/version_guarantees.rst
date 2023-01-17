@@ -79,8 +79,8 @@ Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`end-of
 Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
 Ubuntu 18.04 LTS                   x86-64, aarch64           2023-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 20.04 LTS                   x86-64, aarch64           2025-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
-Ubuntu 21.10                       x86-64, aarch64           2022-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 22.04 LTS                   x86-64, aarch64           2027-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 22.10                       x86-64, aarch64           2023-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
 
 ====================
