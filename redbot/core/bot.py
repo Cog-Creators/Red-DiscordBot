@@ -2199,9 +2199,9 @@ class Red(
     async def send_interactive(
         self,
         channel: discord.abc.Messageable,
-        user: discord.User,
         messages: Iterable[str],
         *,
+        user: Optional[discord.User] = None,
         box_lang: Optional[str] = None,
         timeout: int = 15,
         join_character: str = "",
@@ -2216,13 +2216,14 @@ class Red(
         Parameters
         ----------
         channel : discord.abc.Messageable
-            The channel to send the message.
-        user : discord.User
-            The user who invoked the command
+            The channel to send the messages to.
         messages : `iterable` of `str`
             The messages to send.
+        user : discord.User
+            The user that can respond to the prompt.
+            When this is ``None``, any user can respond.
         box_lang : Optional[str]
-            If specified, each message will be contained within a codeblock of
+            If specified, each message will be contained within a code block of
             this language.
         timeout : int
             How long the user has to respond to the prompt before it times out.
