@@ -66,7 +66,6 @@ from .utils.chat_formatting import (
 )
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
-from .utils.prompt import send_interactive
 from .commands.help import HelpMenuSetting
 
 _entities = {
