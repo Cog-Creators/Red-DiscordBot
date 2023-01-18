@@ -187,14 +187,7 @@
   # Docs
   - docs/framework_apikeys.rst
   - docs/framework_bot.rst
-"Category: Core - Command-line Interfaces":
-  - redbot/__main__.py
-  - redbot/launcher.py
-  - redbot/logging.py
-  - redbot/core/_debuginfo.py
-  - redbot/core/cli.py
-  - redbot/setup.py
-"Category: Core - Commands":
+"Category: Core - Bot Commands":
   # Source
   - redbot/core/core_commands.py
   - redbot/core/_diagnoser.py
@@ -202,6 +195,13 @@
   - docs/.resources/cog_manager_ui/**/*
   - docs/cog_guides/cog_manager_ui.rst
   - docs/cog_guides/core.rst
+"Category: Core - Command-line Interfaces":
+  - redbot/__main__.py
+  - redbot/launcher.py
+  - redbot/logging.py
+  - redbot/core/_debuginfo.py
+  - redbot/core/cli.py
+  - redbot/setup.py
 "Category: Core - Help":
   - redbot/core/commands/help.py
 "Category: Core - i18n":
