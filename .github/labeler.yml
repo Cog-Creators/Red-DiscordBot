@@ -156,12 +156,6 @@
   - docs/framework_config.rst
   # Tests
   - tests/core/test_config.py
-"Category: Core - API - Modlog":
-  # Source
-  - redbot/core/generic_casetypes.py
-  - redbot/core/modlog.py
-  # Docs
-  - docs/framework_modlog.rst
 "Category: Core - API - Other":
   # Source
   - redbot/__init__.py
@@ -217,6 +211,12 @@
   - redbot/**/locales/*
   # Docs
   - docs/framework_i18n.rst
+"Category: Core - Modlog":
+  # Source
+  - redbot/core/generic_casetypes.py
+  - redbot/core/modlog.py
+  # Docs
+  - docs/framework_modlog.rst
 "Category: Core - Other Internals":
   # Source
   - redbot/core/_sharedlibdeprecation.py
