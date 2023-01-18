@@ -2213,8 +2213,6 @@ class Red(
 
         Parameters
         ----------
-        bot : redbot.core.bot.Red
-            The bot object.
         channel : discord.abc.Messageable
             The channel to send the message.
         author : discord.User
