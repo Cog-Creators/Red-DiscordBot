@@ -1452,8 +1452,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             try:
                 await self.bot.send_interactive(
                     channel,
-                    author=ctx.author,
-                    messages=pagify(self.bot._last_exception, shorten_by=10),
+                    pagify(self.bot._last_exception, shorten_by=10),
+                    user=ctx.author,
                     box_lang="py",
                 )
             except discord.HTTPException:

@@ -152,11 +152,12 @@ class Context(DPYContext):
     async def send_interactive(
         self,
         messages: Iterable[str],
-        box_lang: str = None,
+        box_lang: Optional[str] = None,
         timeout: int = 15,
         join_character: str = "",
     ) -> List[discord.Message]:
-        """Send multiple messages interactively.
+        """
+        Send multiple messages interactively.
 
         The user will be prompted for whether or not they would like to view
         the next message, one at a time. They will also be notified of how
@@ -167,7 +168,7 @@ class Context(DPYContext):
         messages : `iterable` of `str`
             The messages to send.
         box_lang : str
-            If specified, each message will be contained within a codeblock of
+            If specified, each message will be contained within a code block of
             this language.
         timeout : int
             How long the user has to respond to the prompt before it times out.
@@ -176,11 +177,15 @@ class Context(DPYContext):
             The character used to join all the messages when the file output
             is selected.
 
+        Returns
+        -------
+        List[discord.Message]
+            A list of sent messages.
         """
         return await self.bot.send_interactive(
             channel=self.channel,
-            author=self.author,
             messages=messages,
+            user=self.author,
             box_lang=box_lang,
             timeout=timeout,
             join_character=join_character,
