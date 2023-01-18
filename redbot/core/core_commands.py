@@ -1457,9 +1457,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if self.bot._last_exception:
             try:
-                await send_interactive(
-                    self.bot,
-                    channel=channel,
+                await self.bot.send_interactive(
+                    channel,
+                    author=ctx.author,
                     messages=pagify(self.bot._last_exception, shorten_by=10),
                     box_lang="py",
                 )

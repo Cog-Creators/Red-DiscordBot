@@ -12,7 +12,6 @@ from .requires import PermState
 from ..utils.chat_formatting import box, text_to_file
 from ..utils.predicates import MessagePredicate
 from ..utils import can_user_react_in, common_filters
-from ..utils.prompt import send_interactive
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -178,8 +177,13 @@ class Context(DPYContext):
             is selected.
 
         """
-        return await send_interactive(
-            self.bot, channel=self.channel, messages=messages, box_lang=box_lang, timeout=timeout
+        return await self.bot.send_interactive(
+            channel=self.channel,
+            author=self.author,
+            messages=messages,
+            box_lang=box_lang,
+            timeout=timeout,
+            join_character=join_character
         )
 
     async def embed_colour(self):

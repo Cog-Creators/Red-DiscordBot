@@ -52,8 +52,10 @@ from .settings_caches import (
     DisabledCogCache,
     I18nManager,
 )
+from .utils.predicates import MessagePredicate
 from .rpc import RPCMixin
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
+from .utils.chat_formatting import box, text_to_file
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 if TYPE_CHECKING:
@@ -2193,3 +2195,86 @@ class Red(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
+
+    async def send_interactive(
+        self,
+        channel: discord.abc.Messageable,
+        author: discord.User,
+        messages: Iterable[str],
+        box_lang: str = None,
+        timeout: int = 15,
+        join_character: str = "",
+    ) -> List[discord.Message]:
+        """Send multiple messages interactively.
+
+        The user will be prompted for whether or not they would like to view
+        the next message, one at a time. They will also be notified of how
+        many messages are remaining on each prompt.
+
+        Parameters
+        ----------
+        bot : redbot.core.bot.Red
+            The bot object.
+        channel : discord.abc.Messageable
+            The channel to send the message.
+        messages : `iterable` of `str`
+            The messages to send.
+        box_lang : str
+            If specified, each message will be contained within a codeblock of
+            this language.
+        timeout : int
+            How long the user has to respond to the prompt before it times out.
+            After timing out, the bot deletes its prompt message.
+        join_character : str
+            The character used to join all the messages when the file output
+            is selected.
+
+        """
+        messages = tuple(messages)
+        ret = []
+
+        for idx, page in enumerate(messages, 1):
+            if box_lang is None:
+                msg = await channel.send(page)
+            else:
+                msg = await channel.send(box(page, lang=box_lang))
+            ret.append(msg)
+            n_remaining = len(messages) - idx
+            if n_remaining > 0:
+                if n_remaining == 1:
+                    plural = ""
+                    is_are = "is"
+                else:
+                    plural = "s"
+                    is_are = "are"
+                query = await channel.send(
+                    "There {} still {} message{} remaining. "
+                    "Type `more` to continue or `file` to upload all contents as a file."
+                    "".format(is_are, n_remaining, plural)
+                )
+                pred = MessagePredicate.lower_contained_in(
+                    ("more", "file"), channel=channel, user=author
+                )
+                try:
+                    resp = await self.wait_for(
+                        "message",
+                        check=pred,
+                        timeout=timeout,
+                    )
+                except asyncio.TimeoutError:
+                    with contextlib.suppress(discord.HTTPException):
+                        await query.delete()
+                    break
+                else:
+                    try:
+                        await channel.delete_messages((query, resp))
+                    except (discord.HTTPException, AttributeError):
+                        # In case the bot can't delete other users' messages,
+                        # or is not a bot account
+                        # or channel is a DM
+                        with contextlib.suppress(discord.HTTPException):
+                            await query.delete()
+                    if pred.result == 1:
+                        await channel.send(file=text_to_file(join_character.join(messages)))
+                        break
+        return ret
