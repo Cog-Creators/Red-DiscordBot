@@ -2234,6 +2234,11 @@ class Red(
         """
         messages = tuple(messages)
         ret = []
+        # using dpy_commands.Context to keep the Messageable contract in full
+        if isinstance(channel, dpy_commands.Context):
+            # this is only necessary to ensure that `channel.delete_messages()` works
+            # when `ctx.channel` has that method
+            channel = channel.channel
 
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
