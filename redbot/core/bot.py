@@ -2291,6 +2291,8 @@ class Red(
                         with contextlib.suppress(discord.HTTPException):
                             await query.delete()
                     if pred.result == 1:
-                        await channel.send(file=text_to_file(join_character.join(messages)))
+                        ret.append(
+                            await channel.send(file=text_to_file(join_character.join(messages)))
+                        )
                         break
         return ret
