@@ -33,7 +33,7 @@ Then run each of the following commands:
     iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     choco upgrade git --params "/GitOnlyOnPath /WindowsTerminal" -y
     choco upgrade visualstudio2022-workload-vctools -y
-    choco upgrade python3 -y --version 3.9.9
+    choco upgrade python311 -y
 
 For Audio support, you should also run the following command before exiting:
 
@@ -57,7 +57,7 @@ Manually installing dependencies
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
 
-* `Python 3.8.1 - 3.9.x <https://www.python.org/downloads/windows/>`_
+* `Python 3.8.1 - 3.11.x <https://www.python.org/downloads/windows/>`_
 
 .. attention:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
                you may run into issues when trying to run Red.
@@ -104,7 +104,7 @@ Then create your virtual environment with the following command
 
 .. prompt:: batch
 
-    py -3.9 -m venv "%userprofile%\redenv"
+    py -3.11 -m venv "%userprofile%\redenv"
 
 And activate it with the following command
 
