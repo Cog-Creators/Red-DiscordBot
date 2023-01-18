@@ -91,12 +91,12 @@ Fixes
 
 - **Core - Bot Commands** - Fixed grammar in the ``[p]uptime`` command (:issue:`5596`)
 - **Core - Command-line Interfaces** - Fixed a bug that prevented users from changing the name and data location with ``redbot --edit`` command (:issue:`5545`, :issue:`5540`, :issue:`5541`)
+- **Core - Modlog** - Modlog's automated case creation for bans now properly checks that the guild is available before further processing (:issue:`5647`)
 - |cool| **Cogs - Audio** - Fixed plain word YT searching with ``[p]play`` and ``[p]search`` commands (:issue:`5712`)
 - |cool| **Cogs - Audio** - Fixed YT age-restricted track playback (:issue:`5712`)
 - **Cogs - Audio** - Fixed the cog not sending any Track Error message on track decoding errors (:issue:`5716`)
 - **Cogs - Audio** - Fixed the ``UnboundLocalError`` exception happening when using ``[p]playlist list`` with an empty playlist (:issue:`5378`, :issue:`5394`)
 - **Cogs - Filter** - Fixed a potential memory leak in Filter cog (:issue:`5578`)
-- **Core - Modlog** - Modlog's automated case creation for bans now properly checks that the guild is available before further processing (:issue:`5647`)
 - **Cogs - Trivia - Lists** - Fixed spelling error in the answer to one of the questions in ``computers`` trivia list (:issue:`5587`, :issue:`5588`)
 
 
@@ -151,7 +151,7 @@ End-user changelog
 Fixes
 *****
 
-- **Core Bot** - Fixed ``[p]invite`` command (:issue:`5517`)
+- **Core - Bot Commands** - Fixed ``[p]invite`` command (:issue:`5517`)
 
 
 Developer changelog
@@ -160,7 +160,7 @@ Developer changelog
 Fixes
 *****
 
-- **RPC** - Fixed ``CORE__INVITE_URL`` RPC method (:issue:`5517`)
+- **RPC methods** - Fixed ``CORE__INVITE_URL`` RPC method (:issue:`5517`)
 
 
 Documentation changes
@@ -251,15 +251,15 @@ Developer changelog
 Additions
 *********
 
-- **Core** - Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
-- |cool| **Core** - Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
-- |cool| **Commands Package** - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
+- **Core - Bot Class** - Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
+- |cool| **Core - Bot Class** - Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
+- |cool| **Core - Commands Package** - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
 
 Changes
 *******
 
 - **Cogs - Dev** - ``[p]mockmsg`` now allows mocking attachment-only messages (:issue:`5446`)
-- **RPC** - Changed the output of ``CORE__LOAD``, ``CORE__RELOAD``, and ``CORE__UNLOAD`` RPC methods to a dictionary (:issue:`5451`, :issue:`5453`)
+- **RPC methods** - Changed the output of ``CORE__LOAD``, ``CORE__RELOAD``, and ``CORE__UNLOAD`` RPC methods to a dictionary (:issue:`5451`, :issue:`5453`)
 
 
 Documentation changes
@@ -426,7 +426,7 @@ Developer changelog
 Additions
 *********
 
-- |cool| **Core** - Added more APIs for allowlists and blocklists (:issue:`5206`)
+- |cool| **Core - Bot Class** - Added more APIs for allowlists and blocklists (:issue:`5206`)
 
     Here's the list of the methods that were added to the ``bot`` object:
 
@@ -438,11 +438,11 @@ Additions
         - `Red.remove_from_whitelist()`
         - `Red.get_whitelist()`
         - `Red.clear_whitelist()`
-- |cool| **Commands Package** - Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
+- |cool| **Core - Commands Package** - Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
 
     This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
     In addition to regular timedelta arguments, it also accepts months and years!
-- **Commands Package** - Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
+- **Core - Commands Package** - Added `CommandConverter` and `CogConverter` to the ``redbot.core.commands`` package (:issue:`5037`)
 
 
 Documentation changes
@@ -731,7 +731,7 @@ Fixes
 *****
 
 - |cool| **Core** - Messages sent interactively in DM channels no longer fail (:issue:`4876`)
-- **Core** - Fixed how the command signature is shown in help for subcommands that have group args (:issue:`4928`)
+- **Core - Help** - Fixed how the command signature is shown in help for subcommands that have group args (:issue:`4928`)
 - **Cogs - Alias** - Fixed issues with command aliases for commands that take an arbitrary, but non-zero, number of arguments (e.g. ``[p]load``) (:issue:`4766`, :issue:`4871`)
 - |cool| **Cogs - Audio** - Fixed stuttering (:issue:`4565`)
 - |cool| **Cogs - Audio** - Fixed random disconnects (:issue:`4565`)
@@ -760,17 +760,17 @@ Changes
 Deprecations
 ************
 
-- **Core** - Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Red.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+- **Core - Bot Class** - Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Red.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
 
     - Read the method's documentation for more information
-- **Commands Package** - Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
+- **Core - Commands Package** - Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
 
     - ``discord.Guild`` or ``GuildConverter`` from ``redbot.core.commands`` should be used instead
 
 Fixes
 *****
 
-- **API Tokens** - Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
+- **Core - Bot Class** - Fixed ``on_red_api_tokens_update`` not being dispatched when the tokens were removed with ``[p]set api remove`` (:issue:`4916`, :issue:`4917`)
 
 
 Documentation changes
@@ -860,7 +860,7 @@ Security
 Additions
 *********
 
-- |cool| **Core** - Help now includes command aliases in the command help (:issue:`3040`)
+- |cool| **Core - Help** - Help now includes command aliases in the command help (:issue:`3040`)
 
     - This can be disabled with ``[p]helpset showaliases`` command
 - **Cogs - Mod** - Added two new settings for disabling username and nickname tracking (:issue:`4799`)
@@ -912,10 +912,10 @@ Fixes
 *****
 
 - Various grammar fixes (:issue:`4705`, :issue:`4748`, :issue:`4750`, :issue:`4763`, :issue:`4788`, :issue:`4792`, :issue:`4810`)
-- |cool| **Core** - Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - **Core - Bot Commands** - Fixed command usage in the help messages for few commands in Red (:issue:`4599`, :issue:`4733`)
 - **Core - Bot Commands** - Fixed errors in ``[p]command defaultdisablecog`` and ``[p]command defaultenablecog`` commands (:issue:`4767`, :issue:`4768`)
 - **Core - Bot Commands** - ``[p]command listdisabled guild`` can no longer be run in DMs (:issue:`4771`, :issue:`4772`)
+- |cool| **Core - Command-line Interfaces** - Fixed the rotation of Red's logs that could before result in big disk usage (:issue:`4405`, :issue:`4738`)
 - **Core - Command-line Interfaces** - Fixed errors appearing when using Ctrl+C to interrupt ``redbot --edit`` (:issue:`3777`, :issue:`4572`)
 - **Cogs - Cleanup** - Fixed an error from passing an overly large integer as a message ID to ``[p]cleanup after`` and ``[p]cleanup before`` (:issue:`4791`)
 - **Cogs - Mod** - The ``[p]tempban`` command no longer errors out when trying to ban a user in a guild with the vanity url feature that doesn't have a vanity url set (:issue:`4714`)
@@ -933,14 +933,14 @@ Developer changelog
 Additions
 *********
 
-- **Core** - Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
+- **Core - Bot Class** - Added an event ``on_red_before_identify`` that is dispatched before IDENTIFYing a session (:issue:`4647`)
+- **Core - Utils Package** - Added a function `redbot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
 - |cool| **Cogs - Dev** - Cogs can now add their own variables to the environment of ``[p]debug``, ``[p]eval``, and ``[p]repl`` commands (:issue:`4667`)
 
     - Variables can be added and removed from the environment of Dev cog using two new methods:
 
         - `bot.add_dev_env_value() <Red.add_dev_env_value()>`
         - `bot.remove_dev_env_value() <Red.remove_dev_env_value()>`
-- **Utilities** - Added a function `redbot.core.utils.chat_formatting.spoiler()` that wraps the given text in a spoiler (:issue:`4754`)
 
 Changes
 *******
@@ -1051,13 +1051,13 @@ Developer changelog
 Additions
 *********
 
+- **Core - Utils Package** - `get_audit_reason()` can now be passed a ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
 - |cool| **Cogs - Dev** - Added new ``[p]bypasscooldown`` command that allows owners to bypass command cooldowns (:issue:`4440`)
-- **Utilities** - `get_audit_reason()` can now be passed a ``shorten`` keyword argument which will automatically shorten the returned audit reason to fit the max length allowed by Discord audit logs (:issue:`4189`)
 
 Changes
 *******
 
-- **Core** - ``bot.remove_command()`` now returns the command object of the removed command as does the equivalent method from `discord.ext.commands.Bot` class (:issue:`4636`)
+- **Core - Bot Class** - ``bot.remove_command()`` now returns the command object of the removed command as does the equivalent method from `discord.ext.commands.Bot` class (:issue:`4636`)
 
 
 Documentation changes
@@ -1126,7 +1126,7 @@ Developer changelog
 Fixes
 *****
 
-- **Modlog API** - ``modlog.get_case()`` and methods using it no longer raise when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
+- **Core - Modlog** - ``modlog.get_case()`` and methods using it no longer raise when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
 
 
 Documentation changes
@@ -1217,12 +1217,12 @@ Security
 Additions
 *********
 
-- |cool| **Core** - Locales and regional formats can now be set in individual guilds using ``[p]set locale`` and ``[p]set regionalformat`` (:issue:`3896`, :issue:`1970`)
-
-    - Global locale and regional format setters have been renamed to ``[p]set globallocale`` and ``[p]set globalregionalformat``
 - **Core - Bot Commands** - Added ``[p]set api list`` to list all currently set API services, without tokens (:issue:`4370`)
 - **Core - Bot Commands** - Added ``[p]set api remove`` to remove API services, including tokens (:issue:`4370`)
 - **Core - Bot Commands** - Added ``[p]helpset usetick``, toggling command message being ticked when help is sent to DM (:issue:`4467`, :issue:`4075`)
+- |cool| **Core - i18n** - Locales and regional formats can now be set in individual guilds using ``[p]set locale`` and ``[p]set regionalformat`` (:issue:`3896`, :issue:`1970`)
+
+    - Global locale and regional format setters have been renamed to ``[p]set globallocale`` and ``[p]set globalregionalformat``
 - **Cogs - Audio** - Added the Global Audio API, to cut down on Youtube 429 errors and allow Spotify playback past user's quota. (:issue:`4446`)
 - |cool| **Cogs - Audio** - Added persistent queues, allowing for queues to be restored on a bot restart or cog reload (:issue:`4446`)
 - **Cogs - Audio** - Added ``[p]audioset restart``, allowing for Lavalink connection to be restarted (:issue:`4446`)
@@ -1309,36 +1309,36 @@ Developer changelog
 Additions
 *********
 
-- **Core** - Added ``[all]`` and ``[dev]`` extras to the ``Red-DiscordBot`` package (:issue:`4443`)
-- **Core** - Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
-- |cool| **Cogs - Dev** - Added ``[p]repl pause`` to pause/resume the REPL session in the current channel (:issue:`4366`)
-- **API Tokens** - Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
-- **API Tokens** - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
-- |cool| **Downloader** - Added JSON schema files for ``info.json`` files (:issue:`4375`)
-- |cool| **i18n API** - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
+- **Core - Bot Class** - Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
+- **Core - Bot Class** - Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
+- **Core - Bot Class** - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
+- **Core - Dependencies** - Added ``[all]`` and ``[dev]`` extras to the ``Red-DiscordBot`` package (:issue:`4443`)
+- |cool| **Core - i18n** - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
 
     - New function added: `redbot.core.i18n.set_contextual_locales_from_guild()`
     - Contextual locale is automatically set for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
-- **Modlog API** - Added ``last_known_username`` parameter to `modlog.create_case()` function (:issue:`4326`)
-- |cool| **Utilities** - Added `redbot.core.utils.get_end_user_data_statement()` and `redbot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
-- **Utilities** - Added `redbot.core.utils.chat_formatting.quote()` to quote text in a message (:issue:`4425`)
+- **Core - Modlog** - Added ``last_known_username`` parameter to `modlog.create_case()` function (:issue:`4326`)
+- |cool| **Core - Utils Package** - Added `redbot.core.utils.get_end_user_data_statement()` and `redbot.core.utils.get_end_user_data_statement_or_raise()` to attempt to fetch a cog's End User Data Statement (:issue:`4404`)
+- **Core - Utils Package** - Added `redbot.core.utils.chat_formatting.quote()` to quote text in a message (:issue:`4425`)
+- |cool| **Cogs - Dev** - Added ``[p]repl pause`` to pause/resume the REPL session in the current channel (:issue:`4366`)
+- |cool| **Cogs - Downloader** - Added JSON schema files for ``info.json`` files (:issue:`4375`)
 
 Changes
 *******
 
-- **Core** - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
-- **Bank API** - Bank API methods now consistently throw TypeError if a non-integer amount is supplied (:issue:`4376`)
-- |cool| **Modlog API** - Added an option to accept a ``discord.Object`` in `modlog.create_case()` (:issue:`4326`)
+- **Core - Bank** - Bank API methods now consistently throw TypeError if a non-integer amount is supplied (:issue:`4376`)
+- **Core - Commands Package** - Moved ``redbot.core.checks.bot_in_a_guild()`` to `redbot.core.commands.bot_in_a_guild()` (old name has been left as an alias) (:issue:`4515`, :issue:`4510`)
+- |cool| **Core - Modlog** - Added an option to accept a ``discord.Object`` in `modlog.create_case()` (:issue:`4326`)
 
 Deprecations
 ************
 
-- **Utilities** - Deprecated ``redbot.core.utils.mod.is_allowed_by_hierarchy()`` (:issue:`4435`)
+- **Core - Utils Package** - Deprecated ``redbot.core.utils.mod.is_allowed_by_hierarchy()`` (:issue:`4435`)
 
 Fixes
 *****
 
-- **Modlog API** - Fixed an error being raised with a deleted channel in `Case.message_content()` (:issue:`4415`)
+- **Core - Modlog** - Fixed an error being raised with a deleted channel in `Case.message_content()` (:issue:`4415`)
 
 
 Documentation changes
@@ -1450,9 +1450,9 @@ Breaking Changes
     - ``redbot.core.commands.APIToken``
     - ``loop`` kwarg from `bounded_gather_iter()`, `bounded_gather()`, and `start_adding_reactions()`
 - **Core** - Cog package names (i.e. name of the folder the cog is in and the name used when loading the cog) now have to be `valid Python identifiers <https://docs.python.org/3/reference/lexical_analysis.html#identifiers>`__ (:issue:`3605`, :issue:`3679`)
-- **Commands Package** - `Context.maybe_send_embed()` now supresses all mentions, including user mentions (:issue:`4192`)
-- **Commands Package** - The default value of the ``filter`` keyword argument in `Context.send()` has been changed to ``None`` (:issue:`3845`)
-- **Utilities** - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
+- **Core - Commands Package** - `Context.maybe_send_embed()` now supresses all mentions, including user mentions (:issue:`4192`)
+- **Core - Commands Package** - The default value of the ``filter`` keyword argument in `Context.send()` has been changed to ``None`` (:issue:`3845`)
+- **Core - Utils Package** - `humanize_list()` no longer raises `IndexError` for empty sequences (:issue:`2982`)
 
 .. _important-dev-340-1:
 
@@ -1469,26 +1469,26 @@ Additions
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
-- **Core** - Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
-- |cool| **Commands Package** - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
-- **Commands Package** - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
+- **Core - Bot Class** - Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
+- |cool| **Core - Commands Package** - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
+- **Core - Commands Package** - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
 
 Changes
 *******
 
-- **Core** - `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
-- |cool| **Commands Package** - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
-- **Utilities** - `humanize_list()` now accepts ``locale`` and ``style`` keyword arguments. See its documentation for more information (:issue:`2982`)
-- |cool| **Utilities** - `humanize_list()` is now properly localized (:issue:`2906`, :issue:`2982`)
-- **Utilities** - `humanize_list()` now accepts empty sequences (:issue:`2982`)
-- **Utilities** - ``bordered()`` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
+- **Core - Bot Class** - `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
+- |cool| **Core - Commands Package** - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
+- **Core - Utils Package** - `humanize_list()` now accepts ``locale`` and ``style`` keyword arguments. See its documentation for more information (:issue:`2982`)
+- |cool| **Core - Utils Package** - `humanize_list()` is now properly localized (:issue:`2906`, :issue:`2982`)
+- **Core - Utils Package** - `humanize_list()` now accepts empty sequences (:issue:`2982`)
+- **Core - Utils Package** - ``bordered()`` now uses ``+`` for corners if keyword argument ``ascii_border`` is set to `True` (:issue:`4097`)
 - **Vendored Packages** - Updated ``discord.ext.menus`` vendor (:issue:`4167`)
 
 Fixes
 *****
 
-- **Commands Package** - Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
-- **RPC** - RPC functionality no longer makes Red hang for a minute on shutdown (:issue:`4134`, :issue:`4143`)
+- **Core - Commands Package** - Red no longer fails to run subcommands of a command group allowed or denied by permission hook (:issue:`3956`)
+- **Core - RPC** - RPC functionality no longer makes Red hang for a minute on shutdown (:issue:`4134`, :issue:`4143`)
 
 
 Documentation changes
@@ -1630,24 +1630,24 @@ Developer changelog
 Additions
 *********
 
-- **Utilities** - Added the methods `map() <AsyncIter.map()>`, `find() <AsyncIter.find()>`, and `next() <AsyncIter.next()>` to `AsyncIter` (:issue:`3921`, :issue:`3887`)
+- **Core - Utils Package** - Added the methods `map() <AsyncIter.map()>`, `find() <AsyncIter.find()>`, and `next() <AsyncIter.next()>` to `AsyncIter` (:issue:`3921`, :issue:`3887`)
 - **Vendored Packages** - Vendored the ``discord.ext.menus`` module (:issue:`4039`)
 
 Changes
 *******
 
-- **Utilities** - Added new ``discord.com`` domain to ``INVITE_URL_RE`` common filter (:issue:`4012`)
+- **Core - Utils Package** - Added new ``discord.com`` domain to ``INVITE_URL_RE`` common filter (:issue:`4012`)
 
 Deprecations
 ************
 
-- **Commands Package** - Updated deprecation times for ``APIToken``, and loops being passed to various functions to the first minor release (represented by ``X`` in ``3.X.0``) after 2020-08-05 (:issue:`3608`)
-- **Downloader** - Updated deprecation warnings for shared libs to reflect that they have been moved for an undefined time (:issue:`3608`)
+- **Core - Commands Package** - Updated deprecation times for ``APIToken``, and loops being passed to various functions to the first minor release (represented by ``X`` in ``3.X.0``) after 2020-08-05 (:issue:`3608`)
+- **Cogs - Downloader** - Updated deprecation warnings for shared libs to reflect that they have been moved for an undefined time (:issue:`3608`)
 
 Fixes
 *****
 
-- **Utilities** - Fixed incorrect role mention regex in `MessagePredicate` (:issue:`4030`)
+- **Core - Utils Package** - Fixed incorrect role mention regex in `MessagePredicate` (:issue:`4030`)
 
 
 Redbot 3.3.9 (2020-06-12)
@@ -1725,7 +1725,7 @@ Developer changelog
 Additions
 *********
 
-- **Core** - Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
+- **Core - Bot Class** - Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
@@ -1800,8 +1800,8 @@ Developer changelog
 Changes
 *******
 
-- **Core** - Red now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
-- **Core** - All bot owner IDs can now be found under ``bot.owner_ids`` attribute (:issue:`3793`)
+- **Core - Bot Class** - Red now inherits from `discord.ext.commands.AutoShardedBot` for better compatibility with code expecting d.py bot (:issue:`3822`)
+- **Core - Bot Class** - All bot owner IDs can now be found under ``bot.owner_ids`` attribute (:issue:`3793`)
 
   -  Note: If you want to use this on bot startup (e.g. in cog's initialisation), you need to await ``bot.wait_until_red_ready()`` first
 
@@ -1809,7 +1809,7 @@ Fixes
 *****
 
 - Libraries using ``pkg_resources`` (like ``humanize`` or ``google-api-python-client``) that were installed through Downloader should now work properly (:issue:`3843`)
-- **Downloader** - Downloader no longer removes the repo when it fails to load it (:issue:`3867`)
+- **Cogs - Downloader** - Downloader no longer removes the repo when it fails to load it (:issue:`3867`)
 
 
 Documentation changes
@@ -1879,17 +1879,17 @@ Developer changelog
 Additions
 *********
 
-- **Utilities** - Added `redbot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`, :issue:`3776`)
+- **Core - Utils Package** - Added `redbot.core.utils.AsyncIter` utility class which allows you to wrap regular iterable into async iterator yielding items and sleeping for ``delay`` seconds every ``steps`` items (:issue:`3767`, :issue:`3776`)
 
 Changes
 *******
 
-- **Utilities** - `bold()`, `italics()`, `strikethrough()`, and `underline()` now accept ``escape_formatting`` argument that can be used to disable escaping of markdown formatting in passed text (:issue:`3742`)
+- **Core - Utils Package** - `bold()`, `italics()`, `strikethrough()`, and `underline()` now accept ``escape_formatting`` argument that can be used to disable escaping of markdown formatting in passed text (:issue:`3742`)
 
 Fixes
 *****
 
-- **Config** - JSON driver will now properly have only one lock per cog name (:issue:`3780`)
+- **Core - Config** - JSON driver will now properly have only one lock per cog name (:issue:`3780`)
 
 
 Documentation changes
@@ -1955,12 +1955,12 @@ Changes
 *******
 
 - **Core - Dependencies** - Bump dependencies, including update to discord.py 1.3.3 (:issue:`3723`)
-- **Utilities** - `redbot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
+- **Core - Utils Package** - `redbot.core.utils.common_filters.filter_invites` now filters ``discord.io/discord.li`` invites links (:issue:`3717`)
 
 Fixes
 *****
 
-- **Utilities** - Fixed false-positives in `redbot.core.utils.common_filters.filter_invites` (:issue:`3717`)
+- **Core - Utils Package** - Fixed false-positives in `redbot.core.utils.common_filters.filter_invites` (:issue:`3717`)
 
 
 Documentation changes
@@ -1989,7 +1989,7 @@ Security
 Additions
 *********
 
-- **Core** - Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
+- **Core - i18n** - Added ``[p]set regionalformat`` command that allows users to set regional formatting that is different from bot's locale (:issue:`3677`, :issue:`3588`)
 - **Cogs - Cleanup** - Added ``[p]cleanup spam`` command that deletes duplicate messages from the last X messages and keeps only one copy (:issue:`3688`)
 - **Cogs - CustomCommands** - Added ``[p]cc search`` command that allows users to search through created custom commands (:issue:`2573`)
 - **Cogs - Trivia** - Added ``[p]triviaset custom upload/delete/list`` commands for managing custom trivia lists from Discord (:issue:`3420`, :issue:`3307`)
@@ -2046,8 +2046,8 @@ Fixes
 *****
 
 - Deprecation warnings issued by Red now use correct stack level so that the cog developers can find the cause of them (:issue:`3644`)
+- **Core - Utils Package** - `redbot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
 - **Cogs - Dev** - Added ``__name__`` to environment's globals (:issue:`3649`, :issue:`3648`)
-- **Utilities** - `redbot.core.utils.menus.menu()` now checks permissions *before* trying to clear reactions (:issue:`3589`, :issue:`3145`)
 
 
 Documentation changes
@@ -2116,7 +2116,7 @@ Developer changelog
 Security
 ********
 
-- **Commands Package** - Subcommands of command group with ``invoke_without_command=True`` will again inherit this group's checks (:issue:`3614`)
+- **Core - Commands Package** - Subcommands of command group with ``invoke_without_command=True`` will again inherit this group's checks (:issue:`3614`)
 
 Additions
 *********
@@ -2128,16 +2128,16 @@ Changes
 
 - **Core - Command-line Interfaces** - Added traceback logging to task exception handling (:issue:`3517`)
 - **Core - Command-line Interfaces** - Bot will now show deprecation warnings in logs (:issue:`3527`, :issue:`3615`)
+- **Core - Commands Package** - Developers can now create a command from an async function wrapped in `functools.partial` (:issue:`3542`)
 - **Core - Dependencies** - Updated all our dependencies - we're using discord.py 1.3.2 now (:issue:`3609`)
-- **Commands Package** - Developers can now create a command from an async function wrapped in `functools.partial` (:issue:`3542`)
-- **Downloader** - Downloader will now replace ``[p]`` with clean prefix same as it does in help command (:issue:`3592`)
-- **Downloader** - Added schema validation to ``info.json`` file processing - it should now be easier to notice any issues with those files (:issue:`3533`, :issue:`3442`)
-- **Utilities** - Added clearer error when page is of a wrong type in `redbot.core.utils.menus.menu()` (:issue:`3571`)
+- **Core - Utils Package** - Added clearer error when page is of a wrong type in `redbot.core.utils.menus.menu()` (:issue:`3571`)
+- **Cogs - Downloader** - Downloader will now replace ``[p]`` with clean prefix same as it does in help command (:issue:`3592`)
+- **Cogs - Downloader** - Added schema validation to ``info.json`` file processing - it should now be easier to notice any issues with those files (:issue:`3533`, :issue:`3442`)
 
 Fixes
 *****
 
-- **Config** - Fixed Config's singletons (:issue:`3137`, :issue:`3136`)
+- **Core - Config** - Fixed Config's singletons (:issue:`3137`, :issue:`3136`)
 
 
 Documentation changes
@@ -2196,7 +2196,7 @@ Developer changelog
 Deprecations
 ************
 
-- **Utilities** - Passing the event loop explicitly in `bounded_gather()`, `bounded_gather_iter()`, and `start_adding_reactions()` is deprecated and will be removed in 3.4 (:issue:`3509`)
+- **Core - Utils Package** - Passing the event loop explicitly in `bounded_gather()`, `bounded_gather_iter()`, and `start_adding_reactions()` is deprecated and will be removed in 3.4 (:issue:`3509`)
 
 
 Documentation changes
@@ -2235,7 +2235,7 @@ Additions
 Changes
 *******
 
-- **Core** - Help is now self consistent in the extra formatting used (:issue:`3451`)
+- **Core - Help** - Help is now self consistent in the extra formatting used (:issue:`3451`)
 - **Cogs - Admin** - Role granting/removing commands will now notify when the user already has/doesn't have a role when attempting to add/remove it (:issue:`3010`, :issue:`3408`)
 - **Cogs - Audio** - Playlist searching is now more intuitive (:issue:`3430`)
 - **Cogs - Downloader** - Some user facing messages were improved (:issue:`3409`)
@@ -2258,26 +2258,26 @@ Developer changelog
 Breaking Changes
 ****************
 
-- **Commands Package** - Importing submodules of ``discord.ext.commands`` from ``redbot.core.commands`` will no longer work (:issue:`3410`)
-- **Commands Package** - ``PermState.ALLOWED_STATES`` from ``redbot.core.commands.requires`` has been moved to a global variable called ``PermStateAllowedStates`` in the same module (:issue:`3410`)
-- **Commands Package** - ``PermState.TRANSITIONS`` from ``redbot.core.commands.requires`` has been moved to a global variable called ``PermStateAllowedStates`` in the same module (:issue:`3410`)
-- **Commands Package** - Use of ``@asyncio.coroutine`` is no longer supported. Use ``async def`` instead (:issue:`3410`)
+- **Core - Commands Package** - Importing submodules of ``discord.ext.commands`` from ``redbot.core.commands`` will no longer work (:issue:`3410`)
+- **Core - Commands Package** - ``PermState.ALLOWED_STATES`` from ``redbot.core.commands.requires`` has been moved to a global variable called ``PermStateAllowedStates`` in the same module (:issue:`3410`)
+- **Core - Commands Package** - ``PermState.TRANSITIONS`` from ``redbot.core.commands.requires`` has been moved to a global variable called ``PermStateAllowedStates`` in the same module (:issue:`3410`)
+- **Core - Commands Package** - Use of ``@asyncio.coroutine`` is no longer supported. Use ``async def`` instead (:issue:`3410`)
 
 Changes
 *******
 
+- **Core - Commands Package** - The commands module has been slightly restructured to provide more useful data to developers (:issue:`3410`)
 - **Core - Dependencies** - We now use discord.py 1.3.1 (:issue:`3445`)
-- **Commands Package** - The commands module has been slightly restructured to provide more useful data to developers (:issue:`3410`)
 
 Deprecations
 ************
 
-- **Downloader** - Updated deprecation warnings for shared libs to reflect that they will instead be removed in 3.4 (:issue:`3449`)
+- **Cogs - Downloader** - Updated deprecation warnings for shared libs to reflect that they will instead be removed in 3.4 (:issue:`3449`)
 
 Fixes
 *****
 
-- **Commands Package** - Fixed an issue with default units in `TimedeltaConverter` (:issue:`3453`)
+- **Core - Commands Package** - Fixed an issue with default units in `TimedeltaConverter` (:issue:`3453`)
 
 
 Documentation changes
@@ -2334,10 +2334,10 @@ Additions
 *********
 
 - **Core** - Added the means for cog creators to use a global preinvoke hook (:issue:`3369`)
-- **Commands Package** - New features added for cog creators to further customize help behavior (:issue:`3339`)
+- **Core - Commands Package** - New features added for cog creators to further customize help behavior (:issue:`3339`)
   
   - Check out our command reference for details on new ``format_help_for_context`` method
-- **Commands Package** - ``[botname]`` is now replaced with the bot's display name in help text (:issue:`3339`)
+- **Core - Commands Package** - ``[botname]`` is now replaced with the bot's display name in help text (:issue:`3339`)
 
 
 Documentation changes
@@ -2577,12 +2577,10 @@ Removals
 Fixes
 *****
 
-- **Core** - Help now properly hides disabled commands (:issue:`2863`)
 - **Core** - Red no longer types infinitely when a command with a cooldown is called within the last second of a cooldown. (:issue:`2985`)
 - **Core** - Added a 3rd-party lib folder to ``sys.path`` before loading cogs. This prevents issues with 3rd-party cogs failing to load when Downloader is not loaded to install requirements (:issue:`3036`)
 - **Core** - Red will now properly send an error message when the invoked command is guild-only (:issue:`3057`)
 - **Core** - Red now always appends the 3rd-party lib folder to the end of ``sys.path`` to avoid shadowing Red's dependencies (:issue:`3062`)
-- **Core** - Fixed help ending up a little too large for Discord embed limits (:issue:`3208`)
 - **Core** - Guild owners are no longer affected by the local whitelist and blacklist (:issue:`3221`)
 - **Core - Bot Commands** - The ``[p]invite`` command no longer errors when a user has the bot blocked or DMs disabled in the server (:issue:`2948`)
 - **Core - Bot Commands** - Cleaned up the ``[p]inviteset public`` and ``[p]inviteset perms`` help strings (:issue:`2963`)
@@ -2602,6 +2600,8 @@ Fixes
 - **Core - Command-line Interfaces** - Fixed the generation of the ``repos.json`` file in the backup process (:issue:`3114`)
 - **Core - Command-line Interfaces** - Added handling for invalid folder names in the data path gracefully in ``redbot-setup`` and ``redbot --edit`` (:issue:`3171`)
 - **Core - Command-line Interfaces** - ``--owner`` and ``-p`` cli flags now work when added from launcher (:issue:`3174`)
+- **Core - Help** - Help now properly hides disabled commands (:issue:`2863`)
+- **Core - Help** - Fixed help ending up a little too large for Discord embed limits (:issue:`3208`)
 - **Core - Modlog** - Modlog entries now show up properly without the mod cog loaded (:issue:`2897`)
 - **Core - Modlog** - Removed potential for additional bad API calls per ban/unban (:issue:`2945`)
 - **Cogs - Admin** - Fixed ``[p]announce`` failing after encountering an error attempting to message the bot owner (:issue:`3166`)
@@ -2664,7 +2664,13 @@ Developer changelog
 Breaking Changes
 ****************
 
-- **Core** - The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned (:issue:`2967`)
+- **Core** - Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord (:issue:`3073`)
+
+    This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it
+- **Core - Bank** - Removed ``bank.MAX_BALANCE``, use `redbot.core.bank.get_max_balance()` from now on (:issue:`2926`)
+- **Core - Commands Package** - Reserved some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES`` (:issue:`2973`)
+- **Core - Commands Package** - Qualified command names are limited to a maximum of 60 characters (:issue:`3223`)
+- **Core - Bot Class** - The main bot config is no longer directly accessible to cogs. New methods have been added for use where this is concerned (:issue:`2967`)
 
   New methods for this include:
 
@@ -2675,15 +2681,9 @@ Breaking Changes
     - `Red.get_admin_role_ids()`
     - `Red.get_mod_roles()`
     - `Red.get_mod_role_ids()`
-- **Core** - Removed ``bot._counter``, Made a few more attributes private (``cog_mgr``, ``main_dir``) (:issue:`2976`)
-- **Core** - Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord (:issue:`3073`)
-
-    This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it
-- **Bank API** - Removed ``bank.MAX_BALANCE``, use `redbot.core.bank.get_max_balance()` from now on (:issue:`2926`)
-- **Commands Package** - Reserved some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES`` (:issue:`2973`)
-- **Commands Package** - Qualified command names are limited to a maximum of 60 characters (:issue:`3223`)
-- **Modlog API** - Modlog casetypes no longer have an attribute for auditlog action type (:issue:`2897`)
-- **Modlog API** - Removed ``redbot.core.modlog.get_next_case_number()`` (:issue:`2908`)
+- **Core - Bot Class** - Removed ``bot._counter``, Made a few more attributes private (``cog_mgr``, ``main_dir``) (:issue:`2976`)
+- **Core - Modlog** - Modlog casetypes no longer have an attribute for auditlog action type (:issue:`2897`)
+- **Core - Modlog** - Removed ``redbot.core.modlog.get_next_case_number()`` (:issue:`2908`)
 
 Additions
 *********
@@ -2694,10 +2694,10 @@ Additions
    - `Red.get_valid_prefixes()`
    - `Red.remove_shared_api_tokens()`
    - `redbot.core.commands.help.HelpSettings`
-- **Core** - Added the method `Red.wait_until_red_ready()` that waits until Red's post connection startup is done (:issue:`3273`)
-- **API Tokens** - New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for a service are updated (:issue:`3134`)
-- **Config** - Added functions to acquire locks on Config groups and values. These locks are acquired by default when calling a value as a context manager. See `Value.get_lock()` for details (:issue:`2654`)
-- **Config** - Added methods to Config for accessing things by id without mocked objects (:issue:`2804`)
+- **Core - Bot Class** - Added the method `Red.wait_until_red_ready()` that waits until Red's post connection startup is done (:issue:`3273`)
+- **Core - Bot Class** - New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for a service are updated (:issue:`3134`)
+- **Core - Config** - Added functions to acquire locks on Config groups and values. These locks are acquired by default when calling a value as a context manager. See `Value.get_lock()` for details (:issue:`2654`)
+- **Core - Config** - Added methods to Config for accessing things by id without mocked objects (:issue:`2804`)
 
     - `Config.guild_from_id()`
     - `Config.user_from_id()`
@@ -2706,10 +2706,10 @@ Additions
     - `Config.member_from_ids()`
       - This one requires multiple ids, one for the guild, one for the user
       - Consequence of discord's object model
-- **Modlog API** - Added ``redbot.core.modlog.get_latest_case()`` to fetch the case object for the most recent ModLog case (:issue:`2908`)
-- **Utilities** - Added `redbot.core.utils.chat_formatting.humanize_number()` function to convert numbers into text that respects the current locale (:issue:`2836`)
-- **Utilities** - Added the function `redbot.core.utils.chat_formatting.text_to_file()` to prepare a long text to be sent as a file (:issue:`2849`)
-- **Utilities** - Added ``use_cached`` and ``images_only`` kwargs to `redbot.core.utils.tunnel.Tunnel.files_from_attach()` (:issue:`2885`)
+- **Core - Modlog** - Added ``redbot.core.modlog.get_latest_case()`` to fetch the case object for the most recent Modlog case (:issue:`2908`)
+- **Core - Utils Package** - Added `redbot.core.utils.chat_formatting.humanize_number()` function to convert numbers into text that respects the current locale (:issue:`2836`)
+- **Core - Utils Package** - Added the function `redbot.core.utils.chat_formatting.text_to_file()` to prepare a long text to be sent as a file (:issue:`2849`)
+- **Core - Utils Package** - Added ``use_cached`` and ``images_only`` kwargs to `redbot.core.utils.tunnel.Tunnel.files_from_attach()` (:issue:`2885`)
 - **Cogs - Audio** - New events dispatched by Audio (:issue:`2904`)
 
    - ``on_red_audio_track_start(guild: discord.Guild, track: lavalink.Track, requester: discord.Member)``
@@ -2723,28 +2723,28 @@ Additions
 Changes
 *******
 
-- **Core** - `Red.send_filtered()` now returns the message that is sent (:issue:`3052`)
-- **Core** - `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now log when they are not able to find the owner notification destination (:issue:`3273`)
-- **Commands Package** - Allowed passing ``cls`` in the `redbot.core.commands.group()` decorator (:issue:`2881`)
-- **Modlog API** - Some generic modlog casetypes are now pre-registered for cog creator use (:issue:`2897`)
+- **Core - Bot Class** - `Red.send_filtered()` now returns the message that is sent (:issue:`3052`)
+- **Core - Bot Class** - `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now log when they are not able to find the owner notification destination (:issue:`3273`)
+- **Core - Commands Package** - Allowed passing ``cls`` in the `redbot.core.commands.group()` decorator (:issue:`2881`)
+- **Core - Modlog** - Some generic modlog casetypes are now pre-registered for cog creator use (:issue:`2897`)
 
 Removals
 ********
 
-- **Utilities** - Removed the functions ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` from ``redbot.core.utils`` (:issue:`3240`)
+- **Core - Utils Package** - Removed the functions ``safe_delete``, ``fuzzy_command_search``, ``format_fuzzy_results`` and ``create_backup`` from ``redbot.core.utils`` (:issue:`3240`)
 
 Fixes
 *****
 
-- **Core** - Fixed `Red.remove_command()` throwing an error when trying to remove a non-existent command (:issue:`2888`)
-- **Core** - Fixed ``is_automod_immune``'s handling of the guild check and added support for checking webhooks (:issue:`3100`)
-- **Core** - ``Red.owner_id`` is now set in the post connection startup (:issue:`3273`)
-- **Core** - `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now wait until Red is done with post connection startup to ensure owner ID is available (:issue:`3273`)
-- **Bank API** - Bank functions now check the recipient balance before transferring and stop the transfer if the recipient's balance will go above the maximum allowed balance (:issue:`2923`)
-- **Commands Package** - `Command.can_see()` now works as intended for disabled commands (:issue:`2892`)
-- **Commands Package** - Fixed ``Context.clean_prefix`` issues resulting from undocumented changes from discord (:issue:`3249`)
-- **Utilities** - Fixed `MessagePredicate.greater()` and `MessagePredicate.less()` allowing any valid int instead of only valid ints/floats that are greater/less than the given value (:issue:`3004`)
-- **Utilities** - Fixed an attribute error that can be raised in `redbot.core.utils.chat_formatting.humanize_timedelta()` if ``seconds = 0`` (:issue:`3231`)
+- **Core - Bank** - Bank functions now check the recipient balance before transferring and stop the transfer if the recipient's balance will go above the maximum allowed balance (:issue:`2923`)
+- **Core - Bot Class** - Fixed `Red.remove_command()` throwing an error when trying to remove a non-existent command (:issue:`2888`)
+- **Core - Bot Class** - Fixed ``is_automod_immune``'s handling of the guild check and added support for checking webhooks (:issue:`3100`)
+- **Core - Bot Class** - ``Red.owner_id`` is now set in the post connection startup (:issue:`3273`)
+- **Core - Bot Class** - `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now wait until Red is done with post connection startup to ensure owner ID is available (:issue:`3273`)
+- **Core - Commands Package** - `Command.can_see()` now works as intended for disabled commands (:issue:`2892`)
+- **Core - Commands Package** - Fixed ``Context.clean_prefix`` issues resulting from undocumented changes from discord (:issue:`3249`)
+- **Core - Utils Package** - Fixed `MessagePredicate.greater()` and `MessagePredicate.less()` allowing any valid int instead of only valid ints/floats that are greater/less than the given value (:issue:`3004`)
+- **Core - Utils Package** - Fixed an attribute error that can be raised in `redbot.core.utils.chat_formatting.humanize_timedelta()` if ``seconds = 0`` (:issue:`3231`)
 
 
 Documentation changes
@@ -2888,11 +2888,11 @@ Fixes
 
 - **Core** - Fixed broken fuzzy help (:issue:`2768`)
 - **Core** - Fixed a race condition that could allow a user to run commands they are denied to run by Permissions cog for a short moment before the cog is loaded (:issue:`2857`)
-- **Core** - Fixed substitution of ``[p]`` in command descriptions in non-embedded help output (:issue:`2846`)
 - **Core - Bot Commands** - ``[p]command disable`` and its subcommands now ensure that the command to disable is not ``[p]command`` or any of its subcommands to prevent lockout (:issue:`2770`)
 - **Core - Bot Commands** - Fixed an issue with error message being sent multiple times when help command was unable to DM the user (:issue:`2790`)
 - **Core - Bot Commands** - Fixed broken link in help of ``[p]set color`` (:issue:`2715`, :issue:`2803`)
 - **Core - Bot Commands** - Fixed user output and exception handling on cog load/reload (:issue:`2767`)
+- **Core - Help** - Fixed substitution of ``[p]`` in command descriptions in non-embedded help output (:issue:`2846`)
 - **Cogs - Audio** - Added missing bot permission checks to commands in Audio cog (:issue:`2756`)
 - **Cogs - Audio** - Fixed an issue with jar downloading on mixed-filesystem environments (:issue:`2682`, :issue:`2765`)
 - **Cogs - Audio** - Fixed an issue with ``[p]playlist copy`` and ``[p]playlist queue`` failing when the prefix contains certain characters (:issue:`2788`, :issue:`2789`)
@@ -2909,15 +2909,15 @@ Additions
 *********
 
 - **Core** - Added ``UserFeedbackCheckFailure`` (:issue:`2761`)
-- **Bank API** - Added `redbot.core.bank.cost()` (:issue:`2761`)
-- **Commands Package** - Added (optional) ``default_unit`` keyword argument to `TimedeltaConverter` (:issue:`2753`)
-- **Commands Package** - Added `Context.react_quietly()` (:issue:`2834`)
+- **Core - Bank** - Added `redbot.core.bank.cost()` (:issue:`2761`)
+- **Core - Commands Package** - Added (optional) ``default_unit`` keyword argument to `TimedeltaConverter` (:issue:`2753`)
+- **Core - Commands Package** - Added `Context.react_quietly()` (:issue:`2834`)
 
 Fixes
 *****
 
-- **Config** - Fixed cache issues with Config when the developer accidentally tries to set an object that isn't JSON serializable (:issue:`2793`, :issue:`2796`)
-- **Config** - Fixed an issue with identifiers that contain ``$`` or ``.`` which has caused a KeyError exception regardless of whether such key existed in the data (:issue:`2832`)
+- **Core - Config** - Fixed cache issues with Config when the developer accidentally tries to set an object that isn't JSON serializable (:issue:`2793`, :issue:`2796`)
+- **Core - Config** - Fixed an issue with identifiers that contain ``$`` or ``.`` which has caused a KeyError exception regardless of whether such key existed in the data (:issue:`2832`)
 
 
 Documentation changes
@@ -2947,7 +2947,12 @@ End-user changelog
 Additions
 *********
 
-- **Core** - Added a few new settings for bot's help (:issue:`2667`, :issue:`2681`, :issue:`2676`)
+- **Core** - Added a generic system that can be used by cog creators to send notifications meant for bot owners (:issue:`2665`, :issue:`2738`, :issue:`2745`)
+- **Core - Bot Commands** - Added ``[p]debuginfo`` command (:issue:`2728`)
+
+    This comes with some commands that allow to manage the destinations for the owner notifications.
+    See the help of commands in ``[p]set ownernotifications`` command group for more information.
+- **Core - Help** - Added a few new settings for bot's help (:issue:`2667`, :issue:`2681`, :issue:`2676`)
 
     - ``[p]helpset usemenus`` - Allows the help command to be sent as a paginated menu.
     - ``[p]helpset showhidden`` - Allows the help command to show hidden commands.
@@ -2955,11 +2960,6 @@ Additions
     - ``[p]helpset verifyexists`` - Allows the bot to respond indicating the existence of a specific help topic even if the user can't use it.
 
     For more information, see help of each of the listed commands.
-- **Core** - Added a generic system that can be used by cog creators to send notifications meant for bot owners (:issue:`2665`, :issue:`2738`, :issue:`2745`)
-- **Core - Bot Commands** - Added ``[p]debuginfo`` command (:issue:`2728`)
-
-    This comes with some commands that allow to manage the destinations for the owner notifications.
-    See the help of commands in ``[p]set ownernotifications`` command group for more information.
 - **Cogs - Mod** - Added ``[p]slowmode`` command (:issue:`2734`)
 
 Changes
@@ -2977,9 +2977,9 @@ Fixes
 
 - **Core** - Fixed update notification for bots that have co-owners (:issue:`2677`)
 - **Core** - Fixed an issue where bad user input didn't result in the bot sending help for the command (:issue:`2707`)
-- **Core** - Fixed an issue with incorrect subcommand descriptions being shown in non-embed help (:issue:`2678`)
-- **Core** - Fixed help for commands with no docstring (:issue:`2415`, :issue:`2722`)
-- **Core** - Help menu no longer blocks settings preview in command groups like ``[p]set`` (:issue:`2712`, :issue:`2725`)
+- **Core - Help** - Fixed an issue with incorrect subcommand descriptions being shown in non-embed help (:issue:`2678`)
+- **Core - Help** - Fixed help for commands with no docstring (:issue:`2415`, :issue:`2722`)
+- **Core - Help** - Help menu no longer blocks settings preview in command groups like ``[p]set`` (:issue:`2712`, :issue:`2725`)
 - **Core - Bot Commands** - Fixed few more issues with help command (:issue:`2676`)
 - **Core - Bot Commands** - Fixed error handling in ``[p]load`` command (:issue:`2686`, :issue:`2688`)
 - **Core - Bot Commands** - Fixed an issue with long cog descriptions in help command (:issue:`2730`)
@@ -2997,15 +2997,15 @@ Developer changelog
 Additions
 *********
 
-- **Core** - Added `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` (:issue:`2665`, :issue:`2738`)
-- **Commands Package** - Added `DictConverter` (:issue:`2692`)
-- **Commands Package** - Added `TimedeltaConverter` and `parse_timedelta()` (:issue:`2736`)
-- **Commands Package** - Added ``assume_yes`` attribute to `redbot.core.commands.Context` (:issue:`2746`)
+- **Core - Bot Class** - Added `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` (:issue:`2665`, :issue:`2738`)
+- **Core - Commands Package** - Added `DictConverter` (:issue:`2692`)
+- **Core - Commands Package** - Added `TimedeltaConverter` and `parse_timedelta()` (:issue:`2736`)
+- **Core - Commands Package** - Added ``assume_yes`` attribute to `redbot.core.commands.Context` (:issue:`2746`)
 
 Changes
 *******
 
-- **Utilities** - `menu()` now accepts `functools.partial` (:issue:`2718`, :issue:`2720`)
+- **Core - Utils Package** - `menu()` now accepts `functools.partial` (:issue:`2718`, :issue:`2720`)
 
 
 Redbot 3.1.1 (2019-05-15)
@@ -3048,9 +3048,9 @@ Changes
 
 - **Core** - Error messages about cooldowns will now show more friendly representation of cooldown's expiration time (:issue:`2412`)
 - **Core** - Cooldown messages are now auto-deleted after cooldown expiration expired (:issue:`2469`)
-- **Core** - Redesigned help and its formatter (:issue:`2628`)
 - **Core** - Updated Mongo driver to support large guilds (:issue:`2536`)
 - **Core - Command-line Interfaces** - ``redbot --version`` will now give you current version of Red (:issue:`2567`)
+- **Core - Help** - Redesigned help and its formatter (:issue:`2628`)
 - **Cogs - Audio** - Changed ``[p]pause`` to a toggle (:issue:`2461`)
 - **Cogs - Audio** - Removed command aliases (``dc``, ``np``, ``n``, ``song``, ``track``, ``q``, ``forceskip``, ``fs``, ``s``) (:issue:`2462`)
 - **Cogs - Audio** - ``[p]seek`` command can now seek to position (:issue:`2470`)
@@ -3071,11 +3071,11 @@ Removals
 Fixes
 *****
 
-- **Core** - Changed default locale from ``en`` to ``en-US`` (:issue:`2642`)
 - **Core - Bot Commands** - Fixed local blacklist/whitelist management commands (:issue:`2531`)
 - **Core - Bot Commands** - ``[p]set locale`` now only accepts actual locales (:issue:`2553`)
 - **Core - Bot Commands** - ``[p]listlocales`` now includes ``en-US`` locale (:issue:`2553`)
 - **Core - Command-line Interfaces** - Fixed the list of available extras in the ``redbot-launcher`` (:issue:`2588`)
+- **Core - i18n** - Changed default locale from ``en`` to ``en-US`` (:issue:`2642`)
 - **Cogs - Audio** - Fixed ``[p]audioset status`` (:issue:`2481`)
 - **Cogs - Audio** - Fixed an issue where queuing song from ``[p]search`` command did not do anything (:issue:`2513`)
 - **Cogs - Audio** - Bot will no longer complain about permissions when trying to connect to user-limited channel, if it has "Move Members" permission (:issue:`2525`)
@@ -3096,31 +3096,31 @@ Developer changelog
 Breaking Changes
 ****************
 
-- **Config** - We now record custom group primary key lengths in the core config object (:issue:`2550`)
-- **Downloader** - Cog Developers now have to use ``min_bot_version`` key instead of ``bot_version`` to specify minimum version of Red supported by the cog in ``info.json``, see more information in :ref:`info-json-format` (:issue:`2605`)
+- **Core - Config** - We now record custom group primary key lengths in the core config object (:issue:`2550`)
+- **Cogs - Downloader** - Cog Developers now have to use ``min_bot_version`` key instead of ``bot_version`` to specify minimum version of Red supported by the cog in ``info.json``, see more information in :ref:`info-json-format` (:issue:`2605`)
 
 Additions
 *********
 
 - **Core** - Added a ``on_message_without_command`` event that is dispatched when bot gets an event for a message that doesn't contain a command (:issue:`2338`)
-- **Config** - Introduced `Config.init_custom()` method (:issue:`2545`)
-- **Downloader** - Added ``max_bot_version`` key to ``info.json`` that allows to specify maximum supported version of Red supported by the cog in ``info.json``, see more information in :ref:`info-json-format`. (:issue:`2605`)
-- **Utilities** - Added `chat_formatting.humanize_timedelta()` (:issue:`2412`)
+- **Core - Config** - Introduced `Config.init_custom()` method (:issue:`2545`)
+- **Core - Utils Package** - Added `chat_formatting.humanize_timedelta()` (:issue:`2412`)
+- **Cogs - Downloader** - Added ``max_bot_version`` key to ``info.json`` that allows to specify maximum supported version of Red supported by the cog in ``info.json``, see more information in :ref:`info-json-format`. (:issue:`2605`)
 
 Changes
 *******
 
 - **Core** - Usage of ``yaml.load`` will now warn about its security issues (:issue:`2326`)
+- **Core - Config** - Migrated internal UUIDs to maintain cross platform consistency (:issue:`2604`)
+- **Core - Utils Package** - Improved error handling of empty lists in `chat_formatting.humanize_list()` (:issue:`2597`)
 - **Core - Dependencies** - Red is now no longer vendoring discord.py and installs it from PyPI (:issue:`2587`)
 - **Core - Dependencies** - Upgraded discord.py dependency to version 1.0.1 (:issue:`2587`)
-- **Config** - Migrated internal UUIDs to maintain cross platform consistency (:issue:`2604`)
-- **Utilities** - Improved error handling of empty lists in `chat_formatting.humanize_list()` (:issue:`2597`)
 
 Fixes
 *****
 
-- **Utilities** - Fixed spelling of the `Tunnel`'s method from ``files_from_attatch()`` to `files_from_attach() <Tunnel.files_from_attach()>`; old name was left for backwards compatibility (:issue:`2496`)
-- **Utilities** - Fixed behavior of ``Tunnel.react_close()`` - now when tunnel closes, the message will be sent to the other end (:issue:`2507`)
+- **Core - Utils Package** - Fixed spelling of the `Tunnel`'s method from ``files_from_attatch()`` to `files_from_attach() <Tunnel.files_from_attach()>`; old name was left for backwards compatibility (:issue:`2496`)
+- **Core - Utils Package** - Fixed behavior of ``Tunnel.react_close()`` - now when tunnel closes, the message will be sent to the other end (:issue:`2507`)
 
 
 Redbot 3.0.2 (2019-02-24)
@@ -3177,12 +3177,12 @@ Developer changelog
 Additions
 *********
 
-- **Utilities** - Added `escape_spoilers()` and `escape_spoilers_and_mass_mentions()` methods for escaping strings with spoiler markdown (:issue:`2401`)
+- **Core - Utils Package** - Added `escape_spoilers()` and `escape_spoilers_and_mass_mentions()` methods for escaping strings with spoiler markdown (:issue:`2401`)
 
 Fixes
 *****
 
-- **Utilities** - ``MessagePredicate.lower_contained_in()`` now actually lowers the message content before trying to match (:issue:`2399`)
+- **Core - Utils Package** - ``MessagePredicate.lower_contained_in()`` now actually lowers the message content before trying to match (:issue:`2399`)
 
 
 Redbot 3.0.0 (2019-01-28)
