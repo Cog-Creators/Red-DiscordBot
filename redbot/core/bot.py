@@ -2201,11 +2201,13 @@ class Red(
         channel: discord.abc.Messageable,
         user: discord.User,
         messages: Iterable[str],
+        *,
         box_lang: str = None,
         timeout: int = 15,
         join_character: str = "",
     ) -> List[discord.Message]:
-        """Send multiple messages interactively.
+        """
+        Send multiple messages interactively.
 
         The user will be prompted for whether or not they would like to view
         the next message, one at a time. They will also be notified of how
