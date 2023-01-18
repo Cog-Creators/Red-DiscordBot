@@ -172,15 +172,6 @@
   - tests/core/test_cog_manager.py
   - tests/core/test_data_manager.py
   - tests/core/test_version.py
-"Category: Core - API - RPC/ZMQ":
-  # Source
-  - redbot/core/rpc.py
-  # Docs
-  - docs/framework_rpc.rst
-  # Tests
-  - redbot/pytest/rpc.py
-  - tests/core/test_rpc.py
-  - tests/rpc_test.html
 "Category: Core - Bot Class":
   # Source
   - redbot/core/bot.py
@@ -227,6 +218,15 @@
   - redbot/pytest/__init__.py
   - redbot/pytest/core.py
   - tests/core/test_installation.py
+"Category: Core - RPC/ZMQ":
+  # Source
+  - redbot/core/rpc.py
+  # Docs
+  - docs/framework_rpc.rst
+  # Tests
+  - redbot/pytest/rpc.py
+  - tests/core/test_rpc.py
+  - tests/rpc_test.html
 "Category: Core - Utility Package":
   # Source
   - redbot/core/utils/*
