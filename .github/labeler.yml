@@ -187,7 +187,7 @@
   # Docs
   - docs/framework_apikeys.rst
   - docs/framework_bot.rst
-"Category: Core - Command-line Interface":
+"Category: Core - Command-line Interfaces":
   - redbot/__main__.py
   - redbot/launcher.py
   - redbot/logging.py
