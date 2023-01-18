@@ -2,13 +2,13 @@
   - .github/workflows/**/*
 
 
-"Category: Cog - Admin":
+"Category: Cogs - Admin":
   # Source
   - redbot/cogs/admin/*
   # Docs
   - docs/cog_guides/admin.rst
   - docs/.resources/admin/**/*
-"Category: Cog - Alias":
+"Category: Cogs - Alias":
   # Source
   - redbot/cogs/alias/*
   # Docs
@@ -17,31 +17,31 @@
   - redbot/pytest/alias.py
   - tests/cogs/test_alias.py
   - docs/.resources/alias/**/*
-"Category: Cog - Audio":
+"Category: Cogs - Audio":
   # Source
   - any:
       - redbot/cogs/audio/**/*
       - "!redbot/cogs/audio/**/locales/*"
   # Docs
   - docs/cog_guides/audio.rst
-"Category: Cog - Bank": []  # historical label for a removed cog
-"Category: Cog - Cleanup":
+"Category: Cogs - Bank": []  # historical label for a removed cog
+"Category: Cogs - Cleanup":
   # Source
   - redbot/cogs/cleanup/*
   # Docs
   - docs/cog_guides/cleanup.rst
-"Category: Cog - CustomCommands":
+"Category: Cogs - CustomCommands":
   # Source
   - redbot/cogs/customcom/*
   # Docs
   - docs/cog_customcom.rst
   - docs/cog_guides/customcommands.rst
-"Category: Cog - Dev":
+"Category: Cogs - Dev":
   # Source
   - redbot/core/dev_commands.py
   # Docs
   - docs/cog_guides/dev.rst
-"Category: Cog - Downloader":
+"Category: Cogs - Downloader":
   # Source
   - redbot/cogs/downloader/*
   # Docs
@@ -50,7 +50,7 @@
   - redbot/pytest/downloader.py
   - redbot/pytest/downloader_testrepo.*
   - tests/cogs/downloader/**/*
-"Category: Cog - Economy":
+"Category: Cogs - Economy":
   # Source
   - redbot/cogs/economy/*
   # Docs
@@ -58,22 +58,22 @@
   # Tests
   - redbot/pytest/economy.py
   - tests/cogs/test_economy.py
-"Category: Cog - Filter":
+"Category: Cogs - Filter":
   # Source
   - redbot/cogs/filter/*
   # Docs
   - docs/cog_guides/filter.rst
-"Category: Cog - General":
+"Category: Cogs - General":
   # Source
   - redbot/cogs/general/*
   # Docs
   - docs/cog_guides/general.rst
-"Category: Cog - Image":
+"Category: Cogs - Image":
   # Source
   - redbot/cogs/image/*
   # Docs
   - docs/cog_guides/image.rst
-"Category: Cog - Mod":
+"Category: Cogs - Mod":
   # Source
   - redbot/cogs/mod/*
   # Docs
@@ -81,17 +81,17 @@
   # Tests
   - redbot/pytest/mod.py
   - tests/cogs/test_mod.py
-"Category: Cog - Modlog":
+"Category: Cogs - Modlog":
   # Source
   - redbot/cogs/modlog/*
   # Docs
   - docs/cog_guides/modlog.rst
-"Category: Cog - Mutes":
+"Category: Cogs - Mutes":
   # Source
   - redbot/cogs/mutes/*
   # Docs
   - docs/cog_guides/mutes.rst
-"Category: Cog - Permissions":
+"Category: Cogs - Permissions":
   # Source
   - redbot/cogs/permissions/*
   # Docs
@@ -100,17 +100,17 @@
   # Tests
   - redbot/pytest/permissions.py
   - tests/cogs/test_permissions.py
-"Category: Cog - Reports":
+"Category: Cogs - Reports":
   # Source
   - redbot/cogs/reports/*
   # Docs
   - docs/cog_guides/reports.rst
-"Category: Cog - Streams":
+"Category: Cogs - Streams":
   # Source
   - redbot/cogs/streams/*
   # Docs
   - docs/cog_guides/streams.rst
-"Category: Cog - Trivia":
+"Category: Cogs - Trivia":
   # Source
   - redbot/cogs/trivia/*
   # Docs
@@ -119,9 +119,9 @@
   - docs/.resources/trivia/**/*
   # Tests
   - tests/cogs/test_trivia.py
-"Category: Cog - Trivia - Lists":
+"Category: Cogs - Trivia - Lists":
   - redbot/cogs/trivia/data/lists/*
-"Category: Cog - Warnings":
+"Category: Cogs - Warnings":
   # Source
   - redbot/cogs/warnings/*
   # Docs
