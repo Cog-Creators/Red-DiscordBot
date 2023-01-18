@@ -172,6 +172,15 @@
   - tests/core/test_cog_manager.py
   - tests/core/test_data_manager.py
   - tests/core/test_version.py
+"Category: Core - API - Utils Package":
+  # Source
+  - any:
+    - redbot/core/utils/*
+    - "!redbot/core/utils/_internal_utils.py"
+  # Docs
+  - docs/framework_utils.rst
+  # Tests
+  - tests/core/test_utils.py
 "Category: Core - Bot Class":
   # Source
   - redbot/core/bot.py
@@ -228,15 +237,6 @@
   - redbot/pytest/rpc.py
   - tests/core/test_rpc.py
   - tests/rpc_test.html
-"Category: Core - Utility Package":
-  # Source
-  - any:
-    - redbot/core/utils/*
-    - "!redbot/core/utils/_internal_utils.py"
-  # Docs
-  - docs/framework_utils.rst
-  # Tests
-  - tests/core/test_utils.py
 
 
 "Category: Docker": []  # potential future feature
