@@ -2199,7 +2199,7 @@ class Red(
     async def send_interactive(
         self,
         channel: discord.abc.Messageable,
-        author: discord.User,
+        user: discord.User,
         messages: Iterable[str],
         box_lang: str = None,
         timeout: int = 15,
@@ -2215,7 +2215,7 @@ class Red(
         ----------
         channel : discord.abc.Messageable
             The channel to send the message.
-        author : discord.User
+        user : discord.User
             The user who invoked the command
         messages : `iterable` of `str`
             The messages to send.
@@ -2262,7 +2262,7 @@ class Red(
                     "".format(is_are, n_remaining, plural)
                 )
                 pred = MessagePredicate.lower_contained_in(
-                    ("more", "file"), channel=channel, user=author
+                    ("more", "file"), channel=channel, user=user
                 )
                 try:
                     resp = await self.wait_for(
