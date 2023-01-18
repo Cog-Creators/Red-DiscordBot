@@ -2231,6 +2231,10 @@ class Red(
             The character used to join all the messages when the file output
             is selected.
 
+        Returns
+        -------
+        List[discord.Message]
+            A list of sent messages.
         """
         messages = tuple(messages)
         ret = []
