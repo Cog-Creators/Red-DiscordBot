@@ -81,6 +81,8 @@ PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
 UserOrRole = Union[int, discord.Role, discord.Member, discord.User]
 
+_ = i18n.Translator("Core", __file__)
+
 
 def _is_submodule(parent, child):
     return parent == child or child.startswith(parent + ".")
@@ -2254,15 +2256,17 @@ class Red(
             n_remaining = len(messages) - idx
             if n_remaining > 0:
                 if n_remaining == 1:
-                    plural = ""
-                    is_are = "is"
+                    prompt_text = _(
+                        "There is still one message remaining. Type {command_1} to continue"
+                        " or {command_2} to upload all contents as a file."
+                    )
                 else:
-                    plural = "s"
-                    is_are = "are"
+                    prompt_text = _(
+                        "There are still {count} messages remaining. Type {command_1} to continue"
+                        " or {command_2} to upload all contents as a file."
+                    )
                 query = await channel.send(
-                    "There {} still {} message{} remaining. "
-                    "Type `more` to continue or `file` to upload all contents as a file."
-                    "".format(is_are, n_remaining, plural)
+                    prompt_text.format(count=n_remaining, command_1="`more`", command_2="`file`")
                 )
                 pred = MessagePredicate.lower_contained_in(
                     ("more", "file"), channel=channel, user=user
