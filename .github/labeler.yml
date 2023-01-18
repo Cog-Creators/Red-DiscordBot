@@ -214,6 +214,7 @@
   - redbot/core/events.py
   - redbot/core/global_checks.py
   - redbot/core/settings_caches.py
+  - redbot/core/utils/_internal_utils.py
   # Tests
   - redbot/pytest/__init__.py
   - redbot/pytest/core.py
@@ -229,7 +230,9 @@
   - tests/rpc_test.html
 "Category: Core - Utility Package":
   # Source
-  - redbot/core/utils/*
+  - any:
+    - redbot/core/utils/*
+    - "!redbot/core/utils/_internal_utils.py"
   # Docs
   - docs/framework_utils.rst
   # Tests
