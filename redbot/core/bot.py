@@ -2202,7 +2202,7 @@ class Red(
         user: discord.User,
         messages: Iterable[str],
         *,
-        box_lang: str = None,
+        box_lang: Optional[str] = None,
         timeout: int = 15,
         join_character: str = "",
     ) -> List[discord.Message]:
@@ -2221,7 +2221,7 @@ class Red(
             The user who invoked the command
         messages : `iterable` of `str`
             The messages to send.
-        box_lang : str
+        box_lang : Optional[str]
             If specified, each message will be contained within a codeblock of
             this language.
         timeout : int
