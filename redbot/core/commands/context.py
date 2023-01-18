@@ -9,8 +9,6 @@ import discord
 from discord.ext.commands import Context as DPYContext
 
 from .requires import PermState
-from ..utils.chat_formatting import box, text_to_file
-from ..utils.predicates import MessagePredicate
 from ..utils import can_user_react_in, common_filters
 
 if TYPE_CHECKING:
