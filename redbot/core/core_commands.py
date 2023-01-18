@@ -1447,13 +1447,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[public]` - Whether to send the traceback to the current context. Leave blank to send to your DMs.
         """
-        channel = (
-            ctx.channel
-            if public
-            else (
-                ctx.author.dm_channel if ctx.author.dm_channel else await ctx.author._get_channel()
-            )
-        )
+        channel = ctx.channel if public else ctx.author
 
         if self.bot._last_exception:
             try:

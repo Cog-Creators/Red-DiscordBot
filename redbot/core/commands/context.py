@@ -183,7 +183,7 @@ class Context(DPYContext):
             messages=messages,
             box_lang=box_lang,
             timeout=timeout,
-            join_character=join_character
+            join_character=join_character,
         )
 
     async def embed_colour(self):

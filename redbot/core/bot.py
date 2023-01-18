@@ -2217,6 +2217,8 @@ class Red(
             The bot object.
         channel : discord.abc.Messageable
             The channel to send the message.
+        author : discord.User
+            The user who invoked the command
         messages : `iterable` of `str`
             The messages to send.
         box_lang : str
