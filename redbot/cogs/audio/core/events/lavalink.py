@@ -90,7 +90,11 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     self._ws_resume[guild_id].set()
 
                 await self._websocket_closed_handler(
-                    guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
+                    guild=guild,
+                    player=player,
+                    extra=extra,
+                    self_deaf=deafen,
+                    disconnect=disconnect,
                 )
             except Exception as exc:
                 log.debug(
@@ -335,7 +339,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         guild: discord.Guild,
         player: lavalink.Player,
         extra: Dict,
-        deafen: bool,
+        self_deaf: bool,
         disconnect: bool,
     ) -> None:
         guild_id = guild.id
@@ -415,7 +419,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
 
                 if has_perm and player.current and player.is_playing:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.connect(deafen=deafen)
+                    await player.connect(self_deaf=self_deaf)
                     await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "Voice websocket reconnected Reason: Error code %s & Currently playing",
@@ -429,7 +433,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 elif has_perm and player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.connect(deafen=deafen)
+                    await player.connect(self_deaf=self_deaf)
                     await player.resume(
                         player.current, start=player.position, replace=True, pause=True
                     )
@@ -445,7 +449,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 elif has_perm and (not disconnect) and (not player.is_playing):
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.connect(deafen=deafen)
+                    await player.connect(self_deaf=self_deaf)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
                         "Reason: Error code %s & Not playing, but auto disconnect disabled",
@@ -497,7 +501,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     ).currently_auto_playing_in.set([])
             elif code in (42069,) and has_perm and player.current and player.is_playing:
                 player.store("resumes", player.fetch("resumes", 0) + 1)
-                await player.connect(deafen=deafen)
+                await player.connect(self_deaf=self_deaf)
                 await player.resume(player.current, start=player.position, replace=True)
                 ws_audio_log.info("Player resumed - Reason: Error code %s & %s", code, reason)
                 ws_audio_log.debug(
@@ -514,7 +518,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 await asyncio.sleep(delay)
                 if has_perm and player.current and player.is_playing:
-                    await player.connect(deafen=deafen)
+                    await player.connect(self_deaf=self_deaf)
                     await player.resume(player.current, start=player.position, replace=True)
                     ws_audio_log.info(
                         "Voice websocket reconnected Reason: Error code %s & Player is active",
@@ -528,7 +532,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 elif has_perm and player.paused and player.current:
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.connect(deafen=deafen)
+                    await player.connect(self_deaf=self_deaf)
                     await player.resume(
                         player.current, start=player.position, replace=True, pause=True
                     )
@@ -544,7 +548,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 elif has_perm and (not disconnect) and (not player.is_playing):
                     player.store("resumes", player.fetch("resumes", 0) + 1)
-                    await player.connect(deafen=deafen)
+                    await player.connect(self_deaf=self_deaf)
                     ws_audio_log.info(
                         "Voice websocket reconnected "
                         "to channel %s in guild: %s | "

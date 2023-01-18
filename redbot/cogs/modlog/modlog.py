@@ -34,7 +34,7 @@ class ModLog(commands.Cog):
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
-            await ctx.send(_("That case does not exist for that server."))
+            await ctx.send(_("That case does not exist for this server."))
             return
         else:
             if await ctx.embed_requested():
@@ -115,7 +115,7 @@ class ModLog(commands.Cog):
                 created_at = datetime.fromtimestamp(case.created_at, tz=timezone.utc)
                 message += (
                     f"{await case.message_content(embed=False)}\n"
-                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}"
+                    f"{bold(_('Timestamp:'))} {discord.utils.format_dt(created_at)}\n\n"
                 )
             for page in pagify(message, ["\n\n", "\n"], priority=True):
                 rendered_cases.append(page)

@@ -82,7 +82,7 @@ release = __version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -228,11 +228,8 @@ linkcheck_retries = 3
 if dpy_version_info.releaselevel == "final":
     # final release - versioned docs should be available
     dpy_docs_url = f"https://discordpy.readthedocs.io/en/v{dpy_version}/"
-elif dpy_version_info.minor == dpy_version_info.micro == 0:
-    # alpha release of a new major version - `master` version of docs should be used
-    dpy_docs_url = "https://discordpy.readthedocs.io/en/master/"
 else:
-    # alpha release of a new minor or micro version - `latest` version of docs should be used
+    # alpha release - `latest` version of docs should be used
     dpy_docs_url = "https://discordpy.readthedocs.io/en/latest/"
 
 # Intersphinx
@@ -249,8 +246,8 @@ intersphinx_mapping = {
 # :dpy_docs:`link text <site_name.html>`
 extlinks = {
     "dpy_docs": (f"{dpy_docs_url}/%s", None),
-    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
-    "ghuser": ("https://github.com/%s", "@"),
+    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#%s"),
+    "ghuser": ("https://github.com/%s", "@%s"),
 }
 
 # Doctest

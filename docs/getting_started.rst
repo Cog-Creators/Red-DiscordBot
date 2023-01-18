@@ -216,7 +216,7 @@ or system files.
 Server owner
 ~~~~~~~~~~~~
 
-The server owner can access all commands on his guild, except the global
+The server owner can access all commands on their guild, except the global
 ones or those that can interact with system files (available for the
 bot owner).
 
@@ -282,7 +282,7 @@ If you want to do it, follow these steps.
 2. **Install Linux**
 
   Most of the VPS providers have tools for installing Linux automatically. If
-  you're a beginner, we recommend **Ubuntu 20.04 LTS**.
+  you're a beginner, we recommend **Ubuntu 22.04 LTS**.
 
   For Raspberry Pi users, just install `Raspbian
   <https://www.raspberrypi.org/software/>`_ on a micro-SD card.
