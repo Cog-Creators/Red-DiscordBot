@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Union, Set, Iterable, Tuple, overload
 import asyncio
 from argparse import Namespace
 from collections import defaultdict
+from typing import Dict, Iterable, List, Optional, Set, Union, overload
 
 import discord
 
@@ -236,14 +236,10 @@ class WhitelistBlacklistManager:
 
     async def discord_deleted_user(self, user_id: int):
         async with self._access_lock:
-            async for guild_id_or_none, ids in AsyncIter(
-                self._cached_whitelist.items(), steps=100
-            ):
+            async for ids in AsyncIter(self._cached_whitelist.values(), steps=100):
                 ids.discard(user_id)
 
-            async for guild_id_or_none, ids in AsyncIter(
-                self._cached_blacklist.items(), steps=100
-            ):
+            async for ids in AsyncIter(self._cached_blacklist.values(), steps=100):
                 ids.discard(user_id)
 
             for grp in (self._config.whitelist, self._config.blacklist):
@@ -257,7 +253,7 @@ class WhitelistBlacklistManager:
             # but can't be safe in 3rd party use
 
             async with self._config._get_base_group("GUILD").all() as abuse:
-                for guild_str, guild_data in abuse.items():
+                for guild_data in abuse.values():
                     for l_name in ("whitelist", "blacklist"):
                         try:
                             guild_data[l_name].remove(user_id)

@@ -1,15 +1,20 @@
 import asyncio
 from collections import defaultdict, deque
-from typing import Optional
 from datetime import timedelta
+from typing import TYPE_CHECKING
 
-from redbot.core import commands, i18n, checks
+from redbot.core import checks, commands, i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
 
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
+
+if TYPE_CHECKING:
+    Duration = timedelta
+else:
+    Duration = commands.TimedeltaConverter(minimum=timedelta(seconds=1), default_unit="seconds")
 
 
 class ModSettings(MixinMeta):
@@ -394,9 +399,7 @@ class ModSettings(MixinMeta):
         self,
         ctx: commands.Context,
         *,
-        duration: commands.TimedeltaConverter(
-            minimum=timedelta(seconds=1), default_unit="seconds"
-        ),
+        duration: Duration,
     ):
         """Set the default time to be used when a user is tempbanned.
 

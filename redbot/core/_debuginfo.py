@@ -16,7 +16,7 @@ from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
 
 
-def noop_box(text: str, **kwargs) -> str:
+def noop_box(text: str, **_kwargs) -> str:
     return text
 
 
@@ -146,7 +146,6 @@ class DebugInfo:
                     owners.append(f"{u.id} ({u})")
                 except discord.HTTPException:
                     owners.append(f"{uid} (Unresolvable)")
-            owners_string = ", ".join(owners) or "None"
             parts.append(f"Owner(s): {', '.join(owners) or 'None'}")
 
         if self.bot is not None:

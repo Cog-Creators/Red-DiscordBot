@@ -1,7 +1,8 @@
-import pytest
-from redbot.core.rpc import RPC, RPCMixin
-
 from unittest.mock import MagicMock
+
+import pytest
+
+from redbot.core.rpc import RPC, RPCMixin
 
 __all__ = ["rpc", "rpcmixin", "cog", "existing_func", "existing_multi_func"]
 
@@ -23,16 +24,16 @@ def rpcmixin():
 @pytest.fixture()
 def cog():
     class Cog:
-        async def cofunc(*args, **kwargs):
+        async def cofunc(self, *args, **kwargs):
             pass
 
-        async def cofunc2(*args, **kwargs):
+        async def cofunc2(self, *args, **kwargs):
             pass
 
-        async def cofunc3(*args, **kwargs):
+        async def cofunc3(self, *args, **kwargs):
             pass
 
-        def func(*args, **kwargs):
+        def func(self, *args, **kwargs):
             pass
 
     return Cog()

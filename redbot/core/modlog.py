@@ -3,22 +3,22 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import List, Literal, Union, Optional, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Literal, Optional, Union, cast
 
 import discord
 
 from redbot.core import Config
+
+from .generic_casetypes import all_generics
+from .i18n import Translator, set_contextual_locales_from_guild
 from .utils import AsyncIter
+from .utils.chat_formatting import bold, pagify
 from .utils.common_filters import (
+    escape_spoilers,
     filter_invites,
     filter_mass_mentions,
     filter_urls,
-    escape_spoilers,
 )
-from .utils.chat_formatting import bold, pagify
-from .i18n import Translator, set_contextual_locales_from_guild
-
-from .generic_casetypes import all_generics
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -129,7 +129,7 @@ async def _init(bot: Red):
             else:
                 if entry:
                     if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own bans, cogs do this.
+                        # Don't create modlog entries for the bot's own bans, cogs do this.
                         mod, reason = entry.user, entry.reason
                         date = entry.created_at
                         await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
@@ -169,7 +169,7 @@ async def _init(bot: Red):
             else:
                 if entry:
                     if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own unbans, cogs do this.
+                        # Don't create modlog entries for the bot's own unbans, cogs do this.
                         mod, reason = entry.user, entry.reason
                         date = entry.created_at
                         await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
@@ -1236,8 +1236,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
             pass
         else:
             type_list.append(ct)
-    else:
-        return type_list
+    return type_list
 
 
 async def get_modlog_channel(

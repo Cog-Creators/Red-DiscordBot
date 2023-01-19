@@ -10,7 +10,7 @@ from typing import Any, AsyncIterator, Dict, Optional, Tuple
 from uuid import uuid4
 
 from .. import data_manager, errors
-from .base import BaseDriver, IdentifierData, ConfigCategory
+from .base import BaseDriver, ConfigCategory, IdentifierData
 
 __all__ = ["JsonDriver"]
 
@@ -35,7 +35,7 @@ def finalize_driver(cog_name):
         if cog_name in _locks:
             del _locks[cog_name]
 
-    for f in _finalizers:
+    for f in reversed(_finalizers):
         if not f.alive:
             _finalizers.remove(f)
 
@@ -149,9 +149,9 @@ class JsonDriver(BaseDriver):
             for i in full_identifiers[:-1]:
                 try:
                     partial = partial.setdefault(i, {})
-                except AttributeError:
+                except AttributeError as exc:
                     # Tried to set sub-field of non-object
-                    raise errors.CannotSetSubfield
+                    raise errors.CannotSetSubfield from exc
 
             partial[full_identifiers[-1]] = value_copy
             await self._save()
@@ -229,7 +229,7 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
     If a windows user ends up with tons of temp files, they should consider hosting on
     something POSIX compatible, or using a different backend instead.
 
-    Most users wont encounter this issue, but with high write volumes,
+    Most users won't encounter this issue, but with high write volumes,
     without the fsync on both the temp file, and after the replace on the directory,
     There's no real durability or atomicity guarantee from the filesystem.
 
@@ -252,7 +252,7 @@ def _save_json(path: Path, data: Dict[str, Any]) -> None:
     tmp_path.replace(path)
 
     try:
-        flag = os.O_DIRECTORY  # pylint: disable=no-member
+        flag = os.O_DIRECTORY
     except AttributeError:
         pass
     else:

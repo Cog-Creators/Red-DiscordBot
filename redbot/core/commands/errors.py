@@ -1,5 +1,6 @@
 """Errors module for the commands package."""
 import inspect
+
 import discord
 from discord.ext import commands
 

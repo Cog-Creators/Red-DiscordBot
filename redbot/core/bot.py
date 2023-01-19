@@ -1,43 +1,42 @@
 from __future__ import annotations
+
 import asyncio
+import contextlib
 import inspect
 import logging
 import os
 import platform
 import shutil
 import sys
-import contextlib
 import weakref
-import functools
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict, namedtuple
 from datetime import datetime
 from importlib.machinery import ModuleSpec
 from pathlib import Path
+from types import MappingProxyType
 from typing import (
-    Optional,
-    Union,
-    List,
-    Iterable,
-    Dict,
-    NoReturn,
-    Set,
-    TypeVar,
-    Callable,
-    Awaitable,
+    TYPE_CHECKING,
     Any,
+    Awaitable,
+    Callable,
+    Dict,
+    Iterable,
+    List,
     Literal,
     MutableMapping,
+    NoReturn,
+    Optional,
     Set,
+    TypeVar,
+    Union,
     overload,
-    TYPE_CHECKING,
 )
-from types import MappingProxyType
 
 import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers, modlog, bank
+from . import Config, bank, commands, drivers, errors, i18n, modlog
 from .cli import ExitCodes
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
@@ -45,20 +44,20 @@ from .data_manager import cog_data_path
 from .dev_commands import Dev
 from .events import init_events
 from .global_checks import init_global_checks
+from .rpc import RPCMixin
 from .settings_caches import (
-    PrefixManager,
-    IgnoreManager,
-    WhitelistBlacklistManager,
     DisabledCogCache,
     I18nManager,
+    IgnoreManager,
+    PrefixManager,
+    WhitelistBlacklistManager,
 )
-from .rpc import RPCMixin
-from .utils import can_user_send_messages_in, common_filters, AsyncIter
+from .utils import AsyncIter, can_user_send_messages_in, common_filters
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 if TYPE_CHECKING:
-    from discord.ext.commands.hybrid import CommandCallback, ContextT, P
     from discord import app_commands
+    from discord.ext.commands.hybrid import CommandCallback, ContextT, P
 
 
 _T = TypeVar("_T")
@@ -92,9 +91,7 @@ class _NoOwnerSet(RuntimeError):
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
 # and must include a call to super().__init__ unless they do not provide an init
-class Red(
-    commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot
-):  # pylint: disable=no-member # barely spurious warning caused by shadowing
+class Red(commands.GroupMixin, RPCMixin, dpy_commands.bot.AutoShardedBot):
     """Our subclass of discord.ext.commands.AutoShardedBot"""
 
     def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
@@ -225,6 +222,7 @@ class Red(
         kwargs["max_messages"] = message_cache_size
         self._max_messages = message_cache_size
 
+        self._color = discord.Colour.default()
         self._uptime = None
         self._checked_time_accuracy = None
 
@@ -401,7 +399,6 @@ class Red(
     @_before_invoke.setter
     def _before_invoke(self, val):  # DEP-WARN
         """Prevent this from being overwritten in super().__init__"""
-        pass
 
     async def _red_before_invoke_method(self, ctx):
         await self.wait_until_red_ready()
@@ -504,7 +501,8 @@ class Red(
     @uptime.setter
     def uptime(self, value) -> NoReturn:
         raise RuntimeError(
-            "Hey, we're cool with sharing info about the uptime, but don't try and assign to it please."
+            "Hey, we're cool with sharing info about the uptime,"
+            " but don't try and assign to it please."
         )
 
     @property
@@ -700,7 +698,7 @@ class Red(
 
         If given a member, this will additionally check guild lists
 
-        If omiting a user or member, you must provide a value for ``who_id``
+        If omitting a user or member, you must provide a value for ``who_id``
 
         You may also provide a value for ``guild`` in this case
 
@@ -1221,7 +1219,7 @@ class Red(
             for package in to_remove:
                 del packages[package]
         if packages:
-            log.info("Loaded packages: " + ", ".join(packages))
+            log.info("Loaded packages: %s", ", ".join(packages))
         else:
             log.info("No packages were loaded.")
 
@@ -1621,6 +1619,7 @@ class Red(
             while pkg_name in curr_pkgs:
                 curr_pkgs.remove(pkg_name)
 
+    # pylint: disable-next=arguments-differ,arguments-renamed
     async def load_extension(self, spec: ModuleSpec):
         # NB: this completely bypasses `discord.ext.commands.Bot._load_from_module_spec`
         name = spec.name.split(".")[-1]
@@ -1634,7 +1633,7 @@ class Red(
 
         try:
             await lib.setup(self)
-        except Exception as e:
+        except Exception:
             await self._remove_module_references(lib.__name__)
             await self._call_module_finalizers(lib, name)
             raise
@@ -2041,7 +2040,7 @@ class Red(
         async def _delete_helper(m):
             with contextlib.suppress(discord.HTTPException):
                 await m.delete()
-                log.debug("Deleted command msg {}".format(m.id))
+                log.debug("Deleted command msg %s", m.id)
 
         await asyncio.sleep(delay)
         await _delete_helper(message)
@@ -2174,10 +2173,10 @@ class Red(
             try:
                 await func(requester=requester, user_id=user_id)
             except commands.commands.RedUnhandledAPI:
-                log.warning(f"{stype}.{sname} did not handle data deletion ")
+                log.warning("%s.%s did not handle data deletion ", stype, sname)
                 failures["unhandled"].append(sname)
-            except Exception as exc:
-                log.exception(f"{stype}.{sname} errored when handling data deletion ")
+            except Exception:
+                log.exception("%s.%s errored when handling data deletion ", stype, sname)
                 failures[stype].append(sname)
 
         handlers = [

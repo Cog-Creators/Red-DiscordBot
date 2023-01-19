@@ -1,36 +1,34 @@
 from redbot import _early_init
 
-# this needs to be called as early as possible
-_early_init()
+# this `if` keeps flake8 happy about doing imports after function call (E402)
+if True:
+    # this needs to be called as early as possible
+    _early_init()
 
 import asyncio
 import functools
-import getpass
 import json
 import logging
 import os
-import pip
-import platform
 import shutil
 import signal
 import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Awaitable, Callable, NoReturn, Union
+from typing import Any, Awaitable, Callable, Union
 
 import discord
 import rich
 
 import redbot.logging
 from redbot import __version__
-from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
-from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
-
+from redbot.core.bot import ExitCodes, Red, _NoOwnerSet
+from redbot.core.cli import confirm, interactive_config, parse_cli_flags
+from redbot.setup import get_data_dir, get_name, save_config
 
 log = logging.getLogger("red.main")
 
@@ -62,7 +60,7 @@ def list_instances():
         sys.exit(ExitCodes.SHUTDOWN)
 
 
-async def debug_info(*args: Any) -> None:
+async def debug_info(*_args: Any) -> None:
     """Shows debug information useful for debugging."""
     print(await DebugInfo().get_text())
 
@@ -378,7 +376,8 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         console.print(
             "Red requires all Privileged Intents to be enabled.\n"
             "You can find out how to enable Privileged Intents with this guide:\n"
-            "https://docs.discord.red/en/stable/bot_application_guide.html#enabling-privileged-intents",
+            "https://docs.discord.red"
+            "/en/stable/bot_application_guide.html#enabling-privileged-intents",
             style="red",
         )
         sys.exit(ExitCodes.CONFIGURATION_ERROR)
@@ -438,11 +437,12 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
     finally:
         # Then cancels all outstanding tasks other than ourselves
         pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
-        [task.cancel() for task in pending]
+        for task in pending:
+            task.cancel()
         await asyncio.gather(*pending, return_exceptions=True)
 
 
-def global_exception_handler(red, loop, context):
+def global_exception_handler(_loop, context):
     """
     Logs unhandled exceptions in other tasks
     """
@@ -493,8 +493,8 @@ def main():
         if cli_flags.no_instance:
             print(
                 "\033[1m"
-                "Warning: The data will be placed in a temporary folder and removed on next system "
-                "reboot."
+                "Warning: The data will be placed in a temporary folder and removed on next system"
+                " reboot."
                 "\033[0m"
             )
             cli_flags.instance_name = "temporary_red"
@@ -513,8 +513,7 @@ def main():
                     s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
                 )
 
-        exc_handler = functools.partial(global_exception_handler, red)
-        loop.set_exception_handler(exc_handler)
+        loop.set_exception_handler(global_exception_handler)
         # We actually can't (just) use asyncio.run here
         # We probably could if we didn't support windows, but we might run into
         # a scenario where this isn't true if anyone works on RPC more in the future

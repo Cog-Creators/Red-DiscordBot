@@ -275,7 +275,6 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return f"{day}{hour}{minutes}{sec}"
 
     async def get_lyrics_status(self, ctx: Context) -> bool:
-        global _prefer_lyrics_cache
         prefer_lyrics = _prefer_lyrics_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).prefer_lyrics()
         )
@@ -379,9 +378,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         reader = DataReader(track)
 
         flags = (reader.read_int() & 0xC0000000) >> 30
-        (version,) = (
-            struct.unpack("B", reader.read_byte()) if flags & 1 != 0 else 1
-        )  # pylint: disable=unused-variable
+        (version,) = struct.unpack("B", reader.read_byte()) if flags & 1 != 0 else 1
 
         title = reader.read_utf().decode(errors=decode_errors)
         author = reader.read_utf().decode()
@@ -389,8 +386,8 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         identifier = reader.read_utf().decode()
         is_stream = reader.read_boolean()
         uri = reader.read_utf().decode() if reader.read_boolean() else None
-        source = reader.read_utf().decode()
-        position = reader.read_long()  # noqa: F841 pylint: disable=unused-variable
+        reader.read_utf().decode()  # source
+        reader.read_long()  # position
 
         track_object = {
             "track": track,

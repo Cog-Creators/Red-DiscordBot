@@ -2,6 +2,7 @@ import asyncio
 from typing import Optional
 
 import discord
+
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -26,7 +27,6 @@ class Announcer:
     def start(self):
         """
         Starts an announcement.
-        :return:
         """
         if self.active is None:
             self.active = True
@@ -35,7 +35,6 @@ class Announcer:
     def cancel(self):
         """
         Cancels a running announcement.
-        :return:
         """
         self.active = False
 

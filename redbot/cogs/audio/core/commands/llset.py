@@ -12,18 +12,18 @@ from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, inline
 
-from ..abc import MixinMeta
-from ..cog_utils import CompositeMetaClass
 from ...utils import (
-    MAX_JAVA_RAM,
-    DEFAULT_LAVALINK_YAML,
     DEFAULT_LAVALINK_SETTINGS,
+    DEFAULT_LAVALINK_YAML,
+    MAX_JAVA_RAM,
     change_dict_naming_convention,
+    get_max_allocation_size,
     has_managed_server,
     has_unmanaged_server,
     sizeof_fmt,
-    get_max_allocation_size,
 )
+from ..abc import MixinMeta
+from ..cog_utils import CompositeMetaClass
 
 log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
 _ = Translator("Audio", Path(__file__))
@@ -292,7 +292,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Setting Changed"),
                 description=_(
                     "External Lavalink node will no longer connect using the secured "
-                    "{secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
+                    "{secured_protocol} protocol and will use {unsecured_protocol} instead .\n\n"
                     "Run `{p}{cmd}` for it to take effect."
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
                 unsecured_protocol=inline("ws://"),
@@ -343,7 +343,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         to_write.write(playlist_data)
         to_write.seek(0)
         datapath = cog_data_path(raw_name="Audio")
-        temp_file = datapath / f"application.dump.yaml"
+        temp_file = datapath / "application.dump.yaml"
         try:
             with temp_file.open("wb") as application_file:
                 application_file.write(to_write.read())

@@ -4,7 +4,6 @@ import math
 import os
 import tarfile
 import time
-
 from io import BytesIO
 from pathlib import Path
 from typing import cast
@@ -44,15 +43,15 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Playlist configuration options.
 
         Scope info:
-        ​ ​ ​ ​ **Global**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users of this bot.
-        ​ ​ ​ ​ ​ ​ ​ ​ Only editable by bot owner.
-        ​ ​ ​ ​ **Guild**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all users in this guild.
-        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.
-        ​ ​ ​ ​ **User**:
-        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.
-        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and the playlist creator.
+        \u200b \u200b \u200b \u200b **Global**:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Visible to all users of this bot.
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Only editable by bot owner.
+        \u200b \u200b \u200b \u200b **Guild**:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Visible to all users in this guild.
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.
+        \u200b \u200b \u200b \u200b **User**:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Visible to all bot users, if --author is passed.
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Editable by bot owner and the playlist creator.
         """
 
     @command_playlist.command(
@@ -71,32 +70,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         The track(s) will be appended to the end of the playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`
-        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`
-        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`
+        \u200b \u200b \u200b \u200b `[p]playlist append MyGuildPlaylist Hello by Adele`
+        \u200b \u200b \u200b \u200b `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -228,36 +227,36 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Copy a playlist from one scope to another.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist copy playlist_name_OR_id [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist copy playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --from-scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --from-author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --from-guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --from-scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --from-author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --from-guild [guild] **Only the bot owner can use this**
 
-        ​ ​ ​ ​ ​ ​ ​ ​ --to-scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --to-author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --to-guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --to-scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --to-author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --to-guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global`
-        ​ ​ ​ ​ `[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User`
-        ​ ​ ​ ​ `[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot`
+        \u200b \u200b \u200b \u200b `[p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -342,7 +341,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Playlist Copied"),
                 description=_(
-                    "Playlist {name} (`{from_id}`) copied from {from_scope} to {to_scope} (`{to_id}`)."
+                    "Playlist {name} (`{from_id}`) copied from {from_scope}"
+                    " to {to_scope} (`{to_id}`)."
                 ).format(
                     name=from_playlist.name,
                     from_id=from_playlist.id,
@@ -359,32 +359,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Create an empty playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist create playlist_name [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist create MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist create MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist create MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -436,32 +436,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Delete a saved playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist delete playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist delete MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist delete MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist delete MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -524,32 +524,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Remove duplicate tracks from a saved playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist dedupe playlist_name_OR_id [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist dedupe playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist dedupe MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist dedupe MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist dedupe MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist dedupe MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist dedupe MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist dedupe MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -657,32 +657,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         for the v2 variable.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist download playlist_name_OR_id [v2=True_OR_False] [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist download MyGuildPlaylist True`
-        ​ ​ ​ ​ `[p]playlist download MyGlobalPlaylist False --scope Global`
-        ​ ​ ​ ​ `[p]playlist download MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist download MyGuildPlaylist True`
+        \u200b \u200b \u200b \u200b `[p]playlist download MyGlobalPlaylist False --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist download MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -788,32 +788,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Retrieve information from a saved playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist info playlist_name_OR_id [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist info playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist info MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist info MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist info MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist info MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist info MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist info MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -848,7 +848,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             track_len = len(playlist.tracks)
 
-            msg = "​"
+            msg = "\u200b"
             if track_len > 0:
                 spaces = "\N{EN SPACE}" * (len(str(len(playlist.tracks))) + 2)
                 async for track_idx, track in AsyncIter(playlist.tracks).enumerate(start=1):
@@ -909,32 +909,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """List saved playlists.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist list [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist list [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist list`
-        ​ ​ ​ ​ `[p]playlist list --scope Global`
-        ​ ​ ​ ​ `[p]playlist list --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist list`
+        \u200b \u200b \u200b \u200b `[p]playlist list --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist list --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1062,32 +1062,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Save the queue to a playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist queue playlist_name [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist queue playlist_name [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist queue MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist queue MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist queue MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist queue MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist queue MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist queue MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1170,32 +1170,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Remove a track from a playlist by url.
 
          **Usage**:
-        ​ ​ ​ ​ `[p]playlist remove playlist_name_OR_id url [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist remove playlist_name_OR_id url [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU`
-        ​ ​ ​ ​ `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`
-        ​ ​ ​ ​ `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist remove MyGuildPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU`
+        \u200b \u200b \u200b \u200b `[p]playlist remove MyGlobalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist remove MyPersonalPlaylist https://www.youtube.com/watch?v=MN3x-kAbgFU --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1286,32 +1286,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Save a playlist from a url.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist save name url [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist save name url [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`
-        ​ ​ ​ ​ `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`
-        ​ ​ ​ ​ `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist save MyGuildPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM`
+        \u200b \u200b \u200b \u200b `[p]playlist save MyGlobalPlaylist https://www.youtube.com/playlist?list=PLx0sYbCqOb8Q_CLZC2BdBSKEEB59BOPUM --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist save MyPersonalPlaylist https://open.spotify.com/playlist/1RyeIbyFeIJVnNzlGr5KkR --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1410,32 +1410,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Load a playlist into the queue.
 
         **Usage**:
-        ​ ​ ​ ​` [p]playlist start playlist_name_OR_id [args]`
+        \u200b \u200b \u200b \u200b` [p]playlist start playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist start MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist start MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist start MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist start MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist start MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist start MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1586,32 +1586,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Updates all tracks in a playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist update playlist_name_OR_id [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist update playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist update MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist update MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist update MyPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist update MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist update MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist update MyPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1755,32 +1755,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         V3 Playlist made with `[p]playlist download` will load a lot faster.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist upload [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist upload [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist upload`
-        ​ ​ ​ ​ `[p]playlist upload --scope Global`
-        ​ ​ ​ ​ `[p]playlist upload --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist upload`
+        \u200b \u200b \u200b \u200b `[p]playlist upload --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist upload --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1896,8 +1896,8 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
-                        "minutes."
+                        "I'm unable to get a track from Lavalink node at the moment,"
+                        " try again in a few minutes."
                     ),
                 )
             except Exception as e:
@@ -1919,32 +1919,32 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Rename an existing playlist.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]playlist rename playlist_name_OR_id new_name [args]`
+        \u200b \u200b \u200b \u200b `[p]playlist rename playlist_name_OR_id new_name [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-        ​ ​ ​ ​ Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+        \u200b \u200b \u200b \u200b Global
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist`
-        ​ ​ ​ ​ `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`
+        \u200b \u200b \u200b \u200b `[p]playlist rename MyGuildPlaylist RenamedGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]playlist rename MyGlobalPlaylist RenamedGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]playlist rename MyPersonalPlaylist RenamedPersonalPlaylist --scope User`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(

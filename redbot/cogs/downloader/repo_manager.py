@@ -5,14 +5,13 @@ import functools
 import keyword
 import os
 import pkgutil
+import re
 import shlex
 import shutil
-import re
-import yarl
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from subprocess import run as sp_run, PIPE, CompletedProcess
 from string import Formatter
+from subprocess import PIPE, CompletedProcess, run as sp_run
 from sys import executable
 from typing import (
     Any,
@@ -28,9 +27,11 @@ from typing import (
 )
 
 import discord
-from redbot.core import data_manager, commands, Config
-from redbot.core.utils._internal_utils import safe_delete
+import yarl
+
+from redbot.core import Config, commands, data_manager
 from redbot.core.i18n import Translator
+from redbot.core.utils._internal_utils import safe_delete
 
 from . import errors
 from .installable import Installable, InstallableType, InstalledModule
@@ -52,9 +53,7 @@ class Candidate(NamedTuple):
     description: str
 
 
-class _RepoCheckoutCtxManager(
-    Awaitable[None], AsyncContextManager[None]
-):  # pylint: disable=duplicate-bases
+class _RepoCheckoutCtxManager(Awaitable[None], AsyncContextManager[None]):
     def __init__(
         self,
         repo: Repo,
@@ -505,17 +504,6 @@ class Repo(RepoJSONMixin):
         :return: List of available modules.
         """
         curr_modules = []
-        """
-        for name in self.folder_path.iterdir():
-            if name.is_dir():
-                spec = importlib.util.spec_from_file_location(
-                    name.stem, location=str(name.parent)
-                )
-                if spec is not None:
-                    curr_modules.append(
-                        Installable(location=name)
-                    )
-        """
         for file_finder, name, is_pkg in pkgutil.iter_modules(path=[str(self.folder_path)]):
             if not name.isidentifier() or keyword.iskeyword(name):
                 # reject package names that can't be valid python identifiers
@@ -968,9 +956,8 @@ class Repo(RepoJSONMixin):
 
         if p.returncode != 0:
             log.error(
-                "Something went wrong when installing"
-                " the following requirements:"
-                " {}".format(", ".join(requirements))
+                "Something went wrong when installing the following requirements: %s",
+                ", ".join(requirements),
             )
             return False
         return True
@@ -1141,7 +1128,7 @@ class RepoManager:
         except KeyError:
             pass
 
-    async def update_repo(self, repo_name: str) -> Tuple[Repo, Tuple[str, str]]:
+    async def update_repo(self, name: str) -> Tuple[Repo, Tuple[str, str]]:
         """Update repo with provided name.
 
         Parameters
@@ -1155,7 +1142,7 @@ class RepoManager:
             A 2-`tuple` with Repo object and a 2-`tuple` of `str`
             containing old and new commit hashes.
         """
-        repo = self._repos[repo_name]
+        repo = self._repos[name]
         old, new = await repo.update()
         return (repo, (old, new))
 

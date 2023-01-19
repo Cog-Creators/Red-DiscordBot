@@ -68,7 +68,7 @@ be replaced by the first argument of your alias:
     # this alias will execute the following command:
     [p]ban Slime#3160 7 Spam bot.
 
-For a more detailed explaination, read :ref:`this <alias-command-alias-add>`.
+For a more detailed explanation, read :ref:`this <alias-command-alias-add>`.
 
 .. _alias-commands:
 
@@ -158,7 +158,7 @@ Here are more examples:
 
 *   *   Full command: ``[p]repo add SinbadCogs
         https://github.com/mikeshardmind/SinbadCogs v3``
-    
+
     *   Alias: ``[p]alias add newrepo repo add {2} https://github.com/{1}/{2}``
     *   Invoked with alias: ``[p]newrepo mikeshardmind SinbadCogs v3``
 

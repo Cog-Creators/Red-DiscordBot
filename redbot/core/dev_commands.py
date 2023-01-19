@@ -10,25 +10,27 @@ The original copy was distributed under MIT License and this derivative work
 is distributed under GNU GPL Version 3.
 """
 
+# pylint: disable=eval-used,exec-used
+
 import ast
 import asyncio
-import aiohttp
 import inspect
 import io
+import re
 import textwrap
 import traceback
 import types
-import re
 from contextlib import redirect_stdout
 from copy import copy
 
+import aiohttp
 import discord
 
 from . import checks, commands
 from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
 from .utils import chat_formatting
-from .utils.chat_formatting import pagify
+from .utils.chat_formatting import inline, pagify
 from .utils.predicates import MessagePredicate
 
 _ = Translator("Dev", __file__)
@@ -40,7 +42,7 @@ START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
 class Dev(commands.Cog):
     """Various development focused utilities."""
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """
         Because despite my best efforts to advise otherwise,
         people use ``--dev`` in production
@@ -263,8 +265,9 @@ class Dev(commands.Cog):
             else:
                 await ctx.send(
                     _(
-                        "Already running a REPL session in this channel. Resume the REPL with `{}repl resume`."
-                    ).format(ctx.prefix)
+                        "Already running a REPL session in this channel."
+                        " Resume the REPL with {command}."
+                    ).format(inline(f"{ctx.clean_prefix}repl resume"))
                 )
             return
 
@@ -274,8 +277,9 @@ class Dev(commands.Cog):
         self.sessions[ctx.channel.id] = True
         await ctx.send(
             _(
-                "Enter code to execute or evaluate. `exit()` or `quit` to exit. `{}repl pause` to pause."
-            ).format(ctx.prefix)
+                "Enter code to execute or evaluate. `exit()` or `quit` to exit."
+                " {command} to pause."
+            ).format(inline(f"{ctx.clean_prefix}repl pause"))
         )
 
         while True:
@@ -316,7 +320,8 @@ class Dev(commands.Cog):
             try:
                 with redirect_stdout(stdout):
                     if executor is None:
-                        result = types.FunctionType(code, env)()
+                        # https://github.com/PyCQA/pylint/issues/7500
+                        result = types.FunctionType(code, env)()  # pylint: disable=not-callable
                     else:
                         result = executor(code, env)
                     result = await self.maybe_await(result)

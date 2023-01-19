@@ -1,10 +1,11 @@
 import logging
-from datetime import timezone
 from collections import defaultdict, deque
 
 import discord
-from redbot.core import i18n, modlog, commands
+
+from redbot.core import commands, i18n, modlog
 from redbot.core.utils.mod import is_mod_or_superior
+
 from .abc import MixinMeta
 
 _ = i18n.Translator("Mod", __file__)
@@ -56,9 +57,9 @@ class Events(MixinMeta):
                     await guild.ban(author, reason=_("Mention spam (Autoban)"))
                 except discord.HTTPException:
                     log.warning(
-                        "Failed to ban a member ({member}) for mention spam in server {guild}.".format(
-                            member=author.id, guild=guild.id
-                        )
+                        "Failed to ban a member (%s) for mention spam in server %s.",
+                        author.id,
+                        guild.id,
                     )
                 else:
                     await modlog.create_case(
@@ -80,9 +81,9 @@ class Events(MixinMeta):
                     await guild.kick(author, reason=_("Mention Spam (Autokick)"))
                 except discord.HTTPException:
                     log.warning(
-                        "Failed to kick a member ({member}) for mention spam in server {guild}".format(
-                            member=author.id, guild=guild.id
-                        )
+                        "Failed to kick a member (%s) for mention spam in server %s.",
+                        author.id,
+                        guild.id,
                     )
                 else:
                     await modlog.create_case(
@@ -102,18 +103,18 @@ class Events(MixinMeta):
             if mentions >= mention_spam["warn"]:
                 try:
                     await author.send(_("Please do not mass mention people!"))
-                except (discord.HTTPException, discord.Forbidden):
+                except discord.HTTPException:
                     try:
                         await message.channel.send(
                             _("{member}, Please do not mass mention people!").format(
                                 member=author.mention
                             )
                         )
-                    except (discord.HTTPException, discord.Forbidden):
+                    except discord.HTTPException:
                         log.warning(
-                            "Failed to warn a member ({member}) for mention spam in server {guild}".format(
-                                member=author.id, guild=guild.id
-                            )
+                            "Failed to warn a member (%s) for mention spam in server %s.",
+                            author.id,
+                            guild.id,
                         )
                         return False
 

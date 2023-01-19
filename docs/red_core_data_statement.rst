@@ -11,7 +11,7 @@ What data Red collects
 ----------------------
 
 Red and the cogs included with it collect some amount of data
-about users for the bot's normal operations. 
+about users for the bot's normal operations.
 
 The bot will keep track of a short history of usernames/nicknames. It will also
 remember which actions were taken using your Discord account (such as creating a playlist)
@@ -23,7 +23,7 @@ for anything other than the portion of the Red's functionality that necessitated
 
 3rd party extensions may store additional data beyond what Red does by default.
 You can use the command ``[p]mydata 3rdparty``
-to view statements about how extensions use your data made by the authors of 
+to view statements about how extensions use your data made by the authors of
 the specific 3rd party extensions an instance of Red has installed.
 
 How can I delete data Red has about me?
@@ -50,10 +50,10 @@ There are a handful of these available to bot owners in the command group
 The most pertinent one if asked to delete data by a member of Trust & Safety
 is
 
-``[p]mydata ownermanagement processdiscordrequest`` 
+``[p]mydata ownermanagement processdiscordrequest``
 
 This will cause the bot to get rid of or disassociate all data
-from the specified user ID. 
+from the specified user ID.
 
 .. warning::
 

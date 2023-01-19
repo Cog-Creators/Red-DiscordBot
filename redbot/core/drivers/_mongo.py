@@ -5,14 +5,13 @@ import contextlib
 import itertools
 import re
 from getpass import getpass
-from typing import Match, Pattern, Tuple, Optional, AsyncIterator, Any, Dict, Iterator, List
+from typing import Any, AsyncIterator, Dict, Iterator, List, Match, Optional, Pattern, Tuple
 from urllib.parse import quote_plus
 
 try:
-    # pylint: disable=import-error
-    import pymongo.errors
     import motor.core
     import motor.motor_asyncio
+    import pymongo.errors
 except ModuleNotFoundError:
     motor = None
     pymongo = None
@@ -43,7 +42,7 @@ class MongoDriver(BaseDriver):
         password = storage_details["PASSWORD"]
         database = storage_details.get("DB_NAME", "default_db")
 
-        if port is 0:
+        if port == 0:
             ports = ""
         else:
             ports = ":{}".format(port)
@@ -66,7 +65,7 @@ class MongoDriver(BaseDriver):
     def get_config_details():
         while True:
             uri = input("Enter URI scheme (mongodb or mongodb+srv): ")
-            if uri is "":
+            if uri == "":
                 uri = "mongodb"
 
             if uri in ["mongodb", "mongodb+srv"]:
@@ -75,7 +74,7 @@ class MongoDriver(BaseDriver):
                 print("Invalid URI scheme")
 
         host = input("Enter host address: ")
-        if uri is "mongodb":
+        if uri == "mongodb":
             port = int(input("Enter host port: "))
         else:
             port = 0

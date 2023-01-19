@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import math
 from pathlib import Path
-
 from typing import MutableMapping, Optional
 
 import discord
@@ -50,6 +49,7 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, page, timeout, emoji
             if message:
                 await ctx.send_help(self.command_queue)
                 with contextlib.suppress(discord.HTTPException):
@@ -118,10 +118,19 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return
 
             emoji = {
-                "prev": "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+                "prev": (
+                    "\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}"
+                    "\N{VARIATION SELECTOR-16}"
+                ),
                 "stop": "\N{BLACK SQUARE FOR STOP}\N{VARIATION SELECTOR-16}",
-                "pause": "\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}",
-                "next": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
+                "pause": (
+                    "\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}"
+                    "\N{VARIATION SELECTOR-16}"
+                ),
+                "next": (
+                    "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}"
+                    "\N{VARIATION SELECTOR-16}"
+                ),
                 "close": "\N{CROSS MARK}",
             }
             expected = tuple(emoji.values())

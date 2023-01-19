@@ -1,5 +1,5 @@
-from importlib.abc import MetaPathFinder
 import warnings
+from importlib.abc import MetaPathFinder
 
 
 class SharedLibDeprecationWarning(DeprecationWarning):
@@ -17,6 +17,7 @@ class SharedLibImportWarner(MetaPathFinder):
 
     def find_spec(self, fullname, path, target=None) -> None:
         """This is only supposed to print warnings, it won't ever return module spec."""
+        del path, target
         parts = fullname.split(".")
         if parts[0] != "cog_shared" or len(parts) != 2:
             return None

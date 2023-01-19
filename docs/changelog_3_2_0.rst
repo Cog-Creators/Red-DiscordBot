@@ -9,7 +9,7 @@ Core Bot Changes
 - Further improvements have been made to bot startup and shutdown.
 - Prefixes are now cached for performance.
 - Added the means for cog creators to use a global preinvoke hook.
-- The bot now ensures it has at least the bare neccessary permissions before running commands.
+- The bot now ensures it has at least the bare necessary permissions before running commands.
 - Deleting instances works as intended again.
 - Sinbad stopped fighting it and embraced the entrypoint madness.
 
@@ -28,7 +28,7 @@ Help Formatter
 
 - ``[botname]`` is now replaced with the bot's display name in help text.
 - New features added for cog creators to further customize help behavior.
-  
+
   - Check out our command reference for details on new ``format_help_for_context`` method.
 - Embed settings are now consistent.
 
@@ -110,7 +110,7 @@ Breaking Changes
     - ``bot.get_admin_role_ids``
     - ``bot.get_mod_roles``
     - ``bot.get_mod_role_ids`` (`#2967 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2967>`_)
-- Reserved some command names for internal Red use. These are available programatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES``. (`#2973 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2973>`_)
+- Reserved some command names for internal Red use. These are available programmatically as ``redbot.core.commands.RESERVED_COMMAND_NAMES``. (`#2973 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2973>`_)
 - Removed ``bot._counter``, Made a few more attrs private (``cog_mgr``, ``main_dir``). (`#2976 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2976>`_)
 - Extension's ``setup()`` function should no longer assume that we are, or even will be connected to Discord.
   This also means that cog creators should no longer use ``bot.wait_until_ready()`` inside it. (`#3073 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3073>`_)
@@ -335,7 +335,7 @@ Bug Fixes
 - ``[p]audioset settings`` no longer shows lavalink JAR version. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
 - Fixed a ``KeyError: loadType`` when trying to play tracks. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
 - ``[p]audioset settings`` now uses ``ctx.is_owner()`` to check if the context author is the bot owner. (`#2904 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2904>`_)
-- Fixed track indexs being off by 1 in ``[p]search``. (`#2940 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2940>`_)
+- Fixed track indexes being off by 1 in ``[p]search``. (`#2940 <https://github.com/Cog-Creators/Red-DiscordBot/issues/2940>`_)
 - Fixed an issue where updating your Spotify and YouTube Data API tokens did not refresh them. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)
 - Fixed an issue where the blacklist was not being applied correctly. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)
 - Fixed an issue in ``[p]audioset restrictions blacklist list`` where it would call the list a ``Whitelist``. (`#3047 <https://github.com/Cog-Creators/Red-DiscordBot/issues/3047>`_)

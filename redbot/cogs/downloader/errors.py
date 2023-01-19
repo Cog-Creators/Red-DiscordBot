@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from .repo_manager import Candidate
@@ -30,8 +30,6 @@ class DownloaderException(Exception):
     Base class for Downloader exceptions.
     """
 
-    pass
-
 
 class GitException(DownloaderException):
     """
@@ -49,16 +47,12 @@ class InvalidRepoName(DownloaderException):
     the message for a more detailed reason.
     """
 
-    pass
-
 
 class CopyingError(DownloaderException):
     """
     Throw when there was an issue
     during copying of module's files.
     """
-
-    pass
 
 
 class ExistingGitRepo(DownloaderException):
@@ -67,8 +61,6 @@ class ExistingGitRepo(DownloaderException):
     git repo already exists.
     """
 
-    pass
-
 
 class MissingGitRepo(DownloaderException):
     """
@@ -76,15 +68,11 @@ class MissingGitRepo(DownloaderException):
     does not.
     """
 
-    pass
-
 
 class CloningError(GitException):
     """
     Thrown when git clone returns a non zero exit code.
     """
-
-    pass
 
 
 class CurrentHashError(GitException):
@@ -93,8 +81,6 @@ class CurrentHashError(GitException):
     to determine the current commit hash.
     """
 
-    pass
-
 
 class HardResetError(GitException):
     """
@@ -102,15 +88,11 @@ class HardResetError(GitException):
     (usually prior to a repo update).
     """
 
-    pass
-
 
 class UpdateError(GitException):
     """
     Thrown when git pull returns a non zero error code.
     """
-
-    pass
 
 
 class GitDiffError(GitException):
@@ -118,23 +100,17 @@ class GitDiffError(GitException):
     Thrown when a git diff fails.
     """
 
-    pass
-
 
 class NoRemoteURL(GitException):
     """
     Thrown when no remote URL exists for a repo.
     """
 
-    pass
-
 
 class UnknownRevision(GitException):
     """
     Thrown when specified revision cannot be found.
     """
-
-    pass
 
 
 class AmbiguousRevision(GitException):
@@ -151,5 +127,3 @@ class PipError(DownloaderException):
     """
     Thrown when pip returns a non-zero return code.
     """
-
-    pass

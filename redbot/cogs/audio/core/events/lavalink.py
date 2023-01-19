@@ -10,6 +10,7 @@ from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
+
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -182,8 +183,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             notify_channel,
                             title=_("Unable to Get Track"),
                             description=_(
-                                "I'm unable to get a track from the Lavalink node at the moment, try again in a few "
-                                "minutes."
+                                "I'm unable to get a track from the Lavalink node at the moment,"
+                                " try again in a few minutes."
                             ),
                         )
                     return
@@ -315,7 +316,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             colour=await self.bot.get_embed_color(message_channel),
                             title=_("Track Stuck"),
                             description=_(
-                                "Playback of the song has stopped due to an unexpected error.\n{error}"
+                                "Playback of the song has stopped due to an unexpected error.\n"
+                                "{error}"
                             ).format(error=description),
                         )
                     else:

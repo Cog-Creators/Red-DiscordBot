@@ -1,20 +1,20 @@
-import logging
 import asyncio
-from typing import Union, List, Literal
-from datetime import timedelta
-from copy import copy
 import contextlib
+import logging
+from copy import copy
+from datetime import timedelta
+from typing import List, Literal, Union
+
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import pagify, box
-from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
+from redbot.core.utils import AsyncIter
+from redbot.core.utils.antispam import AntiSpam
+from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
-
 
 _ = Translator("Reports", __file__)
 
@@ -34,7 +34,7 @@ class Reports(commands.Cog):
 
     default_report = {"report": {}}
 
-    # This can be made configureable later if it
+    # This can be made configurable later if it
     # becomes an issue.
     # Intervals should be a list of tuples in the form
     # (period: timedelta, max_frequency: int)
@@ -81,8 +81,8 @@ class Reports(commands.Cog):
                 if not steps % 100:
                     await asyncio.sleep(0)  # yield context
 
-            if ticket.get("report", {}).get("user_id", 0) == user_id:
-                paths.append((guild_id_str, ticket_number))
+                if ticket.get("report", {}).get("user_id", 0) == user_id:
+                    paths.append((guild_id_str, ticket_number))
 
         async with self.config.custom("REPORT").all() as all_reports:
             async for guild_id_str, ticket_number in AsyncIter(paths, steps=100):
@@ -102,7 +102,6 @@ class Reports(commands.Cog):
     @commands.group(name="reportset")
     async def reportset(self, ctx: commands.Context):
         """Manage Reports."""
-        pass
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
@@ -229,7 +228,7 @@ class Reports(commands.Cog):
             await Tunnel.message_forwarder(
                 destination=channel, content=send_content, embed=em, files=files
             )
-        except (discord.Forbidden, discord.HTTPException):
+        except discord.HTTPException:
             return None
 
         await self.config.custom("REPORT", guild.id, ticket_number).report.set(
@@ -308,7 +307,8 @@ class Reports(commands.Cog):
                 if await self.config.guild(ctx.guild).output_channel() is None:
                     await author.send(
                         _(
-                            "This server has no reports channel set up. Please contact a server admin."
+                            "This server has no reports channel set up."
+                            " Please contact a server admin."
                         )
                     )
                 else:

@@ -19,9 +19,9 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-This cog allows for playing trivia with others. You may 
-choose to play just one category at a time or choose 
-multiple to add variety to your game. You can even create 
+This cog allows for playing trivia with others. You may
+choose to play just one category at a time or choose
+multiple to add variety to your game. You can even create
 your own lists!
 
 .. _trivia-commands:
@@ -133,9 +133,9 @@ triviaset payout
 
 **Description**
 
-Sets the payout multiplier. 
+Sets the payout multiplier.
 
-If a user wins trivia when at least 3 users are playing, they will receive credits; 
+If a user wins trivia when at least 3 users are playing, they will receive credits;
 the amount received is determined by multiplying their total score by this multiplier.
 
 **Arguments**
@@ -200,7 +200,7 @@ triviaset stopafter
 
 **Description**
 
-Sets how long the bot should wait before stopping the trivia 
+Sets how long the bot should wait before stopping the trivia
 session due to lack of response.
 
 **Arguments**
@@ -247,7 +247,7 @@ triviaset custom
 
 Manage custom trivia lists.
 
-.. tip:: 
+.. tip::
 
     Looking to learn how to create your own trivia lists?
     See :ref:`here <guide_trivia_list_creation>` for more information.
@@ -268,7 +268,7 @@ triviaset custom upload
 
 **Description**
 
-Upload a custom trivia list. The bot will prompt you to upload 
+Upload a custom trivia list. The bot will prompt you to upload
 your list as an attachment in Discord.
 
 .. _trivia-command-triviaset-custom-list:
@@ -327,7 +327,7 @@ trivia
 
 Start a trivia session on the specified category.
 
-Multiple categories can be listed, in which case the trivia session 
+Multiple categories can be listed, in which case the trivia session
 will use all of the specified lists to select questions from.
 
 **Arguments**
@@ -348,8 +348,8 @@ trivia leaderboard
 
 **Description**
 
-Shows the trivia leaderboard. Defaults to the top ten in the 
-current server, sorted by total wins. The subcommands provide 
+Shows the trivia leaderboard. Defaults to the top ten in the
+current server, sorted by total wins. The subcommands provide
 more customized leaderboards.
 
 .. _trivia-command-trivia-leaderboard-global:

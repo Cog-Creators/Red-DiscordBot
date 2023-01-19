@@ -3,19 +3,19 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import os
-import re
-from typing import Iterable, List, Union, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, List, Optional, Union
+
 import discord
 from discord.ext.commands import Context as DPYContext
 
-from .requires import PermState
+from ..utils import can_user_react_in
 from ..utils.chat_formatting import box, text_to_file
 from ..utils.predicates import MessagePredicate
-from ..utils import can_user_react_in, common_filters
+from .requires import PermState
 
 if TYPE_CHECKING:
-    from .commands import Command
     from ..bot import Red
+    from .commands import Command
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -92,7 +92,7 @@ class Context(DPYContext):
 
         return await super().send(content=content, **kwargs)
 
-    async def send_help(self, command=None):
+    async def send_help(self, command=None):  # pylint: disable=arguments-differ
         """Send the command help message."""
         # This allows people to manually use this similarly
         # to the upstream d.py version, while retaining our use.
@@ -307,7 +307,7 @@ class Context(DPYContext):
             return self.bot.user
 
 
-if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
+if TYPE_CHECKING or os.getenv("BUILDING_DOCS"):
 
     class DMContext(Context):
         """

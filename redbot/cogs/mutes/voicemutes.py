@@ -1,18 +1,18 @@
-from typing import Optional, Tuple, Union
-from datetime import timezone, timedelta, datetime
-from .abc import MixinMeta
+from datetime import datetime, timedelta, timezone
+from typing import Optional, Tuple
 
 import discord
-from redbot.core import commands, checks, i18n, modlog
+
+from redbot.core import commands, i18n, modlog
 from redbot.core.utils.chat_formatting import (
-    bold,
-    humanize_timedelta,
-    humanize_list,
-    pagify,
     format_perms_list,
+    humanize_list,
+    humanize_timedelta,
+    pagify,
 )
 from redbot.core.utils.mod import get_audit_reason
 
+from .abc import MixinMeta
 from .converters import MuteTime
 
 _ = i18n.Translator("Mutes", __file__)
@@ -71,7 +71,7 @@ class VoiceMutes(MixinMeta):
         ctx: commands.Context,
         users: commands.Greedy[discord.Member],
         *,
-        time_and_reason: MuteTime = {},
+        time_and_reason: MuteTime = None,
     ):
         """Mute a user in their current voice channel.
 
@@ -83,6 +83,7 @@ class VoiceMutes(MixinMeta):
         Examples:
         `[p]voicemute @member1 @member2 spam 5 hours`
         `[p]voicemute @member1 3 days`"""
+        time_and_reason = time_and_reason or {}
         if not users:
             return await ctx.send_help()
         if ctx.me in users:

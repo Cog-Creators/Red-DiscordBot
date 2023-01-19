@@ -1,13 +1,12 @@
 import math
 from pathlib import Path
-
 from typing import List, Tuple
 
 import discord
 import lavalink
+from rapidfuzz import process
 from red_commons.logging import getLogger
 
-from rapidfuzz import process
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter

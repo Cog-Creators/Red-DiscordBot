@@ -1,8 +1,8 @@
+import struct
 from abc import ABC
-from typing import Final
 from base64 import b64decode
 from io import BytesIO
-import struct
+from typing import Final
 
 from redbot import VersionInfo
 from redbot.core import commands
@@ -13,7 +13,6 @@ __version__ = VersionInfo.from_json({"major": 2, "minor": 5, "micro": 0, "releas
 
 __author__ = ["aikaterna", "Draper"]
 _SCHEMA_VERSION: Final[int] = 3
-_OWNER_NOTIFICATION: Final[int] = 1
 
 LazyGreedyConverter = get_lazy_converter("--")
 PlaylistConverter = get_playlist_converter()
@@ -24,8 +23,6 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     This allows the metaclass used for proper type detection to
     coexist with discord.py's metaclass
     """
-
-    pass
 
 
 # Both DataReader and DataWriter are taken from https://github.com/Devoxin/Lavalink.py/blob/master/lavalink/datarw.py
@@ -86,8 +83,8 @@ class DataWriter:
         enc = struct.pack(">i", i)
         self._write(enc)
 
-    def write_long(self, l):
-        enc = struct.pack(">Q", l)
+    def write_long(self, long):
+        enc = struct.pack(">Q", long)
         self._write(enc)
 
     def write_utf(self, s):

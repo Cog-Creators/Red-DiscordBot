@@ -2,61 +2,44 @@ import asyncio
 import contextlib
 import datetime
 import importlib
+import io
 import itertools
 import keyword
 import logging
-import io
 import random
-import markdown
-import os
 import re
 import sys
-import platform
-import psutil
-import getpass
-import pip
 import traceback
 from pathlib import Path
-from redbot.core import data_manager
-from redbot.core.utils.menus import menu
-from redbot.core.utils.views import SetApiView
-from redbot.core.commands import GuildConverter, RawUserIdConverter
 from string import ascii_letters, digits
-from typing import (
-    TYPE_CHECKING,
-    Union,
-    Tuple,
-    List,
-    Optional,
-    Iterable,
-    Sequence,
-    Dict,
-    Set,
-    Literal,
-)
+from typing import TYPE_CHECKING, Dict, Iterable, List, Literal, Optional, Sequence, Union
 
 import aiohttp
 import discord
+import markdown
 from babel import Locale as BabelLocale, UnknownLocaleError
-from redbot.core.data_manager import storage_type
+
+from redbot.core.commands import GuildConverter, RawUserIdConverter
+from redbot.core.utils.menus import menu
+from redbot.core.utils.views import SetApiView
 
 from . import (
     __version__,
-    version_info as red_version_info,
+    bank,
     checks,
     commands,
     errors,
     i18n,
-    bank,
     modlog,
+    version_info as red_version_info,
 )
 from ._diagnoser import IssueDiagnoser
+from .commands import CogConverter, CommandConverter
+from .commands.requires import PrivilegeLevel
 from .utils import AsyncIter, can_user_send_messages_in
 from .utils._internal_utils import fetch_latest_red_version_info
-from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
-    escape,
     humanize_list,
     humanize_number,
     humanize_timedelta,
@@ -64,9 +47,7 @@ from .utils.chat_formatting import (
     pagify,
     warning,
 )
-from .commands import CommandConverter, CogConverter
-from .commands.requires import PrivilegeLevel
-from .commands.help import HelpMenuSetting
+from .utils.predicates import MessagePredicate
 
 _entities = {
     "*": "&midast;",
@@ -262,7 +243,7 @@ class CoreLogic:
             for name, lib in sys.modules.items()
             if name == module_name or name.startswith(f"{module_name}.")
         }
-        for child_name, lib in children.items():
+        for lib in children.values():
             importlib._bootstrap._exec(lib.__spec__, lib)
 
     async def _unload(self, pkg_names: Iterable[str]) -> Dict[str, List[str]]:
@@ -393,7 +374,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     These commands come loaded with every Red bot, and cover some of the most basic usage of the bot.
     """
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete (Core Config is handled in a bot method)"""
         return
 
@@ -1499,7 +1480,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def inviteset(self, ctx):
         """Commands to setup [botname]'s invite settings."""
-        pass
 
     @inviteset.command()
     async def public(self, ctx, confirm: bool = False):
@@ -2142,7 +2122,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @bankset.group(name="prune")
     async def bankset_prune(self, ctx):
         """Base command for pruning bank accounts."""
-        pass
 
     @bankset_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
@@ -2255,7 +2234,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
         """Manage modlog settings."""
-        pass
 
     @checks.is_owner()
     @modlogset.command(hidden=True, name="fixcasetypes")
@@ -2343,7 +2321,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
-            msg = await ctx.bot.wait_for("message", check=pred, timeout=30)
+            await ctx.bot.wait_for("message", check=pred, timeout=30)
         except asyncio.TimeoutError:
             await ctx.send(_("You took too long to respond."))
             return
@@ -3230,7 +3208,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Owner notifications include usage of `[p]contact` and available Red updates.
         """
-        pass
 
     @_set_ownernotifications.command(name="optin")
     async def _set_ownernotifications_optin(self, ctx: commands.Context):
@@ -3692,7 +3669,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if msg is not None:
             await self.bot._config.invoke_error_msg.set(msg)
-            content = _("Succesfully updated the error message.")
+            content = _("Successfully updated the error message.")
         else:
             await self.bot._config.invoke_error_msg.clear()
             content = _("Successfully reset the error message back to the default one.")
@@ -3707,7 +3684,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         All help settings are applied globally.
         """
-        pass
 
     @helpset.command(name="showsettings")
     async def helpset_showsettings(self, ctx: commands.Context):
@@ -4134,12 +4110,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 try:
                     await destination.send(embed=e)
                 except discord.Forbidden:
-                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    log.exception("Contact failed to %r (%r)", destination, destination.id)
                     # Should this automatically opt them out?
                 except discord.HTTPException:
                     log.exception(
-                        f"An unexpected error happened while attempting to"
-                        f" send contact to {destination}({destination.id})"
+                        "An unexpected error happened while attempting to send contact to %r (%r)",
+                        destination,
+                        destination.id,
                     )
                 else:
                     successful = True
@@ -4149,12 +4126,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 try:
                     await destination.send("{}\n{}".format(content, box(msg_text)))
                 except discord.Forbidden:
-                    log.exception(f"Contact failed to {destination}({destination.id})")
+                    log.exception("Contact failed to %r (%r)", destination, destination.id)
                     # Should this automatically opt them out?
                 except discord.HTTPException:
                     log.exception(
-                        f"An unexpected error happened while attempting to"
-                        f" send contact to {destination}({destination.id})"
+                        "An unexpected error happened while attempting to send contact to %r (%r)",
+                        destination,
+                        destination.id,
                     )
                 else:
                     successful = True
@@ -4314,7 +4292,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]allowlist clear` to disable the allowlist
         """
-        pass
 
     @allowlist.command(name="add", require_var_positional=True)
     async def allowlist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
@@ -4401,7 +4378,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]blocklist clear` to disable the blocklist
         """
-        pass
 
     @blocklist.command(name="add", require_var_positional=True)
     async def blocklist_add(self, ctx: commands.Context, *users: Union[discord.Member, int]):
@@ -4496,7 +4472,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]localallowlist clear` to disable the allowlist
         """
-        pass
 
     @localallowlist.command(name="add", require_var_positional=True)
     async def localallowlist_add(
@@ -4513,7 +4488,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
         """
-        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
             current_whitelist = await self.bot.get_whitelist(ctx.guild)
@@ -4577,7 +4551,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
         """
-        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
             current_whitelist = await self.bot.get_whitelist(ctx.guild)
@@ -4619,7 +4592,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Use `[p]localblocklist clear` to disable the blocklist
         """
-        pass
 
     @localblocklist.command(name="add", require_var_positional=True)
     async def localblocklist_add(
@@ -4719,7 +4691,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.group(name="command")
     async def command_manager(self, ctx: commands.Context):
         """Commands to enable and disable commands and cogs."""
-        pass
 
     @checks.is_owner()
     @command_manager.command(name="defaultdisablecog")
@@ -4933,7 +4904,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable globally.
         """
-        if self.command_manager in command.parents or self.command_manager == command:
+        if self.command_manager in command.parents or self.command_manager is command:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
             )
@@ -4969,7 +4940,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<command>` - The command to disable for the current server.
         """
-        if self.command_manager in command.parents or self.command_manager == command:
+        if self.command_manager in command.parents or self.command_manager is command:
             await ctx.send(
                 _("The command to disable cannot be `command` or any of its subcommands.")
             )
@@ -5098,7 +5069,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         This includes duplicate message deletion and mention spam from the Mod cog, and filters from the Filter cog.
         """
-        pass
 
     @autoimmune_group.command(name="list")
     async def autoimmune_list(self, ctx: commands.Context):

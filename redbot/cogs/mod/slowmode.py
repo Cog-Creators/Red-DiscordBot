@@ -1,11 +1,22 @@
-import discord
-import re
-from .abc import MixinMeta
 from datetime import timedelta
-from redbot.core import commands, i18n, checks
+from typing import TYPE_CHECKING
+
+import discord
+
+from redbot.core import commands, i18n
 from redbot.core.utils.chat_formatting import humanize_timedelta
 
+from .abc import MixinMeta
+
 _ = i18n.Translator("Mod", __file__)
+
+
+if TYPE_CHECKING:
+    SlowmodeInterval = timedelta
+else:
+    SlowmodeInterval = commands.TimedeltaConverter(
+        minimum=timedelta(seconds=0), maximum=timedelta(hours=6), default_unit="seconds"
+    )
 
 
 class Slowmode(MixinMeta):
@@ -21,9 +32,7 @@ class Slowmode(MixinMeta):
         self,
         ctx,
         *,
-        interval: commands.TimedeltaConverter(
-            minimum=timedelta(seconds=0), maximum=timedelta(hours=6), default_unit="seconds"
-        ) = timedelta(seconds=0),
+        interval: SlowmodeInterval = timedelta(seconds=0),
     ):
         """Changes thread's or text channel's slowmode setting.
 

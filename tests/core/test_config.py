@@ -373,7 +373,7 @@ async def test_ctxmgr_no_unnecessary_write(config):
     config.register_global(foo=[])
     foo_value_obj = config.foo
     with patch.object(foo_value_obj, "set") as set_method:
-        async with foo_value_obj() as foo:
+        async with foo_value_obj() as _:
             pass
         set_method.assert_not_called()
 

@@ -86,7 +86,7 @@ parameters.
 
     Arguments enclosed in ``[ ]`` are **optional** for the command;
     you can decide whether to use them or not.
-    
+
     If your argument includes spaces like ``Hello world!``, most of the time
     you will need to place it in double quotes like this: ``"Hello world!"``.
     Sometimes (especially for the last argument) these double quotes are not
@@ -237,7 +237,7 @@ Moderator
 A moderator is a step above the average users. You can set multiple moderator
 roles with the ``[p]set roles addmodrole`` and ``[p]set roles removemodrole`` commands.
 
-For example, in the filter cog, a mod will be able to use the various commands 
+For example, in the filter cog, a mod will be able to use the various commands
 under ``[p]filter`` (such as adding and removing filtered words), but they will
 not be able to modify the cog settings with the ``[p]filterset`` command.
 
@@ -345,7 +345,7 @@ The cog guides are formatted the same. They're divided into 3 sections:
     A line that will show how the command must be invoked, with the arguments.
 
   * **Aliases**
-  
+
     Each command may have one or more aliases, which are alternative command names
     you can use to invoke the same command. For example, ``[p]set colour`` can also
     be invoked with ``[p]set color``. If there are aliases for a command, they will

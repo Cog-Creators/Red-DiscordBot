@@ -208,7 +208,7 @@ async def menu(
             ):
                 await message.clear_reactions()
             else:
-                raise RuntimeError
+                raise RuntimeError from None
         except (discord.Forbidden, RuntimeError):  # cannot remove all reactions
             for key in controls.keys():
                 try:
@@ -238,6 +238,7 @@ async def next_page(
     Function for showing next page which is suitable
     for use in ``controls`` mapping that is passed to `menu()`.
     """
+    del emoji
     if page >= len(pages) - 1:
         page = 0  # Loop around to the first item
     else:
@@ -258,6 +259,7 @@ async def prev_page(
     Function for showing previous page which is suitable
     for use in ``controls`` mapping that is passed to `menu()`.
     """
+    del emoji
     if page <= 0:
         page = len(pages) - 1  # Loop around to the last item
     else:
@@ -278,6 +280,7 @@ async def close_menu(
     Function for closing (deleting) menu which is suitable
     for use in ``controls`` mapping that is passed to `menu()`.
     """
+    del ctx, pages, controls, page, timeout, emoji
     with contextlib.suppress(discord.NotFound):
         await message.delete()
 

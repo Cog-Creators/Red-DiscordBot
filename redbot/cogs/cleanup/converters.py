@@ -1,4 +1,4 @@
-from typing import NewType, TYPE_CHECKING
+from typing import TYPE_CHECKING, NewType
 
 from redbot.core.commands import BadArgument, Context, Converter
 from redbot.core.i18n import Translator
@@ -26,7 +26,7 @@ else:
         try:
             ret = int(arg)
         except ValueError:
-            raise BadArgument(_("{arg} is not an integer.").format(arg=inline(arg)))
+            raise BadArgument(_("{arg} is not an integer.").format(arg=inline(arg))) from None
         if ret <= 0:
             raise BadArgument(_("{arg} is not a positive integer.").format(arg=inline(arg)))
         return ret

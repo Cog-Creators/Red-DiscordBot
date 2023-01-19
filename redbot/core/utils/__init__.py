@@ -1,18 +1,20 @@
 from __future__ import annotations
+
 import asyncio
 import json
 import logging
-from asyncio import as_completed, Semaphore
+from asyncio import Semaphore, as_completed
 from asyncio.futures import isfuture
 from itertools import chain
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    AsyncIterator,
     AsyncIterable,
+    AsyncIterator,
     Awaitable,
     Callable,
+    Generator,
     Iterable,
     Iterator,
     List,
@@ -22,8 +24,6 @@ from typing import (
     Tuple,
     TypeVar,
     Union,
-    Generator,
-    Coroutine,
     overload,
 )
 
@@ -56,6 +56,7 @@ log = logging.getLogger("red.core.utils")
 _T = TypeVar("_T")
 _S = TypeVar("_S")
 
+
 # Benchmarked to be the fastest method.
 def deduplicate_iterables(*iterables):
     """
@@ -66,8 +67,7 @@ def deduplicate_iterables(*iterables):
     return list(dict.fromkeys(chain.from_iterable(iterables)))
 
 
-# https://github.com/PyCQA/pylint/issues/2717
-class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
     """Class returned by `async_filter`. See that function for details.
 
     We don't recommend instantiating this class directly.
@@ -165,9 +165,9 @@ async def async_enumerate(
     start : int
         The index to start from. Defaults to 0.
 
-    Returns
-    -------
-    AsyncIterator[Tuple[int, T]]
+    Yields
+    ------
+    Tuple[int, T]
         An async iterator of tuples in the form of ``(index, item)``.
 
     """
@@ -251,8 +251,6 @@ def bounded_gather(
     TypeError
         When invalid parameters are passed
     """
-    loop = asyncio.get_running_loop()
-
     if semaphore is None:
         if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")
@@ -264,7 +262,7 @@ def bounded_gather(
     return asyncio.gather(*tasks, return_exceptions=return_exceptions)
 
 
-class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=duplicate-bases
+class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):
     """Asynchronous iterator yielding items from ``iterable``
     that sleeps for ``delay`` seconds every ``steps`` items.
 
@@ -310,8 +308,8 @@ class AsyncIter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=dupl
     async def __anext__(self) -> _T:
         try:
             item = next(self._iterator)
-        except StopIteration:
-            raise StopAsyncIteration
+        except StopIteration as exc:
+            raise StopAsyncIteration from exc
         if self._i == self._steps:
             self._i = 0
             await asyncio.sleep(self._delay)

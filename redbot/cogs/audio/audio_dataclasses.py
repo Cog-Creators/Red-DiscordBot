@@ -4,7 +4,6 @@ import ntpath
 import os
 import posixpath
 import re
-
 from pathlib import Path, PosixPath, WindowsPath
 from typing import (
     AsyncIterator,
@@ -92,6 +91,7 @@ class LocalPath:
     _all_music_ext = _FULLY_SUPPORTED_MUSIC_EXT + _PARTIALLY_SUPPORTED_MUSIC_EXT
 
     def __init__(self, path, localtrack_folder, **kwargs):
+        self._hash = None
         self._localtrack_folder = localtrack_folder
         self._path = path
         if isinstance(path, (Path, WindowsPath, PosixPath, LocalPath)):
@@ -283,11 +283,9 @@ class LocalPath:
         return NotImplemented
 
     def __hash__(self):
-        try:
-            return self._hash
-        except AttributeError:
+        if self._hash is None:
             self._hash = hash(tuple(self.path._cparts))
-            return self._hash
+        return self._hash
 
     def __lt__(self, other):
         if isinstance(other, LocalPath):
@@ -405,7 +403,7 @@ class Query:
     def process_input(
         cls,
         query: Union[LocalPath, lavalink.Track, "Query", str],
-        _local_folder_current_path: Path,
+        local_folder_current_path: Path,
         **kwargs,
     ) -> "Query":
         """Process the input query into its type.
@@ -414,8 +412,10 @@ class Query:
         ----------
         query : Union[Query, LocalPath, lavalink.Track, str]
             The query string or LocalPath object.
-        _local_folder_current_path: Path
+        local_folder_current_path: Path
             The Current Local Track folder
+        **kwargs
+            Keyword arguments that will be passed through to Query constructor after parsing.
         Returns
         -------
         Query
@@ -441,11 +441,11 @@ class Query:
             query = query.uri
 
         possible_values.update(dict(**kwargs))
-        possible_values.update(cls._parse(query, _local_folder_current_path, **kwargs))
-        return cls(query, _local_folder_current_path, **possible_values)
+        possible_values.update(cls._parse(query, local_folder_current_path, **kwargs))
+        return cls(query, local_folder_current_path, **possible_values)
 
     @staticmethod
-    def _parse(track, _local_folder_current_path: Path, **kwargs) -> MutableMapping:
+    def _parse(track, local_folder_current_path: Path, **kwargs) -> MutableMapping:
         """Parse a track into all the relevant metadata."""
         returning: MutableMapping = {}
         if (
@@ -487,7 +487,7 @@ class Query:
                 track = _RE_REMOVE_START.sub("", track, 1)
                 returning["queryforced"] = track
 
-            _localtrack = LocalPath(track, _local_folder_current_path)
+            _localtrack = LocalPath(track, local_folder_current_path)
             if _localtrack.exists():
                 if _localtrack.is_file():
                     returning["local"] = True

@@ -52,7 +52,7 @@ Manually installing dependencies
 
 .. attention:: There are additional configuration steps required which are
                not documented for installing dependencies manually.
-               These dependencies are only listed seperately here for
+               These dependencies are only listed separately here for
                reference purposes.
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
@@ -91,7 +91,7 @@ to keep it in a location which is easy to type out the path to. From now, we'll 
 
 Start with opening a command prompt (open Start, search for "command prompt", then click it).
 
-.. note:: 
+.. note::
 
     You shouldn't run command prompt as administrator when creating your virtual environment, or
     running Red.

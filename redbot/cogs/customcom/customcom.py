@@ -1,9 +1,9 @@
 import asyncio
-import re
 import random
+import re
 from datetime import datetime, timedelta
 from inspect import Parameter
-from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
+from typing import Dict, Iterable, List, Literal, Mapping, Set, Tuple, Union
 from urllib.parse import quote_plus
 
 import discord
@@ -11,8 +11,8 @@ from rapidfuzz import process
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import menus, AsyncIter
-from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
+from redbot.core.utils import AsyncIter, menus
+from redbot.core.utils.chat_formatting import box, escape, humanize_list, pagify
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
@@ -63,7 +63,7 @@ class CommandObj:
         for guild_id in all_guilds.keys():
             await asyncio.sleep(0)
             async with self.config.guild_from_id(guild_id).commands() as all_commands:
-                async for com_name, com_info in AsyncIter(all_commands.items(), steps=100):
+                async for com_info in AsyncIter(all_commands.values(), steps=100):
                     if not com_info:
                         continue
 
@@ -185,9 +185,9 @@ class CommandObj:
             pred = MessagePredicate.yes_or_no(ctx)
             try:
                 await self.bot.wait_for("message", check=pred, timeout=30)
-            except asyncio.TimeoutError:
+            except asyncio.TimeoutError as exc:
                 await ctx.send(_("Response timed out, please try again later."))
-                raise CommandNotEdited()
+                raise CommandNotEdited() from exc
             if pred.result is True:
                 response = await self.get_responses(ctx=ctx)
             else:
@@ -196,9 +196,9 @@ class CommandObj:
                     resp = await self.bot.wait_for(
                         "message", check=MessagePredicate.same_context(ctx), timeout=180
                     )
-                except asyncio.TimeoutError:
+                except asyncio.TimeoutError as exc:
                     await ctx.send(_("Response timed out, please try again later."))
-                    raise CommandNotEdited()
+                    raise CommandNotEdited() from exc
                 response = resp.content
 
         if response:
@@ -264,7 +264,6 @@ class CustomCommands(commands.Cog):
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
         """Base command for Custom Commands management."""
-        pass
 
     @customcom.command(name="raw")
     async def cc_raw(self, ctx: commands.Context, command: str.lower):
@@ -275,10 +274,10 @@ class CustomCommands(commands.Cog):
         **Arguments:**
 
         - `<command>` The custom command to get the raw response of."""
-        commands = await self.config.guild(ctx.guild).commands()
-        if command not in commands:
+        commands_ = await self.config.guild(ctx.guild).commands()
+        if command not in commands_:
             return await ctx.send("That command doesn't exist.")
-        command = commands[command]
+        command = commands_[command]
         if isinstance(command["response"], str):
             raw = discord.utils.escape_markdown(command["response"])
             if len(raw) > 2000:
@@ -560,7 +559,7 @@ class CustomCommands(commands.Cog):
         results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
-            # We need a space before the newline incase the CC preview ends in link (GH-2295)
+            # We need a space before the newline in case the CC preview ends in link (GH-2295)
             content = " \n".join(map("**{0[0]}** {0[1]}".format, results))
             pages = list(pagify(content, page_length=1024))
             embed_pages = []
@@ -680,14 +679,13 @@ class CustomCommands(commands.Cog):
         if not ctx.command_failed:
             await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
 
+    # fake command to take advantage of discord.py's parsing and events
     async def cc_callback(self, *args, **kwargs) -> None:
         """
         Custom command.
 
         Created via the CustomCom cog. See `[p]customcom` for more details.
         """
-        # fake command to take advantage of discord.py's parsing and events
-        pass
 
     async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
         cc_args = (*cc_args, *cc_kwargs.values())

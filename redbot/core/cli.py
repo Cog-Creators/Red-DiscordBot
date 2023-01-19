@@ -1,6 +1,4 @@
 import argparse
-import asyncio
-import logging
 import sys
 from enum import IntEnum
 from typing import Optional
@@ -104,7 +102,7 @@ def non_negative_int(arg: str) -> int:
     try:
         x = int(arg)
     except ValueError:
-        raise argparse.ArgumentTypeError("The argument has to be a number.")
+        raise argparse.ArgumentTypeError("The argument has to be a number.") from None
     if x < 0:
         raise argparse.ArgumentTypeError("The argument has to be a non-negative integer.")
     if x > sys.maxsize:
@@ -291,7 +289,8 @@ def parse_cli_flags(args):
         action="store_true",
         dest="rich_logging",
         default=None,
-        help="Forcefully enables the Rich logging handlers. This is normally enabled for supported active terminals.",
+        help="Forcefully enables the Rich logging handlers."
+        " This is normally enabled for supported active terminals.",
     )
     parser.add_argument(
         "--force-disable-rich-logging",

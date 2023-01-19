@@ -42,7 +42,7 @@ customcom
 
 .. code-block:: none
 
-    [p]customcom 
+    [p]customcom
 
 .. tip:: Alias: ``cc``
 
@@ -220,7 +220,7 @@ customcom list
 
 .. code-block:: none
 
-    [p]customcom list 
+    [p]customcom list
 
 **Description**
 

@@ -44,7 +44,7 @@ Here's a list of all commands available for this cog.
 
 **Description**
 
-Ask 8 ball a question. 
+Ask 8 ball a question.
 
 .. note:: Your question must end with a question mark.
 

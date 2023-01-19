@@ -2,13 +2,15 @@ import datetime
 from typing import cast
 
 import discord
-from redbot.core import commands, i18n, checks
+
+from redbot.core import checks, commands, i18n
 from redbot.core.utils.common_filters import (
+    escape_spoilers_and_mass_mentions,
     filter_invites,
     filter_various_mentions,
-    escape_spoilers_and_mass_mentions,
 )
 from redbot.core.utils.mod import get_audit_reason
+
 from .abc import MixinMeta
 from .utils import is_allowed_by_hierarchy
 
@@ -76,7 +78,7 @@ class ModInfo(MixinMeta):
                 if exc.status == 400:  # BAD REQUEST
                     await ctx.send(_("That nickname is invalid."))
                 else:
-                    await ctx.send(_("An unexpected error has occured."))
+                    await ctx.send(_("An unexpected error has occurred."))
             else:
                 await ctx.send(_("Done."))
 
@@ -236,10 +238,10 @@ class ModInfo(MixinMeta):
             # In embed.fields.2.value: Must be 1024 or fewer in length.
             if len(role_str) > 1024:
                 # Alternative string building time.
-                # This is not the most optimal, but if you're hitting this, you are losing more time
+                # This is not the most optimal, but if you're hitting this, you're losing more time
                 # to every single check running on users than the occasional user info invoke
-                # We don't start by building this way, since the number of times we hit this should be
-                # infinitesimally small compared to when we don't across all uses of Red.
+                # We don't start by building this way, since the number of times we hit this
+                # should be infinitesimally small compared to when we don't across all uses of Red.
                 continuation_string = _(
                     "and {numeric_number} more roles not displayed due to embed limits."
                 )

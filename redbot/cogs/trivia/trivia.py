@@ -1,29 +1,28 @@
 """Module for Trivia cog."""
 import asyncio
-import math
+import io
 import pathlib
 from collections import Counter
 from typing import Any, Dict, List, Literal, Union
-import schema
 
-import io
-import yaml
 import discord
+import schema
+import yaml
 
-from redbot.core import Config, commands, checks, bank
+from redbot.core import Config, bank, checks, commands
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter, can_user_react_in
-from redbot.core.utils.chat_formatting import box, pagify, bold
+from redbot.core.utils.chat_formatting import bold, box, pagify
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from .checks import trivia_stop_check
 from .converters import finite_float
 from .log import LOG
-from .session import TriviaSession
 from .schema import TRIVIA_LIST_SCHEMA, format_schema_error
+from .session import TriviaSession
 
 __all__ = ("Trivia", "UNIQUE_ID", "InvalidListError", "get_core_lists", "get_list")
 
@@ -33,8 +32,6 @@ _ = Translator("Trivia", __file__)
 
 class InvalidListError(Exception):
     """A Trivia list file is in invalid format."""
-
-    pass
 
 
 @cog_i18n(_)
@@ -220,7 +217,6 @@ class Trivia(commands.Cog):
     @commands.is_owner()
     async def triviaset_custom(self, ctx: commands.Context):
         """Manage Custom Trivia lists."""
-        pass
 
     @triviaset_custom.command(name="list")
     async def custom_trivia_list(self, ctx: commands.Context):
@@ -524,11 +520,13 @@ class Trivia(commands.Cog):
         try:
             priority.remove(key)
         except ValueError:
-            raise ValueError(f"{key} is not a valid key.")
+            raise ValueError(f"{key} is not a valid key.") from None
         # Put key last in reverse priority
         priority.append(key)
         items = data.items()
         for key in priority:
+            # https://github.com/PyCQA/pylint/issues/7100#issuecomment-1171283909
+            # pylint: disable-next=cell-var-from-loop
             items = sorted(items, key=lambda t: t[1][key], reverse=True)
         max_name_len = max(map(lambda m: len(str(m)), data.keys()))
         # Headers
@@ -622,7 +620,7 @@ class Trivia(commands.Cog):
         try:
             path = next(p for p in self._all_lists() if p.stem == category)
         except StopIteration:
-            raise FileNotFoundError("Could not find the `{}` category.".format(category))
+            raise FileNotFoundError("Could not find the `{}` category.".format(category)) from None
 
         return get_list(path)
 

@@ -1,10 +1,9 @@
 import asyncio
 import datetime
 import json
-
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Mapping, Dict
+from typing import Dict, Mapping
 
 import aiohttp
 import discord
@@ -17,15 +16,17 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.antispam import AntiSpam
 
 from ..utils import (
+    DEFAULT_LAVALINK_SETTINGS,
+    DEFAULT_LAVALINK_YAML,
     CacheLevel,
     PlaylistScope,
-    DEFAULT_LAVALINK_YAML,
-    DEFAULT_LAVALINK_SETTINGS,
 )
 from . import abc, cog_utils, commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
 
 _ = Translator("Audio", Path(__file__))
+
+__all__ = ("abc", "cog_utils", "commands", "events", "tasks", "utilities", "Audio")
 
 
 @cog_i18n(_)

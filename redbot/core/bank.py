@@ -3,17 +3,17 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Union, List, Optional, TYPE_CHECKING, Literal
 from functools import wraps
+from typing import TYPE_CHECKING, List, Literal, Optional, Union
 
 import discord
 
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import humanize_number
-from . import Config, errors, commands
-from .i18n import Translator
 
+from . import Config, commands, errors
 from .errors import BankPruneError
+from .i18n import Translator
 
 if TYPE_CHECKING:
     from .bot import Red
@@ -629,16 +629,13 @@ async def get_leaderboard_position(
         guild = None
     else:
         guild = member.guild if hasattr(member, "guild") else None
-    try:
-        leaderboard = await get_leaderboard(None, guild)
-    except TypeError:
-        raise
+
+    leaderboard = await get_leaderboard(None, guild)
+    pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
+    if pos is None:
+        return None
     else:
-        pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
-        if pos is None:
-            return None
-        else:
-            return pos[0]
+        return pos[0]
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:
@@ -751,7 +748,6 @@ async def get_bank_name(guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        global _cache
         if _cache["bank_name"] is None:
             _cache["bank_name"] = await _config.bank_name()
         return _cache["bank_name"]
@@ -785,7 +781,6 @@ async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
     """
     if await is_global():
         await _config.bank_name.set(name)
-        global _cache
         _cache["bank_name"] = name
     elif guild is not None:
         await _config.guild(guild).bank_name.set(name)
@@ -815,7 +810,6 @@ async def get_currency_name(guild: discord.Guild = None) -> str:
 
     """
     if await is_global():
-        global _cache
         if _cache["currency"] is None:
             _cache["currency"] = await _config.currency()
         return _cache["currency"]
@@ -849,7 +843,6 @@ async def set_currency_name(name: str, guild: discord.Guild = None) -> str:
     """
     if await is_global():
         await _config.currency.set(name)
-        global _cache
         _cache["currency"] = name
     elif guild is not None:
         await _config.guild(guild).currency.set(name)
@@ -927,7 +920,6 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
 
     if await is_global():
         await _config.max_balance.set(amount)
-        global _cache
         _cache["max_balance"] = amount
     elif guild is not None:
         await _config.guild(guild).max_balance.set(amount)
@@ -1007,7 +999,6 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
 
     if await is_global():
         await _config.default_balance.set(amount)
-        global _cache
         _cache["default_balance"] = amount
     elif guild is not None:
         await _config.guild(guild).default_balance.set(amount)
@@ -1059,13 +1050,13 @@ def cost(amount: int):
                 )
             try:
                 await withdraw_credits(context.author, amount)
-            except Exception:
+            except Exception as exc:
                 credits_name = await get_currency_name(context.guild)
                 raise commands.UserFeedbackCheckFailure(
                     _("You need at least {cost} {currency} to use this command.").format(
                         cost=humanize_number(amount), currency=credits_name
                     )
-                )
+                ) from exc
             else:
                 try:
                     return await coro(*args, **kwargs)

@@ -1,10 +1,12 @@
 import asyncio
-import discord
-from datetime import datetime
-from redbot.core.utils.chat_formatting import pagify
-import io
 import weakref
+from datetime import datetime
 from typing import List, Optional, Union
+
+import discord
+
+from redbot.core.utils.chat_formatting import pagify
+
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -22,26 +24,17 @@ class TunnelMeta(type):
         if lockout_tuple in _instances:
             return _instances[lockout_tuple]
 
-        # this is needed because weakvalue dicts can
-        # change size without warning if an object is discarded
-        # it can raise a runtime error, so ..
-        while True:
-            try:
-                if not (
-                    any(lockout_tuple[0] == x[0] for x in _instances.keys())
-                    or any(lockout_tuple[1] == x[1] for x in _instances.keys())
-                ):
-                    # if this isn't temporarily stored, the weakref dict
-                    # will discard this before the return statement,
-                    # causing a key error
-                    temp = super(TunnelMeta, cls).__call__(*args, **kwargs)
-                    _instances[lockout_tuple] = temp
-                    return temp
-            except:  # NOQA: E722
-                # Am I really supposed to except a runtime error flake >.>
-                continue
-            else:
-                return None
+        if not (
+            any(lockout_tuple[0] == x[0] for x in _instances.keys())
+            or any(lockout_tuple[1] == x[1] for x in _instances.keys())
+        ):
+            # if this isn't temporarily stored, the weakref dict
+            # will discard this before the return statement,
+            # causing a key error
+            temp = super(TunnelMeta, cls).__call__(*args, **kwargs)
+            _instances[lockout_tuple] = temp
+            return temp
+        return None
 
 
 class Tunnel(metaclass=TunnelMeta):
@@ -179,7 +172,7 @@ class Tunnel(metaclass=TunnelMeta):
 
     async def close_because_disabled(self, close_message: str):
         """
-        Sends a mesage to both ends of the tunnel that the tunnel is now closed.
+        Sends a message to both ends of the tunnel that the tunnel is now closed.
 
         Parameters
         ----------

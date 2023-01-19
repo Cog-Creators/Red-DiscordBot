@@ -1,15 +1,15 @@
 import asyncio
-import discord
 import re
-from datetime import timezone
-from typing import Union, Set, Literal, Optional
+from typing import Literal, Optional, Set, Union
 
-from redbot.core import checks, Config, modlog, commands
+import discord
+
+from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
-from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import pagify, humanize_list
+from redbot.core.utils.chat_formatting import humanize_list, pagify
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Filter", __file__)
 
@@ -83,7 +83,6 @@ class Filter(commands.Cog):
     @checks.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
         """Base command to manage filter settings."""
-        pass
 
     @filterset.command(name="defaultname")
     async def filter_default_name(self, ctx: commands.Context, name: str):
@@ -150,7 +149,6 @@ class Filter(commands.Cog):
 
         Use double quotes to add or remove sentences.
         """
-        pass
 
     @_filter.command(name="clear")
     async def _filter_clear(self, ctx: commands.Context):
@@ -199,7 +197,6 @@ class Filter(commands.Cog):
 
         Use double quotes to add or remove sentences.
         """
-        pass
 
     @_filter_channel.command(name="clear")
     async def _channel_clear(self, ctx: commands.Context):

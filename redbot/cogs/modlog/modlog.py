@@ -1,16 +1,13 @@
-import asyncio
 from datetime import datetime, timezone
-
 from typing import Optional, Union
 
 import discord
 
-from redbot.core import checks, commands, modlog
+from redbot.core import commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box, pagify
+from redbot.core.utils.chat_formatting import bold, pagify
 from redbot.core.utils.menus import menu
-from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("ModLog", __file__)
 
@@ -23,7 +20,7 @@ class ModLog(commands.Cog):
         super().__init__()
         self.bot = bot
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 

@@ -1,6 +1,6 @@
 import abc
 import enum
-from typing import Tuple, Dict, Any, Union, List, AsyncIterator, Type
+from typing import Any, AsyncIterator, Dict, List, Tuple, Type, Union
 
 import rich.progress
 
@@ -159,7 +159,7 @@ class IdentifierData:
 
 
 class BaseDriver(abc.ABC):
-    def __init__(self, cog_name: str, identifier: str, **kwargs):
+    def __init__(self, cog_name: str, identifier: str, **_kwargs):
         self.cog_name = cog_name
         self.unique_cog_identifier = identifier
 
@@ -323,6 +323,7 @@ class BaseDriver(abc.ABC):
             operates.
 
         """
+        del kwargs
         async for cog_name, cog_id in cls.aiter_cogs():
             driver = cls(cog_name, cog_id)
             await driver.clear(IdentifierData(cog_name, cog_id, "", (), (), 0))

@@ -4,19 +4,19 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import TYPE_CHECKING, Union, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Union
+
+import discord
 
 import redbot.cogs
 from redbot.core.commands import BadArgument
 from redbot.core.utils import deduplicate_iterables
-import discord
 
 from . import checks, commands
 from .config import Config
-from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
-
-from .utils.chat_formatting import box, pagify, humanize_list, inline
+from .i18n import Translator, cog_i18n
+from .utils.chat_formatting import box, humanize_list, inline, pagify
 
 __all__ = ["CogManager"]
 
@@ -331,7 +331,7 @@ _ = Translator("CogManagerUI", __file__)
 class CogManagerUI(commands.Cog):
     """Commands to interface with Red's cog manager."""
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete (Core Config is handled in a bot method )"""
         return
 

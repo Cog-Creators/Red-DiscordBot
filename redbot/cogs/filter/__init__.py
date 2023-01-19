@@ -1,5 +1,6 @@
-from .filter import Filter
 from redbot.core.bot import Red
+
+from .filter import Filter
 
 
 async def setup(bot: Red) -> None:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import collections.abc
-import contextlib
 import json
 import logging
 import os
@@ -13,29 +12,25 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
-    AsyncIterable,
+    TYPE_CHECKING,
     AsyncIterator,
     Awaitable,
     Callable,
-    Generator,
-    Iterable,
     Iterator,
     List,
     Optional,
-    Union,
-    TypeVar,
-    TYPE_CHECKING,
     Tuple,
-    cast,
+    TypeVar,
+    Union,
 )
 
 import aiohttp
 import discord
 from packaging.requirements import Requirement
 from rapidfuzz import fuzz, process
+from red_commons.logging import TRACE, VERBOSE
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
-from red_commons.logging import VERBOSE, TRACE
 
 from redbot import VersionInfo
 from redbot.core import data_manager
@@ -141,7 +136,7 @@ async def fuzzy_command_search(
 
         try:
             await cmd_obj.get(ctx.message, term)
-        except:
+        except Exception:
             pass
         else:
             return None
@@ -297,7 +292,7 @@ async def send_to_owners_with_preprocessor(
     await asyncio.gather(*sends)
 
 
-async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
+async def send_to_owners_with_prefix_replaced(bot: Red, content: str):
     """
     This sends something to all owners and their configured extra destinations.
 

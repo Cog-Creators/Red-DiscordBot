@@ -19,7 +19,7 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-A range of highly customizable moderation tools used to protect your 
+A range of highly customizable moderation tools used to protect your
 guild from users who cannot follow the rules.
 
 
@@ -142,7 +142,7 @@ modset
 
 .. code-block:: none
 
-    [p]modset 
+    [p]modset
 
 **Description**
 
@@ -276,7 +276,7 @@ modset hierarchy
 
 .. code-block:: none
 
-    [p]modset hierarchy 
+    [p]modset hierarchy
 
 **Description**
 
@@ -296,7 +296,7 @@ modset mentionspam
 
 .. code-block:: none
 
-    [p]modset mentionspam 
+    [p]modset mentionspam
 
 **Description**
 
@@ -406,7 +406,7 @@ modset reinvite
 
 .. code-block:: none
 
-    [p]modset reinvite 
+    [p]modset reinvite
 
 **Description**
 
@@ -425,7 +425,7 @@ modset showsettings
 
 .. code-block:: none
 
-    [p]modset showsettings 
+    [p]modset showsettings
 
 **Description**
 
@@ -489,7 +489,7 @@ movedeletedelay
 
 .. code-block:: none
 
-    [p]movedeletedelay 
+    [p]movedeletedelay
 
 **Description**
 
@@ -507,7 +507,7 @@ moveignoredchannels
 
 .. code-block:: none
 
-    [p]moveignoredchannels 
+    [p]moveignoredchannels
 
 **Description**
 

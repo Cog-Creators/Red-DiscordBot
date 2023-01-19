@@ -2,14 +2,12 @@ import contextlib
 import math
 import time
 from pathlib import Path
-
 from typing import MutableMapping
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
-
 from lavalink import NodeNotFound
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.commands import UserInputOptional
@@ -363,6 +361,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 output = await self._genre_search_button_action(ctx, category_list, emoji, page)
                 with contextlib.suppress(discord.HTTPException):
@@ -378,6 +377,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 output = await self._genre_search_button_action(
                     ctx, playlists_list, emoji, page, playlist=True
@@ -646,7 +646,8 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         if not isinstance(query, (str, list, Query)):
             raise RuntimeError(
-                f"Expected 'query' to be a string, list or Query object but received: {type(query)} - this is an unexpected argument type, please report it."
+                "Expected 'query' to be a string, list or Query object but received:"
+                f" {type(query)} - this is an unexpected argument type, please report it."
             )
 
         async def _search_menu(
@@ -658,6 +659,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 await self._search_button_action(ctx, tracks, emoji, page)
                 with contextlib.suppress(discord.HTTPException):

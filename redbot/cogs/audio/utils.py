@@ -1,11 +1,8 @@
-import asyncio
-import contextlib
 import math
 import platform
 import re
 import sys
 import time
-
 from enum import Enum, unique
 from pathlib import Path
 from typing import MutableMapping, Tuple, Union
@@ -22,8 +19,8 @@ log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
 
-def get_max_allocation_size(exec) -> Tuple[int, bool]:
-    if platform.architecture(exec)[0] == "64bit":
+def get_max_allocation_size(executable: str) -> Tuple[int, bool]:
+    if platform.architecture(executable)[0] == "64bit":
         max_heap_allowed = psutil.virtual_memory().total
         thinks_is_64_bit = True
     else:
@@ -257,7 +254,7 @@ class CacheLevel:
 
 class Notifier:
     def __init__(
-        self, ctx: commands.Context, message: discord.Message, updates: MutableMapping, **kwargs
+        self, ctx: commands.Context, message: discord.Message, updates: MutableMapping, **_kwargs
     ):
         self.context = ctx
         self.message = message

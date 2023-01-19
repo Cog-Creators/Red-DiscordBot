@@ -9,7 +9,7 @@ import re
 import shlex
 import shutil
 import tempfile
-from typing import ClassVar, Final, List, Optional, Pattern, Tuple, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar, Final, List, Optional, Pattern, Tuple, Union
 
 import aiohttp
 import lavalink
@@ -18,28 +18,27 @@ import yaml
 from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
-from redbot.core import data_manager, Config
+from redbot.core import Config, data_manager
 from redbot.core.i18n import Translator
 
 from .errors import (
-    LavalinkDownloadFailed,
-    InvalidArchitectureException,
-    ManagedLavalinkAlreadyRunningException,
-    ManagedLavalinkPreviouslyShutdownException,
-    UnsupportedJavaException,
-    ManagedLavalinkStartFailure,
-    UnexpectedJavaResponseException,
     EarlyExitException,
+    InvalidArchitectureException,
+    LavalinkDownloadFailed,
+    ManagedLavalinkAlreadyRunningException,
     ManagedLavalinkNodeException,
-    NoProcessFound,
+    ManagedLavalinkPreviouslyShutdownException,
+    ManagedLavalinkStartFailure,
     NodeUnhealthy,
+    NoProcessFound,
+    UnexpectedJavaResponseException,
+    UnsupportedJavaException,
 )
 from .utils import (
     change_dict_naming_convention,
     get_max_allocation_size,
     replace_p_with_prefix,
 )
-from ...core.utils import AsyncIter
 
 if TYPE_CHECKING:
     from . import Audio
@@ -257,7 +256,7 @@ class ServerManager:
     def __init__(self, config: Config, cog: "Audio", timeout: Optional[int] = None) -> None:
         self.ready: asyncio.Event = asyncio.Event()
         self._config = config
-        self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
+        self._proc: Optional[asyncio.subprocess.Process] = None
         self._shutdown: bool = False
         self.start_monitor_task = None
         self.timeout = timeout
@@ -327,13 +326,11 @@ class ServerManager:
                 )
             )
         try:
-            self._proc = (
-                await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
-                    *args,
-                    cwd=str(LAVALINK_DOWNLOAD_DIR),
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.STDOUT,
-                )
+            self._proc = await asyncio.subprocess.create_subprocess_exec(
+                *args,
+                cwd=str(LAVALINK_DOWNLOAD_DIR),
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.STDOUT,
             )
             log.info("Managed Lavalink node started. PID: %s", self._proc.pid)
             try:
@@ -351,7 +348,7 @@ class ServerManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
-        with open(LAVALINK_APP_YML, "w") as f:
+        with open(LAVALINK_APP_YML, "w", encoding="utf-8") as f:
             yaml.safe_dump(data, f)
 
     async def _get_jar_args(self) -> Tuple[List[str], Optional[str]]:
@@ -414,13 +411,11 @@ class ServerManager:
 
     async def _get_java_version(self) -> Tuple[int, int]:
         """This assumes we've already checked that java exists."""
-        _proc: asyncio.subprocess.Process = (
-            await asyncio.create_subprocess_exec(  # pylint:disable=no-member
-                self._java_exc,
-                "-version",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
+        _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
+            self._java_exc,
+            "-version",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
         # java -version outputs to stderr
         _, err = await _proc.communicate()
@@ -496,7 +491,7 @@ class ServerManager:
                         should_retry=False,
                     )
                 elif 400 <= response.status < 600:
-                    # Other bad responses should be raised but we should retry just incase
+                    # Other bad responses should be raised but we should retry just in case
                     raise LavalinkDownloadFailed(response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
@@ -534,7 +529,7 @@ class ServerManager:
             return True
         args, _ = await self._get_jar_args()
         args.append("--version")
-        _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
+        _proc = await asyncio.subprocess.create_subprocess_exec(
             *args,
             cwd=str(LAVALINK_DOWNLOAD_DIR),
             stdout=asyncio.subprocess.PIPE,
@@ -627,7 +622,7 @@ class ServerManager:
                             return  # lavalink_restart_connect will cause a new monitor task to be created.
                     except Exception as exc:
                         log.debug(exc, exc_info=exc)
-                        raise NodeUnhealthy(str(exc))
+                        raise NodeUnhealthy(str(exc)) from exc
             except NoProcessFound:
                 await self._partial_shutdown()
             except asyncio.TimeoutError:

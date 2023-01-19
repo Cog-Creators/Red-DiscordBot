@@ -3,16 +3,17 @@ import logging
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict, List, Literal
+from typing import List, Literal
 
 import discord
-from redbot.core import Config, commands, checks
+
+from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.menus import menu
 
-from redbot.core.bot import Red
-from .alias_entry import AliasEntry, AliasCache, ArgParseError
+from .alias_entry import AliasCache, AliasEntry, ArgParseError
 
 _ = Translator("Alias", __file__)
 
@@ -143,7 +144,7 @@ class Alias(commands.Cog):
         """
         content = message.content
         prefix_list = await self.bot.command_prefix(self.bot, message)
-        prefixes = sorted(prefix_list, key=lambda pfx: len(pfx), reverse=True)
+        prefixes = sorted(prefix_list, key=len, reverse=True)
         for p in prefixes:
             if content.startswith(p):
                 return p
@@ -190,12 +191,10 @@ class Alias(commands.Cog):
     @commands.group()
     async def alias(self, ctx: commands.Context):
         """Manage command aliases."""
-        pass
 
     @alias.group(name="global")
     async def global_(self, ctx: commands.Context):
         """Manage global aliases."""
-        pass
 
     @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="add")
@@ -339,7 +338,7 @@ class Alias(commands.Cog):
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command):
                 await ctx.send(
-                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                    _("The alias with the trigger `{name}` has been edited successfully.").format(
                         name=alias_name
                     )
                 )
@@ -372,7 +371,7 @@ class Alias(commands.Cog):
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command, global_=True):
                 await ctx.send(
-                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                    _("The alias with the trigger `{name}` has been edited successfully.").format(
                         name=alias_name
                     )
                 )

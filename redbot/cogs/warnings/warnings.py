@@ -1,26 +1,23 @@
 import asyncio
 import contextlib
-from datetime import timezone
 from collections import namedtuple
 from copy import copy
-from typing import Union, Optional, Literal
+from typing import Literal, Union
 
 import discord
 
 from redbot.cogs.warnings.helpers import (
-    warning_points_add_check,
-    get_command_for_exceeded_points,
     get_command_for_dropping_points,
+    get_command_for_exceeded_points,
+    warning_points_add_check,
     warning_points_remove_check,
 )
 from redbot.core import Config, checks, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import warning, pagify
+from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.menus import menu
-
 
 _ = Translator("Warnings", __file__)
 
@@ -113,7 +110,6 @@ class Warnings(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def warningset(self, ctx: commands.Context):
         """Manage settings for Warnings."""
-        pass
 
     @warningset.command()
     @commands.guild_only()
@@ -144,13 +140,15 @@ class Warnings(commands.Cog):
         if true_or_false:
             await ctx.send(
                 _(
-                    "I will include the name of the moderator who issued the warning when sending a DM to a user."
+                    "I will include the name of the moderator"
+                    " who issued the warning when sending a DM to a user."
                 )
             )
         else:
             await ctx.send(
                 _(
-                    "I will not include the name of the moderator who issued the warning when sending a DM to a user."
+                    "I will not include the name of the moderator"
+                    " who issued the warning when sending a DM to a user."
                 )
             )
 
@@ -206,7 +204,6 @@ class Warnings(commands.Cog):
         user is warned enough so that their points go over this
         threshold, the action will be executed.
         """
-        pass
 
     @warnaction.command(name="add")
     @commands.guild_only()
@@ -268,7 +265,6 @@ class Warnings(commands.Cog):
         Reasons must be given a name, description and points value. The
         name of the reason must be given when a user is warned.
         """
-        pass
 
     @warnreason.command(name="create", aliases=["add"])
     @commands.guild_only()
@@ -395,7 +391,8 @@ class Warnings(commands.Cog):
         if member.top_role >= ctx.author.top_role and ctx.author != ctx.guild.owner:
             return await ctx.send(
                 _(
-                    "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
+                    "The person you're trying to warn is equal or higher than you"
+                    " in the discord hierarchy, you cannot warn them."
                 )
             )
         guild_settings = await self.config.guild(ctx.guild).all()
@@ -616,7 +613,6 @@ class Warnings(commands.Cog):
 
         try:
             user_id = member.id
-            member = member
         except AttributeError:
             user_id = member
             member = guild.get_member(user_id)

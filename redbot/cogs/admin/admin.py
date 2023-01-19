@@ -3,6 +3,7 @@ import logging
 from typing import Tuple, Union
 
 import discord
+
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
@@ -89,7 +90,7 @@ class Admin(commands.Cog):
     async def cog_load(self) -> None:
         await self.handle_migrations()
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 
@@ -254,7 +255,6 @@ class Admin(commands.Cog):
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
         """Edit role settings."""
-        pass
 
     @editrole.command(name="colour", aliases=["color"])
     async def editrole_colour(
@@ -353,7 +353,6 @@ class Admin(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     async def announceset(self, ctx):
         """Change how announcements are sent in this guild."""
-        pass
 
     @announceset.command(name="channel")
     async def announceset_channel(
@@ -444,7 +443,6 @@ class Admin(commands.Cog):
     @checks.admin_or_permissions(manage_roles=True)
     async def selfroleset(self, ctx: commands.Context):
         """Manage selfroles."""
-        pass
 
     @selfroleset.command(name="add")
     async def selfroleset_add(self, ctx: commands.Context, *roles: discord.Role):
@@ -491,7 +489,9 @@ class Admin(commands.Cog):
             if not self.pass_user_hierarchy_check(ctx, role):
                 await ctx.send(
                     _(
-                        "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
+                        "I cannot let you remove {role.name} from being a selfrole"
+                        " because that role is higher than or equal to your highest role"
+                        " in the Discord hierarchy."
                     ).format(role=role)
                 )
                 return
@@ -531,7 +531,9 @@ class Admin(commands.Cog):
                 if not self.pass_user_hierarchy_check(ctx, role):
                     await ctx.send(
                         _(
-                            "I cannot clear the selfroles because the selfrole '{role.name}' is higher than or equal to your highest role in the Discord hierarchy."
+                            "I cannot clear the selfroles because the selfrole"
+                            " '{role.name}' is higher than or equal to your highest role"
+                            " in the Discord hierarchy."
                         ).format(role=role)
                     )
                     return
@@ -558,11 +560,14 @@ class Admin(commands.Cog):
         if await self.config.serverlocked():
             if len(self.bot.guilds) == 1:  # will be 0 once left
                 log.warning(
-                    f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock. You can "
-                    "temporarily disable serverlock by starting up the bot with the --no-cogs flag."
+                    "Leaving guild %r (%r) due to serverlock. You can"
+                    " temporarily disable serverlock by starting up the bot with"
+                    " the --no-cogs flag.",
+                    guild.name,
+                    guild.id,
                 )
             else:
-                log.info(f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock.")
+                log.info("Leaving guild %r (%r) due to serverlock.", guild.name, guild.id)
             await guild.leave()
 
 

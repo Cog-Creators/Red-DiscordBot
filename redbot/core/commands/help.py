@@ -30,20 +30,16 @@
 import abc
 import asyncio
 from collections import namedtuple
-from dataclasses import dataclass, asdict as dc_asdict
+from dataclasses import asdict as dc_asdict, dataclass
 from enum import Enum
-from typing import Union, List, AsyncIterator, Iterable, cast
+from typing import AsyncIterator, Iterable, List, Union, cast
 
 import discord
 from discord.ext import commands as dpy_commands
 
-from . import commands
-from .context import Context
 from ..i18n import Translator
-from ..utils.views import SimpleMenu
 from ..utils import can_user_react_in, menus
-from ..utils.mod import mass_purge
-from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
+from ..utils._internal_utils import format_fuzzy_results, fuzzy_command_search
 from ..utils.chat_formatting import (
     bold,
     box,
@@ -53,6 +49,10 @@ from ..utils.chat_formatting import (
     pagify,
     underline,
 )
+from ..utils.mod import mass_purge
+from ..utils.views import SimpleMenu
+from . import commands
+from .context import Context
 
 __all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
@@ -207,7 +207,6 @@ class HelpFormatterABC(abc.ABC):
 
         The types subclasses must handle are defined as ``HelpTarget``
         """
-        ...
 
 
 class RedHelpFormatter(HelpFormatterABC):
@@ -365,7 +364,9 @@ class RedHelpFormatter(HelpFormatterABC):
 
             a_diff = len(aliases) - len(valid_alias_list)
             aliases_list = [
-                f"{ctx.clean_prefix}{command.parent.qualified_name + ' ' if command.parent else ''}{alias}"
+                f"{ctx.clean_prefix}"
+                f"{command.parent.qualified_name + ' ' if command.parent else ''}"
+                f"{alias}"
                 for alias in valid_alias_list
             ]
             if len(valid_alias_list) < 10:
@@ -483,9 +484,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 ret.append(curr_group)
                 current_count = f_len
                 curr_group = [f]
-        else:
-            if curr_group:
-                ret.append(curr_group)
+
+        if curr_group:
+            ret.append(curr_group)
 
         return ret
 
@@ -519,7 +520,7 @@ class RedHelpFormatter(HelpFormatterABC):
             # This is still necessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
-            # *only* when necessary, by the exact neccessary amount
+            # *only* when necessary, by the exact necessary amount
             # To retain a visual match with prior behavior.
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Callable, ClassVar, List, Optional, Pattern, Sequence, Tuple, Union, cast
+from typing import Callable, ClassVar, Optional, Pattern, Sequence, Tuple, Union, cast
 
 import discord
 
@@ -13,7 +13,7 @@ _CHAN_MENTION_RE = re.compile(r"<#([0-9]{15,20})>$")
 _ROLE_MENTION_RE = re.compile(r"<@&([0-9]{15,20})>$")
 
 
-class MessagePredicate(Callable[[discord.Message], bool]):
+class MessagePredicate:
     """A simple collection of predicates for message events.
 
     These predicates intend to help simplify checks in message events
@@ -857,7 +857,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
             return user.guild
 
 
-class ReactionPredicate(Callable[[discord.Reaction, discord.abc.User], bool]):
+class ReactionPredicate:
     """A collection of predicates for reaction events.
 
     All checks are combined with :meth:`ReactionPredicate.same_context`.

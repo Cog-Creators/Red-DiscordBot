@@ -8,45 +8,39 @@ from __future__ import annotations
 import inspect
 import io
 import re
-import functools
 import weakref
 from typing import (
+    TYPE_CHECKING,
     Any,
     Awaitable,
     Callable,
-    ClassVar,
     Dict,
     List,
     Literal,
+    MutableMapping,
     Optional,
     Tuple,
     TypeVar,
     Union,
-    MutableMapping,
-    TYPE_CHECKING,
-    cast,
 )
 
 import discord
 from discord.ext.commands import (
-    BadArgument,
-    CommandError,
     CheckFailure,
-    DisabledCommand,
-    command as dpy_command_deco,
+    Cog as DPYCog,
+    CogMeta as DPYCogMeta,
     Command as DPYCommand,
+    CommandError,
+    DisabledCommand,
+    Group as DPYGroup,
     GroupCog as DPYGroupCog,
     HybridCommand as DPYHybridCommand,
     HybridGroup as DPYHybridGroup,
-    Cog as DPYCog,
-    CogMeta as DPYCogMeta,
-    Group as DPYGroup,
-    Greedy,
+    command as dpy_command_deco,
 )
 
-from .errors import ConversionFailure
-from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from ..i18n import Translator
+from .requires import PermState, PermStateAllowedStates, PrivilegeLevel, Requires
 
 _T = TypeVar("_T")
 _CogT = TypeVar("_CogT", bound="Cog")
@@ -54,9 +48,10 @@ _CogT = TypeVar("_CogT", bound="Cog")
 
 if TYPE_CHECKING:
     # circular import avoidance
-    from .context import Context
-    from typing_extensions import ParamSpec, Concatenate
     from discord.ext.commands._types import ContextT, Coro
+    from typing_extensions import Concatenate, ParamSpec
+
+    from .context import Context
 
     _P = ParamSpec("_P")
 
@@ -97,8 +92,6 @@ DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable
 class RedUnhandledAPI(Exception):
     """An exception which can be raised to signal a lack of handling specific APIs"""
 
-    pass
-
 
 class CogCommandMixin:
     """A mixin for cogs and commands."""
@@ -106,7 +99,6 @@ class CogCommandMixin:
     @property
     def help(self) -> str:
         """To be defined by subclasses"""
-        ...
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -317,7 +309,8 @@ class Command(CogCommandMixin, DPYCommand):
             for name in (self.name, *self.aliases):
                 if name in RESERVED_COMMAND_NAMES:
                     raise RuntimeError(
-                        f"The name `{name}` cannot be set as a command name. It is reserved for internal use."
+                        f"The name `{name}` cannot be set as a command name."
+                        " It is reserved for internal use."
                     )
         if len(self.qualified_name) > 60:
             raise RuntimeError(
@@ -481,7 +474,7 @@ class Command(CogCommandMixin, DPYCommand):
                 await self._parse_arguments(ctx)
 
             await self.call_before_hooks(ctx)
-        except:
+        except:  # noqa: E722
             if self._max_concurrency is not None:
                 await self._max_concurrency.release(ctx)
             raise
@@ -587,6 +580,7 @@ class Command(CogCommandMixin, DPYCommand):
                     break
         return old_rule, new_rule
 
+    # pylint: disable-next=useless-parent-delegation
     def error(self, coro, /):
         """
         A decorator that registers a coroutine as a local error handler.
@@ -792,6 +786,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         if doc:
             return inspect.cleandoc(translator(doc))
 
+    # pylint: disable-next=redundant-returns-doc
     async def red_get_data_for_user(self, *, user_id: int) -> MutableMapping[str, io.BytesIO]:
         """
 
@@ -922,7 +917,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         """
         raise RedUnhandledAPI()
 
-    async def can_run(self, ctx: "Context", /, **kwargs) -> bool:
+    async def can_run(self, ctx: "Context", /, **_kwargs) -> bool:
         """
         This really just exists to allow easy use with other methods using can_run
         on commands and groups such as help formatters.
@@ -1188,7 +1183,7 @@ class _AlwaysAvailableMixin:
     This particular class is not supported for 3rd party use
     """
 
-    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *_args, **_kwargs) -> bool:
         return not ctx.author.bot
 
     can_see = can_run
@@ -1237,7 +1232,7 @@ class _ForgetMeSpecialCommand(_RuleDropper, Command):
     We need special can_run behavior here
     """
 
-    async def can_run(self, ctx, /, *args, **kwargs) -> bool:
+    async def can_run(self, ctx, /, *_args, **_kwargs) -> bool:
         return await ctx.bot._config.datarequests.allow_user_requests()
 
     can_see = can_run

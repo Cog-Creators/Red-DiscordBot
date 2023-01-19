@@ -1,13 +1,13 @@
+import json
+import shutil
+import subprocess as sp
 from collections import namedtuple
 from pathlib import Path
-import json
-import subprocess as sp
-import shutil
 
 import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormatter
 from redbot.cogs.downloader.installable import Installable, InstalledModule
+from redbot.cogs.downloader.repo_manager import Repo, RepoManager
 
 __all__ = [
     "GIT_VERSION",
@@ -45,14 +45,13 @@ async def fake_run_noprint(*args, **kwargs):
     return res
 
 
-async def fake_current_commit(*args, **kwargs):
+async def fake_current_commit(*_args, **_kwargs):
     return "fake_result"
 
 
 @pytest.fixture
-def repo_manager(tmpdir_factory):
+def repo_manager():
     rm = RepoManager()
-    # rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
     return rm
 
 
@@ -71,7 +70,7 @@ def repo(tmp_path):
 
 
 @pytest.fixture
-def bot_repo(event_loop):
+def bot_repo():
     cwd = Path.cwd()
     return Repo(
         name="Red-DiscordBot",
@@ -163,7 +162,7 @@ def _init_test_repo(destination: Path):
 
 
 @pytest.fixture(scope="session")
-async def _session_git_repo(tmp_path_factory, event_loop):
+async def _session_git_repo(tmp_path_factory):
     # we will import repo only once once per session and duplicate the repo folder
     repo_path = tmp_path_factory.mktemp("session_git_repo")
     repo = Repo(name="redbot-testrepo", url="", branch="master", commit="", folder_path=repo_path)
@@ -179,7 +178,7 @@ async def _session_git_repo(tmp_path_factory, event_loop):
 
 
 @pytest.fixture
-async def git_repo(_session_git_repo, tmp_path, event_loop):
+async def git_repo(_session_git_repo, tmp_path):
     # fixture only copies repo that was imported in _session_git_repo
     repo_path = tmp_path / "redbot-testrepo"
     shutil.copytree(_session_git_repo.folder_path, repo_path)
@@ -194,7 +193,7 @@ async def git_repo(_session_git_repo, tmp_path, event_loop):
 
 
 @pytest.fixture
-async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
+async def cloned_git_repo(_session_git_repo, tmp_path):
     # don't use this if you want to edit origin repo
     repo_path = tmp_path / "redbot-cloned_testrepo"
     repo = Repo(
@@ -209,7 +208,7 @@ async def cloned_git_repo(_session_git_repo, tmp_path, event_loop):
 
 
 @pytest.fixture
-async def git_repo_with_remote(git_repo, tmp_path, event_loop):
+async def git_repo_with_remote(git_repo, tmp_path):
     # this can safely be used when you want to do changes to origin repo
     repo_path = tmp_path / "redbot-testrepo_with_remote"
     repo = Repo(

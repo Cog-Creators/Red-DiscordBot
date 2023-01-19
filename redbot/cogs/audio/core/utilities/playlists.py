@@ -6,7 +6,6 @@ import math
 import random
 import time
 from pathlib import Path
-
 from typing import List, MutableMapping, Optional, Tuple, Union
 
 import aiohttp
@@ -270,12 +269,12 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
         try:
             await context.bot.wait_for("reaction_add", check=pred, timeout=60)
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as exc:
             with contextlib.suppress(discord.HTTPException):
                 await msg.delete()
             raise TooManyMatches(
                 _("Too many matches found and you did not select which one you wanted.")
-            )
+            ) from exc
         if emojis[pred.result] == "\N{CROSS MARK}":
             with contextlib.suppress(discord.HTTPException):
                 await msg.delete()
@@ -625,8 +624,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
-                        "minutes."
+                        "I'm unable to get a track from Lavalink node at the moment,"
+                        " try again in a few minutes."
                     ),
                 )
             except Exception as e:
@@ -654,8 +653,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable to Get Track"),
                     description=_(
-                        "I'm unable to get a track from Lavalink node at the moment, try again in a few "
-                        "minutes."
+                        "I'm unable to get a track from Lavalink node at the moment,"
+                        " try again in a few minutes."
                     ),
                 )
             except Exception as e:

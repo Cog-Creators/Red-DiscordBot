@@ -1,30 +1,17 @@
 # This file is retained in it's slimmest form which handles autorestart for users on
-# windows and osx until we have proper autorestart docs for theses oses
+# windows and osx until we have proper autorestart docs for these oses
 # no new features will be added to this file
 # issues in this file are to be met with removal, not with fixes.
 
-import getpass
+import argparse
 import os
-import platform
 import subprocess
 import sys
-import argparse
-import asyncio
-import aiohttp
 
 from redbot import MIN_PYTHON_VERSION
-from redbot.setup import (
-    basic_setup,
-    remove_instance,
-    remove_instance_interaction,
-    create_backup,
-)
-from redbot.core import __version__, version_info as red_version_info, VersionInfo
-from redbot.core.cli import ExitCodes, confirm
+from redbot.core import __version__
+from redbot.core.cli import ExitCodes
 from redbot.core.data_manager import load_existing_config
-
-if sys.platform == "linux":
-    import distro  # pylint: disable=import-error
 
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
@@ -33,7 +20,7 @@ INTRO = "==========================\nRed Discord Bot - Launcher\n===============
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
 
-PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv("READTHEDOCS", False)
+PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv("READTHEDOCS")
 
 
 def is_venv():

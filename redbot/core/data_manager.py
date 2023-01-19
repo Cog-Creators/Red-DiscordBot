@@ -197,9 +197,8 @@ def core_data_path() -> Path:
     return core_path.resolve()
 
 
-# noinspection PyUnusedLocal
 @deprecated("bundled_data_path() without calling this function")
-def load_bundled_data(cog_instance, init_location: str):
+def load_bundled_data(cog_instance, init_location: str):  # pylint: disable=unused-argument
     pass
 
 

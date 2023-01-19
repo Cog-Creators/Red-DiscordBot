@@ -38,7 +38,7 @@ allowlist
 
 .. code-block:: none
 
-    [p]allowlist 
+    [p]allowlist
 
 .. tip:: Alias: ``whitelist``
 
@@ -84,7 +84,7 @@ allowlist clear
 
 .. code-block:: none
 
-    [p]allowlist clear 
+    [p]allowlist clear
 
 **Description**
 
@@ -105,7 +105,7 @@ allowlist list
 
 .. code-block:: none
 
-    [p]allowlist list 
+    [p]allowlist list
 
 **Description**
 
@@ -151,7 +151,7 @@ autoimmune
 
 .. code-block:: none
 
-    [p]autoimmune 
+    [p]autoimmune
 
 **Description**
 
@@ -215,7 +215,7 @@ autoimmune list
 
 .. code-block:: none
 
-    [p]autoimmune list 
+    [p]autoimmune list
 
 **Description**
 
@@ -359,7 +359,7 @@ bankset prune
 
 .. code-block:: none
 
-    [p]bankset prune 
+    [p]bankset prune
 
 **Description**
 
@@ -562,7 +562,7 @@ blocklist
 
 .. code-block:: none
 
-    [p]blocklist 
+    [p]blocklist
 
 .. tip:: Aliases: ``blacklist``, ``denylist``
 
@@ -605,7 +605,7 @@ blocklist clear
 
 .. code-block:: none
 
-    [p]blocklist clear 
+    [p]blocklist clear
 
 **Description**
 
@@ -624,7 +624,7 @@ blocklist list
 
 .. code-block:: none
 
-    [p]blocklist list 
+    [p]blocklist list
 
 **Description**
 
@@ -668,7 +668,7 @@ command
 
 .. code-block:: none
 
-    [p]command 
+    [p]command
 
 **Description**
 
@@ -980,7 +980,7 @@ command listdisabled
 
 .. code-block:: none
 
-    [p]command listdisabled 
+    [p]command listdisabled
 
 **Description**
 
@@ -1002,7 +1002,7 @@ command listdisabled global
 
 .. code-block:: none
 
-    [p]command listdisabled global 
+    [p]command listdisabled global
 
 **Description**
 
@@ -1021,7 +1021,7 @@ command listdisabled guild
 
 .. code-block:: none
 
-    [p]command listdisabled guild 
+    [p]command listdisabled guild
 
 **Description**
 
@@ -1040,7 +1040,7 @@ command listdisabledcogs
 
 .. code-block:: none
 
-    [p]command listdisabledcogs 
+    [p]command listdisabledcogs
 
 **Description**
 
@@ -1139,7 +1139,7 @@ embedset
 
 .. code-block:: none
 
-    [p]embedset 
+    [p]embedset
 
 **Description**
 
@@ -1302,7 +1302,7 @@ embedset global
 
 .. code-block:: none
 
-    [p]embedset global 
+    [p]embedset global
 
 **Description**
 
@@ -1418,7 +1418,7 @@ helpset
 
 .. code-block:: none
 
-    [p]helpset 
+    [p]helpset
 
 **Description**
 
@@ -1558,7 +1558,7 @@ helpset resetformatter
 
 .. code-block:: none
 
-    [p]helpset resetformatter 
+    [p]helpset resetformatter
 
 **Description**
 
@@ -1577,7 +1577,7 @@ helpset resetsettings
 
 .. code-block:: none
 
-    [p]helpset resetsettings 
+    [p]helpset resetsettings
 
 **Description**
 
@@ -1650,7 +1650,7 @@ helpset showsettings
 
 .. code-block:: none
 
-    [p]helpset showsettings 
+    [p]helpset showsettings
 
 **Description**
 
@@ -1819,7 +1819,7 @@ ignore
 
 .. code-block:: none
 
-    [p]ignore 
+    [p]ignore
 
 **Description**
 
@@ -1870,7 +1870,7 @@ ignore list
 
 .. code-block:: none
 
-    [p]ignore list 
+    [p]ignore list
 
 **Description**
 
@@ -1891,7 +1891,7 @@ ignore server
 
 .. code-block:: none
 
-    [p]ignore server 
+    [p]ignore server
 
 .. tip:: Alias: ``ignore guild``
 
@@ -1915,7 +1915,7 @@ info
 
 .. code-block:: none
 
-    [p]info 
+    [p]info
 
 **Description**
 
@@ -1931,7 +1931,7 @@ invite
 
 .. code-block:: none
 
-    [p]invite 
+    [p]invite
 
 **Description**
 
@@ -1956,7 +1956,7 @@ inviteset
 
 .. code-block:: none
 
-    [p]inviteset 
+    [p]inviteset
 
 **Description**
 
@@ -2056,7 +2056,7 @@ licenseinfo
 
 .. code-block:: none
 
-    [p]licenseinfo 
+    [p]licenseinfo
 
 .. tip:: Alias: ``licenceinfo``
 
@@ -2105,7 +2105,7 @@ localallowlist
 
 .. code-block:: none
 
-    [p]localallowlist 
+    [p]localallowlist
 
 .. tip:: Alias: ``localwhitelist``
 
@@ -2152,13 +2152,13 @@ localallowlist clear
 
 .. code-block:: none
 
-    [p]localallowlist clear 
+    [p]localallowlist clear
 
 **Description**
 
 Clears the allowlist.
 
-This disables the local allowlist and clears all entires.
+This disables the local allowlist and clears all entries.
 
 **Example:**
     - ``[p]localallowlist clear``
@@ -2173,7 +2173,7 @@ localallowlist list
 
 .. code-block:: none
 
-    [p]localallowlist list 
+    [p]localallowlist list
 
 **Description**
 
@@ -2220,7 +2220,7 @@ localblocklist
 
 .. code-block:: none
 
-    [p]localblocklist 
+    [p]localblocklist
 
 .. tip:: Alias: ``localblacklist``
 
@@ -2264,7 +2264,7 @@ localblocklist clear
 
 .. code-block:: none
 
-    [p]localblocklist clear 
+    [p]localblocklist clear
 
 **Description**
 
@@ -2285,7 +2285,7 @@ localblocklist list
 
 .. code-block:: none
 
-    [p]localblocklist list 
+    [p]localblocklist list
 
 **Description**
 
@@ -2330,7 +2330,7 @@ modlogset
 
 .. code-block:: none
 
-    [p]modlogset 
+    [p]modlogset
 
 **Description**
 
@@ -2392,7 +2392,7 @@ modlogset resetcases
 
 .. code-block:: none
 
-    [p]modlogset resetcases 
+    [p]modlogset resetcases
 
 **Description**
 
@@ -2408,7 +2408,7 @@ mydata
 
 .. code-block:: none
 
-    [p]mydata 
+    [p]mydata
 
 **Description**
 
@@ -2426,7 +2426,7 @@ mydata 3rdparty
 
 .. code-block:: none
 
-    [p]mydata 3rdparty 
+    [p]mydata 3rdparty
 
 **Description**
 
@@ -2447,7 +2447,7 @@ mydata forgetme
 
 .. code-block:: none
 
-    [p]mydata forgetme 
+    [p]mydata forgetme
 
 **Description**
 
@@ -2471,7 +2471,7 @@ mydata getmydata
 
 .. code-block:: none
 
-    [p]mydata getmydata 
+    [p]mydata getmydata
 
 **Description**
 
@@ -2489,7 +2489,7 @@ mydata ownermanagement
 
 .. code-block:: none
 
-    [p]mydata ownermanagement 
+    [p]mydata ownermanagement
 
 **Description**
 
@@ -2505,7 +2505,7 @@ mydata ownermanagement allowuserdeletions
 
 .. code-block:: none
 
-    [p]mydata ownermanagement allowuserdeletions 
+    [p]mydata ownermanagement allowuserdeletions
 
 **Description**
 
@@ -2572,7 +2572,7 @@ mydata ownermanagement disallowuserdeletions
 
 .. code-block:: none
 
-    [p]mydata ownermanagement disallowuserdeletions 
+    [p]mydata ownermanagement disallowuserdeletions
 
 **Description**
 
@@ -2643,7 +2643,7 @@ mydata whatdata
 
 .. code-block:: none
 
-    [p]mydata whatdata 
+    [p]mydata whatdata
 
 **Description**
 
@@ -2721,7 +2721,7 @@ servers
 
 .. code-block:: none
 
-    [p]servers 
+    [p]servers
 
 **Description**
 
@@ -2740,7 +2740,7 @@ set
 
 .. code-block:: none
 
-    [p]set 
+    [p]set
 
 **Description**
 
@@ -2790,7 +2790,7 @@ set api list
 
 .. code-block:: none
 
-    [p]set api list 
+    [p]set api list
 
 **Description**
 
@@ -2882,7 +2882,7 @@ set bot avatar remove
 
 .. code-block:: none
 
-    [p]set bot avatar remove 
+    [p]set bot avatar remove
 
 .. tip:: Alias: ``set bot avatar clear``
 
@@ -3121,7 +3121,7 @@ set fuzzy
 
 .. code-block:: none
 
-    [p]set fuzzy 
+    [p]set fuzzy
 
 **Description**
 
@@ -3247,7 +3247,7 @@ set ownernotifications
 
 .. code-block:: none
 
-    [p]set ownernotifications 
+    [p]set ownernotifications
 
 **Description**
 
@@ -3288,7 +3288,7 @@ set ownernotifications listdestinations
 
 .. code-block:: none
 
-    [p]set ownernotifications listdestinations 
+    [p]set ownernotifications listdestinations
 
 **Description**
 
@@ -3307,7 +3307,7 @@ set ownernotifications optin
 
 .. code-block:: none
 
-    [p]set ownernotifications optin 
+    [p]set ownernotifications optin
 
 **Description**
 
@@ -3332,7 +3332,7 @@ set ownernotifications optout
 
 .. code-block:: none
 
-    [p]set ownernotifications optout 
+    [p]set ownernotifications optout
 
 **Description**
 
@@ -3646,7 +3646,7 @@ set serverfuzzy
 
 .. code-block:: none
 
-    [p]set serverfuzzy 
+    [p]set serverfuzzy
 
 **Description**
 
@@ -3707,7 +3707,7 @@ set showsettings
 
 .. code-block:: none
 
-    [p]set showsettings 
+    [p]set showsettings
 
 **Description**
 
@@ -3975,7 +3975,7 @@ set usebotcolour
 
 .. code-block:: none
 
-    [p]set usebotcolour 
+    [p]set usebotcolour
 
 .. tip:: Alias: ``set usebotcolor``
 
@@ -3988,7 +3988,7 @@ Otherwise, the colour used will be the colour of the bot's top role.
 
 **Example:**
     - ``[p]set usebotcolour``
-    
+
 .. _core-command-set-usebuttons:
 
 """"""""""""""
@@ -4002,7 +4002,7 @@ set usebuttons
 .. code-block:: none
 
     [p]set usebuttons [use_buttons]
-    
+
 **Description**
 
 Set a global bot variable for using buttons in menus. When enabled, all usage of
@@ -4087,7 +4087,7 @@ unignore
 
 .. code-block:: none
 
-    [p]unignore 
+    [p]unignore
 
 **Description**
 
@@ -4132,7 +4132,7 @@ unignore server
 
 .. code-block:: none
 
-    [p]unignore server 
+    [p]unignore server
 
 .. tip:: Alias: ``unignore guild``
 
@@ -4180,7 +4180,7 @@ uptime
 
 .. code-block:: none
 
-    [p]uptime 
+    [p]uptime
 
 **Description**
 

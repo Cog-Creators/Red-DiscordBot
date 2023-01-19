@@ -177,7 +177,7 @@ class BaseWrapper:
             return None
         if self.fetch_result is None:
             return None
-        return self.fetch_result(*row)
+        return self.fetch_result(*row)  # pylint: disable=not-callable
 
     async def _fetch_all(
         self, values: MutableMapping
@@ -196,7 +196,7 @@ class BaseWrapper:
                 except Exception as exc:
                     log.verbose("Failed to completed fetch from database", exc_info=exc)
         async for row in AsyncIter(row_result):
-            output.append(self.fetch_result(*row))
+            output.append(self.fetch_result(*row))  # pylint: disable=not-callable
         return output
 
     async def _fetch_random(
@@ -227,7 +227,7 @@ class BaseWrapper:
             return None
         if self.fetch_result is None:
             return None
-        return self.fetch_result(*row)
+        return self.fetch_result(*row)  # pylint: disable=not-callable
 
 
 class YouTubeTableWrapper(BaseWrapper):

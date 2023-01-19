@@ -3,26 +3,27 @@ import contextlib
 import json
 import logging
 import time
-from dateutil.parser import parse as parse_time
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta, timezone
 from random import choice
 from string import ascii_letters
-from datetime import datetime, timedelta, timezone
-import xml.etree.ElementTree as ET
-from typing import ClassVar, Optional, List, Tuple
+from typing import ClassVar, List, Optional, Tuple
 
 import aiohttp
 import discord
+from dateutil.parser import parse as parse_time
+
+from redbot.core.i18n import Translator
+from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelta
 
 from .errors import (
     APIError,
-    OfflineStream,
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
+    OfflineStream,
     StreamNotFound,
     YoutubeQuotaExceeded,
 )
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelta
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
@@ -47,7 +48,6 @@ def rnd(url):
 
 def get_video_ids_from_feed(feed):
     root = ET.fromstring(feed)
-    rss_video_ids = []
     for child in root.iter("{http://www.w3.org/2005/Atom}entry"):
         for i in child.iter("{http://www.youtube.com/xml/schemas/2015}videoId"):
             yield i.text
@@ -76,7 +76,7 @@ class Stream:
     async def is_online(self):
         raise NotImplementedError()
 
-    def make_embed(self):
+    def make_embed(self, data):
         raise NotImplementedError()
 
     def iter_messages(self):
@@ -146,9 +146,9 @@ class YoutubeStream(Stream):
 
         for video_id in get_video_ids_from_feed(rssdata):
             if video_id in self.not_livestreams:
-                log.debug(f"video_id in not_livestreams: {video_id}")
+                log.debug("video_id in not_livestreams: %s", video_id)
                 continue
-            log.debug(f"video_id not in not_livestreams: {video_id}")
+            log.debug("video_id not in not_livestreams: %s", video_id)
             params = {
                 "key": self._token["api_key"],
                 "id": video_id,
@@ -175,7 +175,7 @@ class YoutubeStream(Stream):
                         continue
                     video_data = data.get("items", [{}])[0]
                     stream_data = video_data.get("liveStreamingDetails", {})
-                    log.debug(f"stream_data for {video_id}: {stream_data}")
+                    log.debug("stream_data for %s: %r", video_id, stream_data)
                     if (
                         stream_data
                         and stream_data != "None"
@@ -195,10 +195,10 @@ class YoutubeStream(Stream):
                         self.not_livestreams.append(video_id)
                         if video_id in self.livestreams:
                             self.livestreams.remove(video_id)
-        log.debug(f"livestreams for {self.name}: {self.livestreams}")
-        log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
+        log.debug("livestreams for %s: %r", self.name, self.livestreams)
+        log.debug("not_livestreams for %s: %r", self.name, self.not_livestreams)
         # This is technically redundant since we have the
-        # info from the RSS ... but incase you don't wanna deal with fully rewritting the
+        # info from the RSS ... but in case you don't wanna deal with fully rewriting the
         # code for this part, as this is only a 2 quota query.
         if self.livestreams:
             params = {
@@ -345,7 +345,10 @@ class TwitchStream(Stream):
                 wait_time = reset_time - current_time + 0.1
                 await asyncio.sleep(wait_time)
 
-    async def get_data(self, url: str, params: dict = {}) -> Tuple[Optional[int], dict]:
+    async def get_data(
+        self, url: str, params: Optional[dict] = None
+    ) -> Tuple[Optional[int], dict]:
+        params = params or {}
         header = {"Client-ID": str(self._client_id)}
         if self._bearer is not None:
             header["Authorization"] = f"Bearer {self._bearer}"

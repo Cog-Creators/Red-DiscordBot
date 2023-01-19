@@ -4,7 +4,6 @@ import datetime
 import json
 import random
 import time
-
 from collections import namedtuple
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tuple, Union, cast
@@ -12,9 +11,9 @@ from typing import TYPE_CHECKING, Callable, List, MutableMapping, Optional, Tupl
 import aiohttp
 import discord
 import lavalink
+from lavalink.rest_api import LoadResult, LoadType
 from red_commons.logging import getLogger
 
-from lavalink.rest_api import LoadResult, LoadType
 from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.commands import Cog, Context
@@ -81,6 +80,7 @@ class AudioAPIInterface:
 
     async def get_random_track_from_db(self, tries=0) -> Optional[MutableMapping]:
         """Get a random track from the local database and return it."""
+        del tries
         track: Optional[MutableMapping] = {}
         try:
             query_data = {}
@@ -166,7 +166,7 @@ class AudioAPIInterface:
             log.trace("Running pending writes to database")
             try:
                 tasks: MutableMapping = {"update": [], "insert": [], "global": []}
-                async for k, task in AsyncIter(self._tasks.items()):
+                async for task in AsyncIter(self._tasks.values()):
                     async for t, args in AsyncIter(task.items()):
                         tasks[t].append(args)
                 self._tasks = {}
@@ -288,7 +288,7 @@ class AudioAPIInterface:
         ctx: Context = None,
     ) -> Union[List[MutableMapping], List[str]]:
         """Gets track info from spotify API."""
-
+        del ctx
         if recursive is False:
             (call, params) = self.spotify_api.spotify_format_call(query_type, uri)
             results = await self.spotify_api.make_get_call(call, params)
@@ -343,7 +343,7 @@ class AudioAPIInterface:
             except KeyError:
                 raise SpotifyFetchError(
                     _("This doesn't seem to be a valid Spotify playlist/album URL or code.")
-                )
+                ) from None
         return tracks
 
     async def spotify_query(
@@ -847,7 +847,7 @@ class AudioAPIInterface:
                     valid_global_entry = True
                 if valid_global_entry:
                     log.trace("Querying Global DB api for %r", query)
-                    results, called_api = results, False
+                    called_api = False
         if valid_global_entry:
             pass
         elif lazy is True:
@@ -870,8 +870,8 @@ class AudioAPIInterface:
                 results = await player.load_tracks(query_string)
             except KeyError:
                 results = None
-            except RuntimeError:
-                raise TrackEnqueueError
+            except RuntimeError as exc:
+                raise TrackEnqueueError from exc
         if results is None:
             results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
             valid_global_entry = False

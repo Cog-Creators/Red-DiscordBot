@@ -1,5 +1,4 @@
 import datetime
-import itertools
 import textwrap
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
@@ -202,7 +201,7 @@ def spoiler(text: str, escape_formatting: bool = True) -> str:
 
 def pagify(
     text: str,
-    delims: Sequence[str] = ["\n"],
+    delims: Sequence[str] = ("\n",),
     *,
     priority: bool = False,
     escape_mass_mentions: bool = True,
@@ -329,7 +328,7 @@ def quote(text: str) -> str:
         The marked up text.
 
     """
-    return textwrap.indent(text, "> ", lambda l: True)
+    return textwrap.indent(text, "> ", lambda line: True)
 
 
 def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) -> str:
@@ -481,7 +480,7 @@ def humanize_timedelta(
     try:
         obj = seconds if seconds is not None else timedelta.total_seconds()
     except AttributeError:
-        raise ValueError("You must provide either a timedelta or a number of seconds")
+        raise ValueError("You must provide either a timedelta or a number of seconds") from None
 
     seconds = int(obj)
     periods = [

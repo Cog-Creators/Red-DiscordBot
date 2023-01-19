@@ -31,11 +31,11 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Play all songs in a localtracks folder.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]local folder`
-        ​ ​ ​ ​ ​ ​ ​ ​ Open a menu to pick a folder to queue.
+        \u200b \u200b \u200b \u200b `[p]local folder`
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Open a menu to pick a folder to queue.
 
-        ​ ​ `[p]local folder folder_name`
-        ​ ​ ​ ​ ​ ​ ​ ​ Queues all of the tracks inside the folder_name folder.
+        \u200b \u200b `[p]local folder folder_name`
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Queues all of the tracks inside the folder_name folder.
         """
         if not await self.localtracks_folder_exists(ctx):
             return
@@ -66,12 +66,12 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
         To play an entire folder, use `[p]help local folder` for instructions.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]local play`
-        ​ ​ ​ ​ ​ ​ ​ ​ Open a menu to pick a track.
+        \u200b \u200b \u200b \u200b `[p]local play`
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Open a menu to pick a track.
 
-        ​ ​ ​ ​ `[p]play localtracks\\album_folder\\song_name.mp3`
-        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`
-        ​ ​ ​ ​ ​ ​ ​ ​ Use a direct link relative to the localtracks folder.
+        \u200b \u200b \u200b \u200b `[p]play localtracks\\album_folder\\song_name.mp3`
+        \u200b \u200b \u200b \u200b `[p]play album_folder\\song_name.mp3`
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b Use a direct link relative to the localtracks folder.
         """
         if not await self.localtracks_folder_exists(ctx):
             return
@@ -94,6 +94,7 @@ class LocalTrackCommands(MixinMeta, metaclass=CompositeMetaClass):
             timeout: float,
             emoji: str,
         ):
+            del pages, controls, timeout
             if message:
                 with contextlib.suppress(discord.HTTPException):
                     await message.delete()

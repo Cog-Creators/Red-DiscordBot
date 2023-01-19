@@ -2,7 +2,6 @@ import argparse
 import functools
 import re
 from pathlib import Path
-
 from typing import Final, MutableMapping, Optional, Pattern, Tuple, Union
 
 import discord
@@ -35,24 +34,24 @@ _ = lambda s: s
 _SCOPE_HELP: Final[str] = _(
     """
 Scope must be a valid version of one of the following:
-​ ​ ​ ​ Global
-​ ​ ​ ​ Guild
-​ ​ ​ ​ User
+\u200b \u200b \u200b \u200b Global
+\u200b \u200b \u200b \u200b Guild
+\u200b \u200b \u200b \u200b User
 """
 )
 _USER_HELP: Final[str] = _(
     """
 Author must be a valid version of one of the following:
-​ ​ ​ ​ User ID
-​ ​ ​ ​ User Mention
-​ ​ ​ ​ User Name#123
+\u200b \u200b \u200b \u200b User ID
+\u200b \u200b \u200b \u200b User Mention
+\u200b \u200b \u200b \u200b User Name#123
 """
 )
 _GUILD_HELP: Final[str] = _(
     """
 Guild must be a valid version of one of the following:
-​ ​ ​ ​ Guild ID
-​ ​ ​ ​ Exact guild name
+\u200b \u200b \u200b \u200b Guild ID
+\u200b \u200b \u200b \u200b Exact guild name
 """
 )
 

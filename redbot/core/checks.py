@@ -1,28 +1,25 @@
 import warnings
-from typing import Awaitable, TYPE_CHECKING, Dict
-
-import discord
+from typing import TYPE_CHECKING, Awaitable, Dict
 
 from .commands import (
-    bot_has_permissions,
-    bot_in_a_guild,
-    has_permissions,
-    is_owner,
-    guildowner,
-    guildowner_or_permissions,
     admin,
     admin_or_permissions,
+    bot_has_permissions,
+    bot_in_a_guild,
+    guildowner,
+    guildowner_or_permissions,
+    has_permissions,
+    is_owner,
     mod,
     mod_or_permissions,
 )
 from .utils.mod import (
-    is_mod_or_superior as _is_mod_or_superior,
-    is_admin_or_superior as _is_admin_or_superior,
     check_permissions as _check_permissions,
+    is_admin_or_superior as _is_admin_or_superior,
+    is_mod_or_superior as _is_mod_or_superior,
 )
 
 if TYPE_CHECKING:
-    from .bot import Red
     from .commands import Context
 
 __all__ = [

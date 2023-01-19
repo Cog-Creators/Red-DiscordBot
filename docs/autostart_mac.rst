@@ -18,7 +18,7 @@ Copy the output of that command.
 
 Now run :code:`sudo nano /Library/LaunchDaemons/red.plist`
 
-Paste the following and replace the following: 
+Paste the following and replace the following:
 
 - :code:`username` (but not :code:`UserName`) with your Mac username
 - :code:`path` with the path you copied earlier
@@ -62,7 +62,7 @@ Paste the following and replace the following:
 
 .. note::
 
-    You may add any additional arguments you need to add to the :code:`redbot` command by 
+    You may add any additional arguments you need to add to the :code:`redbot` command by
     adding them to the end of the array under :code:`ProgramArguments`
 
 .. note::

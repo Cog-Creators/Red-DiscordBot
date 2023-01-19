@@ -354,7 +354,7 @@ Developer changelog
 -------------------
 
 | **Important:**
-| If you're using RPC, please see the full annoucement about current state of RPC in main Red server
+| If you're using RPC, please see the full announcement about current state of RPC in main Red server
   `by clicking here <https://discord.com/channels/133049272517001216/411381123101491200/714560168465137694>`_.
 
 
@@ -562,7 +562,7 @@ Core Commands
 *************
 
 - ``[p]set game`` no longer errors when trying to clear the status (:issue:`3630`, :issue:`3628`)
-- All owner notifcations in Core now use proper prefixes in messages (:issue:`3632`)
+- All owner notifications in Core now use proper prefixes in messages (:issue:`3632`)
 - Added ``[p]set playing`` and ``[p]set streaming`` aliases for respectively ``[p]set game`` and ``[p]set stream`` (:issue:`3646`, :issue:`3590`)
 
 ModLog
@@ -874,7 +874,7 @@ Audio
 -----
 
 - Playlist finding is more intuitive.
-- disconnect and repeat commands no longer interfere with eachother.
+- disconnect and repeat commands no longer interfere with each other.
 
 CustomCom
 ---------

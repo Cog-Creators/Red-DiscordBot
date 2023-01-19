@@ -48,7 +48,7 @@ cog
 
 .. code-block:: none
 
-    [p]cog 
+    [p]cog
 
 **Description**
 
@@ -64,7 +64,7 @@ cog checkforupdates
 
 .. code-block:: none
 
-    [p]cog checkforupdates 
+    [p]cog checkforupdates
 
 **Description**
 
@@ -185,7 +185,7 @@ cog listpinned
 
 .. code-block:: none
 
-    [p]cog listpinned 
+    [p]cog listpinned
 
 **Description**
 
@@ -410,7 +410,7 @@ repo
 
 .. code-block:: none
 
-    [p]repo 
+    [p]repo
 
 **Description**
 
@@ -504,7 +504,7 @@ repo list
 
 .. code-block:: none
 
-    [p]repo list 
+    [p]repo list
 
 **Description**
 

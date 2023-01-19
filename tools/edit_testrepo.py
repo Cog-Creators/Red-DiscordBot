@@ -40,7 +40,6 @@ from typing import Tuple
 
 import click
 
-
 MAIN_DIRECTORY = Path(__file__).absolute().parent.parent
 TEST_REPO_EXPORT_PTH: Path = MAIN_DIRECTORY / "redbot" / "pytest" / "downloader_testrepo.export"
 

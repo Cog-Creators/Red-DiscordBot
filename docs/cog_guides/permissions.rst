@@ -50,7 +50,7 @@ permissions
 
 .. code-block:: none
 
-    [p]permissions 
+    [p]permissions
 
 **Description**
 
@@ -68,7 +68,7 @@ permissions acl
 
 .. code-block:: none
 
-    [p]permissions acl 
+    [p]permissions acl
 
 **Description**
 
@@ -88,7 +88,7 @@ permissions acl getglobal
 
 .. code-block:: none
 
-    [p]permissions acl getglobal 
+    [p]permissions acl getglobal
 
 **Description**
 
@@ -106,7 +106,7 @@ permissions acl getserver
 
 .. code-block:: none
 
-    [p]permissions acl getserver 
+    [p]permissions acl getserver
 
 **Description**
 
@@ -124,13 +124,13 @@ permissions acl setglobal
 
 .. code-block:: none
 
-    [p]permissions acl setglobal 
+    [p]permissions acl setglobal
 
 **Description**
 
 Set global rules with a YAML file.
 
-.. warning::    
+.. warning::
     This will override reset *all* global rules
     to the rules specified in the uploaded file.
 
@@ -149,13 +149,13 @@ permissions acl setserver
 
 .. code-block:: none
 
-    [p]permissions acl setserver 
+    [p]permissions acl setserver
 
 **Description**
 
 Set rules for this server with a YAML file.
 
-.. warning::    
+.. warning::
     This will override reset *all* rules in this
     server to the rules specified in the uploaded file.
 
@@ -171,7 +171,7 @@ permissions acl updateglobal
 
 .. code-block:: none
 
-    [p]permissions acl updateglobal 
+    [p]permissions acl updateglobal
 
 **Description**
 
@@ -192,7 +192,7 @@ permissions acl updateserver
 
 .. code-block:: none
 
-    [p]permissions acl updateserver 
+    [p]permissions acl updateserver
 
 **Description**
 
@@ -211,7 +211,7 @@ permissions acl yamlexample
 
 .. code-block:: none
 
-    [p]permissions acl yamlexample 
+    [p]permissions acl yamlexample
 
 **Description**
 
@@ -301,7 +301,7 @@ permissions clearglobalrules
 
 .. code-block:: none
 
-    [p]permissions clearglobalrules 
+    [p]permissions clearglobalrules
 
 **Description**
 
@@ -319,7 +319,7 @@ permissions clearserverrules
 
 .. code-block:: none
 
-    [p]permissions clearserverrules 
+    [p]permissions clearserverrules
 
 **Description**
 
@@ -335,7 +335,7 @@ permissions explain
 
 .. code-block:: none
 
-    [p]permissions explain 
+    [p]permissions explain
 
 **Description**
 

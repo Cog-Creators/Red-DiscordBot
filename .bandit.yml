@@ -393,4 +393,3 @@ weak_cryptographic_key:
   weak_key_size_ec_medium: 224
   weak_key_size_rsa_high: 1024
   weak_key_size_rsa_medium: 2048
-

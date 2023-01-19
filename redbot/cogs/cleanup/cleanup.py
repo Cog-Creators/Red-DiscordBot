@@ -5,13 +5,14 @@ from typing import Callable, List, Optional, Set, Union
 
 import discord
 
-from redbot.core import checks, commands, Config
+from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.commands import RawUserIdConverter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
-from redbot.core.utils.mod import slow_deletion, mass_purge
+from redbot.core.utils.mod import mass_purge, slow_deletion
 from redbot.core.utils.predicates import MessagePredicate
+
 from .checks import check_self_permissions
 from .converters import PositiveInt, RawMessageIds, positive_int
 
@@ -37,7 +38,7 @@ class Cleanup(commands.Cog):
         self.config = Config.get_conf(self, 8927348724, force_registration=True)
         self.config.register_guild(notify=True)
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 
@@ -172,7 +173,6 @@ class Cleanup(commands.Cog):
     @commands.group()
     async def cleanup(self, ctx: commands.Context):
         """Base command for deleting messages."""
-        pass
 
     @cleanup.command()
     @commands.guild_only()
@@ -437,19 +437,19 @@ class Cleanup(commands.Cog):
         channel = ctx.channel
         author = ctx.author
         try:
-            mone = await channel.fetch_message(one)
+            after = await channel.fetch_message(one)
         except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=one))
             )
         try:
-            mtwo = await channel.fetch_message(two)
+            before = await channel.fetch_message(two)
         except discord.errors.NotFound:
             return await ctx.send(
                 _("Could not find a message with the ID of {id}.".format(id=two))
             )
         to_delete = await self.get_messages_for_deletion(
-            channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
+            channel=channel, before=before, after=after, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
         reason = "{}({}) deleted {} messages in channel #{}.".format(
@@ -623,10 +623,7 @@ class Cleanup(commands.Cog):
                 return
 
         # You can always delete your own messages, this is needed to purge
-        can_mass_purge = False
-        if type(author) is discord.Member:
-            me = ctx.guild.me
-            can_mass_purge = ctx.bot_permissions.manage_messages
+        can_mass_purge = type(author) is discord.Member and ctx.bot_permissions.manage_messages
 
         if match_pattern:
 
@@ -740,7 +737,6 @@ class Cleanup(commands.Cog):
     @commands.admin_or_permissions(manage_messages=True)
     async def cleanupset(self, ctx: commands.Context):
         """Manage the settings for the cleanup command."""
-        pass
 
     @commands.guild_only()
     @cleanupset.command(name="notify")

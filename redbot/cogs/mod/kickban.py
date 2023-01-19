@@ -5,17 +5,19 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple, Union
 
 import discord
-from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional, RawUserIdConverter
+
+from redbot.core import checks, commands, i18n, modlog
+from redbot.core.commands import RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
-    pagify,
-    humanize_number,
     bold,
-    humanize_list,
     format_perms_list,
+    humanize_list,
+    humanize_number,
+    pagify,
 )
 from redbot.core.utils.mod import get_audit_reason
+
 from .abc import MixinMeta
 from .utils import is_allowed_by_hierarchy
 
@@ -46,21 +48,22 @@ class KickBanMixin(MixinMeta):
                 # doesn't grant temporary membership
                 # (i.e. they won't be kicked on disconnect)
                 return inv.url
-        else:  # No existing invite found that is valid
-            channels_and_perms = (
-                (channel, channel.permissions_for(guild.me)) for channel in guild.text_channels
-            )
-            channel = next(
-                (channel for channel, perms in channels_and_perms if perms.create_instant_invite),
-                None,
-            )
-            if channel is None:
-                return ""
-            try:
-                # Create invite that expires after max_age
-                return (await channel.create_invite(max_age=max_age)).url
-            except discord.HTTPException:
-                return ""
+
+        # No existing invite found that is valid
+        channels_and_perms = (
+            (channel, channel.permissions_for(guild.me)) for channel in guild.text_channels
+        )
+        channel = next(
+            (channel for channel, perms in channels_and_perms if perms.create_instant_invite),
+            None,
+        )
+        if channel is None:
+            return ""
+        try:
+            # Create invite that expires after max_age
+            return (await channel.create_invite(max_age=max_age)).url
+        except discord.HTTPException:
+            return ""
 
     @staticmethod
     async def _voice_perm_check(
@@ -177,9 +180,10 @@ class KickBanMixin(MixinMeta):
 
         if removed_temp:
             log.info(
-                "{}({}) upgraded the tempban for {} to a permaban.".format(
-                    author.name, author.id, user.id
-                )
+                "%r (%r) upgraded the tempban for %r to a permaban.",
+                author.name,
+                author.id,
+                user.id,
             )
             success_message = _(
                 "User with ID {user_id} was upgraded from a temporary to a permanent ban."
@@ -189,9 +193,13 @@ class KickBanMixin(MixinMeta):
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
-                    "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
-                        author.name, author.id, ban_type, username, user.id, str(days)
-                    )
+                    "%r (%r) %sned %r (%r), deleting %r days worth of messages.",
+                    author.name,
+                    author.id,
+                    ban_type,
+                    username,
+                    user.id,
+                    days,
                 )
                 success_message = _("Done. That felt good.")
             except discord.Forbidden:
@@ -200,9 +208,12 @@ class KickBanMixin(MixinMeta):
                 return False, _("User with ID {user_id} not found").format(user_id=user.id)
             except Exception:
                 log.exception(
-                    "{}({}) attempted to {} {}({}), but an error occurred.".format(
-                        author.name, author.id, ban_type, username, user.id
-                    )
+                    "%r (%r) attempted to %s %r (%r) but an error occurred.",
+                    author.name,
+                    author.id,
+                    ban_type,
+                    username,
+                    user.id,
                 )
                 return False, _("An unexpected error occurred.")
 
@@ -267,11 +278,13 @@ class KickBanMixin(MixinMeta):
                     # 50013: Missing permissions error code or 403: Forbidden status
                     if e.code == 50013 or e.status == 403:
                         log.info(
-                            f"Failed to unban ({uid}) user from "
-                            f"{guild.name}({guild.id}) guild due to permissions."
+                            "Failed to unban (%r) user from %r (%r) guild due to permissions.",
+                            uid,
+                            guild.name,
+                            guild.id,
                         )
                         break  # skip the rest of this guild
-                    log.info(f"Failed to unban member: error code: {e.code}")
+                    log.info("Failed to unban member: error code: %r", e.code)
                 else:
                     # user unbanned successfully
                     guild_tempbans.remove(uid)
@@ -333,14 +346,16 @@ class KickBanMixin(MixinMeta):
                 await member.send(embed=em)
         try:
             await guild.kick(member, reason=audit_reason)
-            log.info("{}({}) kicked {}({})".format(author.name, author.id, member.name, member.id))
+            log.info("%r (%r) kicked %r (%r)", author.name, author.id, member.name, member.id)
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception:
             log.exception(
-                "{}({}) attempted to kick {}({}), but an error occurred.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%r (%r) attempted to kick %r (%r) but an error occurred.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
         else:
             await modlog.create_case(
@@ -430,7 +445,8 @@ class KickBanMixin(MixinMeta):
                 text += "\n".join(errors.values())
             if upgrades:
                 text += _(
-                    "\nFollowing user IDs have been upgraded from a temporary to a permanent ban:\n"
+                    "\nFollowing user IDs have been upgraded"
+                    " from a temporary to a permanent ban:\n"
                 )
                 text += humanize_list(upgrades)
 
@@ -463,7 +479,8 @@ class KickBanMixin(MixinMeta):
 
         for user_id in user_ids:
             if user_id in tempbans:
-                # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
+                # We need to check if a user is tempbanned here
+                # because otherwise they won't be processed later on.
                 continue
             try:
                 await guild.fetch_ban(discord.Object(user_id))
@@ -531,9 +548,10 @@ class KickBanMixin(MixinMeta):
                     tempbans.remove(user_id)
                     upgrades.append(str(user_id))
                     log.info(
-                        "{}({}) upgraded the tempban for {} to a permaban.".format(
-                            author.name, author.id, user_id
-                        )
+                        "%r (%r) upgraded the tempban for %r to a permaban.",
+                        author.name,
+                        author.id,
+                        user_id,
                     )
                     banned.append(user_id)
                 else:
@@ -541,7 +559,7 @@ class KickBanMixin(MixinMeta):
                         await guild.ban(
                             user, reason=audit_reason, delete_message_seconds=days * 86400
                         )
-                        log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
+                        log.info("%r (%r) hackbanned %r", author.name, author.id, user_id)
                     except discord.NotFound:
                         errors[user_id] = _("User with ID {user_id} not found").format(
                             user_id=user_id
@@ -716,24 +734,31 @@ class KickBanMixin(MixinMeta):
             return
         except discord.HTTPException:
             log.exception(
-                "{}({}) attempted to softban {}({}), but an error occurred trying to ban them.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%r (%r) attempted to softban %r (%r) but an error occurred trying to ban them.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
             return
         try:
             await guild.unban(member)
         except discord.HTTPException:
             log.exception(
-                "{}({}) attempted to softban {}({}), but an error occurred trying to unban them.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%r (%r) attempted to softban %r (%r) but an error occurred trying to unban them.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
             return
         else:
             log.info(
-                "{}({}) softbanned {}({}), deleting 1 day worth "
-                "of messages.".format(author.name, author.id, member.name, member.id)
+                "%r (%r) softbanned %r (%r), deleting 1 day worth of messages.",
+                author.name,
+                author.id,
+                member.name,
+                member.id,
             )
             await modlog.create_case(
                 self.bot,

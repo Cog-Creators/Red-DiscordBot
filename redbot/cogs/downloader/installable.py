@@ -6,14 +6,14 @@ from enum import IntEnum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
-from .log import log
-from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
-from .json_mixins import RepoJSONMixin
-
 from redbot.core import VersionInfo
 
+from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
+from .json_mixins import RepoJSONMixin
+from .log import log
+
 if TYPE_CHECKING:
-    from .repo_manager import RepoManager, Repo
+    from .repo_manager import Repo, RepoManager
 
 
 class InstallableType(IntEnum):
@@ -127,10 +127,9 @@ class Installable(RepoJSONMixin):
         else:
             copy_func = functools.partial(shutil.copytree, dirs_exist_ok=True)
 
-        # noinspection PyBroadException
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.name))
-        except:  # noqa: E722
+        except OSError:
             log.exception("Error occurred when copying path: %s", self._location)
             return False
         return True

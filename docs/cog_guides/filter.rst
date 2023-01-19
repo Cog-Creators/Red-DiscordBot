@@ -44,7 +44,7 @@ filter
 
 .. code-block:: none
 
-    [p]filter 
+    [p]filter
 
 **Description**
 
@@ -88,7 +88,7 @@ filter channel
 
 .. code-block:: none
 
-    [p]filter channel 
+    [p]filter channel
 
 **Description**
 
@@ -148,7 +148,7 @@ filter channel list
 
 .. code-block:: none
 
-    [p]filter channel list 
+    [p]filter channel list
 
 **Description**
 
@@ -234,7 +234,7 @@ filter list
 
 .. code-block:: none
 
-    [p]filter list 
+    [p]filter list
 
 **Description**
 
@@ -250,7 +250,7 @@ filter names
 
 .. code-block:: none
 
-    [p]filter names 
+    [p]filter names
 
 **Description**
 
@@ -270,7 +270,7 @@ filterset
 
 .. code-block:: none
 
-    [p]filterset 
+    [p]filterset
 
 **Description**
 

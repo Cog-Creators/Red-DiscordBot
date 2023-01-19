@@ -15,7 +15,7 @@ Basic Usage
 
     from redbot.core import commands
     from redbot.core.i18n import Translator, cog_i18n
-    
+
     _ = Translator("ExampleCog", __file__)
 
     @cog_i18n(_)

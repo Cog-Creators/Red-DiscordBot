@@ -1,11 +1,11 @@
 import logging
 import re
-from typing import Union, Dict
 from datetime import timedelta
+from typing import Dict, Union
 
 from discord.ext.commands.converter import Converter
-from redbot.core import commands
-from redbot.core import i18n
+
+from redbot.core import commands, i18n
 
 log = logging.getLogger("red.cogs.mutes")
 
@@ -33,7 +33,7 @@ _ = i18n.Translator("Mutes", __file__)
 class MuteTime(Converter):
     """
     This will parse my defined multi response pattern and provide usable formats
-    to be used in multiple reponses
+    to be used in multiple responses
     """
 
     async def convert(
@@ -58,6 +58,6 @@ class MuteTime(Converter):
             except OverflowError:
                 raise commands.BadArgument(
                     _("The time provided is too long; use a more reasonable time.")
-                )
+                ) from None
         result["reason"] = argument.strip()
         return result

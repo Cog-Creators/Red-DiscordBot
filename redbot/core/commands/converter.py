@@ -8,26 +8,23 @@ Some of the converters within are included provisionally and are marked as such.
 import functools
 import re
 from datetime import timedelta
-from dateutil.relativedelta import relativedelta
 from typing import (
     TYPE_CHECKING,
-    Generic,
+    Dict,
+    List,
     Optional,
     Optional as NoParseOptional,
-    Tuple,
-    List,
-    Dict,
     Type,
     TypeVar,
     Union as UserInputOptional,
 )
 
-import discord
+from dateutil.relativedelta import relativedelta
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import BadArgument
 
 from ..i18n import Translator
-from ..utils.chat_formatting import humanize_timedelta, humanize_list
+from ..utils.chat_formatting import humanize_timedelta
 
 if TYPE_CHECKING:
     from .context import Context
@@ -137,7 +134,7 @@ def parse_timedelta(
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
-            )
+            ) from None
         if maximum and maximum < delta:
             raise BadArgument(
                 _(
@@ -199,7 +196,7 @@ def parse_relativedelta(
         except OverflowError:
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
-            )
+            ) from None
         return delta
     return None
 
@@ -270,7 +267,8 @@ else:
 if TYPE_CHECKING:
 
     def get_dict_converter(*expected_keys: str, delims: Optional[List[str]] = None) -> Type[dict]:
-        ...
+        del expected_keys, delims
+        return DictConverter
 
 else:
 
@@ -284,6 +282,8 @@ else:
                 type(DictConverter).__call__, *expected_keys, delims=delims
             )
 
+        # pylint checks `if TYPE_CHECKING`'s definition of `DictConverter`
+        # pylint: disable-next=invalid-metaclass
         class ValidatedConverter(DictConverter, metaclass=PartialMeta):
             pass
 
@@ -349,7 +349,8 @@ if TYPE_CHECKING:
         minimum: Optional[timedelta] = None,
         allowed_units: Optional[List[str]] = None,
     ) -> Type[timedelta]:
-        ...
+        del default_unit, maximum, minimum, allowed_units
+        return TimedeltaConverter
 
 else:
 
@@ -396,6 +397,8 @@ else:
                 maximum=maximum,
             )
 
+        # pylint checks `if TYPE_CHECKING`'s definition of `DictConverter`
+        # pylint: disable-next=invalid-metaclass
         class ValidatedConverter(TimedeltaConverter, metaclass=PartialMeta):
             pass
 
@@ -444,7 +447,7 @@ else:
 
 if not TYPE_CHECKING:
 
-    class NoParseOptional:
+    class NoParseOptional:  # noqa: F811
         """
         This can be used instead of `typing.Optional`
         to avoid discord.py special casing the conversion behavior.
@@ -471,7 +474,7 @@ if not TYPE_CHECKING:
     #:
     #: .. warning::
     #:    This converter class is still provisional.
-    UserInputOptional = Optional
+    UserInputOptional = Optional  # noqa: F811
 
 if TYPE_CHECKING:
     CommandConverter = dpy_commands.Command

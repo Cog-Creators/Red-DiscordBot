@@ -20,7 +20,7 @@ command name, like ``[p]help playlist append``.
 In this guide, you will see references to "Lavalink" or the "Lavalink.jar". `Lavalink <https://github.com/freyacodes/Lavalink/>`_ is the
 Java-based audio backend we use to be able to play music through the bot. Most users will
 not have to worry much about Lavalink or what it is, as Audio manages this process for you
-by default. Advanced users can read more about Lavalink and special cases under the 
+by default. Advanced users can read more about Lavalink and special cases under the
 :ref:`Lavalink - Red Community-Supported Advanced Usage<advanced-usage>` section below.
 
 You will also see references to ``managed`` or ``unmanaged`` in regards to the Lavalink.jar.
@@ -32,7 +32,7 @@ for your bot to use. Any time Red is updated and you update your bot, it will pr
 updated Lavalink.jar for your bot. It is important to keep your bot updated as fixes are provided for Lavalink frequently.
 
 .. warning::
-    
+
     All commands should be used in a Discord server, and not in Direct Messages as Audio is not available there.
 
 .. _basic-audio-use:
@@ -80,10 +80,10 @@ The following commands are used for controlling the audio being played, such as 
 Frequently Asked Questions
 --------------------------
 
-**Q: I used a playlist link with some of the playlist related commands and it tells me that it can't find it. 
+**Q: I used a playlist link with some of the playlist related commands and it tells me that it can't find it.
 How can I use this playlist link with playlist commands in audio?**
 
-	Audio uses Red playlists in its commands that take playlist arguments. 
+	Audio uses Red playlists in its commands that take playlist arguments.
 	These playlists can be created and modified using the ``[p]playlist`` group command.
 	When a playlist or song(s) are saved as a Red playlist, it is assigned an ID automatically,
 	and it is also assigned the one-word name you provided it when creating the playlist.
@@ -100,33 +100,33 @@ How can I use this playlist link with playlist commands in audio?**
 
 **Q: How do I get the bot to disconnect from the channel when it's done playing?**
 
-	``[p]audioset dc`` will make the bot auto-disconnect when playback completes and the 
-	queue is empty. 
-	``[p]audioset emptydisconnect`` with a seconds argument greater than 0 will make the bot 
-	auto-disconnect once it's alone in the channel, after the amount of seconds given to the 
+	``[p]audioset dc`` will make the bot auto-disconnect when playback completes and the
+	queue is empty.
+	``[p]audioset emptydisconnect`` with a seconds argument greater than 0 will make the bot
+	auto-disconnect once it's alone in the channel, after the amount of seconds given to the
 	command. This setting takes precedence over ``[p]audioset dc`` if both settings are active.
 
 **Q: How do I use localtracks?**
 
 	See the :ref:`local tracks section<local-tracks>`.
-    
+
 **Q: My console is saying that "Port 2333 is already in use". How can I fix this?**
 
     If you are trying to run multiple bots with Audio, you should follow our guide on
-    :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another process is using the 
+    :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another process is using the
     port, so you need to figure out what is using port 2333 and terminate/disconnect it yourself.
-    
+
 **Q: My terminal is saying that I "must install Java 11 for Lavalink to run". How can I fix this?**
 
     You are getting this error because you have a different version of Java installed, or you don't have
     Java installed at all. As the error states, Java 11 is required, and can be installed from
     `here <https://adoptium.net/temurin/releases/?version=11>`__.
-    
+
     If you have Java 11 installed, and are still getting this error, you will have to manually tell Audio where your Java install is located.
     Use ``[p]llset java <path_to_java_11_executable>``, to make Audio launch Lavalink with a
     specific Java binary. To do this, you will need to locate your ``java.exe``/``java`` file
     in your **Java 11 install**.
-    
+
     Alternatively, update your PATH settings so that Java 11 is the one used by ``java``. However,
     you should confirm that nothing other than Red is running on the machine that requires Java.
 
@@ -188,10 +188,10 @@ Owner-Only Audioset Commands
 Guild-based Audioset Commands
 -----------------------------
 
-* ``[p]audioset notify`` - Toggle extra messages: Audio will display a notification message when a track starts, 
-  showing the song title, artist, and the thumbnail (if enabled and present). This notify message follows the last 
+* ``[p]audioset notify`` - Toggle extra messages: Audio will display a notification message when a track starts,
+  showing the song title, artist, and the thumbnail (if enabled and present). This notify message follows the last
   invoking Audio command - if an Audio command is used in one channel and this setting is on, the notify messages
-  will start to appear in the channel where the command was used. If another Audio command is used in another 
+  will start to appear in the channel where the command was used. If another Audio command is used in another
   channel, notify messages will start appearing in the second channel instead of the first command channel.
 * ``[p]audioset maxvolume`` - Set the max volume for the guild.
 * ``[p]audioset autodeafen`` - Toggle the bot being auto-deafened upon voice channel join.
@@ -204,9 +204,9 @@ Guild-based Audioset Commands
 Spotify Playback and API Keys
 ------------------------------
 
-We will never be able to play directly from Spotify itself as it is against their Terms of Service. Audio can play 
+We will never be able to play directly from Spotify itself as it is against their Terms of Service. Audio can play
 single tracks or playlists from Spotify by looking up the song(s) on YouTube and playing those tracks instead.
-This is possible by providing your bot with a YouTube API key and a Spotify API key. Instructions for setting both 
+This is possible by providing your bot with a YouTube API key and a Spotify API key. Instructions for setting both
 can be found under ``[p]audioset youtubeapi`` and ``[p]audioset spotifyapi``.
 
 The YouTube API keys that are being given out currently only have 10000 units of quota per day, which is equivalent to
@@ -214,7 +214,7 @@ The YouTube API keys that are being given out currently only have 10000 units of
 lookups. For example, with a 500 song Spotify playlist, the bot will be able to fetch the first 100 songs the
 first day the Spotify playlist URL is used with Audio, then the next day it will be able to use the first 100 lookups
 from the local cache, and use the API credits to look up the next 100 songs. After 5 days of playing the Spotify playlist
-through Audio, that playlist will be fully cached locally until the cached entries are set to expire and will not require  
+through Audio, that playlist will be fully cached locally until the cached entries are set to expire and will not require
 any API credits to play songs.
 
 The following commands are relevant:
@@ -360,14 +360,14 @@ Setting up Multiple Red Instances with Audio on the Same Host
 
 .. warning::
 
-    This section provides instructions for setting up an unmanaged Lavalink node that is on the same machine 
-    as the Red bot(s) that need to connect to it. This configuration is supported by the Red community, so 
+    This section provides instructions for setting up an unmanaged Lavalink node that is on the same machine
+    as the Red bot(s) that need to connect to it. This configuration is supported by the Red community, so
     if you need additional help, feel free to join the `Red Support Server <https://discord.gg/red>`__ and ask in the #support channel.
 
-    If you are looking to set up a remote, unmanaged Lavalink node on a different vps or host than the Red 
-    bot(s) that will connect to it, we provide basic instructions in this guide :ref:`here<remote-lavalink>`, but that 
-    configuration is partially unsupported as we do not provide help with network configuration or system 
-    administration. You will be responsible for configuring your network, firewall, and other system 
+    If you are looking to set up a remote, unmanaged Lavalink node on a different vps or host than the Red
+    bot(s) that will connect to it, we provide basic instructions in this guide :ref:`here<remote-lavalink>`, but that
+    configuration is partially unsupported as we do not provide help with network configuration or system
+    administration. You will be responsible for configuring your network, firewall, and other system
     properties to enable playback and for the bot to connect to the remote unmanaged Lavalink server.
 
 If you are wanting to use multiple bots with Audio on the same machine, you'll need to make a few
@@ -383,11 +383,11 @@ Next, open a command prompt/terminal window. Navigate to ``<datapath>/cogs/Audio
 instances - it doesn't matter which bot as all your bots will now use this single instance of Lavalink.
 You can find your ``<datapath>`` with the ``[p]datapath`` command.
 
-Now you need to determine your RAM needs. If your bot has 1GB RAM available, Lavalink should be restricted 
-to perhaps 384MB -> 768MB, depending on the cogs you have installed. If your bot has 2GB of RAM available, 
-a good amount may be 512MB -> 1GB. 
+Now you need to determine your RAM needs. If your bot has 1GB RAM available, Lavalink should be restricted
+to perhaps 384MB -> 768MB, depending on the cogs you have installed. If your bot has 2GB of RAM available,
+a good amount may be 512MB -> 1GB.
 
-Run the following command, where ``Xmx`` specifies the RAM value you have just determined. The MB suffix 
+Run the following command, where ``Xmx`` specifies the RAM value you have just determined. The MB suffix
 is M and the GB suffix is G.
 
 .. code-block:: ini
@@ -435,7 +435,7 @@ Now we need to create a service file so that systemd can do its magic. Run the f
 .. code-block:: sh
 
 	sudo -e /etc/systemd/system/lavalink.service
-	
+
 Next, paste in the example below, but replacing the following:
 
 * ``<Jar executable path>`` - You can find your Java path by running ``which java``.
@@ -444,9 +444,9 @@ Next, paste in the example below, but replacing the following:
 
 .. code-block:: ini
 
-	[Unit]  
-	Description=lavalink  
-	After=multi-user.target  
+	[Unit]
+	Description=lavalink
+	After=multi-user.target
 
 	[Service]
 	ExecStart=<Java executable path> -Djdk.tls.client.protocols=TLSv1.2 -jar < Lavalink path >/Lavalink.jar
@@ -464,7 +464,7 @@ Next, paste in the example below, but replacing the following:
 Finally, we need to start and enable the service. Run the following commands, separately.
 
 .. code-block:: sh
-	
+
 	sudo systemctl start lavalink
 	sudo systemctl enable lavalink
 
@@ -474,7 +474,7 @@ service runs in the background.
 Finally, you can run the following to retrieve logs for the service, when you need them:
 
 .. code-block:: sh
-	
+
 	sudo journalctl -u lavalink
 
 .. _obtaining-the-latest-lavalink:
@@ -489,7 +489,7 @@ Stop your bot. Download the Lavalink.jar file from `here <https://github.com/Cog
 which could alternatively be downloaded by running the following command:
 
 .. code-block:: sh
-    
+
     curl -LOz Lavalink.jar https://github.com/Cog-Creators/Lavalink-Jars/releases/latest/download/Lavalink.jar
 
 Next, stop all instances of Red running on the host, and stop the Lavalink process. Move the new Lavalink.jar
@@ -498,7 +498,7 @@ to where your old Lavalink.jar is located, overwriting the old file.
 Finally, start up the new Lavalink.jar process via a process manager like systemd, or by running the following command:
 
 .. code-block:: sh
-    
+
     java -jar Lavalink.jar -Djdk.tls.client.protocols=TLSv1.2
 
 Start up your bots, and now they will use the latest Lavalink.jar!
@@ -514,11 +514,11 @@ Setting up an unmanaged Lavalink node on a remote VPS or server
     We'd like to thank BreezeQS, as this guide is a supersession of their unofficial bare-bones guide.
 
 This guide explains how to set up an unmanaged Lavalink node on a separate server running Ubuntu 20.04 LTS.
-It is assumed your bot currently uses a managed Lavalink server (Red's default). 
+It is assumed your bot currently uses a managed Lavalink server (Red's default).
 
 .. warning::
 
-    This guide is provided for advice on this topic and this is generally not a supported configuration for 
+    This guide is provided for advice on this topic and this is generally not a supported configuration for
     Red's usage of Lavalink, as it involves system administration and network configuration. However, if you
     run into any issues, feel free to ask for help in the `Red Support Server <https://discord.gg/red>`__, in the #general channel.
 
@@ -543,14 +543,14 @@ following commands one by one.
     sudo apt upgrade -y
     sudo apt install curl nano -y
 
-If you have no preference in which Java version you install on your target system, Red 
+If you have no preference in which Java version you install on your target system, Red
 uses OpenJDK 11 in the managed Lavalink configuration. It can be installed by running:
 
 .. code-block:: sh
 
     sudo apt install openjdk-11-jre-headless -y
 
-Otherwise, Lavalink works well with most versions of Java 11, 13, 15, 16, 17, and 18. Azul 
+Otherwise, Lavalink works well with most versions of Java 11, 13, 15, 16, 17, and 18. Azul
 Zulu builds are suggested, see `here <https://github.com/freyacodes/Lavalink/#requirements>`__ for more information.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -600,7 +600,7 @@ First, let's open the file. You can use any text editor you want, but in this gu
 Run the following command:
 
 .. code-block:: sh
-    
+
     nano application.yml
 
 You will be dropped into the nano text editor with ``application.yml`` opened. The two important fields that we will modify
@@ -629,11 +629,11 @@ Now that Lavalink has been installed and configured, we can start it up. To do s
 that you are inside the lavalink folder, of course:
 
 .. code-block:: sh
-    
+
     java -Djdk.tls.client.protocols=TLSv1.2 -jar Lavalink.jar
 
 On successful start, Lavalink will greet you with a line mentioning that it is ready to accept connections and you can now
-try connecting to it with your bot. 
+try connecting to it with your bot.
 
 Since we did not configure autostart for Lavalink, you will have to keep the console window open or it will be shut down
 and all connections will be dropped. This is similar to how it happens in Red-Discordbot itself.
@@ -683,7 +683,7 @@ highly recommended. But if you know what you are doing, you can skip it if you w
 First, run the following commands:
 
 .. code-block:: sh
-    
+
     cd
     cd lavalink
     nano auto_update.sh
@@ -700,9 +700,9 @@ Now save the file and exit (``CTRL+X``, then ``y``).
 Now, run the following command, which will make the script possible to run:
 
 .. code-block:: sh
-    
+
     chmod a+rx auto_update.sh
-    
+
 If you did it right, the command itself will not output anything. And when running ``ls``, the script will show up in green.
 
 """"""""""""""""""""""""""""""
@@ -757,16 +757,16 @@ Hit ``CTRL+X``, ``y`` and then ENTER to save and exit. We have now registered La
 Starting and Enabling the Lavalink Service
 """"""""""""""""""""""""""""""""""""""""""
 
-Now run the following command to start the Lavalink service and wait for 10-15 seconds: 
+Now run the following command to start the Lavalink service and wait for 10-15 seconds:
 
 .. code-block:: sh
-    
+
     sudo systemctl start lavalink
 
 You can check the service status with the following command:
 
 .. code-block:: sh
-    
+
     sudo journalctl -u lavalink
 
 Keep in mind this will occupy your terminal and you have to hit CTRL+C to stop it before doing something else.
@@ -831,7 +831,7 @@ audioset
 
 .. code-block:: none
 
-    [p]audioset 
+    [p]audioset
 
 **Description**
 
@@ -849,7 +849,7 @@ audioset autodeafen
 
 .. code-block:: none
 
-    [p]audioset autodeafen 
+    [p]audioset autodeafen
 
 **Description**
 
@@ -867,7 +867,7 @@ audioset autoplay
 
 .. code-block:: none
 
-    [p]audioset autoplay 
+    [p]audioset autoplay
 
 **Description**
 
@@ -930,7 +930,7 @@ audioset autoplay reset
 
 .. code-block:: none
 
-    [p]audioset autoplay reset 
+    [p]audioset autoplay reset
 
 **Description**
 
@@ -946,7 +946,7 @@ audioset autoplay toggle
 
 .. code-block:: none
 
-    [p]audioset autoplay toggle 
+    [p]audioset autoplay toggle
 
 **Description**
 
@@ -1029,7 +1029,7 @@ audioset dailyqueue
 
 .. code-block:: none
 
-    [p]audioset dailyqueue 
+    [p]audioset dailyqueue
 
 **Description**
 
@@ -1047,7 +1047,7 @@ audioset dc
 
 .. code-block:: none
 
-    [p]audioset dc 
+    [p]audioset dc
 
 **Description**
 
@@ -1066,7 +1066,7 @@ audioset dj
 
 .. code-block:: none
 
-    [p]audioset dj 
+    [p]audioset dj
 
 **Description**
 
@@ -1121,7 +1121,7 @@ audioset globaldailyqueue
 
 .. code-block:: none
 
-    [p]audioset globaldailyqueue 
+    [p]audioset globaldailyqueue
 
 **Description**
 
@@ -1181,7 +1181,7 @@ audioset logs
 
 .. code-block:: none
 
-    [p]audioset logs 
+    [p]audioset logs
 
 **Description**
 
@@ -1199,7 +1199,7 @@ audioset lyrics
 
 .. code-block:: none
 
-    [p]audioset lyrics 
+    [p]audioset lyrics
 
 **Description**
 
@@ -1271,7 +1271,7 @@ audioset notify
 
 .. code-block:: none
 
-    [p]audioset notify 
+    [p]audioset notify
 
 **Description**
 
@@ -1289,7 +1289,7 @@ audioset persistqueue
 
 .. code-block:: none
 
-    [p]audioset persistqueue 
+    [p]audioset persistqueue
 
 **Description**
 
@@ -1308,7 +1308,7 @@ audioset restart
 
 .. code-block:: none
 
-    [p]audioset restart 
+    [p]audioset restart
 
 **Description**
 
@@ -1326,7 +1326,7 @@ audioset restrict
 
 .. code-block:: none
 
-    [p]audioset restrict 
+    [p]audioset restrict
 
 **Description**
 
@@ -1348,7 +1348,7 @@ audioset restrictions
 
 .. code-block:: none
 
-    [p]audioset restrictions 
+    [p]audioset restrictions
 
 **Description**
 
@@ -1364,7 +1364,7 @@ audioset restrictions blacklist
 
 .. code-block:: none
 
-    [p]audioset restrictions blacklist 
+    [p]audioset restrictions blacklist
 
 **Description**
 
@@ -1396,7 +1396,7 @@ audioset restrictions blacklist clear
 
 .. code-block:: none
 
-    [p]audioset restrictions blacklist clear 
+    [p]audioset restrictions blacklist clear
 
 **Description**
 
@@ -1428,7 +1428,7 @@ audioset restrictions blacklist list
 
 .. code-block:: none
 
-    [p]audioset restrictions blacklist list 
+    [p]audioset restrictions blacklist list
 
 **Description**
 
@@ -1446,7 +1446,7 @@ audioset restrictions global
 
 .. code-block:: none
 
-    [p]audioset restrictions global 
+    [p]audioset restrictions global
 
 **Description**
 
@@ -1462,7 +1462,7 @@ audioset restrictions global blacklist
 
 .. code-block:: none
 
-    [p]audioset restrictions global blacklist 
+    [p]audioset restrictions global blacklist
 
 **Description**
 
@@ -1494,7 +1494,7 @@ audioset restrictions global blacklist clear
 
 .. code-block:: none
 
-    [p]audioset restrictions global blacklist clear 
+    [p]audioset restrictions global blacklist clear
 
 **Description**
 
@@ -1526,7 +1526,7 @@ audioset restrictions global blacklist list
 
 .. code-block:: none
 
-    [p]audioset restrictions global blacklist list 
+    [p]audioset restrictions global blacklist list
 
 **Description**
 
@@ -1542,7 +1542,7 @@ audioset restrictions global whitelist
 
 .. code-block:: none
 
-    [p]audioset restrictions global whitelist 
+    [p]audioset restrictions global whitelist
 
 **Description**
 
@@ -1575,7 +1575,7 @@ audioset restrictions global whitelist clear
 
 .. code-block:: none
 
-    [p]audioset restrictions global whitelist clear 
+    [p]audioset restrictions global whitelist clear
 
 **Description**
 
@@ -1607,7 +1607,7 @@ audioset restrictions global whitelist list
 
 .. code-block:: none
 
-    [p]audioset restrictions global whitelist list 
+    [p]audioset restrictions global whitelist list
 
 **Description**
 
@@ -1623,7 +1623,7 @@ audioset restrictions whitelist
 
 .. code-block:: none
 
-    [p]audioset restrictions whitelist 
+    [p]audioset restrictions whitelist
 
 **Description**
 
@@ -1656,7 +1656,7 @@ audioset restrictions whitelist clear
 
 .. code-block:: none
 
-    [p]audioset restrictions whitelist clear 
+    [p]audioset restrictions whitelist clear
 
 **Description**
 
@@ -1688,7 +1688,7 @@ audioset restrictions whitelist list
 
 .. code-block:: none
 
-    [p]audioset restrictions whitelist list 
+    [p]audioset restrictions whitelist list
 
 **Description**
 
@@ -1722,7 +1722,7 @@ audioset settings
 
 .. code-block:: none
 
-    [p]audioset settings 
+    [p]audioset settings
 
 **Description**
 
@@ -1740,7 +1740,7 @@ audioset spotifyapi
 
 .. code-block:: none
 
-    [p]audioset spotifyapi 
+    [p]audioset spotifyapi
 
 **Description**
 
@@ -1758,7 +1758,7 @@ audioset status
 
 .. code-block:: none
 
-    [p]audioset status 
+    [p]audioset status
 
 **Description**
 
@@ -1776,7 +1776,7 @@ audioset thumbnail
 
 .. code-block:: none
 
-    [p]audioset thumbnail 
+    [p]audioset thumbnail
 
 **Description**
 
@@ -1812,7 +1812,7 @@ audioset youtubeapi
 
 .. code-block:: none
 
-    [p]audioset youtubeapi 
+    [p]audioset youtubeapi
 
 **Description**
 
@@ -1830,7 +1830,7 @@ audiostats
 
 .. code-block:: none
 
-    [p]audiostats 
+    [p]audiostats
 
 **Description**
 
@@ -1848,7 +1848,7 @@ autoplay
 
 .. code-block:: none
 
-    [p]autoplay 
+    [p]autoplay
 
 **Description**
 
@@ -1896,7 +1896,7 @@ disconnect
 
 .. code-block:: none
 
-    [p]disconnect 
+    [p]disconnect
 
 **Description**
 
@@ -1912,7 +1912,7 @@ eq
 
 .. code-block:: none
 
-    [p]eq 
+    [p]eq
 
 **Description**
 
@@ -1949,7 +1949,7 @@ eq list
 
 .. code-block:: none
 
-    [p]eq list 
+    [p]eq list
 
 **Description**
 
@@ -1981,7 +1981,7 @@ eq reset
 
 .. code-block:: none
 
-    [p]eq reset 
+    [p]eq reset
 
 **Description**
 
@@ -2034,7 +2034,7 @@ genre
 
 .. code-block:: none
 
-    [p]genre 
+    [p]genre
 
 **Description**
 
@@ -2050,7 +2050,7 @@ local
 
 .. code-block:: none
 
-    [p]local 
+    [p]local
 
 **Description**
 
@@ -2087,7 +2087,7 @@ local play
 
 .. code-block:: none
 
-    [p]local play 
+    [p]local play
 
 **Description**
 
@@ -2128,7 +2128,7 @@ now
 
 .. code-block:: none
 
-    [p]now 
+    [p]now
 
 **Description**
 
@@ -2144,7 +2144,7 @@ pause
 
 .. code-block:: none
 
-    [p]pause 
+    [p]pause
 
 **Description**
 
@@ -2160,7 +2160,7 @@ percent
 
 .. code-block:: none
 
-    [p]percent 
+    [p]percent
 
 **Description**
 
@@ -2195,7 +2195,7 @@ playlist
 
 .. code-block:: none
 
-    [p]playlist 
+    [p]playlist
 
 **Description**
 
@@ -2936,7 +2936,7 @@ prev
 
 .. code-block:: none
 
-    [p]prev 
+    [p]prev
 
 **Description**
 
@@ -2968,7 +2968,7 @@ queue clean
 
 .. code-block:: none
 
-    [p]queue clean 
+    [p]queue clean
 
 **Description**
 
@@ -2984,7 +2984,7 @@ queue cleanself
 
 .. code-block:: none
 
-    [p]queue cleanself 
+    [p]queue cleanself
 
 **Description**
 
@@ -3000,7 +3000,7 @@ queue clear
 
 .. code-block:: none
 
-    [p]queue clear 
+    [p]queue clear
 
 **Description**
 
@@ -3032,7 +3032,7 @@ queue shuffle
 
 .. code-block:: none
 
-    [p]queue shuffle 
+    [p]queue shuffle
 
 **Description**
 
@@ -3064,7 +3064,7 @@ repeat
 
 .. code-block:: none
 
-    [p]repeat 
+    [p]repeat
 
 **Description**
 
@@ -3116,7 +3116,7 @@ shuffle
 
 .. code-block:: none
 
-    [p]shuffle 
+    [p]shuffle
 
 **Description**
 
@@ -3132,7 +3132,7 @@ shuffle bumped
 
 .. code-block:: none
 
-    [p]shuffle bumped 
+    [p]shuffle bumped
 
 **Description**
 
@@ -3151,7 +3151,7 @@ sing
 
 .. code-block:: none
 
-    [p]sing 
+    [p]sing
 
 **Description**
 
@@ -3183,7 +3183,7 @@ stop
 
 .. code-block:: none
 
-    [p]stop 
+    [p]stop
 
 **Description**
 
@@ -3199,7 +3199,7 @@ summon
 
 .. code-block:: none
 
-    [p]summon 
+    [p]summon
 
 **Description**
 
@@ -3227,12 +3227,12 @@ Set the volume, 1% - 150%.
 Lavalink Setup Commands
 -----------------------
 
-``[p]llset`` group commands are used for advanced management of the connection to the Lavalink 
-server. The subcommands are dynamically available depending on whether Red is managing your 
+``[p]llset`` group commands are used for advanced management of the connection to the Lavalink
+server. The subcommands are dynamically available depending on whether Red is managing your
 Lavalink node or if you are connecting to one you manage yourself, or a service that offers Lavalink
 nodes.
 
-Commands specifically for managed Lavalink nodes can be found in :ref:`this section<managed-node-management-commands>`, 
+Commands specifically for managed Lavalink nodes can be found in :ref:`this section<managed-node-management-commands>`,
 whilst commands for unmanaged Lavalink nodes can be found :ref:`here<unmanaged-node-management-commands>`.
 
 .. _audio-command-llset:
@@ -3247,7 +3247,7 @@ llset
 
 .. code-block:: none
 
-    [p]llset 
+    [p]llset
 
 **Description**
 
@@ -3256,9 +3256,9 @@ manage an unmanaged (external) or managed Lavalink node.
 
 .. warning::
 
-    You should not change any command settings in this group command unless you 
-    have a valid reason to, e.g. been told by someone in the Red-Discord Bot support 
-    server to do so. Changing llset command settings have the potential to break 
+    You should not change any command settings in this group command unless you
+    have a valid reason to, e.g. been told by someone in the Red-Discord Bot support
+    server to do so. Changing llset command settings have the potential to break
     Audio cog connection and playback if the wrong settings are used.
 
 """"""""""""""
@@ -3437,7 +3437,7 @@ changing it can cause significant playback issues.
 .. _audio-command-llset-config-source:
 
 ^^^^^^^^^^^^^^^^^^^
-llset config source 
+llset config source
 ^^^^^^^^^^^^^^^^^^^
 
 **Syntax**

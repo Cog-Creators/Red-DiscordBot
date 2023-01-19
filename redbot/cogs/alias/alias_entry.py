@@ -1,9 +1,10 @@
-from typing import Tuple, Dict, Optional, List, Union
 from re import findall
+from typing import Dict, List, Optional, Tuple, Union
 
 import discord
 from discord.ext.commands.view import StringView  # DEP-WARN
-from redbot.core import commands, Config
+
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
@@ -49,7 +50,6 @@ class AliasEntry:
             Whitespace will be trimmed from both ends.
         :param message:
         :param prefix:
-        :param alias:
         :return:
         """
         known_content_length = len(prefix) + len(self.name)
@@ -194,7 +194,7 @@ class AliasCache:
             try:
                 indices = [int(a[0]) for a in indices]
             except IndexError:
-                raise ArgParseError(_("Arguments must be specified with a number."))
+                raise ArgParseError(_("Arguments must be specified with a number.")) from None
             low = min(indices)
             indices = [a - low for a in indices]
             high = max(indices)

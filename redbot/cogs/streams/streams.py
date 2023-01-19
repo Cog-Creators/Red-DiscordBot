@@ -1,36 +1,35 @@
-import discord
-from redbot.core.utils.chat_formatting import humanize_list
-from redbot.core.bot import Red
-from redbot.core import checks, commands, Config
-from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
-from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
-from redbot.core.utils.chat_formatting import escape, inline, pagify
+import asyncio
+import contextlib
+import logging
+import re
+from collections import defaultdict
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple, Union
 
-from .streamtypes import (
-    PicartoStream,
-    Stream,
-    TwitchStream,
-    YoutubeStream,
-)
+import aiohttp
+import discord
+
+from redbot.core import Config, checks, commands
+from redbot.core.bot import Red
+from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
+from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
+from redbot.core.utils.chat_formatting import escape, humanize_list, inline, pagify
+
+from . import streamtypes as _streamtypes
 from .errors import (
     APIError,
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
     OfflineStream,
     StreamNotFound,
-    StreamsError,
     YoutubeQuotaExceeded,
 )
-from . import streamtypes as _streamtypes
-
-import re
-import logging
-import asyncio
-import aiohttp
-import contextlib
-from datetime import datetime
-from collections import defaultdict
-from typing import Optional, List, Tuple, Union, Dict
+from .streamtypes import (
+    PicartoStream,
+    Stream,
+    TwitchStream,
+    YoutubeStream,
+)
 
 MAX_RETRY_COUNT = 10
 
@@ -81,7 +80,7 @@ class Streams(commands.Cog):
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 
@@ -129,8 +128,8 @@ class Streams(commands.Cog):
             "5. Copy your client ID and your client secret into:\n"
             "{command}"
             "\n\n"
-            "Note: These tokens are sensitive and should only be used in a private channel "
-            "or in DM with the bot."
+            "Note: These tokens are sensitive and should only be used in a private channel"
+            " or in DM with the bot."
         ).format(
             link="https://dev.twitch.tv/console/apps",
             command=inline(
@@ -152,11 +151,12 @@ class Streams(commands.Cog):
             )
             try:
                 tokens["client_secret"]
-                if notified_owner_missing_twitch_secret is True:
-                    await self.config.notified_owner_missing_twitch_secret.set(False)
             except KeyError:
                 if notified_owner_missing_twitch_secret is False:
                     asyncio.create_task(self._notify_owner_about_missing_twitch_secret())
+            else:
+                if notified_owner_missing_twitch_secret is True:
+                    await self.config.notified_owner_missing_twitch_secret.set(False)
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://id.twitch.tv/oauth2/token",
@@ -308,7 +308,6 @@ class Streams(commands.Cog):
     @checks.mod_or_permissions(manage_channels=True)
     async def streamalert(self, ctx: commands.Context):
         """Manage automated stream alerts."""
-        pass
 
     @streamalert.group(name="twitch", invoke_without_command=True)
     async def _twitch(
@@ -497,7 +496,6 @@ class Streams(commands.Cog):
     @checks.mod_or_permissions(manage_channels=True)
     async def streamset(self, ctx: commands.Context):
         """Manage stream alert settings."""
-        pass
 
     @streamset.command(name="timer")
     @checks.is_owner()
@@ -569,7 +567,6 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def message(self, ctx: commands.Context):
         """Manage custom messages for stream alerts."""
-        pass
 
     @message.command(name="mention")
     @commands.guild_only()
@@ -613,7 +610,6 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def mention(self, ctx: commands.Context):
         """Manage mention settings for stream alerts."""
-        pass
 
     @mention.command(aliases=["everyone"])
     @commands.guild_only()
@@ -781,8 +777,6 @@ class Streams(commands.Cog):
             pass
         except StreamNotFound:
             return False
-        except StreamsError:
-            raise
         return True
 
     async def _stream_alerts(self):
@@ -944,7 +938,7 @@ class Streams(commands.Cog):
                                 await role.edit(mentionable=False)
                         await self.save_streams()
             except Exception as e:
-                log.error("An error has occured with Streams. Please report it.", exc_info=e)
+                log.error("An error has occurred with Streams. Please report it.", exc_info=e)
 
         if to_remove:
             for stream in to_remove:

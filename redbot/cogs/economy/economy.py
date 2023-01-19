@@ -2,20 +2,21 @@ import calendar
 import logging
 import random
 from collections import defaultdict, deque, namedtuple
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from math import ceil
-from typing import cast, Iterable, Union, Literal
+from typing import TYPE_CHECKING, Iterable, Literal, cast
 
 import discord
 
-from redbot.core import Config, bank, commands, errors, checks
-from redbot.core.commands.converter import TimedeltaConverter
+from redbot.core import Config, bank, checks, commands, errors
 from redbot.core.bot import Red
+from redbot.core.commands.converter import TimedeltaConverter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import close_menu, menu
+from redbot.core.utils.menus import menu
+
 from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
@@ -108,7 +109,7 @@ class SetParser:
                     "Invalid value, the argument must be an integer,"
                     " optionally preceded with a `+` or `-` sign."
                 )
-            )
+            ) from None
         if argument and argument[0] in allowed:
             if self.sum < 0:
                 self.operation = "withdraw"
@@ -124,6 +125,12 @@ class SetParser:
             self.sum = abs(self.sum)
         else:
             self.operation = "set"
+
+
+if TYPE_CHECKING:
+    Duration = timedelta
+else:
+    Duration = TimedeltaConverter(default_unit="seconds")
 
 
 @cog_i18n(_)
@@ -179,7 +186,6 @@ class Economy(commands.Cog):
     @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
         """Base command to manage the bank."""
-        pass
 
     @_bank.command()
     async def balance(self, ctx: commands.Context, user: discord.Member = commands.Author):
@@ -301,7 +307,8 @@ class Economy(commands.Cog):
         credits_name = await bank.get_currency_name(ctx.guild)
         if await bank.is_global():  # Role payouts will not be used
 
-            # Gets the latest time the user used the command successfully and adds the global payday time
+            # Gets the latest time the user used the command successfully
+            # and adds the global payday time
             next_payday = (
                 await self.config.user(author).next_payday() + await self.config.PAYDAY_TIME()
             )
@@ -594,9 +601,7 @@ class Economy(commands.Cog):
             sign = "  "
             if i == 1:
                 sign = ">"
-            slot += "{}{} {} {}\n".format(
-                sign, *[c.value for c in row]  # pylint: disable=no-member
-            )
+            slot += "{}{} {} {}\n".format(sign, *[c.value for c in row])
 
         payout = PAYOUTS.get(rows[1])
         if not payout:
@@ -624,7 +629,8 @@ class Economy(commands.Cog):
                 await channel.send(
                     _(
                         "You've reached the maximum amount of {currency}! "
-                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                        "Please spend some more \N{GRIMACING FACE}\n"
+                        "{old_balance} -> {new_balance}!"
                     ).format(
                         currency=await bank.get_currency_name(getattr(channel, "guild", None)),
                         old_balance=humanize_number(then),
@@ -768,9 +774,7 @@ class Economy(commands.Cog):
         )
 
     @economyset.command()
-    async def slottime(
-        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
-    ):
+    async def slottime(self, ctx: commands.Context, *, duration: Duration):
         """Set the cooldown for the slot machine.
 
         Examples:
@@ -791,9 +795,7 @@ class Economy(commands.Cog):
         await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
-    async def paydaytime(
-        self, ctx: commands.Context, *, duration: TimedeltaConverter(default_unit="seconds")
-    ):
+    async def paydaytime(self, ctx: commands.Context, *, duration: Duration):
         """Set the cooldown for the payday command.
 
         Examples:

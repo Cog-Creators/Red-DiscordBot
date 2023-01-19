@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import random
 import re
-
 from collections import OrderedDict
 from pathlib import Path
 from string import ascii_letters, digits
@@ -10,19 +9,18 @@ from typing import Final, Pattern
 
 import discord
 import lavalink
-from red_commons.logging import getLogger
-
 from aiohttp import ClientConnectorError
 from discord.ext.commands import CheckFailure
 from lavalink import NodeNotFound, PlayerNotFound
+from red_commons.logging import getLogger
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import can_user_send_messages_in
 from redbot.core.utils.antispam import AntiSpam
-from redbot.core.utils.chat_formatting import box, humanize_list, underline, bold
+from redbot.core.utils.chat_formatting import bold, box, humanize_list, underline
 
-from ...errors import TrackEnqueueError, AudioError
+from ...errors import AudioError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
@@ -282,10 +280,10 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                         and m.author.id == ctx.author.id,
                         timeout=120,
                     )
-                except asyncio.TimeoutError:
+                except asyncio.TimeoutError as exc:
                     with contextlib.suppress(discord.HTTPException):
                         await sent.add_reaction("\N{CROSS MARK}")
-                    raise commands.CheckFailure
+                    raise commands.CheckFailure from exc
                 else:
                     if message.content.strip() != token:
                         with contextlib.suppress(discord.HTTPException):

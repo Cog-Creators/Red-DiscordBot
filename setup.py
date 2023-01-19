@@ -10,7 +10,7 @@ REQUIREMENTS_FOLDER = ROOT_FOLDER / "requirements"
 # Since we're importing `redbot` package, we have to ensure that it's in sys.path.
 sys.path.insert(0, str(ROOT_FOLDER))
 
-from redbot import VersionInfo
+from redbot import VersionInfo  # noqa: E402
 
 version, _ = VersionInfo._get_version(ignore_installed=True)
 
@@ -47,7 +47,7 @@ extras_require["all"] = extras_combined("postgres")
 
 
 python_requires = ">=3.8.1"
-if not os.getenv("TOX_RED", False) or sys.version_info < (3, 12):
+if not os.getenv("TOX_RED") or sys.version_info < (3, 12):
     python_requires += ",<3.12"
 
 # Metadata and options defined in pyproject.toml

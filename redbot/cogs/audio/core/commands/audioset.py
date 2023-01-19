@@ -3,7 +3,6 @@ import contextlib
 import os
 import tarfile
 from pathlib import Path
-
 from typing import Union
 
 import discord
@@ -464,32 +463,32 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set a playlist to auto-play songs from.
 
         **Usage**:
-        ​ ​ ​ ​ `[p]audioset autoplay playlist playlist_name_OR_id [args]`
+        \u200b \u200b \u200b \u200b `[p]audioset autoplay playlist playlist_name_OR_id [args]`
 
         **Args**:
-        ​ ​ ​ ​ The following are all optional:
-        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>
-        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]
-        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Only the bot owner can use this**
+        \u200b \u200b \u200b \u200b The following are all optional:
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --scope <scope>
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --author [user]
+        \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b --guild [guild] **Only the bot owner can use this**
 
         **Scope** is one of the following:
-            ​Global
-        ​ ​ ​ ​ Guild
-        ​ ​ ​ ​ User
+            \u200bGlobal
+        \u200b \u200b \u200b \u200b Guild
+        \u200b \u200b \u200b \u200b User
 
         **Author** can be one of the following:
-        ​ ​ ​ ​ User ID
-        ​ ​ ​ ​ User Mention
-        ​ ​ ​ ​ User Name#123
+        \u200b \u200b \u200b \u200b User ID
+        \u200b \u200b \u200b \u200b User Mention
+        \u200b \u200b \u200b \u200b User Name#123
 
         **Guild** can be one of the following:
-        ​ ​ ​ ​ Guild ID
-        ​ ​ ​ ​ Exact guild name
+        \u200b \u200b \u200b \u200b Guild ID
+        \u200b \u200b \u200b \u200b Exact guild name
 
         Example use:
-        ​ ​ ​ ​ `[p]audioset autoplay playlist MyGuildPlaylist`
-        ​ ​ ​ ​ `[p]audioset autoplay playlist MyGlobalPlaylist --scope Global`
-        ​ ​ ​ ​ `[p]audioset autoplay playlist PersonalPlaylist --scope User --author Draper`
+        \u200b \u200b \u200b \u200b `[p]audioset autoplay playlist MyGuildPlaylist`
+        \u200b \u200b \u200b \u200b `[p]audioset autoplay playlist MyGlobalPlaylist --scope Global`
+        \u200b \u200b \u200b \u200b `[p]audioset autoplay playlist PersonalPlaylist --scope User --author Draper`
         """
         if self.playlist_api is None:
             return await self.send_embed_msg(
@@ -1249,7 +1248,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
     async def command_audioset_youtubeapi(self, ctx: commands.Context):
         """Instructions to set the YouTube API key."""
         message = _(
-            f"1. Go to Google Developers Console and log in with your Google account.\n"
+            "1. Go to Google Developers Console and log in with your Google account.\n"
             "(https://console.developers.google.com/)\n"
             "2. You should be prompted to create a new project (name does not matter).\n"
             "3. Click on Enable APIs and Services at the top.\n"

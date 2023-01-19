@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import discord
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+import discord
 from discord.ext.commands import BadArgument
-from typing import TYPE_CHECKING, Any, List, Optional, Union, Dict
+
+from redbot.core.commands.converter import get_dict_converter
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
-from redbot.core.commands.converter import get_dict_converter
-
 
 if TYPE_CHECKING:
     from redbot.core.commands import Context
@@ -352,7 +352,7 @@ class SetApiModal(discord.ui.Modal):
     async def on_submit(self, interaction: discord.Interaction):
         if not await interaction.client.is_owner(
             interaction.user
-        ):  # Prevent non-bot owners from somehow aquiring and saving the modal.
+        ):  # Prevent non-bot owners from somehow acquiring and saving the modal.
             return await interaction.response.send_message(
                 _("This modal is for bot owners only. Whoops!"), ephemeral=True
             )
@@ -427,6 +427,7 @@ class SetApiView(discord.ui.View):
         style=discord.ButtonStyle.grey,
     )
     async def auth_button(self, interaction: discord.Interaction, button: discord.Button):
+        del button
         return await interaction.response.send_modal(
             SetApiModal(self.default_service, self.default_keys)
         )

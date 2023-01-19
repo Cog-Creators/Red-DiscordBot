@@ -7,8 +7,8 @@ To be used for pull requests that fix a bug
 
 #### Describe the bug being fixed
 
-<!-- 
-If an issue exists for the bug, mention 
+<!--
+If an issue exists for the bug, mention
 that this PR fixes that issue
 -->
 

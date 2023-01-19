@@ -21,11 +21,19 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.abspath(".."))
-sys.path.insert(0, os.path.abspath("_ext"))
+from docutils import nodes
+from sphinx.transforms import SphinxTransform
 
-os.environ["BUILDING_DOCS"] = "1"
+# this `if` keeps flake8 happy about doing imports after making path changes (E402)
+if True:
+    sys.path.insert(0, os.path.abspath(".."))
+    sys.path.insert(0, os.path.abspath("_ext"))
 
+    os.environ["BUILDING_DOCS"] = "1"
+
+from discord import __version__ as dpy_version, version_info as dpy_version_info
+
+from redbot.core import __version__
 
 # -- General configuration ------------------------------------------------
 
@@ -69,9 +77,6 @@ author = "Cog Creators"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from redbot.core import __version__
-from discord import __version__ as dpy_version, version_info as dpy_version_info
-
 # The short X.Y version.
 version = __version__
 # The full version, including alpha/beta/rc tags.
@@ -258,10 +263,6 @@ doctest_test_doctest_blocks = ""
 # Autodoc options
 autodoc_default_options = {"show-inheritance": True}
 autodoc_typehints = "none"
-
-
-from docutils import nodes
-from sphinx.transforms import SphinxTransform
 
 
 # d.py's |coro| substitution leaks into our docs because we don't replace some of the docstrings

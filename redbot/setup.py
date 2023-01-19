@@ -1,29 +1,30 @@
 from redbot import _early_init
 
-# this needs to be called as early as possible
-_early_init()
+# this `if` keeps flake8 happy about doing imports after function call (E402)
+if True:
+    # this needs to be called as early as possible
+    _early_init()
 
 import asyncio
 import json
 import logging
-import sys
 import re
+import sys
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional, Union
+from typing import Any, Dict, Optional
 
 import click
 
-from redbot.core.cli import confirm
-from redbot.core.utils._internal_utils import (
-    safe_delete,
-    create_backup as red_create_backup,
-    cli_level_to_log_level,
-)
 from redbot.core import config, data_manager, drivers
-from redbot.core.cli import ExitCodes
+from redbot.core.cli import ExitCodes, confirm
 from redbot.core.data_manager import appdir, config_dir, config_file
-from redbot.core.drivers import BackendType, IdentifierData
+from redbot.core.drivers import BackendType
+from redbot.core.utils._internal_utils import (
+    cli_level_to_log_level,
+    create_backup as red_create_backup,
+    safe_delete,
+)
 
 conversion_log = logging.getLogger("red.converter")
 
@@ -166,7 +167,8 @@ def get_name(name: str) -> str:
             )
             name = ""
         elif "-" in name and not confirm(
-            "Hyphens (-) in instance names may cause issues. Are you sure you want to continue with this instance name?",
+            "Hyphens (-) in instance names may cause issues."
+            " Are you sure you want to continue with this instance name?",
             default=False,
         ):
             name = ""
@@ -183,10 +185,7 @@ def basic_setup(
     interactive: bool,
     overwrite_existing_instance: bool,
 ):
-    """
-    Creates the data storage folder.
-    :return:
-    """
+    """Creates the data storage folder."""
     if not interactive and not name:
         print(
             "Providing instance name through --instance-name is required"
@@ -536,10 +535,10 @@ def convert(instance: str, backend: str) -> None:
         default_dirs["STORAGE_TYPE"] = target.value
         default_dirs["STORAGE_DETAILS"] = new_storage_details
         save_config(instance, default_dirs)
-        conversion_log.info(f"Conversion to {target} complete.")
+        conversion_log.info("Conversion to %s complete.", target)
     else:
         conversion_log.info(
-            f"Cannot convert {current_backend.value} to {target.value} at this time."
+            "Cannot convert %s to %s at this time.", current_backend.value, target.value
         )
 
 
@@ -560,7 +559,8 @@ def backup(instance: str, destination_folder: Path) -> None:
 def run_cli():
     # Setuptools entry point script stuff...
     try:
-        cli()  # pylint: disable=no-value-for-parameter  # click
+        # https://github.com/PyCQA/pylint/issues/1694
+        cli()  # pylint: disable=no-value-for-parameter
     except KeyboardInterrupt:
         print("Exiting...")
     else:

@@ -1,5 +1,4 @@
 import re
-
 from typing import Final, List, Optional, Pattern, Set, Union
 from urllib.parse import urlparse
 
@@ -69,9 +68,6 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
         """Checks if the query is allowed in this server or globally."""
         if ctx_or_channel:
             guild = ctx_or_channel.guild
-            channel = (
-                ctx_or_channel.channel if isinstance(ctx_or_channel, Context) else ctx_or_channel
-            )
             query = query.lower().strip()
         else:
             guild = None

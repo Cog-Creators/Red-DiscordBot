@@ -3,9 +3,9 @@ from typing import Optional
 
 import aiohttp
 
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core import checks, Config, commands
+from redbot.core import Config, checks, commands
 from redbot.core.commands import UserInputOptional
+from redbot.core.i18n import Translator, cog_i18n
 
 _ = Translator("Image", __file__)
 
@@ -35,7 +35,7 @@ class Image(commands.Cog):
     async def cog_unload(self):
         await self.session.close()
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **_kwargs):
         """Nothing to delete"""
         return
 
@@ -45,7 +45,6 @@ class Image(commands.Cog):
 
         Make sure to set the Client ID using `[p]imgurcreds`.
         """
-        pass
 
     @_imgur.command(name="search", usage="[count] <terms...>")
     async def imgur_search(self, ctx, count: UserInputOptional[int] = 1, *, term: str):
