@@ -40,7 +40,7 @@ Changes
 - Updated the screenshot in `bot_application_guide` to include the message content intent (:issue:`5798`)
 - Unpinned Temurin version on Windows as a fixed version is now available (:issue:`5815`)
 
----
+----
 
 Redbot 3.4.17 (2022-06-07)
 ==========================
@@ -136,7 +136,7 @@ Fixes
 - Pinned Temurin version on Windows until a fixed version becomes available (:issue:`5717`)
 - Fixed git installation instructions in CentOS 7 install guide (:issue:`5700`)
 
----
+----
 
 Redbot 3.4.16 (2021-12-31)
 ==========================
@@ -173,7 +173,7 @@ Changes
 
 - Changed Arch install guide to temporarily use ``python39`` AUR package instead of ``python`` package as Red does not currently support Python 3.10 (:issue:`5518`)
 
----
+----
 
 Redbot 3.4.15 (2021-12-31)
 ==========================
@@ -288,7 +288,7 @@ Fixes
 
 - Removed inaccurate note from Unix install guides about install commands also being used for updating Red (:issue:`5439`)
 
----
+----
 
 Redbot 3.4.14 (2021-09-23)
 ==========================
@@ -344,7 +344,7 @@ Fixes
 
 - Fixed Raspberry Pi OS install guide (:issue:`5314`, :issue:`5328`)
 
----
+----
 
 Redbot 3.4.13 (2021-09-09)
 ==========================
@@ -471,7 +471,7 @@ Fixes
 - Fixed the examples of commands that are only available to people with the mod role (:issue:`5180`)
 - Fixed few other small issues with the documentation :) (:issue:`5048`, :issue:`5092`, :issue:`5149`, :issue:`5207`, :issue:`5209`, :issue:`5215`, :issue:`5219`, :issue:`5220`)
 
----
+----
 
 Redbot 3.4.12 (2021-06-17)
 ==========================
@@ -516,7 +516,7 @@ Changes
 
 - **Cogs - Dev** - ``[p]debug`` command will now confirm the code finished running with a tick reaction (:issue:`5107`)
 
----
+----
 
 Redbot 3.4.11 (2021-06-12)
 ==========================
@@ -543,7 +543,7 @@ Fixes
 
 - Links to the CogBoard in Red's documentation have been updated to use the new domain (:issue:`5124`)
 
----
+----
 
 Redbot 3.4.10 (2021-05-28)
 ==========================
@@ -671,7 +671,7 @@ Removals
 
 - Removed PM2 guide (:issue:`4991`)
 
----
+----
 
 Redbot 3.4.9 (2021-04-06)
 =========================
@@ -682,7 +682,7 @@ discord.py version has been bumped to 1.7.1.
 
 Thanks again to :ghuser:`Rapptz` for quick response on this issue.
 
----
+----
 
 Redbot 3.4.8 (2021-04-06)
 =========================
@@ -808,7 +808,7 @@ Fixes
 
 - Updated Mac install guide with new ``brew`` commands (:issue:`4865`)
 
----
+----
 
 Redbot 3.4.7 (2021-02-26)
 =========================
@@ -845,7 +845,7 @@ Additions
 - |cool| Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
 - |cool| Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
 
----
+----
 
 Redbot 3.4.6 (2021-02-16)
 =========================
@@ -985,7 +985,7 @@ Fixes
 
 - Updated the pip command for Red with the postgres extra in Linux/macOS install guide to work on zsh shell (:issue:`4697`)
 
----
+----
 
 Redbot 3.4.5 (2020-12-24)
 =========================
@@ -1003,7 +1003,7 @@ Fixes
 
 - **Cogs - Streams** - Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
 
----
+----
 
 Redbot 3.4.4 (2020-12-24)
 =========================
@@ -1090,7 +1090,7 @@ Removals
 
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 
----
+----
 
 Redbot 3.4.3 (2020-11-16)
 =========================
@@ -1153,7 +1153,7 @@ Additions
 - |cool| Added `guide for Cog Manager UI <cogmanagerui>` (:issue:`4152`)
 - |cool| Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
 
----
+----
 
 Redbot 3.4.2 (2020-10-28)
 =========================
@@ -1200,7 +1200,7 @@ Changes
 
 - Removed multi-line commands from Linux install guides to avoid confusing readers (:issue:`4550`)
 
----
+----
 
 Redbot 3.4.1 (2020-10-27)
 =========================
@@ -1374,7 +1374,7 @@ Changes
 - Replaced the link to the approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Improved documentation about arguments in command syntax (:issue:`4058`)
 
----
+----
 
 Redbot 3.4.0 (2020-08-17)
 =========================
@@ -1524,7 +1524,7 @@ Removals
 
 - Removed install instructions for Debian Stretch (:issue:`4099`)
 
----
+----
 
 Redbot 3.3.12 (2020-08-18)
 ==========================
@@ -1556,7 +1556,7 @@ Changes
 - **Cogs - Mod** - Added typing to ``[p](un)mute guild`` to indicate that mute is being processed (:issue:`4066`, :issue:`4172`)
 - **Cogs - Streams** - Improve error messages for invalid channel names/IDs (:issue:`4147`, :issue:`4148`)
 
----
+----
 
 Redbot 3.3.11 (2020-08-10)
 ==========================
@@ -1584,7 +1584,7 @@ Fixes
 - **Cogs - Permissions** - ``[p]permissions removeserverrule`` and ``[p]permissions removeglobalrule`` no longer error when trying to remove a rule that doesn't exist (:issue:`4028`, :issue:`4036`)
 - **Cogs - Warnings** - ``[p]warn`` now sends an error message (instead of no feedback) when an unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
 
----
+----
 
 Redbot 3.3.10 (2020-07-09)
 ==========================
@@ -1670,7 +1670,7 @@ Fixes
 
 - **Core - Utils Package** - Fixed incorrect role mention regex in `MessagePredicate` (:issue:`4030`)
 
----
+----
 
 Redbot 3.3.9 (2020-06-12)
 =========================
@@ -1758,7 +1758,7 @@ Changes
 
 - Added Oracle Cloud to free hosting section in :ref:`host-list` (:issue:`3916`)
 
----
+----
 
 Redbot 3.3.8 (2020-05-29)
 =========================
@@ -1845,14 +1845,14 @@ Changes
 - Revised install instructions (:issue:`3847`)
 - Improved navigation in `document about updating Red <update_red>` (:issue:`3856`, :issue:`3849`)
 
----
+----
 
 Redbot 3.3.7 (2020-04-28)
 =========================
 
 This is a hotfix release fixing issue with generating messages for new cases in Modlog.
 
----
+----
 
 Redbot 3.3.6 (2020-04-27)
 =========================
@@ -1932,7 +1932,7 @@ Changes
 - ``pyenv`` instructions will now update ``pyenv`` if it's already installed (:issue:`3740`)
 - Updated Python version in ``pyenv`` instructions (:issue:`3740`)
 
----
+----
 
 Redbot 3.3.5 (2020-04-09)
 =========================
@@ -1953,7 +1953,7 @@ Fixes
 
 - **Cogs - Alias** - Fixed regression in ``[p]alias add`` that caused it to reject commands containing arguments (:issue:`3734`)
 
----
+----
 
 Redbot 3.3.4 (2020-04-05)
 =========================
@@ -1998,7 +1998,7 @@ Changes
 
 - Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
 
----
+----
 
 Redbot 3.3.3 (2020-03-28)
 =========================
@@ -2091,7 +2091,7 @@ Fixes
 
 - Fixed install instructions for Mac (:issue:`3675`, :issue:`3436`)
 
----
+----
 
 Redbot 3.3.2 (2020-02-28)
 =========================
@@ -2190,7 +2190,7 @@ Changes
 - Added separate headers for each event predicate class for better navigation (:issue:`3595`, :issue:`3164`)
 - Improved wording of explanation for ``required_cogs`` key in `guide_publish_cogs` (:issue:`3520`)
 
----
+----
 
 Redbot 3.3.1 (2020-02-05)
 =========================
@@ -2243,7 +2243,7 @@ Changes
 - Added ``-e`` flag to ``journalctl`` command in systemd guide so that it takes the user to the end of logs automatically (:issue:`3483`)
 - Improved usage of apt update in docs (:issue:`3464`)
 
----
+----
 
 Redbot 3.3.0 (2020-01-26)
 =========================
@@ -2320,7 +2320,7 @@ Fixes
 
 - We've made some small fixes to inaccurate instructions about installing with pyenv (:issue:`3434`)
 
----
+----
 
 Redbot 3.2.3 (2020-01-17)
 =========================
@@ -2398,7 +2398,7 @@ Fixes
 - Updated the documentation with the minimum supported git version (:issue:`3371`)
 - Fixed install instructions for Debian to also work with Debian Stretch (:issue:`3352`)
 
----
+----
 
 Redbot 3.2.2 (2020-01-10)
 =========================
@@ -2420,7 +2420,7 @@ Fixes
 
 - Corrected venv docs to use the actually supported Python version (:issue:`3325`, :issue:`3324`)
 
----
+----
 
 Redbot 3.2.1 (2020-01-10)
 =========================
@@ -2442,7 +2442,7 @@ Fixes
 - **Core - Command-line Interfaces** - Fixed Mongo conversion from being incorrectly blocked (:issue:`3316`, :issue:`3319`)
 - **Cogs - Admin** - Fixed announcer not creating a message for success feedback (:issue:`3320`)
 
----
+----
 
 Redbot 3.2.0 (2020-01-09)
 =========================
@@ -2832,14 +2832,14 @@ Fixes
 - Updated the docs footer copyright to 2018-2019 (:issue:`3105`)
 - Updated copyright notices on License and RTD config to 2020 (:issue:`3259`)
 
----
+----
 
 Redbot 3.1.9 (2020-01-08)
 =========================
 
 This is a maintenance release patching a denial of service issue with Audio.
 
----
+----
 
 Redbot 3.1.8 (2019-11-19)
 =========================
@@ -2847,7 +2847,7 @@ Redbot 3.1.8 (2019-11-19)
 This is a hotfix release updating discord.py to fix a full bot crash when emoji reaction is added/removed.
 This was caused by Discord API changes.
 
----
+----
 
 Redbot 3.1.7 (2019-11-05)
 =========================
@@ -2869,28 +2869,28 @@ Fixes
 - **Core - Dependencies** - Added partial mitigation for issues with running Red on Python 3.8 (`1c64abe <https://github.com/Cog-Creators/Red-DiscordBot/commit/1c648abea21c28cd3b912d1cb2fee6cf2960e352>`__)
 - **Cogs - Audio** - Fixed issues with SoundCloud playback (`989e16b <https://github.com/Cog-Creators/Red-DiscordBot/commit/989e16b20b814971e01a8657dedf4d9b45c23ed1>`__)
 
----
+----
 
 Redbot 3.1.6 (2019-10-18)
 =========================
 
 This is a hotfix release updating discord.py for a critical issue related to voice connections.
 
----
+----
 
 Redbot 3.1.5 (2019-07-31)
 =========================
 
 This is a maintenance release fixing issues with playback of YouTube tracks.
 
----
+----
 
 Redbot 3.1.4 (2019-07-16)
 =========================
 
 This is a hotfix release fixing issues with broken custom commands and modlog cases.
 
----
+----
 
 Redbot 3.1.3 (2019-07-14)
 =========================
@@ -2977,7 +2977,7 @@ Fixes
 - Fixed code examples in Bank, Config, and ModLog API documentation (:issue:`2775`, :issue:`2780`, :issue:`2860`)
 - Fixed the code example for the documentation of `Command.error` decorator and added a note with clarifications (:issue:`2760`)
 
----
+----
 
 Redbot 3.1.2 (2019-05-31)
 =========================
@@ -3051,14 +3051,14 @@ Changes
 
 - **Core - Utils Package** - `menu()` now accepts `functools.partial` (:issue:`2718`, :issue:`2720`)
 
----
+----
 
 Redbot 3.1.1 (2019-05-15)
 =========================
 
 This is a hotfix release fixing issues related to fuzzy command search that were happening with the new help formatter.
 
----
+----
 
 Redbot 3.1.0 (2019-05-15)
 =========================
@@ -3168,7 +3168,7 @@ Fixes
 - **Core - Utils Package** - Fixed spelling of the `Tunnel`'s method from ``files_from_attatch()`` to `files_from_attach() <Tunnel.files_from_attach()>`; old name was left for backwards compatibility (:issue:`2496`)
 - **Core - Utils Package** - Fixed behavior of ``Tunnel.react_close()`` - now when tunnel closes, the message will be sent to the other end (:issue:`2507`)
 
----
+----
 
 Redbot 3.0.2 (2019-02-24)
 =========================
@@ -3185,7 +3185,7 @@ Fixes
 - **Cogs - Permissions** - Fixed rules loading for cogs (`431cdf1 <https://github.com/Cog-Creators/Red-DiscordBot/commit/431cdf1ad4247fbe40f940e39bac4c919b470937>`__)
 - **Cogs - Trivia - Lists** - Fixed a typo in ``cars`` trivia (:issue:`2475`)
 
----
+----
 
 Redbot 3.0.1 (2019-02-17)
 =========================
@@ -3232,7 +3232,7 @@ Fixes
 
 - **Core - Utils Package** - ``MessagePredicate.lower_contained_in()`` now actually lowers the message content before trying to match (:issue:`2399`)
 
----
+----
 
 Redbot 3.0.0 (2019-01-28)
 =========================
