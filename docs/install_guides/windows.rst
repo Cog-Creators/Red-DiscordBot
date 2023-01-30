@@ -127,17 +127,17 @@ Installing Red
 .. attention:: You may need to restart your computer after installing dependencies
                for the PATH changes to take effect.
 
-Run **one** of the following set of commands, depending on what extras you want installed
+Choose **one** of the following commands to install Red.
 
-  * Normal installation:
+To install without additional config backend support:
 
-    .. prompt:: batch
-        :prompts: (redenv) C:\\>
+.. prompt:: batch
+    :prompts: (redenv) C:\\>
 
-        python -m pip install -U pip wheel
-        python -m pip install -U Red-DiscordBot
+    python -m pip install -U pip wheel
+    python -m pip install -U Red-DiscordBot
 
-  * With PostgreSQL support:
+Or, to install with PostgreSQL support:
 
 
 .. attention:: The default JSON driver is faster in most scenarios, the PostgresSQL driver is
@@ -146,12 +146,11 @@ Run **one** of the following set of commands, depending on what extras you want 
                 slowdowns while using the JSON driver, you will be actively hampering your bots performance
                 by using PostgresSQL instead of JSON unless your bot meets the single scenario mentioned above.
 
+.. prompt:: batch
+    :prompts: (redenv) C:\\>
 
-    .. prompt:: batch
-        :prompts: (redenv) C:\\>
-
-        python -m pip install -U pip wheel
-        python -m pip install -U Red-DiscordBot[postgres]
+    python -m pip install -U pip wheel
+    python -m pip install -U Red-DiscordBot[postgres]
 
 --------------------------
 Setting Up and Running Red

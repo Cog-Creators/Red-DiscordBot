@@ -2,7 +2,7 @@
 Installing Red
 --------------
 
-Choose one of the following commands to install Red.
+Choose **one** of the following commands to install Red.
 
 To install without additional config backend support:
 
