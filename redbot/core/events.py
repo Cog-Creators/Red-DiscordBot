@@ -213,6 +213,7 @@ def init_events(bot, cli_flags):
 
         if driver_type == "Postgres":
             from redbot.setup import POSTGRES_DRIVER_WARNING
+
             rich_console.print(POSTGRES_DRIVER_WARNING)
 
         bot._red_ready.set()
