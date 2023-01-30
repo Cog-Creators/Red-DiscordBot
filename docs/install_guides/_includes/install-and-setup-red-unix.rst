@@ -13,6 +13,8 @@ To install without additional config backend support:
     python -m pip install -U Red-DiscordBot
 
 Or, to install with PostgreSQL support:
+
+
 .. attention:: The default JSON driver is faster in most scenarios, the PostgresSQL driver is
                 not properly optimized for SQL and data is stored in JSON format in a single row. It is
                 only recommended if you have a large number of servers or a large number of users and notice
