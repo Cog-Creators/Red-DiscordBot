@@ -690,8 +690,18 @@ class Trivia(commands.Cog):
         TRIVIA_LIST_SCHEMA.validate(trivia_dict)
 
         buffer.seek(0)
-        with file.open("wb") as fp:
-            fp.write(buffer.read())
+        try:
+            with file.open("wb") as fp:
+                fp.write(buffer.read())
+        except FileNotFoundError as e:
+            await ctx.send(
+                _(
+                    "There was an error saving the file.\n"
+                    "Please check the filename and try again, as it could be longer than your system supports."
+                )
+            )
+            return
+
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(
