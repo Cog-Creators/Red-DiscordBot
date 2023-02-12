@@ -243,8 +243,8 @@
 
 
 "Category: Docs - Changelogs":
-  - docs/changelog_*.rst
-  - docs/release_notes_*.rst
+  - CHANGES.rst
+  - docs/changelog.rst
 "Category: Docs - For Developers":
   - docs/framework_events.rst
   - docs/guide_cog_creation.rst
@@ -279,6 +279,7 @@
   - any:
       - '*'
       - '!README.md'
+      - '!CHANGES.rst'
   # .gitattributes files
   - '**/.gitattributes'
   # GitHub configuration files, with the exception of CI configuration
