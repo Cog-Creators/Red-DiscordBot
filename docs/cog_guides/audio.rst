@@ -3281,7 +3281,7 @@ or
 
 Toggle using unmanaged (user-managed) Lavalink nodes - requires an existing Lavalink 
 node for Audio to work, if enabled. This command disables the managed (bot-managed) 
-Lavalink server: if you do not have an unmanaged Lavalink node available, you will be 
+Lavalink server: if you do not have an unmanaged Lavalink node set up, you will be 
 unable to use Audio while this is enabled.
 
 """"""""""
