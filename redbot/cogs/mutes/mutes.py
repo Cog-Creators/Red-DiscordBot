@@ -428,7 +428,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         for result in results:
             if not result:
                 continue
-            _mmember, channel, reason = result
+            _member, channel, reason = result
             unmuted_channels.remove(channel)
         modlog_reason = _("Automatic unmute")
 
