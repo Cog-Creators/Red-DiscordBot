@@ -376,7 +376,7 @@ necessary modifications.
 Firstly, stop all Red bots. For each bot using Audio:
 
 1. Start the bot.
-2. Run the command ``[p]llset external``.
+2. Run the command ``[p]llset unmanaged``.
 3. Stop the bot.
 
 Next, open a command prompt/terminal window. Navigate to ``<datapath>/cogs/Audio`` for any of your bot
@@ -806,7 +806,7 @@ Do not use quotes in these commands. For example, ``[p]llset host 192.168.10.101
 
 .. code-block:: none
 
-    [p]llset external
+    [p]llset unmanaged
     [p]llset host "yourlavalinkip"
     [p]llset port "port"
     [p]llset password "password"
@@ -3252,7 +3252,7 @@ llset
 **Description**
 
 Manage Lavalink node configuration settings. This command holds all commands to
-manage an unmanaged (external) or managed Lavalink node.
+manage an unmanaged (user-managed) or managed (bot-managed) Lavalink node.
 
 .. warning::
 
@@ -3261,21 +3261,28 @@ manage an unmanaged (external) or managed Lavalink node.
     server to do so. Changing llset command settings have the potential to break 
     Audio cog connection and playback if the wrong settings are used.
 
-""""""""""""""
-llset external
-""""""""""""""
+"""""""""""""""
+llset unmanaged
+"""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llset external
+    [p]llset unmanaged
+
+or 
+
+.. code-block:: none
+
+    [p]llsetup unmanaged
 
 **Description**
 
-Toggle using external Lavalink nodes - requires an existing external Lavalink node for
-Audio to work, if enabled. This command disables the managed Lavalink server: if you do
-not have an external Lavalink node you will be unable to use Audio while this is enabled.
+Toggle using unmanaged (user-managed) Lavalink nodes - requires an existing Lavalink 
+node for Audio to work, if enabled. This command disables the managed (bot-managed) 
+Lavalink server: if you do not have an unmanaged Lavalink node set up, you will be 
+unable to use Audio while this is enabled.
 
 """"""""""
 llset info
@@ -3691,7 +3698,7 @@ llset host
 **Description**
 
 Set the Lavalink node host. This command sets the connection host which
-Audio will use to connect to an external Lavalink node.
+Audio will use to connect to an unmanaged Lavalink node.
 
 **Arguments**
 
@@ -3712,7 +3719,7 @@ llset password
 **Description**
 
 Set the Lavalink node password. This command sets the connection password which
-Audio will use to connect to an external Lavalink node.
+Audio will use to connect to an unmanaged Lavalink node.
 
 **Arguments**
 
@@ -3733,7 +3740,7 @@ llset port
 **Description**
 
 Set the Lavalink node port. This command sets the connection port which
-Audio will use to connect to an external Lavalink node.
+Audio will use to connect to an unmanaged Lavalink node.
 
 **Arguments**
 
@@ -3754,4 +3761,4 @@ llset secured
 **Description**
 
 Set the Lavalink node connection to secured. This toggle sets the connection type
-to secured or unsecured when connecting to an external Lavalink node.
+to secured or unsecured when connecting to an unmanaged Lavalink node.
