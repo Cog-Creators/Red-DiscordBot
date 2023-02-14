@@ -334,7 +334,7 @@ def _update_logger_class():
 
 
 def _early_init():
-    # This function replaces logger so we preferrably (though not necessarily) want that to happen
+    # This function replaces logger so we preferably (though not necessarily) want that to happen
     # before importing anything that calls `logging.getLogger()`, i.e. `asyncio`.
     _update_logger_class()
     _update_event_loop_policy()
