@@ -1,9 +1,10 @@
 import discord
+from discord.abc import Snowflake
 from discord.utils import MISSING
 from discord.enums import AppCommandType
 from discord.app_commands import Command, Group, ContextMenu
 from discord.app_commands.errors import CommandAlreadyRegistered
-from typing import Dict, Tuple, Union, Optional, Any
+from typing import Dict, Tuple, Union, Optional, Sequence
 
 
 class RedTree(discord.app_commands.CommandTree):
@@ -22,7 +23,7 @@ class RedTree(discord.app_commands.CommandTree):
     
     def add_command(
         self,
-        command: Union[Command[Any, ..., Any], ContextMenu, Group],
+        command: Union[Command, ContextMenu, Group],
         /,
         *args,
         guild: Optional[Snowflake] = MISSING,
@@ -39,6 +40,8 @@ class RedTree(discord.app_commands.CommandTree):
             return super().add_command(command, *args, guild=guild, guilds=guilds, override=override, **kwargs)
         
         if isinstance(command, ContextMenu):
+            name = command.name
+            type = command.type.value
             key = (name, None, type)
             
             # Handle cases where the command already is in the tree
@@ -50,6 +53,7 @@ class RedTree(discord.app_commands.CommandTree):
                 del self._context_menus[key]
             
             self._disabled_context_menus[key] = command
+            return
             
         if not isinstance(command, (Command, Group)):
             raise TypeError(f'Expected an application command, received {command.__class__.__name__} instead')
@@ -75,26 +79,26 @@ class RedTree(discord.app_commands.CommandTree):
         guild: Optional[Snowflake] = None,
         type: AppCommandType = AppCommandType.chat_input,
         **kwargs,
-    ) -> Optional[Union[Command[Any, ..., Any], ContextMenu, Group]]:
+    ) -> Optional[Union[Command, ContextMenu, Group]]:
         """Removes an application command from this tree."""
         if guild is not None:
-            return super().remove_command(self, command, *args, guild=guild, type=type, **kwargs)
+            return super().remove_command(command, *args, guild=guild, type=type, **kwargs)
         if type is AppCommandType.chat_input:
             return (
-                self._default_global_commands.pop(command, None)
-                or super().remove_command(self, command, *args, guild=guild, type=type, **kwargs)
+                self._disabled_global_commands.pop(command, None)
+                or super().remove_command(command, *args, guild=guild, type=type, **kwargs)
             )
         elif type in (AppCommandType.user, AppCommandType.message):
             key = (command, None, type.value)
             return (
-                self._default_context_menus.pop(key, None)
-                or super().remove_command(self, command, *args, guild=guild, type=type, **kwargs)
+                self._disabled_context_menus.pop(key, None)
+                or super().remove_command(command, *args, guild=guild, type=type, **kwargs)
             )
 
     def clear_commands(self, *args, guild: Optional[Snowflake], type: Optional[AppCommandType] = None, **kwargs) -> None:
         """Clears all application commands from the tree."""
         if guild is not None:
-            return super().clear_commands(self, *args, guild=guild, type=type, **kwargs)
+            return super().clear_commands(*args, guild=guild, type=type, **kwargs)
         
         if type is None or type is AppCommandType.chat_input:
             self._global_commands.clear()
@@ -108,40 +112,38 @@ class RedTree(discord.app_commands.CommandTree):
                 for (name, _guild_id, value), cmd in self._disabled_context_menus.items()
                 if value != type.value
             }
-        return super().clear_commands(self, *args, guild=guild, type=type, **kwargs)
+        return super().clear_commands(*args, guild=guild, type=type, **kwargs)
             
-    async def red_check_enabled(self, bot):
+    async def red_check_enabled(self):
         """Restructures the commands in this tree, enabling commands that are enabled and disabling commands that are disabled.
         
         After running this function, the tree will be populated with enabled commands only.
         """
-        enabled_commands = await bot.list_enabled_app_commands()
-        
-        to_remove = []
-        to_add = []
+        enabled_commands = await self.client.list_enabled_app_commands()
         
         for command in enabled_commands["slash"]:
             if command in self._disabled_global_commands:
-                to_add.append(self._disabled_global_commands[command])
+                super().add_command(self._disabled_global_commands[command])
+                del self._disabled_global_commands[command]
         for command in enabled_commands["message"]:
-            key = (command, None, AppCommandType.message)
+            key = (command, None, AppCommandType.message.value)
             if key in self._disabled_context_menus:
-                to_add.append(self._disabled_context_menus[key])
+                super().add_command(self._disabled_context_menus[key])
+                del self._disabled_context_menus[key]
         for command in enabled_commands["user"]:
-            key = (command, None, AppCommandType.user)
+            key = (command, None, AppCommandType.user.value)
             if key in self._disabled_context_menus:
-                to_add.append(self._disabled_context_menus[key])
+                super().add_command(self._disabled_context_menus[key])
+                del self._disabled_context_menus[key]
         
         for command in self._global_commands:
             if command not in enabled_commands["slash"]:
-                to_remove.append((command, AppCommandType.chat_input))
+                com = super().remove_command(command, type=AppCommandType.chat_input)
+                self._global_commands[command] = com
         for command, guild_id, command_type in self._context_menus:
             if command_type is AppCommandType.message and command not in enabled_commands["message"]:
-                to_remove.append((command, AppCommandType.message))
+                com = super().remove_command(command, type=AppCommandType.message)
+                self._context_menus[(command, None, AppCommandType.message.value)] = com
             elif command_type is AppCommandType.user and command not in enabled_commands["user"]:
-                to_remove.append((command, AppCommandType.user))
-        
-        for command, command_type in to_remove:
-            super().remove_command(command, type=command_type)
-        for command in to_add:
-            super().add_command(command)
+                com = super().remove_command(command, type=AppCommandType.user)
+                self._context_menus[(command, None, AppCommandType.user.value)] = com

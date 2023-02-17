@@ -1708,7 +1708,7 @@ class Red(
         else:
             raise TypeError("command type must be one of chat_input, message, user")
         async with cfg as curr_commands:
-            if command_name not in curr_commands:
+            if command_name in curr_commands:
                 curr_commands.remove(command_name)
     
     async def list_enabled_app_commands(self) -> Dict[str, List[str]]:
@@ -1840,6 +1840,7 @@ class Red(
                     added_hooks.append(hook)
 
             await super().add_cog(cog, guild=guild, guilds=guilds)
+            await self.tree.red_check_enabled()
             self.dispatch("cog_add", cog)
             if "permissions" not in self.extensions:
                 cog.requires.ready_event.set()

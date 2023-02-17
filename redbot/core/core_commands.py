@@ -1978,7 +1978,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         
         await self.bot.enable_app_command(command_name, raw_type)
-        await self.bot.tree.red_check_enabled(self.bot)
+        await self.bot.tree.red_check_enabled()
         await ctx.send(_("Enabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
         
     @slash.command(name="disable")
@@ -2013,7 +2013,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
         
         await self.bot.disable_app_command(command_name, raw_type)
-        await self.bot.tree.red_check_enabled(self.bot)
+        await self.bot.tree.red_check_enabled()
         await ctx.send(_("Disabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
 
     @slash.command(name="enablecog")
