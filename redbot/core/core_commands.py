@@ -1940,6 +1940,121 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
+    # TODO: Guild owner permissions for guild scope slash commands?
+    @commands.group()
+    @checks.is_owner()
+    async def slash(self, ctx: commands.Context):
+        """Base command for managing what application commands are able to be used on [botname]."""
+        
+    @slash.command(name="enable")
+    async def slash_enable(self, ctx: commands.Context, command_name: str, command_type: str="slash"):
+        """Marks an application command as being enabled, allowing it to be added to the bot.
+
+        See commands available to enable with `[p]slash list`.
+
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<command_name>` - The command name to enable. Only the top level name of a group command should be used.
+            - `[command_type]` - What type of application command to enable. Must be one of `slash`, `message`, or `user`. Defaults to `slash`.
+        """
+        command_type = command_type.lower().strip()
+        
+        if command_type == "slash":
+            raw_type = discord.enums.AppCommandType.chat_input
+        elif command_type == "message":
+            raw_type = discord.enums.AppCommandType.message
+        elif command_type == "user":
+            raw_type = discord.enums.AppCommandType.user
+        else:
+            await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
+            return
+        
+        current_settings = await self.bot.list_enabled_app_commands()
+        current_settings = current_settings[command_type]
+        
+        if command_name in current_settings:
+            await ctx.send(_("That application command is already enabled."))
+            return
+        
+        await self.bot.enable_app_command(command_name, raw_type)
+        await self.bot.tree.red_check_enabled(self.bot)
+        await ctx.send(_("Enabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
+        
+    @slash.command(name="disable")
+    async def slash_disable(self, ctx: commands.Context, command_name: str, command_type: str="slash"):
+        """Marks an application command as being disabled, preventing it from being added to the bot.
+
+        See commands available to disable with `[p]slash list`.
+
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<command_name>` - The command name to disable. Only the top level name of a group command should be used.
+            - `[command_type]` - What type of application command to disable. Must be one of `slash`, `message`, or `user`. Defaults to `slash`.
+        """
+        command_type = command_type.lower().strip()
+        
+        if command_type == "slash":
+            raw_type = discord.enums.AppCommandType.chat_input
+        elif command_type == "message":
+            raw_type = discord.enums.AppCommandType.message
+        elif command_type == "user":
+            raw_type = discord.enums.AppCommandType.user
+        else:
+            await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
+            return
+        
+        current_settings = await self.bot.list_enabled_app_commands()
+        current_settings = current_settings[command_type]
+        
+        if command_name not in current_settings:
+            await ctx.send(_("That application command is already disabled."))
+            return
+        
+        await self.bot.disable_app_command(command_name, raw_type)
+        await self.bot.tree.red_check_enabled(self.bot)
+        await ctx.send(_("Disabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
+
+    @slash.command(name="enablecog")
+    async def slash_enablecog(self, ctx: commands.Context, cog_name):
+        """Marks all application commands in a cog as being enabled, allowing them to be added to the bot.
+        
+        See a list of cogs with application commands with `[p]slash list`.
+        
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
+        """
+        ...
+    
+    @slash.command(name="disablecog")
+    async def slash_disablecog(self, ctx: commands.Context, cog_name):
+        """Marks all application commands in a cog as being disabled, preventing them from being added to the bot.
+        
+        See a list of cogs with application commands with `[p]slash list`.
+        
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<cog_name>` - The cog to disable commands from. This argument is case sensitive.
+        """
+        ...
+    
+    @slash.command(name="list")
+    async def slash_list(self, ctx: commands.Context):
+        """Marks all application commands in a cog as being enabled, allowing them to be added to the bot.
+        
+        See a list of cogs with application commands with `[p]slash list`.
+        
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
+        """
+        ...
+
     @commands.command(name="shutdown")
     @checks.is_owner()
     async def _shutdown(self, ctx: commands.Context, silently: bool = False):

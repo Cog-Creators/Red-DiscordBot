@@ -34,6 +34,7 @@ from typing import (
 from types import MappingProxyType
 
 import discord
+from discord.enums import AppCommandType
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
@@ -53,6 +54,7 @@ from .settings_caches import (
     I18nManager,
 )
 from .rpc import RPCMixin
+from .tree import RedTree
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
@@ -144,6 +146,9 @@ class Red(
             datarequests__allow_user_requests=True,
             datarequests__user_requests_are_strict=True,
             use_buttons=False,
+            enabled_slash_commands=[],
+            enabled_user_commands=[],
+            enabled_message_commands=[],
         )
 
         self._config.register_guild(
@@ -231,7 +236,7 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        super().__init__(*args, help_command=None, **kwargs)
+        super().__init__(*args, help_command=None, tree_cls=RedTree, **kwargs)
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
@@ -1669,6 +1674,53 @@ class Red(
             self.unregister_rpc_handler(meth)
 
         return cog
+
+    async def enable_app_command(self, command_name: str, command_type: AppCommandType=AppCommandType.chat_input) -> None:
+        """
+        Mark an application command as being enabled.
+        
+        Enabled commands are able to be added to the bot's tree, are able to be synced, and can be invoked.
+        """
+        if command_type is AppCommandType.chat_input:
+            cfg = self._config.enabled_slash_commands()
+        elif command_type is AppCommandType.message:
+            cfg = self._config.enabled_message_commands()
+        elif command_type is AppCommandType.user:
+            cfg = self._config.enabled_user_commands()
+        else:
+            raise TypeError("command type must be one of chat_input, message, user")
+        async with cfg as curr_commands:
+            if command_name not in curr_commands:
+                curr_commands.append(command_name)
+
+    async def disable_app_command(self, command_name: str, command_type: AppCommandType=AppCommandType.chat_input) -> None:
+        """
+        Mark an application command as being disabled.
+        
+        Disabled commands are not added to the bot's tree, are not able to be synced, and cannot be invoked.
+        """
+        if command_type is AppCommandType.chat_input:
+            cfg = self._config.enabled_slash_commands()
+        elif command_type is AppCommandType.message:
+            cfg = self._config.enabled_message_commands()
+        elif command_type is AppCommandType.user:
+            cfg = self._config.enabled_user_commands()
+        else:
+            raise TypeError("command type must be one of chat_input, message, user")
+        async with cfg as curr_commands:
+            if command_name not in curr_commands:
+                curr_commands.remove(command_name)
+    
+    async def list_enabled_app_commands(self) -> Dict[str, List[str]]:
+        """List the currently enabled application command names."""
+        curr_slash_commands = await self._config.enabled_slash_commands()
+        curr_message_commands = await self._config.enabled_message_commands()
+        curr_user_commands = await self._config.enabled_user_commands()
+        return {
+            "slash": curr_slash_commands,
+            "message": curr_message_commands,
+            "user": curr_user_commands,
+        }
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
