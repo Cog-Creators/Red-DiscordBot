@@ -1947,7 +1947,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Base command for managing what application commands are able to be used on [botname]."""
         
     @slash.command(name="enable")
-    async def slash_enable(self, ctx: commands.Context, command_name: str, command_type: str="slash"):
+    async def slash_enable(self, ctx: commands.Context, command_name: str, command_type: Literal["slash", "message", "user"]="slash"):
         """Marks an application command as being enabled, allowing it to be added to the bot.
 
         See commands available to enable with `[p]slash list`.
@@ -1982,7 +1982,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("Enabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
         
     @slash.command(name="disable")
-    async def slash_disable(self, ctx: commands.Context, command_name: str, command_type: str="slash"):
+    async def slash_disable(self, ctx: commands.Context, command_name: str, command_type: Literal["slash", "message", "user"]="slash"):
         """Marks an application command as being disabled, preventing it from being added to the bot.
 
         See commands available to disable with `[p]slash list`.

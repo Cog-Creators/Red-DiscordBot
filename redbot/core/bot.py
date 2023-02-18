@@ -1639,6 +1639,7 @@ class Red(
 
         try:
             await lib.setup(self)
+            await self.tree.red_check_enabled()
         except Exception as e:
             await self._remove_module_references(lib.__name__)
             await self._call_module_finalizers(lib, name)
@@ -1840,7 +1841,6 @@ class Red(
                     added_hooks.append(hook)
 
             await super().add_cog(cog, guild=guild, guilds=guilds)
-            await self.tree.red_check_enabled()
             self.dispatch("cog_add", cog)
             if "permissions" not in self.extensions:
                 cog.requires.ready_event.set()
