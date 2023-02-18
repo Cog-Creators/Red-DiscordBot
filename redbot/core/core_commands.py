@@ -2044,16 +2044,25 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     
     @slash.command(name="list")
     async def slash_list(self, ctx: commands.Context):
-        """Marks all application commands in a cog as being enabled, allowing them to be added to the bot.
+        """List the slash commands the bot can see, and whether or not they are enabled.
         
-        See a list of cogs with application commands with `[p]slash list`.
-        
-        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
-
-        **Arguments:**
-            - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
+        This command shows the state that will be changed to when `[p]slash sync` is run.
         """
         ...
+    
+    @slash.command(name="sync")
+    async def slash_sync(self, ctx: commands.Context, guild: discord.Guild=None):
+        """Syncs the slash settings to discord.
+        
+        Settings from `[p]slash list` will be synced with discord, changing what commands appear for users.
+        This should be run sparingly, make all necessary changes before running this command.
+        
+        **Arguments:**
+            - `[guild]` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
+        """
+        if guild:
+            guild = guild.id
+        await self.bot.tree.sync(guild=guild)
 
     @commands.command(name="shutdown")
     @checks.is_owner()
