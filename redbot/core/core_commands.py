@@ -1940,7 +1940,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
-    # TODO: Guild owner permissions for guild scope slash commands?
+    # TODO: Guild owner permissions for guild scope slash commands and syncing?
     @commands.group()
     @checks.is_owner()
     async def slash(self, ctx: commands.Context):
@@ -2062,7 +2062,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         if guild:
             guild = guild.id
-        await self.bot.tree.sync(guild=guild)
+        try:
+            await self.bot.tree.sync(guild=guild)
+        except discord.Forbidden as e:
+            # Should only be possible when syncing a guild, but just in case
+            if not guild:
+                raise e
+            await ctx.send(_("I need the `applications.commands` scope in this server to be able to do that. Reinvite me with that scope first."))
+        except Exception as e:
+            raise e
+        else:
+            await ctx.tick()
 
     @commands.command(name="shutdown")
     @checks.is_owner()

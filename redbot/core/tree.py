@@ -1,11 +1,32 @@
 import discord
 from discord.abc import Snowflake
-from discord.utils import MISSING
+from discord.utils import MISSING, _is_submodule
 from discord.enums import AppCommandType
 from discord.app_commands import Command, Group, ContextMenu
-from discord.app_commands.errors import CommandAlreadyRegistered
+from discord.app_commands.errors import (
+    AppCommandError,
+    BotMissingPermissions,
+    CheckFailure,
+    CommandAlreadyRegistered,
+    CommandInvokeError,
+    CommandNotFound,
+    CommandOnCooldown,
+    NoPrivateMessage,
+    TransformerError,
+)
+
+from .i18n import Translator
+from .utils.chat_formatting import format_perms_list, inline
+
+import logging
+import traceback
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Tuple, Union, Optional, Sequence
 
+
+log = logging.getLogger("red")
+
+_ = Translator(__name__, __file__)
 
 class RedTree(discord.app_commands.CommandTree):
     """A container that holds application command information.
@@ -166,3 +187,84 @@ class RedTree(discord.app_commands.CommandTree):
         for command, type in to_remove_context:
             com = super().remove_command(command, type=type)
             self._discabled_context_menus[(command, None, type.value)] = com
+
+    async def on_error(self, interaction: discord.Interaction, error: AppCommandError, /, *args, **kwargs) -> None:
+        # TODO: very weak way to handle this, decide how to manage sending in the channel
+        if interaction.response.is_done():
+            send = interaction.followup.send
+        else:
+            send = interaction.response.send_message
+        
+        if isinstance(error, CommandNotFound):
+            await send(_("Command not found."))
+            log.warning(
+                f"Application command {error.name} could not be resolved. "
+                "It may be from a cog that was updated or unloaded. "
+                "Consider running [p]slash sync to resolve this issue."
+            )
+        elif isinstance(error, CommandInvokeError):
+            log.exception(
+                "Exception in command '{}'".format(error.command.qualified_name),
+                exc_info=error.original,
+            )
+            exception_log = "Exception in command '{}'\n" "".format(error.command.qualified_name)
+            exception_log += "".join(
+                traceback.format_exception(type(error), error, error.__traceback__)
+            )
+            interaction.client._last_exception = exception_log
+
+            message = await interaction.client._config.invoke_error_msg()
+            if not message:
+                if interaction.user.id in interaction.client.owner_ids:
+                    message = inline(
+                        _("Error in command '{command}'. Check your console or logs for details.")
+                    )
+                else:
+                    message = inline(_("Error in command '{command}'."))
+            await send(message.replace("{command}", error.command.qualified_name))
+        elif isinstance(error, TransformerError):
+            # TODO
+            await send("transformer error, command may be out of date :(")
+        elif isinstance(error, BotMissingPermissions):
+            # TODO: This isn't what is done in the text command version, but that requires a subclass of BotMissingPermissions
+            await send(error)
+        elif isinstance(error, NoPrivateMessage):
+            # Seems to be only called normally by the has_role check
+            await send(_("That command is not available in DMs."))
+        elif isinstance(error, CommandOnCooldown):
+            if interaction.client._bypass_cooldowns and interaction.user.id in interaction.client.owner_ids:
+                # TODO: There's no easy `reset_cooldown` method, and there's no easy `invoke` method, so I don't know if it's feasible to support this for slash?
+                pass
+            relative_time = discord.utils.format_dt(
+                datetime.now(timezone.utc) + timedelta(seconds=error.retry_after), "R"
+            )
+            msg = _("This command is on cooldown. Try again {relative_time}.").format(
+                relative_time=relative_time
+            )
+            await send(msg, delete_after=error.retry_after)
+        elif isinstance(error, CheckFailure):
+            await send(_("You are not permitted to use this command."))
+        else:
+            log.exception(type(error).__name__, exc_info=error)
+
+    def _remove_with_module(self, name: str, *args, **kwargs) -> None:
+        """Handles cases where a module raises an exception in the loading process, but added commands to the tree.
+        
+        Duplication of the logic in the super class, but for the containers used by this subclass.
+        """
+        super()._remove_with_module(name, *args, **kwargs)
+        remove = []
+        for key, cmd in self._disabled_context_menus.items():
+            if cmd.module is not None and _is_submodule(name, cmd.module):
+                remove.append(key)
+
+        for key in remove:
+            del self._disabled_context_menus[key]
+
+        remove = []
+        for key, cmd in self._disabled_global_commands.items():
+            if cmd.module is not None and _is_submodule(name, cmd.module):
+                remove.append(key)
+
+        for key in remove:
+            del self._disabled_global_commands[key]
