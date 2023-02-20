@@ -607,7 +607,7 @@ class TwitchTeam(TwitchMeta):
             online_members = await self._request_team_member_data(team_data["users"])
             final_data["online_members"] = online_members
 
-            return final_data
+            return self.make_embed(final_data), online_members
 
         elif team_code == 401:
             raise InvalidTwitchCredentials()
@@ -615,3 +615,12 @@ class TwitchTeam(TwitchMeta):
             raise TwitchTeamNotFound()
         else:
             raise APIError(team_code, team_data)
+
+    @staticmethod
+    def make_embed(data):
+        embed = discord.Embed(title=data["team_display_name"], color=0x6441A4)
+        embed.set_thumbnail(url=data["thumbnail_url"])
+        embed.set_image(url=data["background_image_url"])
+        embed.add_field(name=_("Info"), value=data["info"], inline=False)
+        embed.add_field(name=_("Online members"), value=len(data["online_members"]), inline=False)
+        return embed
