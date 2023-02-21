@@ -188,15 +188,19 @@ class RedTree(discord.app_commands.CommandTree):
             com = super().remove_command(command, type=type)
             self._discabled_context_menus[(command, None, type.value)] = com
 
+    @staticmethod
+    async def _send_from_interaction(interaction, *args, **kwargs):
+        """Util for safely sending a message from an interaction."""
+        ctx = await interaction.client.get_context(interaction)
+        try:
+            await ctx.send(*args, ephemeral=True, **kwargs)
+        except discord.HTTPException:
+            await ctx.channel.send(*args, **kwargs)
+
     async def on_error(self, interaction: discord.Interaction, error: AppCommandError, /, *args, **kwargs) -> None:
-        # TODO: very weak way to handle this, decide how to manage sending in the channel
-        if interaction.response.is_done():
-            send = interaction.followup.send
-        else:
-            send = interaction.response.send_message
-        
+        """Fallback error handler for app commands."""
         if isinstance(error, CommandNotFound):
-            await send(_("Command not found."))
+            await self._send_from_interaction(interaction, _("Command not found."))
             log.warning(
                 f"Application command {error.name} could not be resolved. "
                 "It may be from a cog that was updated or unloaded. "
@@ -221,29 +225,26 @@ class RedTree(discord.app_commands.CommandTree):
                     )
                 else:
                     message = inline(_("Error in command '{command}'."))
-            await send(message.replace("{command}", error.command.qualified_name))
+            await self._send_from_interaction(interaction, message.replace("{command}", error.command.qualified_name))
         elif isinstance(error, TransformerError):
             # TODO
-            await send("transformer error, command may be out of date :(")
+            await self._send_from_interaction(interaction, "transformer error, command may be out of date :(")
         elif isinstance(error, BotMissingPermissions):
             # TODO: This isn't what is done in the text command version, but that requires a subclass of BotMissingPermissions
-            await send(error)
+            await self._send_from_interaction(interaction, error)
         elif isinstance(error, NoPrivateMessage):
             # Seems to be only called normally by the has_role check
-            await send(_("That command is not available in DMs."))
+            await self._send_from_interaction(interaction, _("That command is not available in DMs."))
         elif isinstance(error, CommandOnCooldown):
-            if interaction.client._bypass_cooldowns and interaction.user.id in interaction.client.owner_ids:
-                # TODO: There's no easy `reset_cooldown` method, and there's no easy `invoke` method, so I don't know if it's feasible to support this for slash?
-                pass
             relative_time = discord.utils.format_dt(
                 datetime.now(timezone.utc) + timedelta(seconds=error.retry_after), "R"
             )
             msg = _("This command is on cooldown. Try again {relative_time}.").format(
                 relative_time=relative_time
             )
-            await send(msg, delete_after=error.retry_after)
+            await self._send_from_interaction(interaction, msg, delete_after=error.retry_after)
         elif isinstance(error, CheckFailure):
-            await send(_("You are not permitted to use this command."))
+            await self._send_from_interaction(interaction, _("You are not permitted to use this command."))
         else:
             log.exception(type(error).__name__, exc_info=error)
 
