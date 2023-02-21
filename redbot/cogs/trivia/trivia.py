@@ -154,7 +154,7 @@ class Trivia(commands.Cog):
             )
 
     @triviaset.command(name="usespoilers", usage="<true_or_false>")
-    async def trivaset_use_spoilers(self, ctx: commands.Context, enabled: bool):
+    async def triviaset_use_spoilers(self, ctx: commands.Context, enabled: bool):
         """Set if bot will display the answers in spoilers.
 
         If enabled, the bot will use spoilers to hide answers.
@@ -167,7 +167,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Alright, I won't use spoilers to hide answers anymore."))
 
     @triviaset.command(name="botplays", usage="<true_or_false>")
-    async def trivaset_bot_plays(self, ctx: commands.Context, enabled: bool):
+    async def triviaset_bot_plays(self, ctx: commands.Context, enabled: bool):
         """Set whether or not the bot gains points.
 
         If enabled, the bot will gain a point if no one guesses correctly.
@@ -180,7 +180,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Alright, I won't embarrass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer", usage="<true_or_false>")
-    async def trivaset_reveal_answer(self, ctx: commands.Context, enabled: bool):
+    async def triviaset_reveal_answer(self, ctx: commands.Context, enabled: bool):
         """Set whether or not the answer is revealed.
 
         If enabled, the bot will reveal the answer if no one guesses correctly
@@ -690,8 +690,18 @@ class Trivia(commands.Cog):
         TRIVIA_LIST_SCHEMA.validate(trivia_dict)
 
         buffer.seek(0)
-        with file.open("wb") as fp:
-            fp.write(buffer.read())
+        try:
+            with file.open("wb") as fp:
+                fp.write(buffer.read())
+        except FileNotFoundError as e:
+            await ctx.send(
+                _(
+                    "There was an error saving the file.\n"
+                    "Please check the filename and try again, as it could be longer than your system supports."
+                )
+            )
+            return
+
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(

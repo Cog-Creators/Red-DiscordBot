@@ -35,7 +35,7 @@ Installing the pre-requirements
 We recommend installing pyenv as a method of installing non-native versions of Python on
 Raspberry Pi OS. This guide will tell you how. First, run the following commands:
 
-.. cmake is necessary to be able to successfuly build rapidfuzz.
+.. cmake is necessary to be able to successfully build rapidfuzz.
 
 .. prompt:: bash
 
