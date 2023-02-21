@@ -1,8 +1,8 @@
 .. tree module docs
 
-=======
-RedTree
-=======
+====
+Tree
+====
 
 .. automodule:: redbot.core.tree
 

@@ -32,8 +32,8 @@ class RedTree(discord.app_commands.CommandTree):
     """A container that holds application command information.
     
     Internally does not actually add commands to the tree unless they are
-    enabled with `[p]slash enable`, to support Red's modularity.
-    See discord.app_commands.CommandTree for more information.
+    enabled with ``[p]slash enable``, to support Red's modularity.
+    See ``discord.app_commands.CommandTree`` for more information.
     """
     
     def __init__(self, *args, **kwargs):
@@ -54,7 +54,7 @@ class RedTree(discord.app_commands.CommandTree):
     ) -> None:
         """Adds an application command to the tree.
 
-        Commands will be internally stored until enabled by `[p]slash enable`.
+        Commands will be internally stored until enabled by ``[p]slash enable``.
         """
         # Allow guild specific commands to bypass the internals for development
         if guild is not MISSING or guilds is not MISSING:
@@ -139,6 +139,8 @@ class RedTree(discord.app_commands.CommandTree):
         """Restructures the commands in this tree, enabling commands that are enabled and disabling commands that are disabled.
         
         After running this function, the tree will be populated with enabled commands only.
+        If commands are manually added to the tree outside of the standard cog loading process, this must be run
+        for them to be usable.
         """
         enabled_commands = await self.client.list_enabled_app_commands()
         
@@ -231,6 +233,7 @@ class RedTree(discord.app_commands.CommandTree):
             await self._send_from_interaction(interaction, "transformer error, command may be out of date :(")
         elif isinstance(error, BotMissingPermissions):
             # TODO: This isn't what is done in the text command version, but that requires a subclass of BotMissingPermissions
+            # Because of hybrid commands, this probably needs to have a subclass made and all that jazz >.<
             await self._send_from_interaction(interaction, error)
         elif isinstance(error, NoPrivateMessage):
             # Seems to be only called normally by the has_role check
