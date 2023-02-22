@@ -16,7 +16,7 @@ from discord.app_commands.errors import (
 )
 
 from .i18n import Translator
-from .utils.chat_formatting import format_perms_list, inline
+from .utils.chat_formatting import humanize_list, inline
 
 import logging
 import traceback
@@ -229,12 +229,21 @@ class RedTree(discord.app_commands.CommandTree):
                     message = inline(_("Error in command '{command}'."))
             await self._send_from_interaction(interaction, message.replace("{command}", error.command.qualified_name))
         elif isinstance(error, TransformerError):
-            # TODO
-            await self._send_from_interaction(interaction, "transformer error, command may be out of date :(")
+            if error.__cause__:
+                log.exception("Error in an app command transformer.", exc_info=error.__cause__)
+            await self._send_from_interaction(interaction, str(error))
         elif isinstance(error, BotMissingPermissions):
-            # TODO: This isn't what is done in the text command version, but that requires a subclass of BotMissingPermissions
-            # Because of hybrid commands, this probably needs to have a subclass made and all that jazz >.<
-            await self._send_from_interaction(interaction, error)
+            formatted = ['"' + perm.replace("_", " ").title() + '"' for perm in error.missing_permissions]
+            formatted = humanize_list(formatted).replace("Guild", "Server")
+            if len(error.missing_permissions) == 1:
+                msg = _("I require the {permission} permission to execute that command.").format(
+                    permission=formatted
+                )
+            else:
+                msg = _("I require {permission_list} permissions to execute that command.").format(
+                    permission_list=formatted
+                )
+            await self._send_from_interaction(interaction, msg)
         elif isinstance(error, NoPrivateMessage):
             # Seems to be only called normally by the has_role check
             await self._send_from_interaction(interaction, _("That command is not available in DMs."))
