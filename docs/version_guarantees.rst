@@ -51,9 +51,9 @@ Operating system version           Supported architectures   Ideally supported u
 ================================   =======================   ============================================================
 Windows 10                         x86-64                    `End/Retirement Date <https://docs.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro>`__
 Windows 11                         x86-64                    `Retirement Date <https://docs.microsoft.com/en-us/lifecycle/products/windows-11-home-and-pro-version-21h2>`__
-macOS 10.15 (Catalina)             x86-64                    ~2022-10
 macOS 11 (Big Sur)                 x86-64, aarch64           ~2023-10
 macOS 12 (Monterey)                x86-64, aarch64           ~2024-10
+macOS 13 (Ventura)                 x86-64, aarch64           ~2025-10
 Alma Linux 8                       x86-64, aarch64           2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-cloudlinux-support-almalinux>`__)
 Alma Linux 9                       x86-64, aarch64           2032-05-31
 Arch Linux                         x86-64                    forever (support is only provided for an up-to-date system)
@@ -62,8 +62,8 @@ CentOS Stream 8                    x86-64, aarch64           2024-05-31 (`end of
 CentOS Stream 9                    x86-64, aarch64           2027-05-31 (`expected EOL <https://centos.org/stream9/#timeline>`__)
 Debian 10 Buster                   x86-64, aarch64, armv7l   2022-08-14 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
-Fedora Linux 35                    x86-64, aarch64           2022-11-15 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 36                    x86-64, aarch64           2023-05-16 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
+Fedora Linux 37                    x86-64, aarch64           2023-11-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 openSUSE Leap 15.4                 x86-64, aarch64           2023-11-30 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
 openSUSE Tumbleweed                x86-64, aarch64           forever (support is only provided for an up-to-date system)
 Oracle Linux 8                     x86-64, aarch64           2029-07-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
@@ -79,8 +79,8 @@ Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`end-of
 Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
 Ubuntu 18.04 LTS                   x86-64, aarch64           2023-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 20.04 LTS                   x86-64, aarch64           2025-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
-Ubuntu 21.10                       x86-64, aarch64           2022-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 22.04 LTS                   x86-64, aarch64           2027-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 22.10                       x86-64, aarch64           2023-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
 
 ====================

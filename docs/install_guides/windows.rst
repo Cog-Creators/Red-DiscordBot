@@ -52,7 +52,7 @@ Manually installing dependencies
 
 .. attention:: There are additional configuration steps required which are
                not documented for installing dependencies manually.
-               These dependencies are only listed seperately here for
+               These dependencies are only listed separately here for
                reference purposes.
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
