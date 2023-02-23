@@ -143,7 +143,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
 
     # While the following 2 checks could show even more precise error message,
     # it would require a usage of private attribute rather than the public API
-    # which increases maintanance burden for not that big of benefit.
+    # which increases maintenance burden for not that big of benefit.
     async def _check_ignored_issues(self) -> CheckResult:
         label = _("Check if the channel and the server aren't set to be ignored")
         if await self.bot.ignored_channel_or_guild(self.message):
@@ -816,7 +816,7 @@ class RootDiagnosersMixin(
     async def _check_global_call_once_checks_issues(self) -> CheckResult:
         label = _("Global 'call once' checks")
         # To avoid running core's global checks twice, we just run them all regularly
-        # and if it turns out that invokation would end here, we go back and check each of
+        # and if it turns out that invocation would end here, we go back and check each of
         # core's global check individually to give more precise error message.
         try:
             can_run = await self.bot.can_run(self.ctx, call_once=True)

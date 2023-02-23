@@ -450,14 +450,7 @@ def global_exception_handler(red, loop, context):
     # These will get handled later when it *also* kills loop.run_forever
     if exc is not None and isinstance(exc, (KeyboardInterrupt, SystemExit)):
         return
-    # Maybe in the future we should handle some of the other things
-    # that the default exception handler handles, but this should work fine for now.
-    log.critical(
-        "Caught unhandled exception in %s:\n%s",
-        context.get("future", "event loop"),
-        context["message"],
-        exc_info=exc,
-    )
+    loop.default_exception_handler(context)
 
 
 def red_exception_handler(red, red_task: asyncio.Future):
