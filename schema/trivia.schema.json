@@ -37,8 +37,7 @@
         },
         "reveal_answer": {
           "type": "boolean",
-          "description": "Whether or not to reveal the answer when the question times out. Defaults to true.",
-          "default": true
+          "description": "Whether or not to reveal the answer when the question times out. Defaults to true."
         },
         "timeout": {
           "type": ["integer", "number"],
