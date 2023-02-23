@@ -48,5 +48,11 @@
       },
       "additionalProperties": false
     }
+  },
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
   }
 }
