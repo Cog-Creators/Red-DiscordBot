@@ -21,7 +21,7 @@
           "description": "Whether or not the bot gains points during the session. Defaults to true."
         },
         "delay": {
-          "type": ["integer", "number"],
+          "type": "number",
           "description": "The maximum number of seconds permitted to answer a question, must be a positive number greater than or equal to 4.0. Defaults to 15.0.",
           "minimum": 4.0
         },
