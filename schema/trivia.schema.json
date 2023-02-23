@@ -10,7 +10,7 @@
     },
     "AUTHOR": {
       "type": "string",
-      "description": "Author of the Trivia quiz."
+      "description": "Author of the Trivia list."
     },
     "CONFIG": {
       "type": "object",
