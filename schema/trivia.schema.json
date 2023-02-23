@@ -40,7 +40,7 @@
           "description": "Whether or not to reveal the answer when the question times out. Defaults to true."
         },
         "timeout": {
-          "type": ["integer", "number"],
+          "type": "number",
           "description": "Number of seconds that need to pass until trivia stops due to no response, must be a positive number greater than 0.0. Defaults to 120.0.",
           "exclusiveMinimum": 0
         },
