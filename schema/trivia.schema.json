@@ -4,6 +4,10 @@
   "title": "Red-DiscordBot Trivia List file",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
     "AUTHOR": {
       "type": "string",
       "description": "Author of the Trivia quiz."
