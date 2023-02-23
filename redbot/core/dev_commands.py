@@ -143,19 +143,25 @@ class DevOutput:
         sys.stdout = self._old_streams.pop()
 
     @classmethod
-    async def from_debug(cls, ctx, *, source: str, env: Dict[str, Any]) -> DevOutput:
+    async def from_debug(
+        cls, ctx: commands.Context, *, source: str, env: Dict[str, Any]
+    ) -> DevOutput:
         output = cls(ctx, source=source, filename="<debug command>", env=env)
         await output.run_debug()
         return output
 
     @classmethod
-    async def from_eval(cls, ctx, *, source: str, env: Dict[str, Any]) -> DevOutput:
+    async def from_eval(
+        cls, ctx: commands.Context, *, source: str, env: Dict[str, Any]
+    ) -> DevOutput:
         output = cls(ctx, source=source, filename="<eval command>", env=env)
         await output.run_eval()
         return output
 
     @classmethod
-    async def from_repl(cls, ctx, *, source: str, env: Dict[str, Any]) -> DevOutput:
+    async def from_repl(
+        cls, ctx: commands.Context, *, source: str, env: Dict[str, Any]
+    ) -> DevOutput:
         output = cls(ctx, source=source, filename="<repl session>", env=env)
         await output.run_repl()
         return output
@@ -309,14 +315,14 @@ class DevOutput:
 class Dev(commands.Cog):
     """Various development focused utilities."""
 
-    async def red_delete_data_for_user(self, **kwargs):
+    async def red_delete_data_for_user(self, **kwargs: Any) -> None:
         """
         Because despite my best efforts to advise otherwise,
         people use ``--dev`` in production
         """
         return
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._last_result = None
         self.sessions = {}
@@ -348,7 +354,7 @@ class Dev(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def debug(self, ctx, *, code):
+    async def debug(self, ctx: commands.Context, *, code: str) -> None:
         """Evaluate a statement of python code.
 
         The bot will always respond with the return value of the code.
@@ -382,7 +388,7 @@ class Dev(commands.Cog):
 
     @commands.command(name="eval")
     @checks.is_owner()
-    async def _eval(self, ctx, *, body: str):
+    async def _eval(self, ctx: commands.Context, *, body: str) -> None:
         """Execute asynchronous code.
 
         This command wraps code into the body of an async function and then
@@ -416,7 +422,7 @@ class Dev(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
-    async def repl(self, ctx):
+    async def repl(self, ctx: commands.Context) -> None:
         """Open an interactive REPL.
 
         The REPL will only recognise code as messages which start with a
@@ -486,7 +492,7 @@ class Dev(commands.Cog):
                 await ctx.send(_("Unexpected error: ") + str(exc))
 
     @repl.command(aliases=["resume"])
-    async def pause(self, ctx, toggle: Optional[bool] = None):
+    async def pause(self, ctx: commands.Context, toggle: Optional[bool] = None) -> None:
         """Pauses/resumes the REPL running in the current channel."""
         if ctx.channel.id not in self.sessions:
             await ctx.send(_("There is no currently running REPL session in this channel."))
@@ -504,7 +510,7 @@ class Dev(commands.Cog):
     @commands.guild_only()
     @commands.command()
     @checks.is_owner()
-    async def mock(self, ctx, user: discord.Member, *, command):
+    async def mock(self, ctx: commands.Context, user: discord.Member, *, command: str) -> None:
         """Mock another user invoking a command.
 
         The prefix must not be entered.
@@ -518,7 +524,9 @@ class Dev(commands.Cog):
     @commands.guild_only()
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
+    async def mock_msg(
+        self, ctx: commands.Context, user: discord.Member, *, content: str = ""
+    ) -> None:
         """Dispatch a message event as if it were sent by a different user.
 
         Current message is used as a base (including attachments, embeds, etc.),
@@ -539,7 +547,7 @@ class Dev(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def bypasscooldowns(self, ctx, toggle: Optional[bool] = None):
+    async def bypasscooldowns(self, ctx: commands.Context, toggle: Optional[bool] = None) -> None:
         """Give bot owners the ability to bypass cooldowns.
 
         Does not persist through restarts."""
