@@ -31,7 +31,7 @@
           "exclusiveMinimum": 0
         },
         "payout_multiplier": {
-          "type": ["integer", "number"],
+          "type": "number",
           "description": "The payout multiplier, must be a positive number or zero. Defaults to 0.0.",
           "minimum": 0
         },
