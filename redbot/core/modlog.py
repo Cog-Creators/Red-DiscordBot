@@ -109,12 +109,12 @@ async def _init(bot: Red):
         except RuntimeError:
             return  # No modlog channel so no point in continuing
 
-        if entry.user_id != guild.me.id:
-            # Don't create modlog entires for the bot's own bans, cogs do this.
-            mod, reason = entry.user, entry.reason
-            date = entry.created_at
-            await create_case(_bot_ref, guild, date, entry.action.name, entry.target, mod, reason)
-        return
+        # Don't create modlog entires for the bot's own bans, cogs do this.
+        if entry.user_id == guild.me.id:
+            return
+
+        mod, reason, date = entry.user, entry.reason, entry.created_at
+        await create_case(_bot_ref, guild, date, entry.action.name, entry.target, mod, reason)
 
     bot.add_listener(on_audit_log_entry_create)
 
