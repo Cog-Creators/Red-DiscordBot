@@ -1977,7 +1977,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("That application command is already enabled."))
             return
         
-        await self.bot.enable_app_command(command_name, raw_type)
+        try:
+            await self.bot.enable_app_command(command_name, raw_type)
+        except discord.app_commands.CommandLimitReached:
+            await ctx.send(_("The command limit has been reached. Disable a command first."))
+            return
+        
         await self.bot.tree.red_check_enabled()
         await ctx.send(_("Enabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
         
@@ -2028,20 +2033,28 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
         """
         count = 0
-        for name, com in self.bot.tree._disabled_global_commands.items():
-            if discord.utils._is_submodule(cog_name, com.module):
-                await self.bot.enable_app_command(name, discord.AppCommandType.chat_input)
-                count += 1
-        for key, com in self.bot.tree._disabled_context_menus.items():
-            if discord.utils._is_submodule(cog_name, com.module):
-                name, guild_id, com_type = key
-                await self.bot.enable_app_command(name, discord.AppCommandType(com_type))
-                count += 1
-        if not count:
-            await ctx.send(_("Couldn't find any disabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands.").format(cog_name=cog_name, prefix=ctx.prefix))
-            return
-        await self.bot.tree.red_check_enabled()
-        await ctx.send(_("Enabled {count} commands from `{cog_name}`.").format(count=count, cog_name=cog_name))
+        try:
+            for name, com in self.bot.tree._disabled_global_commands.items():
+                if discord.utils._is_submodule(cog_name, com.module):
+                    await self.bot.enable_app_command(name, discord.AppCommandType.chat_input)
+                    count += 1
+            for key, com in self.bot.tree._disabled_context_menus.items():
+                if discord.utils._is_submodule(cog_name, com.module):
+                    name, guild_id, com_type = key
+                    await self.bot.enable_app_command(name, discord.AppCommandType(com_type))
+                    count += 1
+        except discord.app_commands.CommandLimitReached:
+            if not count:
+                await ctx.send(_("The command limit has been reached. Disable a command first."))
+                return
+            await self.bot.tree.red_check_enabled()
+            await ctx.send(_("Enabled {count} commands from `{cog_name}`.\nSome commands were skipped because the command limit was reached. Disable some commands first.").format(count=count, cog_name=cog_name))
+        else:   
+            if not count:
+                await ctx.send(_("Couldn't find any disabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands.").format(cog_name=cog_name, prefix=ctx.prefix))
+                return
+            await self.bot.tree.red_check_enabled()
+            await ctx.send(_("Enabled {count} commands from `{cog_name}`.").format(count=count, cog_name=cog_name))
     
     @slash.command(name="disablecog")
     async def slash_disablecog(self, ctx: commands.Context, cog_name):

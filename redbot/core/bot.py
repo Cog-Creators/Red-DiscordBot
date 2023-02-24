@@ -1681,16 +1681,26 @@ class Red(
         Mark an application command as being enabled.
         
         Enabled commands are able to be added to the bot's tree, are able to be synced, and can be invoked.
+        
+        Raises
+        ------
+        CommandLimitReached
+            Raised when attempting to enable a command that would exceed the command limit.
         """
         if command_type is AppCommandType.chat_input:
             cfg = self._config.enabled_slash_commands()
+            limit = 100
         elif command_type is AppCommandType.message:
             cfg = self._config.enabled_message_commands()
+            limit = 5
         elif command_type is AppCommandType.user:
             cfg = self._config.enabled_user_commands()
+            limit = 5
         else:
             raise TypeError("command type must be one of chat_input, message, user")
         async with cfg as curr_commands:
+            if len(cur_commands) >= limit:
+                raise discord.app_commands.CommandLimitReached(None, limit, type=command_type)
             if command_name not in curr_commands:
                 curr_commands.append(command_name)
 
