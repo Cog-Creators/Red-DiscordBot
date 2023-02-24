@@ -1699,7 +1699,7 @@ class Red(
         else:
             raise TypeError("command type must be one of chat_input, message, user")
         async with cfg as curr_commands:
-            if len(cur_commands) >= limit:
+            if len(curr_commands) >= limit:
                 raise discord.app_commands.CommandLimitReached(None, limit, type=command_type)
             if command_name not in curr_commands:
                 curr_commands.append(command_name)
