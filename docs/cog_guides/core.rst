@@ -4101,12 +4101,12 @@ slash disablecog
 **Description**
 
 Marks all application commands in a cog as being disabled, preventing them from being
-added to the bot. See a list of cogs with application commands with `[p]slash list`.
+added to the bot. See a list of cogs with application commands with ``[p]slash list``.
 This command does NOT sync the enabled commands with Discord, that must be done manually
-with `[p]slash sync` for commands to appear in users' clients.
+with ``[p]slash sync`` for commands to appear in users' clients.
 
 **Arguments:**
-    - `<cog_name>` - The cog to disable commands from. This argument is case sensitive.
+    - ``<cog_name>`` - The cog to disable commands from. This argument is case sensitive.
 
 .. _core-command-slash-enable:
 
@@ -4123,13 +4123,13 @@ slash enable
 **Description**
 
 Marks an application command as being enabled, allowing it to be added to the bot.
-See commands available to enable with `[p]slash list`. This command does NOT sync the
-enabled commands with Discord, that must be done manually with `[p]slash sync` for
+See commands available to enable with ``[p]slash list``. This command does NOT sync the
+enabled commands with Discord, that must be done manually with ``[p]slash sync`` for
 commands to appear in users' clients.
 
 **Arguments:**
     - ``<command_name>`` - The command name to enable. Only the top level name of a group command should be used.
-    - ``[command_type]`` - What type of application command to enable. Must be one of `slash`, `message`, or `user`. Defaults to `slash`.
+    - ``[command_type]`` - What type of application command to enable. Must be one of ``slash``, ``message``, or ``user``. Defaults to ``slash``.
 
 .. _core-command-slash-enablecog:
 
@@ -4146,12 +4146,12 @@ slash enablecog
 **Description**
 
 Marks all application commands in a cog as being enabled, allowing them to be
-added to the bot. See a list of cogs with application commands with `[p]slash list`.
+added to the bot. See a list of cogs with application commands with ``[p]slash list``.
 This command does NOT sync the enabled commands with Discord, that must be done manually
-with `[p]slash sync` for commands to appear in users' clients.
+with ``[p]slash sync`` for commands to appear in users' clients.
 
 **Arguments:**
-    - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
+    - ``<cog_name>`` - The cog to enable commands from. This argument is case sensitive.
 
 .. _core-command-slash-list:
 
@@ -4168,7 +4168,7 @@ slash list
 **Description**
 
 List the slash commands the bot can see, and whether or not they are enabled.
-This command shows the state that will be changed to when `[p]slash sync` is run.
+This command shows the state that will be changed to when ``[p]slash sync`` is run.
 
 .. _core-command-slash-sync:
 
@@ -4185,11 +4185,11 @@ slash sync
 **Description**
 
 Syncs the slash settings to discord.
-Settings from `[p]slash list` will be synced with discord, changing what commands appear for users.
+Settings from ``[p]slash list`` will be synced with discord, changing what commands appear for users.
 This should be run sparingly, make all necessary changes before running this command.
         
 **Arguments:**
-    - `[guild]` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
+    - ``[guild]`` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
 
 .. _core-command-traceback:
 
