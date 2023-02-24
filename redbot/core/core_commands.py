@@ -1961,11 +1961,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         command_type = command_type.lower().strip()
         
         if command_type == "slash":
-            raw_type = discord.enums.AppCommandType.chat_input
+            raw_type = discord.AppCommandType.chat_input
         elif command_type == "message":
-            raw_type = discord.enums.AppCommandType.message
+            raw_type = discord.AppCommandType.message
         elif command_type == "user":
-            raw_type = discord.enums.AppCommandType.user
+            raw_type = discord.AppCommandType.user
         else:
             await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
             return
@@ -1996,11 +1996,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         command_type = command_type.lower().strip()
         
         if command_type == "slash":
-            raw_type = discord.enums.AppCommandType.chat_input
+            raw_type = discord.AppCommandType.chat_input
         elif command_type == "message":
-            raw_type = discord.enums.AppCommandType.message
+            raw_type = discord.AppCommandType.message
         elif command_type == "user":
-            raw_type = discord.enums.AppCommandType.user
+            raw_type = discord.AppCommandType.user
         else:
             await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
             return
@@ -2027,7 +2027,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
         """
-        ...
+        count = 0
+        for name, com in self.bot.tree._disabled_global_commands.items():
+            if discord.utils._is_submodule(cog_name, com.module):
+                await self.bot.enable_app_command(name, discord.AppCommandType.chat_input)
+                count += 1
+        for key, com in self.bot.tree._disabled_context_menus.items():
+            if discord.utils._is_submodule(cog_name, com.module):
+                name, guild_id, com_type = key
+                await self.bot.enable_app_command(name, discord.AppCommandType(com_type))
+                count += 1
+        if not count:
+            await ctx.send(_("Couldn't find any disabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands.").format(cog_name=cog_name, prefix=ctx.prefix))
+            return
+        await self.bot.tree.red_check_enabled()
+        await ctx.send(_("Enabled {count} commands from `{cog_name}`.").format(count=count, cog_name=cog_name))
     
     @slash.command(name="disablecog")
     async def slash_disablecog(self, ctx: commands.Context, cog_name):
@@ -2040,7 +2054,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cog_name>` - The cog to disable commands from. This argument is case sensitive.
         """
-        ...
+        count = 0
+        for name, com in self.bot.tree._global_commands.items():
+            if discord.utils._is_submodule(cog_name, com.module):
+                await self.bot.disable_app_command(name, discord.AppCommandType.chat_input)
+                count += 1
+        for key, com in self.bot.tree._context_menus.items():
+            if discord.utils._is_submodule(cog_name, com.module):
+                name, guild_id, com_type = key
+                await self.bot.disable_app_command(name, discord.AppCommandType(com_type))
+                count += 1
+        if not count:
+            await ctx.send(_("Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands.").format(cog_name=cog_name, prefix=ctx.prefix))
+            return
+        await self.bot.tree.red_check_enabled()
+        await ctx.send(_("Disabled {count} commands from `{cog_name}`.").format(count=count, cog_name=cog_name))
     
     @slash.command(name="list")
     async def slash_list(self, ctx: commands.Context):

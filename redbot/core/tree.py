@@ -171,9 +171,11 @@ class RedTree(discord.app_commands.CommandTree):
         
         # Remove context
         for command, guild_id, command_type in self._context_menus:
-            if command_type is AppCommandType.message and command not in enabled_commands["message"]:
+            if guild_id is not None:
+                continue
+            if AppCommandType(command_type) is AppCommandType.message and command not in enabled_commands["message"]:
                 to_remove_context.append((command, AppCommandType.message))
-            elif command_type is AppCommandType.user and command not in enabled_commands["user"]:
+            elif AppCommandType(command_type) is AppCommandType.user and command not in enabled_commands["user"]:
                 to_remove_context.append((command, AppCommandType.user))
         
         # Actually add/remove
@@ -188,7 +190,7 @@ class RedTree(discord.app_commands.CommandTree):
             self._disabled_global_commands[command] = com
         for command, type in to_remove_context:
             com = super().remove_command(command, type=type)
-            self._discabled_context_menus[(command, None, type.value)] = com
+            self._disabled_context_menus[(command, None, type.value)] = com
 
     @staticmethod
     async def _send_from_interaction(interaction, *args, **kwargs):
