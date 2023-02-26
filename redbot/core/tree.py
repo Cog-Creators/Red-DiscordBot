@@ -141,7 +141,7 @@ class RedTree(discord.app_commands.CommandTree):
     
     async def sync(self, *args, guild: Optional[Snowflake] = None, **kwargs) -> List[AppCommand]:
         """Wrapper to cache commands when commands are synced."""
-        commands = await super().sync(self, *args, guild=guild, **kwargs)
+        commands = await super().sync(*args, guild=guild, **kwargs)
         for command in commands:
             self._cached_app_commands[(command.name, guild, command.type)] = command
         return commands
@@ -162,7 +162,8 @@ class RedTree(discord.app_commands.CommandTree):
     async def get_or_fetch_command(self, command_name: str, *, guild: Optional[Snowflake] = None, command_type = AppCommandType.chat_input) -> Optional[AppCommand]:
         """Returns the cached value for a command if found, otherwise fetches it from the API.
         
-        Returns None if not found.
+        Returns ``None`` if not found.
+        ``AppCommand`` objects can be used to mention app commands, and to find their snowflake id.
         """
         if (command_name, guild, command_type) in self._cached_app_commands:
             return self._cached_app_commands[(command_name, guild, command_type)]
@@ -173,7 +174,10 @@ class RedTree(discord.app_commands.CommandTree):
     
     @property
     def cached_app_commands(self) -> Dict[Tuple[str, Optional[Snowflake], AppCommandType], AppCommand]:
-        """Maps (command name, guild id, command type) to an AppCommand object."""
+        """A ``Dict`` mapping ``(command name: str, guild id: int, command type: AppCommandType)`` to an ``AppCommand`` object.
+        
+        ``AppCommand`` objects can be used to mention app commands, and to find their snowflake id.
+        """
         return self._cached_app_commands.copy()
     
     @cached_app_commands.setter

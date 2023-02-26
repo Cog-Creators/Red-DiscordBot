@@ -17,6 +17,7 @@ import getpass
 import pip
 import traceback
 from pathlib import Path
+from collections import defaultdict
 from redbot.core import data_manager
 from redbot.core.utils.menus import menu
 from redbot.core.utils.views import SetApiView
@@ -2089,7 +2090,49 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         
         This command shows the state that will be changed to when `[p]slash sync` is run.
         """
-        ...
+        cog_commands = defaultdict(list)
+        for command in self.bot.tree._global_commands.values():
+            module = command.module
+            if "." in module:
+                module = module[:module.find(".")]
+            cog_commands[module].append((command, discord.AppCommandType.chat_input, True))
+        for command in self.bot.tree._disabled_global_commands.values():
+            module = command.module
+            if "." in module:
+                module = module[:module.find(".")]
+            cog_commands[module].append((command, discord.AppCommandType.chat_input, False))
+        for key, command in self.bot.tree._context_menus.items():
+            # Filter out guild context menus
+            if key[1] is not None:
+                continue
+            module = command.module
+            if "." in module:
+                module = module[:module.find(".")]
+            cog_commands[module].append((command, command.type, True))
+        for command in self.bot.tree._disabled_context_menus.values():
+            module = command.module
+            if "." in module:
+                module = module[:module.find(".")]
+            cog_commands[module].append((command, command.type, False))
+        
+        msg = ""
+        for cog in sorted(cog_commands.keys()):
+            msg += cog + "\n"
+            for command, raw_command_type, enabled in sorted(cog_commands[cog], key=lambda v: v[0].name):
+                diff = "+ " if enabled else "- "
+                command_type = "unknown"
+                if raw_command_type is discord.AppCommandType.chat_input:
+                    command_type = "slash"
+                elif raw_command_type is discord.AppCommandType.message:
+                    command_type = "message"
+                elif raw_command_type is discord.AppCommandType.user:
+                    command_type = "user"
+                msg += diff + command_type.ljust(7) + " | " + command.name + "\n"
+            msg += "\n"
+        
+        pages = pagify(msg, delims=["\n\n"])
+        pages = [box(page, lang="diff") for page in pages]
+        await menu(ctx, pages)
     
     @slash.command(name="sync")
     async def slash_sync(self, ctx: commands.Context, guild: discord.Guild=None):
