@@ -146,9 +146,9 @@ class Red(
             datarequests__allow_user_requests=True,
             datarequests__user_requests_are_strict=True,
             use_buttons=False,
-            enabled_slash_commands=[],
-            enabled_user_commands=[],
-            enabled_message_commands=[],
+            enabled_slash_commands={},
+            enabled_user_commands={},
+            enabled_message_commands={},
         )
 
         self._config.register_guild(
@@ -1704,7 +1704,7 @@ class Red(
             if len(curr_commands) >= limit:
                 raise discord.app_commands.CommandLimitReached(None, limit, type=command_type)
             if command_name not in curr_commands:
-                curr_commands.append(command_name)
+                curr_commands[command_name] = None
 
     async def disable_app_command(
         self, command_name: str, command_type: AppCommandType = AppCommandType.chat_input
@@ -1724,9 +1724,9 @@ class Red(
             raise TypeError("command type must be one of chat_input, message, user")
         async with cfg as curr_commands:
             if command_name in curr_commands:
-                curr_commands.remove(command_name)
+                del curr_commands[command_name]
 
-    async def list_enabled_app_commands(self) -> Dict[str, List[str]]:
+    async def list_enabled_app_commands(self) -> Dict[str, Dict[str, Optional[int]]]:
         """List the currently enabled application command names."""
         curr_slash_commands = await self._config.enabled_slash_commands()
         curr_message_commands = await self._config.enabled_message_commands()

@@ -2129,16 +2129,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This command shows the state that will be changed to when `[p]slash sync` is run.
         """
         cog_commands = defaultdict(list)
+        slash_command_names = set()
+        message_command_names = set()
+        user_command_names = set()
+
         for command in self.bot.tree._global_commands.values():
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command, discord.AppCommandType.chat_input, True))
+            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, True))
+            slash_command_names.add(command.name)
         for command in self.bot.tree._disabled_global_commands.values():
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command, discord.AppCommandType.chat_input, False))
+            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, False))
         for key, command in self.bot.tree._context_menus.items():
             # Filter out guild context menus
             if key[1] is not None:
@@ -2146,19 +2151,41 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command, command.type, True))
+            cog_commands[module].append((command.name, command.type, True))
+            if command.type is discord.AppCommandType.message:
+                message_command_names.add(command.name)
+            elif command.type is discord.AppCommandType.user:
+                user_command_names.add(command.name)
         for command in self.bot.tree._disabled_context_menus.values():
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command, command.type, False))
+            cog_commands[module].append((command.name, command.type, False))
+
+        # Commands added with evals will come from __main__, make them unknown instead
+        if "__main__" in cog_commands:
+            main_data = cog_commands["__main__"]
+            del cog_commands["__main__"]
+            cog_commands["(unknown)"] = main_data
+
+        # Commands enabled but unloaded won't appear unless accounted for
+        enabled_commands = await self.bot.list_enabled_app_commands()
+        unknown_slash = set(enabled_commands["slash"]) - slash_command_names
+        unknown_message = set(enabled_commands["message"]) - message_command_names
+        unknown_user = set(enabled_commands["user"]) - user_command_names
+
+        unknown_slash = [(n, discord.AppCommandType.chat_input, True) for n in unknown_slash]
+        unknown_message = [(n, discord.AppCommandType.message, True) for n in unknown_message]
+        unknown_user = [(n, discord.AppCommandType.user, True) for n in unknown_user]
+
+        cog_commands["(unknown)"].extend(unknown_slash)
+        cog_commands["(unknown)"].extend(unknown_message)
+        cog_commands["(unknown)"].extend(unknown_user)
 
         msg = ""
         for cog in sorted(cog_commands.keys()):
             msg += cog + "\n"
-            for command, raw_command_type, enabled in sorted(
-                cog_commands[cog], key=lambda v: v[0].name
-            ):
+            for name, raw_command_type, enabled in sorted(cog_commands[cog], key=lambda v: v[0]):
                 diff = "+ " if enabled else "- "
                 command_type = "unknown"
                 if raw_command_type is discord.AppCommandType.chat_input:
@@ -2167,7 +2194,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     command_type = "message"
                 elif raw_command_type is discord.AppCommandType.user:
                     command_type = "user"
-                msg += diff + command_type.ljust(7) + " | " + command.name + "\n"
+                msg += diff + command_type.ljust(7) + " | " + name + "\n"
             msg += "\n"
 
         pages = pagify(msg, delims=["\n\n"])
