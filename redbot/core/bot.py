@@ -1676,12 +1676,14 @@ class Red(
 
         return cog
 
-    async def enable_app_command(self, command_name: str, command_type: AppCommandType=AppCommandType.chat_input) -> None:
+    async def enable_app_command(
+        self, command_name: str, command_type: AppCommandType = AppCommandType.chat_input
+    ) -> None:
         """
         Mark an application command as being enabled.
-        
+
         Enabled commands are able to be added to the bot's tree, are able to be synced, and can be invoked.
-        
+
         Raises
         ------
         CommandLimitReached
@@ -1704,10 +1706,12 @@ class Red(
             if command_name not in curr_commands:
                 curr_commands.append(command_name)
 
-    async def disable_app_command(self, command_name: str, command_type: AppCommandType=AppCommandType.chat_input) -> None:
+    async def disable_app_command(
+        self, command_name: str, command_type: AppCommandType = AppCommandType.chat_input
+    ) -> None:
         """
         Mark an application command as being disabled.
-        
+
         Disabled commands are not added to the bot's tree, are not able to be synced, and cannot be invoked.
         """
         if command_type is AppCommandType.chat_input:
@@ -1721,7 +1725,7 @@ class Red(
         async with cfg as curr_commands:
             if command_name in curr_commands:
                 curr_commands.remove(command_name)
-    
+
     async def list_enabled_app_commands(self) -> Dict[str, List[str]]:
         """List the currently enabled application command names."""
         curr_slash_commands = await self._config.enabled_slash_commands()

@@ -1946,9 +1946,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @checks.is_owner()
     async def slash(self, ctx: commands.Context):
         """Base command for managing what application commands are able to be used on [botname]."""
-        
+
     @slash.command(name="enable")
-    async def slash_enable(self, ctx: commands.Context, command_name: str, command_type: Literal["slash", "message", "user"]="slash"):
+    async def slash_enable(
+        self,
+        ctx: commands.Context,
+        command_name: str,
+        command_type: Literal["slash", "message", "user"] = "slash",
+    ):
         """Marks an application command as being enabled, allowing it to be added to the bot.
 
         See commands available to enable with `[p]slash list`.
@@ -1960,7 +1965,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[command_type]` - What type of application command to enable. Must be one of `slash`, `message`, or `user`. Defaults to `slash`.
         """
         command_type = command_type.lower().strip()
-        
+
         if command_type == "slash":
             raw_type = discord.AppCommandType.chat_input
         elif command_type == "message":
@@ -1970,25 +1975,34 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
             return
-        
+
         current_settings = await self.bot.list_enabled_app_commands()
         current_settings = current_settings[command_type]
-        
+
         if command_name in current_settings:
             await ctx.send(_("That application command is already enabled."))
             return
-        
+
         try:
             await self.bot.enable_app_command(command_name, raw_type)
         except discord.app_commands.CommandLimitReached:
             await ctx.send(_("The command limit has been reached. Disable a command first."))
             return
-        
+
         await self.bot.tree.red_check_enabled()
-        await ctx.send(_("Enabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
-        
+        await ctx.send(
+            _("Enabled {command_type} application command `{command_name}`").format(
+                command_type=command_type, command_name=command_name
+            )
+        )
+
     @slash.command(name="disable")
-    async def slash_disable(self, ctx: commands.Context, command_name: str, command_type: Literal["slash", "message", "user"]="slash"):
+    async def slash_disable(
+        self,
+        ctx: commands.Context,
+        command_name: str,
+        command_type: Literal["slash", "message", "user"] = "slash",
+    ):
         """Marks an application command as being disabled, preventing it from being added to the bot.
 
         See commands available to disable with `[p]slash list`.
@@ -2000,7 +2014,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[command_type]` - What type of application command to disable. Must be one of `slash`, `message`, or `user`. Defaults to `slash`.
         """
         command_type = command_type.lower().strip()
-        
+
         if command_type == "slash":
             raw_type = discord.AppCommandType.chat_input
         elif command_type == "message":
@@ -2010,24 +2024,28 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
             return
-        
+
         current_settings = await self.bot.list_enabled_app_commands()
         current_settings = current_settings[command_type]
-        
+
         if command_name not in current_settings:
             await ctx.send(_("That application command is already disabled."))
             return
-        
+
         await self.bot.disable_app_command(command_name, raw_type)
         await self.bot.tree.red_check_enabled()
-        await ctx.send(_("Disabled {command_type} application command `{command_name}`").format(command_type=command_type, command_name=command_name))
+        await ctx.send(
+            _("Disabled {command_type} application command `{command_name}`").format(
+                command_type=command_type, command_name=command_name
+            )
+        )
 
     @slash.command(name="enablecog")
     async def slash_enablecog(self, ctx: commands.Context, cog_name):
         """Marks all application commands in a cog as being enabled, allowing them to be added to the bot.
-        
+
         See a list of cogs with application commands with `[p]slash list`.
-        
+
         This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
 
         **Arguments:**
@@ -2049,20 +2067,32 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(_("The command limit has been reached. Disable a command first."))
                 return
             await self.bot.tree.red_check_enabled()
-            await ctx.send(_("Enabled {count} commands from `{cog_name}`.\nSome commands were skipped because the command limit was reached. Disable some commands first.").format(count=count, cog_name=cog_name))
-        else:   
+            await ctx.send(
+                _(
+                    "Enabled {count} commands from `{cog_name}`.\nSome commands were skipped because the command limit was reached. Disable some commands first."
+                ).format(count=count, cog_name=cog_name)
+            )
+        else:
             if not count:
-                await ctx.send(_("Couldn't find any disabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands.").format(cog_name=cog_name, prefix=ctx.prefix))
+                await ctx.send(
+                    _(
+                        "Couldn't find any disabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands."
+                    ).format(cog_name=cog_name, prefix=ctx.prefix)
+                )
                 return
             await self.bot.tree.red_check_enabled()
-            await ctx.send(_("Enabled {count} commands from `{cog_name}`.").format(count=count, cog_name=cog_name))
-    
+            await ctx.send(
+                _("Enabled {count} commands from `{cog_name}`.").format(
+                    count=count, cog_name=cog_name
+                )
+            )
+
     @slash.command(name="disablecog")
     async def slash_disablecog(self, ctx: commands.Context, cog_name):
         """Marks all application commands in a cog as being disabled, preventing them from being added to the bot.
-        
+
         See a list of cogs with application commands with `[p]slash list`.
-        
+
         This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
 
         **Arguments:**
@@ -2079,27 +2109,35 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await self.bot.disable_app_command(name, discord.AppCommandType(com_type))
                 count += 1
         if not count:
-            await ctx.send(_("Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands.").format(cog_name=cog_name, prefix=ctx.prefix))
+            await ctx.send(
+                _(
+                    "Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands."
+                ).format(cog_name=cog_name, prefix=ctx.prefix)
+            )
             return
         await self.bot.tree.red_check_enabled()
-        await ctx.send(_("Disabled {count} commands from `{cog_name}`.").format(count=count, cog_name=cog_name))
-    
+        await ctx.send(
+            _("Disabled {count} commands from `{cog_name}`.").format(
+                count=count, cog_name=cog_name
+            )
+        )
+
     @slash.command(name="list")
     async def slash_list(self, ctx: commands.Context):
         """List the slash commands the bot can see, and whether or not they are enabled.
-        
+
         This command shows the state that will be changed to when `[p]slash sync` is run.
         """
         cog_commands = defaultdict(list)
         for command in self.bot.tree._global_commands.values():
             module = command.module
             if "." in module:
-                module = module[:module.find(".")]
+                module = module[: module.find(".")]
             cog_commands[module].append((command, discord.AppCommandType.chat_input, True))
         for command in self.bot.tree._disabled_global_commands.values():
             module = command.module
             if "." in module:
-                module = module[:module.find(".")]
+                module = module[: module.find(".")]
             cog_commands[module].append((command, discord.AppCommandType.chat_input, False))
         for key, command in self.bot.tree._context_menus.items():
             # Filter out guild context menus
@@ -2107,18 +2145,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 continue
             module = command.module
             if "." in module:
-                module = module[:module.find(".")]
+                module = module[: module.find(".")]
             cog_commands[module].append((command, command.type, True))
         for command in self.bot.tree._disabled_context_menus.values():
             module = command.module
             if "." in module:
-                module = module[:module.find(".")]
+                module = module[: module.find(".")]
             cog_commands[module].append((command, command.type, False))
-        
+
         msg = ""
         for cog in sorted(cog_commands.keys()):
             msg += cog + "\n"
-            for command, raw_command_type, enabled in sorted(cog_commands[cog], key=lambda v: v[0].name):
+            for command, raw_command_type, enabled in sorted(
+                cog_commands[cog], key=lambda v: v[0].name
+            ):
                 diff = "+ " if enabled else "- "
                 command_type = "unknown"
                 if raw_command_type is discord.AppCommandType.chat_input:
@@ -2129,18 +2169,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     command_type = "user"
                 msg += diff + command_type.ljust(7) + " | " + command.name + "\n"
             msg += "\n"
-        
+
         pages = pagify(msg, delims=["\n\n"])
         pages = [box(page, lang="diff") for page in pages]
         await menu(ctx, pages)
-    
+
     @slash.command(name="sync")
-    async def slash_sync(self, ctx: commands.Context, guild: discord.Guild=None):
+    async def slash_sync(self, ctx: commands.Context, guild: discord.Guild = None):
         """Syncs the slash settings to discord.
-        
+
         Settings from `[p]slash list` will be synced with discord, changing what commands appear for users.
         This should be run sparingly, make all necessary changes before running this command.
-        
+
         **Arguments:**
             - `[guild]` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
         """
@@ -2152,7 +2192,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             # Should only be possible when syncing a guild, but just in case
             if not guild:
                 raise e
-            await ctx.send(_("I need the `applications.commands` scope in this server to be able to do that. Reinvite me with that scope first."))
+            await ctx.send(
+                _(
+                    "I need the `applications.commands` scope in this server to be able to do that. Reinvite me with that scope first."
+                )
+            )
         except Exception as e:
             raise e
         else:
@@ -2889,7 +2933,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set status listening jams`
 
         **Arguments:**
-            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."""
+            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
@@ -2924,7 +2969,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set status watching [p]help`
 
         **Arguments:**
-            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."""
+            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
@@ -2955,7 +3001,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set status competing London 2012 Olympic Games`
 
         **Arguments:**
-            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."""
+            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if competing:

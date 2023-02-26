@@ -31,21 +31,24 @@ log = logging.getLogger("red")
 
 _ = Translator(__name__, __file__)
 
+
 class RedTree(discord.app_commands.CommandTree):
     """A container that holds application command information.
-    
+
     Internally does not actually add commands to the tree unless they are
     enabled with ``[p]slash enable``, to support Red's modularity.
     See ``discord.app_commands.CommandTree`` for more information.
     """
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Same structure as superclass
         self._disabled_global_commands: Dict[str, Union[Command, Group]] = {}
         self._disabled_context_menus: Dict[Tuple[str, Optional[int], int], ContextMenu] = {}
-        self._cached_app_commands: Dict[Tuple[str, Optional[Snowflake], AppCommandType], AppCommand] = {}
-    
+        self._cached_app_commands: Dict[
+            Tuple[str, Optional[Snowflake], AppCommandType], AppCommand
+        ] = {}
+
     def add_command(
         self,
         command: Union[Command, ContextMenu, Group],
@@ -62,13 +65,15 @@ class RedTree(discord.app_commands.CommandTree):
         """
         # Allow guild specific commands to bypass the internals for development
         if guild is not MISSING or guilds is not MISSING:
-            return super().add_command(command, *args, guild=guild, guilds=guilds, override=override, **kwargs)
-        
+            return super().add_command(
+                command, *args, guild=guild, guilds=guilds, override=override, **kwargs
+            )
+
         if isinstance(command, ContextMenu):
             name = command.name
             type = command.type.value
             key = (name, None, type)
-            
+
             # Handle cases where the command already is in the tree
             if not override and key in self._disabled_context_menus:
                 raise CommandAlreadyRegistered(name, None)
@@ -76,16 +81,18 @@ class RedTree(discord.app_commands.CommandTree):
                 if not override:
                     raise discord.errors.CommandAlreadyRegistered(name, None)
                 del self._context_menus[key]
-            
+
             self._disabled_context_menus[key] = command
             return
-            
+
         if not isinstance(command, (Command, Group)):
-            raise TypeError(f'Expected an application command, received {command.__class__.__name__} instead')
-        
+            raise TypeError(
+                f"Expected an application command, received {command.__class__.__name__} instead"
+            )
+
         root = command.root_parent or command
         name = root.name
-        
+
         # Handle cases where the command already is in the tree
         if not override and name in self._disabled_global_commands:
             raise discord.errors.CommandAlreadyRegistered(name, None)
@@ -93,9 +100,9 @@ class RedTree(discord.app_commands.CommandTree):
             if not override:
                 raise discord.errors.CommandAlreadyRegistered(name, None)
             del self._global_commands[name]
-        
+
         self._disabled_global_commands[name] = root
-    
+
     def remove_command(
         self,
         command: str,
@@ -109,22 +116,22 @@ class RedTree(discord.app_commands.CommandTree):
         if guild is not None:
             return super().remove_command(command, *args, guild=guild, type=type, **kwargs)
         if type is AppCommandType.chat_input:
-            return (
-                self._disabled_global_commands.pop(command, None)
-                or super().remove_command(command, *args, guild=guild, type=type, **kwargs)
+            return self._disabled_global_commands.pop(command, None) or super().remove_command(
+                command, *args, guild=guild, type=type, **kwargs
             )
         elif type in (AppCommandType.user, AppCommandType.message):
             key = (command, None, type.value)
-            return (
-                self._disabled_context_menus.pop(key, None)
-                or super().remove_command(command, *args, guild=guild, type=type, **kwargs)
+            return self._disabled_context_menus.pop(key, None) or super().remove_command(
+                command, *args, guild=guild, type=type, **kwargs
             )
 
-    def clear_commands(self, *args, guild: Optional[Snowflake], type: Optional[AppCommandType] = None, **kwargs) -> None:
+    def clear_commands(
+        self, *args, guild: Optional[Snowflake], type: Optional[AppCommandType] = None, **kwargs
+    ) -> None:
         """Clears all application commands from the tree."""
         if guild is not None:
             return super().clear_commands(*args, guild=guild, type=type, **kwargs)
-        
+
         if type is None or type is AppCommandType.chat_input:
             self._global_commands.clear()
             self._disabled_global_commands.clear()
@@ -138,30 +145,40 @@ class RedTree(discord.app_commands.CommandTree):
                 if value != type.value
             }
         return super().clear_commands(*args, guild=guild, type=type, **kwargs)
-    
+
     async def sync(self, *args, guild: Optional[Snowflake] = None, **kwargs) -> List[AppCommand]:
         """Wrapper to cache commands when commands are synced."""
         commands = await super().sync(*args, guild=guild, **kwargs)
         for command in commands:
             self._cached_app_commands[(command.name, guild, command.type)] = command
         return commands
-    
-    async def fetch_command(self, command_id: int, /, *args, guild: Optional[Snowflake] = None, **kwargs) -> AppCommand:
+
+    async def fetch_command(
+        self, command_id: int, /, *args, guild: Optional[Snowflake] = None, **kwargs
+    ) -> AppCommand:
         """Wrapper to cache commands when they are fetched."""
         command = await super().fetch_command(command_id, *args, guild=guild, **kwargs)
         self._cached_app_commands[(command.name, guild, command.type)] = command
         return command
-    
-    async def fetch_commands(self, *args, guild: Optional[Snowflake] = None, **kwargs) -> List[AppCommand]:
+
+    async def fetch_commands(
+        self, *args, guild: Optional[Snowflake] = None, **kwargs
+    ) -> List[AppCommand]:
         """Wrapper to cache commands when they are fetched."""
         commands = await super().fetch_commands(*args, guild=guild, **kwargs)
         for command in commands:
             self._cached_app_commands[(command.name, guild, command.type)] = command
         return commands
-    
-    async def get_or_fetch_command(self, command_name: str, *, guild: Optional[Snowflake] = None, command_type = AppCommandType.chat_input) -> Optional[AppCommand]:
+
+    async def get_or_fetch_command(
+        self,
+        command_name: str,
+        *,
+        guild: Optional[Snowflake] = None,
+        command_type=AppCommandType.chat_input,
+    ) -> Optional[AppCommand]:
         """Returns the cached value for a command if found, otherwise fetches it from the API.
-        
+
         Returns ``None`` if not found.
         ``AppCommand`` objects can be used to mention app commands, and to find their snowflake id.
         """
@@ -171,38 +188,42 @@ class RedTree(discord.app_commands.CommandTree):
         if (command_name, guild, command_type) in self._cached_app_commands:
             return self._cached_app_commands[(command_name, guild, command_type)]
         return None
-    
+
     @property
-    def cached_app_commands(self) -> Dict[Tuple[str, Optional[Snowflake], AppCommandType], AppCommand]:
+    def cached_app_commands(
+        self,
+    ) -> Dict[Tuple[str, Optional[Snowflake], AppCommandType], AppCommand]:
         """A ``Dict`` mapping ``(command name: str, guild id: int, command type: AppCommandType)`` to an ``AppCommand`` object.
-        
+
         ``AppCommand`` objects can be used to mention app commands, and to find their snowflake id.
         """
         return self._cached_app_commands.copy()
-    
+
     @cached_app_commands.setter
     def cached_app_commands(self, value):
-        raise Exception("Please use the fetch methods to fill the cache, instead of trying to manually do it.")
-    
+        raise Exception(
+            "Please use the fetch methods to fill the cache, instead of trying to manually do it."
+        )
+
     async def red_check_enabled(self) -> None:
         """Restructures the commands in this tree, enabling commands that are enabled and disabling commands that are disabled.
-        
+
         After running this function, the tree will be populated with enabled commands only.
         If commands are manually added to the tree outside of the standard cog loading process, this must be run
         for them to be usable.
         """
         enabled_commands = await self.client.list_enabled_app_commands()
-        
+
         to_add_commands = []
         to_add_context = []
         to_remove_commands = []
         to_remove_context = []
-        
+
         # Add commands
         for command in enabled_commands["slash"]:
             if command in self._disabled_global_commands:
                 to_add_commands.append(command)
-        
+
         # Add context
         for command in enabled_commands["message"]:
             key = (command, None, AppCommandType.message.value)
@@ -212,21 +233,27 @@ class RedTree(discord.app_commands.CommandTree):
             key = (command, None, AppCommandType.user.value)
             if key in self._disabled_context_menus:
                 to_add_context.append(key)
-        
+
         # Remove commands
         for command in self._global_commands:
             if command not in enabled_commands["slash"]:
                 to_remove_commands.append((command, AppCommandType.chat_input))
-        
+
         # Remove context
         for command, guild_id, command_type in self._context_menus:
             if guild_id is not None:
                 continue
-            if AppCommandType(command_type) is AppCommandType.message and command not in enabled_commands["message"]:
+            if (
+                AppCommandType(command_type) is AppCommandType.message
+                and command not in enabled_commands["message"]
+            ):
                 to_remove_context.append((command, AppCommandType.message))
-            elif AppCommandType(command_type) is AppCommandType.user and command not in enabled_commands["user"]:
+            elif (
+                AppCommandType(command_type) is AppCommandType.user
+                and command not in enabled_commands["user"]
+            ):
                 to_remove_context.append((command, AppCommandType.user))
-        
+
         # Actually add/remove
         for command in to_add_commands:
             super().add_command(self._disabled_global_commands[command])
@@ -250,7 +277,9 @@ class RedTree(discord.app_commands.CommandTree):
         except discord.HTTPException:
             await ctx.channel.send(*args, **kwargs)
 
-    async def on_error(self, interaction: discord.Interaction, error: AppCommandError, /, *args, **kwargs) -> None:
+    async def on_error(
+        self, interaction: discord.Interaction, error: AppCommandError, /, *args, **kwargs
+    ) -> None:
         """Fallback error handler for app commands."""
         if isinstance(error, CommandNotFound):
             await self._send_from_interaction(interaction, _("Command not found."))
@@ -278,13 +307,17 @@ class RedTree(discord.app_commands.CommandTree):
                     )
                 else:
                     message = inline(_("Error in command '{command}'."))
-            await self._send_from_interaction(interaction, message.replace("{command}", error.command.qualified_name))
+            await self._send_from_interaction(
+                interaction, message.replace("{command}", error.command.qualified_name)
+            )
         elif isinstance(error, TransformerError):
             if error.__cause__:
                 log.exception("Error in an app command transformer.", exc_info=error.__cause__)
             await self._send_from_interaction(interaction, str(error))
         elif isinstance(error, BotMissingPermissions):
-            formatted = ['"' + perm.replace("_", " ").title() + '"' for perm in error.missing_permissions]
+            formatted = [
+                '"' + perm.replace("_", " ").title() + '"' for perm in error.missing_permissions
+            ]
             formatted = humanize_list(formatted).replace("Guild", "Server")
             if len(error.missing_permissions) == 1:
                 msg = _("I require the {permission} permission to execute that command.").format(
@@ -297,7 +330,9 @@ class RedTree(discord.app_commands.CommandTree):
             await self._send_from_interaction(interaction, msg)
         elif isinstance(error, NoPrivateMessage):
             # Seems to be only called normally by the has_role check
-            await self._send_from_interaction(interaction, _("That command is not available in DMs."))
+            await self._send_from_interaction(
+                interaction, _("That command is not available in DMs.")
+            )
         elif isinstance(error, CommandOnCooldown):
             relative_time = discord.utils.format_dt(
                 datetime.now(timezone.utc) + timedelta(seconds=error.retry_after), "R"
@@ -307,13 +342,15 @@ class RedTree(discord.app_commands.CommandTree):
             )
             await self._send_from_interaction(interaction, msg, delete_after=error.retry_after)
         elif isinstance(error, CheckFailure):
-            await self._send_from_interaction(interaction, _("You are not permitted to use this command."))
+            await self._send_from_interaction(
+                interaction, _("You are not permitted to use this command.")
+            )
         else:
             log.exception(type(error).__name__, exc_info=error)
 
     def _remove_with_module(self, name: str, *args, **kwargs) -> None:
         """Handles cases where a module raises an exception in the loading process, but added commands to the tree.
-        
+
         Duplication of the logic in the super class, but for the containers used by this subclass.
         """
         super()._remove_with_module(name, *args, **kwargs)
