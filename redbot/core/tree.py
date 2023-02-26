@@ -2,8 +2,11 @@ import discord
 from discord.abc import Snowflake
 from discord.utils import MISSING, _is_submodule
 from discord.enums import AppCommandType
-from discord.app_commands import Command, Group, ContextMenu
-from discord.app_commands.errors import (
+from discord.app_commands import (
+    Command,
+    Group,
+    ContextMenu,
+    AppCommand,
     AppCommandError,
     BotMissingPermissions,
     CheckFailure,
@@ -21,7 +24,7 @@ from .utils.chat_formatting import humanize_list, inline
 import logging
 import traceback
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Tuple, Union, Optional, Sequence
+from typing import List, Dict, Tuple, Union, Optional, Sequence
 
 
 log = logging.getLogger("red")
@@ -41,6 +44,7 @@ class RedTree(discord.app_commands.CommandTree):
         # Same structure as superclass
         self._disabled_global_commands: Dict[str, Union[Command, Group]] = {}
         self._disabled_context_menus: Dict[Tuple[str, Optional[int], int], ContextMenu] = {}
+        self._cached_app_commands: Dict[Tuple[str, Optional[Snowflake], AppCommandType], AppCommand] = {}
     
     def add_command(
         self,
@@ -134,7 +138,48 @@ class RedTree(discord.app_commands.CommandTree):
                 if value != type.value
             }
         return super().clear_commands(*args, guild=guild, type=type, **kwargs)
-            
+    
+    async def sync(self, *args, guild: Optional[Snowflake] = None, **kwargs) -> List[AppCommand]:
+        """Wrapper to cache commands when commands are synced."""
+        commands = await super().sync(self, *args, guild=guild, **kwargs)
+        for command in commands:
+            self._cached_app_commands[(command.name, guild, command.type)] = command
+        return commands
+    
+    async def fetch_command(self, command_id: int, /, *args, guild: Optional[Snowflake] = None, **kwargs) -> AppCommand:
+        """Wrapper to cache commands when they are fetched."""
+        command = await super().fetch_command(command_id, *args, guild=guild, **kwargs)
+        self._cached_app_commands[(command.name, guild, command.type)] = command
+        return command
+    
+    async def fetch_commands(self, *args, guild: Optional[Snowflake] = None, **kwargs) -> List[AppCommand]:
+        """Wrapper to cache commands when they are fetched."""
+        commands = await super().fetch_commands(*args, guild=guild, **kwargs)
+        for command in commands:
+            self._cached_app_commands[(command.name, guild, command.type)] = command
+        return commands
+    
+    async def get_or_fetch_command(self, command_name: str, *, guild: Optional[Snowflake] = None, command_type = AppCommandType.chat_input) -> Optional[AppCommand]:
+        """Returns the cached value for a command if found, otherwise fetches it from the API.
+        
+        Returns None if not found.
+        """
+        if (command_name, guild, command_type) in self._cached_app_commands:
+            return self._cached_app_commands[(command_name, guild, command_type)]
+        await self.fetch_commands(guild=guild)
+        if (command_name, guild, command_type) in self._cached_app_commands:
+            return self._cached_app_commands[(command_name, guild, command_type)]
+        return None
+    
+    @property
+    def cached_app_commands(self) -> Dict[Tuple[str, Optional[Snowflake], AppCommandType], AppCommand]:
+        """Maps (command name, guild id, command type) to an AppCommand object."""
+        return self._cached_app_commands.copy()
+    
+    @cached_app_commands.setter
+    def cached_app_commands(self, value):
+        raise Exception("Please use the fetch methods to fill the cache, instead of trying to manually do it.")
+    
     async def red_check_enabled(self) -> None:
         """Restructures the commands in this tree, enabling commands that are enabled and disabling commands that are disabled.
         
