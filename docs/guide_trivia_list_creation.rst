@@ -156,6 +156,8 @@ So, your final file might look something like this:
         bot_plays: false
         use_spoilers: true
         delay: 20
+        payout_multiplier: 0.5
+        max_score: 20
     How many days are there in a regular year?:
     - 365
     - three hundred and sixty five
