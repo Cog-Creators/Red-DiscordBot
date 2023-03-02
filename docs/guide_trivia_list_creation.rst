@@ -110,7 +110,7 @@ As you've added more questions, your file should look something like this:
     Who won the Premier League in 2015?:
     - Chelsea
     - chelsea f.c.
-    How much money is a US Olympic gold medallist awarded?:
+    How much money is a US Olympic gold medalist awarded?:
     - $37,500
     - 37,500
     - 37.5k
