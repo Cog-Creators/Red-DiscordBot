@@ -944,7 +944,7 @@ class Streams(commands.Cog):
                                 await role.edit(mentionable=False)
                         await self.save_streams()
             except Exception as e:
-                log.error("An error has occured with Streams. Please report it.", exc_info=e)
+                log.error("An error has occurred with Streams. Please report it.", exc_info=e)
 
         if to_remove:
             for stream in to_remove:
