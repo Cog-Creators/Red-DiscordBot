@@ -20,7 +20,7 @@ from redbot.setup import (
     create_backup,
 )
 from redbot.core import __version__, version_info as red_version_info, VersionInfo
-from redbot.core.cli import confirm
+from redbot.core.cli import ExitCodes, confirm
 from redbot.core.data_manager import load_existing_config
 
 if sys.platform == "linux":
@@ -155,7 +155,7 @@ def main():
                 req_ver=".".join(map(str, MIN_PYTHON_VERSION)), sys_ver=sys.version
             )
         )  # Don't make an f-string, these may not exist on the python version being rejected!
-        sys.exit(1)
+        sys.exit(ExitCodes.CONFIGURATION_ERROR)
 
     if INTERACTIVE_MODE:
         main_menu(flags_to_pass)

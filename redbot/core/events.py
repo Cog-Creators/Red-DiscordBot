@@ -266,16 +266,21 @@ def init_events(bot, cli_flags):
                 "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
-
-            message = _(
-                "Error in command '{command}'. Check your console or logs for details."
-            ).format(command=ctx.command.qualified_name)
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
             bot._last_exception = exception_log
-            await ctx.send(inline(message))
+
+            message = await bot._config.invoke_error_msg()
+            if not message:
+                if ctx.author.id in bot.owner_ids:
+                    message = inline(
+                        _("Error in command '{command}'. Check your console or logs for details.")
+                    )
+                else:
+                    message = inline(_("Error in command '{command}'."))
+            await ctx.send(message.replace("{command}", ctx.command.qualified_name))
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
@@ -317,10 +322,12 @@ def init_events(bot, cli_flags):
                 new_ctx = await bot.get_context(ctx.message)
                 await bot.invoke(new_ctx)
                 return
-            if delay := humanize_timedelta(seconds=error.retry_after):
-                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
-            else:
-                msg = _("This command is on cooldown. Try again in 1 second.")
+            relative_time = discord.utils.format_dt(
+                datetime.now(timezone.utc) + timedelta(seconds=error.retry_after), "R"
+            )
+            msg = _("This command is on cooldown. Try again {relative_time}.").format(
+                relative_time=relative_time
+            )
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             if error.per is commands.BucketType.default:
@@ -382,14 +389,10 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_add(command: commands.Command):
-        disabled_commands = await bot._config.disabled_commands()
-        if command.qualified_name in disabled_commands:
-            command.enabled = False
-        guild_data = await bot._config.all_guilds()
-        async for guild_id, data in AsyncIter(guild_data.items(), steps=100):
-            disabled_commands = data.get("disabled_commands", [])
-            if command.qualified_name in disabled_commands:
-                command.disable_in(discord.Object(id=guild_id))
+        if command.cog is not None:
+            return
+
+        await _disable_command_no_cog(command)
 
     async def _guild_added(guild: discord.Guild):
         disabled_commands = await bot._config.guild(guild).disabled_commands()
@@ -424,3 +427,26 @@ def init_events(bot, cli_flags):
             uuid = c.unique_identifier
             group_data = c.custom_groups
             await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
+
+        await _disable_commands_cog(cog)
+
+    async def _disable_command(
+        command: commands.Command, global_disabled: list, guilds_data: dict
+    ):
+        if command.qualified_name in global_disabled:
+            command.enabled = False
+        for guild_id, data in guilds_data.items():
+            guild_disabled_cmds = data.get("disabled_commands", [])
+            if command.qualified_name in guild_disabled_cmds:
+                command.disable_in(discord.Object(id=guild_id))
+
+    async def _disable_commands_cog(cog: commands.Cog):
+        global_disabled = await bot._config.disabled_commands()
+        guilds_data = await bot._config.all_guilds()
+        for command in cog.walk_commands():
+            await _disable_command(command, global_disabled, guilds_data)
+
+    async def _disable_command_no_cog(command: commands.Command):
+        global_disabled = await bot._config.disabled_commands()
+        guilds_data = await bot._config.all_guilds()
+        await _disable_command(command, global_disabled, guilds_data)

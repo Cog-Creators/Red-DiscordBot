@@ -376,7 +376,7 @@ necessary modifications.
 Firstly, stop all Red bots. For each bot using Audio:
 
 1. Start the bot.
-2. Run the command ``[p]llset external``.
+2. Run the command ``[p]llset unmanaged``.
 3. Stop the bot.
 
 Next, open a command prompt/terminal window. Navigate to ``<datapath>/cogs/Audio`` for any of your bot
@@ -806,7 +806,7 @@ Do not use quotes in these commands. For example, ``[p]llset host 192.168.10.101
 
 .. code-block:: none
 
-    [p]llset external
+    [p]llset unmanaged
     [p]llset host "yourlavalinkip"
     [p]llset port "port"
     [p]llset password "password"
@@ -3227,7 +3227,7 @@ Set the volume, 1% - 150%.
 Lavalink Setup Commands
 -----------------------
 
-``[p]llsetup`` group commands are used for advanced management of the connection to the Lavalink 
+``[p]llset`` group commands are used for advanced management of the connection to the Lavalink 
 server. The subcommands are dynamically available depending on whether Red is managing your 
 Lavalink node or if you are connecting to one you manage yourself, or a service that offers Lavalink
 nodes.
@@ -3235,11 +3235,11 @@ nodes.
 Commands specifically for managed Lavalink nodes can be found in :ref:`this section<managed-node-management-commands>`, 
 whilst commands for unmanaged Lavalink nodes can be found :ref:`here<unmanaged-node-management-commands>`.
 
-.. _audio-command-llsetup:
+.. _audio-command-llset:
 
-^^^^^^^
-llsetup
-^^^^^^^
+^^^^^
+llset
+^^^^^
 
 .. note:: |owner-lock|
 
@@ -3247,59 +3247,66 @@ llsetup
 
 .. code-block:: none
 
-    [p]llsetup 
+    [p]llset 
 
 **Description**
 
 Manage Lavalink node configuration settings. This command holds all commands to
-manage an unmanaged (external) or managed Lavalink node.
+manage an unmanaged (user-managed) or managed (bot-managed) Lavalink node.
 
 .. warning::
 
     You should not change any command settings in this group command unless you 
     have a valid reason to, e.g. been told by someone in the Red-Discord Bot support 
-    server to do so. Changing llsetup command settings have the potential to break 
+    server to do so. Changing llset command settings have the potential to break 
     Audio cog connection and playback if the wrong settings are used.
 
-""""""""""""""""
-llsetup external
-""""""""""""""""
+"""""""""""""""
+llset unmanaged
+"""""""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup external
+    [p]llset unmanaged
+
+or 
+
+.. code-block:: none
+
+    [p]llsetup unmanaged
 
 **Description**
 
-Toggle using external Lavalink nodes - requires an existing external Lavalink node for
-Audio to work, if enabled. This command disables the managed Lavalink server: if you do
-not have an external Lavalink node you will be unable to use Audio while this is enabled.
+Toggle using unmanaged (user-managed) Lavalink nodes - requires an existing Lavalink 
+node for Audio to work, if enabled. This command disables the managed (bot-managed) 
+Lavalink server: if you do not have an unmanaged Lavalink node set up, you will be 
+unable to use Audio while this is enabled.
 
-""""""""""""
-llsetup info
-""""""""""""
+""""""""""
+llset info
+""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup info
+    [p]llset info
 
 **Description**
 
 Display Lavalink connection settings.
 
-"""""""""""""
-llsetup reset
-"""""""""""""
+"""""""""""
+llset reset
+"""""""""""
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup reset
+    [p]llset reset
 
 **Description**
 
@@ -3311,17 +3318,17 @@ Reset all ``[p]llset`` changes back to their default values.
 Managed Node Management Commands
 --------------------------------
 
-.. _audio-command-llsetup-config:
+.. _audio-command-llset-config:
 
-^^^^^^^^^^^^^^
-llsetup config
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^
+llset config
+^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config
+    [p]llset config
 
 **Description**
 
@@ -3330,17 +3337,17 @@ Configure the managed Lavalink node runtime options.
 All settings under this group will likely cause Audio to malfunction if changed
 from their defaults, only change settings here if you have been advised to by #support.
 
-.. _audio-command-llsetup-config-bind:
+.. _audio-command-llset-config-bind:
 
-^^^^^^^^^^^^^^^^^^^
-llsetup config bind
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
+llset config bind
+^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config bind [host=localhost]
+    [p]llset config bind [host=localhost]
 
 **Description**
 
@@ -3350,17 +3357,17 @@ Set the managed Lavalink node's binding IP address.
 
 * ``[host]``: The node's binding IP address, defaulting to "localhost".
 
-.. _audio-command-llsetup-config-port:
+.. _audio-command-llset-config-port:
 
-^^^^^^^^^^^^^^^^^^^
-llsetup config port
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
+llset config port
+^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config port [port=2333]
+    [p]llset config port [port=2333]
 
 **Description**
 
@@ -3374,33 +3381,33 @@ you already have an application using port 2333 on this device.
 
 * ``[port]``: The node's connection port, defaulting to 2333.
 
-.. _audio-command-llsetup-config-server:
+.. _audio-command-llset-config-server:
 
-^^^^^^^^^^^^^^^^^^^^^
-llsetup config server
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
+llset config server
+^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config server
+    [p]llset config server
 
 **Description**
 
 Configure the managed node authorization and connection settings.
 
-.. _audio-command-llsetup-config-server-buffer:
+.. _audio-command-llset-config-server-buffer:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config server buffer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config server buffer
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config server buffer [milliseconds=400]
+    [p]llset config server buffer [milliseconds=400]
 
 **Description**
 
@@ -3412,17 +3419,17 @@ changing it can cause significant playback issues.
 
 * ``[milliseconds]`` - The buffer size, defaults to 400.
 
-.. _audio-command-llsetup-config-server-framebuffer:
+.. _audio-command-llset-config-server-framebuffer:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config server framebuffer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config server framebuffer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config server framebuffer [milliseconds=1000]
+    [p]llset config server framebuffer [milliseconds=1000]
 
 **Description**
 
@@ -3434,17 +3441,17 @@ changing it can cause significant playback issues.
 
 * ``[milliseconds]`` - The framebuffer size, defaults to 1000.
 
-.. _audio-command-llsetup-config-source:
+.. _audio-command-llset-config-source:
 
-^^^^^^^^^^^^^^^^^^^^^
-llsetup config source 
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
+llset config source 
+^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source
+    [p]llset config source
 
 **Description**
 
@@ -3454,34 +3461,34 @@ By default, all sources are enabled, you should only use commands here to
 disable a specific source if you have been advised to, disabling sources
 without background knowledge can cause Audio to break.
 
-.. _audio-command-llsetup-config-source-bandcamp:
+.. _audio-command-llset-config-source-bandcamp:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config source bandcamp
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config source bandcamp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source bandcamp
+    [p]llset config source bandcamp
 
 **Description**
 
 Toggle Bandcamp source on or off. This toggle controls the playback
 of all Bandcamp related content.
 
-.. _audio-command-llsetup-config-source-http:
+.. _audio-command-llset-config-source-http:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config source http
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
+llset config source http
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source http
+    [p]llset config source http
 
 **Description**
 
@@ -3489,17 +3496,17 @@ Toggle HTTP direct URL usage on or off. This source is used to
 allow playback from direct HTTP streams (this does not affect direct URL
 playback for the other sources).
 
-.. _audio-command-llsetup-config-source-local:
+.. _audio-command-llset-config-source-local:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config source local
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config source local
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source local
+    [p]llset config source local
 
 **Description**
 
@@ -3507,85 +3514,85 @@ Toggle local file usage on or off.
 This toggle controls the playback of all local track content,
 usually found inside the ``localtracks`` folder.
 
-.. _audio-command-llsetup-config-source-soundcloud:
+.. _audio-command-llset-config-source-soundcloud:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config source soundcloud
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config source soundcloud
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source soundcloud
+    [p]llset config source soundcloud
 
 **Description**
 
 Toggle SoundCloud source on or off.
 This toggle controls the playback of all SoundCloud related content.
 
-.. _audio-command-llsetup-config-source-twitch:
+.. _audio-command-llset-config-source-twitch:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config source twitch
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config source twitch
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source twitch
+    [p]llset config source twitch
 
 **Description**
 
 Toggle Twitch source on or off.
 This toggle controls the playback of all Twitch related content.
 
-.. _audio-command-llsetup-config-source-vimeo:
+.. _audio-command-llset-config-source-vimeo:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config source vimeo
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config source vimeo
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source vimeo
+    [p]llset config source vimeo
 
 **Description**
 
 Toggle Vimeo source on or off.
 This toggle controls the playback of all Vimeo related content.
 
-.. _audio-command-llsetup-config-source-youtube:
+.. _audio-command-llset-config-source-youtube:
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-llsetup config source youtube
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+llset config source youtube
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config source youtube
+    [p]llset config source youtube
 
 **Description**
 
 Toggle YouTube source on or off (**this includes Spotify**).
 This toggle controls the playback of all YouTube and Spotify related content.
 
-.. _audio-command-llsetup-config-token:
+.. _audio-command-llset-config-token:
 
-^^^^^^^^^^^^^^^^^^^^
-llsetup config token
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
+llset config token
+^^^^^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup config token [password=youshallnotpass]
+    [p]llset config token [password=youshallnotpass]
 
 **Description**
 
@@ -3597,17 +3604,17 @@ The value by default is ``youshallnotpass``.
 
 * ``[password]`` - The node's connection password, defaulting to ``youshallnotpass``.
 
-.. _audio-command-llsetup-heapsize:
+.. _audio-command-llset-heapsize:
 
-^^^^^^^^^^^^^^^^
-llsetup heapsize
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+llset heapsize
+^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup heapsize [size=3G]
+    [p]llset heapsize [size=3G]
 
 **Description**
 
@@ -3624,17 +3631,17 @@ node will always use this amount of RAM.
 
 * ``[size]`` - The node's maximum heap-size, defaulting to ``3G``.
 
-.. _audio-command-llsetup-java:
+.. _audio-command-llset-java:
 
-^^^^^^^^^^^^
-llsetup java
-^^^^^^^^^^^^
+^^^^^^^^^^
+llset java
+^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup java [javapath]
+    [p]llset java [javapath]
 
 **Description**
 
@@ -3650,17 +3657,17 @@ The current supported version is Java 11.
 
 * ``[java]`` - The java executable path, leave blank to reset it back to default.
 
-.. _audio-command-llsetup-yaml:
+.. _audio-command-llset-yaml:
 
-^^^^^^^^^^^^
-llsetup yaml
-^^^^^^^^^^^^
+^^^^^^^^^^
+llset yaml
+^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup yaml
+    [p]llset yaml
 
 **Description**
 
@@ -3676,82 +3683,82 @@ Unmanaged Node Management Commands
 
     A normal Red user should never have to use these commands unless they are :ref:`managing multiple Red bots with Audio<multibots>`.
 
-.. _audio-command-llsetup-host:
+.. _audio-command-llset-host:
 
-^^^^^^^^^^^^
-llsetup host
-^^^^^^^^^^^^
+^^^^^^^^^^
+llset host
+^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup host [host=localhost]
+    [p]llset host [host=localhost]
 
 **Description**
 
 Set the Lavalink node host. This command sets the connection host which
-Audio will use to connect to an external Lavalink node.
+Audio will use to connect to an unmanaged Lavalink node.
 
 **Arguments**
 
 * ``[host]`` - The connection host, defaulting to "localhost".
 
-.. _audio-command-llsetup-password:
+.. _audio-command-llset-password:
 
-^^^^^^^^^^^^^^^^
-llsetup password
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+llset password
+^^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup password [password=youshallnotpass]
+    [p]llset password [password=youshallnotpass]
 
 **Description**
 
 Set the Lavalink node password. This command sets the connection password which
-Audio will use to connect to an external Lavalink node.
+Audio will use to connect to an unmanaged Lavalink node.
 
 **Arguments**
 
 * ``[password]`` - The connection password, defaulting to "youshallnotpass".
 
-.. _audio-command-llsetup-port:
+.. _audio-command-llset-port:
 
-^^^^^^^^^^^^
-llsetup port
-^^^^^^^^^^^^
+^^^^^^^^^^
+llset port
+^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup port [port=2333]
+    [p]llset port [port=2333]
 
 **Description**
 
 Set the Lavalink node port. This command sets the connection port which
-Audio will use to connect to an external Lavalink node.
+Audio will use to connect to an unmanaged Lavalink node.
 
 **Arguments**
 
 * ``[password]`` - The connection password, defaulting to 2333.
 
-.. _audio-command-llsetup-secured:
+.. _audio-command-llset-secured:
 
-^^^^^^^^^^^^^^^
-llsetup secured
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
+llset secured
+^^^^^^^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]llsetup secured
+    [p]llset secured
 
 **Description**
 
 Set the Lavalink node connection to secured. This toggle sets the connection type
-to secured or unsecured when connecting to an external Lavalink node.
+to secured or unsecured when connecting to an unmanaged Lavalink node.
