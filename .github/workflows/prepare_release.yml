@@ -107,10 +107,9 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const semver = require('semver');
             const semverString = "${{ steps.bump_version_stable.outputs.new_version }}";
             if(semverString.startsWith("3.")){
-              return semver.coerce(semverString);
+              return semverString;
             }
             else{
               return "";
