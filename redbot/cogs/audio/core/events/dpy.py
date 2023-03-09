@@ -86,7 +86,7 @@ DANGEROUS_COMMANDS = {
         "usually you will never have to change this, "
         "before considering changing it please consult our support team."
     ),
-    "command_llset_external": _(
+    "command_llset_unmanaged": _(
         "This command will disable the managed Lavalink node, "
         "if you toggle this command you must specify an external Lavalink node to connect to, "
         "if you do not do so Audio will stop working."
