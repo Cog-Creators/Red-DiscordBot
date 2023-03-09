@@ -107,9 +107,15 @@ jobs:
         with:
           result-encoding: string
           script: |
+<<<<<<< HEAD
             const semverString = "${{ steps.bump_version_stable.outputs.new_version }}";
             if(semverString.startsWith("3.")){
               return ['[', semverString, ']'].join('');
+=======
+            const semverString = "[${{ steps.bump_version_stable.outputs.new_version }}]";
+            if(semverString.startsWith("[3.")){
+              return semverString;
+>>>>>>> b0d4f9b6 (update file)
             }
             else{
               return "";
