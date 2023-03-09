@@ -107,10 +107,9 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const semver = require('semver');
             const semverString = "${{ steps.bump_version_stable.outputs.new_version }}";
             if(semverString.startsWith("3.")){
-              return semver.coerce(semverString);
+              return semverString;
             }
             else{
               return "";
@@ -121,8 +120,8 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "[${{ steps.semver_parser.outputs.result }}.${{ steps.semver_parser.outputs.result }}] Version bump to ${{ steps.bump_version_stable.outputs.new_version }}"
-          title: "[${{ steps.semver_parser.outputs.result }}.${{ steps.semver_parser.outputs.result }}] Version bump to ${{ steps.bump_version_stable.outputs.new_version }}"
+          commit-message: "[${{ steps.semver_parser.outputs.result }}] Version bump to ${{ steps.bump_version_stable.outputs.new_version }}"
+          title: "[${{ steps.semver_parser.outputs.result }}] Version bump to ${{ steps.bump_version_stable.outputs.new_version }}"
           body: |
             This is an automated PR that is part of Prepare Release automated workflow (1 out of 2).
             Please ensure that there are no errors or invalid files are in the PR.
