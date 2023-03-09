@@ -109,7 +109,8 @@ jobs:
           script: |
             const semverString = "${{ steps.bump_version_stable.outputs.new_version }}";
             if(semverString.startsWith("3.")){
-              return "["+semverString+"]";
+              semverString.concat("[", semverString, "]")
+              return semverString;
             }
             else{
               return "";
