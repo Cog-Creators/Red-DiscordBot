@@ -2181,6 +2181,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         cog_commands["(unknown)"].extend(unknown_slash)
         cog_commands["(unknown)"].extend(unknown_message)
         cog_commands["(unknown)"].extend(unknown_user)
+        # Hide it when empty
+        if not cog_commands["(unknown)"]:
+            del cog_commands["(unknown)"]
 
         msg = ""
         for cog in sorted(cog_commands.keys()):
