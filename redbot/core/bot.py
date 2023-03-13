@@ -1589,7 +1589,7 @@ class Red(
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
-            
+
             # The licenseinfo command must always be available, even in a slash only bot.
             # To get around not having the message content intent, a mention prefix
             # will always work for it.
@@ -1602,7 +1602,7 @@ class Red(
                         if invoker in ("licenseinfo", "licenceinfo"):
                             ctx.command = self.all_commands.get(invoker)
                             ctx.prefix = m
-            
+
             if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
                 log.warning(
                     "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
