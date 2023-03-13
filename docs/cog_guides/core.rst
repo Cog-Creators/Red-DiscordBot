@@ -341,7 +341,7 @@ bankset maxbal
 
 Defines the maximum amount of money a user can have with the bot.
 
-If an user reaches this limit, he will be unable to gain more money.
+If a user reaches this limit, they will be unable to gain more money.
 
 **Arguments**
 
@@ -1274,7 +1274,7 @@ embedset command server
 
 **Description**
 
-Sets a commmand's embed setting for the current server.
+Sets a command's embed setting for the current server.
 
 If set, this is used instead of the server default to determine whether or not to use embeds.
 
@@ -1698,24 +1698,26 @@ helpset usemenus
 
 .. code-block:: none
 
-    [p]helpset usemenus [use_menus]
+    [p]helpset usemenus <"buttons"|"reactions"|"select"|"selectonly"|"disable">
 
 **Description**
 
 Allows the help command to be sent as a paginated menu instead of separate
 messages.
 
-When enabled, ``[p]help`` will only show one page at a time and will use reactions to navigate between pages.
+When "reactions", "buttons", "select", or "selectonly" is passed, ``[p]help`` will
+only show one page at a time and will use the associated control scheme to navigate between pages.
 
-This defaults to False.
-Using this without a setting will toggle.
-
- **Examples:**
-    - ``[p]helpset usemenues True`` - Enables using menus.
-    - ``[p]helpset usemenues`` - Toggles the value.
+**Examples:**
+    - ``[p]helpset usemenus reactions`` - Enables using reaction menus.
+    - ``[p]helpset usemenus buttons`` - Enables using button menus.
+    - ``[p]helpset usemenus select`` - Enables buttons with a select menu.
+    - ``[p]helpset usemenus selectonly`` - Enables a select menu only on help.
+    - ``[p]helpset usemenus disable`` - Disables help menus.
 
 **Arguments:**
-    - ``[use_menus]`` - Whether to use menus. Leave blank to toggle.
+    - ``<"buttons"|"reactions"|"select"|"selectonly"|"disable">`` - Whether to use ``buttons``,
+      ``reactions``, ``select``, ``selectonly``, or no menus.
 
 .. _core-command-helpset-usetick:
 
@@ -2348,11 +2350,15 @@ modlogset cases
 
 **Description**
 
-Enable or disable case creation for a mod action.
+Enable or disable case creation for a mod action, like disabling warnings, enabling bans, etc.
 
-**Arguments**
+**Examples:**
+    - ``[p]modlogset cases kick`` - Enables/disables modlog messages for kicks.
+    - ``[p]modlogset cases ban`` - Enables/disables modlog messages for bans.
 
-* ``[action]``: The action to enable or disable case creation for.
+**Arguments:**
+    - ``[action]`` - The type of mod action to be enabled/disabled for case creation.
+
 
 .. _core-command-modlogset-modlog:
 
@@ -3073,6 +3079,35 @@ This is only applied to the current server and not globally.
 
 **Arguments:**
     - ``[time]`` - The seconds to wait before deleting the command message. Use -1 to disable.
+
+.. _core-command-set-errormsg:
+
+""""""""""""
+set errormsg
+""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set errormsg [msg]
+
+**Description**
+
+Set the message that will be sent on uncaught bot errors.
+
+To include the command name in the message, use the ``{command}`` placeholder.
+
+If you omit the ``msg`` argument, the message will be reset to the default one.
+
+**Examples:**
+    - ``[p]set errormsg`` - Resets the error message back to the default: "Error in command '{command}'.". If the command invoker is one of the bot owners, the message will also include "Check your console or logs for details.".
+    - ``[p]set errormsg Oops, the command {command} has failed! Please try again later.`` - Sets the error message to a custom one.
+
+**Arguments:**
+    - ``[msg]`` - The custom error message. Must be less than 1000 characters. Omit to reset to the default one.
 
 .. _core-command-set-fuzzy:
 
@@ -3953,6 +3988,33 @@ Otherwise, the colour used will be the colour of the bot's top role.
 
 **Example:**
     - ``[p]set usebotcolour``
+    
+.. _core-command-set-usebuttons:
+
+""""""""""""""
+set usebuttons
+""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set usebuttons [use_buttons]
+    
+**Description**
+
+Set a global bot variable for using buttons in menus. When enabled, all usage of
+cores menus API will use buttons instead of reactions. This defaults to False.
+Using this without a setting will toggle.
+
+**Examples:**
+- ``[p]set usebuttons True`` - Enables using buttons.
+- ``[p]helpset usebuttons`` - Toggles the value.
+
+**Arguments:**
+    - ``[use_buttons]`` - Whether to use buttons. Leave blank to toggle.
 
 .. _core-command-shutdown:
 

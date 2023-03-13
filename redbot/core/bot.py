@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import inspect
 import logging
@@ -10,7 +11,6 @@ import weakref
 import functools
 from collections import namedtuple, OrderedDict
 from datetime import datetime
-from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import (
@@ -29,6 +29,7 @@ from typing import (
     MutableMapping,
     Set,
     overload,
+    TYPE_CHECKING,
 )
 from types import MappingProxyType
 
@@ -37,6 +38,7 @@ from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
+from .cli import ExitCodes
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
@@ -54,13 +56,20 @@ from .rpc import RPCMixin
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
+if TYPE_CHECKING:
+    from discord.ext.commands.hybrid import CommandCallback, ContextT, P
+    from discord import app_commands
+
+
+_T = TypeVar("_T")
+
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("red")
 
-__all__ = ("Red", "ExitCodes")
+__all__ = ("Red",)
 
 NotMessage = namedtuple("NotMessage", "guild")
 
@@ -111,7 +120,7 @@ class Red(
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__delete_delay=0,
-            help__use_menus=False,
+            help__use_menus=0,
             help__show_hidden=False,
             help__show_aliases=True,
             help__verify_checks=True,
@@ -125,6 +134,7 @@ class Red(
             invite_commands_scope=False,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
+            invoke_error_msg=None,
             extra_owner_destinations=[],
             owner_opt_out_list=[],
             last_system_info__python_version=[3, 7],
@@ -133,6 +143,7 @@ class Red(
             schema_version=0,
             datarequests__allow_user_requests=True,
             datarequests__user_requests_are_strict=True,
+            use_buttons=False,
         )
 
         self._config.register_guild(
@@ -719,7 +730,7 @@ class Red(
 
         If given a member, this will additionally check guild lists
 
-        If omiting a user or member, you must provide a value for ``who_id``
+        If omitting a user or member, you must provide a value for ``who_id``
 
         You may also provide a value for ``guild`` in this case
 
@@ -1066,6 +1077,16 @@ class Red(
             await self._schema_1_to_2()
             schema_version += 1
             await self._config.schema_version.set(schema_version)
+        if schema_version == 2:
+            await self._schema_2_to_3()
+            schema_version += 1
+            await self._config.schema_version.set(schema_version)
+
+    async def _schema_2_to_3(self):
+        log.info("Migrating help menus to enum values")
+        old = await self._config.help__use_menus()
+        if old is not None:
+            await self._config.help__use_menus.set(int(old))
 
     async def _schema_1_to_2(self):
         """
@@ -1108,6 +1129,8 @@ class Red(
         """
         This should only be run once, prior to logging in to Discord REST API.
         """
+        await super()._pre_login()
+
         await self._maybe_update_config()
         self.description = await self._config.description()
         self._color = discord.Colour(await self._config.color())
@@ -1361,6 +1384,17 @@ class Red(
 
         global_setting = await self._config.embeds()
         return global_setting
+
+    async def use_buttons(self) -> bool:
+        """
+        Determines whether the bot owner has enabled use of buttons instead of
+        reactions for basic menus.
+
+        Returns
+        -------
+        bool
+        """
+        return await self._config.use_buttons()
 
     async def is_owner(self, user: Union[discord.User, discord.Member], /) -> bool:
         """
@@ -1826,6 +1860,58 @@ class Red(
                 subcommand.requires.reset()
         return command
 
+    def hybrid_command(
+        self,
+        name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
+        with_app_command: bool = True,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Callable[[CommandCallback[Any, ContextT, P, _T]], commands.HybridCommand[Any, P, _T]]:
+        """A shortcut decorator that invokes :func:`~redbot.core.commands.hybrid_command` and adds it to
+        the internal command list via :meth:`add_command`.
+
+        Returns
+        --------
+        Callable[..., :class:`HybridCommand`]
+            A decorator that converts the provided method into a Command, adds it to the bot, then returns it.
+        """
+
+        def decorator(func: CommandCallback[Any, ContextT, P, _T]):
+            kwargs.setdefault("parent", self)
+            result = commands.hybrid_command(
+                name=name, *args, with_app_command=with_app_command, **kwargs
+            )(func)
+            self.add_command(result)
+            return result
+
+        return decorator
+
+    def hybrid_group(
+        self,
+        name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
+        with_app_command: bool = True,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Callable[[CommandCallback[Any, ContextT, P, _T]], commands.HybridGroup[Any, P, _T]]:
+        """A shortcut decorator that invokes :func:`~redbot.core.commands.hybrid_group` and adds it to
+        the internal command list via :meth:`add_command`.
+
+        Returns
+        --------
+        Callable[..., :class:`HybridGroup`]
+            A decorator that converts the provided method into a Group, adds it to the bot, then returns it.
+        """
+
+        def decorator(func: CommandCallback[Any, ContextT, P, _T]):
+            kwargs.setdefault("parent", self)
+            result = commands.hybrid_group(
+                name=name, *args, with_app_command=with_app_command, **kwargs
+            )(func)
+            self.add_command(result)
+            return result
+
+        return decorator
+
     def clear_permission_rules(self, guild_id: Optional[int], **kwargs) -> None:
         """Clear all permission overrides in a scope.
 
@@ -2137,11 +2223,3 @@ class Red(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
-
-
-class ExitCodes(IntEnum):
-    # This needs to be an int enum to be used
-    # with sys.exit
-    CRITICAL = 1
-    SHUTDOWN = 0
-    RESTART = 26

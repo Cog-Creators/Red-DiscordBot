@@ -2,12 +2,28 @@ import argparse
 import asyncio
 import logging
 import sys
+from enum import IntEnum
 from typing import Optional
 
 import discord
 from discord import __version__ as discord_version
 
 from redbot.core.utils._internal_utils import cli_level_to_log_level
+
+
+# This needs to be an int enum to be used
+# with sys.exit
+class ExitCodes(IntEnum):
+    #: Clean shutdown (through signals, keyboard interrupt, [p]shutdown, etc.).
+    SHUTDOWN = 0
+    #: An unrecoverable error occurred during application's runtime.
+    CRITICAL = 1
+    #: The CLI command was used incorrectly, such as when the wrong number of arguments are given.
+    INVALID_CLI_USAGE = 2
+    #: Restart was requested by the bot owner (probably through [p]restart command).
+    RESTART = 26
+    #: Some kind of configuration error occurred.
+    CONFIGURATION_ERROR = 78  # Exit code borrowed from os.EX_CONFIG.
 
 
 def confirm(text: str, default: Optional[bool] = None) -> bool:
@@ -23,9 +39,12 @@ def confirm(text: str, default: Optional[bool] = None) -> bool:
     while True:
         try:
             value = input(f"{text}: [{options}] ").lower().strip()
-        except (KeyboardInterrupt, EOFError):
+        except KeyboardInterrupt:
             print("\nAborted!")
-            sys.exit(1)
+            sys.exit(ExitCodes.SHUTDOWN)
+        except EOFError:
+            print("\nAborted!")
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
         if value in ("y", "yes"):
             return True
         if value in ("n", "no"):
