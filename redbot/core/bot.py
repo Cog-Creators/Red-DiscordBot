@@ -187,43 +187,13 @@ class Red(
         self._i18n_cache = I18nManager(self._config)
         self._bypass_cooldowns = False
 
-        if "command_prefix" in kwargs:
-            kwarg_prefix = kwargs["command_prefix"]
+        async def prefix_manager(bot, message) -> List[str]:
+            prefixes = await self._prefix_cache.get_prefixes(message.guild)
+            if cli_flags.mentionable:
+                return when_mentioned_or(*prefixes)(bot, message)
+            return prefixes
 
-            async def prefix_manager(bot, message) -> List[str]:
-                # The licenseinfo command must always be available, even in a slash only bot.
-                # To get around not having the message content intent, a mention prefix
-                # will always work for it.
-                for m in (f"<@{bot.user.id}> ", f"<@!{bot.user.id}> "):
-                    if message.content.startswith(m):
-                        possible_command = message.content[len(m) :].strip()
-                        if any(
-                            possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")
-                        ):
-                            return m
-                if callable(kwarg_prefix):
-                    return await discord.utils.maybe_coroutine(kwarg_prefix, bot, message)
-                return kwarg_prefix
-
-            kwargs["command_prefix"] = prefix_manager
-        else:
-
-            async def prefix_manager(bot, message) -> List[str]:
-                prefixes = await self._prefix_cache.get_prefixes(message.guild)
-                if cli_flags.mentionable:
-                    return when_mentioned_or(*prefixes)(bot, message)
-                # The licenseinfo command must always be available, even in a slash only bot.
-                # To get around not having the message content intent, a mention prefix
-                # will always work for it.
-                for m in (f"<@{bot.user.id}> ", f"<@!{bot.user.id}> "):
-                    if message.content.startswith(m):
-                        possible_command = message.content[len(m) :].strip()
-                        if any(
-                            possible_command.startswith(x) for x in ("licenseinfo", "licenceinfo")
-                        ):
-                            return m
-                return prefixes
-
+        if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
 
         if "owner_id" in kwargs:
@@ -1619,6 +1589,20 @@ class Red(
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
+            
+            # The licenseinfo command must always be available, even in a slash only bot.
+            # To get around not having the message content intent, a mention prefix
+            # will always work for it.
+            if not ctx.valid:
+                for m in (f"<@{self.user.id}> ", f"<@!{self.user.id}> "):
+                    if message.content.startswith(m):
+                        ctx.view.undo()
+                        ctx.view.skip_string(m)
+                        invoker = ctx.view.get_word()
+                        if invoker in ("licenseinfo", "licenceinfo"):
+                            ctx.command = self.all_commands.get(invoker)
+                            ctx.prefix = m
+            
             if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
                 log.warning(
                     "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
