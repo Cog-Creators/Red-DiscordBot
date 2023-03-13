@@ -1602,6 +1602,7 @@ class Red(
                         if invoker in ("licenseinfo", "licenceinfo"):
                             ctx.command = self.all_commands.get(invoker)
                             ctx.prefix = m
+                        break
 
             if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
                 log.warning(
