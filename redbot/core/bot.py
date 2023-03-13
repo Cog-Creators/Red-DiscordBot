@@ -1599,8 +1599,9 @@ class Red(
                         ctx.view.undo()
                         ctx.view.skip_string(m)
                         invoker = ctx.view.get_word()
-                        if invoker in ("licenseinfo", "licenceinfo"):
-                            ctx.command = self.all_commands.get(invoker)
+                        command = self.all_commands.get(invoker, None)
+                        if isinstance(command, commands.commands._AlwaysAvailableMixin):
+                            ctx.command = command
                             ctx.prefix = m
                         break
 
