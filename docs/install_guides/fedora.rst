@@ -12,15 +12,15 @@ Installing Red on Fedora Linux
 Installing the pre-requirements
 -------------------------------
 
-Fedora Linux 35 and above has all required packages available in official repositories. Install
+Fedora Linux 36 and above has all required packages available in official repositories. Install
 them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python39 git java-11-openjdk-headless @development-tools nano
+    sudo dnf -y install python3.11 python3.11-devel git java-11-openjdk-headless @development-tools nano
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv.rst
+.. include:: _includes/create-env-with-venv3.11.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst

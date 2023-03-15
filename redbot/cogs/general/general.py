@@ -220,7 +220,7 @@ class General(commands.Cog):
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
         search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
-        await ctx.send("https://lmgtfy.app/?q={}".format(search_terms))
+        await ctx.send("https://lmgtfy.app/?q={}&s=g".format(search_terms))
 
     @commands.command(hidden=True)
     @commands.guild_only()
@@ -422,6 +422,8 @@ class General(commands.Cog):
                 "NEW_THREAD_PERMISSIONS",
                 "TEXT_IN_VOICE_ENABLED",
                 "THREADS_ENABLED",
+                # available to everyone sometime after forum channel release
+                "PRIVATE_THREADS",
             }
             custom_feature_names = {
                 "VANITY_URL": "Vanity URL",

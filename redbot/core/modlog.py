@@ -689,7 +689,8 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                message = mod_channel.get_partial_message(message_id)
+                if mod_channel is not None:
+                    message = mod_channel.get_partial_message(message_id)
 
         user_objects = {"user": None, "moderator": None, "amended_by": None}
         for user_key in tuple(user_objects):
@@ -858,8 +859,11 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     case = await _config.custom(_CASES, str(guild.id), str(case_number)).all()
     if not case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
-    mod_channel = await get_modlog_channel(guild)
-    return await Case.from_json(mod_channel, bot, case_number, case)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
+    return await Case.from_json(mod_channel, bot, case_number, case, guild=guild)
 
 
 async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
@@ -901,9 +905,12 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
     """
     cases = await _config.custom(_CASES, str(guild.id)).all()
-    mod_channel = await get_modlog_channel(guild)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
     return [
-        await Case.from_json(mod_channel, bot, case_number, case_data)
+        await Case.from_json(mod_channel, bot, case_number, case_data, guild=guild)
         for case_number, case_data in cases.items()
     ]
 
