@@ -2086,25 +2086,31 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         # If enabling would exceed any limit, exit early to not enable only a subset
         if total_slash > SLASH_CAP:
-            await ctx.send(_(
-                "Enabling all application commands from that cog would enable a total of {count} "
-                "commands, exceeding the {cap} command limit for slash commands. "
-                "Disable some commands first."
-            ).format(count=total_slash, cap=SLASH_CAP))
+            await ctx.send(
+                _(
+                    "Enabling all application commands from that cog would enable a total of {count} "
+                    "commands, exceeding the {cap} command limit for slash commands. "
+                    "Disable some commands first."
+                ).format(count=total_slash, cap=SLASH_CAP)
+            )
             return
         if total_message > CONTEXT_CAP:
-            await ctx.send(_(
-                "Enabling all application commands from that cog would enable a total of {count} "
-                "commands, exceeding the {cap} command limit for message commands. "
-                "Disable some commands first."
-            ).format(count=total_message, cap=CONTEXT_CAP))
+            await ctx.send(
+                _(
+                    "Enabling all application commands from that cog would enable a total of {count} "
+                    "commands, exceeding the {cap} command limit for message commands. "
+                    "Disable some commands first."
+                ).format(count=total_message, cap=CONTEXT_CAP)
+            )
             return
         if total_user > CONTEXT_CAP:
-            await ctx.send(_(
-                "Enabling all application commands from that cog would enable a total of {count} "
-                "commands, exceeding the {cap} command limit for user commands. "
-                "Disable some commands first."
-            ).format(count=total_user, cap=CONTEXT_CAP))
+            await ctx.send(
+                _(
+                    "Enabling all application commands from that cog would enable a total of {count} "
+                    "commands, exceeding the {cap} command limit for user commands. "
+                    "Disable some commands first."
+                ).format(count=total_user, cap=CONTEXT_CAP)
+            )
             return
 
         # Enable the cogs
@@ -2116,12 +2122,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await self.bot.enable_app_command(name, discord.AppCommandType.user)
 
         # Update the tree with the new list of enabled cogs
-        await self.bot.tree.red_check_enabled()        
-        await ctx.send(
-            _("Enabled all commands from `{cog_name}`.").format(
-                cog_name=cog_name
-            )
-        )
+        await self.bot.tree.red_check_enabled()
+        await ctx.send(_("Enabled all commands from `{cog_name}`.").format(cog_name=cog_name))
 
     @slash.command(name="disablecog")
     async def slash_disablecog(self, ctx: commands.Context, cog_name):
@@ -2278,12 +2280,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Custom cooldown error message."""
         if not isinstance(error, commands.CommandOnCooldown):
             return await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
-        await ctx.send(_(
-            "You seem to be attempting to sync after recently syncing. Discord does not like it "
-            "when bots sync more often than neccecary, so this command has a cooldown. You "
-            "should enable/disable all commands you want to change first, and run this command "
-            "one time only after all changes have been made. "
-        ))
+        await ctx.send(
+            _(
+                "You seem to be attempting to sync after recently syncing. Discord does not like it "
+                "when bots sync more often than neccecary, so this command has a cooldown. You "
+                "should enable/disable all commands you want to change first, and run this command "
+                "one time only after all changes have been made. "
+            )
+        )
 
     @commands.command(name="shutdown")
     @checks.is_owner()
