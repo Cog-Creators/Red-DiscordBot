@@ -1274,7 +1274,7 @@ embedset command server
 
 **Description**
 
-Sets a commmand's embed setting for the current server.
+Sets a command's embed setting for the current server.
 
 If set, this is used instead of the server default to determine whether or not to use embeds.
 

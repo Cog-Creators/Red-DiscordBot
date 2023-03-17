@@ -174,7 +174,7 @@ class RPCMixin:
 
     def unregister_rpc_handler(self, method):
         """
-        Unregisters an RPC method handler.
+        Deregisters an RPC method handler.
 
         This will be called automatically for you on cog unload and will pass silently if the
         method is not previously registered.

@@ -154,7 +154,7 @@ class Trivia(commands.Cog):
             )
 
     @triviaset.command(name="usespoilers", usage="<true_or_false>")
-    async def trivaset_use_spoilers(self, ctx: commands.Context, enabled: bool):
+    async def triviaset_use_spoilers(self, ctx: commands.Context, enabled: bool):
         """Set if bot will display the answers in spoilers.
 
         If enabled, the bot will use spoilers to hide answers.
@@ -167,7 +167,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Alright, I won't use spoilers to hide answers anymore."))
 
     @triviaset.command(name="botplays", usage="<true_or_false>")
-    async def trivaset_bot_plays(self, ctx: commands.Context, enabled: bool):
+    async def triviaset_bot_plays(self, ctx: commands.Context, enabled: bool):
         """Set whether or not the bot gains points.
 
         If enabled, the bot will gain a point if no one guesses correctly.
@@ -180,7 +180,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Alright, I won't embarrass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer", usage="<true_or_false>")
-    async def trivaset_reveal_answer(self, ctx: commands.Context, enabled: bool):
+    async def triviaset_reveal_answer(self, ctx: commands.Context, enabled: bool):
         """Set whether or not the answer is revealed.
 
         If enabled, the bot will reveal the answer if no one guesses correctly

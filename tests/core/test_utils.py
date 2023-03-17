@@ -44,7 +44,7 @@ async def test_bounded_gather():
         if isinstance(result, RuntimeError):
             num_failed += 1
         else:
-            assert result == i  # verify_permissions original orde
+            assert result == i  # verify_permissions original order
             assert 0 <= result < num_tasks
 
     assert 0 < status[1] <= num_concurrent
