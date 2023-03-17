@@ -2041,7 +2041,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @slash.command(name="enablecog")
-    async def slash_enablecog(self, ctx: commands.Context, cog_name):
+    async def slash_enablecog(self, ctx: commands.Context, cog_name: str):
         """Marks all application commands in a cog as being enabled, allowing them to be added to the bot.
 
         See a list of cogs with application commands with `[p]slash list`.
@@ -2051,41 +2051,77 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
         """
-        count = 0
-        try:
-            for name, com in self.bot.tree._disabled_global_commands.items():
-                if discord.utils._is_submodule(cog_name, com.module):
-                    await self.bot.enable_app_command(name, discord.AppCommandType.chat_input)
-                    count += 1
-            for key, com in self.bot.tree._disabled_context_menus.items():
-                if discord.utils._is_submodule(cog_name, com.module):
-                    name, guild_id, com_type = key
-                    await self.bot.enable_app_command(name, discord.AppCommandType(com_type))
-                    count += 1
-        except discord.app_commands.CommandLimitReached:
-            if not count:
-                await ctx.send(_("The command limit has been reached. Disable a command first."))
-                return
-            await self.bot.tree.red_check_enabled()
+        enabled_commands = await self.bot.list_enabled_app_commands()
+        to_add_slash = []
+        to_add_message = []
+        to_add_user = []
+
+        # Fetch a list of command names to enable
+        for name, com in self.bot.tree._disabled_global_commands.items():
+            if discord.utils._is_submodule(cog_name, com.module):
+                to_add_slash.append(name)
+        for key, com in self.bot.tree._disabled_context_menus.items():
+            if discord.utils._is_submodule(cog_name, com.module):
+                name, guild_id, com_type = key
+                com_type = discord.AppCommandType(com_type)
+                if com_type is discord.AppCommandType.message:
+                    to_add_message.append(name)
+                elif com_type is discord.AppCommandType.user:
+                    to_add_user.append(name)
+
+        # Check that we are going to enable at least one command, for user feedback
+        if not (to_add_slash or to_add_message or to_add_user):
             await ctx.send(
                 _(
-                    "Enabled {count} commands from `{cog_name}`.\nSome commands were skipped because the command limit was reached. Disable some commands first."
-                ).format(count=count, cog_name=cog_name)
+                    "Couldn't find any disabled commands from the cog `{cog_name}`. Use `{prefix}slash list` to see all cogs with slash commands."
+                ).format(cog_name=cog_name, prefix=ctx.prefix)
             )
-        else:
-            if not count:
-                await ctx.send(
-                    _(
-                        "Couldn't find any disabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands."
-                    ).format(cog_name=cog_name, prefix=ctx.prefix)
-                )
-                return
-            await self.bot.tree.red_check_enabled()
-            await ctx.send(
-                _("Enabled {count} commands from `{cog_name}`.").format(
-                    count=count, cog_name=cog_name
-                )
+            return
+
+        SLASH_CAP = 100
+        CONTEXT_CAP = 5
+        total_slash = len(enabled_commands["slash"]) + len(to_add_slash)
+        total_message = len(enabled_commands["message"]) + len(to_add_message)
+        total_user = len(enabled_commands["user"]) + len(to_add_user)
+
+        # If enabling would exceed any limit, exit early to not enable only a subset
+        if total_slash > SLASH_CAP:
+            await ctx.send(_(
+                "Enabling all application commands from that cog would enable a total of {count} "
+                "commands, exceeding the {cap} command limit for slash commands. "
+                "Disable some commands first."
+            ).format(count=total_slash, cap=SLASH_CAP))
+            return
+        if total_message > CONTEXT_CAP:
+            await ctx.send(_(
+                "Enabling all application commands from that cog would enable a total of {count} "
+                "commands, exceeding the {cap} command limit for message commands. "
+                "Disable some commands first."
+            ).format(count=total_message, cap=CONTEXT_CAP))
+            return
+        if total_user > CONTEXT_CAP:
+            await ctx.send(_(
+                "Enabling all application commands from that cog would enable a total of {count} "
+                "commands, exceeding the {cap} command limit for user commands. "
+                "Disable some commands first."
+            ).format(count=total_user, cap=CONTEXT_CAP))
+            return
+
+        # Enable the cogs
+        for name in to_add_slash:
+            await self.bot.enable_app_command(name, discord.AppCommandType.chat_input)
+        for name in to_add_message:
+            await self.bot.enable_app_command(name, discord.AppCommandType.message)
+        for name in to_add_user:
+            await self.bot.enable_app_command(name, discord.AppCommandType.user)
+
+        # Update the tree with the new list of enabled cogs
+        await self.bot.tree.red_check_enabled()        
+        await ctx.send(
+            _("Enabled all commands from `{cog_name}`.").format(
+                cog_name=cog_name
             )
+        )
 
     @slash.command(name="disablecog")
     async def slash_disablecog(self, ctx: commands.Context, cog_name):
@@ -2200,11 +2236,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 msg += diff + command_type.ljust(7) + " | " + name + "\n"
             msg += "\n"
 
-        pages = pagify(msg, delims=["\n\n"])
+        pages = pagify(msg, delims=["\n\n", "\n"])
         pages = [box(page, lang="diff") for page in pages]
         await menu(ctx, pages)
 
     @slash.command(name="sync")
+    @commands.cooldown(1, 60)
     async def slash_sync(self, ctx: commands.Context, guild: discord.Guild = None):
         """Syncs the slash settings to discord.
 
@@ -2224,13 +2261,29 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 raise e
             await ctx.send(
                 _(
-                    "I need the `applications.commands` scope in this server to be able to do that. Reinvite me with that scope first."
-                )
+                    "I need the `applications.commands` scope in this server to be able to do that. "
+                    "You can tell the bot to add that scope to invite links using `{prefix}inviteset commandscope`, "
+                    "and can then run `{prefix}invite` to get an invite that will give the bot the scope. "
+                    "You do not need to kick the bot to enable the scope, just use that invite to "
+                    "re-auth the bot with the scope enabled."
+                ).format(prefix=ctx.prefix)
             )
         except Exception as e:
             raise e
         else:
             await ctx.tick()
+
+    @slash_sync.error
+    async def slash_sync_error(self, ctx: commands.Context, error: commands.CommandError):
+        """Custom cooldown error message."""
+        if not isinstance(error, commands.CommandOnCooldown):
+            return await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+        await ctx.send(_(
+            "You seem to be attempting to sync after recently syncing. Discord does not like it "
+            "when bots sync more often than neccecary, so this command has a cooldown. You "
+            "should enable/disable all commands you want to change first, and run this command "
+            "one time only after all changes have been made. "
+        ))
 
     @commands.command(name="shutdown")
     @checks.is_owner()
