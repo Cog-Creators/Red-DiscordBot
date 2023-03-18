@@ -1016,13 +1016,13 @@ async def create_case(
     ValueError
         If the action type is not a valid action type.
     RuntimeError
-        If user is the bot itself
+        If user is the bot itself.
     TypeError
         If ``channel`` is of type `discord.PartialMessageable`.
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
-        raise ValueError("That is not a valid action type.")
+        raise ValueError(f"{action_type} is not a valid action type.")
 
     if not await case_type.is_enabled():
         return
