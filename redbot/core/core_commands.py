@@ -2041,6 +2041,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @slash.command(name="enablecog")
+    @commands.max_concurrency(1, wait=True)
     async def slash_enablecog(self, ctx: commands.Context, cog_name: str):
         """Marks all application commands in a cog as being enabled, allowing them to be added to the bot.
 
