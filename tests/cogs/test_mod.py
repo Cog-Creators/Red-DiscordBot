@@ -10,7 +10,6 @@ async def test_modlog_register_casetype(mod):
     assert casetype is not None
 
 
-
 async def test_modlog_case_create(mod, ctx, monkeypatch, member_factory, empty_user):
     from datetime import datetime, timezone
 
