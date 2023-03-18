@@ -998,7 +998,7 @@ class Repo(RepoJSONMixin):
 
     @classmethod
     async def from_folder(cls, folder: Path, branch: str = "") -> Repo:
-        repo = cls(name=folder.stem, url="", branch=branch, commit="", folder_path=folder)
+        repo = cls(name=folder.name, url="", branch=branch, commit="", folder_path=folder)
         repo.url = await repo.current_url()
         if branch == "":
             repo.branch = await repo.current_branch()
@@ -1214,14 +1214,14 @@ class RepoManager:
             if not folder.is_dir():
                 continue
             try:
-                branch = await self.config.repos.get_raw(folder.stem, default="")
-                ret[folder.stem] = await Repo.from_folder(folder, branch)
+                branch = await self.config.repos.get_raw(folder.name, default="")
+                ret[folder.name] = await Repo.from_folder(folder, branch)
                 if branch == "":
-                    await self.config.repos.set_raw(folder.stem, value=ret[folder.stem].branch)
+                    await self.config.repos.set_raw(folder.name, value=ret[folder.name].branch)
             except errors.NoRemoteURL:
-                log.warning("A remote URL does not exist for repo %s", folder.stem)
+                log.warning("A remote URL does not exist for repo %s", folder.name)
             except errors.DownloaderException as err:
-                log.error("Ignoring repo %s due to error.", folder.stem, exc_info=err)
+                log.error("Ignoring repo %s due to error.", folder.name, exc_info=err)
                 # Downloader should NOT remove the repo on generic errors like this one.
                 # We were removing whole repo folder here in the past,
                 # but it's quite destructive for such a generic error.

@@ -21,18 +21,3 @@ to keep it in a location which is easy to type out the path to. From now, we'll 
 ``redenv`` and it will be located in your home directory.
 
 Create your virtual environment with the following command:
-
-.. prompt:: bash
-
-    python3.9 -m venv ~/redenv
-
-And activate it with the following command:
-
-.. prompt:: bash
-
-    source ~/redenv/bin/activate
-
-.. important::
-
-    You must activate the virtual environment with the above command every time you open a new
-    shell to run, install or update Red.
