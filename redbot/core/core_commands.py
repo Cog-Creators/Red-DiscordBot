@@ -2223,6 +2223,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not cog_commands["(unknown)"]:
             del cog_commands["(unknown)"]
 
+        if not cog_commands:
+            await ctx.send(_("There are no application commands to list."))
+            return
+
         msg = ""
         for cog in sorted(cog_commands.keys()):
             msg += cog + "\n"
