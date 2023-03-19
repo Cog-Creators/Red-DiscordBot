@@ -143,6 +143,21 @@ class RedTree(discord.app_commands.CommandTree):
             }
         return super().clear_commands(*args, guild=guild, type=type, **kwargs)
 
+    async def sync(self, *args, guild: Optional[Snowflake] = None, **kwargs) -> List[AppCommand]:
+        """Wrapper to store command IDs when commands are synced."""
+        commands = await super().sync(*args, guild=guild, **kwargs)
+        if guild:
+            return commands
+        async with self.client._config.all() as cfg:
+            for command in commands:
+                if command.type is AppCommandType.chat_input:
+                    cfg["enabled_slash_commands"][command.name] = command.id
+                elif command.type is AppCommandType.message:
+                    cfg["enabled_message_commands"][command.name] = command.id
+                elif command.type is AppCommandType.user:
+                    cfg["enabled_user_commands"][command.name] = command.id
+        return commands
+
     async def red_check_enabled(self) -> None:
         """Restructures the commands in this tree, enabling commands that are enabled and disabling commands that are disabled.
 
