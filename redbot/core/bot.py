@@ -34,7 +34,6 @@ from typing import (
 from types import MappingProxyType
 
 import discord
-from discord.enums import AppCommandType
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
@@ -1677,7 +1676,7 @@ class Red(
         return cog
 
     async def enable_app_command(
-        self, command_name: str, command_type: AppCommandType = AppCommandType.chat_input
+        self, command_name: str, command_type: discord.AppCommandType = discord.AppCommandType.chat_input
     ) -> None:
         """
         Mark an application command as being enabled.
@@ -1689,13 +1688,13 @@ class Red(
         CommandLimitReached
             Raised when attempting to enable a command that would exceed the command limit.
         """
-        if command_type is AppCommandType.chat_input:
+        if command_type is discord.AppCommandType.chat_input:
             cfg = self._config.enabled_slash_commands()
             limit = 100
-        elif command_type is AppCommandType.message:
+        elif command_type is discord.AppCommandType.message:
             cfg = self._config.enabled_message_commands()
             limit = 5
-        elif command_type is AppCommandType.user:
+        elif command_type is discord.AppCommandType.user:
             cfg = self._config.enabled_user_commands()
             limit = 5
         else:
@@ -1707,18 +1706,18 @@ class Red(
                 curr_commands[command_name] = None
 
     async def disable_app_command(
-        self, command_name: str, command_type: AppCommandType = AppCommandType.chat_input
+        self, command_name: str, command_type: discord.AppCommandType = discord.AppCommandType.chat_input
     ) -> None:
         """
         Mark an application command as being disabled.
 
         Disabled commands are not added to the bot's tree, are not able to be synced, and cannot be invoked.
         """
-        if command_type is AppCommandType.chat_input:
+        if command_type is discord.AppCommandType.chat_input:
             cfg = self._config.enabled_slash_commands()
-        elif command_type is AppCommandType.message:
+        elif command_type is discord.AppCommandType.message:
             cfg = self._config.enabled_message_commands()
-        elif command_type is AppCommandType.user:
+        elif command_type is discord.AppCommandType.user:
             cfg = self._config.enabled_user_commands()
         else:
             raise TypeError("command type must be one of chat_input, message, user")

@@ -1,7 +1,6 @@
 import discord
 from discord.abc import Snowflake
-from discord.utils import MISSING, _is_submodule
-from discord.enums import AppCommandType
+from discord.utils import MISSING
 from discord.app_commands import (
     Command,
     Group,
@@ -106,30 +105,30 @@ class RedTree(discord.app_commands.CommandTree):
         /,
         *args,
         guild: Optional[Snowflake] = None,
-        type: AppCommandType = AppCommandType.chat_input,
+        type: discord.AppCommandType = discord.AppCommandType.chat_input,
         **kwargs,
     ) -> Optional[Union[Command, ContextMenu, Group]]:
         """Removes an application command from this tree."""
         if guild is not None:
             return super().remove_command(command, *args, guild=guild, type=type, **kwargs)
-        if type is AppCommandType.chat_input:
+        if type is discord.AppCommandType.chat_input:
             return self._disabled_global_commands.pop(command, None) or super().remove_command(
                 command, *args, guild=guild, type=type, **kwargs
             )
-        elif type in (AppCommandType.user, AppCommandType.message):
+        elif type in (discord.AppCommandType.user, discord.AppCommandType.message):
             key = (command, None, type.value)
             return self._disabled_context_menus.pop(key, None) or super().remove_command(
                 command, *args, guild=guild, type=type, **kwargs
             )
 
     def clear_commands(
-        self, *args, guild: Optional[Snowflake], type: Optional[AppCommandType] = None, **kwargs
+        self, *args, guild: Optional[Snowflake], type: Optional[discord.AppCommandType] = None, **kwargs
     ) -> None:
         """Clears all application commands from the tree."""
         if guild is not None:
             return super().clear_commands(*args, guild=guild, type=type, **kwargs)
 
-        if type is None or type is AppCommandType.chat_input:
+        if type is None or type is discord.AppCommandType.chat_input:
             self._global_commands.clear()
             self._disabled_global_commands.clear()
 
@@ -150,11 +149,11 @@ class RedTree(discord.app_commands.CommandTree):
             return commands
         async with self.client._config.all() as cfg:
             for command in commands:
-                if command.type is AppCommandType.chat_input:
+                if command.type is discord.AppCommandType.chat_input:
                     cfg["enabled_slash_commands"][command.name] = command.id
-                elif command.type is AppCommandType.message:
+                elif command.type is discord.AppCommandType.message:
                     cfg["enabled_message_commands"][command.name] = command.id
-                elif command.type is AppCommandType.user:
+                elif command.type is discord.AppCommandType.user:
                     cfg["enabled_user_commands"][command.name] = command.id
         return commands
 
@@ -179,33 +178,33 @@ class RedTree(discord.app_commands.CommandTree):
 
         # Add context
         for command in enabled_commands["message"]:
-            key = (command, None, AppCommandType.message.value)
+            key = (command, None, discord.AppCommandType.message.value)
             if key in self._disabled_context_menus:
                 to_add_context.append(key)
         for command in enabled_commands["user"]:
-            key = (command, None, AppCommandType.user.value)
+            key = (command, None, discord.AppCommandType.user.value)
             if key in self._disabled_context_menus:
                 to_add_context.append(key)
 
         # Remove commands
         for command in self._global_commands:
             if command not in enabled_commands["slash"]:
-                to_remove_commands.append((command, AppCommandType.chat_input))
+                to_remove_commands.append((command, discord.AppCommandType.chat_input))
 
         # Remove context
         for command, guild_id, command_type in self._context_menus:
             if guild_id is not None:
                 continue
             if (
-                AppCommandType(command_type) is AppCommandType.message
+                discord.AppCommandType(command_type) is discord.AppCommandType.message
                 and command not in enabled_commands["message"]
             ):
-                to_remove_context.append((command, AppCommandType.message))
+                to_remove_context.append((command, discord.AppCommandType.message))
             elif (
-                AppCommandType(command_type) is AppCommandType.user
+                discord.AppCommandType(command_type) is discord.AppCommandType.user
                 and command not in enabled_commands["user"]
             ):
-                to_remove_context.append((command, AppCommandType.user))
+                to_remove_context.append((command, discord.AppCommandType.user))
 
         # Actually add/remove
         for command in to_add_commands:
@@ -229,6 +228,10 @@ class RedTree(discord.app_commands.CommandTree):
             await ctx.send(*args, ephemeral=True, **kwargs)
         except discord.HTTPException:
             await ctx.channel.send(*args, **kwargs)
+
+    @staticmethod
+    def _is_submodule(parent: str, child: str):
+        return parent == child or child.startswith(parent + ".")
 
     async def on_error(
         self, interaction: discord.Interaction, error: AppCommandError, /, *args, **kwargs
@@ -301,6 +304,7 @@ class RedTree(discord.app_commands.CommandTree):
         else:
             log.exception(type(error).__name__, exc_info=error)
 
+    # DEP-WARN
     def _remove_with_module(self, name: str, *args, **kwargs) -> None:
         """Handles cases where a module raises an exception in the loading process, but added commands to the tree.
 
@@ -309,7 +313,7 @@ class RedTree(discord.app_commands.CommandTree):
         super()._remove_with_module(name, *args, **kwargs)
         remove = []
         for key, cmd in self._disabled_context_menus.items():
-            if cmd.module is not None and _is_submodule(name, cmd.module):
+            if cmd.module is not None and self._is_submodule(name, cmd.module):
                 remove.append(key)
 
         for key in remove:
@@ -317,7 +321,7 @@ class RedTree(discord.app_commands.CommandTree):
 
         remove = []
         for key, cmd in self._disabled_global_commands.items():
-            if cmd.module is not None and _is_submodule(name, cmd.module):
+            if cmd.module is not None and self._is_submodule(name, cmd.module):
                 remove.append(key)
 
         for key in remove:

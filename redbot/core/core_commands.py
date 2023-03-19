@@ -1941,6 +1941,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
+    @staticmethod
+    def _is_submodule(parent: str, child: str):
+        return parent == child or child.startswith(parent + ".")
+
     # TODO: Guild owner permissions for guild scope slash commands and syncing?
     @commands.group()
     @checks.is_owner()
@@ -2059,10 +2063,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         # Fetch a list of command names to enable
         for name, com in self.bot.tree._disabled_global_commands.items():
-            if discord.utils._is_submodule(cog_name, com.module):
+            if self._is_submodule(cog_name, com.module):
                 to_add_slash.append(name)
         for key, com in self.bot.tree._disabled_context_menus.items():
-            if discord.utils._is_submodule(cog_name, com.module):
+            if self._is_submodule(cog_name, com.module):
                 name, guild_id, com_type = key
                 com_type = discord.AppCommandType(com_type)
                 if com_type is discord.AppCommandType.message:
@@ -2139,11 +2143,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         count = 0
         for name, com in self.bot.tree._global_commands.items():
-            if discord.utils._is_submodule(cog_name, com.module):
+            if self._is_submodule(cog_name, com.module):
                 await self.bot.disable_app_command(name, discord.AppCommandType.chat_input)
                 count += 1
         for key, com in self.bot.tree._context_menus.items():
-            if discord.utils._is_submodule(cog_name, com.module):
+            if self._is_submodule(cog_name, com.module):
                 name, guild_id, com_type = key
                 await self.bot.disable_app_command(name, discord.AppCommandType(com_type))
                 count += 1
