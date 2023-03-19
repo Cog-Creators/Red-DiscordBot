@@ -197,7 +197,6 @@
   - docs/cog_guides/core.rst
 "Category: Core - Command-line Interfaces":
   - redbot/__main__.py
-  - redbot/launcher.py
   - redbot/logging.py
   - redbot/core/_debuginfo.py
   - redbot/core/cli.py
