@@ -2258,8 +2258,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[guild]` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
         """
-        if guild:
-            guild = guild.id
         try:
             await self.bot.tree.sync(guild=guild)
         except discord.Forbidden as e:
