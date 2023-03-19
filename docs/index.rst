@@ -16,8 +16,9 @@ Welcome to Red - Discord Bot's documentation!
     bot_application_guide
     update_red
     about_venv
-    autostart_systemd
+    autostart_windows
     autostart_mac
+    autostart_systemd
 
 .. toctree::
     :maxdepth: 2
