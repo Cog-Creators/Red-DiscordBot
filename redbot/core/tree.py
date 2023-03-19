@@ -223,11 +223,11 @@ class RedTree(discord.app_commands.CommandTree):
     @staticmethod
     async def _send_from_interaction(interaction, *args, **kwargs):
         """Util for safely sending a message from an interaction."""
-        ctx = await interaction.client.get_context(interaction)
-        try:
-            await ctx.send(*args, ephemeral=True, **kwargs)
-        except discord.HTTPException:
-            await ctx.channel.send(*args, **kwargs)
+        if interaction.response.is_done():
+            if interaction.is_expired():
+                return await interaction.channel.send(*args, **kwargs)
+            return await interaction.followup.send(*args, ephemeral=True, **kwargs)
+        return await interaction.response.send_message(*args, ephemeral=True, **kwargs)
 
     @staticmethod
     def _is_submodule(parent: str, child: str):
