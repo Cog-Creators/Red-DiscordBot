@@ -1274,7 +1274,7 @@ embedset command server
 
 **Description**
 
-Sets a commmand's embed setting for the current server.
+Sets a command's embed setting for the current server.
 
 If set, this is used instead of the server default to determine whether or not to use embeds.
 
@@ -3079,6 +3079,35 @@ This is only applied to the current server and not globally.
 
 **Arguments:**
     - ``[time]`` - The seconds to wait before deleting the command message. Use -1 to disable.
+
+.. _core-command-set-errormsg:
+
+""""""""""""
+set errormsg
+""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set errormsg [msg]
+
+**Description**
+
+Set the message that will be sent on uncaught bot errors.
+
+To include the command name in the message, use the ``{command}`` placeholder.
+
+If you omit the ``msg`` argument, the message will be reset to the default one.
+
+**Examples:**
+    - ``[p]set errormsg`` - Resets the error message back to the default: "Error in command '{command}'.". If the command invoker is one of the bot owners, the message will also include "Check your console or logs for details.".
+    - ``[p]set errormsg Oops, the command {command} has failed! Please try again later.`` - Sets the error message to a custom one.
+
+**Arguments:**
+    - ``[msg]`` - The custom error message. Must be less than 1000 characters. Omit to reset to the default one.
 
 .. _core-command-set-fuzzy:
 

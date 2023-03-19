@@ -20,7 +20,7 @@ window like this:
 
 .. image:: .resources/red-console.png
 
-.. _gettings-started-invite:
+.. _getting-started-invite:
 
 -------------------------
 Invite Red to your server

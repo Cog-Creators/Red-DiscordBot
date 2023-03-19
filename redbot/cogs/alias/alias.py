@@ -339,7 +339,7 @@ class Alias(commands.Cog):
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command):
                 await ctx.send(
-                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                    _("The alias with the trigger `{name}` has been edited successfully.").format(
                         name=alias_name
                     )
                 )
@@ -372,7 +372,7 @@ class Alias(commands.Cog):
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command, global_=True):
                 await ctx.send(
-                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                    _("The alias with the trigger `{name}` has been edited successfully.").format(
                         name=alias_name
                     )
                 )

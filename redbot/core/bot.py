@@ -11,7 +11,6 @@ import weakref
 import functools
 from collections import namedtuple, OrderedDict
 from datetime import datetime
-from enum import IntEnum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import (
@@ -39,6 +38,7 @@ from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
 from . import Config, i18n, commands, errors, drivers, modlog, bank
+from .cli import ExitCodes
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
@@ -69,7 +69,7 @@ SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
 log = logging.getLogger("red")
 
-__all__ = ("Red", "ExitCodes")
+__all__ = ("Red",)
 
 NotMessage = namedtuple("NotMessage", "guild")
 
@@ -134,6 +134,7 @@ class Red(
             invite_commands_scope=False,
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
+            invoke_error_msg=None,
             extra_owner_destinations=[],
             owner_opt_out_list=[],
             last_system_info__python_version=[3, 7],
@@ -699,7 +700,7 @@ class Red(
 
         If given a member, this will additionally check guild lists
 
-        If omiting a user or member, you must provide a value for ``who_id``
+        If omitting a user or member, you must provide a value for ``who_id``
 
         You may also provide a value for ``guild`` in this case
 
@@ -1098,6 +1099,8 @@ class Red(
         """
         This should only be run once, prior to logging in to Discord REST API.
         """
+        await super()._pre_login()
+
         await self._maybe_update_config()
         self.description = await self._config.description()
         self._color = discord.Colour(await self._config.color())
@@ -1586,6 +1589,22 @@ class Red(
         """
         if not message.author.bot:
             ctx = await self.get_context(message)
+
+            # The licenseinfo command must always be available, even in a slash only bot.
+            # To get around not having the message content intent, a mention prefix
+            # will always work for it.
+            if not ctx.valid:
+                for m in (f"<@{self.user.id}> ", f"<@!{self.user.id}> "):
+                    if message.content.startswith(m):
+                        ctx.view.undo()
+                        ctx.view.skip_string(m)
+                        invoker = ctx.view.get_word()
+                        command = self.all_commands.get(invoker, None)
+                        if isinstance(command, commands.commands._AlwaysAvailableMixin):
+                            ctx.command = command
+                            ctx.prefix = m
+                        break
+
             if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
                 log.warning(
                     "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
@@ -2190,11 +2209,3 @@ class Red(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
-
-
-class ExitCodes(IntEnum):
-    # This needs to be an int enum to be used
-    # with sys.exit
-    CRITICAL = 1
-    SHUTDOWN = 0
-    RESTART = 26
