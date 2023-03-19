@@ -85,7 +85,7 @@ class MixinMeta(ABC):
     _disconnected_shard: Set[int]
 
     @abstractmethod
-    async def command_llsetup(self, ctx: commands.Context):
+    async def command_llset(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @commands.command()

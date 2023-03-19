@@ -657,7 +657,7 @@ class Menu(metaclass=_MenuMeta):
         Handles reporting of errors while updating the menu from events.
         The default behaviour is to log the exception.
 
-        This may be overriden by subclasses.
+        This may be overridden by subclasses.
 
         Parameters
         ----------

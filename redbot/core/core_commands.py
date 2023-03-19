@@ -1320,7 +1320,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.GuildContext, command: CommandConverter, enabled: bool = None
     ):
         """
-        Sets a commmand's embed setting for the current server.
+        Sets a command's embed setting for the current server.
 
         If set, this is used instead of the server default to determine whether or not to use embeds.
 
@@ -3692,7 +3692,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if msg is not None:
             await self.bot._config.invoke_error_msg.set(msg)
-            content = _("Succesfully updated the error message.")
+            content = _("Successfully updated the error message.")
         else:
             await self.bot._config.invoke_error_msg.clear()
             content = _("Successfully reset the error message back to the default one.")
@@ -5357,7 +5357,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     category_channels.append(channel.category)
             if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 channels.append(channel)
-        for channel in ctx.guild.forum_channels:
+        for channel in ctx.guild.forums:
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
