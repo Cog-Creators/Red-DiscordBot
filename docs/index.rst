@@ -80,6 +80,12 @@ Welcome to Red - Discord Bot's documentation!
     framework_utils
     version_guarantees
 
+.. toctree:: 
+    :maxdepth: 2
+    :caption: Red Developer Docs:
+
+    
+
 .. toctree::
     :maxdepth: 2
     :caption: Others
