@@ -1972,10 +1972,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if command_type == "slash":
             raw_type = discord.AppCommandType.chat_input
+            command_list = self.bot.tree._disabled_global_commands
+            key = command_name
         elif command_type == "message":
             raw_type = discord.AppCommandType.message
+            command_list = self.bot.tree._disabled_context_menus
+            key = (command_name, None, raw_type.value)
         elif command_type == "user":
             raw_type = discord.AppCommandType.user
+            command_list = self.bot.tree._disabled_context_menus
+            key = (command_name, None, raw_type.value)
         else:
             await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
             return
@@ -1985,6 +1991,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         if command_name in current_settings:
             await ctx.send(_("That application command is already enabled."))
+            return
+
+        if key not in command_list:
+            await ctx.send(
+                _(
+                    "That application command could not be found. "
+                    "Use `{prefix}slash list` to see all application commands. "
+                    "You may need to double check the command type."
+                ).format(prefix=ctx.prefix)
+            )
             return
 
         try:
@@ -2078,7 +2094,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not (to_add_slash or to_add_message or to_add_user):
             await ctx.send(
                 _(
-                    "Couldn't find any disabled commands from the cog `{cog_name}`. Use `{prefix}slash list` to see all cogs with slash commands."
+                    "Couldn't find any disabled commands from the cog `{cog_name}`. Use `{prefix}slash list` to see all cogs with application commands."
                 ).format(cog_name=cog_name, prefix=ctx.prefix)
             )
             return
@@ -2165,7 +2181,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if not removed:
             await ctx.send(
                 _(
-                    "Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands."
+                    "Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with application commands."
                 ).format(cog_name=cog_name, prefix=ctx.prefix)
             )
             return
