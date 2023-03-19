@@ -2128,7 +2128,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         # Update the tree with the new list of enabled cogs
         await self.bot.tree.red_check_enabled()
-        await ctx.send(_("Enabled all commands from `{cog_name}`.").format(cog_name=cog_name))
+
+        # Output processing
+        count = len(to_add_slash) + len(to_add_message) + len(to_add_user)
+        names = to_add_slash.copy()
+        names.extend(to_add_message)
+        names.extend(to_add_user)
+        formatted_names = humanize_list([inline(name) for name in names])
+        await ctx.send(
+            _("Enabled {count} commands from `{cog_name}`:\n{names}").format(
+                count=count, cog_name=cog_name, names=formatted_names
+            )
+        )
 
     @slash.command(name="disablecog")
     async def slash_disablecog(self, ctx: commands.Context, cog_name):
@@ -2141,17 +2152,17 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<cog_name>` - The cog to disable commands from. This argument is case sensitive.
         """
-        count = 0
+        removed = []
         for name, com in self.bot.tree._global_commands.items():
             if self._is_submodule(cog_name, com.module):
                 await self.bot.disable_app_command(name, discord.AppCommandType.chat_input)
-                count += 1
+                removed.append(name)
         for key, com in self.bot.tree._context_menus.items():
             if self._is_submodule(cog_name, com.module):
                 name, guild_id, com_type = key
                 await self.bot.disable_app_command(name, discord.AppCommandType(com_type))
-                count += 1
-        if not count:
+                removed.append(name)
+        if not removed:
             await ctx.send(
                 _(
                     "Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with slash commands."
@@ -2159,9 +2170,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
             return
         await self.bot.tree.red_check_enabled()
+        formatted_names = humanize_list([inline(name) for name in removed])
         await ctx.send(
-            _("Disabled {count} commands from `{cog_name}`.").format(
-                count=count, cog_name=cog_name
+            _("Disabled {count} commands from `{cog_name}`:\n{names}").format(
+                count=len(removed), cog_name=cog_name, names=formatted_names
             )
         )
 
@@ -2262,25 +2274,30 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[guild]` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
         """
-        try:
-            await self.bot.tree.sync(guild=guild)
-        except discord.Forbidden as e:
-            # Should only be possible when syncing a guild, but just in case
-            if not guild:
+        # This command should not be automated due to the restrictive rate limits associated with it.
+        if ctx.assume_yes:
+            return
+        commands = []
+        async with ctx.typing():
+            try:
+                commands = await self.bot.tree.sync(guild=guild)
+            except discord.Forbidden as e:
+                # Should only be possible when syncing a guild, but just in case
+                if not guild:
+                    raise e
+                await ctx.send(
+                    _(
+                        "I need the `applications.commands` scope in this server to be able to do that. "
+                        "You can tell the bot to add that scope to invite links using `{prefix}inviteset commandscope`, "
+                        "and can then run `{prefix}invite` to get an invite that will give the bot the scope. "
+                        "You do not need to kick the bot to enable the scope, just use that invite to "
+                        "re-auth the bot with the scope enabled."
+                    ).format(prefix=ctx.prefix)
+                )
+                return
+            except Exception as e:
                 raise e
-            await ctx.send(
-                _(
-                    "I need the `applications.commands` scope in this server to be able to do that. "
-                    "You can tell the bot to add that scope to invite links using `{prefix}inviteset commandscope`, "
-                    "and can then run `{prefix}invite` to get an invite that will give the bot the scope. "
-                    "You do not need to kick the bot to enable the scope, just use that invite to "
-                    "re-auth the bot with the scope enabled."
-                ).format(prefix=ctx.prefix)
-            )
-        except Exception as e:
-            raise e
-        else:
-            await ctx.tick()
+        await ctx.send(_("Synced {count} commands.").format(count=len(commands)))
 
     @slash_sync.error
     async def slash_sync_error(self, ctx: commands.Context, error: commands.CommandError):

@@ -122,7 +122,11 @@ class RedTree(discord.app_commands.CommandTree):
             )
 
     def clear_commands(
-        self, *args, guild: Optional[Snowflake], type: Optional[discord.AppCommandType] = None, **kwargs
+        self,
+        *args,
+        guild: Optional[Snowflake],
+        type: Optional[discord.AppCommandType] = None,
+        **kwargs,
     ) -> None:
         """Clears all application commands from the tree."""
         if guild is not None:

@@ -1692,7 +1692,9 @@ class Red(
         return cog
 
     async def enable_app_command(
-        self, command_name: str, command_type: discord.AppCommandType = discord.AppCommandType.chat_input
+        self,
+        command_name: str,
+        command_type: discord.AppCommandType = discord.AppCommandType.chat_input,
     ) -> None:
         """
         Mark an application command as being enabled.
@@ -1722,7 +1724,9 @@ class Red(
                 curr_commands[command_name] = None
 
     async def disable_app_command(
-        self, command_name: str, command_type: discord.AppCommandType = discord.AppCommandType.chat_input
+        self,
+        command_name: str,
+        command_type: discord.AppCommandType = discord.AppCommandType.chat_input,
     ) -> None:
         """
         Mark an application command as being disabled.
