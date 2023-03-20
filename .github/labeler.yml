@@ -163,9 +163,11 @@
   - redbot/core/cog_manager.py  # TODO: privatize cog manager module
   - redbot/core/data_manager.py
   - redbot/core/errors.py
+  - redbot/core/tree.py
   # Docs
   - docs/framework_cogmanager.rst  # TODO: privatize cog manager module
   - docs/framework_datamanager.rst
+  - docs/framework_tree.rst
   # Tests
   - redbot/pytest/cog_manager.py  # TODO: privatize cog manager module
   - redbot/pytest/data_manager.py
