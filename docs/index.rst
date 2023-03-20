@@ -87,7 +87,7 @@ Welcome to Red - Discord Bot's documentation!
     
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Others
 
     changelog
