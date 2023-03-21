@@ -77,6 +77,7 @@ Welcome to Red - Discord Bot's documentation!
     framework_i18n
     framework_modlog
     framework_rpc
+    framework_tree
     framework_utils
     version_guarantees
 
