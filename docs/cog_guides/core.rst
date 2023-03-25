@@ -3709,11 +3709,11 @@ set showsettings
 
 .. code-block:: none
 
-    [p]set showsettings 
+    [p]set showsettings [server]
 
 **Description**
 
-Show the current settings for Red.
+Show the current settings for Red. Accepts optional guild parameter if its prefix must be recovered.
 
 .. _core-command-set-status:
 
