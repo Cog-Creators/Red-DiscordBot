@@ -36,7 +36,7 @@ Embed Helpers
     :exclude-members: randomize_color
 
 Menus
-==============
+=====
 
 .. automodule:: redbot.core.utils.menus
     :members:
@@ -79,4 +79,10 @@ Utility UI
 ==========
 
 .. automodule:: redbot.core.utils.views
+    :members:
+
+AntiSpam
+========
+
+.. automodule:: redbot.core.utils.antispam
     :members:

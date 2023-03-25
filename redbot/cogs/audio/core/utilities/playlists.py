@@ -31,7 +31,7 @@ from ..cog_utils import CompositeMetaClass
 
 log = getLogger("red.cogs.Audio.cog.Utilities.playlists")
 _ = Translator("Audio", Path(__file__))
-CURRATED_DATA = (
+CURATED_DATA = (
     "https://gist.githubusercontent.com/aikaterna/4b5de6c420cd6f12b83cb895ca2de16a/raw/json"
 )
 
@@ -262,9 +262,9 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             colour=await context.embed_colour(),
         )
         msg = await context.send(embed=embed)
-        avaliable_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
-        avaliable_emojis.append("🔟")
-        emojis = avaliable_emojis[: len(correct_scope_matches)]
+        available_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
+        available_emojis.append("🔟")
+        emojis = available_emojis[: len(correct_scope_matches)]
         emojis.append("\N{CROSS MARK}")
         start_adding_reactions(msg, emojis)
         pred = ReactionPredicate.with_emojis(emojis, msg, user=context.author)
@@ -686,7 +686,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def _get_bundled_playlist_tracks(self):
         async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(
-                CURRATED_DATA + f"?timestamp={int(time.time())}",
+                CURATED_DATA + f"?timestamp={int(time.time())}",
                 headers={"content-type": "application/json"},
             ) as response:
                 if response.status != 200:

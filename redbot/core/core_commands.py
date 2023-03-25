@@ -17,6 +17,7 @@ import getpass
 import pip
 import traceback
 from pathlib import Path
+from collections import defaultdict
 from redbot.core import data_manager
 from redbot.core.utils.menus import menu
 from redbot.core.utils.views import SetApiView
@@ -62,6 +63,7 @@ from .utils.chat_formatting import (
     humanize_timedelta,
     inline,
     pagify,
+    warning,
 )
 from .commands import CommandConverter, CogConverter
 from .commands.requires import PrivilegeLevel
@@ -1319,7 +1321,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.GuildContext, command: CommandConverter, enabled: bool = None
     ):
         """
-        Sets a commmand's embed setting for the current server.
+        Sets a command's embed setting for the current server.
 
         If set, this is used instead of the server default to determine whether or not to use embeds.
 
@@ -1477,8 +1479,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
             - `[p]invite`
         """
+        message = await self.bot.get_invite_url()
+        if (admin := self.bot.get_cog("Admin")) and await admin.config.serverlocked():
+            message += "\n\n" + warning(
+                _(
+                    "This bot is currently **serverlocked**, meaning that it is locked "
+                    "to its current servers and will leave any server it joins."
+                )
+            )
         try:
-            await ctx.author.send(await self.bot.get_invite_url())
+            await ctx.author.send(message)
             await ctx.tick()
         except discord.errors.Forbidden:
             await ctx.send(
@@ -1931,6 +1941,394 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             for page in pagify(total_message):
                 await ctx.send(page)
 
+    @staticmethod
+    def _is_submodule(parent: str, child: str):
+        return parent == child or child.startswith(parent + ".")
+
+    # TODO: Guild owner permissions for guild scope slash commands and syncing?
+    @commands.group()
+    @checks.is_owner()
+    async def slash(self, ctx: commands.Context):
+        """Base command for managing what application commands are able to be used on [botname]."""
+
+    @slash.command(name="enable")
+    async def slash_enable(
+        self,
+        ctx: commands.Context,
+        command_name: str,
+        command_type: Literal["slash", "message", "user"] = "slash",
+    ):
+        """Marks an application command as being enabled, allowing it to be added to the bot.
+
+        See commands available to enable with `[p]slash list`.
+
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<command_name>` - The command name to enable. Only the top level name of a group command should be used.
+            - `[command_type]` - What type of application command to enable. Must be one of `slash`, `message`, or `user`. Defaults to `slash`.
+        """
+        command_type = command_type.lower().strip()
+
+        if command_type == "slash":
+            raw_type = discord.AppCommandType.chat_input
+            command_list = self.bot.tree._disabled_global_commands
+            key = command_name
+        elif command_type == "message":
+            raw_type = discord.AppCommandType.message
+            command_list = self.bot.tree._disabled_context_menus
+            key = (command_name, None, raw_type.value)
+        elif command_type == "user":
+            raw_type = discord.AppCommandType.user
+            command_list = self.bot.tree._disabled_context_menus
+            key = (command_name, None, raw_type.value)
+        else:
+            await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
+            return
+
+        current_settings = await self.bot.list_enabled_app_commands()
+        current_settings = current_settings[command_type]
+
+        if command_name in current_settings:
+            await ctx.send(_("That application command is already enabled."))
+            return
+
+        if key not in command_list:
+            await ctx.send(
+                _(
+                    "That application command could not be found. "
+                    "Use `{prefix}slash list` to see all application commands. "
+                    "You may need to double check the command type."
+                ).format(prefix=ctx.prefix)
+            )
+            return
+
+        try:
+            await self.bot.enable_app_command(command_name, raw_type)
+        except discord.app_commands.CommandLimitReached:
+            await ctx.send(_("The command limit has been reached. Disable a command first."))
+            return
+
+        await self.bot.tree.red_check_enabled()
+        await ctx.send(
+            _("Enabled {command_type} application command `{command_name}`").format(
+                command_type=command_type, command_name=command_name
+            )
+        )
+
+    @slash.command(name="disable")
+    async def slash_disable(
+        self,
+        ctx: commands.Context,
+        command_name: str,
+        command_type: Literal["slash", "message", "user"] = "slash",
+    ):
+        """Marks an application command as being disabled, preventing it from being added to the bot.
+
+        See commands available to disable with `[p]slash list`.
+
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<command_name>` - The command name to disable. Only the top level name of a group command should be used.
+            - `[command_type]` - What type of application command to disable. Must be one of `slash`, `message`, or `user`. Defaults to `slash`.
+        """
+        command_type = command_type.lower().strip()
+
+        if command_type == "slash":
+            raw_type = discord.AppCommandType.chat_input
+        elif command_type == "message":
+            raw_type = discord.AppCommandType.message
+        elif command_type == "user":
+            raw_type = discord.AppCommandType.user
+        else:
+            await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
+            return
+
+        current_settings = await self.bot.list_enabled_app_commands()
+        current_settings = current_settings[command_type]
+
+        if command_name not in current_settings:
+            await ctx.send(_("That application command is already disabled."))
+            return
+
+        await self.bot.disable_app_command(command_name, raw_type)
+        await self.bot.tree.red_check_enabled()
+        await ctx.send(
+            _("Disabled {command_type} application command `{command_name}`").format(
+                command_type=command_type, command_name=command_name
+            )
+        )
+
+    @slash.command(name="enablecog")
+    @commands.max_concurrency(1, wait=True)
+    async def slash_enablecog(self, ctx: commands.Context, cog_name: str):
+        """Marks all application commands in a cog as being enabled, allowing them to be added to the bot.
+
+        See a list of cogs with application commands with `[p]slash list`.
+
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<cog_name>` - The cog to enable commands from. This argument is case sensitive.
+        """
+        enabled_commands = await self.bot.list_enabled_app_commands()
+        to_add_slash = []
+        to_add_message = []
+        to_add_user = []
+
+        # Fetch a list of command names to enable
+        for name, com in self.bot.tree._disabled_global_commands.items():
+            if self._is_submodule(cog_name, com.module):
+                to_add_slash.append(name)
+        for key, com in self.bot.tree._disabled_context_menus.items():
+            if self._is_submodule(cog_name, com.module):
+                name, guild_id, com_type = key
+                com_type = discord.AppCommandType(com_type)
+                if com_type is discord.AppCommandType.message:
+                    to_add_message.append(name)
+                elif com_type is discord.AppCommandType.user:
+                    to_add_user.append(name)
+
+        # Check that we are going to enable at least one command, for user feedback
+        if not (to_add_slash or to_add_message or to_add_user):
+            await ctx.send(
+                _(
+                    "Couldn't find any disabled commands from the cog `{cog_name}`. Use `{prefix}slash list` to see all cogs with application commands."
+                ).format(cog_name=cog_name, prefix=ctx.prefix)
+            )
+            return
+
+        SLASH_CAP = 100
+        CONTEXT_CAP = 5
+        total_slash = len(enabled_commands["slash"]) + len(to_add_slash)
+        total_message = len(enabled_commands["message"]) + len(to_add_message)
+        total_user = len(enabled_commands["user"]) + len(to_add_user)
+
+        # If enabling would exceed any limit, exit early to not enable only a subset
+        if total_slash > SLASH_CAP:
+            await ctx.send(
+                _(
+                    "Enabling all application commands from that cog would enable a total of {count} "
+                    "commands, exceeding the {cap} command limit for slash commands. "
+                    "Disable some commands first."
+                ).format(count=total_slash, cap=SLASH_CAP)
+            )
+            return
+        if total_message > CONTEXT_CAP:
+            await ctx.send(
+                _(
+                    "Enabling all application commands from that cog would enable a total of {count} "
+                    "commands, exceeding the {cap} command limit for message commands. "
+                    "Disable some commands first."
+                ).format(count=total_message, cap=CONTEXT_CAP)
+            )
+            return
+        if total_user > CONTEXT_CAP:
+            await ctx.send(
+                _(
+                    "Enabling all application commands from that cog would enable a total of {count} "
+                    "commands, exceeding the {cap} command limit for user commands. "
+                    "Disable some commands first."
+                ).format(count=total_user, cap=CONTEXT_CAP)
+            )
+            return
+
+        # Enable the cogs
+        for name in to_add_slash:
+            await self.bot.enable_app_command(name, discord.AppCommandType.chat_input)
+        for name in to_add_message:
+            await self.bot.enable_app_command(name, discord.AppCommandType.message)
+        for name in to_add_user:
+            await self.bot.enable_app_command(name, discord.AppCommandType.user)
+
+        # Update the tree with the new list of enabled cogs
+        await self.bot.tree.red_check_enabled()
+
+        # Output processing
+        count = len(to_add_slash) + len(to_add_message) + len(to_add_user)
+        names = to_add_slash.copy()
+        names.extend(to_add_message)
+        names.extend(to_add_user)
+        formatted_names = humanize_list([inline(name) for name in names])
+        await ctx.send(
+            _("Enabled {count} commands from `{cog_name}`:\n{names}").format(
+                count=count, cog_name=cog_name, names=formatted_names
+            )
+        )
+
+    @slash.command(name="disablecog")
+    async def slash_disablecog(self, ctx: commands.Context, cog_name):
+        """Marks all application commands in a cog as being disabled, preventing them from being added to the bot.
+
+        See a list of cogs with application commands with `[p]slash list`.
+
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+
+        **Arguments:**
+            - `<cog_name>` - The cog to disable commands from. This argument is case sensitive.
+        """
+        removed = []
+        for name, com in self.bot.tree._global_commands.items():
+            if self._is_submodule(cog_name, com.module):
+                await self.bot.disable_app_command(name, discord.AppCommandType.chat_input)
+                removed.append(name)
+        for key, com in self.bot.tree._context_menus.items():
+            if self._is_submodule(cog_name, com.module):
+                name, guild_id, com_type = key
+                await self.bot.disable_app_command(name, discord.AppCommandType(com_type))
+                removed.append(name)
+        if not removed:
+            await ctx.send(
+                _(
+                    "Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with application commands."
+                ).format(cog_name=cog_name, prefix=ctx.prefix)
+            )
+            return
+        await self.bot.tree.red_check_enabled()
+        formatted_names = humanize_list([inline(name) for name in removed])
+        await ctx.send(
+            _("Disabled {count} commands from `{cog_name}`:\n{names}").format(
+                count=len(removed), cog_name=cog_name, names=formatted_names
+            )
+        )
+
+    @slash.command(name="list")
+    async def slash_list(self, ctx: commands.Context):
+        """List the slash commands the bot can see, and whether or not they are enabled.
+
+        This command shows the state that will be changed to when `[p]slash sync` is run.
+        """
+        cog_commands = defaultdict(list)
+        slash_command_names = set()
+        message_command_names = set()
+        user_command_names = set()
+
+        for command in self.bot.tree._global_commands.values():
+            module = command.module
+            if "." in module:
+                module = module[: module.find(".")]
+            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, True))
+            slash_command_names.add(command.name)
+        for command in self.bot.tree._disabled_global_commands.values():
+            module = command.module
+            if "." in module:
+                module = module[: module.find(".")]
+            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, False))
+        for key, command in self.bot.tree._context_menus.items():
+            # Filter out guild context menus
+            if key[1] is not None:
+                continue
+            module = command.module
+            if "." in module:
+                module = module[: module.find(".")]
+            cog_commands[module].append((command.name, command.type, True))
+            if command.type is discord.AppCommandType.message:
+                message_command_names.add(command.name)
+            elif command.type is discord.AppCommandType.user:
+                user_command_names.add(command.name)
+        for command in self.bot.tree._disabled_context_menus.values():
+            module = command.module
+            if "." in module:
+                module = module[: module.find(".")]
+            cog_commands[module].append((command.name, command.type, False))
+
+        # Commands added with evals will come from __main__, make them unknown instead
+        if "__main__" in cog_commands:
+            main_data = cog_commands["__main__"]
+            del cog_commands["__main__"]
+            cog_commands["(unknown)"] = main_data
+
+        # Commands enabled but unloaded won't appear unless accounted for
+        enabled_commands = await self.bot.list_enabled_app_commands()
+        unknown_slash = set(enabled_commands["slash"]) - slash_command_names
+        unknown_message = set(enabled_commands["message"]) - message_command_names
+        unknown_user = set(enabled_commands["user"]) - user_command_names
+
+        unknown_slash = [(n, discord.AppCommandType.chat_input, True) for n in unknown_slash]
+        unknown_message = [(n, discord.AppCommandType.message, True) for n in unknown_message]
+        unknown_user = [(n, discord.AppCommandType.user, True) for n in unknown_user]
+
+        cog_commands["(unknown)"].extend(unknown_slash)
+        cog_commands["(unknown)"].extend(unknown_message)
+        cog_commands["(unknown)"].extend(unknown_user)
+        # Hide it when empty
+        if not cog_commands["(unknown)"]:
+            del cog_commands["(unknown)"]
+
+        if not cog_commands:
+            await ctx.send(_("There are no application commands to list."))
+            return
+
+        msg = ""
+        for cog in sorted(cog_commands.keys()):
+            msg += cog + "\n"
+            for name, raw_command_type, enabled in sorted(cog_commands[cog], key=lambda v: v[0]):
+                diff = "+ " if enabled else "- "
+                command_type = "unknown"
+                if raw_command_type is discord.AppCommandType.chat_input:
+                    command_type = "slash"
+                elif raw_command_type is discord.AppCommandType.message:
+                    command_type = "message"
+                elif raw_command_type is discord.AppCommandType.user:
+                    command_type = "user"
+                msg += diff + command_type.ljust(7) + " | " + name + "\n"
+            msg += "\n"
+
+        pages = pagify(msg, delims=["\n\n", "\n"])
+        pages = [box(page, lang="diff") for page in pages]
+        await menu(ctx, pages)
+
+    @slash.command(name="sync")
+    @commands.cooldown(1, 60)
+    async def slash_sync(self, ctx: commands.Context, guild: discord.Guild = None):
+        """Syncs the slash settings to discord.
+
+        Settings from `[p]slash list` will be synced with discord, changing what commands appear for users.
+        This should be run sparingly, make all necessary changes before running this command.
+
+        **Arguments:**
+            - `[guild]` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
+        """
+        # This command should not be automated due to the restrictive rate limits associated with it.
+        if ctx.assume_yes:
+            return
+        commands = []
+        async with ctx.typing():
+            try:
+                commands = await self.bot.tree.sync(guild=guild)
+            except discord.Forbidden as e:
+                # Should only be possible when syncing a guild, but just in case
+                if not guild:
+                    raise e
+                await ctx.send(
+                    _(
+                        "I need the `applications.commands` scope in this server to be able to do that. "
+                        "You can tell the bot to add that scope to invite links using `{prefix}inviteset commandscope`, "
+                        "and can then run `{prefix}invite` to get an invite that will give the bot the scope. "
+                        "You do not need to kick the bot to enable the scope, just use that invite to "
+                        "re-auth the bot with the scope enabled."
+                    ).format(prefix=ctx.prefix)
+                )
+                return
+            except Exception as e:
+                raise e
+        await ctx.send(_("Synced {count} commands.").format(count=len(commands)))
+
+    @slash_sync.error
+    async def slash_sync_error(self, ctx: commands.Context, error: commands.CommandError):
+        """Custom cooldown error message."""
+        if not isinstance(error, commands.CommandOnCooldown):
+            return await ctx.bot.on_command_error(ctx, error, unhandled_by_cog=True)
+        await ctx.send(
+            _(
+                "You seem to be attempting to sync after recently syncing. Discord does not like it "
+                "when bots sync more often than neccecary, so this command has a cooldown. You "
+                "should enable/disable all commands you want to change first, and run this command "
+                "one time only after all changes have been made. "
+            )
+        )
+
     @commands.command(name="shutdown")
     @checks.is_owner()
     async def _shutdown(self, ctx: commands.Context, silently: bool = False):
@@ -2291,7 +2689,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @modlogset.command(name="cases")
     @commands.guild_only()
     async def modlogset_cases(self, ctx: commands.Context, action: str = None):
-        """Enable or disable case creation for a mod action."""
+        """
+        Enable or disable case creation for a mod action.
+
+        An action can be enabling or disabling specific cases. (Ban, kick, mute, etc.)
+
+        Example: `[p]modlogset cases kick enabled`
+        """
         guild = ctx.guild
 
         if action is None:  # No args given
@@ -2656,7 +3060,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set status listening jams`
 
         **Arguments:**
-            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."""
+            - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
@@ -2691,7 +3096,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set status watching [p]help`
 
         **Arguments:**
-            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."""
+            - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
@@ -2722,7 +3128,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set status competing London 2012 Olympic Games`
 
         **Arguments:**
-            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."""
+            - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if competing:
@@ -3336,13 +3743,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- End Set Ownernotifications Commands -- ###
 
     @_set.command(name="showsettings")
-    async def _set_showsettings(self, ctx: commands.Context):
+    async def _set_showsettings(self, ctx: commands.Context, server: discord.Guild = None):
         """
-        Show the current settings for [botname].
+        Show the current settings for [botname]. Accepts optional guild parameter if its prefix must be recovered.
         """
-        if ctx.guild:
-            guild_data = await ctx.bot._config.guild(ctx.guild).all()
-            guild = ctx.guild
+        if server is None:
+            server = ctx.guild
+
+        if server:
+            guild_data = await ctx.bot._config.guild(server).all()
+            guild = server
             admin_role_ids = guild_data["admin_role"]
             admin_role_names = [r.name for r in guild.roles if r.id in admin_role_ids]
             admin_roles_str = (
@@ -3352,9 +3762,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             mod_role_names = [r.name for r in guild.roles if r.id in mod_role_ids]
             mod_roles_str = humanize_list(mod_role_names) if mod_role_names else _("Not Set.")
 
-            guild_locale = await i18n.get_locale_from_guild(self.bot, ctx.guild)
+            guild_locale = await i18n.get_locale_from_guild(self.bot, server)
             guild_regional_format = (
-                await i18n.get_regional_format_from_guild(self.bot, ctx.guild) or guild_locale
+                await i18n.get_regional_format_from_guild(self.bot, server) or guild_locale
             )
 
             guild_settings = _(
@@ -3371,7 +3781,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             guild_settings = ""
 
-        prefixes = await ctx.bot._prefix_cache.get_prefixes(ctx.guild)
+        prefixes = await ctx.bot._prefix_cache.get_prefixes(server)
         global_data = await ctx.bot._config.all()
         locale = global_data["locale"]
         regional_format = global_data["regional_format"] or locale
@@ -3584,8 +3994,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command(name="serverprefix", aliases=["serverprefixes"])
     @checks.admin_or_permissions(manage_guild=True)
-    @commands.guild_only()
-    async def _set_serverprefix(self, ctx: commands.Context, *prefixes: str):
+    async def _set_serverprefix(
+        self, ctx: commands.Context, server: Optional[discord.Guild], *prefixes: str
+    ):
         """
         Sets [botname]'s server prefix(es).
 
@@ -3598,12 +4009,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set serverprefix "! "` - Quotes are needed to use spaces in prefixes.
             - `[p]set serverprefix "@[botname] "` - This uses a mention as the prefix.
             - `[p]set serverprefix ! ? .` - Sets multiple prefixes.
+            - `[p]set serverprefix "Red - Discord Bot" ? - Sets the prefix for a specific server. Quotes are needed to use spaces in the server name.
 
         **Arguments:**
             - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
         """
+        if server is None:
+            server = ctx.guild
+
         if not prefixes:
-            await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=[])
+            await ctx.bot.set_prefixes(guild=server, prefixes=[])
             await ctx.send(_("Server prefixes have been reset."))
             return
         if any(prefix.startswith("/") for prefix in prefixes):
@@ -3615,7 +4030,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("You cannot have a prefix longer than 25 characters."))
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.set_prefixes(guild=ctx.guild, prefixes=prefixes)
+        await ctx.bot.set_prefixes(guild=server, prefixes=prefixes)
         if len(prefixes) == 1:
             await ctx.send(_("Server prefix set."))
         else:
@@ -3623,7 +4038,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command(name="usebuttons")
     @checks.is_owner()
-    async def use_buttons(self, ctx: commands.Context, use_buttons: bool = None):
+    async def _set_usebuttons(self, ctx: commands.Context, use_buttons: bool = None):
         """
         Set a global bot variable for using buttons in menus.
 
@@ -3632,7 +4047,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         This defaults to False.
         Using this without a setting will toggle.
 
-         **Examples:**
+        **Examples:**
             - `[p]set usebuttons True` - Enables using buttons.
             - `[p]helpset usebuttons` - Toggles the value.
 
@@ -3646,6 +4061,35 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("I will use buttons on basic menus."))
         else:
             await ctx.send(_("I will not use buttons on basic menus."))
+
+    @_set.command(name="errormsg")
+    @commands.is_owner()
+    async def _set_errormsg(self, ctx: commands.Context, *, msg: str = None):
+        """
+        Set the message that will be sent on uncaught bot errors.
+
+        To include the command name in the message, use the `{command}` placeholder.
+
+        If you omit the `msg` argument, the message will be reset to the default one.
+
+        **Examples:**
+            - `[p]set errormsg` - Resets the error message back to the default: "Error in command '{command}'.". If the command invoker is one of the bot owners, the message will also include "Check your console or logs for details.".
+            - `[p]set errormsg Oops, the command {command} has failed! Please try again later.` - Sets the error message to a custom one.
+
+        **Arguments:**
+            - `[msg]` - The custom error message. Must be less than 1000 characters. Omit to reset to the default one.
+        """
+        if msg is not None and len(msg) >= 1000:
+            return await ctx.send(_("The message must be less than 1000 characters."))
+
+        if msg is not None:
+            await self.bot._config.invoke_error_msg.set(msg)
+            content = _("Successfully updated the error message.")
+        else:
+            await self.bot._config.invoke_error_msg.clear()
+            content = _("Successfully reset the error message back to the default one.")
+
+        await ctx.send(content)
 
     @commands.group()
     @checks.is_owner()
@@ -3754,7 +4198,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if use_menus == "reactions":
             msg = _("Help will use reaction menus.")
             await ctx.bot._config.help.use_menus.set(1)
-        if use_menus == "disabled":
+        if use_menus == "disable":
             msg = _("Help will not use menus.")
             await ctx.bot._config.help.use_menus.set(0)
 
@@ -5305,7 +5749,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     category_channels.append(channel.category)
             if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
                 channels.append(channel)
-        for channel in ctx.guild.forum_channels:
+        for channel in ctx.guild.forums:
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
