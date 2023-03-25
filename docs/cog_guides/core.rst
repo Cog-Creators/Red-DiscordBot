@@ -3674,7 +3674,7 @@ set serverprefix
 
 .. code-block:: none
 
-    [p]set serverprefix [prefixes...]
+    [p]set serverprefix [server] [prefixes...]
 
 .. tip:: Alias: ``set serverprefixes``
 
@@ -3693,8 +3693,10 @@ Sets Red's server prefix(es).
     - ``[p]set serverprefix "! "`` - Quotes are needed to use spaces in prefixes.
     - ``[p]set serverprefix "@Red "`` - This uses a mention as the prefix.
     - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
+    - ``[p]set serverprefix "Red - Discord Bot" ?`` - Sets the prefix for a specific server. Quotes are needed to use spaces in the server name.
 
 **Arguments:**
+    - ``[server]`` - The server to set the prefix for. Leave blank to set the prefix for the current server.
     - ``[prefixes...]`` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
 
 .. _core-command-set-showsettings:
