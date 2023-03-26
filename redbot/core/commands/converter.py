@@ -27,7 +27,6 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import BadArgument
 
-from . import Range
 from ..i18n import Translator
 from ..utils.chat_formatting import humanize_timedelta, humanize_list
 
@@ -237,7 +236,7 @@ class RawUserIdConverter(dpy_commands.Converter):
 # which is *not* for type checking for the actual implementation
 # and ensure the lies stay correct for how the object should look as a typehint
 
-positive_int = Range[int, 0, None]
+positive_int = dpy_commands.Range[int, 0, None]
 
 
 if TYPE_CHECKING:
