@@ -6,6 +6,7 @@ This module contains useful functions and classes for command argument conversio
 Some of the converters within are included provisionally and are marked as such.
 """
 import functools
+import math
 import re
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
@@ -26,6 +27,7 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import BadArgument
 
+from . import Range
 from ..i18n import Translator
 from ..utils.chat_formatting import humanize_timedelta, humanize_list
 
@@ -234,6 +236,25 @@ class RawUserIdConverter(dpy_commands.Converter):
 # These are used for command conversion purposes. Please refer to the portion
 # which is *not* for type checking for the actual implementation
 # and ensure the lies stay correct for how the object should look as a typehint
+
+positive_int = Range[int, 0, None]
+
+
+if TYPE_CHECKING:
+    finite_float = float
+else:
+    def finite_float(arg: str) -> float:
+        """
+        This converts a user provided string into a finite float.
+        """
+        try:
+            ret = float(arg)
+        except ValueError:
+            raise BadArgument(_("`{arg}` is not a number.").format(arg=arg))
+        if not math.isfinite(ret):
+            raise BadArgument(_("`{arg}` is not a finite number.").format(arg=ret))
+        return ret
+
 
 if TYPE_CHECKING:
     DictConverter = Dict[str, str]
