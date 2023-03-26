@@ -3745,7 +3745,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command(name="showsettings")
     async def _set_showsettings(self, ctx: commands.Context, server: discord.Guild = None):
         """
-        Show the current settings for [botname]. Accepts optional guild parameter if its prefix must be recovered.
+        Show the current settings for [botname].
+
+        **Examples:**
+            - `[p]set showsettings`
+            - `[p]set showsettings "Red - Discord Bot"`
+
+        **Arguments:**
+            - `[server]` - Optional server to get information for. Leave blank to get the information from the current server.
         """
         if server is None:
             server = ctx.guild
