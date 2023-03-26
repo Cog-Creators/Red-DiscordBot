@@ -3713,7 +3713,14 @@ set showsettings
 
 **Description**
 
-Show the current settings for Red. Accepts optional guild parameter if its prefix must be recovered.
+Show the current settings for Red.
+
+**Examples:**
+    - ``[p]set showsettings``
+    - ``[p]set showsettings "Red - Discord Bot"``
+
+**Arguments:**
+    - ``[server]`` - Optional server to get information for. Leave blank to get the information from the current server.
 
 .. _core-command-set-status:
 
