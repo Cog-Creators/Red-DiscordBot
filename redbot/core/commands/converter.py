@@ -242,6 +242,7 @@ positive_int = dpy_commands.Range[int, 0, None]
 if TYPE_CHECKING:
     finite_float = float
 else:
+
     def finite_float(arg: str) -> float:
         """
         This converts a user provided string into a finite float.

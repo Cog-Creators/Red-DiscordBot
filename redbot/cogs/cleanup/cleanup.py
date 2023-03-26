@@ -685,9 +685,7 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_duplicates(
-        self, ctx: commands.Context, number: positive_int = 50
-    ):
+    async def cleanup_duplicates(self, ctx: commands.Context, number: positive_int = 50):
         """Deletes duplicate messages in the channel from the last X messages and keeps only one copy.
 
         Defaults to 50.

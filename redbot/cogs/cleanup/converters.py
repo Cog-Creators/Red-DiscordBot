@@ -1,4 +1,3 @@
-
 from redbot.core.commands import BadArgument, Context, Converter
 from redbot.core.i18n import Translator
 
