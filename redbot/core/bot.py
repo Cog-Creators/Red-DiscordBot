@@ -824,7 +824,13 @@ class Red(
 
         # We do not consider messages with PartialMessageable channel as eligible.
         # See `process_commands()` for our handling of it.
-        if isinstance(channel, discord.PartialMessageable):
+
+        # 27-03-2023: Addendum, DMs won't run into the same issues that guild partials will,
+        # so we can safely continue to execute the command.
+        if (
+            isinstance(channel, discord.PartialMessageable)
+            and channel.type is not discord.ChannelType.private
+        ):
             return False
 
         if guild:
@@ -1029,7 +1035,6 @@ class Red(
         discord.Member
             The user you requested.
         """
-
         if (member := guild.get_member(member_id)) is not None:
             return member
         return await guild.fetch_member(member_id)
@@ -1609,7 +1614,11 @@ class Red(
                             ctx.prefix = m
                         break
 
-            if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
+            if (
+                ctx.invoked_with
+                and isinstance(message.channel, discord.PartialMessageable)
+                and message.channel.type is not discord.ChannelType.private
+            ):
                 log.warning(
                     "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
                     message.id,
