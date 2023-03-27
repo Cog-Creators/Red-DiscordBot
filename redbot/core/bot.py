@@ -825,9 +825,8 @@ class Red(
         # We do not consider messages with PartialMessageable channel as eligible.
         # See `process_commands()` for our handling of it.
 
-        # 27-03-2023: Addendum, Fetching the channel here is gonna cost us some API calls.
-        # But so far seems like the better solution.
-        # On hybrid commands this may in a very rare scenario cause a timeout. But that's assuming the worst
+        # 27-03-2023: Addendum, DMs won't run into the same issues that guild partials will,
+        # so we can safely continue to execute the command.
         if (
             isinstance(channel, discord.PartialMessageable)
             and channel.type is not discord.ChannelType.private
