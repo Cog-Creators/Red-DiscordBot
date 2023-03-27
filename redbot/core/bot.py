@@ -1034,6 +1034,37 @@ class Red(
             return member
         return await guild.fetch_member(member_id)
 
+    async def get_or_fetch_channel(
+        self, channel_id: int
+    ) -> Union[discord.abc.GuildChannel, discord.abc.PrivateChannel, discord.Thread]:
+        """
+        Retrieves a channel based on their ID.
+
+
+        .. warning::
+
+            This method may make an API call if the channel is not found in the bot cache. For general usage, consider ``bot.get_channel`` instead.
+
+        Parameters
+        -----------
+        channel_id: int
+            The ID of the channel that should be retrieved.
+
+        Raises
+        -------
+        Errors
+            Please refer to `discord.Client.fetch_channel`.
+
+        Returns
+        --------
+        Union[discord.abc.GuildChannel, discord.abc.PrivateChannel, discord.Thread]
+            The channel requested.
+        """
+
+        if (channel := self.get_channel(channel_id)) is not None:
+            return channel
+        return await self.fetch_channel(channel_id)
+
     get_embed_colour = get_embed_color
 
     # start config migrations
