@@ -828,7 +828,10 @@ class Red(
         # 27-03-2023: Addendum, Fetching the channel here is gonna cost us some API calls.
         # But so far seems like the better solution.
         # On hybrid commands this may in a very rare scenario cause a timeout. But that's assuming the worst
-        if isinstance(channel, discord.PartialMessageable):
+        if (
+            isinstance(channel, discord.PartialMessageable)
+            and channel.type is not discord.ChannelType.private
+        ):
             try:
                 channel = await self.get_or_fetch_channel(channel.id)
             except discord.DiscordException:
@@ -1646,7 +1649,11 @@ class Red(
                             ctx.prefix = m
                         break
 
-            if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
+            if (
+                ctx.invoked_with
+                and isinstance(message.channel, discord.PartialMessageable)
+                and message.channel.type is not discord.ChannelType.private
+            ):
                 log.warning(
                     "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
                     message.id,
