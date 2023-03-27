@@ -832,10 +832,7 @@ class Red(
             isinstance(channel, discord.PartialMessageable)
             and channel.type is not discord.ChannelType.private
         ):
-            try:
-                channel = await self.get_or_fetch_channel(channel.id)
-            except discord.DiscordException:
-                return False
+            return False
 
         if guild:
             assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
