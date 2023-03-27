@@ -46,6 +46,7 @@ from discord.ext.commands import (
 
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
+from .. import app_commands
 from ..i18n import Translator
 
 _T = TypeVar("_T")
