@@ -1093,7 +1093,7 @@ class HybridGroup(Group, DPYHybridGroup[_CogT, _P, _T]):
 
 
 def hybrid_command(
-    name: Union[str, discord.app_commands.locale_str] = discord.utils.MISSING,
+    name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
     *,
     with_app_command: bool = True,
     **attrs: Any,
@@ -1113,7 +1113,7 @@ def hybrid_command(
 
 
 def hybrid_group(
-    name: Union[str, discord.app_commands.locale_str] = discord.utils.MISSING,
+    name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
     *,
     with_app_command: bool = True,
     **attrs: Any,
