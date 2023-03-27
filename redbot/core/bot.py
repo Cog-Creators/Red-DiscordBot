@@ -1647,15 +1647,11 @@ class Red(
                         break
 
             if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
-                try:
-                    channel = await self.get_or_fetch_channel(message.channel.id)
-                    ctx.channel = message.channel = channel
-                except discord.DiscordException:
-                    log.warning(
-                        "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
-                        message.id,
-                        message.channel,
-                    )
+                log.warning(
+                    "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
+                    message.id,
+                    message.channel,
+                )
             else:
                 await self.invoke(ctx)
         else:
