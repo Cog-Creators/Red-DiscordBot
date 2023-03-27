@@ -824,8 +824,15 @@ class Red(
 
         # We do not consider messages with PartialMessageable channel as eligible.
         # See `process_commands()` for our handling of it.
+
+        # 27-03-2023: Addendum, Fetching the channel here is gonna cost us some API calls.
+        # But so far seems like the better solution.
+        # On hybrid commands this may in a very rare scenario cause a timeout. But that's assuming the worst
         if isinstance(channel, discord.PartialMessageable):
-            return False
+            try:
+                channel = await self.get_or_fetch_channel(channel.id)
+            except discord.DiscordException:
+                return False
 
         if guild:
             assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
@@ -1029,7 +1036,6 @@ class Red(
         discord.Member
             The user you requested.
         """
-
         if (member := guild.get_member(member_id)) is not None:
             return member
         return await guild.fetch_member(member_id)
@@ -1641,11 +1647,15 @@ class Red(
                         break
 
             if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
-                log.warning(
-                    "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
-                    message.id,
-                    message.channel,
-                )
+                try:
+                    channel = await self.get_or_fetch_channel(message.channel.id)
+                    ctx.channel = message.channel = channel
+                except discord.DiscordException:
+                    log.warning(
+                        "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
+                        message.id,
+                        message.channel,
+                    )
             else:
                 await self.invoke(ctx)
         else:
