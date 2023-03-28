@@ -59,7 +59,8 @@ from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 if TYPE_CHECKING:
     from discord.ext.commands.hybrid import CommandCallback, ContextT, P
-    from discord import app_commands
+
+    from redbot.core import app_commands
 
 
 _T = TypeVar("_T")
@@ -1728,7 +1729,7 @@ class Red(
             raise TypeError("command type must be one of chat_input, message, user")
         async with cfg as curr_commands:
             if len(curr_commands) >= limit:
-                raise discord.app_commands.CommandLimitReached(None, limit, type=command_type)
+                raise app_commands.CommandLimitReached(None, limit, type=command_type)
             if command_name not in curr_commands:
                 curr_commands[command_name] = None
 
