@@ -63,6 +63,7 @@ Welcome to Red - Discord Bot's documentation!
 
     guide_migration
     guide_cog_creation
+    guide_slash_and_interactions
     guide_publish_cogs
     guide_cog_creators
     framework_apikeys
