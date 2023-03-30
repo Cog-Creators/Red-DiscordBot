@@ -29,7 +29,7 @@ Welcome to Red - Discord Bot's documentation!
     guide_trivia_list_creation
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: User guides:
 
     getting_started
