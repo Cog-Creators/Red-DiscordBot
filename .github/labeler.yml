@@ -134,6 +134,11 @@
   - redbot/core/bank.py
   # Docs
   - docs/framework_bank.rst
+"Category: Core - API - App Commands Package":
+  # Source
+  - redbot/core/app_commands/*
+  # Tests
+  - tests/core/test_app_commands.py
 "Category: Core - API - Commands Package":
   # Source
   - any:

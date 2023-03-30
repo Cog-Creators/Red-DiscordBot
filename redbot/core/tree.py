@@ -1,22 +1,23 @@
 import discord
 from discord.abc import Snowflake
 from discord.utils import MISSING
-from discord.app_commands import (
-    Command,
-    Group,
-    ContextMenu,
+
+from .app_commands import (
     AppCommand,
     AppCommandError,
     BotMissingPermissions,
     CheckFailure,
+    Command,
     CommandAlreadyRegistered,
     CommandInvokeError,
     CommandNotFound,
     CommandOnCooldown,
+    CommandTree,
+    ContextMenu,
+    Group,
     NoPrivateMessage,
     TransformerError,
 )
-
 from .i18n import Translator
 from .utils.chat_formatting import humanize_list, inline
 
@@ -31,7 +32,7 @@ log = logging.getLogger("red")
 _ = Translator(__name__, __file__)
 
 
-class RedTree(discord.app_commands.CommandTree):
+class RedTree(CommandTree):
     """A container that holds application command information.
 
     Internally does not actually add commands to the tree unless they are

@@ -18,7 +18,7 @@ import pip
 import traceback
 from pathlib import Path
 from collections import defaultdict
-from redbot.core import data_manager
+from redbot.core import app_commands, data_manager
 from redbot.core.utils.menus import menu
 from redbot.core.utils.views import SetApiView
 from redbot.core.commands import GuildConverter, RawUserIdConverter
@@ -2005,7 +2005,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         try:
             await self.bot.enable_app_command(command_name, raw_type)
-        except discord.app_commands.CommandLimitReached:
+        except app_commands.CommandLimitReached:
             await ctx.send(_("The command limit has been reached. Disable a command first."))
             return
 
