@@ -166,6 +166,7 @@ class Red(
             delete_delay=-1,
             locale=None,
             regional_format=None,
+            help_pages=-1,
         )
 
         self._config.register_channel(embeds=None, ignored=False)
