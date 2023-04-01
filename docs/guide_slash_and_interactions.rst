@@ -10,7 +10,7 @@ Slash Commands and Interactions
 This guide is going to cover on how to write a simple slash command into a Red cog.
 This guide will assume that you have a working basic cog.
 If you do not have a basic cog, please refer to the :ref:`getting started <getting-started>` guide.
-It is also adviced to make your self familiar with `Application Commands <https://discord.com/developers/docs/interactions/application-commands>`__ from Discord's documentation. 
+It is also adviced to make yourself familiar with `Application Commands <https://discord.com/developers/docs/interactions/application-commands>`__ from Discord's documentation. 
 
 ---------------
 Getting Started
@@ -35,7 +35,7 @@ For this example we will use a basic hello world command.
         async def hello(self, interaction: discord.Interaction):
             await interaction.response.send_message("Hello World!", ephemeral=True)
 
-Go ahead and load your cog. Once it is loaded, we will have to register our slash commands.
+Go ahead and load your cog. Once it is loaded, we will have to enable and sync our slash commands.
 We can do this by using the :ref:`Slash<core-command-slash>` command to manage our slash commands.
 Once you have registered your slash commands, you can test them out by typing ``/hello`` in your server.
 
@@ -110,16 +110,16 @@ These can be used to create a more complex command structure.
         def __init__(self, bot):
             self.bot = bot
 
-        group = app_commands.Group(name="zoo", description="Zoo related commands")
+        zoo = app_commands.Group(name="zoo", description="Zoo related commands")
 
-        @group.command(name="add", description="Add an animal to the zoo")
+        @zoo.command(name="add", description="Add an animal to the zoo")
         @app_commands.describe(animal="The animal you want to add")
-        async def add_animal(self, interaction: discord.Interaction, animal: str):
+        async def zoo_add(self, interaction: discord.Interaction, animal: str):
             await interaction.response.send_message(f"Added {animal} to the zoo", ephemeral=True)
 
-        @group.command(name="remove", description="Remove an animal from the zoo")
+        @zoo.command(name="remove", description="Remove an animal from the zoo")
         @app_commands.describe(animal="The animal you want to remove")
-        async def remove_animal(self, interaction: discord.Interaction, animal: str):
+        async def zoo_remove(self, interaction: discord.Interaction, animal: str):
             await interaction.response.send_message(f"Removed {animal} from the zoo", ephemeral=True)
 
 Arguments
@@ -155,7 +155,7 @@ Let's take a look at how we can do that.
         async def member(self, interaction: discord.Interaction, member: discord.Member):
             await interaction.response.send_message(f"Your member is {member.mention}", ephemeral=True)
 
-As you see with the channel command, we can pick a specific channel to use in our command,
+If you try out the channel command, you will see that it currently accepts any type of channel,
 however let's say we want to limit this to voice channels only.
 We can do so by adjusting our type hint to :class:`discord.VoiceChannel` instead of :class:`discord.TextChannel`.
 
@@ -226,7 +226,7 @@ This is useful for commands that you want to be able to use in both text and sla
 
         @dog.command(name="bark")
         async def bark(self, ctx: commands.Context):
-            await ctx.send("Bark")
+            await ctx.send("Bark", ephemeral=True)
 
 After syncing your cog via the :ref:`Slash<core-command-slash>` command, you'll be able to use the commands as both a slash and text command.
 
