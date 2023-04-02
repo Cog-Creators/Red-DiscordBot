@@ -236,7 +236,7 @@ Context Menu Commands
 Context menu commands are a way to provide a interaction via the context menu.
 These are seen under ``Apps`` in the Discord client when you right click on a message or user.
 Context menu commands are a great way to provide a quick way to interact with your bot.
-These commands accept one arguement, the contextual `user` or `message` that was right clicked.
+These commands accept one arguement, the contextual ``user`` or ``message`` that was right clicked.
 
 Setting up context commands is a bit more involved then setting up slash commands.
 First lets setup our context commands in our cog.
