@@ -980,12 +980,13 @@ class CogMeta(DPYCogMeta):
     """
     Allows GroupCog instances to set custom red specific Group kwargs.
     """
+
     __cog_group_red_force_enable__: bool
-    
+
     def __new__(cls, *args: Any, **kwargs: Any):
         name, bases, attrs = args
-        red_force_enable = kwargs.pop('group_red_force_enable', False)
-        attrs['__cog_group_red_force_enable__'] = red_force_enable
+        red_force_enable = kwargs.pop("group_red_force_enable", False)
+        attrs["__cog_group_red_force_enable__"] = red_force_enable
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
 
@@ -1027,6 +1028,7 @@ class GroupCog(Cog, DPYGroupCog):
 
     This class inherits from `Cog` and `discord.ext.commands.GroupCog`
     """
+
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls)
         if cls.__cog_is_app_commands_group__:
@@ -1036,9 +1038,11 @@ class GroupCog(Cog, DPYGroupCog):
                 nsfw=cls.__cog_group_nsfw__,
                 auto_locale_strings=cls.__cog_group_auto_locale_strings__,
                 parent=None,
-                guild_ids=getattr(cls, '__discord_app_commands_default_guilds__', None),
-                guild_only=getattr(cls, '__discord_app_commands_guild_only__', False),
-                default_permissions=getattr(cls, '__discord_app_commands_default_permissions__', None),
+                guild_ids=getattr(cls, "__discord_app_commands_default_guilds__", None),
+                guild_only=getattr(cls, "__discord_app_commands_guild_only__", False),
+                default_permissions=getattr(
+                    cls, "__discord_app_commands_default_permissions__", None
+                ),
                 extras=cls.__cog_group_extras__,
                 red_force_enable=cls.__cog_group_red_force_enable__,
             )
@@ -1071,10 +1075,10 @@ class GroupCog(Cog, DPYGroupCog):
             self.__cog_app_commands_group__.module = cls.__module__
             mapping = {cmd.name: cmd for cmd in children}
             if len(mapping) > 25:
-                raise TypeError('maximum number of application command children exceeded')
+                raise TypeError("maximum number of application command children exceeded")
 
             self.__cog_app_commands_group__._children = mapping
-            
+
         return self
 
 

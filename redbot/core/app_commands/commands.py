@@ -13,6 +13,7 @@ __all__ = (
     "command",
 )
 
+
 class Command(DPYCommand):
     """
     Command class for Red.
@@ -38,10 +39,11 @@ class Command(DPYCommand):
         Warning: This will cause your cog to fail to load if adding the
         command would put the bot over the command limits.
     """
+
     def __init__(self, *args, **kwargs):
         self.red_force_enable = kwargs.pop("red_force_enable", False)
         super().__init__(*args, **kwargs)
-    
+
     def _copy_with(self, *args, **kwargs):
         """Add Red's extra attributes to copies."""
         new_copy = super()._copy_with(*args, **kwargs)
@@ -74,6 +76,7 @@ class ContextMenu(DPYContextMenu):
         Warning: This will cause your cog to fail to load if adding the
         command would put the bot over the command limits.
     """
+
     def __init__(self, *args, **kwargs):
         self.red_force_enable = kwargs.pop("red_force_enable", False)
         super().__init__(*args, **kwargs)
@@ -104,10 +107,11 @@ class Group(DPYGroup):
         Warning: This will cause your cog to fail to load if adding the
         command would put the bot over the command limits.
     """
+
     def __init__(self, *args, **kwargs):
         self.red_force_enable = kwargs.pop("red_force_enable", False)
         super().__init__(*args, **kwargs)
-    
+
     def _copy_with(self, *args, **kwargs):
         """Add Red's extra attributes to copies."""
         new_copy = super()._copy_with(*args, **kwargs)
@@ -128,13 +132,14 @@ class Group(DPYGroup):
 
         Same interface as `discord.app_commands.Group.command`.
         """
+
         def decorator(func):
             if not inspect.iscoroutinefunction(func):
-                raise TypeError('command function must be a coroutine function')
+                raise TypeError("command function must be a coroutine function")
 
             if description is MISSING:
                 if func.__doc__ is None:
-                    desc = '\N{HORIZONTAL ELLIPSIS}'
+                    desc = "\N{HORIZONTAL ELLIPSIS}"
                 else:
                     desc = _shorten(func.__doc__)
             else:
@@ -170,13 +175,14 @@ def command(
 
     Same interface as `discord.app_commands.command`.
     """
+
     def decorator(func):
         if not inspect.iscoroutinefunction(func):
-            raise TypeError('command function must be a coroutine function')
+            raise TypeError("command function must be a coroutine function")
 
         if description is MISSING:
             if func.__doc__ is None:
-                desc = '\N{HORIZONTAL ELLIPSIS}'
+                desc = "\N{HORIZONTAL ELLIPSIS}"
             else:
                 desc = _shorten(func.__doc__)
         else:
@@ -212,7 +218,7 @@ def context_menu(
 
     def decorator(func):
         if not inspect.iscoroutinefunction(func):
-            raise TypeError('context menu function must be a coroutine function')
+            raise TypeError("context menu function must be a coroutine function")
 
         actual_name = func.__name__.title() if name is MISSING else name
         return ContextMenu(
