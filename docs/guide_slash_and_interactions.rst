@@ -36,7 +36,7 @@ For this example we will use a basic hello world command.
             await interaction.response.send_message("Hello World!", ephemeral=True)
 
 Go ahead and load your cog. Once it is loaded, we will have to enable and sync our slash commands.
-We can do this by using the :ref:`Slash<core-command-slash>` command to manage our slash commands.
+We can do this by using the :ref:`[p]slash<core-command-slash>` command to manage our slash commands.
 Once you have registered your slash commands, you can test them out by typing ``/hello`` in your server.
 
 ----------------------------
@@ -228,7 +228,7 @@ This is useful for commands that you want to be able to use in both text and sla
         async def bark(self, ctx: commands.Context):
             await ctx.send("Bark", ephemeral=True)
 
-After syncing your cog via the :ref:`Slash<core-command-slash>` command, you'll be able to use the commands as both a slash and text command.
+After syncing your cog via the :ref:`[p]slash<core-command-slash>` command, you'll be able to use the commands as both a slash and text command.
 
 ---------------------
 Context Menu Commands
@@ -236,8 +236,7 @@ Context Menu Commands
 Context menu commands are a way to provide a interaction via the context menu.
 These are seen under ``Apps`` in the Discord client when you right click on a message or user.
 Context menu commands are a great way to provide a quick way to interact with your bot.
-So long your command doesn't require any arguments that is.
-As these commands do not have the ability to accept any arguments.
+These commands accept one arguement, the contextual `user` or `message` that was right clicked.
 
 Setting up context commands is a bit more involved then setting up slash commands.
 First lets setup our context commands in our cog.
@@ -258,27 +257,23 @@ First lets setup our context commands in our cog.
     async def get_user_id(interaction: discord.Interaction, user: discord.User):
         await interaction.response.send_message(f"User ID: {user.id}", ephemeral=True)
 
-    def __init__(self, bot):
-        self.bot = bot
+Once we've prepared our main cog file, we have to add a small bit of code to our ``__init__.py`` file.
+
+.. code-block:: python
+
+    from .my_cog import get_message_id, get_user_id
+
+    async def setup(bot):
+        bot.tree.add_command(get_message_id)
+        bot.tree.add_command(get_user_id)
 
     async def teardown(bot):
         # We're removing the commands here to ensure they get unloaded properly when the cog is unloaded.
         bot.tree.remove_command("Get message ID", type=discord.AppCommandType.message)
         bot.tree.remove_command("Get user ID", type=discord.AppCommandType.user)
 
-Once we've prepared our main cog file, we have to add a small bit of code to our ``__init__.py`` file.
-
-.. code-block:: python
-
-    from .my_cog import MyCog, get_message_id, get_user_id
-
-    async def setup(bot):
-        bot.tree.add_command(get_message_id)
-        bot.tree.add_command(get_user_id)
-        await bot.add_cog(MyCog(bot))
-
 Now we're ready to sync our commands to Discord.
-We can do this by using the :ref:`Slash<core-command-slash>` command.
+We can do this by using the :ref:`[p]slash<core-command-slash>` command.
 Take note of the specific arguments you have to use to sync a context command.
 
 ---------------------------------
