@@ -8,6 +8,7 @@
 from .commands import (
     Cog as Cog,
     CogMixin as CogMixin,
+    CogMeta as CogMeta,
     CogCommandMixin as CogCommandMixin,
     CogGroupMixin as CogGroupMixin,
     Command as Command,
@@ -92,7 +93,6 @@ from discord.ext.commands import (
     Bot as Bot,
     NotOwner as NotOwner,
     CategoryChannelConverter as CategoryChannelConverter,
-    CogMeta as CogMeta,
     ConversionError as ConversionError,
     UserInputError as UserInputError,
     Converter as Converter,

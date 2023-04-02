@@ -5,6 +5,14 @@
 # Ensure no names are removed without warning. #
 ################################################
 
+from .commands import (
+    Command as Command,
+    command as command,
+    ContextMenu as ContextMenu,
+    context_menu as context_menu,
+    Group as Group,
+)
+
 ### DEP-WARN: Check this *every* discord.py update
 from discord.app_commands import (
     AllChannels as AllChannels,
@@ -16,7 +24,6 @@ from discord.app_commands import (
     AppCommandThread as AppCommandThread,
     Argument as Argument,
     BotMissingPermissions as BotMissingPermissions,
-    Command as Command,
     CommandAlreadyRegistered as CommandAlreadyRegistered,
     CommandInvokeError as CommandInvokeError,
     CommandLimitReached as CommandLimitReached,
@@ -25,9 +32,7 @@ from discord.app_commands import (
     CommandSignatureMismatch as CommandSignatureMismatch,
     CommandSyncFailure as CommandSyncFailure,
     CommandTree as CommandTree,
-    ContextMenu as ContextMenu,
     Cooldown as Cooldown,
-    Group as Group,
     GuildAppCommandPermissions as GuildAppCommandPermissions,
     MissingAnyRole as MissingAnyRole,
     MissingApplicationID as MissingApplicationID,
@@ -50,8 +55,6 @@ from discord.app_commands import (
     CheckFailure as CheckFailure,
     Choice as Choice,
     choices as choices,
-    command as command,
-    context_menu as context_menu,
     default_permissions as default_permissions,
     describe as describe,
     guild_only as guild_only,

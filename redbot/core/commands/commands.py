@@ -976,7 +976,20 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
         return await self.can_run(ctx)
 
 
-class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
+class CogMeta(DPYCogMeta):
+    """
+    Allows GroupCog instances to set custom red specific Group kwargs.
+    """
+    __cog_group_red_force_enable__: bool
+    
+    def __new__(cls, *args: Any, **kwargs: Any):
+        name, bases, attrs = args
+        red_force_enable = kwargs.pop('group_red_force_enable', False)
+        attrs['__cog_group_red_force_enable__'] = red_force_enable
+        return super().__new__(cls, name, bases, attrs, **kwargs)
+
+
+class Cog(CogMixin, DPYCog, metaclass=CogMeta):
     """
     Red's Cog base class
 
@@ -1014,6 +1027,55 @@ class GroupCog(Cog, DPYGroupCog):
 
     This class inherits from `Cog` and `discord.ext.commands.GroupCog`
     """
+    def __new__(cls, *args, **kwargs):
+        self = super().__new__(cls)
+        if cls.__cog_is_app_commands_group__:
+            self.__cog_app_commands_group__ = app_commands.Group(
+                name=cls.__cog_group_name__,
+                description=cls.__cog_group_description__,
+                nsfw=cls.__cog_group_nsfw__,
+                auto_locale_strings=cls.__cog_group_auto_locale_strings__,
+                parent=None,
+                guild_ids=getattr(cls, '__discord_app_commands_default_guilds__', None),
+                guild_only=getattr(cls, '__discord_app_commands_guild_only__', False),
+                default_permissions=getattr(cls, '__discord_app_commands_default_permissions__', None),
+                extras=cls.__cog_group_extras__,
+                red_force_enable=cls.__cog_group_red_force_enable__,
+            )
+            # Fixes the module being changed to this file, so `[p]slash enablecog` functions properly.
+            self.__cog_app_commands_group__.module = cls.__module__
+
+        children = []
+
+        if Cog._get_overridden_method(self.cog_app_command_error) is not None:
+            error_handler = self.cog_app_command_error
+        else:
+            error_handler = None
+
+        for command in cls.__cog_app_commands__:
+            copy = command._copy_with(parent=self.__cog_app_commands_group__, binding=self)
+
+            if copy._attr:
+                setattr(self, copy._attr, copy)
+
+            if isinstance(copy, app_commands.Group):
+                copy.__discord_app_commands_error_handler__ = error_handler
+                for command in copy._children.values():
+                    if isinstance(command, app_commands.Group):
+                        command.__discord_app_commands_error_handler__ = error_handler
+
+            children.append(copy)
+
+        self.__cog_app_commands__ = children
+        if self.__cog_app_commands_group__:
+            self.__cog_app_commands_group__.module = cls.__module__
+            mapping = {cmd.name: cmd for cmd in children}
+            if len(mapping) > 25:
+                raise TypeError('maximum number of application command children exceeded')
+
+            self.__cog_app_commands_group__._children = mapping
+            
+        return self
 
 
 class HybridCommand(Command, DPYHybridCommand[_CogT, _P, _T]):
