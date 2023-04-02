@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Union, List, Optional
 
 import redbot.cogs
-from redbot.core.commands.converter import positive_int
+from redbot.core.commands import positive_int
 from redbot.core.utils import deduplicate_iterables
 import discord
 

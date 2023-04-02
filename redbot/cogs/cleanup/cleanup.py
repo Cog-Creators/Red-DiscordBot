@@ -7,8 +7,7 @@ import discord
 
 from redbot.core import checks, commands, Config
 from redbot.core.bot import Red
-from redbot.core.commands import RawUserIdConverter
-from redbot.core.commands.converter import positive_int
+from redbot.core.commands import positive_int, RawUserIdConverter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.core.utils.mod import slow_deletion, mass_purge

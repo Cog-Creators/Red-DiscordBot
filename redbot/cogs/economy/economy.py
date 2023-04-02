@@ -10,7 +10,7 @@ from typing import cast, Iterable, Literal
 import discord
 
 from redbot.core import Config, bank, commands, errors, checks
-from redbot.core.commands.converter import positive_int, TimedeltaConverter
+from redbot.core.commands import positive_int, TimedeltaConverter
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
