@@ -40,10 +40,12 @@ __all__ = [
     "NoParseOptional",
     "RelativedeltaConverter",
     "TimedeltaConverter",
+    "finite_float",
     "get_dict_converter",
     "get_timedelta_converter",
     "parse_relativedelta",
     "parse_timedelta",
+    "positive_int",
     "CommandConverter",
     "CogConverter",
 ]
