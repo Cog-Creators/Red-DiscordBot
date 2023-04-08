@@ -43,6 +43,10 @@ from discord.ext.commands import (
     Group as DPYGroup,
     Greedy,
 )
+from discord.ext.commands.hybrid import (
+    HybridAppCommand as DPYHybridAppCommand,
+    replace_parameters,
+)
 
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
@@ -1082,6 +1086,17 @@ class GroupCog(Cog, DPYGroupCog):
         return self
 
 
+class HybridAppCommand(app_commands.Command, DPYHybridAppCommand):
+    """
+    App command Command subclass for hybrids.
+    """
+
+    def __init__(self, wrapped):
+        super().__init__(wrapped)
+        self.red_force_enable = wrapped.red_force_enable
+        print(wrapped.name, self.name)
+
+
 class HybridCommand(Command, DPYHybridCommand[_CogT, _P, _T]):
     """HybridCommand class for Red.
 
@@ -1093,6 +1108,11 @@ class HybridCommand(Command, DPYHybridCommand[_CogT, _P, _T]):
 
         This class is not intended to be subclassed.
     """
+
+    def __init__(self, func, /, *, red_force_enable=False, **kwargs):
+        super().__init__(func, **kwargs)
+        self.red_force_enable = red_force_enable
+        self.app_command = HybridAppCommand(self) if self.with_app_command else None
 
 
 class HybridGroup(Group, DPYHybridGroup[_CogT, _P, _T]):
@@ -1114,11 +1134,78 @@ class HybridGroup(Group, DPYHybridGroup[_CogT, _P, _T]):
         This class is not intended to be subclassed.
     """
 
-    def __init__(self, *args: Any, **kwargs: Any):
-        fallback = "fallback" in kwargs and kwargs["fallback"] is not None
-        invoke_without_command = kwargs.pop("invoke_without_command", False) or fallback
+    def __init__(
+        self,
+        *args: Any,
+        name=discord.utils.MISSING,
+        description=discord.utils.MISSING,
+        fallback=None,
+        red_force_enable=False,
+        **kwargs: Any,
+    ):
+        invoke_without_command = (
+            kwargs.pop("invoke_without_command", False) or fallback is not None
+        )
         kwargs["invoke_without_command"] = invoke_without_command
+        self.red_force_enable = red_force_enable
+
+        name, name_locale = (
+            (name.message, name) if isinstance(name, app_commands.locale_str) else (name, None)
+        )
+        if name is not discord.utils.MISSING:
+            kwargs["name"] = name
+        description, description_locale = (
+            (description.message, description)
+            if isinstance(description, app_commands.locale_str)
+            else (description, None)
+        )
+        if description is not discord.utils.MISSING:
+            kwargs["description"] = description
         super().__init__(*args, **kwargs)
+        self.invoke_without_command = True
+        self.with_app_command: bool = kwargs.pop("with_app_command", True)
+        self._locale_name: Optional[app_commands.locale_str] = name_locale
+        self._locale_description: Optional[app_commands.locale_str] = description_locale
+
+        parent = None
+        if self.parent is not None:
+            if isinstance(self.parent, HybridGroup):
+                parent = self.parent.app_command
+            else:
+                raise TypeError(
+                    f"HybridGroup parent must be HybridGroup not {self.parent.__class__}"
+                )
+
+        self.app_command: app_commands.Group = discord.utils.MISSING
+        self.fallback: Optional[str] = fallback
+
+        if self.with_app_command:
+            guild_ids = kwargs.pop("guild_ids", None) or getattr(
+                self.callback, "__discord_app_commands_default_guilds__", None
+            )
+            guild_only = getattr(self.callback, "__discord_app_commands_guild_only__", False)
+            default_permissions = getattr(
+                self.callback, "__discord_app_commands_default_permissions__", None
+            )
+            nsfw = getattr(self.callback, "__discord_app_commands_is_nsfw__", False)
+            self.app_command = app_commands.Group(
+                name=self._locale_name or self.name,
+                description=self._locale_description or self.description or self.short_doc or "…",
+                guild_ids=guild_ids,
+                guild_only=guild_only,
+                default_permissions=default_permissions,
+                nsfw=nsfw,
+                red_force_enable=red_force_enable,
+            )
+
+            self.app_command.parent = parent
+            self.app_command.module = self.module
+
+            if fallback is not None:
+                command = HybridAppCommand(self)
+                command.name = fallback
+                self.app_command.add_command(command)
+
         self.invoke_without_command = invoke_without_command
 
     @property
