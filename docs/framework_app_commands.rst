@@ -15,10 +15,6 @@ extend functionalities used throughout the bot, as outlined below.
 
 .. autoclass:: redbot.core.app_commands.Command
     :members:
-    :inherited-members:
-
-.. autoclass:: redbot.core.app_commands.Command
-    :members:
 
 .. autoclass:: redbot.core.app_commands.ContextMenu
     :members:
