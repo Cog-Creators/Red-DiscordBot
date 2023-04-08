@@ -66,6 +66,7 @@ Welcome to Red - Discord Bot's documentation!
     guide_publish_cogs
     guide_cog_creators
     framework_apikeys
+    framework_app_commands
     framework_bank
     framework_bot
     framework_checks
