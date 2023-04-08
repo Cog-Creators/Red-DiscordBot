@@ -61,7 +61,7 @@ class RedTree(CommandTree):
         Commands will be internally stored until enabled by ``[p]slash enable``.
         """
         # Allow guild specific commands to bypass the internals for development
-        if guild is not MISSING or guilds is not MISSING:
+        if guild is not MISSING or guilds is not MISSING or command.red_force_enable:
             return super().add_command(
                 command, *args, guild=guild, guilds=guilds, override=override, **kwargs
             )
@@ -192,22 +192,25 @@ class RedTree(CommandTree):
                 to_add_context.append(key)
 
         # Remove commands
-        for command in self._global_commands:
-            if command not in enabled_commands["slash"]:
+        for command, command_obj in self._global_commands.items():
+            if command not in enabled_commands["slash"] and not command_obj.red_force_enable:
                 to_remove_commands.append((command, discord.AppCommandType.chat_input))
 
         # Remove context
-        for command, guild_id, command_type in self._context_menus:
+        for key, command_obj in self._context_menus.items():
+            command, guild_id, command_type = key
             if guild_id is not None:
                 continue
             if (
                 discord.AppCommandType(command_type) is discord.AppCommandType.message
                 and command not in enabled_commands["message"]
+                and not command_obj.red_force_enable
             ):
                 to_remove_context.append((command, discord.AppCommandType.message))
             elif (
                 discord.AppCommandType(command_type) is discord.AppCommandType.user
                 and command not in enabled_commands["user"]
+                and not command_obj.red_force_enable
             ):
                 to_remove_context.append((command, discord.AppCommandType.user))
 

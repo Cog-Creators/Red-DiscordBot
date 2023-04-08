@@ -1094,7 +1094,6 @@ class HybridAppCommand(app_commands.Command, DPYHybridAppCommand):
     def __init__(self, wrapped):
         super().__init__(wrapped)
         self.red_force_enable = wrapped.red_force_enable
-        print(wrapped.name, self.name)
 
 
 class HybridCommand(Command, DPYHybridCommand[_CogT, _P, _T]):
