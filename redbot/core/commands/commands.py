@@ -744,7 +744,7 @@ class CogGroupMixin:
 class Group(GroupMixin, Command, CogGroupMixin, DPYGroup):
     """Group command class for Red.
 
-    This class inherits from `Command`, with :class:`GroupMixin` and
+    This class inherits from `discord.ext.commands.Command`, with :class:`GroupMixin` and
     `discord.ext.commands.Group` mixed in.
     """
 
@@ -1101,7 +1101,7 @@ class HybridCommand(Command, DPYHybridCommand[_CogT, _P, _T]):
 
     This should not be created directly, and instead via the decorator.
 
-    This class inherits from `Command` and `discord.ext.commands.HybridCommand`.
+    This class inherits from `discord.ext.commands.Command` and `discord.ext.commands.HybridCommand`.
 
     .. warning::
 
@@ -1286,7 +1286,7 @@ def hybrid_group(
 
 
 def command(name=None, cls=Command, **attrs):
-    """A decorator which transforms an async function into a `Command`.
+    """A decorator which transforms an async function into a `redbot.core.Command`.
 
     Same interface as `discord.ext.commands.command`.
     """
