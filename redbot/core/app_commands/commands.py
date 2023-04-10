@@ -128,7 +128,7 @@ class Group(DPYGroup):
         extras: Dict[Any, Any] = MISSING,
     ):
         """
-        A decorator which transforms an async function into a `Command` that is a subcommand of this group.
+        A decorator which transforms an async function into a `redbot.core.app_commands.Command` that is a subcommand of this group.
 
         Same interface as `discord.app_commands.Group.command`.
         """
@@ -171,7 +171,7 @@ def command(
     red_force_enable: bool = False,
 ):
     """
-    A decorator which transforms an async function into a `Command`.
+    A decorator which transforms an async function into a `redbot.core.app_commands.Command`.
 
     Same interface as `discord.app_commands.command`.
     """
@@ -211,7 +211,7 @@ def context_menu(
     red_force_enable: bool = False,
 ):
     """
-    A decorator which transforms an async function into a `ContextMenu`.
+    A decorator which transforms an async function into a `redbot.core.app_commands.ContextMenu`.
 
     Same interface as `discord.app_commands.context_menu`.
     """
