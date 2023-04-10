@@ -1286,7 +1286,7 @@ def hybrid_group(
 
 
 def command(name=None, cls=Command, **attrs):
-    """A decorator which transforms an async function into a `redbot.core.Command`.
+    """A decorator which transforms an async function into a `redbot.core.commands.Command`.
 
     Same interface as `discord.ext.commands.command`.
     """
