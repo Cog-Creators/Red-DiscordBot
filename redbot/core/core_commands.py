@@ -3969,6 +3969,24 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
             )
             return
+        if any(len(x) < MINIMUM_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(
+                _(
+                    "Warning: A prefix is below the recommended length (1 character).\n"
+                    "Do you want to continue?"
+                )
+                + " (yes/no)"
+            )
+            pred = MessagePredicate.yes_or_no(ctx)
+            try:
+                await self.bot.wait_for("message", check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Response timed out."))
+                return
+            else:
+                if pred.result is False:
+                    await ctx.send(_("Cancelled."))
+                    return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(
                 _(
