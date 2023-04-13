@@ -144,8 +144,6 @@
   - any:
       - redbot/core/commands/*
       - "!redbot/core/commands/help.py"
-  # this isn't in commands package but it just re-exports things from it
-  - redbot/core/checks.py
   # Docs
   - docs/framework_checks.rst
   - docs/framework_commands.rst
