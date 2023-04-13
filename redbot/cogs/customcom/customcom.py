@@ -3,14 +3,13 @@ import re
 import random
 from datetime import datetime, timedelta
 from inspect import Parameter
-from collections import OrderedDict
-from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal
+from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
 from urllib.parse import quote_plus
 
 import discord
-from fuzzywuzzy import process
+from rapidfuzz import process
 
-from redbot.core import Config, checks, commands
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus, AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
@@ -43,6 +42,10 @@ class CommandNotEdited(CCError):
     pass
 
 
+class ResponseTooLong(CCError):
+    pass
+
+
 class CommandObj:
     def __init__(self, **kwargs):
         self.config = kwargs.get("config")
@@ -55,7 +58,6 @@ class CommandObj:
         return {k: v for k, v in _commands.items() if _commands[k]}
 
     async def redact_author_ids(self, user_id: int):
-
         all_guilds = await self.config.all_guilds()
 
         for guild_id in all_guilds.keys():
@@ -91,6 +93,14 @@ class CommandObj:
 
             if msg.content.lower() == "exit()":
                 break
+            elif len(msg.content) > 2000:
+                await ctx.send(
+                    _(
+                        "The text response you're trying to create has more than 2000 characters.\n"
+                        "I cannot send messages that are longer than 2000 characters, please try again."
+                    )
+                )
+                continue
             else:
                 try:
                     this_args = ctx.cog.prepare_args(msg.content)
@@ -126,11 +136,18 @@ class CommandObj:
         else:
             raise NotFound()
 
-    async def create(self, ctx: commands.Context, command: str, *, response):
+    async def create(
+        self, ctx: commands.Context, command: str, *, response: Union[str, List[str]]
+    ):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
+        # Check against those pesky nitro users!
+        if isinstance(response, str) and len(response) > 2000:
+            raise ResponseTooLong()
+        elif isinstance(response, list) and any([len(i) > 2000 for i in response]):
+            raise ResponseTooLong()
         # test to raise
         ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
         author = ctx.message.author
@@ -163,7 +180,7 @@ class CommandObj:
         author = ctx.message.author
 
         if ask_for and not response:
-            await ctx.send(_("Do you want to create a 'randomized' custom command? (y/n)"))
+            await ctx.send(_("Do you want to create a 'randomized' custom command?") + " (yes/no)")
 
             pred = MessagePredicate.yes_or_no(ctx)
             try:
@@ -186,6 +203,8 @@ class CommandObj:
 
         if response:
             # test to raise
+            if len(response) > 2000:
+                raise ResponseTooLong()
             ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
             ccinfo["response"] = response
 
@@ -290,7 +309,7 @@ class CustomCommands(commands.Cog):
                     if len(msg) > 2000:
                         msg = f"{msg[:1997]}..."
                     msglist.append(msg)
-            await menus.menu(ctx, msglist, menus.DEFAULT_CONTROLS)
+            await menus.menu(ctx, msglist)
 
     @customcom.command(name="search")
     @commands.guild_only()
@@ -298,7 +317,7 @@ class CustomCommands(commands.Cog):
         """
         Searches through custom commands, according to the query.
 
-        Uses fuzzywuzzy searching to find close matches.
+        Uses fuzzy searching to find close matches.
 
         **Arguments:**
 
@@ -307,10 +326,10 @@ class CustomCommands(commands.Cog):
         cc_commands = await CommandObj.get_commands(self.config.guild(ctx.guild))
         extracted = process.extract(query, list(cc_commands.keys()))
         accepted = []
-        for entry in extracted:
-            if entry[1] > 60:
+        for key, score, __ in extracted:
+            if score > 60:
                 # Match was decently strong
-                accepted.append((entry[0], cc_commands[entry[0]]))
+                accepted.append((key, cc_commands[key]))
             else:
                 # Match wasn't strong enough
                 pass
@@ -328,7 +347,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(_("The following matches have been found:") + box(content))
 
     @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_create(self, ctx: commands.Context, command: str.lower, *, text: str):
         """Create custom commands.
 
@@ -339,7 +358,7 @@ class CustomCommands(commands.Cog):
         await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
     @cc_create.command(name="random")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_create_random(self, ctx: commands.Context, command: str.lower):
         """Create a CC where it will randomly choose a response!
 
@@ -369,9 +388,16 @@ class CustomCommands(commands.Cog):
                     command=f"{ctx.clean_prefix}customcom edit"
                 )
             )
+        except ResponseTooLong:  # This isn't needed, however may be a good idea to keep this.
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @cc_create.command(name="simple")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_create_simple(self, ctx, command: str.lower, *, text: str):
         """Add a simple custom command.
 
@@ -401,9 +427,16 @@ class CustomCommands(commands.Cog):
             )
         except ArgParseError as e:
             await ctx.send(e.args[0])
+        except ResponseTooLong:
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @customcom.command(name="cooldown")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_cooldown(
         self, ctx, command: str.lower, cooldown: int = None, *, per: str.lower = "member"
     ):
@@ -421,8 +454,8 @@ class CustomCommands(commands.Cog):
         **Arguments:**
 
         - `<command>` The custom command to check or set the cooldown.
-        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.
-        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.
+        - `[cooldown]` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.
+        - `[per]` The group to apply the cooldown on. Defaults to per member. Valid choices are server / guild, user / member, and channel.
         """
         if cooldown is None:
             try:
@@ -454,7 +487,7 @@ class CustomCommands(commands.Cog):
             )
 
     @customcom.command(name="delete", aliases=["del", "remove"])
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str.lower):
         """Delete a custom command.
 
@@ -472,7 +505,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(_("That command doesn't exist."))
 
     @customcom.command(name="edit")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_edit(self, ctx, command: str.lower, *, text: str = None):
         """Edit a custom command.
 
@@ -497,9 +530,16 @@ class CustomCommands(commands.Cog):
             await ctx.send(e.args[0])
         except CommandNotEdited:
             pass
+        except ResponseTooLong:
+            await ctx.send(
+                _(
+                    "The text response you're trying to create has more than 2000 characters.\n"
+                    "I cannot send messages that are longer than 2000 characters."
+                )
+            )
 
     @customcom.command(name="list")
-    @checks.bot_has_permissions(add_reactions=True)
+    @commands.bot_can_react()
     async def cc_list(self, ctx: commands.Context):
         """List all available custom commands.
 
@@ -532,11 +572,11 @@ class CustomCommands(commands.Cog):
                 )
                 embed.set_footer(text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
                 embed_pages.append(embed)
-            await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
+            await menus.menu(ctx, embed_pages)
         else:
             content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
             pages = list(map(box, pagify(content, page_length=2000, shorten_by=10)))
-            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+            await menus.menu(ctx, pages)
 
     @customcom.command(name="show")
     async def cc_show(self, ctx, command_name: str):
@@ -595,11 +635,14 @@ class CustomCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_without_command(self, message):
-        is_private = isinstance(message.channel, discord.abc.PrivateChannel)
+        is_private = message.guild is None
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
         # something similar once it's added
         user_allowed = True
+
+        if isinstance(message.channel, discord.PartialMessageable):
+            return
 
         if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
             return
@@ -664,9 +707,8 @@ class CustomCommands(commands.Cog):
     @staticmethod
     def prepare_args(raw_response) -> Mapping[str, Parameter]:
         args = re.findall(r"{(\d+)[^:}]*(:[^.}]*)?[^}]*\}", raw_response)
-        default = [("ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))]
         if not args:
-            return OrderedDict(default)
+            return {}
         allowed_builtins = {
             "bool": bool,
             "complex": complex,
@@ -734,9 +776,7 @@ class CustomCommands(commands.Cog):
                 i if i < high else "final",
             )
             fin[i] = fin[i].replace(name=name)
-        # insert ctx parameter for discord.py parsing
-        fin = default + [(p.name, p) for p in fin]
-        return OrderedDict(fin)
+        return dict((p.name, p) for p in fin)
 
     def test_cooldowns(self, ctx, command, cooldowns):
         now = datetime.utcnow()

@@ -1,9 +1,8 @@
 import asyncio
 from collections import defaultdict, deque
-from typing import Optional
 from datetime import timedelta
 
-from redbot.core import commands, i18n, checks
+from redbot.core import commands, i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
 
@@ -18,7 +17,7 @@ class ModSettings(MixinMeta):
     """
 
     @commands.group()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
         """Manage server administration settings."""
 
@@ -336,15 +335,15 @@ class ModSettings(MixinMeta):
         if not cur_setting:
             await self.config.guild(guild).reinvite_on_unban.set(True)
             await ctx.send(
-                _("Users unbanned with `{command}` will be reinvited.").format(
-                    command=f"{ctx.clean_prefix}unban"
+                _("Users unbanned with {command} will be reinvited.").format(
+                    command=inline(f"{ctx.clean_prefix}unban")
                 )
             )
         else:
             await self.config.guild(guild).reinvite_on_unban.set(False)
             await ctx.send(
-                _("Users unbanned with `{command}` will not be reinvited.").format(
-                    command=f"{ctx.clean_prefix}unban"
+                _("Users unbanned with {command} will not be reinvited.").format(
+                    command=inline(f"{ctx.clean_prefix}unban")
                 )
             )
 
@@ -463,7 +462,7 @@ class ModSettings(MixinMeta):
             msg = _(
                 "All name changes will no longer be tracked.\n"
                 "To delete existing name data, use {command}."
-            ).format(command=f"`{ctx.clean_prefix}modset deletenames`")
+            ).format(command=inline(f"{ctx.clean_prefix}modset deletenames"))
         await self.config.track_all_names.set(enabled)
         await ctx.send(msg)
 

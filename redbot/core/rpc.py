@@ -8,6 +8,8 @@ from aiohttp_json_rpc.rpc import JsonRpcMethod
 
 import logging
 
+from redbot.core.cli import ExitCodes
+
 log = logging.getLogger("red.rpc")
 
 __all__ = ["RPC", "RPCMixin", "get_name"]
@@ -62,14 +64,20 @@ class RPC:
     RPC server manager.
     """
 
+    app: web.Application
+    _rpc: RedRpc
+    _runner: web.AppRunner
+
     def __init__(self):
+        self._site: Optional[web.TCPSite] = None
+        self._started = False
+
+    async def _pre_login(self) -> None:
         self.app = web.Application()
         self._rpc = RedRpc()
         self.app.router.add_route("*", "/", self._rpc.handle_request)
 
         self._runner = web.AppRunner(self.app)
-        self._site: Optional[web.TCPSite] = None
-        self._started = False
 
     async def initialize(self, port: int):
         """
@@ -89,7 +97,7 @@ class RPC:
             )
         except Exception as exc:
             log.exception("RPC setup failure", exc_info=exc)
-            sys.exit(1)
+            sys.exit(ExitCodes.CRITICAL)
         else:
             await self._site.start()
             log.debug("Created RPC server listener on port %s", port)
@@ -132,6 +140,9 @@ class RPCMixin:
 
         self.rpc_handlers = {}  # Uppercase cog name to method
 
+    async def _pre_login(self) -> None:
+        await self.rpc._pre_login()
+
     def register_rpc_handler(self, method):
         """
         Registers a method to act as an RPC handler if the internal RPC server is active.
@@ -163,7 +174,7 @@ class RPCMixin:
 
     def unregister_rpc_handler(self, method):
         """
-        Unregisters an RPC method handler.
+        Deregisters an RPC method handler.
 
         This will be called automatically for you on cog unload and will pass silently if the
         method is not previously registered.

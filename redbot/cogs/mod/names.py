@@ -2,7 +2,7 @@ import datetime
 from typing import cast
 
 import discord
-from redbot.core import commands, i18n, checks
+from redbot.core import commands, i18n
 from redbot.core.utils.common_filters import (
     filter_invites,
     filter_various_mentions,
@@ -32,7 +32,7 @@ class ModInfo(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
-    @checks.admin_or_permissions(manage_nicknames=True)
+    @commands.admin_or_permissions(manage_nicknames=True)
     async def rename(self, ctx: commands.Context, member: discord.Member, *, nickname: str = ""):
         """Change a member's nickname.
 
@@ -76,7 +76,7 @@ class ModInfo(MixinMeta):
                 if exc.status == 400:  # BAD REQUEST
                     await ctx.send(_("That nickname is invalid."))
                 else:
-                    await ctx.send(_("An unexpected error has occured."))
+                    await ctx.send(_("An unexpected error has occurred."))
             else:
                 await ctx.send(_("Done."))
 
@@ -193,10 +193,10 @@ class ModInfo(MixinMeta):
         roles = member.roles[-1:0:-1]
         names, nicks = await self.get_names_and_nicks(member)
 
-        joined_at = member.joined_at.replace(tzinfo=datetime.timezone.utc)
         if is_special:
             joined_at = special_date
-        user_created = int(member.created_at.replace(tzinfo=datetime.timezone.utc).timestamp())
+        else:
+            joined_at = member.joined_at
         voice_state = member.voice
         member_number = (
             sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
@@ -205,9 +205,15 @@ class ModInfo(MixinMeta):
             + 1
         )
 
-        created_on = "<t:{0}>\n(<t:{0}:R>)".format(user_created)
+        created_on = (
+            f"{discord.utils.format_dt(member.created_at)}\n"
+            f"{discord.utils.format_dt(member.created_at, 'R')}"
+        )
         if joined_at is not None:
-            joined_on = "<t:{0}>\n(<t:{0}:R>)".format(int(joined_at.timestamp()))
+            joined_on = (
+                f"{discord.utils.format_dt(joined_at)}\n"
+                f"{discord.utils.format_dt(joined_at, 'R')}"
+            )
         else:
             joined_on = _("Unknown")
 
@@ -225,7 +231,6 @@ class ModInfo(MixinMeta):
         status_string = self.get_status_string(member)
 
         if roles:
-
             role_str = ", ".join([x.mention for x in roles])
             # 400 BAD REQUEST (error code: 50035): Invalid Form Body
             # In embed.fields.2.value: Must be 1024 or fewer in length.
@@ -296,7 +301,7 @@ class ModInfo(MixinMeta):
         name = " ~ ".join((name, member.nick)) if member.nick else name
         name = filter_invites(name)
 
-        avatar = member.avatar_url_as(static_format="png")
+        avatar = member.display_avatar.replace(static_format="png")
         data.set_author(name=f"{statusemoji} {name}", url=avatar)
         data.set_thumbnail(url=avatar)
 

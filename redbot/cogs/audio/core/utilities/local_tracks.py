@@ -1,13 +1,13 @@
 import contextlib
-import logging
 
 from pathlib import Path
 from typing import List, Union
 
 import discord
 import lavalink
+from red_commons.logging import getLogger
 
-from fuzzywuzzy import process
+from rapidfuzz import process
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -17,7 +17,7 @@ from ...errors import TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
-log = logging.getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
+log = getLogger("red.cogs.Audio.cog.Utilities.local_tracks")
 _ = Translator("Audio", Path(__file__))
 
 
@@ -51,7 +51,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
 
     async def get_localtrack_folder_tracks(
-        self, ctx, player: lavalink.player_manager.Player, query: Query
+        self, ctx, player: lavalink.player.Player, query: Query
     ) -> List[lavalink.rest_api.Track]:
         """Return a list of tracks per the provided query."""
         if not await self.localtracks_folder_exists(ctx) or self.api_interface is None:
@@ -118,7 +118,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         }
         search_results = process.extract(search_words, to_search_string, limit=50)
         search_list = []
-        async for track_match, percent_match in AsyncIter(search_results):
+        async for track_match, percent_match, __ in AsyncIter(search_results):
             if percent_match > 85:
                 search_list.extend(
                     [
