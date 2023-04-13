@@ -9,7 +9,7 @@ from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List
 from collections import defaultdict
 
 import discord
-from redbot.core import checks, commands, Config, version_info as red_version_info
+from redbot.core import commands, Config, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -480,7 +480,7 @@ class Downloader(commands.Cog):
             await target.send(page)
 
     @commands.command(require_var_positional=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def pipinstall(self, ctx: commands.Context, *deps: str) -> None:
         """
         Install a group of dependencies using pip.
@@ -514,7 +514,7 @@ class Downloader(commands.Cog):
             )
 
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def repo(self, ctx: commands.Context) -> None:
         """Base command for repository management."""
         pass
@@ -698,7 +698,7 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, message)
 
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def cog(self, ctx: commands.Context) -> None:
         """Base command for cog installation management commands."""
         pass
@@ -1625,6 +1625,12 @@ class Downloader(commands.Cog):
                             command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
                         )
                     )
+            # If the bot has any slash commands enabled, warn them to sync
+            enabled_slash = await self.bot.list_enabled_app_commands()
+            if any(enabled_slash.values()):
+                message += _(
+                    "\nYou may need to resync your slash commands with `{prefix}slash sync`."
+                ).format(prefix=ctx.prefix)
         if failed_cogs:
             cognames = [cog.name for cog in failed_cogs]
             message += (

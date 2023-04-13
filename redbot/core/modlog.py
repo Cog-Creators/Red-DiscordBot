@@ -1020,18 +1020,23 @@ async def create_case(
 
     Raises
     ------
+    ValueError
+        If the action type is not a valid action type.
+    RuntimeError
+        If user is the bot itself.
     TypeError
         If ``channel`` is of type `discord.PartialMessageable`.
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
-        return
+        raise ValueError(f"{action_type} is not a valid action type.")
 
     if not await case_type.is_enabled():
         return
 
-    if user == bot.user:
-        return
+    user_id = user if isinstance(user, int) else user.id
+    if user_id == bot.user.id:
+        raise RuntimeError("The bot itself can not be the target of a modlog entry.")
 
     if isinstance(channel, discord.PartialMessageable):
         raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")

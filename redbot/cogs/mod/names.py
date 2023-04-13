@@ -2,7 +2,7 @@ import datetime
 from typing import cast
 
 import discord
-from redbot.core import commands, i18n, checks
+from redbot.core import commands, i18n
 from redbot.core.utils.common_filters import (
     filter_invites,
     filter_various_mentions,
@@ -32,7 +32,7 @@ class ModInfo(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
-    @checks.admin_or_permissions(manage_nicknames=True)
+    @commands.admin_or_permissions(manage_nicknames=True)
     async def rename(self, ctx: commands.Context, member: discord.Member, *, nickname: str = ""):
         """Change a member's nickname.
 
@@ -76,7 +76,7 @@ class ModInfo(MixinMeta):
                 if exc.status == 400:  # BAD REQUEST
                     await ctx.send(_("That nickname is invalid."))
                 else:
-                    await ctx.send(_("An unexpected error has occured."))
+                    await ctx.send(_("An unexpected error has occurred."))
             else:
                 await ctx.send(_("Done."))
 

@@ -352,7 +352,7 @@ class SetApiModal(discord.ui.Modal):
     async def on_submit(self, interaction: discord.Interaction):
         if not await interaction.client.is_owner(
             interaction.user
-        ):  # Prevent non-bot owners from somehow aquiring and saving the modal.
+        ):  # Prevent non-bot owners from somehow acquiring and saving the modal.
             return await interaction.response.send_message(
                 _("This modal is for bot owners only. Whoops!"), ephemeral=True
             )

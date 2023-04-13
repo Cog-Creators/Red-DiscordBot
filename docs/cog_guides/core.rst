@@ -1274,7 +1274,7 @@ embedset command server
 
 **Description**
 
-Sets a commmand's embed setting for the current server.
+Sets a command's embed setting for the current server.
 
 If set, this is used instead of the server default to determine whether or not to use embeds.
 
@@ -4044,6 +4044,152 @@ This is the recommended method for shutting down the bot.
 
 **Arguments:**
     - ``[silently]`` - Whether to skip sending the shutdown message. Defaults to False.
+
+.. _core-command-slash:
+
+^^^^^
+slash
+^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash 
+
+**Description**
+
+Base command for managing what application commands are able to be used on Red.
+
+.. _core-command-slash-disable:
+
+"""""""""""""
+slash disable
+"""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash disable <command_name> [command_type]
+    
+**Description**
+
+Marks an application command as being disabled, preventing it from being added to the bot.
+See commands available to disable with ``[p]slash list``. This command does NOT sync the
+enabled commands with Discord, that must be done manually with ``[p]slash sync`` for
+commands to appear in users' clients.
+
+**Arguments:**
+    - ``<command_name>`` - The command name to disable. Only the top level name of a group command should be used.
+    - ``[command_type]`` - What type of application command to disable. Must be one of ``slash``, ``message``, or ``user``. Defaults to ``slash``.
+
+.. _core-command-slash-disablecog:
+
+""""""""""""""""
+slash disablecog
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash disablecog <cog_name>
+    
+**Description**
+
+Marks all application commands in a cog as being disabled, preventing them from being
+added to the bot. See a list of cogs with application commands with ``[p]slash list``.
+This command does NOT sync the enabled commands with Discord, that must be done manually
+with ``[p]slash sync`` for commands to appear in users' clients.
+
+**Arguments:**
+    - ``<cog_name>`` - The cog to disable commands from. This argument is case sensitive.
+
+.. _core-command-slash-enable:
+
+""""""""""""
+slash enable
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash enable <command_name> [command_type]
+    
+**Description**
+
+Marks an application command as being enabled, allowing it to be added to the bot.
+See commands available to enable with ``[p]slash list``. This command does NOT sync the
+enabled commands with Discord, that must be done manually with ``[p]slash sync`` for
+commands to appear in users' clients.
+
+**Arguments:**
+    - ``<command_name>`` - The command name to enable. Only the top level name of a group command should be used.
+    - ``[command_type]`` - What type of application command to enable. Must be one of ``slash``, ``message``, or ``user``. Defaults to ``slash``.
+
+.. _core-command-slash-enablecog:
+
+"""""""""""""""
+slash enablecog
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash enablecog <cog_name>
+    
+**Description**
+
+Marks all application commands in a cog as being enabled, allowing them to be
+added to the bot. See a list of cogs with application commands with ``[p]slash list``.
+This command does NOT sync the enabled commands with Discord, that must be done manually
+with ``[p]slash sync`` for commands to appear in users' clients.
+
+**Arguments:**
+    - ``<cog_name>`` - The cog to enable commands from. This argument is case sensitive.
+
+.. _core-command-slash-list:
+
+""""""""""
+slash list
+""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash list
+    
+**Description**
+
+List the slash commands the bot can see, and whether or not they are enabled.
+This command shows the state that will be changed to when ``[p]slash sync`` is run.
+
+.. _core-command-slash-sync:
+
+""""""""""
+slash sync
+""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash sync [guild]
+    
+**Description**
+
+Syncs the slash settings to discord.
+Settings from ``[p]slash list`` will be synced with discord, changing what commands appear for users.
+This should be run sparingly, make all necessary changes before running this command.
+        
+**Arguments:**
+    - ``[guild]`` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
 
 .. _core-command-traceback:
 

@@ -164,7 +164,7 @@ def is_owner_if_bank_global():
     .. code-block:: python
 
         @bank.is_owner_if_bank_global()
-        @checks.guildowner()
+        @commands.guildowner()
         @commands.group()
         async def bankset(self, ctx: commands.Context):
             \"""Base command for bank settings.\"""
