@@ -1946,7 +1946,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     # TODO: Guild owner permissions for guild scope slash commands and syncing?
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def slash(self, ctx: commands.Context):
         """Base command for managing what application commands are able to be used on [botname]."""
 
