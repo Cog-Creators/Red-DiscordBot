@@ -30,7 +30,7 @@ commonmark==0.9.1
     # via rich
 contextlib2==21.6.0
     # via schema
-discord-py==2.1.0
+discord-py==2.2.2
     # via
     #   -r base.in
     #   red-lavalink
