@@ -3,14 +3,12 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import List, Tuple, Literal
+from typing import Literal
 
-import discord
-from redbot.core.utils import AsyncIter
-
-from redbot.core import Config, modlog, commands
+from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import inline
 from .events import Events
