@@ -875,7 +875,7 @@ class Red(
             author = ctx.user
         else:
             author = ctx.author
-        
+
         is_private = isinstance(ctx.channel, discord.abc.PrivateChannel)
         if isinstance(ctx.channel, discord.PartialMessageable):
             if ctx.channel.type is not discord.ChannelType.private:

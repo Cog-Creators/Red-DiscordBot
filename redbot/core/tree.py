@@ -316,13 +316,18 @@ class RedTree(CommandTree):
 
         if interaction.guild:
             if not (await self.client.ignored_channel_or_guild(interaction)):
-                await interaction.response.send_message("This channel or server is ignored.", ephemeral=True)
+                await interaction.response.send_message(
+                    "This channel or server is ignored.", ephemeral=True
+                )
                 return False
 
         if not (await self.client.allowed_by_whitelist_blacklist(interaction.user)):
-            await interaction.response.send_message("You are not permitted to use commands because of an allowlist or blocklist.", ephemeral=True)
+            await interaction.response.send_message(
+                "You are not permitted to use commands because of an allowlist or blocklist.",
+                ephemeral=True,
+            )
             return False
-        
+
         return True
 
     # DEP-WARN
