@@ -1,4 +1,3 @@
-
 from .commands import (
     bot_has_permissions,
     bot_in_a_guild,
