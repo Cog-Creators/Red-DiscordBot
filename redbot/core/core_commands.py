@@ -2049,8 +2049,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if existing is not None and existing.extras.get("red_force_enable", False):
             await ctx.send(
                 _(
-                    "That application command has been enabled by the cog author, "
-                    "and cannot be disabled. The cog must be unloaded to remove the command."
+                    "That application command has been set as required for the cog to function "
+                    "by the author, and cannot be disabled. "
+                    "The cog must be unloaded to remove the command."
                 )
             )
             return
