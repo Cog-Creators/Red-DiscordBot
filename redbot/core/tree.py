@@ -61,7 +61,11 @@ class RedTree(CommandTree):
         Commands will be internally stored until enabled by ``[p]slash enable``.
         """
         # Allow guild specific commands to bypass the internals for development
-        if guild is not MISSING or guilds is not MISSING or command.extras.get("red_force_enable", False):
+        if (
+            guild is not MISSING
+            or guilds is not MISSING
+            or command.extras.get("red_force_enable", False)
+        ):
             return super().add_command(
                 command, *args, guild=guild, guilds=guilds, override=override, **kwargs
             )
@@ -193,7 +197,9 @@ class RedTree(CommandTree):
 
         # Remove commands
         for command, command_obj in self._global_commands.items():
-            if command not in enabled_commands["slash"] and not command_obj.extras.get("red_force_enable", False):
+            if command not in enabled_commands["slash"] and not command_obj.extras.get(
+                "red_force_enable", False
+            ):
                 to_remove_commands.append((command, discord.AppCommandType.chat_input))
 
         # Remove context

@@ -2214,13 +2214,27 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, True, command.extras.get("red_force_enable", False)))
+            cog_commands[module].append(
+                (
+                    command.name,
+                    discord.AppCommandType.chat_input,
+                    True,
+                    command.extras.get("red_force_enable", False),
+                )
+            )
             slash_command_names.add(command.name)
         for command in self.bot.tree._disabled_global_commands.values():
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, False, command.extras.get("red_force_enable", False)))
+            cog_commands[module].append(
+                (
+                    command.name,
+                    discord.AppCommandType.chat_input,
+                    False,
+                    command.extras.get("red_force_enable", False),
+                )
+            )
         for key, command in self.bot.tree._context_menus.items():
             # Filter out guild context menus
             if key[1] is not None:
@@ -2228,7 +2242,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, command.type, True, command.extras.get("red_force_enable", False)))
+            cog_commands[module].append(
+                (command.name, command.type, True, command.extras.get("red_force_enable", False))
+            )
             if command.type is discord.AppCommandType.message:
                 message_command_names.add(command.name)
             elif command.type is discord.AppCommandType.user:
@@ -2237,7 +2253,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, command.type, False, command.extras.get("red_force_enable", False)))
+            cog_commands[module].append(
+                (command.name, command.type, False, command.extras.get("red_force_enable", False))
+            )
 
         # Commands added with evals will come from __main__, make them unknown instead
         if "__main__" in cog_commands:
@@ -2251,8 +2269,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         unknown_message = set(enabled_commands["message"]) - message_command_names
         unknown_user = set(enabled_commands["user"]) - user_command_names
 
-        unknown_slash = [(n, discord.AppCommandType.chat_input, True, False) for n in unknown_slash]
-        unknown_message = [(n, discord.AppCommandType.message, True, False) for n in unknown_message]
+        unknown_slash = [
+            (n, discord.AppCommandType.chat_input, True, False) for n in unknown_slash
+        ]
+        unknown_message = [
+            (n, discord.AppCommandType.message, True, False) for n in unknown_message
+        ]
         unknown_user = [(n, discord.AppCommandType.user, True, False) for n in unknown_user]
 
         cog_commands["(unknown)"].extend(unknown_slash)
