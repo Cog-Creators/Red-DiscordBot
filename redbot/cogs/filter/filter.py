@@ -4,7 +4,7 @@ import re
 from datetime import timezone
 from typing import Union, Set, Literal, Optional
 
-from redbot.core import checks, Config, modlog, commands
+from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
@@ -80,7 +80,7 @@ class Filter(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
         """Base command to manage filter settings."""
         pass
@@ -144,7 +144,7 @@ class Filter(commands.Cog):
 
     @commands.group(name="filter")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_messages=True)
+    @commands.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
         """Base command to add or remove words from the server filter.
 

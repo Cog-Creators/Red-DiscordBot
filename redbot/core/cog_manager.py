@@ -11,7 +11,7 @@ from redbot.core.commands import BadArgument
 from redbot.core.utils import deduplicate_iterables
 import discord
 
-from . import checks, commands
+from . import commands
 from .config import Config
 from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
@@ -336,7 +336,7 @@ class CogManagerUI(commands.Cog):
         return
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def paths(self, ctx: commands.Context):
         """
         Lists current cog paths in order of priority.
@@ -358,7 +358,7 @@ class CogManagerUI(commands.Cog):
         await ctx.send(box(msg))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def addpath(self, ctx: commands.Context, *, path: Path):
         """
         Add a path to the list of available cog paths.
@@ -375,7 +375,7 @@ class CogManagerUI(commands.Cog):
             await ctx.send(_("Path successfully added."))
 
     @commands.command(require_var_positional=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def removepath(self, ctx: commands.Context, *path_numbers: positive_int):
         """
         Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.
@@ -413,7 +413,7 @@ class CogManagerUI(commands.Cog):
             await ctx.send(page)
 
     @commands.command(usage="<from> <to>")
-    @checks.is_owner()
+    @commands.is_owner()
     async def reorderpath(self, ctx: commands.Context, from_: positive_int, to: positive_int):
         """
         Reorders paths internally to allow discovery of different cogs.
@@ -439,7 +439,7 @@ class CogManagerUI(commands.Cog):
         await ctx.send(_("Paths reordered."))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def installpath(self, ctx: commands.Context, path: Path = None):
         """
         Returns the current install path or sets it if one is provided.
@@ -464,7 +464,7 @@ class CogManagerUI(commands.Cog):
         )
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def cogs(self, ctx: commands.Context):
         """
         Lists all loaded and available cogs.

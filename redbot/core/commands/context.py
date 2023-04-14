@@ -9,7 +9,7 @@ import discord
 from discord.ext.commands import Context as DPYContext
 
 from .requires import PermState
-from ..utils import can_user_react_in, common_filters
+from ..utils import can_user_react_in
 
 if TYPE_CHECKING:
     from .commands import Command
