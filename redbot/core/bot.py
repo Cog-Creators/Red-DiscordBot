@@ -851,7 +851,7 @@ class Red(
         return True
 
     async def ignored_channel_or_guild(
-        self, ctx: Union[commands.Context, discord.Message]
+        self, ctx: Union[commands.Context, discord.Message, discord.Interaction]
     ) -> bool:
         """
         This checks if the bot is meant to be ignoring commands in a channel or guild,
@@ -861,7 +861,8 @@ class Red(
         ----------
         ctx :
             Context object of the command which needs to be checked prior to invoking
-            or a Message object which might be intended for use as a command.
+            or a Message object which might be intended for use as a command
+            or an Interaction object which might be intended for use with a command.
 
         Returns
         -------
@@ -871,20 +872,30 @@ class Red(
         Raises
         ------
         TypeError
-            ``ctx.channel`` is of `discord.PartialMessageable` type.
+            ``ctx.channel`` is a `discord.PartialMessageable` with a ``type`` other
+            than ``discord.ChannelType.private``
         """
+        if isinstance(ctx, discord.Interaction):
+            author = ctx.user
+        else:
+            author = ctx.author
+
+        is_private = isinstance(ctx.channel, discord.abc.PrivateChannel)
         if isinstance(ctx.channel, discord.PartialMessageable):
-            raise TypeError("Can't check permissions for PartialMessageable.")
-        perms = ctx.channel.permissions_for(ctx.author)
+            if ctx.channel.type is not discord.ChannelType.private:
+                raise TypeError("Can't check permissions for non-private PartialMessageable.")
+            is_private = True
+        perms = ctx.channel.permissions_for(author)
         surpass_ignore = (
-            isinstance(ctx.channel, discord.abc.PrivateChannel)
+            is_private
             or perms.manage_guild
-            or await self.is_owner(ctx.author)
-            or await self.is_admin(ctx.author)
+            or await self.is_owner(author)
+            or await self.is_admin(author)
         )
         # guild-wide checks
         if surpass_ignore:
             return True
+
         guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
         if guild_ignored:
             return False

@@ -309,6 +309,27 @@ class RedTree(CommandTree):
         else:
             log.exception(type(error).__name__, exc_info=error)
 
+    async def interaction_check(self, interaction: discord.Interaction):
+        """Global checks for app commands."""
+        if interaction.user.bot:
+            return False
+
+        if interaction.guild:
+            if not (await self.client.ignored_channel_or_guild(interaction)):
+                await interaction.response.send_message(
+                    "This channel or server is ignored.", ephemeral=True
+                )
+                return False
+
+        if not (await self.client.allowed_by_whitelist_blacklist(interaction.user)):
+            await interaction.response.send_message(
+                "You are not permitted to use commands because of an allowlist or blocklist.",
+                ephemeral=True,
+            )
+            return False
+
+        return True
+
     # DEP-WARN
     def _remove_with_module(self, name: str, *args, **kwargs) -> None:
         """Handles cases where a module raises an exception in the loading process, but added commands to the tree.
