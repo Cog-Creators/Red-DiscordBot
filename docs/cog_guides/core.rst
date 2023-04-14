@@ -4168,7 +4168,14 @@ slash list
 **Description**
 
 List the slash commands the bot can see, and whether or not they are enabled.
+
 This command shows the state that will be changed to when ``[p]slash sync`` is run.
+Commands from the same cog are grouped, with the cog name as the header.
+
+The prefix denotes the state of the command:
+- Commands starting with ``- `` have not yet been enabled.
+- Commands starting with ``+ `` have been manually enabled.
+- Commands starting with ``++`` have been enabled by the cog author, and cannot be disabled.
 
 .. _core-command-slash-sync:
 
