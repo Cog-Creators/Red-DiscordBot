@@ -1446,21 +1446,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[public]` - Whether to send the traceback to the current context. Leave blank to send to your DMs.
         """
-        if not public:
-            destination = ctx.author
-        else:
-            destination = ctx.channel
+        channel = ctx.channel if public else ctx.author
 
         if self.bot._last_exception:
-            for page in pagify(self.bot._last_exception, shorten_by=10):
-                try:
-                    await destination.send(box(page, lang="py"))
-                except discord.HTTPException:
-                    await ctx.channel.send(
-                        "I couldn't send the traceback message to you in DM. "
-                        "Either you blocked me or you disabled DMs in this server."
-                    )
-                    return
+            try:
+                await self.bot.send_interactive(
+                    channel,
+                    pagify(self.bot._last_exception, shorten_by=10),
+                    user=ctx.author,
+                    box_lang="py",
+                )
+            except discord.HTTPException:
+                await ctx.channel.send(
+                    "I couldn't send the traceback message to you in DM. "
+                    "Either you blocked me or you disabled DMs in this server."
+                )
+                return
             if not public:
                 await ctx.tick()
         else:
