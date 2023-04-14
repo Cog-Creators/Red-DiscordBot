@@ -2045,11 +2045,21 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
             return
 
+        existing = self.bot.tree.get_command(command_name, type=raw_type)
+        if existing is not None and existing.extras.get("red_force_enable", False):
+            await ctx.send(
+                _(
+                    "That application command has been enabled by the cog author, "
+                    "and cannot be disabled. The cog must be unloaded to remove the command."
+                )
+            )
+            return
+
         current_settings = await self.bot.list_enabled_app_commands()
         current_settings = current_settings[command_type]
 
         if command_name not in current_settings:
-            await ctx.send(_("That application command is already disabled."))
+            await ctx.send(_("That application command is already disabled or does not exist."))
             return
 
         await self.bot.disable_app_command(command_name, raw_type)
