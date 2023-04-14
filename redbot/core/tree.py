@@ -1,6 +1,7 @@
 import discord
 from discord.abc import Snowflake
 from discord.utils import MISSING
+from discord.ext.commands.hybrid import HybridAppCommand
 
 from .app_commands import (
     AppCommand,
@@ -61,6 +62,8 @@ class RedTree(CommandTree):
         Commands will be internally stored until enabled by ``[p]slash enable``.
         """
         # Allow guild specific commands to bypass the internals for development
+        if isinstance(command, HybridAppCommand):
+            command.extras = command.wrapped.extras
         if (
             guild is not MISSING
             or guilds is not MISSING
