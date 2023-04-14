@@ -2198,6 +2198,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """List the slash commands the bot can see, and whether or not they are enabled.
 
         This command shows the state that will be changed to when `[p]slash sync` is run.
+        Commands from the same cog are grouped, with the cog name as the header.
+
+        The prefix denotes the state of the command:
+        - Commands starting with `- ` have not yet been enabled.
+        - Commands starting with `+ ` have been manually enabled.
+        - Commands starting with `++` have been enabled by the cog author, and cannot be disabled.
         """
         cog_commands = defaultdict(list)
         slash_command_names = set()
@@ -2208,13 +2214,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, True))
+            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, True, command.extras.get("red_force_enable", False)))
             slash_command_names.add(command.name)
         for command in self.bot.tree._disabled_global_commands.values():
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, False))
+            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, False, command.extras.get("red_force_enable", False)))
         for key, command in self.bot.tree._context_menus.items():
             # Filter out guild context menus
             if key[1] is not None:
@@ -2222,7 +2228,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, command.type, True))
+            cog_commands[module].append((command.name, command.type, True, command.extras.get("red_force_enable", False)))
             if command.type is discord.AppCommandType.message:
                 message_command_names.add(command.name)
             elif command.type is discord.AppCommandType.user:
@@ -2231,7 +2237,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, command.type, False))
+            cog_commands[module].append((command.name, command.type, False, command.extras.get("red_force_enable", False)))
 
         # Commands added with evals will come from __main__, make them unknown instead
         if "__main__" in cog_commands:
@@ -2245,9 +2251,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         unknown_message = set(enabled_commands["message"]) - message_command_names
         unknown_user = set(enabled_commands["user"]) - user_command_names
 
-        unknown_slash = [(n, discord.AppCommandType.chat_input, True) for n in unknown_slash]
-        unknown_message = [(n, discord.AppCommandType.message, True) for n in unknown_message]
-        unknown_user = [(n, discord.AppCommandType.user, True) for n in unknown_user]
+        unknown_slash = [(n, discord.AppCommandType.chat_input, True, False) for n in unknown_slash]
+        unknown_message = [(n, discord.AppCommandType.message, True, False) for n in unknown_message]
+        unknown_user = [(n, discord.AppCommandType.user, True, False) for n in unknown_user]
 
         cog_commands["(unknown)"].extend(unknown_slash)
         cog_commands["(unknown)"].extend(unknown_message)
@@ -2263,8 +2269,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         msg = ""
         for cog in sorted(cog_commands.keys()):
             msg += cog + "\n"
-            for name, raw_command_type, enabled in sorted(cog_commands[cog], key=lambda v: v[0]):
-                diff = "+ " if enabled else "- "
+            for name, raw_command_type, enabled, forced in sorted(
+                cog_commands[cog], key=lambda v: v[0]
+            ):
+                diff = "-  "
+                if forced:
+                    diff = "++ "
+                elif enabled:
+                    diff = "+  "
                 command_type = "unknown"
                 if raw_command_type is discord.AppCommandType.chat_input:
                     command_type = "slash"
