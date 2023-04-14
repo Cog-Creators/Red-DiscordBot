@@ -175,32 +175,42 @@ class RedTree(CommandTree):
         """
         enabled_commands = await self.client.list_enabled_app_commands()
 
-        to_add_commands = []
-        to_add_context = []
-        to_remove_commands = []
-        to_remove_context = []
+        to_add_commands = set()
+        to_add_context = set()
+        to_remove_commands = set()
+        to_remove_context = set()
 
         # Add commands
         for command in enabled_commands["slash"]:
             if command in self._disabled_global_commands:
-                to_add_commands.append(command)
+                to_add_commands.add(command)
 
         # Add context
         for command in enabled_commands["message"]:
             key = (command, None, discord.AppCommandType.message.value)
             if key in self._disabled_context_menus:
-                to_add_context.append(key)
+                to_add_context.add(key)
         for command in enabled_commands["user"]:
             key = (command, None, discord.AppCommandType.user.value)
             if key in self._disabled_context_menus:
-                to_add_context.append(key)
+                to_add_context.add(key)
+
+        # Add force enabled commands
+        for command, command_obj in self._disabled_global_commands.items():
+            if command_obj.extras.get("red_force_enable", False):
+                to_add_commands.add(command)
+
+        # Add force enabled context
+        for key, command_obj in self._disabled_context_menus.items():
+            if command_obj.extras.get("red_force_enable", False):
+                to_add_context.add(key)
 
         # Remove commands
         for command, command_obj in self._global_commands.items():
             if command not in enabled_commands["slash"] and not command_obj.extras.get(
                 "red_force_enable", False
             ):
-                to_remove_commands.append((command, discord.AppCommandType.chat_input))
+                to_remove_commands.add((command, discord.AppCommandType.chat_input))
 
         # Remove context
         for key, command_obj in self._context_menus.items():
@@ -212,13 +222,13 @@ class RedTree(CommandTree):
                 and command not in enabled_commands["message"]
                 and not command_obj.extras.get("red_force_enable", False)
             ):
-                to_remove_context.append((command, discord.AppCommandType.message))
+                to_remove_context.add((command, discord.AppCommandType.message))
             elif (
                 discord.AppCommandType(command_type) is discord.AppCommandType.user
                 and command not in enabled_commands["user"]
                 and not command_obj.extras.get("red_force_enable", False)
             ):
-                to_remove_context.append((command, discord.AppCommandType.user))
+                to_remove_context.add((command, discord.AppCommandType.user))
 
         # Actually add/remove
         for command in to_add_commands:
