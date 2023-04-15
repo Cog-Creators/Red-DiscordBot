@@ -97,7 +97,7 @@ class JsonDriver(BaseDriver):
         return
 
     @staticmethod
-    def get_config_details() -> Dict[str, Any]:
+    def get_config_details(interactive: bool) -> Dict[str, Any]:
         # No driver-specific configuration needed
         return {}
 

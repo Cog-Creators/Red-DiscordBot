@@ -55,7 +55,17 @@ class PostgresDriver(BaseDriver):
             await cls._pool.close()
 
     @staticmethod
-    def get_config_details():
+    def get_config_details(interactive: bool):
+
+        if not interactive:
+            return {
+                "host": None,
+                "port": None,
+                "user": None,
+                "password": None,
+                "database": None,
+            }
+
         unixmsg = (
             ""
             if sys.platform == "win32"

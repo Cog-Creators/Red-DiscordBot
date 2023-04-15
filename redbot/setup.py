@@ -212,7 +212,7 @@ def basic_setup(
 
     default_dirs["STORAGE_TYPE"] = storage_type.value
     driver_cls = drivers.get_driver_class(storage_type)
-    default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
+    default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details(interactive)
 
     if name in instance_data:
         if overwrite_existing_instance:
@@ -407,7 +407,9 @@ async def remove_instance_interaction() -> None:
         "Choose a backend type for the new instance."
         " If this option is omitted, you will be asked for this."
         " Defaults to JSON in non-interactive mode.\n"
-        "Note: Choosing PostgreSQL will prevent the setup from being completely non-interactive."
+        "Note: Choosing PostgreSQL with the non-interactive flag\n"
+        "will use either the enivronmental variables if set \n "
+        "or the default values.\n"
     ),
 )
 @click.option(
