@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any, Dict
 
 import platformdirs
-from discord.utils import deprecated
 
 from . import commands
 from .cli import ExitCodes
@@ -17,6 +16,8 @@ from .cli import ExitCodes
 __all__ = (
     "cog_data_path",
     "bundled_data_path",
+    "data_path",
+    "metadata_file",
     "storage_details",
     "storage_type",
 )
@@ -193,12 +194,6 @@ def core_data_path() -> Path:
     return core_path.resolve()
 
 
-# noinspection PyUnusedLocal
-@deprecated("bundled_data_path() without calling this function")
-def load_bundled_data(cog_instance, init_location: str):
-    pass
-
-
 def bundled_data_path(cog_instance: commands.Cog) -> Path:
     """
     Get the path to the "data" directory bundled with this cog.
@@ -233,6 +228,28 @@ def bundled_data_path(cog_instance: commands.Cog) -> Path:
         raise FileNotFoundError("No such directory {}".format(bundled_path))
 
     return bundled_path
+
+
+def data_path() -> Path:
+    """Gets the base data path.
+
+    Returns
+    -------
+    str
+        Storage type.
+    """
+    return _base_data_path()
+
+
+def metadata_file() -> Path:
+    """Gets the path of metadata file.
+
+    Returns
+    -------
+    str
+        Storage type.
+    """
+    return config_file
 
 
 def storage_type() -> str:
