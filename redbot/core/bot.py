@@ -53,7 +53,7 @@ from ._settings_caches import (
     I18nManager,
 )
 from .utils.predicates import MessagePredicate
-from .rpc import RPCMixin
+from ._rpc import RPCMixin
 from .tree import RedTree
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils.chat_formatting import box, text_to_file

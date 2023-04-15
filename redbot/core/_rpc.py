@@ -12,7 +12,7 @@ from redbot.core._cli import ExitCodes
 
 log = logging.getLogger("red.rpc")
 
-__all__ = ["RPC", "RPCMixin", "get_name"]
+__all__ = ("RPC", "RPCMixin", "get_name")
 
 
 def get_name(func, prefix=""):

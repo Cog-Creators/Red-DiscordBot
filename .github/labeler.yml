@@ -237,7 +237,7 @@
   - tests/core/test_installation.py
 "Category: Core - RPC/ZMQ":
   # Source
-  - redbot/core/rpc.py
+  - redbot/core/_rpc.py
   # Docs
   - docs/framework_rpc.rst
   # Tests
