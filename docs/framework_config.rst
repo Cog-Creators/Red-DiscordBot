@@ -98,13 +98,13 @@ in various ways:
 .. code-block:: python
 
     @commands.command()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def setbaz(self, ctx, new_value):
         await self.config.guild(ctx.guild).baz.set(new_value)
         await ctx.send("Value of baz has been changed!")
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def setfoobar(self, ctx, new_value):
         await self.config.foobar.set(new_value)
 
@@ -259,7 +259,7 @@ Now let's see an example that uses multiple identifiers:
 
 .. code-block:: python
 
-    from redbot.core import Config, commands, checks
+    from redbot.core import Config, commands
 
 
     class ChannelAccess(commands.Cog):
@@ -273,7 +273,7 @@ Now let's see an example that uses multiple identifiers:
             self.config.register_custom("ChannelAccess", **default_access)
 
         @commands.command()
-        @checks.is_owner()
+        @commands.is_owner()
         async def grantaccess(self, ctx, channel: discord.TextChannel, member: discord.Member):
             await self.config.custom("ChannelAccess", channel.id, member.id).allowed.set(True)
             await ctx.send("Member has been granted access to that channel")

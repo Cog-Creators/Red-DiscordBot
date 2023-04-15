@@ -52,9 +52,11 @@ from .settings_caches import (
     DisabledCogCache,
     I18nManager,
 )
+from .utils.predicates import MessagePredicate
 from .rpc import RPCMixin
 from .tree import RedTree
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
+from .utils.chat_formatting import box, text_to_file
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 if TYPE_CHECKING:
@@ -80,6 +82,8 @@ DataDeletionResults = namedtuple("DataDeletionResults", "failed_modules failed_c
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
 UserOrRole = Union[int, discord.Role, discord.Member, discord.User]
+
+_ = i18n.Translator("Core", __file__)
 
 
 def _is_submodule(parent, child):
@@ -847,7 +851,7 @@ class Red(
         return True
 
     async def ignored_channel_or_guild(
-        self, ctx: Union[commands.Context, discord.Message]
+        self, ctx: Union[commands.Context, discord.Message, discord.Interaction]
     ) -> bool:
         """
         This checks if the bot is meant to be ignoring commands in a channel or guild,
@@ -857,7 +861,8 @@ class Red(
         ----------
         ctx :
             Context object of the command which needs to be checked prior to invoking
-            or a Message object which might be intended for use as a command.
+            or a Message object which might be intended for use as a command
+            or an Interaction object which might be intended for use with a command.
 
         Returns
         -------
@@ -867,20 +872,30 @@ class Red(
         Raises
         ------
         TypeError
-            ``ctx.channel`` is of `discord.PartialMessageable` type.
+            ``ctx.channel`` is a `discord.PartialMessageable` with a ``type`` other
+            than ``discord.ChannelType.private``
         """
+        if isinstance(ctx, discord.Interaction):
+            author = ctx.user
+        else:
+            author = ctx.author
+
+        is_private = isinstance(ctx.channel, discord.abc.PrivateChannel)
         if isinstance(ctx.channel, discord.PartialMessageable):
-            raise TypeError("Can't check permissions for PartialMessageable.")
-        perms = ctx.channel.permissions_for(ctx.author)
+            if ctx.channel.type is not discord.ChannelType.private:
+                raise TypeError("Can't check permissions for non-private PartialMessageable.")
+            is_private = True
+        perms = ctx.channel.permissions_for(author)
         surpass_ignore = (
-            isinstance(ctx.channel, discord.abc.PrivateChannel)
+            is_private
             or perms.manage_guild
-            or await self.is_owner(ctx.author)
-            or await self.is_admin(ctx.author)
+            or await self.is_owner(author)
+            or await self.is_admin(author)
         )
         # guild-wide checks
         if surpass_ignore:
             return True
+
         guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
         if guild_ignored:
             return False
@@ -1915,6 +1930,8 @@ class Red(
                 self.dispatch("command_add", subcommand)
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
+        if isinstance(command, (commands.HybridCommand, commands.HybridGroup)):
+            command.app_command.extras = command.extras
 
     def remove_command(self, name: str, /) -> Optional[commands.Command]:
         command = super().remove_command(name)
@@ -2289,3 +2306,102 @@ class Red(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
+
+    async def send_interactive(
+        self,
+        channel: discord.abc.Messageable,
+        messages: Iterable[str],
+        *,
+        user: Optional[discord.User] = None,
+        box_lang: Optional[str] = None,
+        timeout: int = 15,
+        join_character: str = "",
+    ) -> List[discord.Message]:
+        """
+        Send multiple messages interactively.
+
+        The user will be prompted for whether or not they would like to view
+        the next message, one at a time. They will also be notified of how
+        many messages are remaining on each prompt.
+
+        Parameters
+        ----------
+        channel : discord.abc.Messageable
+            The channel to send the messages to.
+        messages : `iterable` of `str`
+            The messages to send.
+        user : discord.User
+            The user that can respond to the prompt.
+            When this is ``None``, any user can respond.
+        box_lang : Optional[str]
+            If specified, each message will be contained within a code block of
+            this language.
+        timeout : int
+            How long the user has to respond to the prompt before it times out.
+            After timing out, the bot deletes its prompt message.
+        join_character : str
+            The character used to join all the messages when the file output
+            is selected.
+
+        Returns
+        -------
+        List[discord.Message]
+            A list of sent messages.
+        """
+        messages = tuple(messages)
+        ret = []
+        # using dpy_commands.Context to keep the Messageable contract in full
+        if isinstance(channel, dpy_commands.Context):
+            # this is only necessary to ensure that `channel.delete_messages()` works
+            # when `ctx.channel` has that method
+            channel = channel.channel
+
+        for idx, page in enumerate(messages, 1):
+            if box_lang is None:
+                msg = await channel.send(page)
+            else:
+                msg = await channel.send(box(page, lang=box_lang))
+            ret.append(msg)
+            n_remaining = len(messages) - idx
+            if n_remaining > 0:
+                if n_remaining == 1:
+                    prompt_text = _(
+                        "There is still one message remaining. Type {command_1} to continue"
+                        " or {command_2} to upload all contents as a file."
+                    )
+                else:
+                    prompt_text = _(
+                        "There are still {count} messages remaining. Type {command_1} to continue"
+                        " or {command_2} to upload all contents as a file."
+                    )
+                query = await channel.send(
+                    prompt_text.format(count=n_remaining, command_1="`more`", command_2="`file`")
+                )
+                pred = MessagePredicate.lower_contained_in(
+                    ("more", "file"), channel=channel, user=user
+                )
+                try:
+                    resp = await self.wait_for(
+                        "message",
+                        check=pred,
+                        timeout=timeout,
+                    )
+                except asyncio.TimeoutError:
+                    with contextlib.suppress(discord.HTTPException):
+                        await query.delete()
+                    break
+                else:
+                    try:
+                        await channel.delete_messages((query, resp))
+                    except (discord.HTTPException, AttributeError):
+                        # In case the bot can't delete other users' messages,
+                        # or is not a bot account
+                        # or channel is a DM
+                        with contextlib.suppress(discord.HTTPException):
+                            await query.delete()
+                    if pred.result == 1:
+                        ret.append(
+                            await channel.send(file=text_to_file(join_character.join(messages)))
+                        )
+                        break
+        return ret
