@@ -87,8 +87,17 @@ Ubuntu 22.10                       x86-64, aarch64           2023-07-31 (`End of
 Developer Guarantees
 ====================
 
-Anything in the ``redbot.core`` module or any of its submodules 
-which is not private (even if not documented) should not break without notice.
+Any name (function, class, attribute) listed in the ``__all__`` attribute of
+the ``redbot`` module (excluding its submodules), ``redbot.core`` package,
+or any of its public submodules (modules that do not start with "_")
+is considered a public API and should not break without notice.
+
+Methods of public classes are considered public if they do not start with "_"
+or are dunder methods (e.g. ``method()`` and ``__getattr__()`` are public but ``_method()`` isn't).
+
+Any other name (function, class, attribute) in the ``redbot`` package is considered private,
+even if it doesn't start with "_".
+Lack of ``__all__`` in the module means that all of its names are considered private APIs.
 
 Anything in the ``redbot.cogs`` and ``redbot.vendored`` modules or any of their submodules is specifically
 excluded from being guaranteed.
@@ -99,6 +108,9 @@ provided by or provided to the bot should not begin with
 This allows us to add certain optional features non-breakingly without a name conflict.
 
 Any RPC method exposed by Red may break without notice.
+
+Any exclusion from these guarantees should be noted in the documentation of
+the affected attribute, function, class, or method.
 
 If you would like something in here to be guaranteed,
 open an issue making a case for it to be moved.
