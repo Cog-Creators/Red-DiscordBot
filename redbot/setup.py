@@ -14,11 +14,10 @@ from typing import Dict, Any, Optional, Union
 
 import click
 
-from redbot.core._cli import confirm
+from redbot.core._cli import cli_level_to_log_level, confirm
 from redbot.core.utils._internal_utils import (
     safe_delete,
     create_backup as red_create_backup,
-    cli_level_to_log_level,
 )
 from redbot.core import config, data_manager, _data_manager, _drivers
 from redbot.core._cli import ExitCodes
