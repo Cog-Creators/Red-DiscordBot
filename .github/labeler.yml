@@ -303,9 +303,6 @@
   - docs/_templates/**/*
   # empty file
   - redbot/cogs/__init__.py
-  # can't go more meta than that :)
-  # TODO: remove this useless file
-  - redbot/meta.py
   # py.typed file
   - redbot/py.typed
   # requirements files
