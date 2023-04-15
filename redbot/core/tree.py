@@ -26,6 +26,7 @@ import traceback
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Tuple, Union, Optional, Sequence
 
+__all__ = ("RedTree",)
 
 log = logging.getLogger("red")
 
