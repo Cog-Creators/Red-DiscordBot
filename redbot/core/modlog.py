@@ -244,6 +244,8 @@ class Case:
 
     A single mod log case
 
+    This class should ONLY be instantiated by the modlog itself.
+
     Attributes
     ----------
     bot: Red
@@ -730,6 +732,8 @@ class Case:
 class CaseType:
     """
     A single case type
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------

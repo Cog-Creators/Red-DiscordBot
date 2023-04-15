@@ -128,6 +128,9 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disab
 class Value:
     """A singular "value" of data.
 
+    This class should not be instantiated directly - you should get instances of this class
+    through methods and attribute lookup on instances of `Config` and `Group`.
+
     Attributes
     ----------
     identifier_data : IdentifierData
@@ -274,6 +277,9 @@ class Group(Value):
 
     Inherits from `Value` which means that all of the attributes and methods
     available in `Value` are also available when working with a `Group` object.
+
+    This class should not be instantiated directly - you should get instances of this class
+    through methods and attribute lookup on instances of `Config` and `Group`.
 
     Attributes
     ----------
