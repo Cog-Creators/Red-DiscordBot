@@ -159,12 +159,13 @@ def init_events(bot, cli_flags):
         lang = await bot._config.locale()
         dpy_version = discord.__version__
 
+        driver_type = data_manager.storage_type()
         table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         table_general_info.add_row("Prefixes", ", ".join(prefixes))
         table_general_info.add_row("Language", lang)
         table_general_info.add_row("Red version", red_version)
         table_general_info.add_row("Discord.py version", dpy_version)
-        table_general_info.add_row("Storage type", data_manager.storage_type())
+        table_general_info.add_row("Storage type", driver_type)
 
         table_counts = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         # String conversion is needed as Rich doesn't deal with ints
@@ -209,6 +210,11 @@ def init_events(bot, cli_flags):
             )
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)
+
+        if driver_type == "Postgres":
+            from redbot.setup import POSTGRES_DRIVER_WARNING
+
+            rich_console.print(POSTGRES_DRIVER_WARNING)
 
         bot._red_ready.set()
         if outdated_red_message:

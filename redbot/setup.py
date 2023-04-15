@@ -40,6 +40,13 @@ else:
     instance_list = list(instance_data.keys())
 
 
+POSTGRES_DRIVER_WARNING = (
+    "WARNING: The PostgreSQL driver is not properly optimized for SQL and data is stored in JSON format in a single row."
+    " It is only recommended if you have a large number of servers or a large number of users and notice slowdowns while using the JSON driver."
+    " You will be actively hampering your bots performance by using PostgresSQL instead of JSON unless your bot meets the single scenario mentioned above."
+)
+
+
 def save_config(name, data, remove=False):
     _config = data_manager.load_existing_config()
     if remove and name in _config:
@@ -100,6 +107,13 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
 
 def get_storage_type(backend: Optional[str], *, interactive: bool):
     if backend:
+        if backend.lower() == "postgres":
+            print(POSTGRES_DRIVER_WARNING)
+            if interactive and not click.confirm(
+                "Are you sure you wish to use the PostgresSQL config driver even after the warning above?",
+                default=False,
+            ):
+                return BackendType.JSON
         return get_target_backend(backend)
     if not interactive:
         return BackendType.JSON
@@ -108,8 +122,9 @@ def get_storage_type(backend: Optional[str], *, interactive: bool):
     while storage is None:
         print()
         print("Please choose your storage backend.")
-        print("1. JSON (file storage, requires no database).")
+        print("1. JSON (Recommended) (file storage, requires no database).")
         print("2. PostgreSQL (Requires a database server)")
+        print("   {}".format(POSTGRES_DRIVER_WARNING))
         print("If you're unsure, press [ENTER] to use the recommended default - JSON.")
 
         storage = input("> ")
@@ -117,6 +132,13 @@ def get_storage_type(backend: Optional[str], *, interactive: bool):
             return BackendType.JSON
         try:
             storage = int(storage)
+            if storage == 2:
+                print(POSTGRES_DRIVER_WARNING)
+                if not click.confirm(
+                    "Are you sure you wish to use the PostgresSQL config driver even after the warning above?",
+                    default=False,
+                ):
+                    storage = None
         except ValueError:
             storage = None
         else:
@@ -521,6 +543,14 @@ def delete(
 def convert(instance: str, backend: str) -> None:
     """Convert data backend of an instance."""
     current_backend = get_current_backend(instance)
+    if backend == "postgres":
+        print(POSTGRES_DRIVER_WARNING)
+        if not click.confirm(
+            "Are you sure you wish to use the PostgresSQL config driver even after the warning above?",
+            default=False,
+        ):
+            print("Not continuing")
+            sys.exit(ExitCodes.SHUTDOWN)
     target = get_target_backend(backend)
     data_manager.load_basic_configuration(instance)
 
