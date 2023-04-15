@@ -38,7 +38,7 @@ from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
 from . import Config, i18n, app_commands, commands, errors, drivers, modlog, bank
-from .cli import ExitCodes
+from ._cli import ExitCodes
 from ._cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path

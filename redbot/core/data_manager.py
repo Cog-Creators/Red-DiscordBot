@@ -11,7 +11,7 @@ from typing import Any, Dict
 import platformdirs
 
 from . import commands
-from .cli import ExitCodes
+from ._cli import ExitCodes
 
 __all__ = (
     "cog_data_path",

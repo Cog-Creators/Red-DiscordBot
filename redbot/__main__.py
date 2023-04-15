@@ -25,7 +25,7 @@ import rich
 import redbot.logging
 from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
+from redbot.core._cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, drivers
 from redbot.core._debuginfo import DebugInfo
