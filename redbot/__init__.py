@@ -13,16 +13,13 @@ from typing import (
     Union as _Union,
 )
 
-
-MIN_PYTHON_VERSION = (3, 8, 1)
-
-__all__ = [
-    "MIN_PYTHON_VERSION",
+__all__ = (
     "__version__",
     "version_info",
     "VersionInfo",
-    "_update_event_loop_policy",
-]
+)
+
+MIN_PYTHON_VERSION = (3, 8, 1)
 if _sys.version_info < MIN_PYTHON_VERSION:
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
