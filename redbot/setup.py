@@ -21,7 +21,8 @@ from redbot.core.utils._internal_utils import (
     cli_level_to_log_level,
 )
 from redbot.core import config, data_manager
-from redbot.core._cli import ExitCodes
+from redbot.core._config import migrate
+from redbot.core.cli import ExitCodes
 from redbot.core.data_manager import appdir, config_dir, config_file
 from redbot.core._drivers import (
     BackendType,
@@ -275,7 +276,7 @@ async def do_migration(
     await cur_driver_cls.initialize(**cur_storage_details)
     await new_driver_cls.initialize(**new_storage_details)
 
-    await config.migrate(cur_driver_cls, new_driver_cls)
+    await migrate(cur_driver_cls, new_driver_cls)
 
     await cur_driver_cls.teardown()
     await new_driver_cls.teardown()
