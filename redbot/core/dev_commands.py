@@ -28,7 +28,7 @@ from types import CodeType, TracebackType
 
 import discord
 
-from . import checks, commands
+from . import commands
 from .commands import NoParseOptional as Optional
 from .i18n import Translator, cog_i18n
 from .utils import chat_formatting
@@ -353,7 +353,7 @@ class Dev(commands.Cog):
         return env
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def debug(self, ctx: commands.Context, *, code: str) -> None:
         """Evaluate a statement of python code.
 
@@ -387,7 +387,7 @@ class Dev(commands.Cog):
         await output.send()
 
     @commands.command(name="eval")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _eval(self, ctx: commands.Context, *, body: str) -> None:
         """Execute asynchronous code.
 
@@ -421,7 +421,7 @@ class Dev(commands.Cog):
         await output.send()
 
     @commands.group(invoke_without_command=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def repl(self, ctx: commands.Context) -> None:
         """Open an interactive REPL.
 
@@ -509,7 +509,7 @@ class Dev(commands.Cog):
 
     @commands.guild_only()
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def mock(self, ctx: commands.Context, user: discord.Member, *, command: str) -> None:
         """Mock another user invoking a command.
 
@@ -523,7 +523,7 @@ class Dev(commands.Cog):
 
     @commands.guild_only()
     @commands.command(name="mockmsg")
-    @checks.is_owner()
+    @commands.is_owner()
     async def mock_msg(
         self, ctx: commands.Context, user: discord.Member, *, content: str = ""
     ) -> None:
@@ -546,7 +546,7 @@ class Dev(commands.Cog):
         ctx.bot.dispatch("message", msg)
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def bypasscooldowns(self, ctx: commands.Context, toggle: Optional[bool] = None) -> None:
         """Give bot owners the ability to bypass cooldowns.
 

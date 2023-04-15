@@ -136,6 +136,11 @@
   - redbot/core/bank.py
   # Docs
   - docs/framework_bank.rst
+"Category: Core - API - App Commands Package":
+  # Source
+  - redbot/core/app_commands/*
+  # Tests
+  - tests/core/test_app_commands.py
 "Category: Core - API - Commands Package":
   # Source
   - any:
@@ -165,9 +170,11 @@
   - redbot/core/cog_manager.py  # TODO: privatize cog manager module
   - redbot/core/data_manager.py
   - redbot/core/errors.py
+  - redbot/core/tree.py
   # Docs
   - docs/framework_cogmanager.rst  # TODO: privatize cog manager module
   - docs/framework_datamanager.rst
+  - docs/framework_tree.rst
   # Tests
   - redbot/pytest/cog_manager.py  # TODO: privatize cog manager module
   - redbot/pytest/data_manager.py
@@ -199,7 +206,6 @@
   - docs/cog_guides/core.rst
 "Category: Core - Command-line Interfaces":
   - redbot/__main__.py
-  - redbot/launcher.py
   - redbot/logging.py
   - redbot/core/_debuginfo.py
   - redbot/core/cli.py
