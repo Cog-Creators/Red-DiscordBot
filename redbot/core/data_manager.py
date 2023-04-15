@@ -14,16 +14,12 @@ from discord.utils import deprecated
 from . import commands
 from .cli import ExitCodes
 
-__all__ = [
-    "create_temp_config",
-    "load_basic_configuration",
+__all__ = (
     "cog_data_path",
-    "core_data_path",
-    "load_bundled_data",
     "bundled_data_path",
     "storage_details",
     "storage_type",
-]
+)
 
 log = logging.getLogger("red.data_manager")
 
@@ -253,14 +249,14 @@ def storage_type() -> str:
         raise RuntimeError("Bot basic config has not been loaded yet.") from e
 
 
-def storage_details() -> dict:
+def storage_details() -> Dict[str, str]:
     """Gets any details necessary for config drivers to load.
 
     These are set on setup.
 
     Returns
     -------
-    dict
+    Dict[str, str]
         Storage details.
     """
-    return basic_config.get("STORAGE_DETAILS", {})
+    return deepcopy(basic_config.get("STORAGE_DETAILS", {}))
