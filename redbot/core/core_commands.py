@@ -38,7 +38,6 @@ from typing import (
 
 import aiohttp
 import discord
-from babel import Locale as BabelLocale, UnknownLocaleError
 from redbot.core.data_manager import storage_type
 
 from . import (
@@ -46,6 +45,7 @@ from . import (
     version_info as red_version_info,
     commands,
     errors,
+    _i18n,
     i18n,
     bank,
     modlog,
@@ -3395,17 +3395,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `<language_code>` - The default locale to use for the bot. This can be any language code with country code included.
         """
         try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
+            standardized_locale_name = _i18n.set_global_locale(language_code)
+        except ValueError:
             await ctx.send(_("Invalid language code. Use format: `en-US`"))
             return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_locale(standardized_locale_name)
         await self.bot._i18n_cache.set_locale(None, standardized_locale_name)
         await i18n.set_contextual_locales_from_guild(self.bot, ctx.guild)
         await ctx.send(_("Global locale has been set."))
@@ -3438,17 +3431,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Locale has been set to the default."))
             return
         try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
+            standardized_locale_name = i18n.set_contextual_locale(language_code)
+        except ValueError:
             await ctx.send(_("Invalid language code. Use format: `en-US`"))
             return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_contextual_locale(standardized_locale_name)
         await self.bot._i18n_cache.set_locale(ctx.guild, standardized_locale_name)
         await ctx.send(_("Locale has been set."))
 
@@ -3494,23 +3480,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[language_code]` - The default region format to use for the bot.
         """
         if language_code.lower() == "reset":
-            i18n.set_regional_format(None)
+            _i18n.set_global_regional_format(None)
             await self.bot._i18n_cache.set_regional_format(None, None)
             await ctx.send(_("Global regional formatting will now be based on bot's locale."))
             return
 
         try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
+            standardized_locale_name = _i18n.set_global_regional_format(language_code)
+        except ValueError:
             await ctx.send(_("Invalid language code. Use format: `en-US`"))
             return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_regional_format(standardized_locale_name)
         await self.bot._i18n_cache.set_regional_format(None, standardized_locale_name)
         await ctx.send(
             _("Global regional formatting will now be based on `{language_code}` locale.").format(
@@ -3545,17 +3524,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             return
 
         try:
-            locale = BabelLocale.parse(language_code, sep="-")
-        except (ValueError, UnknownLocaleError):
+            standardized_locale_name = i18n.set_contextual_regional_format(language_code)
+        except ValueError:
             await ctx.send(_("Invalid language code. Use format: `en-US`"))
             return
-        if locale.territory is None:
-            await ctx.send(
-                _("Invalid format - language code has to include country code, e.g. `en-US`")
-            )
-            return
-        standardized_locale_name = f"{locale.language}-{locale.territory}"
-        i18n.set_contextual_regional_format(standardized_locale_name)
         await self.bot._i18n_cache.set_regional_format(ctx.guild, standardized_locale_name)
         await ctx.send(
             _("Regional formatting will now be based on `{language_code}` locale.").format(
