@@ -167,16 +167,13 @@
   # Source
   - redbot/__init__.py
   - redbot/core/__init__.py
-  - redbot/core/cog_manager.py  # TODO: privatize cog manager module
   - redbot/core/data_manager.py
   - redbot/core/errors.py
   - redbot/core/tree.py
   # Docs
-  - docs/framework_cogmanager.rst  # TODO: privatize cog manager module
   - docs/framework_datamanager.rst
   - docs/framework_tree.rst
   # Tests
-  - redbot/pytest/cog_manager.py  # TODO: privatize cog manager module
   - redbot/pytest/data_manager.py
   - tests/core/test_cog_manager.py
   - tests/core/test_data_manager.py
@@ -227,6 +224,7 @@
   - docs/framework_modlog.rst
 "Category: Core - Other Internals":
   # Source
+  - redbot/core/_cog_manager.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/events.py
   - redbot/core/global_checks.py
@@ -234,6 +232,7 @@
   - redbot/core/utils/_internal_utils.py
   # Tests
   - redbot/pytest/__init__.py
+  - redbot/pytest/cog_manager.py
   - redbot/pytest/core.py
   - tests/core/test_installation.py
 "Category: Core - RPC/ZMQ":
