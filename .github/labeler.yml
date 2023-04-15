@@ -225,10 +225,10 @@
 "Category: Core - Other Internals":
   # Source
   - redbot/core/_cog_manager.py
+  - redbot/core/_settings_caches.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/events.py
   - redbot/core/global_checks.py
-  - redbot/core/settings_caches.py
   - redbot/core/utils/_internal_utils.py
   # Tests
   - redbot/pytest/__init__.py
