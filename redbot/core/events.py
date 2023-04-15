@@ -241,7 +241,7 @@ def init_events(bot, cli_flags):
                 await ctx.send_help()
         elif isinstance(error, commands.RangeError):
             if isinstance(error.value, int):
-                if (error.minimum == 0 or error.minimum == 1) and error.maximum is None:
+                if error.minimum == 0 and error.maximum is None:
                     message = _("Argument `{parameter_name}` must be a positive integer.")
                 elif error.minimum is None and error.maximum is not None:
                     message = _(
@@ -249,14 +249,14 @@ def init_events(bot, cli_flags):
                     )
                 elif error.minimum is not None and error.maximum is None:
                     message = _(
-                        "Argument `{parameter_name}` must be an integer no less than {maximum}."
+                        "Argument `{parameter_name}` must be an integer no less than {minimum}."
                     )
                 elif error.maximum is not None and error.minimum is not None:
                     message = _(
                         "Argument `{parameter_name}` must be an integer between {minimum} and {maximum}."
                     )
             elif isinstance(error.value, float):
-                if (error.minimum == 0 or error.minimum == 1) and error.maximum is None:
+                if error.minimum == 0 and error.maximum is None:
                     message = _("Argument `{parameter_name}` must be a positive number.")
                 elif error.minimum is None and error.maximum is not None:
                     message = _(
@@ -270,7 +270,7 @@ def init_events(bot, cli_flags):
                     message = _(
                         "Argument `{parameter_name}` must be a number between {minimum} and {maximum}."
                     )
-            else:
+            elif isinstance(error.value, str):
                 if error.minimum is None and error.maximum is not None:
                     message = _(
                         "Argument `{parameter_name}` must be a string with a length of no more than {maximum}."
@@ -294,7 +294,7 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.BadArgument):
             if isinstance(converter, commands.Range):
                 if converter.annotation is int:
-                    if (converter.min == 0 or converter.min == 1) and converter.max is None:
+                    if converter.min == 0 and converter.max is None:
                         message = _("Argument `{parameter_name}` must be a positive integer.")
                     elif converter.min is None and converter.max is not None:
                         message = _(
@@ -302,14 +302,14 @@ def init_events(bot, cli_flags):
                         )
                     elif converter.min is not None and converter.max is None:
                         message = _(
-                            "Argument `{parameter_name}` must be an integer no less than {maximum}."
+                            "Argument `{parameter_name}` must be an integer no less than {minimum}."
                         )
                     elif converter.max is not None and converter.min is not None:
                         message = _(
                             "Argument `{parameter_name}` must be an integer between {minimum} and {maximum}."
                         )
                 elif converter.annotation is float:
-                    if (converter.min == 0 or converter.min == 1) and converter.max is None:
+                    if converter.min == 0 and converter.max is None:
                         message = _("Argument `{parameter_name}` must be a positive number.")
                     elif converter.min is None and converter.max is not None:
                         message = _(
@@ -317,13 +317,13 @@ def init_events(bot, cli_flags):
                         )
                     elif converter.min is not None and converter.max is None:
                         message = _(
-                            "Argument `{parameter_name}` must be a number no less than {maximum}."
+                            "Argument `{parameter_name}` must be a number no less than {minimum}."
                         )
                     elif converter.max is not None and converter.min is not None:
                         message = _(
                             "Argument `{parameter_name}` must be a number between {minimum} and {maximum}."
                         )
-                else:
+                elif converter.annotation is str:
                     if error.minimum is None and error.maximum is not None:
                         message = _(
                             "Argument `{parameter_name}` must be a string with a length of no more than {maximum}."
