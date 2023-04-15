@@ -37,7 +37,7 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers, modlog, bank
+from . import Config, i18n, app_commands, commands, errors, drivers, modlog, bank
 from .cli import ExitCodes
 from .cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
@@ -61,8 +61,6 @@ from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 if TYPE_CHECKING:
     from discord.ext.commands.hybrid import CommandCallback, ContextT, P
-
-    from redbot.core import app_commands
 
 
 _T = TypeVar("_T")
