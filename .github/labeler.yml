@@ -41,6 +41,8 @@
   - redbot/core/dev_commands.py
   # Docs
   - docs/cog_guides/dev.rst
+  # Tests
+  - tests/core/test_dev_commands.py
 "Category: Cogs - Downloader":
   # Source
   - redbot/cogs/downloader/*
