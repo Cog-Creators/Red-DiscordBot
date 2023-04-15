@@ -2,19 +2,20 @@ import calendar
 import logging
 import random
 from collections import defaultdict, deque, namedtuple
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 from math import ceil
 from typing import cast, Iterable, Union, Literal
 
 import discord
 
-from redbot.core import Config, bank, commands, errors, checks
+from redbot.core import Config, bank, commands, errors
 from redbot.core.commands.converter import TimedeltaConverter
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
+from redbot.core.utils.menus import close_menu, menu
 from .converters import positive_int
 
 T_ = Translator("Economy", __file__)
@@ -181,7 +182,7 @@ class Economy(commands.Cog):
         pass
 
     @_bank.command()
-    async def balance(self, ctx: commands.Context, user: discord.Member = None):
+    async def balance(self, ctx: commands.Context, user: discord.Member = commands.Author):
         """Show the user's account balance.
 
         Example:
@@ -192,9 +193,6 @@ class Economy(commands.Cog):
 
         - `<user>` The user to check the balance of. If omitted, defaults to your own balance.
         """
-        if user is None:
-            user = ctx.author
-
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
         max_bal = await bank.get_max_balance(ctx.guild)
@@ -239,7 +237,7 @@ class Economy(commands.Cog):
         )
 
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Set the balance of a user's bank account.
@@ -342,14 +340,15 @@ class Economy(commands.Cog):
                 )
 
             else:
-                dtime = self.display_time(next_payday - cur_time)
+                relative_time = discord.utils.format_dt(
+                    datetime.now(timezone.utc) + timedelta(seconds=next_payday - cur_time), "R"
+                )
                 await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                    _("{author.mention} Too soon. Your next payday is {relative_time}.").format(
+                        author=author, relative_time=relative_time
+                    )
                 )
         else:
-
             # Gets the users latest successfully payday and adds the guilds payday time
             next_payday = (
                 await self.config.member(author).next_payday()
@@ -398,11 +397,13 @@ class Economy(commands.Cog):
                     )
                 )
             else:
-                dtime = self.display_time(next_payday - cur_time)
+                relative_time = discord.utils.format_dt(
+                    datetime.now(timezone.utc) + timedelta(seconds=next_payday - cur_time), "R"
+                )
                 await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                    _("{author.mention} Too soon. Your next payday is {relative_time}.").format(
+                        author=author, relative_time=relative_time
+                    )
                 )
 
     @commands.command()
@@ -435,11 +436,11 @@ class Economy(commands.Cog):
         if show_global and await bank.is_global():
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
-            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.display_avatar)
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
             if guild:
-                base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
+                base_embed.set_author(name=guild.name, icon_url=guild.icon)
 
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
@@ -517,11 +518,7 @@ class Economy(commands.Cog):
                 highscores.append(box(temp_msg, lang="md"))
 
         if highscores:
-            await menu(
-                ctx,
-                highscores,
-                DEFAULT_CONTROLS if len(highscores) > 1 else {"\N{CROSS MARK}": close_menu},
-            )
+            await menu(ctx, highscores)
         else:
             await ctx.send(_("No balances found."))
 
@@ -659,7 +656,7 @@ class Economy(commands.Cog):
 
     @guild_only_check()
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Base command to manage Economy settings."""
@@ -899,25 +896,3 @@ class Economy(commands.Cog):
                         num=humanize_number(creds), currency=credits_name, role_name=role.name
                     )
                 )
-
-    # What would I ever do without stackoverflow?
-    @staticmethod
-    def display_time(seconds, granularity=2):
-        intervals = (  # Source: http://stackoverflow.com/a/24542445
-            (_("weeks"), 604800),  # 60 * 60 * 24 * 7
-            (_("days"), 86400),  # 60 * 60 * 24
-            (_("hours"), 3600),  # 60 * 60
-            (_("minutes"), 60),
-            (_("seconds"), 1),
-        )
-
-        result = []
-
-        for name, count in intervals:
-            value = seconds // count
-            if value:
-                seconds -= value * count
-                if value == 1:
-                    name = name.rstrip("s")
-                result.append("{} {}".format(value, name))
-        return ", ".join(result[:granularity])

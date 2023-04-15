@@ -4,20 +4,36 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Union, List, Optional
+from typing import TYPE_CHECKING, Union, List, Optional
 
 import redbot.cogs
+from redbot.core.commands import BadArgument
 from redbot.core.utils import deduplicate_iterables
 import discord
 
-from . import checks, commands
+from . import commands
 from .config import Config
 from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
 
-from .utils.chat_formatting import box, pagify
+from .utils.chat_formatting import box, pagify, humanize_list, inline
 
 __all__ = ["CogManager"]
+
+
+# Duplicate of redbot.cogs.cleanup.converters.positive_int
+if TYPE_CHECKING:
+    positive_int = int
+else:
+
+    def positive_int(arg: str) -> int:
+        try:
+            ret = int(arg)
+        except ValueError:
+            raise BadArgument(_("{arg} is not an integer.").format(arg=inline(arg)))
+        if ret <= 0:
+            raise BadArgument(_("{arg} is not a positive integer.").format(arg=inline(arg)))
+        return ret
 
 
 class NoSuchCog(ImportError):
@@ -36,7 +52,7 @@ class CogManager:
     bot directory.
     """
 
-    CORE_PATH = Path(redbot.cogs.__path__[0])
+    CORE_PATH = Path(redbot.cogs.__path__[0]).resolve()
 
     def __init__(self):
         self.config = Config.get_conf(self, 2938473984732, True)
@@ -316,11 +332,11 @@ class CogManagerUI(commands.Cog):
     """Commands to interface with Red's cog manager."""
 
     async def red_delete_data_for_user(self, **kwargs):
-        """ Nothing to delete (Core Config is handled in a bot method ) """
+        """Nothing to delete (Core Config is handled in a bot method )"""
         return
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def paths(self, ctx: commands.Context):
         """
         Lists current cog paths in order of priority.
@@ -342,7 +358,7 @@ class CogManagerUI(commands.Cog):
         await ctx.send(box(msg))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def addpath(self, ctx: commands.Context, *, path: Path):
         """
         Add a path to the list of available cog paths.
@@ -358,39 +374,53 @@ class CogManagerUI(commands.Cog):
         else:
             await ctx.send(_("Path successfully added."))
 
-    @commands.command()
-    @checks.is_owner()
-    async def removepath(self, ctx: commands.Context, path_number: int):
+    @commands.command(require_var_positional=True)
+    @commands.is_owner()
+    async def removepath(self, ctx: commands.Context, *path_numbers: positive_int):
         """
-        Removes a path from the available cog paths given the `path_number` from `[p]paths`.
+        Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.
         """
-        path_number -= 1
-        if path_number < 0:
-            await ctx.send(_("Path numbers must be positive."))
-            return
+        valid: List[Path] = []
+        invalid: List[int] = []
 
         cog_paths = await ctx.bot._cog_mgr.user_defined_paths()
-        try:
-            to_remove = cog_paths.pop(path_number)
-        except IndexError:
-            await ctx.send(_("That is an invalid path number."))
-            return
+        # dict.fromkeys removes duplicates while preserving the order
+        for path_number in dict.fromkeys(sorted(path_numbers)):
+            idx = path_number - 1
+            try:
+                to_remove = cog_paths[idx]
+            except IndexError:
+                invalid.append(path_number)
+            else:
+                await ctx.bot._cog_mgr.remove_path(to_remove)
+                valid.append(to_remove)
 
-        await ctx.bot._cog_mgr.remove_path(to_remove)
-        await ctx.send(_("Path successfully removed."))
+        parts = []
+        if valid:
+            parts.append(
+                _("The following paths were removed: {paths}").format(
+                    paths=humanize_list([inline(str(path)) for path in valid])
+                )
+            )
+        if invalid:
+            parts.append(
+                _("The following path numbers did not exist: {path_numbers}").format(
+                    path_numbers=humanize_list([inline(str(path)) for path in invalid])
+                )
+            )
 
-    @commands.command()
-    @checks.is_owner()
-    async def reorderpath(self, ctx: commands.Context, from_: int, to: int):
+        for page in pagify("\n\n".join(parts), ["\n", " "]):
+            await ctx.send(page)
+
+    @commands.command(usage="<from> <to>")
+    @commands.is_owner()
+    async def reorderpath(self, ctx: commands.Context, from_: positive_int, to: positive_int):
         """
         Reorders paths internally to allow discovery of different cogs.
         """
         # Doing this because in the paths command they're 1 indexed
         from_ -= 1
         to -= 1
-        if from_ < 0 or to < 0:
-            await ctx.send(_("Path numbers must be positive."))
-            return
 
         all_paths = await ctx.bot._cog_mgr.user_defined_paths()
         try:
@@ -409,7 +439,7 @@ class CogManagerUI(commands.Cog):
         await ctx.send(_("Paths reordered."))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def installpath(self, ctx: commands.Context, path: Path = None):
         """
         Returns the current install path or sets it if one is provided.
@@ -434,7 +464,7 @@ class CogManagerUI(commands.Cog):
         )
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def cogs(self, ctx: commands.Context):
         """
         Lists all loaded and available cogs.

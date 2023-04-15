@@ -5,12 +5,13 @@ import sys
 import codecs
 import logging
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from typing import Tuple
 
 import aiohttp
 import discord
-import pkg_resources
-from pkg_resources import DistributionNotFound
+import importlib.metadata
+from packaging.requirements import Requirement
 from redbot.core import data_manager
 
 from redbot.core.commands import RedHelpFormatter, HelpSettings
@@ -31,7 +32,7 @@ from .utils._internal_utils import (
     fetch_latest_red_version_info,
     send_to_owners_with_prefix_replaced,
 )
-from .utils.chat_formatting import inline, bordered, format_perms_list, humanize_timedelta
+from .utils.chat_formatting import inline, format_perms_list, humanize_timedelta
 
 import rich
 from rich import box
@@ -54,6 +55,88 @@ ______         _           ______ _                       _  ______       _
 _ = Translator(__name__, __file__)
 
 
+def get_outdated_red_messages(pypi_version: str, py_version_req: str) -> Tuple[str, str]:
+    outdated_red_message = _(
+        "Your Red instance is out of date! {} is the current version, however you are using {}!"
+    ).format(pypi_version, red_version)
+    rich_outdated_message = (
+        f"[red]Outdated version![/red]\n"
+        f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
+        f"but you're using [cyan]{red_version}[/][red]!!![/red]"
+    )
+    current_python = platform.python_version()
+    extra_update = _(
+        "\n\nWhile the following command should work in most scenarios as it is "
+        "based on your current OS, environment, and Python version, "
+        "**we highly recommend you to read the update docs at <{docs}> and "
+        "make sure there is nothing else that "
+        "needs to be done during the update.**"
+    ).format(docs="https://docs.discord.red/en/stable/update_red.html")
+
+    if not expected_version(current_python, py_version_req):
+        extra_update += _(
+            "\n\nYou have Python `{py_version}` and this update "
+            "requires `{req_py}`; you cannot simply run the update command.\n\n"
+            "You will need to follow the update instructions in our docs above, "
+            "if you still need help updating after following the docs go to our "
+            "#support channel in <https://discord.gg/red>"
+        ).format(py_version=current_python, req_py=py_version_req)
+        outdated_red_message += extra_update
+        return outdated_red_message, rich_outdated_message
+
+    red_dist = importlib.metadata.distribution("Red-DiscordBot")
+    installed_extras = red_dist.metadata.get_all("Provides-Extra")
+    installed_extras.remove("dev")
+    installed_extras.remove("all")
+    distributions = {}
+    for req_str in red_dist.requires:
+        req = Requirement(req_str)
+        if req.marker is None or req.marker.evaluate():
+            continue
+        for extra in reversed(installed_extras):
+            if not req.marker.evaluate({"extra": extra}):
+                continue
+
+            # Check that the requirement is met.
+            # This is a bit simplified for our purposes and does not check
+            # whether the requirements of our requirements are met as well.
+            # This could potentially be an issue if we'll ever depend on
+            # a dependency's extra in our extra when we already depend on that
+            # in our base dependencies. However, considering that right now, all
+            # our dependencies are also fully pinned, this should not ever matter.
+            if req.name in distributions:
+                dist = distributions[req.name]
+            else:
+                try:
+                    dist = importlib.metadata.distribution(req.name)
+                except importlib.metadata.PackageNotFoundError:
+                    installed_extras.remove(extra)
+                    dist = None
+                distributions[req.name] = dist
+            if dist is None or not req.specifier.contains(dist.version, prereleases=True):
+                installed_extras.remove(extra)
+
+    if installed_extras:
+        package_extras = f"[{','.join(installed_extras)}]"
+    else:
+        package_extras = ""
+
+    extra_update += _(
+        "\n\nTo update your bot, first shutdown your bot"
+        " then open a window of {console} (Not as admin) and run the following:"
+        "{command_1}\n"
+        "Once you've started up your bot again, we recommend that"
+        " you update any installed 3rd-party cogs with this command in Discord:"
+        "{command_2}"
+    ).format(
+        console=_("Command Prompt") if platform.system() == "Windows" else _("Terminal"),
+        command_1=f'```"{sys.executable}" -m pip install -U "Red-DiscordBot{package_extras}"```',
+        command_2=f"```[p]cog update```",
+    )
+    outdated_red_message += extra_update
+    return outdated_red_message, rich_outdated_message
+
+
 def init_events(bot, cli_flags):
     @bot.event
     async def on_connect():
@@ -70,11 +153,10 @@ def init_events(bot, cli_flags):
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
-        invite_url = discord.utils.oauth_url(bot._app_info.id)
+        invite_url = discord.utils.oauth_url(bot.application_id, scopes=("bot",))
 
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
-        red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
         table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
@@ -97,69 +179,9 @@ def init_events(bot, cli_flags):
             pypi_version, py_version_req = await fetch_latest_red_version_info()
             outdated = pypi_version and pypi_version > red_version_info
             if outdated:
-                outdated_red_message = _(
-                    "Your Red instance is out of date! {} is the current "
-                    "version, however you are using {}!"
-                ).format(pypi_version, red_version)
-                rich_outdated_message = (
-                    f"[red]Outdated version![/red]\n"
-                    f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
-                    f"but you're using [cyan]{red_version}[/][red]!!![/red]"
+                outdated_red_message, rich_outdated_message = get_outdated_red_messages(
+                    pypi_version, py_version_req
                 )
-                current_python = platform.python_version()
-                extra_update = _(
-                    "\n\nWhile the following command should work in most scenarios as it is "
-                    "based on your current OS, environment, and Python version, "
-                    "**we highly recommend you to read the update docs at <{docs}> and "
-                    "make sure there is nothing else that "
-                    "needs to be done during the update.**"
-                ).format(docs="https://docs.discord.red/en/stable/update_red.html")
-                if expected_version(current_python, py_version_req):
-                    installed_extras = []
-                    for extra, reqs in red_pkg._dep_map.items():
-                        if extra is None or extra in {"dev", "all"}:
-                            continue
-                        try:
-                            pkg_resources.require(req.name for req in reqs)
-                        except pkg_resources.DistributionNotFound:
-                            pass
-                        else:
-                            installed_extras.append(extra)
-
-                    if installed_extras:
-                        package_extras = f"[{','.join(installed_extras)}]"
-                    else:
-                        package_extras = ""
-
-                    extra_update += _(
-                        "\n\nTo update your bot, first shutdown your "
-                        "bot then open a window of {console} (Not as admin) and "
-                        "run the following:\n\n"
-                    ).format(
-                        console=_("Command Prompt")
-                        if platform.system() == "Windows"
-                        else _("Terminal")
-                    )
-                    extra_update += (
-                        '```"{python}" -m pip install -U Red-DiscordBot{package_extras}```'.format(
-                            python=sys.executable, package_extras=package_extras
-                        )
-                    )
-                    extra_update += _(
-                        "\nOnce you've started up your bot again, if you have any 3rd-party cogs"
-                        " installed we then highly recommend you update them with this command"
-                        " in Discord: `[p]cog update`"
-                    )
-
-                else:
-                    extra_update += _(
-                        "\n\nYou have Python `{py_version}` and this update "
-                        "requires `{req_py}`; you cannot simply run the update command.\n\n"
-                        "You will need to follow the update instructions in our docs above, "
-                        "if you still need help updating after following the docs go to our "
-                        "#support channel in <https://discord.gg/red>"
-                    ).format(py_version=current_python, req_py=py_version_req)
-                outdated_red_message += extra_update
 
         rich_console = rich.get_console()
         rich_console.print(INTRO, style="red", markup=False, highlight=False)
@@ -188,7 +210,6 @@ def init_events(bot, cli_flags):
         if rich_outdated_message:
             rich_console.print(rich_outdated_message)
 
-        bot._color = discord.Colour(await bot._config.color())
         bot._red_ready.set()
         if outdated_red_message:
             await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
@@ -199,7 +220,6 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_error(ctx, error, unhandled_by_cog=False):
-
         if not unhandled_by_cog:
             if hasattr(ctx.command, "on_error"):
                 return
@@ -221,7 +241,16 @@ def init_events(bot, cli_flags):
             await ctx.send(msg)
             if error.send_cmd_help:
                 await ctx.send_help()
-        elif isinstance(error, commands.ConversionFailure):
+        elif isinstance(error, commands.BadArgument):
+            if isinstance(error.__cause__, ValueError):
+                converter = ctx.current_parameter.converter
+                argument = ctx.current_argument
+                if converter is int:
+                    await ctx.send(_('"{argument}" is not an integer.').format(argument=argument))
+                    return
+                if converter is float:
+                    await ctx.send(_('"{argument}" is not a number.').format(argument=argument))
+                    return
             if error.args:
                 await ctx.send(error.args[0])
             else:
@@ -237,16 +266,21 @@ def init_events(bot, cli_flags):
                 "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
-
-            message = _(
-                "Error in command '{command}'. Check your console or logs for details."
-            ).format(command=ctx.command.qualified_name)
             exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
             bot._last_exception = exception_log
-            await ctx.send(inline(message))
+
+            message = await bot._config.invoke_error_msg()
+            if not message:
+                if ctx.author.id in bot.owner_ids:
+                    message = inline(
+                        _("Error in command '{command}'. Check your console or logs for details.")
+                    )
+                else:
+                    message = inline(_("Error in command '{command}'."))
+            await ctx.send(message.replace("{command}", ctx.command.qualified_name))
         elif isinstance(error, commands.CommandNotFound):
             help_settings = await HelpSettings.from_context(ctx)
             fuzzy_commands = await fuzzy_command_search(
@@ -288,10 +322,12 @@ def init_events(bot, cli_flags):
                 new_ctx = await bot.get_context(ctx.message)
                 await bot.invoke(new_ctx)
                 return
-            if delay := humanize_timedelta(seconds=error.retry_after):
-                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
-            else:
-                msg = _("This command is on cooldown. Try again in 1 second.")
+            relative_time = discord.utils.format_dt(
+                datetime.now(timezone.utc) + timedelta(seconds=error.retry_after), "R"
+            )
+            msg = _("This command is on cooldown. Try again {relative_time}.").format(
+                relative_time=relative_time
+            )
             await ctx.send(msg, delete_after=error.retry_after)
         elif isinstance(error, commands.MaxConcurrencyReached):
             if error.per is commands.BucketType.default:
@@ -332,7 +368,7 @@ def init_events(bot, cli_flags):
             log.exception(type(error).__name__, exc_info=error)
 
     @bot.event
-    async def on_message(message):
+    async def on_message(message, /):
         await set_contextual_locales_from_guild(bot, message.guild)
 
         await bot.process_commands(message)
@@ -341,7 +377,7 @@ def init_events(bot, cli_flags):
             not bot._checked_time_accuracy
             or (discord_now - timedelta(minutes=60)) > bot._checked_time_accuracy
         ):
-            system_now = datetime.utcnow()
+            system_now = datetime.now(timezone.utc)
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warning(
@@ -353,14 +389,10 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_add(command: commands.Command):
-        disabled_commands = await bot._config.disabled_commands()
-        if command.qualified_name in disabled_commands:
-            command.enabled = False
-        guild_data = await bot._config.all_guilds()
-        async for guild_id, data in AsyncIter(guild_data.items(), steps=100):
-            disabled_commands = data.get("disabled_commands", [])
-            if command.qualified_name in disabled_commands:
-                command.disable_in(discord.Object(id=guild_id))
+        if command.cog is not None:
+            return
+
+        await _disable_command_no_cog(command)
 
     async def _guild_added(guild: discord.Guild):
         disabled_commands = await bot._config.guild(guild).disabled_commands()
@@ -395,3 +427,26 @@ def init_events(bot, cli_flags):
             uuid = c.unique_identifier
             group_data = c.custom_groups
             await bot._config.custom("CUSTOM_GROUPS", c.cog_name, uuid).set(group_data)
+
+        await _disable_commands_cog(cog)
+
+    async def _disable_command(
+        command: commands.Command, global_disabled: list, guilds_data: dict
+    ):
+        if command.qualified_name in global_disabled:
+            command.enabled = False
+        for guild_id, data in guilds_data.items():
+            guild_disabled_cmds = data.get("disabled_commands", [])
+            if command.qualified_name in guild_disabled_cmds:
+                command.disable_in(discord.Object(id=guild_id))
+
+    async def _disable_commands_cog(cog: commands.Cog):
+        global_disabled = await bot._config.disabled_commands()
+        guilds_data = await bot._config.all_guilds()
+        for command in cog.walk_commands():
+            await _disable_command(command, global_disabled, guilds_data)
+
+    async def _disable_command_no_cog(command: commands.Command):
+        global_disabled = await bot._config.disabled_commands()
+        guilds_data = await bot._config.all_guilds()
+        await _disable_command(command, global_disabled, guilds_data)

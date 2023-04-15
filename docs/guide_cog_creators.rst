@@ -73,7 +73,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 
   - Cogs that are more than what is able to be run in a simple eval.
   - Cogs that are more than just a simple API access request.
-  - Cogs that properly use Red utilities, including Config, checks, and any other utility functions.
+  - Cogs that properly use Red utilities, for example Config, or any other utility functions.
   - Cogs that use event listeners (bot.wait_for or cog-wide listeners) or custom tasks that are efficient and handle exceptions appropriately.
   - Cogs that handle errors properly.
   - Cogs that handle permissions properly.
@@ -84,7 +84,7 @@ Any Cog Creator that does not follow these requirements will have their repo rem
 - The default locale must be English.
 - The main cog class and every command must have a doc-string.
 - No cog allows for escalation of permissions. (e.g., sending a mass ping through the bot without having permission to do so)
-- Respect the role hierarchy. Don’t let a lower role have a way to grant a higher role.
+- Respect the role hierarchy. Don't let a lower role have a way to grant a higher role.
 - If your cog install comes with any pre-packaged data, use `bundled_data_path()` to access it.
 - If your cog install creates any non-config data, use `cog_data_path()` to store it.
 - Unless the cog is intentionally designed to listen to certain input from bots, cogs should ignore input from bots.
@@ -138,7 +138,8 @@ While not required for approved Cog Creators, they are still recommended in orde
   - ``ctx.embed_color``
   - ``bot.is_automod_immune``
 
-- Use checks to limit command use when the bot needs special permissions.
+- Use decorators to limit command use, restrict usage, or define whether the bot needs special permissions.
+  You can find all of the permission and cooldown related decorators under the ``redbot.core.commands`` namespace.
 - Check against user input before doing things. Common things to check:
 
   - Resulting output is safe.
