@@ -255,6 +255,19 @@ def init_events(bot, cli_flags):
                 await ctx.send(error.args[0])
             else:
                 await ctx.send_help()
+        elif isinstance(error, commands.BadUnionArgument):
+            errors = []
+            for exc in error.errors:
+                if exc.args and isinstance(exc, commands.BadArgument):
+                    errors.append(exc.args[0])
+            if errors:
+                if len(errors) > 1:
+                    msg = error.args[0] + "\n" + "\n".join(errors)
+                else:
+                    msg = errors[0]
+            else:
+                msg = error.args[0]
+            await ctx.send(msg)
         elif isinstance(error, commands.UserInputError):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
