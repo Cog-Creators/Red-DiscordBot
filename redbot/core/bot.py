@@ -44,7 +44,7 @@ from .core_commands import Core
 from .data_manager import cog_data_path
 from .dev_commands import Dev
 from .events import init_events
-from .global_checks import init_global_checks
+from ._global_checks import init_global_checks
 from ._settings_caches import (
     PrefixManager,
     IgnoreManager,
