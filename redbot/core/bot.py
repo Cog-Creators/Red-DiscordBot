@@ -37,7 +37,7 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, app_commands, commands, errors, drivers, modlog, bank
+from . import Config, i18n, app_commands, commands, errors, _drivers, modlog, bank
 from ._cli import ExitCodes
 from ._cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
@@ -2160,7 +2160,7 @@ class Red(
     async def close(self):
         """Logs out of Discord and closes all connections."""
         await super().close()
-        await drivers.get_driver_class().teardown()
+        await _drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
                 await self.rpc.close()

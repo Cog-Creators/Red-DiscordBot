@@ -540,30 +540,14 @@ Value
     :members:
     :special-members: __call__
 
+IdentifierData
+^^^^^^^^^^^^^^
 
-****************
-Driver Reference
-****************
-
-.. autofunction:: redbot.core.drivers.get_driver
-
-.. autoclass:: redbot.core.drivers.BackendType
+.. autoclass:: IdentifierData
     :members:
 
-.. autoclass:: redbot.core.drivers.ConfigCategory
-    :members:
+ConfigCategory
+^^^^^^^^^^^^^^
 
-Base Driver
-^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.BaseDriver
-    :members:
-
-JSON Driver
-^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.JsonDriver
-    :members:
-
-Postgres Driver
-^^^^^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.PostgresDriver
+.. autoclass:: ConfigCategory
     :members:

@@ -6,7 +6,7 @@ import weakref
 import pytest
 from redbot.core import Config
 from redbot.core.bot import Red
-from redbot.core import config as config_module, drivers
+from redbot.core import config as config_module, _drivers
 
 __all__ = [
     "override_data_path",
@@ -50,7 +50,7 @@ def driver(tmpdir_factory):
 
     rand = str(uuid.uuid4())
     path = Path(str(tmpdir_factory.mktemp(rand)))
-    return drivers.get_driver("PyTest", str(random.randint(1, 999999)), data_path_override=path)
+    return _drivers.get_driver("PyTest", str(random.randint(1, 999999)), data_path_override=path)
 
 
 @pytest.fixture()

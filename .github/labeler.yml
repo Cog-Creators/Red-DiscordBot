@@ -156,8 +156,8 @@
 "Category: Core - API - Config":
   # Source
   - any:
-      - redbot/core/drivers/**/*
-      - "!redbot/core/drivers/**/locales/*"
+      - redbot/core/_drivers/**/*
+      - "!redbot/core/_drivers/**/locales/*"
   - redbot/core/config.py
   # Docs
   - docs/framework_config.rst
