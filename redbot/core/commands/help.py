@@ -274,7 +274,10 @@ class RedHelpFormatter(HelpFormatterABC):
     async def get_cog_help_mapping(
         self, ctx: Context, obj: commands.Cog, help_settings: HelpSettings
     ):
-        iterator = filter(lambda c: c.parent is None and c.cog is obj, ctx.bot.commands)
+        if obj is None:
+            iterator = filter(lambda c: c.parent is None and c.cog is None, ctx.bot.commands)
+        else:
+            iterator = obj.get_commands()
         return {
             com.name: com
             async for com in self.help_filter_func(ctx, iterator, help_settings=help_settings)
