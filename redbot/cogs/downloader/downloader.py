@@ -632,7 +632,7 @@ class Downloader(commands.Cog):
                 joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
         for page in pagify(joined, ["\n"], shorten_by=16):
-            await ctx.send(box(page.lstrip(" ")))
+            await ctx.send(box(page.lstrip(" "), lang="markdown"))
 
     @repo.command(name="info")
     async def _repo_info(self, ctx: commands.Context, repo: Repo) -> None:
@@ -1353,7 +1353,7 @@ class Downloader(commands.Cog):
             cogs = _("Available Cog:\n{text}").format(text=available_str)
         cogs = cogs + "\n\n" + installed_str
         for page in pagify(cogs, ["\n"], shorten_by=16):
-            await ctx.send(box(page.lstrip(" ")))
+            await ctx.send(box(page.lstrip(" "), lang="markdown"))
 
     @cog.command(name="info", usage="<repo> <cog>")
     async def _cog_info(self, ctx: commands.Context, repo: Repo, cog_name: str) -> None:
