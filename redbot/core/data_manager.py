@@ -9,21 +9,19 @@ from pathlib import Path
 from typing import Any, Dict
 
 import platformdirs
-from discord.utils import deprecated
 
 from . import commands
-from .cli import ExitCodes
+from ._cli import ExitCodes
 
-__all__ = [
-    "create_temp_config",
-    "load_basic_configuration",
+__all__ = (
     "cog_data_path",
     "core_data_path",
-    "load_bundled_data",
     "bundled_data_path",
+    "data_path",
+    "metadata_file",
     "storage_details",
     "storage_type",
-]
+)
 
 log = logging.getLogger("red.data_manager")
 
@@ -197,12 +195,6 @@ def core_data_path() -> Path:
     return core_path.resolve()
 
 
-# noinspection PyUnusedLocal
-@deprecated("bundled_data_path() without calling this function")
-def load_bundled_data(cog_instance, init_location: str):
-    pass
-
-
 def bundled_data_path(cog_instance: commands.Cog) -> Path:
     """
     Get the path to the "data" directory bundled with this cog.
@@ -239,6 +231,28 @@ def bundled_data_path(cog_instance: commands.Cog) -> Path:
     return bundled_path
 
 
+def data_path() -> Path:
+    """Gets the base data path.
+
+    Returns
+    -------
+    str
+        Storage type.
+    """
+    return _base_data_path()
+
+
+def metadata_file() -> Path:
+    """Gets the path of metadata file.
+
+    Returns
+    -------
+    str
+        Storage type.
+    """
+    return config_file
+
+
 def storage_type() -> str:
     """Gets the storage type as a string.
 
@@ -253,14 +267,14 @@ def storage_type() -> str:
         raise RuntimeError("Bot basic config has not been loaded yet.") from e
 
 
-def storage_details() -> dict:
+def storage_details() -> Dict[str, str]:
     """Gets any details necessary for config drivers to load.
 
     These are set on setup.
 
     Returns
     -------
-    dict
+    Dict[str, str]
         Storage details.
     """
-    return basic_config.get("STORAGE_DETAILS", {})
+    return deepcopy(basic_config.get("STORAGE_DETAILS", {}))

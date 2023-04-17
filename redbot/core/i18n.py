@@ -20,15 +20,14 @@ if TYPE_CHECKING:
 
 __all__ = [
     "get_locale",
-    "set_locale",
-    "reload_locales",
-    "cog_i18n",
-    "Translator",
-    "get_babel_locale",
-    "get_babel_regional_format",
+    "get_regional_format",
     "get_locale_from_guild",
     "get_regional_format_from_guild",
     "set_contextual_locales_from_guild",
+    "Translator",
+    "get_babel_locale",
+    "get_babel_regional_format",
+    "cog_i18n",
 ]
 
 log = logging.getLogger("red.i18n")
@@ -48,6 +47,14 @@ _translators = []
 
 
 def get_locale() -> str:
+    """
+    Get locale in a current context.
+
+    Returns
+    -------
+    str
+        Current locale's language code with country code included, e.g. "en-US".
+    """
     return str(_current_locale.get())
 
 
@@ -63,6 +70,14 @@ def set_contextual_locale(locale: str) -> None:
 
 
 def get_regional_format() -> str:
+    """
+    Get regional format in a current context.
+
+    Returns
+    -------
+    str
+        Current regional format's language code with country code included, e.g. "en-US".
+    """
     if _current_regional_format.get() is None:
         return str(_current_locale.get())
     return str(_current_regional_format.get())
@@ -97,7 +112,7 @@ async def get_locale_from_guild(bot: Red, guild: Optional[discord.Guild]) -> str
     Returns
     -------
     str
-        Guild's locale string.
+        Guild locale's language code with country code included, e.g. "en-US".
     """
     return await bot._i18n_cache.get_locale(guild)
 
@@ -117,7 +132,7 @@ async def get_regional_format_from_guild(bot: Red, guild: Optional[discord.Guild
     Returns
     -------
     str
-        Guild's locale string.
+        Guild regional format's language code with country code included, e.g. "en-US".
     """
     return await bot._i18n_cache.get_regional_format(guild)
 

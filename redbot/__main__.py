@@ -25,9 +25,9 @@ import rich
 import redbot.logging
 from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
+from redbot.core._cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core import data_manager, drivers
+from redbot.core import data_manager, _drivers
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
@@ -281,7 +281,7 @@ def early_exit_runner(
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
         red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
-        driver_cls = drivers.get_driver_class()
+        driver_cls = _drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
         loop.run_until_complete(func(red, cli_flags))
         loop.run_until_complete(driver_cls.teardown())
@@ -307,7 +307,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     need additional handling in this function.
     """
 
-    driver_cls = drivers.get_driver_class()
+    driver_cls = _drivers.get_driver_class()
 
     await driver_cls.initialize(**data_manager.storage_details())
 

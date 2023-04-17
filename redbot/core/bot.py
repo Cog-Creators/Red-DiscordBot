@@ -37,15 +37,15 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, app_commands, commands, errors, drivers, modlog, bank
-from .cli import ExitCodes
-from .cog_manager import CogManager, CogManagerUI
+from . import Config, i18n, app_commands, commands, errors, _drivers, modlog, bank
+from ._cli import ExitCodes
+from ._cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
 from .dev_commands import Dev
-from .events import init_events
-from .global_checks import init_global_checks
-from .settings_caches import (
+from ._events import init_events
+from ._global_checks import init_global_checks
+from ._settings_caches import (
     PrefixManager,
     IgnoreManager,
     WhitelistBlacklistManager,
@@ -53,7 +53,7 @@ from .settings_caches import (
     I18nManager,
 )
 from .utils.predicates import MessagePredicate
-from .rpc import RPCMixin
+from ._rpc import RPCMixin
 from .tree import RedTree
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils.chat_formatting import box, text_to_file
@@ -2161,7 +2161,7 @@ class Red(
     async def close(self):
         """Logs out of Discord and closes all connections."""
         await super().close()
-        await drivers.get_driver_class().teardown()
+        await _drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
                 await self.rpc.close()

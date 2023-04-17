@@ -8,6 +8,8 @@ from discord.ext import commands as dpy_commands
 
 from redbot.core import commands
 
+__all__ = ("MessagePredicate", "ReactionPredicate")
+
 _ID_RE = re.compile(r"([0-9]{15,20})$")
 _USER_MENTION_RE = re.compile(r"<@!?([0-9]{15,20})>$")
 _CHAN_MENTION_RE = re.compile(r"<#([0-9]{15,20})>$")
