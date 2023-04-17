@@ -15,6 +15,7 @@ from ._cli import ExitCodes
 
 __all__ = (
     "cog_data_path",
+    "core_data_path",
     "bundled_data_path",
     "data_path",
     "metadata_file",

@@ -20,6 +20,7 @@ __all__ = (
     "serverunmute",
     "voicekick",
     "warning",
+    "all_generics",
 )
 
 ban = {"name": "ban", "default_setting": True, "image": "\N{HAMMER}", "case_str": "Ban"}
