@@ -4,10 +4,10 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import TYPE_CHECKING, Union, List, Optional
+from typing import Union, List, Optional
 
 import redbot.cogs
-from redbot.core.commands import BadArgument
+from redbot.core.commands import positive_int
 from redbot.core.utils import deduplicate_iterables
 import discord
 
@@ -19,21 +19,6 @@ from .data_manager import cog_data_path
 from .utils.chat_formatting import box, pagify, humanize_list, inline
 
 __all__ = ["CogManager"]
-
-
-# Duplicate of redbot.cogs.cleanup.converters.positive_int
-if TYPE_CHECKING:
-    positive_int = int
-else:
-
-    def positive_int(arg: str) -> int:
-        try:
-            ret = int(arg)
-        except ValueError:
-            raise BadArgument(_("{arg} is not an integer.").format(arg=inline(arg)))
-        if ret <= 0:
-            raise BadArgument(_("{arg} is not a positive integer.").format(arg=inline(arg)))
-        return ret
 
 
 class NoSuchCog(ImportError):
