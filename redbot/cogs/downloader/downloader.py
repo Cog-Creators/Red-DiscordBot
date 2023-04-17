@@ -366,8 +366,7 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[cog.repo_name]
             except KeyError:
-                # docstring specifies this already
-                cog.repo = cast(Repo, cog.repo)
+                cog.repo = cast(Repo, cog.repo)  # docstring specifies this already
                 repo_by_commit = repos[cog.repo_name] = (cog.repo, defaultdict(list))
             cogs_by_commit = repo_by_commit[1]
             cogs_by_commit[cog.commit].append(cog)
@@ -406,8 +405,7 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[lib.repo_name]
             except KeyError:
-                # docstring specifies this already
-                lib.repo = cast(Repo, lib.repo)
+                lib.repo = cast(Repo, lib.repo)  # docstring specifies this already
                 repo_by_commit = repos[lib.repo_name] = (lib.repo, defaultdict(set))
             libs_by_commit = repo_by_commit[1]
             libs_by_commit[lib.commit].add(lib)
@@ -1768,8 +1766,7 @@ class Downloader(commands.Cog):
                     else cog_installable.repo.name
                 )
                 cog_pkg_name = cog_installable.name
-            # core commands or core cog
-            elif cog.__module__.startswith("redbot."):
+            elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
                 module_fragments = cog.__module__.split(".")
