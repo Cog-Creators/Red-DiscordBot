@@ -8,6 +8,16 @@ if TYPE_CHECKING:
     from ..bot import Red
     from ..commands import Context
 
+__all__ = (
+    "mass_purge",
+    "slow_deletion",
+    "get_audit_reason",
+    "is_mod_or_superior",
+    "strfdelta",
+    "is_admin_or_superior",
+    "check_permissions",
+)
+
 
 async def mass_purge(
     messages: List[discord.Message],

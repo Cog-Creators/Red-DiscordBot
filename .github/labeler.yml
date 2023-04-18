@@ -156,8 +156,8 @@
 "Category: Core - API - Config":
   # Source
   - any:
-      - redbot/core/drivers/**/*
-      - "!redbot/core/drivers/**/locales/*"
+      - redbot/core/_drivers/**/*
+      - "!redbot/core/_drivers/**/locales/*"
   - redbot/core/config.py
   # Docs
   - docs/framework_config.rst
@@ -167,16 +167,13 @@
   # Source
   - redbot/__init__.py
   - redbot/core/__init__.py
-  - redbot/core/cog_manager.py  # TODO: privatize cog manager module
   - redbot/core/data_manager.py
   - redbot/core/errors.py
   - redbot/core/tree.py
   # Docs
-  - docs/framework_cogmanager.rst  # TODO: privatize cog manager module
   - docs/framework_datamanager.rst
   - docs/framework_tree.rst
   # Tests
-  - redbot/pytest/cog_manager.py  # TODO: privatize cog manager module
   - redbot/pytest/data_manager.py
   - tests/core/test_cog_manager.py
   - tests/core/test_data_manager.py
@@ -207,8 +204,8 @@
 "Category: Core - Command-line Interfaces":
   - redbot/__main__.py
   - redbot/logging.py
+  - redbot/core/_cli.py
   - redbot/core/_debuginfo.py
-  - redbot/core/cli.py
   - redbot/setup.py
 "Category: Core - Help":
   - redbot/core/commands/help.py
@@ -227,18 +224,20 @@
   - docs/framework_modlog.rst
 "Category: Core - Other Internals":
   # Source
+  - redbot/core/_cog_manager.py
+  - redbot/core/_events.py
+  - redbot/core/_global_checks.py
+  - redbot/core/_settings_caches.py
   - redbot/core/_sharedlibdeprecation.py
-  - redbot/core/events.py
-  - redbot/core/global_checks.py
-  - redbot/core/settings_caches.py
   - redbot/core/utils/_internal_utils.py
   # Tests
   - redbot/pytest/__init__.py
+  - redbot/pytest/cog_manager.py
   - redbot/pytest/core.py
   - tests/core/test_installation.py
 "Category: Core - RPC/ZMQ":
   # Source
-  - redbot/core/rpc.py
+  - redbot/core/_rpc.py
   # Docs
   - docs/framework_rpc.rst
   # Tests
@@ -304,9 +303,6 @@
   - docs/_templates/**/*
   # empty file
   - redbot/cogs/__init__.py
-  # can't go more meta than that :)
-  # TODO: remove this useless file
-  - redbot/meta.py
   # py.typed file
   - redbot/py.typed
   # requirements files

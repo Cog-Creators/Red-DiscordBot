@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 from typing import Tuple, List
 from collections import namedtuple
 
+__all__ = ("AntiSpam",)
+
 _AntiSpamInterval = namedtuple("_AntiSpamInterval", ["period", "frequency"])
 
 

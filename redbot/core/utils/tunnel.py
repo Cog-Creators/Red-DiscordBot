@@ -7,6 +7,8 @@ import weakref
 from typing import List, Optional, Union
 from .common_filters import filter_mass_mentions
 
+__all__ = ("Tunnel",)
+
 _instances = weakref.WeakValueDictionary({})
 
 

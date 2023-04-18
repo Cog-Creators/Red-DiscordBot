@@ -68,7 +68,7 @@ else:
     _P = TypeVar("_P")
 
 
-__all__ = [
+__all__ = (
     "Cog",
     "CogMixin",
     "CogCommandMixin",
@@ -77,13 +77,15 @@ __all__ = [
     "Group",
     "GroupCog",
     "GroupMixin",
+    "HybridCommand",
+    "HybridGroup",
     "command",
     "group",
     "hybrid_command",
     "hybrid_group",
     "RESERVED_COMMAND_NAMES",
     "RedUnhandledAPI",
-]
+)
 
 #: The following names are reserved for various reasons
 RESERVED_COMMAND_NAMES = (

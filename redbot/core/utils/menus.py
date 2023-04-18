@@ -14,6 +14,15 @@ from .. import commands
 from .predicates import ReactionPredicate
 from .views import SimpleMenu, _SimplePageSource
 
+__all__ = (
+    "menu",
+    "next_page",
+    "prev_page",
+    "close_menu",
+    "start_adding_reactions",
+    "DEFAULT_CONTROLS",
+)
+
 _T = TypeVar("_T")
 _PageList = TypeVar("_PageList", List[str], List[discord.Embed])
 _ReactableEmoji = Union[str, discord.Emoji]

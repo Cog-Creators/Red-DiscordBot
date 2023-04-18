@@ -25,10 +25,11 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("red.core.modlog")
 
-__all__ = [
+__all__ = (
     "Case",
     "CaseType",
     "get_case",
+    "get_latest_case",
     "get_all_cases",
     "get_cases_for_member",
     "create_case",
@@ -39,7 +40,7 @@ __all__ = [
     "get_modlog_channel",
     "set_modlog_channel",
     "reset_cases",
-]
+)
 
 _config: Optional[Config] = None
 _bot_ref: Optional[Red] = None
@@ -242,6 +243,8 @@ class Case:
     Case()
 
     A single mod log case
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------
@@ -729,6 +732,8 @@ class Case:
 class CaseType:
     """
     A single case type
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------

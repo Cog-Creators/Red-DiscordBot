@@ -69,7 +69,6 @@ Welcome to Red - Discord Bot's documentation!
     framework_bank
     framework_bot
     framework_checks
-    framework_cogmanager
     framework_commands
     framework_config
     framework_datamanager
