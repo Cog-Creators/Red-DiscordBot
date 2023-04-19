@@ -14,7 +14,7 @@ following, then press Enter:
 
 .. prompt:: bash
 
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 After the installation, install the required packages by pasting the commands and pressing enter,
 one-by-one:
