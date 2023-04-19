@@ -354,7 +354,7 @@ class Dev(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    async def mock(self, ctx, user: discord.User, *, command):
+    async def mock(self, ctx, user: discord.Member, *, command):
         """Mock another user invoking a command.
 
         The prefix must not be entered.
@@ -367,7 +367,7 @@ class Dev(commands.Cog):
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
-    async def mock_msg(self, ctx, user: discord.User, *, content: str = ""):
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str = ""):
         """Dispatch a message event as if it were sent by a different user.
 
         Current message is used as a base (including attachments, embeds, etc.),
