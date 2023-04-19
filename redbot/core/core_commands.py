@@ -537,7 +537,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "6. <{}>\n"
                 "7. <{}>\n"
             ).format(
-                red_repo, author_repo, contributors_url, support_server_url, python_url, dpy_repo, red_pypi
+                red_repo,
+                author_repo,
+                contributors_url,
+                support_server_url,
+                python_url,
+                dpy_repo,
+                red_pypi,
             )
             await ctx.send(refs)
 
