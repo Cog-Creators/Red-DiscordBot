@@ -72,7 +72,11 @@ class ModLog(commands.Cog):
     @modlogset.command(name="cases")
     @commands.guild_only()
     async def set_cases(self, ctx: commands.Context, action: str = None):
-        """Enable or disable case creation for a mod action."""
+        """
+        Enable or disable case creation for a mod action.
+        An action can be enabling or disabling specific cases. (Ban, kick, mute, etc.)
+        Example: `[p]modlogset cases kick enabled`
+        """
         guild = ctx.guild
 
         if action is None:  # No args given
