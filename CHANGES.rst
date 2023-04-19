@@ -254,8 +254,8 @@ Developer changelog
 Additions
 *********
 
-- **Core - Bot Class** - Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested()` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
-- |cool| **Core - Bot Class** - Added `Red.get_invite_url()` and `Red.is_invite_url_public()` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
+- **Core - Bot Class** - Added optional ``check_permissions`` keyword-only argument to `Red.embed_requested() <RedBase.embed_requested()>` which, if ``True``, will make the method also check whether the bot can send embeds in the given channel (:issue:`5452`)
+- |cool| **Core - Bot Class** - Added `Red.get_invite_url() <RedBase.get_invite_url()>` and `Red.is_invite_url_public() <RedBase.is_invite_url_public()>` that expose the functionality of ``[p]invite`` programmatically (:issue:`5152`, :issue:`5424`)
 - |cool| **Core - Commands Package** - Added optional ``message`` argument to `Context.tick()` and `Context.react_quietly()` which is used if adding the reaction doesn't succeed (:issue:`3359`, :issue:`4092`)
 
 Changes
@@ -435,14 +435,14 @@ Additions
 
     Here's the list of the methods that were added to the ``bot`` object:
 
-        - `Red.add_to_blacklist()`
-        - `Red.remove_from_blacklist()`
-        - `Red.get_blacklist()`
-        - `Red.clear_blacklist()`
-        - `Red.add_to_whitelist()`
-        - `Red.remove_from_whitelist()`
-        - `Red.get_whitelist()`
-        - `Red.clear_whitelist()`
+        - `Red.add_to_blacklist() <RedBase.add_to_blacklist()>`
+        - `Red.remove_from_blacklist() <RedBase.remove_from_blacklist()>`
+        - `Red.get_blacklist() <RedBase.get_blacklist()>`
+        - `Red.clear_blacklist() <RedBase.clear_blacklist()>`
+        - `Red.add_to_whitelist() <RedBase.add_to_whitelist()>`
+        - `Red.remove_from_whitelist() <RedBase.remove_from_whitelist()>`
+        - `Red.get_whitelist() <RedBase.get_whitelist()>`
+        - `Red.clear_whitelist() <RedBase.clear_whitelist()>`
 - |cool| **Core - Commands Package** - Added `RelativedeltaConverter` and `parse_relativedelta` to the ``redbot.core.commands`` package (:issue:`5000`)
 
     This converter and function return `dateutil.relativedelta.relativedelta` object that represents a relative delta.
@@ -770,7 +770,7 @@ Changes
 Deprecations
 ************
 
-- **Core - Bot Class** - Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <Red.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
+- **Core - Bot Class** - Added ``guild`` parameter to `bot.allowed_by_whitelist_blacklist() <RedBase.allowed_by_whitelist_blacklist()>` which is meant to replace the deprecated ``guild_id`` parameter (:issue:`4905`, :issue:`4914`)
 
     - Read the method's documentation for more information
 - **Core - Commands Package** - Deprecated importing ``GuildConverter`` from ``redbot.core.commands.converter`` namespace (:issue:`4928`)
@@ -951,8 +951,8 @@ Additions
 
     - Variables can be added and removed from the environment of Dev cog using two new methods:
 
-        - `bot.add_dev_env_value() <Red.add_dev_env_value()>`
-        - `bot.remove_dev_env_value() <Red.remove_dev_env_value()>`
+        - `bot.add_dev_env_value() <RedBase.add_dev_env_value()>`
+        - `bot.remove_dev_env_value() <RedBase.remove_dev_env_value()>`
 
 Changes
 *******
@@ -1326,9 +1326,9 @@ Developer changelog
 Additions
 *********
 
-- **Core - Bot Class** - Added `bot.get_or_fetch_user() <Red.get_or_fetch_user()>` and `bot.get_or_fetch_member() <Red.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
-- **Core - Bot Class** - Added `bot.remove_shared_api_services() <Red.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
-- **Core - Bot Class** - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <Red.get_shared_api_tokens()>` (:issue:`4370`)
+- **Core - Bot Class** - Added `bot.get_or_fetch_user() <RedBase.get_or_fetch_user()>` and `bot.get_or_fetch_member() <RedBase.get_or_fetch_member()>` methods (:issue:`4403`, :issue:`4402`)
+- **Core - Bot Class** - Added `bot.remove_shared_api_services() <RedBase.remove_shared_api_services()>` to remove all keys and tokens associated with an API service (:issue:`4370`)
+- **Core - Bot Class** - Added an option to return all tokens for an API service if ``service_name`` is not specified in `bot.get_shared_api_tokens() <RedBase.get_shared_api_tokens()>` (:issue:`4370`)
 - **Core - Dependencies** - Added ``[all]`` and ``[dev]`` extras to the ``Red-DiscordBot`` package (:issue:`4443`)
 - |cool| **Core - i18n** - Added API for setting contextual locales (:issue:`3896`, :issue:`1970`)
 
@@ -1479,7 +1479,7 @@ Additions
 
 - |cool| **Core** - Added cog disabling API (:issue:`4043`, :issue:`3945`)
 
-    - New methods added: `bot.cog_disabled_in_guild() <Red.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <Red.cog_disabled_in_guild_raw()>`
+    - New methods added: `bot.cog_disabled_in_guild() <RedBase.cog_disabled_in_guild()>`, `bot.cog_disabled_in_guild_raw() <RedBase.cog_disabled_in_guild_raw()>`
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 - |cool| **Core** - Added data request API (:issue:`4045`,  :issue:`4169`)
 
@@ -1487,14 +1487,14 @@ Additions
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
-- **Core - Bot Class** - Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
+- **Core - Bot Class** - Added `bot.message_eligible_as_command() <RedBase.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
 - |cool| **Core - Commands Package** - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
 - **Core - Commands Package** - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
 
 Changes
 *******
 
-- **Core - Bot Class** - `bot.ignored_channel_or_guild() <Red.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
+- **Core - Bot Class** - `bot.ignored_channel_or_guild() <RedBase.ignored_channel_or_guild()>` now accepts `discord.Message` objects (:issue:`4077`)
 - |cool| **Core - Commands Package** - Autohelp in group commands is now sent *after* invoking the group, which allows before invoke hooks to prevent autohelp from getting triggered (:issue:`4129`)
 - **Core - Utils Package** - `humanize_list()` now accepts ``locale`` and ``style`` keyword arguments. See its documentation for more information (:issue:`2982`)
 - |cool| **Core - Utils Package** - `humanize_list()` is now properly localized (:issue:`2906`, :issue:`2982`)
@@ -1747,7 +1747,7 @@ Developer changelog
 Additions
 *********
 
-- **Core - Bot Class** - Added `bot.set_prefixes() <Red.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
+- **Core - Bot Class** - Added `bot.set_prefixes() <RedBase.set_prefixes()>` method that allows developers to set global/server prefixes (:issue:`3890`)
 
 
 Documentation changes
@@ -2710,13 +2710,13 @@ Breaking Changes
 
   New methods for this include:
 
-    - `Red.get_shared_api_tokens()`
-    - `Red.set_shared_api_tokens()`
-    - `Red.get_embed_colour()` (and its alias - ``get_embed_color()``)
-    - `Red.get_admin_roles()`
-    - `Red.get_admin_role_ids()`
-    - `Red.get_mod_roles()`
-    - `Red.get_mod_role_ids()`
+    - `RedBase.get_shared_api_tokens()`
+    - `RedBase.set_shared_api_tokens()`
+    - `RedBase.get_embed_colour()` (and its alias - ``get_embed_color()``)
+    - `RedBase.get_admin_roles()`
+    - `RedBase.get_admin_role_ids()`
+    - `RedBase.get_mod_roles()`
+    - `RedBase.get_mod_role_ids()`
 - **Core - Bot Class** - Removed ``bot._counter``, Made a few more attributes private (``cog_mgr``, ``main_dir``) (:issue:`2976`)
 - **Core - Modlog** - Modlog casetypes no longer have an attribute for auditlog action type (:issue:`2897`)
 - **Core - Modlog** - Removed ``redbot.core.modlog.get_next_case_number()`` (:issue:`2908`)
@@ -2726,11 +2726,11 @@ Additions
 
 - Added a few methods and classes replacing direct config access (which is no longer supported) (:issue:`2976`)
 
-   - `Red.allowed_by_whitelist_blacklist()`
-   - `Red.get_valid_prefixes()`
-   - `Red.remove_shared_api_tokens()`
+   - `Red.allowed_by_whitelist_blacklist() <RedBase.allowed_by_whitelist_blacklist()>`
+   - `Red.get_valid_prefixes() <RedBase.get_valid_prefixes()>`
+   - `Red.remove_shared_api_tokens() <RedBase.remove_shared_api_tokens()>`
    - `redbot.core.commands.help.HelpSettings`
-- **Core - Bot Class** - Added the method `Red.wait_until_red_ready()` that waits until Red's post connection startup is done (:issue:`3273`)
+- **Core - Bot Class** - Added the method `Red.wait_until_red_ready() <RedBase.wait_until_red_ready()>` that waits until Red's post connection startup is done (:issue:`3273`)
 - **Core - Bot Class** - New event ``on_red_api_tokens_update`` is now dispatched when shared api keys for a service are updated (:issue:`3134`)
 - **Core - Config** - Added functions to acquire locks on Config groups and values. These locks are acquired by default when calling a value as a context manager. See `Value.get_lock()` for details (:issue:`2654`)
 - **Core - Config** - Added methods to Config for accessing things by id without mocked objects (:issue:`2804`)
@@ -2759,8 +2759,8 @@ Additions
 Changes
 *******
 
-- **Core - Bot Class** - `Red.send_filtered()` now returns the message that is sent (:issue:`3052`)
-- **Core - Bot Class** - `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now log when they are not able to find the owner notification destination (:issue:`3273`)
+- **Core - Bot Class** - `Red.send_filtered() <RedBase.send_filtered()>` now returns the message that is sent (:issue:`3052`)
+- **Core - Bot Class** - `Red.send_to_owners() <RedBase.send_to_owners()>` and `Red.get_owner_notification_destinations() <RedBase.get_owner_notification_destinations()>` now log when they are not able to find the owner notification destination (:issue:`3273`)
 - **Core - Commands Package** - Allowed passing ``cls`` in the `redbot.core.commands.group()` decorator (:issue:`2881`)
 - **Core - Modlog** - Some generic modlog casetypes are now pre-registered for cog creator use (:issue:`2897`)
 
@@ -2773,10 +2773,10 @@ Fixes
 *****
 
 - **Core - Bank** - Bank functions now check the recipient balance before transferring and stop the transfer if the recipient's balance will go above the maximum allowed balance (:issue:`2923`)
-- **Core - Bot Class** - Fixed `Red.remove_command()` throwing an error when trying to remove a non-existent command (:issue:`2888`)
+- **Core - Bot Class** - Fixed `Red.remove_command() <RedBase.remove_command()>` throwing an error when trying to remove a non-existent command (:issue:`2888`)
 - **Core - Bot Class** - Fixed ``is_automod_immune``'s handling of the guild check and added support for checking webhooks (:issue:`3100`)
 - **Core - Bot Class** - ``Red.owner_id`` is now set in the post connection startup (:issue:`3273`)
-- **Core - Bot Class** - `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` now wait until Red is done with post connection startup to ensure owner ID is available (:issue:`3273`)
+- **Core - Bot Class** - `Red.send_to_owners() <RedBase.send_to_owners()>` and `Red.get_owner_notification_destinations() <RedBase.get_owner_notification_destinations()>` now wait until Red is done with post connection startup to ensure owner ID is available (:issue:`3273`)
 - **Core - Commands Package** - `Command.can_see()` now works as intended for disabled commands (:issue:`2892`)
 - **Core - Commands Package** - Fixed ``Context.clean_prefix`` issues resulting from undocumented changes from discord (:issue:`3249`)
 - **Core - Utils Package** - Fixed `MessagePredicate.greater()` and `MessagePredicate.less()` allowing any valid int instead of only valid ints/floats that are greater/less than the given value (:issue:`3004`)
@@ -3041,7 +3041,7 @@ Developer changelog
 Additions
 *********
 
-- **Core - Bot Class** - Added `Red.send_to_owners()` and `Red.get_owner_notification_destinations()` (:issue:`2665`, :issue:`2738`)
+- **Core - Bot Class** - Added `Red.send_to_owners() <RedBase.send_to_owners()>` and `Red.get_owner_notification_destinations() <RedBase.get_owner_notification_destinations()>` (:issue:`2665`, :issue:`2738`)
 - **Core - Commands Package** - Added `DictConverter` (:issue:`2692`)
 - **Core - Commands Package** - Added `TimedeltaConverter` and `parse_timedelta()` (:issue:`2736`)
 - **Core - Commands Package** - Added ``assume_yes`` attribute to `redbot.core.commands.Context` (:issue:`2746`)
