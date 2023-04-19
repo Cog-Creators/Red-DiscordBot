@@ -14,7 +14,7 @@ from .utils import AsyncIter
 class PrefixManager:
     def __init__(self, config: Config, cli_flags: Namespace):
         self._config: Config = config
-        self._global_prefix_overide: Optional[List[str]] = (
+        self._global_prefix_override: Optional[List[str]] = (
             sorted(cli_flags.prefix, reverse=True) or None
         )
         self._cached: Dict[Optional[int], List[str]] = {}
@@ -32,7 +32,7 @@ class PrefixManager:
                 if not ret:
                     ret = await self.get_prefixes(None)
             else:
-                ret = self._global_prefix_overide or (await self._config.prefix())
+                ret = self._global_prefix_override or (await self._config.prefix())
 
             self._cached[gid] = ret.copy()
 

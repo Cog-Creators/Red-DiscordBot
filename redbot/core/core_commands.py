@@ -1309,7 +1309,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self, ctx: commands.GuildContext, command: CommandConverter, enabled: bool = None
     ):
         """
-        Sets a commmand's embed setting for the current server.
+        Sets a command's embed setting for the current server.
 
         If set, this is used instead of the server default to determine whether or not to use embeds.
 
