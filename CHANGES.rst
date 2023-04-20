@@ -43,7 +43,7 @@ Changes
 - **Cogs - Trivia** - Added JSON schema for Trivia's custom list format and allowed the usage of ``$schema`` key (:issue:`5565`)
 - **Cogs - Trivia - Lists** - Added over 30 new questions to the ``harrypotter`` trivia list (:issue:`5887`)
 - **Cogs - Trivia - Lists** - Renamed the country of Turkey to Türkiye as per the United Nations' name change (:issue:`5795`)
-- **Cogs - Trivia - Lists** - Improved the topography trivia by adding/removing correct/incorrect answers and fixing incosistencies (:issue:`5572`)
+- **Cogs - Trivia - Lists** - Improved the topography trivia by adding/removing correct/incorrect answers and fixing inconsistencies (:issue:`5572`)
 
 Fixes
 *****
