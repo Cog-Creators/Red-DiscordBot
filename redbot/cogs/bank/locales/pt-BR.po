@@ -46,10 +46,10 @@ msgid "Bank settings:\n\n"
 "Default balance: {default_balance}\n"
 "Maximum allowed balance: {maximum_bal}\n"
 msgstr "Configurações do Banco:\n\n"
-"Nome do Banco: {bank_name}\n"
-"Alcance do Banco: {bank_scope}\n"
+"Nome do banco: {bank_name}\n"
+"Escopo do banco: {bank_scope}\n"
 "Moeda: {currency_name}\n"
-"Saldo padrão: {default_balance}\n"
+"Saldo inicial: {default_balance}\n"
 "Saldo máximo permitido: {maximum_bal}\n"
 
 #: redbot/cogs/bank/bank.py:83
@@ -59,8 +59,8 @@ msgid "Toggle whether the bank is global or not.\n\n"
 "        If the bank is per-server, it will become global.\n"
 "        "
 msgstr "Alterna se o banco é global ou não.\n\n"
-"        Se a opção estiver em global, alterna as configurações para por servidor.\n"
-"        Se a opção estiver em por servidor, altera as configurações para global.\n"
+"        Se o banco for global, será separado por servidor.\n"
+"        Se o banco estiver separado por servidor, será global.\n"
 "        "
 
 #: redbot/cogs/bank/bank.py:90
@@ -73,20 +73,20 @@ msgstr "global"
 
 #: redbot/cogs/bank/bank.py:93
 msgid "This will toggle the bank to be {banktype}, deleting all accounts in the process! If you're sure, type `{command}`"
-msgstr "Isso irá alterar o banco para {banktype}, deletando todas as contas no processo! Se tiver certeza disso, digite `{command}`"
+msgstr "Isso alternará o banco para {banktype}, apagando todas as contas no processo! Se tiver certeza, digite `{command}`"
 
 #: redbot/cogs/bank/bank.py:100
 msgid "The bank is now {banktype}."
-msgstr "O banco agora é `{banktype}`."
+msgstr "O banco agora é {banktype}."
 
 #: redbot/cogs/bank/bank.py:106
 #, docstring
 msgid "Set the bank's name."
-msgstr "Defina o nome do banco."
+msgstr "Define o nome do banco."
 
 #: redbot/cogs/bank/bank.py:108
 msgid "Bank name has been set to: {name}"
-msgstr "O nome do banco foi definido como {name}"
+msgstr "O nome do banco foi definido como: {name}"
 
 #: redbot/cogs/bank/bank.py:114
 #, docstring
@@ -95,12 +95,12 @@ msgstr "Dá um nome para a moeda do banco."
 
 #: redbot/cogs/bank/bank.py:116
 msgid "Currency name has been set to: {name}"
-msgstr "A moeda foi nomeada de: {name}"
+msgstr "O nome da moeda foi definido como: {name}"
 
 #: redbot/cogs/bank/bank.py:122
 #, docstring
 msgid "Set the maximum balance a user can get."
-msgstr "Define um saldo limite que um usuário pode ter."
+msgstr "Define o saldo máximo permitido a um usuário."
 
 #: redbot/cogs/bank/bank.py:128
 msgid "Amount must be greater than zero and less than {max}."
@@ -108,5 +108,5 @@ msgstr "A quantia deve ser maior que zero e menor que {max}."
 
 #: redbot/cogs/bank/bank.py:133
 msgid "Maximum balance has been set to: {amount}"
-msgstr "O saldo máximo foi definido para: {amount}"
+msgstr "O saldo máximo foi definido como: {amount}"
 

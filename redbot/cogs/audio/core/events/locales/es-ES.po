@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:22+0000\n"
+"POT-Creation-Date: 2022-10-31 01:43+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -144,8 +144,8 @@ msgid "Manage Emojis"
 msgstr "Administrar Emojis"
 
 #: redbot/cogs/audio/core/events/dpy.py:65
-msgid "Use Slash Commands"
-msgstr "Usar comandos Slash"
+msgid "Use Application Commands"
+msgstr "Usar Comandos de Aplicación"
 
 #: redbot/cogs/audio/core/events/dpy.py:66
 msgid "Request to Speak"
@@ -224,36 +224,36 @@ msgid "This command changes the connection port used to connect to this managed 
 msgstr "Este comando cambia el puerto de conexión usado para conectarse a este nodo administrado, sólo cambiar esto si el puerto por defecto '2333' está causando conflictos con aplicaciones existentes."
 
 #: redbot/cogs/audio/core/events/dpy.py:120
-msgid "This command toggles the support of direct url streams like Icecast or Shoutcast streams. An example is <http://ice6.somafm.com/gsclassic-128-mp3>; Disabling this will make the bot unable to play any direct url steam content."
-msgstr "Este comando activa el soporte de flujos de url directos como los streams Icecast o Shoutcast. Un ejemplo es <http://ice6.somafm.com/gsclassic-128-mp3>; deshabilitar esto hará que el bot no pueda reproducir ningúna url directa con stream de contenido."
+msgid "This command toggles the support of direct url streams like Icecast or Shoutcast streams. An example is <http://ice1.somafm.com/gsclassic-128-mp3>; disabling this will make the bot unable to play any direct url steam content."
+msgstr "Este comando activa el soporte de streams de url directos como los streams Icecast o Shoutcast. Un ejemplo es <http://ice1.somafm.com/gsclassic-128-mp3>; deshabilitar esto hará que el bot no pueda reproducir ningún contenido directo de vapor de url."
 
 #: redbot/cogs/audio/core/events/dpy.py:130
-msgid "This command toggles the support of local track audio playback. for example `/mnt/data/my_super_funky_track.mp3`; Disabling this will make the bot unable to play any local track content."
-msgstr "Este comando activa la reproducción de pistas locales. Por ejemplo `/mnt/data/my_super_funky_track.mp3`; Desactivar esto hará que el bot no pueda reproducir ningún contenido de pista local."
+msgid "This command toggles the support of local track audio playback. An example is `/mnt/data/my_super_funky_track.mp3`; disabling this will make the bot unable to play any local track content."
+msgstr "Este comando activa el soporte para la reproducción de audio de pistas locales. Un ejemplo es `/mnt/data/my_super_funky_track.mp3`; deshabilitar esto hará que el bot no pueda reproducir ningún contenido local de la pista."
 
 #: redbot/cogs/audio/core/events/dpy.py:135
-msgid "This command toggles the support of Soundcloud playback. An example is <https://soundcloud.com/user-103858850/tilla>; Disabling this will make the bot unable to play any Soundcloud content."
-msgstr "Este comando activa el soporte de reproducción de Soundcloud. Un ejemplo es <https://soundcloud.com/user-103858850/tilla>; al deshabilitar esto el bot no podrá reproducir ningún contenido de Soundcloud."
+msgid "This command toggles the support of SoundCloud playback. An example is <https://soundcloud.com/user-103858850/tilla>; disabling this will make the bot unable to play any SoundCloud content."
+msgstr "Este comando activa el soporte de la reproducción de SoundCloud. Un ejemplo es <https://soundcloud.com/user-103858850/tilla>; deshabilitar esto hará que el bot no pueda reproducir ningún contenido de SoundCloud."
 
 #: redbot/cogs/audio/core/events/dpy.py:140
-msgid "This command toggles the support of YouTube playback (Spotify depends on YouTube). Disabling this will make the bot unable to play any YouTube content, this includes Spotify."
-msgstr "Este comando activa el soporte de la reproducción de YouTube (Spotify depende de YouTube). Desactivar esto hará que el bot no pueda reproducir ningún contenido de YouTube, esto incluye Spotify."
+msgid "This command toggles the support of YouTube playback (Spotify depends on YouTube). Disabling this will make the bot unable to play any YouTube content: this includes Spotify."
+msgstr "Este comando activa el soporte de la reproducción de YouTube (Spotify depende de YouTube). Desactivar esto hará que el bot no pueda reproducir ningún contenido de YouTube: esto incluye Spotify."
 
 #: redbot/cogs/audio/core/events/dpy.py:145
-msgid "This command toggles the support of Twitch playback. An example of this is <https://twitch.tv/monstercat>; Disabling this will make the bot unable to play any Twitch content."
-msgstr "Este comando activa el soporte de la reproducción de Twitch. Un ejemplo de esto es <https://twitch.tv/monstercat>; Desactivar esto hará que el bot no pueda reproducir ningún contenido de Twitch."
+msgid "This command toggles the support of Twitch playback. An example of this is <https://twitch.tv/monstercat>; disabling this will make the bot unable to play any Twitch content."
+msgstr "Este comando activa el soporte de la reproducción de Twitch. Un ejemplo de esto es <https://twitch.tv/monstercat>; deshabilitar esto hará que el bot no pueda reproducir ningún contenido de Twitch."
 
 #: redbot/cogs/audio/core/events/dpy.py:150
-msgid "This command toggles the support of Vimeo playback. An example of this is <https://vimeo.com/157743578>; Disabling this will make the bot unable to play any Vimeo content."
-msgstr "Este comando activa el soporte de la reproducción de Vimeo. Un ejemplo de esto es <https://vimeo.com/157743578>; al desactivar esto el bot no podrá reproducir ningún contenido de Vimeo."
+msgid "This command toggles the support of Vimeo playback. An example of this is <https://vimeo.com/157743578>; disabling this will make the bot unable to play any Vimeo content."
+msgstr "Este comando activa el soporte de la reproducción de Vimeo. Un ejemplo de esto es <https://vimeo.com/157743578>; deshabilitar esto hará que el bot no pueda reproducir ningún contenido de Vimeo."
 
 #: redbot/cogs/audio/core/events/dpy.py:155
-msgid "This setting controls the managed nodes framebuffer, Do not change this unless instructed."
-msgstr "Este ajuste controla el framebuffer de nodos administrados, no cambie esto a menos que se le indique."
+msgid "This setting controls the managed node's framebuffer, do not change this unless instructed."
+msgstr "Esta configuración controla el framebuffer del nodo administrado, no cambie esto a menos que se lo indique."
 
 #: redbot/cogs/audio/core/events/dpy.py:159
-msgid "This setting controls the managed nodes NAS buffer, Do not change this unless instructed."
-msgstr "Esta configuración controla el buffer NAS de los nodos administrados, no cambie esto a menos que se le indique."
+msgid "This setting controls the managed node's JDA-NAS buffer, do not change this unless instructed."
+msgstr "Esta configuración controla el buffer JDA-NAS del nodo administrado, no cambie esto a menos que se le indique."
 
 #: redbot/cogs/audio/core/events/dpy.py:163
 msgid "This command will reset every setting changed by `[p]llset`."
@@ -333,12 +333,12 @@ msgid "The bot is not connected to a voice channel."
 msgstr "El bot no está conectado a un canal de voz."
 
 #: redbot/cogs/audio/core/events/dpy.py:380
-#: redbot/cogs/audio/core/events/lavalink.py:179
+#: redbot/cogs/audio/core/events/lavalink.py:183
 msgid "Unable to Get Track"
 msgstr "No se puede cargar la canción"
 
 #: redbot/cogs/audio/core/events/dpy.py:381
-#: redbot/cogs/audio/core/events/lavalink.py:180
+#: redbot/cogs/audio/core/events/lavalink.py:184
 msgid "I'm unable to get a track from the Lavalink node at the moment, try again in a few minutes."
 msgstr "No puedo obtener una canción desde el nodo de Lavalink en este momento, inténtalo de nuevo en unos minutos."
 
@@ -350,41 +350,41 @@ msgstr "Hubo un problema de comunicación con Discord."
 msgid "This error has been reported to the bot owner."
 msgstr "Este error ha sido reportado al propietario del bot."
 
-#: redbot/cogs/audio/core/events/lavalink.py:171
+#: redbot/cogs/audio/core/events/lavalink.py:175
 msgid "Couldn't get a valid track."
 msgstr "No se pudo obtener una canción válida."
 
-#: redbot/cogs/audio/core/events/lavalink.py:206
+#: redbot/cogs/audio/core/events/lavalink.py:210
 msgid "Now Playing"
 msgstr "Escuchando"
 
-#: redbot/cogs/audio/core/events/lavalink.py:208
+#: redbot/cogs/audio/core/events/lavalink.py:212
 msgid "Track length: {length} | Requested by: {user}"
 msgstr "Longitud de la pista: {length} | Solicitado por: {user}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:231
+#: redbot/cogs/audio/core/events/lavalink.py:235
 msgid "Queue ended."
 msgstr "Cola terminada."
 
-#: redbot/cogs/audio/core/events/lavalink.py:297
+#: redbot/cogs/audio/core/events/lavalink.py:301
 msgid "Multiple Errors Detected"
 msgstr "Múltiples errores detectados"
 
-#: redbot/cogs/audio/core/events/lavalink.py:298
+#: redbot/cogs/audio/core/events/lavalink.py:302
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
 msgstr "Cerrando el reproductor de audio debido a múltiples errores detectados. Si esto persiste, por favor informa al propietario del bot ya que el engranaje de audio puede no estar disponible temporalmente."
 
-#: redbot/cogs/audio/core/events/lavalink.py:312
+#: redbot/cogs/audio/core/events/lavalink.py:316
 msgid "Track Stuck"
 msgstr "Rastreo atascado"
 
-#: redbot/cogs/audio/core/events/lavalink.py:313
+#: redbot/cogs/audio/core/events/lavalink.py:317
 msgid "Playback of the song has stopped due to an unexpected error.\n"
 "{error}"
 msgstr "La reproducción de la canción se ha detenido debido a un error inesperado.\n"
 "{error}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:319
+#: redbot/cogs/audio/core/events/lavalink.py:323
 msgid "Track Error"
 msgstr "Error de pista"
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:21+0000\n"
+"POT-Creation-Date: 2023-02-14 02:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -25,11 +25,13 @@ msgid "Create aliases for commands.\n\n"
 "    and append them to the stored alias.\n"
 "    "
 msgstr "Crie atalhos para comandos.\n\n"
-"    Atalhos são nomes simplificados para comandos. \n"
-"    Podem agir como uma lambda (armazenando argumentos para uso repetitivo)\n"
-"    ou simplesmente como um atalho para dizer \"x y z\".\n\n"
-"    Quando executado, os atalhos aceitam quaisquer argumentos adicionais\n"
-"    e junta-los com os já armazenados.\n"
+"    Atalhos são nomes alternativos ou simplificados para\n"
+"    os comandos. Podem agir tanto como uma lambda\n"
+"    (armazenando argumentos para usos repetidos) ou\n"
+"    simplesmente como um atalho para dizer \"x y z\".\n\n"
+"    Quando executados, os atalhos aceitam quaisquer\n"
+"    argumentos adicionais, que são acrescentados ao atalho\n"
+"    armazenado.\n"
 "    "
 
 #: redbot/cogs/alias/alias.py:180
@@ -45,7 +47,7 @@ msgstr "\n\n"
 #: redbot/cogs/alias/alias.py:192
 #, docstring
 msgid "Manage command aliases."
-msgstr "Gerenciar atalhos dos comandos."
+msgstr "Gerenciar atalhos de comandos."
 
 #: redbot/cogs/alias/alias.py:197
 #, docstring
@@ -59,7 +61,7 @@ msgstr "Adicione um atalho para um comando."
 
 #: redbot/cogs/alias/alias.py:209
 msgid "You attempted to create a new alias with the name {name} but that name is already a command on this bot."
-msgstr "Você tentou criar um novo atalho com o nome {name} mas o atalho já existe no servidor."
+msgstr "Você tentou criar um novo atalho com o nome {name} mas este nome já é um comando nesse bot."
 
 #: redbot/cogs/alias/alias.py:220
 msgid "You attempted to create a new alias with the name {name} but that alias already exists."
@@ -112,8 +114,8 @@ msgid "You attempted to edit an alias to a command that doesn't exist."
 msgstr "Você tentou editar um atalho para um comando que não existe."
 
 #: redbot/cogs/alias/alias.py:342 redbot/cogs/alias/alias.py:375
-msgid "The alias with the trigger `{name}` has been edited sucessfully."
-msgstr "O atalho com o gatilho `{name}` foi editado com sucesso."
+msgid "The alias with the trigger `{name}` has been edited successfully."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:349 redbot/cogs/alias/alias.py:382
 msgid "Alias with the name `{name}` was not found."
@@ -122,16 +124,16 @@ msgstr "O atalho com o nome `{name}` não foi encontrado."
 #: redbot/cogs/alias/alias.py:357
 #, docstring
 msgid "Edit an existing global alias."
-msgstr "Editar um atalho global."
+msgstr "Editar um atalho global existente."
 
 #: redbot/cogs/alias/alias.py:389
 #, docstring
 msgid "Try to execute help for the base command of the alias."
-msgstr "Tente executar 'help' para o comando base do atalho."
+msgstr "Tente consultar a ajuda para o comando base do atalho."
 
 #: redbot/cogs/alias/alias.py:394
 msgid "No such alias exists."
-msgstr "Alias inexistente."
+msgstr "Atalho inexistente."
 
 #: redbot/cogs/alias/alias.py:398
 #, docstring
@@ -140,7 +142,7 @@ msgstr "Mostrar qual comando o atalho executa."
 
 #: redbot/cogs/alias/alias.py:403
 msgid "The `{alias_name}` alias will execute the command `{command}`"
-msgstr "O atalho `{alias_name}` irá executar o comando `{command}`"
+msgstr "O atalho `{alias_name}` executará o comando `{command}`"
 
 #: redbot/cogs/alias/alias.py:408
 msgid "There is no alias with the name `{name}`"

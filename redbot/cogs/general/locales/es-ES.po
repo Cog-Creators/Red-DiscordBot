@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-08-08 23:56+0000\n"
+"POT-Creation-Date: 2022-12-27 10:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -311,111 +311,19 @@ msgstr "3 - Alto"
 msgid "4 - Highest"
 msgstr "4 - el más alto"
 
-#: redbot/cogs/general/general.py:356
-msgid "Animated Icon"
-msgstr "Icono animado"
-
-#: redbot/cogs/general/general.py:357
-msgid "Animated Banner"
-msgstr "Banner Animado"
-
-#: redbot/cogs/general/general.py:358
-msgid "Banner"
-msgstr "Banner"
-
-#: redbot/cogs/general/general.py:359
-msgid "Commerce"
-msgstr "Comercio"
-
-#: redbot/cogs/general/general.py:360
-msgid "Community"
-msgstr "Comunidad"
-
-#: redbot/cogs/general/general.py:361
-msgid "Discoverable"
-msgstr "Descubrible"
-
-#: redbot/cogs/general/general.py:362
-msgid "Featurable"
-msgstr "Características"
-
-#: redbot/cogs/general/general.py:363
-msgid "Splash Invite"
-msgstr "Invitación Splash"
-
-#: redbot/cogs/general/general.py:364
-msgid "Membership Screening enabled"
-msgstr "Cribado de miembros habilitado"
-
-#: redbot/cogs/general/general.py:365
-msgid "Monetization Enabled"
-msgstr "Monetización habilitada"
-
-#: redbot/cogs/general/general.py:366
-msgid "More Stickers"
-msgstr "Más stickers"
-
-#: redbot/cogs/general/general.py:367
-msgid "News"
-msgstr "Noticias"
-
-#: redbot/cogs/general/general.py:368
-msgid "Partnered"
-msgstr "Asociado"
-
-#: redbot/cogs/general/general.py:369
-msgid "Preview Enabled"
-msgstr "Vista previa habilitada"
-
-#: redbot/cogs/general/general.py:370
-msgid "Private Threads"
-msgstr "Hilos privados"
-
-#: redbot/cogs/general/general.py:371
-msgid "Role Icon"
-msgstr "Ícono del rol"
-
-#: redbot/cogs/general/general.py:372
-msgid "Seven Day Thread Archive"
-msgstr "7 días para archivar hilo"
-
-#: redbot/cogs/general/general.py:373
-msgid "Three Day Thread Archive"
-msgstr "3 días para archivar hilo"
-
-#: redbot/cogs/general/general.py:374
-msgid "Ticketed Events Enabled"
-msgstr "Eventos de tickets activados"
-
-#: redbot/cogs/general/general.py:375
-msgid "Verified"
-msgstr "Verificado"
-
-#: redbot/cogs/general/general.py:376
-msgid "Vanity URL"
-msgstr "URL de Vanity"
-
-#: redbot/cogs/general/general.py:377
-msgid "VIP Regions"
-msgstr "Regiones VIP"
-
-#: redbot/cogs/general/general.py:378
-msgid "Welcome Screen Enabled"
-msgstr "Pantalla de bienvenida activada"
-
-#: redbot/cogs/general/general.py:386
+#: redbot/cogs/general/general.py:355
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr "{bot_name} se unió a este servidor el {bot_join}. ¡Eso es hace más de {since_join} días!"
 
-#: redbot/cogs/general/general.py:408
+#: redbot/cogs/general/general.py:377
 msgid "Members:"
 msgstr "Miembros:"
 
-#: redbot/cogs/general/general.py:410
+#: redbot/cogs/general/general.py:379
 msgid "Channels:"
 msgstr "Canales:"
 
-#: redbot/cogs/general/general.py:411
+#: redbot/cogs/general/general.py:380
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}\n"
 "🎙 Stage: {stage}"
@@ -423,11 +331,11 @@ msgstr "💬 Texto: {text}\n"
 "🔊 Voz: {voice}\n"
 "🎙 Escenario: {stage}"
 
-#: redbot/cogs/general/general.py:422
+#: redbot/cogs/general/general.py:391
 msgid "Utility:"
 msgstr "Utilidad:"
 
-#: redbot/cogs/general/general.py:423
+#: redbot/cogs/general/general.py:392
 msgid "Owner: {owner}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
@@ -435,11 +343,11 @@ msgstr "Dueño: {owner}\n"
 "Nivel de verificación: {verif}\n"
 "ID del servidor: {id}{shard_info}"
 
-#: redbot/cogs/general/general.py:434
+#: redbot/cogs/general/general.py:403
 msgid "Misc:"
 msgstr "Miscelánea:"
 
-#: redbot/cogs/general/general.py:435
+#: redbot/cogs/general/general.py:404
 msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
@@ -449,15 +357,15 @@ msgstr "Canal AFK: {afk_chan}\n"
 "Emojis personalizados: {emoji_count}\n"
 "Roles: {role_count}"
 
-#: redbot/cogs/general/general.py:440
+#: redbot/cogs/general/general.py:409
 msgid "Not set"
 msgstr "No establecido"
 
-#: redbot/cogs/general/general.py:448
+#: redbot/cogs/general/general.py:442
 msgid "Server features:"
 msgstr "Características del servidor:"
 
-#: redbot/cogs/general/general.py:450
+#: redbot/cogs/general/general.py:449
 msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
@@ -467,11 +375,11 @@ msgstr "Nivel {boostlevel} con {nitroboosters} boosts\n"
 "Límite de emojis: {emojis_limit}\n"
 "Tasa de bits máxima de Vcs: {bitrate}"
 
-#: redbot/cogs/general/general.py:462
+#: redbot/cogs/general/general.py:461
 msgid "Nitro Boost:"
 msgstr "Nitro Boost:"
 
-#: redbot/cogs/general/general.py:471
+#: redbot/cogs/general/general.py:470
 #, docstring
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
@@ -480,29 +388,29 @@ msgstr "Busca en el Diccionario Urbano.\n\n"
 "        Esto utiliza la API no oficial del Diccionario Urbano.\n"
 "        "
 
-#: redbot/cogs/general/general.py:489 redbot/cogs/general/general.py:560
+#: redbot/cogs/general/general.py:488 redbot/cogs/general/general.py:559
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr "No se encontraron entradas de Diccionario Urbano, o hubo un error en el proceso."
 
-#: redbot/cogs/general/general.py:495
+#: redbot/cogs/general/general.py:494
 msgid "No Urban Dictionary entries were found."
 msgstr "No se encontraron entradas de Diccionario Urbano."
 
-#: redbot/cogs/general/general.py:501
+#: redbot/cogs/general/general.py:500
 msgid "{word} by {author}"
 msgstr "{word} de {author}"
 
-#: redbot/cogs/general/general.py:509 redbot/cogs/general/general.py:543
+#: redbot/cogs/general/general.py:508 redbot/cogs/general/general.py:542
 msgid "{definition}\n\n"
 "**Example:** {example}"
 msgstr "{definition}\n\n"
 "**Ejemplo:** {example}"
 
-#: redbot/cogs/general/general.py:515
+#: redbot/cogs/general/general.py:514
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr "{thumbs_down} Abajo / {thumbs_up} Arriba, Potenciado por Urban Dictionary."
 
-#: redbot/cogs/general/general.py:533
+#: redbot/cogs/general/general.py:532
 msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"

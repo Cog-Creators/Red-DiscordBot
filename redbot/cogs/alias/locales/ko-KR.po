@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:21+0000\n"
+"POT-Creation-Date: 2023-02-14 02:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -111,8 +111,8 @@ msgid "You attempted to edit an alias to a command that doesn't exist."
 msgstr "존재하지 않는 명령어에 대한 새 별칭을 생성하려고 시도하셨어요."
 
 #: redbot/cogs/alias/alias.py:342 redbot/cogs/alias/alias.py:375
-msgid "The alias with the trigger `{name}` has been edited sucessfully."
-msgstr "작동조건이 '{name}'인 별명이 성공적으로 편집되었어요"
+msgid "The alias with the trigger `{name}` has been edited successfully."
+msgstr ""
 
 #: redbot/cogs/alias/alias.py:349 redbot/cogs/alias/alias.py:382
 msgid "Alias with the name `{name}` was not found."

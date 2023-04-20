@@ -70,10 +70,12 @@ msgstr "Niczego nie znaleziono.\n"
 #: redbot/cogs/audio/apis/youtube.py:62
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr ""
+msgstr "Twój token API danych YouTube jest nieprawidłowy.\n"
+"Sprawdź ponownie klucz API YouTube i postępuj zgodnie z instrukcjami z `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"
 "Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr ""
+msgstr "Kod błędu API YouTube: 403\n"
+"Twój klucz API YouTube mógł osiągnąć limit zapytań na dziś. Sprawdź <https://developers.google.com/youtube/v3/getting-started#quota> aby uzyskać więcej informacji."
 

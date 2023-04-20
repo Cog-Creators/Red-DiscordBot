@@ -25,5 +25,5 @@ msgstr "Parça alınamıyor"
 
 #: redbot/cogs/audio/core/tasks/startup.py:282
 msgid "I'm unable to get a track from the Lavalink node at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Şu anda Lavalink'ten şarkıyı çalamıyorum, lütfen birkaç dakika sonra tekrar deneyin."
 

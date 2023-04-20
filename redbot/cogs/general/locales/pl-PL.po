@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-08-08 23:56+0000\n"
+"POT-Creation-Date: 2022-12-27 10:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr "Ogólne komendy."
 
 #: redbot/cogs/general/general.py:53
 msgid "As I see it, yes"
-msgstr "Moim zdaniem tak"
+msgstr "Jak to widzę, tak"
 
 #: redbot/cogs/general/general.py:54
 msgid "It is certain"
@@ -107,7 +107,11 @@ msgid "Choose between multiple options.\n\n"
 "        Options are separated by spaces.\n\n"
 "        To denote options which include whitespace, you should enclose the options in double quotes.\n"
 "        "
-msgstr ""
+msgstr "Wybierz między wieloma opcjami.\n\n"
+"        Musi być co najmniej 2 opcje do wyboru.\n"
+"        Opcje są oddzielone spacjami.\n\n"
+"        Aby oznaczyć opcje zawierające spację, powinieneś zamknąć opcje w podwójnych cudzysłowach.\n"
+"        "
 
 #: redbot/cogs/general/general.py:96
 msgid "Not enough options to pick from."
@@ -227,11 +231,15 @@ msgid "\n"
 "        `details`: Shows more information when set to `True`.\n"
 "        Default to False.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Pokaż informacje o serwerze.\n\n"
+"        `szczegóły`: Pokazuje więcej informacji po ustawieniu na `True`.\n"
+"        Domyślnie na Fałsz.\n"
+"        "
 
 #: redbot/cogs/general/general.py:259
 msgid "Created on {date_and_time}. That's {relative_time}!"
-msgstr ""
+msgstr "Utworzono {date_and_time}. To {relative_time}!"
 
 #: redbot/cogs/general/general.py:273
 msgid "Users online"
@@ -239,7 +247,7 @@ msgstr "Użytkowników online"
 
 #: redbot/cogs/general/general.py:274
 msgid "Not available"
-msgstr ""
+msgstr "Niedostępne"
 
 #: redbot/cogs/general/general.py:276
 msgid "Text Channels"
@@ -301,190 +309,114 @@ msgstr "3 - Wysoki"
 
 #: redbot/cogs/general/general.py:352
 msgid "4 - Highest"
-msgstr ""
+msgstr "4 - Najwyższy"
 
-#: redbot/cogs/general/general.py:356
-msgid "Animated Icon"
-msgstr ""
-
-#: redbot/cogs/general/general.py:357
-msgid "Animated Banner"
-msgstr ""
-
-#: redbot/cogs/general/general.py:358
-msgid "Banner"
-msgstr ""
-
-#: redbot/cogs/general/general.py:359
-msgid "Commerce"
-msgstr ""
-
-#: redbot/cogs/general/general.py:360
-msgid "Community"
-msgstr ""
-
-#: redbot/cogs/general/general.py:361
-msgid "Discoverable"
-msgstr ""
-
-#: redbot/cogs/general/general.py:362
-msgid "Featurable"
-msgstr ""
-
-#: redbot/cogs/general/general.py:363
-msgid "Splash Invite"
-msgstr ""
-
-#: redbot/cogs/general/general.py:364
-msgid "Membership Screening enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:365
-msgid "Monetization Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:366
-msgid "More Stickers"
-msgstr ""
-
-#: redbot/cogs/general/general.py:367
-msgid "News"
-msgstr ""
-
-#: redbot/cogs/general/general.py:368
-msgid "Partnered"
-msgstr "Partnerzy"
-
-#: redbot/cogs/general/general.py:369
-msgid "Preview Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:370
-msgid "Private Threads"
-msgstr ""
-
-#: redbot/cogs/general/general.py:371
-msgid "Role Icon"
-msgstr ""
-
-#: redbot/cogs/general/general.py:372
-msgid "Seven Day Thread Archive"
-msgstr ""
-
-#: redbot/cogs/general/general.py:373
-msgid "Three Day Thread Archive"
-msgstr ""
-
-#: redbot/cogs/general/general.py:374
-msgid "Ticketed Events Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:375
-msgid "Verified"
-msgstr "Zweryfikowany"
-
-#: redbot/cogs/general/general.py:376
-msgid "Vanity URL"
-msgstr ""
+#: redbot/cogs/general/general.py:355
+msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
+msgstr "{bot_name} dołączył do tego serwera {bot_join}. Jest to ponad {since_join} dni temu!"
 
 #: redbot/cogs/general/general.py:377
-msgid "VIP Regions"
-msgstr ""
-
-#: redbot/cogs/general/general.py:378
-msgid "Welcome Screen Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:386
-msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
-msgstr ""
-
-#: redbot/cogs/general/general.py:408
 msgid "Members:"
-msgstr ""
+msgstr "Członkowie:"
 
-#: redbot/cogs/general/general.py:410
+#: redbot/cogs/general/general.py:379
 msgid "Channels:"
-msgstr ""
+msgstr "Kanały:"
 
-#: redbot/cogs/general/general.py:411
+#: redbot/cogs/general/general.py:380
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}\n"
 "🎙 Stage: {stage}"
-msgstr ""
+msgstr "💬 Tekstowy: {text}\n"
+"🔊 Głosowe: {voice}\n"
+"🎙 Stage: {stage}"
 
-#: redbot/cogs/general/general.py:422
+#: redbot/cogs/general/general.py:391
 msgid "Utility:"
-msgstr ""
+msgstr "Użyteczne:"
 
-#: redbot/cogs/general/general.py:423
+#: redbot/cogs/general/general.py:392
 msgid "Owner: {owner}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
-msgstr ""
+msgstr "Właściciel: {owner}\n"
+"Poziom weryfikatora: {verif}\n"
+"ID serwera: {id}{shard_info}"
 
-#: redbot/cogs/general/general.py:434
+#: redbot/cogs/general/general.py:403
 msgid "Misc:"
-msgstr ""
+msgstr "Różne:"
 
-#: redbot/cogs/general/general.py:435
+#: redbot/cogs/general/general.py:404
 msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
 "Roles: {role_count}"
-msgstr ""
+msgstr "Kanał AFK: {afk_chan}\n"
+"limit czasu AFK: {afk_timeout}\n"
+"Własne emotikony: {emoji_count}\n"
+"Role: {role_count}"
 
-#: redbot/cogs/general/general.py:440
+#: redbot/cogs/general/general.py:409
 msgid "Not set"
-msgstr ""
+msgstr "Nie ustawiono"
 
-#: redbot/cogs/general/general.py:448
+#: redbot/cogs/general/general.py:442
 msgid "Server features:"
-msgstr ""
+msgstr "Funkcje serwera:"
 
-#: redbot/cogs/general/general.py:450
+#: redbot/cogs/general/general.py:449
 msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
 "VCs max bitrate: {bitrate}"
-msgstr ""
+msgstr "Poziom {boostlevel} z {nitroboosters} boostami\n"
+"Limit rozmiaru pliku: {filelimit}\n"
+"Limit emotikon: {emojis_limit}\n"
+"Maksymalna szybkość transmisji bitów na vc: {bitrate}"
 
-#: redbot/cogs/general/general.py:462
+#: redbot/cogs/general/general.py:461
 msgid "Nitro Boost:"
-msgstr ""
+msgstr "Nitro Boost:"
 
-#: redbot/cogs/general/general.py:471
+#: redbot/cogs/general/general.py:470
 #, docstring
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
 "        "
-msgstr ""
+msgstr "Przeszukaj słownik miejski.\n\n"
+"        To używa nieoficjalnego API słownika miejskiego.\n"
+"        "
 
-#: redbot/cogs/general/general.py:489 redbot/cogs/general/general.py:560
+#: redbot/cogs/general/general.py:488 redbot/cogs/general/general.py:559
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
-msgstr ""
+msgstr "Nie znaleziono wpisów do słownika miejskiego lub wystąpił błąd w tym procesie."
 
-#: redbot/cogs/general/general.py:495
+#: redbot/cogs/general/general.py:494
 msgid "No Urban Dictionary entries were found."
-msgstr ""
+msgstr "Nie znaleziono wpisów w słowniku miejskim."
 
-#: redbot/cogs/general/general.py:501
+#: redbot/cogs/general/general.py:500
 msgid "{word} by {author}"
-msgstr ""
+msgstr "{word} przez {author}"
 
-#: redbot/cogs/general/general.py:509 redbot/cogs/general/general.py:543
+#: redbot/cogs/general/general.py:508 redbot/cogs/general/general.py:542
 msgid "{definition}\n\n"
 "**Example:** {example}"
-msgstr ""
+msgstr "{definition}\n\n"
+"**Przykład:** {example}"
 
-#: redbot/cogs/general/general.py:515
+#: redbot/cogs/general/general.py:514
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "{thumbs_down} w dół / {thumbs_up} w górę, napędzane przez słownik miejski."
 
-#: redbot/cogs/general/general.py:533
+#: redbot/cogs/general/general.py:532
 msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"
 "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "<{permalink}>\n"
+" {word} przez {author}\n\n"
+"{description}\n\n"
+"{thumbs_down} Dół / {thumbs_up} Up, napędzany przez słownik miejski."
 

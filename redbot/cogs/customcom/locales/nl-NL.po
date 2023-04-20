@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:21+0000\n"
+"POT-Creation-Date: 2022-12-30 02:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,8 @@ msgstr ""
 #: redbot/cogs/customcom/customcom.py:80
 msgid "Welcome to the interactive random {cc} maker!\n"
 "Every message you send will be added as one of the random responses to choose from once this {cc} is triggered. To exit this interactive menu, type `{quit}`"
-msgstr ""
+msgstr "Welkom bij de interactieve willekeurige {cc} maker!\n"
+"Elk bericht dat u verzendt zal worden toegevoegd als een van de willekeurige antwoorden die u kunt kiezen zodra dit {cc} wordt geactiveerd. Om dit interactieve menu te verlaten, typ `{quit}`"
 
 #: redbot/cogs/customcom/customcom.py:91
 msgid "Add a random response:"
@@ -27,24 +28,25 @@ msgstr "Voer een willekeurig antwoord in:"
 #: redbot/cogs/customcom/customcom.py:98
 msgid "The text response you're trying to create has more than 2000 characters.\n"
 "I cannot send messages that are longer than 2000 characters, please try again."
-msgstr ""
+msgstr "Het tekstantwoord dat u probeert te maken heeft meer dan 2000 tekens.\n"
+"Ik kan geen berichten verzenden die langer zijn dan 2000 tekens, probeer het opnieuw."
 
 #: redbot/cogs/customcom/customcom.py:111
 msgid "Random responses must take the same arguments!"
-msgstr ""
+msgstr "Willekeurige antwoorden moeten dezelfde argumenten aanvoeren!"
 
 #: redbot/cogs/customcom/customcom.py:183
 msgid "Do you want to create a 'randomized' custom command?"
-msgstr ""
+msgstr "Wilt u een aangepaste opdracht 'willekeurig' maken?"
 
 #: redbot/cogs/customcom/customcom.py:189
 #: redbot/cogs/customcom/customcom.py:200
 msgid "Response timed out, please try again later."
-msgstr ""
+msgstr "Er is een time-out, probeer het later opnieuw."
 
 #: redbot/cogs/customcom/customcom.py:194
 msgid "What response do you want?"
-msgstr ""
+msgstr "Welk antwoord wilt u?"
 
 #: redbot/cogs/customcom/customcom.py:236
 #, docstring
@@ -53,12 +55,16 @@ msgid "This cog contains commands for creating and managing custom commands that
 "    Custom commands can be used by anyone by default, so be careful with pings.\n"
 "    Commands can only be lowercase, and will not respond to any uppercase letters.\n"
 "    "
-msgstr ""
+msgstr "Deze cog bevat commando's voor het maken en beheren van aangepaste commando's die tekst weergeven.\n\n"
+"    Dit zijn handig voor het opslaan van informatie die leden nodig kunnen hebben, zoals FAQ antwoorden of uitnodigingslinks.\n"
+"    Aangepaste commando's kunnen standaard door iedereen worden gebruikt, dus wees voorzichtig met pings.\n"
+"    Opdrachten kunnen alleen kleine letters zijn en zullen niet reageren op hoofdletters.\n"
+"    "
 
 #: redbot/cogs/customcom/customcom.py:266
 #, docstring
 msgid "Base command for Custom Commands management."
-msgstr ""
+msgstr "Basis commando voor aangepast commandobeheer."
 
 #: redbot/cogs/customcom/customcom.py:271
 #, docstring
@@ -66,22 +72,26 @@ msgid "Get the raw response of a custom command, to get the proper markdown.\n\n
 "        This is helpful for copy and pasting.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The custom command to get the raw response of."
-msgstr ""
+msgstr "Krijg de ruwe reactie van een aangepast commando, om de juiste markdown te krijgen.\n\n"
+"        Dit is handig om te kopiëren en plakken.\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` Het custom commando om de ruwe reactie van te krijgen."
 
 #: redbot/cogs/customcom/customcom.py:296
 msgid "Response #{num}/{total}"
-msgstr ""
+msgstr "Antwoord #{num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:306
 msgid "Response #{num}/{total}:\n"
 "{raw}"
-msgstr ""
+msgstr "Antwoord #{num}/{total}:\n"
+"{raw}"
 
 #: redbot/cogs/customcom/customcom.py:317
 #, docstring
 msgid "\n"
 "        Searches through custom commands, according to the query.\n\n"
-"        Uses fuzzywuzzy searching to find close matches.\n\n"
+"        Uses fuzzy searching to find close matches.\n\n"
 "        **Arguments:**\n\n"
 "        - `<query>` The query to search for. Can be multiple words.\n"
 "        "
@@ -89,11 +99,11 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:337
 msgid "No close matches were found."
-msgstr ""
+msgstr "Er zijn geen overeenkomsten gevonden."
 
 #: redbot/cogs/customcom/customcom.py:342
 msgid "Search results"
-msgstr ""
+msgstr "Zoek resultaten"
 
 #: redbot/cogs/customcom/customcom.py:347
 msgid "The following matches have been found:"
@@ -171,8 +181,8 @@ msgid "Set, edit, or view the cooldown for a custom command.\n\n"
 "            - `[p]cc cooldown mycommand 30 guild`\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The custom command to check or set the cooldown.\n"
-"        - `<cooldown>` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.\n"
-"        - `<per>` The group to apply the cooldown on. Defaults to per member. Valid choices are server, guild, user, and member.\n"
+"        - `[cooldown]` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.\n"
+"        - `[per]` The group to apply the cooldown on. Defaults to per member. Valid choices are server / guild, user / member, and channel.\n"
 "        "
 msgstr ""
 

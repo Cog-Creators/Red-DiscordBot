@@ -18,13 +18,13 @@ msgstr ""
 #: redbot/cogs/audio/apis/interface.py:270
 #: redbot/cogs/audio/apis/interface.py:600
 msgid "Failing to get tracks, skipping remaining."
-msgstr "Gagal mendapatkan trek, melewatkan sisa."
+msgstr "Gagal untuk mendapatkan trek, melewati sisa."
 
 #: redbot/cogs/audio/apis/interface.py:303
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr "Kunci Spotify API atau rahasia klien belum disetel dengan benar.\n"
+msgstr "Spotify API key atau client secret belum disetel dengan benar.\n"
 "Gunakan `{prefix} audioset spotifyapi` untuk mendapatkan petunjuk."
 
 #: redbot/cogs/audio/apis/interface.py:345

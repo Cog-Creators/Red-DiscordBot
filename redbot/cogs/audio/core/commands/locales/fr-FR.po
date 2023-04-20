@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-16 19:29+0000\n"
+"POT-Creation-Date: 2023-02-12 21:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -371,7 +371,7 @@ msgstr "Paramètre modifié"
 #, docstring
 msgid "Set a playlist to auto-play songs from.\n\n"
 "        **Usage**:\n"
-"        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\n\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay playlist playlist_name_OR_id [args]`\n\n"
 "        **Args**:\n"
 "        ​ ​ ​ ​ The following are all optional:\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
@@ -389,19 +389,19 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ Guild ID\n"
 "        ​ ​ ​ ​ Exact guild name\n\n"
 "        Example use:\n"
-"        ​ ​ ​ ​ `[p]audioset autoplay MyGuildPlaylist`\n"
-"        ​ ​ ​ ​ `[p]audioset autoplay MyGlobalPlaylist --scope Global`\n"
-"        ​ ​ ​ ​ `[p]audioset autoplay PersonalPlaylist --scope User --author Draper`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay playlist MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay playlist MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]audioset autoplay playlist PersonalPlaylist --scope User --author Draper`\n"
 "        "
 msgstr "Définissez une liste de lecture pour la lecture automatique des chansons.\n\n"
 "        **Utilisation**:\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay playlist_name_OR_id [args]`\n\n"
 "        **Arguments**:\n"
-"        ​ ​ ​ ​ Les éléments suivants sont tous facultatifs:\n"
+"        ​ ​ ​ ​ Les éléments suivants sont tous facultatifs :\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Seul le propriétaire du bot peut l'utiliser**\n\n"
-"        **Portée**, la portée, est l'un des éléments suivants:\n"
+"        **Portée**, la portée, est l'un des éléments suivants :\n"
 "            ​Global\n"
 "        ​ ​ ​ ​ Guild\n"
 "        ​ ​ ​ ​ User\n\n"
@@ -972,7 +972,7 @@ msgid "External server:        [{use_external_lavalink}]\n"
 msgstr "Serveur externe : [{use_external_lavalink}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1123
-msgid "Lavalink build:         [{llbuild}]\n"
+msgid "Lavalink version:       [{llversion}]\n"
 "Lavalink branch:        [{llbranch}]\n"
 "Release date:           [{build_time}]\n"
 "Lavaplayer version:     [{lavaplayer}]\n"
@@ -980,7 +980,14 @@ msgid "Lavalink build:         [{llbuild}]\n"
 "Java Executable:        [{jv_exec}]\n"
 "Initial Heapsize:       [{xms}]\n"
 "Max Heapsize:           [{xmx}]\n"
-msgstr ""
+msgstr "Version de Lavalink : [{llversion}]\n"
+"Branche Lavalink : [{llbranch}]\n"
+"Date de sortie : [{build_time}]\n"
+"Version Lavaplayer : [{lavaplayer}]\n"
+"Version Java : [{jvm}]\n"
+"Exécutable Java : [{jv_exec}]\n"
+"Taille initiale de la pile : [{xms}]\n"
+"Taille maximale de la pile : [{xmx}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1143
 msgid "Localtracks path:       [{localpath}]\n"
@@ -1867,7 +1874,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:37
 #, docstring
 msgid "`Dangerous commands` Manage Lavalink node configuration settings.\n\n"
-"        This command block holds all commands to manage an external or managed Lavalink node.\n\n"
+"        This command block holds all commands to configure an unmanaged (user maintained) or managed (bot maintained) Lavalink node.\n\n"
 "        You should not mess with any command in here unless you have a valid reason to,\n"
 "        i.e. been told by someone in the Red-Discord Bot support server to do so.\n"
 "        All the commands in here have the potential to break the Audio cog.\n"
@@ -1878,7 +1885,7 @@ msgstr ""
 #, docstring
 msgid "Change your Java executable path.\n\n"
 "        This command shouldn't need to be used most of the time, and is only useful if the host machine has conflicting Java versions.\n\n"
-"        If changing this make sure that the java you set is supported by Audio.\n"
+"        If changing this make sure that the Java executable you set is supported by Audio.\n"
 "        The current supported version is Java 11.\n\n"
 "        Enter nothing or \"java\" to reset it back to default.\n"
 "        "
@@ -1936,15 +1943,15 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:157
 #, docstring
-msgid "Toggle using external Lavalink nodes - requires an existing external Lavalink node for Audio to work, if enabled.\n\n"
-"        This command disables the managed Lavalink server, if you do not have an external Lavalink node you will be unable to use Audio while this is enabled.\n"
+msgid "Toggle using external (unmanaged) Lavalink nodes - requires an existing Lavalink node for Audio to work, if enabled.\n\n"
+"        This command disables the managed Lavalink server. If you do not have another Lavalink node set up, you will be unable to use Audio while this is enabled.\n"
 "        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:167
 #: redbot/cogs/audio/core/commands/llset.py:176
-msgid "External Lavalink server: {true_or_false}."
-msgstr "Serveur Lavalink externe : {true_or_false}."
+msgid "Unmanaged Lavalink server: {true_or_false}."
+msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:186
 msgid "Failed To Shutdown Lavalink"
@@ -1953,29 +1960,29 @@ msgstr "Échec de l'arrêt de Lavalink"
 #: redbot/cogs/audio/core/commands/llset.py:197
 #, docstring
 msgid "Set the Lavalink node host.\n\n"
-"        This command sets the connection host which Audio will use to connect to an external Lavalink node.\n"
+"        This command sets the connection host which Audio will use to connect to an unmanaged Lavalink node.\n"
 "        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:205
-msgid "External Lavalink node host set to {host}. Run `{p}{cmd}` for it to take effect."
+msgid "Unmanaged Lavalink node host set to {host}. Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:218
 #, docstring
 msgid "Set the Lavalink node password.\n\n"
-"        This command sets the connection password which Audio will use to connect to an external Lavalink node.\n"
+"        This command sets the connection password which Audio will use to connect to an unmanaged Lavalink node.\n"
 "        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:227
-msgid "External Lavalink node password set to {password}. Run `{p}{cmd}` for it to take effect."
+msgid "Unmanaged Lavalink node password set to {password}. Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:242
 #, docstring
 msgid "Set the Lavalink node port.\n\n"
-"        This command sets the connection port which Audio will use to connect to an external Lavalink node.\n"
+"        This command sets the connection port which Audio will use to connect to an unmanaged Lavalink node.\n"
 "        "
 msgstr ""
 
@@ -1991,23 +1998,23 @@ msgid "A port must be between 0 and 65535 "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:256
-msgid "External Lavalink node port set to {port}. Run `{p}{cmd}` for it to take effect."
+msgid "Unmanaged Lavalink node port set to {port}. Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:269
 #, docstring
 msgid "Set the Lavalink node connection to secured.\n\n"
-"        This command sets the connection type to secured when connecting to an external Lavalink node.\n"
+"        This toggle sets the connection type to secured or unsecured when connecting to an unmanaged Lavalink node.\n"
 "        "
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:280
-msgid "Managed Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
+msgid "Unmanaged Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:293
-msgid "Managed Lavalink node will no longer connect using the secured {secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
+msgid "Unmanaged Lavalink node will no longer connect using the secured {secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
@@ -2129,7 +2136,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:458
 #, docstring
 msgid "Toggle HTTP direct URL usage on or off.\n\n"
-"        This source is used to allow playback from direct http streams (This does not affect direct url playback for the other sources)\n"
+"        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).\n"
 "        "
 msgstr ""
 
@@ -2180,7 +2187,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:539
 #, docstring
 msgid "Toggle Soundcloud source on or off.\n\n"
-"        This toggle controls the playback of all Soundcloud related content.\n"
+"        This toggle controls the playback of all SoundCloud related content.\n"
 "        "
 msgstr ""
 
@@ -2264,7 +2271,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:683
 #, docstring
-msgid "`Dangerous command`  Set the managed Lavalink node NAS buffer size.\n\n"
+msgid "`Dangerous command`  Set the managed Lavalink node JDA-NAS buffer size.\n\n"
 "        Only change this if you have been directly advised to, changing it can cause significant playback issues.\n"
 "        "
 msgstr ""
@@ -2639,7 +2646,7 @@ msgid "Playlist configuration options.\n\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.\n"
 "        ​ ​ ​ ​ **User**:\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\n"
-"        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and the playlist creator.\n"
 "        "
 msgstr ""
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:21+0000\n"
+"POT-Creation-Date: 2022-10-03 14:07+0000\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian Bokmal\n"
 "MIME-Version: 1.0\n"
@@ -187,69 +187,49 @@ msgstr "Det er ingen gjeldende ordoppsett som skal filtreres i denne kanalen."
 msgid "Filtered in this channel:"
 msgstr "Filtrert i denne kanalen:"
 
-#: redbot/cogs/filter/filter.py:255
+#: redbot/cogs/filter/filter.py:260
 #, docstring
 msgid "Add words to the filter.\n\n"
 "        Use double quotes to add sentences.\n\n"
 "        Examples:\n"
-"            - `[p]filter channel add word1 word2 word3`\n"
-"            - `[p]filter channel add \"This is a sentence\"`\n\n"
+"            - `[p]filter channel add #channel word1 word2 word3`\n"
+"            - `[p]filter channel add #channel \"This is a sentence\"`\n\n"
 "        **Arguments:**\n\n"
+"        - `<channel>` The text, voice, or forum channel to add filtered words to.\n"
 "        - `[words...]` The words or sentences to filter.\n"
 "        "
-msgstr "Legg til ord i filteret.\n\n"
-"        Bruk doble tilbud for å legge til setninger.\n\n"
-"        Eksempler:\n"
-"            - `[p]filter channel add  ord1 ord2 ord3`\n"
-"            - `[p]filter channel add \"Dette er en setning\"`\n\n"
-"        **Argumenter:**\n\n"
-"        - `[words...]` Ord eller setninger til filter.\n"
-"        "
-
-#: redbot/cogs/filter/filter.py:270
-msgid "Threads can't have a filter list set up. If you want to add words to the list of the parent channel, send the command in that channel."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:279
+#: redbot/cogs/filter/filter.py:276
 msgid "Words added to filter."
 msgstr "Ord som er lagt til filteret."
 
-#: redbot/cogs/filter/filter.py:281
+#: redbot/cogs/filter/filter.py:278
 msgid "Words already in the filter."
 msgstr "Ord er allerede i filteret."
 
-#: redbot/cogs/filter/filter.py:285
+#: redbot/cogs/filter/filter.py:287
 #, docstring
 msgid "Remove words from the filter.\n\n"
 "        Use double quotes to remove sentences.\n\n"
 "        Examples:\n"
-"            - `[p]filter channel remove word1 word2 word3`\n"
-"            - `[p]filter channel remove \"This is a sentence\"`\n\n"
+"            - `[p]filter channel remove #channel word1 word2 word3`\n"
+"            - `[p]filter channel remove #channel \"This is a sentence\"`\n\n"
 "        **Arguments:**\n\n"
+"        - `<channel>` The text, voice, or forum channel to add filtered words to.\n"
 "        - `[words...]` The words or sentences to no longer filter.\n"
 "        "
-msgstr "Fjern ord fra filteret.\n\n"
-"        Bruk doble tilbud for å fjerne setninger.\n\n"
-"        Eksempler:\n"
-"            - `[p]filter channel remove ord1 ord2 ord3`\n"
-"            - `[p]filter channel remove \"Dette er en setning\"`\n\n"
-"        **Argumenter:**\n\n"
-"        - `[words...]` Ord eller setninger som ikke skal filtreres lenger.\n"
-"        "
-
-#: redbot/cogs/filter/filter.py:300
-msgid "Threads can't have a filter list set up. If you want to remove words from the list of the parent channel, send the command in that channel."
 msgstr ""
 
-#: redbot/cogs/filter/filter.py:308
+#: redbot/cogs/filter/filter.py:302
 msgid "Words removed from filter."
 msgstr "Ord fjernet fra filteret."
 
-#: redbot/cogs/filter/filter.py:311 redbot/cogs/filter/filter.py:355
+#: redbot/cogs/filter/filter.py:305 redbot/cogs/filter/filter.py:349
 msgid "Those words weren't in the filter."
 msgstr "Disse ordene var ikke i filteret."
 
-#: redbot/cogs/filter/filter.py:315
+#: redbot/cogs/filter/filter.py:309
 #, docstring
 msgid "Add words to the filter.\n\n"
 "        Use double quotes to add sentences.\n\n"
@@ -268,15 +248,15 @@ msgstr "Legg til ord i filteret.\n\n"
 "        - `[words...]` Ordene eller setningene å filtrere.\n"
 "        "
 
-#: redbot/cogs/filter/filter.py:331
+#: redbot/cogs/filter/filter.py:325
 msgid "Words successfully added to filter."
 msgstr "Ord lagt til filteret."
 
-#: redbot/cogs/filter/filter.py:333
+#: redbot/cogs/filter/filter.py:327
 msgid "Those words were already in the filter."
 msgstr "Disse ordene var allerede i filteret."
 
-#: redbot/cogs/filter/filter.py:337
+#: redbot/cogs/filter/filter.py:331
 #, docstring
 msgid "Remove words from the filter.\n\n"
 "        Use double quotes to remove sentences.\n\n"
@@ -295,11 +275,11 @@ msgstr "Fjern ord fra filteret.\n\n"
 "        - `[words...]` Ordene eller setningene til ikke å filtrere mer.\n"
 "        "
 
-#: redbot/cogs/filter/filter.py:353
+#: redbot/cogs/filter/filter.py:347
 msgid "Words successfully removed from filter."
 msgstr "Ord fjernet fra filter."
 
-#: redbot/cogs/filter/filter.py:359
+#: redbot/cogs/filter/filter.py:353
 #, docstring
 msgid "Toggle name and nickname filtering.\n\n"
 "        This is disabled by default.\n"
@@ -308,31 +288,31 @@ msgstr "Veksle navn og filter for kallenavn.\n\n"
 "        Dette er deaktivert som standard.\n"
 "        "
 
-#: redbot/cogs/filter/filter.py:369
+#: redbot/cogs/filter/filter.py:363
 msgid "Names and nicknames will no longer be filtered."
 msgstr "Navn og kallenavn vil ikke lenger bli filtrert."
 
-#: redbot/cogs/filter/filter.py:371
+#: redbot/cogs/filter/filter.py:365
 msgid "Names and nicknames will now be filtered."
 msgstr "Navn og kallenavn vil nå bli filtrert."
 
-#: redbot/cogs/filter/filter.py:497
+#: redbot/cogs/filter/filter.py:505
 msgid "Filtered words used: {words}"
 msgstr "Filtrerte ord som brukes: {words}"
 
-#: redbot/cogs/filter/filter.py:499
+#: redbot/cogs/filter/filter.py:507
 msgid "Filtered word used: {word}"
 msgstr "Filtrert ord brukt: {word}"
 
-#: redbot/cogs/filter/filter.py:513
+#: redbot/cogs/filter/filter.py:521
 msgid "Autoban (too many filtered messages.)"
 msgstr "Autoban (for mange filtrerte meldinger.)"
 
-#: redbot/cogs/filter/filter.py:583
+#: redbot/cogs/filter/filter.py:591
 msgid "Filtered nickname"
 msgstr "Filtrert kallenavn"
 
-#: redbot/cogs/filter/filter.py:583
+#: redbot/cogs/filter/filter.py:591
 msgid "Filtered name"
 msgstr "Filtrert navn"
 
