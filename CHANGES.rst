@@ -50,7 +50,7 @@ Fixes
 
 - Fixed various typos across Red's codebase (:issue:`5867`, :issue:`5888`, :issue:`5977`, :issue:`5989`)
 - **Core** - Resolved an edge case in the PostgreSQL driver that made it fail to clear an entire Config scope when it had no data (:issue:`5855`)
-- **Cogs - Admin** - Added ``reason`` argument to ``[p]addrole`` and ``[p]removerole`` commands (:issue:`5927`)
+- **Cogs - Admin** - ``[p]addrole`` and ``[p]removerole`` commands will now add an audit log reason to when applying/removing roles (:issue:`5927`)
 - |cool| **Cogs - Audio** - Fixed Twitch playback (:issue:`6033`)
 - |cool| **Cogs - Audio** - Fixed plain word search queries (:issue:`6033`)
 - **Cogs - Audio** - Prevented formatting from being escaped on Playlist Enqueued message (:issue:`6025`)
