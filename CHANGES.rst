@@ -31,7 +31,7 @@ Changes
 - **Core - Bot Commands** - Updated ``[p]info`` command to link to the full contributor list instead of linking to the org (:issue:`6079`)
 - **Core - Bot Commands** - Updated ``[p]invite`` command to warn the user if the bot is serverlocked (:issue:`5898`)
 - **Core - Bot Commands** - ``[p]dm`` command now uses the bot's configured embed color (:issue:`5868`)
-- |cool| **Cogs - Admin** - ``[p]selfrole`` and its ``add`` and ``remove`` subcommands now no longer require the letter casing to match role's name (:issue:`3853`, :issue:`3865`)
+- |cool| **Cogs - Admin** - Role names are no longer case sensitive in ``[p]selfrole`` and its ``add`` and ``remove`` subcommands (:issue:`3853`, :issue:`3865`)
 - **Cogs - Audio** - Updated enqueued track message to show track's album or playlist if present (:issue:`5569`)
 - **Cogs - Downloader** - Updated ``[p]findcog`` command to show both the cog and cog package name (:issue:`5443`, :issue:`5772`)
 - **Cogs - General** - Changed ``[p]serverinfo`` command to not require an update whenever a new server feature is added (:issue:`5830`, :issue:`5919`)
