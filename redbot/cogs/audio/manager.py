@@ -47,9 +47,6 @@ if TYPE_CHECKING:
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = getLogger("red.Audio.manager")
-LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
-LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 
@@ -271,6 +268,18 @@ class ServerManager:
         self._pipe_task = None
 
     @property
+    def lavalink_download_dir(self) -> pathlib.Path:
+        return data_manager.cog_data_path(raw_name="Audio")
+
+    @property
+    def lavalink_jar_file(self) -> pathlib.Path:
+        return self.lavalink_download_dir / "Lavalink.jar"
+
+    @property
+    def lavalink_app_yml(self) -> pathlib.Path:
+        return self.lavalink_download_dir / "application.yml"
+
+    @property
     def path(self) -> Optional[str]:
         return self._java_exc
 
@@ -335,7 +344,7 @@ class ServerManager:
             self._proc = (
                 await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
                     *args,
-                    cwd=str(LAVALINK_DOWNLOAD_DIR),
+                    cwd=str(self.lavalink_download_dir),
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.STDOUT,
                 )
@@ -356,7 +365,7 @@ class ServerManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
-        with open(LAVALINK_APP_YML, "w") as f:
+        with open(self.lavalink_app_yml, "w") as f:
             yaml.safe_dump(data, f)
 
     async def _get_jar_args(self) -> Tuple[List[str], Optional[str]]:
@@ -398,7 +407,7 @@ class ServerManager:
                 "please fix this by setting the correct value with '[p]llset heapsize'.",
             )
 
-        command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
+        command_args.extend(["-jar", str(self.lavalink_jar_file)])
         self._args = command_args
         return command_args, invalid
 
@@ -528,7 +537,7 @@ class ServerManager:
                     finally:
                         file.close()
 
-                shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
+                shutil.move(path, str(self.lavalink_jar_file), copy_function=shutil.copyfile)
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         await self._is_up_to_date()
@@ -541,7 +550,7 @@ class ServerManager:
         args.append("--version")
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
-            cwd=str(LAVALINK_DOWNLOAD_DIR),
+            cwd=str(self.lavalink_download_dir),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )
@@ -588,7 +597,7 @@ class ServerManager:
         return self._up_to_date
 
     async def maybe_download_jar(self):
-        if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
+        if not (self.lavalink_jar_file.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: Optional[float] = None):
