@@ -10,6 +10,7 @@ import shlex
 import shutil
 import tempfile
 from typing import ClassVar, Final, List, Optional, Pattern, Tuple, Union, TYPE_CHECKING
+from typing_extensions import Self
 
 import aiohttp
 import lavalink
@@ -137,6 +138,19 @@ class LavalinkOldVersion:
     def __str__(self) -> None:
         return f"{self.raw_version}_{self.build_number}"
 
+    @classmethod
+    def from_version_output(cls, output: bytes) -> Self:
+        build_match = LAVALINK_BUILD_LINE.search(output)
+        if build_match is None:
+            raise ValueError("Could not find Build line in the given `--version` output.")
+        version_match = LAVALINK_VERSION_LINE_PRE35.search(output)
+        if version_match is None:
+            raise ValueError("Could not find Version line in the given `--version` output.")
+        return cls(
+            raw_version=version_match["version"].decode(),
+            build_number=int(build_match["build"]),
+        )
+
     def __eq__(self, other: object) -> bool:
         if isinstance(other, LavalinkOldVersion):
             return self.build_number == other.build_number
@@ -196,6 +210,19 @@ class LavalinkVersion:
         if self.red:
             version += f"_red{self.red}"
         return version
+
+    @classmethod
+    def from_version_output(cls, output: bytes) -> Self:
+        match = LAVALINK_VERSION_LINE.search(output)
+        if match is None:
+            raise ValueError("Could not find Version line in the given `--version` output.")
+        return LavalinkVersion(
+            major=int(match["major"]),
+            minor=int(match["minor"]),
+            patch=int(match["patch"] or 0),
+            rc=int(match["rc"]) if match["rc"] is not None else None,
+            red=int(match["red"] or 0),
+        )
 
     def _get_comparison_tuple(self) -> Tuple[int, int, int, bool, int, int]:
         return self.major, self.minor, self.patch, self.rc is None, self.rc or 0, self.red
@@ -569,24 +596,17 @@ class ServerManager:
             return False
 
         if (build := LAVALINK_BUILD_LINE.search(stdout)) is not None:
-            if (version := LAVALINK_VERSION_LINE_PRE35.search(stdout)) is None:
+            try:
+                self._lavalink_version = LavalinkOldVersion.from_version_output(stdout)
+            except ValueError:
                 # Output is unexpected, suspect corrupted jarfile
                 return False
-            self._lavalink_version = LavalinkOldVersion(
-                raw_version=version["version"].decode(),
-                build_number=int(build["build"]),
-            )
-        elif (version := LAVALINK_VERSION_LINE.search(stdout)) is not None:
-            self._lavalink_version = LavalinkVersion(
-                major=int(version["major"]),
-                minor=int(version["minor"]),
-                patch=int(version["patch"] or 0),
-                rc=int(version["rc"]) if version["rc"] is not None else None,
-                red=int(version["red"] or 0),
-            )
         else:
-            # Output is unexpected, suspect corrupted jarfile
-            return False
+            try:
+                self._lavalink_version = LavalinkVersion.from_version_output(stdout)
+            except ValueError:
+                # Output is unexpected, suspect corrupted jarfile
+                return False
         date = buildtime["build_time"].decode()
         date = date.replace(".", "/")
         self._lavalink_branch = branch["branch"].decode()
