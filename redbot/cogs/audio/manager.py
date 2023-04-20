@@ -109,6 +109,9 @@ LAVALINK_VERSION_LINE_PRE35: Final[Pattern] = re.compile(
     rb"^Version:\s+(?P<version>\S+)$", re.MULTILINE | re.VERBOSE
 )
 # used for LL 3.5-rc4 and newer
+# This regex is limited to the realistic usage in the LL version number,
+# not everything that could be a part of it according to the spec.
+# We can easily release an update to this regex in the future if it ever becomes necessary.
 LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
     rb"""
     ^
@@ -117,9 +120,11 @@ LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
         (?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)
         # Before LL 3.6, when patch version == 0, it was stripped from the version string
         (?:\.(?P<patch>0|[1-9]\d*))?
-        (?:-rc(?P<rc>0|[1-9]\d*))?
-        # only used by our downstream Lavalink if we need to make a release before upstream
-        (?:_red(?P<red>[1-9]\d*))?
+        # Before LL 3.6, the dot in rc.N was optional
+        (?:-rc\.?(?P<rc>0|[1-9]\d*))?
+        # additional build metadata, can be used by our downstream Lavalink
+        # if we need to alter an upstream release
+        (?:\+red\.(?P<red>[1-9]\d*))?
     )
     $
     """,
