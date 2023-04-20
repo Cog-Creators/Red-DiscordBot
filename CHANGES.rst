@@ -32,6 +32,7 @@ Changes
 - **Core - Bot Commands** - Updated ``[p]invite`` command to warn the user if the bot is serverlocked (:issue:`5898`)
 - **Core - Bot Commands** - ``[p]dm`` command now uses the bot's configured embed color (:issue:`5868`)
 - |cool| **Cogs - Admin** - Role names are no longer case sensitive in ``[p]selfrole`` and its ``add`` and ``remove`` subcommands (:issue:`3853`, :issue:`3865`)
+- **Cogs - Admin** - ``[p]addrole`` and ``[p]removerole`` commands will now add an audit log reason to when applying/removing roles (:issue:`5927`)
 - **Cogs - Audio** - Updated enqueued track message to show track's album or playlist if present (:issue:`5569`)
 - **Cogs - Downloader** - Updated ``[p]findcog`` command to show both the cog and cog package name (:issue:`5443`, :issue:`5772`)
 - **Cogs - General** - Changed ``[p]serverinfo`` command to not require an update whenever a new server feature is added (:issue:`5830`, :issue:`5919`)
@@ -50,7 +51,6 @@ Fixes
 
 - Fixed various typos across Red's codebase (:issue:`5867`, :issue:`5888`, :issue:`5977`, :issue:`5989`)
 - **Core** - Resolved an edge case in the PostgreSQL driver that made it fail to clear an entire Config scope when it had no data (:issue:`5855`)
-- **Cogs - Admin** - ``[p]addrole`` and ``[p]removerole`` commands will now add an audit log reason to when applying/removing roles (:issue:`5927`)
 - |cool| **Cogs - Audio** - Fixed Twitch playback (:issue:`6033`)
 - |cool| **Cogs - Audio** - Fixed plain word search queries (:issue:`6033`)
 - **Cogs - Audio** - Prevented formatting from being escaped on Playlist Enqueued message (:issue:`6025`)
