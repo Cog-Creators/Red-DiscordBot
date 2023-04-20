@@ -446,7 +446,7 @@ class Admin(commands.Cog):
         """Manage selfroles."""
         pass
 
-    @selfroleset.command(name="add")
+    @selfroleset.command(name="add", require_var_positional=True)
     async def selfroleset_add(self, ctx: commands.Context, *roles: discord.Role):
         """
         Add a role, or a selection of roles, to the list of available selfroles.
@@ -479,7 +479,7 @@ class Admin(commands.Cog):
 
         await ctx.send(message)
 
-    @selfroleset.command(name="remove")
+    @selfroleset.command(name="remove", require_var_positional=True)
     async def selfroleset_remove(self, ctx: commands.Context, *roles: SelfRole):
         """
         Remove a role, or a selection of roles, from the list of available selfroles.
