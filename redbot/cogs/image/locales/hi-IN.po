@@ -18,14 +18,17 @@ msgstr ""
 #: redbot/cogs/image/image.py:15
 #, docstring
 msgid "Image related commands."
-msgstr ""
+msgstr "छवि संबंधित आदेश।"
 
 #: redbot/cogs/image/image.py:44
 #, docstring
 msgid "Retrieve pictures from Imgur.\n\n"
 "        Make sure to set the Client ID using `[p]imgurcreds`.\n"
 "        "
-msgstr ""
+msgstr "Imgur से चित्र प्राप्त करें।\n"
+"      \n"
+"       का उपयोग करके क्लाइंट आईडी सेट करना सुनिश्चित करें `[p]imgurcreds`\n"
+"        "
 
 #: redbot/cogs/image/image.py:52
 #, docstring

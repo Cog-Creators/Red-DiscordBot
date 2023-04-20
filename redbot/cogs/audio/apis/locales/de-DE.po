@@ -49,7 +49,7 @@ msgstr " {bad_tracks} Tracks können nicht zur Warteschlange hinzugefügt werden
 
 #: redbot/cogs/audio/apis/interface.py:673
 msgid "Playlist Enqueued"
-msgstr "Playlist eingereiht"
+msgstr "Wiedergabeliste eingereiht"
 
 #: redbot/cogs/audio/apis/interface.py:674
 msgid "Added {num} tracks to the queue.{maxlength_msg}"

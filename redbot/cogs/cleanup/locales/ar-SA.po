@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:21+0000\n"
+"POT-Creation-Date: 2023-04-17 21:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
@@ -23,30 +23,35 @@ msgid "This cog contains commands used for \"cleaning up\" (deleting) messages.\
 "    Messages older than two weeks cannot be mass deleted.\n"
 "    This is a limitation of the API.\n"
 "    "
-msgstr ""
+msgstr "This cog contains commands used for \"cleaning up\" (deleting) messages.\n\n"
+"    This is designed as a moderator tool and offers many convenient use cases.\n"
+"    All cleanup commands only apply to the channel the command is executed in.\n\n"
+"    Messages older than two weeks cannot be mass deleted.\n"
+"    This is a limitation of the API.\n"
+"    "
 
 #: redbot/cogs/cleanup/cleanup.py:58
 msgid "Are you sure you want to delete {number} messages?"
-msgstr ""
+msgstr "{number}"
 
 #: redbot/cogs/cleanup/cleanup.py:72
 msgid "Cancelled."
 msgstr "تم الإلغاء."
 
-#: redbot/cogs/cleanup/cleanup.py:143
+#: redbot/cogs/cleanup/cleanup.py:147
 msgid "1 message was deleted."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:146
+#: redbot/cogs/cleanup/cleanup.py:150
 msgid "{num} messages were deleted."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:169
+#: redbot/cogs/cleanup/cleanup.py:174
 #, docstring
 msgid "Base command for deleting messages."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:179
+#: redbot/cogs/cleanup/cleanup.py:184
 #, docstring
 msgid "Delete the last X messages matching the specified text in the current channel.\n\n"
 "        Example:\n"
@@ -58,7 +63,7 @@ msgid "Delete the last X messages matching the specified text in the current cha
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:239
+#: redbot/cogs/cleanup/cleanup.py:244
 #, docstring
 msgid "Delete the last X messages from a specified user in the current channel.\n\n"
 "        Examples:\n"
@@ -71,7 +76,7 @@ msgid "Delete the last X messages from a specified user in the current channel.\
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:309
+#: redbot/cogs/cleanup/cleanup.py:314
 #, docstring
 msgid "Delete all messages after a specified message.\n\n"
 "        To get a message id, enable developer mode in Discord's\n"
@@ -84,11 +89,11 @@ msgid "Delete all messages after a specified message.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:330 redbot/cogs/cleanup/cleanup.py:385
+#: redbot/cogs/cleanup/cleanup.py:335 redbot/cogs/cleanup/cleanup.py:390
 msgid "Message not found."
 msgstr "الرسالة غير موجودة."
 
-#: redbot/cogs/cleanup/cleanup.py:363
+#: redbot/cogs/cleanup/cleanup.py:368
 #, docstring
 msgid "Deletes X messages before the specified message.\n\n"
 "        To get a message id, enable developer mode in Discord's\n"
@@ -102,7 +107,7 @@ msgid "Deletes X messages before the specified message.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:419
+#: redbot/cogs/cleanup/cleanup.py:424
 #, docstring
 msgid "Delete the messages between Message One and Message Two, providing the messages IDs.\n\n"
 "        The first message ID should be the older message and the second one the newer.\n\n"
@@ -115,7 +120,7 @@ msgid "Delete the messages between Message One and Message Two, providing the me
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:468
+#: redbot/cogs/cleanup/cleanup.py:473
 #, docstring
 msgid "Delete the last X messages in the current channel.\n\n"
 "        Example:\n"
@@ -126,7 +131,7 @@ msgid "Delete the last X messages in the current channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:507
+#: redbot/cogs/cleanup/cleanup.py:512
 #, docstring
 msgid "Clean up command messages and messages from the bot in the current channel.\n\n"
 "        Can only cleanup custom commands and alias commands if those cogs are loaded.\n\n"
@@ -136,7 +141,7 @@ msgid "Clean up command messages and messages from the bot in the current channe
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:596
+#: redbot/cogs/cleanup/cleanup.py:601
 #, docstring
 msgid "Clean up messages owned by the bot in the current channel.\n\n"
 "        By default, all messages are cleaned. If a second argument is specified,\n"
@@ -152,7 +157,7 @@ msgid "Clean up messages owned by the bot in the current channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:685
+#: redbot/cogs/cleanup/cleanup.py:688
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
@@ -161,12 +166,12 @@ msgid "Deletes duplicate messages in the channel from the last X messages and ke
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:737
+#: redbot/cogs/cleanup/cleanup.py:740
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:743
+#: redbot/cogs/cleanup/cleanup.py:746
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -174,23 +179,15 @@ msgid "Toggle clean up notification settings.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:751
+#: redbot/cogs/cleanup/cleanup.py:754
 msgid "I will no longer notify of message deletions."
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:754
+#: redbot/cogs/cleanup/cleanup.py:757
 msgid "I will now notify of message deletions."
 msgstr ""
 
-#: redbot/cogs/cleanup/converters.py:17
+#: redbot/cogs/cleanup/converters.py:14
 msgid "{} doesn't look like a valid message ID."
 msgstr "{} لا يبدو معرف رسالة صالح."
-
-#: redbot/cogs/cleanup/converters.py:29
-msgid "{arg} is not an integer."
-msgstr ""
-
-#: redbot/cogs/cleanup/converters.py:31
-msgid "{arg} is not a positive integer."
-msgstr ""
 

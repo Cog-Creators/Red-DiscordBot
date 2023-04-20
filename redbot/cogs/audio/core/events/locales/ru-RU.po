@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:22+0000\n"
+"POT-Creation-Date: 2022-10-31 01:43+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -144,7 +144,7 @@ msgid "Manage Emojis"
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:65
-msgid "Use Slash Commands"
+msgid "Use Application Commands"
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:66
@@ -224,35 +224,35 @@ msgid "This command changes the connection port used to connect to this managed 
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:120
-msgid "This command toggles the support of direct url streams like Icecast or Shoutcast streams. An example is <http://ice6.somafm.com/gsclassic-128-mp3>; Disabling this will make the bot unable to play any direct url steam content."
+msgid "This command toggles the support of direct url streams like Icecast or Shoutcast streams. An example is <http://ice1.somafm.com/gsclassic-128-mp3>; disabling this will make the bot unable to play any direct url steam content."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:130
-msgid "This command toggles the support of local track audio playback. for example `/mnt/data/my_super_funky_track.mp3`; Disabling this will make the bot unable to play any local track content."
+msgid "This command toggles the support of local track audio playback. An example is `/mnt/data/my_super_funky_track.mp3`; disabling this will make the bot unable to play any local track content."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:135
-msgid "This command toggles the support of Soundcloud playback. An example is <https://soundcloud.com/user-103858850/tilla>; Disabling this will make the bot unable to play any Soundcloud content."
+msgid "This command toggles the support of SoundCloud playback. An example is <https://soundcloud.com/user-103858850/tilla>; disabling this will make the bot unable to play any SoundCloud content."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:140
-msgid "This command toggles the support of YouTube playback (Spotify depends on YouTube). Disabling this will make the bot unable to play any YouTube content, this includes Spotify."
+msgid "This command toggles the support of YouTube playback (Spotify depends on YouTube). Disabling this will make the bot unable to play any YouTube content: this includes Spotify."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:145
-msgid "This command toggles the support of Twitch playback. An example of this is <https://twitch.tv/monstercat>; Disabling this will make the bot unable to play any Twitch content."
+msgid "This command toggles the support of Twitch playback. An example of this is <https://twitch.tv/monstercat>; disabling this will make the bot unable to play any Twitch content."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:150
-msgid "This command toggles the support of Vimeo playback. An example of this is <https://vimeo.com/157743578>; Disabling this will make the bot unable to play any Vimeo content."
+msgid "This command toggles the support of Vimeo playback. An example of this is <https://vimeo.com/157743578>; disabling this will make the bot unable to play any Vimeo content."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:155
-msgid "This setting controls the managed nodes framebuffer, Do not change this unless instructed."
+msgid "This setting controls the managed node's framebuffer, do not change this unless instructed."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:159
-msgid "This setting controls the managed nodes NAS buffer, Do not change this unless instructed."
+msgid "This setting controls the managed node's JDA-NAS buffer, do not change this unless instructed."
 msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:163
@@ -330,12 +330,12 @@ msgid "The bot is not connected to a voice channel."
 msgstr "Бот не подключен к голосовому каналу."
 
 #: redbot/cogs/audio/core/events/dpy.py:380
-#: redbot/cogs/audio/core/events/lavalink.py:179
+#: redbot/cogs/audio/core/events/lavalink.py:183
 msgid "Unable to Get Track"
 msgstr "Не удается получить трек"
 
 #: redbot/cogs/audio/core/events/dpy.py:381
-#: redbot/cogs/audio/core/events/lavalink.py:180
+#: redbot/cogs/audio/core/events/lavalink.py:184
 msgid "I'm unable to get a track from the Lavalink node at the moment, try again in a few minutes."
 msgstr ""
 
@@ -347,41 +347,41 @@ msgstr "Возникла проблема со связью с Discord."
 msgid "This error has been reported to the bot owner."
 msgstr "Об этой ошибке было сообщено владельцу бота."
 
-#: redbot/cogs/audio/core/events/lavalink.py:171
+#: redbot/cogs/audio/core/events/lavalink.py:175
 msgid "Couldn't get a valid track."
 msgstr "Не удалось получить правильный трек."
 
-#: redbot/cogs/audio/core/events/lavalink.py:206
+#: redbot/cogs/audio/core/events/lavalink.py:210
 msgid "Now Playing"
 msgstr "Сейчас играет"
 
-#: redbot/cogs/audio/core/events/lavalink.py:208
+#: redbot/cogs/audio/core/events/lavalink.py:212
 msgid "Track length: {length} | Requested by: {user}"
 msgstr "Длина трека: {length} | Запрошено: {user}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:231
+#: redbot/cogs/audio/core/events/lavalink.py:235
 msgid "Queue ended."
 msgstr "Очередь закончилась."
 
-#: redbot/cogs/audio/core/events/lavalink.py:297
+#: redbot/cogs/audio/core/events/lavalink.py:301
 msgid "Multiple Errors Detected"
 msgstr "Обнаружено множество ошибок"
 
-#: redbot/cogs/audio/core/events/lavalink.py:298
+#: redbot/cogs/audio/core/events/lavalink.py:302
 msgid "Closing the audio player due to multiple errors being detected. If this persists, please inform the bot owner as the Audio cog may be temporally unavailable."
 msgstr "Закрытие аудио проигрывателя из-за нескольких обнаруженных ошибок. Если это повторится, сообщите владельцу бота так как Audio Cog может быть временно недоступен."
 
-#: redbot/cogs/audio/core/events/lavalink.py:312
+#: redbot/cogs/audio/core/events/lavalink.py:316
 msgid "Track Stuck"
 msgstr "Трек застрял"
 
-#: redbot/cogs/audio/core/events/lavalink.py:313
+#: redbot/cogs/audio/core/events/lavalink.py:317
 msgid "Playback of the song has stopped due to an unexpected error.\n"
 "{error}"
 msgstr "Воспроизведение песни приостановлено из-за непредвиденной ошибки.\n"
 "{error}"
 
-#: redbot/cogs/audio/core/events/lavalink.py:319
+#: redbot/cogs/audio/core/events/lavalink.py:323
 msgid "Track Error"
 msgstr "Ошибка отслеживания"
 

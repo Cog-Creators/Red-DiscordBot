@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:21+0000\n"
+"POT-Creation-Date: 2023-02-14 02:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,14 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Utwórz aliasy dla poleceń.\n\n"
+"    Aliasy są alternatywnymi nazwami skróconych poleceń. Mogą\n"
+"  działać zarówno jako lambda (przechowywanie argumentów do wielokrotnego użycia)\n"
+" lub po prostu jako skrót do powiedzenia \"xyz \".\n\n"
+" \n"
+"Po uruchomieniu aliasy przyjmą wszelkie dodatkowe argumenty\n"
+"     i dołączą je do przechowywanego aliasu.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:180
 msgid "Aliases:\n"
@@ -95,28 +102,28 @@ msgstr "Utworzono nowy globalny alias z wyzwalaczem '{name}'."
 #: redbot/cogs/alias/alias.py:322
 #, docstring
 msgid "Edit an existing alias in this server."
-msgstr ""
+msgstr "Usuwa istniejący alias na tym serwerze."
 
 #: redbot/cogs/alias/alias.py:327 redbot/cogs/alias/alias.py:362
 msgid "The alias with the name {name} does not exist."
-msgstr ""
+msgstr "Alias o nazwie {name} nie istnieje."
 
 #: redbot/cogs/alias/alias.py:333 redbot/cogs/alias/alias.py:368
 msgid "You attempted to edit an alias to a command that doesn't exist."
-msgstr ""
+msgstr "Próbowałeś/aś utworzyć nowy alias do komendy która nie istnieje."
 
 #: redbot/cogs/alias/alias.py:342 redbot/cogs/alias/alias.py:375
-msgid "The alias with the trigger `{name}` has been edited sucessfully."
+msgid "The alias with the trigger `{name}` has been edited successfully."
 msgstr ""
 
 #: redbot/cogs/alias/alias.py:349 redbot/cogs/alias/alias.py:382
 msgid "Alias with the name `{name}` was not found."
-msgstr ""
+msgstr "Alias o nazwie `{name}` nie został znaleziony."
 
 #: redbot/cogs/alias/alias.py:357
 #, docstring
 msgid "Edit an existing global alias."
-msgstr ""
+msgstr "Usuwa istniejący globalny alias."
 
 #: redbot/cogs/alias/alias.py:389
 #, docstring

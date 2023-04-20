@@ -25,5 +25,5 @@ msgstr "Não foi possível obter a faixa"
 
 #: redbot/cogs/audio/core/tasks/startup.py:282
 msgid "I'm unable to get a track from the Lavalink node at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Não foi possível obter uma faixa do nó do Lavalink no momento, tente novamente em alguns minutos."
 

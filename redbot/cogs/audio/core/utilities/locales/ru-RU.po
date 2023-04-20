@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-07-19 15:11+0000\n"
+"POT-Creation-Date: 2023-01-23 19:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgid "Connection to Lavalink node has failed"
 msgstr ""
 
 #: redbot/cogs/audio/core/utilities/formatting.py:98
-#: redbot/cogs/audio/core/utilities/player.py:589
+#: redbot/cogs/audio/core/utilities/player.py:591
 #: redbot/cogs/audio/core/utilities/playlists.py:529
 msgid "Please check your console or logs for details."
 msgstr "Пожалуйста, проверьте вашу консоль или логи для получения более подробной информации."
@@ -50,28 +50,28 @@ msgid "Unable To Play Tracks"
 msgstr "Не удается воспроизвести треки"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:116
-#: redbot/cogs/audio/core/utilities/player.py:441
-#: redbot/cogs/audio/core/utilities/player.py:522
+#: redbot/cogs/audio/core/utilities/player.py:442
+#: redbot/cogs/audio/core/utilities/player.py:524
 msgid "Queue size limit reached."
 msgstr "Достигнут предел размера очереди."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:154
-#: redbot/cogs/audio/core/utilities/player.py:597
+#: redbot/cogs/audio/core/utilities/player.py:599
 msgid "Track Enqueued"
 msgstr "Трек поставлен в очередь"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:168
-#: redbot/cogs/audio/core/utilities/player.py:546
+#: redbot/cogs/audio/core/utilities/player.py:548
 msgid "This track is not allowed in this server."
 msgstr "Этот трек не разрешен на этом сервере."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:185
-#: redbot/cogs/audio/core/utilities/player.py:568
+#: redbot/cogs/audio/core/utilities/player.py:570
 msgid "Track exceeds maximum length."
 msgstr "Этот трек превышает максимальную длину."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:200
-#: redbot/cogs/audio/core/utilities/player.py:600
+#: redbot/cogs/audio/core/utilities/player.py:602
 msgid "{time} until track playback: #{position} in queue"
 msgstr "{time} до воспроизведения трека: #{position} в очереди"
 
@@ -117,10 +117,10 @@ msgstr " - Имя: <{pname}>\n"
 " - Автор: < {author} >\n\n"
 
 #: redbot/cogs/audio/core/utilities/local_tracks.py:109
-#: redbot/cogs/audio/core/utilities/player.py:235
-#: redbot/cogs/audio/core/utilities/player.py:245
-#: redbot/cogs/audio/core/utilities/player.py:327
-#: redbot/cogs/audio/core/utilities/player.py:648
+#: redbot/cogs/audio/core/utilities/player.py:234
+#: redbot/cogs/audio/core/utilities/player.py:244
+#: redbot/cogs/audio/core/utilities/player.py:326
+#: redbot/cogs/audio/core/utilities/player.py:650
 msgid "Invalid Environment"
 msgstr "Неверное окружение"
 
@@ -140,180 +140,184 @@ msgstr "{required_credits} {currency} требуется, у вас {bal}."
 msgid "music in {} servers"
 msgstr "музыка на {} серверах"
 
-#: redbot/cogs/audio/core/utilities/player.py:136
-#: redbot/cogs/audio/core/utilities/player.py:140
-#: redbot/cogs/audio/core/utilities/player.py:145
+#: redbot/cogs/audio/core/utilities/player.py:135
+#: redbot/cogs/audio/core/utilities/player.py:139
+#: redbot/cogs/audio/core/utilities/player.py:144
 msgid "There's nothing in the queue."
 msgstr "Очередь пуста."
 
-#: redbot/cogs/audio/core/utilities/player.py:142
+#: redbot/cogs/audio/core/utilities/player.py:141
 msgid "Currently livestreaming {track}"
 msgstr "Сейчас в прямом эфире {track}"
 
-#: redbot/cogs/audio/core/utilities/player.py:147
+#: redbot/cogs/audio/core/utilities/player.py:146
 msgid "{time} left on {track}"
 msgstr "{time} осталось в {track}"
 
-#: redbot/cogs/audio/core/utilities/player.py:155
-#: redbot/cogs/audio/core/utilities/player.py:190
+#: redbot/cogs/audio/core/utilities/player.py:154
+#: redbot/cogs/audio/core/utilities/player.py:189
 msgid "Track Skipped"
 msgstr "Трек пропущен"
 
-#: redbot/cogs/audio/core/utilities/player.py:168
+#: redbot/cogs/audio/core/utilities/player.py:167
 msgid "Track number must be equal to or greater than 1."
 msgstr "Номер трека должен быть больше или равен 1."
 
-#: redbot/cogs/audio/core/utilities/player.py:174
+#: redbot/cogs/audio/core/utilities/player.py:173
 msgid "There are only {queuelen} songs currently queued."
 msgstr "В настоящее время в очереди стоят только песни: {queuelen}."
 
-#: redbot/cogs/audio/core/utilities/player.py:180
+#: redbot/cogs/audio/core/utilities/player.py:179
 msgid "{skip_to_track} Tracks Skipped"
 msgstr "{skip_to_track} треков пропущено"
 
-#: redbot/cogs/audio/core/utilities/player.py:236
+#: redbot/cogs/audio/core/utilities/player.py:235
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
 msgstr "Владелец должен установить идентификатор клиента Spotify и секрет клиента Spotify, прежде чем можно будет использовать URL-адреса или коды Spotify..\n"
 "Просмотрите `{prefix}audioset spotifyapi` для получения инструкций."
 
-#: redbot/cogs/audio/core/utilities/player.py:246
+#: redbot/cogs/audio/core/utilities/player.py:245
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
 msgstr "Владелец должен установить ключ YouTube API перед использованием URL-адресов или кодов Spotify.\n"
 "Смотрите `{prefix}audioset youtubeapi` для получения инструкций."
 
-#: redbot/cogs/audio/core/utilities/player.py:255
-#: redbot/cogs/audio/core/utilities/player.py:364
+#: redbot/cogs/audio/core/utilities/player.py:254
+#: redbot/cogs/audio/core/utilities/player.py:363
 #: redbot/cogs/audio/core/utilities/playlists.py:594
 msgid "Unable To Get Tracks"
 msgstr "Не удается получить треки"
 
-#: redbot/cogs/audio/core/utilities/player.py:256
-#: redbot/cogs/audio/core/utilities/player.py:365
+#: redbot/cogs/audio/core/utilities/player.py:255
+#: redbot/cogs/audio/core/utilities/player.py:364
 #: redbot/cogs/audio/core/utilities/playlists.py:595
 msgid "Wait until the playlist has finished loading."
 msgstr "Дождитесь окончания загрузки плейлиста."
 
-#: redbot/cogs/audio/core/utilities/player.py:267
-#: redbot/cogs/audio/core/utilities/player.py:309
-#: redbot/cogs/audio/core/utilities/player.py:407
+#: redbot/cogs/audio/core/utilities/player.py:266
+#: redbot/cogs/audio/core/utilities/player.py:308
+#: redbot/cogs/audio/core/utilities/player.py:408
 #: redbot/cogs/audio/core/utilities/playlists.py:605
 #: redbot/cogs/audio/core/utilities/playlists.py:638
 msgid "Nothing found."
 msgstr "Ничего не найдено."
 
-#: redbot/cogs/audio/core/utilities/player.py:270
-#: redbot/cogs/audio/core/utilities/player.py:311
-#: redbot/cogs/audio/core/utilities/player.py:422
+#: redbot/cogs/audio/core/utilities/player.py:269
+#: redbot/cogs/audio/core/utilities/player.py:310
+#: redbot/cogs/audio/core/utilities/player.py:423
 #: redbot/cogs/audio/core/utilities/playlists.py:607
 #: redbot/cogs/audio/core/utilities/playlists.py:640
 msgid "Track is not playable."
 msgstr "Трек не воспроизводится."
 
-#: redbot/cogs/audio/core/utilities/player.py:271
-#: redbot/cogs/audio/core/utilities/player.py:312
-#: redbot/cogs/audio/core/utilities/player.py:424
+#: redbot/cogs/audio/core/utilities/player.py:270
+#: redbot/cogs/audio/core/utilities/player.py:311
+#: redbot/cogs/audio/core/utilities/player.py:425
 #: redbot/cogs/audio/core/utilities/playlists.py:608
 #: redbot/cogs/audio/core/utilities/playlists.py:641
 msgid "**{suffix}** is not a fully supported format and some tracks may not play."
 msgstr "**{suffix}** не является полностью поддерживаемым форматом, и некоторые треки не могут воспроизводиться."
 
-#: redbot/cogs/audio/core/utilities/player.py:301
-#: redbot/cogs/audio/core/utilities/player.py:392
-#: redbot/cogs/audio/core/utilities/player.py:655
+#: redbot/cogs/audio/core/utilities/player.py:300
+#: redbot/cogs/audio/core/utilities/player.py:393
+#: redbot/cogs/audio/core/utilities/player.py:657
 #: redbot/cogs/audio/core/utilities/playlists.py:425
 #: redbot/cogs/audio/core/utilities/playlists.py:626
 #: redbot/cogs/audio/core/utilities/playlists.py:655
 msgid "Unable to Get Track"
 msgstr "Не удается получить трек"
 
-#: redbot/cogs/audio/core/utilities/player.py:302
+#: redbot/cogs/audio/core/utilities/player.py:301
 #: redbot/cogs/audio/core/utilities/playlists.py:426
 msgid "I'm unable to get a track from the Lavalink node at the moment, try again in a few minutes."
 msgstr ""
 
-#: redbot/cogs/audio/core/utilities/player.py:328
+#: redbot/cogs/audio/core/utilities/player.py:327
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
 msgstr "API ключ Spotify или секрет клиента были установлены неправильно. \n"
 "Для получения инструкций используйте `{prefix}audioset spotifyapi`."
 
-#: redbot/cogs/audio/core/utilities/player.py:352
+#: redbot/cogs/audio/core/utilities/player.py:351
 msgid "Unable To Find Tracks"
 msgstr "Не удается найти треки"
 
-#: redbot/cogs/audio/core/utilities/player.py:353
+#: redbot/cogs/audio/core/utilities/player.py:352
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "Это не похоже на поддерживаемый $SPOTIFY URL или код."
 
-#: redbot/cogs/audio/core/utilities/player.py:379
+#: redbot/cogs/audio/core/utilities/player.py:378
 msgid "{query} is not an allowed query."
 msgstr "{query} не является допустимым запросом."
 
-#: redbot/cogs/audio/core/utilities/player.py:393
+#: redbot/cogs/audio/core/utilities/player.py:394
 #: redbot/cogs/audio/core/utilities/playlists.py:627
 #: redbot/cogs/audio/core/utilities/playlists.py:656
 msgid "I'm unable to get a track from Lavalink node at the moment, try again in a few minutes."
 msgstr ""
 
-#: redbot/cogs/audio/core/utilities/player.py:415
+#: redbot/cogs/audio/core/utilities/player.py:416
 msgid "Local tracks will not work if the `Lavalink.jar` cannot see the track.\n"
 "This may be due to permissions or because Lavalink.jar is being run in a different machine than the local tracks."
 msgstr "Локальные треки не будут работать, если `Lavalink.jar` не будет видеть трек.\n"
 "Это может быть вызвано правами или потому что Lavalink.jar запускается на машине, отличной от локальных треков."
 
-#: redbot/cogs/audio/core/utilities/player.py:485
+#: redbot/cogs/audio/core/utilities/player.py:486
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} треков не могут быть поставлены в очередь."
 
-#: redbot/cogs/audio/core/utilities/player.py:491
+#: redbot/cogs/audio/core/utilities/player.py:492
 msgid "No Title"
 msgstr "Без заголовка"
 
-#: redbot/cogs/audio/core/utilities/player.py:497
+#: redbot/cogs/audio/core/utilities/player.py:494
 msgid "Playlist Enqueued"
 msgstr "Плейлист поставлен в очередь"
 
-#: redbot/cogs/audio/core/utilities/player.py:500
+#: redbot/cogs/audio/core/utilities/player.py:494
+msgid "Album Enqueued"
+msgstr ""
+
+#: redbot/cogs/audio/core/utilities/player.py:502
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "{num} треков добавлено в очередь.{maxlength_msg}"
 
-#: redbot/cogs/audio/core/utilities/player.py:506
+#: redbot/cogs/audio/core/utilities/player.py:508
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "{time} до начала воспроизведения плейлиста: начинается с #{position} в очереди"
 
-#: redbot/cogs/audio/core/utilities/player.py:586
+#: redbot/cogs/audio/core/utilities/player.py:588
 msgid "Nothing found"
 msgstr "Ничего не найдено"
 
-#: redbot/cogs/audio/core/utilities/player.py:621
+#: redbot/cogs/audio/core/utilities/player.py:623
 msgid "Please wait, finding tracks..."
 msgstr "Пожалуйста, подождите, поиск треков..."
 
-#: redbot/cogs/audio/core/utilities/player.py:627
+#: redbot/cogs/audio/core/utilities/player.py:629
 msgid "Getting track {num}/{total}..."
 msgstr "Получение трека {num}/{total}..."
 
-#: redbot/cogs/audio/core/utilities/player.py:628
+#: redbot/cogs/audio/core/utilities/player.py:630
 msgid "Matching track {num}/{total}..."
 msgstr "Сопоставление трека {num}/{total}..."
 
-#: redbot/cogs/audio/core/utilities/player.py:629
+#: redbot/cogs/audio/core/utilities/player.py:631
 #: redbot/cogs/audio/core/utilities/playlists.py:341
 #: redbot/cogs/audio/core/utilities/playlists.py:414
 msgid "Loading track {num}/{total}..."
 msgstr "Загрузка трека {num}/{total}..."
 
-#: redbot/cogs/audio/core/utilities/player.py:630
+#: redbot/cogs/audio/core/utilities/player.py:632
 msgid "Approximate time remaining: {seconds}"
 msgstr "Примерно времени осталось: {seconds}"
 
-#: redbot/cogs/audio/core/utilities/player.py:656
+#: redbot/cogs/audio/core/utilities/player.py:658
 msgid "I'm unable to get a track from Lavalink at the moment, try again in a few minutes."
 msgstr "На данный момент я не могу получить трек от Lava_link, попробуйте еще раз через несколько минут."
 
-#: redbot/cogs/audio/core/utilities/player.py:665
+#: redbot/cogs/audio/core/utilities/player.py:667
 msgid "The connection was reset while loading the playlist."
 msgstr "Соединение было сброшено при загрузке плейлиста."
 
@@ -479,11 +483,11 @@ msgstr "Перемешивание"
 msgid "Repeat"
 msgstr "Повтор"
 
-#: redbot/cogs/audio/core/utilities/queue.py:161
+#: redbot/cogs/audio/core/utilities/queue.py:159
 msgid "Matching Tracks:"
 msgstr "Соответствующие треки:"
 
-#: redbot/cogs/audio/core/utilities/queue.py:164
+#: redbot/cogs/audio/core/utilities/queue.py:162
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks"
 msgstr "Страница {page_num}/{total_pages} | {num_tracks} треков"
 

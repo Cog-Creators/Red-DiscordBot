@@ -21,9 +21,9 @@ msgstr "無法取得有效的歌曲。"
 
 #: redbot/cogs/audio/core/tasks/startup.py:281
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "無法獲取歌曲。"
 
 #: redbot/cogs/audio/core/tasks/startup.py:282
 msgid "I'm unable to get a track from the Lavalink node at the moment, try again in a few minutes."
-msgstr ""
+msgstr "我目前無法從 Lavalink 節點獲取曲目，請過幾分鐘再試。"
 

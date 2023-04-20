@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-04-03 01:21+0000\n"
+"POT-Creation-Date: 2023-04-17 21:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -38,20 +38,20 @@ msgstr "Jeste li sigurni da želite izbrisati {number} poruka?"
 msgid "Cancelled."
 msgstr "Otkazano."
 
-#: redbot/cogs/cleanup/cleanup.py:143
+#: redbot/cogs/cleanup/cleanup.py:147
 msgid "1 message was deleted."
 msgstr "Izbrisana jedna poruka."
 
-#: redbot/cogs/cleanup/cleanup.py:146
+#: redbot/cogs/cleanup/cleanup.py:150
 msgid "{num} messages were deleted."
 msgstr "Izbrisano {num} poruka."
 
-#: redbot/cogs/cleanup/cleanup.py:169
+#: redbot/cogs/cleanup/cleanup.py:174
 #, docstring
 msgid "Base command for deleting messages."
 msgstr "Osnovna naredba za brisanje poruka."
 
-#: redbot/cogs/cleanup/cleanup.py:179
+#: redbot/cogs/cleanup/cleanup.py:184
 #, docstring
 msgid "Delete the last X messages matching the specified text in the current channel.\n\n"
 "        Example:\n"
@@ -70,7 +70,7 @@ msgstr "Izbrišite zadnjih X poruka koje odgovaraju navedenom tekstu u trenutnom
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:239
+#: redbot/cogs/cleanup/cleanup.py:244
 #, docstring
 msgid "Delete the last X messages from a specified user in the current channel.\n\n"
 "        Examples:\n"
@@ -91,7 +91,7 @@ msgstr "Izbrišite posljednje X poruke od određenog korisnika u trenutnom kanal
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:309
+#: redbot/cogs/cleanup/cleanup.py:314
 #, docstring
 msgid "Delete all messages after a specified message.\n\n"
 "        To get a message id, enable developer mode in Discord's\n"
@@ -113,11 +113,11 @@ msgstr "Izbrišite sve poruke nakon određene poruke.\n\n"
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:330 redbot/cogs/cleanup/cleanup.py:385
+#: redbot/cogs/cleanup/cleanup.py:335 redbot/cogs/cleanup/cleanup.py:390
 msgid "Message not found."
 msgstr "Poruka nije pronađena."
 
-#: redbot/cogs/cleanup/cleanup.py:363
+#: redbot/cogs/cleanup/cleanup.py:368
 #, docstring
 msgid "Deletes X messages before the specified message.\n\n"
 "        To get a message id, enable developer mode in Discord's\n"
@@ -141,7 +141,7 @@ msgstr "Briše X poruka prije navedene poruke.\n\n"
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:419
+#: redbot/cogs/cleanup/cleanup.py:424
 #, docstring
 msgid "Delete the messages between Message One and Message Two, providing the messages IDs.\n\n"
 "        The first message ID should be the older message and the second one the newer.\n\n"
@@ -162,7 +162,7 @@ msgstr "Izbrišite poruke između dvije poruke, navodeći ID-eve poruka.\n\n"
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:468
+#: redbot/cogs/cleanup/cleanup.py:473
 #, docstring
 msgid "Delete the last X messages in the current channel.\n\n"
 "        Example:\n"
@@ -179,7 +179,7 @@ msgstr "Izbrišite posljednje X poruke u trenutnom kanalu.\n\n"
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:507
+#: redbot/cogs/cleanup/cleanup.py:512
 #, docstring
 msgid "Clean up command messages and messages from the bot in the current channel.\n\n"
 "        Can only cleanup custom commands and alias commands if those cogs are loaded.\n\n"
@@ -194,7 +194,7 @@ msgstr "Očistite naredbene poruke i poruke od bota u trenutnom kanalu.\n\n"
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:596
+#: redbot/cogs/cleanup/cleanup.py:601
 #, docstring
 msgid "Clean up messages owned by the bot in the current channel.\n\n"
 "        By default, all messages are cleaned. If a second argument is specified,\n"
@@ -221,7 +221,7 @@ msgstr "Očistite poruke u vlasništvu bota u trenutnom kanalu.\n\n"
 "        - `<delete_pinned>` Određuje hoće li se izbrisati prikvačene poruke ili ne. Zadano na False\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:685
+#: redbot/cogs/cleanup/cleanup.py:688
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
@@ -234,12 +234,12 @@ msgstr "Briše duplicirane poruke u kanalu iz zadnjih X poruka i zadržava samo 
 "        - `<number>` Broj poruka za provjeru duplikata. Mora biti pozitivan cijeli broj.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:737
+#: redbot/cogs/cleanup/cleanup.py:740
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr "Upravljajte postavkama za naredbu za čišćenje."
 
-#: redbot/cogs/cleanup/cleanup.py:743
+#: redbot/cogs/cleanup/cleanup.py:746
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -250,23 +250,15 @@ msgstr "Uključite/isključite obavijesti za čišćenje.\n\n"
 "        Ova će poruka biti izbrisana nakon 5 sekundi.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:751
+#: redbot/cogs/cleanup/cleanup.py:754
 msgid "I will no longer notify of message deletions."
 msgstr "Više neću obavještavati o brisanju poruka."
 
-#: redbot/cogs/cleanup/cleanup.py:754
+#: redbot/cogs/cleanup/cleanup.py:757
 msgid "I will now notify of message deletions."
 msgstr "Sada ću obavijestiti o brisanju poruka."
 
-#: redbot/cogs/cleanup/converters.py:17
+#: redbot/cogs/cleanup/converters.py:14
 msgid "{} doesn't look like a valid message ID."
 msgstr "{} ne izgleda kao valjani ID poruke."
-
-#: redbot/cogs/cleanup/converters.py:29
-msgid "{arg} is not an integer."
-msgstr "{arg} nije cijeli broj."
-
-#: redbot/cogs/cleanup/converters.py:31
-msgid "{arg} is not a positive integer."
-msgstr "{arg} nije pozitivan cijeli broj."
 

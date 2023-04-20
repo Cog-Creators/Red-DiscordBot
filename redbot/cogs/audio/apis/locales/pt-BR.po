@@ -24,12 +24,12 @@ msgstr "Falha ao obter as faixas; pulando as faixas restantes."
 #: redbot/cogs/audio/apis/spotify.py:175
 msgid "The Spotify API key or client secret has not been set properly. \n"
 "Use `{prefix}audioset spotifyapi` for instructions."
-msgstr "A chave do Spotify API ou segredo do cliente não foram definidos corretamente. \n"
+msgstr "A chave de API do Spotify ou segredo do cliente não foram definidos corretamente. \n"
 "Use `{prefix}audioset spotifyapi` para mais instruções."
 
 #: redbot/cogs/audio/apis/interface.py:345
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
-msgstr "Esta não parece ser uma URL de uma lista/album ou código do Spotify válido."
+msgstr "Esta não parece ser uma URL ou código válido de uma lista/álbum do Spotify."
 
 #: redbot/cogs/audio/apis/interface.py:471
 msgid "This doesn't seem to be a supported Spotify URL or code."
@@ -53,7 +53,7 @@ msgstr "Lista de reprodução enfileirada"
 
 #: redbot/cogs/audio/apis/interface.py:674
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
-msgstr "{num} faixas enfileiradas.{maxlength_msg}"
+msgstr "{num} faixas adicionadas à fila.{maxlength_msg}"
 
 #: redbot/cogs/audio/apis/interface.py:680
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
@@ -71,7 +71,7 @@ msgstr "Nada encontrado.\n"
 msgid "Your YouTube Data API token is invalid.\n"
 "Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
 msgstr "Seu token API de dados do YouTube é inválido.\n"
-"Verifique novamente a chave API do YouTube e siga as instruções em `{prefix}audioset youtubeapi`."
+"Verifique novamente a chave de API do YouTube e siga as instruções em `{prefix}audioset youtubeapi`."
 
 #: redbot/cogs/audio/apis/youtube.py:74
 msgid "YouTube API error code: 403\n"

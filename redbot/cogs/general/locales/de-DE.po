@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2022-08-08 23:56+0000\n"
+"POT-Creation-Date: 2022-12-27 10:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -130,7 +130,7 @@ msgstr "{author.mention} Wir wäre es mit mehr als 1? ;P"
 
 #: redbot/cogs/general/general.py:120
 msgid "{author.mention} Max allowed number is {maxamount}."
-msgstr ""
+msgstr "{author.mention} Die maximal zulässige Anzahl ist {maxamount}."
 
 #: redbot/cogs/general/general.py:127
 #, docstring
@@ -227,7 +227,11 @@ msgid "\n"
 "        `details`: Shows more information when set to `True`.\n"
 "        Default to False.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Zeige Serverinformation\n\n"
+"        `Details`: Zeigt mehr Information an wen auf `True` gesetzt ist.\n"
+"        Stander mäßig ist es False.\n"
+"        "
 
 #: redbot/cogs/general/general.py:259
 msgid "Created on {date_and_time}. That's {relative_time}!"
@@ -239,7 +243,7 @@ msgstr "Benutzer online"
 
 #: redbot/cogs/general/general.py:274
 msgid "Not available"
-msgstr ""
+msgstr "Nicht verfügbar"
 
 #: redbot/cogs/general/general.py:276
 msgid "Text Channels"
@@ -263,7 +267,7 @@ msgstr "Server-ID: "
 
 #: redbot/cogs/general/general.py:283
 msgid "  •  Use {command} for more info on the server."
-msgstr ""
+msgstr "  • Nutzte sie {command} für weitere Information auf dem Server."
 
 #: redbot/cogs/general/general.py:309
 msgid "\n"
@@ -302,131 +306,39 @@ msgstr "3 - Hoch"
 msgid "4 - Highest"
 msgstr ""
 
-#: redbot/cogs/general/general.py:356
-msgid "Animated Icon"
-msgstr "Animiertes Icon"
-
-#: redbot/cogs/general/general.py:357
-msgid "Animated Banner"
-msgstr ""
-
-#: redbot/cogs/general/general.py:358
-msgid "Banner"
-msgstr ""
-
-#: redbot/cogs/general/general.py:359
-msgid "Commerce"
-msgstr "Handel"
-
-#: redbot/cogs/general/general.py:360
-msgid "Community"
-msgstr "Community"
-
-#: redbot/cogs/general/general.py:361
-msgid "Discoverable"
-msgstr ""
-
-#: redbot/cogs/general/general.py:362
-msgid "Featurable"
-msgstr ""
-
-#: redbot/cogs/general/general.py:363
-msgid "Splash Invite"
-msgstr "Splash Einladung"
-
-#: redbot/cogs/general/general.py:364
-msgid "Membership Screening enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:365
-msgid "Monetization Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:366
-msgid "More Stickers"
-msgstr ""
-
-#: redbot/cogs/general/general.py:367
-msgid "News"
-msgstr ""
-
-#: redbot/cogs/general/general.py:368
-msgid "Partnered"
-msgstr "Partnered"
-
-#: redbot/cogs/general/general.py:369
-msgid "Preview Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:370
-msgid "Private Threads"
-msgstr ""
-
-#: redbot/cogs/general/general.py:371
-msgid "Role Icon"
-msgstr ""
-
-#: redbot/cogs/general/general.py:372
-msgid "Seven Day Thread Archive"
-msgstr ""
-
-#: redbot/cogs/general/general.py:373
-msgid "Three Day Thread Archive"
-msgstr ""
-
-#: redbot/cogs/general/general.py:374
-msgid "Ticketed Events Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:375
-msgid "Verified"
-msgstr "Verifiziert"
-
-#: redbot/cogs/general/general.py:376
-msgid "Vanity URL"
-msgstr "Vanity URL"
-
-#: redbot/cogs/general/general.py:377
-msgid "VIP Regions"
-msgstr ""
-
-#: redbot/cogs/general/general.py:378
-msgid "Welcome Screen Enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:386
+#: redbot/cogs/general/general.py:355
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr "{bot_name} ist dem Server durch {bot_join} beigetreten. Das ist über {since_join} Tage her!"
 
-#: redbot/cogs/general/general.py:408
+#: redbot/cogs/general/general.py:377
 msgid "Members:"
 msgstr "Mitglieder:"
 
-#: redbot/cogs/general/general.py:410
+#: redbot/cogs/general/general.py:379
 msgid "Channels:"
 msgstr "Kanäle:"
 
-#: redbot/cogs/general/general.py:411
+#: redbot/cogs/general/general.py:380
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}\n"
 "🎙 Stage: {stage}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:422
+#: redbot/cogs/general/general.py:391
 msgid "Utility:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:423
+#: redbot/cogs/general/general.py:392
 msgid "Owner: {owner}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:434
+#: redbot/cogs/general/general.py:403
 msgid "Misc:"
 msgstr "Sonstiges:"
 
-#: redbot/cogs/general/general.py:435
+#: redbot/cogs/general/general.py:404
 msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
@@ -436,26 +348,26 @@ msgstr "AFK Kanal: {afk_chan}\n"
 "Benutzerdefinierte Emojis: {emoji_count}\n"
 "Rollen: {role_count}"
 
-#: redbot/cogs/general/general.py:440
+#: redbot/cogs/general/general.py:409
 msgid "Not set"
 msgstr "Nicht festgelegt"
 
-#: redbot/cogs/general/general.py:448
+#: redbot/cogs/general/general.py:442
 msgid "Server features:"
 msgstr "Server Merkmale:"
 
-#: redbot/cogs/general/general.py:450
+#: redbot/cogs/general/general.py:449
 msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
 "VCs max bitrate: {bitrate}"
 msgstr ""
 
-#: redbot/cogs/general/general.py:462
+#: redbot/cogs/general/general.py:461
 msgid "Nitro Boost:"
 msgstr "Nitro Boost:"
 
-#: redbot/cogs/general/general.py:471
+#: redbot/cogs/general/general.py:470
 #, docstring
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
@@ -464,29 +376,29 @@ msgstr "Durchsuche das Urban Dictionary.\n\n"
 "        Dies verwendet die inoffizielle Urban Dictionary API.\n"
 "        "
 
-#: redbot/cogs/general/general.py:489 redbot/cogs/general/general.py:560
+#: redbot/cogs/general/general.py:488 redbot/cogs/general/general.py:559
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr "Keine Urban Dictionary Einträge gefunden, oder es gab einen Fehler während des Vorgangs."
 
-#: redbot/cogs/general/general.py:495
+#: redbot/cogs/general/general.py:494
 msgid "No Urban Dictionary entries were found."
 msgstr "Keine Urban Dictionary Einträge gefunden."
 
-#: redbot/cogs/general/general.py:501
+#: redbot/cogs/general/general.py:500
 msgid "{word} by {author}"
 msgstr "{word} von {author}"
 
-#: redbot/cogs/general/general.py:509 redbot/cogs/general/general.py:543
+#: redbot/cogs/general/general.py:508 redbot/cogs/general/general.py:542
 msgid "{definition}\n\n"
 "**Example:** {example}"
 msgstr "{definition}\n\n"
 "**Beispiel:** {example}"
 
-#: redbot/cogs/general/general.py:515
+#: redbot/cogs/general/general.py:514
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr "{thumbs_down} Runter / {thumbs_up} Hoch, Powered by Urban Dictionary."
 
-#: redbot/cogs/general/general.py:533
+#: redbot/cogs/general/general.py:532
 msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"
