@@ -51,6 +51,7 @@ Fixes
 
 - Fixed various typos across Red's codebase (:issue:`5867`, :issue:`5888`, :issue:`5977`, :issue:`5989`)
 - **Core** - Resolved an edge case in the PostgreSQL driver that made it fail to clear an entire Config scope when it had no data (:issue:`5855`)
+- **Cogs - Admin** - Fixed ``[p]selfroleset add/remove`` commands not showing the help when they're invoked with no arguments (:issue:`6084`)
 - |cool| **Cogs - Audio** - Fixed Twitch playback (:issue:`6033`)
 - |cool| **Cogs - Audio** - Fixed plain word search queries (:issue:`6033`)
 - **Cogs - Audio** - Prevented formatting from being escaped on Playlist Enqueued message (:issue:`6025`)
