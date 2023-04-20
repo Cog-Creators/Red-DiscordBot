@@ -27,7 +27,7 @@ Additions
 Changes
 *******
 
-- **Core** - Updated the PostgreSQL to not depend on the execution of purposefully erroneous SQL queries (:issue:`3983`, :issue:`5855`)
+- **Core** - Updated the PostgreSQL driver to not depend on the execution of purposefully erroneous SQL queries (:issue:`3983`, :issue:`5855`)
 - **Core - Bot Commands** - Updated ``[p]info`` command to link to the full contributor list instead of linking to the org (:issue:`6079`)
 - **Core - Bot Commands** - Updated ``[p]invite`` command to warn the user if the bot is serverlocked (:issue:`5898`)
 - **Core - Bot Commands** - ``[p]dm`` command now uses the bot's configured embed color (:issue:`5868`)
@@ -35,7 +35,7 @@ Changes
 - **Cogs - Audio** - Updated enqueued track message to show track's album or playlist if present (:issue:`5569`)
 - **Cogs - Downloader** - Updated ``[p]findcog`` command to show both the cog and cog package name (:issue:`5443`, :issue:`5772`)
 - **Cogs - General** - Changed ``[p]serverinfo`` command to not require an update whenever a new server feature is added (:issue:`5830`, :issue:`5919`)
-- **Cogs - Mod** - Hid ``[p]movedeletedelay`` and ``[p]moveignoredchannels`` commands to prevent accidental use as they should only be run when told to do so (:issue:`5870`)
+- **Cogs - Mod** - Hid ``[p]movedeletedelay`` and ``[p]moveignoredchannels`` commands to prevent accidental use (:issue:`5870`)
 - **Cogs - Mod** - Updated mention spam handling to count role mentions. Such mentions are counted as a single mention (:issue:`4471`, :issue:`5388`)
 - **Cogs - Modlog** - Improved clarity of the help of the ``[p]modlogset cases`` command (:issue:`5352`)
 - **Cogs - Trivia** - Changed the validation of custom trivia lists to match the restrictions from ``[p]triviaset`` commands (:issue:`5947`, :issue:`5949`)
