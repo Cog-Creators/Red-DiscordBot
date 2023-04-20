@@ -1,4 +1,4 @@
-.. _autostart_windows:
+.. _autostart-windows:
 
 ==============================================
 Setting up auto-restart using batch on Windows
