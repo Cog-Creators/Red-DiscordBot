@@ -51,14 +51,6 @@ if _system_user:
         config_dir = appdir.site_data_path
 
 config_file = config_dir / "config.json"
-if not config_file.exists() and sys.platform == "darwin":
-    # backwards compatibility with the location given by appdirs 1.4.4 (replaced by platformdirs 2)
-    # which was the same as user_data_path
-    # https://platformdirs.readthedocs.io/en/stable/changelog.html#platformdirs-2-0-0
-    _old_config_location = appdir.user_data_path / "config.json"
-    if _old_config_location.exists():
-        config_dir.mkdir(parents=True, exist_ok=True)
-        _old_config_location.rename(config_file)
 
 
 def load_existing_config():
