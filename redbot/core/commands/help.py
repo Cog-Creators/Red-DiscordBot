@@ -430,7 +430,6 @@ class RedHelpFormatter(HelpFormatterABC):
             await self.make_and_send_embeds(ctx, emb, help_settings=help_settings)
 
         else:  # Code blocks:
-
             subtext = None
             subtext_header = None
             if subcommands:
