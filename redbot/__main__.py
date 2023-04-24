@@ -420,7 +420,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
 
 async def shutdown_handler(red, signal_type=None, exit_code=None):
     if signal_type:
-        log.info("%s received. Quitting...", signal_type)
+        log.info("%s received. Quitting...", signal_type.name)
         # Do not collapse the below line into other logic
         # We need to renter this function
         # after it interrupts the event loop.
@@ -525,7 +525,7 @@ def main():
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
         # We need to do something with prior to having the loop close
-        log.info("Shutting down with exit code: %s", exc.code)
+        log.info("Shutting down with exit code: %s (%s)", exc.code.value, exc.code.name)
         if red is not None:
             loop.run_until_complete(shutdown_handler(red, None, exc.code))
     except Exception as exc:  # Non standard case.
