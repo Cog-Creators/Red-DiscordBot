@@ -16,6 +16,9 @@ For Users
 Future changes (currently deprecated functionality)
 ---------------------------------------------------
 
+Red 3.5 changes
+---------------
+
 Removals
 ~~~~~~~~
 
@@ -36,15 +39,14 @@ as it can already be done through other (better supported) means:
 - Removing all instances (no direct alternative, can be done through ``redbot-setup delete``)
 - Debug information (available under ``redbot --debuginfo`` and ``[p]debuginfo`` bot command)
 
-Currently, ``redbot-launcher`` only provides auto-restart functionality.
-We plan to fully remove ``redbot-launcher`` once our documentation has information on
-how to set up auto-restart on all of the supported operating systems.
+Currently, ``redbot-launcher`` only provides auto-restart functionality
+which we now document how to do properly on each of the supported systems
 
-Documentation for `autostart_systemd` and `autostart_mac` is already available,
-documentation for Windows is still in the works.
+Auto-restart documentation can be found here:
 
-Red 3.5 changes
----------------
+- `autostart_windows`
+- `autostart_mac`
+- `autostart_systemd`
 
 Behavior changes
 ~~~~~~~~~~~~~~~~
