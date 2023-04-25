@@ -25,10 +25,11 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("red.core.modlog")
 
-__all__ = [
+__all__ = (
     "Case",
     "CaseType",
     "get_case",
+    "get_latest_case",
     "get_all_cases",
     "get_cases_for_member",
     "create_case",
@@ -39,7 +40,7 @@ __all__ = [
     "get_modlog_channel",
     "set_modlog_channel",
     "reset_cases",
-]
+)
 
 _config: Optional[Config] = None
 _bot_ref: Optional[Red] = None
@@ -242,6 +243,8 @@ class Case:
     Case()
 
     A single mod log case
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------
@@ -730,6 +733,8 @@ class CaseType:
     """
     A single case type
 
+    This class should ONLY be instantiated by the modlog itself.
+
     Attributes
     ----------
     name: str
@@ -1020,18 +1025,23 @@ async def create_case(
 
     Raises
     ------
+    ValueError
+        If the action type is not a valid action type.
+    RuntimeError
+        If user is the bot itself.
     TypeError
         If ``channel`` is of type `discord.PartialMessageable`.
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
-        return
+        raise ValueError(f"{action_type} is not a valid action type.")
 
     if not await case_type.is_enabled():
         return
 
-    if user == bot.user:
-        return
+    user_id = user if isinstance(user, int) else user.id
+    if user_id == bot.user.id:
+        raise RuntimeError("The bot itself can not be the target of a modlog entry.")
 
     if isinstance(channel, discord.PartialMessageable):
         raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")

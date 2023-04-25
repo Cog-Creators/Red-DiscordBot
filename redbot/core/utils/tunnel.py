@@ -7,6 +7,8 @@ import weakref
 from typing import List, Optional, Union
 from .common_filters import filter_mass_mentions
 
+__all__ = ("Tunnel",)
+
 _instances = weakref.WeakValueDictionary({})
 
 
@@ -179,7 +181,7 @@ class Tunnel(metaclass=TunnelMeta):
 
     async def close_because_disabled(self, close_message: str):
         """
-        Sends a mesage to both ends of the tunnel that the tunnel is now closed.
+        Sends a message to both ends of the tunnel that the tunnel is now closed.
 
         Parameters
         ----------

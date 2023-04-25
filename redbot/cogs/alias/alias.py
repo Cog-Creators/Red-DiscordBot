@@ -3,10 +3,10 @@ import logging
 from copy import copy
 from re import search
 from string import Formatter
-from typing import Dict, List, Literal
+from typing import List, Literal
 
 import discord
-from redbot.core import Config, commands, checks
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.menus import menu
@@ -197,7 +197,7 @@ class Alias(commands.Cog):
         """Manage global aliases."""
         pass
 
-    @checks.mod_or_permissions(manage_guild=True)
+    @commands.mod_or_permissions(manage_guild=True)
     @alias.command(name="add")
     @commands.guild_only()
     async def _add_alias(self, ctx: commands.Context, alias_name: str, *, command):
@@ -257,7 +257,7 @@ class Alias(commands.Cog):
             _("A new alias with the trigger `{name}` has been created.").format(name=alias_name)
         )
 
-    @checks.is_owner()
+    @commands.is_owner()
     @global_.command(name="add")
     async def _add_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Add a global alias for a command."""
@@ -315,7 +315,7 @@ class Alias(commands.Cog):
             )
         )
 
-    @checks.mod_or_permissions(manage_guild=True)
+    @commands.mod_or_permissions(manage_guild=True)
     @alias.command(name="edit")
     @commands.guild_only()
     async def _edit_alias(self, ctx: commands.Context, alias_name: str, *, command):
@@ -339,7 +339,7 @@ class Alias(commands.Cog):
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command):
                 await ctx.send(
-                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                    _("The alias with the trigger `{name}` has been edited successfully.").format(
                         name=alias_name
                     )
                 )
@@ -351,7 +351,7 @@ class Alias(commands.Cog):
         except ArgParseError as e:
             return await ctx.send(" ".join(e.args))
 
-    @checks.is_owner()
+    @commands.is_owner()
     @global_.command(name="edit")
     async def _edit_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """Edit an existing global alias."""
@@ -372,7 +372,7 @@ class Alias(commands.Cog):
         try:
             if await self._aliases.edit_alias(ctx, alias_name, command, global_=True):
                 await ctx.send(
-                    _("The alias with the trigger `{name}` has been edited sucessfully.").format(
+                    _("The alias with the trigger `{name}` has been edited successfully.").format(
                         name=alias_name
                     )
                 )
@@ -407,7 +407,7 @@ class Alias(commands.Cog):
         else:
             await ctx.send(_("There is no alias with the name `{name}`").format(name=alias_name))
 
-    @checks.mod_or_permissions(manage_guild=True)
+    @commands.mod_or_permissions(manage_guild=True)
     @alias.command(name="delete", aliases=["del", "remove"])
     @commands.guild_only()
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
@@ -423,7 +423,7 @@ class Alias(commands.Cog):
         else:
             await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
 
-    @checks.is_owner()
+    @commands.is_owner()
     @global_.command(name="delete", aliases=["del", "remove"])
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
         """Delete an existing global alias."""

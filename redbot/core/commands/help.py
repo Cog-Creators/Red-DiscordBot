@@ -274,7 +274,10 @@ class RedHelpFormatter(HelpFormatterABC):
     async def get_cog_help_mapping(
         self, ctx: Context, obj: commands.Cog, help_settings: HelpSettings
     ):
-        iterator = filter(lambda c: c.parent is None and c.cog is obj, ctx.bot.commands)
+        if obj is None:
+            iterator = filter(lambda c: c.parent is None and c.cog is None, ctx.bot.commands)
+        else:
+            iterator = obj.get_commands()
         return {
             com.name: com
             async for com in self.help_filter_func(ctx, iterator, help_settings=help_settings)
@@ -510,7 +513,7 @@ class RedHelpFormatter(HelpFormatterABC):
         offset += len(embed_dict["embed"]["title"])
 
         # In order to only change the size of embeds when necessary for this rather
-        # than change the existing behavior for people uneffected by this
+        # than change the existing behavior for people unaffected by this
         # we're only modifying the page char limit should they be impacted.
         # We could consider changing this to always just subtract the offset,
         # But based on when this is being handled (very end of 3.2 release)
@@ -519,7 +522,7 @@ class RedHelpFormatter(HelpFormatterABC):
             # This is still necessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
-            # *only* when necessary, by the exact neccessary amount
+            # *only* when necessary, by the exact necessary amount
             # To retain a visual match with prior behavior.
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:

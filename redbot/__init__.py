@@ -13,16 +13,13 @@ from typing import (
     Union as _Union,
 )
 
-
-MIN_PYTHON_VERSION = (3, 8, 1)
-
-__all__ = [
-    "MIN_PYTHON_VERSION",
+__all__ = (
     "__version__",
     "version_info",
     "VersionInfo",
-    "_update_event_loop_policy",
-]
+)
+
+MIN_PYTHON_VERSION = (3, 8, 1)
 if _sys.version_info < MIN_PYTHON_VERSION:
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
@@ -334,7 +331,7 @@ def _update_logger_class():
 
 
 def _early_init():
-    # This function replaces logger so we preferrably (though not necessarily) want that to happen
+    # This function replaces logger so we preferably (though not necessarily) want that to happen
     # before importing anything that calls `logging.getLogger()`, i.e. `asyncio`.
     _update_logger_class()
     _update_event_loop_policy()
@@ -373,4 +370,13 @@ if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
         category=DeprecationWarning,
         module="discord",
         message="'audioop' is deprecated and slated for removal",
+    )
+    # DEP-WARN - will need a fix before Python 3.12 support
+    #
+    # DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="importlib",
+        message=r"the load_module\(\) method is deprecated and slated for removal",
     )

@@ -36,6 +36,7 @@ ALWAYS_MATCH = Optional(Use(lambda x: x))
 MATCH_ALL_BUT_STR = Optional(Use(not_str))
 TRIVIA_LIST_SCHEMA = Schema(
     {
+        Optional("$schema"): And(str, error=_("{key} key must be a text value.")),
         Optional("AUTHOR"): And(str, error=_("{key} key must be a text value.")),
         Optional("CONFIG"): And(
             {

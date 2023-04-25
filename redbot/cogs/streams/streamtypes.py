@@ -198,7 +198,7 @@ class YoutubeStream(Stream):
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
         log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
         # This is technically redundant since we have the
-        # info from the RSS ... but incase you don't wanna deal with fully rewritting the
+        # info from the RSS ... but incase you don't wanna deal with fully rewriting the
         # code for this part, as this is only a 2 quota query.
         if self.livestreams:
             params = {
@@ -330,7 +330,7 @@ class TwitchStream(Stream):
     async def wait_for_rate_limit_reset(self) -> None:
         """Check rate limits in response header and ensure we're following them.
 
-        From python-twitch-client and adaptated to asyncio from Trusty-cogs:
+        From python-twitch-client and adapted to asyncio from Trusty-cogs:
         https://github.com/tsifrer/python-twitch-client/blob/master/twitch/helix/base.py
         https://github.com/TrustyJAID/Trusty-cogs/blob/master/twitch/twitch_api.py
         """

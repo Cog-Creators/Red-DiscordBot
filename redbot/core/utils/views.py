@@ -8,9 +8,10 @@ from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
 from redbot.core.commands.converter import get_dict_converter
 
-
 if TYPE_CHECKING:
     from redbot.core.commands import Context
+
+__all__ = ("SimpleMenu", "SetApiModal", "SetApiView")
 
 _ = Translator("UtilsViews", __file__)
 
@@ -352,7 +353,7 @@ class SetApiModal(discord.ui.Modal):
     async def on_submit(self, interaction: discord.Interaction):
         if not await interaction.client.is_owner(
             interaction.user
-        ):  # Prevent non-bot owners from somehow aquiring and saving the modal.
+        ):  # Prevent non-bot owners from somehow acquiring and saving the modal.
             return await interaction.response.send_message(
                 _("This modal is for bot owners only. Whoops!"), ephemeral=True
             )

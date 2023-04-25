@@ -30,7 +30,7 @@ commonmark==0.9.1
     # via rich
 contextlib2==21.6.0
     # via schema
-discord-py==2.1.0
+discord-py==2.2.2
     # via
     #   -r base.in
     #   red-lavalink
@@ -52,7 +52,7 @@ orjson==3.8.3
     # via -r base.in
 packaging==22.0
     # via -r base.in
-platformdirs==2.6.0
+platformdirs==3.2.0
     # via -r base.in
 psutil==5.9.4
     # via -r base.in
@@ -74,7 +74,7 @@ red-commons==1.0.0
     # via
     #   -r base.in
     #   red-lavalink
-red-lavalink==0.11.0rc1
+red-lavalink==0.11.0
     # via -r base.in
 rich==12.6.0
     # via -r base.in

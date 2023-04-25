@@ -9,7 +9,7 @@ from urllib.parse import quote_plus
 import discord
 from rapidfuzz import process
 
-from redbot.core import Config, checks, commands
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus, AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
@@ -347,7 +347,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(_("The following matches have been found:") + box(content))
 
     @customcom.group(name="create", aliases=["add"], invoke_without_command=True)
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_create(self, ctx: commands.Context, command: str.lower, *, text: str):
         """Create custom commands.
 
@@ -358,7 +358,7 @@ class CustomCommands(commands.Cog):
         await ctx.invoke(self.cc_create_simple, command=command, text=text)
 
     @cc_create.command(name="random")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_create_random(self, ctx: commands.Context, command: str.lower):
         """Create a CC where it will randomly choose a response!
 
@@ -397,7 +397,7 @@ class CustomCommands(commands.Cog):
             )
 
     @cc_create.command(name="simple")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_create_simple(self, ctx, command: str.lower, *, text: str):
         """Add a simple custom command.
 
@@ -436,7 +436,7 @@ class CustomCommands(commands.Cog):
             )
 
     @customcom.command(name="cooldown")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_cooldown(
         self, ctx, command: str.lower, cooldown: int = None, *, per: str.lower = "member"
     ):
@@ -487,7 +487,7 @@ class CustomCommands(commands.Cog):
             )
 
     @customcom.command(name="delete", aliases=["del", "remove"])
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str.lower):
         """Delete a custom command.
 
@@ -505,7 +505,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(_("That command doesn't exist."))
 
     @customcom.command(name="edit")
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def cc_edit(self, ctx, command: str.lower, *, text: str = None):
         """Edit a custom command.
 

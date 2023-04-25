@@ -19,9 +19,15 @@ from typing import (
 
 import discord
 
-from .drivers import IdentifierData, get_driver, ConfigCategory, BaseDriver
+from ._drivers import BaseDriver, ConfigCategory, IdentifierData, get_driver
 
-__all__ = ["Config", "get_latest_confs", "migrate"]
+__all__ = (
+    "ConfigCategory",
+    "IdentifierData",
+    "Value",
+    "Group",
+    "Config",
+)
 
 log = logging.getLogger("red.config")
 
@@ -122,21 +128,22 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):  # pylint: disab
 class Value:
     """A singular "value" of data.
 
+    This class should not be instantiated directly - you should get instances of this class
+    through methods and attribute lookup on instances of `Config` and `Group`.
+
     Attributes
     ----------
     identifier_data : IdentifierData
         Information on identifiers for this value.
     default
         The default value for the data element that `identifiers` points at.
-    driver : `redbot.core.drivers.BaseDriver`
-        A reference to `Config.driver`.
 
     """
 
     def __init__(self, identifier_data: IdentifierData, default_value, driver, config: "Config"):
         self.identifier_data = identifier_data
         self.default = default_value
-        self.driver = driver
+        self._driver = driver
         self._config = config
 
     def get_lock(self) -> asyncio.Lock:
@@ -174,7 +181,7 @@ class Value:
 
     async def _get(self, default=...):
         try:
-            ret = await self.driver.get(self.identifier_data)
+            ret = await self._driver.get(self.identifier_data)
         except KeyError:
             return default if default is not ... else self.default
         return ret
@@ -255,13 +262,13 @@ class Value:
         """
         if isinstance(value, dict):
             value = _str_key_dict(value)
-        await self.driver.set(self.identifier_data, value=value)
+        await self._driver.set(self.identifier_data, value=value)
 
     async def clear(self):
         """
         Clears the value from record for the data element pointed to by `identifiers`.
         """
-        await self.driver.clear(self.identifier_data)
+        await self._driver.clear(self.identifier_data)
 
 
 class Group(Value):
@@ -271,14 +278,15 @@ class Group(Value):
     Inherits from `Value` which means that all of the attributes and methods
     available in `Value` are also available when working with a `Group` object.
 
+    This class should not be instantiated directly - you should get instances of this class
+    through methods and attribute lookup on instances of `Config` and `Group`.
+
     Attributes
     ----------
     defaults : `dict`
         All registered default values for this Group.
     force_registration : `bool`
         Same as `Config.force_registration`.
-    driver : `redbot.core.drivers.BaseDriver`
-        A reference to `Config.driver`.
 
     """
 
@@ -292,9 +300,9 @@ class Group(Value):
     ):
         self._defaults = defaults
         self.force_registration = force_registration
-        self.driver = driver
+        self._driver = driver
 
-        super().__init__(identifier_data, {}, self.driver, config)
+        super().__init__(identifier_data, {}, self._driver, config)
 
     @property
     def defaults(self):
@@ -340,7 +348,7 @@ class Group(Value):
             return Group(
                 identifier_data=new_identifiers,
                 defaults=self._defaults[item],
-                driver=self.driver,
+                driver=self._driver,
                 force_registration=self.force_registration,
                 config=self._config,
             )
@@ -348,7 +356,7 @@ class Group(Value):
             return Value(
                 identifier_data=new_identifiers,
                 default_value=self._defaults[item],
-                driver=self.driver,
+                driver=self._driver,
                 config=self._config,
             )
         elif self.force_registration:
@@ -357,7 +365,7 @@ class Group(Value):
             return Value(
                 identifier_data=new_identifiers,
                 default_value=None,
-                driver=self.driver,
+                driver=self._driver,
                 config=self._config,
             )
 
@@ -383,7 +391,7 @@ class Group(Value):
         """
         path = tuple(str(p) for p in nested_path)
         identifier_data = self.identifier_data.get_child(*path)
-        await self.driver.clear(identifier_data)
+        await self._driver.clear(identifier_data)
 
     def is_group(self, item: Any) -> bool:
         """A helper method for `__getattr__`. Most developers will have no need
@@ -502,7 +510,7 @@ class Group(Value):
 
         identifier_data = self.identifier_data.get_child(*path)
         try:
-            raw = await self.driver.get(identifier_data)
+            raw = await self._driver.get(identifier_data)
         except KeyError:
             if default is not ...:
                 return default
@@ -587,7 +595,7 @@ class Group(Value):
         identifier_data = self.identifier_data.get_child(*path)
         if isinstance(value, dict):
             value = _str_key_dict(value)
-        await self.driver.set(identifier_data, value=value)
+        await self._driver.set(identifier_data, value=value)
 
 
 class Config(metaclass=ConfigMeta):
@@ -612,8 +620,6 @@ class Config(metaclass=ConfigMeta):
     unique_identifier : `int`
         Unique identifier provided to differentiate cog data when name
         conflicts occur.
-    driver
-        An instance of a driver that implements `redbot.core.drivers.BaseDriver`.
     force_registration : `bool`
         Determines if Config should throw an error if a cog attempts to access
         an attribute which has not been previously registered.
@@ -644,7 +650,7 @@ class Config(metaclass=ConfigMeta):
         self.cog_name = cog_name
         self.unique_identifier = unique_identifier
 
-        self.driver = driver
+        self._driver = driver
         self.force_registration = force_registration
         self._defaults = defaults or {}
 
@@ -940,7 +946,7 @@ class Config(metaclass=ConfigMeta):
         return Group(
             identifier_data=identifier_data,
             defaults=defaults,
-            driver=self.driver,
+            driver=self._driver,
             force_registration=self.force_registration,
             config=self,
         )
@@ -1184,7 +1190,7 @@ class Config(metaclass=ConfigMeta):
         defaults = self.defaults.get(scope, {})
 
         try:
-            dict_ = await self.driver.get(group.identifier_data)
+            dict_ = await self._driver.get(group.identifier_data)
         except KeyError:
             pass
         else:
@@ -1301,7 +1307,7 @@ class Config(metaclass=ConfigMeta):
         if guild is None:
             group = self._get_base_group(self.MEMBER)
             try:
-                dict_ = await self.driver.get(group.identifier_data)
+                dict_ = await self._driver.get(group.identifier_data)
             except KeyError:
                 pass
             else:
@@ -1310,7 +1316,7 @@ class Config(metaclass=ConfigMeta):
         else:
             group = self._get_base_group(self.MEMBER, str(guild.id))
             try:
-                guild_data = await self.driver.get(group.identifier_data)
+                guild_data = await self._driver.get(group.identifier_data)
             except KeyError:
                 pass
             else:
@@ -1338,7 +1344,7 @@ class Config(metaclass=ConfigMeta):
         if not scopes:
             # noinspection PyTypeChecker
             identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
-            group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
+            group = Group(identifier_data, defaults={}, driver=self._driver, config=self)
         else:
             cat, *scopes = scopes
             group = self._get_base_group(cat, *scopes)
