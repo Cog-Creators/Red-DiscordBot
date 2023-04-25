@@ -95,7 +95,7 @@ class Filter(commands.Cog):
         The default name used is *John Doe*.
 
         Example:
-            - `[p]filterset defaultname Missingno`
+        - `[p]filterset defaultname Missingno`
 
         **Arguments:**
 
@@ -115,8 +115,8 @@ class Filter(commands.Cog):
         Set both to zero to disable autoban.
 
         Examples:
-            - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
-            - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
+        - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
+        - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
 
         **Arguments:**
 
@@ -262,8 +262,8 @@ class Filter(commands.Cog):
         Use double quotes to add sentences.
 
         Examples:
-            - `[p]filter channel add #channel word1 word2 word3`
-            - `[p]filter channel add #channel "This is a sentence"`
+        - `[p]filter channel add #channel word1 word2 word3`
+        - `[p]filter channel add #channel "This is a sentence"`
 
         **Arguments:**
 
@@ -289,8 +289,8 @@ class Filter(commands.Cog):
         Use double quotes to remove sentences.
 
         Examples:
-            - `[p]filter channel remove #channel word1 word2 word3`
-            - `[p]filter channel remove #channel "This is a sentence"`
+        - `[p]filter channel remove #channel word1 word2 word3`
+        - `[p]filter channel remove #channel "This is a sentence"`
 
         **Arguments:**
 
@@ -311,8 +311,8 @@ class Filter(commands.Cog):
         Use double quotes to add sentences.
 
         Examples:
-            - `[p]filter add word1 word2 word3`
-            - `[p]filter add "This is a sentence"`
+        - `[p]filter add word1 word2 word3`
+        - `[p]filter add "This is a sentence"`
 
         **Arguments:**
 
@@ -333,8 +333,8 @@ class Filter(commands.Cog):
         Use double quotes to remove sentences.
 
         Examples:
-            - `[p]filter remove word1 word2 word3`
-            - `[p]filter remove "This is a sentence"`
+        - `[p]filter remove word1 word2 word3`
+        - `[p]filter remove "This is a sentence"`
 
         **Arguments:**
 
