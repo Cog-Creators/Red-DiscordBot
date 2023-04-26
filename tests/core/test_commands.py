@@ -50,15 +50,6 @@ def test_dpy_commands_reexports():
         dpy_attrs.add(attr_name)
 
     missing_attrs = dpy_attrs - set(commands.__dict__.keys())
-    # temporarily ignore things related to app commands as the work on that is done separately
-    missing_attrs -= {
-        "GroupCog",
-        "HybridGroup",
-        "hybrid_group",
-        "hybrid_command",
-        "HybridCommand",
-        "HybridCommandError",
-    }
 
     if missing_attrs:
         pytest.fail(

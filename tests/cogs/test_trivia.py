@@ -26,7 +26,7 @@ def test_trivia_lists():
         except InvalidListError as exc:
             e = exc.__cause__
             if isinstance(e, SchemaError):
-                problem_lists.append((l.stem, f"SCHEMA error:\n{e!s}"))
+                problem_lists.append((l.stem, f"SCHEMA error:\n{format_schema_error(e)}"))
             else:
                 problem_lists.append((l.stem, f"YAML error:\n{e!s}"))
 

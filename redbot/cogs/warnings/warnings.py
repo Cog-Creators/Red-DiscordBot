@@ -3,7 +3,7 @@ import contextlib
 from datetime import timezone
 from collections import namedtuple
 from copy import copy
-from typing import Union, Optional, Literal
+from typing import Union, Literal
 
 import discord
 
@@ -13,7 +13,7 @@ from redbot.cogs.warnings.helpers import (
     get_command_for_dropping_points,
     warning_points_remove_check,
 )
-from redbot.core import Config, checks, commands, modlog
+from redbot.core import Config, commands, modlog
 from redbot.core.bot import Red
 from redbot.core.commands import UserInputOptional
 from redbot.core.i18n import Translator, cog_i18n
@@ -110,7 +110,7 @@ class Warnings(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def warningset(self, ctx: commands.Context):
         """Manage settings for Warnings."""
         pass
@@ -195,7 +195,7 @@ class Warnings(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
         """Manage automated actions for Warnings.
 
@@ -261,7 +261,7 @@ class Warnings(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):
         """Manage warning reasons.
 
@@ -305,7 +305,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def reasonlist(self, ctx: commands.Context):
         """List all configured reasons for Warnings."""
         guild = ctx.guild
@@ -334,7 +334,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def actionlist(self, ctx: commands.Context):
         """List all configured automated actions for Warnings."""
         guild = ctx.guild
@@ -369,7 +369,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def warn(
         self,
         ctx: commands.Context,
@@ -525,7 +525,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin()
+    @commands.admin()
     async def warnings(self, ctx: commands.Context, member: Union[discord.Member, int]):
         """List the warnings for the specified user."""
 
@@ -601,7 +601,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def unwarn(
         self,
         ctx: commands.Context,

@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import platform
 import sys
-import codecs
 import logging
 import traceback
 from datetime import datetime, timedelta, timezone
@@ -17,12 +16,9 @@ from redbot.core import data_manager
 from redbot.core.commands import RedHelpFormatter, HelpSettings
 from redbot.core.i18n import (
     Translator,
-    set_contextual_locale,
-    set_contextual_regional_format,
     set_contextual_locales_from_guild,
 )
-from .utils import AsyncIter
-from .. import __version__ as red_version, version_info as red_version_info, VersionInfo
+from .. import __version__ as red_version, version_info as red_version_info
 from . import commands
 from .config import get_latest_confs
 from .utils._internal_utils import (
@@ -32,7 +28,7 @@ from .utils._internal_utils import (
     fetch_latest_red_version_info,
     send_to_owners_with_prefix_replaced,
 )
-from .utils.chat_formatting import inline, format_perms_list, humanize_timedelta
+from .utils.chat_formatting import inline, format_perms_list
 
 import rich
 from rich import box
@@ -229,6 +225,8 @@ def init_events(bot, cli_flags):
                     return
         if not isinstance(error, commands.CommandNotFound):
             asyncio.create_task(bot._delete_delay(ctx))
+        converter = getattr(ctx.current_parameter, "converter", None)
+        argument = ctx.current_argument
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
@@ -241,10 +239,112 @@ def init_events(bot, cli_flags):
             await ctx.send(msg)
             if error.send_cmd_help:
                 await ctx.send_help()
+        elif isinstance(error, commands.RangeError):
+            if isinstance(error.value, int):
+                if error.minimum == 0 and error.maximum is None:
+                    message = _("Argument `{parameter_name}` must be a positive integer.")
+                elif error.minimum is None and error.maximum is not None:
+                    message = _(
+                        "Argument `{parameter_name}` must be an integer no more than {maximum}."
+                    )
+                elif error.minimum is not None and error.maximum is None:
+                    message = _(
+                        "Argument `{parameter_name}` must be an integer no less than {minimum}."
+                    )
+                elif error.maximum is not None and error.minimum is not None:
+                    message = _(
+                        "Argument `{parameter_name}` must be an integer between {minimum} and {maximum}."
+                    )
+            elif isinstance(error.value, float):
+                if error.minimum == 0 and error.maximum is None:
+                    message = _("Argument `{parameter_name}` must be a positive number.")
+                elif error.minimum is None and error.maximum is not None:
+                    message = _(
+                        "Argument `{parameter_name}` must be a number no more than {maximum}."
+                    )
+                elif error.minimum is not None and error.maximum is None:
+                    message = _(
+                        "Argument `{parameter_name}` must be a number no less than {maximum}."
+                    )
+                elif error.maximum is not None and error.minimum is not None:
+                    message = _(
+                        "Argument `{parameter_name}` must be a number between {minimum} and {maximum}."
+                    )
+            elif isinstance(error.value, str):
+                if error.minimum is None and error.maximum is not None:
+                    message = _(
+                        "Argument `{parameter_name}` must be a string with a length of no more than {maximum}."
+                    )
+                elif error.minimum is not None and error.maximum is None:
+                    message = _(
+                        "Argument `{parameter_name}` must be a string with a length of no less than {minimum}."
+                    )
+                elif error.maximum is not None and error.minimum is not None:
+                    message = _(
+                        "Argument `{parameter_name}` must be a string with a length of between {minimum} and {maximum}."
+                    )
+            await ctx.send(
+                message.format(
+                    maximum=error.maximum,
+                    minimum=error.minimum,
+                    parameter_name=ctx.current_parameter.name,
+                )
+            )
+            return
         elif isinstance(error, commands.BadArgument):
+            if isinstance(converter, commands.Range):
+                if converter.annotation is int:
+                    if converter.min == 0 and converter.max is None:
+                        message = _("Argument `{parameter_name}` must be a positive integer.")
+                    elif converter.min is None and converter.max is not None:
+                        message = _(
+                            "Argument `{parameter_name}` must be an integer no more than {maximum}."
+                        )
+                    elif converter.min is not None and converter.max is None:
+                        message = _(
+                            "Argument `{parameter_name}` must be an integer no less than {minimum}."
+                        )
+                    elif converter.max is not None and converter.min is not None:
+                        message = _(
+                            "Argument `{parameter_name}` must be an integer between {minimum} and {maximum}."
+                        )
+                elif converter.annotation is float:
+                    if converter.min == 0 and converter.max is None:
+                        message = _("Argument `{parameter_name}` must be a positive number.")
+                    elif converter.min is None and converter.max is not None:
+                        message = _(
+                            "Argument `{parameter_name}` must be a number no more than {maximum}."
+                        )
+                    elif converter.min is not None and converter.max is None:
+                        message = _(
+                            "Argument `{parameter_name}` must be a number no less than {minimum}."
+                        )
+                    elif converter.max is not None and converter.min is not None:
+                        message = _(
+                            "Argument `{parameter_name}` must be a number between {minimum} and {maximum}."
+                        )
+                elif converter.annotation is str:
+                    if error.minimum is None and error.maximum is not None:
+                        message = _(
+                            "Argument `{parameter_name}` must be a string with a length of no more than {maximum}."
+                        )
+                    elif error.minimum is not None and error.maximum is None:
+                        message = _(
+                            "Argument `{parameter_name}` must be a string with a length of no less than {minimum}."
+                        )
+                    elif error.maximum is not None and error.minimum is not None:
+                        message = _(
+                            "Argument `{parameter_name}` must be a string with a length of between {minimum} and {maximum}."
+                        )
+                await ctx.send(
+                    message.format(
+                        maximum=converter.max,
+                        minimum=converter.min,
+                        parameter_name=ctx.current_parameter.name,
+                    )
+                )
+                return
             if isinstance(error.__cause__, ValueError):
-                converter = ctx.current_parameter.converter
-                argument = ctx.current_argument
                 if converter is int:
                     await ctx.send(_('"{argument}" is not an integer.').format(argument=argument))
                     return

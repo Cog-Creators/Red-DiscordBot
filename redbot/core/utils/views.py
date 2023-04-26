@@ -8,9 +8,10 @@ from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
 from redbot.core.commands.converter import get_dict_converter
 
-
 if TYPE_CHECKING:
     from redbot.core.commands import Context
+
+__all__ = ("SimpleMenu", "SetApiModal", "SetApiView")
 
 _ = Translator("UtilsViews", __file__)
 

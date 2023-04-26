@@ -1,7 +1,7 @@
 import discord
 from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.bot import Red
-from redbot.core import checks, commands, Config
+from redbot.core import commands, Config
 from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import escape, inline, pagify
@@ -305,7 +305,7 @@ class Streams(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def streamalert(self, ctx: commands.Context):
         """Manage automated stream alerts."""
         pass
@@ -494,13 +494,13 @@ class Streams(commands.Cog):
         await self.add_or_remove(ctx, stream, discord_channel)
 
     @commands.group()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def streamset(self, ctx: commands.Context):
         """Manage stream alert settings."""
         pass
 
     @streamset.command(name="timer")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _streamset_refresh_timer(self, ctx: commands.Context, refresh_time: int):
         """Set stream check refresh time."""
         if refresh_time < 60:
@@ -512,7 +512,7 @@ class Streams(commands.Cog):
         )
 
     @streamset.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def twitchtoken(self, ctx: commands.Context):
         """Explain how to set the twitch token."""
         message = _(
@@ -538,7 +538,7 @@ class Streams(commands.Cog):
         await ctx.maybe_send_embed(message)
 
     @streamset.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def youtubekey(self, ctx: commands.Context):
         """Explain how to set the YouTube token."""
 

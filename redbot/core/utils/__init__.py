@@ -40,6 +40,8 @@ if TYPE_CHECKING:
     DMMessageable = Union[commands.DMContext, discord.Member, discord.User, discord.DMChannel]
 
 __all__ = (
+    "async_filter",
+    "async_enumerate",
     "bounded_gather",
     "bounded_gather_iter",
     "deduplicate_iterables",
