@@ -81,7 +81,7 @@ class RedTree(CommandTree):
                 raise CommandAlreadyRegistered(name, None)
             if key in self._context_menus:
                 if not override:
-                    raise discord.errors.CommandAlreadyRegistered(name, None)
+                    raise CommandAlreadyRegistered(name, None)
                 del self._context_menus[key]
 
             self._disabled_context_menus[key] = command
@@ -97,10 +97,10 @@ class RedTree(CommandTree):
 
         # Handle cases where the command already is in the tree
         if not override and name in self._disabled_global_commands:
-            raise discord.errors.CommandAlreadyRegistered(name, None)
+            raise CommandAlreadyRegistered(name, None)
         if name in self._global_commands:
             if not override:
-                raise discord.errors.CommandAlreadyRegistered(name, None)
+                raise CommandAlreadyRegistered(name, None)
             del self._global_commands[name]
 
         self._disabled_global_commands[name] = root
