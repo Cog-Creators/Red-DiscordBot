@@ -371,3 +371,12 @@ if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
         module="discord",
         message="'audioop' is deprecated and slated for removal",
     )
+    # DEP-WARN - will need a fix before Python 3.12 support
+    #
+    # DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="importlib",
+        message=r"the load_module\(\) method is deprecated and slated for removal",
+    )

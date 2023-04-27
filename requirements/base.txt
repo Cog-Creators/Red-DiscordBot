@@ -52,7 +52,7 @@ orjson==3.8.3
     # via -r base.in
 packaging==22.0
     # via -r base.in
-platformdirs==2.6.0
+platformdirs==3.2.0
     # via -r base.in
 psutil==5.9.4
     # via -r base.in

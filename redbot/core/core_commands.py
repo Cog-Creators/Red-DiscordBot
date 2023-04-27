@@ -407,8 +407,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
-        org_repo = "https://github.com/Cog-Creators"
-        red_repo = org_repo + "/Red-DiscordBot"
+        red_repo = "https://github.com/Cog-Creators/Red-DiscordBot"
+        contributors_url = red_repo + "/graphs/contributors"
         red_pypi = "https://pypi.org/project/Red-DiscordBot"
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
@@ -438,7 +438,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "creates content for everyone to enjoy. [Join us today]({}) "
                 "and help us improve!\n\n"
                 "(c) Cog Creators"
-            ).format(red_repo, author_repo, org_repo, support_server_url)
+            ).format(red_repo, author_repo, contributors_url, support_server_url)
 
             embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(
@@ -537,7 +537,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "6. <{}>\n"
                 "7. <{}>\n"
             ).format(
-                red_repo, author_repo, org_repo, support_server_url, python_url, dpy_repo, red_pypi
+                red_repo,
+                author_repo,
+                contributors_url,
+                support_server_url,
+                python_url,
+                dpy_repo,
+                red_pypi,
             )
             await ctx.send(refs)
 
