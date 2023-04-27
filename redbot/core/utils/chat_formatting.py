@@ -60,7 +60,7 @@ def hyperlink(text: str, url: str) -> str:
     return f"[{text}]({url})"
 
 
-def header(text: str, size: Literal['small', 'medium', 'large']) -> str:
+def header(text: str, size: Literal["small", "medium", "large"]) -> str:
     """Formats a header.
 
     Parameters
