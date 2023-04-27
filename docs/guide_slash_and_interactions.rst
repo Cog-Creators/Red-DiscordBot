@@ -82,11 +82,11 @@ For example, we can use this to create a command that allows us to choose betwee
         @app_commands.command()
         @app_commands.describe(color="The color you want to choose")
         @app_commands.choices(color=[
-             app_commands.Choice(name="Red', value="red"),
-             app_commands.Choice(name="Blue', value="blue"),
+             app_commands.Choice(name="Red", value="red"),
+             app_commands.Choice(name="Blue", value="blue"),
         ])
         async def color(self, interaction: discord.Interaction, color: Color):
-            await interaction.response.send_message(f"Your color is {str(color)}", ephemeral=True)
+            await interaction.response.send_message(f"Your color is {color}", ephemeral=True)
 
 The user will be shown the ``name`` of the choice, and the argument will be passed the
 ``value`` associated with that choice. This allows user-facing names to be prettier than
@@ -107,7 +107,7 @@ user-facing label.
         @app_commands.command()
         @app_commands.describe(color="The color you want to choose")
         async def color(self, interaction: discord.Interaction, color: Literal["Red", "Blue"]):
-            await interaction.response.send_message(f"Your color is {str(color)}", ephemeral=True)
+            await interaction.response.send_message(f"Your color is {color}", ephemeral=True)
 
 Finally, an ``Enum`` subclass can be used to specify choices. When done this way, the
 resulting parameter will be an instance of that enum, rather than the ``value``.
@@ -128,7 +128,7 @@ resulting parameter will be an instance of that enum, rather than the ``value``.
         @app_commands.command()
         @app_commands.describe(color="The color you want to choose")
         async def color(self, interaction: discord.Interaction, color: Color):
-            await interaction.response.send_message(f"Your color is {str(color.value)}", ephemeral=True)
+            await interaction.response.send_message(f"Your color is {color.value}", ephemeral=True)
 
 Check out the full reference of decorators on Discord.py's documentation `here <https://discordpy.readthedocs.io/en/stable/interactions/api.html#decorators>`__.
 
