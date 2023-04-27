@@ -73,12 +73,53 @@ For example, we can use this to create a command that allows us to choose betwee
 
 .. code-block:: python
 
+    from redbot.core import commands, app_commands
+
+    class MyCog(commands.Cog):
+        def __init__(self, bot):
+            self.bot = bot
+
+        @app_commands.command()
+        @app_commands.describe(color="The color you want to choose")
+        @app_commands.choices(color=[
+             app_commands.Choice(name="Red', value="red"),
+             app_commands.Choice(name="Blue', value="blue"),
+        ])
+        async def color(self, interaction: discord.Interaction, color: Color):
+            await interaction.response.send_message(f"Your color is {str(color)}", ephemeral=True)
+
+The user will be shown the ``name`` of the choice, and the argument will be passed the
+``value`` associated with that choice. This allows user-facing names to be prettier than
+what is actually processed by the command.
+
+Alternatively, ``Literal`` can be used if the argument does not need a different
+user-facing label.
+
+.. code-block:: python
+
+    from redbot.core import commands, app_commands
+    from typing import Literal
+
+    class MyCog(commands.Cog):
+        def __init__(self, bot):
+            self.bot = bot
+
+        @app_commands.command()
+        @app_commands.describe(color="The color you want to choose")
+        async def color(self, interaction: discord.Interaction, color: Literal["Red", "Blue"]):
+            await interaction.response.send_message(f"Your color is {str(color)}", ephemeral=True)
+
+Finally, an ``Enum`` subclass can be used to specify choices. When done this way, the
+resulting parameter will be an instance of that enum, rather than the ``value``.
+
+.. code-block:: python
+
     from enum import Enum
     from redbot.core import commands, app_commands
 
     class Color(Enum):
-        Red = 1
-        Blue = 2
+        Red = "red"
+        Blue = "blue"
 
     class MyCog(commands.Cog):
         def __init__(self, bot):
@@ -87,7 +128,7 @@ For example, we can use this to create a command that allows us to choose betwee
         @app_commands.command()
         @app_commands.describe(color="The color you want to choose")
         async def color(self, interaction: discord.Interaction, color: Color):
-            await interaction.response.send_message(f"Your color is {str(color.name)}", ephemeral=True)
+            await interaction.response.send_message(f"Your color is {str(color.value)}", ephemeral=True)
 
 Check out the full reference of decorators on Discord.py's documentation `here <https://discordpy.readthedocs.io/en/stable/interactions/api.html#decorators>`__.
 
@@ -141,21 +182,21 @@ Let's take a look at how we can do that.
             self.bot = bot
 
         @app_commands.command()
-        @app_commands.describe(channel="The channel you want to use")
-        async def channel(self, interaction: discord.Interaction, channel: discord.TextChannel):
-            await interaction.response.send_message(f"Your channel is {channel.mention}", ephemeral=True)
+        @app_commands.describe(channel="The channel you want to mention")
+        async def mentionchannel(self, interaction: discord.Interaction, channel: discord.TextChannel):
+            await interaction.response.send_message(f"That channel is {channel.mention}", ephemeral=True)
 
         @app_commands.command()
-        @app_commands.describe(role="The role you want to use")
-        async def role(self, interaction: discord.Interaction, role: discord.Role):
-            await interaction.response.send_message(f"Your role is {role.mention}", ephemeral=True)
+        @app_commands.describe(role="The role you want to mention")
+        async def mentionrole(self, interaction: discord.Interaction, role: discord.Role):
+            await interaction.response.send_message(f"That role is {role.mention}", ephemeral=True)
 
         @app_commands.command()
-        @app_commands.describe(member="The member you want to use")
-        async def member(self, interaction: discord.Interaction, member: discord.Member):
-            await interaction.response.send_message(f"Your member is {member.mention}", ephemeral=True)
+        @app_commands.describe(member="The member you want to mention")
+        async def mentionmember(self, interaction: discord.Interaction, member: discord.Member):
+            await interaction.response.send_message(f"That member is {member.mention}", ephemeral=True)
 
-If you try out the channel command, you will see that it currently accepts any type of channel,
+If you try out the mentionchannel command, you will see that it currently accepts any type of channel,
 however let's say we want to limit this to voice channels only.
 We can do so by adjusting our type hint to :class:`discord.VoiceChannel` instead of :class:`discord.TextChannel`.
 
@@ -170,9 +211,9 @@ We can do so by adjusting our type hint to :class:`discord.VoiceChannel` instead
             self.bot = bot
 
         @app_commands.command()
-        @app_commands.describe(channel="The channel you want to use")
-        async def channel(self, interaction: discord.Interaction, channel: discord.VoiceChannel):
-            await interaction.response.send_message(f"Your channel is {channel.mention}", ephemeral=True)
+        @app_commands.describe(channel="The channel you want to mention")
+        async def mentionchannel(self, interaction: discord.Interaction, channel: discord.VoiceChannel):
+            await interaction.response.send_message(f"That channel is {channel.mention}", ephemeral=True)
 
 With integer and float arguments, we can also specify a minimum and maximum value.
 This can also be done to strings to set a minimum and maximum length.
@@ -189,8 +230,8 @@ These limits will be reflected within Discord when the user is filling out the c
             self.bot = bot
 
         @app_commands.command()
-        @app_commands.describe(number="The number you want to use, max 10")
-        async def number(self, interaction: discord.Interaction, number: app_commands.Range[int, None, 10]):
+        @app_commands.describe(number="The number you want to say, max 10")
+        async def saynumber(self, interaction: discord.Interaction, number: app_commands.Range[int, None, 10]):
             await interaction.response.send_message(f"Your number is {number}", ephemeral=True)
 
 See the `Discord.py documentation <https://discordpy.readthedocs.io/en/stable/interactions/api.html#range>`__ for more information on this.
