@@ -183,7 +183,7 @@ Let's take a look at how we can do that.
 
         @app_commands.command()
         @app_commands.describe(channel="The channel you want to mention")
-        async def mentionchannel(self, interaction: discord.Interaction, channel: discord.TextChannel):
+        async def mentionchannel(self, interaction: discord.Interaction, channel: discord.abc.GuildChannel):
             await interaction.response.send_message(f"That channel is {channel.mention}", ephemeral=True)
 
         @app_commands.command()
@@ -198,7 +198,7 @@ Let's take a look at how we can do that.
 
 If you try out the mentionchannel command, you will see that it currently accepts any type of channel,
 however let's say we want to limit this to voice channels only.
-We can do so by adjusting our type hint to :class:`discord.VoiceChannel` instead of :class:`discord.TextChannel`.
+We can do so by adjusting our type hint to :class:`discord.VoiceChannel` instead of :class:`discord.abc.GuildChannel`.
 
 .. code-block:: python
 
