@@ -1,0 +1,5 @@
+[codespell]
+skip = *.po
+exclude-file = .codespell-ignore-lines
+ignore-words = .codespell-ignore-words
+ignore-regex = \\n

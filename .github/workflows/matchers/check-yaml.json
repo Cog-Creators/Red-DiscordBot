@@ -1,0 +1,19 @@
+{
+    "problemMatcher": [
+        {
+            "owner": "check-yaml",
+            "pattern": [
+                {
+                    "regexp": "^(.+)$",
+                    "message": 1
+                },
+                {
+                    "regexp": "^  in \"(.+\\.ya?ml)\", line (\\d+), column (\\d+)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3
+                }
+            ]
+        }
+    ]
+}

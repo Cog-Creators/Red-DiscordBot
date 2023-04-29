@@ -11,15 +11,31 @@ if exist "%~dp0.venv\" (
 goto %1
 
 :reformat
+echo - black:
 "%VENV_PYTHON%" -m black "%~dp0."
+echo - ruff:
+"%VENV_PYTHON%" -m ruff --fix-only "%~dp0."
 goto:eof
 
 :stylecheck
+echo - black:
 "%VENV_PYTHON%" -m black --check "%~dp0."
+if %errorlevel% neq 0 (
+    goto:eof
+)
+echo - ruff:
+"%VENV_PYTHON%" -m ruff --select I001 --no-fix "%~dp0."
 goto:eof
 
 :stylediff
+echo WARNING: black and ruff diffs aren't combined! Consider using pre-commit instead.
+echo - black:
 "%VENV_PYTHON%" -m black --check --diff "%~dp0."
+if %errorlevel% neq 0 (
+    goto:eof
+)
+echo - ruff:
+"%VENV_PYTHON%" -m ruff --fix-only --diff "%~dp0."
 goto:eof
 
 :newenv

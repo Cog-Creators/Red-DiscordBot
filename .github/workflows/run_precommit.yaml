@@ -1,0 +1,43 @@
+name: Run pre-commit
+on:
+  pull_request:
+  push:
+env:
+  RUFF_FORMAT: github
+
+jobs:
+  run_precommit:
+    name: Run pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository
+      - uses: actions/checkout@v3
+
+      # Setup Python and install pre-commit
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: Install pre-commit
+        run: |
+          pip install -U pre-commit
+
+      # Load cached pre-commit environment
+      - name: set PY
+        run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      # Register problem matchers
+      - name: Register problem matchers
+        run: |
+          echo "::add-matcher::.github/workflows/matchers/check-json.json"
+          echo "::add-matcher::.github/workflows/matchers/check-toml.json"
+          echo "::add-matcher::.github/workflows/matchers/check-yaml.json"
+          echo "::add-matcher::.github/workflows/matchers/codespell.json"
+
+      # Run pre-commit
+      - name: Run pre-commit
+        run: |
+          pre-commit run --show-diff-on-failure --color=never --all-files --verbose

@@ -17,7 +17,8 @@ jobs:
           python_version:
             - "3.8"
           tox_env:
-            - style
+            # Ran within pre-commit workflow
+            # - style
             - docs
           include:
             - tox_env: py38
@@ -32,8 +33,9 @@ jobs:
             - tox_env: py311
               python_version: "3.11"
               friendly_name: Python 3.11 - Tests
-            - tox_env: style
-              friendly_name: Style
+            # Ran within pre-commit workflow
+            # - tox_env: style
+            #   friendly_name: Style
             - tox_env: docs
               friendly_name: Docs
         fail-fast: false
@@ -50,6 +52,9 @@ jobs:
           run: |
             python -m pip install --upgrade pip
             pip install tox
+        - name: Register problem matcher
+          run: |
+            echo "::add-matcher::.github/workflows/matchers/sphinx.json"
         - name: Tox test
           env:
             TOXENV: ${{ matrix.tox_env }}

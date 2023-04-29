@@ -1,0 +1,17 @@
+{
+    "__comment": "Credits to: https://github.com/home-assistant/core/blob/d32c364d7f9e138e0dd9363b34b3cb39f4afcd06/.github/workflows/matchers/codespell.json",
+    "problemMatcher": [
+        {
+            "owner": "codespell",
+            "severity": "warning",
+            "pattern": [
+                {
+                    "regexp": "^(.+):(\\d+):\\s(.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "message": 3
+                }
+            ]
+        }
+    ]
+}

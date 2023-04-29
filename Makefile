@@ -32,10 +32,14 @@ export HELP_BODY
 # Python Code Style
 reformat:
 	$(VENV_PYTHON) -m black $(ROOT_DIR)
+	$(VENV_PYTHON) -m ruff --fix-only $(ROOT_DIR)
 stylecheck:
 	$(VENV_PYTHON) -m black --check $(ROOT_DIR)
+	$(VENV_PYTHON) -m ruff --select I001 --no-fix $(ROOT_DIR)
 stylediff:
+	@echo "WARNING: black and ruff diffs aren't combined! Consider using pre-commit instead."
 	$(VENV_PYTHON) -m black --check --diff $(ROOT_DIR)
+	$(VENV_PYTHON) -m ruff --fix-only --diff $(ROOT_DIR)
 
 # Translations
 gettext:
