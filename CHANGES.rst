@@ -258,6 +258,7 @@ Changes
 - Updated bot hosting list with the new location for Contabo and addition of AlphaVPS (:issue:`5928`)
 - Updated installation URLs for Homebrew and Chocolatey (:issue:`5776`)
 
+----
 
 Redbot 3.4.18 (2022-08-15)
 ==========================
