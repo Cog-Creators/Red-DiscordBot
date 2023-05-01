@@ -110,7 +110,7 @@ Changes
 - **Core** - Modernized packaging-related things (:issue:`5924`)
 - **Core** - Removed ``is_mod_or_superior``, ``is_admin_or_superior``, and ``check_permissions`` (:issue:`6016`)
 - **Core** - Modified version guarantees, privatizing many APIs that were not intended to be public (:issue:`6021`)
-- **Core - Bank API** - Moved `is_owner_if_bank_global()` from  `redbot.cogs.bank`   to `redbot.core.bank` (:issue:`3709`, :issue:`4486`)
+- **Core - Bank API** - Moved `is_owner_if_bank_global()` from  ``redbot.cogs.bank`` to ``redbot.core.bank`` (:issue:`3709`, :issue:`4486`)
 - **Core - Config** - Unserializable values can no longer be registered to config defaults (:issue:`5557`)
 - **Core - Config** - ``_from_id`` methods now raise a `TypeError` if the provided value is not an ``int`` (:issue:`5459`, :issue:`5564`)
 - **Core - Commands Package** - `maybe_send_embed()` now raises a `ValueError` if the message's length is not between 1 and 2000 characters (:issue:`4383`, :issue:`4465`)
