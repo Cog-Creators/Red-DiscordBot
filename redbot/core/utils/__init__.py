@@ -58,6 +58,7 @@ log = logging.getLogger("red.core.utils")
 _T = TypeVar("_T")
 _S = TypeVar("_S")
 
+
 # Benchmarked to be the fastest method.
 def deduplicate_iterables(*iterables):
     """
