@@ -50,7 +50,7 @@ Changes
 - **Core - Bot Commands** - ``[p]removepath`` now allows passing more than one path at once (:issue:`5820`, :issue:`5859`)
 - **Core - Bot Commands** - Always available commands such as ``[p]licenseinfo`` now always accept a mention prefix (:issue:`5460`, :issue:`5865`)
 - **Core - Bot Commands** - Added an optional ``guild`` parameter to ``[p]set showsettings`` and ``[p]set serverprefix`` to prevent prefix lock outs (:issue:`5891`, :issue:`5918`)
-- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.2.2 (:issue:`5709`, :issues:`5920`, :issue:`5998`)
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.2.2 (:issue:`5709`, :issue:`5920`, :issue:`5998`)
 - **Core - Dependencies** - Added support for Python versions 3.10 and 3.11 (:issue:`5611`)
 - **Core - Dependencies** - Added ``red_commons`` as a dependency (:issue:`5624`)
 - **Core - Dependencies** - Red's other dependencies have been bumped (:issue:`5611`, :issue:`5631`)
@@ -143,7 +143,7 @@ Documentation changes
 
 Additions
 *********
-- Added a list of officially supported operating system versions and architectures (:issue:`5437`, :issue:`5677`, :issue:`5803`, :issues:`5974`)
+- Added a list of officially supported operating system versions and architectures (:issue:`5437`, :issue:`5677`, :issue:`5803`, :issue:`5974`)
 - Added documentation for the AntiSpam module (:issue:`5641`)
 - |cool| Added a cog guide for the Audio cog (:issue:`5871`)
 - Added documentation for creating app commands with Red (:issue:`6008`)
