@@ -1,5 +1,161 @@
 .. Red changelogs
 
+Redbot 3.5.0 (TODO: ADD DATE)
+==============================
+
+| Thanks to all these amazing people that contributed to this release:
+| TODO: GET CONTRIBS
+
+Read before updating
+--------------------
+
+TODO: ADD IF APPLICABLE
+
+
+End-user changelog
+------------------
+
+Additions
+*********
+- **Core - Bot Commands** - Added ``[p]set errormsg`` to set the message that is sent when an uncaught error occurs (:issue:`5622`, :issue:`5894`)
+- |cool| **Core - Bot Commands** - Added ``[p]slash`` to manage application commands (:issue:`5672`, :issue:`5992`, :issue:`6015`)
+- **Cogs - Streams** - Added ``[p]streamset livebutton`` to add a link button under stream alerts (:issue:`5646`, :issue:`5856`)
+
+Changes
+*******
+- **Core** - The bot will no longer launch without an owner set (:issue:`4926`)
+- **Core** - The home directory is now preferred for the metadata file, even for system users (:issue:`5022`)
+- **Core** - ``-v`` and ``--verbose`` are now aliased to ``--debug``, and the flag can be passed up to 3 times to increase the verbosity of the debugging logs (:issue:`5613`)
+- **Core** - Updated the output of ``--debuginfo`` (:issue:`5662`)
+- **Core** - Fixed an unintended suppression of exceptions in ``redbot --edit`` (:issue:`5661`, :issue:`5673`)
+- **Core** - Added new exit codes ``2`` (invalid CLI usage) and ``78`` (configuration error) (:issue:`5069`, :issue:`5674`)
+- **Core** - Instance names must now start and end with a letter or number (:issue:`5680`)
+- **Core** - ``/`` can no longer be used as a bot prefix (:issue:`5693`)
+- **Core** - Added new launch flag ``--unload-cogs`` (:issue:`5796`, :issue:`5802`)
+- **Core** - Added descriptions for the ``--overwrite-existing-instance`` and ``--debug`` flags for ``redbot-setup`` (:issue:`5808`, :issue:`5818`)
+- **Core** - Cooldown messages now use relative discord timestamps (:issue:`5893`)
+- **Core** - Added the option to request a ``file`` containing all content remaining in interactive prompts (:issue:`5901`, :issue:`5902`)
+- **Core** - Removed ``redbot-launcher`` (:issue:`5999`)
+- **Core** - Modified the console messages for shutting down the bot to be more consistent (:issue:`6095`)
+- **Core - Bot Commands** - Moved ``[p]modlogset`` to ``[p]set modlog`` (:issue:`4128`, :issue:`4486`)
+- **Core - Bot Commands** - Moved ``[p]set`` subcommands ``username``, ``nickname``, ``avatar``, ``description``, and ``custominfo`` to ``[p]set bot`` (:issue:`5432`)
+- **Core - Bot Commands** - Moved activity related ``[p]set`` subcommands to ``[p]set activity`` (:issue:`5432`)
+- **Core - Bot Commands** - Moved status related ``[p]set`` subcommands to ``[p]set status`` (:issue:`5432`)
+- **Core - Bot Commands** - Moved ``[p]set globallocale`` and ``[p]set locale`` to ``[p]set locale global`` and ``[p]set locale server`` (:issue:`5432`)
+- **Core - Bot Commands** - Moved ``[p]set globalregionallocale`` and ``[p]set regionallocale`` to ``[p]set regionalformat global`` and ``[p]set regionalformat server`` (:issue:`5432`)
+- |cool| **Core - Bot Commands** - ``[p]helpset usemenus`` now accepts the values ``reactions``, ``buttons``, ``select``, ``selectonly``, and ``disable`` (:issue:`5634`)
+- **Core - Bot Commands** - ``[p]set api`` now sends a modal to securely set api tokens when no arguments are passed (:issue:`5637`)
+- |cool| **Core - Bot Commands** - Added ``[p]set usebuttons`` to replace most existing reactions menus with button menus (:issue:`5683`, :issue:`5885`)
+- **Core - Bot Commands** - ``[p]traceback`` now prompts to continue if the output requires multiple messages (:issue:`5621`, :issue:`5851`)
+- **Core - Bot Commands** - ``[p]removepath`` now allows passing more than one path at once (:issue:`5820`, :issue:`5859`)
+- **Core - Bot Commands** - Always available commands such as ``[p]licenseinfo`` now always accept a mention prefix (:issue:`5460`, :issue:`5865`)
+- **Core - Bot Commands** - Added an optional ``guild`` parameter to ``[p]set showsettings`` and ``[p]set serverprefix`` to prevent prefix lock outs (:issue:`5891`, :issue:`5918`)
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.2.2 (:issue:`5709`, :issues:`5920`, :issue:`5998`)
+- **Core - Dependencies** - Added support for Python versions 3.10 and 3.11 (:issue:`5611`)
+- **Core - Dependencies** - Added ``red_commons`` as a dependency (:issue:`5624`)
+- **Core - Dependencies** - Red's other dependencies have been bumped (:issue:`5611`, :issue:`5631`)
+- **Cogs - Audio** - Made many changes to ``[p]llset`` (:issue:`5593`)
+- **Cogs - Audio** - Now uses verbose and trace level logging to improve readability of the debug logs (:issue:`5618`)
+- **Cogs - Audio** - Swapped references from "internal"/"external" to "managed"/"unmanaged" (:issue:`5944`, :issue:`5952`)
+- **Cogs - Audio** - Removed the ``[p]llsetup`` alias (:issue:`5953`)
+- **Cogs - Bank** - Removed the bank cog. (:issue:`4128`, :issue:`4486`)
+- **Cogs - Cleanup** - Cleanups now include a message in the audit log detailing who triggered the deletion (:issue:`5861`, :issue:`5863`)
+- **Cogs - Downloader** - Added an argument to automatically reload after updating cogs with ``[p]cog update`` (:issue:`5623`)
+- **Cogs - Economy** - Moved ``[p]economyset registeramount`` to ``[p]bankset registeramount`` (:issue:`4128`, :issue:`4486`)
+- **Cogs - Economy** - Moved ``[p]bank reset`` to ``[p]bankset reset`` (:issue:`4128`, :issue:`4486`)
+- **Cogs - Economy** - Moved ``[p]bank prune`` to ``[p]bankset prune`` (:issue:`4128`, :issue:`4486`)
+- **Cogs - General** - Added stage channel information to the extended output of ``[p]serverinfo`` (:issue:`5785`)
+- **Cogs - Streams** - ``[p]streamalert list`` now shows the platform of each channel (:issue:`3866`, :issue:`5160`)
+- **Cogs - Streams** - ``[p]streamalert`` subcommands now accepts an additional argument to toggle alerts in a particular channel (:issue:`3866`, :issue:`5160`)
+
+Fixes
+*****
+- **Core - Bot Commands** - The core path is now always an absolute path in ``[p]paths`` (:issue:`5142`)
+- **Core** - Optimized how disabled commands are checked when cogs are loaded (:issue:`5550`)
+- **Cogs - Audio** - Fixed a RAM allocation warning happening in unintended cases (:issue:`5643`)
+- **Cogs - Audio** - Fixed a logging deadlock (:issue:`5903`)
+- **Cogs - Downloader** - Fixed a missing space to an output of ``[p]cog install`` (:issue:`5531`)
+- **Cogs - Modlog** - Case messages are no longer edited immediately after being sent (:issue:`5577`)
+- **Cogs - Trivia - Lists** - Fixed some inaccuracies in the ``worldflags`` list (:issue:`5684`)
+- **Cogs - Trivia - Lists** - Fixed some inaccuracies in the ``geography`` list (:issue:`5743`)
+- **Cogs - Trivia - Lists** - Fixed some inaccuracies in the ``clashroyale`` list (:issue:`5771`)
+
+
+Developer changelog
+-------------------
+
+Additions
+*********
+- **Core** - Added an event ``on_cog_remove`` which is dispatched when cogs are unloaded (:issue:`5570`)
+- **Core** - Added `RedTree` and general app command support (:issue:`5672`, :issue:`5992`, :issue:`6015`)
+- **Core** - Added `redbot.core.app_commands`, which shadows `discord.app_commands` (:issue:`6006`)
+- **Core** - Passing ``red_force_enable: True`` to ``extras`` in an app command to bypass ``[p]slash enable`` (:issue:`6018`)
+- **Core - Commands Package** - Added `RawUserIdConverter` (:issue:`4486`)
+- |cool| **Core - Commands Package** - Added support for hybrid commands (:issue:`5681`)
+- **Core - Commands Package** - Added `positive_int` and `finite_float` converters (:issue:`5939`, :issue:`5969`)
+- **Core - Utils Package** - Added `SimpleMenu`, a template view subclass (:issue:`5634`)
+- **Core - Utils Package** - Added `SetApiModal` and `SetApiView` (:issue:`5637`)
+
+Changes
+*******
+- **Core** - Removed ``RedBase`` (:issue:`5159`)
+- **Core** - Removed the ``guild_id`` parameter from `allowed_by_whitelist_blacklist()`. Use the ``guild`` parameter instead (:issue:`5433`)
+- **Core** - The ``channel`` parameter of `embed_requested` now accepts any messageable guild channel (:issue:`5576`)
+- **Core** - Removed the ``user`` parameter from `embed_requested` (:issue:`5576`)
+- **Core** - The ``command`` parameter of `embed_requested` is now keyword-only (:issue:`5576`)
+- **Core** - The ``check_permissions`` parameter of `embed_requested` now defaults to ``True`` (:issue:`5576`)
+- |cool| **Core** - ``logging.getLogger()`` now returns a custom logger subclass with support for ``verbose`` and ``trace`` level logging (:issue:`5613`)
+- **Core** - The bot's color is now set earlier in the launch process (:issue:`5627`)
+- **Core** - Added extra information to version info for dev versions of Red (:issue:`5664`)
+- **Core** - Modernized packaging-related things (:issue:`5924`)
+- **Core** - Removed ``is_mod_or_superior``, ``is_admin_or_superior``, and ``check_permissions`` (:issue:`6016`)
+- **Core** - Modified version guarantees, privatizing many APIs that were not intended to be public (:issue:`6021`)
+- **Core - Bank API** - Moved `is_owner_if_bank_global()` from `redbot.cogs.bank` to `redbot.core.bank` (:issue:`3709`, :issue:`4486`)
+- **Core - Config** - Unserializable values can no longer be registered to config defaults (:issue:`5557`)
+- **Core - Config** - ``_from_id`` methods now raise a `TypeError` if the provided value is not an ``int`` (:issue:`5459`, :issue:`5564`)
+- **Core - Commands Package** - `maybe_send_embed()` now raises a `ValueError` if the message's length is not between 1 and 2000 characters (:issue:`4383`, :issue:`4465`)
+- **Core - Commands Package** - Removed `GuildConverter` from the `redbot.core.commands.converter` namespace. Use `redbot.core.commands` instead (:issue:`5433`)
+- **Core - Modlog API** - `Case.message` is now a `discord.PartialMessage` unless the case object is created from `modlog.create_case()` (:issue:`4977`)
+- **Core - Modlog API** - `modlog.create_case()` now raises a `ValueError` when an invalid casetype is passed (:issue:`5386`)
+- **Core - Modlog API** - Fixed `modlog.get_case` raising a runtime error when no modlog channel is configured (:issue:`5644`, :issue:`5866`)
+- |cool| **Core - Utils Package** - Reaction menus now triggers both when adding and removing the reaction (:issue:`4517`)
+- **Core - Utils Package** - Removed ``is_allowed_by_hierarchy`` (:issue:`5433`)
+- **Core - Utils Package** - Removed the ``caching`` and ``safety`` modules (:issue:`5653`)
+- **Core - Utils Package** - `DEFAULT_CONTROLS`, `ALPHABET_EMOJIS`, and `NUMBER_EMOJIS` are now immutable (:issue:`5666`)
+- **Core - Utils Package** - `menu()` now defaults to `DEFAULT_CONTROLS` if the ``controls`` argument is not passed (:issue:`5678`)
+- **Core - Utils Package** - Removed ``bordered()`` (:issue:`5692`)
+- **Core - Utils Package** - Optimized the performance of `pagify()` to better handle large inputs (:issue:`5698`)
+- **Core - Utils Package** - `MessagePredicate`'s ``channel`` parameter now accepts any `discord.abc.Messageable` (:issue:`5942`)
+- |cool| **Cogs - Dev** - Tracebacks in dev commands now include source lines (:issue:`5843`)
+
+Fixes
+*****
+- **Core** - Fixed edge cases in the ordering logic of `VersionInfo` (:issue:`5932`)
+- **Core - Commands Package** - Timedelta conversions no longer match on certain kinds of invalid data (:issue:`5385`, :issue:`5393`)
+- **Core - Commands Package** - Fixed inconsistencies relating to check ordering (:issue:`5625`)
+- **Core - Commands Package** - ``ctx.channel`` can now be a `PartialMessageable` if it represents a DM channel (:issue:`5995`, :issue:`6005`)
+- **Core - Utils Package** - Fixed an unintended `IndexError` in menus (:issue:`5430`)
+- **Cogs - Dev** - ``[p]mock`` now only works in guilds (:issue:`5923`, :issue:`5926`)
+
+
+Documentation changes
+---------------------
+
+Additions
+*********
+- Added a list of officially supported operating system versions and architectures (:issue:`5437`, :issue:`5677`, :issue:`5803`, :issues:`5974`)
+- Added documentation for the AntiSpam module (:issue:`5641`)
+- |cool| Added a cog guide for the Audio cog (:issue:`5871`)
+- Added documentation for creating app commands with Red (:issue:`6008`)
+
+Fixes
+*****
+- Removed references to the ``master`` discord.py docs (:issue:`5713`)
+- Removed some duplicated references (:issue:`5782`)
+- Fixed an inaccurate typehint in the documentation for `Config.user` (:issue:`5791`)
+
+----
+
 Redbot 3.4.19 (2023-04-20)
 ==========================
 
