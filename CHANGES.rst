@@ -17,9 +17,12 @@ End-user changelog
 
 Additions
 *********
+- **Core** - Added new launch flag ``--unload-cogs`` (:issue:`5796`, :issue:`5802`)
+- |cool| **Core - Bot Commands** - Added ``[p]set usebuttons`` to replace most existing reactions menus with button menus (:issue:`5683`, :issue:`5885`)
 - **Core - Bot Commands** - Added ``[p]set errormsg`` to set the message that is sent when an uncaught error occurs (:issue:`5622`, :issue:`5894`)
 - |cool| **Core - Bot Commands** - Added ``[p]slash`` to manage application commands (:issue:`5672`, :issue:`5992`, :issue:`6015`)
 - **Cogs - Streams** - Added ``[p]streamset livebutton`` to add a link button under stream alerts (:issue:`5646`, :issue:`5856`)
+- **Core - Dependencies** - Added ``red_commons`` as a dependency (:issue:`5624`)
 
 Changes
 *******
@@ -31,7 +34,6 @@ Changes
 - **Core** - Added new exit codes ``2`` (invalid CLI usage) and ``78`` (configuration error) (:issue:`5069`, :issue:`5674`)
 - **Core** - Instance names must now start and end with a letter or number (:issue:`5680`)
 - **Core** - ``/`` can no longer be used as a bot prefix (:issue:`5693`)
-- **Core** - Added new launch flag ``--unload-cogs`` (:issue:`5796`, :issue:`5802`)
 - **Core** - Added descriptions for the ``--overwrite-existing-instance`` and ``--debug`` flags for ``redbot-setup`` (:issue:`5808`, :issue:`5818`)
 - **Core** - Cooldown messages now use relative discord timestamps (:issue:`5893`)
 - **Core** - Added the option to request a ``file`` containing all content remaining in interactive prompts (:issue:`5901`, :issue:`5902`)
@@ -45,14 +47,12 @@ Changes
 - **Core - Bot Commands** - Moved ``[p]set globalregionallocale`` and ``[p]set regionallocale`` to ``[p]set regionalformat global`` and ``[p]set regionalformat server`` (:issue:`5432`)
 - |cool| **Core - Bot Commands** - ``[p]helpset usemenus`` now accepts the values ``reactions``, ``buttons``, ``select``, ``selectonly``, and ``disable`` (:issue:`5634`)
 - **Core - Bot Commands** - ``[p]set api`` now sends a modal to securely set api tokens when no arguments are passed (:issue:`5637`)
-- |cool| **Core - Bot Commands** - Added ``[p]set usebuttons`` to replace most existing reactions menus with button menus (:issue:`5683`, :issue:`5885`)
 - **Core - Bot Commands** - ``[p]traceback`` now prompts to continue if the output requires multiple messages (:issue:`5621`, :issue:`5851`)
 - **Core - Bot Commands** - ``[p]removepath`` now allows passing more than one path at once (:issue:`5820`, :issue:`5859`)
 - **Core - Bot Commands** - Always available commands such as ``[p]licenseinfo`` now always accept a mention prefix (:issue:`5460`, :issue:`5865`)
 - **Core - Bot Commands** - Added an optional ``guild`` parameter to ``[p]set showsettings`` and ``[p]set serverprefix`` to prevent prefix lock outs (:issue:`5891`, :issue:`5918`)
 - |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.2.2 (:issue:`5709`, :issue:`5920`, :issue:`5998`)
 - **Core - Dependencies** - Added support for Python versions 3.10 and 3.11 (:issue:`5611`)
-- **Core - Dependencies** - Added ``red_commons`` as a dependency (:issue:`5624`)
 - **Core - Dependencies** - Red's other dependencies have been bumped (:issue:`5611`, :issue:`5631`)
 - **Cogs - Audio** - Made many changes to ``[p]llset`` (:issue:`5593`)
 - **Cogs - Audio** - Now uses verbose and trace level logging to improve readability of the debug logs (:issue:`5618`)
