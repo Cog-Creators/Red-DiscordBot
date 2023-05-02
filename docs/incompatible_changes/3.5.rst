@@ -264,7 +264,7 @@ This has resulted in the following being removed/privatized:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Changing storage details during Red's runtime is not supported and as such,
-this function now returns a deep copy of underlying dictionary to prevent changes.
+this function now returns a deep copy of the underlying dictionary to prevent changes.
 
 Changed the version order of final dev releases and dev pre-releases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -697,8 +697,8 @@ between 1 and 2000 characters.
 Since the length limits for regular message content and embed's description are
 different, it is easy to miss an issue with inappropriate handling of length limits
 during development. This change should aid with early detection of such issue by
-consistently rejecting message with length that can't be used with
-both embed and non-embed message.
+consistently rejecting messages with length that can't be used with
+both embed and non-embed messages.
 
 This change only affects code that is already not guaranteed to work.
 You should make sure that your code properly handles message length limits.
@@ -708,8 +708,8 @@ You should make sure that your code properly handles message length limits.
 
 Listening only to reaction add results in bad user experience.
 If the bot had Manage Messages permission, it removed the user's reaction
-so that they don't have to click twice but this comes with a noticable delay.
-This issue is even more noticable under load, when the bot ended up hitting
+so that they don't have to click twice but this comes with a noticeable delay.
+This issue is even more noticeable under load, when the bot ended up hitting
 Discord-imposed rate limits.
 
 If your calls to `menu()` are using the default controls (``redbot.core.utils.menus.DEFAULT_CONTROLS``),
@@ -717,7 +717,7 @@ you don't have to do anything.
 
 Otherwise, you should ensure that your custom functions used for the menu controls
 do not depend on this behavior in some way. In particular, you should make sure that
-your functions do not automatically remove author's reaction.
+your functions do not automatically remove the author's reaction.
 
 Here's an example code that needs to be updated:
 
