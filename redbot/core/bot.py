@@ -1291,6 +1291,7 @@ class Red(
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             commands.Context,
             discord.User,
             discord.Member,
@@ -1305,7 +1306,7 @@ class Red(
 
         Arguments
         ---------
-        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
+        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
             The target messageable object to check embed settings for.
 
         Keyword Arguments
@@ -1352,7 +1353,10 @@ class Red(
                 "You cannot pass a GroupChannel, DMChannel, or PartialMessageable to this method."
             )
 
-        if isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+        if isinstance(
+            channel,
+            (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread),
+        ):
             channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
 
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
