@@ -60,7 +60,6 @@ Arch Linux                         x86-64                    forever (support is
 CentOS 7                           x86-64, aarch64           2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 8                    x86-64, aarch64           2024-05-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 9                    x86-64, aarch64           2027-05-31 (`expected EOL <https://centos.org/stream9/#timeline>`__)
-Debian 10 Buster                   x86-64, aarch64, armv7l   2022-08-14 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Fedora Linux 36                    x86-64, aarch64           2023-05-16 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 37                    x86-64, aarch64           2023-11-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
