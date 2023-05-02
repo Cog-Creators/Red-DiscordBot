@@ -252,6 +252,7 @@
 "Category: Docs - Changelogs":
   - CHANGES.rst
   - docs/changelog.rst
+  - docs/incompatible_changes/**/*
 "Category: Docs - For Developers":
   - docs/framework_events.rst
   - docs/guide_cog_creation.rst
