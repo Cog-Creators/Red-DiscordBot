@@ -21,8 +21,8 @@ Additions
 - |cool| **Core - Bot Commands** - Added ``[p]set usebuttons`` to replace most existing reactions menus with button menus (:issue:`5683`, :issue:`5885`)
 - **Core - Bot Commands** - Added ``[p]set errormsg`` to set the message that is sent when an uncaught error occurs (:issue:`5622`, :issue:`5894`)
 - |cool| **Core - Bot Commands** - Added ``[p]slash`` to manage application commands (:issue:`5672`, :issue:`5992`, :issue:`6015`)
-- **Cogs - Streams** - Added ``[p]streamset livebutton`` to add a link button under stream alerts (:issue:`5646`, :issue:`5856`)
 - **Core - Dependencies** - Added ``red_commons`` as a dependency (:issue:`5624`)
+- **Cogs - Streams** - Added ``[p]streamset livebutton`` to add a link button under stream alerts (:issue:`5646`, :issue:`5856`)
 
 Changes
 *******
@@ -51,7 +51,7 @@ Changes
 - **Core - Bot Commands** - ``[p]removepath`` now allows passing more than one path at once (:issue:`5820`, :issue:`5859`)
 - **Core - Bot Commands** - Always available commands such as ``[p]licenseinfo`` now always accept a mention prefix (:issue:`5460`, :issue:`5865`)
 - **Core - Bot Commands** - Added an optional ``guild`` parameter to ``[p]set showsettings`` and ``[p]set serverprefix`` to prevent prefix lock outs (:issue:`5891`, :issue:`5918`)
-- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.2.2 (:issue:`5709`, :issue:`5920`, :issue:`5998`)
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.2.3 (:issue:`5709`, :issue:`5920`, :issue:`5998`, :issue:`6109`)
 - **Core - Dependencies** - Added support for Python versions 3.10 and 3.11 (:issue:`5611`)
 - **Core - Dependencies** - Red's other dependencies have been bumped (:issue:`5611`, :issue:`5631`)
 - **Cogs - Audio** - Made many changes to ``[p]llset`` (:issue:`5593`)
@@ -117,7 +117,6 @@ Changes
 - **Core - Commands Package** - Removed ``GuildConverter`` from the `redbot.core.commands.converter` namespace. Use `redbot.core.commands` instead (:issue:`5433`)
 - **Core - Modlog API** - `Case.message` is now a `discord.PartialMessage` unless the case object is created from `modlog.create_case()` (:issue:`4977`)
 - **Core - Modlog API** - `modlog.create_case()` now raises a `ValueError` when an invalid casetype is passed (:issue:`5386`)
-- **Core - Modlog API** - Fixed `modlog.get_case` raising a runtime error when no modlog channel is configured (:issue:`5644`, :issue:`5866`)
 - |cool| **Core - Utils Package** - Reaction menus now triggers both when adding and removing the reaction (:issue:`4517`)
 - **Core - Utils Package** - Removed ``is_allowed_by_hierarchy`` (:issue:`5433`)
 - **Core - Utils Package** - Removed the ``caching`` and ``safety`` modules (:issue:`5653`)
@@ -134,6 +133,7 @@ Fixes
 - **Core - Commands Package** - Timedelta conversions no longer match on certain kinds of invalid data (:issue:`5385`, :issue:`5393`)
 - **Core - Commands Package** - Fixed inconsistencies relating to check ordering (:issue:`5625`)
 - **Core - Commands Package** - ``ctx.channel`` can now be a `discord.PartialMessageable` if it represents a DM channel (:issue:`5995`, :issue:`6005`)
+- **Core - Modlog API** - Fixed `modlog.get_case` raising a runtime error when no modlog channel is configured (:issue:`5644`, :issue:`5866`)
 - **Core - Utils Package** - Fixed an unintended `IndexError` in menus (:issue:`5430`)
 - **Cogs - Dev** - ``[p]mock`` now only works in guilds (:issue:`5923`, :issue:`5926`)
 
@@ -143,10 +143,11 @@ Documentation changes
 
 Additions
 *********
-- Added a list of officially supported operating system versions and architectures (:issue:`5437`, :issue:`5677`, :issue:`5803`, :issue:`5974`)
+- Added a list of officially supported operating system versions and architectures (:issue:`5437`, :issue:`5677`, :issue:`5803`, :issue:`5974`, :issue:`6110`)
 - Added documentation for the AntiSpam module (:issue:`5641`)
 - |cool| Added a cog guide for the Audio cog (:issue:`5871`)
 - Added documentation for creating app commands with Red (:issue:`6008`)
+- Added documentation listing past and future breaking changes (:issue:`5603`)
 
 Fixes
 *****
