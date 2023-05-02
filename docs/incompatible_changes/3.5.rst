@@ -422,6 +422,17 @@ After:
                 else:
                     await channel.send(content)
 
+``modlog.create_case()`` now raises instead of silently returning on error
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To help avoid passing invalid arguments, `modlog.create_case()` now raises:
+
+- `ValueError` when the ``action_type`` argument is not a valid action type
+- `RuntimeError` when the ``user`` argument is passed with the bot's user object/ID
+
+Proper usage of these methods is unlikely to be affected
+and this should mostly just help detect bugs earlier.
+
 .. _config-register-1:
 
 ``Config``'s register methods now only accept JSON-castable types
@@ -447,17 +458,6 @@ It used to be possible to register an instance of a subclass of `dict` such as
 `collections.Counter` and have the `redbot.core.config.Group` cast the returned value to that type
 before returning it. With this change, `redbot.core.config.Group` will now always return an instance of
 `dict` containing only base JSON types, without subclasses.
-
-``modlog.create_case()`` now raises instead of silently returning on error
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To help avoid passing invalid arguments, `modlog.create_case()` now raises:
-
-- `ValueError` when the ``action_type`` argument is not a valid action type
-- `RuntimeError` when the ``user`` argument is passed with the bot's user object/ID
-
-Proper usage of these methods is unlikely to be affected
-and this should mostly just help detect bugs earlier.
 
 ``Config.*_from_id/*_from_ids()`` methods now raise when ``int`` is not passed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
