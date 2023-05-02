@@ -390,7 +390,7 @@ the decorator order.
 Some of the primary dependencies have been removed or replaced
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-While this may not technically fall under `our version guarantees <version_guarantees>`,
+While this may not technically fall under `our version guarantees <../version_guarantees>`,
 we recognize that this may affect some people.
 As such, below we list the noteworthy dependency replacements and removals (package names
 are PyPI distribution names):
