@@ -1371,7 +1371,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def embedset_channel(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
         enabled: bool = None,
     ):
         """
@@ -1387,10 +1389,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Examples:**
             - `[p]embedset channel #text-channel False` - Disables embeds in the #text-channel.
             - `[p]embedset channel #forum-channel disable` - Disables embeds in the #forum-channel.
-            - `[p]embedset channel #text-channel` - Resets value to use guild default in the #text-channel .
+            - `[p]embedset channel #text-channel` - Resets value to use guild default in the #text-channel.
 
         **Arguments:**
-            - `<channel>` - The text, voice, or forum channel to set embed setting for.
+            - `<channel>` - The text, voice, stage, or forum channel to set embed setting for.
             - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.
         """
         if enabled is None:
