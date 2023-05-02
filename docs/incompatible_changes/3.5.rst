@@ -95,6 +95,46 @@ The following commands have been moved to Core:
 This has also resulted in the removal of the ``bank`` cog
 as it no longer contained any commands.
 
+If you have any custom settings for this cog or these commands,
+you may need to readd them with the new command names.
+
+Commands in the ``[p]set`` group have been reorganized
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The list of commands in the ``[p]set`` group has gotten quite long over the years
+so we decided to reorganize it.
+
+The following changes have been made:
+
+- Commands related to metadata about the bot have been moved to the ``[p]set bot`` subgroup:
+
+    - ``[p]set avatar`` is now ``[p]set bot avatar``
+    - ``[p]set custominfo`` is now ``[p]set bot custominfo``
+    - ``[p]set description`` is now ``[p]set bot description``
+    - ``[p]set nickname`` is now ``[p]set bot nickname``
+    - ``[p]set username`` is now ``[p]set bot username``
+- Commands related to server's admin and mod roles have been moved to the ``[p]set roles`` subgroup:
+
+    - ``[p]set addadminrole`` is now ``[p]set roles addadminrole``
+    - ``[p]set removeadminrole`` is now ``[p]set roles removeadminrole``
+    - ``[p]set addmodrole`` is now ``[p]set roles addmodrole``
+    - ``[p]set removemodrole`` is now ``[p]set roles removemodrole``
+- Commands related to bot user's activity and status have been moved to the ``[p]set status`` subgroup:
+
+    - ``[p]set status`` has been split into ``[p]set status online/idle/dnd/invisible`` subcommands
+    - ``[p]set competing`` is now ``[p]set status competing``
+    - ``[p]set listening`` is now ``[p]set status listening``
+    - ``[p]set playing`` is now ``[p]set status playing``
+    - ``[p]set streaming`` is now ``[p]set status streaming``
+    - ``[p]set watching`` is now ``[p]set status watching``
+- ``[p]set globallocale`` has been renamed to ``[p]set locale global``
+- ``[p]set locale`` is now also available under ``[p]set locale server``
+- ``[p]set globalregionalformat`` has been renamed to ``[p]set regionalformat global``
+- ``[p]set regionalformat`` is now also available under ``[p]set regionalformat server``
+
+If you have any custom settings for these commands,
+you may need to readd them with the new command names.
+
 Red requires to have at least one owner
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
