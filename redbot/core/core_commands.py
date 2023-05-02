@@ -2709,7 +2709,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def modlogset_modlog(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel] = None,
     ):
         """Set a channel as the modlog.
 
@@ -3713,7 +3713,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set_ownernotifications.command(name="adddestination")
     async def _set_ownernotifications_adddestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        ctx: commands.Context,
+        *,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ):
         """
         Adds a destination text channel to receive owner notifications.
@@ -3738,7 +3741,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         *,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, int],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, int],
     ):
         """
         Removes a destination text channel from receiving owner notifications.
