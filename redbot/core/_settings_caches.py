@@ -156,7 +156,11 @@ class IgnoreManager:
     async def get_ignored_channel(
         self,
         channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.ForumChannel, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.ForumChannel,
+            discord.Thread,
         ],
         check_category: bool = True,
     ) -> bool:
@@ -188,6 +192,7 @@ class IgnoreManager:
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             discord.Thread,
             discord.ForumChannel,
             discord.CategoryChannel,

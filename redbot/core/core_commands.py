@@ -5686,6 +5686,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             discord.ForumChannel,
             discord.CategoryChannel,
             discord.Thread,
@@ -5744,6 +5745,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             discord.ForumChannel,
             discord.CategoryChannel,
             discord.Thread,
@@ -5787,23 +5789,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     async def count_ignored(self, ctx: commands.Context):
         category_channels: List[discord.CategoryChannel] = []
-        channels: List[Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel]] = []
+        channels: List[
+            Union[
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.ForumChannel,
+            ]
+        ] = []
         threads: List[discord.Thread] = []
         if await self.bot._ignored_cache.get_ignored_guild(ctx.guild):
             return _("This server is currently being ignored.")
-        for channel in ctx.guild.text_channels:
-            if channel.category and channel.category not in category_channels:
-                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
-                    category_channels.append(channel.category)
-            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                channels.append(channel)
-        for channel in ctx.guild.voice_channels:
-            if channel.category and channel.category not in category_channels:
-                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
-                    category_channels.append(channel.category)
-            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                channels.append(channel)
-        for channel in ctx.guild.forums:
+        for channel in itertools.chain(
+            ctx.guild.text_channels,
+            ctx.guild.voice_channels,
+            ctx.guild.stage_channels,
+            ctx.guild.forums,
+        ):
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)
