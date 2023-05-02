@@ -64,6 +64,7 @@ Debian 10 Buster                   x86-64, aarch64, armv7l   2022-08-14 (`End of
 Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Fedora Linux 36                    x86-64, aarch64           2023-05-16 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 37                    x86-64, aarch64           2023-11-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
+Fedora Linux 38                    x86-64, aarch64           2024-05-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 openSUSE Leap 15.4                 x86-64, aarch64           2023-11-30 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
 openSUSE Tumbleweed                x86-64, aarch64           forever (support is only provided for an up-to-date system)
 Oracle Linux 8                     x86-64, aarch64           2029-07-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
@@ -81,6 +82,7 @@ Ubuntu 18.04 LTS                   x86-64, aarch64           2023-04-30 (`End of
 Ubuntu 20.04 LTS                   x86-64, aarch64           2025-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 22.04 LTS                   x86-64, aarch64           2027-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 22.10                       x86-64, aarch64           2023-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 23.04                       x86-64, aarch64           2024-01-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
 
 .. _developer-guarantees:
