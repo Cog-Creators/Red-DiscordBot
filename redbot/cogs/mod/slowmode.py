@@ -30,9 +30,6 @@ class Slowmode(MixinMeta):
         Interval can be anything from 0 seconds to 6 hours.
         Use without parameters to disable.
         """
-        if not isinstance(ctx.channel, (discord.TextChannel, discord.Thread)):
-            await ctx.send(_("Slowmode can only be set in text channels and threads."))
-            return
         seconds = interval.total_seconds()
         await ctx.channel.edit(slowmode_delay=seconds)
         if seconds > 0:
