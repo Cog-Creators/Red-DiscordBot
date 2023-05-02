@@ -325,19 +325,19 @@ Here's an example of a list of versions sorted using the new order (oldest versi
 - 3.5.0.post1
 - 3.5.1
 
-``Red.get_owner_notification_destinations()`` may return a ``discord.VoiceChannel`` instance now
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``Red.get_owner_notification_destinations()`` may now return instances of ``discord.Voice/StageChannel``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With the introduction of Text in Voice feature, we added the ability to add a voice channel
+With the introduction of Text in Voice feature, we added the ability to add a voice/stage channel
 as an owner notifications destination. This means that `redbot.core.modlog.get_modlog_channel()`
-may now return an instance of `discord.VoiceChannel`.
+may now return instances of `discord.VoiceChannel` and `discord.StageChannel`.
 
-``modlog.get_modlog_channel()`` may return a ``discord.VoiceChannel`` instance now
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``modlog.get_modlog_channel()`` may now return instances of ``discord.Voice/StageChannel``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 With the introduction of Text in Voice feature, we added the ability to set a modlog
-channel to a voice channel. This means that `redbot.core.modlog.get_modlog_channel()`
-may now return an instance of `discord.VoiceChannel`.
+channel to a voice/stage channel. This means that `redbot.core.modlog.get_modlog_channel()`
+may now return instances of `discord.VoiceChannel` and `discord.StageChannel`.
 
 ``menus.DEFAULT_CONTROLS`` and ``ReactionPredicate.*_EMOJIS`` use immutable types now
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
