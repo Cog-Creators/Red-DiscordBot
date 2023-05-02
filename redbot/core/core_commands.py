@@ -4695,7 +4695,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         channel: Optional[
-            Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
         ] = commands.CurrentChannel,
         # avoid non-default argument following default argument by using empty param()
         member: Union[discord.Member, discord.User] = commands.param(),
@@ -4719,7 +4719,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if ctx.guild is None:
             await ctx.send(
                 _(
-                    "A text channel, voice channel, or thread needs to be passed"
+                    "A text channel, voice channel, stage channel, or thread needs to be passed"
                     " when using this command in DMs."
                 )
             )
