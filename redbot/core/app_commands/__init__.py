@@ -60,6 +60,8 @@ from discord.app_commands import (
     rename as rename,
 )
 
+from . import checks as checks
+
 __all__ = (
     "AllChannels",
     "AppCommand",
@@ -112,4 +114,5 @@ __all__ = (
     "guilds",
     "locale_str",
     "rename",
+    "checks",
 )

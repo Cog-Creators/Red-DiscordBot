@@ -21,3 +21,14 @@ def test_dpy_app_commands_reexports():
             "redbot.core.app_commands is missing these names from discord.app_commands: "
             + ", ".join(missing_attrs)
         )
+
+
+def test_dpy_app_commands_checks_reexports():
+    dpy_attrs = set(dpy_app_commands.checks.__all__)
+    missing_attrs = dpy_attrs - set(app_commands.checks.__dict__.keys())
+
+    if missing_attrs:
+        pytest.fail(
+            "redbot.core.app_commands.checks is missing these names from discord.app_commands: "
+            + ", ".join(missing_attrs)
+        )
