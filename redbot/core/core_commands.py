@@ -1371,7 +1371,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def embedset_channel(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
         enabled: bool = None,
     ):
         """
@@ -1387,10 +1389,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Examples:**
             - `[p]embedset channel #text-channel False` - Disables embeds in the #text-channel.
             - `[p]embedset channel #forum-channel disable` - Disables embeds in the #forum-channel.
-            - `[p]embedset channel #text-channel` - Resets value to use guild default in the #text-channel .
+            - `[p]embedset channel #text-channel` - Resets value to use guild default in the #text-channel.
 
         **Arguments:**
-            - `<channel>` - The text, voice, or forum channel to set embed setting for.
+            - `<channel>` - The text, voice, stage, or forum channel to set embed setting for.
             - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.
         """
         if enabled is None:
@@ -2709,7 +2711,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def modlogset_modlog(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel] = None,
     ):
         """Set a channel as the modlog.
 
@@ -3713,7 +3715,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set_ownernotifications.command(name="adddestination")
     async def _set_ownernotifications_adddestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        ctx: commands.Context,
+        *,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ):
         """
         Adds a destination text channel to receive owner notifications.
@@ -3738,7 +3743,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         *,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, int],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, int],
     ):
         """
         Removes a destination text channel from receiving owner notifications.
@@ -4692,7 +4697,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         channel: Optional[
-            Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
         ] = commands.CurrentChannel,
         # avoid non-default argument following default argument by using empty param()
         member: Union[discord.Member, discord.User] = commands.param(),
@@ -4716,7 +4721,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if ctx.guild is None:
             await ctx.send(
                 _(
-                    "A text channel, voice channel, or thread needs to be passed"
+                    "A text channel, voice channel, stage channel, or thread needs to be passed"
                     " when using this command in DMs."
                 )
             )
@@ -5683,6 +5688,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             discord.ForumChannel,
             discord.CategoryChannel,
             discord.Thread,
@@ -5741,6 +5747,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             discord.ForumChannel,
             discord.CategoryChannel,
             discord.Thread,
@@ -5784,23 +5791,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     async def count_ignored(self, ctx: commands.Context):
         category_channels: List[discord.CategoryChannel] = []
-        channels: List[Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel]] = []
+        channels: List[
+            Union[
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.ForumChannel,
+            ]
+        ] = []
         threads: List[discord.Thread] = []
         if await self.bot._ignored_cache.get_ignored_guild(ctx.guild):
             return _("This server is currently being ignored.")
-        for channel in ctx.guild.text_channels:
-            if channel.category and channel.category not in category_channels:
-                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
-                    category_channels.append(channel.category)
-            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                channels.append(channel)
-        for channel in ctx.guild.voice_channels:
-            if channel.category and channel.category not in category_channels:
-                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
-                    category_channels.append(channel.category)
-            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                channels.append(channel)
-        for channel in ctx.guild.forums:
+        for channel in itertools.chain(
+            ctx.guild.text_channels,
+            ctx.guild.voice_channels,
+            ctx.guild.stage_channels,
+            ctx.guild.forums,
+        ):
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)

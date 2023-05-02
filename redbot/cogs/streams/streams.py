@@ -316,7 +316,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Manage Twitch stream notifications."""
@@ -328,7 +328,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this or the given channel for a Twitch stream."""
@@ -345,7 +345,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name_or_id: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a YouTube stream."""
@@ -357,7 +357,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a Picarto stream."""
@@ -794,7 +794,7 @@ class Streams(commands.Cog):
     async def _send_stream_alert(
         self,
         stream,
-        channel: Union[discord.TextChannel, discord.VoiceChannel],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
         embed: discord.Embed,
         content: str = None,
         *,
@@ -954,7 +954,7 @@ class Streams(commands.Cog):
     async def _get_mention_str(
         self,
         guild: discord.Guild,
-        channel: Union[discord.TextChannel, discord.VoiceChannel],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
         guild_data: dict,
     ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
@@ -982,7 +982,9 @@ class Streams(commands.Cog):
         return " ".join(mentions), edited_roles
 
     async def filter_streams(
-        self, streams: list, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        streams: list,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ) -> list:
         filtered = []
         for stream in streams:

@@ -221,7 +221,7 @@ class Permissions(commands.Cog):
             "Global rules (set by the owner) are checked first, then rules set for servers. If "
             "multiple global or server rules apply to the case, the order they are checked in is:\n"
             "  1. Rules about a user.\n"
-            "  2. Rules about the voice channel a user is connected to.\n"
+            "  2. Rules about the voice/stage channel a user is connected to.\n"
             "  3. Rules about the channel or a parent of the thread a command was issued in.\n"
             "  4. Rules about a role the user has (The highest role they have with a rule will be "
             "used).\n"

@@ -1173,7 +1173,7 @@ embedset channel
 
 .. code-block:: none
 
-    [p]embedset channel [enabled]
+    [p]embedset channel <channel> [enabled]
 
 **Description**
 
@@ -1187,10 +1187,12 @@ If enabled is left blank, the setting will be unset and the guild default will b
 To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Examples:**
-    - ``[p]embedset channel False`` - Disables embeds in this channel.
-    - ``[p]embedset channel`` - Resets value to use guild default.
+    - ``[p]embedset channel #text-channel False`` - Disables embeds in the #text-channel.
+    - ``[p]embedset channel #forum-channel disable`` - Disables embeds in the #forum-channel.
+    - ``[p]embedset channel #text-channel`` - Resets value to use guild default in the #text-channel.
 
 **Arguments:**
+    - ``<channel>`` - The text, voice, stage, or forum channel to set embed setting for.
     - ``[enabled]`` - Whether to use embeds in this channel. Leave blank to reset to default.
 
 .. _core-command-embedset-command:
