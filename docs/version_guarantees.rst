@@ -83,6 +83,8 @@ Ubuntu 22.04 LTS                   x86-64, aarch64           2027-04-30 (`End of
 Ubuntu 22.10                       x86-64, aarch64           2023-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
 
+.. _developer-guarantees:
+
 ====================
 Developer Guarantees
 ====================
@@ -114,6 +116,8 @@ the affected attribute, function, class, or method.
 
 If you would like something in here to be guaranteed,
 open an issue making a case for it to be moved.
+
+.. _breaking-change-notices:
 
 =======================
 Breaking Change Notices

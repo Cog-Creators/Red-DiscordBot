@@ -86,7 +86,7 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Others
 
     changelog
-    incompatible_changes
+    incompatible_changes/index
     host-list
 
 
