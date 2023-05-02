@@ -464,6 +464,10 @@ To help support some of the newer features, we've also added a few things:
       `admin_or_can_manage_channel()`, `mod_or_can_manage_channel()`
     - Functions: `can_user_send_messages_in()`, `can_user_manage_channel()`, `can_user_react_in()`
 
+- New module (`redbot.core.utils.views`) with useful `discord.ui.View` subclasses
+
+    - `SetApiModal`, `SetApiView`, `SimpleMenu`
+
 ``Case.channel`` can now be a ``discord.Thread``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
