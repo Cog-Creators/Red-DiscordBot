@@ -357,7 +357,10 @@ class Admin(commands.Cog):
 
     @announceset.command(name="channel")
     async def announceset_channel(
-        self, ctx, *, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        ctx,
+        *,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ):
         """Change the channel where the bot will send announcements."""
         await self.config.guild(ctx.guild).announce_channel.set(channel.id)

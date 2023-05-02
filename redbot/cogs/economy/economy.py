@@ -299,7 +299,6 @@ class Economy(commands.Cog):
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
         if await bank.is_global():  # Role payouts will not be used
-
             # Gets the latest time the user used the command successfully and adds the global payday time
             next_payday = (
                 await self.config.user(author).next_payday() + await self.config.PAYDAY_TIME()

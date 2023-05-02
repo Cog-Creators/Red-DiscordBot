@@ -73,6 +73,7 @@ _T = TypeVar("_T")
 GlobalPermissionModel = Union[
     discord.User,
     discord.VoiceChannel,
+    discord.StageChannel,
     discord.TextChannel,
     discord.ForumChannel,
     discord.CategoryChannel,
@@ -82,6 +83,7 @@ GlobalPermissionModel = Union[
 GuildPermissionModel = Union[
     discord.Member,
     discord.VoiceChannel,
+    discord.StageChannel,
     discord.TextChannel,
     discord.ForumChannel,
     discord.CategoryChannel,

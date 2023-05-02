@@ -860,7 +860,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def notification_channel_set(
         self,
         ctx: commands.Context,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Set the notification channel for automatic unmute issues.

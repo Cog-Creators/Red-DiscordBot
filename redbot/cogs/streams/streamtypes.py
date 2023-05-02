@@ -54,7 +54,6 @@ def get_video_ids_from_feed(feed):
 
 
 class Stream:
-
     token_name: ClassVar[Optional[str]] = None
     platform_name: ClassVar[Optional[str]] = None
 
@@ -106,7 +105,6 @@ class Stream:
 
 
 class YoutubeStream(Stream):
-
     token_name = "youtube"
     platform_name = "YouTube"
 
@@ -306,7 +304,6 @@ class YoutubeStream(Stream):
 
 
 class TwitchStream(Stream):
-
     token_name = "twitch"
     platform_name = "Twitch"
 
@@ -464,7 +461,6 @@ class TwitchStream(Stream):
 
 
 class PicartoStream(Stream):
-
     token_name = None  # This streaming services don't currently require an API key
     platform_name = "Picarto"
 

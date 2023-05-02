@@ -312,7 +312,7 @@ class TriviaSession:
         top_score = self.scores.most_common(1)[0][1]
         winners = []
         num_humans = 0
-        for (player, score) in self.scores.items():
+        for player, score in self.scores.items():
             if not player.bot:
                 if score == top_score:
                     winners.append(player)
