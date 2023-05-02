@@ -35,7 +35,11 @@ from redbot.core import commands
 
 if TYPE_CHECKING:
     GuildMessageable = Union[
-        commands.GuildContext, discord.TextChannel, discord.VoiceChannel, discord.Thread
+        commands.GuildContext,
+        discord.TextChannel,
+        discord.VoiceChannel,
+        discord.StageChannel,
+        discord.Thread,
     ]
     DMMessageable = Union[commands.DMContext, discord.Member, discord.User, discord.DMChannel]
 
