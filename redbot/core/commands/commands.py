@@ -43,7 +43,6 @@ from discord.ext.commands import (
     Greedy,
 )
 
-from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
 from .. import app_commands
 from ..i18n import Translator
