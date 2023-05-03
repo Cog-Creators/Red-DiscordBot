@@ -9,8 +9,23 @@ Redbot 3.5.0 (TODO: ADD DATE)
 Read before updating
 --------------------
 
-TODO: ADD IF APPLICABLE
+#. Red 3.5 comes with breaking changes for users. Look at `Backward incompatible changes in Red 3.5 document <incompatible-changes-3.5>` and `End-user changelog <important-350-1>` for full details.
 
+    Note that because this release also comes with breaking changes for developers,
+    the cogs you're currently using will likely not work with the new release
+    until you update (and that's *if* they have been updated).
+
+    `Our update instructions <update_red>` include instructions on how you can safely update
+    your bot and cogs from versions before 3.5. **Make sure** that you look at the instructions
+    for **the version you currently have**, not the version you're updating to.
+
+    Note that any cogs that have not yet been updated will likely not work
+    until their author releases an update.
+
+#. Red 3.5 comes with breaking changes for cog developers. Look at `Backward incompatible changes in Red 3.5 document <incompatible-changes-3.5>` and `Developer changelog <important-350-2>` for full details.
+#. Fedora 35 and Debian 10 (Buster) are no longer supported as they have already reached their end of life.
+
+.. _important-350-1:
 
 End-user changelog
 ------------------
@@ -96,7 +111,7 @@ Removals
 ********
 
 - **Core** - Removed ``redbot-launcher`` (:issue:`5999`)
-- **Core - OS Support** - Fedora 36 and Debian 10 are no longer supported as they have already reached end of life (:issue:`5974`, :issue:`6110`)
+- **Core - OS Support** - Fedora 35 and Debian 10 (Buster) are no longer supported as they have already reached end of life (:issue:`5974`, :issue:`6110`)
 - **Cogs - Audio** - Removed the ``[p]llsetup`` alias of ``[p]llset`` (:issue:`5953`)
 - **Cogs - Bank** - Removed the bank cog as its only command - ``[p]bankset`` - is now a core command (:issue:`4128`, :issue:`4486`)
 
@@ -116,6 +131,7 @@ Fixes
 - **Cogs - Trivia - Lists** - Fixed some inaccuracies in the ``geography`` list (:issue:`5743`)
 - **Cogs - Trivia - Lists** - Fixed some inaccuracies in the ``clashroyale`` list (:issue:`5771`)
 
+.. _important-350-2:
 
 Developer changelog
 -------------------
