@@ -3842,7 +3842,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         locale = global_data["locale"]
         regional_format = global_data["regional_format"] or locale
         colour = discord.Colour(global_data["color"])
-        
+
         admin_cog = self.bot.get_cog("Admin")
         serverlocked = await admin_cog.config.serverlocked() if admin_cog else False
 
