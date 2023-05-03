@@ -1,10 +1,10 @@
 .. Red changelogs
 
-Redbot 3.5.0 (TODO: ADD DATE)
-==============================
+Redbot 3.5.0 (2023-05-04)
+=========================
 
 | Thanks to all these amazing people that contributed to this release:
-| TODO: GET CONTRIBS
+| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`alexratman`, :ghuser:`AntonioNarra`, :ghuser:`Arman0334`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`Honkertonken`, :ghuser:`i-am-zaidali`, :ghuser:`Jackenmen`, :ghuser:`japandotorg`, :ghuser:`karlsbjorn`, :ghuser:`keqking`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Kuro-Rui`, :ghuser:`leetfin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yuansheng1549`
 
 Read before updating
 --------------------
