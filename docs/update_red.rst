@@ -12,7 +12,7 @@ Here are some things to consider to help make your upgrade as smooth as possible
 
 .. note::
 
-    If you're developing for Red, you should also look for "Breaking changes" sections in release notes for each minor (X.Y.0) version that's been released since you last updated Red.
+    If you're developing for Red, you should also look for "Breaking changes" sections in release notes for each minor (X.Y.0) version that's been released since you last updated Red. To make migration process easier, we also provide extensive `incompatible_changes/index` document explaining the breaking changes we've made in more detail.
 
 .. important::
 
