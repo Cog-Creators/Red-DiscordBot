@@ -446,7 +446,7 @@ discord.py version has been updated to 2.2.3
 To allow Red to continue operating *and* use the newer features (threads, text in voice/stage channels,
 buttons, application commands, and AutoMod, to name a few), we've updated discord.py from version
 1.7.3 to 2.2.3. Since this is a major upgrade, it will require you to update your code accordingly.
-discord.py's documentation has :dpy_docs:`a migration guide <migrating>` that you can follow in order to
+discord.py's documentation has :dpy_docs:`a migration guide <migrating.html>` that you can follow in order to
 update your cogs.
 
 Red itself has already been updated to support all of these changes that happened over the years.
