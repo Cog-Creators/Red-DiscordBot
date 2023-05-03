@@ -525,7 +525,12 @@ def main():
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
         # We need to do something with prior to having the loop close
-        log.info("Shutting down with exit code: %s (%s)", exc.code.value, exc.code.name)
+        exit_code = int(exc.code)
+        try:
+            exit_code_name = ExitCodes(exit_code).name
+        except ValueError:
+            exit_code_name = "UNKNOWN"
+        log.info("Shutting down with exit code: %s (%s)", exit_code, exit_code_name)
         if red is not None:
             loop.run_until_complete(shutdown_handler(red, None, exc.code))
     except Exception as exc:  # Non standard case.
