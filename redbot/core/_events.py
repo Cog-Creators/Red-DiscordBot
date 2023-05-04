@@ -106,7 +106,6 @@ def get_outdated_red_messages(pypi_version: str, py_version_req: str) -> Tuple[s
                 try:
                     dist = importlib.metadata.distribution(req.name)
                 except importlib.metadata.PackageNotFoundError:
-                    installed_extras.remove(extra)
                     dist = None
                 distributions[req.name] = dist
             if dist is None or not req.specifier.contains(dist.version, prereleases=True):
