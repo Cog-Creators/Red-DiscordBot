@@ -1,5 +1,33 @@
 .. Red changelogs
 
+Redbot 3.5.1 (2023-05-04)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Flame442`, :ghuser:`Jackenmen`
+
+This is a hotfix release fixing documentation issues and a bug with the update notification logic
+that caused Red to crash.
+
+End-user changelog
+------------------
+
+Fixes
+*****
+
+- **Core** - Fixed a crash in the Red update notification logic (:issue:`6124`)
+
+
+Documentation changes
+---------------------
+
+Fixes
+*****
+
+- Fix the instructions for updating Red (:issue:`6123`)
+
+----
+
 Redbot 3.5.0 (2023-05-04)
 =========================
 

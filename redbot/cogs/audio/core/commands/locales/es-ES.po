@@ -2450,7 +2450,7 @@ msgstr "No hay coincidencias."
 #: redbot/cogs/audio/core/commands/miscellaneous.py:29
 #, docstring
 msgid "Make Red sing one of her songs."
-msgstr "Haz que el rojo cante una de sus canciones."
+msgstr "Haz que Red cante una de sus canciones."
 
 #: redbot/cogs/audio/core/commands/miscellaneous.py:47
 #, docstring
@@ -3791,7 +3791,7 @@ msgstr "Carga cancelada."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1829
 msgid "Only Red playlist files can be uploaded."
-msgstr "Sólo se pueden subir archivos de listas de reproducción rojas."
+msgstr "Sólo se pueden subir archivos de listas de reproducción Red."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1837
 msgid "Not a valid playlist file."
