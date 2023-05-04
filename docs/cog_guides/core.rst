@@ -3676,7 +3676,7 @@ set serverprefix
 
 .. code-block:: none
 
-    [p]set serverprefix [prefixes...]
+    [p]set serverprefix [server] [prefixes...]
 
 .. tip:: Alias: ``set serverprefixes``
 
@@ -3697,6 +3697,7 @@ Sets Red's server prefix(es).
     - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
 
 **Arguments:**
+    - ``[server]`` - The server to set the prefix for. Defaults to current server.
     - ``[prefixes...]`` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
 
 .. _core-command-set-showsettings:
@@ -3709,11 +3710,16 @@ set showsettings
 
 .. code-block:: none
 
-    [p]set showsettings 
+    [p]set showsettings [server]
 
 **Description**
 
 Show the current settings for Red.
+
+Accepts optional server parameter to allow prefix recovery.
+
+**Arguments:**
+    - ``[server]`` - The server to show the settings for. Defaults to current server, or no server in a DM context.
 
 .. _core-command-set-status:
 
