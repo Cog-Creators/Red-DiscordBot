@@ -2,20 +2,20 @@ import calendar
 import logging
 import random
 from collections import defaultdict, deque, namedtuple
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 from math import ceil
-from typing import cast, Iterable, Union, Literal
+from typing import cast, Iterable, Literal
 
 import discord
 
-from redbot.core import Config, bank, commands, errors, checks
-from redbot.core.commands.converter import TimedeltaConverter
+from redbot.core import Config, bank, commands, errors
+from redbot.core.commands.converter import TimedeltaConverter, positive_int
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import close_menu, menu
-from .converters import positive_int
+from redbot.core.utils.menus import menu
 
 T_ = Translator("Economy", __file__)
 
@@ -236,7 +236,7 @@ class Economy(commands.Cog):
         )
 
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Set the balance of a user's bank account.
@@ -299,7 +299,6 @@ class Economy(commands.Cog):
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
         if await bank.is_global():  # Role payouts will not be used
-
             # Gets the latest time the user used the command successfully and adds the global payday time
             next_payday = (
                 await self.config.user(author).next_payday() + await self.config.PAYDAY_TIME()
@@ -339,11 +338,13 @@ class Economy(commands.Cog):
                 )
 
             else:
-                dtime = self.display_time(next_payday - cur_time)
+                relative_time = discord.utils.format_dt(
+                    datetime.now(timezone.utc) + timedelta(seconds=next_payday - cur_time), "R"
+                )
                 await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                    _("{author.mention} Too soon. Your next payday is {relative_time}.").format(
+                        author=author, relative_time=relative_time
+                    )
                 )
         else:
             # Gets the users latest successfully payday and adds the guilds payday time
@@ -394,11 +395,13 @@ class Economy(commands.Cog):
                     )
                 )
             else:
-                dtime = self.display_time(next_payday - cur_time)
+                relative_time = discord.utils.format_dt(
+                    datetime.now(timezone.utc) + timedelta(seconds=next_payday - cur_time), "R"
+                )
                 await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                    _("{author.mention} Too soon. Your next payday is {relative_time}.").format(
+                        author=author, relative_time=relative_time
+                    )
                 )
 
     @commands.command()
@@ -651,7 +654,7 @@ class Economy(commands.Cog):
 
     @guild_only_check()
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Base command to manage Economy settings."""
@@ -891,25 +894,3 @@ class Economy(commands.Cog):
                         num=humanize_number(creds), currency=credits_name, role_name=role.name
                     )
                 )
-
-    # What would I ever do without stackoverflow?
-    @staticmethod
-    def display_time(seconds, granularity=2):
-        intervals = (  # Source: http://stackoverflow.com/a/24542445
-            (_("weeks"), 604800),  # 60 * 60 * 24 * 7
-            (_("days"), 86400),  # 60 * 60 * 24
-            (_("hours"), 3600),  # 60 * 60
-            (_("minutes"), 60),
-            (_("seconds"), 1),
-        )
-
-        result = []
-
-        for name, count in intervals:
-            value = seconds // count
-            if value:
-                seconds -= value * count
-                if value == 1:
-                    name = name.rstrip("s")
-                result.append("{} {}".format(value, name))
-        return ", ".join(result[:granularity])

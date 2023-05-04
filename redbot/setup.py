@@ -14,15 +14,16 @@ from typing import Dict, Any, Optional, Union
 
 import click
 
-from redbot.core.cli import confirm
+from redbot.core._cli import confirm
 from redbot.core.utils._internal_utils import (
     safe_delete,
     create_backup as red_create_backup,
     cli_level_to_log_level,
 )
-from redbot.core import config, data_manager, drivers
+from redbot.core import config, data_manager, _drivers
+from redbot.core._cli import ExitCodes
 from redbot.core.data_manager import appdir, config_dir, config_file
-from redbot.core.drivers import BackendType, IdentifierData
+from redbot.core._drivers import BackendType, IdentifierData
 
 conversion_log = logging.getLogger("red.converter")
 
@@ -30,7 +31,7 @@ try:
     config_dir.mkdir(parents=True, exist_ok=True)
 except PermissionError:
     print("You don't have permission to write to '{}'\nExiting...".format(config_dir))
-    sys.exit(1)
+    sys.exit(ExitCodes.CONFIGURATION_ERROR)
 
 instance_data = data_manager.load_existing_config()
 if instance_data is None:
@@ -77,7 +78,7 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
             "We were unable to check your chosen directory."
             " Provided path may contain an invalid character."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     if not exists:
         try:
@@ -85,15 +86,15 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
         except OSError:
             print(
                 "We were unable to create your chosen directory."
-                " You may need to restart this process with admin"
-                " privileges."
+                " You may need to create the directory and set proper permissions"
+                " for it manually before it can be used as the data directory."
             )
-            sys.exit(1)
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     print("You have chosen {} to be your data directory.".format(data_path))
     if not click.confirm("Please confirm", default=True):
         print("Please start the process over.")
-        sys.exit(0)
+        sys.exit(ExitCodes.CRITICAL)
     return str(data_path.resolve())
 
 
@@ -125,28 +126,43 @@ def get_storage_type(backend: Optional[str], *, interactive: bool):
 
 
 def get_name(name: str) -> str:
-    INSTANCE_NAME_RE = re.compile(r"[A-Za-z0-9_\.\-]*")
+    INSTANCE_NAME_RE = re.compile(
+        r"""
+        [a-z0-9]              # starts with letter or digit
+        (?:
+            (?!.*[_\.\-]{2})  # ensure no consecutive dots, hyphens, or underscores
+            [a-z0-9_\.\-]*    # match allowed characters
+            [a-z0-9]          # ensure string ends with letter or digit
+        )?                    # optional to allow strings of length 1
+        """,
+        re.VERBOSE | re.IGNORECASE,
+    )
     if name:
         if INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
-                "ERROR: Instance names can only include characters A-z, numbers, "
-                "underscores (_) and periods (.)."
+                "ERROR: Instance names need to start and end with a letter or a number"
+                " and can only include characters A-z, numbers,"
+                " and non-consecutive underscores (_) and periods (.)."
             )
-            sys.exit(1)
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
         return name
 
     while len(name) == 0:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
-            "This name is case-sensitive and should only include characters"
-            " A-z, numbers, underscores (_) and periods (.)."
+            "This name is case-sensitive, needs to start and end with a letter or a number"
+            " and should only include characters A-z, numbers,"
+            " and non-consecutive underscores (_) and periods (.)."
         )
         name = input("> ")
-        if INSTANCE_NAME_RE.fullmatch(name) is None:
+        if not name:
+            pass
+        elif INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
-                "ERROR: Instance names can only include characters A-z, numbers, "
-                "underscores (_) and periods (.)."
+                "ERROR: Instance names need to start and end with a letter or a number"
+                " and can only include characters A-z, numbers,"
+                " and non-consecutive underscores (_) and periods (.)."
             )
             name = ""
         elif "-" in name and not confirm(
@@ -176,7 +192,7 @@ def basic_setup(
             "Providing instance name through --instance-name is required"
             " when using non-interactive mode."
         )
-        sys.exit(1)
+        sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     if interactive:
         print(
@@ -195,7 +211,7 @@ def basic_setup(
     storage_type = get_storage_type(backend, interactive=interactive)
 
     default_dirs["STORAGE_TYPE"] = storage_type.value
-    driver_cls = drivers.get_driver_class(storage_type)
+    driver_cls = _drivers.get_driver_class(storage_type)
     default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
 
     if name in instance_data:
@@ -210,14 +226,14 @@ def basic_setup(
                 "Are you absolutely certain you want to continue?", default=False
             ):
                 print("Not continuing")
-                sys.exit(0)
+                sys.exit(ExitCodes.SHUTDOWN)
         else:
             print(
                 "An instance with this name already exists.\n"
                 "If you want to remove the existing instance and replace it with this one,"
                 " run this command with --overwrite-existing-instance flag."
             )
-            sys.exit(1)
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
     save_config(name, default_dirs)
 
     if interactive:
@@ -246,8 +262,8 @@ def get_target_backend(backend: str) -> BackendType:
 async def do_migration(
     current_backend: BackendType, target_backend: BackendType
 ) -> Dict[str, Any]:
-    cur_driver_cls = drivers._get_driver_class_include_old(current_backend)
-    new_driver_cls = drivers.get_driver_class(target_backend)
+    cur_driver_cls = _drivers._get_driver_class_include_old(current_backend)
+    new_driver_cls = _drivers.get_driver_class(target_backend)
     cur_storage_details = data_manager.storage_details()
     new_storage_details = new_driver_cls.get_config_details()
 
@@ -268,7 +284,7 @@ async def create_backup(instance: str, destination_folder: Path = Path.home()) -
     if backend_type != BackendType.JSON:
         await do_migration(backend_type, BackendType.JSON)
     print("Backing up the instance's data...")
-    driver_cls = drivers.get_driver_class()
+    driver_cls = _drivers.get_driver_class()
     await driver_cls.initialize(**data_manager.storage_details())
     backup_fpath = await red_create_backup(destination_folder)
     await driver_cls.teardown()
@@ -304,7 +320,7 @@ async def remove_instance(
     if _create_backup is True:
         await create_backup(instance)
 
-    driver_cls = drivers.get_driver_class(backend)
+    driver_cls = _drivers.get_driver_class(backend)
     if delete_data is True:
         await driver_cls.initialize(**data_manager.storage_details())
         try:
@@ -347,7 +363,16 @@ async def remove_instance_interaction() -> None:
 
 
 @click.group(invoke_without_command=True)
-@click.option("--debug", "--verbose", "-v", count=True)
+@click.option(
+    "--debug",
+    "--verbose",
+    "-v",
+    count=True,
+    help=(
+        "Increase the verbosity of the logs, each usage of this flag increases the verbosity"
+        " level by 1."
+    ),
+)
 @click.option(
     "--no-prompt",
     "interactive",
@@ -385,7 +410,15 @@ async def remove_instance_interaction() -> None:
         "Note: Choosing PostgreSQL will prevent the setup from being completely non-interactive."
     ),
 )
-@click.option("--overwrite-existing-instance", type=bool, is_flag=True)
+@click.option(
+    "--overwrite-existing-instance",
+    type=bool,
+    is_flag=True,
+    help=(
+        "Confirm overwriting of existing instance.\n"
+        "Note: This removes *metadata* about the existing instance with that name."
+    ),
+)
 @click.pass_context
 def cli(
     ctx: click.Context,

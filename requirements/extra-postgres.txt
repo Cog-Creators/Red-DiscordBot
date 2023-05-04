@@ -1,0 +1,2 @@
+asyncpg==0.27.0
+    # via -r extra-postgres.in

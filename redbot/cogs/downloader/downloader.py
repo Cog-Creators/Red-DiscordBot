@@ -9,7 +9,7 @@ from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List
 from collections import defaultdict
 
 import discord
-from redbot.core import checks, commands, Config, version_info as red_version_info
+from redbot.core import commands, Config, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -480,7 +480,7 @@ class Downloader(commands.Cog):
             await target.send(page)
 
     @commands.command(require_var_positional=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def pipinstall(self, ctx: commands.Context, *deps: str) -> None:
         """
         Install a group of dependencies using pip.
@@ -514,7 +514,7 @@ class Downloader(commands.Cog):
             )
 
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def repo(self, ctx: commands.Context) -> None:
         """Base command for repository management."""
         pass
@@ -529,7 +529,8 @@ class Downloader(commands.Cog):
             - `[p]repo add 26-Cogs https://github.com/Twentysix26/x26-Cogs`
             - `[p]repo add Laggrons-Dumb-Cogs https://github.com/retke/Laggrons-Dumb-Cogs v3`
 
-        Repo names can only contain characters A-z, numbers, underscores, and hyphens.
+        Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots (but they cannot start or end with a dot).
+
         The branch will be the default branch if not specified.
 
         **Arguments**
@@ -697,7 +698,7 @@ class Downloader(commands.Cog):
         await self.send_pagified(ctx, message)
 
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def cog(self, ctx: commands.Context) -> None:
         """Base command for cog installation management commands."""
         pass
@@ -1624,6 +1625,12 @@ class Downloader(commands.Cog):
                             command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
                         )
                     )
+            # If the bot has any slash commands enabled, warn them to sync
+            enabled_slash = await self.bot.list_enabled_app_commands()
+            if any(enabled_slash.values()):
+                message += _(
+                    "\nYou may need to resync your slash commands with `{prefix}slash sync`."
+                ).format(prefix=ctx.prefix)
         if failed_cogs:
             cognames = [cog.name for cog in failed_cogs]
             message += (
@@ -1740,8 +1747,8 @@ class Downloader(commands.Cog):
         # Check if in installed cogs
         cog = command.cog
         if cog:
-            cog_name = self.cog_name_from_instance(cog)
-            installed, cog_installable = await self.is_installed(cog_name)
+            cog_pkg_name = self.cog_name_from_instance(cog)
+            installed, cog_installable = await self.is_installed(cog_pkg_name)
             if installed:
                 made_by = (
                     humanize_list(cog_installable.author)
@@ -1758,17 +1765,21 @@ class Downloader(commands.Cog):
                     if cog_installable.repo is None
                     else cog_installable.repo.name
                 )
-                cog_name = cog_installable.name
+                cog_pkg_name = cog_installable.name
             elif cog.__module__.startswith("redbot."):  # core commands or core cog
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
-                cog_name = cog.__class__.__name__
+                module_fragments = cog.__module__.split(".")
+                if module_fragments[1] == "core":
+                    cog_pkg_name = "N/A - Built-in commands"
+                else:
+                    cog_pkg_name = module_fragments[2]
                 repo_name = "Red-DiscordBot"
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
-                cog_name = cog.__class__.__name__
                 repo_name = _("Unknown")
+            cog_name = cog.__class__.__name__
         else:
             msg = _("This command is not provided by a cog.")
             await ctx.send(msg)
@@ -1777,7 +1788,8 @@ class Downloader(commands.Cog):
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(name=_("Command:"), value=command_name, inline=False)
-            embed.add_field(name=_("Cog name:"), value=cog_name, inline=False)
+            embed.add_field(name=_("Cog package name:"), value=cog_pkg_name, inline=True)
+            embed.add_field(name=_("Cog name:"), value=cog_name, inline=True)
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo name:"), value=repo_name, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
@@ -1789,12 +1801,18 @@ class Downloader(commands.Cog):
 
         else:
             msg = _(
-                "Command: {command}\nCog name: {cog}\nMade by: {author}\nRepo name: {repo_name}\nRepo URL: {repo_url}\n"
+                "Command:          {command}\n"
+                "Cog package name: {cog_pkg}\n"
+                "Cog name:         {cog}\n"
+                "Made by:          {author}\n"
+                "Repo name:        {repo_name}\n"
+                "Repo URL:         {repo_url}\n"
             ).format(
                 command=command_name,
+                cog_pkg=cog_pkg_name,
+                cog=cog_name,
                 author=made_by,
                 repo_url=repo_url,
-                cog=cog_name,
                 repo_name=repo_name,
             )
             if installed and cog_installable.repo is not None and cog_installable.repo.branch:

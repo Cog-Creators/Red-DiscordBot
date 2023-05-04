@@ -1,3 +1,4 @@
+import os as _os
 import re as _re
 import sys as _sys
 import warnings as _warnings
@@ -12,22 +13,19 @@ from typing import (
     Union as _Union,
 )
 
-
-MIN_PYTHON_VERSION = (3, 8, 1)
-
-__all__ = [
-    "MIN_PYTHON_VERSION",
+__all__ = (
     "__version__",
     "version_info",
     "VersionInfo",
-    "_update_event_loop_policy",
-]
+)
+
+MIN_PYTHON_VERSION = (3, 8, 1)
 if _sys.version_info < MIN_PYTHON_VERSION:
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
         f"{_sys.version}! Please update Python."
     )
-    _sys.exit(1)
+    _sys.exit(78)
 
 
 class VersionInfo:
@@ -149,12 +147,20 @@ class VersionInfo:
             ]
         ] = []
         for obj in (self, other):
+            if (
+                obj.releaselevel == obj.FINAL
+                and obj.post_release is None
+                and obj.dev_release is not None
+            ):
+                releaselevel = -1
+            else:
+                releaselevel = obj._RELEASE_LEVELS.index(obj.releaselevel)
             tups.append(
                 (
                     obj.major,
                     obj.minor,
                     obj.micro,
-                    obj._RELEASE_LEVELS.index(obj.releaselevel),
+                    releaselevel,
                     obj.serial if obj.serial is not None else _inf,
                     obj.post_release if obj.post_release is not None else -_inf,
                     obj.dev_release if obj.dev_release is not None else _inf,
@@ -201,45 +207,86 @@ class VersionInfo:
     def _get_version(cls, *, ignore_installed: bool = False) -> _Tuple[str, "VersionInfo"]:
         if not _VERSION.endswith(".dev1"):
             return _VERSION, cls.from_str(_VERSION)
-        try:
-            import os
 
-            path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-            # we only want to do this for editable installs
-            if not os.path.exists(os.path.join(path, ".git")):
-                raise RuntimeError("not a git repository")
+        project_root = _os.path.abspath(_os.path.dirname(_os.path.dirname(__file__)))
 
-            import subprocess
-
-            output = subprocess.check_output(
-                ("git", "describe", "--tags", "--long", "--dirty"),
-                stderr=subprocess.DEVNULL,
-                cwd=path,
-            )
-            _, count, commit, *dirty = output.decode("utf-8").strip().split("-", 3)
-            dirty_suffix = f".{dirty[0]}" if dirty else ""
-            ver = f"{_VERSION[:-1]}{count}+{commit}{dirty_suffix}"
-            return ver, cls.from_str(ver)
-        except Exception:
-            # `ignore_installed` is `True` when building with setuptools.
-            if ignore_installed:
-                # we don't want any failure to raise here but we should print it
-                import traceback
-
-                traceback.print_exc()
+        methods = [
+            cls._get_version_from_git_repo,
+        ]
+        # `ignore_installed` is `True` when building with setuptools.
+        if ignore_installed:
+            methods.append(cls._get_version_from_sdist_pkg_info)
+            methods.append(cls._get_version_from_git_archive)
+        else:
+            methods.append(cls._get_version_from_package_metadata)
+        exceptions = []
+        for method in methods:
+            try:
+                version = method(project_root)
+            except Exception as exc:
+                exceptions.append(exc)
             else:
-                try:
-                    from importlib.metadata import version
+                break
+        else:
+            import traceback
 
-                    ver = version("Red-DiscordBot")
-                    return ver, cls.from_str(ver)
-                except Exception:
-                    # we don't want any failure to raise here but we should print it
-                    import traceback
+            for exc in exceptions:
+                traceback.print_exception(None, exc, exc.__traceback__)
+                exc.__traceback__ = None
 
-                    traceback.print_exc()
+            version = _VERSION
 
-        return _VERSION, cls.from_str(_VERSION)
+        return version, cls.from_str(version)
+
+    @classmethod
+    def _get_version_from_git_repo(cls, project_root: str) -> str:
+        # we only want to do this for editable installs
+        if not _os.path.exists(_os.path.join(project_root, ".git")):
+            raise RuntimeError("not a git repository")
+
+        import subprocess
+
+        output = subprocess.check_output(
+            ("git", "describe", "--tags", "--long", "--dirty"),
+            stderr=subprocess.DEVNULL,
+            cwd=project_root,
+        )
+        _, count, commit, *dirty = output.decode("utf-8").strip().split("-", 3)
+        dirty_suffix = f".{dirty[0]}" if dirty else ""
+        return f"{_VERSION[:-1]}{count}+{commit}{dirty_suffix}"
+
+    @classmethod
+    def _get_version_from_git_archive(cls, project_root: str) -> str:
+        with open(_os.path.join(project_root, ".git_archive_info.txt"), encoding="utf-8") as fp:
+            commit, describe_name = fp.read().splitlines()
+            if not describe_name:
+                raise RuntimeError("git archive's describe didn't output anything")
+            if "%(describe" in describe_name:
+                # either git-archive was generated with Git < 2.35 or this is not a git-archive
+                raise RuntimeError("git archive did not support describe output")
+            _, _, suffix = describe_name.partition("-")
+            if suffix:
+                count, _, _ = suffix.partition("-")
+            else:
+                count = "0"
+            return f"{_VERSION[:-1]}{count}+g{commit}"
+
+    @classmethod
+    def _get_version_from_sdist_pkg_info(cls, project_root: str) -> str:
+        pkg_info_path = _os.path.join(project_root, "PKG-INFO")
+        if not _os.path.exists(pkg_info_path):
+            raise RuntimeError("not an sdist")
+
+        import email
+
+        with open(pkg_info_path, encoding="utf-8") as fp:
+            return email.message_from_file(fp)["Version"]
+
+    @classmethod
+    def _get_version_from_package_metadata(cls, project_root: str) -> str:
+        from importlib.metadata import version
+
+        return version("Red-DiscordBot")
 
 
 def _update_event_loop_policy():
@@ -261,8 +308,12 @@ def _ensure_no_colorama():
     from rich.console import detect_legacy_windows
 
     if not detect_legacy_windows():
-        import colorama
-        import colorama.initialise
+        try:
+            import colorama
+            import colorama.initialise
+        except ModuleNotFoundError:
+            # colorama is not Red's primary dependency so it might not be present
+            return
 
         colorama.deinit()
 
@@ -280,7 +331,7 @@ def _update_logger_class():
 
 
 def _early_init():
-    # This function replaces logger so we preferrably (though not necessarily) want that to happen
+    # This function replaces logger so we preferably (though not necessarily) want that to happen
     # before importing anything that calls `logging.getLogger()`, i.e. `asyncio`.
     _update_logger_class()
     _update_event_loop_policy()
@@ -292,8 +343,6 @@ _VERSION = "3.5.0.dev1"
 
 __version__, version_info = VersionInfo._get_version()
 
-# Filter fuzzywuzzy slow sequence matcher warning
-_warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
 # Show DeprecationWarning
 _warnings.filterwarnings("default", category=DeprecationWarning)
 
@@ -311,4 +360,23 @@ if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
         category=DeprecationWarning,
         module="asyncio",
         message="The loop argument is deprecated since Python 3.8",
+    )
+    # DEP-WARN - d.py currently uses audioop module, Danny is aware of the deprecation
+    #
+    # DeprecationWarning: 'audioop' is deprecated and slated for removal in Python 3.13
+    #   import audioop
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="discord",
+        message="'audioop' is deprecated and slated for removal",
+    )
+    # DEP-WARN - will need a fix before Python 3.12 support
+    #
+    # DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="importlib",
+        message=r"the load_module\(\) method is deprecated and slated for removal",
     )

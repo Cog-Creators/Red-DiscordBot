@@ -9,7 +9,7 @@ import discord
 
 from redbot.core import Config, checks, commands, i18n, modlog
 from redbot.core.bot import Red
-from redbot.core import commands, checks, i18n, modlog, Config
+from redbot.core import commands, i18n, modlog, Config
 from redbot.core.utils import AsyncIter, bounded_gather, can_user_react_in
 from redbot.core.utils.chat_formatting import (
     bold,
@@ -433,7 +433,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         for result in results:
             if not result:
                 continue
-            _mmeber, channel, reason = result
+            _member, channel, reason = result
             unmuted_channels.remove(channel)
         modlog_reason = _("Automatic unmute")
 
@@ -865,7 +865,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def notification_channel_set(
         self,
         ctx: commands.Context,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Set the notification channel for automatic unmute issues.
@@ -1201,6 +1203,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.command(usage="<users...> [time_and_reason]")
     @commands.guild_only()
     @commands.mod_or_permissions(manage_roles=True, moderate_members=True)
+    @commands.mod_or_permissions(manage_roles=True)
     async def mute(
         self,
         ctx: commands.Context,

@@ -98,13 +98,13 @@ in various ways:
 .. code-block:: python
 
     @commands.command()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def setbaz(self, ctx, new_value):
         await self.config.guild(ctx.guild).baz.set(new_value)
         await ctx.send("Value of baz has been changed!")
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def setfoobar(self, ctx, new_value):
         await self.config.foobar.set(new_value)
 
@@ -128,7 +128,7 @@ Notice a few things in the above examples:
     self.config.<insert scope here, or nothing if global>.variable_name.set(new_value)
 
 It is also possible to use :code:`async with` syntax to get and set config
-values. When entering the statement, the config value is retreived, and on exit,
+values. When entering the statement, the config value is retrieved, and on exit,
 it is saved. This puts a safeguard on any code within the :code:`async with`
 block such that if it breaks from the block in any way (whether it be from
 :code:`return`, :code:`break`, :code:`continue` or an exception), the value will
@@ -259,10 +259,10 @@ Now let's see an example that uses multiple identifiers:
 
 .. code-block:: python
 
-    from redbot.core import Config, commands, checks
+    from redbot.core import Config, commands
 
 
-    class ChannelAccesss(commands.Cog):
+    class ChannelAccess(commands.Cog):
         def __init__(self):
             self.config = Config.get_conf(self, identifier=1234567890)
             default_access = {
@@ -273,7 +273,7 @@ Now let's see an example that uses multiple identifiers:
             self.config.register_custom("ChannelAccess", **default_access)
 
         @commands.command()
-        @checks.is_owner()
+        @commands.is_owner()
         async def grantaccess(self, ctx, channel: discord.TextChannel, member: discord.Member):
             await self.config.custom("ChannelAccess", channel.id, member.id).allowed.set(True)
             await ctx.send("Member has been granted access to that channel")
@@ -540,30 +540,14 @@ Value
     :members:
     :special-members: __call__
 
+IdentifierData
+^^^^^^^^^^^^^^
 
-****************
-Driver Reference
-****************
-
-.. autofunction:: redbot.core.drivers.get_driver
-
-.. autoclass:: redbot.core.drivers.BackendType
+.. autoclass:: IdentifierData
     :members:
 
-.. autoclass:: redbot.core.drivers.ConfigCategory
-    :members:
+ConfigCategory
+^^^^^^^^^^^^^^
 
-Base Driver
-^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.BaseDriver
-    :members:
-
-JSON Driver
-^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.JsonDriver
-    :members:
-
-Postgres Driver
-^^^^^^^^^^^^^^^
-.. autoclass:: redbot.core.drivers.PostgresDriver
+.. autoclass:: ConfigCategory
     :members:

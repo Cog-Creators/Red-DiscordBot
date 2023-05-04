@@ -82,7 +82,7 @@ release = __version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -110,6 +110,9 @@ with open("prolog.txt", "r") as file:
 
 # Adds d.py version to available substitutions in all files
 rst_prolog += f"\n.. |DPY_VERSION| replace:: {dpy_version}"
+
+# Add release highlight indicator to available substitutions in all files
+rst_prolog += f"\n.. |cool| replace:: \N{HEAVY BLACK HEART}\N{VARIATION SELECTOR-16}"
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -246,8 +249,8 @@ intersphinx_mapping = {
 # :dpy_docs:`link text <site_name.html>`
 extlinks = {
     "dpy_docs": (f"{dpy_docs_url}/%s", None),
-    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#"),
-    "ghuser": ("https://github.com/%s", "@"),
+    "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#%s"),
+    "ghuser": ("https://github.com/%s", "@%s"),
 }
 
 # Doctest

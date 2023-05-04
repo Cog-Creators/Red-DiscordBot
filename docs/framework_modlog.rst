@@ -21,7 +21,7 @@ Basic Usage
 
     class MyCog(commands.Cog):
         @commands.command()
-        @checks.admin_or_permissions(ban_members=True)
+        @commands.admin_or_permissions(ban_members=True)
         async def ban(self, ctx, user: discord.Member, reason: str = None):
             await ctx.guild.ban(user)
             case = await modlog.create_case(

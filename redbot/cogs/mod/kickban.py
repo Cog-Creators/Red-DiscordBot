@@ -5,8 +5,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple, Union
 
 import discord
-from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional, RawUserIdConverter
+from redbot.core import commands, i18n, modlog
+from redbot.core.commands import RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
     pagify,
@@ -187,7 +187,7 @@ class KickBanMixin(MixinMeta):
         else:
             username = user.name if hasattr(user, "name") else "Unknown"
             try:
-                await guild.ban(user, reason=audit_reason, delete_message_days=days)
+                await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
                     "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
                         author.name, author.id, ban_type, username, user.id, str(days)
@@ -281,7 +281,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
-    @checks.admin_or_permissions(kick_members=True)
+    @commands.admin_or_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """
         Kick a user.
@@ -359,7 +359,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def ban(
         self,
         ctx: commands.Context,
@@ -397,7 +397,7 @@ class KickBanMixin(MixinMeta):
     @commands.command(aliases=["hackban"], usage="<user_ids...> [days] [reason]")
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def massban(
         self,
         ctx: commands.Context,
@@ -538,7 +538,9 @@ class KickBanMixin(MixinMeta):
                     banned.append(user_id)
                 else:
                     try:
-                        await guild.ban(user, reason=audit_reason, delete_message_days=days)
+                        await guild.ban(
+                            user, reason=audit_reason, delete_message_seconds=days * 86400
+                        )
                         log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
                     except discord.NotFound:
                         errors[user_id] = _("User with ID {user_id} not found").format(
@@ -569,7 +571,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def tempban(
         self,
         ctx: commands.Context,
@@ -647,7 +649,7 @@ class KickBanMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
         try:
-            await guild.ban(member, reason=audit_reason, delete_message_days=days)
+            await guild.ban(member, reason=audit_reason, delete_message_seconds=days * 86400)
         except discord.Forbidden:
             await ctx.send(_("I can't do that for some reason."))
         except discord.HTTPException:
@@ -668,7 +670,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def softban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Kick a user and delete 1 day's worth of their messages."""
         guild = ctx.guild
@@ -706,7 +708,7 @@ class KickBanMixin(MixinMeta):
         except discord.HTTPException:
             msg = None
         try:
-            await guild.ban(member, reason=audit_reason, delete_message_days=1)
+            await guild.ban(member, reason=audit_reason, delete_message_seconds=86400)
         except discord.errors.Forbidden:
             await ctx.send(_("My role is not high enough to softban that user."))
             if msg is not None:
@@ -795,7 +797,7 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
+    @commands.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(
         self, ctx: commands.Context, member: discord.Member, *, reason: str = None
     ):
@@ -838,7 +840,7 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
+    @commands.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Ban a user from speaking and listening in the server's voice channels."""
         user_voice_state: discord.VoiceState = member.voice
@@ -880,7 +882,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def unban(
         self, ctx: commands.Context, user_id: RawUserIdConverter, *, reason: str = None
     ):
