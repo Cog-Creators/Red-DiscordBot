@@ -119,7 +119,8 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
             redbot <your instance name> --no-cogs --load-cogs downloader
 
     #. Wait for the bot to start.
-    #. Run the ``[p]cog update`` command on Discord and wait for it to finish.
+    #. Run the ``[p]cog update`` command on Discord.
+    #. Wait for the bot to stop typing and send a response. This step may take a while.
     #. Shutdown the bot with the ``[p]shutdown`` command.
 #. Start your bot as you normally do.
 
@@ -162,7 +163,8 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
             redbot <your instance name> --no-cogs --load-cogs downloader
 
     #. Wait for the bot to start.
-    #. Run the ``[p]cog update`` command on Discord and wait for it to finish.
+    #. Run the ``[p]cog update`` command on Discord.
+    #. Wait for the bot to stop typing and send a response. This step may take a while.
     #. Shutdown the bot with the ``[p]shutdown`` command.
 #. Start your bot as you normally do.
 
