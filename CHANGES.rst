@@ -26,6 +26,7 @@ Fixes
 
 - Fix the instructions for updating Red (:issue:`6123`)
 
+----
 
 Redbot 3.5.0 (2023-05-04)
 =========================
