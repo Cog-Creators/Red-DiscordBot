@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-02 23:06+0000\n"
+"POT-Creation-Date: 2023-05-04 00:53+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -35,27 +35,27 @@ msgstr "Tento čas je pro tento příkaz příliš velký. (Maximum: {minimum})"
 msgid "'{input}' doesn't look like a valid user ID."
 msgstr "'{input}' nevypadá jako platné ID uživatele."
 
-#: redbot/core/commands/converter.py:253
+#: redbot/core/commands/converter.py:254
 msgid "`{arg}` is not a number."
 msgstr ""
 
-#: redbot/core/commands/converter.py:255
+#: redbot/core/commands/converter.py:256
 msgid "`{arg}` is not a finite number."
 msgstr ""
 
-#: redbot/core/commands/converter.py:278
+#: redbot/core/commands/converter.py:279
 msgid "Missing a key or value."
 msgstr "Chybí klíč nebo hodnota."
 
-#: redbot/core/commands/converter.py:284
+#: redbot/core/commands/converter.py:285
 msgid "Unexpected key `{key}`."
 msgstr "Neočekávaný klíč `{key}`."
 
-#: redbot/core/commands/converter.py:509
+#: redbot/core/commands/converter.py:510
 msgid "Command \"{arg}\" not found."
 msgstr "Příkaz \"{arg}\" nebyl nalezen."
 
-#: redbot/core/commands/converter.py:519
+#: redbot/core/commands/converter.py:520
 msgid "Cog \"{arg}\" not found."
 msgstr ""
 
