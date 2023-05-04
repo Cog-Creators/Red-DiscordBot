@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-04 00:53+0000\n"
+"POT-Creation-Date: 2023-05-04 06:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -610,7 +610,7 @@ msgstr "\n\n"
 "Tienes Python `{py_version}` y esta actualización requiere `{req_py}`; no puedes simplemente ejecutar el comando de actualización.\n\n"
 "Necesitarás seguir las instrucciones de actualización en nuestros documentos anteriores si todavía necesitas ayuda para actualizar después de seguir los documentos ve a nuestro canal #support en <https://discord.gg/red>"
 
-#: redbot/core/_events.py:120
+#: redbot/core/_events.py:119
 msgid "\n\n"
 "To update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:{command_1}\n"
 "Once you've started up your bot again, we recommend that you update any installed 3rd-party cogs with this command in Discord:{command_2}"
@@ -618,127 +618,127 @@ msgstr "\n\n"
 "Para actualizar tu bot, primero apaga tu bot y luego abre una ventana de {console} (no como administrador) y ejecuta lo siguiente:{command_1}\n"
 "Una vez que hayas iniciado tu bot de nuevo, le recomendamos que actualice cualquier cog de terceros instalado con este comando en Discord:{command_2}"
 
-#: redbot/core/_events.py:128
+#: redbot/core/_events.py:127
 msgid "Command Prompt"
 msgstr "Línea de comandos"
 
-#: redbot/core/_events.py:128
+#: redbot/core/_events.py:127
 msgid "Terminal"
 msgstr "Terminal"
 
-#: redbot/core/_events.py:234
+#: redbot/core/_events.py:233
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr "`{user_input}` no es un valor válido para `{command}`"
 
-#: redbot/core/_events.py:245 redbot/core/_events.py:298
+#: redbot/core/_events.py:244 redbot/core/_events.py:297
 msgid "Argument `{parameter_name}` must be a positive integer."
 msgstr "El argumento `{parameter_name}` debe ser un entero positivo."
 
-#: redbot/core/_events.py:247 redbot/core/_events.py:300
+#: redbot/core/_events.py:246 redbot/core/_events.py:299
 msgid "Argument `{parameter_name}` must be an integer no more than {maximum}."
 msgstr "El argumento `{parameter_name}` debe ser un número entero menor a {maximum}."
 
-#: redbot/core/_events.py:251 redbot/core/_events.py:304
+#: redbot/core/_events.py:250 redbot/core/_events.py:303
 msgid "Argument `{parameter_name}` must be an integer no less than {minimum}."
 msgstr "El argumento `{parameter_name}` debe ser un número entero superior a {minimum}."
 
-#: redbot/core/_events.py:255 redbot/core/_events.py:308
+#: redbot/core/_events.py:254 redbot/core/_events.py:307
 msgid "Argument `{parameter_name}` must be an integer between {minimum} and {maximum}."
 msgstr "El argumento `{parameter_name}` debe ser un número entero entre {minimum} y {maximum}."
 
-#: redbot/core/_events.py:260 redbot/core/_events.py:313
+#: redbot/core/_events.py:259 redbot/core/_events.py:312
 msgid "Argument `{parameter_name}` must be a positive number."
 msgstr "El argumento `{parameter_name}` debe ser un número positivo."
 
-#: redbot/core/_events.py:262 redbot/core/_events.py:315
+#: redbot/core/_events.py:261 redbot/core/_events.py:314
 msgid "Argument `{parameter_name}` must be a number no more than {maximum}."
 msgstr "El argumento `{parameter_name}` debe ser un número menor a {maximum}."
 
-#: redbot/core/_events.py:266
+#: redbot/core/_events.py:265
 msgid "Argument `{parameter_name}` must be a number no less than {maximum}."
 msgstr "El argumento `{parameter_name}` debe ser un número no inferior a {maximum}."
 
-#: redbot/core/_events.py:270 redbot/core/_events.py:323
+#: redbot/core/_events.py:269 redbot/core/_events.py:322
 msgid "Argument `{parameter_name}` must be a number between {minimum} and {maximum}."
 msgstr "El argumento `{parameter_name}` debe ser un número entre {minimum} y {maximum}."
 
-#: redbot/core/_events.py:275 redbot/core/_events.py:328
+#: redbot/core/_events.py:274 redbot/core/_events.py:327
 msgid "Argument `{parameter_name}` must be a string with a length of no more than {maximum}."
 msgstr "El argumento `{parameter_name}` debe ser un string con una longitud menor a {maximum}."
 
-#: redbot/core/_events.py:279 redbot/core/_events.py:332
+#: redbot/core/_events.py:278 redbot/core/_events.py:331
 msgid "Argument `{parameter_name}` must be a string with a length of no less than {minimum}."
 msgstr "El argumento `{parameter_name}` debe ser un string con una longitud mayor a {minimum}."
 
-#: redbot/core/_events.py:283 redbot/core/_events.py:336
+#: redbot/core/_events.py:282 redbot/core/_events.py:335
 msgid "Argument `{parameter_name}` must be a string with a length of between {minimum} and {maximum}."
 msgstr "El argumento `{parameter_name}` debe ser un string con una longitud entre {minimum} y {maximum}."
 
-#: redbot/core/_events.py:319
+#: redbot/core/_events.py:318
 msgid "Argument `{parameter_name}` must be a number no less than {minimum}."
 msgstr "El argumento `{parameter_name}` debe ser un número mayor a {minimum}."
 
-#: redbot/core/_events.py:349
+#: redbot/core/_events.py:348
 msgid "\"{argument}\" is not an integer."
 msgstr "\"{argument}\" no es un entero."
 
-#: redbot/core/_events.py:352
+#: redbot/core/_events.py:351
 msgid "\"{argument}\" is not a number."
 msgstr "\"{argument}\" no es un número."
 
-#: redbot/core/_events.py:379 redbot/core/tree.py:287
+#: redbot/core/_events.py:378 redbot/core/tree.py:287
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr "Error en el comando '{command}'. Revisa tu consola o logs para obtener más detalles."
 
-#: redbot/core/_events.py:382 redbot/core/tree.py:290
+#: redbot/core/_events.py:381 redbot/core/tree.py:290
 msgid "Error in command '{command}'."
 msgstr "Error en el comando '{command}'."
 
-#: redbot/core/_events.py:400 redbot/core/tree.py:304
+#: redbot/core/_events.py:399 redbot/core/tree.py:304
 msgid "I require the {permission} permission to execute that command."
 msgstr "Necesito el permiso {permission} para ejecutar ese comando."
 
-#: redbot/core/_events.py:404 redbot/core/tree.py:308
+#: redbot/core/_events.py:403 redbot/core/tree.py:308
 msgid "I require {permission_list} permissions to execute that command."
 msgstr "Necesito el permiso {permission_list} para ejecutar este comando."
 
-#: redbot/core/_events.py:412 redbot/core/tree.py:315
+#: redbot/core/_events.py:411 redbot/core/tree.py:315
 msgid "That command is not available in DMs."
 msgstr "Ese comando no está disponible en DMs."
 
-#: redbot/core/_events.py:414
+#: redbot/core/_events.py:413
 msgid "That command is only available in DMs."
 msgstr "Ese comando sólo está disponible en DMs."
 
-#: redbot/core/_events.py:416
+#: redbot/core/_events.py:415
 msgid "That command is only available in NSFW channels."
 msgstr "Este comando sólo está disponible en canales NSFW."
 
-#: redbot/core/_events.py:428 redbot/core/tree.py:321
+#: redbot/core/_events.py:427 redbot/core/tree.py:321
 msgid "This command is on cooldown. Try again {relative_time}."
 msgstr "Este comando está en enfriamiento. Inténtalo de nuevo {relative_time}."
 
-#: redbot/core/_events.py:435
+#: redbot/core/_events.py:434
 msgid "Too many people using this command. It can only be used {number} times concurrently."
 msgstr "Demasiadas personas usando este comando. Sólo se puede usar {number} veces al mismo tiempo."
 
-#: redbot/core/_events.py:440
+#: redbot/core/_events.py:439
 msgid "Too many people using this command. It can only be used once concurrently."
 msgstr "Demasiadas personas usando este comando. Sólo se puede usar una vez al mismo tiempo."
 
-#: redbot/core/_events.py:446
+#: redbot/core/_events.py:445
 msgid "That command is still completing, it can only be used {number} times per {type} concurrently."
 msgstr "Ese comando todavía se está completando, solo puede ser usado {number} veces por {type} al mismo tiempo."
 
-#: redbot/core/_events.py:451
+#: redbot/core/_events.py:450
 msgid "That command is still completing, it can only be used once per {type} concurrently."
 msgstr "Este comando todavía se está completando, solo se puede usar una vez cada {type} al mismo tiempo."
 
-#: redbot/core/_events.py:457
+#: redbot/core/_events.py:456
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
 msgstr "Demasiadas personas usando este comando. Sólo se puede usar {number} veces por {type} al mismo tiempo."
 
-#: redbot/core/_events.py:462
+#: redbot/core/_events.py:461
 msgid "Too many people using this command. It can only be used once per {type} concurrently."
 msgstr "Demasiadas personas usando este comando. Sólo se puede usar una vez cada {type} al mismo tiempo."
 
@@ -847,7 +847,7 @@ msgid "Instance owned by team: [{owner}]\n"
 msgstr "Instancia propiedad del equipo: [{owner}]\n"
 "Python: [{python_version}] (5)\n"
 "discord.py: [{dpy_version}] (6)\n"
-"Versión roja: [{red_version}] (7)\n"
+"Versión de Red: [{red_version}] (7)\n"
 
 #: redbot/core/core_commands.py:495
 msgid "Instance owned by: [{owner}]\n"
@@ -857,7 +857,7 @@ msgid "Instance owned by: [{owner}]\n"
 msgstr "Instancia propiedad de: [{owner}]\n"
 "Python: [{python_version}] (5)\n"
 "discord. y: [{dpy_version}] (6)\n"
-"Versión roja: [{red_version}] (7)\n"
+"Versión de Red: [{red_version}] (7)\n"
 
 #: redbot/core/core_commands.py:514
 msgid "Outdated:          [{state}]\n"
@@ -3482,7 +3482,10 @@ msgid "\n"
 "        Show the current settings for [botname].\n\n"
 "        Accepts optional server parameter to allow prefix recovery.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Mostrar la configuración actual para [botname].\n\n"
+"        Acepta el parámetro opcional del servidor para permitir la recuperación del prefijo.\n"
+"        "
 
 #: redbot/core/core_commands.py:3817 redbot/core/core_commands.py:3821
 msgid "Not Set."
@@ -3725,7 +3728,21 @@ msgid "\n"
 "            - `[server]` - The server to set the prefix for. Defaults to current server.\n"
 "            - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Establece los prefijos del servidor de [botname].\n\n"
+"        Advertencia: Esto anulará los prefijos globales, el bot no responderá a ningún prefijo global en este servidor.\n"
+"            Esto no es aditivo. Reemplazará todos los prefijos actuales del servidor.\n"
+"            Un prefijo no puede tener más de 25 caracteres.\n\n"
+"        **Ejemplos:**\n"
+"            - `[p]set serverprefix !\n"
+"            - `[p]establecer servidor \"! \"` - Las cotizaciones son necesarias para utilizar espacios en los prefijos.\n"
+"            - `[p]set serverprefix \"@[botname] \"` - Esto utiliza una mención como prefijo.\n"
+"            - `[p]set serverprefix ! ? .` - Establece varios prefijos.\n"
+"            - `[p]set serverprefix \"Red - Discord Bot\" ? - Establece el prefijo para un servidor específico. Se necesitan citas para usar espacios en el nombre del servidor.\n\n"
+"        **Argumentos:**\n"
+"            - `[server]` - El servidor para establecer el prefijo para. Por defecto es el servidor actual.\n"
+"            - `[prefixes...]` - Los prefijos a los que el bot responderá en este servidor. Dejar en blanco para limpiar los prefijos del servidor.\n"
+"        "
 
 #: redbot/core/core_commands.py:4081
 msgid "Server prefixes have been reset."
