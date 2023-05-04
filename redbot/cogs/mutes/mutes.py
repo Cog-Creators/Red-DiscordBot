@@ -1866,7 +1866,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "channel": channel,
                 "reason": _(MUTE_UNMUTE_ISSUES["already_unmuted"]),
             }
-        if not current_mute["voice_mute"] and voice_mute:
+        if not current_mute.get("voice_mute", False) and voice_mute:
             return {
                 "success": False,
                 "channel": channel,
