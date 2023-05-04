@@ -9,6 +9,7 @@ Redbot 3.5.0 (2023-05-04)
 Read before updating
 --------------------
 
+#. ``[p]bankset`` is now a core command and as a consequence, the bank cog has been removed. This means that when you start the bot for the first time after the update, you'll see a "Failed to load package bank" message. That is perfectly normal and this message can be ignored.
 #. Red 3.5 comes with breaking changes for users. Look at `Backward incompatible changes in Red 3.5 document <incompatible-changes-3.5>` and `End-user changelog <important-350-1>` for full details.
 
     Note that because this release also comes with breaking changes for developers,
