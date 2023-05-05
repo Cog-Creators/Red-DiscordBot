@@ -183,7 +183,7 @@ class KickBanMixin(MixinMeta):
                 "User with ID {user_id} was upgraded from a temporary to a permanent ban."
             ).format(user_id=user.id)
         else:
-            username = str(user) if isinstance(user, discord.abc.User) else "Unknown"
+            user_handle = str(user) if isinstance(user, discord.abc.User) else "Unknown"
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
@@ -191,7 +191,7 @@ class KickBanMixin(MixinMeta):
                     author,
                     author.id,
                     ban_type,
-                    username,
+                    user_handle,
                     user.id,
                     days,
                 )
@@ -206,7 +206,7 @@ class KickBanMixin(MixinMeta):
                     author,
                     author.id,
                     ban_type,
-                    username,
+                    user_handle,
                     user.id,
                 )
                 return False, _("An unexpected error occurred.")
