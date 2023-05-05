@@ -115,13 +115,11 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 requesters["total"] += 1
 
         async for track in AsyncIter(queue_tracks):
-            req_username = "{}#{}".format(track.requester.name, track.requester.discriminator)
+            req_username = str(track.requester)
             await _usercount(req_username)
 
         try:
-            req_username = "{}#{}".format(
-                player.current.requester.name, player.current.requester.discriminator
-            )
+            req_username = str(player.current.requester)
             await _usercount(req_username)
         except AttributeError:
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))

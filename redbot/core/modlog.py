@@ -395,7 +395,7 @@ class Case:
 
         # update last known username
         if not isinstance(self.user, int):
-            self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
+            self.last_known_username = str(self.user)
 
         if isinstance(self.channel, discord.Thread):
             self.parent_channel_id = self.channel.parent_id
@@ -504,22 +504,24 @@ class Case:
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
             else:
-                # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
-                name = self.last_known_username[:-5]
-                discriminator = self.last_known_username[-4:]
-                user = (
-                    f"\N{FIRST STRONG ISOLATE}{name}"
-                    f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
-                )
+                # When we tried changing the *old* username to start with '@', it errored out
+                # saying that a username can't contain '@' so let's hope that was always the case?
+                if self.last_known_username[0] == "@":
+                    user = f"{self.last_known_username} ({self.user})"
+                # Last known username is a legacy username with a discriminator
+                else:
+                    # isolate the name so that the direction of the discriminator and ID do not get changed
+                    # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
+                    name = self.last_known_username[:-5]
+                    discriminator = self.last_known_username[-4:]
+                    user = (
+                        f"\N{FIRST STRONG ISOLATE}{name}"
+                        f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
+                    )
         else:
-            # isolate the name so that the direction of the discriminator and ID do not get changed
             # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
-            user = escape_spoilers(
-                filter_invites(
-                    f"\N{FIRST STRONG ISOLATE}{self.user.name}"
-                    f"\N{POP DIRECTIONAL ISOLATE}#{self.user.discriminator} ({self.user.id})"
-                )
-            )  # Invites and spoilers get rendered even in embeds.
+            # TODO: keep the old handling *if* we release before pomelo migration is complete
+            user = f"{self.user} ({self.user.id})"
 
         channel_value = None
         if isinstance(self.channel, int):

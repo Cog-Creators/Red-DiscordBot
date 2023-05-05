@@ -160,17 +160,18 @@ class Events(MixinMeta):
 
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
-        if before.name != after.name:
+        # TODO: track usernames and global (or display?) names separately?
+        if before.display_name != after.display_name:
             track_all_names = await self.config.track_all_names()
             if not track_all_names:
                 return
             async with self.config.user(before).past_names() as name_list:
                 while None in name_list:  # clean out null entries from a bug
                     name_list.remove(None)
-                if before.name in name_list:
+                if before.display_name in name_list:
                     # Ensure order is maintained without duplicates occurring
-                    name_list.remove(before.name)
-                name_list.append(before.name)
+                    name_list.remove(before.display_name)
+                name_list.append(before.display_name)
                 while len(name_list) > 20:
                     name_list.pop(0)
 

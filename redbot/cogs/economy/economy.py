@@ -434,7 +434,9 @@ class Economy(commands.Cog):
         if show_global and await bank.is_global():
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
-            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.display_avatar)
+            base_embed.set_author(
+                name=ctx.bot.user.display_name, icon_url=ctx.bot.user.display_avatar
+            )
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
             if guild:

@@ -1820,7 +1820,7 @@ class Red(
             except AttributeError:
                 # webhook messages are a user not member,
                 # cheaper than isinstance
-                if author.bot and author.discriminator == "0000":
+                if author.bot and author.discriminator == "0000":  # TODO: pain
                     return True  # webhooks require significant permissions to enable.
             else:
                 ids_to_check.append(author.id)
