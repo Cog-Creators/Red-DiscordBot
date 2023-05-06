@@ -16,14 +16,17 @@ following, then press Enter:
 
 .. prompt:: bash
 
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew_location="$([ -n "$HOMEBREW_PREFIX" ] && echo "$HOMEBREW_PREFIX" || ([ "$(/usr/bin/uname -m)" = "arm64" ] && echo /opt/homebrew || echo /usr/local))/bin/brew"
+    printf '\neval "$(%s shellenv)"\n' "$brew_location" >> "$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))"
+    eval "$("$brew_location" shellenv)"
 
 After the installation, install the required packages by pasting the commands and pressing enter,
 one-by-one:
 
 .. prompt:: bash
 
-    brew install python@3.9
+    brew install python@3.11
     brew install git
     brew tap homebrew/cask-versions
     brew install --cask temurin11
@@ -33,12 +36,11 @@ To fix this, you should run these commands:
 
 .. prompt:: bash
 
-    profile=$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))
-    echo 'export PATH="$(brew --prefix)/opt/python@3.9/bin:$PATH"' >> "$profile"
-    source "$profile"
+    echo 'export PATH="$(brew --prefix)/opt/python@3.11/bin:$PATH"' >> "$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))"
+    export PATH="$(brew --prefix)/opt/python@3.11/bin:$PATH"
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv.rst
+.. include:: _includes/create-env-with-venv3.11.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst

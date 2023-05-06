@@ -11,10 +11,10 @@ Install them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python39 git java-11-openjdk-headless @development nano
+    sudo dnf -y install python39 python3-devel git java-11-openjdk-headless @development nano
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv.rst
+.. include:: _includes/create-env-with-venv3.9.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst

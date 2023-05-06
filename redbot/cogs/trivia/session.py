@@ -118,13 +118,12 @@ class TriviaSession:
             self.stop()
         except Exception as exc:
             LOG.error("A trivia session has encountered an error.\n", exc_info=exc)
-            asyncio.create_task(
-                self.ctx.send(
-                    _(
-                        "An unexpected error occurred in the trivia session.\nCheck your console or logs for details."
-                    )
+            msg = _("An unexpected error occurred in the trivia session.")
+            if self.ctx.author.id in self.ctx.bot.owner_ids:
+                msg = _(
+                    "An unexpected error occurred in the trivia session.\nCheck your console or logs for details."
                 )
-            )
+            asyncio.create_task(self.ctx.send(msg))
             self.stop()
 
     async def run(self):
@@ -313,7 +312,7 @@ class TriviaSession:
         top_score = self.scores.most_common(1)[0][1]
         winners = []
         num_humans = 0
-        for (player, score) in self.scores.items():
+        for player, score in self.scores.items():
             if not player.bot:
                 if score == top_score:
                     winners.append(player)

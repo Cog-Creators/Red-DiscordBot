@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import datetime
 import itertools
+import math
 import textwrap
 from io import BytesIO
 from typing import Iterator, List, Optional, Sequence, SupportsInt, Union
@@ -9,6 +12,29 @@ from babel.lists import format_list as babel_list
 from babel.numbers import format_decimal
 
 from redbot.core.i18n import Translator, get_babel_locale, get_babel_regional_format
+
+__all__ = (
+    "error",
+    "warning",
+    "info",
+    "success",
+    "question",
+    "bold",
+    "box",
+    "inline",
+    "italics",
+    "spoiler",
+    "pagify",
+    "strikethrough",
+    "underline",
+    "quote",
+    "escape",
+    "humanize_list",
+    "format_perms_list",
+    "humanize_timedelta",
+    "humanize_number",
+    "text_to_file",
+)
 
 _ = Translator("UtilsChatFormatting", __file__)
 
@@ -200,81 +226,10 @@ def spoiler(text: str, escape_formatting: bool = True) -> str:
     return f"||{escape(text, formatting=escape_formatting)}||"
 
 
-def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
-    """Get two blocks of text inside borders.
-
-    Note
-    ----
-    This will only work with a monospaced font.
-
-    Parameters
-    ----------
-    *columns : `sequence` of `str`
-        The columns of text, each being a list of lines in that column.
-    ascii_border : bool
-        Whether or not the border should be pure ASCII.
-
-    Returns
-    -------
-    str
-        The bordered text.
-
-    """
-    borders = {
-        "TL": "+" if ascii_border else "┌",  # Top-left
-        "TR": "+" if ascii_border else "┐",  # Top-right
-        "BL": "+" if ascii_border else "└",  # Bottom-left
-        "BR": "+" if ascii_border else "┘",  # Bottom-right
-        "HZ": "-" if ascii_border else "─",  # Horizontal
-        "VT": "|" if ascii_border else "│",  # Vertical
-    }
-
-    sep = " " * 4  # Separator between boxes
-    widths = tuple(max(len(row) for row in column) + 9 for column in columns)  # width of each col
-    colsdone = [False] * len(columns)  # whether or not each column is done
-    lines = [sep.join("{TL}" + "{HZ}" * width + "{TR}" for width in widths)]
-
-    for line in itertools.zip_longest(*columns):
-        row = []
-        for colidx, column in enumerate(line):
-            width = widths[colidx]
-            done = colsdone[colidx]
-            if column is None:
-                if not done:
-                    # bottom border of column
-                    column = "{HZ}" * width
-                    row.append("{BL}" + column + "{BR}")
-                    colsdone[colidx] = True  # mark column as done
-                else:
-                    # leave empty
-                    row.append(" " * (width + 2))
-            else:
-                column += " " * (width - len(column))  # append padded spaces
-                row.append("{VT}" + column + "{VT}")
-
-        lines.append(sep.join(row))
-
-    final_row = []
-    for width, done in zip(widths, colsdone):
-        if not done:
-            final_row.append("{BL}" + "{HZ}" * width + "{BR}")
-        else:
-            final_row.append(" " * (width + 2))
-    lines.append(sep.join(final_row))
-
-    return "\n".join(lines).format(**borders)
-
-
-def pagify(
-    text: str,
-    delims: Sequence[str] = ["\n"],
-    *,
-    priority: bool = False,
-    escape_mass_mentions: bool = True,
-    shorten_by: int = 8,
-    page_length: int = 2000,
-) -> Iterator[str]:
+class pagify(Iterator[str]):
     """Generate multiple pages from the given text.
+
+    The returned iterator supports length estimation with :func:`operator.length_hint()`.
 
     Note
     ----
@@ -309,33 +264,82 @@ def pagify(
         Pages of the given text.
 
     """
-    in_text = text
-    page_length -= shorten_by
-    while len(in_text) > page_length:
-        this_page_len = page_length
-        if escape_mass_mentions:
-            this_page_len -= in_text.count("@here", 0, page_length) + in_text.count(
-                "@everyone", 0, page_length
-            )
-        closest_delim = (in_text.rfind(d, 1, this_page_len) for d in delims)
-        if priority:
-            closest_delim = next((x for x in closest_delim if x > 0), -1)
-        else:
-            closest_delim = max(closest_delim)
-        closest_delim = closest_delim if closest_delim != -1 else this_page_len
-        if escape_mass_mentions:
-            to_send = escape(in_text[:closest_delim], mass_mentions=True)
-        else:
-            to_send = in_text[:closest_delim]
-        if len(to_send.strip()) > 0:
-            yield to_send
-        in_text = in_text[closest_delim:]
 
-    if len(in_text.strip()) > 0:
-        if escape_mass_mentions:
-            yield escape(in_text, mass_mentions=True)
-        else:
-            yield in_text
+    # when changing signature of this method, please update it in docs/framework_utils.rst as well
+    def __init__(
+        self,
+        text: str,
+        delims: Sequence[str] = ("\n",),
+        *,
+        priority: bool = False,
+        escape_mass_mentions: bool = True,
+        shorten_by: int = 8,
+        page_length: int = 2000,
+    ) -> None:
+        self._text = text
+        self._delims = delims
+        self._priority = priority
+        self._escape_mass_mentions = escape_mass_mentions
+        self._shorten_by = shorten_by
+        self._page_length = page_length - shorten_by
+
+        self._start = 0
+        self._end = len(text)
+
+    def __repr__(self) -> str:
+        text = self._text
+        if len(text) > 20:
+            text = f"{text[:19]}\N{HORIZONTAL ELLIPSIS}"
+        return (
+            "pagify("
+            f"{text!r},"
+            f" {self._delims!r},"
+            f" priority={self._priority!r},"
+            f" escape_mass_mentions={self._escape_mass_mentions!r},"
+            f" shorten_by={self._shorten_by!r},"
+            f" page_length={self._page_length + self._shorten_by!r}"
+            ")"
+        )
+
+    def __length_hint__(self) -> int:
+        return math.ceil((self._end - self._start) / self._page_length)
+
+    def __iter__(self) -> pagify:
+        return self
+
+    def __next__(self) -> str:
+        text = self._text
+        escape_mass_mentions = self._escape_mass_mentions
+        page_length = self._page_length
+        start = self._start
+        end = self._end
+
+        while (end - start) > page_length:
+            stop = start + page_length
+            if escape_mass_mentions:
+                stop -= text.count("@here", start, stop) + text.count("@everyone", start, stop)
+            closest_delim_it = (text.rfind(d, start + 1, stop) for d in self._delims)
+            if self._priority:
+                closest_delim = next((x for x in closest_delim_it if x > 0), -1)
+            else:
+                closest_delim = max(closest_delim_it)
+            stop = closest_delim if closest_delim != -1 else stop
+            if escape_mass_mentions:
+                to_send = escape(text[start:stop], mass_mentions=True)
+            else:
+                to_send = text[start:stop]
+            start = self._start = stop
+            if len(to_send.strip()) > 0:
+                return to_send
+
+        if len(text[start:end].strip()) > 0:
+            self._start = end
+            if escape_mass_mentions:
+                return escape(text[start:end], mass_mentions=True)
+            else:
+                return text[start:end]
+
+        raise StopIteration
 
 
 def strikethrough(text: str, escape_formatting: bool = True) -> str:

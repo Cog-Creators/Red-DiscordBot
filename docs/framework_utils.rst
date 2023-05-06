@@ -27,6 +27,10 @@ Chat Formatting
 
 .. automodule:: redbot.core.utils.chat_formatting
     :members:
+    :exclude-members: pagify
+
+    .. autofunction:: pagify(text, delims=('\n',), *, priority=False, escape_mass_mentions=True, shorten_by=8, page_length=2000)
+        :for:
 
 Embed Helpers
 =============
@@ -35,8 +39,8 @@ Embed Helpers
     :members:
     :exclude-members: randomize_color
 
-Reaction Menus
-==============
+Menus
+=====
 
 .. automodule:: redbot.core.utils.menus
     :members:
@@ -67,6 +71,7 @@ Tunnel
 
 .. automodule:: redbot.core.utils.tunnel
     :members: Tunnel
+    :exclude-members: files_from_attatch
 
 Common Filters
 ==============
@@ -78,4 +83,10 @@ Utility UI
 ==========
 
 .. automodule:: redbot.core.utils.views
+    :members:
+
+AntiSpam
+========
+
+.. automodule:: redbot.core.utils.antispam
     :members:

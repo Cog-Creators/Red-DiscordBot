@@ -20,7 +20,7 @@ window like this:
 
 .. image:: .resources/red-console.png
 
-.. _gettings-started-invite:
+.. _getting-started-invite:
 
 -------------------------
 Invite Red to your server
@@ -216,7 +216,7 @@ or system files.
 Server owner
 ~~~~~~~~~~~~
 
-The server owner can access all commands on his guild, except the global
+The server owner can access all commands on their guild, except the global
 ones or those that can interact with system files (available for the
 bot owner).
 
