@@ -1,22 +1,23 @@
 import discord
 from discord.abc import Snowflake
 from discord.utils import MISSING
-from discord.app_commands import (
-    Command,
-    Group,
-    ContextMenu,
+
+from .app_commands import (
     AppCommand,
     AppCommandError,
     BotMissingPermissions,
     CheckFailure,
+    Command,
     CommandAlreadyRegistered,
     CommandInvokeError,
     CommandNotFound,
     CommandOnCooldown,
+    CommandTree,
+    ContextMenu,
+    Group,
     NoPrivateMessage,
     TransformerError,
 )
-
 from .i18n import Translator
 from .utils.chat_formatting import humanize_list, inline
 
@@ -25,13 +26,14 @@ import traceback
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Tuple, Union, Optional, Sequence
 
+__all__ = ("RedTree",)
 
 log = logging.getLogger("red")
 
 _ = Translator(__name__, __file__)
 
 
-class RedTree(discord.app_commands.CommandTree):
+class RedTree(CommandTree):
     """A container that holds application command information.
 
     Internally does not actually add commands to the tree unless they are
@@ -60,7 +62,11 @@ class RedTree(discord.app_commands.CommandTree):
         Commands will be internally stored until enabled by ``[p]slash enable``.
         """
         # Allow guild specific commands to bypass the internals for development
-        if guild is not MISSING or guilds is not MISSING:
+        if (
+            guild is not MISSING
+            or guilds is not MISSING
+            or command.extras.get("red_force_enable", False)
+        ):
             return super().add_command(
                 command, *args, guild=guild, guilds=guilds, override=override, **kwargs
             )
@@ -75,7 +81,7 @@ class RedTree(discord.app_commands.CommandTree):
                 raise CommandAlreadyRegistered(name, None)
             if key in self._context_menus:
                 if not override:
-                    raise discord.errors.CommandAlreadyRegistered(name, None)
+                    raise CommandAlreadyRegistered(name, None)
                 del self._context_menus[key]
 
             self._disabled_context_menus[key] = command
@@ -91,10 +97,10 @@ class RedTree(discord.app_commands.CommandTree):
 
         # Handle cases where the command already is in the tree
         if not override and name in self._disabled_global_commands:
-            raise discord.errors.CommandAlreadyRegistered(name, None)
+            raise CommandAlreadyRegistered(name, None)
         if name in self._global_commands:
             if not override:
-                raise discord.errors.CommandAlreadyRegistered(name, None)
+                raise CommandAlreadyRegistered(name, None)
             del self._global_commands[name]
 
         self._disabled_global_commands[name] = root
@@ -170,45 +176,60 @@ class RedTree(discord.app_commands.CommandTree):
         """
         enabled_commands = await self.client.list_enabled_app_commands()
 
-        to_add_commands = []
-        to_add_context = []
-        to_remove_commands = []
-        to_remove_context = []
+        to_add_commands = set()
+        to_add_context = set()
+        to_remove_commands = set()
+        to_remove_context = set()
 
         # Add commands
         for command in enabled_commands["slash"]:
             if command in self._disabled_global_commands:
-                to_add_commands.append(command)
+                to_add_commands.add(command)
 
         # Add context
         for command in enabled_commands["message"]:
             key = (command, None, discord.AppCommandType.message.value)
             if key in self._disabled_context_menus:
-                to_add_context.append(key)
+                to_add_context.add(key)
         for command in enabled_commands["user"]:
             key = (command, None, discord.AppCommandType.user.value)
             if key in self._disabled_context_menus:
-                to_add_context.append(key)
+                to_add_context.add(key)
+
+        # Add force enabled commands
+        for command, command_obj in self._disabled_global_commands.items():
+            if command_obj.extras.get("red_force_enable", False):
+                to_add_commands.add(command)
+
+        # Add force enabled context
+        for key, command_obj in self._disabled_context_menus.items():
+            if command_obj.extras.get("red_force_enable", False):
+                to_add_context.add(key)
 
         # Remove commands
-        for command in self._global_commands:
-            if command not in enabled_commands["slash"]:
-                to_remove_commands.append((command, discord.AppCommandType.chat_input))
+        for command, command_obj in self._global_commands.items():
+            if command not in enabled_commands["slash"] and not command_obj.extras.get(
+                "red_force_enable", False
+            ):
+                to_remove_commands.add((command, discord.AppCommandType.chat_input))
 
         # Remove context
-        for command, guild_id, command_type in self._context_menus:
+        for key, command_obj in self._context_menus.items():
+            command, guild_id, command_type = key
             if guild_id is not None:
                 continue
             if (
                 discord.AppCommandType(command_type) is discord.AppCommandType.message
                 and command not in enabled_commands["message"]
+                and not command_obj.extras.get("red_force_enable", False)
             ):
-                to_remove_context.append((command, discord.AppCommandType.message))
+                to_remove_context.add((command, discord.AppCommandType.message))
             elif (
                 discord.AppCommandType(command_type) is discord.AppCommandType.user
                 and command not in enabled_commands["user"]
+                and not command_obj.extras.get("red_force_enable", False)
             ):
-                to_remove_context.append((command, discord.AppCommandType.user))
+                to_remove_context.add((command, discord.AppCommandType.user))
 
         # Actually add/remove
         for command in to_add_commands:
@@ -307,6 +328,27 @@ class RedTree(discord.app_commands.CommandTree):
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        """Global checks for app commands."""
+        if interaction.user.bot:
+            return False
+
+        if interaction.guild:
+            if not (await self.client.ignored_channel_or_guild(interaction)):
+                await interaction.response.send_message(
+                    "This channel or server is ignored.", ephemeral=True
+                )
+                return False
+
+        if not (await self.client.allowed_by_whitelist_blacklist(interaction.user)):
+            await interaction.response.send_message(
+                "You are not permitted to use commands because of an allowlist or blocklist.",
+                ephemeral=True,
+            )
+            return False
+
+        return True
 
     # DEP-WARN
     def _remove_with_module(self, name: str, *args, **kwargs) -> None:

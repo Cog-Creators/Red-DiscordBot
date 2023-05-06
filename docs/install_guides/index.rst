@@ -19,7 +19,6 @@ we recommend **Ubuntu 22.04 LTS**.
    centos-7
    centos-stream-8
    centos-stream-9
-   debian-10
    debian-11
    fedora
    opensuse-leap-15

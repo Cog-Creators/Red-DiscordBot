@@ -25,10 +25,11 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("red.core.modlog")
 
-__all__ = [
+__all__ = (
     "Case",
     "CaseType",
     "get_case",
+    "get_latest_case",
     "get_all_cases",
     "get_cases_for_member",
     "create_case",
@@ -39,7 +40,7 @@ __all__ = [
     "get_modlog_channel",
     "set_modlog_channel",
     "reset_cases",
-]
+)
 
 _config: Optional[Config] = None
 _bot_ref: Optional[Red] = None
@@ -242,6 +243,8 @@ class Case:
     Case()
 
     A single mod log case
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------
@@ -646,7 +649,7 @@ class Case:
     @classmethod
     async def from_json(
         cls,
-        mod_channel: Union[discord.TextChannel, discord.VoiceChannel],
+        mod_channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
         bot: Red,
         case_number: int,
         data: dict,
@@ -656,7 +659,7 @@ class Case:
 
         Parameters
         ----------
-        mod_channel: `discord.TextChannel` or `discord.VoiceChannel`
+        mod_channel: `discord.TextChannel` or `discord.VoiceChannel`, `discord.StageChannel`
             The mod log channel for the guild
         bot: Red
             The bot's instance. Needed to get the target user
@@ -729,6 +732,8 @@ class Case:
 class CaseType:
     """
     A single case type
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------
@@ -1247,7 +1252,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
 
 async def get_modlog_channel(
     guild: discord.Guild,
-) -> Union[discord.TextChannel, discord.VoiceChannel]:
+) -> Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel]:
     """
     Get the current modlog channel.
 
@@ -1258,7 +1263,7 @@ async def get_modlog_channel(
 
     Returns
     -------
-    `discord.TextChannel` or `discord.VoiceChannel`
+    `discord.TextChannel`, `discord.VoiceChannel`, or `discord.StageChannel`
         The channel object representing the modlog channel.
 
     Raises
@@ -1278,7 +1283,8 @@ async def get_modlog_channel(
 
 
 async def set_modlog_channel(
-    guild: discord.Guild, channel: Union[discord.TextChannel, discord.VoiceChannel, None]
+    guild: discord.Guild,
+    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, None],
 ) -> bool:
     """
     Changes the modlog channel
@@ -1287,7 +1293,7 @@ async def set_modlog_channel(
     ----------
     guild: `discord.Guild`
         The guild to set a mod log channel for
-    channel: `discord.TextChannel`, `discord.VoiceChannel`, or `None`
+    channel: `discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, or `None`
         The channel to be set as modlog channel
 
     Returns
