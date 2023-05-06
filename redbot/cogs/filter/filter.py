@@ -4,7 +4,7 @@ import re
 from datetime import timezone
 from typing import Union, Set, Literal, Optional
 
-from redbot.core import checks, Config, modlog, commands
+from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
@@ -80,7 +80,7 @@ class Filter(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
         """Base command to manage filter settings."""
         pass
@@ -144,7 +144,7 @@ class Filter(commands.Cog):
 
     @commands.group(name="filter")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_messages=True)
+    @commands.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
         """Base command to add or remove words from the server filter.
 
@@ -254,7 +254,9 @@ class Filter(commands.Cog):
     async def filter_channel_add(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
         *words: str,
     ):
         """Add words to the filter.
@@ -267,7 +269,7 @@ class Filter(commands.Cog):
 
         **Arguments:**
 
-        - `<channel>` The text, voice, or forum channel to add filtered words to.
+        - `<channel>` The text, voice, stage, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to filter.
         """
         added = await self.add_to_filter(channel, words)
@@ -281,7 +283,9 @@ class Filter(commands.Cog):
     async def filter_channel_remove(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
         *words: str,
     ):
         """Remove words from the filter.
@@ -294,7 +298,7 @@ class Filter(commands.Cog):
 
         **Arguments:**
 
-        - `<channel>` The text, voice, or forum channel to add filtered words to.
+        - `<channel>` The text, voice, stage, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to no longer filter.
         """
         removed = await self.remove_from_filter(channel, words)
@@ -368,7 +372,12 @@ class Filter(commands.Cog):
         self,
         guild: discord.Guild,
         channel: Optional[
-            Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel]
+            Union[
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.ForumChannel,
+            ]
         ] = None,
     ) -> None:
         """Invalidate a cached pattern"""
@@ -381,7 +390,11 @@ class Filter(commands.Cog):
     async def add_to_filter(
         self,
         server_or_channel: Union[
-            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.ForumChannel
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.ForumChannel,
         ],
         words: list,
     ) -> bool:
@@ -405,7 +418,11 @@ class Filter(commands.Cog):
     async def remove_from_filter(
         self,
         server_or_channel: Union[
-            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.ForumChannel
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.ForumChannel,
         ],
         words: list,
     ) -> bool:
@@ -430,7 +447,11 @@ class Filter(commands.Cog):
         self,
         text: str,
         server_or_channel: Union[
-            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.Thread
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.Thread,
         ],
     ) -> Set[str]:
         if isinstance(server_or_channel, discord.Guild):

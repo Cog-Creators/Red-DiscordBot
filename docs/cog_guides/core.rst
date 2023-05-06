@@ -1173,7 +1173,7 @@ embedset channel
 
 .. code-block:: none
 
-    [p]embedset channel [enabled]
+    [p]embedset channel <channel> [enabled]
 
 **Description**
 
@@ -1187,10 +1187,12 @@ If enabled is left blank, the setting will be unset and the guild default will b
 To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Examples:**
-    - ``[p]embedset channel False`` - Disables embeds in this channel.
-    - ``[p]embedset channel`` - Resets value to use guild default.
+    - ``[p]embedset channel #text-channel False`` - Disables embeds in the #text-channel.
+    - ``[p]embedset channel #forum-channel disable`` - Disables embeds in the #forum-channel.
+    - ``[p]embedset channel #text-channel`` - Resets value to use guild default in the #text-channel.
 
 **Arguments:**
+    - ``<channel>`` - The text, voice, stage, or forum channel to set embed setting for.
     - ``[enabled]`` - Whether to use embeds in this channel. Leave blank to reset to default.
 
 .. _core-command-embedset-command:
@@ -3674,7 +3676,7 @@ set serverprefix
 
 .. code-block:: none
 
-    [p]set serverprefix [prefixes...]
+    [p]set serverprefix [server] [prefixes...]
 
 .. tip:: Alias: ``set serverprefixes``
 
@@ -3695,6 +3697,7 @@ Sets Red's server prefix(es).
     - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
 
 **Arguments:**
+    - ``[server]`` - The server to set the prefix for. Defaults to current server.
     - ``[prefixes...]`` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
 
 .. _core-command-set-showsettings:
@@ -3707,11 +3710,16 @@ set showsettings
 
 .. code-block:: none
 
-    [p]set showsettings 
+    [p]set showsettings [server]
 
 **Description**
 
 Show the current settings for Red.
+
+Accepts optional server parameter to allow prefix recovery.
+
+**Arguments:**
+    - ``[server]`` - The server to show the settings for. Defaults to current server, or no server in a DM context.
 
 .. _core-command-set-status:
 
@@ -4168,7 +4176,14 @@ slash list
 **Description**
 
 List the slash commands the bot can see, and whether or not they are enabled.
+
 This command shows the state that will be changed to when ``[p]slash sync`` is run.
+Commands from the same cog are grouped, with the cog name as the header.
+
+The prefix denotes the state of the command:
+- Commands starting with ``- `` have not yet been enabled.
+- Commands starting with ``+ `` have been manually enabled.
+- Commands starting with ``++`` have been enabled by the cog author, and cannot be disabled.
 
 .. _core-command-slash-sync:
 

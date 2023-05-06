@@ -18,7 +18,7 @@ import pip
 import traceback
 from pathlib import Path
 from collections import defaultdict
-from redbot.core import data_manager
+from redbot.core import app_commands, data_manager
 from redbot.core.utils.menus import menu
 from redbot.core.utils.views import SetApiView
 from redbot.core.commands import GuildConverter, RawUserIdConverter
@@ -44,7 +44,6 @@ from redbot.core.data_manager import storage_type
 from . import (
     __version__,
     version_info as red_version_info,
-    checks,
     commands,
     errors,
     i18n,
@@ -408,8 +407,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Shows info about [botname]."""
         embed_links = await ctx.embed_requested()
         author_repo = "https://github.com/Twentysix26"
-        org_repo = "https://github.com/Cog-Creators"
-        red_repo = org_repo + "/Red-DiscordBot"
+        red_repo = "https://github.com/Cog-Creators/Red-DiscordBot"
+        contributors_url = red_repo + "/graphs/contributors"
         red_pypi = "https://pypi.org/project/Red-DiscordBot"
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
@@ -439,7 +438,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "creates content for everyone to enjoy. [Join us today]({}) "
                 "and help us improve!\n\n"
                 "(c) Cog Creators"
-            ).format(red_repo, author_repo, org_repo, support_server_url)
+            ).format(red_repo, author_repo, contributors_url, support_server_url)
 
             embed = discord.Embed(color=(await ctx.embed_colour()))
             embed.add_field(
@@ -538,7 +537,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 "6. <{}>\n"
                 "7. <{}>\n"
             ).format(
-                red_repo, author_repo, org_repo, support_server_url, python_url, dpy_repo, red_pypi
+                red_repo,
+                author_repo,
+                contributors_url,
+                support_server_url,
+                python_url,
+                dpy_repo,
+                red_pypi,
             )
             await ctx.send(refs)
 
@@ -792,7 +797,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @checks.is_owner()
+    @commands.is_owner()
     @mydata.group(name="ownermanagement")
     async def mydata_owner_management(self, ctx: commands.Context):
         """
@@ -1176,7 +1181,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(box(text))
 
     @embedset.command(name="global")
-    @checks.is_owner()
+    @commands.is_owner()
     async def embedset_global(self, ctx: commands.Context):
         """
         Toggle the global embed setting.
@@ -1198,7 +1203,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Embeds are now enabled by default."))
 
     @embedset.command(name="server", aliases=["guild"])
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @commands.guild_only()
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
@@ -1230,7 +1235,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             else _("Embeds are now disabled for this guild.")
         )
 
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @embedset.group(name="command", invoke_without_command=True)
     async def embedset_command(
         self, ctx: commands.Context, command: CommandConverter, enabled: bool = None
@@ -1361,12 +1366,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @embedset.command(name="channel")
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @commands.guild_only()
     async def embedset_channel(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
         enabled: bool = None,
     ):
         """
@@ -1382,10 +1389,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Examples:**
             - `[p]embedset channel #text-channel False` - Disables embeds in the #text-channel.
             - `[p]embedset channel #forum-channel disable` - Disables embeds in the #forum-channel.
-            - `[p]embedset channel #text-channel` - Resets value to use guild default in the #text-channel .
+            - `[p]embedset channel #text-channel` - Resets value to use guild default in the #text-channel.
 
         **Arguments:**
-            - `<channel>` - The text, voice, or forum channel to set embed setting for.
+            - `<channel>` - The text, voice, stage, or forum channel to set embed setting for.
             - `[enabled]` - Whether to use embeds in this channel. Leave blank to reset to default.
         """
         if enabled is None:
@@ -1432,7 +1439,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def traceback(self, ctx: commands.Context, public: bool = False):
         """Sends to the owner the last command exception that has occurred.
 
@@ -1447,21 +1454,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `[public]` - Whether to send the traceback to the current context. Leave blank to send to your DMs.
         """
-        if not public:
-            destination = ctx.author
-        else:
-            destination = ctx.channel
+        channel = ctx.channel if public else ctx.author
 
         if self.bot._last_exception:
-            for page in pagify(self.bot._last_exception, shorten_by=10):
-                try:
-                    await destination.send(box(page, lang="py"))
-                except discord.HTTPException:
-                    await ctx.channel.send(
-                        "I couldn't send the traceback message to you in DM. "
-                        "Either you blocked me or you disabled DMs in this server."
-                    )
-                    return
+            try:
+                await self.bot.send_interactive(
+                    channel,
+                    pagify(self.bot._last_exception, shorten_by=10),
+                    user=ctx.author,
+                    box_lang="py",
+                )
+            except discord.HTTPException:
+                await ctx.channel.send(
+                    "I couldn't send the traceback message to you in DM. "
+                    "Either you blocked me or you disabled DMs in this server."
+                )
+                return
             if not public:
                 await ctx.tick()
         else:
@@ -1497,7 +1505,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def inviteset(self, ctx):
         """Commands to setup [botname]'s invite settings."""
         pass
@@ -1581,7 +1589,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def leave(self, ctx: commands.Context, *servers: GuildConverter):
         """
         Leaves servers.
@@ -1665,7 +1673,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         await ctx.send(_("Alright, I'm not leaving that server."))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def servers(self, ctx: commands.Context):
         """
         Lists the servers [botname] is currently in.
@@ -1685,7 +1693,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await menu(ctx, pages)
 
     @commands.command(require_var_positional=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def load(self, ctx: commands.Context, *cogs: str):
         """Loads cog packages from the local paths and installed cogs.
 
@@ -1798,7 +1806,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(page)
 
     @commands.command(require_var_positional=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
         """Unloads previously loaded cog packages.
 
@@ -1844,7 +1852,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(page)
 
     @commands.command(require_var_positional=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads cog packages.
 
@@ -1947,7 +1955,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     # TODO: Guild owner permissions for guild scope slash commands and syncing?
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def slash(self, ctx: commands.Context):
         """Base command for managing what application commands are able to be used on [botname]."""
 
@@ -2005,7 +2013,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         try:
             await self.bot.enable_app_command(command_name, raw_type)
-        except discord.app_commands.CommandLimitReached:
+        except app_commands.CommandLimitReached:
             await ctx.send(_("The command limit has been reached. Disable a command first."))
             return
 
@@ -2045,11 +2053,22 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Command type must be one of `slash`, `message`, or `user`."))
             return
 
+        existing = self.bot.tree.get_command(command_name, type=raw_type)
+        if existing is not None and existing.extras.get("red_force_enable", False):
+            await ctx.send(
+                _(
+                    "That application command has been set as required for the cog to function "
+                    "by the author, and cannot be disabled. "
+                    "The cog must be unloaded to remove the command."
+                )
+            )
+            return
+
         current_settings = await self.bot.list_enabled_app_commands()
         current_settings = current_settings[command_type]
 
         if command_name not in current_settings:
-            await ctx.send(_("That application command is already disabled."))
+            await ctx.send(_("That application command is already disabled or does not exist."))
             return
 
         await self.bot.disable_app_command(command_name, raw_type)
@@ -2279,6 +2298,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """List the slash commands the bot can see, and whether or not they are enabled.
 
         This command shows the state that will be changed to when `[p]slash sync` is run.
+        Commands from the same cog are grouped, with the cog name as the header.
+
+        The prefix denotes the state of the command:
+        - Commands starting with `- ` have not yet been enabled.
+        - Commands starting with `+ ` have been manually enabled.
+        - Commands starting with `++` have been enabled by the cog author, and cannot be disabled.
         """
         cog_commands = defaultdict(list)
         slash_command_names = set()
@@ -2289,13 +2314,27 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, True))
+            cog_commands[module].append(
+                (
+                    command.name,
+                    discord.AppCommandType.chat_input,
+                    True,
+                    command.extras.get("red_force_enable", False),
+                )
+            )
             slash_command_names.add(command.name)
         for command in self.bot.tree._disabled_global_commands.values():
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, discord.AppCommandType.chat_input, False))
+            cog_commands[module].append(
+                (
+                    command.name,
+                    discord.AppCommandType.chat_input,
+                    False,
+                    command.extras.get("red_force_enable", False),
+                )
+            )
         for key, command in self.bot.tree._context_menus.items():
             # Filter out guild context menus
             if key[1] is not None:
@@ -2303,7 +2342,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, command.type, True))
+            cog_commands[module].append(
+                (command.name, command.type, True, command.extras.get("red_force_enable", False))
+            )
             if command.type is discord.AppCommandType.message:
                 message_command_names.add(command.name)
             elif command.type is discord.AppCommandType.user:
@@ -2312,7 +2353,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             module = command.module
             if "." in module:
                 module = module[: module.find(".")]
-            cog_commands[module].append((command.name, command.type, False))
+            cog_commands[module].append(
+                (command.name, command.type, False, command.extras.get("red_force_enable", False))
+            )
 
         # Commands added with evals will come from __main__, make them unknown instead
         if "__main__" in cog_commands:
@@ -2326,9 +2369,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         unknown_message = set(enabled_commands["message"]) - message_command_names
         unknown_user = set(enabled_commands["user"]) - user_command_names
 
-        unknown_slash = [(n, discord.AppCommandType.chat_input, True) for n in unknown_slash]
-        unknown_message = [(n, discord.AppCommandType.message, True) for n in unknown_message]
-        unknown_user = [(n, discord.AppCommandType.user, True) for n in unknown_user]
+        unknown_slash = [
+            (n, discord.AppCommandType.chat_input, True, False) for n in unknown_slash
+        ]
+        unknown_message = [
+            (n, discord.AppCommandType.message, True, False) for n in unknown_message
+        ]
+        unknown_user = [(n, discord.AppCommandType.user, True, False) for n in unknown_user]
 
         cog_commands["(unknown)"].extend(unknown_slash)
         cog_commands["(unknown)"].extend(unknown_message)
@@ -2344,8 +2391,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         msg = ""
         for cog in sorted(cog_commands.keys()):
             msg += cog + "\n"
-            for name, raw_command_type, enabled in sorted(cog_commands[cog], key=lambda v: v[0]):
-                diff = "+ " if enabled else "- "
+            for name, raw_command_type, enabled, forced in sorted(
+                cog_commands[cog], key=lambda v: v[0]
+            ):
+                diff = "-  "
+                if forced:
+                    diff = "++ "
+                elif enabled:
+                    diff = "+  "
                 command_type = "unknown"
                 if raw_command_type is discord.AppCommandType.chat_input:
                     command_type = "slash"
@@ -2411,7 +2464,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @commands.command(name="shutdown")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _shutdown(self, ctx: commands.Context, silently: bool = False):
         """Shuts down the bot.
 
@@ -2434,7 +2487,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.shutdown()
 
     @commands.command(name="restart")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _restart(self, ctx: commands.Context, silently: bool = False):
         """Attempts to restart [botname].
 
@@ -2454,7 +2507,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.shutdown(restart=True)
 
     @bank.is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @commands.group()
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings."""
@@ -2490,7 +2543,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(box(settings))
 
     @bankset.command(name="toggleglobal")
-    @checks.is_owner()
+    @commands.is_owner()
     async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
         """Toggle whether the bank is global or not.
 
@@ -2512,7 +2565,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("The bank is now {banktype}.").format(banktype=word))
 
     @bank.is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="bankname")
     async def bankset_bankname(self, ctx: commands.Context, *, name: str):
         """Set the bank's name."""
@@ -2520,7 +2573,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("Bank name has been set to: {name}").format(name=name))
 
     @bank.is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="creditsname")
     async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
         """Set the name for the bank's currency."""
@@ -2528,7 +2581,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("Currency name has been set to: {name}").format(name=name))
 
     @bank.is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="maxbal")
     async def bankset_maxbal(self, ctx: commands.Context, *, amount: int):
         """Set the maximum balance a user can get."""
@@ -2546,7 +2599,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @bank.is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="registeramount")
     async def bankset_registeramount(self, ctx: commands.Context, creds: int):
         """Set the initial balance for new bank accounts.
@@ -2576,7 +2629,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @bank.is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @bankset.command(name="reset")
     async def bankset_reset(self, ctx, confirmation: bool = False):
         """Delete all bank accounts.
@@ -2608,7 +2661,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @bankset.group(name="prune")
     async def bankset_prune(self, ctx):
         """Base command for pruning bank accounts."""
@@ -2616,7 +2669,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @bankset_prune.command(name="server", aliases=["guild", "local"])
     @commands.guild_only()
-    @checks.guildowner()
+    @commands.guildowner()
     async def bankset_prune_local(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users no longer in the server.
 
@@ -2649,7 +2702,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
 
     @bankset_prune.command(name="global")
-    @checks.is_owner()
+    @commands.is_owner()
     async def bankset_prune_global(self, ctx, confirmation: bool = False):
         """Prune bank accounts for users who no longer share a server with the bot.
 
@@ -2722,12 +2775,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
 
     @commands.group()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
         """Manage modlog settings."""
         pass
 
-    @checks.is_owner()
+    @commands.is_owner()
     @modlogset.command(hidden=True, name="fixcasetypes")
     async def modlogset_fixcasetypes(self, ctx: commands.Context):
         """Command to fix misbehaving casetypes."""
@@ -2739,7 +2792,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def modlogset_modlog(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel] = None,
     ):
         """Set a channel as the modlog.
 
@@ -2830,11 +2883,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Bot Metadata Commands -- ###
 
     @_set.group(name="bot", aliases=["metadata"])
-    @checks.admin_or_permissions(manage_nicknames=True)
+    @commands.admin_or_permissions(manage_nicknames=True)
     async def _set_bot(self, ctx: commands.Context):
         """Commands for changing [botname]'s metadata."""
 
-    @checks.is_owner()
+    @commands.is_owner()
     @_set_bot.command(name="description")
     async def _set_bot_description(self, ctx: commands.Context, *, description: str = ""):
         """
@@ -2871,7 +2924,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.tick()
 
     @_set_bot.group(name="avatar", invoke_without_command=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_bot_avatar(self, ctx: commands.Context, url: str = None):
         """Sets [botname]'s avatar
 
@@ -2920,7 +2973,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Done."))
 
     @_set_bot_avatar.command(name="remove", aliases=["clear"])
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_bot_avatar_remove(self, ctx: commands.Context):
         """
         Removes [botname]'s avatar.
@@ -2933,7 +2986,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("Avatar removed."))
 
     @_set_bot.command(name="username", aliases=["name"])
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_bot_username(self, ctx: commands.Context, *, username: str):
         """Sets [botname]'s username.
 
@@ -2989,7 +3042,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Done."))
 
     @_set_bot.command(name="nickname")
-    @checks.admin_or_permissions(manage_nicknames=True)
+    @commands.admin_or_permissions(manage_nicknames=True)
     @commands.guild_only()
     async def _set_bot_nickname(self, ctx: commands.Context, *, nickname: str = None):
         """Sets [botname]'s nickname for the current server.
@@ -3013,7 +3066,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Done."))
 
     @_set_bot.command(name="custominfo")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_bot_custominfo(self, ctx: commands.Context, *, text: str = None):
         """Customizes a section of `[p]info`.
 
@@ -3045,16 +3098,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Bot Status Commands -- ###
 
     @_set.group(name="status")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status(self, ctx: commands.Context):
         """Commands for setting [botname]'s status."""
 
     @_set_status.command(
         name="streaming", aliases=["stream", "twitch"], usage="[(<streamer> <stream_title>)]"
     )
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
         """Sets [botname]'s streaming status to a twitch stream.
 
@@ -3095,8 +3148,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("Done."))
 
     @_set_status.command(name="playing", aliases=["game"])
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_game(self, ctx: commands.Context, *, game: str = None):
         """Sets [botname]'s playing status.
 
@@ -3127,8 +3180,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Game cleared."))
 
     @_set_status.command(name="listening")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_listening(self, ctx: commands.Context, *, listening: str = None):
         """Sets [botname]'s listening status.
 
@@ -3163,8 +3216,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Listening cleared."))
 
     @_set_status.command(name="watching")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_watching(self, ctx: commands.Context, *, watching: str = None):
         """Sets [botname]'s watching status.
 
@@ -3195,8 +3248,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Watching cleared."))
 
     @_set_status.command(name="competing")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_competing(self, ctx: commands.Context, *, competing: str = None):
         """Sets [botname]'s competing status.
 
@@ -3236,29 +3289,29 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         return await ctx.send(_("Status changed to {}.").format(status))
 
     @_set_status.command(name="online")
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_online(self, ctx: commands.Context):
         """Set [botname]'s status to online."""
         await self._set_my_status(ctx, discord.Status.online)
 
     @_set_status.command(name="dnd", aliases=["donotdisturb", "busy"])
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_dnd(self, ctx: commands.Context):
         """Set [botname]'s status to do not disturb."""
         await self._set_my_status(ctx, discord.Status.do_not_disturb)
 
     @_set_status.command(name="idle", aliases=["away", "afk"])
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_idle(self, ctx: commands.Context):
         """Set [botname]'s status to idle."""
         await self._set_my_status(ctx, discord.Status.idle)
 
     @_set_status.command(name="invisible", aliases=["offline"])
-    @checks.bot_in_a_guild()
-    @checks.is_owner()
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
     async def _set_status_invisible(self, ctx: commands.Context):
         """Set [botname]'s status to invisible."""
         await self._set_my_status(ctx, discord.Status.invisible)
@@ -3267,13 +3320,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Bot Roles Commands -- ###
 
     @_set.group(name="roles")
-    @checks.guildowner()
+    @commands.guildowner()
     @commands.guild_only()
     async def _set_roles(self, ctx: commands.Context):
         """Set server's admin and mod roles for [botname]."""
 
     @_set_roles.command(name="addadminrole")
-    @checks.guildowner()
+    @commands.guildowner()
     @commands.guild_only()
     async def _set_roles_addadminrole(self, ctx: commands.Context, *, role: discord.Role):
         """
@@ -3301,7 +3354,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("That role is now considered an admin role."))
 
     @_set_roles.command(name="addmodrole")
-    @checks.guildowner()
+    @commands.guildowner()
     @commands.guild_only()
     async def _set_roles_addmodrole(self, ctx: commands.Context, *, role: discord.Role):
         """
@@ -3330,7 +3383,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_roles.command(
         name="removeadminrole", aliases=["remadmindrole", "deladminrole", "deleteadminrole"]
     )
-    @checks.guildowner()
+    @commands.guildowner()
     @commands.guild_only()
     async def _set_roles_removeadminrole(self, ctx: commands.Context, *, role: discord.Role):
         """
@@ -3352,7 +3405,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_roles.command(
         name="removemodrole", aliases=["remmodrole", "delmodrole", "deletemodrole"]
     )
-    @checks.guildowner()
+    @commands.guildowner()
     @commands.guild_only()
     async def _set_roles_removemodrole(self, ctx: commands.Context, *, role: discord.Role):
         """
@@ -3375,7 +3428,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Set Locale Commands -- ###
 
     @_set.group(name="locale", invoke_without_command=True)
-    @checks.guildowner_or_permissions(manage_guild=True)
+    @commands.guildowner_or_permissions(manage_guild=True)
     async def _set_locale(self, ctx: commands.Context, language_code: str):
         """
         Changes [botname]'s locale in this server.
@@ -3402,7 +3455,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.invoke(self._set_locale_local, language_code)
 
     @_set_locale.command(name="global")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_locale_global(self, ctx: commands.Context, language_code: str):
         """
         Changes [botname]'s default locale.
@@ -3440,7 +3493,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set_locale.command(name="server", aliases=["local", "guild"])
     @commands.guild_only()
-    @checks.guildowner_or_permissions(manage_guild=True)
+    @commands.guildowner_or_permissions(manage_guild=True)
     async def _set_locale_local(self, ctx: commands.Context, language_code: str):
         """
         Changes [botname]'s locale in this server.
@@ -3481,7 +3534,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("Locale has been set."))
 
     @_set.group(name="regionalformat", aliases=["region"], invoke_without_command=True)
-    @checks.guildowner_or_permissions(manage_guild=True)
+    @commands.guildowner_or_permissions(manage_guild=True)
     async def _set_regional_format(self, ctx: commands.Context, language_code: str):
         """
         Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
@@ -3505,7 +3558,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.invoke(self._set_regional_format_local, language_code)
 
     @_set_regional_format.command(name="global")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_regional_format_global(self, ctx: commands.Context, language_code: str):
         """
         Changes the bot's regional format. This is used for formatting date, time and numbers.
@@ -3548,7 +3601,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set_regional_format.command(name="server", aliases=["local", "guild"])
     @commands.guild_only()
-    @checks.guildowner_or_permissions(manage_guild=True)
+    @commands.guildowner_or_permissions(manage_guild=True)
     async def _set_regional_format_local(self, ctx: commands.Context, language_code: str):
         """
         Changes the bot's regional format in this server. This is used for formatting date, time and numbers.
@@ -3595,7 +3648,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- Set Api Commands -- ###
 
     @_set.group(name="api", invoke_without_command=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_api(
         self,
         ctx: commands.Context,
@@ -3695,7 +3748,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     # -- End Set Api Commands -- ###
     # -- Set Ownernotifications Commands -- ###
 
-    @checks.is_owner()
+    @commands.is_owner()
     @_set.group(name="ownernotifications")
     async def _set_ownernotifications(self, ctx: commands.Context):
         """
@@ -3743,7 +3796,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set_ownernotifications.command(name="adddestination")
     async def _set_ownernotifications_adddestination(
-        self, ctx: commands.Context, *, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        ctx: commands.Context,
+        *,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ):
         """
         Adds a destination text channel to receive owner notifications.
@@ -3768,7 +3824,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         *,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, int],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, int],
     ):
         """
         Removes a destination text channel from receiving owner notifications.
@@ -3826,7 +3882,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set.command(name="showsettings")
     async def _set_showsettings(self, ctx: commands.Context, server: discord.Guild = None):
         """
-        Show the current settings for [botname]. Accepts optional guild parameter if its prefix must be recovered.
+        Show the current settings for [botname].
+
+        Accepts optional server parameter to allow prefix recovery.
         """
         if server is None:
             server = ctx.guild
@@ -3887,7 +3945,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(settings):
             await ctx.send(box(page))
 
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @_set.command(name="deletedelay")
     @commands.guild_only()
     async def _set_deletedelay(self, ctx: commands.Context, time: int = None):
@@ -3929,7 +3987,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(_("I will not delete command messages."))
 
     @_set.command(name="usebotcolour", aliases=["usebotcolor"])
-    @checks.guildowner()
+    @commands.guildowner()
     @commands.guild_only()
     async def _set_usebotcolour(self, ctx: commands.Context):
         """
@@ -3950,7 +4008,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @_set.command(name="serverfuzzy")
-    @checks.guildowner()
+    @commands.guildowner()
     @commands.guild_only()
     async def _set_serverfuzzy(self, ctx: commands.Context):
         """
@@ -3974,7 +4032,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @_set.command(name="fuzzy")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_fuzzy(self, ctx: commands.Context):
         """
         Toggle whether to enable fuzzy command search in DMs.
@@ -3995,7 +4053,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         )
 
     @_set.command(name="colour", aliases=["color"])
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
         """
         Sets a default colour to be used for the bot's embeds.
@@ -4027,7 +4085,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         aliases=["prefixes", "globalprefix", "globalprefixes"],
         require_var_positional=True,
     )
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_prefix(self, ctx: commands.Context, *prefixes: str):
         """Sets [botname]'s global prefix(es).
 
@@ -4074,7 +4132,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Prefixes set."))
 
     @_set.command(name="serverprefix", aliases=["serverprefixes"])
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def _set_serverprefix(
         self, ctx: commands.Context, server: Optional[discord.Guild], *prefixes: str
     ):
@@ -4093,6 +4151,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             - `[p]set serverprefix "Red - Discord Bot" ? - Sets the prefix for a specific server. Quotes are needed to use spaces in the server name.
 
         **Arguments:**
+            - `[server]` - The server to set the prefix for. Defaults to current server.
             - `[prefixes...]` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
         """
         if server is None:
@@ -4118,7 +4177,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Server prefixes set."))
 
     @_set.command(name="usebuttons")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _set_usebuttons(self, ctx: commands.Context, use_buttons: bool = None):
         """
         Set a global bot variable for using buttons in menus.
@@ -4173,7 +4232,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(content)
 
     @commands.group()
-    @checks.is_owner()
+    @commands.is_owner()
     async def helpset(self, ctx: commands.Context):
         """
         Commands to manage settings for the help command.
@@ -4638,7 +4697,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("I'm unable to deliver your message. Sorry."))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def dm(self, ctx: commands.Context, user_id: int, *, message: str):
         """Sends a DM to a user.
 
@@ -4694,7 +4753,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 await ctx.send(_("Message delivered to {}").format(destination))
 
     @commands.command(hidden=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def datapath(self, ctx: commands.Context):
         """Prints the bot's data path."""
         from redbot.core.data_manager import basic_config
@@ -4704,7 +4763,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(box(msg))
 
     @commands.command(hidden=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def debuginfo(self, ctx: commands.Context):
         """Shows debug information useful for debugging."""
         from redbot.core._debuginfo import DebugInfo
@@ -4722,7 +4781,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         self,
         ctx: commands.Context,
         channel: Optional[
-            Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
         ] = commands.CurrentChannel,
         # avoid non-default argument following default argument by using empty param()
         member: Union[discord.Member, discord.User] = commands.param(),
@@ -4746,7 +4805,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if ctx.guild is None:
             await ctx.send(
                 _(
-                    "A text channel, voice channel, or thread needs to be passed"
+                    "A text channel, voice channel, stage channel, or thread needs to be passed"
                     " when using this command in DMs."
                 )
             )
@@ -4778,7 +4837,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(await issue_diagnoser.diagnose())
 
     @commands.group(aliases=["whitelist"])
-    @checks.is_owner()
+    @commands.is_owner()
     async def allowlist(self, ctx: commands.Context):
         """
         Commands to manage the allowlist.
@@ -4867,7 +4926,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(_("Allowlist has been cleared."))
 
     @commands.group(aliases=["blacklist", "denylist"])
-    @checks.is_owner()
+    @commands.is_owner()
     async def blocklist(self, ctx: commands.Context):
         """
         Commands to manage the blocklist.
@@ -4960,7 +5019,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group(aliases=["localwhitelist"])
     @commands.guild_only()
-    @checks.admin_or_permissions(administrator=True)
+    @commands.admin_or_permissions(administrator=True)
     async def localallowlist(self, ctx: commands.Context):
         """
         Commands to manage the server specific allowlist.
@@ -5085,7 +5144,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @commands.group(aliases=["localblacklist"])
     @commands.guild_only()
-    @checks.admin_or_permissions(administrator=True)
+    @commands.admin_or_permissions(administrator=True)
     async def localblocklist(self, ctx: commands.Context):
         """
         Commands to manage the server specific blocklist.
@@ -5188,13 +5247,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot.clear_blacklist(ctx.guild)
         await ctx.send(_("Server blocklist has been cleared."))
 
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     @commands.group(name="command")
     async def command_manager(self, ctx: commands.Context):
         """Commands to enable and disable commands and cogs."""
         pass
 
-    @checks.is_owner()
+    @commands.is_owner()
     @command_manager.command(name="defaultdisablecog")
     async def command_default_disable_cog(self, ctx: commands.Context, *, cog: CogConverter):
         """Set the default state for a cog as disabled.
@@ -5217,7 +5276,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await self.bot._disabled_cog_cache.default_disable(cogname)
         await ctx.send(_("{cogname} has been set as disabled by default.").format(cogname=cogname))
 
-    @checks.is_owner()
+    @commands.is_owner()
     @command_manager.command(name="defaultenablecog")
     async def command_default_enable_cog(self, ctx: commands.Context, *, cog: CogConverter):
         """Set the default state for a cog as enabled.
@@ -5393,7 +5452,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.invoke(self.command_disable_guild, command=command)
 
-    @checks.is_owner()
+    @commands.is_owner()
     @command_disable.command(name="global")
     async def command_disable_global(self, ctx: commands.Context, *, command: CommandConverter):
         """
@@ -5542,7 +5601,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.tick()
 
-    @checks.is_owner()
+    @commands.is_owner()
     @command_manager.command(name="disabledmsg")
     async def command_disabledmsg(self, ctx: commands.Context, *, message: str = ""):
         """Set the bot's response to disabled commands.
@@ -5563,7 +5622,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.tick()
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(manage_guild=True)
+    @commands.guildowner_or_permissions(manage_guild=True)
     @commands.group(name="autoimmune")
     async def autoimmune_group(self, ctx: commands.Context):
         """
@@ -5713,6 +5772,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             discord.ForumChannel,
             discord.CategoryChannel,
             discord.Thread,
@@ -5741,7 +5801,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("Channel already in ignore list."))
 
     @ignore.command(name="server", aliases=["guild"])
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def ignore_guild(self, ctx: commands.Context):
         """
         Ignore commands in this server.
@@ -5771,6 +5831,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             discord.ForumChannel,
             discord.CategoryChannel,
             discord.Thread,
@@ -5797,7 +5858,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(_("That channel is not in the ignore list."))
 
     @unignore.command(name="server", aliases=["guild"])
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def unignore_guild(self, ctx: commands.Context):
         """
         Remove this server from the ignore list.
@@ -5814,23 +5875,23 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     async def count_ignored(self, ctx: commands.Context):
         category_channels: List[discord.CategoryChannel] = []
-        channels: List[Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel]] = []
+        channels: List[
+            Union[
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.ForumChannel,
+            ]
+        ] = []
         threads: List[discord.Thread] = []
         if await self.bot._ignored_cache.get_ignored_guild(ctx.guild):
             return _("This server is currently being ignored.")
-        for channel in ctx.guild.text_channels:
-            if channel.category and channel.category not in category_channels:
-                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
-                    category_channels.append(channel.category)
-            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                channels.append(channel)
-        for channel in ctx.guild.voice_channels:
-            if channel.category and channel.category not in category_channels:
-                if await self.bot._ignored_cache.get_ignored_channel(channel.category):
-                    category_channels.append(channel.category)
-            if await self.bot._ignored_cache.get_ignored_channel(channel, check_category=False):
-                channels.append(channel)
-        for channel in ctx.guild.forums:
+        for channel in itertools.chain(
+            ctx.guild.text_channels,
+            ctx.guild.voice_channels,
+            ctx.guild.stage_channels,
+            ctx.guild.forums,
+        ):
             if channel.category and channel.category not in category_channels:
                 if await self.bot._ignored_cache.get_ignored_channel(channel.category):
                     category_channels.append(channel.category)

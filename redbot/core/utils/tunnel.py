@@ -7,6 +7,8 @@ import weakref
 from typing import List, Optional, Union
 from .common_filters import filter_mass_mentions
 
+__all__ = ("Tunnel",)
+
 _instances = weakref.WeakValueDictionary({})
 
 
@@ -57,7 +59,7 @@ class Tunnel(metaclass=TunnelMeta):
     ----------
     sender: `discord.Member`
         The person who opened the tunnel
-    origin: `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
+    origin: `discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, or `discord.Thread`
         The channel in which it was opened
     recipient: `discord.User`
         The user on the other end of the tunnel
@@ -67,7 +69,9 @@ class Tunnel(metaclass=TunnelMeta):
         self,
         *,
         sender: discord.Member,
-        origin: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+        origin: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
         recipient: discord.User,
     ):
         self.sender = sender

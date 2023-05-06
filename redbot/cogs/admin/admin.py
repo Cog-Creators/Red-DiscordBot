@@ -3,7 +3,7 @@ import logging
 from typing import Tuple, Union
 
 import discord
-from redbot.core import Config, checks, commands
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.mod import get_audit_reason
@@ -215,7 +215,7 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def addrole(
         self,
         ctx: commands.Context,
@@ -233,7 +233,7 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def removerole(
         self,
         ctx: commands.Context,
@@ -251,7 +251,7 @@ class Admin(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
         """Edit role settings."""
         pass
@@ -325,7 +325,7 @@ class Admin(commands.Cog):
             await ctx.send(_("Done."))
 
     @commands.group(invoke_without_command=True)
-    @checks.is_owner()
+    @commands.is_owner()
     async def announce(self, ctx: commands.Context, *, message: str):
         """Announce a message to all servers the bot is in."""
         if not self.is_announcing():
@@ -350,14 +350,17 @@ class Admin(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def announceset(self, ctx):
         """Change how announcements are sent in this guild."""
         pass
 
     @announceset.command(name="channel")
     async def announceset_channel(
-        self, ctx, *, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        ctx,
+        *,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ):
         """Change the channel where the bot will send announcements."""
         await self.config.guild(ctx.guild).announce_channel.set(channel.id)
@@ -441,12 +444,12 @@ class Admin(commands.Cog):
         await ctx.send(box(msg, "diff"))
 
     @commands.group()
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     async def selfroleset(self, ctx: commands.Context):
         """Manage selfroles."""
         pass
 
-    @selfroleset.command(name="add")
+    @selfroleset.command(name="add", require_var_positional=True)
     async def selfroleset_add(self, ctx: commands.Context, *roles: discord.Role):
         """
         Add a role, or a selection of roles, to the list of available selfroles.
@@ -479,7 +482,7 @@ class Admin(commands.Cog):
 
         await ctx.send(message)
 
-    @selfroleset.command(name="remove")
+    @selfroleset.command(name="remove", require_var_positional=True)
     async def selfroleset_remove(self, ctx: commands.Context, *roles: SelfRole):
         """
         Remove a role, or a selection of roles, from the list of available selfroles.
@@ -541,7 +544,7 @@ class Admin(commands.Cog):
             await ctx.send(_("No changes have been made."))
 
     @commands.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def serverlock(self, ctx: commands.Context):
         """Lock a bot to its current servers only."""
         serverlocked = await self.config.serverlocked()
