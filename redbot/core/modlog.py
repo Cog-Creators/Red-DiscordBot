@@ -510,7 +510,7 @@ class Case:
                     user = f"{self.last_known_username} ({self.user})"
                 # Last known user handle is a legacy username with a discriminator
                 else:
-                    # isolate the name so that the direction of the discriminator and ID do not get changed
+                    # isolate the name so that the direction of the discriminator and ID aren't changed
                     # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
                     name = self.last_known_username[:-5]
                     discriminator = self.last_known_username[-4:]
@@ -519,9 +519,17 @@ class Case:
                         f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
                     )
         else:
-            # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
-            # TODO: keep the old handling *if* we release before pomelo migration is complete
-            user = f"{self.user} ({self.user.id})"
+            if self.user.discriminator == "0":
+                # isolate the name so that the direction of the discriminator and ID aren't changed
+                # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
+                user = escape_spoilers(
+                    filter_invites(
+                        f"\N{FIRST STRONG ISOLATE}{self.user.name}"
+                        f"\N{POP DIRECTIONAL ISOLATE}#{self.user.discriminator} ({self.user.id})"
+                    )
+                )  # Invites and spoilers get rendered even in embeds.
+            else:
+                user = f"{self.user} ({self.user.id})"
 
         channel_value = None
         if isinstance(self.channel, int):
