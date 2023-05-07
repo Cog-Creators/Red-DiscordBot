@@ -329,9 +329,16 @@ class DevOutput:
                 pass
             else:
                 if exc.text is None:
-                    # line numbers are 1-based, the list indexes are 0-based
-                    exc.text = source_lines[exc.lineno - 1]
-                exc.lineno -= line_offset
+                    try:
+                        # line numbers are 1-based, the list indexes are 0-based
+                        exc.text = source_lines[exc.lineno - 1]
+                    except IndexError:
+                        # the frame might be pointing at a different source code, ignore...
+                        pass
+                    else:
+                        exc.lineno -= line_offset
+                else:
+                    exc.lineno -= line_offset
 
         traceback_exc = traceback.TracebackException(exc_type, exc, tb)
         py311_or_above = sys.version_info >= (3, 11)
@@ -345,8 +352,12 @@ class DevOutput:
             if lineno is None:
                 continue
 
-            # line numbers are 1-based, the list indexes are 0-based
-            line = source_lines[lineno - 1]
+            try:
+                # line numbers are 1-based, the list indexes are 0-based
+                line = source_lines[lineno - 1]
+            except IndexError:
+                # the frame might be pointing at a different source code, ignore...
+                continue
             lineno -= line_offset
             # support for enhanced error locations in tracebacks
             if py311_or_above:
