@@ -1,6 +1,7 @@
 import logging
 from datetime import timezone
 from collections import defaultdict, deque
+from typing import List, Optional
 
 import discord
 from redbot.core import i18n, modlog, commands
@@ -158,22 +159,31 @@ class Events(MixinMeta):
         if not deleted:
             await self.check_mention_spam(message)
 
+    @staticmethod
+    def _update_past_names(name: str, name_list: List[Optional[str]]) -> None:
+        while None in name_list:  # clean out null entries from a bug
+            name_list.remove(None)
+        if name in name_list:
+            # Ensure order is maintained without duplicates occurring
+            name_list.remove(name)
+        name_list.append(name)
+        while len(name_list) > 20:
+            name_list.pop(0)
+
     @commands.Cog.listener()
     async def on_user_update(self, before: discord.User, after: discord.User):
-        # TODO: track usernames and global (or display?) names separately?
-        if before.display_name != after.display_name:
+        if before.name != after.name:
             track_all_names = await self.config.track_all_names()
             if not track_all_names:
                 return
             async with self.config.user(before).past_names() as name_list:
-                while None in name_list:  # clean out null entries from a bug
-                    name_list.remove(None)
-                if before.display_name in name_list:
-                    # Ensure order is maintained without duplicates occurring
-                    name_list.remove(before.display_name)
-                name_list.append(before.display_name)
-                while len(name_list) > 20:
-                    name_list.pop(0)
+                self._update_past_names(before.name, name_list)
+        if before.display_name != after.display_name:
+            track_all_names = await self.config.track_all_names()
+            if not track_all_names:
+                return
+            async with self.config.user(before).past_display_names() as name_list:
+                self._update_past_names(before.display_name, name_list)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
@@ -186,10 +196,4 @@ class Events(MixinMeta):
             if (not track_all_names) or (not track_nicknames):
                 return
             async with self.config.member(before).past_nicks() as nick_list:
-                while None in nick_list:  # clean out null entries from a bug
-                    nick_list.remove(None)
-                if before.nick in nick_list:
-                    nick_list.remove(before.nick)
-                nick_list.append(before.nick)
-                while len(nick_list) > 20:
-                    nick_list.pop(0)
+                self._update_past_names(before.nick, nick_list)
