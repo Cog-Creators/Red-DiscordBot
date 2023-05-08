@@ -28,6 +28,8 @@ if TYPE_CHECKING:
 __all__ = (
     "get_locale",
     "get_regional_format",
+    "set_contextual_locale",
+    "set_contextual_regional_format",
     "get_locale_from_guild",
     "get_regional_format_from_guild",
     "set_contextual_locales_from_guild",
