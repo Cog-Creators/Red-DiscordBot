@@ -1,5 +1,6 @@
 import sys
 import textwrap
+from typing import Any, Dict, Optional
 from unittest.mock import MagicMock
 
 import pytest
@@ -134,12 +135,12 @@ def test_cleanup_code(content: str, source: str) -> None:
     assert cleanup_code(content) == source
 
 
-def _get_dev_output(source: str) -> DevOutput:
+def _get_dev_output(source: str, *, env: Optional[Dict[str, Any]] = None) -> DevOutput:
     return DevOutput(
         MagicMock(spec=commands.Context),
         source=source,
         filename="<test run>",
-        env={"__builtins__": __builtins__, "__name__": "__main__", "_": None},
+        env={"__builtins__": __builtins__, "__name__": "__main__", "_": None, **(env or {})},
     )
 
 
@@ -389,3 +390,36 @@ async def test_successful_run_repl_exec(monkeypatch: pytest.MonkeyPatch) -> None
     world
     """
     await _run_dev_output(monkeypatch, source, result, repl=True)
+
+
+async def test_regression_format_exception_from_previous_snippet(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    snippet_0 = textwrap.dedent(
+        """\
+    def repro():
+        raise Exception("this is an error!")
+
+    return repro
+    """
+    )
+    snippet_1 = "_()"
+    result = textwrap.dedent(
+        """\
+    Traceback (most recent call last):
+      File "<test run>", line 1, in func
+        _()
+      File "<test run>", line 2, in repro
+        raise Exception("this is an error!")
+    Exception: this is an error!
+    """
+    )
+    monkeypatch.setattr("redbot.core.dev_commands.sanitize_output", lambda ctx, s: s)
+
+    output = _get_dev_output(snippet_0)
+    await output.run_eval()
+    output = _get_dev_output(snippet_1, env={"_": output.result})
+    await output.run_eval()
+    assert str(output) == result
+    # ensure that our Context mock is never actually used by anything
+    assert not output.ctx.mock_calls
