@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from redbot.core import commands
-from redbot.core.dev_commands import DevOutput, cleanup_code
+from redbot.core.dev_commands import DevOutput, SourceCache, cleanup_code
 
 
 # the examples are based on how the markdown ends up being rendered by Discord
@@ -135,11 +135,19 @@ def test_cleanup_code(content: str, source: str) -> None:
     assert cleanup_code(content) == source
 
 
-def _get_dev_output(source: str, *, env: Optional[Dict[str, Any]] = None) -> DevOutput:
+def _get_dev_output(
+    source: str,
+    *,
+    source_cache: Optional[SourceCache] = None,
+    env: Optional[Dict[str, Any]] = None,
+) -> DevOutput:
+    if source_cache is None:
+        source_cache = SourceCache()
     return DevOutput(
         MagicMock(spec=commands.Context),
+        source_cache=source_cache,
+        filename=f"<test run - snippet #{source_cache.take_next_index()}>",
         source=source,
-        filename="<test run>",
         env={"__builtins__": __builtins__, "__name__": "__main__", "_": None, **(env or {})},
     )
 
@@ -185,7 +193,7 @@ EXPRESSION_TESTS = {
         (
             lambda v: v < (3, 10),
             """\
-              File "<test run>", line 1
+              File "<test run - snippet #0>", line 1
                 12x
                   ^
             SyntaxError: invalid syntax
@@ -194,7 +202,7 @@ EXPRESSION_TESTS = {
         (
             lambda v: v >= (3, 10),
             """\
-              File "<test run>", line 1
+              File "<test run - snippet #0>", line 1
                 12x
                  ^
             SyntaxError: invalid decimal literal
@@ -205,7 +213,7 @@ EXPRESSION_TESTS = {
         (
             lambda v: v < (3, 10),
             """\
-              File "<test run>", line 1
+              File "<test run - snippet #0>", line 1
                 foo(x, z for z in range(10), t, w)
                        ^
             SyntaxError: Generator expression must be parenthesized
@@ -214,7 +222,7 @@ EXPRESSION_TESTS = {
         (
             lambda v: v >= (3, 10),
             """\
-              File "<test run>", line 1
+              File "<test run - snippet #0>", line 1
                 foo(x, z for z in range(10), t, w)
                        ^^^^^^^^^^^^^^^^^^^^
             SyntaxError: Generator expression must be parenthesized
@@ -227,7 +235,7 @@ EXPRESSION_TESTS = {
             lambda v: v < (3, 11),
             """\
             Traceback (most recent call last):
-              File "<test run>", line 1, in <module>
+              File "<test run - snippet #0>", line 1, in <module>
                 abs(1 / 0)
             ZeroDivisionError: division by zero
             """,
@@ -236,7 +244,7 @@ EXPRESSION_TESTS = {
             lambda v: v >= (3, 11),
             """\
             Traceback (most recent call last):
-              File "<test run>", line 1, in <module>
+              File "<test run - snippet #0>", line 1, in <module>
                 abs(1 / 0)
                     ~~^~~
             ZeroDivisionError: division by zero
@@ -253,7 +261,7 @@ STATEMENT_TESTS = {
         (
             lambda v: v < (3, 10),
             """\
-              File "<test run>", line 2
+              File "<test run - snippet #0>", line 2
                 12x
                   ^
             SyntaxError: invalid syntax
@@ -262,7 +270,7 @@ STATEMENT_TESTS = {
         (
             lambda v: v >= (3, 10),
             """\
-              File "<test run>", line 2
+              File "<test run - snippet #0>", line 2
                 12x
                  ^
             SyntaxError: invalid decimal literal
@@ -276,7 +284,7 @@ STATEMENT_TESTS = {
         (
             lambda v: v < (3, 10),
             """\
-              File "<test run>", line 2
+              File "<test run - snippet #0>", line 2
                 foo(x, z for z in range(10), t, w)
                        ^
             SyntaxError: Generator expression must be parenthesized
@@ -285,7 +293,7 @@ STATEMENT_TESTS = {
         (
             lambda v: v >= (3, 10),
             """\
-              File "<test run>", line 2
+              File "<test run - snippet #0>", line 2
                 foo(x, z for z in range(10), t, w)
                        ^^^^^^^^^^^^^^^^^^^^
             SyntaxError: Generator expression must be parenthesized
@@ -305,7 +313,7 @@ STATEMENT_TESTS = {
             """\
             123
             Traceback (most recent call last):
-              File "<test run>", line 3, in <module>
+              File "<test run - snippet #0>", line 3, in <module>
                 abs(1 / 0)
             ZeroDivisionError: division by zero
             """,
@@ -315,7 +323,7 @@ STATEMENT_TESTS = {
             """\
             123
             Traceback (most recent call last):
-              File "<test run>", line 3, in <module>
+              File "<test run - snippet #0>", line 3, in <module>
                 abs(1 / 0)
                     ~~^~~
             ZeroDivisionError: division by zero
@@ -407,18 +415,19 @@ async def test_regression_format_exception_from_previous_snippet(
     result = textwrap.dedent(
         """\
     Traceback (most recent call last):
-      File "<test run>", line 1, in func
+      File "<test run - snippet #1>", line 1, in func
         _()
-      File "<test run>", line 2, in repro
+      File "<test run - snippet #0>", line 2, in repro
         raise Exception("this is an error!")
     Exception: this is an error!
     """
     )
     monkeypatch.setattr("redbot.core.dev_commands.sanitize_output", lambda ctx, s: s)
 
-    output = _get_dev_output(snippet_0)
+    source_cache = SourceCache()
+    output = _get_dev_output(snippet_0, source_cache=source_cache)
     await output.run_eval()
-    output = _get_dev_output(snippet_1, env={"_": output.result})
+    output = _get_dev_output(snippet_1, source_cache=source_cache, env={"_": output.result})
     await output.run_eval()
     assert str(output) == result
     # ensure that our Context mock is never actually used by anything
