@@ -117,6 +117,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
         if not await self.maybe_charge_requester(ctx, guild_data["jukebox_price"]):
             return
+        emoji = str(emoji)
         try:
             if emoji == "\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}":
                 search_choice = tracks[0 + (page * 5)]
