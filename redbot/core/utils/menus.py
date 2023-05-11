@@ -45,7 +45,7 @@ class _GenericButton(discord.ui.Button):
         message = self.view.message
         page = self.view.current_page
         timeout = self.view.timeout
-        emoji = str(self.emoji)
+        emoji = str(self.emoji) if self.emoji.is_unicode_emoji() else self.emoji
         try:
             await self.func(ctx, pages, controls, message, page, timeout, emoji)
         except Exception:
