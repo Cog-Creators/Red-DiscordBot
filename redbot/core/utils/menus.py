@@ -45,7 +45,7 @@ class _GenericButton(discord.ui.Button):
         message = self.view.message
         page = self.view.current_page
         timeout = self.view.timeout
-        emoji = self.emoji
+        emoji = str(self.emoji)
         try:
             await self.func(ctx, pages, controls, message, page, timeout, emoji)
         except Exception:
