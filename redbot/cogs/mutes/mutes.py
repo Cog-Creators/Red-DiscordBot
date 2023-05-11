@@ -1729,7 +1729,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
-        current_mute = self._channel_mutes.get(channel.id) or None
+        current_mute = self._channel_mutes[channel.id].get(user.id)
 
         # Determine if this is voice mute -> channel mute upgrade
         is_mute_upgrade = (
