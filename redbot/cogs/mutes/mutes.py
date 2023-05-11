@@ -405,8 +405,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                             self._unmute_tasks[task_name] = asyncio.create_task(
                                 self._auto_channel_unmute_user(guild_channel, mute_data)
                             )
-                        else:
-                            await self.config.channel_from_id(channel).clear()
 
         del multiple_mutes
 
