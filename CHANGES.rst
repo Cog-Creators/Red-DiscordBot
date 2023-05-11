@@ -1,5 +1,33 @@
 .. Red changelogs
 
+Redbot 3.5.1 (2023-05-04)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Flame442`, :ghuser:`Jackenmen`
+
+This is a hotfix release fixing documentation issues and a bug with the update notification logic
+that caused Red to crash.
+
+End-user changelog
+------------------
+
+Fixes
+*****
+
+- **Core** - Fixed a crash in the Red update notification logic (:issue:`6124`)
+
+
+Documentation changes
+---------------------
+
+Fixes
+*****
+
+- Fix the instructions for updating Red (:issue:`6123`)
+
+----
+
 Redbot 3.5.0 (2023-05-04)
 =========================
 
@@ -25,6 +53,7 @@ Read before updating
 
 #. Red 3.5 comes with breaking changes for cog developers. Look at `Backward incompatible changes in Red 3.5 document <incompatible-changes-3.5>` and `Developer changelog <important-350-2>` for full details.
 #. Fedora 35 and Debian 10 (Buster) are no longer supported as they have already reached their end of life.
+#. On x86-64 systems, we now require that the CPU supports x86-64-v2 instruction set. This roughly translates to us dropping support for x86-64 CPUs that have been released before 2009.
 
 .. _important-350-1:
 
@@ -35,6 +64,7 @@ Breaking Changes
 ****************
 
 - **Core** - The bot will no longer launch without an owner set (:issue:`4926`)
+- **Core - OS support** - On x86-64 systems, we now require that the CPU supports x86-64-v2 instruction set. This roughly translates to us dropping support for x86-64 CPUs that have been released before 2009 (:issue:`6100`)
 
 Additions
 *********

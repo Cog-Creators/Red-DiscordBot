@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-04 00:53+0000\n"
+"POT-Creation-Date: 2023-05-04 06:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -597,133 +597,133 @@ msgid "\n\n"
 "You will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
 msgstr ""
 
-#: redbot/core/_events.py:120
+#: redbot/core/_events.py:119
 msgid "\n\n"
 "To update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:{command_1}\n"
 "Once you've started up your bot again, we recommend that you update any installed 3rd-party cogs with this command in Discord:{command_2}"
 msgstr ""
 
-#: redbot/core/_events.py:128
+#: redbot/core/_events.py:127
 msgid "Command Prompt"
 msgstr ""
 
-#: redbot/core/_events.py:128
+#: redbot/core/_events.py:127
 msgid "Terminal"
 msgstr ""
 
-#: redbot/core/_events.py:234
+#: redbot/core/_events.py:233
 msgid "`{user_input}` is not a valid value for `{command}`"
 msgstr "`{user_input}` nie jest poprawną wartością dla `{command}`"
 
-#: redbot/core/_events.py:245 redbot/core/_events.py:298
+#: redbot/core/_events.py:244 redbot/core/_events.py:297
 msgid "Argument `{parameter_name}` must be a positive integer."
 msgstr ""
 
-#: redbot/core/_events.py:247 redbot/core/_events.py:300
+#: redbot/core/_events.py:246 redbot/core/_events.py:299
 msgid "Argument `{parameter_name}` must be an integer no more than {maximum}."
 msgstr ""
 
-#: redbot/core/_events.py:251 redbot/core/_events.py:304
+#: redbot/core/_events.py:250 redbot/core/_events.py:303
 msgid "Argument `{parameter_name}` must be an integer no less than {minimum}."
 msgstr ""
 
-#: redbot/core/_events.py:255 redbot/core/_events.py:308
+#: redbot/core/_events.py:254 redbot/core/_events.py:307
 msgid "Argument `{parameter_name}` must be an integer between {minimum} and {maximum}."
 msgstr ""
 
-#: redbot/core/_events.py:260 redbot/core/_events.py:313
+#: redbot/core/_events.py:259 redbot/core/_events.py:312
 msgid "Argument `{parameter_name}` must be a positive number."
 msgstr ""
 
-#: redbot/core/_events.py:262 redbot/core/_events.py:315
+#: redbot/core/_events.py:261 redbot/core/_events.py:314
 msgid "Argument `{parameter_name}` must be a number no more than {maximum}."
 msgstr ""
 
-#: redbot/core/_events.py:266
+#: redbot/core/_events.py:265
 msgid "Argument `{parameter_name}` must be a number no less than {maximum}."
 msgstr ""
 
-#: redbot/core/_events.py:270 redbot/core/_events.py:323
+#: redbot/core/_events.py:269 redbot/core/_events.py:322
 msgid "Argument `{parameter_name}` must be a number between {minimum} and {maximum}."
 msgstr ""
 
-#: redbot/core/_events.py:275 redbot/core/_events.py:328
+#: redbot/core/_events.py:274 redbot/core/_events.py:327
 msgid "Argument `{parameter_name}` must be a string with a length of no more than {maximum}."
 msgstr ""
 
-#: redbot/core/_events.py:279 redbot/core/_events.py:332
+#: redbot/core/_events.py:278 redbot/core/_events.py:331
 msgid "Argument `{parameter_name}` must be a string with a length of no less than {minimum}."
 msgstr ""
 
-#: redbot/core/_events.py:283 redbot/core/_events.py:336
+#: redbot/core/_events.py:282 redbot/core/_events.py:335
 msgid "Argument `{parameter_name}` must be a string with a length of between {minimum} and {maximum}."
 msgstr ""
 
-#: redbot/core/_events.py:319
+#: redbot/core/_events.py:318
 msgid "Argument `{parameter_name}` must be a number no less than {minimum}."
 msgstr ""
 
-#: redbot/core/_events.py:349
+#: redbot/core/_events.py:348
 msgid "\"{argument}\" is not an integer."
 msgstr ""
 
-#: redbot/core/_events.py:352
+#: redbot/core/_events.py:351
 msgid "\"{argument}\" is not a number."
 msgstr ""
 
-#: redbot/core/_events.py:379 redbot/core/tree.py:287
+#: redbot/core/_events.py:378 redbot/core/tree.py:287
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr ""
 
-#: redbot/core/_events.py:382 redbot/core/tree.py:290
+#: redbot/core/_events.py:381 redbot/core/tree.py:290
 msgid "Error in command '{command}'."
 msgstr ""
 
-#: redbot/core/_events.py:400 redbot/core/tree.py:304
+#: redbot/core/_events.py:399 redbot/core/tree.py:304
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/_events.py:404 redbot/core/tree.py:308
+#: redbot/core/_events.py:403 redbot/core/tree.py:308
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/_events.py:412 redbot/core/tree.py:315
+#: redbot/core/_events.py:411 redbot/core/tree.py:315
 msgid "That command is not available in DMs."
 msgstr ""
 
-#: redbot/core/_events.py:414
+#: redbot/core/_events.py:413
 msgid "That command is only available in DMs."
 msgstr ""
 
-#: redbot/core/_events.py:416
+#: redbot/core/_events.py:415
 msgid "That command is only available in NSFW channels."
 msgstr ""
 
-#: redbot/core/_events.py:428 redbot/core/tree.py:321
+#: redbot/core/_events.py:427 redbot/core/tree.py:321
 msgid "This command is on cooldown. Try again {relative_time}."
 msgstr ""
 
-#: redbot/core/_events.py:435
+#: redbot/core/_events.py:434
 msgid "Too many people using this command. It can only be used {number} times concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:440
+#: redbot/core/_events.py:439
 msgid "Too many people using this command. It can only be used once concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:446
+#: redbot/core/_events.py:445
 msgid "That command is still completing, it can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:451
+#: redbot/core/_events.py:450
 msgid "That command is still completing, it can only be used once per {type} concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:457
+#: redbot/core/_events.py:456
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:462
+#: redbot/core/_events.py:461
 msgid "Too many people using this command. It can only be used once per {type} concurrently."
 msgstr ""
 
