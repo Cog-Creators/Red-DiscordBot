@@ -38,7 +38,8 @@ their end-of-life date.
     The meaning of architecture names:
 
     - **x86-64** (also known as amd64) refers to computers running a 64-bit version of the operating system
-      on standard Intel and AMD 64-bit processors supporting x86-64-v2 instruction set (post-2008 hardware).
+      on standard Intel and AMD 64-bit processors supporting x86-64-v2 instruction set
+      (post-2008 Intel processors and post-2011 AMD processors).
     - **aarch64** (also known as arm64) refers to computers running an ARM 64-bit version of the operating system
       on 64-bit ARM processors (ARMv8-A and ARMv9-A) such as Apple M1 devices or Raspberry Pi computers
       (Raspberry Pi 3B and above, excluding Pi Zero (W/WH) model).
