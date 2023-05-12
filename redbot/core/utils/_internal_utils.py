@@ -35,10 +35,9 @@ from packaging.requirements import Requirement
 from rapidfuzz import fuzz, process
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
-from red_commons.logging import VERBOSE, TRACE
 
 from redbot import VersionInfo
-from redbot.core import data_manager
+from redbot.core import _data_manager, data_manager
 from redbot.core.utils.chat_formatting import box
 
 if TYPE_CHECKING:
@@ -58,7 +57,6 @@ __all__ = (
     "fetch_latest_red_version_info",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
-    "cli_level_to_log_level",
 )
 
 _T = TypeVar("_T")
@@ -211,13 +209,13 @@ async def format_fuzzy_results(
 
 
 async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
-    data_path = Path(data_manager.core_data_path().parent)
+    data_path = data_manager.data_path()
     if not data_path.exists():
         return None
 
     dest.mkdir(parents=True, exist_ok=True)
     timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
-    backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
+    backup_fpath = dest / f"redv3_{data_manager.instance_name()}_{timestr}.tar.gz"
 
     to_backup = []
     exclusions = [
@@ -242,7 +240,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         json.dump(repo_output, fs, indent=4)
     instance_file = data_path / "instance.json"
     with instance_file.open("w") as fs:
-        json.dump({data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
+        json.dump({data_manager.instance_name(): _data_manager.basic_config}, fs, indent=4)
     for f in data_path.glob("**/*"):
         if not any(ex in str(f) for ex in exclusions) and f.is_file():
             to_backup.append(f)
@@ -359,15 +357,3 @@ class RichIndefiniteBarColumn(ProgressColumn):
             total=task.total,
             completed=task.completed,
         )
-
-
-def cli_level_to_log_level(level: int) -> int:
-    if level == 0:
-        log_level = logging.INFO
-    elif level == 1:
-        log_level = logging.DEBUG
-    elif level == 2:
-        log_level = VERBOSE
-    else:
-        log_level = TRACE
-    return log_level

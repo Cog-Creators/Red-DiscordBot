@@ -131,10 +131,10 @@ class DebugInfo:
         )
 
     async def _get_red_vars_section(self) -> DebugInfoSection:
-        if data_manager.instance_name is None:
+        if data_manager.instance_name() is None:
             return DebugInfoSection(
                 "Red variables",
-                f"Metadata file: {data_manager.config_file}",
+                f"Metadata file: {data_manager.metadata_file()}",
             )
 
         parts = [f"Instance name: {data_manager.instance_name}"]
@@ -161,8 +161,8 @@ class DebugInfo:
             parts.append(f"Disabled intents: {disabled_intents}")
 
         parts.append(f"Storage type: {data_manager.storage_type()}")
-        parts.append(f"Data path: {data_manager.basic_config['DATA_PATH']}")
-        parts.append(f"Metadata file: {data_manager.config_file}")
+        parts.append(f"Data path: {data_manager.data_path()}")
+        parts.append(f"Metadata file: {data_manager.metadata_file()}")
 
         return DebugInfoSection(
             "Red variables",
