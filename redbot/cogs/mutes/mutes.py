@@ -401,9 +401,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         log.debug(f"Creating task: {task_name}")
                         if task_name in self._unmute_tasks:
                             continue
-                        self._unmute_tasks[task_name] = asyncio.create_task(
-                            self._auto_channel_unmute_user(guild.get_channel(channel), mute_data)
-                        )
+                        if guild_channel := guild.get_channel(channel):
+                            self._unmute_tasks[task_name] = asyncio.create_task(
+                                self._auto_channel_unmute_user(guild_channel, mute_data)
+                            )
 
         del multiple_mutes
 
@@ -1726,7 +1727,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
-        current_mute = self._channel_mutes.get(channel.id)
+        current_mute = self._channel_mutes[channel.id].get(user.id)
 
         # Determine if this is voice mute -> channel mute upgrade
         is_mute_upgrade = (
