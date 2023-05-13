@@ -50,11 +50,13 @@ class DebugInfo:
     def __init__(self, bot: Optional[Red] = None) -> None:
         self.bot = bot
 
-    async def get_text(self) -> str:
-        if self.bot is None:
-            return await self.get_cli_text()
-        else:
-            return await self.get_command_text()
+    @property
+    def is_logged_in(self) -> bool:
+        return self.bot is not None and self.bot.application_id is not None
+
+    @property
+    def is_connected(self) -> bool:
+        return self.bot is not None and self.bot.is_ready()
 
     async def get_cli_text(self) -> str:
         parts = ["\x1b[31m# Debug Info for Red:\x1b[0m"]
@@ -139,7 +141,14 @@ class DebugInfo:
             )
 
         parts = [f"Instance name: {instance_name}"]
+
         if self.bot is not None:
+            # This formatting is a bit ugly but this is a debug information command
+            # and calling repr() on prefix strings ensures that the list isn't ambiguous.
+            prefixes = ", ".join(map(repr, await self.bot._config.prefix()))
+            parts.append(f"Global prefix(es): {prefixes}")
+
+        if self.is_logged_in:
             owners = []
             for uid in self.bot.owner_ids:
                 try:
@@ -150,7 +159,7 @@ class DebugInfo:
             owners_string = ", ".join(owners) or "None"
             parts.append(f"Owner(s): {', '.join(owners) or 'None'}")
 
-        if self.bot is not None:
+        if self.is_connected:
             disabled_intents = (
                 ", ".join(
                     intent_name.replace("_", " ").title()

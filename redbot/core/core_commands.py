@@ -4688,7 +4688,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """Shows debug information useful for debugging."""
         from redbot.core._debuginfo import DebugInfo
 
-        await ctx.send(await DebugInfo(self.bot).get_text())
+        await ctx.send(await DebugInfo(self.bot).get_command_text())
 
     # You may ask why this command is owner-only,
     # cause after all it could be quite useful to guild owners!
