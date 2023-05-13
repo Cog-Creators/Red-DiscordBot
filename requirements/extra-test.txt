@@ -14,7 +14,7 @@ mccabe==0.7.0
     # via pylint
 pluggy==1.0.0
     # via pytest
-pylint==2.17.3
+pylint==2.17.4
     # via -r extra-test.in
 pytest==7.3.1
     # via
