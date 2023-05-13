@@ -3114,7 +3114,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `[p]set status listening jams`
 
         **Arguments:**
-        - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status."""
+        - `[listening]` - The text to follow `Listening to`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
@@ -3149,7 +3150,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `[p]set status watching [p]help`
 
         **Arguments:**
-        - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status."""
+        - `[watching]` - The text to follow `Watching`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
@@ -3180,7 +3182,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `[p]set status competing London 2012 Olympic Games`
 
         **Arguments:**
-        - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status."""
+        - `[competing]` - The text to follow `Competing in`. Leave blank to clear the current activity status.
+        """
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if competing:
