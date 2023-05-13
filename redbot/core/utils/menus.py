@@ -34,7 +34,7 @@ _active_menus: Dict[int, SimpleMenu] = {}
 class _GenericButton(discord.ui.Button):
     def __init__(self, emoji: Union[str, discord.PartialEmoji], func):
         super().__init__(
-            emoji=discord.PartialEmoji.from_str(emoji), style=discord.ButtonStyle.grey
+            emoji=discord.PartialEmoji.from_str(str(emoji)), style=discord.ButtonStyle.grey
         )
         self.func = func
 
