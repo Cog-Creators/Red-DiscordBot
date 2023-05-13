@@ -890,8 +890,7 @@ class KickBanMixin(MixinMeta):
 
         Requires specifying the target user's ID. To find this, you may either:
         1. Copy it from the mod log case (if one was created), or
-        2. enable developer mode, go to Bans in this server's settings, right-
-          click the user and select 'Copy ID'.
+        2. Enable Developer Mode, go to Bans in this server's settings, right-click the user and select 'Copy ID'.
         """
         guild = ctx.guild
         author = ctx.author
