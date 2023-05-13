@@ -2,7 +2,6 @@ import asyncio
 import re
 import random
 from datetime import datetime, timedelta
-from inspect import Parameter
 from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
 from urllib.parse import quote_plus
 
@@ -10,6 +9,7 @@ import discord
 from rapidfuzz import process
 
 from redbot.core import Config, commands
+from redbot.core.commands import Parameter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus, AsyncIter
 from redbot.core.utils.chat_formatting import box, pagify, escape, humanize_list
