@@ -93,7 +93,8 @@ The user will be shown the ``name`` of the choice, and the argument will be pass
 This allows user-facing names to be prettier than what is actually processed by the command.
 
 Alternatively, ``Literal`` can be used if the argument does not need a different
-user-facing label.
+user-facing label. When done this way, the resulting parameter will be one of
+the literal values listed.
 
 .. code-block:: python
 
