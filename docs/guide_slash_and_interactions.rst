@@ -85,12 +85,12 @@ For example, we can use this to create a command that allows us to choose betwee
              app_commands.Choice(name="Red", value="red"),
              app_commands.Choice(name="Blue", value="blue"),
         ])
-        async def color(self, interaction: discord.Interaction, color: Color):
-            await interaction.response.send_message(f"Your color is {color}", ephemeral=True)
+        async def color(self, interaction: discord.Interaction, color: app_commands.Choice[str]):
+            await interaction.response.send_message(f"Your color is {color.value}", ephemeral=True)
 
-The user will be shown the ``name`` of the choice, and the argument will be passed the
-``value`` associated with that choice. This allows user-facing names to be prettier than
-what is actually processed by the command.
+The user will be shown the ``name`` of the choice, and the argument will be passed a
+``discord.Choice`` object with the ``name`` and ``value`` associated with that choice.
+This allows user-facing names to be prettier than what is actually processed by the command.
 
 Alternatively, ``Literal`` can be used if the argument does not need a different
 user-facing label.
@@ -110,7 +110,7 @@ user-facing label.
             await interaction.response.send_message(f"Your color is {color}", ephemeral=True)
 
 Finally, an ``Enum`` subclass can be used to specify choices. When done this way, the
-resulting parameter will be an instance of that enum, rather than the ``value``.
+resulting parameter will be an instance of that enum, rather than ``discord.Choice``.
 
 .. code-block:: python
 
