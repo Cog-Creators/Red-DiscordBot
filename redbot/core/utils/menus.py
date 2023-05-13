@@ -32,12 +32,8 @@ _active_menus: Dict[int, SimpleMenu] = {}
 
 
 class _GenericButton(discord.ui.Button):
-    def __init__(
-        self, emoji: discord.PartialEmoji, func: _ControlCallable
-    ):
-        super().__init__(
-            emoji=emoji, style=discord.ButtonStyle.grey
-        )
+    def __init__(self, emoji: discord.PartialEmoji, func: _ControlCallable):
+        super().__init__(emoji=emoji, style=discord.ButtonStyle.grey)
         self.func = func
 
     async def callback(self, interaction: discord.Interaction):
