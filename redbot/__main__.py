@@ -17,7 +17,7 @@ import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Awaitable, Callable, NoReturn, Union
+from typing import Any, Awaitable, Callable, NoReturn, Optional, Union
 
 import discord
 import rich
@@ -62,9 +62,9 @@ def list_instances():
         sys.exit(ExitCodes.SHUTDOWN)
 
 
-async def debug_info(*args: Any) -> None:
+async def debug_info(red: Optional[Red] = None, *args: Any) -> None:
     """Shows debug information useful for debugging."""
-    print(await DebugInfo().get_text())
+    print(await DebugInfo(red).get_cli_text())
 
 
 async def edit_instance(red, cli_flags):
