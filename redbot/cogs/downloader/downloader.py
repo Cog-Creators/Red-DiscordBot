@@ -1333,9 +1333,9 @@ class Downloader(commands.Cog):
         )
 
         if len(installed_cogs_in_repo) > 1:
-            installed_str = _("> Installed Cogs\n{text}").format(text=installed_str)
+            installed_str = _("# Installed Cogs\n{text}").format(text=installed_str)
         elif installed_cogs_in_repo:
-            installed_str = _("> Installed Cog\n{text}").format(text=installed_str)
+            installed_str = _("# Installed Cog\n{text}").format(text=installed_str)
 
         available_cogs = [
             cog for cog in repo.available_cogs if not (cog.hidden or cog in installed_cogs_in_repo)
@@ -1346,11 +1346,11 @@ class Downloader(commands.Cog):
         )
 
         if not available_str:
-            cogs = _("# Available Cogs\nNo cogs are available.")
+            cogs = _("> Available Cogs\nNo cogs are available.")
         elif len(available_cogs) > 1:
-            cogs = _("# Available Cogs\n{text}").format(text=available_str)
+            cogs = _("> Available Cogs\n{text}").format(text=available_str)
         else:
-            cogs = _("# Available Cog\n{text}").format(text=available_str)
+            cogs = _("> Available Cog\n{text}").format(text=available_str)
         cogs = cogs + "\n\n" + installed_str
         for page in pagify(cogs, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="markdown"))
