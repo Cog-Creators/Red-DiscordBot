@@ -131,13 +131,14 @@ class DebugInfo:
         )
 
     async def _get_red_vars_section(self) -> DebugInfoSection:
-        if data_manager.instance_name is None:
+        instance_name = data_manager.instance_name()
+        if instance_name is None:
             return DebugInfoSection(
                 "Red variables",
                 f"Metadata file: {data_manager.config_file}",
             )
 
-        parts = [f"Instance name: {data_manager.instance_name}"]
+        parts = [f"Instance name: {instance_name}"]
         if self.bot is not None:
             owners = []
             for uid in self.bot.owner_ids:

@@ -76,7 +76,11 @@ class Cleanup(commands.Cog):
     async def get_messages_for_deletion(
         *,
         channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.DMChannel, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.DMChannel,
+            discord.Thread,
         ],
         number: Optional[int] = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
@@ -132,7 +136,11 @@ class Cleanup(commands.Cog):
         self,
         num: int,
         channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.DMChannel, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.DMChannel,
+            discord.Thread,
         ],
         *,
         subtract_invoking: bool = False,
@@ -153,7 +161,9 @@ class Cleanup(commands.Cog):
 
     @staticmethod
     async def get_message_from_reference(
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
         reference: discord.MessageReference,
     ) -> Optional[discord.Message]:
         message = None

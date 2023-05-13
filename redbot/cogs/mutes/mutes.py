@@ -262,7 +262,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         inside our tasks.
         """
         log.debug("Cleaning unmute tasks")
-        is_debug = log.getEffectiveLevel() <= logging.DEBUG
         for task_id in list(self._unmute_tasks.keys()):
             task = self._unmute_tasks[task_id]
 
@@ -273,9 +272,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if task.done():
                 try:
                     r = task.result()
-                except Exception:
-                    if is_debug:
-                        log.exception("Dead task when trying to unmute")
+                except Exception as exc:
+                    log.error("An unexpected error occurred in the unmute task", exc_info=exc)
                 self._unmute_tasks.pop(task_id, None)
 
     async def _handle_server_unmutes(self):
@@ -403,9 +401,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         log.debug(f"Creating task: {task_name}")
                         if task_name in self._unmute_tasks:
                             continue
-                        self._unmute_tasks[task_name] = asyncio.create_task(
-                            self._auto_channel_unmute_user(guild.get_channel(channel), mute_data)
-                        )
+                        if guild_channel := guild.get_channel(channel):
+                            self._unmute_tasks[task_name] = asyncio.create_task(
+                                self._auto_channel_unmute_user(guild_channel, mute_data)
+                            )
 
         del multiple_mutes
 
@@ -860,7 +859,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def notification_channel_set(
         self,
         ctx: commands.Context,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Set the notification channel for automatic unmute issues.
@@ -1726,7 +1727,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
-        current_mute = self._channel_mutes.get(channel.id)
+        current_mute = self._channel_mutes[channel.id].get(user.id)
 
         # Determine if this is voice mute -> channel mute upgrade
         is_mute_upgrade = (
@@ -1866,7 +1867,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "channel": channel,
                 "reason": _(MUTE_UNMUTE_ISSUES["already_unmuted"]),
             }
-        if not current_mute["voice_mute"] and voice_mute:
+        if not current_mute.get("voice_mute", False) and voice_mute:
             return {
                 "success": False,
                 "channel": channel,

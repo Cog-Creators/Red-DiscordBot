@@ -21,7 +21,9 @@ __all__ = (
 
 async def mass_purge(
     messages: List[discord.Message],
-    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+    channel: Union[
+        discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+    ],
     *,
     reason: Optional[str] = None,
 ):
@@ -39,7 +41,7 @@ async def mass_purge(
     ----------
     messages : `list` of `discord.Message`
         The messages to bulk delete.
-    channel : `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
+    channel : `discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, or `discord.Thread`
         The channel to delete messages from.
     reason : `str`, optional
         The reason for bulk deletion, which will appear in the audit log.

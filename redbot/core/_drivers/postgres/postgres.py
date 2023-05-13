@@ -36,7 +36,6 @@ def encode_identifier_data(
 
 
 class PostgresDriver(BaseDriver):
-
     _pool: Optional["asyncpg.pool.Pool"] = None
 
     @classmethod

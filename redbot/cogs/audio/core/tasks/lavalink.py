@@ -108,7 +108,7 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                     password=password,
                     port=port,
                     timeout=timeout,
-                    resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name}",
+                    resume_key=f"Red-Core-Audio-{self.bot.user.id}-{data_manager.instance_name()}",
                     secured=secured,
                 )
             except lavalink.AbortingNodeConnection:
