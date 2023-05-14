@@ -321,7 +321,7 @@ class RedTree(CommandTree):
             msg = _("This command is on cooldown. Try again {relative_time}.").format(
                 relative_time=relative_time
             )
-            await self._send_from_interaction(interaction, msg, delete_after=error.retry_after)
+            await self._send_from_interaction(interaction, msg)
         elif isinstance(error, CheckFailure):
             await self._send_from_interaction(
                 interaction, _("You are not permitted to use this command.")
