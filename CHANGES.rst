@@ -4,7 +4,7 @@ Redbot 3.5.2 (2023-05-14)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| [TODO]
+| :ghuser:`aikaterna`, :ghuser:`flaree`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`rramboer`, :ghuser:`synrg`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
 
 End-user changelog
 ------------------
