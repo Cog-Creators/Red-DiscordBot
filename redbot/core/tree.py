@@ -251,7 +251,7 @@ class RedTree(CommandTree):
         if interaction.response.is_done():
             if interaction.is_expired():
                 return await interaction.channel.send(*args, **kwargs)
-            kwargs.pop("delete_after")
+            kwargs.pop("delete_after", None)
             return await interaction.followup.send(*args, ephemeral=True, **kwargs)
         return await interaction.response.send_message(*args, ephemeral=True, **kwargs)
 
