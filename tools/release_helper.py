@@ -1,4 +1,9 @@
 #!/usr/bin/env python3.8
+"""Script helping with making releases.
+
+This script mostly aims to help with the changelog-related tasks but it does also guide you
+through the release process steps including running the 'Prepare release' workflow.
+"""
 import enum
 import json
 import os
