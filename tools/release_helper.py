@@ -293,8 +293,8 @@ def set_release_stage(stage: ReleaseStage) -> None:
 
 
 @click.group(invoke_without_command=True)
-@click.option("--continue", flag_value=True, default=None)
-@click.option("--abort", flag_value=False, default=None)
+@click.option("--continue", "abort", flag_value=False, default=None)
+@click.option("--abort", "abort", flag_value=True, default=None)
 def cli(*, abort: bool = None):
     """Red's release helper, guiding you through the whole process!"""
     stage = get_release_stage()
@@ -347,12 +347,14 @@ def cli(*, abort: bool = None):
             )
         )
         set_base_branch(git_verify_branch(release_type))
+        set_release_type(release_type)
         version = get_version_to_release()
         if not click.confirm(f"The version you want to release is {version}, is that correct?"):
             raise click.ClickException(
                 "Please check out the branch that you want to release from"
                 " and start this program again."
             )
+        set_version(version)
         set_release_stage(ReleaseStage.RELEASE_INFO_SET)
     else:
         release_type = get_release_type()
