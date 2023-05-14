@@ -21,6 +21,7 @@ Fixes
 *****
 
 - Fixed visual issues with numbered and unnumbered lists caused by Discord's new Markdown support (:issue:`6101`)
+- **Core** - Fixed handling of cooldown errors for application commands (:issue:`6159`)
 - **Core - Bot Commands** - Added missing backtick to the help of ``[p]set serverprefix`` (:issue:`6004`)
 - **Core - Command-line Interfaces** - Fixed ``redbot --debuginfo`` trying to start/starting the bot (:issue:`6131`)
 - **Cogs - Audio** - Fixed Audio's managed node trying to allocate 4 GB of memory on 32-bit platforms regardless of how much is actually available (:issue:`6137`, :issue:`6150`)
