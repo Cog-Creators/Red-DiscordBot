@@ -251,6 +251,7 @@ class RedTree(CommandTree):
         if interaction.response.is_done():
             if interaction.is_expired():
                 return await interaction.channel.send(*args, **kwargs)
+            kwargs.pop("delete_after")
             return await interaction.followup.send(*args, ephemeral=True, **kwargs)
         return await interaction.response.send_message(*args, ephemeral=True, **kwargs)
 
@@ -321,7 +322,7 @@ class RedTree(CommandTree):
             msg = _("This command is on cooldown. Try again {relative_time}.").format(
                 relative_time=relative_time
             )
-            await self._send_from_interaction(interaction, msg)
+            await self._send_from_interaction(interaction, msg, delete_after=error.retry_after)
         elif isinstance(error, CheckFailure):
             await self._send_from_interaction(
                 interaction, _("You are not permitted to use this command.")
