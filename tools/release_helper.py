@@ -6,9 +6,10 @@ import pydoc
 import re
 import shlex
 import subprocess
+import time
 import webbrowser
 from collections import defaultdict
-from typing import List
+from typing import Dict, List, Optional
 
 import click
 import requests
@@ -412,7 +413,7 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
     commands = [
         ("git", "add", "."),
         ("git", "commit", "-m", f"Red {version} - Changelog"),
-        ("git", "push", GH_URL, f"{changelog_branch}:{changelog_branch}"),
+        ("git", "push", "-u", GH_URL, f"{changelog_branch}:{changelog_branch}"),
     ]
     print(
         "Do you want to commit everything from repo's working tree and push it?"
@@ -505,25 +506,13 @@ def run_prepare_release_workflow(release_type: ReleaseType, version: str) -> Non
         "--branch",
         base_branch,
     )
-    previous_run = json.loads(subprocess.check_output(command, text=True))[0]["number"]
+    previous_run = json.loads(subprocess.check_output(run_list_command, text=True))[0]["number"]
     subprocess.check_call(("gh", "workflow", "run", "prepare_release.yml", "--ref", base_branch))
     rich.print("Waiting for GitHub Actions workflow to show...")
     time.sleep(2)
     while True:
         data = json.loads(
-            subprocess.check_output(
-                (
-                    "gh",
-                    "run",
-                    "list",
-                    "--limit=1",
-                    "--json=conclusion,databaseId,status",
-                    "--workflow=prepare_release.yml",
-                    "--branch",
-                    base_branch,
-                ),
-                text=True,
-            )
+            subprocess.check_output(run_list_command, text=True)
         )[0]
         if data["number"] > previous_run:
             run_id = data["databaseId"]
@@ -576,7 +565,7 @@ def create_short_lived_branch(release_type: ReleaseType, version: str) -> None:
             "- Push the branch to upstream repository (Cog-Creators/Red-DiscordBot)\n"
             "  This can be done with the command:\n"
             "  ```\n"
-            f"  git push {GH_URL} V3/release/{version}\n"
+            f"  git push -u {GH_URL} V3/release/{version}\n"
             "  ```"
         )
     )
