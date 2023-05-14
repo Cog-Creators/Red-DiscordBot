@@ -511,9 +511,7 @@ def run_prepare_release_workflow(release_type: ReleaseType, version: str) -> Non
     rich.print("Waiting for GitHub Actions workflow to show...")
     time.sleep(2)
     while True:
-        data = json.loads(
-            subprocess.check_output(run_list_command, text=True)
-        )[0]
+        data = json.loads(subprocess.check_output(run_list_command, text=True))[0]
         if data["number"] > previous_run:
             run_id = data["databaseId"]
             break
