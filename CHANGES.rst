@@ -54,7 +54,7 @@ Fixes
 *****
 
 - Fixed command choices example in `Slash Commands and Interactions guide <guide_slash_and_interactions>` (:issue:`6154`)
-- Updated `the 3.5.0 changelog <redbot-3-5-0-2023-05-04>`, `incompatible-changes-3.5`, and `end-user-guarantees` to mention the new ``x86-64-v2`` instruction set requirement (:issue:`6141`, :issue:`6147`)
+- Updated `the 3.5.0 changelog <redbot-3-5-0-2023-05-04>`, `incompatible-changes-3.5`, and `end-user-guarantees` documents to mention the new ``x86-64-v2`` instruction set requirement (:issue:`6141`, :issue:`6147`)
 
 
 ----
@@ -86,6 +86,8 @@ Fixes
 - Fix the instructions for updating Red (:issue:`6123`)
 
 ----
+
+.. _redbot-3-5-0-2023-05-04:
 
 Redbot 3.5.0 (2023-05-04)
 =========================
