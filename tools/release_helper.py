@@ -20,6 +20,7 @@ import click
 import requests
 import rich
 from rich.markdown import Markdown
+from typing_extensions import Self
 
 
 class ReleaseType(enum.Enum):
@@ -32,7 +33,7 @@ class ReleaseType(enum.Enum):
         return f"{self.name.lower()} release"
 
     @classmethod
-    def from_str(cls, name: str) -> ReleaseType:
+    def from_str(cls, name: str) -> Self:
         return cls[name]
 
 
@@ -52,7 +53,7 @@ class ReleaseStage(enum.IntEnum):
     SHORT_LIVED_BRANCH_CREATED = enum.auto()
 
     @classmethod
-    def from_str(cls, name: str) -> ReleaseStage:
+    def from_str(cls, name: str) -> Self:
         return cls[name]
 
 
