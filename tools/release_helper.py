@@ -284,6 +284,15 @@ def set_version(version: str) -> None:
     set_git_config_value("release-version", version)
 
 
+def get_previous_workflow_run_number() -> int:
+    previous_workflow_run_number = int(get_git_config_value("previous-workflow-run-number"))
+    return previous_workflow_run_number
+
+
+def set_previous_workflow_run_number(run_number: int) -> None:
+    set_git_config_value("previous-workflow-run-number", str(run_number))
+
+
 def get_release_stage() -> ReleaseStage:
     return ReleaseStage.from_str(get_git_config_value("release-stage") or "WELCOME")
 
@@ -640,6 +649,16 @@ def run_prepare_release_workflow(release_type: ReleaseType, version: str) -> Non
         rich.print(":white_check_mark: Already done!")
 
     base_branch = get_base_branch()
+    run_list_command = (
+        "gh",
+        "run",
+        "list",
+        "--limit=1",
+        "--json=databaseId,number",
+        "--workflow=prepare_release.yml",
+        "--branch",
+        base_branch,
+    )
     if get_release_stage() < ReleaseStage.PREPARE_RELEASE_SPAWNED:
         rich.print(
             Markdown(
@@ -663,25 +682,16 @@ def run_prepare_release_workflow(release_type: ReleaseType, version: str) -> Non
                 "Run this command again once you're ready to run this workflow."
             )
 
-        run_list_command = (
-            "gh",
-            "run",
-            "list",
-            "--limit=1",
-            "--json=databaseId,number",
-            "--workflow=prepare_release.yml",
-            "--branch",
-            base_branch,
+        set_previous_workflow_run_number(
+            json.loads(subprocess.check_output(run_list_command, text=True))[0]["number"]
         )
-        previous_run = json.loads(subprocess.check_output(run_list_command, text=True))[0][
-            "number"
-        ]
         subprocess.check_call(
             ("gh", "workflow", "run", "prepare_release.yml", "--ref", base_branch)
         )
         set_release_stage(ReleaseStage.PREPARE_RELEASE_SPAWNED)
     if get_release_stage() < ReleaseStage.PREPARE_RELEASE_RAN:
-        rich.print("Waiting for GitHub Actions workflow to show...")
+        previous_run = get_previous_workflow_run_number()
+        print_markdown("Waiting for GitHub Actions workflow to show...")
         time.sleep(2)
         while True:
             data = json.loads(subprocess.check_output(run_list_command, text=True))[0]
@@ -690,7 +700,7 @@ def run_prepare_release_workflow(release_type: ReleaseType, version: str) -> Non
                 break
             time.sleep(5)
 
-        subprocess.check_call(("gh", "run", "watch", run_id))
+        subprocess.check_call(("gh", "run", "watch", str(run_id)))
         rich.print("The automated pull requests have been created.\n")
         set_release_stage(ReleaseStage.PREPARE_RELEASE_RAN)
     rich.print(Markdown("# Step 6: Merge the automatically created PRs"))
