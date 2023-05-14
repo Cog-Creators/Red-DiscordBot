@@ -248,7 +248,7 @@ intersphinx_mapping = {
 # This allows to create links to d.py docs with
 # :dpy_docs:`link text <site_name.html>`
 extlinks = {
-    "dpy_docs": (f"{dpy_docs_url}/%s", None),
+    "dpy_docs": (f"{dpy_docs_url}%s", None),
     "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#%s"),
     "ghuser": ("https://github.com/%s", "@%s"),
 }
