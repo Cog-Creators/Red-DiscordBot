@@ -1,5 +1,65 @@
 .. Red changelogs
 
+Redbot 3.5.2 (2023-05-14)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`flaree`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`rramboer`, :ghuser:`synrg`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core** - Added list of global prefixes to ``redbot --debuginfo <instance_name>`` and ``[p]debuginfo`` (:issue:`6153`)
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6155`)
+- **Cogs - Downloader** - Updated the code block style in ``[p]repo list`` and ``[p]cog list`` to account for Discord client changes (:issue:`6003`, :issue:`6152`)
+- **Cogs - Trivia** - Updated the code block style in the scoreboard to account for Discord client changes (:issue:`6152`)
+
+Fixes
+*****
+
+- Fixed visual issues with numbered and unnumbered lists caused by Discord's new Markdown support (:issue:`6101`)
+- **Core** - Fixed handling of cooldown errors for application commands (:issue:`6159`)
+- **Core - Bot Commands** - Added missing backtick to the help of ``[p]set serverprefix`` (:issue:`6004`)
+- **Core - Command-line Interfaces** - Fixed ``redbot --debuginfo`` trying to start/starting the bot (:issue:`6131`)
+- **Cogs - Audio** - Fixed Audio's managed node trying to allocate 4 GB of memory on 32-bit platforms regardless of how much is actually available (:issue:`6137`, :issue:`6150`)
+- **Cogs - Audio** - Fixed song selection in ``[p]search`` always picking the first option when buttons are used (:issue:`6136`, :issue:`6143`)
+- **Cogs - CustomCommands** - Fixed parameter handling (:issue:`6138`, :issue:`6149`)
+- **Cogs - Mutes** - Fixed ``[p]channelmute`` returning "That user is already muted" error when the user is not actually muted (:issue:`6144`)
+- **Cogs - Mutes** - Fixed unexpected error in automatic channel unmuting when the relevant channel is not available (:issue:`6140`, :issue:`6144`)
+- **Cogs - Reports** - Fixed ``[p]report`` command not working in DMs (:issue:`6148`)
+- **Vendored Packages** - Fixed menus breaking in DMs (:issue:`6139`)
+
+
+Developer changelog
+-------------------
+
+Additions
+*********
+
+- **Core - Data Manager** - Added a new `data_manager.instance_name()` public function (:issue:`6146`)
+
+Fixes
+*****
+
+- **Core - Utils Package** - Fixed ``menu()`` passing an instance of `discord.PartialEmoji` instead of `str` when a button with a unicode emoji is used (:issue:`6143`)
+- **Cogs - Dev** - Fixed issues with exception formatting in ``[p]eval/repl/debug`` commands failing when code from a previous invocation of any of those commands was used (:issue:`6135`)
+
+
+Documentation changes
+---------------------
+
+Fixes
+*****
+
+- Fixed command choices example in `Slash Commands and Interactions guide <guide_slash_and_interactions>` (:issue:`6154`)
+- Updated `the 3.5.0 changelog <redbot-3-5-0-2023-05-04>`, `incompatible-changes-3.5`, and `end-user-guarantees` documents to mention the new ``x86-64-v2`` instruction set requirement (:issue:`6141`, :issue:`6147`)
+
+
+----
+
 Redbot 3.5.1 (2023-05-04)
 =========================
 
@@ -27,6 +87,8 @@ Fixes
 - Fix the instructions for updating Red (:issue:`6123`)
 
 ----
+
+.. _redbot-3-5-0-2023-05-04:
 
 Redbot 3.5.0 (2023-05-04)
 =========================
