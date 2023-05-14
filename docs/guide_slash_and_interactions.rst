@@ -17,7 +17,7 @@ Getting Started
 ---------------
 
 To start off, we will have to import some additional modules to our cog file.
-We will be using the :class:`redbot.core.app_commands` module to create our slash commands.
+We will be using the ``redbot.core.app_commands`` module to create our slash commands.
 Once we have imported the module, we can start creating our slash commands in our cog class.
 For this example we will use a basic hello world command.
 
@@ -49,7 +49,7 @@ Below we will go over some of the different stuff you can do with slash commands
 Decorators
 ----------
 Just like with text commands, we can use decorators to modify the behaviour of our slash commands.
-For example, we can use the :func:`app_commands.guild_only` decorator to make our slash command only work in guilds.
+For example, we can use the `app_commands.guild_only() <discord.app_commands.guild_only>` decorator to make our slash command only work in guilds.
 
 .. code-block:: python
 
@@ -66,7 +66,7 @@ For example, we can use the :func:`app_commands.guild_only` decorator to make ou
         async def hello(self, interaction: discord.Interaction):
             await interaction.response.send_message("Hello World!", ephemeral=True)
 
-One of the more useful decorators is the :func:`app.commands.choices` decorator.
+One of the more useful decorators is the `app_commands.choices() <discord.app_commands.choices>` decorator.
 This decorator allows us to specify a list of choices for a specific argument.
 This is useful for arguments that have a limited number of options.
 For example, we can use this to create a command that allows us to choose between two different colors.
@@ -89,7 +89,7 @@ For example, we can use this to create a command that allows us to choose betwee
             await interaction.response.send_message(f"Your color is {color.value}", ephemeral=True)
 
 The user will be shown the ``name`` of the choice, and the argument will be passed a
-``discord.Choice`` object with the ``name`` and ``value`` associated with that choice.
+`app_commands.Choice <discord.app_commands.Choice>` object with the ``name`` and ``value`` associated with that choice.
 This allows user-facing names to be prettier than what is actually processed by the command.
 
 Alternatively, ``Literal`` can be used if the argument does not need a different
@@ -110,8 +110,8 @@ the literal values listed.
         async def color(self, interaction: discord.Interaction, color: Literal["Red", "Blue"]):
             await interaction.response.send_message(f"Your color is {color}", ephemeral=True)
 
-Finally, an ``Enum`` subclass can be used to specify choices. When done this way, the
-resulting parameter will be an instance of that enum, rather than ``discord.Choice``.
+Finally, an `enum.Enum` subclass can be used to specify choices. When done this way, the
+resulting parameter will be an instance of that enum, rather than `app_commands.Choice <discord.app_commands.Choice>`.
 
 .. code-block:: python
 
@@ -131,7 +131,7 @@ resulting parameter will be an instance of that enum, rather than ``discord.Choi
         async def color(self, interaction: discord.Interaction, color: Color):
             await interaction.response.send_message(f"Your color is {color.value}", ephemeral=True)
 
-Check out the full reference of decorators on Discord.py's documentation `here <https://discordpy.readthedocs.io/en/stable/interactions/api.html#decorators>`__.
+Check out :dpy_docs:`the full reference of decorators at Discord.py's documentation <interactions/api.html#decorators>`.
 
 
 Groups & Subcommands
