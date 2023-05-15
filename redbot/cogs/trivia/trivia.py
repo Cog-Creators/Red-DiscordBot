@@ -10,7 +10,7 @@ import io
 import yaml
 import discord
 
-from redbot.core import Config, commands, checks, bank
+from redbot.core import Config, commands, bank
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -77,7 +77,7 @@ class Trivia(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(administrator=True)
+    @commands.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
         """Manage Trivia settings."""
 
@@ -194,7 +194,7 @@ class Trivia(commands.Cog):
             await ctx.send(_("Alright, I won't reveal the answer to the questions anymore."))
 
     @bank.is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     @triviaset.command(name="payout")
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: finite_float):
         """Set the payout multiplier.
@@ -705,7 +705,10 @@ class Trivia(commands.Cog):
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(
-        self, channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+        self,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
     ) -> TriviaSession:
         return next(
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None

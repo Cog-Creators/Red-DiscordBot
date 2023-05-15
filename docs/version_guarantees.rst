@@ -38,7 +38,8 @@ their end-of-life date.
     The meaning of architecture names:
 
     - **x86-64** (also known as amd64) refers to computers running a 64-bit version of the operating system
-      on standard Intel and AMD 64-bit processors.
+      on standard Intel and AMD 64-bit processors supporting x86-64-v2 instruction set
+      (post-2008 Intel processors and post-2011 AMD processors).
     - **aarch64** (also known as arm64) refers to computers running an ARM 64-bit version of the operating system
       on 64-bit ARM processors (ARMv8-A and ARMv9-A) such as Apple M1 devices or Raspberry Pi computers
       (Raspberry Pi 3B and above, excluding Pi Zero (W/WH) model).
@@ -60,15 +61,15 @@ Arch Linux                         x86-64                    forever (support is
 CentOS 7                           x86-64, aarch64           2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 8                    x86-64, aarch64           2024-05-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 9                    x86-64, aarch64           2027-05-31 (`expected EOL <https://centos.org/stream9/#timeline>`__)
-Debian 10 Buster                   x86-64, aarch64, armv7l   2022-08-14 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Fedora Linux 36                    x86-64, aarch64           2023-05-16 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 37                    x86-64, aarch64           2023-11-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
+Fedora Linux 38                    x86-64, aarch64           2024-05-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 openSUSE Leap 15.4                 x86-64, aarch64           2023-11-30 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
 openSUSE Tumbleweed                x86-64, aarch64           forever (support is only provided for an up-to-date system)
 Oracle Linux 8                     x86-64, aarch64           2029-07-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
 Oracle Linux 9                     x86-64, aarch64           2032-06-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
-Raspberry Pi OS (Legacy) 10        armv7l                    2022-08-14 (`End of life for Debian 10 <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
+Raspberry Pi OS (Legacy) 10        armv7l                    ~2023-12 (approximate date of release of Raspberry Pi OS 12)
 Raspberry Pi OS 11                 aarch64, armv7l           ~2023-12 (approximate date of release of Raspberry Pi OS 12)
 RHEL 8 (latest)                    x86-64, aarch64           2029-05-31 (`End of Maintenance Support <https://access.redhat.com/support/policy/updates/errata#Life_Cycle_Dates>`__)
 RHEL 8.4                           x86-64, aarch64           2023-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
@@ -81,14 +82,26 @@ Ubuntu 18.04 LTS                   x86-64, aarch64           2023-04-30 (`End of
 Ubuntu 20.04 LTS                   x86-64, aarch64           2025-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 22.04 LTS                   x86-64, aarch64           2027-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 22.10                       x86-64, aarch64           2023-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 23.04                       x86-64, aarch64           2024-01-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
+
+.. _developer-guarantees:
 
 ====================
 Developer Guarantees
 ====================
 
-Anything in the ``redbot.core`` module or any of its submodules 
-which is not private (even if not documented) should not break without notice.
+Any name (function, class, attribute) listed in the ``__all__`` attribute of
+the ``redbot`` module (excluding its submodules), ``redbot.core`` package,
+or any of its public submodules (modules that do not start with "_")
+is considered a public API and should not break without notice.
+
+Methods of public classes are considered public if they do not start with "_"
+or are dunder methods (e.g. ``method()`` and ``__getattr__()`` are public but ``_method()`` isn't).
+
+Any other name (function, class, attribute) in the ``redbot`` package is considered private,
+even if it doesn't start with "_".
+Lack of ``__all__`` in the module means that all of its names are considered private APIs.
 
 Anything in the ``redbot.cogs`` and ``redbot.vendored`` modules or any of their submodules is specifically
 excluded from being guaranteed.
@@ -100,8 +113,13 @@ This allows us to add certain optional features non-breakingly without a name co
 
 Any RPC method exposed by Red may break without notice.
 
+Any exclusion from these guarantees should be noted in the documentation of
+the affected attribute, function, class, or method.
+
 If you would like something in here to be guaranteed,
 open an issue making a case for it to be moved.
+
+.. _breaking-change-notices:
 
 =======================
 Breaking Change Notices

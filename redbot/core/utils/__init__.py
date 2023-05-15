@@ -35,11 +35,17 @@ from redbot.core import commands
 
 if TYPE_CHECKING:
     GuildMessageable = Union[
-        commands.GuildContext, discord.TextChannel, discord.VoiceChannel, discord.Thread
+        commands.GuildContext,
+        discord.TextChannel,
+        discord.VoiceChannel,
+        discord.StageChannel,
+        discord.Thread,
     ]
     DMMessageable = Union[commands.DMContext, discord.Member, discord.User, discord.DMChannel]
 
 __all__ = (
+    "async_filter",
+    "async_enumerate",
     "bounded_gather",
     "bounded_gather_iter",
     "deduplicate_iterables",
@@ -55,6 +61,7 @@ log = logging.getLogger("red.core.utils")
 
 _T = TypeVar("_T")
 _S = TypeVar("_S")
+
 
 # Benchmarked to be the fastest method.
 def deduplicate_iterables(*iterables):

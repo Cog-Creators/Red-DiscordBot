@@ -13,16 +13,13 @@ from typing import (
     Union as _Union,
 )
 
-
-MIN_PYTHON_VERSION = (3, 8, 1)
-
-__all__ = [
-    "MIN_PYTHON_VERSION",
+__all__ = (
     "__version__",
     "version_info",
     "VersionInfo",
-    "_update_event_loop_policy",
-]
+)
+
+MIN_PYTHON_VERSION = (3, 8, 1)
 if _sys.version_info < MIN_PYTHON_VERSION:
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "
@@ -342,7 +339,7 @@ def _early_init():
 
 
 # This is bumped automatically by release workflow (`.github/workflows/scripts/bump_version.py`)
-_VERSION = "3.5.0.dev1"
+_VERSION = "3.5.3.dev1"
 
 __version__, version_info = VersionInfo._get_version()
 
@@ -373,4 +370,13 @@ if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
         category=DeprecationWarning,
         module="discord",
         message="'audioop' is deprecated and slated for removal",
+    )
+    # DEP-WARN - will need a fix before Python 3.12 support
+    #
+    # DeprecationWarning: the load_module() method is deprecated and slated for removal in Python 3.12; use exec_module() instead
+    _warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        module="importlib",
+        message=r"the load_module\(\) method is deprecated and slated for removal",
     )

@@ -5,8 +5,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple, Union
 
 import discord
-from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional, RawUserIdConverter
+from redbot.core import commands, i18n, modlog
+from redbot.core.commands import RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
     pagify,
@@ -281,7 +281,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
-    @checks.admin_or_permissions(kick_members=True)
+    @commands.admin_or_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """
         Kick a user.
@@ -359,7 +359,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def ban(
         self,
         ctx: commands.Context,
@@ -397,7 +397,7 @@ class KickBanMixin(MixinMeta):
     @commands.command(aliases=["hackban"], usage="<user_ids...> [days] [reason]")
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def massban(
         self,
         ctx: commands.Context,
@@ -571,7 +571,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def tempban(
         self,
         ctx: commands.Context,
@@ -670,7 +670,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def softban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Kick a user and delete 1 day's worth of their messages."""
         guild = ctx.guild
@@ -797,7 +797,7 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
+    @commands.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(
         self, ctx: commands.Context, member: discord.Member, *, reason: str = None
     ):
@@ -840,7 +840,7 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
+    @commands.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Ban a user from speaking and listening in the server's voice channels."""
         user_voice_state: discord.VoiceState = member.voice
@@ -882,16 +882,16 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def unban(
         self, ctx: commands.Context, user_id: RawUserIdConverter, *, reason: str = None
     ):
         """Unban a user from this server.
 
         Requires specifying the target user's ID. To find this, you may either:
-         1. Copy it from the mod log case (if one was created), or
-         2. enable developer mode, go to Bans in this server's settings, right-
-        click the user and select 'Copy ID'."""
+        1. Copy it from the mod log case (if one was created), or
+        2. Enable Developer Mode, go to Bans in this server's settings, right-click the user and select 'Copy ID'.
+        """
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(ctx.author, reason, shorten=True)
