@@ -467,8 +467,6 @@ class Command(CogCommandMixin, DPYCommand):
         if ctx.guild:
             if self._disabled_in.has(ctx.guild.id):
                 return False
-            if self._disabled_in.has(ctx.channel.id):
-                return False
 
         return True
 
