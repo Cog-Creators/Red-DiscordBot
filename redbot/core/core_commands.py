@@ -3598,13 +3598,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `<service>` - The service you're adding tokens to.
         - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
         """
-        if service is None:  # Handled in order of missing operations
-            await ctx.send(_("Click the button below to set your keys."), view=SetApiView())
-        elif tokens is None:
-            await ctx.send(
-                _("Click the button below to set your keys."),
-                view=SetApiView(default_service=service),
-            )
+        if service is None or tokens is None:
+            view = SetApiView(default_service=service)
+            msg = await ctx.send(_("Click the button below to set your keys."), view=view)
+            await view.wait()
+            view.auth_button.disabled = True
+            await msg.edit(view=view)
         else:
             if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
