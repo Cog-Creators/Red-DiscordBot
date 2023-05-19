@@ -262,8 +262,7 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             colour=await context.embed_colour(),
         )
         msg = await context.send(embed=embed)
-        available_emojis = ReactionPredicate.NUMBER_EMOJIS[1:]
-        available_emojis.append("🔟")
+        available_emojis = ReactionPredicate.NUMBER_EMOJIS[1:] + ("🔟",)
         emojis = available_emojis[: len(correct_scope_matches)]
         emojis.append("\N{CROSS MARK}")
         start_adding_reactions(msg, emojis)
