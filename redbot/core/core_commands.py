@@ -3602,8 +3602,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             view = SetApiView(default_service=service)
             msg = await ctx.send(_("Click the button below to set your keys."), view=view)
             await view.wait()
-            view.auth_button.disabled = True
-            await msg.edit(view=view)
+            await msg.edit(content=_("This API keys setup message has expired."), view=None)
         else:
             if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
