@@ -503,35 +503,33 @@ class Case:
                 # can't use _() inside f-string expressions, see bpo-36310 and red#3818
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
+            # Handle pomelo usernames stored before we updated our implementation
+            elif self.last_known_username.endswith("#0"):
+                user = f"{self.last_known_username[:-2]} ({self.user})"
+            # New usernames can't contain `#` and old usernames couldn't either.
+            elif len(self.last_known_username) <= 5 or self.last_known_username[-5] != "#":
+                user = f"{self.last_known_username} ({self.user})"
+            # Last known user handle is a legacy username with a discriminator
             else:
-                # Handle pomelo usernames stored before we updated our implementation
-                if self.last_known_username.endswith("#0"):
-                    user = f"{self.last_known_username[:-2]} ({self.user})"
-                # New usernames can't contain `#` and old usernames couldn't either.
-                elif len(self.last_known_username) <= 5 or self.last_known_username[-5] != "#":
-                    user = f"{self.last_known_username} ({self.user})"
-                # Last known user handle is a legacy username with a discriminator
-                else:
-                    # isolate the name so that the direction of the discriminator and ID aren't changed
-                    # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
-                    name = self.last_known_username[:-5]
-                    discriminator = self.last_known_username[-4:]
-                    user = (
-                        f"\N{FIRST STRONG ISOLATE}{name}"
-                        f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
-                    )
-        else:
-            if self.user.discriminator == "0":
                 # isolate the name so that the direction of the discriminator and ID aren't changed
                 # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
-                user = escape_spoilers(
-                    filter_invites(
-                        f"\N{FIRST STRONG ISOLATE}{self.user.name}"
-                        f"\N{POP DIRECTIONAL ISOLATE}#{self.user.discriminator} ({self.user.id})"
-                    )
-                )  # Invites and spoilers get rendered even in embeds.
-            else:
-                user = f"{self.user} ({self.user.id})"
+                name = self.last_known_username[:-5]
+                discriminator = self.last_known_username[-4:]
+                user = (
+                    f"\N{FIRST STRONG ISOLATE}{name}"
+                    f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
+                )
+        elif self.user.discriminator == "0":
+            user = f"{self.user} ({self.user.id})"
+        else:
+            # isolate the name so that the direction of the discriminator and ID aren't changed
+            # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
+            user = escape_spoilers(
+                filter_invites(
+                    f"\N{FIRST STRONG ISOLATE}{self.user.name}"
+                    f"\N{POP DIRECTIONAL ISOLATE}#{self.user.discriminator} ({self.user.id})"
+                )
+            )  # Invites and spoilers get rendered even in embeds.
 
         channel_value = None
         if isinstance(self.channel, int):
