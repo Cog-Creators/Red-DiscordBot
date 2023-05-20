@@ -306,7 +306,7 @@ class Case:
         (note: it might not exist regardless of whether this attribute is `None`)
         or if it has never been created.
     last_known_username: Optional[str]
-        The last known user handle (``@username`` / ``username#1234``) of the user.
+        The last known user handle (``username`` / ``username#1234``) of the user.
         `None` if the handle of the user was never saved
         or if their data had to be anonymized.
     """
@@ -504,9 +504,11 @@ class Case:
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
             else:
-                # When we tried changing the *old* username to start with '@', it errored out
-                # saying that a username can't contain '@' so let's hope that was always the case?
-                if self.last_known_username[0] == "@":
+                # Handle pomelo usernames stored before we updated our implementation
+                if self.last_known_username.endswith("#0"):
+                    user = f"{self.last_known_username[:-2]} ({self.user})"
+                # New usernames can't contain `#` and old usernames couldn't either.
+                elif len(self.last_known_username) <= 5 or self.last_known_username[-5] != "#":
                     user = f"{self.last_known_username} ({self.user})"
                 # Last known user handle is a legacy username with a discriminator
                 else:
@@ -1029,7 +1031,7 @@ async def create_case(
     channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]]
         The channel the action was taken in
     last_known_username: Optional[str]
-        The last known user handle (``@username`` / ``username#1234``) of the user
+        The last known user handle (``username`` / ``username#1234``) of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
 
