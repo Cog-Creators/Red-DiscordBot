@@ -431,3 +431,54 @@ class SetApiView(discord.ui.View):
         return await interaction.response.send_modal(
             SetApiModal(self.default_service, self.default_keys)
         )
+
+
+class ConfirmView(discord.ui.View):
+    """
+    A simple ``discord.ui.View`` used for confirming something.
+
+    Parameters
+    ----------
+    author: Optional[discord.abc.User]
+        The user who you want to be interacting with the confirmation. If this is omitted
+        anyone can click yes or no.
+    default: bool
+        The default result value. Defaults to False.
+
+    Attributes
+    ----------
+        result: bool
+            The result of the confirm view.
+
+    Examples
+    --------
+        view = ConfirmView(ctx.author)
+        await ctx.send("Are you sure you about that?", view=view)
+        await view.wait()
+        if view.result:
+            await ctx.send("Okay I will do that.")
+        else:
+            await ctx.send("I will not be doing that then.")
+    """
+
+    def __init__(self, author: Optional[discord.abc.User] = None, default: bool = False):
+        super().__init__()
+        self.result = default
+        self.author: Optional[discord.abc.User] = author
+
+    @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
+    async def yes_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.result = True
+        self.stop()
+        await interaction.response.edit_message(view=None)
+
+    @discord.ui.button(label=_("No"), style=discord.ButtonStyle.red)
+    async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.result = False
+        self.stop()
+        await interaction.response.edit_message(view=None)
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if self.author and interaction.user.id != self.author.id:
+            return False
+        return True
