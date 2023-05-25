@@ -440,20 +440,17 @@ class ConfirmView(discord.ui.View):
     Parameters
     ----------
     author: Optional[discord.abc.User]
-        The user who you want to be interacting with the confirmation. If this is omitted
-        anyone can click yes or no.
+        The user who you want to be interacting with the confirmation.
+        If this is omitted anyone can click yes or no.
     default: bool
-        The default result value. Defaults to False.
+        The default result value. Defaults to ``False``.
     timeout: float
-        The timeout of the view in seconds. Defaults to 180 seconds.
-
-    Attributes
-    ----------
-        result: bool
-            The result of the confirm view.
+        The timeout of the view in seconds. Defaults to ``180`` seconds.
 
     Examples
     --------
+    Using the view::
+
         view = ConfirmView(ctx.author)
         await ctx.send("Are you sure you about that?", view=view)
         await view.wait()
@@ -461,6 +458,11 @@ class ConfirmView(discord.ui.View):
             await ctx.send("Okay I will do that.")
         else:
             await ctx.send("I will not be doing that then.")
+
+    Attributes
+    ----------
+    result: bool
+        The result of the confirm view.
     """
 
     def __init__(
