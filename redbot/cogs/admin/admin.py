@@ -324,7 +324,7 @@ class Admin(commands.Cog):
         else:
             log.info(reason)
             await ctx.send(_("Done."))
-            
+
     @editrole.command(name="icon")
     async def edit_role_icon(
         self,
@@ -334,22 +334,20 @@ class Admin(commands.Cog):
     ):
         """
         Edit a role's icon.
-        
+
         Use double quotes if the role contains spaces.
-        
+
         Example:
             `[p]editrole icon "The Transistor" <:red:230319279424143360>`
             `[p]editrole icon "The Transistor" https://cdn.discordapp.com/emojis/230319279424143360.webp`
         """
         author = ctx.message.author
-        reason = "{}({}) changed the icon of role '{}'".format(
-            author.name, author.id, role.name
-        )
-        
+        reason = "{}({}) changed the icon of role '{}'".format(author.name, author.id, role.name)
+
         if "ROLE_ICONS" not in ctx.guild.features:
             await ctx.send(_("This server does not have support for the role icons feature."))
             return
-        
+
         if not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(ROLE_USER_HIERARCHY_ISSUE).format(role=role))
             return
@@ -359,7 +357,7 @@ class Admin(commands.Cog):
         if not ctx.guild.me.guild_permissions.manage_roles:
             await ctx.send(_(NEED_MANAGE_ROLES))
             return
-        
+
         if ctx.message.attachments:
             image = await ctx.message.attachments[0].read()
         elif isinstance(icon, discord.Emoji):
@@ -375,11 +373,9 @@ class Admin(commands.Cog):
                 await ctx.send(_("Invalid url provided: {}").format(error.message))
                 return
         else:
-            await ctx.send(
-                _(f"Please provide a valid emoji or link for the role icon.")
-            )
+            await ctx.send(_(f"Please provide a valid emoji or link for the role icon."))
             return
-        
+
         try:
             await role.edit(reason=reason, display_icon=image)
         except discord.Forbidden:
