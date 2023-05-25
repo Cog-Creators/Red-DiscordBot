@@ -444,6 +444,8 @@ class ConfirmView(discord.ui.View):
         anyone can click yes or no.
     default: bool
         The default result value. Defaults to False.
+    timeout: float
+        The timeout of the view in seconds. Defaults to 180 seconds.
 
     Attributes
     ----------
@@ -461,8 +463,16 @@ class ConfirmView(discord.ui.View):
             await ctx.send("I will not be doing that then.")
     """
 
-    def __init__(self, author: Optional[discord.abc.User] = None, default: bool = False):
-        super().__init__()
+    def __init__(
+        self,
+        author: Optional[discord.abc.User] = None,
+        default: bool = False,
+        *,
+        timeout: float = 180.0,
+    ):
+        if timeout is None:
+            raise TypeError("This view should not be used as a persistent view.")
+        super().__init__(timeout=timeout)
         self.result = default
         self.author: Optional[discord.abc.User] = author
 
