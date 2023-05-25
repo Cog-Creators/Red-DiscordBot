@@ -11,7 +11,7 @@ from redbot.core.commands.converter import get_dict_converter
 if TYPE_CHECKING:
     from redbot.core.commands import Context
 
-__all__ = ("SimpleMenu", "SetApiModal", "SetApiView")
+__all__ = ("ConfirmView", "SimpleMenu", "SetApiModal", "SetApiView")
 
 _ = Translator("UtilsViews", __file__)
 
