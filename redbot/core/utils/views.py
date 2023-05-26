@@ -461,6 +461,7 @@ class ConfirmView(discord.ui.View):
                 # remove the buttons if they're not pressed.
 
     Disabling if the buttons are not pressed::
+
         view = ConfirmView(ctx.author)
         msg = await ctx.send("Are you sure you about that?", view=view)
         await view.wait()
