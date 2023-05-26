@@ -442,8 +442,6 @@ class ConfirmView(discord.ui.View):
     author: Optional[discord.abc.User]
         The user who you want to be interacting with the confirmation.
         If this is omitted anyone can click yes or no.
-    default: bool
-        The default result value. Defaults to ``False``.
     timeout: float
         The timeout of the view in seconds. Defaults to ``180`` seconds.
 
@@ -452,30 +450,45 @@ class ConfirmView(discord.ui.View):
     Using the view::
 
         view = ConfirmView(ctx.author)
-        await ctx.send("Are you sure you about that?", view=view)
+        msg = await ctx.send("Are you sure you about that?", view=view)
         await view.wait()
         if view.result:
             await ctx.send("Okay I will do that.")
         else:
             await ctx.send("I will not be doing that then.")
+            if view.result is None:
+                await msg.edit(view=None)
+                # remove the buttons if they're not pressed.
+
+    Disabling if the buttons are not pressed::
+        view = ConfirmView(ctx.author)
+        msg = await ctx.send("Are you sure you about that?", view=view)
+        await view.wait()
+        if view.result:
+            await ctx.send("Okay I will do that.")
+        else:
+            await ctx.send("I will not be doing that then.")
+            if view.result is None:
+                view.yes_button.disabled = True
+                view.no_button.disabled = True
+                await msg.edit(view=view)
 
     Attributes
     ----------
-    result: bool
+    result: Optional[bool]
         The result of the confirm view.
     """
 
     def __init__(
         self,
         author: Optional[discord.abc.User] = None,
-        default: bool = False,
         *,
         timeout: float = 180.0,
     ):
         if timeout is None:
             raise TypeError("This view should not be used as a persistent view.")
         super().__init__(timeout=timeout)
-        self.result = default
+        self.result: Optional[bool] = None
         self.author: Optional[discord.abc.User] = author
 
     @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
