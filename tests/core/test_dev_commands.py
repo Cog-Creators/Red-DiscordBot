@@ -330,7 +330,7 @@ STATEMENT_TESTS = {
             """,
         ),
     ),
-    # exception chaining - direct cause
+    # exception chaining
     """\
     try:
         1 / 0
