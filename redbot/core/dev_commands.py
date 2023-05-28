@@ -337,8 +337,12 @@ class DevOutput:
                         pass
                     else:
                         exc.lineno -= line_offset
+                        if sys.version_info >= (3, 10) and exc.end_lineno is not None:
+                            exc.end_lineno -= line_offset
                 else:
                     exc.lineno -= line_offset
+                    if sys.version_info >= (3, 10) and exc.end_lineno is not None:
+                        exc.end_lineno -= line_offset
 
         traceback_exc = traceback.TracebackException(exc_type, exc, tb)
         py311_or_above = sys.version_info >= (3, 11)
