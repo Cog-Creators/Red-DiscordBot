@@ -7,7 +7,6 @@ from typing import Dict, List, Literal, Optional, Tuple, Union, cast
 
 import discord
 
-from redbot.core import Config, checks, commands, i18n, modlog
 from redbot.core.bot import Red
 from redbot.core import commands, i18n, modlog, Config
 from redbot.core.utils import AsyncIter, bounded_gather, can_user_react_in
@@ -20,7 +19,6 @@ from redbot.core.utils.chat_formatting import (
 )
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from .converters import MuteTime
@@ -1422,8 +1420,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
         if issue_list:
             msg = _("The following users could not be muted\n")
-            for user, issue in issue_list:
-                msg += f"{user}: {issue}\n"
+            for issue in issue_list:
+                msg += f"{issue.user}: {issue.reason}\n"
             await ctx.send_interactive(pagify(msg))
 
     @commands.command(usage="<users...> [reason]")
@@ -1549,7 +1547,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         user, author, guild, _("Channel unmute"), reason
                     )
                 else:
-                    issue_list.append((user, response.reason))
+                    issue_list.append(response)
         if success_list:
             if channel.id in self._channel_mutes and self._channel_mutes[channel.id]:
                 await self.config.channel(channel).muted_users.set(self._channel_mutes[channel.id])
@@ -1562,8 +1560,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
         if issue_list:
             msg = _("The following users could not be unmuted\n")
-            for user, issue in issue_list:
-                msg += f"{user}: {issue}\n"
+            for issue in issue_list:
+                msg += f"{issue.user}: {issue.reason}\n"
             await ctx.send_interactive(pagify(msg))
 
     async def mute_user(
@@ -1734,11 +1732,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         # Determine if this is voice mute -> channel mute upgrade
         is_mute_upgrade = (
-            current_mute is not None and not voice_mute and current_mute.get("voice_mute", False)
+            current_mute != {} and not voice_mute and current_mute.get("voice_mute", False)
         )
         # We want to continue if this is a new mute or a mute upgrade,
         # otherwise we should return with failure.
-        if current_mute is not None and not is_mute_upgrade:
+        if current_mute != {} and not is_mute_upgrade:
             ret.reason = _(MUTE_UNMUTE_ISSUES["already_muted"])
             return ret
         new_overs: Dict[str, Optional[bool]] = {"speak": False}
