@@ -1732,11 +1732,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         # Determine if this is voice mute -> channel mute upgrade
         is_mute_upgrade = (
-            current_mute != {} and not voice_mute and current_mute.get("voice_mute", False)
+            current_mute is not None and not voice_mute and current_mute.get("voice_mute", False)
         )
         # We want to continue if this is a new mute or a mute upgrade,
         # otherwise we should return with failure.
-        if current_mute != {} and not is_mute_upgrade:
+        if current_mute is not None and not is_mute_upgrade:
             ret.reason = _(MUTE_UNMUTE_ISSUES["already_muted"])
             return ret
         new_overs: Dict[str, Optional[bool]] = {"speak": False}
