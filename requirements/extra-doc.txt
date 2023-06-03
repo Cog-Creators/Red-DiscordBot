@@ -1,6 +1,6 @@
 alabaster==0.7.13
     # via sphinx
-certifi==2022.12.7
+certifi==2023.5.7
     # via requests
 docutils==0.18.1
     # via
@@ -13,7 +13,7 @@ jinja2==3.1.2
     # via sphinx
 markupsafe==2.1.2
     # via jinja2
-requests==2.29.0
+requests==2.30.0
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
@@ -44,5 +44,5 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 sphinxcontrib-trio==1.1.2
     # via -r extra-doc.in
-urllib3==1.26.15
+urllib3==2.0.2
     # via requests

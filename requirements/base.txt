@@ -50,11 +50,11 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-orjson==3.8.11
+orjson==3.8.12
     # via -r base.in
 packaging==23.1
     # via -r base.in
-platformdirs==3.5.0
+platformdirs==3.5.1
     # via -r base.in
 psutil==5.9.5
     # via -r base.in

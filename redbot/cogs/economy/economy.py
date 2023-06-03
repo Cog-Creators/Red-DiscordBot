@@ -185,8 +185,8 @@ class Economy(commands.Cog):
         """Show the user's account balance.
 
         Example:
-            - `[p]bank balance`
-            - `[p]bank balance @Twentysix`
+        - `[p]bank balance`
+        - `[p]bank balance @Twentysix`
 
         **Arguments**
 
@@ -211,7 +211,7 @@ class Economy(commands.Cog):
         This will come out of your balance, so make sure you have enough.
 
         Example:
-            - `[p]bank transfer @Twentysix 500`
+        - `[p]bank transfer @Twentysix 500`
 
         **Arguments**
 
@@ -244,9 +244,9 @@ class Economy(commands.Cog):
         Putting + or - signs before the amount will add/remove currency on the user's bank account instead.
 
         Examples:
-            - `[p]bank set @Twentysix 26` - Sets balance to 26
-            - `[p]bank set @Twentysix +2` - Increases balance by 2
-            - `[p]bank set @Twentysix -6` - Decreases balance by 6
+        - `[p]bank set @Twentysix 26` - Sets balance to 26
+        - `[p]bank set @Twentysix +2` - Increases balance by 2
+        - `[p]bank set @Twentysix -6` - Decreases balance by 6
 
         **Arguments**
 
@@ -412,9 +412,9 @@ class Economy(commands.Cog):
         Defaults to top 10.
 
         Examples:
-            - `[p]leaderboard`
-            - `[p]leaderboard 50` - Shows the top 50 instead of top 10.
-            - `[p]leaderboard 100 yes` - Shows the top 100 from all servers.
+        - `[p]leaderboard`
+        - `[p]leaderboard 50` - Shows the top 50 instead of top 10.
+        - `[p]leaderboard 100 yes` - Shows the top 100 from all servers.
 
         **Arguments**
 
@@ -535,7 +535,7 @@ class Economy(commands.Cog):
         """Use the slot machine.
 
         Example:
-            - `[p]slot 50`
+        - `[p]slot 50`
 
         **Arguments**
 
@@ -700,7 +700,7 @@ class Economy(commands.Cog):
         """Set the minimum slot machine bid.
 
         Example:
-            - `[p]economyset slotmin 10`
+        - `[p]economyset slotmin 10`
 
         **Arguments**
 
@@ -735,7 +735,7 @@ class Economy(commands.Cog):
         """Set the maximum slot machine bid.
 
         Example:
-            - `[p]economyset slotmax 50`
+        - `[p]economyset slotmax 50`
 
         **Arguments**
 
@@ -772,8 +772,8 @@ class Economy(commands.Cog):
         """Set the cooldown for the slot machine.
 
         Examples:
-            - `[p]economyset slottime 10`
-            - `[p]economyset slottime 10m`
+        - `[p]economyset slottime 10`
+        - `[p]economyset slottime 10m`
 
         **Arguments**
 
@@ -795,8 +795,8 @@ class Economy(commands.Cog):
         """Set the cooldown for the payday command.
 
         Examples:
-            - `[p]economyset paydaytime 86400`
-            - `[p]economyset paydaytime 1d`
+        - `[p]economyset paydaytime 86400`
+        - `[p]economyset paydaytime 1d`
 
         **Arguments**
 
@@ -820,7 +820,7 @@ class Economy(commands.Cog):
         """Set the amount earned each payday.
 
         Example:
-            - `[p]economyset paydayamount 400`
+        - `[p]economyset paydayamount 400`
 
         **Arguments**
 
@@ -854,7 +854,7 @@ class Economy(commands.Cog):
         Only available when not using a global bank.
 
         Example:
-            - `[p]economyset rolepaydayamount @Members 400`
+        - `[p]economyset rolepaydayamount @Members 400`
 
         **Arguments**
 
