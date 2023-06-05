@@ -196,7 +196,7 @@ Other Details
 - QA reserves the right to revoke these roles and all privileges if you are found to be in gross negligence, malicious intent, or reckless abandonment of your repository.
 - Cogs must be functionally working to the quality of an approved cog on the latest minor version of Red to be listed on the Red Index. Cogs that are not updated within 1 month of initial breakage will be delisted from the index until they are updated. Examples of potential breakage include, but are not limited to:
 
-  - A dependency with an unlocked version receiving a breaking update
+  - A dependency without version constraints receiving a breaking update
   - An API changing the schema of its endpoints
   - Red itself releasing a new minor version
 
