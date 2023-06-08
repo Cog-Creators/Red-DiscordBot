@@ -76,7 +76,11 @@ class Cleanup(commands.Cog):
     async def get_messages_for_deletion(
         *,
         channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.DMChannel, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.DMChannel,
+            discord.Thread,
         ],
         number: Optional[int] = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
@@ -132,7 +136,11 @@ class Cleanup(commands.Cog):
         self,
         num: int,
         channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.DMChannel, discord.Thread
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.DMChannel,
+            discord.Thread,
         ],
         *,
         subtract_invoking: bool = False,
@@ -153,7 +161,9 @@ class Cleanup(commands.Cog):
 
     @staticmethod
     async def get_message_from_reference(
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
         reference: discord.MessageReference,
     ) -> Optional[discord.Message]:
         message = None
@@ -184,7 +194,7 @@ class Cleanup(commands.Cog):
         """Delete the last X messages matching the specified text in the current channel.
 
         Example:
-            - `[p]cleanup text "test" 5`
+        - `[p]cleanup text "test" 5`
 
         Remember to use double quotes.
 
@@ -244,8 +254,8 @@ class Cleanup(commands.Cog):
         """Delete the last X messages from a specified user in the current channel.
 
         Examples:
-            - `[p]cleanup user @Twentysix 2`
-            - `[p]cleanup user Red 6`
+        - `[p]cleanup user @Twentysix 2`
+        - `[p]cleanup user Red 6`
 
         **Arguments:**
 
@@ -426,7 +436,7 @@ class Cleanup(commands.Cog):
         The first message ID should be the older message and the second one the newer.
 
         Example:
-            - `[p]cleanup between 123456789123456789 987654321987654321`
+        - `[p]cleanup between 123456789123456789 987654321987654321`
 
         **Arguments:**
 
@@ -473,7 +483,7 @@ class Cleanup(commands.Cog):
         """Delete the last X messages in the current channel.
 
         Example:
-            - `[p]cleanup messages 26`
+        - `[p]cleanup messages 26`
 
         **Arguments:**
 
@@ -604,9 +614,9 @@ class Cleanup(commands.Cog):
         it is used for pattern matching - only messages containing the given text will be deleted.
 
         Examples:
-            - `[p]cleanup self 6`
-            - `[p]cleanup self 10 Pong`
-            - `[p]cleanup self 7 "" True`
+        - `[p]cleanup self 6`
+        - `[p]cleanup self 10 Pong`
+        - `[p]cleanup self 7 "" True`
 
         **Arguments:**
 

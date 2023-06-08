@@ -473,8 +473,8 @@ class ModSettings(MixinMeta):
         """Delete all stored usernames and nicknames.
 
         Examples:
-            - `[p]modset deletenames` - Did not confirm. Shows the help message.
-            - `[p]modset deletenames yes` - Deletes all stored usernames and nicknames.
+        - `[p]modset deletenames` - Did not confirm. Shows the help message.
+        - `[p]modset deletenames yes` - Deletes all stored usernames and nicknames.
 
         **Arguments**
 

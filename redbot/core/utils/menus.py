@@ -32,10 +32,8 @@ _active_menus: Dict[int, SimpleMenu] = {}
 
 
 class _GenericButton(discord.ui.Button):
-    def __init__(self, emoji: Union[str, discord.PartialEmoji], func):
-        super().__init__(
-            emoji=discord.PartialEmoji.from_str(emoji), style=discord.ButtonStyle.grey
-        )
+    def __init__(self, emoji: discord.PartialEmoji, func: _ControlCallable):
+        super().__init__(emoji=emoji, style=discord.ButtonStyle.grey)
         self.func = func
 
     async def callback(self, interaction: discord.Interaction):
@@ -45,7 +43,11 @@ class _GenericButton(discord.ui.Button):
         message = self.view.message
         page = self.view.current_page
         timeout = self.view.timeout
-        emoji = self.emoji
+        emoji = (
+            str(self.emoji)
+            if self.emoji.is_unicode_emoji()
+            else (ctx.bot.get_emoji(self.emoji.id) or self.emoji)
+        )
         try:
             await self.func(ctx, pages, controls, message, page, timeout, emoji)
         except Exception:
@@ -148,18 +150,19 @@ async def menu(
             has_close = False
             to_add = {}
             for emoji, func in controls.items():
+                part_emoji = discord.PartialEmoji.from_str(str(emoji))
                 if func == next_page:
                     has_next = True
-                    if emoji != view.forward_button.emoji:
-                        view.forward_button.emoji = discord.PartialEmoji.from_str(emoji)
+                    if part_emoji != view.forward_button.emoji:
+                        view.forward_button.emoji = part_emoji
                 elif func == prev_page:
                     has_prev = True
-                    if emoji != view.backward_button.emoji:
-                        view.backward_button.emoji = discord.PartialEmoji.from_str(emoji)
+                    if part_emoji != view.backward_button.emoji:
+                        view.backward_button.emoji = part_emoji
                 elif func == close_menu:
                     has_close = True
                 else:
-                    to_add[emoji] = func
+                    to_add[part_emoji] = func
             if not has_next:
                 view.remove_item(view.forward_button)
             if not has_prev:

@@ -252,12 +252,14 @@
 "Category: Docs - Changelogs":
   - CHANGES.rst
   - docs/changelog.rst
+  - docs/incompatible_changes/**/*
 "Category: Docs - For Developers":
   - docs/framework_events.rst
   - docs/guide_cog_creation.rst
   - docs/guide_cog_creators.rst
   - docs/guide_migration.rst
   - docs/guide_publish_cogs.rst
+  - docs/guide_slash_and_interactions.rst
 "Category: Docs - Install Guides":
   - docs/about_venv.rst
   - docs/autostart_*.rst

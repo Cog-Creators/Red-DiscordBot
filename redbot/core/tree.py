@@ -81,7 +81,7 @@ class RedTree(CommandTree):
                 raise CommandAlreadyRegistered(name, None)
             if key in self._context_menus:
                 if not override:
-                    raise discord.errors.CommandAlreadyRegistered(name, None)
+                    raise CommandAlreadyRegistered(name, None)
                 del self._context_menus[key]
 
             self._disabled_context_menus[key] = command
@@ -97,10 +97,10 @@ class RedTree(CommandTree):
 
         # Handle cases where the command already is in the tree
         if not override and name in self._disabled_global_commands:
-            raise discord.errors.CommandAlreadyRegistered(name, None)
+            raise CommandAlreadyRegistered(name, None)
         if name in self._global_commands:
             if not override:
-                raise discord.errors.CommandAlreadyRegistered(name, None)
+                raise CommandAlreadyRegistered(name, None)
             del self._global_commands[name]
 
         self._disabled_global_commands[name] = root
@@ -251,7 +251,12 @@ class RedTree(CommandTree):
         if interaction.response.is_done():
             if interaction.is_expired():
                 return await interaction.channel.send(*args, **kwargs)
-            return await interaction.followup.send(*args, ephemeral=True, **kwargs)
+            delete_after = kwargs.pop("delete_after", None)
+            kwargs["wait"] = True
+            msg = await interaction.followup.send(*args, ephemeral=True, **kwargs)
+            if delete_after is not None:
+                await msg.delete(delay=delete_after)
+            return msg
         return await interaction.response.send_message(*args, ephemeral=True, **kwargs)
 
     @staticmethod

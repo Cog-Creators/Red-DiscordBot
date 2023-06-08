@@ -838,7 +838,10 @@ class Red(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
+            assert isinstance(
+                channel,
+                (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread),
+            )
             if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
@@ -1292,6 +1295,7 @@ class Red(
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             commands.Context,
             discord.User,
             discord.Member,
@@ -1306,7 +1310,7 @@ class Red(
 
         Arguments
         ---------
-        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
+        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
             The target messageable object to check embed settings for.
 
         Keyword Arguments
@@ -1353,7 +1357,10 @@ class Red(
                 "You cannot pass a GroupChannel, DMChannel, or PartialMessageable to this method."
             )
 
-        if isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+        if isinstance(
+            channel,
+            (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread),
+        ):
             channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
 
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
@@ -2082,7 +2089,9 @@ class Red(
 
     async def get_owner_notification_destinations(
         self,
-    ) -> List[Union[discord.TextChannel, discord.VoiceChannel, discord.User]]:
+    ) -> List[
+        Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.User]
+    ]:
         """
         Gets the users and channels to send to
         """

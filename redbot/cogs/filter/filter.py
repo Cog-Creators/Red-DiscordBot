@@ -95,7 +95,7 @@ class Filter(commands.Cog):
         The default name used is *John Doe*.
 
         Example:
-            - `[p]filterset defaultname Missingno`
+        - `[p]filterset defaultname Missingno`
 
         **Arguments:**
 
@@ -115,8 +115,8 @@ class Filter(commands.Cog):
         Set both to zero to disable autoban.
 
         Examples:
-            - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
-            - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
+        - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
+        - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
 
         **Arguments:**
 
@@ -254,7 +254,9 @@ class Filter(commands.Cog):
     async def filter_channel_add(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
         *words: str,
     ):
         """Add words to the filter.
@@ -262,12 +264,12 @@ class Filter(commands.Cog):
         Use double quotes to add sentences.
 
         Examples:
-            - `[p]filter channel add #channel word1 word2 word3`
-            - `[p]filter channel add #channel "This is a sentence"`
+        - `[p]filter channel add #channel word1 word2 word3`
+        - `[p]filter channel add #channel "This is a sentence"`
 
         **Arguments:**
 
-        - `<channel>` The text, voice, or forum channel to add filtered words to.
+        - `<channel>` The text, voice, stage, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to filter.
         """
         added = await self.add_to_filter(channel, words)
@@ -281,7 +283,9 @@ class Filter(commands.Cog):
     async def filter_channel_remove(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
         *words: str,
     ):
         """Remove words from the filter.
@@ -289,12 +293,12 @@ class Filter(commands.Cog):
         Use double quotes to remove sentences.
 
         Examples:
-            - `[p]filter channel remove #channel word1 word2 word3`
-            - `[p]filter channel remove #channel "This is a sentence"`
+        - `[p]filter channel remove #channel word1 word2 word3`
+        - `[p]filter channel remove #channel "This is a sentence"`
 
         **Arguments:**
 
-        - `<channel>` The text, voice, or forum channel to add filtered words to.
+        - `<channel>` The text, voice, stage, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to no longer filter.
         """
         removed = await self.remove_from_filter(channel, words)
@@ -311,8 +315,8 @@ class Filter(commands.Cog):
         Use double quotes to add sentences.
 
         Examples:
-            - `[p]filter add word1 word2 word3`
-            - `[p]filter add "This is a sentence"`
+        - `[p]filter add word1 word2 word3`
+        - `[p]filter add "This is a sentence"`
 
         **Arguments:**
 
@@ -333,8 +337,8 @@ class Filter(commands.Cog):
         Use double quotes to remove sentences.
 
         Examples:
-            - `[p]filter remove word1 word2 word3`
-            - `[p]filter remove "This is a sentence"`
+        - `[p]filter remove word1 word2 word3`
+        - `[p]filter remove "This is a sentence"`
 
         **Arguments:**
 
@@ -368,7 +372,12 @@ class Filter(commands.Cog):
         self,
         guild: discord.Guild,
         channel: Optional[
-            Union[discord.TextChannel, discord.VoiceChannel, discord.ForumChannel]
+            Union[
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.ForumChannel,
+            ]
         ] = None,
     ) -> None:
         """Invalidate a cached pattern"""
@@ -381,7 +390,11 @@ class Filter(commands.Cog):
     async def add_to_filter(
         self,
         server_or_channel: Union[
-            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.ForumChannel
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.ForumChannel,
         ],
         words: list,
     ) -> bool:
@@ -405,7 +418,11 @@ class Filter(commands.Cog):
     async def remove_from_filter(
         self,
         server_or_channel: Union[
-            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.ForumChannel
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.ForumChannel,
         ],
         words: list,
     ) -> bool:
@@ -430,7 +447,11 @@ class Filter(commands.Cog):
         self,
         text: str,
         server_or_channel: Union[
-            discord.Guild, discord.TextChannel, discord.VoiceChannel, discord.Thread
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.Thread,
         ],
     ) -> Set[str]:
         if isinstance(server_or_channel, discord.Guild):

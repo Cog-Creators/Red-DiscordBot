@@ -21,10 +21,13 @@ Open that document in Notepad, and paste the following text in it:
     CALL "%userprofile%\redenv\Scripts\activate.bat"
     python -O -m redbot <your instance name>
 
-    IF %ERRORLEVEL% NEQ 0 (
-        ECHO Restarting Red...
-        GOTO RED
-    )
+    IF %ERRORLEVEL% == 1 GOTO RESTART_RED
+    IF %ERRORLEVEL% == 26 GOTO RESTART_RED
+    EXIT /B %ERRORLEVEL%
+
+    :RESTART_RED
+    ECHO Restarting Red...
+    GOTO RED
 
 Replace ``<your instance name>`` with the instance name of your bot.
 If you created your VENV at a location other than the recommended one, replace ``%userprofile%\redenv\Scripts\activate.bat`` with the path to your VENV.

@@ -236,6 +236,7 @@ class RawUserIdConverter(dpy_commands.Converter):
 # which is *not* for type checking for the actual implementation
 # and ensure the lies stay correct for how the object should look as a typehint
 
+#: This converts a user provided string into a positive (>=0) integer.
 positive_int = dpy_commands.Range[int, 0, None]
 
 

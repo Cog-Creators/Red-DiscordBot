@@ -705,7 +705,10 @@ class Trivia(commands.Cog):
         await ctx.send(_("Saved Trivia list as {filename}.").format(filename=filename))
 
     def _get_trivia_session(
-        self, channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+        self,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
     ) -> TriviaSession:
         return next(
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None

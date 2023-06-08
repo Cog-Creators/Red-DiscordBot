@@ -43,7 +43,7 @@ red-discordbot = "redbot.pytest"
 
 [tool.black]
 line-length = 99
-required-version = '22'
+required-version = '23'
 target-version = ['py38']
 include = '\.py$'
 force-exclude = '''
