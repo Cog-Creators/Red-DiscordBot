@@ -621,7 +621,8 @@ class Downloader(commands.Cog):
         """
         List all installed repos.
 
-        Use `[p]repo list 1` to get a list of links to the repos instead.
+        `links`: Shows links instead of descriptions when set to `True`.
+        Default to False.
         """
         repos = self._repo_manager.repos
         sorted_repos = sorted(repos, key=lambda r: str.lower(r.name))
