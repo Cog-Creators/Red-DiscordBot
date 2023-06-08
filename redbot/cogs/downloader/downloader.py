@@ -628,6 +628,7 @@ class Downloader(commands.Cog):
         sorted_repos = sorted(repos, key=lambda r: str.lower(r.name))
         if len(repos) == 0:
             await ctx.send(box(_("There are no repos installed."), lang="markdown"))
+            return
         if links:
             joined = _("Installed Repos:\n")
             for repo in sorted_repos:
