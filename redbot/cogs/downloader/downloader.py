@@ -617,7 +617,7 @@ class Downloader(commands.Cog):
         )
 
     @repo.command(name="list")
-    async def _repo_list(self, ctx: commands.Context, links: Optional[bool] = False) -> None:
+    async def _repo_list(self, ctx: commands.Context, links: bool = False) -> None:
         """
         List all installed repos.
 
