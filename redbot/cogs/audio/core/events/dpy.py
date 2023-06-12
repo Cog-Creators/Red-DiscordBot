@@ -61,7 +61,7 @@ HUMANIZED_PERM = {
     "manage_nicknames": _("Manage Nicknames"),
     "manage_roles": _("Manage Roles"),
     "manage_webhooks": _("Manage Webhooks"),
-    "manage_guild_expressions": _("Manage Server Expressions"),
+    "manage_expressions": _("Manage Expressions"),
     "use_application_commands": _("Use Application Commands"),
     "request_to_speak": _("Request to Speak"),
     "manage_events": _("Manage Events"),
