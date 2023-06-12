@@ -1,4 +1,4 @@
-astroid==2.15.4
+astroid==2.15.5
     # via pylint
 dill==0.3.6
     # via pylint
@@ -16,7 +16,7 @@ pluggy==1.0.0
     # via pytest
 pylint==2.17.4
     # via -r extra-test.in
-pytest==7.3.1
+pytest==7.3.2
     # via
     #   -r extra-test.in
     #   pytest-asyncio
