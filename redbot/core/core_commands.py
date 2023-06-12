@@ -2965,8 +2965,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    # TODO: figure out if there's going to be an endpoint for changing the app/global name
-
     @_set_bot.command(name="nickname")
     @commands.admin_or_permissions(manage_nicknames=True)
     @commands.guild_only()
