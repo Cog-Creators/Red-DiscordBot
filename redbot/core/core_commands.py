@@ -2568,7 +2568,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "This will delete all bank accounts for {scope}.\nIf you're sure, type "
                     "`{prefix}bankset reset yes`"
                 ).format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    scope=self.bot.user.display_name
+                    if await bank.is_global()
+                    else _("this server"),
                     prefix=ctx.clean_prefix,
                 )
             )
@@ -2576,7 +2578,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await bank.wipe_bank(guild=ctx.guild)
             await ctx.send(
                 _("All bank accounts for {scope} have been deleted.").format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server")
+                    scope=self.bot.user.display_name
+                    if await bank.is_global()
+                    else _("this server")
                 )
             )
 
@@ -3855,7 +3859,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "Global regional format: {regional_format}\n"
             "Default embed colour: {colour}"
         ).format(
-            bot_name=ctx.bot.user.name,
+            bot_name=ctx.bot.user.display_name,
             prefixes=prefix_string,
             guild_settings=guild_settings,
             locale=locale,

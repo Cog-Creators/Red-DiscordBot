@@ -323,7 +323,7 @@ class TriviaSession:
         if payout <= 0:
             return
         for winner in winners:
-            LOG.debug("Paying trivia winner: %d credits --> %s", payout, winner.name)
+            LOG.debug("Paying trivia winner: %d credits --> %s", payout, winner)
             try:
                 await bank.deposit_credits(winner, payout)
             except errors.BalanceTooHigh as e:

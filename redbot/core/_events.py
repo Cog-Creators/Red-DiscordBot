@@ -183,13 +183,13 @@ def init_events(bot, cli_flags):
         if guilds:
             rich_console.print(
                 Columns(
-                    [Panel(table_general_info, title=str(bot.user.name)), Panel(table_counts)],
+                    [Panel(table_general_info, title=bot.user.display_name), Panel(table_counts)],
                     equal=True,
                     align="center",
                 )
             )
         else:
-            rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
+            rich_console.print(Columns([Panel(table_general_info, title=bot.user.display_name)]))
 
         rich_console.print(
             "Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands))
