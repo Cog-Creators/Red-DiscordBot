@@ -18,6 +18,7 @@ def pip_compile(name: str) -> None:
             "piptools",
             "compile",
             "--upgrade",
+            "--resolver=backtracking",
             "--verbose",
             f"{name}.in",
             "--output-file",

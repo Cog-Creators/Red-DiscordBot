@@ -418,7 +418,7 @@ class ModSettings(MixinMeta):
     @commands.guild_only()
     async def tracknicknames(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle whether nickname changes should be tracked.
+        Toggle whether server nickname changes should be tracked.
 
         This setting will be overridden if trackallnames is disabled.
         """
@@ -470,11 +470,11 @@ class ModSettings(MixinMeta):
     @commands.max_concurrency(1, commands.BucketType.default)
     @commands.is_owner()
     async def deletenames(self, ctx: commands.Context, confirmation: bool = False) -> None:
-        """Delete all stored usernames and nicknames.
+        """Delete all stored usernames, global display names, and server nicknames.
 
         Examples:
         - `[p]modset deletenames` - Did not confirm. Shows the help message.
-        - `[p]modset deletenames yes` - Deletes all stored usernames and nicknames.
+        - `[p]modset deletenames yes` - Deletes all stored usernames, global display names, and server nicknames.
 
         **Arguments**
 
@@ -483,8 +483,8 @@ class ModSettings(MixinMeta):
         if not confirmation:
             await ctx.send(
                 _(
-                    "This will delete all stored usernames and nicknames the bot has stored."
-                    "\nIf you're sure, type {command}"
+                    "This will delete all stored usernames, global display names,"
+                    " and server nicknames the bot has stored.\nIf you're sure, type {command}"
                 ).format(command=inline(f"{ctx.clean_prefix}modset deletenames yes"))
             )
             return
@@ -511,16 +511,23 @@ class ModSettings(MixinMeta):
                 async for guild_id in AsyncIter(guilds_to_remove, steps=100):
                     del mod_member_data[guild_id]
 
-            # Username data
+            # Username and global display name data
             async with self.config._get_base_group(self.config.USER).all() as mod_user_data:
                 users_to_remove = []
                 async for user_id, user_data in AsyncIter(mod_user_data.items(), steps=100):
                     if "past_names" in user_data:
                         del user_data["past_names"]
+                    if "past_display_names" in user_data:
+                        del user_data["past_display_names"]
                     if not user_data:
                         users_to_remove.append(user_id)
 
                 async for user_id in AsyncIter(users_to_remove, steps=100):
                     del mod_user_data[user_id]
 
-        await ctx.send(_("Usernames and nicknames have been deleted from Mod config."))
+        await ctx.send(
+            _(
+                "Usernames, global display names, and server nicknames"
+                " have been deleted from Mod config."
+            )
+        )
