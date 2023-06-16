@@ -66,8 +66,7 @@ new best friend or all of these together!
 
 Red is built to be used in [Discord](https://discord.com/), a voice, video, and text chat application that allows users to 
 communicate with their friends and communities. Discord utilizes servers that contain chat rooms and 
-voice channels that can be accessed through invite links. Discord is available for [download](https://discord.com/download) on multiple operating 
-systems.
+voice channels that can be accessed through invite links.
 
 [Installation](#installation) is easy, and you do **NOT** need to know anything about coding! Aside
 from installing and updating, every part of the bot can be controlled from within Discord.
