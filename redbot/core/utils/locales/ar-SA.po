@@ -17,98 +17,97 @@ msgstr ""
 
 #: redbot/core/utils/chat_formatting.py:557
 msgid "year"
-msgstr ""
+msgstr "سنة"
 
 #: redbot/core/utils/chat_formatting.py:557
 msgid "years"
-msgstr ""
+msgstr "سنوات"
 
 #: redbot/core/utils/chat_formatting.py:558
 msgid "month"
-msgstr ""
+msgstr "شهر"
 
 #: redbot/core/utils/chat_formatting.py:558
 msgid "months"
-msgstr ""
+msgstr "أشهر"
 
 #: redbot/core/utils/chat_formatting.py:559
 msgid "day"
-msgstr ""
+msgstr "يوم"
 
 #: redbot/core/utils/chat_formatting.py:559
 msgid "days"
-msgstr ""
+msgstr "أيام"
 
 #: redbot/core/utils/chat_formatting.py:560
 msgid "hour"
-msgstr ""
+msgstr "ساعة"
 
 #: redbot/core/utils/chat_formatting.py:560
 msgid "hours"
-msgstr ""
+msgstr "ساعات"
 
 #: redbot/core/utils/chat_formatting.py:561
 msgid "minute"
-msgstr ""
+msgstr "دقيقة"
 
 #: redbot/core/utils/chat_formatting.py:561
 msgid "minutes"
-msgstr ""
+msgstr "دقائق"
 
 #: redbot/core/utils/chat_formatting.py:562
 msgid "second"
-msgstr ""
+msgstr "ثانية"
 
 #: redbot/core/utils/chat_formatting.py:562
 msgid "seconds"
-msgstr ""
+msgstr "ثواني"
 
 #: redbot/core/utils/views.py:34
 msgid "Select a Page"
-msgstr ""
+msgstr "إختر الصفحة"
 
 #: redbot/core/utils/views.py:170
 msgid "Page {num}"
-msgstr ""
+msgstr "الصفحة {num}"
 
 #: redbot/core/utils/views.py:266
 msgid "You are not authorized to interact with this."
-msgstr ""
+msgstr "لا يمكنك التفاعل مع هذا."
 
 #: redbot/core/utils/views.py:308
 msgid "Set API Keys"
-msgstr ""
+msgstr "قم بإعداد مفاتيح API"
 
 #: redbot/core/utils/views.py:309
 msgid "Keys and tokens"
-msgstr ""
+msgstr "المفاتيح والرموز"
 
 #: redbot/core/utils/views.py:311
 msgid "Set API Keys for {service}"
-msgstr ""
+msgstr "تعيين مفاتيح API لـ {service}"
 
 #: redbot/core/utils/views.py:312
 msgid "Keys and tokens for {service}"
-msgstr ""
+msgstr "المفاتيح والرموز المميزة لـ {service}"
 
 #: redbot/core/utils/views.py:321
 msgid "Service"
-msgstr ""
+msgstr "خدمة"
 
 #: redbot/core/utils/views.py:358
 msgid "This modal is for bot owners only. Whoops!"
-msgstr ""
+msgstr "هذه الاستمارة مخصصة لمالكي الروبوت فقط. وووبس!"
 
 #: redbot/core/utils/views.py:371
-msgid "{error_message}\n"
-"Please try again."
-msgstr ""
+msgid "{error_message}\nPlease try again."
+msgstr "{error_message}\nيرجى المحاولة مرة أخرى."
 
 #: redbot/core/utils/views.py:378 redbot/core/utils/views.py:385
 msgid "`{service}` API tokens have been set."
-msgstr "تم تعيين رمز API{service}."
+msgstr "{service} `تم تعيين الرموز المميزة ل API ."
 
 #: redbot/core/utils/views.py:421
 msgid "This button is for bot owners only, oh well."
-msgstr ""
+msgstr "هذا الزر مخصص لمالكي الروبوت فقط ، اوه حسنًا."
 

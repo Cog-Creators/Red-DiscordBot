@@ -17,23 +17,23 @@ msgstr ""
 
 #: redbot/core/commands/converter.py:84
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}` ليست وحدة زمنية صالحة لهذا الأمر"
 
 #: redbot/core/commands/converter.py:140 redbot/core/commands/converter.py:202
 msgid "The time set is way too high, consider setting something reasonable."
-msgstr ""
+msgstr "الوقت المحدد كبير للغاية ، ففكر في تعيين شيء معقول."
 
 #: redbot/core/commands/converter.py:144
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
-msgstr ""
+msgstr "هذا المقدار من الوقت كبير جدًا بالنسبة لهذا الأمر. (الحد الأقصى: {maximum})"
 
 #: redbot/core/commands/converter.py:150
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
-msgstr ""
+msgstr "هذا المقدار من الوقت صغير جدًا بالنسبة لهذا الأمر. (الحد الأدنى: {minimum})"
 
 #: redbot/core/commands/converter.py:231
 msgid "'{input}' doesn't look like a valid user ID."
-msgstr ""
+msgstr "لا يبدو '{input}' معرّف مستخدم صالحًا."
 
 #: redbot/core/commands/converter.py:254
 msgid "`{arg}` is not a number."
@@ -45,19 +45,19 @@ msgstr "`{arg}` ليس رقماً محدوداً."
 
 #: redbot/core/commands/converter.py:279
 msgid "Missing a key or value."
-msgstr ""
+msgstr "مفتاح أو قيمة مفقودة."
 
 #: redbot/core/commands/converter.py:285
 msgid "Unexpected key `{key}`."
-msgstr ""
+msgstr "مفتاح غير متوقع `{key}`"
 
 #: redbot/core/commands/converter.py:510
 msgid "Command \"{arg}\" not found."
-msgstr ""
+msgstr "الأمر \"{arg}\" غير موجود."
 
 #: redbot/core/commands/converter.py:520
 msgid "Cog \"{arg}\" not found."
-msgstr ""
+msgstr "مجموعة الأوامر \"{arg}\" غير موجودة."
 
 #: redbot/core/commands/help.py:125 redbot/core/commands/help.py:144
 msgid "No"
@@ -74,23 +74,24 @@ msgstr "معطل"
 #: redbot/core/commands/help.py:138
 msgid "\n"
 "Custom Tagline: {tag}"
-msgstr ""
+msgstr "\n"
+"وصف مخصص: {tag}"
 
 #: redbot/core/commands/help.py:145
 msgid "Yes, reactions"
-msgstr ""
+msgstr "نعم، تفاعلات"
 
 #: redbot/core/commands/help.py:146
 msgid "Yes, buttons"
-msgstr ""
+msgstr "نعم، أزرار"
 
 #: redbot/core/commands/help.py:147
 msgid "Yes, buttons with select menu"
-msgstr ""
+msgstr "نعم ، الأزرار مع قائمة الاختيار"
 
 #: redbot/core/commands/help.py:148
 msgid "Yes, select menu only"
-msgstr ""
+msgstr "نعم ، قائمة الاختيار فقط"
 
 #: redbot/core/commands/help.py:152
 msgid "Maximum characters per page: {page_char_limit}\n"
@@ -103,10 +104,19 @@ msgid "Maximum characters per page: {page_char_limit}\n"
 "Delete delay: {delete_delay}\n"
 "React with a checkmark when help is sent via DM: {use_tick}\n"
 "Reaction timeout (only used if menus are used): {react_timeout} seconds{tagline_info}"
-msgstr ""
+msgstr "الحد الأقصى للأحرف لكل صفحة: {page_char_limit}\n"
+"أقصى عدد من الصفحات لكل خادم (تُستخدم فقط في حالة عدم استخدام القوائم): {max_pages_in_guild}\n"
+" قائمة المساعدة: {use_menus}\n"
+"إظهارالأوامر المخفية في قائمة المساعدة: {show_hidden}\n"
+"إظهارالأسماء البديلة للأوامر في قائمة المساعدة: {show_aliases}\n"
+"إظهارالأوامر التي يمكن استخدامها فقط في قائمة المساعدة: {verify_checks}\n"
+"إظهارأوامر غير قابلة للاستخدام عندما يُطلب منها مباشرة في قائمة المساعدة: {verify_exists}\n"
+"حذف المهلة: {delete_delay}\n"
+"تفاعل بعلامة اختيار عند إرسال المساعدة عبر DM: {use_tick}\n"
+"مهلة التفاعل (تستخدم فقط في حالة استخدام القوائم): {react_timeout} ثانية {tagline_info}"
 
 #: redbot/core/commands/help.py:303
-msgid "Type {command1} for more info on a command. You can also type {command2} for more info on a category."
+msgid "اكتب {command1} للحصول على مزيد من المعلومات حول الأمر. يمكنك أيضًا كتابة {command2} لمزيد من المعلومات حول الفئة."
 msgstr ""
 
 #: redbot/core/commands/help.py:349
