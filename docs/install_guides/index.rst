@@ -20,7 +20,6 @@ we recommend **Ubuntu 22.04 LTS**.
    centos-stream-8
    centos-stream-9
    debian-11
-   debian-12
    fedora
    opensuse-leap-15
    opensuse-tumbleweed
