@@ -55,13 +55,13 @@ Windows 11                         x86-64                    `Retirement Date <h
 macOS 11 (Big Sur)                 x86-64, aarch64           ~2023-10
 macOS 12 (Monterey)                x86-64, aarch64           ~2024-10
 macOS 13 (Ventura)                 x86-64, aarch64           ~2025-10
-Alma Linux 8                       x86-64, aarch64           2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-cloudlinux-support-almalinux>`__)
+Alma Linux 8                       x86-64, aarch64           2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-almalinux-be-supported>`__)
 Alma Linux 9                       x86-64, aarch64           2032-05-31
 Arch Linux                         x86-64                    forever (support is only provided for an up-to-date system)
 CentOS 7                           x86-64, aarch64           2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 8                    x86-64, aarch64           2024-05-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 9                    x86-64, aarch64           2027-05-31 (`expected EOL <https://centos.org/stream9/#timeline>`__)
-Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
+Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-07 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Debian 12 Bookworm                 x86-64, aarch64, armv7l   ~2026-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Fedora Linux 37                    x86-64, aarch64           2023-11-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 38                    x86-64, aarch64           2024-05-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
