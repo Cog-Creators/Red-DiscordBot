@@ -67,6 +67,7 @@ Fedora Linux 36                    x86-64, aarch64           2023-05-16 (`End of
 Fedora Linux 37                    x86-64, aarch64           2023-11-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 38                    x86-64, aarch64           2024-05-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 openSUSE Leap 15.4                 x86-64, aarch64           2023-11-30 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
+openSUSE Leap 15.5                 x86-64, aarch64           2024-12-31 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
 openSUSE Tumbleweed                x86-64, aarch64           forever (support is only provided for an up-to-date system)
 Oracle Linux 8                     x86-64, aarch64           2029-07-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
 Oracle Linux 9                     x86-64, aarch64           2032-06-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
