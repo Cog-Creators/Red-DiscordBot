@@ -83,7 +83,7 @@ DANGEROUS_COMMANDS = {
         "This command will change the executable path of Java, "
         "this is useful if you have multiple installations of Java and the default one is causing issues. "
         "Please don't change this unless you are certain that the Java version you are specifying is supported by Red. "
-        "The default and supported version is currently Java 11."
+        "The default and supported versions are currently Java 17 and 11."
     ),
     "command_llset_heapsize": _(
         "This command will change the maximum RAM allocation for the managed Lavalink node, "

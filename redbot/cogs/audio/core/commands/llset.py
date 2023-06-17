@@ -51,7 +51,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         This command shouldn't need to be used most of the time, and is only useful if the host machine has conflicting Java versions.
 
         If changing this make sure that the Java executable you set is supported by Audio.
-        The current supported version is Java 11.
+        The current supported versions are Java 17 and 11.
 
         Enter nothing or "java" to reset it back to default.
         """
