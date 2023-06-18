@@ -31,7 +31,6 @@ we recommend **Ubuntu 22.04 LTS**.
    rhel-9
    rocky-linux-8
    rocky-linux-9
-   ubuntu-1804
    ubuntu-2004
    ubuntu-2204
    ubuntu-non-lts

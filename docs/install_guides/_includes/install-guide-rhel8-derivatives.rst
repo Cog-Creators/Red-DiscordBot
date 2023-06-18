@@ -6,8 +6,10 @@
 Installing the pre-requirements
 -------------------------------
 
-Red Hat Enterprise Linux (RHEL) 8.4-8.x and its derivatives have all required packages available in official repositories.
+Red Hat Enterprise Linux (RHEL) 8.6-8.x and its derivatives have all required packages available in official repositories.
 Install them with dnf:
+
+.. TODO: Use Python 3.11 once RHEL 8.6 goes EOL in 2024.
 
 .. prompt:: bash
 
