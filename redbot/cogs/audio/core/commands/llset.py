@@ -310,7 +310,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         if configs["use_external_lavalink"]:
             msg = "----" + _("Connection Settings") + "----        \n"
             msg += _("Host:             [{host}]\n").format(host=configs["host"])
-            msg += _("Port:             [{port}]\n").format(port=configs["ws_port"] or _("Default HTTP/HTTPS port"))
+            msg += _("Port:             [{port}]\n").format(
+                port=configs["ws_port"] or _("Default HTTP/HTTPS port")
+            )
             msg += _("Password:         [{password}]\n").format(password=configs["password"])
             msg += _("Secured:          [{state}]\n").format(state=configs["secured_ws"])
 
