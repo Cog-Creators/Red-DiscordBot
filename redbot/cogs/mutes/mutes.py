@@ -11,7 +11,7 @@ from .converters import MuteTime
 from .voicemutes import VoiceMutes
 
 from redbot.core.bot import Red
-from redbot.core import commands, checks, i18n, modlog, Config
+from redbot.core import commands, i18n, modlog, Config
 from redbot.core.utils import AsyncIter, bounded_gather, can_user_react_in
 from redbot.core.utils.chat_formatting import (
     bold,
@@ -262,7 +262,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         inside our tasks.
         """
         log.debug("Cleaning unmute tasks")
-        is_debug = log.getEffectiveLevel() <= logging.DEBUG
         for task_id in list(self._unmute_tasks.keys()):
             task = self._unmute_tasks[task_id]
 
@@ -273,9 +272,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if task.done():
                 try:
                     r = task.result()
-                except Exception:
-                    if is_debug:
-                        log.exception("Dead task when trying to unmute")
+                except Exception as exc:
+                    log.error("An unexpected error occurred in the unmute task", exc_info=exc)
                 self._unmute_tasks.pop(task_id, None)
 
     async def _handle_server_unmutes(self):
@@ -403,9 +401,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         log.debug(f"Creating task: {task_name}")
                         if task_name in self._unmute_tasks:
                             continue
-                        self._unmute_tasks[task_name] = asyncio.create_task(
-                            self._auto_channel_unmute_user(guild.get_channel(channel), mute_data)
-                        )
+                        if guild_channel := guild.get_channel(channel):
+                            self._unmute_tasks[task_name] = asyncio.create_task(
+                                self._auto_channel_unmute_user(guild_channel, mute_data)
+                            )
 
         del multiple_mutes
 
@@ -428,7 +427,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         for result in results:
             if not result:
                 continue
-            _mmeber, channel, reason = result
+            _member, channel, reason = result
             unmuted_channels.remove(channel)
         modlog_reason = _("Automatic unmute")
 
@@ -789,7 +788,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def senddm(self, ctx: commands.Context, true_or_false: bool):
         """Set whether mute notifications should be sent to users in DMs."""
         await self.config.guild(ctx.guild).dm.set(true_or_false)
@@ -800,7 +799,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @muteset.command()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def showmoderator(self, ctx, true_or_false: bool):
         """Decide whether the name of the moderator muting a user should be included in the DM to that user."""
         await self.config.guild(ctx.guild).show_mod.set(true_or_false)
@@ -830,7 +829,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await ctx.send(_("Okay I will allow channel overwrites for muting users."))
 
     @muteset.command(name="settings", aliases=["showsettings"])
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def show_mutes_settings(self, ctx: commands.Context):
         """
         Shows the current mute settings for this guild.
@@ -856,11 +855,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         await ctx.maybe_send_embed(msg)
 
     @muteset.command(name="notification")
-    @checks.admin_or_permissions(manage_channels=True)
+    @commands.admin_or_permissions(manage_channels=True)
     async def notification_channel_set(
         self,
         ctx: commands.Context,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel]
+        ] = None,
     ):
         """
         Set the notification channel for automatic unmute issues.
@@ -878,7 +879,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
 
     @muteset.command(name="role")
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
     async def mute_role(self, ctx: commands.Context, *, role: discord.Role = None):
         """Sets the role to be applied when muting a user.
@@ -916,7 +917,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
 
     @muteset.command(name="makerole")
-    @checks.admin_or_permissions(manage_roles=True)
+    @commands.admin_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.max_concurrency(1, commands.BucketType.guild)
     async def make_mute_role(self, ctx: commands.Context, *, name: str):
@@ -1002,7 +1003,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return channel.mention
 
     @muteset.command(name="defaulttime", aliases=["time"])
-    @checks.mod_or_permissions(manage_messages=True)
+    @commands.mod_or_permissions(manage_messages=True)
     async def default_mute_time(self, ctx: commands.Context, *, time: Optional[MuteTime] = None):
         """
         Set the default mute time for the mute command.
@@ -1107,7 +1108,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @commands.command()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     async def activemutes(self, ctx: commands.Context):
         """
         Displays active mutes on this server.
@@ -1170,7 +1171,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @commands.command(usage="<users...> [time_and_reason]")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     async def mute(
         self,
         ctx: commands.Context,
@@ -1321,7 +1322,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.command(
         name="mutechannel", aliases=["channelmute"], usage="<users...> [time_and_reason]"
     )
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_permissions=True)
     async def channel_mute(
         self,
@@ -1411,7 +1412,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
     @commands.command(usage="<users...> [reason]")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     async def unmute(
         self,
         ctx: commands.Context,
@@ -1478,7 +1479,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if issue_list:
             await self.handle_issues(ctx, issue_list)
 
-    @checks.mod_or_permissions(manage_roles=True)
+    @commands.mod_or_permissions(manage_roles=True)
     @commands.command(name="unmutechannel", aliases=["channelunmute"], usage="<users...> [reason]")
     @commands.bot_has_guild_permissions(manage_permissions=True)
     async def unmute_channel(
@@ -1571,7 +1572,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "user": user,
         }
         # TODO: This typing is ugly and should probably be an object on its own
-        # along with this entire method and some othe refactorization
+        # along with this entire method and some other refactorization
         # v1.0.0 is meant to look ugly right :')
         if permissions.administrator:
             ret["reason"] = _(MUTE_UNMUTE_ISSUES["is_admin"])
@@ -1726,7 +1727,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
 
         if channel.id not in self._channel_mutes:
             self._channel_mutes[channel.id] = {}
-        current_mute = self._channel_mutes.get(channel.id)
+        current_mute = self._channel_mutes[channel.id].get(user.id)
 
         # Determine if this is voice mute -> channel mute upgrade
         is_mute_upgrade = (
@@ -1866,7 +1867,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 "channel": channel,
                 "reason": _(MUTE_UNMUTE_ISSUES["already_unmuted"]),
             }
-        if not current_mute["voice_mute"] and voice_mute:
+        if not current_mute.get("voice_mute", False) and voice_mute:
             return {
                 "success": False,
                 "channel": channel,

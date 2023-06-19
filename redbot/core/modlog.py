@@ -25,10 +25,11 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("red.core.modlog")
 
-__all__ = [
+__all__ = (
     "Case",
     "CaseType",
     "get_case",
+    "get_latest_case",
     "get_all_cases",
     "get_cases_for_member",
     "create_case",
@@ -39,7 +40,7 @@ __all__ = [
     "get_modlog_channel",
     "set_modlog_channel",
     "reset_cases",
-]
+)
 
 _config: Optional[Config] = None
 _bot_ref: Optional[Red] = None
@@ -243,6 +244,8 @@ class Case:
 
     A single mod log case
 
+    This class should ONLY be instantiated by the modlog itself.
+
     Attributes
     ----------
     bot: Red
@@ -303,8 +306,8 @@ class Case:
         (note: it might not exist regardless of whether this attribute is `None`)
         or if it has never been created.
     last_known_username: Optional[str]
-        The last known username of the user.
-        `None` if the username of the user was never saved
+        The last known user handle (``username`` / ``username#1234``) of the user.
+        `None` if the handle of the user was never saved
         or if their data had to be anonymized.
     """
 
@@ -390,9 +393,9 @@ class Case:
             else:
                 setattr(self, item, value)
 
-        # update last known username
+        # update last known user handle
         if not isinstance(self.user, int):
-            self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
+            self.last_known_username = str(self.user)
 
         if isinstance(self.channel, discord.Thread):
             self.parent_channel_id = self.channel.parent_id
@@ -500,7 +503,15 @@ class Case:
                 # can't use _() inside f-string expressions, see bpo-36310 and red#3818
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
+            # Handle pomelo usernames stored before we updated our implementation
+            elif self.last_known_username.endswith("#0"):
+                user = f"{self.last_known_username[:-2]} ({self.user})"
+            # New usernames can't contain `#` and old usernames couldn't either.
+            elif len(self.last_known_username) <= 5 or self.last_known_username[-5] != "#":
+                user = f"{self.last_known_username} ({self.user})"
+            # Last known user handle is a legacy username with a discriminator
             else:
+                # isolate the name so that the direction of the discriminator and ID aren't changed
                 # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
                 name = self.last_known_username[:-5]
                 discriminator = self.last_known_username[-4:]
@@ -508,8 +519,10 @@ class Case:
                     f"\N{FIRST STRONG ISOLATE}{name}"
                     f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
                 )
+        elif self.user.discriminator == "0":
+            user = f"{self.user} ({self.user.id})"
         else:
-            # isolate the name so that the direction of the discriminator and ID do not get changed
+            # isolate the name so that the direction of the discriminator and ID aren't changed
             # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
             user = escape_spoilers(
                 filter_invites(
@@ -646,7 +659,7 @@ class Case:
     @classmethod
     async def from_json(
         cls,
-        mod_channel: Union[discord.TextChannel, discord.VoiceChannel],
+        mod_channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
         bot: Red,
         case_number: int,
         data: dict,
@@ -656,7 +669,7 @@ class Case:
 
         Parameters
         ----------
-        mod_channel: `discord.TextChannel` or `discord.VoiceChannel`
+        mod_channel: `discord.TextChannel` or `discord.VoiceChannel`, `discord.StageChannel`
             The mod log channel for the guild
         bot: Red
             The bot's instance. Needed to get the target user
@@ -689,7 +702,8 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                message = mod_channel.get_partial_message(message_id)
+                if mod_channel is not None:
+                    message = mod_channel.get_partial_message(message_id)
 
         user_objects = {"user": None, "moderator": None, "amended_by": None}
         for user_key in tuple(user_objects):
@@ -728,6 +742,8 @@ class Case:
 class CaseType:
     """
     A single case type
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------
@@ -858,8 +874,11 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     case = await _config.custom(_CASES, str(guild.id), str(case_number)).all()
     if not case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
-    mod_channel = await get_modlog_channel(guild)
-    return await Case.from_json(mod_channel, bot, case_number, case)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
+    return await Case.from_json(mod_channel, bot, case_number, case, guild=guild)
 
 
 async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
@@ -901,9 +920,12 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
     """
     cases = await _config.custom(_CASES, str(guild.id)).all()
-    mod_channel = await get_modlog_channel(guild)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
     return [
-        await Case.from_json(mod_channel, bot, case_number, case_data)
+        await Case.from_json(mod_channel, bot, case_number, case_data, guild=guild)
         for case_number, case_data in cases.items()
     ]
 
@@ -1007,24 +1029,29 @@ async def create_case(
     channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]]
         The channel the action was taken in
     last_known_username: Optional[str]
-        The last known username of the user
+        The last known user handle (``username`` / ``username#1234``) of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
 
     Raises
     ------
+    ValueError
+        If the action type is not a valid action type.
+    RuntimeError
+        If user is the bot itself.
     TypeError
         If ``channel`` is of type `discord.PartialMessageable`.
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
-        return
+        raise ValueError(f"{action_type} is not a valid action type.")
 
     if not await case_type.is_enabled():
         return
 
-    if user == bot.user:
-        return
+    user_id = user if isinstance(user, int) else user.id
+    if user_id == bot.user.id:
+        raise RuntimeError("The bot itself can not be the target of a modlog entry.")
 
     if isinstance(channel, discord.PartialMessageable):
         raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")
@@ -1235,7 +1262,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
 
 async def get_modlog_channel(
     guild: discord.Guild,
-) -> Union[discord.TextChannel, discord.VoiceChannel]:
+) -> Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel]:
     """
     Get the current modlog channel.
 
@@ -1246,7 +1273,7 @@ async def get_modlog_channel(
 
     Returns
     -------
-    `discord.TextChannel` or `discord.VoiceChannel`
+    `discord.TextChannel`, `discord.VoiceChannel`, or `discord.StageChannel`
         The channel object representing the modlog channel.
 
     Raises
@@ -1266,7 +1293,8 @@ async def get_modlog_channel(
 
 
 async def set_modlog_channel(
-    guild: discord.Guild, channel: Union[discord.TextChannel, discord.VoiceChannel, None]
+    guild: discord.Guild,
+    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, None],
 ) -> bool:
     """
     Changes the modlog channel
@@ -1275,7 +1303,7 @@ async def set_modlog_channel(
     ----------
     guild: `discord.Guild`
         The guild to set a mod log channel for
-    channel: `discord.TextChannel`, `discord.VoiceChannel`, or `None`
+    channel: `discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, or `None`
         The channel to be set as modlog channel
 
     Returns

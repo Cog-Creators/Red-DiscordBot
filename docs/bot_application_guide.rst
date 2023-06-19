@@ -69,7 +69,7 @@ Enabling Privileged Intents
 
 5. Scroll down to the "Privileged Gateway Intents" section, enable all three privileged intents and save your changes.
 
-    .. image:: /.resources/bot-guide/discord_privileged_intents_until_aug_31.png
+    .. image:: /.resources/bot-guide/discord_privileged_intents.png
         :alt: The privileged gateway intents selector.
 
 .. warning::

@@ -27,6 +27,10 @@ Chat Formatting
 
 .. automodule:: redbot.core.utils.chat_formatting
     :members:
+    :exclude-members: pagify
+
+    .. autofunction:: pagify(text, delims=('\n',), *, priority=False, escape_mass_mentions=True, shorten_by=8, page_length=2000)
+        :for:
 
 Embed Helpers
 =============
@@ -79,4 +83,10 @@ Utility UI
 ==========
 
 .. automodule:: redbot.core.utils.views
+    :members:
+
+AntiSpam
+========
+
+.. automodule:: redbot.core.utils.antispam
     :members:
