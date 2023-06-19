@@ -2329,7 +2329,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 msg += diff + command_type.ljust(7) + " | " + name + "\n"
             msg += "\n"
 
-        pages = pagify(msg, delims=["\n\n", "\n"])
+        pages = pagify(msg, delims=["\n\n", "\n"], shorten_by=12)
         pages = [box(page, lang="diff") for page in pages]
         await menu(ctx, pages)
 
