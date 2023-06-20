@@ -40,7 +40,7 @@ Raspberry Pi OS. This guide will tell you how. First, run the following commands
 .. prompt:: bash
 
     sudo apt update
-    sudo apt -y install cmake make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-11-jre-headless nano
+    sudo apt -y install cmake make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libgdbm-dev uuid-dev python3-openssl git openjdk-17-jre-headless nano
     CXX=/usr/bin/g++
 
 .. Include common instructions:

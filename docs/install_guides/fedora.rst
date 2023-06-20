@@ -17,7 +17,7 @@ them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python3.11 python3.11-devel git java-11-openjdk-headless @development-tools nano
+    sudo dnf -y install python3.11 python3.11-devel git java-17-openjdk-headless @development-tools nano
 
 .. Include common instructions:
 

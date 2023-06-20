@@ -365,20 +365,19 @@ class ServerManager:
             raise UnsupportedJavaException(
                 await replace_p_with_prefix(
                     self.cog.bot,
-                    f"The managed Lavalink node requires Java 11 to run{extras};\n"
-                    "Either install version 11 and restart the bot or connect to an external Lavalink node "
+                    f"The managed Lavalink node requires Java 17 or 11 to run{extras};\n"
+                    "Either install version 17 (or 11) and restart the bot or connect to an external Lavalink node "
                     "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
-                    "If you already have Java 11 installed then then you will need to specify the executable path, "
-                    "use '[p]llset java' to set the correct Java 11 executable.",
+                    "If you already have Java 17 or 11 installed then then you will need to specify the executable path, "
+                    "use '[p]llset java' to set the correct Java 17 or 11 executable.",
                 )  # TODO: Replace with Audio docs when they are out
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
-        command_args = [
-            self._java_exc,
-            "-Djdk.tls.client.protocols=TLSv1.2",
-            f"-Xms{java_xms}",
-        ]
+        command_args = [self._java_exc]
+        if self._java_version[0] < 12:
+            command_args.append("-Djdk.tls.client.protocols=TLSv1.2")
+        command_args.append(f"-Xms{java_xms}")
         meta = 0, None
         invalid = None
         if match and (
@@ -408,7 +407,7 @@ class ServerManager:
             self._java_version = None
         else:
             self._java_version = await self._get_java_version()
-            self._java_available = (11, 0) <= self._java_version < (12, 0)
+            self._java_available = self._java_version[0] in (11, 17)
             self._java_exc = java_exec
         return self._java_available, self._java_version
 
