@@ -522,16 +522,18 @@ class ConfirmView(discord.ui.View):
 
         Examples
         --------
-        Changing the style of this ``discord.ui.Button``::
+        Changing the style and label of this ``discord.ui.Button``::
 
             view = ConfirmView(ctx.author)
-            view.confirm_button.style = discord.ButtonStyle.blurple
-            view.message = await ctx.send("Are you sure you about that?", view=view)
+            view.confirm_button.style = discord.ButtonStyle.red
+            view.confirm_button.label = "Delete"
+            view.dismiss_button.label = "Cancel"
+            view.message = await ctx.send("Are you sure you want to remove #very-important-channel?", view=view)
             await view.wait()
             if view.result:
-                await ctx.send("Okay I will do that.")
+                await ctx.send("Channel #very-important-channel delted.")
             else:
-                await ctx.send("I will not be doing that then.")
+                await ctx.send("Canceled.")
         """
         self.result = True
         self.stop()
@@ -547,16 +549,18 @@ class ConfirmView(discord.ui.View):
 
         Examples
         --------
-        Changing the style of this ``discord.ui.Button``::
+        Changing the style and label of this ``discord.ui.Button``::
 
             view = ConfirmView(ctx.author)
-            view.dismiss_button.style = discord.ButtonStyle.red
-            view.message = await ctx.send("Are you sure you about that?", view=view)
+            view.confirm_button.style = discord.ButtonStyle.red
+            view.confirm_button.label = "Delete"
+            view.dismiss_button.label = "Cancel"
+            view.message = await ctx.send("Are you sure you want to remove #very-important-channel?", view=view)
             await view.wait()
             if view.result:
-                await ctx.send("Okay I will do that.")
+                await ctx.send("Channel #very-important-channel delted.")
             else:
-                await ctx.send("I will not be doing that then.")
+                await ctx.send("Canceled.")
         """
         self.result = False
         self.stop()
