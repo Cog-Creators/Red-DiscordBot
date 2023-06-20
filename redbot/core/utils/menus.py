@@ -110,6 +110,7 @@ async def menu(
             view._source = _SimplePageSource(pages)
         new_page = await view.get_page(page)
         view.current_page = page
+        view.timeout = timeout
         await view.message.edit(**new_page)
         return
     if not isinstance(pages[0], (discord.Embed, str)):
