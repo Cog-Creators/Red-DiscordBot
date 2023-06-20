@@ -11,7 +11,7 @@ from redbot.core.commands.converter import get_dict_converter
 if TYPE_CHECKING:
     from redbot.core.commands import Context
 
-__all__ = ("ConfirmView", "SimpleMenu", "SetApiModal", "SetApiView")
+__all__ = ("SimpleMenu", "SetApiModal", "SetApiView", "ConfirmView")
 
 _ = Translator("UtilsViews", __file__)
 
@@ -445,23 +445,25 @@ class ConfirmView(discord.ui.View):
     timeout: float
         The timeout of the view in seconds. Defaults to ``180`` seconds.
     disable_buttons: bool
-        Whether to disable the buttons after the timeout. Defaults to ``False``.
+        Whether to disable the buttons instead of removing them from the message after the timeout.
+         Defaults to ``False``.
 
     Examples
     --------
     Using the view::
 
         view = ConfirmView(ctx.author)
+        # attach the message to the view after sending it.
+        # This way, the view will be automatically removed
+        # from the message after the timeout.
         view.message = await ctx.send("Are you sure you about that?", view=view)
-        # attach the message to the view this way to ensure clean removal
-        # when the view is finished.
         await view.wait()
         if view.result:
             await ctx.send("Okay I will do that.")
         else:
             await ctx.send("I will not be doing that then.")
 
-    Disabling if the buttons are not pressed::
+    Auto-disable the buttons after timeout if nothing is pressed::
 
         view = ConfirmView(ctx.author, disable_buttons=True)
         view.message = await ctx.send("Are you sure you about that?", view=view)
@@ -480,10 +482,10 @@ class ConfirmView(discord.ui.View):
     message: Optional[discord.Message]
         The message the confirm view is sent on. This can be set while
         sending the message. This can also be left as ``None`` in which case
-        if the view is never interacted with nothing will happen in ``on_timeout``
+        nothing will happen in ``on_timeout``, if the view is never interacted with.
     disable_buttons: bool
-        Whether to disable the buttons instead of remove the buttons if the message
-        has been seen by the view.
+        Whether to disable the buttons isntead of removing them on timeout
+        (if the ``message`` attribute has been set on the view).
     """
 
     def __init__(
@@ -503,29 +505,33 @@ class ConfirmView(discord.ui.View):
 
     async def on_timeout(self):
         if self.message is None:
-            return
             # we can't do anything here if message is none
-        if self.disable_buttons:
-            # prioritize disabling buttons since it's considered custom
-            # behavior
-            self.disable()
-            await self.message.edit(view=self)
             return
-        await self.message.edit(view=None)
 
-    def disable(self):
-        self.yes_button.disabled = True
-        self.no_button.disabled = True
+        if self.disable_buttons:
+            self.yes_button.disabled = True
+            self.no_button.disabled = True
+            await self.message.edit(view=self)
+        else:
+            await self.message.edit(view=None)
 
     @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
     async def yes_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.result = True
         self.stop()
+        # respond to the interaction so the user does not see "interaction failed".
+        await interaction.response.defer()
+        # call `on_timeout` explicitly here since it's not called when `stop()` is called.
+        await self.on_timeout()
 
     @discord.ui.button(label=_("No"), style=discord.ButtonStyle.red)
     async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.result = False
         self.stop()
+        # respond to the interaction so the user does not see "interaction failed".
+        await interaction.response.defer()
+        # call `on_timeout` explicitly here since it's not called when `stop()` is called.
+        await self.on_timeout()
 
     async def interaction_check(self, interaction: discord.Interaction):
         if self.message is None:
