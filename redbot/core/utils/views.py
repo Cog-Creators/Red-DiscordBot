@@ -444,40 +444,46 @@ class ConfirmView(discord.ui.View):
         If this is omitted anyone can click yes or no.
     timeout: float
         The timeout of the view in seconds. Defaults to ``180`` seconds.
+    disable_buttons: bool
+        Whether to disable the buttons after the timeout. Defaults to ``False``.
 
     Examples
     --------
     Using the view::
 
         view = ConfirmView(ctx.author)
-        msg = await ctx.send("Are you sure you about that?", view=view)
+        view.message = await ctx.send("Are you sure you about that?", view=view)
+        # attach the message to the view this way to ensure clean removal
+        # when the view is finished.
         await view.wait()
         if view.result:
             await ctx.send("Okay I will do that.")
         else:
             await ctx.send("I will not be doing that then.")
-            if view.result is None:
-                await msg.edit(view=None)
-                # remove the buttons if they're not pressed.
 
     Disabling if the buttons are not pressed::
 
-        view = ConfirmView(ctx.author)
-        msg = await ctx.send("Are you sure you about that?", view=view)
+        view = ConfirmView(ctx.author, disable_buttons=True)
+        view.message = await ctx.send("Are you sure you about that?", view=view)
         await view.wait()
         if view.result:
             await ctx.send("Okay I will do that.")
         else:
             await ctx.send("I will not be doing that then.")
-            if view.result is None:
-                view.yes_button.disabled = True
-                view.no_button.disabled = True
-                await msg.edit(view=view)
 
     Attributes
     ----------
     result: Optional[bool]
         The result of the confirm view.
+    author: Optional[discord.abc.User]
+        The author of the message who is allowed to press the buttons.
+    message: Optional[discord.Message]
+        The message the confirm view is sent on. This can be set while
+        sending the message. This can also be left as ``None`` in which case
+        if the view is never interacted with nothing will happen in ``on_timeout``
+    disable_buttons: bool
+        Whether to disable the buttons instead of remove the buttons if the message
+        has been seen by the view.
     """
 
     def __init__(
@@ -485,26 +491,45 @@ class ConfirmView(discord.ui.View):
         author: Optional[discord.abc.User] = None,
         *,
         timeout: float = 180.0,
+        disable_buttons: bool = False,
     ):
         if timeout is None:
             raise TypeError("This view should not be used as a persistent view.")
         super().__init__(timeout=timeout)
         self.result: Optional[bool] = None
         self.author: Optional[discord.abc.User] = author
+        self.message: Optional[discord.Message] = None
+        self.disable_buttons = disable_buttons
+
+    async def on_timeout(self):
+        if self.message is None:
+            return
+            # we can't do anything here if message is none
+        if self.disable_buttons:
+            # prioritize disabling buttons since it's considered custom
+            # behavior
+            self.disable()
+            await self.message.edit(view=self)
+            return
+        await self.message.edit(view=None)
+
+    def disable(self):
+        self.yes_button.disabled = True
+        self.no_button.disabled = True
 
     @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
     async def yes_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.result = True
         self.stop()
-        await interaction.response.edit_message(view=None)
 
     @discord.ui.button(label=_("No"), style=discord.ButtonStyle.red)
     async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.result = False
         self.stop()
-        await interaction.response.edit_message(view=None)
 
     async def interaction_check(self, interaction: discord.Interaction):
+        if self.message is None:
+            self.message = interaction.message
         if self.author and interaction.user.id != self.author.id:
             return False
         return True
