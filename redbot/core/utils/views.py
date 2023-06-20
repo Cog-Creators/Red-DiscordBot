@@ -509,14 +509,30 @@ class ConfirmView(discord.ui.View):
             return
 
         if self.disable_buttons:
-            self.yes_button.disabled = True
-            self.no_button.disabled = True
+            self.confirm_button.disabled = True
+            self.dismiss_button.disabled = True
             await self.message.edit(view=self)
         else:
             await self.message.edit(view=None)
 
     @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
-    async def yes_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def confirm_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """
+        A ``discord.ui.Button`` to confirm the message.
+
+        Examples
+        --------
+        Changing the style of this ``discord.ui.Button``::
+
+            view = ConfirmView(ctx.author)
+            view.confirm_button.style = discord.ButtonStyle.blurple
+            view.message = await ctx.send("Are you sure you about that?", view=view)
+            await view.wait()
+            if view.result:
+                await ctx.send("Okay I will do that.")
+            else:
+                await ctx.send("I will not be doing that then.")
+        """
         self.result = True
         self.stop()
         # respond to the interaction so the user does not see "interaction failed".
@@ -524,8 +540,24 @@ class ConfirmView(discord.ui.View):
         # call `on_timeout` explicitly here since it's not called when `stop()` is called.
         await self.on_timeout()
 
-    @discord.ui.button(label=_("No"), style=discord.ButtonStyle.red)
-    async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label=_("No"), style=discord.ButtonStyle.secondary)
+    async def dismiss_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """
+        A ``discord.ui.Button`` to dismiss the message.
+
+        Examples
+        --------
+        Changing the style of this ``discord.ui.Button``::
+
+            view = ConfirmView(ctx.author)
+            view.dismiss_button.style = discord.ButtonStyle.red
+            view.message = await ctx.send("Are you sure you about that?", view=view)
+            await view.wait()
+            if view.result:
+                await ctx.send("Okay I will do that.")
+            else:
+                await ctx.send("I will not be doing that then.")
+        """
         self.result = False
         self.stop()
         # respond to the interaction so the user does not see "interaction failed".
