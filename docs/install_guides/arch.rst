@@ -16,7 +16,7 @@ Install the pre-requirements with pacman:
 
 .. prompt:: bash
 
-    sudo pacman -Syu git jre11-openjdk-headless base-devel nano
+    sudo pacman -Syu git jre17-openjdk-headless base-devel nano
 
 On Arch Linux, Python 3.9 can be installed from the Arch User Repository (AUR) from the ``python39`` package.
 

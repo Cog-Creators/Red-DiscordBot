@@ -355,7 +355,7 @@ class General(commands.Cog):
             joined_on = _(
                 "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
             ).format(
-                bot_name=ctx.bot.user.name,
+                bot_name=ctx.bot.user.display_name,
                 bot_join=guild.me.joined_at.strftime("%d %b %Y %H:%M:%S"),
                 since_join=humanize_number((ctx.message.created_at - guild.me.joined_at).days),
             )

@@ -1794,6 +1794,8 @@ class Red(
         Checks if the user, message, context, or role should be considered immune from automated
         moderation actions.
 
+        Bot users are considered immune.
+
         This will return ``False`` in direct messages.
 
         Parameters
@@ -1812,22 +1814,22 @@ class Red(
             return False
 
         if isinstance(to_check, discord.Role):
-            ids_to_check = [to_check.id]
+            ids_to_check = {to_check.id}
         else:
             author = getattr(to_check, "author", to_check)
+            if author.bot:
+                return True
+            ids_to_check = set()
             try:
-                ids_to_check = [r.id for r in author.roles]
+                ids_to_check = {r.id for r in author.roles}
             except AttributeError:
-                # webhook messages are a user not member,
-                # cheaper than isinstance
-                if author.bot and author.discriminator == "0000":
-                    return True  # webhooks require significant permissions to enable.
-            else:
-                ids_to_check.append(author.id)
+                # cheaper than isinstance(author, discord.User)
+                pass
+            ids_to_check.add(author.id)
 
         immune_ids = await self._config.guild(guild).autoimmune_ids()
 
-        return any(i in immune_ids for i in ids_to_check)
+        return not ids_to_check.isdisjoint(immune_ids)
 
     @staticmethod
     async def send_filtered(

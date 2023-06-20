@@ -306,8 +306,8 @@ class Case:
         (note: it might not exist regardless of whether this attribute is `None`)
         or if it has never been created.
     last_known_username: Optional[str]
-        The last known username of the user.
-        `None` if the username of the user was never saved
+        The last known user handle (``username`` / ``username#1234``) of the user.
+        `None` if the handle of the user was never saved
         or if their data had to be anonymized.
     """
 
@@ -393,9 +393,9 @@ class Case:
             else:
                 setattr(self, item, value)
 
-        # update last known username
+        # update last known user handle
         if not isinstance(self.user, int):
-            self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
+            self.last_known_username = str(self.user)
 
         if isinstance(self.channel, discord.Thread):
             self.parent_channel_id = self.channel.parent_id
@@ -503,7 +503,15 @@ class Case:
                 # can't use _() inside f-string expressions, see bpo-36310 and red#3818
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
+            # Handle pomelo usernames stored before we updated our implementation
+            elif self.last_known_username.endswith("#0"):
+                user = f"{self.last_known_username[:-2]} ({self.user})"
+            # New usernames can't contain `#` and old usernames couldn't either.
+            elif len(self.last_known_username) <= 5 or self.last_known_username[-5] != "#":
+                user = f"{self.last_known_username} ({self.user})"
+            # Last known user handle is a legacy username with a discriminator
             else:
+                # isolate the name so that the direction of the discriminator and ID aren't changed
                 # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
                 name = self.last_known_username[:-5]
                 discriminator = self.last_known_username[-4:]
@@ -511,8 +519,10 @@ class Case:
                     f"\N{FIRST STRONG ISOLATE}{name}"
                     f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
                 )
+        elif self.user.discriminator == "0":
+            user = f"{self.user} ({self.user.id})"
         else:
-            # isolate the name so that the direction of the discriminator and ID do not get changed
+            # isolate the name so that the direction of the discriminator and ID aren't changed
             # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
             user = escape_spoilers(
                 filter_invites(
@@ -1019,7 +1029,7 @@ async def create_case(
     channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]]
         The channel the action was taken in
     last_known_username: Optional[str]
-        The last known username of the user
+        The last known user handle (``username`` / ``username#1234``) of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
 

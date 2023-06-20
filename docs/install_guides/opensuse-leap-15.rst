@@ -17,7 +17,7 @@ with zypper:
 
 .. prompt:: bash
 
-    sudo zypper -n install python310 python310-devel git-core java-11-openjdk-headless nano
+    sudo zypper -n install python310 python310-devel git-core java-17-openjdk-headless nano
     sudo zypper -n install -t pattern devel_basis
 
 .. Include common instructions:
