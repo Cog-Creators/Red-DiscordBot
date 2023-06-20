@@ -531,7 +531,7 @@ class ConfirmView(discord.ui.View):
             view.message = await ctx.send("Are you sure you want to remove #very-important-channel?", view=view)
             await view.wait()
             if view.result:
-                await ctx.send("Channel #very-important-channel delted.")
+                await ctx.send("Channel #very-important-channel deleted.")
             else:
                 await ctx.send("Canceled.")
         """
@@ -558,7 +558,7 @@ class ConfirmView(discord.ui.View):
             view.message = await ctx.send("Are you sure you want to remove #very-important-channel?", view=view)
             await view.wait()
             if view.result:
-                await ctx.send("Channel #very-important-channel delted.")
+                await ctx.send("Channel #very-important-channel deleted.")
             else:
                 await ctx.send("Canceled.")
         """
