@@ -529,6 +529,7 @@ class ConfirmView(discord.ui.View):
 
     @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
     async def confirm_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # Warning: The Sphinx documentation for this method/attribute does not use this docstring.
         """
         A `discord.ui.Button` to confirm the message.
 
@@ -561,6 +562,7 @@ class ConfirmView(discord.ui.View):
 
     @discord.ui.button(label=_("No"), style=discord.ButtonStyle.secondary)
     async def dismiss_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # Warning: The Sphinx documentation for this method/attribute does not use this docstring.
         """
         A `discord.ui.Button` to dismiss the message.
 
