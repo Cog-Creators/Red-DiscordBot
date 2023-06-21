@@ -532,8 +532,8 @@ class ConfirmView(discord.ui.View):
         """
         A `discord.ui.Button` to confirm the message.
 
-        Examples
-        --------
+        Example
+        -------
         Changing the style and label of this `discord.ui.Button`::
 
             view = ConfirmView(ctx.author)
@@ -561,8 +561,8 @@ class ConfirmView(discord.ui.View):
         """
         A `discord.ui.Button` to dismiss the message.
 
-        Examples
-        --------
+        Example
+        -------
         Changing the style and label of this `discord.ui.Button`::
 
             view = ConfirmView(ctx.author)
