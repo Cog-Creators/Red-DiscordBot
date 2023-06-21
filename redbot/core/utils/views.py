@@ -435,7 +435,7 @@ class SetApiView(discord.ui.View):
 
 class ConfirmView(discord.ui.View):
     """
-    A simple ``discord.ui.View`` used for confirming something.
+    A simple `discord.ui.View` used for confirming something.
 
     Parameters
     ----------
@@ -446,7 +446,7 @@ class ConfirmView(discord.ui.View):
         The timeout of the view in seconds. Defaults to ``180`` seconds.
     disable_buttons: bool
         Whether to disable the buttons instead of removing them from the message after the timeout.
-         Defaults to ``False``.
+        Defaults to ``False``.
 
     Examples
     --------
@@ -482,10 +482,10 @@ class ConfirmView(discord.ui.View):
     message: Optional[discord.Message]
         The message the confirm view is sent on. This can be set while
         sending the message. This can also be left as ``None`` in which case
-        nothing will happen in ``on_timeout``, if the view is never interacted with.
+        nothing will happen in `on_timeout()`, if the view is never interacted with.
     disable_buttons: bool
         Whether to disable the buttons isntead of removing them on timeout
-        (if the ``message`` attribute has been set on the view).
+        (if the `message` attribute has been set on the view).
     """
 
     def __init__(
@@ -518,11 +518,11 @@ class ConfirmView(discord.ui.View):
     @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
     async def confirm_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """
-        A ``discord.ui.Button`` to confirm the message.
+        A `discord.ui.Button` to confirm the message.
 
         Examples
         --------
-        Changing the style and label of this ``discord.ui.Button``::
+        Changing the style and label of this `discord.ui.Button`::
 
             view = ConfirmView(ctx.author)
             view.confirm_button.style = discord.ButtonStyle.red
@@ -545,11 +545,11 @@ class ConfirmView(discord.ui.View):
     @discord.ui.button(label=_("No"), style=discord.ButtonStyle.secondary)
     async def dismiss_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """
-        A ``discord.ui.Button`` to dismiss the message.
+        A `discord.ui.Button` to dismiss the message.
 
         Examples
         --------
-        Changing the style and label of this ``discord.ui.Button``::
+        Changing the style and label of this `discord.ui.Button`::
 
             view = ConfirmView(ctx.author)
             view.confirm_button.style = discord.ButtonStyle.red
