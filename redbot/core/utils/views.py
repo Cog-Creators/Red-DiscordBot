@@ -573,5 +573,8 @@ class ConfirmView(discord.ui.View):
         if self.message is None:
             self.message = interaction.message
         if self.author and interaction.user.id != self.author.id:
+            await interaction.response.send_message(
+                content=_("You are not authorized to interact with this."), ephemeral=True
+            )
             return False
         return True
