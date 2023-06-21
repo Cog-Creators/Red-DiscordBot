@@ -532,6 +532,9 @@ class ConfirmView(discord.ui.View):
         """
         A `discord.ui.Button` to confirm the message.
 
+        The button's callback will set `result` to ``True``, defer the response,
+        and call `on_timeout()` to clean up the view.
+
         Example
         -------
         Changing the style and label of this `discord.ui.Button`::
@@ -560,6 +563,9 @@ class ConfirmView(discord.ui.View):
     async def dismiss_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """
         A `discord.ui.Button` to dismiss the message.
+
+        The button's callback will set `result` to ``False``, defer the response,
+        and call `on_timeout()` to clean up the view.
 
         Example
         -------
