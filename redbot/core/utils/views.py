@@ -504,6 +504,18 @@ class ConfirmView(discord.ui.View):
         self.disable_buttons = disable_buttons
 
     async def on_timeout(self):
+        """
+        A callback that is called by the provided (default) callbacks for `confirm_button`
+        and `dismiss_button` as well as when a view’s timeout elapses without being
+        explicitly stopped.
+
+        The default implementation will either disable the buttons
+        when `disable_buttons` is ``True``, or remove the view from the message otherwise.
+
+        .. note::
+
+            This will not do anything if `message` is ``None``.
+        """
         if self.message is None:
             # we can't do anything here if message is none
             return
@@ -570,6 +582,22 @@ class ConfirmView(discord.ui.View):
         await self.on_timeout()
 
     async def interaction_check(self, interaction: discord.Interaction):
+        """
+        A callback that is called when an interaction happens within the view
+        that checks whether the view should process item callbacks for the interaction.
+
+        The default implementation of this will assign value of `discord.Interaction.message`
+        to the `message` attribute and either:
+
+        - send an ephemeral failure message and return ``False``,
+          if `author` is set and isn't the same as the interaction user, or
+        - return ``True``
+
+        .. seealso::
+
+            The documentation of the callback in the base class:
+            :meth:`discord.ui.View.interaction_check()`
+        """
         if self.message is None:
             self.message = interaction.message
         if self.author and interaction.user.id != self.author.id:
