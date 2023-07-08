@@ -540,7 +540,7 @@ def humanize_timedelta(
         A number of seconds
     negative_unit: Optional[str]
         What to use in instances of negative timedeltas.
-        This is mainly used if you want to use `-` instead of the
+        This is mainly used if you want to use "-" instead of the
         word "negative"
 
     Returns
