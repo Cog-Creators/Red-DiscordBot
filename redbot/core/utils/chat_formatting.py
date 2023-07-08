@@ -519,7 +519,10 @@ def format_perms_list(perms: discord.Permissions) -> str:
 
 
 def humanize_timedelta(
-    *, timedelta: Optional[datetime.timedelta] = None, seconds: Optional[SupportsInt] = None
+    *,
+    timedelta: Optional[datetime.timedelta] = None,
+    seconds: Optional[SupportsInt] = None,
+    negative_unit: Optional[str] = None,
 ) -> str:
     """
     Get a locale aware human timedelta representation.
@@ -535,6 +538,10 @@ def humanize_timedelta(
         A timedelta object
     seconds: Optional[SupportsInt]
         A number of seconds
+    negative_unit: Optional[str]
+        What to use in instances of negative timedeltas.
+        This is mainly used if you want to use `-` instead of the
+        word "negative"
 
     Returns
     -------
@@ -561,7 +568,12 @@ def humanize_timedelta(
         (_("minute"), _("minutes"), 60),
         (_("second"), _("seconds"), 1),
     ]
-
+    negative = ""
+    if seconds < 0:
+        seconds = -1 * seconds
+        negative = _("negative ")
+    if negative_unit is not None:
+        negative = negative_unit
     strings = []
     for period_name, plural_period_name, period_seconds in periods:
         if seconds >= period_seconds:
@@ -571,7 +583,7 @@ def humanize_timedelta(
             unit = plural_period_name if period_value > 1 else period_name
             strings.append(f"{period_value} {unit}")
 
-    return ", ".join(strings)
+    return negative + ", ".join(strings)
 
 
 def humanize_number(val: Union[int, float], override_locale=None) -> str:
