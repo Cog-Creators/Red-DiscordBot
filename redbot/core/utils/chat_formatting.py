@@ -572,8 +572,8 @@ def humanize_timedelta(
     if seconds < 0:
         seconds = -1 * seconds
         negative = _("negative ")
-    if negative_unit is not None:
-        negative = negative_unit
+        if negative_unit is not None:
+            negative = negative_unit
     strings = []
     for period_name, plural_period_name, period_seconds in periods:
         if seconds >= period_seconds:
