@@ -148,7 +148,7 @@ class Cleanup(commands.Cog):
         """
         Sends a notification to the channel that a certain number of messages have been deleted.
         """
-        if not hasattr(channel, "guild") or await self.config.guild(channel.guild).notify():
+        if not channel.guild or await self.config.guild(channel.guild).notify():
             if subtract_invoking:
                 num -= 1
             if num == 1:
