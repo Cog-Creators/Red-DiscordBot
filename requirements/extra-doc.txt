@@ -1,6 +1,6 @@
 alabaster==0.7.13
     # via sphinx
-certifi==2023.5.7
+certifi==2023.7.22
     # via requests
 docutils==0.18.1
     # via
@@ -44,5 +44,5 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 sphinxcontrib-trio==1.1.2
     # via -r extra-doc.in
-urllib3==2.0.3
+urllib3==2.0.4
     # via requests

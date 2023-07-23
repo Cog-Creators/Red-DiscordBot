@@ -1,4 +1,4 @@
-black==23.3.0
+black==23.7.0
     # via -r extra-style.in
 mypy-extensions==1.0.0
     # via black
