@@ -501,7 +501,12 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
     else:
         rich.print("Time for a changelog!")
 
-    if click.confirm("Do you have a changelog already?"):
+    rich.print(
+        "Do you have a [bold]finished[/] changelog already?"
+        " This should include the contributor list.",
+        end="",
+    )
+    if click.confirm(""):
         set_release_stage(ReleaseStage.CHANGELOG_CREATED)
         return
     rich.print()
