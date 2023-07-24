@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-13 10:40+0000\n"
+"POT-Creation-Date: 2023-06-14 02:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -181,7 +181,7 @@ msgid "Clean up messages owned by the bot in the current channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:698
+#: redbot/cogs/cleanup/cleanup.py:694
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
@@ -194,12 +194,12 @@ msgstr "Briše duplicirane poruke u kanalu iz zadnjih X poruka i zadržava samo 
 "        - `<number>` Broj poruka za provjeru duplikata. Mora biti pozitivan cijeli broj.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:750
+#: redbot/cogs/cleanup/cleanup.py:746
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr "Upravljajte postavkama za naredbu za čišćenje."
 
-#: redbot/cogs/cleanup/cleanup.py:756
+#: redbot/cogs/cleanup/cleanup.py:752
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -210,11 +210,11 @@ msgstr "Uključite/isključite obavijesti za čišćenje.\n\n"
 "        Ova će poruka biti izbrisana nakon 5 sekundi.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:764
+#: redbot/cogs/cleanup/cleanup.py:760
 msgid "I will no longer notify of message deletions."
 msgstr "Više neću obavještavati o brisanju poruka."
 
-#: redbot/cogs/cleanup/cleanup.py:767
+#: redbot/cogs/cleanup/cleanup.py:763
 msgid "I will now notify of message deletions."
 msgstr "Sada ću obavijestiti o brisanju poruka."
 

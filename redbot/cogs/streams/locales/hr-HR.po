@@ -86,7 +86,7 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:301 redbot/cogs/streams/streams.py:810
 msgid "Watch the stream"
-msgstr ""
+msgstr "Gledaj stream"
 
 #: redbot/cogs/streams/streams.py:310
 #, docstring
