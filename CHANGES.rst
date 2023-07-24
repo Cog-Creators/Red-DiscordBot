@@ -17,7 +17,7 @@ End-user changelog
 Changes
 *******
 
-- :cool: Red has been updated to support `Discord's new username system <https://discord.com/blog/usernames>`__ (:issue:`6130`)
+- |cool| Red has been updated to support `Discord's new username system <https://discord.com/blog/usernames>`__ (:issue:`6130`)
 
     This means that we now support passing the new usernames as arguments
     and properly display usernames/global display names in core commands and cogs where applicable.
