@@ -19,8 +19,8 @@ Changes
 
 - |cool| Red has been updated to support `Discord's new username system <https://discord.com/blog/usernames>`__ (:issue:`6130`)
 
-    This means that we now support passing the new usernames as arguments
-    and properly display usernames/global display names in core commands and cogs where applicable.
+  This means that we now support passing the new usernames as arguments
+  and properly display usernames/global display names in core commands and cogs where applicable.
 
 - **Core** - All bots are are now considered to be immune to auto-moderation (:issue:`6130`)
 - **Core** - Added list of command-line arguments to ``redbot --debuginfo <instance_name>`` and ``[p]debuginfo`` (:issue:`6164`)
