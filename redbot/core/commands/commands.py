@@ -555,8 +555,8 @@ class Command(CogCommandMixin, DPYCommand):
         Disable this command in the given guild.
 
         This is generally called by the settings managed with
-        the ``[p]command disable global/server`` commands and
-        any changes made outside of that will not persist after cog
+        the ``[p]command disable global/server`` commands.
+        Any changes made outside of that will not persist after cog
         reload and may also be affected when either of those commands
         is called on this command. It is not recommended to rely on
         this method, if you want a consistent behavior.
@@ -581,8 +581,8 @@ class Command(CogCommandMixin, DPYCommand):
         """Enable this command in the given guild.
 
         This is generally called by the settings managed with
-        the ``[p]command disable global/server`` commands and
-        any changes made outside of that will not persist after cog
+        the ``[p]command disable global/server`` commands.
+        Any changes made outside of that will not persist after cog
         reload and may also be affected when either of those commands
         is called on this command. It is not recommended to rely on
         this method, if you want a consistent behavior.
