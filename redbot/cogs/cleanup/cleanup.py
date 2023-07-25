@@ -148,7 +148,7 @@ class Cleanup(commands.Cog):
         """
         Sends a notification to the channel that a certain number of messages have been deleted.
         """
-        if not hasattr(channel, "guild") or await self.config.guild(channel.guild).notify():
+        if not channel.guild or await self.config.guild(channel.guild).notify():
             if subtract_invoking:
                 num -= 1
             if num == 1:
@@ -228,8 +228,8 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages containing '{}' in channel #{}.".format(
-            author.name,
+        reason = "{} ({}) deleted {} messages containing '{}' in channel #{}.".format(
+            author,
             author.id,
             humanize_number(len(to_delete), override_locale="en_us"),
             text,
@@ -295,10 +295,10 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = (
-            "{}({}) deleted {} messages"
-            " made by {}({}) in channel #{}."
+            "{} ({}) deleted {} messages"
+            " made by {} ({}) in channel #{}."
             "".format(
-                author.name,
+                author,
                 author.id,
                 humanize_number(len(to_delete), override_locale="en_US"),
                 member or "???",
@@ -353,8 +353,8 @@ class Cleanup(commands.Cog):
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
         )
 
-        reason = "{}({}) deleted {} messages in channel #{}.".format(
-            author.name,
+        reason = "{} ({}) deleted {} messages in channel #{}.".format(
+            author,
             author.id,
             humanize_number(len(to_delete), override_locale="en_US"),
             channel.name,
@@ -409,8 +409,8 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages in channel #{}.".format(
-            author.name,
+        reason = "{} ({}) deleted {} messages in channel #{}.".format(
+            author,
             author.id,
             humanize_number(len(to_delete), override_locale="en_US"),
             channel.name,
@@ -462,8 +462,8 @@ class Cleanup(commands.Cog):
             channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
-        reason = "{}({}) deleted {} messages in channel #{}.".format(
-            author.name,
+        reason = "{} ({}) deleted {} messages in channel #{}.".format(
+            author,
             author.id,
             humanize_number(len(to_delete), override_locale="en_US"),
             channel.name,
@@ -504,8 +504,8 @@ class Cleanup(commands.Cog):
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages in channel #{}.".format(
-            author.name, author.id, len(to_delete), channel.name
+        reason = "{} ({}) deleted {} messages in channel #{}.".format(
+            author, author.id, len(to_delete), channel.name
         )
         log.info(reason)
 
@@ -585,10 +585,10 @@ class Cleanup(commands.Cog):
         to_delete.append(ctx.message)
 
         reason = (
-            "{}({}) deleted {}"
+            "{} ({}) deleted {}"
             " command messages in channel #{}."
             "".format(
-                author.name,
+                author,
                 author.id,
                 humanize_number(len(to_delete), override_locale="en_US"),
                 channel.name,
@@ -670,15 +670,11 @@ class Cleanup(commands.Cog):
         else:
             channel_name = str(channel)
 
-        reason = (
-            "{}({}) deleted {} messages "
-            "sent by the bot in {}."
-            "".format(
-                author.name,
-                author.id,
-                humanize_number(len(to_delete), override_locale="en_US"),
-                channel_name,
-            )
+        reason = "{} ({}) deleted {} messages sent by the bot in {}.".format(
+            author,
+            author.id,
+            humanize_number(len(to_delete), override_locale="en_US"),
+            channel_name,
         )
         log.info(reason)
 

@@ -177,6 +177,7 @@ def parse_cli_flags(args):
         type=int,
         default=[],
         nargs="+",
+        action="extend",
         help="ID of a co-owner. Only people who have access "
         "to the system that is hosting Red should be  "
         "co-owners, as this gives them complete access "
@@ -201,11 +202,16 @@ def parse_cli_flags(args):
         "--load-cogs",
         type=str,
         nargs="+",
+        action="extend",
         help="Force loading specified cogs from the installed packages. "
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
     parser.add_argument(
-        "--unload-cogs", type=str, nargs="+", help="Force unloading specified cogs."
+        "--unload-cogs",
+        type=str,
+        nargs="+",
+        action="extend",
+        help="Force unloading specified cogs.",
     )
     parser.add_argument(
         "--dry-run",

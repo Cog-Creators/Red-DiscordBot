@@ -398,13 +398,18 @@ class RedHelpFormatter(HelpFormatterABC):
 
             command_help = command.format_help_for_context(ctx)
             if command_help:
-                splitted = command_help.split("\n\n")
-                name = splitted[0]
-                value = "\n\n".join(splitted[1:])
-                if not value:
-                    value = EMPTY_STRING
-                field = EmbedField(name[:250], value[:1024], False)
-                emb["fields"].append(field)
+                splitted = filter(None, command_help.split("\n\n"))
+                try:
+                    name = next(splitted)
+                except StopIteration:
+                    # all parts are empty
+                    pass
+                else:
+                    value = "\n\n".join(splitted)
+                    if not value:
+                        value = EMPTY_STRING
+                    field = EmbedField(name[:250], value[:1024], False)
+                    emb["fields"].append(field)
 
             if subcommands:
 
@@ -571,13 +576,18 @@ class RedHelpFormatter(HelpFormatterABC):
 
             emb["footer"]["text"] = tagline
             if description:
-                splitted = description.split("\n\n")
-                name = splitted[0]
-                value = "\n\n".join(splitted[1:])
-                if not value:
-                    value = EMPTY_STRING
-                field = EmbedField(name[:252], value[:1024], False)
-                emb["fields"].append(field)
+                splitted = filter(None, description.split("\n\n"))
+                try:
+                    name = next(splitted)
+                except StopIteration:
+                    # all parts are empty
+                    pass
+                else:
+                    value = "\n\n".join(splitted)
+                    if not value:
+                        value = EMPTY_STRING
+                    field = EmbedField(name[:252], value[:1024], False)
+                    emb["fields"].append(field)
 
             if coms:
 

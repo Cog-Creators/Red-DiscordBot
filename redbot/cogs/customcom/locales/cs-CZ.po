@@ -28,15 +28,16 @@ msgstr "Přidat náhodnou odpověď:"
 #: redbot/cogs/customcom/customcom.py:98
 msgid "The text response you're trying to create has more than 2000 characters.\n"
 "I cannot send messages that are longer than 2000 characters, please try again."
-msgstr ""
+msgstr "Textová odpověď, kterou se snažíte vytvořit, má více než 2000 znaků.\n"
+"Nemohu odesílat zprávy delší než 2000 znaků, zkuste to prosím znovu."
 
 #: redbot/cogs/customcom/customcom.py:111
 msgid "Random responses must take the same arguments!"
-msgstr ""
+msgstr "Náhodné odpovědi musí obsahovat stejné argumenty!"
 
 #: redbot/cogs/customcom/customcom.py:183
 msgid "Do you want to create a 'randomized' custom command?"
-msgstr ""
+msgstr "Chcete vytvořit 'náhodný' vlastní příkaz?"
 
 #: redbot/cogs/customcom/customcom.py:189
 #: redbot/cogs/customcom/customcom.py:200
@@ -54,12 +55,17 @@ msgid "This cog contains commands for creating and managing custom commands that
 "    Custom commands can be used by anyone by default, so be careful with pings.\n"
 "    Commands can only be lowercase, and will not respond to any uppercase letters.\n"
 "    "
-msgstr ""
+msgstr "Tento cog obsahuje příkazy pro vytváření a správu vlastních příkazů, které zobrazují text.\n\n"
+"    Je užitečný pro ukládání informací, které by členové mohli potřebovat, například\n"
+"    FAQ odpovědi nebo invite linky. Vlastní příkazy může ve výchozím stavu použít\n"
+"    kdokoliv, proto buďte opatrní s pingy. Příkazy mohou být psány pouze s\n"
+"    malými písmeny a na velká písmena nebudou reagovat.\n"
+"    "
 
 #: redbot/cogs/customcom/customcom.py:266
 #, docstring
 msgid "Base command for Custom Commands management."
-msgstr ""
+msgstr "Základní příkaz pro správu vlastních příkazů."
 
 #: redbot/cogs/customcom/customcom.py:271
 #, docstring
@@ -71,12 +77,13 @@ msgstr ""
 
 #: redbot/cogs/customcom/customcom.py:296
 msgid "Response #{num}/{total}"
-msgstr ""
+msgstr "Odpověď #{num}/{total}"
 
 #: redbot/cogs/customcom/customcom.py:306
 msgid "Response #{num}/{total}:\n"
 "{raw}"
-msgstr ""
+msgstr "Odpověď #{num}/{total}:\n"
+"{raw}"
 
 #: redbot/cogs/customcom/customcom.py:317
 #, docstring
@@ -86,19 +93,24 @@ msgid "\n"
 "        **Arguments:**\n\n"
 "        - `<query>` The query to search for. Can be multiple words.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Vyhledavá ve vlastních příkazech dle dotazu.\n\n"
+"        Použije fuzzy vyhledávání k nalezení blízkých shod.\n\n"
+"        **Argumenty:**\n\n"
+"        -`<query>` Dotaz, který se má vyhledat. Může obsahovat více slov.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:337
 msgid "No close matches were found."
-msgstr ""
+msgstr "Žádné blízké odpovídající záznamy nebyly nalezeny."
 
 #: redbot/cogs/customcom/customcom.py:342
 msgid "Search results"
-msgstr ""
+msgstr "Výsledky hledání"
 
 #: redbot/cogs/customcom/customcom.py:347
 msgid "The following matches have been found:"
-msgstr ""
+msgstr "Byly nalezeny tyto záznamy odpovidající vyhledavaní:"
 
 #: redbot/cogs/customcom/customcom.py:352
 #, docstring

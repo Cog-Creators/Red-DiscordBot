@@ -1,5 +1,84 @@
 .. Red changelogs
 
+Redbot 3.5.3 (2023-07-24)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Om1609`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
+
+Read before updating
+--------------------
+
+#. Fedora 36, Ubuntu 18.04 LTS and versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux older than 8.6 are no longer supported as they have already reached their end of life.
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- |cool| Red has been updated to support `Discord's new username system <https://discord.com/blog/usernames>`__ (:issue:`6130`)
+
+  This means that we now support passing the new usernames as arguments
+  and properly display usernames/global display names in core commands and cogs where applicable.
+
+- **Core** - All bots are are now considered to be immune to auto-moderation (:issue:`6130`)
+- **Core** - Added list of command-line arguments to ``redbot --debuginfo <instance_name>`` and ``[p]debuginfo`` (:issue:`6164`)
+- **Core - Bot Commands** - The ``[p]set api`` command will now hide the button once the time to open the modal to set API keys elapses (:issue:`6166`)
+- **Core - Command-line Interfaces** - Multiple arguments to ``--co-owner``, ``--load-cogs``, and ``--unload-cogs`` flags can now be specified both by passing multiple arguments right after the flag and by repeating the flag multiple times with different arguments (:issue:`6200`)
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6185`)
+- |cool| **Cogs - Audio** - The managed Lavalink server can now be run with either Java 11 or Java 17 (:issue:`6190`)
+- **Cogs - Audio** - Added an option to auto-use default HTTP/HTTPS port for unmanaged Lavalink server (:issue:`5629`)
+- **Cogs - Mod** - The cog now tracks both the usernames *and* global display names (:issue:`6130`)
+
+Removals
+********
+
+- **Core - OS Support** - Fedora 36, Ubuntu 18.04 LTS and versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux older than 8.6 are no longer supported as they have already reached end of life (:issue:`6189`)
+
+Fixes
+*****
+
+- **Core** - Red's menu timeout is now consistent between reaction and button menus (:issue:`6173`)
+- **Core - Bot Commands** - Fixed message too long error in the ``[p]slash list`` command (:issue:`6167`)
+- **Core - Command-line Interfaces** - Red will now properly exit with code ``1`` (``CRITICAL``) when the bot fails after connecting to Discord but before becoming ready instead of indefinitely hanging in non-working condition (:issue:`6202`)
+- **Cogs - Audio** - Fixed playlist selection in the picker used by the playlist-related commands (:issue:`6169`, :issue:`6170`)
+- **Cogs - Cleanup** - Fixed an issue with ``[p]cleanup self`` not working in DMs (:issue:`6196`, :issue:`6197`)
+- **Cogs - Downloader** - Fixed ``CancelledError`` tracebacks showing up in logs when the bot is shut down quickly after the cog is loaded (:issue:`6203`)
+- **Cogs - Mutes** - Fixed ``CancelledError`` tracebacks showing up in logs when the bot is shut down quickly after the cog is loaded (:issue:`6203`)
+
+Developer changelog
+-------------------
+
+Additions
+*********
+
+- |cool| **Core - Utils Package** - Added new view (`ConfirmView`) that can be used to ask for confirmation (:issue:`6174`, :issue:`6176`)
+- **Core - Commands Package** - Added `Command.is_enabled()` method allowing to check whether the command is disabled in a guild/globally (:issue:`4130`, :issue:`5552`, :issue:`6209`)
+
+Fixes
+*****
+
+- **Core - Commands Package** - Fixed handling of cases where the string returned by `Cog.format_help_for_context()`/`Command.format_help_for_context()` starts with ``"\n\n"`` (:issue:`5941`)
+- **Cogs - Dev** - Fixed issues with exception formatting in ``[p]eval/repl/debug`` commands not including the code for chained/grouped exceptions (:issue:`6178`)
+
+Documentation changes
+---------------------
+
+Additions
+*********
+
+- Added usage example to `get_end_user_data_statement_or_raise()` (:issue:`6171`)
+
+Changes
+*******
+
+- |cool| Added install instructions for Debian 12 Bookworm (:issue:`6190`)
+- |cool| The install guides have been updated to install Java 17 when possible (:issue:`6190`)
+
+
+----
+
 Redbot 3.5.2 (2023-05-14)
 =========================
 
@@ -54,6 +133,7 @@ Documentation changes
 Fixes
 *****
 
+- Fixed the search box on the documentation page returning no results (:issue:`6185`)
 - Fixed command choices example in `Slash Commands and Interactions guide <guide_slash_and_interactions>` (:issue:`6154`)
 - Updated `the 3.5.0 changelog <redbot-3-5-0-2023-05-04>`, `incompatible-changes-3.5`, and `end-user-guarantees` documents to mention the new ``x86-64-v2`` instruction set requirement (:issue:`6141`, :issue:`6147`)
 

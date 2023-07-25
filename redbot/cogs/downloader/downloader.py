@@ -98,14 +98,19 @@ class Downloader(commands.Cog):
 
     def create_init_task(self):
         def _done_callback(task: asyncio.Task) -> None:
-            exc = task.exception()
-            if exc is not None:
+            try:
+                exc = task.exception()
+            except asyncio.CancelledError:
+                pass
+            else:
+                if exc is None:
+                    return
                 log.error(
                     "An unexpected error occurred during Downloader's initialization.",
                     exc_info=exc,
                 )
-                self._ready_raised = True
-                self._ready.set()
+            self._ready_raised = True
+            self._ready.set()
 
         self._init_task = asyncio.create_task(self.initialize())
         self._init_task.add_done_callback(_done_callback)

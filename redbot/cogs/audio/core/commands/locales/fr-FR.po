@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-02-12 21:08+0000\n"
+"POT-Creation-Date: 2023-06-20 09:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -342,28 +342,28 @@ msgstr "\n"
 #: redbot/cogs/audio/core/commands/llset.py:175
 #: redbot/cogs/audio/core/commands/llset.py:204
 #: redbot/cogs/audio/core/commands/llset.py:226
-#: redbot/cogs/audio/core/commands/llset.py:255
-#: redbot/cogs/audio/core/commands/llset.py:279
-#: redbot/cogs/audio/core/commands/llset.py:292
-#: redbot/cogs/audio/core/commands/llset.py:383
-#: redbot/cogs/audio/core/commands/llset.py:407
-#: redbot/cogs/audio/core/commands/llset.py:438
-#: redbot/cogs/audio/core/commands/llset.py:467
-#: redbot/cogs/audio/core/commands/llset.py:476
-#: redbot/cogs/audio/core/commands/llset.py:494
-#: redbot/cogs/audio/core/commands/llset.py:503
-#: redbot/cogs/audio/core/commands/llset.py:521
-#: redbot/cogs/audio/core/commands/llset.py:530
-#: redbot/cogs/audio/core/commands/llset.py:548
-#: redbot/cogs/audio/core/commands/llset.py:557
-#: redbot/cogs/audio/core/commands/llset.py:575
-#: redbot/cogs/audio/core/commands/llset.py:584
-#: redbot/cogs/audio/core/commands/llset.py:602
-#: redbot/cogs/audio/core/commands/llset.py:611
-#: redbot/cogs/audio/core/commands/llset.py:629
-#: redbot/cogs/audio/core/commands/llset.py:638
-#: redbot/cogs/audio/core/commands/llset.py:665
-#: redbot/cogs/audio/core/commands/llset.py:696
+#: redbot/cogs/audio/core/commands/llset.py:258
+#: redbot/cogs/audio/core/commands/llset.py:282
+#: redbot/cogs/audio/core/commands/llset.py:295
+#: redbot/cogs/audio/core/commands/llset.py:388
+#: redbot/cogs/audio/core/commands/llset.py:412
+#: redbot/cogs/audio/core/commands/llset.py:443
+#: redbot/cogs/audio/core/commands/llset.py:472
+#: redbot/cogs/audio/core/commands/llset.py:481
+#: redbot/cogs/audio/core/commands/llset.py:499
+#: redbot/cogs/audio/core/commands/llset.py:508
+#: redbot/cogs/audio/core/commands/llset.py:526
+#: redbot/cogs/audio/core/commands/llset.py:535
+#: redbot/cogs/audio/core/commands/llset.py:553
+#: redbot/cogs/audio/core/commands/llset.py:562
+#: redbot/cogs/audio/core/commands/llset.py:580
+#: redbot/cogs/audio/core/commands/llset.py:589
+#: redbot/cogs/audio/core/commands/llset.py:607
+#: redbot/cogs/audio/core/commands/llset.py:616
+#: redbot/cogs/audio/core/commands/llset.py:634
+#: redbot/cogs/audio/core/commands/llset.py:643
+#: redbot/cogs/audio/core/commands/llset.py:670
+#: redbot/cogs/audio/core/commands/llset.py:701
 msgid "Setting Changed"
 msgstr "Paramètre modifié"
 
@@ -1168,13 +1168,13 @@ msgid "Restarts the lavalink connection."
 msgstr "Redémarrage de la connection à Lavalink."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1463
-#: redbot/cogs/audio/core/commands/llset.py:726
+#: redbot/cogs/audio/core/commands/llset.py:731
 msgid "Failed To Shutdown Lavalink Node"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1464
 #: redbot/cogs/audio/core/commands/llset.py:187
-#: redbot/cogs/audio/core/commands/llset.py:727
+#: redbot/cogs/audio/core/commands/llset.py:732
 msgid "Please reload Audio (`{prefix}reload audio`)."
 msgstr "Veuillez recharger l'Audio (`{prefix}reload audio`)."
 
@@ -1886,7 +1886,7 @@ msgstr ""
 msgid "Change your Java executable path.\n\n"
 "        This command shouldn't need to be used most of the time, and is only useful if the host machine has conflicting Java versions.\n\n"
 "        If changing this make sure that the Java executable you set is supported by Audio.\n"
-"        The current supported version is Java 11.\n\n"
+"        The current supported versions are Java 17 and 11.\n\n"
 "        Enter nothing or \"java\" to reset it back to default.\n"
 "        "
 msgstr ""
@@ -1983,120 +1983,125 @@ msgstr ""
 #, docstring
 msgid "Set the Lavalink node port.\n\n"
 "        This command sets the connection port which Audio will use to connect to an unmanaged Lavalink node.\n"
+"        Set port to -1 to disable the port and connect to the specified host via ports 80/443\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:249
-#: redbot/cogs/audio/core/commands/llset.py:431
-#: redbot/cogs/audio/core/commands/llset.py:659
-#: redbot/cogs/audio/core/commands/llset.py:690
+#: redbot/cogs/audio/core/commands/llset.py:252
+#: redbot/cogs/audio/core/commands/llset.py:436
+#: redbot/cogs/audio/core/commands/llset.py:664
+#: redbot/cogs/audio/core/commands/llset.py:695
 msgid "Setting Not Changed"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:250
+#: redbot/cogs/audio/core/commands/llset.py:253
 msgid "A port must be between 0 and 65535 "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:256
+#: redbot/cogs/audio/core/commands/llset.py:259
 msgid "Unmanaged Lavalink node port set to {port}. Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:269
+#: redbot/cogs/audio/core/commands/llset.py:272
 #, docstring
 msgid "Set the Lavalink node connection to secured.\n\n"
 "        This toggle sets the connection type to secured or unsecured when connecting to an unmanaged Lavalink node.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:280
+#: redbot/cogs/audio/core/commands/llset.py:283
 msgid "Unmanaged Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:293
+#: redbot/cogs/audio/core/commands/llset.py:296
 msgid "Unmanaged Lavalink node will no longer connect using the secured {secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:304
+#: redbot/cogs/audio/core/commands/llset.py:307
 #, docstring
 msgid "Display Lavalink connection settings."
 msgstr "Affiche les paramètres de connexion de Lavalink."
 
-#: redbot/cogs/audio/core/commands/llset.py:308
+#: redbot/cogs/audio/core/commands/llset.py:311
 msgid "Connection Settings"
 msgstr "Paramètres de connexion"
 
-#: redbot/cogs/audio/core/commands/llset.py:309
-#: redbot/cogs/audio/core/commands/llset.py:316
+#: redbot/cogs/audio/core/commands/llset.py:312
+#: redbot/cogs/audio/core/commands/llset.py:321
 msgid "Host:             [{host}]\n"
 msgstr "Hôte :             [{host}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:310
-#: redbot/cogs/audio/core/commands/llset.py:319
+#: redbot/cogs/audio/core/commands/llset.py:313
+#: redbot/cogs/audio/core/commands/llset.py:324
 msgid "Port:             [{port}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:311
-#: redbot/cogs/audio/core/commands/llset.py:320
+#: redbot/cogs/audio/core/commands/llset.py:314
+msgid "Default HTTP/HTTPS port"
+msgstr ""
+
+#: redbot/cogs/audio/core/commands/llset.py:316
+#: redbot/cogs/audio/core/commands/llset.py:325
 msgid "Password:         [{password}]\n"
 msgstr "Mot de passe :         [{password}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:312
+#: redbot/cogs/audio/core/commands/llset.py:317
 msgid "Secured:          [{state}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:315
+#: redbot/cogs/audio/core/commands/llset.py:320
 msgid "Lavalink Node Settings"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:323
+#: redbot/cogs/audio/core/commands/llset.py:328
 msgid "Initial Heapsize: [{xms}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:324
+#: redbot/cogs/audio/core/commands/llset.py:329
 msgid "Max Heapsize:     [{xmx}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:325
+#: redbot/cogs/audio/core/commands/llset.py:330
 msgid "Java exec:        [{java_exc_path}]\n"
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:333
-#: redbot/cogs/audio/core/commands/llset.py:355
+#: redbot/cogs/audio/core/commands/llset.py:338
+#: redbot/cogs/audio/core/commands/llset.py:360
 msgid "I need to be able to DM you to send you this info."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:338
+#: redbot/cogs/audio/core/commands/llset.py:343
 #, docstring
 msgid "Uploads a copy of the application.yml file used by the managed Lavalink node."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:362
+#: redbot/cogs/audio/core/commands/llset.py:367
 #, docstring
 msgid "Configure the managed Lavalink node runtime options.\n\n"
 "        All settings under this group will likely cause Audio to malfunction if changed from their defaults, only change settings here if you have been advised to by support.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:369
+#: redbot/cogs/audio/core/commands/llset.py:374
 #, docstring
 msgid "Configure the managed node authorization and connection settings."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:375
+#: redbot/cogs/audio/core/commands/llset.py:380
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node's binding IP address.\n\n"
 "        This value by default is `localhost` which will restrict the server to only localhost apps by default, changing this will likely break the managed Lavalink node if you don't know what you are doing.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:384
+#: redbot/cogs/audio/core/commands/llset.py:389
 msgid "Managed node will now accept connection on {host}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:399
+#: redbot/cogs/audio/core/commands/llset.py:404
 #, docstring
 msgid "Set the managed Lavalink node's connection password.\n\n"
 "        This is the password required for Audio to connect to the managed Lavalink node.\n"
@@ -2104,12 +2109,12 @@ msgid "Set the managed Lavalink node's connection password.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:408
+#: redbot/cogs/audio/core/commands/llset.py:413
 msgid "Managed node will now accept {password} as the authorization token.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:422
+#: redbot/cogs/audio/core/commands/llset.py:427
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node's connection port.\n\n"
 "        This port is the port the managed Lavalink node binds to, you should only change this if there is a conflict with the default port because you already have an application using port 2333 on this device.\n\n"
@@ -2117,170 +2122,170 @@ msgid "`Dangerous command` Set the managed Lavalink node's connection port.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:432
+#: redbot/cogs/audio/core/commands/llset.py:437
 msgid "The port must be between 1024 and 49151."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:439
+#: redbot/cogs/audio/core/commands/llset.py:444
 msgid "Managed node will now accept connections on {port}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:451
+#: redbot/cogs/audio/core/commands/llset.py:456
 #, docstring
 msgid "`Dangerous command` Toggle audio sources on/off.\n\n"
 "        By default, all sources are enabled, you should only use commands here to disable a specific source if you have been advised to, disabling sources without background knowledge can cause Audio to break.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:458
+#: redbot/cogs/audio/core/commands/llset.py:463
 #, docstring
 msgid "Toggle HTTP direct URL usage on or off.\n\n"
 "        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:468
+#: redbot/cogs/audio/core/commands/llset.py:473
 msgid "Managed node will allow playback from direct URLs.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:477
+#: redbot/cogs/audio/core/commands/llset.py:482
 msgid "Managed node will not play from direct URLs anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:485
+#: redbot/cogs/audio/core/commands/llset.py:490
 #, docstring
 msgid "Toggle Bandcamp source on or off.\n\n"
 "        This toggle controls the playback of all Bandcamp related content.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:495
+#: redbot/cogs/audio/core/commands/llset.py:500
 msgid "Managed node will allow playback from Bandcamp.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:504
+#: redbot/cogs/audio/core/commands/llset.py:509
 msgid "Managed node will not play from Bandcamp anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:512
+#: redbot/cogs/audio/core/commands/llset.py:517
 #, docstring
 msgid "Toggle local file usage on or off.\n\n"
 "        This toggle controls the playback of all local track content, usually found inside the `localtracks` folder.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:522
+#: redbot/cogs/audio/core/commands/llset.py:527
 msgid "Managed node will allow playback from local files.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:531
+#: redbot/cogs/audio/core/commands/llset.py:536
 msgid "Managed node will not play from local files anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:539
+#: redbot/cogs/audio/core/commands/llset.py:544
 #, docstring
 msgid "Toggle Soundcloud source on or off.\n\n"
 "        This toggle controls the playback of all SoundCloud related content.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:549
+#: redbot/cogs/audio/core/commands/llset.py:554
 msgid "Managed node will allow playback from Soundcloud.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:558
+#: redbot/cogs/audio/core/commands/llset.py:563
 msgid "Managed node will not play from Soundcloud anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:566
+#: redbot/cogs/audio/core/commands/llset.py:571
 #, docstring
 msgid "`Dangerous command` Toggle YouTube source on or off (this includes Spotify).\n\n"
 "        This toggle controls the playback of all YouTube and Spotify related content.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:576
+#: redbot/cogs/audio/core/commands/llset.py:581
 msgid "Managed node will allow playback from YouTube.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:585
+#: redbot/cogs/audio/core/commands/llset.py:590
 msgid "Managed node will not play from YouTube anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:593
+#: redbot/cogs/audio/core/commands/llset.py:598
 #, docstring
 msgid "Toggle Twitch source on or off.\n\n"
 "        This toggle controls the playback of all Twitch related content.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:603
+#: redbot/cogs/audio/core/commands/llset.py:608
 msgid "Managed node will allow playback from Twitch.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:612
+#: redbot/cogs/audio/core/commands/llset.py:617
 msgid "Managed node will not play from Twitch anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:620
+#: redbot/cogs/audio/core/commands/llset.py:625
 #, docstring
 msgid "Toggle Vimeo source on or off.\n\n"
 "        This toggle controls the playback of all Vimeo related content.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:630
+#: redbot/cogs/audio/core/commands/llset.py:635
 msgid "Managed node will allow playback from Vimeo.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:639
+#: redbot/cogs/audio/core/commands/llset.py:644
 msgid "Managed node will not play from Vimeo anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:652
+#: redbot/cogs/audio/core/commands/llset.py:657
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node framebuffer size.\n\n"
 "        Only change this if you have been directly advised to, changing it can cause significant playback issues.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:660
+#: redbot/cogs/audio/core/commands/llset.py:665
 msgid "The lowest value the framebuffer can be set to is 100ms."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:666
-#: redbot/cogs/audio/core/commands/llset.py:697
+#: redbot/cogs/audio/core/commands/llset.py:671
+#: redbot/cogs/audio/core/commands/llset.py:702
 msgid "Managed node's bufferDurationMs set to {milliseconds}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:683
+#: redbot/cogs/audio/core/commands/llset.py:688
 #, docstring
 msgid "`Dangerous command`  Set the managed Lavalink node JDA-NAS buffer size.\n\n"
 "        Only change this if you have been directly advised to, changing it can cause significant playback issues.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:691
+#: redbot/cogs/audio/core/commands/llset.py:696
 msgid "The lowest value the buffer may be is 100ms."
 msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:709
+#: redbot/cogs/audio/core/commands/llset.py:714
 #, docstring
 msgid "Reset all `llset` changes back to their default values."
 msgstr ""
@@ -2365,7 +2370,7 @@ msgstr "Page {}/{}"
 msgid "Queue percentage."
 msgstr "Pourcentage de la liste."
 
-#: redbot/cogs/audio/core/commands/miscellaneous.py:127
+#: redbot/cogs/audio/core/commands/miscellaneous.py:125
 #: redbot/cogs/audio/core/commands/playlists.py:1129
 #: redbot/cogs/audio/core/commands/queue.py:67
 #: redbot/cogs/audio/core/commands/queue.py:164
@@ -2383,7 +2388,7 @@ msgstr "Pourcentage de la liste."
 msgid "There's nothing in the queue."
 msgstr "Il n'y a rien dans la liste."
 
-#: redbot/cogs/audio/core/commands/miscellaneous.py:148
+#: redbot/cogs/audio/core/commands/miscellaneous.py:146
 msgid "Queued and playing tracks:"
 msgstr "Dans la liste et en cours de lecture :"
 
