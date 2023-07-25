@@ -1343,7 +1343,7 @@ class Downloader(commands.Cog):
         ]
         available_str = "\n".join(
             "+ {}{}".format(cog.name, ": {}".format(cog.short) if cog.short else "")
-            for cog in sorted(installed_cogs_in_repo, key=attrgetter("name"))
+            for cog in sorted(available_cogs, key=attrgetter("name"))
         )
 
         if not available_str:
