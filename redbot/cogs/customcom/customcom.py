@@ -622,11 +622,10 @@ class CustomCommands(commands.Cog):
                 last_editor = _("Deleted User")
             elif member := ctx.guild.get_member(_leid):
                 last_editor = f"{member} ({_leid})"
+            elif cmd.get("last_editor"):
+                author = f"{cmd['last_editor']['name']} ({_leid})"
             else:
-                if cmd.get("last_editor"):
-                    author = f"{cmd['last_editor']['name']} ({_leid})"
-                else:
-                    last_editor = _("Member not found. ({_leid})").format(_leid=_leid)
+                last_editor = _("Member not found. ({_leid})").format(_leid=_leid)
         else:
             last_editor = _("Never edited.")
 
@@ -639,7 +638,11 @@ class CustomCommands(commands.Cog):
             "Created: {created_at}\n"
             "Type: {type}\n"
         ).format(
-            command_name=command_name, author=author, last_editor=last_editor, created_at=cmd["created_at"], type=_type
+            command_name=command_name,
+            author=author,
+            last_editor=last_editor,
+            created_at=cmd["created_at"],
+            type=_type,
         )
 
         cooldowns = cmd.get("cooldowns", {})
