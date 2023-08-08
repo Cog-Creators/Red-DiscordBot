@@ -7,7 +7,7 @@ import discord
 import lavalink
 from red_commons.logging import getLogger
 
-from rapidfuzz import process
+import rapidfuzz
 from redbot.core import commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -116,7 +116,9 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         to_search_string = {
             i.local_track_path.name for i in to_search if i.local_track_path is not None
         }
-        search_results = process.extract(search_words, to_search_string, limit=50)
+        search_results = rapidfuzz.process.extract(
+            search_words, to_search_string, limit=50, processor=rapidfuzz.utils.default_process
+        )
         search_list = []
         async for track_match, percent_match, __ in AsyncIter(search_results):
             if percent_match > 85:
