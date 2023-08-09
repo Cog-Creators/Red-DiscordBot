@@ -14,7 +14,7 @@ mccabe==0.7.0
     # via pylint
 pluggy==1.2.0
     # via pytest
-pylint==2.17.4
+pylint==2.17.5
     # via -r extra-test.in
 pytest==7.4.0
     # via
@@ -29,7 +29,7 @@ tomli==2.0.1
     # via
     #   pylint
     #   pytest
-tomlkit==0.11.8
+tomlkit==0.12.1
     # via pylint
 wrapt==1.15.0
     # via astroid
