@@ -3212,6 +3212,47 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.bot.change_presence(status=status, activity=game)
         return await ctx.send(_("Status changed to {}.").format(status))
 
+    @_set_status.command(name="custom")
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
+    async def _set_status_custom(self, ctx: commands.Context, *, name: str = None):
+        """Sets [botname]'s custom status.
+
+        This will appear as `<name>`.
+
+        Maximum length for a custom status is 128 characters.
+
+        **Examples:**
+        - `[p]set status custom` - Clears the activity status.
+        - `[p]set status custom Running cogs...`
+
+        **Arguments:**
+        - `[custom]` - The custom status text. Leave blank to clear the current activity status.
+        """
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if name:
+            if len(name) > 128:
+                await ctx.send(
+                    _("The maximum length of custom descriptions is 128 characters.")
+                )
+                return
+            activity = discord.Activity(name=name, state=name, type=discord.ActivityType.custom)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(
+                _("Status set to `{name}`.").format(name=name)
+            )
+        else:
+            await ctx.send(_("Custom status cleared."))
+
+    async def _set_my_status(self, ctx: commands.Context, status: discord.Status):
+        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
+        await ctx.bot.change_presence(status=status, activity=game)
+        return await ctx.send(_("Status changed to {}.").format(status))
+
     @_set_status.command(name="online")
     @commands.bot_in_a_guild()
     @commands.is_owner()
