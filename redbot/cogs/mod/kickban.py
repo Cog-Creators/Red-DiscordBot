@@ -5,8 +5,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple, Union
 
 import discord
-from redbot.core import commands, i18n, checks, modlog
-from redbot.core.commands import UserInputOptional, RawUserIdConverter
+from redbot.core import commands, i18n, modlog
+from redbot.core.commands import RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
     pagify,
@@ -177,21 +177,23 @@ class KickBanMixin(MixinMeta):
 
         if removed_temp:
             log.info(
-                "{}({}) upgraded the tempban for {} to a permaban.".format(
-                    author.name, author.id, user.id
-                )
+                "%s (%s) upgraded the tempban for %s to a permaban.", author, author.id, user.id
             )
             success_message = _(
                 "User with ID {user_id} was upgraded from a temporary to a permanent ban."
             ).format(user_id=user.id)
         else:
-            username = user.name if hasattr(user, "name") else "Unknown"
+            user_handle = str(user) if isinstance(user, discord.abc.User) else "Unknown"
             try:
                 await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
-                    "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
-                        author.name, author.id, ban_type, username, user.id, str(days)
-                    )
+                    "%s (%s) %sned %s (%s), deleting %s days worth of messages.",
+                    author,
+                    author.id,
+                    ban_type,
+                    user_handle,
+                    user.id,
+                    days,
                 )
                 success_message = _("Done. That felt good.")
             except discord.Forbidden:
@@ -200,9 +202,12 @@ class KickBanMixin(MixinMeta):
                 return False, _("User with ID {user_id} not found").format(user_id=user.id)
             except Exception:
                 log.exception(
-                    "{}({}) attempted to {} {}({}), but an error occurred.".format(
-                        author.name, author.id, ban_type, username, user.id
-                    )
+                    "%s (%s) attempted to %s %s (%s), but an error occurred.",
+                    author,
+                    author.id,
+                    ban_type,
+                    user_handle,
+                    user.id,
                 )
                 return False, _("An unexpected error occurred.")
 
@@ -281,7 +286,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
-    @checks.admin_or_permissions(kick_members=True)
+    @commands.admin_or_permissions(kick_members=True)
     async def kick(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """
         Kick a user.
@@ -333,14 +338,16 @@ class KickBanMixin(MixinMeta):
                 await member.send(embed=em)
         try:
             await guild.kick(member, reason=audit_reason)
-            log.info("{}({}) kicked {}({})".format(author.name, author.id, member.name, member.id))
+            log.info("%s (%s) kicked %s (%s)", author, author.id, member, member.id)
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception:
             log.exception(
-                "{}({}) attempted to kick {}({}), but an error occurred.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%s (%s) attempted to kick %s (%s), but an error occurred.",
+                author,
+                author.id,
+                member,
+                member.id,
             )
         else:
             await modlog.create_case(
@@ -359,7 +366,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def ban(
         self,
         ctx: commands.Context,
@@ -397,7 +404,7 @@ class KickBanMixin(MixinMeta):
     @commands.command(aliases=["hackban"], usage="<user_ids...> [days] [reason]")
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def massban(
         self,
         ctx: commands.Context,
@@ -531,9 +538,10 @@ class KickBanMixin(MixinMeta):
                     tempbans.remove(user_id)
                     upgrades.append(str(user_id))
                     log.info(
-                        "{}({}) upgraded the tempban for {} to a permaban.".format(
-                            author.name, author.id, user_id
-                        )
+                        "%s (%s) upgraded the tempban for %s to a permaban.",
+                        author,
+                        author.id,
+                        user_id,
                     )
                     banned.append(user_id)
                 else:
@@ -541,7 +549,7 @@ class KickBanMixin(MixinMeta):
                         await guild.ban(
                             user, reason=audit_reason, delete_message_seconds=days * 86400
                         )
-                        log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
+                        log.info("%s (%s) hackbanned %s", author, author.id, user_id)
                     except discord.NotFound:
                         errors[user_id] = _("User with ID {user_id} not found").format(
                             user_id=user_id
@@ -571,7 +579,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def tempban(
         self,
         ctx: commands.Context,
@@ -670,7 +678,7 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def softban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Kick a user and delete 1 day's worth of their messages."""
         guild = ctx.guild
@@ -716,24 +724,32 @@ class KickBanMixin(MixinMeta):
             return
         except discord.HTTPException:
             log.exception(
-                "{}({}) attempted to softban {}({}), but an error occurred trying to ban them.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%s (%s) attempted to softban %s (%s), but an error occurred trying to ban them.",
+                author,
+                author.id,
+                member,
+                member.id,
             )
             return
         try:
             await guild.unban(member)
         except discord.HTTPException:
             log.exception(
-                "{}({}) attempted to softban {}({}), but an error occurred trying to unban them.".format(
-                    author.name, author.id, member.name, member.id
-                )
+                "%s (%s) attempted to softban %s (%s),"
+                " but an error occurred trying to unban them.",
+                author,
+                author.id,
+                member,
+                member.id,
             )
             return
         else:
             log.info(
-                "{}({}) softbanned {}({}), deleting 1 day worth "
-                "of messages.".format(author.name, author.id, member.name, member.id)
+                "%s (%s) softbanned %s (%s), deleting 1 day worth of messages.",
+                author,
+                author.id,
+                member,
+                member.id,
             )
             await modlog.create_case(
                 self.bot,
@@ -797,7 +813,7 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
+    @commands.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(
         self, ctx: commands.Context, member: discord.Member, *, reason: str = None
     ):
@@ -840,7 +856,7 @@ class KickBanMixin(MixinMeta):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(mute_members=True, deafen_members=True)
+    @commands.admin_or_permissions(mute_members=True, deafen_members=True)
     async def voiceban(self, ctx: commands.Context, member: discord.Member, *, reason: str = None):
         """Ban a user from speaking and listening in the server's voice channels."""
         user_voice_state: discord.VoiceState = member.voice
@@ -882,16 +898,16 @@ class KickBanMixin(MixinMeta):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def unban(
         self, ctx: commands.Context, user_id: RawUserIdConverter, *, reason: str = None
     ):
         """Unban a user from this server.
 
         Requires specifying the target user's ID. To find this, you may either:
-         1. Copy it from the mod log case (if one was created), or
-         2. enable developer mode, go to Bans in this server's settings, right-
-        click the user and select 'Copy ID'."""
+        1. Copy it from the mod log case (if one was created), or
+        2. Enable Developer Mode, go to Bans in this server's settings, right-click the user and select 'Copy ID'.
+        """
         guild = ctx.guild
         author = ctx.author
         audit_reason = get_audit_reason(ctx.author, reason, shorten=True)

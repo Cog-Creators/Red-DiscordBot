@@ -21,7 +21,7 @@ recursive-include redbot *.export
 recursive-include redbot py.typed
 
 # include *.sql files from postgres driver
-recursive-include redbot/core/drivers/postgres *.sql
+recursive-include redbot/core/_drivers/postgres *.sql
 
 # include tests
 graft tests
