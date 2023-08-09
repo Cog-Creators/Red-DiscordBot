@@ -3233,18 +3233,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if name:
             if len(name) > 128:
-                await ctx.send(
-                    _("The maximum length of custom descriptions is 128 characters.")
-                )
+                await ctx.send(_("The maximum length of custom statuses is 128 characters."))
                 return
             activity = discord.Activity(name=name, state=name, type=discord.ActivityType.custom)
         else:
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
         if activity:
-            await ctx.send(
-                _("Status set to `{name}`.").format(name=name)
-            )
+            await ctx.send(_("Custom status set to `{name}`.").format(name=name))
         else:
             await ctx.send(_("Custom status cleared."))
 
