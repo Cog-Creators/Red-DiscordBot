@@ -3202,7 +3202,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="custom")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_custom(self, ctx: commands.Context, *, text: commands.Range[str, 1, 128] = None):
+    async def _set_status_custom(
+        self, ctx: commands.Context, *, text: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s custom status.
 
         This will appear as `<text>`.
