@@ -3035,7 +3035,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _set_status_stream(
         self,
         ctx: commands.Context,
-        streamer: commands.Range[str, 1, 511] = None,
+        streamer: commands.Range[str, 1, 489] = None,
         *,
         stream_title: commands.Range[str, 1, 128] = None,
     ):
