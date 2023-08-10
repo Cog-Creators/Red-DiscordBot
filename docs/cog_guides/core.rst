@@ -3771,9 +3771,9 @@ Maximum length for a competing status is 128 characters.
 
 .. _core-command-set-status-custom:
 
-""""""""""""""""""""
+"""""""""""""""""
 set status custom
-""""""""""""""""""""
+"""""""""""""""""
 
 .. note:: |owner-lock|
 
