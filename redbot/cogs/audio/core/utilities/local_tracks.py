@@ -122,7 +122,7 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if percent_match > 85:
                 search_list.extend(
                     [
-                        discord.utils.escape_markdown(i.to_string_user())
+                        i.to_string_user()
                         for i in to_search
                         if i.local_track_path is not None
                         and i.local_track_path.name == track_match
