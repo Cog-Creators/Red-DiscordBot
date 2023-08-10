@@ -3202,7 +3202,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="custom")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_custom(self, ctx: commands.Context, *, text: str = None):
+    async def _set_status_custom(self, ctx: commands.Context, *, text: commands.Range[str, 1, 128] = None):
         """Sets [botname]'s custom status.
 
         This will appear as `<text>`.
@@ -3219,9 +3219,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if text:
-            if len(text) > 128:
-                await ctx.send(_("The maximum length of custom statuses is 128 characters."))
-                return
             activity = discord.Activity(name=text, state=text, type=discord.ActivityType.custom)
         else:
             activity = None
