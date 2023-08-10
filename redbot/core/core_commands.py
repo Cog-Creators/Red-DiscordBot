@@ -3207,11 +3207,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Competing cleared."))
 
-    async def _set_my_status(self, ctx: commands.Context, status: discord.Status):
-        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
-        await ctx.bot.change_presence(status=status, activity=game)
-        return await ctx.send(_("Status changed to {}.").format(status))
-
     @_set_status.command(name="custom")
     @commands.bot_in_a_guild()
     @commands.is_owner()
