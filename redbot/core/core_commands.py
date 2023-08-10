@@ -3032,7 +3032,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     )
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
+    async def _set_status_stream(
+        self,
+        ctx: commands.Context,
+        streamer: str = None,
+        *,
+        stream_title: commands.Range[str, 1, 128] = None,
+    ):
         """Sets [botname]'s streaming status to a twitch stream.
 
         This will appear as `Streaming <stream_title>` or `LIVE ON TWITCH` depending on the context.
@@ -3074,7 +3080,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="playing", aliases=["game"])
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_game(self, ctx: commands.Context, *, game: str = None):
+    async def _set_status_game(
+        self, ctx: commands.Context, *, game: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s playing status.
 
         This will appear as `Playing <game>` or `PLAYING A GAME: <game>` depending on the context.
@@ -3106,7 +3114,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="listening")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_listening(self, ctx: commands.Context, *, listening: str = None):
+    async def _set_status_listening(
+        self, ctx: commands.Context, *, listening: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s listening status.
 
         This will appear as `Listening to <listening>`.
@@ -3142,7 +3152,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="watching")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_watching(self, ctx: commands.Context, *, watching: str = None):
+    async def _set_status_watching(
+        self, ctx: commands.Context, *, watching: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s watching status.
 
         This will appear as `Watching <watching>`.
@@ -3174,7 +3186,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="competing")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_competing(self, ctx: commands.Context, *, competing: str = None):
+    async def _set_status_competing(
+        self, ctx: commands.Context, *, competing: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s competing status.
 
         This will appear as `Competing in <competing>`.
