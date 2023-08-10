@@ -3213,7 +3213,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def _set_status_custom(self, ctx: commands.Context, *, text: str = None):
         """Sets [botname]'s custom status.
 
-        This will appear as `<name>`.
+        This will appear as `<text>`.
 
         Maximum length for a custom status is 128 characters.
 
