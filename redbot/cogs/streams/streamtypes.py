@@ -487,9 +487,7 @@ class PicartoStream(Stream):
             raise APIError(r.status, data)
 
     def make_embed(self, data):
-        avatar = rnd(
-            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg".format(data["name"].lower())
-        )
+        avatar = rnd(data["avatar"])
         url = "https://picarto.tv/" + data["name"]
         thumbnail = data["thumbnails"]["web"]
         embed = discord.Embed(title=data["title"], url=url, color=0x4C90F3)
