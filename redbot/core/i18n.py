@@ -362,7 +362,7 @@ from . import commands
 def cog_i18n(translator: Translator):
     """Get a class decorator to link the translator to this cog."""
 
-    def decorator(cog_class: type):
+    def decorator(cog_class):
         cog_class.__translator__ = translator
         for name, attr in cog_class.__dict__.items():
             if isinstance(attr, (commands.Group, commands.Command)):
