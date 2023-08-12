@@ -213,6 +213,7 @@
   - redbot/core/commands/help.py
 "Category: Core - i18n":
   # Source
+  - redbot/core/_i18n.py
   - redbot/core/i18n.py
   # Locale files
   - redbot/**/locales/*
