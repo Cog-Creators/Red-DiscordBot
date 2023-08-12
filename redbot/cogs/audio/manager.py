@@ -264,7 +264,7 @@ class LavalinkVersion:
 
 
 class ServerManager:
-    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 5)
+    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 8)
     LAVALINK_DOWNLOAD_URL: Final[str] = (
         "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
         f"{JAR_VERSION}/"
