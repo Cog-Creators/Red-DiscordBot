@@ -1,5 +1,43 @@
 .. Red changelogs
 
+Redbot 3.5.4 (2023-08-12)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`laggron42`, :ghuser:`Leo40Git`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.5.4 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.8>`__.
+
+End-user changelog
+------------------
+
+Additions
+*********
+
+- |cool| **Core - Bot Commands** - Added ``[p]set status custom`` command allowing the bot owner to change the bot's custom status (:issue:`6226`)
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6225`)
+
+Fixes
+*****
+
+- **Core** - Fixed errors showing in logs when the button menu timed out and the original message no longer existed (:issue:`6228`, :issue:`6229`)
+- |cool| **Cogs - Audio** - Fixed YT playback (:issue:`6221`)
+- **Cogs - Audio** - Fixed poor quality of ``[p]local/queue search``'s results when case sensitive matching was involved (:issue:`6129`, :issue:`6224`)
+- **Cogs - Audio** - Fixed ``[p]local search`` resorting to YT playback when file name involved certain characters such as ``-`` (:issue:`6223`)
+- **Cogs - CustomCommands** - Fixed poor quality of ``[p]customcom search``'s results when case sensitive matching was involved (:issue:`6224`)
+- **Cogs - Streams** - Fixed Picarto channels showing without the channel avatar (:issue:`6230`)
+
+----
+
 Redbot 3.5.3 (2023-07-24)
 =========================
 
