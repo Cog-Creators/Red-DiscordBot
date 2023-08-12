@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-01 22:55+0000\n"
+"POT-Creation-Date: 2023-08-12 02:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
@@ -368,12 +368,12 @@ msgid " - Rerun"
 msgstr ""
 
 #: redbot/cogs/streams/streamtypes.py:450
-#: redbot/cogs/streams/streamtypes.py:498
+#: redbot/cogs/streams/streamtypes.py:496
 msgid "Followers"
 msgstr "المتابِعون"
 
 #: redbot/cogs/streams/streamtypes.py:451
-#: redbot/cogs/streams/streamtypes.py:499
+#: redbot/cogs/streams/streamtypes.py:497
 msgid "Total views"
 msgstr "مجموع المشاهدات"
 
@@ -381,15 +381,15 @@ msgstr "مجموع المشاهدات"
 msgid "Playing: "
 msgstr "تشغيل: "
 
-#: redbot/cogs/streams/streamtypes.py:504
+#: redbot/cogs/streams/streamtypes.py:502
 msgid "None"
 msgstr "لاشيء"
 
-#: redbot/cogs/streams/streamtypes.py:507
+#: redbot/cogs/streams/streamtypes.py:505
 msgid "NSFW | "
 msgstr "NSFW <unk> "
 
-#: redbot/cogs/streams/streamtypes.py:511
+#: redbot/cogs/streams/streamtypes.py:509
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "الفئة {adult}: {category} <unk> علامات: {tags}"
 
