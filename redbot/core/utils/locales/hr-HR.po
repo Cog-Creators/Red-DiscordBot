@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-06-21 16:48+0000\n"
+"POT-Creation-Date: 2023-08-11 00:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -71,45 +71,45 @@ msgstr ""
 msgid "Page {num}"
 msgstr ""
 
-#: redbot/core/utils/views.py:266 redbot/core/utils/views.py:617
+#: redbot/core/utils/views.py:270 redbot/core/utils/views.py:626
 msgid "You are not authorized to interact with this."
 msgstr ""
 
-#: redbot/core/utils/views.py:308
+#: redbot/core/utils/views.py:312
 msgid "Set API Keys"
 msgstr "Postavi API ključeve"
 
-#: redbot/core/utils/views.py:309
+#: redbot/core/utils/views.py:313
 msgid "Keys and tokens"
 msgstr "Ključevi i tokeni"
 
-#: redbot/core/utils/views.py:311
+#: redbot/core/utils/views.py:315
 msgid "Set API Keys for {service}"
 msgstr "Postavi API ključeve za {service}"
 
-#: redbot/core/utils/views.py:312
+#: redbot/core/utils/views.py:316
 msgid "Keys and tokens for {service}"
 msgstr "Ključevi i tokeni za {service}"
 
-#: redbot/core/utils/views.py:321
+#: redbot/core/utils/views.py:325
 msgid "Service"
 msgstr "Usluga"
 
-#: redbot/core/utils/views.py:358
+#: redbot/core/utils/views.py:362
 msgid "This modal is for bot owners only. Whoops!"
 msgstr "Ovaj modal je samo za vlasnike bota. Ups!"
 
-#: redbot/core/utils/views.py:371
+#: redbot/core/utils/views.py:375
 msgid "{error_message}\n"
 "Please try again."
 msgstr "{error_message}\n"
 "Molim te pokušaj ponovno."
 
-#: redbot/core/utils/views.py:378 redbot/core/utils/views.py:385
+#: redbot/core/utils/views.py:382 redbot/core/utils/views.py:389
 msgid "`{service}` API tokens have been set."
 msgstr "`{service}` API tokeni su postavljeni."
 
-#: redbot/core/utils/views.py:421
+#: redbot/core/utils/views.py:425
 msgid "This button is for bot owners only, oh well."
 msgstr "Ovaj gumb je samo za vlasnike bota."
 
