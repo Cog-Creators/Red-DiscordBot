@@ -3221,7 +3221,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if text:
-            activity = discord.Activity(name=text, state=text, type=discord.ActivityType.custom)
+            activity = discord.CustomActivity(name=text)
         else:
             activity = None
         await ctx.bot.change_presence(status=status, activity=activity)
