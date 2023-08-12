@@ -19,7 +19,7 @@ End-user changelog
 Additions
 *********
 
-- |cool| **Core - Bot Commands** - Added ``[p]set status custom`` command allowing the bot owner to change bot's custom status (:issue:`6226`)
+- |cool| **Core - Bot Commands** - Added ``[p]set status custom`` command allowing the bot owner to change the bot's custom status (:issue:`6226`)
 
 Changes
 *******
@@ -29,7 +29,7 @@ Changes
 Fixes
 *****
 
-- **Core** - Fixed errors showing in logs when the button menu times out and the original message no longer exists (:issue:`6228`, :issue:`6229`)
+- **Core** - Fixed errors showing in logs when the button menu timed out and the original message no longer existed (:issue:`6228`, :issue:`6229`)
 - |cool| **Cogs - Audio** - Fixed YT playback (:issue:`6221`)
 - **Cogs - Audio** - Fixed poor quality of ``[p]local/queue search``'s results when case sensitive matching was involved (:issue:`6129`, :issue:`6224`)
 - **Cogs - Audio** - Fixed ``[p]local search`` resorting to YT playback when file name involved certain characters such as ``-`` (:issue:`6223`)
