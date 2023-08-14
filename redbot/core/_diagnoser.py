@@ -485,9 +485,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         return await self._check_requires(_("Permissions verification"), self.ctx.command)
 
     async def _check_requires_cog(self) -> CheckResult:
-        label = _("Permissions verification for {cog} cog").format(
-            cog=inline(self.ctx.cog.qualified_name)
-        )
+        label = _("Cog permissions verification")
         if self.ctx.cog is None:
             return CheckResult(True, label)
         return await self._check_requires(label, self.ctx.cog)
