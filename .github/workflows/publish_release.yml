@@ -2,7 +2,7 @@ name: Publish Release
 on:
   push:
     tags:
-      - "*"
+      - "3.[0-9]+.[0-9]+"
 
 jobs:
   release_information:
