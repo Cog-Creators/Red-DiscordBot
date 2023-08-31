@@ -349,7 +349,7 @@ class RedHelpFormatter(HelpFormatterABC):
         signature = self.get_command_signature(ctx, command)
 
         aliases = command.aliases
-        sig_description = _("Syntax:\n") + box(signature) + "\n"
+        sig_description = bold(_("Syntax:\n")) + box(signature)
         if help_settings.show_aliases and aliases:
             alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
             aliases = sorted(aliases, key=len)
@@ -379,7 +379,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     aliases_content = _("{aliases} and one more alias.").format(
                         aliases=aliases_formatted_list
                     )
-            sig_description += box(f"\n{alias_fmt}: {aliases_content}")
+            sig_description += bold(f"{alias_fmt}:") + box(f"{aliases_content}")
 
         subcommands = None
         if hasattr(command, "all_commands"):
