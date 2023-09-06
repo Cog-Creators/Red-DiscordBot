@@ -27,7 +27,7 @@ from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelt
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
 TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/helix/streams/"
-TWITCH_FOLLOWS_ENDPOINT = TWITCH_BASE_URL + "/helix/channels/follows"
+TWITCH_FOLLOWS_ENDPOINT = TWITCH_BASE_URL + "/helix/channels/followers"
 
 YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3"
 YOUTUBE_CHANNELS_ENDPOINT = YOUTUBE_BASE_URL + "/channels"
