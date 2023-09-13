@@ -1330,11 +1330,12 @@ class Downloader(commands.Cog):
 
         - `<repo>` The repo to list cogs from.
         """
+        sort_function = lambda x: x.name.lower()
         all_installed_cogs = await self.installed_cogs()
         installed_cogs_in_repo = [cog for cog in all_installed_cogs if cog.repo_name == repo.name]
         installed_str = "\n".join(
             "- {}{}".format(i.name, ": {}".format(i.short) if i.short else "")
-            for i in installed_cogs_in_repo
+            for i in sorted(installed_cogs_in_repo, key=sort_function)
         )
 
         if len(installed_cogs_in_repo) > 1:
@@ -1347,7 +1348,7 @@ class Downloader(commands.Cog):
         ]
         available_str = "\n".join(
             "+ {}{}".format(cog.name, ": {}".format(cog.short) if cog.short else "")
-            for cog in available_cogs
+            for cog in sorted(available_cogs, key=sort_function)
         )
 
         if not available_str:
