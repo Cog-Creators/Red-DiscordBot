@@ -24,6 +24,8 @@
       - "!redbot/cogs/audio/**/locales/*"
   # Docs
   - docs/cog_guides/audio.rst
+  # Tests
+  - tests/cogs/audio/**/*
 "Category: Cogs - Bank": []  # historical label for a removed cog
 "Category: Cogs - Cleanup":
   # Source
@@ -41,6 +43,8 @@
   - redbot/core/dev_commands.py
   # Docs
   - docs/cog_guides/dev.rst
+  # Tests
+  - tests/core/test_dev_commands.py
 "Category: Cogs - Downloader":
   # Source
   - redbot/cogs/downloader/*
@@ -134,6 +138,11 @@
   - redbot/core/bank.py
   # Docs
   - docs/framework_bank.rst
+"Category: Core - API - App Commands Package":
+  # Source
+  - redbot/core/app_commands/*
+  # Tests
+  - tests/core/test_app_commands.py
 "Category: Core - API - Commands Package":
   # Source
   - any:
@@ -149,8 +158,8 @@
 "Category: Core - API - Config":
   # Source
   - any:
-      - redbot/core/drivers/**/*
-      - "!redbot/core/drivers/**/locales/*"
+      - redbot/core/_drivers/**/*
+      - "!redbot/core/_drivers/**/locales/*"
   - redbot/core/config.py
   # Docs
   - docs/framework_config.rst
@@ -160,14 +169,13 @@
   # Source
   - redbot/__init__.py
   - redbot/core/__init__.py
-  - redbot/core/cog_manager.py  # TODO: privatize cog manager module
   - redbot/core/data_manager.py
   - redbot/core/errors.py
+  - redbot/core/tree.py
   # Docs
-  - docs/framework_cogmanager.rst  # TODO: privatize cog manager module
   - docs/framework_datamanager.rst
+  - docs/framework_tree.rst
   # Tests
-  - redbot/pytest/cog_manager.py  # TODO: privatize cog manager module
   - redbot/pytest/data_manager.py
   - tests/core/test_cog_manager.py
   - tests/core/test_data_manager.py
@@ -197,10 +205,9 @@
   - docs/cog_guides/core.rst
 "Category: Core - Command-line Interfaces":
   - redbot/__main__.py
-  - redbot/launcher.py
   - redbot/logging.py
+  - redbot/core/_cli.py
   - redbot/core/_debuginfo.py
-  - redbot/core/cli.py
   - redbot/setup.py
 "Category: Core - Help":
   - redbot/core/commands/help.py
@@ -219,18 +226,20 @@
   - docs/framework_modlog.rst
 "Category: Core - Other Internals":
   # Source
+  - redbot/core/_cog_manager.py
+  - redbot/core/_events.py
+  - redbot/core/_global_checks.py
+  - redbot/core/_settings_caches.py
   - redbot/core/_sharedlibdeprecation.py
-  - redbot/core/events.py
-  - redbot/core/global_checks.py
-  - redbot/core/settings_caches.py
   - redbot/core/utils/_internal_utils.py
   # Tests
   - redbot/pytest/__init__.py
+  - redbot/pytest/cog_manager.py
   - redbot/pytest/core.py
   - tests/core/test_installation.py
 "Category: Core - RPC/ZMQ":
   # Source
-  - redbot/core/rpc.py
+  - redbot/core/_rpc.py
   # Docs
   - docs/framework_rpc.rst
   # Tests
@@ -245,12 +254,14 @@
 "Category: Docs - Changelogs":
   - CHANGES.rst
   - docs/changelog.rst
+  - docs/incompatible_changes/**/*
 "Category: Docs - For Developers":
   - docs/framework_events.rst
   - docs/guide_cog_creation.rst
   - docs/guide_cog_creators.rst
   - docs/guide_migration.rst
   - docs/guide_publish_cogs.rst
+  - docs/guide_slash_and_interactions.rst
 "Category: Docs - Install Guides":
   - docs/about_venv.rst
   - docs/autostart_*.rst
@@ -296,9 +307,6 @@
   - docs/_templates/**/*
   # empty file
   - redbot/cogs/__init__.py
-  # can't go more meta than that :)
-  # TODO: remove this useless file
-  - redbot/meta.py
   # py.typed file
   - redbot/py.typed
   # requirements files

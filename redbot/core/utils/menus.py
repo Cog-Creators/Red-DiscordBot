@@ -14,6 +14,15 @@ from .. import commands
 from .predicates import ReactionPredicate
 from .views import SimpleMenu, _SimplePageSource
 
+__all__ = (
+    "menu",
+    "next_page",
+    "prev_page",
+    "close_menu",
+    "start_adding_reactions",
+    "DEFAULT_CONTROLS",
+)
+
 _T = TypeVar("_T")
 _PageList = TypeVar("_PageList", List[str], List[discord.Embed])
 _ReactableEmoji = Union[str, discord.Emoji]
@@ -23,25 +32,27 @@ _active_menus: Dict[int, SimpleMenu] = {}
 
 
 class _GenericButton(discord.ui.Button):
-    def __init__(self, emoji: Union[str, discord.PartialEmoji], func):
-        super().__init__(
-            emoji=discord.PartialEmoji.from_str(emoji), style=discord.ButtonStyle.grey
-        )
+    def __init__(self, emoji: discord.PartialEmoji, func: _ControlCallable):
+        super().__init__(emoji=emoji, style=discord.ButtonStyle.grey)
         self.func = func
 
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         ctx = self.view.ctx
         pages = self.view.source.entries
         controls = None
         message = self.view.message
         page = self.view.current_page
         timeout = self.view.timeout
-        emoji = self.emoji
+        emoji = (
+            str(self.emoji)
+            if self.emoji.is_unicode_emoji()
+            else (ctx.bot.get_emoji(self.emoji.id) or self.emoji)
+        )
         try:
             await self.func(ctx, pages, controls, message, page, timeout, emoji)
         except Exception:
             pass
-        await interaction.response.defer()
 
 
 async def menu(
@@ -99,6 +110,7 @@ async def menu(
             view._source = _SimplePageSource(pages)
         new_page = await view.get_page(page)
         view.current_page = page
+        view.timeout = timeout
         await view.message.edit(**new_page)
         return
     if not isinstance(pages[0], (discord.Embed, str)):
@@ -126,12 +138,12 @@ async def menu(
         # This is not normally the way we recommend sending this because
         # internally we already include the emojis we expect.
         if controls == DEFAULT_CONTROLS:
-            view = SimpleMenu(pages)
+            view = SimpleMenu(pages, timeout=timeout)
             await view.start(ctx)
             await view.wait()
             return
         else:
-            view = SimpleMenu(pages)
+            view = SimpleMenu(pages, timeout=timeout)
             view.remove_item(view.last_button)
             view.remove_item(view.first_button)
             has_next = False
@@ -139,18 +151,19 @@ async def menu(
             has_close = False
             to_add = {}
             for emoji, func in controls.items():
+                part_emoji = discord.PartialEmoji.from_str(str(emoji))
                 if func == next_page:
                     has_next = True
-                    if emoji != view.forward_button.emoji:
-                        view.forward_button.emoji = discord.PartialEmoji.from_str(emoji)
+                    if part_emoji != view.forward_button.emoji:
+                        view.forward_button.emoji = part_emoji
                 elif func == prev_page:
                     has_prev = True
-                    if emoji != view.backward_button.emoji:
-                        view.backward_button.emoji = discord.PartialEmoji.from_str(emoji)
+                    if part_emoji != view.backward_button.emoji:
+                        view.backward_button.emoji = part_emoji
                 elif func == close_menu:
                     has_close = True
                 else:
-                    to_add[emoji] = func
+                    to_add[part_emoji] = func
             if not has_next:
                 view.remove_item(view.forward_button)
             if not has_prev:
