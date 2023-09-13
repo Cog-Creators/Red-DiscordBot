@@ -27,7 +27,7 @@ from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelt
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
 TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/helix/streams/"
-TWITCH_FOLLOWS_ENDPOINT = TWITCH_ID_ENDPOINT + "/follows"
+TWITCH_FOLLOWS_ENDPOINT = TWITCH_BASE_URL + "/helix/channels/followers"
 
 YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3"
 YOUTUBE_CHANNELS_ENDPOINT = YOUTUBE_BASE_URL + "/channels"
@@ -403,7 +403,9 @@ class TwitchStream(Stream):
             final_data["title"] = stream_data["title"]
             final_data["type"] = stream_data["type"]
 
-            __, follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": self.id})
+            __, follows_data = await self.get_data(
+                TWITCH_FOLLOWS_ENDPOINT, {"broadcaster_id": self.id}
+            )
             if follows_data:
                 final_data["followers"] = follows_data["total"]
 
