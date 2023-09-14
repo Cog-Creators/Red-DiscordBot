@@ -105,9 +105,7 @@ query getAllTagCommits {
       nodes {
         name
         target {
-          ... on Commit {
-            oid
-          }
+          commitResourcePath
         }
       }
     }
@@ -796,7 +794,8 @@ def show_unreleased_commits(version: str, base_branch: str) -> None:
     )
     json = resp.json()
     tag_commits = {
-        node["target"]["oid"]: node["name"] for node in json["data"]["repository"]["refs"]["nodes"]
+        node["target"]["commitResourcePath"].rsplit("/", 1)[-1]: node["name"]
+        for node in json["data"]["repository"]["refs"]["nodes"]
     }
 
     after = None
