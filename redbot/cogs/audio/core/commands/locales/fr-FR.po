@@ -1197,7 +1197,7 @@ msgstr "Erreur"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1484
 msgid "Music without sound isn't music at all. Try setting the volume higher then 0%."
-msgstr ""
+msgstr "La musique sans son n'est pas du tout de la musique. Essayez de définir le volume plus élevé que 0%."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1492
 #: redbot/cogs/audio/core/commands/audioset.py:1500
@@ -1351,7 +1351,7 @@ msgstr "Vous devez être dans un salon vocal pour passer une piste."
 
 #: redbot/cogs/audio/core/commands/controller.py:270
 msgid "You need the DJ role or be the track requester to enqueue the previous song tracks."
-msgstr ""
+msgstr "Vous devez avoir le rôle de DJ ou être le demandeur de piste pour mettre en file d'attente les pistes précédentes."
 
 #: redbot/cogs/audio/core/commands/controller.py:278
 #: redbot/cogs/audio/core/commands/player.py:52
@@ -1409,7 +1409,9 @@ msgstr "Répétition de piste"
 msgid "Seek ahead or behind on a track by seconds or to a specific time.\n\n"
 "        Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`).\n"
 "        "
-msgstr ""
+msgstr "Cherchez avant ou après sur une piste par secondes ou par temps spécifique.\n\n"
+"        Accepte les secondes ou une valeur formatée comme 00:00:00 (`hh:mm:ss`) ou 00:00 (`mm:ss`).\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:324
 #: redbot/cogs/audio/core/commands/controller.py:331
@@ -1479,7 +1481,10 @@ msgid "Toggle bumped track shuffle.\n\n"
 "        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\n"
 "        over `[p]shuffle`.\n"
 "        "
-msgstr ""
+msgstr "Activer/désactiver la lecture aléatoire.\n\n"
+"        Réglez cette option sur désactivée si vous souhaitez éviter que les chansons bumpées ne soient mélangées. Cela prend la priorité\n"
+"        par rapport à `[p]shuffle`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:465
 msgid "Shuffle bumped tracks: {true_or_false}."
@@ -1496,7 +1501,7 @@ msgstr "Vous devez être dans un salon vocal pour passer une musique."
 
 #: redbot/cogs/audio/core/commands/controller.py:500
 msgid "You need the DJ role or be the track requester to skip tracks."
-msgstr ""
+msgstr "Vous devez avoir le rôle de DJ ou être le demandeur de piste pour passer des pistes."
 
 #: redbot/cogs/audio/core/commands/controller.py:513
 msgid "You can only skip the current track."
@@ -1578,7 +1583,7 @@ msgstr "Je n'ai pas la permission de me connecter et de parler dans votre salon 
 
 #: redbot/cogs/audio/core/commands/controller.py:673
 msgid "Unable To Do This Action"
-msgstr ""
+msgstr "Impossible de faire cette action"
 
 #: redbot/cogs/audio/core/commands/controller.py:674
 msgid "I am already in your channel."
@@ -1597,7 +1602,7 @@ msgstr "Rejoignez un salon vocal d'abord."
 #: redbot/cogs/audio/core/commands/controller.py:693
 #: redbot/cogs/audio/core/commands/player.py:100
 msgid "Connection to the Lavalink node has not yet been established."
-msgstr ""
+msgstr "La connexion au nœud Lavalink n'a pas encore été établie."
 
 #: redbot/cogs/audio/core/commands/controller.py:700
 #, docstring
@@ -1725,7 +1730,11 @@ msgid "Equalizer management.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Réglez une bande d'égalisation avec un numéro de bande ou un nom et une valeur. \n\n"
+"        Les positions de bande sont 1-15 et les valeurs ont une plage de -0,25 à 1,0. \n"
+"        Les noms de bande sont 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1,6k, 2,5k, 4k, 6,3k, 10k et 16k Hz.\n"
+"        Une valeur de bande à -0,25 la rend nulle alors que +0,25 est double.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:73
 #, docstring
@@ -1835,7 +1844,7 @@ msgstr "Pas d'enregistrement du préréglage."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:296
 msgid "Current equalizer saved to the {preset_name} preset."
-msgstr ""
+msgstr "L'égaliseur actuel a été sauvegardé dans le préréglage {preset_name}."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:310
 #, docstring
@@ -1845,7 +1854,11 @@ msgid "Set an eq band with a band number or name and value.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Réglez une bande d'égalisation avec un numéro de bande ou un nom et une valeur. \n\n"
+"        Les positions de bande sont 1-15 et les valeurs ont une plage de -0,25 à 1,0. \n"
+"        Les noms de bande sont 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1,6k, 2,5k, 4k, 6,3k, 10k et 16k Hz.\n"
+"        Une valeur de bande à -0,25 la rend nulle alors que +0,25 est double.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:326
 msgid "Unable To Set Preset"
@@ -1857,7 +1870,7 @@ msgstr "Vous avez besoin du rôle DJ pour régler les préréglages de l'égalis
 
 #: redbot/cogs/audio/core/commands/equalizer.py:367
 msgid "Invalid Band"
-msgstr ""
+msgstr "Bande de fréquence invalide"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:368
 msgid "Valid band numbers are 1-15 or the band names listed in the help for this command."
@@ -1869,7 +1882,7 @@ msgstr "Préréglage modifié"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:393
 msgid "The {band_name}Hz band has been set to {band_value}."
-msgstr ""
+msgstr "La bande {band_name}Hz a été réglée sur {band_value}."
 
 #: redbot/cogs/audio/core/commands/llset.py:37
 #, docstring
@@ -1897,7 +1910,7 @@ msgstr "L'exécutable de Java a été réinitialisé"
 
 #: redbot/cogs/audio/core/commands/llset.py:63
 msgid "Audio will now use `java` to run your managed Lavalink node. Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "L'audio va maintenant utiliser `java` pour exécuter votre nœud Lavalink géré. Exécutez `{p}{cmd}` pour qu'il prenne effet."
 
 #: redbot/cogs/audio/core/commands/llset.py:75
 msgid "`{java_path}` is not a valid executable"
@@ -1909,7 +1922,7 @@ msgstr "L'exécutable de Java a changé"
 
 #: redbot/cogs/audio/core/commands/llset.py:83
 msgid "Audio will now use `{exc}` to run your managed Lavalink node. Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "L'audio va maintenant utiliser `{exc}` pour exécuter votre nœud Lavalink géré. Exécutez `{p}{cmd}` pour qu'il prenne effet."
 
 #: redbot/cogs/audio/core/commands/llset.py:96
 #, docstring
@@ -2036,11 +2049,11 @@ msgstr "Hôte :             [{host}]\n"
 #: redbot/cogs/audio/core/commands/llset.py:313
 #: redbot/cogs/audio/core/commands/llset.py:324
 msgid "Port:             [{port}]\n"
-msgstr ""
+msgstr "Port :             [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:314
 msgid "Default HTTP/HTTPS port"
-msgstr ""
+msgstr "Port HTTP/HTTPS par défaut"
 
 #: redbot/cogs/audio/core/commands/llset.py:316
 #: redbot/cogs/audio/core/commands/llset.py:325
@@ -2049,11 +2062,11 @@ msgstr "Mot de passe :         [{password}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:317
 msgid "Secured:          [{state}]\n"
-msgstr ""
+msgstr "Sécurisé : [{state}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:320
 msgid "Lavalink Node Settings"
-msgstr ""
+msgstr "Paramètres du noeud Lavalink"
 
 #: redbot/cogs/audio/core/commands/llset.py:328
 msgid "Initial Heapsize: [{xms}]\n"
@@ -2070,12 +2083,12 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/llset.py:338
 #: redbot/cogs/audio/core/commands/llset.py:360
 msgid "I need to be able to DM you to send you this info."
-msgstr ""
+msgstr "Je dois être en mesure de vous envoyer cette information par MP."
 
 #: redbot/cogs/audio/core/commands/llset.py:343
 #, docstring
 msgid "Uploads a copy of the application.yml file used by the managed Lavalink node."
-msgstr ""
+msgstr "Télécharge une copie du fichier application.yml utilisé par le noeud Lavalink géré."
 
 #: redbot/cogs/audio/core/commands/llset.py:367
 #, docstring
@@ -2425,7 +2438,7 @@ msgstr "Vous devez avoir le rôle DJ pour ajouter des pistes à la liste."
 #: redbot/cogs/audio/core/commands/player.py:439
 #: redbot/cogs/audio/core/commands/player.py:555
 msgid "Connection to Lavalink node has failed"
-msgstr ""
+msgstr "La connexion à Lavalink a échoué"
 
 #: redbot/cogs/audio/core/commands/player.py:71
 #: redbot/cogs/audio/core/commands/player.py:179
@@ -2468,12 +2481,13 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:712
 #: redbot/cogs/audio/core/commands/queue.py:362
 msgid "Connection to Lavalink node has not yet been established."
-msgstr ""
+msgstr "La connexion au nœud Lavalink n'a pas encore été établie."
 
 #: redbot/cogs/audio/core/commands/player.py:255
 msgid "Local tracks will not work if the managed Lavalink node cannot see the track.\n"
 "This may be due to permissions or you are using an external Lavalink node in a different machine than the bot and the local tracks."
-msgstr ""
+msgstr "Les pistes locales ne fonctionneront pas si Lavalink ne peut pas voir la piste.\n"
+"Cela peut être dû à des permissions ou parce que le noeud Lavalink est exécuté sur une machine différente de celle des pistes locales."
 
 #: redbot/cogs/audio/core/commands/player.py:262
 #: redbot/cogs/audio/core/commands/player.py:794
@@ -2506,17 +2520,19 @@ msgstr "Piste ajoutée"
 #: redbot/cogs/audio/core/commands/player.py:355
 #, docstring
 msgid "Pick a Spotify playlist from a list of categories to start playing."
-msgstr ""
+msgstr "Choisissez une playlist Spotify dans une liste de catégories pour commencer la lecture."
 
 #: redbot/cogs/audio/core/commands/player.py:415
 msgid "The owner needs to set the Spotify client ID and Spotify client secret, before Spotify URLs or codes can be used. \n"
 "See `{prefix}audioset spotifyapi` for instructions."
-msgstr ""
+msgstr "Le propriétaire doit rentrer le \"Client ID\" Spotify et le \"Client Secret\" Spotify avant de pouvoir utiliser les URL ou les codes Spotify. \n"
+"Voir `{prefix}audioset spotifyapi` pour les instructions."
 
 #: redbot/cogs/audio/core/commands/player.py:425
 msgid "The owner needs to set the YouTube API key before Spotify URLs or codes can be used.\n"
 "See `{prefix}audioset youtubeapi` for instructions."
-msgstr ""
+msgstr "Le propriétaire doit définir la clé d'API YouTube avant de pouvoir utiliser les URLs ou les codes Spotify.\n"
+"Voir `{prefix}audioset youtubeapi` pour les instructions."
 
 #: redbot/cogs/audio/core/commands/player.py:483
 msgid "You must be in the voice channel to use the genre command."
@@ -3353,7 +3369,7 @@ msgstr "Cette playlist est trop grande."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1898
 msgid "I'm unable to get a track from Lavalink node at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Je ne parviens actuellement pas à me connecter à Lavalink pour l'instant. Réessayez dans quelques minutes."
 
 #: redbot/cogs/audio/core/commands/playlists.py:1919
 #, docstring
