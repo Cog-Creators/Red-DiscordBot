@@ -29,7 +29,7 @@ msgstr "`{arg}` n'est pas un nombre fini."
 
 #: redbot/cogs/trivia/schema.py:34
 msgid "The trivia list does not contain any questions."
-msgstr ""
+msgstr "La liste des trivia ne contient aucune question."
 
 #: redbot/cogs/trivia/schema.py:39 redbot/cogs/trivia/schema.py:40
 msgid "{key} key must be a text value."

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-07-19 20:46+0000\n"
+"POT-Creation-Date: 2023-09-13 23:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -173,8 +173,8 @@ msgid "Show information about a repo.\n\n"
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:653
-#: redbot/cogs/downloader/downloader.py:1398
-#: redbot/cogs/downloader/downloader.py:1761
+#: redbot/cogs/downloader/downloader.py:1399
+#: redbot/cogs/downloader/downloader.py:1762
 msgid "Missing from info.json"
 msgstr "Niet gevonden in info.json"
 
@@ -214,7 +214,7 @@ msgid "Repo update completed successfully."
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:691
-#: redbot/cogs/downloader/downloader.py:1615
+#: redbot/cogs/downloader/downloader.py:1616
 msgid "\n"
 "Updated: "
 msgstr ""
@@ -247,23 +247,23 @@ msgid "\n"
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:743
-#: redbot/cogs/downloader/downloader.py:1595
+#: redbot/cogs/downloader/downloader.py:1596
 msgid "Failed to install requirements: "
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:745
-#: redbot/cogs/downloader/downloader.py:1597
+#: redbot/cogs/downloader/downloader.py:1598
 msgid "Failed to install the requirement: "
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:750
-#: redbot/cogs/downloader/downloader.py:1663
+#: redbot/cogs/downloader/downloader.py:1664
 msgid "\n"
 "Failed to install shared libraries: "
 msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:752
-#: redbot/cogs/downloader/downloader.py:1665
+#: redbot/cogs/downloader/downloader.py:1666
 msgid "\n"
 "Failed to install shared library: "
 msgstr ""
@@ -612,32 +612,32 @@ msgid "List all available cogs from a single repo.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1341
+#: redbot/cogs/downloader/downloader.py:1342
 msgid "# Installed Cogs\n"
 "{text}"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1343
+#: redbot/cogs/downloader/downloader.py:1344
 msgid "# Installed Cog\n"
 "{text}"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1354
+#: redbot/cogs/downloader/downloader.py:1355
 msgid "> Available Cogs\n"
 "No cogs are available."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1356
+#: redbot/cogs/downloader/downloader.py:1357
 msgid "> Available Cogs\n"
 "{text}"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1358
+#: redbot/cogs/downloader/downloader.py:1359
 msgid "> Available Cog\n"
 "{text}"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1365
+#: redbot/cogs/downloader/downloader.py:1366
 #, docstring
 msgid "List information about a single cog.\n\n"
 "        Example:\n"
@@ -648,11 +648,11 @@ msgid "List information about a single cog.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1378
+#: redbot/cogs/downloader/downloader.py:1379
 msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"
 msgstr "Er is geen cog '{cog_name}' in repo '{repo.name} '"
 
-#: redbot/cogs/downloader/downloader.py:1384
+#: redbot/cogs/downloader/downloader.py:1385
 msgid "Information on {cog_name}:\n"
 "{description}\n\n"
 "End user data statement:\n"
@@ -661,142 +661,142 @@ msgid "Information on {cog_name}:\n"
 "Requirements: {requirements}"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1396
+#: redbot/cogs/downloader/downloader.py:1397
 msgid "Author of the cog didn't provide end user data statement."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1465
+#: redbot/cogs/downloader/downloader.py:1466
 msgid "\n"
 "Couldn't find these cogs in {repo.name}: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1467
+#: redbot/cogs/downloader/downloader.py:1468
 msgid "\n"
 "Couldn't find this cog in {repo.name}: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1471
+#: redbot/cogs/downloader/downloader.py:1472
 msgid "\n"
 "These cogs were already installed: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1473
+#: redbot/cogs/downloader/downloader.py:1474
 msgid "\n"
 "This cog was already installed: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1477
+#: redbot/cogs/downloader/downloader.py:1478
 msgid "\n"
 "Some cogs with these names are already installed from different repos: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1479
+#: redbot/cogs/downloader/downloader.py:1480
 msgid "\n"
 "Cog with this name is already installed from a different repo: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1496
+#: redbot/cogs/downloader/downloader.py:1497
 msgid " (Minimum: {min_version})"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1509
+#: redbot/cogs/downloader/downloader.py:1510
 msgid " (Minimum: {min_version}"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1513
+#: redbot/cogs/downloader/downloader.py:1514
 msgid ", at most: {max_version}"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1522
+#: redbot/cogs/downloader/downloader.py:1523
 msgid "\n"
 "These cogs require higher python version than you have: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1524
+#: redbot/cogs/downloader/downloader.py:1525
 msgid "\n"
 "This cog requires higher python version than you have: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1528
+#: redbot/cogs/downloader/downloader.py:1529
 msgid "\n"
 "These cogs require different Red version than you currently have ({current_version}): "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1533
+#: redbot/cogs/downloader/downloader.py:1534
 msgid "\n"
 "This cog requires different Red version than you currently have ({current_version}): "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1604
+#: redbot/cogs/downloader/downloader.py:1605
 msgid "Cog update completed successfully."
 msgstr "Cog update succesvol."
 
-#: redbot/cogs/downloader/downloader.py:1619
+#: redbot/cogs/downloader/downloader.py:1620
 msgid "\n"
 "End user data statements of these cogs have changed: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1621
+#: redbot/cogs/downloader/downloader.py:1622
 msgid "\n"
 "You can use {command} to see the updated statements.\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1627
+#: redbot/cogs/downloader/downloader.py:1628
 msgid "\n"
 "End user data statement of this cog has changed:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1629
+#: redbot/cogs/downloader/downloader.py:1630
 msgid "\n"
 "You can use {command} to see the updated statement.\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1636
+#: redbot/cogs/downloader/downloader.py:1637
 msgid "\n"
 "You may need to resync your slash commands with `{prefix}slash sync`."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1642
+#: redbot/cogs/downloader/downloader.py:1643
 msgid "\n"
 "Failed to update cogs: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1644
+#: redbot/cogs/downloader/downloader.py:1645
 msgid "\n"
 "Failed to update cog: "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1647
+#: redbot/cogs/downloader/downloader.py:1648
 msgid "No cogs were updated."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1650
+#: redbot/cogs/downloader/downloader.py:1651
 msgid "\n"
 "Some shared libraries were updated, you should restart the bot to bring the changes into effect."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1655
+#: redbot/cogs/downloader/downloader.py:1656
 msgid "\n"
 "A shared library was updated, you should restart the bot to bring the changes into effect."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1672
+#: redbot/cogs/downloader/downloader.py:1673
 msgid "None of the updated cogs were previously loaded. Update complete."
 msgstr "Geen van de geüpdatet cogs zijn eerder geladen. Update is compleet."
 
-#: redbot/cogs/downloader/downloader.py:1677
+#: redbot/cogs/downloader/downloader.py:1678
 msgid "Would you like to reload the updated cogs?"
 msgstr "Wil je de bijgewerkte cogs herladen?"
 
-#: redbot/cogs/downloader/downloader.py:1679
+#: redbot/cogs/downloader/downloader.py:1680
 msgid "Would you like to reload the updated cog?"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1705
+#: redbot/cogs/downloader/downloader.py:1706
 msgid "OK then."
 msgstr "Ohke."
 
-#: redbot/cogs/downloader/downloader.py:1735
+#: redbot/cogs/downloader/downloader.py:1736
 #, docstring
 msgid "Find which cog a command comes from.\n\n"
 "        This will only work with loaded cogs.\n\n"
@@ -807,57 +807,57 @@ msgid "Find which cog a command comes from.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1749
+#: redbot/cogs/downloader/downloader.py:1750
 msgid "That command doesn't seem to exist."
 msgstr "Commando bestaat niet."
 
-#: redbot/cogs/downloader/downloader.py:1764
-#: redbot/cogs/downloader/downloader.py:1769
+#: redbot/cogs/downloader/downloader.py:1765
+#: redbot/cogs/downloader/downloader.py:1770
 msgid "Missing from installed repos"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1784
-#: redbot/cogs/downloader/downloader.py:1786
+#: redbot/cogs/downloader/downloader.py:1785
+#: redbot/cogs/downloader/downloader.py:1787
 msgid "Unknown"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1785
+#: redbot/cogs/downloader/downloader.py:1786
 msgid "None - this cog wasn't installed via downloader"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1789
+#: redbot/cogs/downloader/downloader.py:1790
 msgid "This command is not provided by a cog."
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1795
+#: redbot/cogs/downloader/downloader.py:1796
 msgid "Command:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1796
+#: redbot/cogs/downloader/downloader.py:1797
 msgid "Cog package name:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1797
+#: redbot/cogs/downloader/downloader.py:1798
 msgid "Cog name:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1798
+#: redbot/cogs/downloader/downloader.py:1799
 msgid "Made by:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1799
+#: redbot/cogs/downloader/downloader.py:1800
 msgid "Repo name:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1800
+#: redbot/cogs/downloader/downloader.py:1801
 msgid "Repo URL:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1803
+#: redbot/cogs/downloader/downloader.py:1804
 msgid "Repo branch:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1808
+#: redbot/cogs/downloader/downloader.py:1809
 msgid "Command:          {command}\n"
 "Cog package name: {cog_pkg}\n"
 "Cog name:         {cog}\n"
@@ -866,19 +866,19 @@ msgid "Command:          {command}\n"
 "Repo URL:         {repo_url}\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1824
+#: redbot/cogs/downloader/downloader.py:1825
 msgid "Repo branch: {branch_name}\n"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1845
+#: redbot/cogs/downloader/downloader.py:1846
 msgid "Failed to update the following repositories:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1847
+#: redbot/cogs/downloader/downloader.py:1848
 msgid "Failed to update the following repository:"
 msgstr ""
 
-#: redbot/cogs/downloader/downloader.py:1850
+#: redbot/cogs/downloader/downloader.py:1851
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
 msgstr ""
 

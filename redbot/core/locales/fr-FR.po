@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-08-10 01:16+0000\n"
+"POT-Creation-Date: 2023-09-14 02:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -267,7 +267,7 @@ msgstr "Vérification des Contrôles globaux, cog et commandes"
 msgid "The given command is disabled in this guild."
 msgstr "La commande donnée est désactivée dans cette guilde."
 
-#: redbot/core/_diagnoser.py:383 redbot/core/_diagnoser.py:860
+#: redbot/core/_diagnoser.py:383 redbot/core/_diagnoser.py:858
 msgid "One of the parents of the given command is disabled globally."
 msgstr "L'un des parents de la commande donnée est désactivé globalement."
 
@@ -334,259 +334,259 @@ msgid "Permissions verification"
 msgstr "Vérification des permissions"
 
 #: redbot/core/_diagnoser.py:488
-msgid "Permissions verification for {cog} cog"
-msgstr "Vérification des permission pour le cog {cog}"
+msgid "Cog permissions verification"
+msgstr ""
 
-#: redbot/core/_diagnoser.py:505
+#: redbot/core/_diagnoser.py:503
 msgid "The cog of the given command is disabled in this guild."
 msgstr "Le cog de la commande donnée est désactivé dans cette guilde."
 
-#: redbot/core/_diagnoser.py:506
+#: redbot/core/_diagnoser.py:504
 msgid "To fix this issue, you can run {command} which will enable the {affected_cog} cog in this guild."
 msgstr "Pour résoudre ce problème, vous pouvez exécuter {command} qui activera le cog {affected_cog} dans cette guilde."
 
-#: redbot/core/_diagnoser.py:520
+#: redbot/core/_diagnoser.py:518
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {cog} cog."
 msgstr "Il manque au Bot certaines permissions de canal ({permissions}) requises par le cog {cog}."
 
-#: redbot/core/_diagnoser.py:528
+#: redbot/core/_diagnoser.py:526
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {command} command."
 msgstr "Il manque au Bot certaines permissions de canal ({permissions}) requises par la commande {command}."
 
-#: redbot/core/_diagnoser.py:540
+#: redbot/core/_diagnoser.py:538
 msgid "To fix this issue, grant the required permissions to the bot through role settings or channel overrides."
 msgstr "Pour résoudre ce problème, accordez les autorisations requises au bot par le biais des paramètres de rôle ou des dérogations de canal."
 
-#: redbot/core/_diagnoser.py:559 redbot/core/_diagnoser.py:655
+#: redbot/core/_diagnoser.py:557 redbot/core/_diagnoser.py:653
 msgid "Other issues related to the permissions."
 msgstr "Autres problèmes liés aux permissions."
 
-#: redbot/core/_diagnoser.py:560
+#: redbot/core/_diagnoser.py:558
 msgid "Fatal error: There's an issue related to the permissions for the {cog} cog but we're not able to determine the exact cause."
 msgstr "Erreur fatale : Il y a un problème lié aux permissions du cog {cog} mais nous ne sommes pas en mesure d'en déterminer la cause exacte."
 
-#: redbot/core/_diagnoser.py:565
+#: redbot/core/_diagnoser.py:563
 msgid "Fatal error: There's an issue related to the permissions for the {command} command but we're not able to determine the exact cause."
 msgstr "Erreur fatale : Il y a un problème lié aux permissions de la commande {command} mais nous ne sommes pas en mesure d'en déterminer la cause exacte."
 
-#: redbot/core/_diagnoser.py:569
+#: redbot/core/_diagnoser.py:567
 msgid "This is an unexpected error, please report it on Red's issue tracker."
 msgstr "Il s'agit d'une erreur inattendue, veuillez la signaler sur le gestionnaire de problèmes de Red."
 
-#: redbot/core/_diagnoser.py:576
+#: redbot/core/_diagnoser.py:574
 msgid "Ensure that the command is not bot owner only"
 msgstr "Assurez-vous que la commande n'est pas uniquement réservée au(x) propriétaire(s) du bot"
 
-#: redbot/core/_diagnoser.py:584
+#: redbot/core/_diagnoser.py:582
 msgid "The command is bot owner only and the given user is not a bot owner."
 msgstr "La commande est réservée au propriétaire du bot et l'utilisateur donné n'est pas le propriétaire du bot."
 
-#: redbot/core/_diagnoser.py:585
+#: redbot/core/_diagnoser.py:583
 msgid "This cannot be fixed - regular users cannot run bot owner only commands."
 msgstr "Cela ne peut pas être corrigé - les utilisateurs ordinaires ne peuvent pas exécuter les commandes réservées au propriétaire du bot."
 
-#: redbot/core/_diagnoser.py:591
+#: redbot/core/_diagnoser.py:589
 msgid "Permission hooks"
 msgstr "Vérifications des permissions"
 
-#: redbot/core/_diagnoser.py:601
+#: redbot/core/_diagnoser.py:599
 msgid "Fatal error: the result of permission hooks is inconsistent."
 msgstr "Erreur fatale : le résultat des vérifications des permissions est incohérent."
 
-#: redbot/core/_diagnoser.py:602 redbot/core/_diagnoser.py:608
-#: redbot/core/_diagnoser.py:846
+#: redbot/core/_diagnoser.py:600 redbot/core/_diagnoser.py:606
+#: redbot/core/_diagnoser.py:844
 msgid "To fix this issue, a manual review of the installed cogs is required."
 msgstr "Pour résoudre ce problème, il faut procéder à un examen manuel des cogs installés."
 
-#: redbot/core/_diagnoser.py:607
+#: redbot/core/_diagnoser.py:605
 msgid "The access has been denied by one of the bot's permissions hooks."
 msgstr "L'accès a été refusé par l'un des contrôles de permissions du cog."
 
-#: redbot/core/_diagnoser.py:617
+#: redbot/core/_diagnoser.py:615
 msgid "User's discord permissions, privilege level and rules from Permissions cog"
 msgstr "Permissions utilisateurs Discord, niveau de privilèges et règles des permissions du cog"
 
-#: redbot/core/_diagnoser.py:632
+#: redbot/core/_diagnoser.py:630
 msgid "The access has been denied due to the rules set for the {cog} cog with Permissions cog."
 msgstr "L'accès a été refusé en raison des règles définies pour le cog {cog} avec les permission du cog."
 
-#: redbot/core/_diagnoser.py:637
+#: redbot/core/_diagnoser.py:635
 msgid "The access has been denied due to the rules set for the {command} command with Permissions cog."
 msgstr "L'accès a été refusé en raison des règles définies pour la commande {command} avec les permissions du cog."
 
-#: redbot/core/_diagnoser.py:641
+#: redbot/core/_diagnoser.py:639
 msgid "To fix the issue, a manual review of the rules is required."
 msgstr "Pour résoudre ce problème, une révision manuelle des règles est nécessaire."
 
-#: redbot/core/_diagnoser.py:656
+#: redbot/core/_diagnoser.py:654
 msgid "There's an issue related to the permissions of {cog} cog but we're not able to determine the exact cause."
 msgstr "Il y a un problème lié aux permissions du cog {cog} mais nous ne sommes pas en mesure de déterminer la cause exacte."
 
-#: redbot/core/_diagnoser.py:661
+#: redbot/core/_diagnoser.py:659
 msgid "There's an issue related to the permissions of {command} command but we're not able to determine the exact cause."
 msgstr "Il y a un problème lié aux permissions de la commande {command} mais nous ne sommes pas en mesure de déterminer la cause exacte."
 
-#: redbot/core/_diagnoser.py:665
+#: redbot/core/_diagnoser.py:663
 msgid "To fix this issue, a manual review of the command is required."
 msgstr "Pour résoudre ce problème, une révision manuelle de la commande est nécessaire."
 
-#: redbot/core/_diagnoser.py:672
+#: redbot/core/_diagnoser.py:670
 msgid "Permission checks"
 msgstr "Vérifications des permissions"
 
-#: redbot/core/_diagnoser.py:676
+#: redbot/core/_diagnoser.py:674
 msgid "The access has been denied by one of the permissions checks of {cog} cog."
 msgstr "L'accès a été refusé par l'un des contrôles de permissions du cog {cog}."
 
-#: redbot/core/_diagnoser.py:680
+#: redbot/core/_diagnoser.py:678
 msgid "The access has been denied by one of the permission checks of {command} command."
 msgstr "L'accès a été refusé par l'un des contrôles de permissions de la commande {command}."
 
-#: redbot/core/_diagnoser.py:688
+#: redbot/core/_diagnoser.py:686
 msgid "To fix this issue, a manual review of the permission checks is required."
 msgstr "Pour résoudre ce problème, une révision manuelle des contrôles de permissions est nécessaire."
 
-#: redbot/core/_diagnoser.py:694
+#: redbot/core/_diagnoser.py:692
 msgid "User's discord permissions and privilege level"
 msgstr "Permissions et niveau de privilège de l'utilisateur sur discord"
 
-#: redbot/core/_diagnoser.py:703
+#: redbot/core/_diagnoser.py:701
 msgid "grant the required permissions to the user through role settings or channel overrides"
 msgstr "accorder les autorisations requises à l'utilisateur par le biais de paramètres de rôle ou de dérogations de canal"
 
-#: redbot/core/_diagnoser.py:709
+#: redbot/core/_diagnoser.py:707
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {cog} cog."
 msgstr "Il manque à l'utilisateur certaines des autorisations de canal ({permissions}) requises par le cog {cog}."
 
-#: redbot/core/_diagnoser.py:714
+#: redbot/core/_diagnoser.py:712
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {command} command."
 msgstr "L'utilisateur ne dispose pas de certaines des autorisations de canal ({permissions}) requises par la commande {command}."
 
-#: redbot/core/_diagnoser.py:723
+#: redbot/core/_diagnoser.py:721
 msgid "the guild owner"
 msgstr "propriétaire de guilde"
 
-#: redbot/core/_diagnoser.py:726
+#: redbot/core/_diagnoser.py:724
 msgid "the mod role"
 msgstr "le rôle de modérateur"
 
-#: redbot/core/_diagnoser.py:728
+#: redbot/core/_diagnoser.py:726
 msgid "the admin role"
 msgstr "le rôle administrateur"
 
-#: redbot/core/_diagnoser.py:731
+#: redbot/core/_diagnoser.py:729
 msgid "assign appropriate role to the user"
 msgstr "attribuer le rôle approprié à l'utilisateur"
 
-#: redbot/core/_diagnoser.py:733
+#: redbot/core/_diagnoser.py:731
 msgid "The user is missing the privilege level ({privilege_level}) required by the {cog} cog."
 msgstr "L'utilisateur n'a pas le niveau de privilège ({privilege_level}) requis par le cog {cog}."
 
-#: redbot/core/_diagnoser.py:740
+#: redbot/core/_diagnoser.py:738
 msgid "The user is missing the privilege level ({privilege_level}) required by the {command} command."
 msgstr "L'utilisateur ne possède pas le niveau de privilège ({privilege_level}) requis par la commande {command}."
 
-#: redbot/core/_diagnoser.py:753
+#: redbot/core/_diagnoser.py:751
 msgid "add appropriate rule in the Permissions cog"
 msgstr "ajouter la règle appropriée dans le menu \"Permissions\" du cog"
 
-#: redbot/core/_diagnoser.py:756
+#: redbot/core/_diagnoser.py:754
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {cog} cog."
 msgstr "L'utilisateur ne possède ni les autorisations de canal ({permissions}) ni le niveau de privilège ({privilege_level}) requis par le cog {cog}."
 
-#: redbot/core/_diagnoser.py:765
+#: redbot/core/_diagnoser.py:763
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {command} command."
 msgstr "L'utilisateur ne possède ni les autorisations de canal ({permissions}) ni le niveau de privilège ({privilege_level}) requis par la commande {command}."
 
-#: redbot/core/_diagnoser.py:783
+#: redbot/core/_diagnoser.py:781
 msgid "Checks and permissions verification for the command {command}"
 msgstr "Vérification des contrôles et des permissions pour la commande {command}"
 
-#: redbot/core/_diagnoser.py:806 redbot/core/_diagnoser.py:919
+#: redbot/core/_diagnoser.py:804 redbot/core/_diagnoser.py:917
 msgid "Other command checks"
 msgstr "Autres vérifications des commandes"
 
-#: redbot/core/_diagnoser.py:807 redbot/core/_diagnoser.py:920
+#: redbot/core/_diagnoser.py:805 redbot/core/_diagnoser.py:918
 msgid "The given command is failing one of the required checks."
 msgstr "La commande donnée échoue à l'une des vérifications requises."
 
-#: redbot/core/_diagnoser.py:808 redbot/core/_diagnoser.py:921
+#: redbot/core/_diagnoser.py:806 redbot/core/_diagnoser.py:919
 msgid "To fix this issue, a manual review of the command's checks is required."
 msgstr "Pour résoudre ce problème, une révision manuelle des contrôles de la commande est nécessaire."
 
-#: redbot/core/_diagnoser.py:819
+#: redbot/core/_diagnoser.py:817
 msgid "Global 'call once' checks"
 msgstr "Contrôles globaux 'appel unique'"
 
-#: redbot/core/_diagnoser.py:841
+#: redbot/core/_diagnoser.py:839
 msgid "Other global 'call once' checks"
 msgstr "Autres contrôles globaux 'appel unique'"
 
-#: redbot/core/_diagnoser.py:842
+#: redbot/core/_diagnoser.py:840
 msgid "One of the global 'call once' checks implemented by a 3rd-party cog prevents this command from being ran."
 msgstr "L'une des vérifications globales \"appel unique\" mises en œuvre par un cog tiers empêche l'exécution de cette commande."
 
-#: redbot/core/_diagnoser.py:851
+#: redbot/core/_diagnoser.py:849
 msgid "Check if the command is disabled"
 msgstr "Vérifier si la commande est désactivée"
 
-#: redbot/core/_diagnoser.py:861 redbot/core/_diagnoser.py:875
+#: redbot/core/_diagnoser.py:859 redbot/core/_diagnoser.py:873
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command globally."
 msgstr "Pour résoudre ce problème, vous pouvez exécuter {command} qui activera globalement la commande {affected_command}."
 
-#: redbot/core/_diagnoser.py:874
+#: redbot/core/_diagnoser.py:872
 msgid "The given command is disabled globally."
 msgstr "La commande donnée est globalement désactivée."
 
-#: redbot/core/_diagnoser.py:887
+#: redbot/core/_diagnoser.py:885
 msgid "Checks and permissions verification"
 msgstr "Vérification des contrôles et des autorisations"
 
-#: redbot/core/_diagnoser.py:938
+#: redbot/core/_diagnoser.py:936
 msgid "Passed"
 msgstr "Passé"
 
-#: redbot/core/_diagnoser.py:940
+#: redbot/core/_diagnoser.py:938
 msgid "Failed"
 msgstr "Échoué"
 
-#: redbot/core/_diagnoser.py:969
+#: redbot/core/_diagnoser.py:967
 msgid "All checks passed and no issues were detected. Make sure that the given parameters correspond to the channel, user, and command name that have been problematic.\n\n"
 "If you still can't find the issue, it is likely that one of the 3rd-party cogs you're using adds a global or cog local before invoke hook that prevents the command from getting invoked as this can't be diagnosed with this tool."
 msgstr "Toutes les vérifications ont été passées et aucun problème n'a été détecté. Assurez-vous que les paramètres donnés correspondent au canal, à l'utilisateur et au nom de la commande qui ont été problématiques.\n\n"
 "Si vous ne trouvez toujours pas le problème, il est probable que l'un des cogs tiers que vous utilisez ajoute un cog local global ou cog avant d'appeler un hook qui empêche la commande d'être appelée car cela ne peut pas être diagnostiqué avec cet outil."
 
-#: redbot/core/_diagnoser.py:980
+#: redbot/core/_diagnoser.py:978
 msgid "The bot has been able to identify the issue."
 msgstr "Le bot a été capable d'identifier le problème."
 
-#: redbot/core/_diagnoser.py:983
+#: redbot/core/_diagnoser.py:981
 msgid "Detected issue: "
 msgstr "Problème détecté : "
 
-#: redbot/core/_diagnoser.py:985
+#: redbot/core/_diagnoser.py:983
 msgid "Solution: "
 msgstr "Solution: "
 
-#: redbot/core/_diagnoser.py:987
+#: redbot/core/_diagnoser.py:985
 msgid "\n"
 "Here's a detailed report in case you need it:"
 msgstr "\n"
 "Voici un rapport détaillé au cas où vous en auriez besoin :"
 
-#: redbot/core/_diagnoser.py:988
+#: redbot/core/_diagnoser.py:986
 msgid "Channel: "
 msgstr "Salon: "
 
-#: redbot/core/_diagnoser.py:989
+#: redbot/core/_diagnoser.py:987
 msgid "Command caller: "
 msgstr "Appel de commande: "
 
-#: redbot/core/_diagnoser.py:990
+#: redbot/core/_diagnoser.py:988
 msgid "Command: "
 msgstr "Commande: "
 
-#: redbot/core/_diagnoser.py:991
+#: redbot/core/_diagnoser.py:989
 msgid "Tests that have been ran:"
 msgstr "Les tests qui ont été effectués :"
 
@@ -688,7 +688,7 @@ msgstr "Erreur dans la commande '{command}'. Vérifiez votre console ou les logs
 
 #: redbot/core/_events.py:388 redbot/core/tree.py:295
 msgid "Error in command '{command}'."
-msgstr ""
+msgstr "Erreur lors de l’exécution de la commande '{command}'."
 
 #: redbot/core/_events.py:406 redbot/core/tree.py:309
 msgid "I require the {permission} permission to execute that command."
@@ -1771,19 +1771,19 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2002
 msgid "That application command is already enabled."
-msgstr ""
+msgstr "Cette commande d'application est déjà activée."
 
 #: redbot/core/core_commands.py:2007
 msgid "That application command could not be found. Use `{prefix}slash list` to see all application commands. You may need to double check the command type."
-msgstr ""
+msgstr "Cette commande d'application n'a pas pu être trouvée. Utilisez `{prefix}slash list` pour voir toutes les commandes d'application. Vous devrez peut-être vérifier le type de commande."
 
 #: redbot/core/core_commands.py:2018
 msgid "The command limit has been reached. Disable a command first."
-msgstr ""
+msgstr "La limite de commande a été atteinte. Désactivez d'abord une commande."
 
 #: redbot/core/core_commands.py:2023
 msgid "Enabled {command_type} application command `{command_name}`"
-msgstr ""
+msgstr "La commande d'application {command_type} `{command_name} ` est activée"
 
 #: redbot/core/core_commands.py:2035
 #, docstring
@@ -1820,11 +1820,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2116
 msgid "Couldn't find any disabled commands from the cog `{cog_name}`. Use `{prefix}slash list` to see all cogs with application commands."
-msgstr ""
+msgstr "Impossible de trouver des commandes désactivées depuis le cog `{cog_name}`. Utilisez `{prefix}slash list` pour voir tous les cogs avec les commandes d'application."
 
 #: redbot/core/core_commands.py:2131
 msgid "Enabling all application commands from that cog would enable a total of {count} commands, exceeding the {cap} command limit for slash commands. Disable some commands first."
-msgstr ""
+msgstr "Activer toutes les commandes d'application de ce cog activerait un total de commandes {count} , dépassant la limite de commande {cap} pour les commandes slash. Désactiver certaines commandes d'abord."
 
 #: redbot/core/core_commands.py:2140
 msgid "Enabling all application commands from that cog would enable a total of {count} commands, exceeding the {cap} command limit for message commands. Disable some commands first."
@@ -1856,7 +1856,8 @@ msgstr ""
 #: redbot/core/core_commands.py:2211
 msgid "Disabled {count} commands from `{cog_name}`:\n"
 "{names}"
-msgstr ""
+msgstr "Commandes {count} désactivées depuis `{cog_name}`:\n"
+"{names}"
 
 #: redbot/core/core_commands.py:2218
 #, docstring
@@ -1872,7 +1873,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2308
 msgid "There are no application commands to list."
-msgstr ""
+msgstr "Il n'y a aucune commande d'application à afficher."
 
 #: redbot/core/core_commands.py:2339
 #, docstring
@@ -1890,7 +1891,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2370
 msgid "Synced {count} commands."
-msgstr ""
+msgstr "Commandes {count} synchronisées."
 
 #: redbot/core/core_commands.py:2378
 msgid "You seem to be attempting to sync after recently syncing. Discord does not like it when bots sync more often than neccecary, so this command has a cooldown. You should enable/disable all commands you want to change first, and run this command one time only after all changes have been made. "
@@ -2217,7 +2218,7 @@ msgstr "Vous avez pris trop de temps à répondre."
 
 #: redbot/core/core_commands.py:2799
 msgid "Cases have been reset."
-msgstr ""
+msgstr "Les arguments ont été réinitialisés."
 
 #: redbot/core/core_commands.py:2801
 msgid "No changes have been made."
@@ -2231,7 +2232,7 @@ msgstr "Des commandes pour modifier les paramètres de [botname]."
 #: redbot/core/core_commands.py:2812
 #, docstring
 msgid "Commands for changing [botname]'s metadata."
-msgstr ""
+msgstr "Commandes pour modifier les paramètres de [botname]."
 
 #: redbot/core/core_commands.py:2817
 #, docstring
@@ -2463,7 +2464,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3165
 msgid "Status set to `Watching {watching}`."
-msgstr ""
+msgstr "Statut défini à ``Regarde {watching}`."
 
 #: redbot/core/core_commands.py:3167
 msgid "Watching cleared."
@@ -2509,7 +2510,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3231
 msgid "Custom status cleared."
-msgstr ""
+msgstr "Statut personnalisé effacé."
 
 #: redbot/core/core_commands.py:3236
 msgid "Status changed to {}."
@@ -2518,7 +2519,7 @@ msgstr "Statut changé à {}."
 #: redbot/core/core_commands.py:3242
 #, docstring
 msgid "Set [botname]'s status to online."
-msgstr ""
+msgstr "Passer le statut de [botname] à connecté."
 
 #: redbot/core/core_commands.py:3249
 #, docstring
@@ -2528,12 +2529,12 @@ msgstr ""
 #: redbot/core/core_commands.py:3256
 #, docstring
 msgid "Set [botname]'s status to idle."
-msgstr ""
+msgstr "Passer le statut de [botname] à occupé."
 
 #: redbot/core/core_commands.py:3263
 #, docstring
 msgid "Set [botname]'s status to invisible."
-msgstr ""
+msgstr "Passer le statut de [botname] à invisible."
 
 #: redbot/core/core_commands.py:3273
 #, docstring
@@ -2928,7 +2929,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3843 redbot/core/core_commands.py:3847
 msgid "Not Set."
-msgstr ""
+msgstr "Pas encore défini."
 
 #: redbot/core/core_commands.py:3854
 msgid "Admin roles: {admin}\n"
@@ -3253,7 +3254,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4275
 msgid "Help will use the select menu only."
-msgstr ""
+msgstr "L'aide n'utilisera que le menu sélectionné."
 
 #: redbot/core/core_commands.py:4278
 msgid "Help will use button menus and add a select menu."
@@ -3261,11 +3262,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4281
 msgid "Help will use button menus."
-msgstr ""
+msgstr "L'aide utilisera les menus boutons."
 
 #: redbot/core/core_commands.py:4284
 msgid "Help will use reaction menus."
-msgstr ""
+msgstr "L'aide utilisera les boutons de réaction."
 
 #: redbot/core/core_commands.py:4287
 msgid "Help will not use menus."
@@ -3309,7 +3310,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4334
 msgid "Help will now show command aliases."
-msgstr ""
+msgstr "Le menu d'aide n'affichera pas les alias de commandes."
 
 #: redbot/core/core_commands.py:4336
 msgid "Help will no longer show command aliases."
@@ -4702,37 +4703,37 @@ msgstr "Dernière modification à"
 
 #: redbot/core/modlog.py:604
 msgid "User:"
-msgstr ""
+msgstr "Utilisateur :"
 
 #: redbot/core/modlog.py:605
 msgid "Moderator:"
-msgstr ""
+msgstr "Modérateur :"
 
 #: redbot/core/modlog.py:608
 msgid "Until:"
-msgstr ""
+msgstr "Jusqu'à :"
 
 #: redbot/core/modlog.py:608
 msgid "Duration:"
-msgstr ""
+msgstr "Durée :"
 
 #: redbot/core/modlog.py:611 redbot/core/modlog.py:613
 msgid "Channel:"
-msgstr ""
+msgstr "Salon :"
 
 #: redbot/core/modlog.py:615
 msgid "Amended by:"
-msgstr ""
+msgstr "Modifié par :"
 
 #: redbot/core/modlog.py:617
 msgid "Last modified at:"
-msgstr ""
+msgstr "Modifié pour la dernière fois :"
 
 #: redbot/core/tree.py:271
 msgid "Command not found."
-msgstr ""
+msgstr "Commande introuvable."
 
 #: redbot/core/tree.py:332
 msgid "You are not permitted to use this command."
-msgstr ""
+msgstr "Vous n'avez pas la permission d'utiliser cette commande."
 

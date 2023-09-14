@@ -137,99 +137,99 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:63
 msgid "Manage Webhooks"
-msgstr ""
+msgstr "Gérer les webhook"
 
 #: redbot/cogs/audio/core/events/dpy.py:64
 msgid "Manage Expressions"
-msgstr ""
+msgstr "Gérer les expressions"
 
 #: redbot/cogs/audio/core/events/dpy.py:65
 msgid "Use Application Commands"
-msgstr ""
+msgstr "Utiliser les commandes de l'application"
 
 #: redbot/cogs/audio/core/events/dpy.py:66
 msgid "Request to Speak"
-msgstr ""
+msgstr "Demande de prise de parole"
 
 #: redbot/cogs/audio/core/events/dpy.py:67
 msgid "Manage Events"
-msgstr ""
+msgstr "Gérer les événements"
 
 #: redbot/cogs/audio/core/events/dpy.py:68
 msgid "Manage Threads"
-msgstr ""
+msgstr "Gérer les fils de discussion"
 
 #: redbot/cogs/audio/core/events/dpy.py:69
 msgid "Create Public Threads"
-msgstr ""
+msgstr "Créer des fils de discussion publics"
 
 #: redbot/cogs/audio/core/events/dpy.py:70
 msgid "Create Private Threads"
-msgstr ""
+msgstr "Créer des fils de discussion privés"
 
 #: redbot/cogs/audio/core/events/dpy.py:71
 msgid "Use External Stickers"
-msgstr ""
+msgstr "Utilise des autocollants externes"
 
 #: redbot/cogs/audio/core/events/dpy.py:72
 msgid "Send Messages in Threads"
-msgstr ""
+msgstr "Envoyer des messages dans des fils de discussion"
 
 #: redbot/cogs/audio/core/events/dpy.py:73
 msgid "Start Activities"
-msgstr ""
+msgstr "Commencer les activités"
 
 #: redbot/cogs/audio/core/events/dpy.py:74
 msgid "Moderate Member"
-msgstr ""
+msgstr "Membres Modérateurs"
 
 #: redbot/cogs/audio/core/events/dpy.py:75
 msgid "Use Soundboard"
-msgstr ""
+msgstr "Utiliser le soundboard"
 
 #: redbot/cogs/audio/core/events/dpy.py:76
 msgid "Create Expressions"
-msgstr ""
+msgstr "Créer des expressions"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Use External Sounds"
-msgstr ""
+msgstr "Utiliser des sons externes"
 
 #: redbot/cogs/audio/core/events/dpy.py:78
 msgid "Send Voice Messages"
-msgstr ""
+msgstr "Envoyer des messages vocaux"
 
 #: redbot/cogs/audio/core/events/dpy.py:82
 msgid "This command will change the executable path of Java, this is useful if you have multiple installations of Java and the default one is causing issues. Please don't change this unless you are certain that the Java version you are specifying is supported by Red. The default and supported versions are currently Java 17 and 11."
-msgstr ""
+msgstr "Cette commande va changer le chemin de l'exécutable de Java, est utile si vous avez plusieurs installations de Java et que celle par défaut pose des problèmes. Veuillez ne pas modifier cela à moins que vous soyez certain que la version Java que vous spécifiez est prise en charge par Red. Les versions par défaut et supportées sont actuellement Java 17 et 11."
 
 #: redbot/cogs/audio/core/events/dpy.py:88
 msgid "This command will change the maximum RAM allocation for the managed Lavalink node, usually you will never have to change this, before considering changing it please consult our support team."
-msgstr ""
+msgstr "Cette commande va changer l'allocation maximale de RAM pour le noeud Lavalink géré, généralement vous n'aurez jamais à changer cela, avant d'envisager de le modifier, veuillez consulter notre équipe d'assistance."
 
 #: redbot/cogs/audio/core/events/dpy.py:93
 msgid "This command will disable the managed Lavalink node, if you toggle this command you must specify an external Lavalink node to connect to, if you do not do so Audio will stop working."
-msgstr ""
+msgstr "Cette commande désactivera le noeud Lavalink géré, Si vous activez cette commande, vous devez spécifier un noeud Lavalink externe auquel vous devez vous connecter, si vous ne le faites pas, Audio arrêtera de fonctionner."
 
 #: redbot/cogs/audio/core/events/dpy.py:98
 msgid "This command is used to specify the IP which will be used by Red to connect to an external Lavalink node. "
-msgstr ""
+msgstr "Cette commande est utilisée pour spécifier l'adresse IP qui sera utilisée par Red pour se connecter à un noeud Lavalink externe. "
 
 #: redbot/cogs/audio/core/events/dpy.py:101
 msgid "This command is used to specify the authentication password used by Red to connect to an external Lavalink node."
-msgstr ""
+msgstr "Cette commande est utilisée pour spécifier le mot de passe d'authentification utilisé par Red pour se connecter à un noeud Lavalink externe."
 
 #: redbot/cogs/audio/core/events/dpy.py:105
 msgid "This command is used toggle between secured and unsecured connections to an external Lavalink node."
-msgstr ""
+msgstr "Cette commande est utilisée pour basculer entre les connexions sécurisées et non sécurisées vers un noeud Lavalink externe."
 
 #: redbot/cogs/audio/core/events/dpy.py:108
 msgid "This command is used to specify the connection port used by Red to connect to an external Lavalink node."
-msgstr ""
+msgstr "Cette commande est utilisée pour spécifier le port de connexion qui sera utilisée par Red pour se connecter à un noeud Lavalink externe."
 
 #: redbot/cogs/audio/core/events/dpy.py:111
 msgid "This command specifies which network interface and IP the managed Lavalink node will bind to, by default this is 'localhost', only change this if you want the managed Lavalink node to bind to a specific IP/interface."
-msgstr ""
+msgstr "Cette commande spécifie à quelle interface réseau et à quelle adresse IP le noeud Lavalink géré sera lié, par défaut, c'est 'localhost', seulement changer cela si vous voulez que le noeud Lavalink géré soit lié à une adresse IP/interface spécifique."
 
 #: redbot/cogs/audio/core/events/dpy.py:116
 msgid "This command changes the authentication password required to connect to this managed node.The default value is 'youshallnotpass'."

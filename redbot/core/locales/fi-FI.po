@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-08-10 01:16+0000\n"
+"POT-Creation-Date: 2023-09-14 02:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -239,7 +239,7 @@ msgstr ""
 msgid "The given command is disabled in this guild."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:383 redbot/core/_diagnoser.py:860
+#: redbot/core/_diagnoser.py:383 redbot/core/_diagnoser.py:858
 msgid "One of the parents of the given command is disabled globally."
 msgstr ""
 
@@ -303,257 +303,257 @@ msgid "Permissions verification"
 msgstr ""
 
 #: redbot/core/_diagnoser.py:488
-msgid "Permissions verification for {cog} cog"
+msgid "Cog permissions verification"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:505
+#: redbot/core/_diagnoser.py:503
 msgid "The cog of the given command is disabled in this guild."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:506
+#: redbot/core/_diagnoser.py:504
 msgid "To fix this issue, you can run {command} which will enable the {affected_cog} cog in this guild."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:520
+#: redbot/core/_diagnoser.py:518
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {cog} cog."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:528
+#: redbot/core/_diagnoser.py:526
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {command} command."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:540
+#: redbot/core/_diagnoser.py:538
 msgid "To fix this issue, grant the required permissions to the bot through role settings or channel overrides."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:559 redbot/core/_diagnoser.py:655
+#: redbot/core/_diagnoser.py:557 redbot/core/_diagnoser.py:653
 msgid "Other issues related to the permissions."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:560
+#: redbot/core/_diagnoser.py:558
 msgid "Fatal error: There's an issue related to the permissions for the {cog} cog but we're not able to determine the exact cause."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:565
+#: redbot/core/_diagnoser.py:563
 msgid "Fatal error: There's an issue related to the permissions for the {command} command but we're not able to determine the exact cause."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:569
+#: redbot/core/_diagnoser.py:567
 msgid "This is an unexpected error, please report it on Red's issue tracker."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:576
+#: redbot/core/_diagnoser.py:574
 msgid "Ensure that the command is not bot owner only"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:584
+#: redbot/core/_diagnoser.py:582
 msgid "The command is bot owner only and the given user is not a bot owner."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:585
+#: redbot/core/_diagnoser.py:583
 msgid "This cannot be fixed - regular users cannot run bot owner only commands."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:591
+#: redbot/core/_diagnoser.py:589
 msgid "Permission hooks"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:601
+#: redbot/core/_diagnoser.py:599
 msgid "Fatal error: the result of permission hooks is inconsistent."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:602 redbot/core/_diagnoser.py:608
-#: redbot/core/_diagnoser.py:846
+#: redbot/core/_diagnoser.py:600 redbot/core/_diagnoser.py:606
+#: redbot/core/_diagnoser.py:844
 msgid "To fix this issue, a manual review of the installed cogs is required."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:607
+#: redbot/core/_diagnoser.py:605
 msgid "The access has been denied by one of the bot's permissions hooks."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:617
+#: redbot/core/_diagnoser.py:615
 msgid "User's discord permissions, privilege level and rules from Permissions cog"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:632
+#: redbot/core/_diagnoser.py:630
 msgid "The access has been denied due to the rules set for the {cog} cog with Permissions cog."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:637
+#: redbot/core/_diagnoser.py:635
 msgid "The access has been denied due to the rules set for the {command} command with Permissions cog."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:641
+#: redbot/core/_diagnoser.py:639
 msgid "To fix the issue, a manual review of the rules is required."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:656
+#: redbot/core/_diagnoser.py:654
 msgid "There's an issue related to the permissions of {cog} cog but we're not able to determine the exact cause."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:661
+#: redbot/core/_diagnoser.py:659
 msgid "There's an issue related to the permissions of {command} command but we're not able to determine the exact cause."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:665
+#: redbot/core/_diagnoser.py:663
 msgid "To fix this issue, a manual review of the command is required."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:672
+#: redbot/core/_diagnoser.py:670
 msgid "Permission checks"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:676
+#: redbot/core/_diagnoser.py:674
 msgid "The access has been denied by one of the permissions checks of {cog} cog."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:680
+#: redbot/core/_diagnoser.py:678
 msgid "The access has been denied by one of the permission checks of {command} command."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:688
+#: redbot/core/_diagnoser.py:686
 msgid "To fix this issue, a manual review of the permission checks is required."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:694
+#: redbot/core/_diagnoser.py:692
 msgid "User's discord permissions and privilege level"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:703
+#: redbot/core/_diagnoser.py:701
 msgid "grant the required permissions to the user through role settings or channel overrides"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:709
+#: redbot/core/_diagnoser.py:707
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {cog} cog."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:714
+#: redbot/core/_diagnoser.py:712
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {command} command."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:723
+#: redbot/core/_diagnoser.py:721
 msgid "the guild owner"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:726
+#: redbot/core/_diagnoser.py:724
 msgid "the mod role"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:728
+#: redbot/core/_diagnoser.py:726
 msgid "the admin role"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:731
+#: redbot/core/_diagnoser.py:729
 msgid "assign appropriate role to the user"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:733
+#: redbot/core/_diagnoser.py:731
 msgid "The user is missing the privilege level ({privilege_level}) required by the {cog} cog."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:740
+#: redbot/core/_diagnoser.py:738
 msgid "The user is missing the privilege level ({privilege_level}) required by the {command} command."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:753
+#: redbot/core/_diagnoser.py:751
 msgid "add appropriate rule in the Permissions cog"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:756
+#: redbot/core/_diagnoser.py:754
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {cog} cog."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:765
+#: redbot/core/_diagnoser.py:763
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {command} command."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:783
+#: redbot/core/_diagnoser.py:781
 msgid "Checks and permissions verification for the command {command}"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:806 redbot/core/_diagnoser.py:919
+#: redbot/core/_diagnoser.py:804 redbot/core/_diagnoser.py:917
 msgid "Other command checks"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:807 redbot/core/_diagnoser.py:920
+#: redbot/core/_diagnoser.py:805 redbot/core/_diagnoser.py:918
 msgid "The given command is failing one of the required checks."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:808 redbot/core/_diagnoser.py:921
+#: redbot/core/_diagnoser.py:806 redbot/core/_diagnoser.py:919
 msgid "To fix this issue, a manual review of the command's checks is required."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:819
+#: redbot/core/_diagnoser.py:817
 msgid "Global 'call once' checks"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:841
+#: redbot/core/_diagnoser.py:839
 msgid "Other global 'call once' checks"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:842
+#: redbot/core/_diagnoser.py:840
 msgid "One of the global 'call once' checks implemented by a 3rd-party cog prevents this command from being ran."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:851
+#: redbot/core/_diagnoser.py:849
 msgid "Check if the command is disabled"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:861 redbot/core/_diagnoser.py:875
+#: redbot/core/_diagnoser.py:859 redbot/core/_diagnoser.py:873
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command globally."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:874
+#: redbot/core/_diagnoser.py:872
 msgid "The given command is disabled globally."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:887
+#: redbot/core/_diagnoser.py:885
 msgid "Checks and permissions verification"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:938
+#: redbot/core/_diagnoser.py:936
 msgid "Passed"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:940
+#: redbot/core/_diagnoser.py:938
 msgid "Failed"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:969
+#: redbot/core/_diagnoser.py:967
 msgid "All checks passed and no issues were detected. Make sure that the given parameters correspond to the channel, user, and command name that have been problematic.\n\n"
 "If you still can't find the issue, it is likely that one of the 3rd-party cogs you're using adds a global or cog local before invoke hook that prevents the command from getting invoked as this can't be diagnosed with this tool."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:980
+#: redbot/core/_diagnoser.py:978
 msgid "The bot has been able to identify the issue."
 msgstr ""
 
-#: redbot/core/_diagnoser.py:983
+#: redbot/core/_diagnoser.py:981
 msgid "Detected issue: "
 msgstr ""
 
-#: redbot/core/_diagnoser.py:985
+#: redbot/core/_diagnoser.py:983
 msgid "Solution: "
 msgstr ""
 
-#: redbot/core/_diagnoser.py:987
+#: redbot/core/_diagnoser.py:985
 msgid "\n"
 "Here's a detailed report in case you need it:"
 msgstr ""
 
-#: redbot/core/_diagnoser.py:988
+#: redbot/core/_diagnoser.py:986
 msgid "Channel: "
 msgstr ""
 
-#: redbot/core/_diagnoser.py:989
+#: redbot/core/_diagnoser.py:987
 msgid "Command caller: "
 msgstr ""
 
-#: redbot/core/_diagnoser.py:990
+#: redbot/core/_diagnoser.py:988
 msgid "Command: "
 msgstr ""
 
-#: redbot/core/_diagnoser.py:991
+#: redbot/core/_diagnoser.py:989
 msgid "Tests that have been ran:"
 msgstr ""
 
