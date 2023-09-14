@@ -14,7 +14,7 @@ import subprocess
 import time
 import webbrowser
 from collections import defaultdict
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import click
 import requests
@@ -29,7 +29,7 @@ class ReleaseType(enum.Enum):
     MAINTENANCE = 3
     HOTFIX = 4
 
-    def __str__(self) -> None:
+    def __str__(self) -> str:
         return f"{self.name.lower()} release"
 
     @classmethod
@@ -228,11 +228,11 @@ def get_git_config_value(key: str) -> str:
         return ""
 
 
-def set_git_config_value(key: str, value: str) -> str:
+def set_git_config_value(key: str, value: str) -> None:
     subprocess.check_call(("git", "config", "--local", f"red-release-helper.{key}", value))
 
 
-def wipe_git_config_values() -> str:
+def wipe_git_config_values() -> None:
     try:
         subprocess.check_output(
             ("git", "config", "--local", "--remove-section", "red-release-helper")
@@ -304,7 +304,7 @@ def set_release_stage(stage: ReleaseStage) -> None:
 @click.group(invoke_without_command=True)
 @click.option("--continue", "abort", flag_value=False, default=None)
 @click.option("--abort", "abort", flag_value=True, default=None)
-def cli(*, abort: bool = None):
+def cli(*, abort: Optional[bool] = None):
     """Red's release helper, guiding you through the whole process!"""
     stage = get_release_stage()
     if abort is True:
@@ -782,11 +782,11 @@ STEPS = (
 @cli.command(name="unreleased")
 @click.argument("version")
 @click.argument("base_branch")
-def cli_unreleased(version: str, base_branch: str) -> int:
+def cli_unreleased(version: str, base_branch: str) -> None:
     show_unreleased_commits(version, base_branch)
 
 
-def show_unreleased_commits(version: str, base_branch: str) -> int:
+def show_unreleased_commits(version: str, base_branch: str) -> None:
     token = get_github_token()
 
     resp = requests.post(
@@ -868,7 +868,7 @@ def cli_milestone(version: str) -> None:
 
 
 def view_milestone_issues(version: str) -> None:
-    issue_views = []
+    issue_views: List[str] = []
     for issue_type in ("pr", "issue"):
         for number in subprocess.check_output(
             (
@@ -916,8 +916,8 @@ def get_contributors(version: str, *, show_not_merged: bool = False) -> None:
 def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[str]:
     after = None
     has_next_page = True
-    authors = {}
-    reviewers = {}
+    authors: Dict[str, List[Tuple[int, str]]] = {}
+    reviewers: Dict[str, List[Tuple[int, str]]] = {}
     token = get_github_token()
     states = ["MERGED"]
     if show_not_merged:
@@ -940,7 +940,6 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
             milestone_data = json["data"]["repository"]["milestones"]["nodes"][0]
         except IndexError:
             raise click.ClickException("Given milestone couldn't have been found.")
-        milestone_title = milestone_data["title"]
         pull_requests = milestone_data["pullRequests"]
         nodes = pull_requests["nodes"]
         for pr_node in nodes:
