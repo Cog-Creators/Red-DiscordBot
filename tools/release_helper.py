@@ -12,6 +12,7 @@ import re
 import shlex
 import subprocess
 import time
+import urllib.parse
 import webbrowser
 from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
@@ -137,6 +138,27 @@ query getCommitHistory($refQualifiedName: String!, $after: String) {
             }
           }
         }
+      }
+    }
+  }
+}
+"""
+GET_LAST_ISSUE_NUMBER_QUERY = """
+query getLastIssueNumber {
+  repository(owner: "Cog-Creators", name: "Red-DiscordBot") {
+    discussions(orderBy: {field: CREATED_AT, direction: DESC}, first: 1) {
+      nodes {
+        number
+      }
+    }
+    issues(orderBy: {field: CREATED_AT, direction: DESC}, first: 1) {
+      nodes {
+        number
+      }
+    }
+    pullRequests(orderBy: {field: CREATED_AT, direction: DESC}, first: 1) {
+      nodes {
+        number
       }
     }
   }
@@ -576,9 +598,10 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
             if option == "4":
                 break
 
+        title = f"Red {version} - Changelog"
         commands = [
             ("git", "add", "."),
-            ("git", "commit", "-m", f"Red {version} - Changelog"),
+            ("git", "commit", "-m", title),
             ("git", "push", "-u", GH_URL, f"{changelog_branch}:{changelog_branch}"),
         ]
         print(
@@ -594,10 +617,37 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
         else:
             print("Okay, please open a changelog PR manually then.")
     if get_release_stage() is ReleaseStage.CHANGELOG_COMMITTED:
+        token = get_github_token()
+        resp = requests.post(
+            "https://api.github.com/graphql",
+            json={"query": GET_LAST_ISSUE_NUMBER_QUERY},
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        next_issue_number = (
+            max(
+                next(iter(data["nodes"]), {"number": 0})["number"]
+                for data in resp.json()["data"]["repository"].values()
+            )
+            + 1
+        )
+        docs_preview_url = (
+            f"https://red-discordbot--{next_issue_number}.org.readthedocs.build"
+            f"/en/{next_issue_number}/changelog.html"
+        )
         subprocess.check_call(commands[2])
+        query = {
+            "expand": "1",
+            "milestone": version,
+            "labels": "Type: Feature,Changelog Entry: Skipped",
+            "title": title,
+            "body": (
+                "### Description of the changes\n\n"
+                f"The PR for Red {version} changelog.\n\n"
+                f"Docs preview: {docs_preview_url}"
+            ),
+        }
         pr_url = (
-            f"{GH_URL}/compare/V3/develop...{changelog_branch}"
-            f"?expand=1&milestone={version}&labels=Type:+Feature"
+            f"{GH_URL}/compare/V3/develop...{changelog_branch}?{urllib.parse.urlencode(query)}"
         )
         print(f"Create new PR: {pr_url}")
         webbrowser.open_new_tab(pr_url)
