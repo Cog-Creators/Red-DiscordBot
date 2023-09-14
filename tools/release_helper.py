@@ -536,40 +536,46 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
     else:
         changelog_branch = f"V3/changelogs/{version}"
         subprocess.check_call(("git", "fetch", GH_URL))
-    try:
-        subprocess.check_call(("git", "checkout", "-b", changelog_branch, "FETCH_HEAD"))
-    except subprocess.CalledProcessError:
-        rich.print()
-        if click.confirm(
-            f"It seems that {changelog_branch} branch already exists, do you want to use it?"
-        ):
-            subprocess.check_call(("git", "checkout", changelog_branch))
-        elif not click.confirm("Do you want to use a different branch?"):
-            raise click.ClickException("Can't continue without a changelog branch...")
-        elif click.confirm("Do you want to create a new branch?"):
-            while True:
-                changelog_branch = click.prompt("Input the name of the new branch")
-                try:
-                    subprocess.check_call(
-                        ("git", "checkout", "-b", changelog_branch, "FETCH_HEAD")
-                    )
-                except subprocess.CalledProcessError:
-                    continue
-                else:
-                    break
-        else:
-            while True:
-                changelog_branch = click.prompt("Input the name of the branch to check out")
-                try:
-                    subprocess.check_call(("git", "checkout", changelog_branch))
-                except subprocess.CalledProcessError:
-                    continue
-                else:
-                    break
+        try:
+            subprocess.check_call(("git", "checkout", "-b", changelog_branch, "FETCH_HEAD"))
+        except subprocess.CalledProcessError:
+            rich.print()
+            if click.confirm(
+                f"It seems that {changelog_branch} branch already exists, do you want to use it?"
+            ):
+                subprocess.check_call(("git", "checkout", changelog_branch))
+            elif not click.confirm("Do you want to use a different branch?"):
+                raise click.ClickException("Can't continue without a changelog branch...")
+            elif click.confirm("Do you want to create a new branch?"):
+                while True:
+                    changelog_branch = click.prompt("Input the name of the new branch")
+                    try:
+                        subprocess.check_call(
+                            ("git", "checkout", "-b", changelog_branch, "FETCH_HEAD")
+                        )
+                    except subprocess.CalledProcessError:
+                        continue
+                    else:
+                        break
+            else:
+                while True:
+                    changelog_branch = click.prompt("Input the name of the branch to check out")
+                    try:
+                        subprocess.check_call(("git", "checkout", changelog_branch))
+                    except subprocess.CalledProcessError:
+                        continue
+                    else:
+                        break
 
-    set_changelog_branch(changelog_branch)
-    set_release_stage(ReleaseStage.CHANGELOG_BRANCH_EXISTS)
+        set_changelog_branch(changelog_branch)
+        set_release_stage(ReleaseStage.CHANGELOG_BRANCH_EXISTS)
 
+    title = f"Red {version} - Changelog"
+    commands = [
+        ("git", "add", "."),
+        ("git", "commit", "-m", title),
+        ("git", "push", "-u", GH_URL, f"{changelog_branch}:{changelog_branch}"),
+    ]
     if get_release_stage() < ReleaseStage.CHANGELOG_COMMITTED:
         rich.print(
             "\n:pencil: At this point, you should have an up-to-date milestone"
@@ -598,12 +604,6 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
             if option == "4":
                 break
 
-        title = f"Red {version} - Changelog"
-        commands = [
-            ("git", "add", "."),
-            ("git", "commit", "-m", title),
-            ("git", "push", "-u", GH_URL, f"{changelog_branch}:{changelog_branch}"),
-        ]
         print(
             "Do you want to commit everything from repo's working tree and push it?"
             " The following commands will run:"
