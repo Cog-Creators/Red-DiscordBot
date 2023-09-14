@@ -21,7 +21,7 @@ Fixes
 - **Core - Bot Commands** - Fixed handling of an edge case in the ``[p]diagnoseissues`` command that involved commands without a cog (:issue:`6237`)
 - **Core - Bot Commands** - Fixed the formatting of nested result lists in the ``[p]diagnoseissues`` command (:issue:`6238`)
 - **Cogs - Mod** - Fixed the formatting of the help description for the ``[p]ban``, ``[p]kick``, and ``[p]tempban`` commands (:issue:`6245`)
-- **Cogs - Streams** - Updated the implementation of Twitch streams to no longer use the "Get Users Follows" endpoint that was deprecated in February 2023 (:issue:`6246`, :issue:`6247`)
+- |cool| **Cogs - Streams** - Updated the implementation of Twitch streams to no longer use the "Get Users Follows" endpoint that was deprecated in February 2023 (:issue:`6246`, :issue:`6247`)
 
 Documentation changes
 ---------------------
