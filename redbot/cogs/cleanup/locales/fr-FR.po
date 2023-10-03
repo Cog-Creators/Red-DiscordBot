@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-13 10:40+0000\n"
+"POT-Creation-Date: 2023-06-14 02:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -178,7 +178,7 @@ msgid "Clean up messages owned by the bot in the current channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:698
+#: redbot/cogs/cleanup/cleanup.py:694
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
@@ -191,12 +191,12 @@ msgstr "Supprime les messages dupliquées dans le salon depuis les X derniers me
 "        - `<number>` Le nombre de message à vérifier comme doublon. Doit être un nombre positif.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:750
+#: redbot/cogs/cleanup/cleanup.py:746
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr "Gérer les paramètres de la commande de nettoyage."
 
-#: redbot/cogs/cleanup/cleanup.py:756
+#: redbot/cogs/cleanup/cleanup.py:752
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -207,11 +207,11 @@ msgstr "Suivi des paramètres de notification de nettoyage.\n\n"
 "        Ce message sera supprimé après 5 secondes.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:764
+#: redbot/cogs/cleanup/cleanup.py:760
 msgid "I will no longer notify of message deletions."
 msgstr "Je ne notifierai plus la suppression des messages."
 
-#: redbot/cogs/cleanup/cleanup.py:767
+#: redbot/cogs/cleanup/cleanup.py:763
 msgid "I will now notify of message deletions."
 msgstr "Je vais maintenant notifier la suppression des messages."
 

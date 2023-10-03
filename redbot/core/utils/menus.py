@@ -37,6 +37,7 @@ class _GenericButton(discord.ui.Button):
         self.func = func
 
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         ctx = self.view.ctx
         pages = self.view.source.entries
         controls = None
@@ -52,7 +53,6 @@ class _GenericButton(discord.ui.Button):
             await self.func(ctx, pages, controls, message, page, timeout, emoji)
         except Exception:
             pass
-        await interaction.response.defer()
 
 
 async def menu(

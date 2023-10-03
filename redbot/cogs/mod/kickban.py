@@ -292,9 +292,9 @@ class KickBanMixin(MixinMeta):
         Kick a user.
 
         Examples:
-           - `[p]kick 428675506947227648 wanted to be kicked.`
+        - `[p]kick 428675506947227648 wanted to be kicked.`
             This will kick the user with ID 428675506947227648 from the server.
-           - `[p]kick @Twentysix wanted to be kicked.`
+        - `[p]kick @Twentysix wanted to be kicked.`
             This will kick Twentysix from the server.
 
         If a reason is specified, it will be the reason that shows up
@@ -380,9 +380,9 @@ class KickBanMixin(MixinMeta):
         `days` is the amount of days of messages to cleanup on ban.
 
         Examples:
-           - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
+        - `[p]ban 428675506947227648 7 Continued to spam after told to stop.`
             This will ban the user with ID 428675506947227648 and it will delete 7 days worth of messages.
-           - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
+        - `[p]ban @Twentysix 7 Continued to spam after told to stop.`
             This will ban Twentysix and it will delete 7 days worth of messages.
 
         A user ID should be provided if the user is not a member of this server.
@@ -595,11 +595,11 @@ class KickBanMixin(MixinMeta):
         `days` is the amount of days of messages to cleanup on tempban.
 
         Examples:
-           - `[p]tempban @Twentysix Because I say so`
+        - `[p]tempban @Twentysix Because I say so`
             This will ban Twentysix for the default amount of time set by an administrator.
-           - `[p]tempban @Twentysix 15m You need a timeout`
+        - `[p]tempban @Twentysix 15m You need a timeout`
             This will ban Twentysix for 15 minutes.
-           - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`
+        - `[p]tempban 428675506947227648 1d2h15m 5 Evil person`
             This will ban the user with ID 428675506947227648 for 1 day 2 hours 15 minutes and will delete the last 5 days of their messages.
         """
         guild = ctx.guild

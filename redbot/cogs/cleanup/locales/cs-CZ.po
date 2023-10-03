@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-13 10:40+0000\n"
+"POT-Creation-Date: 2023-06-14 02:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -23,11 +23,17 @@ msgid "This cog contains commands used for \"cleaning up\" (deleting) messages.\
 "    Messages older than two weeks cannot be mass deleted.\n"
 "    This is a limitation of the API.\n"
 "    "
-msgstr ""
+msgstr "Tento cog obsahuje příkazy pro \"čištění\" (mazání) zpráv.\n\n"
+"    Tento cog je navržen jako moderatorský nástroj, nabízí se mnoho užitečných\n"
+"    situací k použití tohoto nástroje. Všechny příkazy pro čištění se vztahují\n"
+"    pouze na kanál, ve kterém je příkaz spuštěn.\n\n"
+"    Zprávy starší než dva týdny nelze hromadně mazat, jedná se o omezení\n"
+"    rozhraní API.\n"
+"    "
 
 #: redbot/cogs/cleanup/cleanup.py:58
 msgid "Are you sure you want to delete {number} messages?"
-msgstr ""
+msgstr "Jste si jistí, že chcete smazat {number} zpráv?"
 
 #: redbot/cogs/cleanup/cleanup.py:72
 msgid "Cancelled."
@@ -35,16 +41,16 @@ msgstr "Zrušeno."
 
 #: redbot/cogs/cleanup/cleanup.py:155
 msgid "1 message was deleted."
-msgstr ""
+msgstr "1 zpráva byla odstraněna."
 
 #: redbot/cogs/cleanup/cleanup.py:158
 msgid "{num} messages were deleted."
-msgstr ""
+msgstr "{num} zpráv bylo odstraněno."
 
 #: redbot/cogs/cleanup/cleanup.py:184
 #, docstring
 msgid "Base command for deleting messages."
-msgstr ""
+msgstr "Základní příkaz k mazání zpráv."
 
 #: redbot/cogs/cleanup/cleanup.py:194
 #, docstring
@@ -152,7 +158,7 @@ msgid "Clean up messages owned by the bot in the current channel.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:698
+#: redbot/cogs/cleanup/cleanup.py:694
 #, docstring
 msgid "Deletes duplicate messages in the channel from the last X messages and keeps only one copy.\n\n"
 "        Defaults to 50.\n\n"
@@ -161,26 +167,29 @@ msgid "Deletes duplicate messages in the channel from the last X messages and ke
 "        "
 msgstr ""
 
-#: redbot/cogs/cleanup/cleanup.py:750
+#: redbot/cogs/cleanup/cleanup.py:746
 #, docstring
 msgid "Manage the settings for the cleanup command."
-msgstr ""
+msgstr "Správa nastavení příkazu cleanup."
 
-#: redbot/cogs/cleanup/cleanup.py:756
+#: redbot/cogs/cleanup/cleanup.py:752
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
 "        This message will be deleted after 5 seconds.\n"
 "        "
-msgstr ""
+msgstr "Přepínač nastavení upozorňování  na čištění.\n\n"
+"        Pokud je zaplý, bude poslána zpráva obsahující počet, kolik zpráv bylo vymazáno.\n"
+"        Tato zpráva  je smazána po uběhnutí 5 sekund.\n"
+"        "
 
-#: redbot/cogs/cleanup/cleanup.py:764
+#: redbot/cogs/cleanup/cleanup.py:760
 msgid "I will no longer notify of message deletions."
-msgstr ""
+msgstr "Od teď už nebudu upozorňovat na mazání zpráv."
 
-#: redbot/cogs/cleanup/cleanup.py:767
+#: redbot/cogs/cleanup/cleanup.py:763
 msgid "I will now notify of message deletions."
-msgstr ""
+msgstr "Od teď budu upozorňovat na mazání zpráv."
 
 #: redbot/cogs/cleanup/converters.py:14
 msgid "{} doesn't look like a valid message ID."

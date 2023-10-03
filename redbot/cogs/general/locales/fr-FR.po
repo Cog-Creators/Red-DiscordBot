@@ -247,7 +247,7 @@ msgstr "Utilisateurs en ligne"
 
 #: redbot/cogs/general/general.py:274
 msgid "Not available"
-msgstr ""
+msgstr "Non disponible"
 
 #: redbot/cogs/general/general.py:276
 msgid "Text Channels"
@@ -309,7 +309,7 @@ msgstr "3 - Haut"
 
 #: redbot/cogs/general/general.py:352
 msgid "4 - Highest"
-msgstr ""
+msgstr "4 - Plus haut"
 
 #: redbot/cogs/general/general.py:355
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
@@ -327,7 +327,9 @@ msgstr "Salons :"
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}\n"
 "🎙 Stage: {stage}"
-msgstr ""
+msgstr "💬 Texte : {text}\n"
+"🔊 Voix : {voice}\n"
+"🎙️ Scène : {stage}"
 
 #: redbot/cogs/general/general.py:391
 msgid "Utility:"
@@ -337,7 +339,9 @@ msgstr "Utilitaire:"
 msgid "Owner: {owner}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
-msgstr ""
+msgstr "Propriétaire : {owner}\n"
+"Niveau de vérification : {verif}\n"
+"ID du serveur : {id}{shard_info}"
 
 #: redbot/cogs/general/general.py:403
 msgid "Misc:"

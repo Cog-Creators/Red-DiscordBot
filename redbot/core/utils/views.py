@@ -193,14 +193,18 @@ class SimpleMenu(discord.ui.View):
         return self._source
 
     async def on_timeout(self):
-        if self.delete_after_timeout and not self.message.flags.ephemeral:
-            await self.message.delete()
-        elif self.disable_after_timeout:
-            for child in self.children:
-                child.disabled = True
-            await self.message.edit(view=self)
-        else:
-            await self.message.edit(view=None)
+        try:
+            if self.delete_after_timeout and not self.message.flags.ephemeral:
+                await self.message.delete()
+            elif self.disable_after_timeout:
+                for child in self.children:
+                    child.disabled = True
+                await self.message.edit(view=self)
+            else:
+                await self.message.edit(view=None)
+        except discord.HTTPException:
+            # message could no longer be there or we may not be able to edit/delete it anymore
+            pass
 
     def _get_select_menu(self):
         # handles modifying the select menu if more than 25 pages are provided
@@ -523,9 +527,14 @@ class ConfirmView(discord.ui.View):
         if self.disable_buttons:
             self.confirm_button.disabled = True
             self.dismiss_button.disabled = True
-            await self.message.edit(view=self)
+            view = self
         else:
-            await self.message.edit(view=None)
+            view = None
+        try:
+            await self.message.edit(view=view)
+        except discord.HTTPException:
+            # message could no longer be there or we may not be able to edit it anymore
+            pass
 
     @discord.ui.button(label=_("Yes"), style=discord.ButtonStyle.green)
     async def confirm_button(self, interaction: discord.Interaction, button: discord.ui.Button):
