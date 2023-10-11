@@ -61,7 +61,7 @@ HUMANIZED_PERM = {
     "manage_nicknames": _("Manage Nicknames"),
     "manage_roles": _("Manage Roles"),
     "manage_webhooks": _("Manage Webhooks"),
-    "manage_emojis": _("Manage Emojis"),
+    "manage_expressions": _("Manage Expressions"),
     "use_application_commands": _("Use Application Commands"),
     "request_to_speak": _("Request to Speak"),
     "manage_events": _("Manage Events"),
@@ -72,6 +72,10 @@ HUMANIZED_PERM = {
     "send_messages_in_threads": _("Send Messages in Threads"),
     "start_embedded_activities": _("Start Activities"),
     "moderate_members": _("Moderate Member"),
+    "use_soundboard": _("Use Soundboard"),
+    "create_expressions": _("Create Expressions"),
+    "use_external_sounds": _("Use External Sounds"),
+    "send_voice_messages": _("Send Voice Messages"),
 }
 
 DANGEROUS_COMMANDS = {
@@ -79,7 +83,7 @@ DANGEROUS_COMMANDS = {
         "This command will change the executable path of Java, "
         "this is useful if you have multiple installations of Java and the default one is causing issues. "
         "Please don't change this unless you are certain that the Java version you are specifying is supported by Red. "
-        "The default and supported version is currently Java 11."
+        "The default and supported versions are currently Java 17 and 11."
     ),
     "command_llset_heapsize": _(
         "This command will change the maximum RAM allocation for the managed Lavalink node, "

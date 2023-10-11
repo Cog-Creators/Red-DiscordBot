@@ -17,7 +17,7 @@ Now install the pre-requirements with apt:
 .. prompt:: bash
 
     sudo apt update
-    sudo apt -y install python3.11 python3.11-dev python3.11-venv git openjdk-11-jre-headless build-essential nano
+    sudo apt -y install python3.11 python3.11-dev python3.11-venv git openjdk-17-jre-headless build-essential nano
 
 .. Include common instructions:
 

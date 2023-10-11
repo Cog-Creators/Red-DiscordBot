@@ -1009,7 +1009,6 @@ class Repo(RepoJSONMixin):
 
 
 class RepoManager:
-
     GITHUB_OR_GITLAB_RE = re.compile(r"https?://git(?:hub)|(?:lab)\.com/")
     TREE_URL_RE = re.compile(r"(?P<tree>/tree)/(?P<branch>\S+)$")
 

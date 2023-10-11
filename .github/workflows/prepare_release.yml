@@ -45,11 +45,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Automated Crowdin downstream
-          title: "[i18n] Automated Crowdin downstream"
+          title: "Automated Crowdin downstream"
           body: |
             This is an automated PR that is part of Prepare Release automated workflow (2 out of 2).
             Please ensure that there are no errors or invalid files are in the PR.
-          labels: "Automated PR, Category: i18n, Changelog Entry: Skipped"
+          labels: "Automated PR, Changelog Entry: Skipped"
           branch: "automated/i18n"
           author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           milestone: ${{ needs.pr_stable_bump.outputs.milestone_number }}
