@@ -46,6 +46,19 @@ Unsure of how to get started contributing to Red? Please take a look at the Issu
 
 At this point you're ready to start making changes. Feel free to ask for help; everyone was a beginner at some point!
 
+INSTRUCTIONS-
+
+- Fork this Repository using the button at the top on right corner.
+- Clone your forked repository to your pc ( git clone "url from clone option.)
+- Create a new branch for your modifications (ie. `git branch new-user` and check it out `git checkout new-user` or simply do `git checkout -b new-user`)
+- Add your files (`git add -A`), commit (`git commit -m "added myself"`) and push (`git push origin new-user`)
+- Create a pull request
+- Star this repository
+
+  Wait for Pull Request to merge
+
+
+
 # 4. Getting Started
 
 Red's repository is configured to follow a particular development workflow, using various reputable tools. We kindly ask that you stick to this workflow when contributing to Red, by following the guides below. This will help you to easily produce quality code, identify errors early, and streamline the code review process.
