@@ -406,7 +406,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     except Exception as e:
         log.critical(e)
         sys.exit(ExitCodes.CRITICAL)
-        
+
     return None
 
 
