@@ -403,10 +403,6 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             " (and --co-owner if you need more than one) flag\n"
         )
         sys.exit(ExitCodes.CONFIGURATION_ERROR)
-    except Exception as e:
-        # Catch all other exceptions here to prevent shutdown hangs
-        log.critical(e)
-        sys.exit(ExitCodes.CRITICAL)
 
     return None
 
