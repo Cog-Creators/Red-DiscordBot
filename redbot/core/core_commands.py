@@ -3633,7 +3633,20 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
+            print(tokens)
+            embed = discord.Embed()
+            for dict_key, token in tokens.items():
+                if token.startswith("<") and token.endswith(">"):
+                    angle_bracket_warning = _(
+                        "Your `{dict_key}` was set including the <> symbols. If this was an accident you may experience"
+                        " issues with `{service}`. In that case, please try setting your `{dict_key}` again with"
+                        " the < and > removed"
+                    ).format(dict_key=dict_key, service=service)
+                    log.warning(angle_bracket_warning)
+                    embed.add_field(name="Warning", value=angle_bracket_warning)
             await ctx.bot.set_shared_api_tokens(service, **tokens)
+            if embed:
+                await ctx.send(embed=embed)
             await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
 
     @_set_api.command(name="list")
