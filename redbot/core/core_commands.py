@@ -3633,7 +3633,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
-            print(tokens)
             embed = discord.Embed()
             for dict_key, token in tokens.items():
                 if token.startswith("<") and token.endswith(">"):
