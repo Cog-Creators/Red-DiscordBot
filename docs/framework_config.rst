@@ -60,11 +60,14 @@ Then, in the class's :code:`__init__` function, you need to get a config instanc
 The ``identifier`` in :py:meth:`Config.get_conf` is used to keep your cog's data separate
 from that of another cog, and thus should be unique to your cog. For example: if we
 have two cogs named :code:`MyCog` and their identifier is different, each will have
-its own data without overwriting the other's data. Note that, as shown by most of the examples
+its own data without overwriting the other's data.
+
+Note that, as shown by most of the examples
 in this document, it is also possible to force registration of a data key before allowing you
 to get and set data for that key by adding :code:`force_registration=True` after identifier.
 When this is set to :code:`False` (the default), the default value for any key that isn't registered
-will be :code:`None`.
+will be :code:`None`. When this is set to :code:`True` (as shown in this document), attempting
+to read from or write to any key that isn't registered will raise an :code:`AttributeError`.
 
 After we've gotten that, we need to register default values:
 
