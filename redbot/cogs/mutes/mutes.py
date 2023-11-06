@@ -1174,8 +1174,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             for page in pagify(msg):
                 if await ctx.embed_requested():
                     msgs.append(
-                        discord.Emebed(
-                            description=page, colour=await ctx.bot.get_embed_colour(ctx.channel)
+                        discord.Embed(
+                            description=page, colour=await ctx.embed_colour()
                         )
                     )
                 else:
