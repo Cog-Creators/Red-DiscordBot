@@ -1173,11 +1173,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             msgs = []
             for page in pagify(msg):
                 if await ctx.embed_requested():
-                    msgs.append(
-                        discord.Embed(
-                            description=page, colour=await ctx.embed_colour()
-                        )
-                    )
+                    msgs.append(discord.Embed(description=page, colour=await ctx.embed_colour()))
                 else:
                     msgs.append(page)
             await SimpleMenu(msgs).start(ctx)
