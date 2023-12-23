@@ -32,7 +32,7 @@ from typing import (
 import aiohttp
 import discord
 from packaging.requirements import Requirement
-from fuzzywuzzy import fuzz, process
+import rapidfuzz
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 from red_commons.logging import VERBOSE, TRACE
@@ -147,20 +147,26 @@ async def fuzzy_command_search(
             return None
 
     if commands is None:
-        choices = set(ctx.bot.walk_commands())
+        choices = {c: c.qualified_name for c in ctx.bot.walk_commands()}
     elif isinstance(commands, collections.abc.AsyncIterator):
-        choices = {c async for c in commands}
+        choices = {c: c.qualified_name async for c in commands}
     else:
-        choices = set(commands)
+        choices = {c: c.qualified_name for c in commands}
 
-    # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(term, choices, limit=5, scorer=fuzz.QRatio)
+    # Do the scoring. `extracted` is a list of tuples in the form `(cmd_name, score, cmd)`
+    extracted = rapidfuzz.process.extract(
+        term,
+        choices,
+        limit=5,
+        scorer=rapidfuzz.fuzz.QRatio,
+        processor=rapidfuzz.utils.default_process,
+    )
     if not extracted:
         return None
 
     # Filter through the fuzzy-matched commands.
     matched_commands = []
-    for command, score in extracted:
+    for __, score, command in extracted:
         if score < min_score:
             # Since the list is in decreasing order of score, we can exit early.
             break
@@ -217,7 +223,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
 
     dest.mkdir(parents=True, exist_ok=True)
     timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
-    backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
+    backup_fpath = dest / f"redv3_{data_manager.instance_name()}_{timestr}.tar.gz"
 
     to_backup = []
     exclusions = [
@@ -242,7 +248,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         json.dump(repo_output, fs, indent=4)
     instance_file = data_path / "instance.json"
     with instance_file.open("w") as fs:
-        json.dump({data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
+        json.dump({data_manager.instance_name(): data_manager.basic_config}, fs, indent=4)
     for f in data_path.glob("**/*"):
         if not any(ex in str(f) for ex in exclusions) and f.is_file():
             to_backup.append(f)

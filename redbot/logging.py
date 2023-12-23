@@ -10,7 +10,7 @@ from datetime import datetime  # This clearly never leads to confusion...
 from os import isatty
 
 import rich
-from pygments.styles.monokai import MonokaiStyle
+from pygments.styles.monokai import MonokaiStyle  # DEP-WARN
 from pygments.token import (
     Comment,
     Error,
@@ -22,16 +22,14 @@ from pygments.token import (
     Token,
 )
 from rich._log_render import LogRender  # DEP-WARN
-from rich.console import render_group
-from rich.containers import Renderables
+from rich.console import group
 from rich.highlighter import NullHighlighter
 from rich.logging import RichHandler
 from rich.style import Style
-from rich.syntax import ANSISyntaxTheme, PygmentsSyntaxTheme
-from rich.table import Table
+from rich.syntax import ANSISyntaxTheme, PygmentsSyntaxTheme  # DEP-WARN
 from rich.text import Text
 from rich.theme import Theme
-from rich.traceback import PathHighlighter, Traceback
+from rich.traceback import PathHighlighter, Traceback  # DEP-WARN
 
 
 MAX_OLD_LOGS = 8
@@ -151,7 +149,8 @@ class FixedMonokaiStyle(MonokaiStyle):
 
 
 class RedTraceback(Traceback):
-    @render_group()
+    # DEP-WARN
+    @group()
     def _render_stack(self, stack):
         for obj in super()._render_stack.__wrapped__(self, stack):
             if obj != "":
