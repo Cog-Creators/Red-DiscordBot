@@ -2,7 +2,7 @@ from copy import copy
 import asyncio
 import discord
 
-from redbot.core import Config, checks, commands
+from redbot.core import Config, commands
 from redbot.core.commands.requires import PrivilegeLevel
 from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate
@@ -55,7 +55,8 @@ async def create_and_invoke_context(
         await realctx.bot.invoke(fctx)
     except (commands.CheckFailure, commands.CommandOnCooldown):
         # reinvoke bypasses checks and we don't want to run bot owner only commands here
-        if fctx.command.requires.privilege_level < PrivilegeLevel.BOT_OWNER:
+        privilege_level = fctx.command.requires.privilege_level
+        if privilege_level is None or privilege_level < PrivilegeLevel.BOT_OWNER:
             await fctx.reinvoke()
 
 
@@ -71,7 +72,8 @@ def get_command_from_input(bot, userinput: str):
     if com is None:
         return None, _("I could not find a command from that input!")
 
-    if com.requires.privilege_level >= PrivilegeLevel.BOT_OWNER:
+    privilege_level = com.requires.privilege_level
+    if privilege_level is not None and privilege_level >= PrivilegeLevel.BOT_OWNER:
         return (
             None,
             _("That command requires bot owner. I can't allow you to use that for an action"),
