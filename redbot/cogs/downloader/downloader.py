@@ -566,6 +566,20 @@ class Downloader(commands.Cog):
             await ctx.send(
                 _("The repo name you provided is already in use. Please choose another name.")
             )
+        except errors.AuthenticationError as err:
+            await ctx.send(
+                _(
+                    "Failed to authenticate or repository does not exist."
+                    " See logs for more information."
+                )
+            )
+            log.exception(
+                "Something went wrong whilst cloning %s (to revision: %s)",
+                repo_url,
+                branch,
+                exc_info=err,
+            )
+
         except errors.CloningError as err:
             await ctx.send(
                 _(
