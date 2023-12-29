@@ -1795,7 +1795,7 @@ class Red(
         """
         Get the cached ID for a particular app command.
 
-        Pulls from Reds internal cache of app command IDs, which is updated when this instance ``[p]slash sync`` or ``bot.tree.sync()``s.
+        Pulls from Reds internal cache of app command IDs, which is updated when this instance runs ``[p]slash sync`` or ``bot.tree.sync()``.
         Does not keep track of guild specific app commands.
         Returns ``None`` if the command does not exist or if Red does not know the ID for that app command.
         """
@@ -1819,7 +1819,7 @@ class Red(
         """
         Get the string that allows you to mention a particular app command.
 
-        Pulls from Reds internal cache of app command IDs, which is updated when this instance ``[p]slash sync`` or ``bot.tree.sync()``s.
+        Pulls from Reds internal cache of app command IDs, which is updated when this instance runs ``[p]slash sync`` or ``bot.tree.sync()``.
         Does not keep track of guild specific app commands.
         Returns ``None`` if the command does not exist or if Red does not know the ID for that app command.
         """
