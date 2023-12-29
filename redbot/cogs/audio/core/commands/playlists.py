@@ -1823,7 +1823,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 file_url = file_message.attachments[0].url
             except IndexError:
                 return await self.send_embed_msg(ctx, title=_("Upload cancelled."))
-            file_suffix = file_url.rsplit(".", 1)[1]
+            file_suffix = file_url.rsplit(".", 1)[1][:3]
             if file_suffix != "txt":
                 return await self.send_embed_msg(
                     ctx, title=_("Only Red playlist files can be uploaded.")
