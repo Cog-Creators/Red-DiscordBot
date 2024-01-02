@@ -13,7 +13,7 @@ find detailed docs about usage and commands.
     included in the cogs paths and it cannot be unloaded. It contains needed
     commands for cog management.
 
-.. _cogmanaerui-usage:
+.. _cogmanagerui-usage:
 
 -----
 Usage
@@ -45,7 +45,7 @@ or unload them.
 How to install a local package without using downloader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Let's suppose you made a cog request on the `cog board <https://cogboard.red>`_
+Let's suppose you made a cog request on the `cog board <https://cogboard.discord.red>`_
 and now you want to add your own cog to Red. You should have a folder that
 looks like this:
 
@@ -171,17 +171,17 @@ removepath
 
 .. code-block:: none
 
-    [p]removepath <path_number>
+    [p]removepath <path_numbers...>
 
 **Description**
 
-Removes a path from the list of available paths. Its cogs won't be accessible
-anymore.
+Removes one or more paths from the list of available paths. Its cogs won't be
+accessible anymore.
 
 **Arguments**
 
-*   ``<path_number>``: The number of the path to remove. You can get it with
-    the :ref:`paths <cogmanagerui>` command.
+*   ``<path_numbers>``: The number of the path(s) to remove. You can get it with
+    the :ref:`paths <cogmanagerui-command-paths>` command.
 
 .. _cogmanagerui-command-reorderpath:
 
@@ -193,7 +193,7 @@ reorderpath
 
 .. code-block:: none
 
-    [p]reorderpath <from_> <to>
+    [p]reorderpath <from> <to>
 
 **Description**
 
@@ -221,7 +221,7 @@ have to put the 3rd path higher than the 2nd path, let's swap them! Type
 
 **Arguments**
 
-*   ``<from_>``: The index of the path you want to move.
+*   ``<from>``: The index of the path you want to move.
 *   ``<to>``: The location where you want to insert the path.
 
 .. _cogmanagerui-command-installpath:
@@ -238,10 +238,12 @@ installpath
 
 **Description**
 
-Shows the install path, or sets a new one. If you want to set a new path, the
-same rules as for :ref:`addpath <cogmanagerui-command-addpath>` applies.
+Shows the install path, or sets a new one.
 
-.. warning:: If you edit the install path, the cogs won't be transfered.
+If you want to set a new path, the same rules as for
+:ref:`addpath <cogmanagerui-command-addpath>` apply
+
+.. warning:: If you edit the install path, the cogs won't be transferred.
 
 **Arguments**
 

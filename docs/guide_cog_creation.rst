@@ -86,6 +86,9 @@ In that file, place the following code:
     class MyCog(commands.Cog):
         """My custom cog"""
 
+        def __init__(self, bot):
+            self.bot = bot
+
         @commands.command()
         async def mycom(self, ctx):
             """This does stuff!"""
@@ -99,8 +102,8 @@ Open :code:`__init__.py`. In that file, place the following:
     from .mycog import MyCog
 
 
-    def setup(bot):
-        bot.add_cog(MyCog())
+    async def setup(bot):
+        await bot.add_cog(MyCog(bot))
 
 Make sure that both files are saved.
 

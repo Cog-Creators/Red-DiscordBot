@@ -2,22 +2,20 @@ import calendar
 import logging
 import random
 from collections import defaultdict, deque, namedtuple
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 from math import ceil
-from typing import cast, Iterable, Union, Literal
+from typing import cast, Iterable, Literal
 
 import discord
 
-from redbot.cogs.bank import is_owner_if_bank_global
-from redbot.cogs.mod.converters import RawUserIds
-from redbot.core import Config, bank, commands, errors, checks
-from redbot.core.commands.converter import TimedeltaConverter
+from redbot.core import Config, bank, commands, errors
+from redbot.core.commands.converter import TimedeltaConverter, positive_int
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
-from redbot.core.utils.menus import close_menu, menu, DEFAULT_CONTROLS
-from .converters import positive_int
+from redbot.core.utils.menus import menu
 
 T_ = Translator("Economy", __file__)
 
@@ -90,7 +88,7 @@ def guild_only_check():
     async def pred(ctx: commands.Context):
         if await bank.is_global():
             return True
-        elif not await bank.is_global() and ctx.guild is not None:
+        elif ctx.guild is not None and not await bank.is_global():
             return True
         else:
             return False
@@ -183,20 +181,17 @@ class Economy(commands.Cog):
         pass
 
     @_bank.command()
-    async def balance(self, ctx: commands.Context, user: discord.Member = None):
+    async def balance(self, ctx: commands.Context, user: discord.Member = commands.Author):
         """Show the user's account balance.
 
         Example:
-            - `[p]bank balance`
-            - `[p]bank balance @Twentysix`
+        - `[p]bank balance`
+        - `[p]bank balance @Twentysix`
 
         **Arguments**
 
         - `<user>` The user to check the balance of. If omitted, defaults to your own balance.
         """
-        if user is None:
-            user = ctx.author
-
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
         max_bal = await bank.get_max_balance(ctx.guild)
@@ -216,7 +211,7 @@ class Economy(commands.Cog):
         This will come out of your balance, so make sure you have enough.
 
         Example:
-            - `[p]bank transfer @Twentysix 500`
+        - `[p]bank transfer @Twentysix 500`
 
         **Arguments**
 
@@ -240,8 +235,8 @@ class Economy(commands.Cog):
             )
         )
 
-    @is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @bank.is_owner_if_bank_global()
+    @commands.admin_or_permissions(manage_guild=True)
     @_bank.command(name="set")
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Set the balance of a user's bank account.
@@ -249,9 +244,9 @@ class Economy(commands.Cog):
         Putting + or - signs before the amount will add/remove currency on the user's bank account instead.
 
         Examples:
-            - `[p]bank set @Twentysix 26` - Sets balance to 26
-            - `[p]bank set @Twentysix +2` - Increases balance by 2
-            - `[p]bank set @Twentysix -6` - Decreases balance by 6
+        - `[p]bank set @Twentysix 26` - Sets balance to 26
+        - `[p]bank set @Twentysix +2` - Increases balance by 2
+        - `[p]bank set @Twentysix -6` - Decreases balance by 6
 
         **Arguments**
 
@@ -291,152 +286,6 @@ class Economy(commands.Cog):
         else:
             await ctx.send(msg)
 
-    @is_owner_if_bank_global()
-    @checks.guildowner_or_permissions(administrator=True)
-    @_bank.command()
-    async def reset(self, ctx, confirmation: bool = False):
-        """Delete all bank accounts.
-
-        Examples:
-            - `[p]bank reset` - Did not confirm. Shows the help message.
-            - `[p]bank reset yes`
-
-        **Arguments**
-
-        - `<confirmation>` This will default to false unless specified.
-        """
-        if confirmation is False:
-            await ctx.send(
-                _(
-                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
-                    "`{prefix}bank reset yes`"
-                ).format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
-                    prefix=ctx.clean_prefix,
-                )
-            )
-        else:
-            await bank.wipe_bank(guild=ctx.guild)
-            await ctx.send(
-                _("All bank accounts for {scope} have been deleted.").format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server")
-                )
-            )
-
-    @is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
-    @_bank.group(name="prune")
-    async def _prune(self, ctx):
-        """Base command for pruning bank accounts."""
-        pass
-
-    @_prune.command(name="server", aliases=["guild", "local"])
-    @commands.guild_only()
-    @checks.guildowner()
-    async def _local(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users no longer in the server.
-
-        Cannot be used with a global bank. See `[p]bank prune global`.
-
-        Examples:
-            - `[p]bank prune server` - Did not confirm. Shows the help message.
-            - `[p]bank prune server yes`
-
-        **Arguments**
-
-        - `<confirmation>` This will default to false unless specified.
-        """
-        global_bank = await bank.is_global()
-        if global_bank is True:
-            return await ctx.send(_("This command cannot be used with a global bank."))
-
-        if confirmation is False:
-            await ctx.send(
-                _(
-                    "This will delete all bank accounts for users no longer in this server."
-                    "\nIf you're sure, type "
-                    "`{prefix}bank prune local yes`"
-                ).format(prefix=ctx.clean_prefix)
-            )
-        else:
-            await bank.bank_prune(self.bot, guild=ctx.guild)
-            await ctx.send(
-                _("Bank accounts for users no longer in this server have been deleted.")
-            )
-
-    @_prune.command(name="global")
-    @checks.is_owner()
-    async def _global(self, ctx, confirmation: bool = False):
-        """Prune bank accounts for users who no longer share a server with the bot.
-
-        Cannot be used without a global bank. See `[p]bank prune server`.
-
-        Examples:
-            - `[p]bank prune global` - Did not confirm. Shows the help message.
-            - `[p]bank prune global yes`
-
-        **Arguments**
-
-        - `<confirmation>` This will default to false unless specified.
-        """
-        global_bank = await bank.is_global()
-        if global_bank is False:
-            return await ctx.send(_("This command cannot be used with a local bank."))
-
-        if confirmation is False:
-            await ctx.send(
-                _(
-                    "This will delete all bank accounts for users "
-                    "who no longer share a server with the bot."
-                    "\nIf you're sure, type `{prefix}bank prune global yes`"
-                ).format(prefix=ctx.clean_prefix)
-            )
-        else:
-            await bank.bank_prune(self.bot)
-            await ctx.send(
-                _(
-                    "Bank accounts for users who "
-                    "no longer share a server with the bot have been pruned."
-                )
-            )
-
-    @_prune.command(usage="<user> [confirmation=False]")
-    async def user(
-        self, ctx, member_or_id: Union[discord.Member, RawUserIds], confirmation: bool = False
-    ):
-        """Delete the bank account of a specified user.
-
-        Examples:
-            - `[p]bank prune user @TwentySix` - Did not confirm. Shows the help message.
-            - `[p]bank prune user @TwentySix yes`
-
-        **Arguments**
-
-        - `<user>` The user to delete the bank of. Takes mentions, names, and user ids.
-        - `<confirmation>` This will default to false unless specified.
-        """
-        global_bank = await bank.is_global()
-        if global_bank is False and ctx.guild is None:
-            return await ctx.send(_("This command cannot be used in DMs with a local bank."))
-        try:
-            name = member_or_id.display_name
-            uid = member_or_id.id
-        except AttributeError:
-            name = member_or_id
-            uid = member_or_id
-
-        if confirmation is False:
-            await ctx.send(
-                _(
-                    "This will delete {name}'s bank account."
-                    "\nIf you're sure, type "
-                    "`{prefix}bank prune user {id} yes`"
-                ).format(prefix=ctx.clean_prefix, id=uid, name=name)
-            )
-        else:
-            await bank.bank_prune(self.bot, guild=ctx.guild, user_id=uid)
-            await ctx.send(_("The bank account for {name} has been pruned.").format(name=name))
-
     @guild_only_check()
     @commands.command()
     async def payday(self, ctx: commands.Context):
@@ -450,7 +299,6 @@ class Economy(commands.Cog):
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
         if await bank.is_global():  # Role payouts will not be used
-
             # Gets the latest time the user used the command successfully and adds the global payday time
             next_payday = (
                 await self.config.user(author).next_payday() + await self.config.PAYDAY_TIME()
@@ -490,14 +338,15 @@ class Economy(commands.Cog):
                 )
 
             else:
-                dtime = self.display_time(next_payday - cur_time)
+                relative_time = discord.utils.format_dt(
+                    datetime.now(timezone.utc) + timedelta(seconds=next_payday - cur_time), "R"
+                )
                 await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                    _("{author.mention} Too soon. Your next payday is {relative_time}.").format(
+                        author=author, relative_time=relative_time
+                    )
                 )
         else:
-
             # Gets the users latest successfully payday and adds the guilds payday time
             next_payday = (
                 await self.config.member(author).next_payday()
@@ -546,11 +395,13 @@ class Economy(commands.Cog):
                     )
                 )
             else:
-                dtime = self.display_time(next_payday - cur_time)
+                relative_time = discord.utils.format_dt(
+                    datetime.now(timezone.utc) + timedelta(seconds=next_payday - cur_time), "R"
+                )
                 await ctx.send(
-                    _(
-                        "{author.mention} Too soon. For your next payday you have to wait {time}."
-                    ).format(author=author, time=dtime)
+                    _("{author.mention} Too soon. Your next payday is {relative_time}.").format(
+                        author=author, relative_time=relative_time
+                    )
                 )
 
     @commands.command()
@@ -561,9 +412,9 @@ class Economy(commands.Cog):
         Defaults to top 10.
 
         Examples:
-            - `[p]leaderboard`
-            - `[p]leaderboard 50` - Shows the top 50 instead of top 10.
-            - `[p]leaderboard 100 yes` - Shows the top 100 from all servers.
+        - `[p]leaderboard`
+        - `[p]leaderboard 50` - Shows the top 50 instead of top 10.
+        - `[p]leaderboard 100 yes` - Shows the top 100 from all servers.
 
         **Arguments**
 
@@ -580,14 +431,16 @@ class Economy(commands.Cog):
             top = 10
 
         base_embed = discord.Embed(title=_("Economy Leaderboard"))
-        if await bank.is_global() and show_global:
+        if show_global and await bank.is_global():
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
-            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+            base_embed.set_author(
+                name=ctx.bot.user.display_name, icon_url=ctx.bot.user.display_avatar
+            )
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
             if guild:
-                base_embed.set_author(name=guild.name, icon_url=guild.icon_url)
+                base_embed.set_author(name=guild.name, icon_url=guild.icon)
 
         try:
             bal_len = len(humanize_number(bank_sorted[0][1]["balance"]))
@@ -665,11 +518,7 @@ class Economy(commands.Cog):
                 highscores.append(box(temp_msg, lang="md"))
 
         if highscores:
-            await menu(
-                ctx,
-                highscores,
-                DEFAULT_CONTROLS if len(highscores) > 1 else {"\N{CROSS MARK}": close_menu},
-            )
+            await menu(ctx, highscores)
         else:
             await ctx.send(_("No balances found."))
 
@@ -688,7 +537,7 @@ class Economy(commands.Cog):
         """Use the slot machine.
 
         Example:
-            - `[p]slot 50`
+        - `[p]slot 50`
 
         **Arguments**
 
@@ -806,8 +655,8 @@ class Economy(commands.Cog):
         )
 
     @guild_only_check()
-    @is_owner_if_bank_global()
-    @checks.admin_or_permissions(manage_guild=True)
+    @bank.is_owner_if_bank_global()
+    @commands.admin_or_permissions(manage_guild=True)
     @commands.group()
     async def economyset(self, ctx: commands.Context):
         """Base command to manage Economy settings."""
@@ -817,40 +666,43 @@ class Economy(commands.Cog):
         """
         Shows the current economy settings
         """
+        role_paydays = []
         guild = ctx.guild
         if await bank.is_global():
             conf = self.config
         else:
             conf = self.config.guild(guild)
+            for role in guild.roles:
+                rolepayday = await self.config.role(role).PAYDAY_CREDITS()
+                if rolepayday:
+                    role_paydays.append(f"{role}: {rolepayday}")
         await ctx.send(
             box(
                 _(
-                    "----Economy Settings---\n"
+                    "---Economy Settings---\n"
                     "Minimum slot bid: {slot_min}\n"
                     "Maximum slot bid: {slot_max}\n"
                     "Slot cooldown: {slot_time}\n"
                     "Payday amount: {payday_amount}\n"
                     "Payday cooldown: {payday_time}\n"
-                    "Amount given at account registration: {register_amount}\n"
-                    "Maximum allowed balance: {maximum_bal}"
                 ).format(
                     slot_min=humanize_number(await conf.SLOT_MIN()),
                     slot_max=humanize_number(await conf.SLOT_MAX()),
                     slot_time=humanize_number(await conf.SLOT_TIME()),
                     payday_time=humanize_number(await conf.PAYDAY_TIME()),
                     payday_amount=humanize_number(await conf.PAYDAY_CREDITS()),
-                    register_amount=humanize_number(await bank.get_default_balance(guild)),
-                    maximum_bal=humanize_number(await bank.get_max_balance(guild)),
                 )
             )
         )
+        if role_paydays:
+            await ctx.send(box(_("---Role Payday Amounts---\n") + "\n".join(role_paydays)))
 
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: positive_int):
         """Set the minimum slot machine bid.
 
         Example:
-            - `[p]economyset slotmin 10`
+        - `[p]economyset slotmin 10`
 
         **Arguments**
 
@@ -885,7 +737,7 @@ class Economy(commands.Cog):
         """Set the maximum slot machine bid.
 
         Example:
-            - `[p]economyset slotmax 50`
+        - `[p]economyset slotmax 50`
 
         **Arguments**
 
@@ -922,8 +774,8 @@ class Economy(commands.Cog):
         """Set the cooldown for the slot machine.
 
         Examples:
-            - `[p]economyset slottime 10`
-            - `[p]economyset slottime 10m`
+        - `[p]economyset slottime 10`
+        - `[p]economyset slottime 10m`
 
         **Arguments**
 
@@ -945,8 +797,8 @@ class Economy(commands.Cog):
         """Set the cooldown for the payday command.
 
         Examples:
-            - `[p]economyset paydaytime 86400`
-            - `[p]economyset paydaytime 1d`
+        - `[p]economyset paydaytime 86400`
+        - `[p]economyset paydaytime 1d`
 
         **Arguments**
 
@@ -970,7 +822,7 @@ class Economy(commands.Cog):
         """Set the amount earned each payday.
 
         Example:
-            - `[p]economyset paydayamount 400`
+        - `[p]economyset paydayamount 400`
 
         **Arguments**
 
@@ -998,12 +850,13 @@ class Economy(commands.Cog):
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
         """Set the amount earned each payday for a role.
+
         Set to `0` to remove the payday amount you set for that role.
 
         Only available when not using a global bank.
 
         Example:
-            - `[p]economyset rolepaydayamount @Members 400`
+        - `[p]economyset rolepaydayamount @Members 400`
 
         **Arguments**
 
@@ -1043,53 +896,3 @@ class Economy(commands.Cog):
                         num=humanize_number(creds), currency=credits_name, role_name=role.name
                     )
                 )
-
-    @economyset.command()
-    async def registeramount(self, ctx: commands.Context, creds: int):
-        """Set the initial balance for new bank accounts.
-
-        Example:
-            - `[p]economyset registeramount 5000`
-
-        **Arguments**
-
-        - `<creds>` The new initial balance amount. Default is 0.
-        """
-        guild = ctx.guild
-        max_balance = await bank.get_max_balance(ctx.guild)
-        credits_name = await bank.get_currency_name(guild)
-        try:
-            await bank.set_default_balance(creds, guild)
-        except ValueError:
-            return await ctx.send(
-                _("Amount must be greater than or equal to zero and less than {maxbal}.").format(
-                    maxbal=humanize_number(max_balance)
-                )
-            )
-        await ctx.send(
-            _("Registering an account will now give {num} {currency}.").format(
-                num=humanize_number(creds), currency=credits_name
-            )
-        )
-
-    # What would I ever do without stackoverflow?
-    @staticmethod
-    def display_time(seconds, granularity=2):
-        intervals = (  # Source: http://stackoverflow.com/a/24542445
-            (_("weeks"), 604800),  # 60 * 60 * 24 * 7
-            (_("days"), 86400),  # 60 * 60 * 24
-            (_("hours"), 3600),  # 60 * 60
-            (_("minutes"), 60),
-            (_("seconds"), 1),
-        )
-
-        result = []
-
-        for name, count in intervals:
-            value = seconds // count
-            if value:
-                seconds -= value * count
-                if value == 1:
-                    name = name.rstrip("s")
-                result.append("{} {}".format(value, name))
-        return ", ".join(result[:granularity])
