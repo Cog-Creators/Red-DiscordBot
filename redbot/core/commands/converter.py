@@ -47,7 +47,6 @@ __all__ = [
     "parse_timedelta",
     "parse_relativedelta_with_reason",
     "parse_timedelta_with_reason",
-    "Literal",
     "positive_int",
     "CommandConverter",
     "CogConverter",
