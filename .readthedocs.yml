@@ -1,16 +1,13 @@
 version: 2
 
-formats:
-  - pdf
-
 build:
-  image: latest
+  os: "ubuntu-22.04"
+  tools:
+    python: "3.8"
 
 python:
-  version: 3.8
   install:
-    - requirements: docs/requirements.txt
     - method: pip
       path: .
       extra_requirements:
-        - docs
+        - doc

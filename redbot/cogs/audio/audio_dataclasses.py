@@ -1,6 +1,5 @@
 import contextlib
 import glob
-import logging
 import ntpath
 import os
 import posixpath
@@ -21,6 +20,7 @@ from typing import (
 from urllib.parse import urlparse
 
 import lavalink
+from red_commons.logging import getLogger
 
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
@@ -79,7 +79,7 @@ _PARTIALLY_SUPPORTED_VIDEO_EXT: Tuple[str, ...] = (
 _PARTIALLY_SUPPORTED_MUSIC_EXT += _PARTIALLY_SUPPORTED_VIDEO_EXT
 
 
-log = logging.getLogger("red.cogs.Audio.audio_dataclasses")
+log = getLogger("red.cogs.Audio.audio_dataclasses")
 
 
 class LocalPath:
@@ -578,8 +578,6 @@ class Query:
                             returning["single"] = True
                     elif url_domain == "vimeo.com":
                         returning["vimeo"] = True
-                    elif url_domain in ["mixer.com", "beam.pro"]:
-                        returning["mixer"] = True
                     elif url_domain == "twitch.tv":
                         returning["twitch"] = True
                         if "?t=" in track:

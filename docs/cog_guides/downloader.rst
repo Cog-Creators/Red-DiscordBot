@@ -235,8 +235,8 @@ You may only uninstall cogs which were previously installed
 by Downloader.
 
 Examples:
-    - ``[p]cog uninstall 26-Cogs defender``
-    - ``[p]cog uninstall Laggrons-Dumb-Cogs say roleinvite``
+    - ``[p]cog uninstall defender``
+    - ``[p]cog uninstall say roleinvite``
 
 **Arguments**
 
@@ -461,14 +461,15 @@ repo delete
 
 **Description**
 
-Remove a repo and its files.
+Remove repos and their files.
 
-Example:
+Examples:
     - ``[p]repo delete 26-Cogs``
+    - ``[p]repo delete 26-Cogs Laggrons-Dumb-Cogs``
 
 **Arguments**
 
-- ``<repo>`` The name of an already added repo
+- ``<repos...>`` The repo or repos to remove.
 
 .. _downloader-command-repo-info:
 

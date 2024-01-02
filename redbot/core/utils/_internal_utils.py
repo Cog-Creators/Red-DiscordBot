@@ -2,32 +2,42 @@ from __future__ import annotations
 
 import asyncio
 import collections.abc
+import contextlib
 import json
 import logging
 import os
 import re
 import shutil
 import tarfile
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    AsyncIterable,
     AsyncIterator,
     Awaitable,
     Callable,
+    Generator,
+    Iterable,
     Iterator,
     List,
     Optional,
     Union,
+    TypeVar,
     TYPE_CHECKING,
     Tuple,
+    cast,
 )
 
 import aiohttp
 import discord
-import pkg_resources
-from fuzzywuzzy import fuzz, process
-from redbot import VersionInfo
+from packaging.requirements import Requirement
+import rapidfuzz
+from rich.progress import ProgressColumn
+from rich.progress_bar import ProgressBar
+from red_commons.logging import VERBOSE, TRACE
 
+from redbot import VersionInfo
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -46,7 +56,12 @@ __all__ = (
     "send_to_owners_with_prefix_replaced",
     "expected_version",
     "fetch_latest_red_version_info",
+    "deprecated_removed",
+    "RichIndefiniteBarColumn",
+    "cli_level_to_log_level",
 )
+
+_T = TypeVar("_T")
 
 
 def safe_delete(pth: Path):
@@ -132,20 +147,26 @@ async def fuzzy_command_search(
             return None
 
     if commands is None:
-        choices = set(ctx.bot.walk_commands())
+        choices = {c: c.qualified_name for c in ctx.bot.walk_commands()}
     elif isinstance(commands, collections.abc.AsyncIterator):
-        choices = {c async for c in commands}
+        choices = {c: c.qualified_name async for c in commands}
     else:
-        choices = set(commands)
+        choices = {c: c.qualified_name for c in commands}
 
-    # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
-    extracted = process.extract(term, choices, limit=5, scorer=fuzz.QRatio)
+    # Do the scoring. `extracted` is a list of tuples in the form `(cmd_name, score, cmd)`
+    extracted = rapidfuzz.process.extract(
+        term,
+        choices,
+        limit=5,
+        scorer=rapidfuzz.fuzz.QRatio,
+        processor=rapidfuzz.utils.default_process,
+    )
     if not extracted:
         return None
 
     # Filter through the fuzzy-matched commands.
     matched_commands = []
-    for command, score in extracted:
+    for __, score, command in extracted:
         if score < min_score:
             # Since the list is in decreasing order of score, we can exit early.
             break
@@ -202,7 +223,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
 
     dest.mkdir(parents=True, exist_ok=True)
     timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
-    backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
+    backup_fpath = dest / f"redv3_{data_manager.instance_name()}_{timestr}.tar.gz"
 
     to_backup = []
     exclusions = [
@@ -227,7 +248,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         json.dump(repo_output, fs, indent=4)
     instance_file = data_path / "instance.json"
     with instance_file.open("w") as fs:
-        json.dump({data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
+        json.dump({data_manager.instance_name(): data_manager.basic_config}, fs, indent=4)
     for f in data_path.glob("**/*"):
         if not any(ex in str(f) for ex in exclusions) and f.is_file():
             to_backup.append(f)
@@ -301,8 +322,8 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
 
 
 def expected_version(current: str, expected: str) -> bool:
-    # `pkg_resources` needs a regular requirement string, so "x" serves as requirement's name here
-    return current in pkg_resources.Requirement.parse(f"x{expected}")
+    # Requirement needs a regular requirement string, so "x" serves as requirement's name here
+    return Requirement(f"x{expected}").specifier.contains(current, prereleases=True)
 
 
 async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
@@ -317,3 +338,42 @@ async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Option
         required_python = data["info"]["requires_python"]
 
         return release, required_python
+
+
+def deprecated_removed(
+    deprecation_target: str,
+    deprecation_version: str,
+    minimum_days: int,
+    message: str = "",
+    stacklevel: int = 1,
+) -> None:
+    warnings.warn(
+        f"{deprecation_target} is deprecated since version {deprecation_version}"
+        " and will be removed in the first minor version that gets released"
+        f" after {minimum_days} days since deprecation. {message}",
+        DeprecationWarning,
+        stacklevel=stacklevel + 1,
+    )
+
+
+class RichIndefiniteBarColumn(ProgressColumn):
+    def render(self, task):
+        return ProgressBar(
+            pulse=task.completed < task.total,
+            animation_time=task.get_time(),
+            width=40,
+            total=task.total,
+            completed=task.completed,
+        )
+
+
+def cli_level_to_log_level(level: int) -> int:
+    if level == 0:
+        log_level = logging.INFO
+    elif level == 1:
+        log_level = logging.DEBUG
+    elif level == 2:
+        log_level = VERBOSE
+    else:
+        log_level = TRACE
+    return log_level

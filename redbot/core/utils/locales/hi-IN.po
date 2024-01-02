@@ -1,0 +1,114 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2023-04-17 21:45+0000\n"
+"Last-Translator: \n"
+"Language-Team: Hindi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Project-ID: 289505\n"
+"X-Crowdin-Language: hi\n"
+"X-Crowdin-File-ID: 197\n"
+"Language: hi_IN\n"
+
+#: redbot/core/utils/chat_formatting.py:557
+msgid "year"
+msgstr "साल"
+
+#: redbot/core/utils/chat_formatting.py:557
+msgid "years"
+msgstr "साल"
+
+#: redbot/core/utils/chat_formatting.py:558
+msgid "month"
+msgstr "महीना"
+
+#: redbot/core/utils/chat_formatting.py:558
+msgid "months"
+msgstr "महीने"
+
+#: redbot/core/utils/chat_formatting.py:559
+msgid "day"
+msgstr "दिन"
+
+#: redbot/core/utils/chat_formatting.py:559
+msgid "days"
+msgstr "दिन"
+
+#: redbot/core/utils/chat_formatting.py:560
+msgid "hour"
+msgstr "घंटा"
+
+#: redbot/core/utils/chat_formatting.py:560
+msgid "hours"
+msgstr "घंटे"
+
+#: redbot/core/utils/chat_formatting.py:561
+msgid "minute"
+msgstr "मिनट"
+
+#: redbot/core/utils/chat_formatting.py:561
+msgid "minutes"
+msgstr "मिनट"
+
+#: redbot/core/utils/chat_formatting.py:562
+msgid "second"
+msgstr "सेकंड"
+
+#: redbot/core/utils/chat_formatting.py:562
+msgid "seconds"
+msgstr "सेकंड"
+
+#: redbot/core/utils/views.py:34
+msgid "Select a Page"
+msgstr ""
+
+#: redbot/core/utils/views.py:170
+msgid "Page {num}"
+msgstr ""
+
+#: redbot/core/utils/views.py:266
+msgid "You are not authorized to interact with this."
+msgstr ""
+
+#: redbot/core/utils/views.py:308
+msgid "Set API Keys"
+msgstr ""
+
+#: redbot/core/utils/views.py:309
+msgid "Keys and tokens"
+msgstr ""
+
+#: redbot/core/utils/views.py:311
+msgid "Set API Keys for {service}"
+msgstr ""
+
+#: redbot/core/utils/views.py:312
+msgid "Keys and tokens for {service}"
+msgstr ""
+
+#: redbot/core/utils/views.py:321
+msgid "Service"
+msgstr ""
+
+#: redbot/core/utils/views.py:358
+msgid "This modal is for bot owners only. Whoops!"
+msgstr ""
+
+#: redbot/core/utils/views.py:371
+msgid "{error_message}\n"
+"Please try again."
+msgstr ""
+
+#: redbot/core/utils/views.py:378 redbot/core/utils/views.py:385
+msgid "`{service}` API tokens have been set."
+msgstr ""
+
+#: redbot/core/utils/views.py:421
+msgid "This button is for bot owners only, oh well."
+msgstr ""
+

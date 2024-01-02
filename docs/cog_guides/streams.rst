@@ -27,7 +27,6 @@ Supported streaming services are:
 
 - Twitch
 - Youtube
-- Smashcast
 - Picarto
 
 Youtube and Twitch both require setting authentication 
@@ -201,7 +200,10 @@ Use ``{mention}`` in the message to insert the selected mentions.
 
 Use ``{stream}`` in the message to insert the channel or user name.
 
-For example: ``[p]streamset message mention {mention}, {stream} is live!``
+Use ``{stream.display_name}`` in the message to insert the channel's display name
+(on Twitch, this may be different from ``{stream}``).
+
+For example: ``[p]streamset message mention {mention}, {stream.display_name} is live!``
 
 **Arguments**
 
@@ -225,7 +227,10 @@ Sets a stream alert message for when mentions are disabled.
 
 Use ``{stream}`` in the message to insert the channel or user name.
 
-For example: ``[p]streamset message nomention {stream} is live!``
+Use ``{stream.display_name}`` in the message to insert the channel's display name
+(on Twitch, this may be different from ``{stream}``).
+
+For example: ``[p]streamset message nomention {stream.display_name} is live!``
 
 **Arguments**
 
@@ -333,6 +338,22 @@ To set the Twitch API tokens, follow these steps:
 .. attention:: These tokens are sensitive and should only be 
                used in a private channel or in DM with the bot.
 
+.. _streams-command-streamset-usebuttons:
+
+^^^^^^^^^^^^^^^^^^^^
+streamset usebuttons
+^^^^^^^^^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]streamset usebuttons
+
+**Description**
+
+Toggle whether to use buttons for stream alerts.
+
 .. _streams-command-picarto:
 
 ^^^^^^^
@@ -352,26 +373,6 @@ Check if a Picarto channel is live.
 **Arguments**
 
 * ``<channel_name>``: The Picarto channel to check.
-
-.. _streams-command-smashcast:
-
-^^^^^^^^^
-smashcast
-^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-    
-    [p]smashcast <channel_name>
-
-**Description**
-
-Check if a Smashcast channel is live.
-
-**Arguments**
-
-* ``<channel_name>``: The Smashcast channel to check.
 
 .. _streams-command-twitchstream:
 
@@ -465,27 +466,6 @@ specified Picarto channel.
 **Arguments**
 
 * ``<channel_name>``: The Picarto channel to toggle the alert for.
-
-.. _streams-command-streamalert-smashcast:
-
-^^^^^^^^^^^^^^^^^^^^^
-streamalert smashcast
-^^^^^^^^^^^^^^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-    
-    [p]streamalert smashcast <channel_name>
-
-**Description**
-
-Toggle alerts in the current channel for the 
-specified Smashcast channel.
-
-**Arguments**
-
-* ``<channel_name>``: The Smashcast channel to toggle the alert for.
 
 .. _streams-command-streamalert-twitch-channel:
 

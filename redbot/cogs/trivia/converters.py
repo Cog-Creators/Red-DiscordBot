@@ -8,7 +8,7 @@ __all__ = ("finite_float",)
 _ = Translator("Trivia", __file__)
 
 
-MAX_VALUE = 2 ** 63 - 1
+MAX_VALUE = 2**63 - 1
 
 
 def finite_float(arg: str) -> float:
