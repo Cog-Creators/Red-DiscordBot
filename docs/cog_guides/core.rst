@@ -1683,8 +1683,11 @@ Set the tagline to be used.
 The maximum tagline length is 2048 characters.
 This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
 
+You can use ``[p]`` in your tagline, which will be replaced by the bot's prefix.
+
 **Examples:**
     - ``[p]helpset tagline Thanks for using the bot!``
+    - ``[p]helpset tagline Use [p]invite to add me to your server.``
     - ``[p]helpset tagline`` - Resets the tagline to the default.
 
 **Arguments:**
