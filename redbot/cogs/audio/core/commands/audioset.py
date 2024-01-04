@@ -758,9 +758,17 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set a price for queueing tracks for non-mods, 0 to disable."""
         if price < 0:
             return await self.send_embed_msg(
-                ctx, title=_("Invalid Price"), description=_("Price can't be less than zero.")
+                ctx,
+                title=_("Invalid Price"),
+                description=_("Price can't be less than zero."),
             )
-        if price == 0:
+        elif price > 2**63 - 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Price"),
+                description=_("Price can't be greater than 2^63 - 1."),
+            )
+        elif price == 0:
             jukebox = False
             await self.send_embed_msg(
                 ctx, title=_("Setting Changed"), description=_("Jukebox mode disabled.")
