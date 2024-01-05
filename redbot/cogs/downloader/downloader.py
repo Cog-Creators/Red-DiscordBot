@@ -654,7 +654,7 @@ class Downloader(commands.Cog):
                 joined = _("# Installed Repo\n")
             for repo in sorted_repos:
                 if list_urls:
-                    joined += "+ {}: {}\n  + <{}>\n".format(repo.name, repo.short or "", repo.url)
+                    joined += "+ {}: {}\n  + {}\n".format(repo.name, repo.short or "", repo.url if codeblock else "<{}>".format(repo.url))
                 else:
                     joined += "+ {}: {}\n".format(repo.name, f" ({repo.short})" if repo.short else "")
 
