@@ -636,7 +636,9 @@ class Downloader(commands.Cog):
         )
 
     @repo.command(name="list")
-    async def _repo_list(self, ctx: commands.Context, list_urls: bool = False, codeblock: bool = True) -> None:
+    async def _repo_list(
+        self, ctx: commands.Context, list_urls: bool = False, codeblock: bool = True
+    ) -> None:
         """List all installed repos.
 
         **Arguments**
@@ -654,9 +656,15 @@ class Downloader(commands.Cog):
                 joined = _("# Installed Repo\n")
             for repo in sorted_repos:
                 if list_urls:
-                    joined += "+ {}: {}\n  + {}\n".format(repo.name, repo.short or "", repo.url if codeblock else "<{}>".format(repo.url))
+                    joined += "+ {}: {}\n  + {}\n".format(
+                        repo.name,
+                        repo.short or "",
+                        repo.url if codeblock else "<{}>".format(repo.url),
+                    )
                 else:
-                    joined += "+ {}: {}\n".format(repo.name, f" ({repo.short})" if repo.short else "")
+                    joined += "+ {}: {}\n".format(
+                        repo.name, f" ({repo.short})" if repo.short else ""
+                    )
 
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="markdown") if codeblock else page)
