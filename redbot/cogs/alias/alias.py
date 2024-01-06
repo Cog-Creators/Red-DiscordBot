@@ -12,7 +12,7 @@ from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.menus import menu
 
 from redbot.core.bot import Red
-from .alias_entry import AliasEntry, AliasCache, ArgParseError
+from .alias_cache import AliasEntry, AliasCache, ArgParseError
 
 _ = Translator("Alias", __file__)
 
@@ -47,12 +47,20 @@ class Alias(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, 8927348724)
 
-        self.config.register_global(entries=[], handled_string_creator=False)
-        self.config.register_guild(entries=[])
+        default_alias = {
+            "command": None,
+            "creator": None,
+            "uses": 0,
+        }
+
+        self.config.init_custom("Alias", 2)
+        self.config.register_custom("Alias", **default_alias)
+        self.config.register_global(handled_string_creator=False, using_custom_group=False)
         self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
 
     async def cog_load(self) -> None:
         await self._maybe_handle_string_keys()
+        await self._maybe_migrate_config_to_custom_group()
 
         if not self._aliases._loaded:
             await self._aliases.load_aliases()
@@ -119,6 +127,31 @@ class Alias(commands.Cog):
             # hit.
 
         await self.config.handled_string_creator.set(True)
+
+    async def _maybe_migrate_config_to_custom_group(self):
+        if await self.config.using_custom_group():
+            return
+
+        if await self.config.entries():
+            async for a in self.config.entries():
+                await self.config.custom("Alias", None, a["name"]).command.set(a["command"])
+                await self.config.custom("Alias", None, a["name"]).creator.set(a["creator"])
+            await self.config.entries.clear()
+
+        all_guild_aliases = await self.config.all_guilds()
+        for guild_id, guild_data in all_guild_aliases.items():
+            try:
+                for a in guild_data["entries"]:
+                    await self.config.custom("Alias", guild_id, a["name"]).command.set(
+                        a["command"]
+                    )
+                    await self.config.custom("Alias", guild_id, a["name"]).creator.set(
+                        a["creator"]
+                    )
+                await self.config.guild_from_id(guild_id).entries.clear()
+            except KeyError:
+                continue
+        await self.config.using_custom_group.set(True)
 
     def is_command(self, alias_name: str) -> bool:
         """
