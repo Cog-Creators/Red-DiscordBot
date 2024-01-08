@@ -147,7 +147,7 @@ def empty_message():
 @pytest.fixture(scope="module")
 def newline_message():
     mock_msg = type("", (), {})()
-    mock_msg.content = "!test a\nb\nc\n"
+    mock_msg.content = "!test a\nb\nc"
     return mock_msg
 
 
