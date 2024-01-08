@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2020-10-22 12:30+0000\n"
+"POT-Creation-Date: 2022-03-16 16:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.1\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,16 +15,19 @@ msgstr ""
 "X-Crowdin-File-ID: 698\n"
 "Language: tr_TR\n"
 
-#: redbot/cogs/audio/apis/interface.py:273
-#: redbot/cogs/audio/apis/interface.py:595
+#: redbot/cogs/audio/apis/interface.py:270
+#: redbot/cogs/audio/apis/interface.py:600
 msgid "Failing to get tracks, skipping remaining."
 msgstr "Parça alınamıyor, atlanıyor."
 
-#: redbot/cogs/audio/apis/interface.py:304
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Spotify API veya client secret'ı düzgün bir şekilde ayarlanmamış. \\n `{prefix}audioset spotifyapi` komutundan bilgi alabilirsiniz."
+#: redbot/cogs/audio/apis/interface.py:303
+#: redbot/cogs/audio/apis/spotify.py:175
+msgid "The Spotify API key or client secret has not been set properly. \n"
+"Use `{prefix}audioset spotifyapi` for instructions."
+msgstr "Spotify API anahtarı veya istemci sırrı düzgün ayarlanmamış. \n"
+"Yönergeler için `{prefix}audioset spotifyapi` komutunu çalıştırın."
 
-#: redbot/cogs/audio/apis/interface.py:346
+#: redbot/cogs/audio/apis/interface.py:345
 msgid "This doesn't seem to be a valid Spotify playlist/album URL or code."
 msgstr "Bu geçerli bir Spotify çalma listesi / albüm URL'si veya Kodu gibi görünmüyor."
 
@@ -32,43 +35,48 @@ msgstr "Bu geçerli bir Spotify çalma listesi / albüm URL'si veya Kodu gibi g�
 msgid "This doesn't seem to be a supported Spotify URL or code."
 msgstr "Bu geçerli bir Spotify URL'si ya da kodu gibi gözükmüyor."
 
-#: redbot/cogs/audio/apis/interface.py:558
+#: redbot/cogs/audio/apis/interface.py:561
 msgid "The connection was reset while loading the playlist."
 msgstr "Playlist yüklenirken bağlantı yenilendi."
 
-#: redbot/cogs/audio/apis/interface.py:569
+#: redbot/cogs/audio/apis/interface.py:572
 msgid "Player timeout, skipping remaining tracks."
 msgstr "Oynatıcı zaman aşımına uğradı, kalan parçalar atlanıyor."
 
-#: redbot/cogs/audio/apis/interface.py:661
+#: redbot/cogs/audio/apis/interface.py:665
 msgid " {bad_tracks} tracks cannot be queued."
 msgstr " {bad_tracks} parçalar sıraya alınamaz."
 
-#: redbot/cogs/audio/apis/interface.py:669
+#: redbot/cogs/audio/apis/interface.py:673
 msgid "Playlist Enqueued"
 msgstr "Playlist sıraya alındı"
 
-#: redbot/cogs/audio/apis/interface.py:670
+#: redbot/cogs/audio/apis/interface.py:674
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
 msgstr "{num} adet şarkı sıraya eklendi.{maxlength_msg}"
 
-#: redbot/cogs/audio/apis/interface.py:676
+#: redbot/cogs/audio/apis/interface.py:680
 msgid "{time} until start of playlist playback: starts at #{position} in queue"
 msgstr "Playlistin başlamasına {time} süre var: #{position} sırasında başlar"
 
-#: redbot/cogs/audio/apis/interface.py:687
-msgid "Nothing found.\\nThe YouTube API key may be invalid or you may be rate limited on YouTube's search service.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr "Hiçbir şey bulunamadı.\\nYouTube API keyi yanlış ya da API kullanımınız sınırlandırılmış.\\nYouTube API keyinizi kontrol edin ve `{prefix}audioset youtubeapi`'de ki yönlendirmeleri takip edin."
-
-#: redbot/cogs/audio/apis/spotify.py:175
-msgid "The Spotify API key or client secret has not been set properly. \\nUse `{prefix}audioset spotifyapi` for instructions."
-msgstr "Spotify API veya client secret'ı düzgün bir şekilde ayarlanmamış. \\n `{prefix}audioset spotifyapi` komutundan bilgi alabilirsiniz."
+#: redbot/cogs/audio/apis/interface.py:691
+msgid "Nothing found.\n"
+"The YouTube API key may be invalid or you may be rate limited on YouTube's search service.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
+msgstr "Hiçbir şey bulunamadı.\n"
+"Youtube API anahtarı geçersiz veya YouTube arama hizmetinden geçici olarak engellenmiş olabilir.\n"
+"YouTube API anahtarını tekrar kontrol edin ve `{prefix}audioset youtubeapi` komutundaki yönergeleri takip edin."
 
 #: redbot/cogs/audio/apis/youtube.py:62
-msgid "Your YouTube Data API token is invalid.\\nCheck the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
-msgstr "Youtube Data API anahtarınız geçersiz..\\nYoutube API anahtarınızı tekrar kontrol edin ve `{prefix}audioset youtubeapi` komutunun verdiği talimatları takip edin."
+msgid "Your YouTube Data API token is invalid.\n"
+"Check the YouTube API key again and follow the instructions at `{prefix}audioset youtubeapi`."
+msgstr "Youtube Data API anahtarınız geçersiz.\n"
+"Youtube API anahtarınızı tekrar kontrol edin ve `{prefix}audioset youtubeapi` komutunun verdiği talimatları takip edin."
 
 #: redbot/cogs/audio/apis/youtube.py:74
-msgid "YouTube API error code: 403\\nYour YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
-msgstr "YouTube API hata kodu: 403\\nYoutube API anahtarınız hesabın günlük sorgu limitine ulaşmış olabilir. Lütfen daha fazla bilgi için <https://developers.google.com/youtube/v3/getting-started#quota> adresini ziyaret edin."
+msgid "YouTube API error code: 403\n"
+"Your YouTube API key may have reached the account's query limit for today. Please check <https://developers.google.com/youtube/v3/getting-started#quota> for more information."
+msgstr "YouTube API hata kodu: 403\n"
+"YouTube API anahtarınız bu günkü istek limitine ulaşmış olabilir. Daha fazla bilgi için lütfen\n"
+"<https://developers.google.com/youtube/v3/getting-started#quota> adresini ziyaret edin."
 

@@ -1,0 +1,179 @@
+name: Publish Release
+on:
+  push:
+    tags:
+      - "3.[0-9]+.[0-9]+"
+
+jobs:
+  release_information:
+    if: github.repository == 'Cog-Creators/Red-DiscordBot'
+    name: GO HERE BEFORE APPROVING
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository and install Python
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      # Get version to release
+      - name: Get version to release
+        id: version_to_release
+        run: |
+          python .github/workflows/scripts/bump_version.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
+          JUST_RETURN_VERSION: '1'
+
+      # Print release information
+      - name: REVIEW OUTPUT OF THIS STEP BEFORE APPROVING
+        env:
+          TAG_BASE_BRANCH: ${{ github.event.base_ref }}
+          TAG_REF_NAME: ${{ github.ref }}
+          RELEASE_VERSION: ${{ steps.version_to_release.outputs.version }}
+        run: |
+          echo 'Release information:'
+          echo "- Branch the tag was based off: ${TAG_BASE_BRANCH#'refs/heads/'}"
+          echo "- Tag name: ${TAG_REF_NAME#'refs/tags/'}"
+          echo "- Release version: $RELEASE_VERSION"
+
+          echo "TAG_NAME=${TAG_REF_NAME#'refs/tags/'}" >> $GITHUB_ENV
+
+      - name: Ensure the tag name corresponds to the released version
+        env:
+          RELEASE_VERSION: ${{ steps.version_to_release.outputs.version }}
+        run: |
+          if [[ "$TAG_NAME" != "$RELEASE_VERSION" ]]; then
+              echo -n "The tag name ($TAG_NAME) is not the same as"
+              echo " the release version ($RELEASE_VERSION)!"
+              exit 1
+          else
+              echo "The tag name and the release version are the same ($TAG_NAME)."
+              echo 'Continuing...'
+          fi
+
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade build twine
+
+      - name: Build
+        run: python -m build
+      - name: Check built distributions
+        run: python -m twine check dist/*
+
+      - name: Upload packaged distributions
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-output
+          path: ./dist
+
+  release_to_pypi:
+    needs:
+      - release_information
+      - build
+    environment: Release
+    name: Release to PyPI
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Download packaged distributions
+        uses: actions/download-artifact@v3
+        with:
+          name: build-output
+          path: dist/
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # This is already checked during the build.
+          verify-metadata: false
+          # Allow security-minded people to verify whether the files on PyPI
+          # were automatically uploaded by a CI script.
+          print-hash: true
+
+  pr_dev_bump:
+    permissions:
+      contents: write
+      pull-requests: write
+    needs: release_to_pypi
+    name: Update Red version number to dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get base branch
+        env:
+          TAG_BASE_BRANCH: ${{ github.event.base_ref }}
+        run: |
+          echo "BASE_BRANCH=${TAG_BASE_BRANCH#'refs/heads/'}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BASE_BRANCH }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      # Version bump to development version
+      - name: Update Red version number to dev
+        id: bump_version_dev
+        run: |
+          python .github/workflows/scripts/bump_version.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
+          DEV_BUMP: '1'
+
+      # Get milestone number of the milestone for the old version
+      - name: Get milestone number
+        id: get_milestone_number
+        uses: actions/github-script@v6
+        env:
+          MILESTONE_TITLE: ${{ steps.bump_version_dev.outputs.old_version }}
+        with:
+          script: |
+            const script = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/get_milestone_number_by_exact_title.js`
+            );
+            return await script({github, context});
+
+      - name: Create Pull Request
+        id: cpr_bump_dev
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
+          title: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
+          body: |
+            This is an automated PR.
+            Please ensure that there are no errors or invalid files are in the PR.
+          labels: "Automated PR, Changelog Entry: Skipped"
+          branch: "automated/pr_bumps/${{ steps.bump_version_dev.outputs.new_version }}"
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          milestone: ${{ steps.get_milestone_number.outputs.result }}
+          base: ${{ env.BASE_BRANCH }}
+
+      - name: Close and reopen the PR with different token to trigger CI
+        uses: actions/github-script@v6
+        env:
+          PR_NUMBER: ${{ steps.cpr_bump_dev.outputs.pull-request-number }}
+          PR_OPERATION: ${{ steps.cpr_bump_dev.outputs.pull-request-operation }}
+        with:
+          github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
+          script: |
+            const script = require(
+              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/close_and_reopen_pr.js`
+            );
+            console.log(await script({github, context}));

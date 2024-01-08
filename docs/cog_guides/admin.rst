@@ -25,8 +25,8 @@ It can add or remove a role to a member, edit one or make some available
 for members so they can self-assign them as they wish.
 
 It also provides tools for the bot owner such as server locking (once enabled,
-the bot will instantly leave new servers she joins) and announcements, which
-will send something in all the servers of the bot.
+the bot will instantly leave new servers it joins) and announcements, which
+can send something in all the servers of the bot.
 
 .. _admin-commands:
 
@@ -46,13 +46,16 @@ selfrole
 
 .. code-block:: none
 
-    [p]selfrole
+    [p]selfrole <selfrole>
 
 **Description**
 
-Add or remove roles to yourself. Those roles must have been configured as user
-settable by admins using the :ref:`selfroleset command
-<admin-command-selfroleset>`.
+Add or remove a role from yourself. It must have been configured as user settable
+by admins using the :ref:`selfroleset command <admin-command-selfroleset>`.
+
+**Arguments**
+
+* ``<selfrole>``: The role you want to attribute or remove from yourself. |role-input|
 
 .. _admin-command-selfrole-add:
 
@@ -147,7 +150,7 @@ selfroleset add
 
 **Description**
 
-Add a role to the list of selfroles.
+Add a role, or a selection of roles, to the list of available selfroles.
 
 .. warning:: Members will be able to assign themselves the role.
     Make sure it doesn't give extra perms or anything that can break
@@ -156,6 +159,22 @@ Add a role to the list of selfroles.
 **Arguments**
 
 * ``<role>``: The role to add to the list. |role-input|
+
+.. _admin-command-selfroleset-clear:
+
+"""""""""""""""""
+selfroleset clear
+"""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]selfroleset clear
+
+**Description**
+
+Clear the list of available selfroles for this server.
 
 .. _admin-command-selfroleset-remove:
 
@@ -171,7 +190,7 @@ selfroleset remove
 
 **Description**
 
-Removes a role from the list of selfroles.
+Remove a role, or a selection of roles, from the list of available selfroles.
 
 **Arguments**
 
@@ -229,7 +248,7 @@ as yourself, the command author.
 * ``<role>``: The role to remove. |role-input-quotes|
 
 * ``[user]``: The member to remove the role from. |member-input| Defaults
-    to the command author.
+  to the command author.
 
 .. _admin-command-editrole:
 
@@ -370,7 +389,7 @@ announceset channel
 
 .. code-block:: none
 
-    [p]announceset channel [channel]
+    [p]announceset channel <channel>
 
 **Description**
 
@@ -378,8 +397,8 @@ Sets the channel where the bot owner announcements will be sent.
 
 **Arguments**
 
-* ``[channel]``: The channel that will be used for bot announcements.
-  |channel-input| Defaults to where you typed the command.
+* ``<channel>``: The channel that will be used for bot announcements.
+  |channel-input|
 
 .. _admin-command-announceset-clearchannel:
 

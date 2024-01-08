@@ -1,5 +1,5 @@
 .. This file will be run at the beginning of all files.
-    You can add the subsitutions you need.
+    You can add the substitutions you need.
 
 .. this is a .txt so sphinx doesn't error because it's
     missing in the index
@@ -25,18 +25,18 @@
 .. |role-input| replace:: Please give **the exact role name or ID**, or it won't be detected.
 
 .. |role-input-quotes| replace:: Please give **the exact role name or ID**, or it won't be detected.
-    If the role name has spaces, provide it enclosed in quotes like this: ``"my role with spaces"``
+    If the role name has spaces, provide it enclosed in quotes like this: ``"my role with spaces"``.
 
-.. |member-input| replace:: You can either mention the member, provide its ID, its exact name with
-    the tag or not, or its nickname.
+.. |member-input| replace:: You can either mention the member, provide their ID, their exact name with
+    the tag or not, or their nickname.
 
-.. |member-input-quotes| replace:: You can either mention the member, provide its ID, its exact
-    name with the tag or not, or its nickname enclosed in quotes if there are spaces.
+.. |member-input-quotes| replace:: You can either mention the member, provide their ID, their exact
+    name with the tag or not, or their nickname enclosed in quotes if there are spaces.
 
-.. |user-input| replace:: You can either provide the member's ID or its exact name with the tag or
+.. |user-input| replace:: You can either provide the member's ID or their exact name with the tag or
     not.
 
-.. |user-input-quotes| replace:: You can either provide the member's ID or its exact name with the
+.. |user-input-quotes| replace:: You can either provide the member's ID or their exact name with the
     tag or not, enclosed in quotes if there are spaces.
 
 .. |channel-input| replace:: You can either mention the channel, provide its exact name or its ID.
@@ -48,3 +48,7 @@
 
 .. |color-input| replace:: You can either provide the hexadecimal code of the color, or one of the
     colors listed here: :class:`discord.Color`.
+
+.. These are the comments for parameter types such as `bool`.
+
+.. |bool-input| replace:: You should provide either 'true' or 'false'.

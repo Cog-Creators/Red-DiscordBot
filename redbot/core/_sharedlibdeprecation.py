@@ -21,9 +21,9 @@ class SharedLibImportWarner(MetaPathFinder):
         if parts[0] != "cog_shared" or len(parts) != 2:
             return None
         msg = (
-            "One of cogs uses shared libraries which are"
+            "One of the cogs uses shared libraries which are"
             " deprecated and scheduled for removal in the future.\n"
-            "You should inform author of the cog about this message."
+            "You should inform the author(s) of the cog about this message."
         )
         warnings.warn(msg, SharedLibDeprecationWarning, stacklevel=2)
         return None
