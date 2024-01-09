@@ -62,9 +62,7 @@ class AliasEntry:
             word = view.get_quoted_word()
             if len(word) < view.index - prev:
                 word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
-            extra.append(word)
-            extra[0] = extra[0].strip(" ")
-            extra[len(extra) - 1] = extra[len(extra) - 1].strip(" ")
+            extra.append(word.strip(" "))
         return extra
 
     def to_json(self) -> dict:
