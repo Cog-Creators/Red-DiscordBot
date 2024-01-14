@@ -648,11 +648,11 @@ class Downloader(commands.Cog):
             else:
                 joined = _("# Installed Repo\n")
             for repo in sorted_repos:
-                    joined += "- {}: {}\n  - {}\n".format(
-                        repo.name,
-                        repo.short or "",
-                        "<{}>".format(repo.url),
-                    )
+                joined += "- {}: {}\n  - {}\n".format(
+                    repo.name,
+                    repo.short or "",
+                    "<{}>".format(repo.url),
+                )
 
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(page)
