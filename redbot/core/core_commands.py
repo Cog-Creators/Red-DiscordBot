@@ -4446,8 +4446,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        Note: This setting does not apply to menu help.
-
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
         text channels.
