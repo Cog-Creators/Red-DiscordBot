@@ -880,6 +880,8 @@ class RedHelpFormatter(HelpFormatterABC):
             # Allow other things to happen during menu timeout/interaction.
             if use_DMs:
                 menu_ctx = await ctx.bot.get_context(m)
+                # Monkeypatch so help listens for reactions from the original author, not the bot
+                menu_ctx.author = ctx.author
             else:
                 menu_ctx = ctx
             asyncio.create_task(
