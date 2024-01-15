@@ -69,9 +69,13 @@ Additional References
 .. py:currentmodule:: redbot.core.bot
 
 .. automethod:: Red.get_shared_api_tokens
+    :noindex:
 
 .. automethod:: Red.set_shared_api_tokens
+    :noindex:
 
 .. automethod:: Red.remove_shared_api_tokens
+    :noindex:
 
 .. automethod:: Red.remove_shared_api_services
+    :noindex:

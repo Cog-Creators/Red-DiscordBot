@@ -20,15 +20,19 @@ if TYPE_CHECKING:
 
 _ = Translator("Bank API", __file__)
 
-__all__ = [
+__all__ = (
+    "is_owner_if_bank_global",
     "Account",
     "get_balance",
+    "can_spend",
     "set_balance",
     "withdraw_credits",
     "deposit_credits",
-    "can_spend",
     "transfer_credits",
     "wipe_bank",
+    "bank_prune",
+    "get_leaderboard",
+    "get_leaderboard_position",
     "get_account",
     "is_global",
     "set_global",
@@ -36,16 +40,15 @@ __all__ = [
     "set_bank_name",
     "get_currency_name",
     "set_currency_name",
-    "get_default_balance",
-    "set_default_balance",
     "get_max_balance",
     "set_max_balance",
-    "cost",
+    "get_default_balance",
+    "set_default_balance",
     "AbortPurchase",
-    "bank_prune",
-]
+    "cost",
+)
 
-_MAX_BALANCE = 2 ** 63 - 1
+_MAX_BALANCE = 2**63 - 1
 
 _SCHEMA_VERSION = 1
 
@@ -145,6 +148,44 @@ async def _process_data_deletion(
         async for guild_id, member_dict in AsyncIter(all_members.items(), steps=100):
             if user_id in member_dict:
                 await _config.member_from_ids(guild_id, user_id).clear()
+
+
+def is_owner_if_bank_global():
+    """
+    Restrict the command to the bot owner if the bank is global,
+    otherwise ensure it's used in guild (WITHOUT checking any user permissions).
+
+    When used on the command, this should be combined
+    with permissions check like `guildowner_or_permissions()`.
+
+    This is a `command check <discord.ext.commands.check>`.
+
+    Example
+    -------
+
+    .. code-block:: python
+
+        @bank.is_owner_if_bank_global()
+        @commands.guildowner()
+        @commands.group()
+        async def bankset(self, ctx: commands.Context):
+            \"""Base command for bank settings.\"""
+
+    If the bank is global, the ``[p]bankset`` command can only be used by
+    the bot owners in both guilds and DMs.
+    If the bank is local, the command can only be used in guilds by guild and bot owners.
+    """
+
+    async def pred(ctx: commands.Context):
+        author = ctx.author
+        if not await is_global():
+            if not ctx.guild:
+                return False
+            return True
+        else:
+            return await ctx.bot.is_owner(author)
+
+    return commands.check(pred)
 
 
 class Account:

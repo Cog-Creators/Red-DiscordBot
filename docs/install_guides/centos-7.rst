@@ -4,6 +4,8 @@
 Installing Red on CentOS 7
 ==========================
 
+.. include:: _includes/supported-arch-x64+aarch64.rst
+
 .. include:: _includes/linux-preamble.rst
 
 -------------------------------
@@ -31,11 +33,13 @@ In order to install Git 2.11 or greater, we recommend adding the IUS repository:
 .. prompt:: bash
 
     sudo yum -y install https://repo.ius.io/ius-release-el7.rpm
-    sudo yum -y swap git git224
+    sudo yum -y swap git git236
 
 .. Include common instructions:
 
-.. include:: _includes/install-python-pyenv.rst
+.. Python 3.10 requires OpenSSL 1.1.1 which CentOS 7 doesn't provide in base repository.
+
+.. include:: _includes/install-python39-pyenv.rst
 
 .. include:: _includes/create-env-with-pyenv-virtualenv.rst
 
