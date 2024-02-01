@@ -1,11 +1,10 @@
-import asyncio
 from datetime import datetime, timezone
 
 from typing import Optional, Union
 
 import discord
 
-from redbot.core import checks, commands, modlog
+from redbot.core import commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
