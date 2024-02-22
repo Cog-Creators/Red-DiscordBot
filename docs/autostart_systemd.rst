@@ -32,9 +32,9 @@ Next, your python :code:`path` can be fetched with the following commands:
     $ pyenv shell <virtualenv_name>
     (redenv) $ pyenv which python
 
-Then create the new service file:
+Then create the new service file (replace InstanceName with the name of your Instance):
 
-:code:`sudo nano /etc/systemd/system/red@.service`
+:code:`sudo nano /etc/systemd/system/red@InstanceName.service`
 
 Paste the following in the file, and replace all instances of :code:`username` with the Linux username you retrieved above, and :code:`path` with the python path you retrieved above.
 
