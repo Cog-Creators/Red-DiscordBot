@@ -112,7 +112,7 @@ msgstr "Vous avez essayé d'éditer un alias pour une commande qui n'existe pas.
 
 #: redbot/cogs/alias/alias.py:342 redbot/cogs/alias/alias.py:375
 msgid "The alias with the trigger `{name}` has been edited successfully."
-msgstr ""
+msgstr "L'alias avec le déclencheur `{name}` a été édité avec succès."
 
 #: redbot/cogs/alias/alias.py:349 redbot/cogs/alias/alias.py:382
 msgid "Alias with the name `{name}` was not found."
