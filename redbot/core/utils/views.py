@@ -242,6 +242,19 @@ class SimpleMenu(discord.ui.View):
         kwargs = await self.get_page(self.current_page)
         self.message = await ctx.send(**kwargs, ephemeral=ephemeral)
 
+    async def start_dm(self, user: discord.User):
+        """
+        Used to start displaying the menu in a direct message.
+
+        Parameters
+        ----------
+            user: `discord.User`
+                The user that will be direct messaged by the bot.
+        """
+        self.author = user
+        kwargs = await self.get_page(self.current_page)
+        self.message = await user.send(**kwargs)
+
     async def get_page(self, page_num: int) -> Dict[str, Optional[Any]]:
         try:
             page = await self.source.get_page(page_num)

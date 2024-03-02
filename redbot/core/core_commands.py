@@ -117,6 +117,7 @@ _ = i18n.Translator("Core", __file__)
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
 MAX_PREFIX_LENGTH = 25
+MINIMUM_PREFIX_LENGTH = 1
 
 
 class CoreLogic:
@@ -2377,7 +2378,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(
             _(
                 "You seem to be attempting to sync after recently syncing. Discord does not like it "
-                "when bots sync more often than neccecary, so this command has a cooldown. You "
+                "when bots sync more often than necessary, so this command has a cooldown. You "
                 "should enable/disable all commands you want to change first, and run this command "
                 "one time only after all changes have been made. "
             )
@@ -4052,6 +4053,24 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
             )
             return
+        if any(len(x) < MINIMUM_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(
+                _(
+                    "Warning: A prefix is below the recommended length (1 character).\n"
+                    "Do you want to continue?"
+                )
+                + " (yes/no)"
+            )
+            pred = MessagePredicate.yes_or_no(ctx)
+            try:
+                await self.bot.wait_for("message", check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Response timed out."))
+                return
+            else:
+                if pred.result is False:
+                    await ctx.send(_("Cancelled."))
+                    return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(
                 _(
@@ -4110,6 +4129,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(
                 _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
             )
+            return
+        if any(len(x) < MINIMUM_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(_("You cannot have a prefix shorter than 1 character."))
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(_("You cannot have a prefix longer than 25 characters."))
@@ -4445,8 +4467,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @helpset.command(name="maxpages")
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
-
-        Note: This setting does not apply to menu help.
 
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
