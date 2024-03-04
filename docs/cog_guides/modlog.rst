@@ -88,7 +88,7 @@ List cases for the specified member.
 
 * ``<member>``: The member to get cases for. |member-input|
 
-.. _core-command-modlogset:
+.. _modlog-command-modlogset:
 
 ^^^^^^^^^
 modlogset
