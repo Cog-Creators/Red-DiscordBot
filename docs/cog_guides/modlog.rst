@@ -88,6 +88,87 @@ List cases for the specified member.
 
 * ``<member>``: The member to get cases for. |member-input|
 
+.. _core-command-modlogset:
+
+^^^^^^^^^
+modlogset
+^^^^^^^^^
+
+.. note:: |guildowner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset 
+
+**Description**
+
+Manage modlog settings.
+
+.. _core-command-modlogset-cases:
+
+"""""""""""""""
+modlogset cases
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset cases [action]
+
+**Description**
+
+Enable or disable case creation for a mod action, like disabling warnings, enabling bans, etc.
+
+**Examples:**
+    - ``[p]modlogset cases kick`` - Enables/disables modlog messages for kicks.
+    - ``[p]modlogset cases ban`` - Enables/disables modlog messages for bans.
+
+**Arguments:**
+    - ``[action]`` - The type of mod action to be enabled/disabled for case creation.
+
+
+.. _core-command-modlogset-modlog:
+
+""""""""""""""""
+modlogset modlog
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset modlog [channel]
+
+.. tip:: Alias: ``modlogset channel``
+
+**Description**
+
+Set a channel as the modlog.
+
+**Arguments**
+
+* ``[channel]``: The channel to set as the modlog. If omitted, the modlog will be disabled.
+
+.. _core-command-modlogset-resetcases:
+
+""""""""""""""""""""
+modlogset resetcases
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modlogset resetcases 
+
+**Description**
+
+Reset all modlog cases in this server.
+
+
 .. _modlog-command-reason:
 
 ^^^^^^
