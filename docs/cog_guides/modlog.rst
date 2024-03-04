@@ -19,7 +19,7 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-Browse and manage modlog cases. To manage modlog settings, use `[p]modlogset`.
+Browse and manage modlog cases. To manage modlog settings, use ``[p]modlogset``.
 
 
 .. _modlog-commands:
