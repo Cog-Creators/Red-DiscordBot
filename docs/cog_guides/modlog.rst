@@ -106,7 +106,7 @@ modlogset
 
 Manage modlog settings.
 
-.. _core-command-modlogset-cases:
+.. _modlog-command-modlogset-cases:
 
 """""""""""""""
 modlogset cases
@@ -130,7 +130,7 @@ Enable or disable case creation for a mod action, like disabling warnings, enabl
     - ``[action]`` - The type of mod action to be enabled/disabled for case creation.
 
 
-.. _core-command-modlogset-modlog:
+.. _modlog-command-modlogset-modlog:
 
 """"""""""""""""
 modlogset modlog
@@ -152,7 +152,7 @@ Set a channel as the modlog.
 
 * ``[channel]``: The channel to set as the modlog. If omitted, the modlog will be disabled.
 
-.. _core-command-modlogset-resetcases:
+.. _modlog-command-modlogset-resetcases:
 
 """"""""""""""""""""
 modlogset resetcases
