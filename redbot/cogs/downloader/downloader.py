@@ -644,11 +644,11 @@ class Downloader(commands.Cog):
             joined = _("There are no repos installed.")
         else:
             if len(repos) > 1:
-                joined = _("# Installed Repos\n")
+                joined = _("## Installed Repos\n")
             else:
-                joined = _("# Installed Repo\n")
+                joined = _("## Installed Repo\n")
             for repo in sorted_repos:
-                joined += "- {}: {}\n  - {}\n".format(
+                joined += "- **{}:** {}\n  - {}\n".format(
                     repo.name,
                     repo.short or "",
                     "<{}>".format(repo.url),
