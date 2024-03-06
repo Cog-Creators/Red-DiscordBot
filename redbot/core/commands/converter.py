@@ -136,11 +136,11 @@ def parse_timedelta(
         if params.get("years"): # convert years to days
             years = params.pop("years")
             params.setdefault("days", 0)
-            params["days"] += 30 * years
+            params["days"] += 365 * years
         if params.get("months"): # convert months to days
             months = params.pop("months")
             params.setdefault("days", 0)
-            params["days"] += 365 * months
+            params["days"] += 30 * months
         try:
             delta = timedelta(**params)
         except OverflowError:
@@ -206,11 +206,11 @@ def parse_relativedelta(
         if params.get("years"): # convert years to days
             years = params.pop("years")
             params.setdefault("days", 0)
-            params["days"] += 30 * years
+            params["days"] += 365 * years
         if params.get("months"): # convert months to days
             months = params.pop("months")
             params.setdefault("days", 0)
-            params["days"] += 365 * months
+            params["days"] += 30 * months
         try:
             delta = relativedelta(**params)
         except OverflowError:
