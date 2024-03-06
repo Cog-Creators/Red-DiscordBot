@@ -80,7 +80,7 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
         print(
             "\nPick a prefix. A prefix is what you type before a "
             "command. Example:\n"
-            "!help\n^ The exclamation mark is the prefix in this case.\n"
+            "!help\n^ The exclamation mark (!) is the prefix in this case.\n"
             "The prefix can be multiple characters. You will be able to change it "
             "later and add more of them.\nChoose your prefix:\n"
         )
@@ -93,6 +93,12 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
                 print(
                     "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
                 )
+                prefix = ""
+            if prefix and not confirm(
+                f'You chose "{prefix}" as your prefix. To run the help command,'
+                f" you will have to send:\n{prefix}help\n\n"
+                "Do you want to continue with this prefix?"
+            ):
                 prefix = ""
             if prefix:
                 await red._config.prefix.set([prefix])
