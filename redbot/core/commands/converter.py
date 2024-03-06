@@ -133,6 +133,14 @@ def parse_timedelta(
     ]
     params = _parse_and_match(argument, allowed_units)
     if params:
+        if params.get("years"): # convert years to days
+            years = params.pop("years")
+            params.setdefault("days", 0)
+            params["days"] += 30 * years
+        if params.get("months"): # convert months to days
+            months = params.pop("months")
+            params.setdefault("days", 0)
+            params["days"] += 365 * months
         try:
             delta = timedelta(**params)
         except OverflowError:
