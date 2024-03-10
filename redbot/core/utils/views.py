@@ -65,7 +65,11 @@ class _StopButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         self.view.stop()
-        await interaction.message.delete()
+        if interaction.message.flags.ephemeral:
+            await interaction.response.defer(thinking=False)
+            await interaction.delete_original_response()
+        else:
+            await interaction.message.delete()
 
 
 class SimpleMenu(discord.ui.View):
