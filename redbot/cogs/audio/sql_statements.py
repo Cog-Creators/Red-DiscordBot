@@ -94,7 +94,7 @@ pragma user_version=3;
 """
 
 # Data Deletion
-# This is intentionally 2 seperate transactions due to concerns
+# This is intentionally 2 separate transactions due to concerns
 # Draper had. This should prevent it from being a large issue,
 # as this is no different than triggering a bulk deletion now.
 HANDLE_DISCORD_DATA_DELETION_QUERY: Final[
