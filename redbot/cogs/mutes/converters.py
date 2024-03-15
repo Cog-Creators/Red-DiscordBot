@@ -52,6 +52,7 @@ class MuteTime(Converter):
             for k, v in time.groupdict().items():
                 if v:
                     time_data[k] = int(v)
+            break # Break after the first valid match
         if time_data:
             try:
                 result["duration"] = timedelta(**time_data)
