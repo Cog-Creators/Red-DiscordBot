@@ -69,25 +69,79 @@ async def menu(
     """
     An emoji-based menu
 
-    .. note:: All pages should be of the same type
+    All functions for handling what a particular emoji does
+    should be coroutines (i.e. :code:`async def`). Additionally,
+    they must take all of the parameters of this function, in
+    addition to a string representing the emoji reacted with.
+    This parameter should be the 7th one, and none of the
+    parameters in the handling functions are optional.
 
-    .. note:: All functions for handling what a particular emoji does
-              should be coroutines (i.e. :code:`async def`). Additionally,
-              they must take all of the parameters of this function, in
-              addition to a string representing the emoji reacted with.
-              This parameter should be the last one, and none of the
-              parameters in the handling functions are optional
+    .. warning::
 
-    .. warning:: If you're using the ``user`` param, you need to pass it
-              as a keyword-only argument, and set :obj:`None` as the
-              default in your function.
+        If you're using the ``user`` param, you need to pass it
+        as a keyword-only argument, and set :obj:`None` as the
+        default in your function.
+
+    Examples
+    --------
+
+    Simple menu using default controls::
+
+        from redbot.core.utils.menus import menu
+
+        pages = ["Hello", "Hi", "Bonjour", "Salut"]
+        await menu(ctx, pages)
+
+    Menu with a custom control performing an action (deleting an item from pages list)::
+
+        from redbot.core.utils import menus
+
+        items = ["Apple", "Banana", "Cucumber", "Dragonfruit"]
+
+        def generate_pages():
+            return [f"{fruit} is an awesome fruit!" for fruit in items]
+
+        async def delete_item_action(ctx, pages, controls, message, page, timeout, emoji):
+            fruit = items.pop(page)  # lookup and remove corresponding fruit name
+            await ctx.send(f"I guess you don't like {fruit}, huh? Deleting...")
+            pages = generate_pages()
+            if not pages:
+                return await menus.close_menu(ctx, pages, controls, message, page, timeout)
+            page = min(page, len(pages) - 1)
+            return await menus.menu(ctx, pages, controls, message, page, timeout)
+
+        pages = generate_pages()
+        controls = {**menus.DEFAULT_CONTROLS, "\\N{NO ENTRY SIGN}": delete_item_action}
+        await menus.menu(ctx, pages, controls)
+
+    Menu with custom controls that output a result (confirmation prompt)::
+
+        from redbot.core.utils.menus import menu
+
+        async def control_yes(*args, **kwargs):
+            return True
+
+        async def control_no(*args, **kwargs):
+            return False
+
+        msg = "Do you wish to continue?"
+        controls = {
+            "\\N{WHITE HEAVY CHECK MARK}": control_yes,
+            "\\N{CROSS MARK}": control_no,
+        }
+        reply = await menu(ctx, [msg], controls)
+        if reply:
+            await ctx.send("Continuing...")
+        else:
+            await ctx.send("Okay, I'm not going to perform the requested action.")
 
     Parameters
     ----------
     ctx: commands.Context
         The command context
-    pages: `list` of `str` or `discord.Embed`
+    pages: Union[List[str], List[discord.Embed]]
         The pages of the menu.
+        All pages need to be of the same type (either `str` or `discord.Embed`).
     controls: Optional[Mapping[str, Callable]]
         A mapping of emoji to the function which handles the action for the
         emoji. The signature of the function should be the same as of this function
