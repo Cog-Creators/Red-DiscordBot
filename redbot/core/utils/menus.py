@@ -209,7 +209,9 @@ async def menu(
             return
 
     try:
-        predicates = ReactionPredicate.with_emojis(tuple(controls.keys()), message, user or ctx.author)
+        predicates = ReactionPredicate.with_emojis(
+            tuple(controls.keys()), message, user or ctx.author
+        )
         tasks = [
             asyncio.create_task(ctx.bot.wait_for("reaction_add", check=predicates)),
             asyncio.create_task(ctx.bot.wait_for("reaction_remove", check=predicates)),
