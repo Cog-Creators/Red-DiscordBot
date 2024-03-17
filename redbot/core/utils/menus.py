@@ -49,10 +49,7 @@ class _GenericButton(discord.ui.Button):
             if self.emoji.is_unicode_emoji()
             else (ctx.bot.get_emoji(self.emoji.id) or self.emoji)
         )
-        try:
-            await self.func(ctx, pages, controls, message, page, timeout, emoji)
-        except Exception:
-            pass
+        await self.func(ctx, pages, controls, message, page, timeout, emoji)
 
 
 async def menu(
