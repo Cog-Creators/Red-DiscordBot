@@ -106,7 +106,6 @@ async def menu(
         The time (in seconds) to wait for a reaction
     user: Optional[discord.User]
         The user allowed to interact with the menu. Defaults to ctx.author.
-        This is a keyword-only argument.
 
     Raises
     ------
