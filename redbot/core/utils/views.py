@@ -245,6 +245,12 @@ class SimpleMenu(discord.ui.View):
         """
         Used to start the menu displaying the first page requested.
 
+        .. warning::
+
+            The ``user`` parameter is considered provisional.
+            If no issues arise, we plan on including it under developer guarantees
+            in the first release made after 2024-05-18.
+
         Parameters
         ----------
             ctx: `commands.Context`
@@ -252,6 +258,12 @@ class SimpleMenu(discord.ui.View):
             user: discord.User
                 The user allowed to interact with the menu.
                 If this is ``None``, ``ctx.author`` will be able to interact with the menu.
+
+                .. warning::
+
+                    This parameter is provisional.
+                    If no issues arise, we plan on including it under developer guarantees
+                    in the first release made after 2024-05-18.
             ephemeral: `bool`
                 Send the message ephemerally. This only works
                 if the context is from a slash command interaction.
