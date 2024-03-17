@@ -50,13 +50,10 @@ class _GenericButton(discord.ui.Button):
             else (ctx.bot.get_emoji(self.emoji.id) or self.emoji)
         )
         user = self.view.author if not self.view._fallback_author_to_ctx else None
-        try:
-            if user is not None:
-                await self.func(ctx, pages, controls, message, page, timeout, emoji, user=user)
-            else:
-                await self.func(ctx, pages, controls, message, page, timeout, emoji)
-        except Exception:
-            pass
+        if user is not None:
+            await self.func(ctx, pages, controls, message, page, timeout, emoji, user=user)
+        else:
+            await self.func(ctx, pages, controls, message, page, timeout, emoji)
 
 
 async def menu(
