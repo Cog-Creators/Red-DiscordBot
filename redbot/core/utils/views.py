@@ -256,6 +256,7 @@ class SimpleMenu(discord.ui.View):
                 Send the message ephemerally. This only works
                 if the context is from a slash command interaction.
         """
+        self._fallback_author_to_ctx = True
         if user is not None:
             self.author = user
         self.ctx = ctx
