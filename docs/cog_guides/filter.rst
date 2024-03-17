@@ -115,12 +115,29 @@ Add words to the filter.
 Use double quotes to add sentences.
 
 Examples:
-    - ``[p]filter channel add word1 word2 word3``
-    - ``[p]filter channel add "This is a sentence"``
+    - ``[p]filter channel add #channel word1 word2 word3``
+    - ``[p]filter channel add #channel "This is a sentence"``
 
 **Arguments:**
 
+- ``<channel>`` The text, voice, stage, or forum channel to add filtered words to.
 - ``[words...]`` The words or sentences to filter.
+
+.. _filter-command-filter-channel-clear:
+
+""""""""""""""""""""
+filter channel clear
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]filter channel clear
+
+**Description**
+
+Clears this channel's filter list.
 
 .. _filter-command-filter-channel-list:
 
@@ -148,7 +165,7 @@ filter channel remove
 
 .. code-block:: none
 
-    [p]filter channel remove [words...]
+    [p]filter channel remove <channel> [words...]
 
 **Description**
 
@@ -157,12 +174,29 @@ Remove words from the filter.
 Use double quotes to remove sentences.
 
 Examples:
-    - ``[p]filter channel remove word1 word2 word3``
-    - ``[p]filter channel remove "This is a sentence"``
+    - ``[p]filter channel remove #channel word1 word2 word3``
+    - ``[p]filter channel remove #channel "This is a sentence"``
 
 **Arguments:**
 
+- ``<channel>`` The text, voice, stage, or forum channel to add filtered words to.
 - ``[words...]`` The words or sentences to no longer filter.
+
+.. _filter-command-filter-clear:
+
+""""""""""""
+filter clear
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]filter clear
+
+**Description**
+
+Clears this server's filter list.
 
 .. _filter-command-filter-delete:
 

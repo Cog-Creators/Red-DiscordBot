@@ -294,3 +294,40 @@ Examples:
 - ``<user>`` The user whose messages are to be cleaned up.
 - ``<number>`` The max number of messages to cleanup. Must be a positive integer.
 - ``<delete_pinned>`` Whether to delete pinned messages or not. Defaults to False
+
+.. _cleanup-command-cleanupset:
+
+^^^^^^^^^^
+cleanupset
+^^^^^^^^^^
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanupset 
+
+**Description**
+
+Manage the settings for the cleanup command.
+
+.. _cleanup-command-cleanupset-notify:
+
+"""""""""""""""""
+cleanupset notify
+"""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]cleanupset notify
+
+**Description**
+
+Toggle clean up notification settings.
+
+When enabled, a message will be sent per cleanup, showing how many messages were deleted.
+This message will be deleted after 5 seconds.

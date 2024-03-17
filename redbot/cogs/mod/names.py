@@ -1,8 +1,9 @@
-from datetime import datetime
-from typing import cast
+import datetime
+from typing import List, Tuple, cast
 
 import discord
-from redbot.core import commands, i18n, checks
+from redbot.core import commands, i18n
+from redbot.core.utils.chat_formatting import bold, pagify
 from redbot.core.utils.common_filters import (
     filter_invites,
     filter_various_mentions,
@@ -10,6 +11,7 @@ from redbot.core.utils.common_filters import (
 )
 from redbot.core.utils.mod import get_audit_reason
 from .abc import MixinMeta
+from .utils import is_allowed_by_hierarchy
 
 _ = i18n.Translator("Mod", __file__)
 
@@ -19,23 +21,23 @@ class ModInfo(MixinMeta):
     Commands regarding names, userinfo, etc.
     """
 
-    async def get_names_and_nicks(self, user):
-        names = await self.config.user(user).past_names()
-        nicks = await self.config.member(user).past_nicks()
-        if names:
-            names = [escape_spoilers_and_mass_mentions(name) for name in names if name]
-        if nicks:
-            nicks = [escape_spoilers_and_mass_mentions(nick) for nick in nicks if nick]
-        return names, nicks
+    async def get_names(self, member: discord.Member) -> Tuple[List[str], List[str], List[str]]:
+        user_data = await self.config.user(member).all()
+        usernames, display_names = user_data["past_names"], user_data["past_display_names"]
+        nicks = await self.config.member(member).past_nicks()
+        usernames = list(map(escape_spoilers_and_mass_mentions, filter(None, usernames)))
+        display_names = list(map(escape_spoilers_and_mass_mentions, filter(None, display_names)))
+        nicks = list(map(escape_spoilers_and_mass_mentions, filter(None, nicks)))
+        return usernames, display_names, nicks
 
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)
-    @checks.admin_or_permissions(manage_nicknames=True)
+    @commands.admin_or_permissions(manage_nicknames=True)
     async def rename(self, ctx: commands.Context, member: discord.Member, *, nickname: str = ""):
-        """Change a member's nickname.
+        """Change a member's server nickname.
 
-        Leaving the nickname empty will remove it.
+        Leaving the nickname argument empty will remove it.
         """
         nickname = nickname.strip()
         me = cast(discord.Member, ctx.me)
@@ -55,6 +57,16 @@ class ModInfo(MixinMeta):
                     "equal to me in the role hierarchy."
                 )
             )
+        elif ctx.author != member and not await is_allowed_by_hierarchy(
+            self.bot, self.config, ctx.guild, ctx.author, member
+        ):
+            await ctx.send(
+                _(
+                    "I cannot let you do that. You are "
+                    "not higher than the user in the role "
+                    "hierarchy."
+                )
+            )
         else:
             try:
                 await member.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
@@ -65,7 +77,7 @@ class ModInfo(MixinMeta):
                 if exc.status == 400:  # BAD REQUEST
                     await ctx.send(_("That nickname is invalid."))
                 else:
-                    await ctx.send(_("An unexpected error has occured."))
+                    await ctx.send(_("An unexpected error has occurred."))
             else:
                 await ctx.send(_("Done."))
 
@@ -164,9 +176,9 @@ class ModInfo(MixinMeta):
         """Show information about a member.
 
         This includes fields for status, discord join date, server
-        join date, voice state and previous names/nicknames.
+        join date, voice state and previous usernames/global display names/nicknames.
 
-        If the member has no roles, previous names or previous nicknames,
+        If the member has no roles, previous usernames, global display names, or server nicknames,
         these fields will be omitted.
         """
         author = ctx.author
@@ -176,21 +188,16 @@ class ModInfo(MixinMeta):
             member = author
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
+        special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000, datetime.timezone.utc)
         is_special = member.id == 96130341705637888 and guild.id == 133049272517001216
 
         roles = member.roles[-1:0:-1]
-        names, nicks = await self.get_names_and_nicks(member)
+        usernames, display_names, nicks = await self.get_names(member)
 
-        joined_at = member.joined_at if not is_special else special_date
-        since_created = (ctx.message.created_at - member.created_at).days
-        if joined_at is not None:
-            since_joined = (ctx.message.created_at - joined_at).days
-            user_joined = joined_at.strftime("%d %b %Y %H:%M")
+        if is_special:
+            joined_at = special_date
         else:
-            since_joined = "?"
-            user_joined = _("Unknown")
-        user_created = member.created_at.strftime("%d %b %Y %H:%M")
+            joined_at = member.joined_at
         voice_state = member.voice
         member_number = (
             sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
@@ -199,8 +206,17 @@ class ModInfo(MixinMeta):
             + 1
         )
 
-        created_on = _("{}\n({} days ago)").format(user_created, since_created)
-        joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
+        created_on = (
+            f"{discord.utils.format_dt(member.created_at)}\n"
+            f"{discord.utils.format_dt(member.created_at, 'R')}"
+        )
+        if joined_at is not None:
+            joined_on = (
+                f"{discord.utils.format_dt(joined_at)}\n"
+                f"{discord.utils.format_dt(joined_at, 'R')}"
+            )
+        else:
+            joined_on = _("Unknown")
 
         if any(a.type is discord.ActivityType.streaming for a in member.activities):
             statusemoji = "\N{LARGE PURPLE CIRCLE}"
@@ -216,7 +232,6 @@ class ModInfo(MixinMeta):
         status_string = self.get_status_string(member)
 
         if roles:
-
             role_str = ", ".join([x.mention for x in roles])
             # 400 BAD REQUEST (error code: 50035): Invalid Form Body
             # In embed.fields.2.value: Must be 1024 or fewer in length.
@@ -259,22 +274,17 @@ class ModInfo(MixinMeta):
             data.add_field(
                 name=_("Roles") if len(roles) > 1 else _("Role"), value=role_str, inline=False
             )
-        if names:
-            # May need sanitizing later, but mentions do not ping in embeds currently
-            val = filter_invites(", ".join(names))
-            data.add_field(
-                name=_("Previous Names") if len(names) > 1 else _("Previous Name"),
-                value=val,
-                inline=False,
-            )
-        if nicks:
-            # May need sanitizing later, but mentions do not ping in embeds currently
-            val = filter_invites(", ".join(nicks))
-            data.add_field(
-                name=_("Previous Nicknames") if len(nicks) > 1 else _("Previous Nickname"),
-                value=val,
-                inline=False,
-            )
+        for single_form, plural_form, names in (
+            (_("Previous Username"), _("Previous Usernames"), usernames),
+            (_("Previous Global Display Name"), _("Previous Global Display Names"), display_names),
+            (_("Previous Server Nickname"), _("Previous Server Nicknames"), nicks),
+        ):
+            if names:
+                data.add_field(
+                    name=plural_form if len(names) > 1 else single_form,
+                    value=filter_invites(", ".join(names)),
+                    inline=False,
+                )
         if voice_state and voice_state.channel:
             data.add_field(
                 name=_("Current voice channel"),
@@ -287,7 +297,7 @@ class ModInfo(MixinMeta):
         name = " ~ ".join((name, member.nick)) if member.nick else name
         name = filter_invites(name)
 
-        avatar = member.avatar_url_as(static_format="png")
+        avatar = member.display_avatar.replace(static_format="png")
         data.set_author(name=f"{statusemoji} {name}", url=avatar)
         data.set_thumbnail(url=avatar)
 
@@ -295,21 +305,20 @@ class ModInfo(MixinMeta):
 
     @commands.command()
     async def names(self, ctx: commands.Context, *, member: discord.Member):
-        """Show previous names and nicknames of a member."""
-        names, nicks = await self.get_names_and_nicks(member)
-        msg = ""
-        if names:
-            msg += _("**Past 20 names**:")
-            msg += "\n"
-            msg += ", ".join(names)
-        if nicks:
-            if msg:
-                msg += "\n\n"
-            msg += _("**Past 20 nicknames**:")
-            msg += "\n"
-            msg += ", ".join(nicks)
-        if msg:
-            msg = filter_various_mentions(msg)
-            await ctx.send(msg)
+        """Show previous usernames, global display names, and server nicknames of a member."""
+        usernames, display_names, nicks = await self.get_names(member)
+        parts = []
+        for header, names in (
+            (_("Past 20 usernames:"), usernames),
+            (_("Past 20 global display names:"), display_names),
+            (_("Past 20 server nicknames:"), nicks),
+        ):
+            if names:
+                parts.append(bold(header) + ", ".join(names))
+        if parts:
+            # each name can have 32 characters, we store 3*20 names which totals to
+            # 60*32=1920 characters which is quite close to the message length limit
+            for msg in pagify(filter_various_mentions("\n\n".join(parts))):
+                await ctx.send(msg)
         else:
             await ctx.send(_("That member doesn't have any recorded name or nickname change."))
