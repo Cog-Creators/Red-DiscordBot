@@ -3,7 +3,8 @@ commands.converter
 ==================
 This module contains useful functions and classes for command argument conversion.
 
-Some of the converters within are included provisionally and are marked as such.
+Some of the converters within are included `provisionally <developer-guarantees-exclusions>`
+and are marked as such.
 """
 import functools
 import math
@@ -492,7 +493,7 @@ if not TYPE_CHECKING:
     #: multiple types, but such usage is not supported and will fail at runtime
     #:
     #: .. warning::
-    #:    This converter class is still provisional.
+    #:    This converter class is still `provisional <developer-guarantees-exclusions>`.
     UserInputOptional = Optional
 
 if TYPE_CHECKING:

@@ -443,7 +443,7 @@ Changes
 - **Core - Bot Class** - The ``channel`` parameter of `Red.embed_requested()` now accepts any messageable guild channel (:issue:`5576`)
 - **Core - Bot Class** - The bot's color is now set earlier in the launch process (:issue:`5627`)
 - **Core - Bot Class** - `Red.remove_cog()` returns a `commands.Cog` instance now (:issue:`5600`)
-- **Core - Commands Package** - The provisional ``Literal`` converter has been replaced with discord.py's own `typing.Literal` implementation (:issue:`5600`)
+- **Core - Commands Package** - The `provisional <developer-guarantees-exclusions>` ``Literal`` converter has been replaced with discord.py's own `typing.Literal` implementation (:issue:`5600`)
 - **Core - Commands Package** - Added a ``join_character`` parameter to `Red.send_interactive()` and `Context.send_interactive()` to allow choosing the character messages are joined with (:issue:`5901`, :issue:`5902`)
 - **Core - Modlog** - `modlog.set_modlog_channel()` can now accept `discord.VoiceChannel` and `discord.StageChannel` (:issue:`5709`)
 - **Core - Utils Package** - `menu()` now defaults to `DEFAULT_CONTROLS` if the ``controls`` argument is not passed (:issue:`5678`)
@@ -2077,13 +2077,13 @@ Additions
     - Cog disabling is automatically applied for commands and only needs to be done manually for things like event listeners; see `recommendations-for-cog-creators` for more information
 - |cool| **Core** - Added data request API (:issue:`4045`,  :issue:`4169`)
 
-    - New special methods added to `redbot.core.commands.Cog`: `red_get_data_for_user()` (documented provisionally), `red_delete_data_for_user()`
+    - New special methods added to `redbot.core.commands.Cog`: `red_get_data_for_user()` (documented `provisionally <developer-guarantees-exclusions>`), `red_delete_data_for_user()`
     - New special module level variable added: ``__red_end_user_data_statement__``
     - These methods and variables should be added by all cogs according to their documentation; see `recommendations-for-cog-creators` for more information
     - New ``info.json`` key added: ``end_user_data_statement``; see `Info.json format documentation <info-json-format>` for more information
 - **Core - Bot Class** - Added `bot.message_eligible_as_command() <Red.message_eligible_as_command()>` utility method which can be used to determine if a message may be responded to as a command (:issue:`4077`)
-- |cool| **Core - Commands Package** - Added a provisional API for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
-- **Core - Commands Package** - `commands.NoParseOptional <NoParseOptional>` is no longer provisional and is now fully supported part of API (:issue:`4142`)
+- |cool| **Core - Commands Package** - Added a `provisional API <developer-guarantees-exclusions>` for replacing the help formatter. See `documentation <framework-commands-help>` for more details (:issue:`4011`)
+- **Core - Commands Package** - `commands.NoParseOptional <NoParseOptional>` is no longer `provisional <developer-guarantees-exclusions>` and is now fully supported part of API (:issue:`4142`)
 
 Changes
 *******
@@ -2435,7 +2435,7 @@ Documentation changes
 Changes
 *******
 
-- Added information about provisional status of RPC (:issue:`3862`)
+- Added information about `provisional <developer-guarantees-exclusions>` status of RPC (:issue:`3862`)
 - Revised install instructions (:issue:`3847`)
 - Improved navigation in `document about updating Red <update_red>` (:issue:`3856`, :issue:`3849`)
 
