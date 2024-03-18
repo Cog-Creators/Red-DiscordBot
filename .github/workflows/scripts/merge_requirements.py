@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from pathlib import Path
 from typing import List, TextIO
@@ -14,6 +16,12 @@ class RequirementData:
     def __init__(self, requirement_string: str) -> None:
         self.req = Requirement(requirement_string)
         self.comments = set()
+
+    def __hash__(self) -> int:
+        return hash(self.req)
+
+    def __eq__(self, other: RequirementData) -> bool:
+        return self.req == other.req
 
     @property
     def name(self) -> str:
@@ -54,7 +62,7 @@ names.extend(file.stem for file in REQUIREMENTS_FOLDER.glob("extra-*.in"))
 base_requirements = []
 
 for name in names:
-    # {req_name: {sys_platform: RequirementData}
+    # {req_data: {sys_platform: RequirementData}
     input_data = {}
     all_envs = set()
     # all_platforms = set()
@@ -69,21 +77,17 @@ for name in names:
             requirements = get_requirements(fp)
 
         for req in requirements:
-            envs = input_data.setdefault(req.name, {})
+            envs = input_data.setdefault(req, {})
             envs[env_name] = req
 
     output = base_requirements if name == "base" else []
-    for req_name, envs in input_data.items():
-        req = next(iter(envs.values()))
+    for req, envs in input_data.items():
         python_versions_per_platform = {}
         platforms_per_python_version = {}
         for env_name, other_req in envs.items():
             platform_name, python_version = env_name.split("-", maxsplit=1)
             python_versions_per_platform.setdefault(platform_name, []).append(python_version)
             platforms_per_python_version.setdefault(python_version, []).append(platform_name)
-
-            if req.req != other_req.req:
-                raise RuntimeError(f"Incompatible requirements for {req_name}.")
 
             req.comments.update(other_req.comments)
 
@@ -95,7 +99,7 @@ for name in names:
             old_req_marker = req.marker
             req.marker = base_req.marker = None
             if base_req.req != req.req:
-                raise RuntimeError(f"Incompatible requirements for {req_name}.")
+                raise RuntimeError(f"Incompatible requirements for {req.name}.")
 
             base_req.marker = old_base_marker
             req.marker = old_req_marker
