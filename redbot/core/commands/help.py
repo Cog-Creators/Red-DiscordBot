@@ -82,7 +82,7 @@ class HelpSettings:
 
     .. warning::
 
-        This class is provisional.
+        This class is `provisional <developer-guarantees-exclusions>`.
 
     """
 
@@ -190,7 +190,7 @@ class HelpFormatterABC(abc.ABC):
 
     .. warning::
 
-        This class is documented but provisional with expected changes.
+        This class is documented but `provisional <developer-guarantees-exclusions>` with expected changes.
 
         In the future, this class will receive changes to support
         invoking the help command without context.
