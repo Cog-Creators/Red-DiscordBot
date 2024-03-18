@@ -112,11 +112,17 @@ This allows us to add certain optional features non-breakingly without a name co
 
 Any RPC method exposed by Red may break without notice.
 
-Any exclusion from these guarantees should be noted in the documentation of
-the affected attribute, function, class, or method.
-
 If you would like something in here to be guaranteed,
 open an issue making a case for it to be moved.
+
+.. _developer-guarantees-exclusions:
+
+Exclusions
+----------
+
+Any exclusion from these guarantees should be noted in the documentation of
+the affected attribute, function, class, or method. The term "provisional"
+may be used in documentation to note such exclusions.
 
 .. _breaking-change-notices:
 

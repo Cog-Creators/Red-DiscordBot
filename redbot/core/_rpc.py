@@ -156,7 +156,8 @@ class RPCMixin:
             The return value of handler methods must also be JSON serializable.
 
         .. important::
-            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
+            RPC support is included in Red on a `provisional <developer-guarantees-exclusions>` basis.
+            Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
         Parameters
         ----------
@@ -180,7 +181,8 @@ class RPCMixin:
         method is not previously registered.
 
         .. important::
-            RPC support is included in Red on a provisional basis. Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
+            RPC support is included in Red on a `provisional <developer-guarantees-exclusions>` basis.
+            Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
         Parameters
         ----------
