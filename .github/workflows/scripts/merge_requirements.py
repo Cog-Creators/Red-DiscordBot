@@ -56,21 +56,32 @@ base_requirements = []
 for name in names:
     # {req_name: {sys_platform: RequirementData}
     input_data = {}
-    all_platforms = set()
+    all_envs = set()
+    # all_platforms = set()
+    # all_python_versions = set()
     for file in REQUIREMENTS_FOLDER.glob(f"*-{name}.txt"):
-        platform_name = file.stem.split("-", maxsplit=1)[0]
-        all_platforms.add(platform_name)
+        platform_name, python_version, _ = file.stem.split("-", maxsplit=2)
+        env_name = f"{platform_name}-{python_version}"
+        all_envs.add(env_name)
+        # all_platforms.add(platform_name)
+        # all_python_versions.add(python_version)
         with file.open(encoding="utf-8") as fp:
             requirements = get_requirements(fp)
 
         for req in requirements:
-            platforms = input_data.setdefault(req.name, {})
-            platforms[platform_name] = req
+            envs = input_data.setdefault(req.name, {})
+            envs[env_name] = req
 
     output = base_requirements if name == "base" else []
-    for req_name, platforms in input_data.items():
-        req = next(iter(platforms.values()))
-        for other_req in platforms.values():
+    for req_name, envs in input_data.items():
+        req = next(iter(envs.values()))
+        python_versions_per_platform = {}
+        platforms_per_python_version = {}
+        for env_name, other_req in envs.items():
+            platform_name, python_version = env_name.split("-", maxsplit=1)
+            python_versions_per_platform.setdefault(platform_name, []).append(python_version)
+            platforms_per_python_version.setdefault(python_version, []).append(platform_name)
+
             if req.req != other_req.req:
                 raise RuntimeError(f"Incompatible requirements for {req_name}.")
 
@@ -91,17 +102,42 @@ for name in names:
             if base_req.marker is None or base_req.marker == req.marker:
                 continue
 
-        if len(platforms) == len(all_platforms):
+        if len(envs) == len(all_envs):
             output.append(req)
             continue
-        elif len(platforms) < len(all_platforms - platforms.keys()):
-            platform_marker = " or ".join(
-                f"sys_platform == '{platform}'" for platform in platforms
-            )
+
+        if len(set(map(frozenset, python_versions_per_platform.values()))) == 1:
+            # same Python version set for all platforms, limit by platform only
+            if len(envs) < len(all_envs - envs.keys()):
+                platform_marker = " or ".join(
+                    f"sys_platform == '{platform}'" for platform in envs
+                )
+            else:
+                platform_marker = " and ".join(
+                    f"sys_platform != '{platform}'" for platform in all_envs - envs.keys()
+                )
+        elif len(set(map(frozenset, platforms_per_python_version.values()))) == 1:
+            # same platform set for all python version, limit by Python version only
+            if len(envs) < len(all_envs - envs.keys()):
+                platform_marker = " or ".join(
+                    f"python_version == '{platform}'" for platform in envs
+                )
+            else:
+                platform_marker = " and ".join(
+                    f"python_version != '{platform}'" for platform in all_envs - envs.keys()
+                )
         else:
-            platform_marker = " and ".join(
-                f"sys_platform != '{platform}'" for platform in all_platforms - platforms.keys()
-            )
+            if len(envs) < len(all_envs - envs.keys()):
+                platform_marker = " or ".join(
+                    f"(sys_platform == '{platform}' and python_version == '{platform}')"
+                    for platform in envs
+                )
+            else:
+                platform_marker = " and ".join(
+                    f"(sys_platform != '{platform}' and python_version != '{platform}')"
+                    for platform in all_envs - envs.keys()
+                )
+
 
         new_marker = (
             f"({req.marker}) and ({platform_marker})"
