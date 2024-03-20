@@ -135,15 +135,13 @@ for name in names:
             elif len(python_versions) < len(all_python_versions - python_versions):
                 # requirement present on less Python versions than not
                 python_version_marker = " or ".join(
-                    f"python_version == '{env_name}'" for env_name in envs
-                    # f"python_version == '{python_version}'" for python_version in python_versions
+                    f"python_version == '{python_version}'" for python_version in python_versions
                 )
             else:
                 # requirement present on more Python versions than not
                 python_version_marker = " and ".join(
-                    f"python_version != '{env_name}'" for env_name in all_envs - envs.keys()
-                    # f"python_version != '{python_version}'"
-                    # for python_version in all_python_versions - python_versions
+                    f"python_version != '{python_version}'"
+                    for python_version in all_python_versions - python_versions
                 )
 
             platform_marker = ""
@@ -153,14 +151,12 @@ for name in names:
             elif len(platforms) < len(all_platforms - platforms):
                 # requirement present on less platforms than not
                 platform_marker = " or ".join(
-                    f"sys_platform == '{env_name}'" for env_name in envs
-                    # f"sys_platform == '{platform}'" for platform in platforms
+                    f"sys_platform == '{platform}'" for platform in platforms
                 )
             else:
                 # requirement present on more platforms than not
                 platform_marker = " and ".join(
-                    f"sys_platform != '{env_name}'" for env_name in all_envs - envs.keys()
-                    # f"sys_platform != '{platform}'" for platform in all_platforms - platforms
+                    f"sys_platform != '{platform}'" for platform in all_platforms - platforms
                 )
 
             if python_version_marker and platform_marker:
