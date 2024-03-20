@@ -122,50 +122,22 @@ for name in names:
 
         # At this point I'm wondering why I didn't just go for
         # a more generic boolean algebra simplification (sympy.simplify_logic())...
-        if len(set(map(frozenset, python_versions_per_platform.values()))) == 1:
+        if (
+            len(set(map(frozenset, python_versions_per_platform.values()))) == 1
+            or len(set(map(frozenset, platforms_per_python_version.values()))) == 1
+        ):
             # All platforms have the same Python version set.
             # Let's generate the base Python version marker.
-            python_version_marker = " or ".join(
-                f"python_version == '{env_name}'" for env_name in envs
-                # f"python_version == '{python_version}'"
-                # for python_version in python_versions
-            )
-
-            if len(platforms) == len(all_platforms):
-                # requirement present on all platforms
-                env_marker = python_version_marker
-            elif len(platforms) < len(all_platforms - platforms):
-                # requirement present on less platforms than not
-                platform_marker = " or ".join(
-                    f"sys_platform == '{env_name}'" for env_name in envs
-                    # f"sys_platform == '{platform}'" for platform in platforms
-                )
-                env_marker = f"({python_version_marker}) and ({platform_marker})"
-            else:
-                # requirement present on more platforms than not
-                platform_marker = " and ".join(
-                    f"sys_platform != '{env_name}'" for env_name in all_envs - envs.keys()
-                    # f"sys_platform != '{platform}'" for platform in all_platforms - platforms
-                )
-                env_marker = f"({python_version_marker}) and ({platform_marker})"
-        elif len(set(map(frozenset, platforms_per_python_version.values()))) == 1:
-            # All Python versions have the same Python version set.
-            # Let's generate the base platform marker
-            platform_marker = " or ".join(
-                f"sys_platform == '{env_name}'" for env_name in envs
-                # f"sys_platform == '{platform}'" for platform in platforms
-            )
-
+            python_version_marker = ""
             if len(python_versions) == len(all_python_versions):
                 # requirement present on all Python versions
-                env_marker = platform_marker
+                pass
             elif len(python_versions) < len(all_python_versions - python_versions):
                 # requirement present on less Python versions than not
                 python_version_marker = " or ".join(
                     f"python_version == '{env_name}'" for env_name in envs
                     # f"python_version == '{python_version}'" for python_version in python_versions
                 )
-                env_marker = f"({platform_marker}) and ({python_version_marker})"
             else:
                 # requirement present on more Python versions than not
                 python_version_marker = " and ".join(
@@ -173,17 +145,42 @@ for name in names:
                     # f"python_version != '{python_version}'"
                     # for python_version in all_python_versions - python_versions
                 )
-                env_marker = f"({platform_marker}) and ({python_version_marker})"
+
+            platform_marker = ""
+            if len(platforms) == len(all_platforms):
+                # requirement present on all platforms
+                pass
+            elif len(platforms) < len(all_platforms - platforms):
+                # requirement present on less platforms than not
+                platform_marker = " or ".join(
+                    f"sys_platform == '{env_name}'" for env_name in envs
+                    # f"sys_platform == '{platform}'" for platform in platforms
+                )
+            else:
+                # requirement present on more platforms than not
+                platform_marker = " and ".join(
+                    f"sys_platform != '{env_name}'" for env_name in all_envs - envs.keys()
+                    # f"sys_platform != '{platform}'" for platform in all_platforms - platforms
+                )
+
+            if python_version_marker and platform_marker:
+                env_marker = f"({python_version_marker}) and ({platform_marker})"
+            elif python_version_marker:
+                env_marker = python_version_marker
+            elif platform_marker:
+                env_marker = platform_marker
+            else:
+                env_marker = ""
         else:
             # Fallback to generic case.
 
             if len(envs) < len(all_envs - envs.keys()):
-                platform_marker = " or ".join(
+                env_marker = " or ".join(
                     f"(sys_platform == '{platform}' and python_version == '{python_version}')"
                     for platform, python_version in iter_envs(envs)
                 )
             else:
-                platform_marker = " and ".join(
+                env_marker = " and ".join(
                     f"(sys_platform != '{platform}' and python_version != '{python_version}')"
                     for platform, python_version in iter_envs(all_envs - envs.keys())
                 )
