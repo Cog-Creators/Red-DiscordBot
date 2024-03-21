@@ -176,11 +176,7 @@ for name in names:
                 )
             )
 
-        new_marker = (
-            f"({req.marker}) and ({env_marker})"
-            if req.marker is not None
-            else env_marker
-        )
+        new_marker = f"({req.marker}) and ({env_marker})" if req.marker is not None else env_marker
         req.marker = Marker(new_marker)
         if base_req is not None and base_req.marker == req.marker:
             continue
