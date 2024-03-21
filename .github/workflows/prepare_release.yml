@@ -36,8 +36,8 @@ jobs:
         run: |
           make download_translations
         env:
-          CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
-          CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_IDENTIFIER }}
 
       - name: Create Pull Request
         id: cpr_crowdin
