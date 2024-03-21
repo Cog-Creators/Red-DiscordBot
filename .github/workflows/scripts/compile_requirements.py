@@ -1,16 +1,22 @@
 import os
+import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 
+EXCLUDE_STEM_RE = re.compile(r".*-3\.(?!8-)(\d+)-extra-(doc|style)")
 GITHUB_OUTPUT = os.environ["GITHUB_OUTPUT"]
 REQUIREMENTS_FOLDER = Path(__file__).parents[3].absolute() / "requirements"
 os.chdir(REQUIREMENTS_FOLDER)
 
 
 def pip_compile(version: str, name: str) -> None:
+    stem = f"{sys.platform}-{version}-{name}"
+    if EXCLUDE_STEM_RE.fullmatch(stem):
+        return
+
     executable = ("py", f"-{version}") if sys.platform == "win32" else (f"python{version}",)
     subprocess.check_call(
         (
@@ -23,7 +29,7 @@ def pip_compile(version: str, name: str) -> None:
             "--verbose",
             f"{name}.in",
             "--output-file",
-            f"{sys.platform}-{version}-{name}.txt",
+            f"{stem}.txt",
         )
     )
 
