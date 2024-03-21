@@ -82,7 +82,7 @@ class HelpSettings:
 
     .. warning::
 
-        This class is provisional.
+        This class is `provisional <developer-guarantees-exclusions>`.
 
     """
 
@@ -190,7 +190,7 @@ class HelpFormatterABC(abc.ABC):
 
     .. warning::
 
-        This class is documented but provisional with expected changes.
+        This class is documented but `provisional <developer-guarantees-exclusions>` with expected changes.
 
         In the future, this class will receive changes to support
         invoking the help command without context.
@@ -878,14 +878,10 @@ class RedHelpFormatter(HelpFormatterABC):
             m = await (destination.send(embed=pages[0]) if embed else destination.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
-            if use_DMs:
-                menu_ctx = await ctx.bot.get_context(m)
-                # Monkeypatch so help listens for reactions from the original author, not the bot
-                menu_ctx.author = ctx.author
-            else:
-                menu_ctx = ctx
             asyncio.create_task(
-                menus.menu(menu_ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+                menus.menu(
+                    ctx, pages, c, user=ctx.author, message=m, timeout=help_settings.react_timeout
+                )
             )
             # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
