@@ -26,7 +26,7 @@ jobs:
           curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
           echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
           sudo apt-get update -qq
-          sudo apt-get install -y crowdin
+          sudo apt-get install -y crowdin3
           pip install redgettext==3.4.2
 
       - name: Generate source files
