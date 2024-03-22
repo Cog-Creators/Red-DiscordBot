@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-03-02 14:44+0000\n"
+"POT-Creation-Date: 2024-01-04 00:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,11 @@ msgstr ""
 msgid "There is no ongoing trivia session in this channel."
 msgstr ""
 
-#: redbot/cogs/trivia/converters.py:15
+#: redbot/cogs/trivia/converters.py:18
 msgid "`{arg}` is not a number."
 msgstr ""
 
-#: redbot/cogs/trivia/converters.py:17
+#: redbot/cogs/trivia/converters.py:20
 msgid "`{arg}` is not a finite number."
 msgstr ""
 
@@ -76,88 +76,88 @@ msgstr ""
 msgid "A trivia list should be a 'key: value' mapping."
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:20
+#: redbot/cogs/trivia/session.py:21
 msgid "I know this one! {answer}!"
 msgstr "Vím to! {answer}!"
 
-#: redbot/cogs/trivia/session.py:21
+#: redbot/cogs/trivia/session.py:22
 msgid "Easy: {answer}."
 msgstr "Jednoduché: {answer}."
 
-#: redbot/cogs/trivia/session.py:22
+#: redbot/cogs/trivia/session.py:23
 msgid "Oh really? It's {answer} of course."
 msgstr "Opravdu? Je to samozřejmě {answer}."
 
-#: redbot/cogs/trivia/session.py:26
+#: redbot/cogs/trivia/session.py:27
 msgid "I know this one! ||{answer}!||"
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:27
+#: redbot/cogs/trivia/session.py:28
 msgid "Easy: ||{answer}.||"
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:28
+#: redbot/cogs/trivia/session.py:29
 msgid "Oh really? It's ||{answer}|| of course."
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:32
+#: redbot/cogs/trivia/session.py:33
 msgid "To the next one I guess..."
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:33
+#: redbot/cogs/trivia/session.py:34
 msgid "Moving on..."
 msgstr "Přesouvání na..."
 
-#: redbot/cogs/trivia/session.py:34
+#: redbot/cogs/trivia/session.py:35
 msgid "I'm sure you'll know the answer of the next one."
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:35
+#: redbot/cogs/trivia/session.py:36
 msgid "😔 Next one."
 msgstr "😔 Další."
 
-#: redbot/cogs/trivia/session.py:121
+#: redbot/cogs/trivia/session.py:122
 msgid "An unexpected error occurred in the trivia session."
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:123
+#: redbot/cogs/trivia/session.py:124
 msgid "An unexpected error occurred in the trivia session.\n"
 "Check your console or logs for details."
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:143
+#: redbot/cogs/trivia/session.py:144
 msgid "Question number {num}!"
 msgstr "Otázka č. {num}!"
 
-#: redbot/cogs/trivia/session.py:152
+#: redbot/cogs/trivia/session.py:153
 msgid "There are no more questions!"
 msgstr "Nebyly nalezeny žádné otázky!"
 
-#: redbot/cogs/trivia/session.py:160
+#: redbot/cogs/trivia/session.py:161
 msgid "{trivia_list} (by {author})"
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:165
+#: redbot/cogs/trivia/session.py:166
 msgid "Starting Trivia: {list_names}"
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:211
+#: redbot/cogs/trivia/session.py:212
 msgid "Guys...? Well, I guess I'll stop then."
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:222
+#: redbot/cogs/trivia/session.py:223
 msgid " **+1** for me!"
 msgstr " **+1** pro mě!"
 
-#: redbot/cogs/trivia/session.py:227
+#: redbot/cogs/trivia/session.py:228
 msgid "You got it {user}! **+1** to you!"
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:332
+#: redbot/cogs/trivia/session.py:334
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
 msgstr ""
 
-#: redbot/cogs/trivia/session.py:340
+#: redbot/cogs/trivia/session.py:342
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
 msgstr ""
 
