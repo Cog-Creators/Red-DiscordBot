@@ -2955,7 +2955,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 )
             )
         except ValueError:
-            await ctx.send(_("JPG / PNG format only."))
+            await ctx.send(_("JPG / PNG / GIF format only."))
         else:
             await ctx.send(_("Done."))
 
