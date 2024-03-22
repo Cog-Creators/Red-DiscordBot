@@ -1,5 +1,105 @@
 .. Red changelogs
 
+Redbot 3.5.6 (2024-03-22)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`BlizzardTheWolf`, :ghuser:`DJTOMATO`, :ghuser:`Dav-Git`, :ghuser:`Flame442`, :ghuser:`goettner`, :ghuser:`Jackenmen`, :ghuser:`Jan200101`, :ghuser:`japandotorg`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`madebylydia`, :ghuser:`michael-is-qcde`, :ghuser:`scarecr0w12`, :ghuser:`yeetbruises`, :ghuser:`Zephyrkul`
+
+Read before updating
+--------------------
+
+#. macOS 11 (Big Sur), Fedora 37, Ubuntu 22.10 (Kinetic Kudu), 23.04 (Lunar Lobster), openSUSE Leap 15.4, and Raspberry Pi OS (Legacy) 10 Buster are no longer supported as they have already reached their end of life.
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.5.6 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.11>`__.
+
+End-user changelog
+------------------
+
+Additions
+*********
+
+- **Cogs - Trivia - Lists** - Added a ``doom`` trivia about the whole Doom video game franchise (:issue:`4803`)
+- **Cogs - Trivia - Lists** - Added a trivia about Star Trek (:issue:`2946`)
+
+Changes
+*******
+
+- Improved handling of very large numbers in various areas of the bot (:issue:`4619`, :issue:`6283`)
+- **Core** - Empty (server) prefixes are now disallowed (:issue:`6013`)
+- |cool| **Core** - Menu-based help will now be sent to DMs when max number of pages (``[p]helpset maxpages``) is set to 0, similarly to non-menu help (:issue:`5093`, :issue:`5375`)
+- |cool| **Core** - Prefix can now be automatically inserted into help tagline by putting ``[p]`` at the position that the prefix should appear at (:issue:`4669`, :issue:`4972`)
+- **Core - Command-line Interfaces** - Improved first-time user experience when setting up new instance by asking for confirmation after user enters the prefix (:issue:`6287`)
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6312`)
+- **Core - Modlog** - Case auto-creation for bans and unbans now relies directly on recently introduced audit log events which should make it work more reliably (:issue:`5970`)
+- |cool| **Cogs - Alias** - Fixed a long-known issue with aliases not retaining new lines from the arguments they are passed (:issue:`2704`, :issue:`4656`)
+- **Cogs - Downloader** - Downloader commands will now try to detect potential Git authentication failures and report them more clearly (:issue:`5420`)
+- **Cogs - Modlog** - The cog help now mentions how the user can change the modlog settings (:issue:`6300`)
+- **Cogs - Trivia - Lists** - Updated FIFA World Cup list to include outcomes of the 2022 tournament (:issue:`5931`)
+
+Removals
+********
+
+- **Core - OS Support** - macOS 11 (Big Sur), Fedora 37, Ubuntu 22.10 (Kinetic Kudu), 23.04 (Lunar Lobster), openSUSE Leap 15.4, and Raspberry Pi OS (Legacy) 10 Buster are no longer supported as they have already reached end of life (:issue:`6309`)
+
+Fixes
+*****
+
+- **Cogs - Admin** - Fixed the ``[p]editrole colour`` command erroring out whenever it's ran (:issue:`6270`)
+- |cool| **Cogs - Audio** - Fixed YT playback (:issue:`6305`)
+- **Cogs - Audio** - Fixed not being able to seek when player is paused (:issue:`6305`)
+- **Cogs - Audio** - Fixed handling of file name suffixes in ``[p]playlist upload`` caused by changes in Discord API (:issue:`6279`, :issue:`6280`)
+- |cool| **Cogs - General** - Fixed issues with ``[p]lmgtfy`` command once and for all by deploying an equivalent service as part of Cog-Creators' infrastructure (:issue:`6255`, :issue:`6268`, :issue:`6269`)
+- **Cogs - Streams** - Fixed markdown formatting in the ``[p]streamalert list`` command to be compliant with newer Discord markdown renderer (:issue:`6292`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- **Core - Utils Package** - Added `SimpleMenu.start_dm()` method for sending the menu to the given user rather than `Context` (:issue:`6286`)
+- **Core - Utils Package** - The `menu()` utility function received a new `provisional <developer-guarantees-exclusions>` ``user`` parameter for defining who can interact with the menu (instead of the default ``ctx.author``) (:issue:`4913`)
+
+    If no issues arise, we plan on including this parameter under developer guarantees
+    in the first release made after 2024-05-18.
+
+- **Core - Utils Package** - The `SimpleMenu.start()` method received a new `provisional <developer-guarantees-exclusions>` ``user`` parameter for defining who can interact with the menu (instead of the default ``ctx.author``) (:issue:`4913`)
+
+    If no issues arise, we plan on including this parameter under developer guarantees
+    in the first release made after 2024-05-18.
+
+Fixes
+*****
+
+- **Core - Commands Package** - Fixed an edge case where the permission names passed as keyword arguments were not validated in Red's custom decorators (:issue:`6291`)
+- **Core - Utils Package** - Tracebacks from custom control functions are no longer suppressed by ``menu()`` when ``[p]set usebuttons`` option is enabled (:issue:`6310`)
+
+Documentation changes
+---------------------
+
+Additions
+*********
+
+- |cool| Added install guide for Raspberry Pi OS 12 Bookworm (:issue:`6309`)
+- Added a tip in `guide_slash_and_interactions` about forcing the client to see the new commands after syncing (:issue:`6298`)
+
+Changes
+*******
+
+- Install guide for Raspberry Pi OS Legacy now describes installation for Raspberry Pi OS (Legacy) 11 (:issue:`6309`)
+- Updated Python versions used in Arch Linux and openSUSE Leap instructions to 3.10 and 3.11 respectively (:issue:`6309`)
+- Clarified the meaning of the word `"provisional" <developer-guarantees-exclusions>` that is used across the documentation to refer to APIs excluded from version guarantees (:issue:`6311`)
+- Added ``force_registration=True`` to all `Config.get_conf()` usage examples in `framework_config` documentation to reflect our current recommendations (:issue:`6259`)
+
+Fixes
+*****
+
+- Fixed the "Edit on GitHub" links in Red's online documentation (:issue:`6258`)
+
+----
+
 Redbot 3.5.5 (2023-09-14)
 =========================
 
