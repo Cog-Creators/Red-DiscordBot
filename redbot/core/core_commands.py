@@ -3872,6 +3872,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         regional_format = global_data["regional_format"] or locale
         colour = discord.Colour(global_data["color"])
 
+        admin_cog = self.bot.get_cog("Admin")
+        serverlocked = await admin_cog.config.serverlocked() if admin_cog else False
+
         prefix_string = " ".join(prefixes)
         settings = _(
             "{bot_name} Settings:\n\n"
@@ -3879,7 +3882,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "{guild_settings}"
             "Global locale: {locale}\n"
             "Global regional format: {regional_format}\n"
-            "Default embed colour: {colour}"
+            "Default embed colour: {colour}\n"
+            "Serverlocked: {serverlocked}"
         ).format(
             bot_name=ctx.bot.user.display_name,
             prefixes=prefix_string,
@@ -3887,6 +3891,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             locale=locale,
             regional_format=regional_format,
             colour=colour,
+            serverlocked=serverlocked,
         )
         for page in pagify(settings):
             await ctx.send(box(page))
