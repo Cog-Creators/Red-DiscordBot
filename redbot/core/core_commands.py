@@ -2909,7 +2909,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         async with ctx.typing():
             await ctx.bot.user.edit(avatar=None)
         await ctx.send(_("Avatar removed."))
-    
+
     @_set_bot.group(name="banner", invoke_without_command=True)
     @commands.is_owner()
     async def _set_bot_banner(self, ctx: commands.Context, url: str = None):
