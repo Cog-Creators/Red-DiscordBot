@@ -50,7 +50,7 @@ Fixes
 - |cool| **Cogs - Audio** - Fixed YT playback (:issue:`6305`)
 - **Cogs - Audio** - Fixed not being able to seek when player is paused (:issue:`6305`)
 - **Cogs - Audio** - Fixed handling of file name suffixes in ``[p]playlist upload`` caused by changes in Discord API (:issue:`6279`, :issue:`6280`)
-- |cool| **Cogs - General** - Fixed issues with ``[p]lmgtfy`` command once and for all by deploying equivalent service as part of Cog-Creators' infrastructure (:issue:`6255`, :issue:`6268`, :issue:`6269`)
+- |cool| **Cogs - General** - Fixed issues with ``[p]lmgtfy`` command once and for all by deploying an equivalent service as part of Cog-Creators' infrastructure (:issue:`6255`, :issue:`6268`, :issue:`6269`)
 - **Cogs - Streams** - Fixed markdown formatting in the ``[p]streamalert list`` command to be compliant with newer Discord markdown renderer (:issue:`6292`)
 
 Developer changelog
@@ -96,7 +96,7 @@ Changes
 Fixes
 *****
 
-- Fixes the "Edit on GitHub" links in Red's online documentation (:issue:`6258`)
+- Fixed the "Edit on GitHub" links in Red's online documentation (:issue:`6258`)
 
 ----
 
