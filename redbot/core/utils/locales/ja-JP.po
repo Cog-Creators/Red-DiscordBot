@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-04-17 21:45+0000\n"
+"POT-Creation-Date: 2024-03-21 22:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -65,50 +65,51 @@ msgstr "秒間"
 
 #: redbot/core/utils/views.py:34
 msgid "Select a Page"
-msgstr ""
+msgstr "ページを選択"
 
-#: redbot/core/utils/views.py:170
+#: redbot/core/utils/views.py:171
 msgid "Page {num}"
-msgstr ""
+msgstr "ページ{num}"
 
-#: redbot/core/utils/views.py:266
+#: redbot/core/utils/views.py:316 redbot/core/utils/views.py:672
 msgid "You are not authorized to interact with this."
-msgstr ""
-
-#: redbot/core/utils/views.py:308
-msgid "Set API Keys"
-msgstr ""
-
-#: redbot/core/utils/views.py:309
-msgid "Keys and tokens"
-msgstr ""
-
-#: redbot/core/utils/views.py:311
-msgid "Set API Keys for {service}"
-msgstr ""
-
-#: redbot/core/utils/views.py:312
-msgid "Keys and tokens for {service}"
-msgstr ""
-
-#: redbot/core/utils/views.py:321
-msgid "Service"
-msgstr ""
+msgstr "これをインタラクトする権限がありません"
 
 #: redbot/core/utils/views.py:358
-msgid "This modal is for bot owners only. Whoops!"
-msgstr ""
+msgid "Set API Keys"
+msgstr "APIキーを設定"
+
+#: redbot/core/utils/views.py:359
+msgid "Keys and tokens"
+msgstr "キーとトークン"
+
+#: redbot/core/utils/views.py:361
+msgid "Set API Keys for {service}"
+msgstr "{service} のAPIキーを設定"
+
+#: redbot/core/utils/views.py:362
+msgid "Keys and tokens for {service}"
+msgstr "{service} のキーとトークン"
 
 #: redbot/core/utils/views.py:371
-msgid "{error_message}\n"
-"Please try again."
-msgstr ""
+msgid "Service"
+msgstr "サービス"
 
-#: redbot/core/utils/views.py:378 redbot/core/utils/views.py:385
-msgid "`{service}` API tokens have been set."
-msgstr ""
+#: redbot/core/utils/views.py:408
+msgid "This modal is for bot owners only. Whoops!"
+msgstr "おっと！このモーダルはBot所有者専用です。"
 
 #: redbot/core/utils/views.py:421
+msgid "{error_message}\n"
+"Please try again."
+msgstr "{error_message}\n"
+"もう一度お試しください。"
+
+#: redbot/core/utils/views.py:428 redbot/core/utils/views.py:435
+msgid "`{service}` API tokens have been set."
+msgstr "`{service}` APIトークンが設定されました"
+
+#: redbot/core/utils/views.py:471
 msgid "This button is for bot owners only, oh well."
-msgstr ""
+msgstr "このボタンは、Bot所有者のみが使用できます"
 
