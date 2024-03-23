@@ -63,12 +63,12 @@ Changes
 - **Core - Utils Package** - The `menu()` utility function received a new `provisional <developer-guarantees-exclusions>` ``user`` parameter for defining who can interact with the menu (instead of the default ``ctx.author``) (:issue:`4913`)
 
     If no issues arise, we plan on including this parameter under developer guarantees
-    in the first release made after 2024-05-18.
+    in the first release made after 2024-05-24.
 
 - **Core - Utils Package** - The `SimpleMenu.start()` method received a new `provisional <developer-guarantees-exclusions>` ``user`` parameter for defining who can interact with the menu (instead of the default ``ctx.author``) (:issue:`4913`)
 
     If no issues arise, we plan on including this parameter under developer guarantees
-    in the first release made after 2024-05-18.
+    in the first release made after 2024-05-24.
 
 Fixes
 *****
