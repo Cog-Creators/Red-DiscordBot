@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-02-27 15:18+0000\n"
+"POT-Creation-Date: 2024-03-23 23:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -2270,12 +2270,12 @@ msgid "Something went wrong while trying to get the image."
 msgstr "嘗試取得圖片時發生錯誤"
 
 #: redbot/core/core_commands.py:2889
-msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG or PNG format."
-msgstr "失敗的。請記住，您每小時最多可以編輯我的頭像兩次。 URL 或附件必須是 JPG 或 PNG 格式的有效圖像。"
+msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG, PNG, or GIF format."
+msgstr ""
 
 #: redbot/core/core_commands.py:2896
-msgid "JPG / PNG format only."
-msgstr "僅限 JPG / PNG 格式。zaphkiel翻譯"
+msgid "JPG / PNG / GIF format only."
+msgstr ""
 
 #: redbot/core/core_commands.py:2898 redbot/core/core_commands.py:2967
 #: redbot/core/core_commands.py:2991 redbot/core/core_commands.py:3073
