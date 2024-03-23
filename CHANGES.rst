@@ -1,5 +1,23 @@
 .. Red changelogs
 
+Redbot 3.5.7 (2024-03-24)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| TODO
+
+This is a hotfix release fixing a bug with Red's reaction-based menus introduced in the previous release.
+
+End-user changelog
+------------------
+
+Fixes
+*****
+
+- **Core** - Fixed an issue with Red's reaction-based menus *with custom controls* not working properly (:issue:`6324`)
+
+---
+
 Redbot 3.5.6 (2024-03-22)
 =========================
 
