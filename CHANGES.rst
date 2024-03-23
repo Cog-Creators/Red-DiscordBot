@@ -4,7 +4,7 @@ Redbot 3.5.7 (2024-03-24)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| TODO
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`karlsbjorn`, :ghuser:`Jackenmen`
 
 This is a hotfix release fixing a bug with Red's reaction-based menus introduced in the previous release.
 
@@ -15,6 +15,7 @@ Fixes
 *****
 
 - **Core** - Fixed an issue with Red's reaction-based menus *with custom controls* not working properly (:issue:`6324`)
+- **Core - Bot Commands** - Updated supported image formats in ``[p]set bot avatar``'s error messages to include GIFs (:issue:`6323`)
 
 ---
 
