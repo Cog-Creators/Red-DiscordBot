@@ -17,7 +17,7 @@ Fixes
 - **Core** - Fixed an issue with Red's reaction-based menus *with custom controls* not working properly (:issue:`6324`)
 - **Core - Bot Commands** - Updated supported image formats in ``[p]set bot avatar``'s error messages to include GIFs (:issue:`6323`)
 
----
+----
 
 Redbot 3.5.6 (2024-03-22)
 =========================
