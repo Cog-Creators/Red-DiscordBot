@@ -249,7 +249,7 @@ class SimpleMenu(discord.ui.View):
 
             The ``user`` parameter is considered `provisional <developer-guarantees-exclusions>`.
             If no issues arise, we plan on including it under developer guarantees
-            in the first release made after 2024-05-18.
+            in the first release made after 2024-05-24.
 
         Parameters
         ----------
@@ -263,7 +263,7 @@ class SimpleMenu(discord.ui.View):
 
                     This parameter is `provisional <developer-guarantees-exclusions>`.
                     If no issues arise, we plan on including it under developer guarantees
-                    in the first release made after 2024-05-18.
+                    in the first release made after 2024-05-24.
             ephemeral: `bool`
                 Send the message ephemerally. This only works
                 if the context is from a slash command interaction.
