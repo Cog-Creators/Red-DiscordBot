@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-02-27 15:18+0000\n"
+"POT-Creation-Date: 2024-03-23 23:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -2222,12 +2222,12 @@ msgid "Something went wrong while trying to get the image."
 msgstr ""
 
 #: redbot/core/core_commands.py:2889
-msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG or PNG format."
+msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG, PNG, or GIF format."
 msgstr ""
 
 #: redbot/core/core_commands.py:2896
-msgid "JPG / PNG format only."
-msgstr "I formati file permessi sono JPG / PNG."
+msgid "JPG / PNG / GIF format only."
+msgstr ""
 
 #: redbot/core/core_commands.py:2898 redbot/core/core_commands.py:2967
 #: redbot/core/core_commands.py:2991 redbot/core/core_commands.py:3073
