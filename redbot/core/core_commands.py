@@ -2709,7 +2709,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @modlogset.command(hidden=True, name="fixcasetypes")
     async def modlogset_fixcasetypes(self, ctx: commands.Context):
         """Command to fix misbehaving casetypes."""
-        await modlog.handle_auditype_key()
+        await modlog._handle_audit_type_key()
         await ctx.tick()
 
     @modlogset.command(aliases=["channel"], name="modlog")
