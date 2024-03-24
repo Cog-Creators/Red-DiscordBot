@@ -66,9 +66,10 @@ class _StopButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view.stop()
         if interaction.message.flags.ephemeral:
-            await interaction.response.edit_message(view=None)
-            return
-        await interaction.message.delete()
+            await interaction.response.defer(thinking=False)
+            await interaction.delete_original_response()
+        else:
+            await interaction.message.delete()
 
 
 class SimpleMenu(discord.ui.View):
@@ -208,7 +209,7 @@ class SimpleMenu(discord.ui.View):
 
     async def on_timeout(self):
         try:
-            if self.delete_after_timeout and not self.message.flags.ephemeral:
+            if self.delete_after_timeout:
                 await self.message.delete()
             elif self.disable_after_timeout:
                 for child in self.children:
