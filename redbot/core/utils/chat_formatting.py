@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import dateutil.relativedelta
 import itertools
 import math
 import textwrap
@@ -570,6 +571,43 @@ def humanize_timedelta(
                 continue
             unit = plural_period_name if period_value > 1 else period_name
             strings.append(f"{period_value} {unit}")
+
+    return ", ".join(strings)
+
+
+def humanize_relativedelta(relativedelta: dateutil.relativedelta.relativedelta) -> str:
+    """
+    Get a human readable relativedelta representation.
+
+    Fractional values will be omitted, and values less than 1 second
+    an empty string.
+
+    Parameters
+    ----------
+    relativedelta: dateutil.relativedelta.relativedelta
+        A relativedelta object
+
+    Returns
+    -------
+    str
+        A human readable representation of the relativedelta.
+    """
+    relativedelta = relativedelta.normalized()
+    periods = [
+        ("years", _("year"), _("years")),
+        ("months", _("month"), _("months")),
+        ("days", _("day"), _("days")),
+        ("hours", _("hour"), _("hours")),
+        ("minutes", _("minute"), _("minutes")),
+        ("seconds", _("second"), _("seconds")),
+    ]
+    strings = []
+    for period_raw, period_name, plural_period_name in periods:
+        period_value = getattr(relativedelta, period_raw, 0)
+        if not period_value:
+            continue
+        unit = plural_period_name if period_value > 1 else period_name
+        strings.append(f"{period_value} {unit}")
 
     return ", ".join(strings)
 
