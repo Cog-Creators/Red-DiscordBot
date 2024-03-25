@@ -1,11 +1,10 @@
-import asyncio
 from datetime import datetime, timezone
 
 from typing import Optional, Union
 
 import discord
 
-from redbot.core import checks, commands, modlog
+from redbot.core import commands, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import bold, box, pagify
@@ -17,7 +16,7 @@ _ = Translator("ModLog", __file__)
 
 @cog_i18n(_)
 class ModLog(commands.Cog):
-    """Browse and manage modlog cases."""
+    """Browse and manage modlog cases. To manage modlog settings, use `[p]modlogset`."""
 
     def __init__(self, bot: Red):
         super().__init__()

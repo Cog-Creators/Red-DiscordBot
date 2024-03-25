@@ -82,7 +82,7 @@ class HelpSettings:
 
     .. warning::
 
-        This class is provisional.
+        This class is `provisional <developer-guarantees-exclusions>`.
 
     """
 
@@ -190,7 +190,7 @@ class HelpFormatterABC(abc.ABC):
 
     .. warning::
 
-        This class is documented but provisional with expected changes.
+        This class is documented but `provisional <developer-guarantees-exclusions>` with expected changes.
 
         In the future, this class will receive changes to support
         invoking the help command without context.
@@ -309,6 +309,12 @@ class RedHelpFormatter(HelpFormatterABC):
         )
 
     @staticmethod
+    def format_tagline(ctx: Context, tagline: str):
+        if not tagline:
+            return
+        return tagline.replace("[p]", ctx.clean_prefix)
+
+    @staticmethod
     def get_command_signature(ctx: Context, command: commands.Command) -> str:
         parent = command.parent
         entries = []
@@ -345,7 +351,7 @@ class RedHelpFormatter(HelpFormatterABC):
 
         description = command.description or ""
 
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
         signature = _("Syntax: {command_signature}").format(
             command_signature=self.get_command_signature(ctx, command)
         )
@@ -398,13 +404,18 @@ class RedHelpFormatter(HelpFormatterABC):
 
             command_help = command.format_help_for_context(ctx)
             if command_help:
-                splitted = command_help.split("\n\n")
-                name = splitted[0]
-                value = "\n\n".join(splitted[1:])
-                if not value:
-                    value = EMPTY_STRING
-                field = EmbedField(name[:250], value[:1024], False)
-                emb["fields"].append(field)
+                splitted = filter(None, command_help.split("\n\n"))
+                try:
+                    name = next(splitted)
+                except StopIteration:
+                    # all parts are empty
+                    pass
+                else:
+                    value = "\n\n".join(splitted)
+                    if not value:
+                        value = EMPTY_STRING
+                    field = EmbedField(name[:250], value[:1024], False)
+                    emb["fields"].append(field)
 
             if subcommands:
 
@@ -430,7 +441,6 @@ class RedHelpFormatter(HelpFormatterABC):
             await self.make_and_send_embeds(ctx, emb, help_settings=help_settings)
 
         else:  # Code blocks:
-
             subtext = None
             subtext_header = None
             if subcommands:
@@ -510,7 +520,7 @@ class RedHelpFormatter(HelpFormatterABC):
         offset += len(embed_dict["embed"]["title"])
 
         # In order to only change the size of embeds when necessary for this rather
-        # than change the existing behavior for people uneffected by this
+        # than change the existing behavior for people unaffected by this
         # we're only modifying the page char limit should they be impacted.
         # We could consider changing this to always just subtract the offset,
         # But based on when this is being handled (very end of 3.2 release)
@@ -519,7 +529,7 @@ class RedHelpFormatter(HelpFormatterABC):
             # This is still necessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
-            # *only* when necessary, by the exact neccessary amount
+            # *only* when necessary, by the exact necessary amount
             # To retain a visual match with prior behavior.
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:
@@ -565,20 +575,25 @@ class RedHelpFormatter(HelpFormatterABC):
             return
 
         description = obj.format_help_for_context(ctx)
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
             if description:
-                splitted = description.split("\n\n")
-                name = splitted[0]
-                value = "\n\n".join(splitted[1:])
-                if not value:
-                    value = EMPTY_STRING
-                field = EmbedField(name[:252], value[:1024], False)
-                emb["fields"].append(field)
+                splitted = filter(None, description.split("\n\n"))
+                try:
+                    name = next(splitted)
+                except StopIteration:
+                    # all parts are empty
+                    pass
+                else:
+                    value = "\n\n".join(splitted)
+                    if not value:
+                        value = EMPTY_STRING
+                    field = EmbedField(name[:252], value[:1024], False)
+                    emb["fields"].append(field)
 
             if coms:
 
@@ -633,7 +648,7 @@ class RedHelpFormatter(HelpFormatterABC):
             return
 
         description = ctx.bot.description or ""
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
@@ -754,7 +769,9 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.display_avatar,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(
+                    ctx, help_settings.tagline
+                ) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -767,7 +784,9 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.display_avatar,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(
+                    ctx, help_settings.tagline
+                ) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -786,7 +805,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                 icon_url=ctx.me.display_avatar,
             )
-            tagline = help_settings.tagline or self.get_default_tagline(ctx)
+            tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(
+                ctx
+            )
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
         else:
@@ -835,23 +856,32 @@ class RedHelpFormatter(HelpFormatterABC):
         if help_settings.use_menus.value >= HelpMenuSetting.buttons.value:
             use_select = help_settings.use_menus.value == 3
             select_only = help_settings.use_menus.value == 4
-            await SimpleMenu(
+            menu = SimpleMenu(
                 pages,
                 timeout=help_settings.react_timeout,
                 use_select_menu=use_select,
                 use_select_only=select_only,
-            ).start(ctx)
+            )
+            # Send menu to DMs if max pages is 0
+            if help_settings.max_pages_in_guild == 0:
+                await menu.start_dm(ctx.author)
+            else:
+                await menu.start(ctx)
 
         elif (
             can_user_react_in(ctx.me, ctx.channel)
             and help_settings.use_menus is HelpMenuSetting.reactions
         ):
+            use_DMs = help_settings.max_pages_in_guild == 0
+            destination = ctx.author if use_DMs else ctx.channel
             # Specifically ensuring the menu's message is sent prior to returning
-            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
+            m = await (destination.send(embed=pages[0]) if embed else destination.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
             asyncio.create_task(
-                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+                menus.menu(
+                    ctx, pages, c, user=ctx.author, message=m, timeout=help_settings.react_timeout
+                )
             )
             # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())
@@ -890,7 +920,12 @@ class RedHelpFormatter(HelpFormatterABC):
                 # We need to wrap this in a task to not block after-sending-help interactions.
                 # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs
                 async def _delete_delay_help(
-                    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+                    channel: Union[
+                        discord.TextChannel,
+                        discord.VoiceChannel,
+                        discord.StageChannel,
+                        discord.Thread,
+                    ],
                     messages: List[discord.Message],
                     delay: int,
                 ):

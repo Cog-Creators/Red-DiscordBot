@@ -27,7 +27,7 @@ from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelt
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
 TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/helix/streams/"
-TWITCH_FOLLOWS_ENDPOINT = TWITCH_ID_ENDPOINT + "/follows"
+TWITCH_FOLLOWS_ENDPOINT = TWITCH_BASE_URL + "/helix/channels/followers"
 
 YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3"
 YOUTUBE_CHANNELS_ENDPOINT = YOUTUBE_BASE_URL + "/channels"
@@ -54,7 +54,6 @@ def get_video_ids_from_feed(feed):
 
 
 class Stream:
-
     token_name: ClassVar[Optional[str]] = None
     platform_name: ClassVar[Optional[str]] = None
 
@@ -106,7 +105,6 @@ class Stream:
 
 
 class YoutubeStream(Stream):
-
     token_name = "youtube"
     platform_name = "YouTube"
 
@@ -198,7 +196,7 @@ class YoutubeStream(Stream):
         log.debug(f"livestreams for {self.name}: {self.livestreams}")
         log.debug(f"not_livestreams for {self.name}: {self.not_livestreams}")
         # This is technically redundant since we have the
-        # info from the RSS ... but incase you don't wanna deal with fully rewritting the
+        # info from the RSS ... but incase you don't wanna deal with fully rewriting the
         # code for this part, as this is only a 2 quota query.
         if self.livestreams:
             params = {
@@ -306,7 +304,6 @@ class YoutubeStream(Stream):
 
 
 class TwitchStream(Stream):
-
     token_name = "twitch"
     platform_name = "Twitch"
 
@@ -330,7 +327,7 @@ class TwitchStream(Stream):
     async def wait_for_rate_limit_reset(self) -> None:
         """Check rate limits in response header and ensure we're following them.
 
-        From python-twitch-client and adaptated to asyncio from Trusty-cogs:
+        From python-twitch-client and adapted to asyncio from Trusty-cogs:
         https://github.com/tsifrer/python-twitch-client/blob/master/twitch/helix/base.py
         https://github.com/TrustyJAID/Trusty-cogs/blob/master/twitch/twitch_api.py
         """
@@ -406,7 +403,9 @@ class TwitchStream(Stream):
             final_data["title"] = stream_data["title"]
             final_data["type"] = stream_data["type"]
 
-            __, follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": self.id})
+            __, follows_data = await self.get_data(
+                TWITCH_FOLLOWS_ENDPOINT, {"broadcaster_id": self.id}
+            )
             if follows_data:
                 final_data["followers"] = follows_data["total"]
 
@@ -464,7 +463,6 @@ class TwitchStream(Stream):
 
 
 class PicartoStream(Stream):
-
     token_name = None  # This streaming services don't currently require an API key
     platform_name = "Picarto"
 
@@ -491,9 +489,7 @@ class PicartoStream(Stream):
             raise APIError(r.status, data)
 
     def make_embed(self, data):
-        avatar = rnd(
-            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg".format(data["name"].lower())
-        )
+        avatar = rnd(data["avatar"])
         url = "https://picarto.tv/" + data["name"]
         thumbnail = data["thumbnails"]["web"]
         embed = discord.Embed(title=data["title"], url=url, color=0x4C90F3)

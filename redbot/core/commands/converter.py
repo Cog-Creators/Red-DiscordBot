@@ -3,15 +3,16 @@ commands.converter
 ==================
 This module contains useful functions and classes for command argument conversion.
 
-Some of the converters within are included provisionally and are marked as such.
+Some of the converters within are included `provisionally <developer-guarantees-exclusions>`
+and are marked as such.
 """
 import functools
+import math
 import re
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from typing import (
     TYPE_CHECKING,
-    Generic,
     Optional,
     Optional as NoParseOptional,
     Tuple,
@@ -22,7 +23,6 @@ from typing import (
     Union as UserInputOptional,
 )
 
-import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import BadArgument
 
@@ -39,10 +39,12 @@ __all__ = [
     "NoParseOptional",
     "RelativedeltaConverter",
     "TimedeltaConverter",
+    "finite_float",
     "get_dict_converter",
     "get_timedelta_converter",
     "parse_relativedelta",
     "parse_timedelta",
+    "positive_int",
     "CommandConverter",
     "CogConverter",
 ]
@@ -234,6 +236,27 @@ class RawUserIdConverter(dpy_commands.Converter):
 # These are used for command conversion purposes. Please refer to the portion
 # which is *not* for type checking for the actual implementation
 # and ensure the lies stay correct for how the object should look as a typehint
+
+#: This converts a user provided string into a positive (>=0) integer.
+positive_int = dpy_commands.Range[int, 0, None]
+
+
+if TYPE_CHECKING:
+    finite_float = float
+else:
+
+    def finite_float(arg: str) -> float:
+        """
+        This converts a user provided string into a finite float.
+        """
+        try:
+            ret = float(arg)
+        except ValueError:
+            raise BadArgument(_("`{arg}` is not a number.").format(arg=arg))
+        if not math.isfinite(ret):
+            raise BadArgument(_("`{arg}` is not a finite number.").format(arg=ret))
+        return ret
+
 
 if TYPE_CHECKING:
     DictConverter = Dict[str, str]
@@ -470,7 +493,7 @@ if not TYPE_CHECKING:
     #: multiple types, but such usage is not supported and will fail at runtime
     #:
     #: .. warning::
-    #:    This converter class is still provisional.
+    #:    This converter class is still `provisional <developer-guarantees-exclusions>`.
     UserInputOptional = Optional
 
 if TYPE_CHECKING:

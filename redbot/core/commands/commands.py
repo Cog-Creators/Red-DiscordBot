@@ -24,7 +24,6 @@ from typing import (
     Union,
     MutableMapping,
     TYPE_CHECKING,
-    cast,
 )
 
 import discord
@@ -44,8 +43,8 @@ from discord.ext.commands import (
     Greedy,
 )
 
-from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
+from .. import app_commands
 from ..i18n import Translator
 
 _T = TypeVar("_T")
@@ -68,7 +67,7 @@ else:
     _P = TypeVar("_P")
 
 
-__all__ = [
+__all__ = (
     "Cog",
     "CogMixin",
     "CogCommandMixin",
@@ -77,13 +76,15 @@ __all__ = [
     "Group",
     "GroupCog",
     "GroupMixin",
+    "HybridCommand",
+    "HybridGroup",
     "command",
     "group",
     "hybrid_command",
     "hybrid_group",
     "RESERVED_COMMAND_NAMES",
     "RedUnhandledAPI",
-]
+)
 
 #: The following names are reserved for various reasons
 RESERVED_COMMAND_NAMES = (
@@ -91,7 +92,6 @@ RESERVED_COMMAND_NAMES = (
 )
 
 _ = Translator("commands.commands", __file__)
-DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
 
 
 class RedUnhandledAPI(Exception):
@@ -310,6 +310,7 @@ class Command(CogCommandMixin, DPYCommand):
 
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
+        self._disabled_in: discord.utils.SnowflakeList = discord.utils.SnowflakeList([])
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
         super().__init__(*args, **kwargs)
@@ -460,10 +461,41 @@ class Command(CogCommandMixin, DPYCommand):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
+    def is_enabled(self, guild: Optional[discord.abc.Snowflake] = None) -> bool:
+        """
+        Check if the command is enabled globally or in a guild.
+
+        When guild is provided, this method checks whether
+        the command is enabled both globally and in the guild.
+
+        This is generally set by the settings managed with
+        the ``[p]command enable/disable global/server`` commands.
+
+        Parameters
+        ----------
+        guild : discord.abc.Snowflake, optional
+            The guild to check that the command is enabled in.
+            If this is ``None``, this will check whether
+            the command is enabled globally.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command is enabled.
+        """
+        if not self.enabled:
+            return False
+        if guild is not None:
+            if self._disabled_in.has(guild.id):
+                return False
+
+        return True
+
     async def prepare(self, ctx, /):
         ctx.command = self
 
-        if not self.enabled:
+        cmd_enabled = self.is_enabled(ctx.guild)
+        if not cmd_enabled:
             raise DisabledCommand(f"{self.name} command is disabled")
 
         if not await self.can_run(ctx, change_permission_state=True):
@@ -519,7 +551,15 @@ class Command(CogCommandMixin, DPYCommand):
         return True
 
     def disable_in(self, guild: discord.Guild) -> bool:
-        """Disable this command in the given guild.
+        """
+        Disable this command in the given guild.
+
+        This is generally called by the settings managed with
+        the ``[p]command disable global/server`` commands.
+        Any changes made outside of that will not persist after cog
+        reload and may also be affected when either of those commands
+        is called on this command. It is not recommended to rely on
+        this method, if you want a consistent behavior.
 
         Parameters
         ----------
@@ -530,17 +570,22 @@ class Command(CogCommandMixin, DPYCommand):
         -------
         bool
             ``True`` if the command wasn't already disabled.
-
         """
-        disabler = get_command_disabler(guild)
-        if disabler in self.checks:
+        if self._disabled_in.has(guild.id):
             return False
-        else:
-            self.checks.append(disabler)
-            return True
+
+        self._disabled_in.add(guild.id)
+        return True
 
     def enable_in(self, guild: discord.Guild) -> bool:
         """Enable this command in the given guild.
+
+        This is generally called by the settings managed with
+        the ``[p]command disable global/server`` commands.
+        Any changes made outside of that will not persist after cog
+        reload and may also be affected when either of those commands
+        is called on this command. It is not recommended to rely on
+        this method, if you want a consistent behavior.
 
         Parameters
         ----------
@@ -551,15 +596,13 @@ class Command(CogCommandMixin, DPYCommand):
         -------
         bool
             ``True`` if the command wasn't already enabled.
-
         """
-        disabler = get_command_disabler(guild)
         try:
-            self.checks.remove(disabler)
+            self._disabled_in.remove(guild.id)
         except ValueError:
             return False
-        else:
-            return True
+
+        return True
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
@@ -797,7 +840,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         .. note::
 
-            This method is documented provisionally
+            This method is documented `provisionally <developer-guarantees-exclusions>`
             and may have minor changes made to it.
             It is not expected to undergo major changes,
             but nothing utilizes this method yet and the inclusion of this method
@@ -1093,7 +1136,7 @@ class HybridGroup(Group, DPYHybridGroup[_CogT, _P, _T]):
 
 
 def hybrid_command(
-    name: Union[str, discord.app_commands.locale_str] = discord.utils.MISSING,
+    name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
     *,
     with_app_command: bool = True,
     **attrs: Any,
@@ -1113,7 +1156,7 @@ def hybrid_command(
 
 
 def hybrid_group(
-    name: Union[str, discord.app_commands.locale_str] = discord.utils.MISSING,
+    name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
     *,
     with_app_command: bool = True,
     **attrs: Any,
@@ -1148,28 +1191,6 @@ def group(name=None, cls=Group, **attrs):
     Same interface as `discord.ext.commands.group`.
     """
     return dpy_command_deco(name, cls, **attrs)
-
-
-__command_disablers: DisablerDictType = weakref.WeakValueDictionary()
-
-
-def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
-    """Get the command disabler for a guild.
-
-    A command disabler is a simple check predicate which returns
-    ``False`` if the context is within the given guild.
-    """
-    try:
-        return __command_disablers[guild.id]
-    except KeyError:
-
-        async def disabler(ctx: "Context") -> bool:
-            if ctx.guild is not None and ctx.guild.id == guild.id:
-                raise DisabledCommand()
-            return True
-
-        __command_disablers[guild.id] = disabler
-        return disabler
 
 
 # The below are intentionally left out of `__all__`
