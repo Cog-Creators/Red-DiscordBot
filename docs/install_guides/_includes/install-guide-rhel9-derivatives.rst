@@ -9,9 +9,11 @@ Installing the pre-requirements
 Red Hat Enterprise Linux (RHEL) 9 and its derivatives have all required packages available in official repositories.
 Install them with dnf:
 
+.. TODO: Use Python 3.11 once RHEL 9.0 goes EOL in 2024.
+
 .. prompt:: bash
 
-    sudo dnf -y install python39 python3-devel git java-11-openjdk-headless @development nano
+    sudo dnf -y install python39 python3-devel git java-17-openjdk-headless @development nano
 
 .. Include common instructions:
 

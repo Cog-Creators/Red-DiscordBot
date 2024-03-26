@@ -117,6 +117,7 @@ _ = i18n.Translator("Core", __file__)
 TokenConverter = commands.get_dict_converter(delims=[" ", ",", ";"])
 
 MAX_PREFIX_LENGTH = 25
+MINIMUM_PREFIX_LENGTH = 1
 
 
 class CoreLogic:
@@ -2329,7 +2330,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 msg += diff + command_type.ljust(7) + " | " + name + "\n"
             msg += "\n"
 
-        pages = pagify(msg, delims=["\n\n", "\n"])
+        pages = pagify(msg, delims=["\n\n", "\n"], shorten_by=12)
         pages = [box(page, lang="diff") for page in pages]
         await menu(ctx, pages)
 
@@ -2377,7 +2378,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         await ctx.send(
             _(
                 "You seem to be attempting to sync after recently syncing. Discord does not like it "
-                "when bots sync more often than neccecary, so this command has a cooldown. You "
+                "when bots sync more often than necessary, so this command has a cooldown. You "
                 "should enable/disable all commands you want to change first, and run this command "
                 "one time only after all changes have been made. "
             )
@@ -2568,7 +2569,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     "This will delete all bank accounts for {scope}.\nIf you're sure, type "
                     "`{prefix}bankset reset yes`"
                 ).format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    scope=self.bot.user.display_name
+                    if await bank.is_global()
+                    else _("this server"),
                     prefix=ctx.clean_prefix,
                 )
             )
@@ -2576,7 +2579,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await bank.wipe_bank(guild=ctx.guild)
             await ctx.send(
                 _("All bank accounts for {scope} have been deleted.").format(
-                    scope=self.bot.user.name if await bank.is_global() else _("this server")
+                    scope=self.bot.user.display_name
+                    if await bank.is_global()
+                    else _("this server")
                 )
             )
 
@@ -2884,11 +2889,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _(
                     "Failed. Remember that you can edit my avatar "
                     "up to two times a hour. The URL or attachment "
-                    "must be a valid image in either JPG or PNG format."
+                    "must be a valid image in either JPG, PNG, or GIF format."
                 )
             )
         except ValueError:
-            await ctx.send(_("JPG / PNG format only."))
+            await ctx.send(_("JPG / PNG / GIF format only."))
         else:
             await ctx.send(_("Done."))
 
@@ -3028,7 +3033,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     )
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_stream(self, ctx: commands.Context, streamer=None, *, stream_title=None):
+    async def _set_status_stream(
+        self,
+        ctx: commands.Context,
+        streamer: commands.Range[str, 1, 489] = None,
+        *,
+        stream_title: commands.Range[str, 1, 128] = None,
+    ):
         """Sets [botname]'s streaming status to a twitch stream.
 
         This will appear as `Streaming <stream_title>` or `LIVE ON TWITCH` depending on the context.
@@ -3052,12 +3063,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
-            if len(streamer) > 511:
-                await ctx.send(_("The maximum length of the streamer url is 511 characters."))
-                return
-            if len(stream_title) > 128:
-                await ctx.send(_("The maximum length of the stream title is 128 characters."))
-                return
             activity = discord.Streaming(url=streamer, name=stream_title)
             await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
@@ -3070,7 +3075,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="playing", aliases=["game"])
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_game(self, ctx: commands.Context, *, game: str = None):
+    async def _set_status_game(
+        self, ctx: commands.Context, *, game: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s playing status.
 
         This will appear as `Playing <game>` or `PLAYING A GAME: <game>` depending on the context.
@@ -3086,9 +3093,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
 
         if game:
-            if len(game) > 128:
-                await ctx.send(_("The maximum length of game descriptions is 128 characters."))
-                return
             game = discord.Game(name=game)
         else:
             game = None
@@ -3102,7 +3106,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="listening")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_listening(self, ctx: commands.Context, *, listening: str = None):
+    async def _set_status_listening(
+        self, ctx: commands.Context, *, listening: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s listening status.
 
         This will appear as `Listening to <listening>`.
@@ -3119,11 +3125,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
-            if len(listening) > 128:
-                await ctx.send(
-                    _("The maximum length of listening descriptions is 128 characters.")
-                )
-                return
             activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
             activity = None
@@ -3138,7 +3139,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="watching")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_watching(self, ctx: commands.Context, *, watching: str = None):
+    async def _set_status_watching(
+        self, ctx: commands.Context, *, watching: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s watching status.
 
         This will appear as `Watching <watching>`.
@@ -3155,9 +3158,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
-            if len(watching) > 128:
-                await ctx.send(_("The maximum length of watching descriptions is 128 characters."))
-                return
             activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
             activity = None
@@ -3170,7 +3170,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_status.command(name="competing")
     @commands.bot_in_a_guild()
     @commands.is_owner()
-    async def _set_status_competing(self, ctx: commands.Context, *, competing: str = None):
+    async def _set_status_competing(
+        self, ctx: commands.Context, *, competing: commands.Range[str, 1, 128] = None
+    ):
         """Sets [botname]'s competing status.
 
         This will appear as `Competing in <competing>`.
@@ -3187,11 +3189,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if competing:
-            if len(competing) > 128:
-                await ctx.send(
-                    _("The maximum length of competing descriptions is 128 characters.")
-                )
-                return
             activity = discord.Activity(name=competing, type=discord.ActivityType.competing)
         else:
             activity = None
@@ -3202,6 +3199,37 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         else:
             await ctx.send(_("Competing cleared."))
+
+    @_set_status.command(name="custom")
+    @commands.bot_in_a_guild()
+    @commands.is_owner()
+    async def _set_status_custom(
+        self, ctx: commands.Context, *, text: commands.Range[str, 1, 128] = None
+    ):
+        """Sets [botname]'s custom status.
+
+        This will appear as `<text>`.
+
+        Maximum length for a custom status is 128 characters.
+
+        **Examples:**
+        - `[p]set status custom` - Clears the activity status.
+        - `[p]set status custom Running cogs...`
+
+        **Arguments:**
+        - `[text]` - The custom status text. Leave blank to clear the current activity status.
+        """
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
+        if text:
+            activity = discord.CustomActivity(name=text)
+        else:
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
+        if activity:
+            await ctx.send(_("Custom status set to `{text}`.").format(text=text))
+        else:
+            await ctx.send(_("Custom status cleared."))
 
     async def _set_my_status(self, ctx: commands.Context, status: discord.Status):
         game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
@@ -3598,13 +3626,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `<service>` - The service you're adding tokens to.
         - `<tokens>` - Pairs of token keys and values. The key and value should be separated by one of ` `, `,`, or `;`.
         """
-        if service is None:  # Handled in order of missing operations
-            await ctx.send(_("Click the button below to set your keys."), view=SetApiView())
-        elif tokens is None:
-            await ctx.send(
-                _("Click the button below to set your keys."),
-                view=SetApiView(default_service=service),
-            )
+        if service is None or tokens is None:
+            view = SetApiView(default_service=service)
+            msg = await ctx.send(_("Click the button below to set your keys."), view=view)
+            await view.wait()
+            await msg.edit(content=_("This API keys setup message has expired."), view=None)
         else:
             if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
@@ -3855,7 +3881,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             "Global regional format: {regional_format}\n"
             "Default embed colour: {colour}"
         ).format(
-            bot_name=ctx.bot.user.name,
+            bot_name=ctx.bot.user.display_name,
             prefixes=prefix_string,
             guild_settings=guild_settings,
             locale=locale,
@@ -4027,6 +4053,24 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
             )
             return
+        if any(len(x) < MINIMUM_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(
+                _(
+                    "Warning: A prefix is below the recommended length (1 character).\n"
+                    "Do you want to continue?"
+                )
+                + " (yes/no)"
+            )
+            pred = MessagePredicate.yes_or_no(ctx)
+            try:
+                await self.bot.wait_for("message", check=pred, timeout=30)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Response timed out."))
+                return
+            else:
+                if pred.result is False:
+                    await ctx.send(_("Cancelled."))
+                    return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(
                 _(
@@ -4085,6 +4129,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.send(
                 _("Prefixes cannot start with '/', as it conflicts with Discord's slash commands.")
             )
+            return
+        if any(len(x) < MINIMUM_PREFIX_LENGTH for x in prefixes):
+            await ctx.send(_("You cannot have a prefix shorter than 1 character."))
             return
         if any(len(x) > MAX_PREFIX_LENGTH for x in prefixes):
             await ctx.send(_("You cannot have a prefix longer than 25 characters."))
@@ -4421,8 +4468,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset_maxpages(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        Note: This setting does not apply to menu help.
-
         If a help message contains more pages than this value, the help message will
         be sent to the command author via DM. This is to help reduce spam in server
         text channels.
@@ -4510,8 +4555,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         The maximum tagline length is 2048 characters.
         This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
 
+        You can use `[\u200bp]` in your tagline, which will be replaced by the bot's prefix.
+
         **Examples:**
         - `[p]helpset tagline Thanks for using the bot!`
+        - `[p]helpset tagline Use [\u200bp]invite to add me to your server.`
         - `[p]helpset tagline` - Resets the tagline to the default.
 
         **Arguments:**

@@ -215,11 +215,11 @@ modset deletenames
 
 **Description**
 
-Delete all stored usernames and nicknames.
+Delete all stored usernames, global display names, and server nicknames.
 
 **Arguments**
 
-- ``<confirmation>``: Whether to delete all stored usernames and nicknames. |bool-input|
+- ``<confirmation>``: Whether to delete all stored usernames, global display names, and server nicknames. |bool-input|
 
 .. _mod-command-modset-deleterepeats:
 
@@ -469,7 +469,7 @@ modset tracknicknames
 
 **Description**
 
-Toggle whether nickname changes should be tracked.
+Toggle whether server nickname changes should be tracked.
 
 This setting will be overridden if trackallnames is disabled.
 
@@ -527,7 +527,7 @@ names
 
 **Description**
 
-Show previous names and nicknames of a member.
+Show previous usernames, global display names, and server nicknames of a member.
 
 **Arguments**
 
@@ -549,14 +549,14 @@ rename
 
 **Description**
 
-Change a member's nickname.
+Change a member's server nickname.
 
-Leaving the nickname empty will remove it.
+Leaving the nickname argument empty will remove it.
 
 **Arguments**
 
 * ``<member>``: |member-input|
-* ``[nickname]``: The new nickname for the member.
+* ``[nickname]``: The new server nickname for the member.
 
 .. _mod-command-slowmode:
 
@@ -684,9 +684,9 @@ userinfo
 Show information about a user.
 
 This includes fields for status, discord join date, server
-join date, voice state and previous names/nicknames.
+join date, voice state and previous usernames/global display names/nicknames.
 
-If the user has no roles, previous names or previous nicknames,
+If the user has no roles, previous usernames, global display names, or server nicknames,
 these fields will be omitted.
 
 **Arguments**

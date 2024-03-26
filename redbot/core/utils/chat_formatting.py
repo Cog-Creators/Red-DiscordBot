@@ -576,7 +576,7 @@ def humanize_timedelta(
 
 def humanize_number(val: Union[int, float], override_locale=None) -> str:
     """
-    Convert an int or float to a str with digit separators based on bot locale
+    Convert an int or float to a str with digit separators based on bot locale.
 
     Parameters
     ----------
@@ -585,10 +585,15 @@ def humanize_number(val: Union[int, float], override_locale=None) -> str:
     override_locale: Optional[str]
         A value to override bot's regional format.
 
+    Raises
+    ------
+    decimals.InvalidOperation
+        If val is greater than 10 x 10^21 for some locales, 10 x 10^24 in others.
+
     Returns
     -------
     str
-        locale aware formatted number.
+        Locale-aware formatted number.
     """
     return format_decimal(val, locale=get_babel_regional_format(override_locale))
 
