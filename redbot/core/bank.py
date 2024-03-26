@@ -1122,39 +1122,22 @@ def cost(amount: int):
     return deco
 
 
-class BankTransferInformation:
-    def __init__(
-        self,
-        transfer_amount: int,
-        sender_id: int,
-        recipient_id: int,
-        guild_id: int,
-        sender_new_balance: int,
-        recipient_new_balance: int,
-    ):
-        self.transfer_amount = transfer_amount
-        self.sender_id = sender_id
-        self.recipient_id = recipient_id
-        self.guild_id = guild_id
-        self.sender_new_balance = sender_new_balance
-        self.recipient_new_balance = recipient_new_balance
+class BankTransferInformation(NamedTuple):
+    transfer_amount: int
+    sender_id: int
+    recipient_id: int
+    guild_id: int
+    sender_new_balance: int
+    recipient_new_balance: int
 
 
-class BankSetBalanceInformation:
-    def __init__(
-        self,
-        recipient_id: int,
-        guild_id: int,
-        recipient_old_balance: int,
-        recipient_new_balance: int,
-    ):
-        self.recipient_id = recipient_id
-        self.guild_id = guild_id
-        self.recipient_old_balance = recipient_old_balance
-        self.recipient_new_balance = recipient_new_balance
+class BankSetBalanceInformation(NamedTuple):
+    recipient_id: int
+    guild_id: int
+    recipient_old_balance: int
+    recipient_new_balance: int
 
 
-class BankPruneInformation:
-    def __init__(self, scope: int, pruned_users: Union(List[int], Dict[str, List[int]])):
-        self.scope = scope
-        self.pruned_users = pruned_users
+class BankPruneInformation(NamedTuple):
+    scope: int
+    pruned_users: Union[List[int], Dict[str, List[int]]]
