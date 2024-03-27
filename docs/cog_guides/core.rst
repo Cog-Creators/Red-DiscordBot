@@ -2895,6 +2895,57 @@ Removes Red's avatar.
 **Example:**
     - ``[p]set bot avatar remove``
 
+.. _core-command-set-bot-banner:
+
+""""""""""""""
+set bot banner
+""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot banner [url]
+
+**Description**
+
+Sets Red's banner
+
+Supports either an attachment or an image URL.
+
+**Examples:**
+    - ``[p]set bot banner`` - With an image attachment, this will set the banner.
+    - ``[p]set bot banner`` - Without an attachment, this will show the command help.
+    - ``[p]set bot banner https://links.flaree.xyz/k95`` - Sets the banner to the provided url.
+
+**Arguments:**
+    - ``[url]`` - An image url to be used as an banner. Leave blank when uploading an attachment.
+
+.. _core-command-set-bot-banner-remove:
+
+"""""""""""""""""""""
+set bot banner remove
+"""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot banner remove 
+
+.. tip:: Alias: ``set bot banner clear``
+
+**Description**
+
+Removes Red's banner.
+
+**Example:**
+    - ``[p]set bot banner remove``
+
 .. _core-command-set-bot-custominfo:
 
 """"""""""""""""""
