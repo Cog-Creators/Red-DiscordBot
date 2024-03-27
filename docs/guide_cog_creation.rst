@@ -147,7 +147,7 @@ have successfully created a cog!
         ------ __init__.py
         ------ coolcog.py
     
-    You would then use :code:`[p]addpath D:\red-cogs` to add the path
+    You would then use :code:`[p]addpath D:\\red-cogs` to add the path
     and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
     to load them
     

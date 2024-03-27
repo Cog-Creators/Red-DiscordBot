@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-08-12 02:50+0000\n"
+"POT-Creation-Date: 2023-09-06 18:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -359,37 +359,37 @@ msgstr ""
 msgid "This stream was scheduled for {min} minutes ago"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:445
+#: redbot/cogs/streams/streamtypes.py:447
 msgid "Untitled broadcast"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:447
+#: redbot/cogs/streams/streamtypes.py:449
 msgid " - Rerun"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:450
-#: redbot/cogs/streams/streamtypes.py:496
+#: redbot/cogs/streams/streamtypes.py:452
+#: redbot/cogs/streams/streamtypes.py:498
 msgid "Followers"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:451
-#: redbot/cogs/streams/streamtypes.py:497
+#: redbot/cogs/streams/streamtypes.py:453
+#: redbot/cogs/streams/streamtypes.py:499
 msgid "Total views"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:456
+#: redbot/cogs/streams/streamtypes.py:458
 msgid "Playing: "
 msgstr "Toistetaan: "
 
-#: redbot/cogs/streams/streamtypes.py:502
+#: redbot/cogs/streams/streamtypes.py:504
 msgid "None"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:505
+#: redbot/cogs/streams/streamtypes.py:507
 msgid "NSFW | "
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:509
+#: redbot/cogs/streams/streamtypes.py:511
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr ""
 

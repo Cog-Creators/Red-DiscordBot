@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-03-02 14:44+0000\n"
+"POT-Creation-Date: 2024-01-04 00:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -19,146 +19,146 @@ msgstr ""
 msgid "There is no ongoing trivia session in this channel."
 msgstr "In diesem Kanal läuft gerade keine Trivia Runde."
 
-#: redbot/cogs/trivia/converters.py:15
+#: redbot/cogs/trivia/converters.py:18
 msgid "`{arg}` is not a number."
 msgstr "`{arg}` ist keine Zahl."
 
-#: redbot/cogs/trivia/converters.py:17
+#: redbot/cogs/trivia/converters.py:20
 msgid "`{arg}` is not a finite number."
 msgstr "`{arg}` ist keine endliche Zahl."
 
 #: redbot/cogs/trivia/schema.py:34
 msgid "The trivia list does not contain any questions."
-msgstr ""
+msgstr "Die Trivia-Liste enthält keine Fragen."
 
 #: redbot/cogs/trivia/schema.py:39 redbot/cogs/trivia/schema.py:40
 msgid "{key} key must be a text value."
-msgstr ""
+msgstr "{key} Schlüssel muss ein Textwert sein."
 
 #: redbot/cogs/trivia/schema.py:46
 msgid "{key} key in {parent_key} must be a positive integer."
-msgstr ""
+msgstr "{key} Schlüssel in {parent_key} muss eine positiver integer sein."
 
 #: redbot/cogs/trivia/schema.py:51
 msgid "{key} key in {parent_key} must be a positive number."
-msgstr ""
+msgstr "{key} Schlüssel in {parent_key} muss eine positive Zahl sein."
 
 #: redbot/cogs/trivia/schema.py:56
 msgid "{key} key in {parent_key} must be a positive number greater than or equal to 4."
-msgstr ""
+msgstr "{key} Schlüssel in {parent_key} muss eine positive Zahl größer oder gleich 4 sein."
 
 #: redbot/cogs/trivia/schema.py:62 redbot/cogs/trivia/schema.py:65
 #: redbot/cogs/trivia/schema.py:73
 msgid "{key} key in {parent_key} must be either true or false."
-msgstr ""
+msgstr "{key} Schlüssel in {parent_key} muss entweder wahr oder falsch sein."
 
 #: redbot/cogs/trivia/schema.py:70
 msgid "{key} key in {parent_key} must be a non-negative number."
-msgstr ""
+msgstr "{key} Schlüssel in {parent_key} muss eine nicht-negative Zahl sein."
 
 #: redbot/cogs/trivia/schema.py:79
 msgid "{key} is not a key that can be specified in {parent_key}."
-msgstr ""
+msgstr "{key} ist kein Schlüssel, der in {parent_key} angegeben werden kann."
 
 #: redbot/cogs/trivia/schema.py:82
 msgid "{key} should be a 'key: value' mapping."
-msgstr ""
+msgstr "{key} sollte ein 'Schlüssel: Wert' Mapping sein."
 
 #: redbot/cogs/trivia/schema.py:86
 msgid "Value of question {key} is not a list of text values (answers)."
-msgstr ""
+msgstr "Der Wert der Frage {key} ist keine Liste von Textwerten (Antworten)."
 
 #: redbot/cogs/trivia/schema.py:92
 msgid "A key of question {key} is not a text value."
-msgstr ""
+msgstr "Ein Schlüssel der Frage {key} ist kein Textwert."
 
 #: redbot/cogs/trivia/schema.py:95
 msgid "A trivia list should be a 'key: value' mapping."
-msgstr ""
+msgstr "Eine Trivialiste sollte eine Zuordnung von 'Schlüssel: Wert' sein."
 
-#: redbot/cogs/trivia/session.py:20
+#: redbot/cogs/trivia/session.py:21
 msgid "I know this one! {answer}!"
 msgstr "Das weiß ich! {answer}!"
 
-#: redbot/cogs/trivia/session.py:21
+#: redbot/cogs/trivia/session.py:22
 msgid "Easy: {answer}."
 msgstr "Einfach: {answer}."
 
-#: redbot/cogs/trivia/session.py:22
+#: redbot/cogs/trivia/session.py:23
 msgid "Oh really? It's {answer} of course."
 msgstr "Ach ja? Es ist natürlich {answer}."
 
-#: redbot/cogs/trivia/session.py:26
+#: redbot/cogs/trivia/session.py:27
 msgid "I know this one! ||{answer}!||"
 msgstr "Das weiß ich! ||{answer}!||"
 
-#: redbot/cogs/trivia/session.py:27
+#: redbot/cogs/trivia/session.py:28
 msgid "Easy: ||{answer}.||"
 msgstr "Ganz einfach: ||{answer}.||"
 
-#: redbot/cogs/trivia/session.py:28
+#: redbot/cogs/trivia/session.py:29
 msgid "Oh really? It's ||{answer}|| of course."
 msgstr "Echt jetzt? Es ist natürlich ||{answer}||."
 
-#: redbot/cogs/trivia/session.py:32
+#: redbot/cogs/trivia/session.py:33
 msgid "To the next one I guess..."
 msgstr "Dann wohl auf zur nächsten Frage..."
 
-#: redbot/cogs/trivia/session.py:33
+#: redbot/cogs/trivia/session.py:34
 msgid "Moving on..."
 msgstr "Weiter geht's..."
 
-#: redbot/cogs/trivia/session.py:34
+#: redbot/cogs/trivia/session.py:35
 msgid "I'm sure you'll know the answer of the next one."
 msgstr "Ich bin mir sicher, dass du die nächste Antwort wissen wirst."
 
-#: redbot/cogs/trivia/session.py:35
+#: redbot/cogs/trivia/session.py:36
 msgid "😔 Next one."
 msgstr "😔 Nächste Frage."
 
-#: redbot/cogs/trivia/session.py:121
+#: redbot/cogs/trivia/session.py:122
 msgid "An unexpected error occurred in the trivia session."
-msgstr ""
+msgstr "In der Trivia-Sitzung ist ein unerwarteter Fehler aufgetreten."
 
-#: redbot/cogs/trivia/session.py:123
+#: redbot/cogs/trivia/session.py:124
 msgid "An unexpected error occurred in the trivia session.\n"
 "Check your console or logs for details."
 msgstr "In der Trivia-Session ist ein unerwarteter Fehler aufgetreten.\n"
 "Überprüfe deine Konsole oder Logs."
 
-#: redbot/cogs/trivia/session.py:143
+#: redbot/cogs/trivia/session.py:144
 msgid "Question number {num}!"
 msgstr "Frage Nummer {num}!"
 
-#: redbot/cogs/trivia/session.py:152
+#: redbot/cogs/trivia/session.py:153
 msgid "There are no more questions!"
 msgstr "Es gibt keine weiteren Fragen!"
 
-#: redbot/cogs/trivia/session.py:160
+#: redbot/cogs/trivia/session.py:161
 msgid "{trivia_list} (by {author})"
 msgstr "{trivia_list} (von {author})"
 
-#: redbot/cogs/trivia/session.py:165
+#: redbot/cogs/trivia/session.py:166
 msgid "Starting Trivia: {list_names}"
 msgstr "Starte Trivia: {list_names}"
 
-#: redbot/cogs/trivia/session.py:211
+#: redbot/cogs/trivia/session.py:212
 msgid "Guys...? Well, I guess I'll stop then."
 msgstr "Leute...? Nun gut, ich denke dann werde ich aufhören."
 
-#: redbot/cogs/trivia/session.py:222
+#: redbot/cogs/trivia/session.py:223
 msgid " **+1** for me!"
 msgstr " **+1** für mich!"
 
-#: redbot/cogs/trivia/session.py:227
+#: redbot/cogs/trivia/session.py:228
 msgid "You got it {user}! **+1** to you!"
 msgstr "Du hast es raus, {user}! **+1** für dich!"
 
-#: redbot/cogs/trivia/session.py:332
+#: redbot/cogs/trivia/session.py:334
 msgid "Congratulations {users}! You have each received {num} {currency} for winning!"
 msgstr "Glückwunsch, {users}! Sie erhälten jeweils {num} {currency} für Ihren Sieg erhalten!"
 
-#: redbot/cogs/trivia/session.py:340
+#: redbot/cogs/trivia/session.py:342
 msgid "Congratulations {user}! You have received {num} {currency} for winning!"
 msgstr "Glückwunsch, {user}! Du erhältst {num} {currency} weil du Erster gewesen bist!"
 
@@ -368,7 +368,7 @@ msgstr "Du hast den Uploadprozess abgebrochen."
 
 #: redbot/cogs/trivia/trivia.py:281
 msgid "Invalid syntax:\n"
-msgstr ""
+msgstr "Ungültiger Syntax:\n"
 
 #: redbot/cogs/trivia/trivia.py:284
 msgid "There was an error parsing the trivia list. See logs for more info."
@@ -540,7 +540,8 @@ msgstr "Ich werde die bestehende Datei nicht ersetzen."
 #: redbot/cogs/trivia/trivia.py:698
 msgid "There was an error saving the file.\n"
 "Please check the filename and try again, as it could be longer than your system supports."
-msgstr ""
+msgstr "Beim Speichern der Datei ist ein Fehler aufgetreten.\n"
+"Bitte überprüfen Sie den Dateinamen und versuchen Sie es erneut, da die Möglichkeit besteht das Ihr System die Länge des Dateinamens nicht Unterstützt."
 
 #: redbot/cogs/trivia/trivia.py:705
 msgid "Saved Trivia list as {filename}."

@@ -138,7 +138,7 @@ html_context = {
     "display_github": True,
     "github_user": "Cog-Creators",
     "github_repo": "Red-DiscordBot",
-    "github_version": "V3/develop/docs/",
+    "github_version": "V3/develop",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -274,7 +274,7 @@ class IgnoreCoroSubstitution(SphinxTransform):
     def apply(self, **kwargs) -> None:
         for ref in self.document.traverse(nodes.substitution_reference):
             if ref["refname"] == "coro":
-                ref.replace_self(nodes.Text("", ""))
+                ref.replace_self(nodes.Text(""))
 
 
 def setup(app):

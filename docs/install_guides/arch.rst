@@ -18,20 +18,20 @@ Install the pre-requirements with pacman:
 
     sudo pacman -Syu git jre17-openjdk-headless base-devel nano
 
-On Arch Linux, Python 3.9 can be installed from the Arch User Repository (AUR) from the ``python39`` package.
+On Arch Linux, Python 3.10 can be installed from the Arch User Repository (AUR) from the ``python310`` package.
 
-The manual build process is the Arch-supported install method for AUR packages. You can install ``python39`` package with the following commands:
+The manual build process is the Arch-supported install method for AUR packages. You can install ``python310`` package with the following commands:
 
 .. prompt:: bash
 
-    git clone https://aur.archlinux.org/python39.git /tmp/python39
-    cd /tmp/python39
+    git clone https://aur.archlinux.org/python310.git /tmp/python310
+    cd /tmp/python310
     makepkg -sicL
     cd -
-    rm -rf /tmp/python39
+    rm -rf /tmp/python310
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv3.9.rst
+.. include:: _includes/create-env-with-venv3.10.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst
