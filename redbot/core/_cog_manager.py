@@ -17,7 +17,7 @@ import discord
 from . import commands
 from .config import Config
 from .i18n import Translator, cog_i18n
-from .data_manager import cog_data_path
+from .data_manager import cog_data_path, data_path
 
 from .utils.chat_formatting import box, pagify, humanize_list, inline
 
@@ -353,6 +353,28 @@ class CogManagerUI(commands.Cog):
         """
         if not path.is_dir():
             await ctx.send(_("That path does not exist or does not point to a valid directory."))
+            return
+
+        path = path.resolve()
+
+        # Path.is_relative_to() is 3.9+
+        bot_data_path = data_path()
+        if path == bot_data_path or bot_data_path in path.parents:
+            await ctx.send(
+                _("A cog path cannot be part of bot's data path ({bot_data_path}).").format(
+                    bot_data_path=inline(str(bot_data_path))
+                )
+            )
+            return
+
+        # Path.is_relative_to() is 3.9+
+        core_path = ctx.bot._cog_mgr.CORE_PATH
+        if path == core_path or core_path in path.parents:
+            await ctx.send(
+                _("A cog path cannot be part of bot's core path ({core_path}).").format(
+                    core_path=inline(str(core_path))
+                )
+            )
             return
 
         if (path / "__init__.py").is_file():
