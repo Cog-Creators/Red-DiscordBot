@@ -38,6 +38,7 @@ TRIVIA_LIST_SCHEMA = Schema(
     {
         Optional("$schema"): And(str, error=_("{key} key must be a text value.")),
         Optional("AUTHOR"): And(str, error=_("{key} key must be a text value.")),
+        Optional("DESCRIPTION"): And(str, error=_("{key} key must be a text value.")),
         Optional("CONFIG"): And(
             {
                 Optional("max_score"): And(
