@@ -646,7 +646,7 @@ class ServerManager:
             log.info(
                 "Lavalink version outdated, triggering update from %s to %s...",
                 self._lavalink_version,
-                self.JAR_VERSION
+                self.JAR_VERSION,
             )
             await self._download_jar()
 
