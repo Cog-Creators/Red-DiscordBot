@@ -15,6 +15,7 @@ we recommend **Ubuntu 22.04 LTS**.
    mac
    alma-linux-8
    alma-linux-9
+   amazon-linux-2023
    arch
    centos-7
    centos-stream-8
