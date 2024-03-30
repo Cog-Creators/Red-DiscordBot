@@ -604,29 +604,22 @@ class ServerManager:
         stdout = (await _proc.communicate())[0]
         if (branch := LAVALINK_BRANCH_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError("Could not find 'Branch' line in the `--version` output.")
         if (java := LAVALINK_JAVA_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError("Could not find 'JVM' line in the `--version` output.")
         if (lavaplayer := LAVALINK_LAVAPLAYER_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError("Could not find 'Lavaplayer' line in the `--version` output.")
         if (buildtime := LAVALINK_BUILD_TIME_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError("Could not find 'Build time' line in the `--version` output.")
 
-        if (build := LAVALINK_BUILD_LINE.search(stdout)) is not None:
-            try:
-                self._lavalink_version = LavalinkOldVersion.from_version_output(stdout)
-            except ValueError:
-                # Output is unexpected, suspect corrupted jarfile
-                return False
-        else:
-            try:
-                self._lavalink_version = LavalinkVersion.from_version_output(stdout)
-            except ValueError:
-                # Output is unexpected, suspect corrupted jarfile
-                return False
+        self._lavalink_version = (
+            LavalinkOldVersion.from_version_output(stdout)
+            if LAVALINK_BUILD_LINE.search(stdout) is not None
+            else LavalinkVersion.from_version_output(stdout)
+        )
         date = buildtime["build_time"].decode()
         date = date.replace(".", "/")
         self._lavalink_branch = branch["branch"].decode()
@@ -637,7 +630,24 @@ class ServerManager:
         return self._up_to_date
 
     async def maybe_download_jar(self):
-        if not (self.lavalink_jar_file.exists() and await self._is_up_to_date()):
+        if not self.lavalink_jar_file.exists():
+            log.info("Triggering first-time download of Lavalink...")
+            await self._download_jar()
+            return
+
+        try:
+            up_to_date = await self._is_up_to_date()
+        except ValueError as exc:
+            log.warning("Failed to get Lavalink version: %s\nTriggering update...", exc)
+            await self._download_jar()
+            return
+
+        if not up_to_date:
+            log.info(
+                "Lavalink version outdated, triggering update from %s to %s...",
+                self._lavalink_version,
+                self.JAR_VERSION
+            )
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: Optional[float] = None):
