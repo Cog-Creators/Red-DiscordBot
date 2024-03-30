@@ -1,4 +1,5 @@
 import itertools
+from typing import Optional
 
 import pytest
 
@@ -43,30 +44,37 @@ def test_old_ll_version_parsing(
     raw_version: str, raw_build_number: str, expected: LavalinkOldVersion
 ) -> None:
     line = b"Version: %b\nBuild: %b" % (raw_version.encode(), raw_build_number.encode())
-    assert LavalinkOldVersion.from_version_output(line)
+    actual = LavalinkOldVersion.from_version_output(line)
+    assert actual == expected
+    assert str(actual) == f"{raw_version}_{raw_build_number}"
 
 
 @pytest.mark.parametrize(
-    "raw_version,expected",
+    "raw_version,expected_str,expected",
     (
         # older version format that allowed stripped `.0` and no dot in `rc.4`, used until LL 3.6
-        ("3.5-rc4", LavalinkVersion(3, 5, rc=4)),
-        ("3.5", LavalinkVersion(3, 5)),
+        ("3.5-rc4", "3.5.0-rc.4", LavalinkVersion(3, 5, rc=4)),
+        ("3.5", "3.5.0", LavalinkVersion(3, 5)),
         # newer version format
-        ("3.6.0-rc.1", LavalinkVersion(3, 6, 0, rc=1)),
+        ("3.6.0-rc.1", None, LavalinkVersion(3, 6, 0, rc=1)),
         # downstream RC version with `+red.N` suffix
-        ("3.7.5-rc.1+red.1", LavalinkVersion(3, 7, 5, rc=1, red=1)),
-        ("3.7.5-rc.1+red.123", LavalinkVersion(3, 7, 5, rc=1, red=123)),
+        ("3.7.5-rc.1+red.1", None, LavalinkVersion(3, 7, 5, rc=1, red=1)),
+        ("3.7.5-rc.1+red.123", None, LavalinkVersion(3, 7, 5, rc=1, red=123)),
         # upstream stable version
-        ("3.7.5", LavalinkVersion(3, 7, 5)),
+        ("3.7.5", None, LavalinkVersion(3, 7, 5)),
         # downstream stable version with `+red.N` suffix
-        ("3.7.5+red.1", LavalinkVersion(3, 7, 5, red=1)),
-        ("3.7.5+red.123", LavalinkVersion(3, 7, 5, red=123)),
+        ("3.7.5+red.1", None, LavalinkVersion(3, 7, 5, red=1)),
+        ("3.7.5+red.123", None, LavalinkVersion(3, 7, 5, red=123)),
     ),
 )
-def test_ll_version_parsing(raw_version: str, expected: LavalinkVersion) -> None:
+def test_ll_version_parsing(
+    raw_version: str, expected_str: Optional[str], expected: LavalinkVersion
+) -> None:
     line = b"Version: " + raw_version.encode()
-    assert LavalinkVersion.from_version_output(line)
+    actual = LavalinkVersion.from_version_output(line)
+    expected_str = expected_str or raw_version
+    assert actual == expected
+    assert str(actual) == expected_str
 
 
 def test_ll_version_comparison() -> None:
