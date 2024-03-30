@@ -40,7 +40,7 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-orjson==3.9.15
+orjson==3.10.0
     # via -r base.in
 packaging==24.0
     # via -r base.in
@@ -54,7 +54,7 @@ python-dateutil==2.9.0.post0
     # via -r base.in
 pyyaml==6.0.1
     # via -r base.in
-rapidfuzz==3.6.2
+rapidfuzz==3.7.0
     # via -r base.in
 red-commons==1.0.0
     # via
