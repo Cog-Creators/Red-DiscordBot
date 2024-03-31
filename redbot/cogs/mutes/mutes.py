@@ -1494,6 +1494,80 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if issue_list:
             await self.handle_issues(ctx, issue_list)
 
+
+    @commands.command(usage="<users...> [reason]", hidden=True)
+    @commands.guild_only()
+    @commands.mod_or_permissions(manage_roles=True)
+    async def forceunmute(
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[discord.Member],
+        *,
+        reason: Optional[str] = None,
+    ):
+        """Force Unmute users who have had channel overwrite mutes in every channel.
+
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
+        `[reason]` is the reason for the unmute.
+        """
+        if not users:
+            return await ctx.send_help()
+        if ctx.me in users:
+            return await ctx.send(_("You cannot unmute me."))
+        if ctx.author in users:
+            return await ctx.send(_("You cannot unmute yourself."))
+        if not await self._check_for_mute_role(ctx):
+            return
+        async with ctx.typing():
+            guild = ctx.guild
+            author = ctx.author
+            issue_list = []
+            success_list = []
+            if guild.id in self._channel_mute_events:
+                self._channel_mute_events[guild.id].clear()
+            else:
+                self._channel_mute_events[guild.id] = asyncio.Event()
+            for user in users:
+                tasks = []
+                for channel in guild.channels:
+                    tasks.append(self.channel_unmute_user(guild, channel, author, user, reason))
+                results = await bounded_gather(*tasks)
+                for result in results:
+                    if not result.success:
+                        issue_list.append(result)
+                if not all(t.success for t in results):
+                    success_list.append(user)
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        ctx.message.created_at,
+                        "sunmute",
+                        user,
+                        author,
+                        reason,
+                        until=None,
+                    )
+                    await self._send_dm_notification(
+                        user, author, guild, _("Server unmute"), reason
+                    )
+                await self.config.member(user).clear()
+
+        self._channel_mute_events[guild.id].set()
+        if success_list:
+            if ctx.guild.id in self._server_mutes and self._server_mutes[ctx.guild.id]:
+                await self.config.guild(ctx.guild).muted_users.set(
+                    self._server_mutes[ctx.guild.id]
+                )
+            else:
+                await self.config.guild(ctx.guild).muted_users.clear()
+            await ctx.send(
+                _("{users} unmuted in this server.").format(
+                    users=humanize_list([f"{u}" for u in success_list])
+                )
+            )
+        if issue_list:
+            await self.handle_issues(ctx, issue_list)
+
     @commands.mod_or_permissions(manage_roles=True)
     @commands.command(name="unmutechannel", aliases=["channelunmute"], usage="<users...> [reason]")
     @commands.bot_has_guild_permissions(manage_permissions=True)
