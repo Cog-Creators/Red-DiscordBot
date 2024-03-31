@@ -1532,7 +1532,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 for result in results:
                     if not result.success:
                         issue_list.append(result)
-                if not all(t.success for t in results):
+                if any(t.success for t in results):
                     success_list.append(user)
                     await modlog.create_case(
                         self.bot,
