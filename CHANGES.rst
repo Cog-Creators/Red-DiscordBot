@@ -1,5 +1,44 @@
 .. Red changelogs
 
+Redbot 3.5.8 (2024-03-31)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :TODO:
+
+End-user changelog
+------------------
+
+Additions
+*********
+
+- **Cogs - Trivia** - Trivia lists can now have a description as documented in `guide_trivia_list_creation` (:issue:`5897`)
+- :cool: **Cogs - Trivia** - Added ``[p]trivia info`` command for getting information about the specified Trivia list, including its setting overrides (:issue:`3978`, :issue:`5897`)
+
+Changes
+*******
+
+- **Core - Bot Commands** - The ``[p]addpath`` command will now detect potentially incorrect paths and prompt for confirmation (:issue:`6330`)
+- **Core - Bot Commands** - The ``[p]addpath`` command will now error out when the user tries adding a path that's part of the core path or instance's data path (:issue:`6330`)
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6333`)
+- **Cogs - Audio** - The cog will now log the reason for Lavalink.jar being re-downloaded (:issue:`6334`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed YT playback (:TODO: issue number)
+- **Cogs - Audio** - Fixed Lavalink.jar downloading for RC and Red-specific versions (:issue:`6334`)
+
+Documentation changes
+---------------------
+
+Additions
+*********
+
+- |cool| Added install instructions for Amazon Linux 2023 (:issue:`6331`)
+
+----
+
 Redbot 3.5.7 (2024-03-24)
 =========================
 
