@@ -834,7 +834,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if true_or_false:
             await ctx.send(_("Okay I will enforce role mutes before muting users."))
         else:
-            await ctx.send(_("Okay I will allow channel overwrites for muting users."))
+            await ctx.send(_("Okay I will use timeouts for muting users."))
 
     @muteset.command(name="settings", aliases=["showsettings"])
     @commands.mod_or_permissions(manage_channels=True)
