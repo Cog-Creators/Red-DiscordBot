@@ -766,9 +766,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return
         mute_role = await self.config.guild(guild).mute_role()
         if not mute_role:
-            # channel overwrite mutes would quickly allow a malicious
-            # user to globally rate limit the bot therefore we are not
-            # going to support re-muting users via channel overwrites
+            # timeouts already restore on rejoin
             return
         await i18n.set_contextual_locales_from_guild(self.bot, guild)
         if guild.id in self._server_mutes:
