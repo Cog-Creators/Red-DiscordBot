@@ -94,13 +94,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "dm": False,
             "show_mod": False,
         }
-        # Tbh I would rather force everyone to use role mutes.
-        # I also honestly think everyone would agree they're the
-        # way to go. If for whatever reason someone wants to
-        # enable channel overwrite mutes for their bot they can.
-        # Channel overwrite logic still needs to be in place
-        # for channel mutes methods.
-        self.config.register_global(force_role_mutes=False, schema_version=0)
+        self.config.register_global(schema_version=0)
         self.config.register_guild(**default_guild)
         self.config.register_member(perms_cache={})
         self.config.register_channel(muted_users={})
@@ -823,18 +817,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 )
             )
 
-    @muteset.command(name="forcerole")
-    @commands.is_owner()
-    async def force_role_mutes(self, ctx: commands.Context, true_or_false: bool):
-        """
-        Whether or not to force role only mutes on the bot
-        """
-        await self.config.force_role_mutes.set(true_or_false)
-        if true_or_false:
-            await ctx.send(_("Okay I will enforce role mutes before muting users."))
-        else:
-            await ctx.send(_("Okay I will allow the use of timeouts for muting users."))
-
     @muteset.command(name="settings", aliases=["showsettings"])
     @commands.mod_or_permissions(manage_channels=True)
     async def show_mutes_settings(self, ctx: commands.Context):
@@ -1037,7 +1019,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         command_1 = f"{ctx.clean_prefix}muteset role"
         command_2 = f"{ctx.clean_prefix}muteset makerole"
         msg = _(
-            "This server does not have a mute role setup. "
+            "This server does not have a mute role setup and I do not have permission to timeout users. "
             " You can setup a mute role with {command_1} or"
             " {command_2} if you just want a basic role created setup.\n\n"
         ).format(
@@ -1046,8 +1028,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         )
         mute_role_id = await self.config.guild(ctx.guild).mute_role()
         mute_role = ctx.guild.get_role(mute_role_id)
-        force_role_mutes = await self.config.force_role_mutes()
-        if force_role_mutes and not mute_role:
+        timeout_perms = ctx.channel.permissions_for(ctx.me).moderate_members
+        if not timeout_perms and not mute_role:
             await ctx.send(msg)
             return False
 
