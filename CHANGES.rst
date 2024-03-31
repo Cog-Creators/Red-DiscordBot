@@ -12,7 +12,7 @@ End-user changelog
 Additions
 *********
 
-- **Cogs - Trivia** - Trivia lists can now have a description as documented in `guide_trivia_list_creation` (:issue:`5897`)
+- **Cogs - Trivia** - Trivia lists can now have a description as documented in :ref:`guide_trivia_list_creation` (:issue:`5897`)
 - :cool: **Cogs - Trivia** - Added ``[p]trivia info`` command for getting information about the specified Trivia list, including its setting overrides (:issue:`3978`, :issue:`5897`)
 
 Changes
