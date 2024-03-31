@@ -160,10 +160,16 @@ class LavalinkOldVersion:
     def from_version_output(cls, output: bytes) -> Self:
         build_match = LAVALINK_BUILD_LINE.search(output)
         if build_match is None:
-            raise ValueError("Could not find Build line in the given `--version` output.")
+            raise ValueError(
+                "Could not find 'Build' line in the given `--version` output,"
+                " or invalid build number given."
+            )
         version_match = LAVALINK_VERSION_LINE_PRE35.search(output)
         if version_match is None:
-            raise ValueError("Could not find Version line in the given `--version` output.")
+            raise ValueError(
+                "Could not find 'Version' line in the given `--version` output,"
+                " or invalid version number given."
+            )
         return cls(
             raw_version=version_match["version"].decode(),
             build_number=int(build_match["build"]),
@@ -236,7 +242,10 @@ class LavalinkVersion:
             # >=3.5-rc4, <3.6
             match = LAVALINK_VERSION_LINE_PRE36.search(output)
         if match is None:
-            raise ValueError("Could not find Version line in the given `--version` output.")
+            raise ValueError(
+                "Could not find 'Version' line in the given `--version` output,"
+                " or invalid version number given."
+            )
         return LavalinkVersion(
             major=int(match["major"]),
             minor=int(match["minor"]),
@@ -604,16 +613,28 @@ class ServerManager:
         stdout = (await _proc.communicate())[0]
         if (branch := LAVALINK_BRANCH_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            raise ValueError("Could not find 'Branch' line in the `--version` output.")
+            raise ValueError(
+                "Could not find 'Branch' line in the `--version` output,"
+                " or invalid branch name given."
+            )
         if (java := LAVALINK_JAVA_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            raise ValueError("Could not find 'JVM' line in the `--version` output.")
+            raise ValueError(
+                "Could not find 'JVM' line in the `--version` output,"
+                " or invalid version number given."
+            )
         if (lavaplayer := LAVALINK_LAVAPLAYER_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            raise ValueError("Could not find 'Lavaplayer' line in the `--version` output.")
+            raise ValueError(
+                "Could not find 'Lavaplayer' line in the `--version` output,"
+                " or invalid version number given."
+            )
         if (buildtime := LAVALINK_BUILD_TIME_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            raise ValueError("Could not find 'Build time' line in the `--version` output.")
+            raise ValueError(
+                "Could not find 'Build time' line in the `--version` output,"
+                " or invalid build time given."
+            )
 
         self._lavalink_version = (
             LavalinkOldVersion.from_version_output(stdout)
