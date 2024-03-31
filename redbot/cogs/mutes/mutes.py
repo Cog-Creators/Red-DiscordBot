@@ -1,5 +1,4 @@
 import asyncio
-import contextlib
 import logging
 from abc import ABC
 from datetime import datetime, timedelta, timezone
@@ -18,8 +17,7 @@ from redbot.core.utils.chat_formatting import (
     pagify,
 )
 from redbot.core.utils.mod import get_audit_reason
-from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from redbot.core.utils.views import ConfirmView, SimpleMenu
 
 from .converters import MuteTime
 from .models import ChannelMuteResponse, MuteResponse
@@ -1104,8 +1102,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         msg += "\n"
 
         if msg:
+            msgs = []
             for page in pagify(msg):
-                await ctx.maybe_send_embed(page)
+                if ctx.embed_requested():
+                    msgs.append(
+                        discord.Embed(description=page, colour=await self.bot.get_embed_color(ctx))
+                    )
+                else:
+                    msgs.append(page)
+            await SimpleMenu(msgs).start(ctx)
             return
         await ctx.maybe_send_embed(_("There are no mutes on this server right now."))
 
@@ -1298,37 +1303,16 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         message = _(
             "Some users could not be properly muted or unmuted. Would you like to see who, where, and why?"
         )
-
+        view = ConfirmView(ctx.author)
         can_react = can_user_react_in(ctx.me, ctx.channel)
         if not can_react:
             message += " (y/n)"
-        query: discord.Message = await ctx.send(message)
-        if can_react:
-            # noinspection PyAsyncCall
-            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
-            pred = ReactionPredicate.yes_or_no(query, ctx.author)
-            event = "reaction_add"
-        else:
-            pred = MessagePredicate.yes_or_no(ctx)
-            event = "message"
-        try:
-            await ctx.bot.wait_for(event, check=pred, timeout=30)
-        except asyncio.TimeoutError:
-            with contextlib.suppress(discord.NotFound):
-                await query.delete()
-            return
-
-        if not pred.result:
-            if can_react:
-                with contextlib.suppress(discord.NotFound):
-                    await query.delete()
-            else:
-                await ctx.send(_("OK then."))
+        view.message = await ctx.send(message, view=view)
+        await view.wait()
+        if not view.result:
+            await ctx.send(_("OK then."))
             return
         else:
-            if can_react:
-                with contextlib.suppress(discord.Forbidden):
-                    await query.clear_reactions()
             issue = "\n".join(self.parse_issues(issue) for issue in issue_list)
             resp = pagify(issue)
             await ctx.send_interactive(resp)
