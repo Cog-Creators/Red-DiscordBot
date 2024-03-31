@@ -1182,7 +1182,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if len(success_list) > 1:
                 msg = _("{users} have been timed out in this server{time}.")
             await ctx.send(
-                msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
+                msg.format(users=humanize_list([f"`{u}`" for u in success_list]), time=time)
             )
         else:
             await ctx.send(_("None of the users provided could be muted properly."))
@@ -1273,7 +1273,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if len(success_list) > 1:
                 msg = _("{users} have been muted in this server{time}.")
             await ctx.send(
-                msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
+                msg.format(users=humanize_list([f"`{u}`" for u in success_list]), time=time)
             )
         if issue_list:
             await self.handle_issues(ctx, issue_list)
@@ -1424,12 +1424,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if len(success_list) > 1:
                 msg = _("{users} have been muted in this channel{time}.")
             await ctx.send(
-                msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
+                msg.format(users=humanize_list([f"`{u}`" for u in success_list]), time=time)
             )
         if issue_list:
-            msg = _("The following users could not be muted\n")
+            msg = _("The following users could not be muted:\n")
             for issue in issue_list:
-                msg += f"{issue.user}: {issue.reason}\n"
+                msg += f"- `{issue.user}`: {issue.reason}\n"
             await ctx.send_interactive(pagify(msg))
 
     @commands.command(usage="<users...> [reason]")
@@ -1498,7 +1498,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 await self.config.guild(ctx.guild).muted_users.clear()
             await ctx.send(
                 _("{users} unmuted in this server.").format(
-                    users=humanize_list([f"{u}" for u in success_list])
+                    users=humanize_list([f"`{u}`" for u in success_list])
                 )
             )
         if issue_list:
@@ -1572,7 +1572,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 await self.config.guild(ctx.guild).muted_users.clear()
             await ctx.send(
                 _("{users} unmuted in this server.").format(
-                    users=humanize_list([f"{u}" for u in success_list])
+                    users=humanize_list([f"`{u}`" for u in success_list])
                 )
             )
         if issue_list:
@@ -1638,13 +1638,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 await self.config.channel(channel).muted_users.clear()
             await ctx.send(
                 _("{users} unmuted in this channel.").format(
-                    users=humanize_list([f"{u}" for u in success_list])
+                    users=humanize_list([f"`{u}`" for u in success_list])
                 )
             )
         if issue_list:
-            msg = _("The following users could not be unmuted\n")
+            msg = _("The following users could not be unmuted:\n")
             for issue in issue_list:
-                msg += f"{issue.user}: {issue.reason}\n"
+                msg += f"- `{issue.user}`: {issue.reason}\n"
             await ctx.send_interactive(pagify(msg))
 
     async def mute_user(
