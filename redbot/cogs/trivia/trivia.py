@@ -762,14 +762,6 @@ class Trivia(commands.Cog):
         trivia_dict = yaml.safe_load(buffer)
         TRIVIA_LIST_SCHEMA.validate(trivia_dict)
 
-        for key in ("AUTHOR", "DESCRIPTION"):
-            if len(trivia_dict.get(key, "")) > 1024:
-                return await ctx.send(
-                    _("Trivia list's {key} key must be under 1024 characters.").format(
-                        key=inline(key)
-                    )
-                )
-
         buffer.seek(0)
         try:
             with file.open("wb") as fp:
