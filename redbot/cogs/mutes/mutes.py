@@ -44,6 +44,11 @@ MUTE_UNMUTE_ISSUES = {
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."
     ),
+    "permissions_issue_guild": _(
+        "Failed to mute or unmute user. I need the Timeout Members "
+        "permission and the user I'm muting must be "
+        "lower than myself in the role hierarchy."
+    ),
     "permissions_issue_channel": _(
         "Failed to mute or unmute user. I need the Manage Permissions permission."
     ),
