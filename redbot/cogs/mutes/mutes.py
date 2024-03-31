@@ -1629,46 +1629,43 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """
         ret: MuteResponse = MuteResponse(success=False, reason=None, user=user)
 
-        mute_role = await self.config.guild(guild).mute_role()
+        mute_role_id = await self.config.guild(guild).mute_role()
         if not await self.is_allowed_by_hierarchy(guild, author, user):
             ret.reason = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
             return ret
 
-        if mute_role:
-            role = guild.get_role(mute_role)
-            if not role:
-                ret.reason = _(MUTE_UNMUTE_ISSUES["role_missing"])
-                return ret
-            if role not in user.roles:
-                ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
-                return ret
+        reasons = []
+        mute_role = guild.get_role(mute_role_id)
 
+        if mute_role and mute_role in user.roles:
             if guild.id in self._server_mutes:
                 if user.id in self._server_mutes[guild.id]:
                     del self._server_mutes[guild.id][user.id]
-            if not guild.me.guild_permissions.manage_roles or role >= guild.me.top_role:
-                ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_role"])
-                return ret
-            try:
-                await user.remove_roles(role, reason=reason)
-            except discord.errors.Forbidden:
-                ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_role"])
-                return ret
-            ret.success = True
-            return ret
-        else:
-            if not user.is_timed_out():
-                ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
-                return ret
+            if not guild.me.guild_permissions.manage_roles or mute_role >= guild.me.top_role:
+                reasons.append(_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]))
+            else:
+                try:
+                    await user.remove_roles(mute_role, reason=reason)
+                    ret.success = True
+                except discord.errors.Forbidden:
+                    reasons.append(_(MUTE_UNMUTE_ISSUES["permissions_issue_role"]))
+
+        if user.is_timed_out():
             if guild.me.guild_permissions.moderate_members:
                 try:
                     await user.edit(timed_out_until=None, reason=reason)
                     ret.success = True
                 except Exception:
-                    pass
+                    reasons.append(_(MUTE_UNMUTE_ISSUES["permissions_issue_guild"]))
             else:
-                ret.reason = _("I lack the moderate members permission.")
-            return ret
+                reasons.append(_("I lack the timeout members permission."))
+
+        if not reasons and not ret.success:
+            ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
+        elif reasons:
+            ret.reason = "\n".join(reasons)
+
+        return ret
 
     async def channel_mute_user(
         self,
