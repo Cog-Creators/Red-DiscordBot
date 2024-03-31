@@ -342,13 +342,13 @@ class Trivia(commands.Cog):
                 authors.append(trivia_dict.pop("AUTHOR", None))
                 continue
             return
+        config = trivia_dict.pop("CONFIG", None)
         if not trivia_dict:
             await ctx.send(
                 _("The trivia list was parsed successfully, however it appears to be empty!")
             )
             return
         settings = await self.config.guild(ctx.guild).all()
-        config = trivia_dict.pop("CONFIG", None)
         if config and settings["allow_override"]:
             settings.update(config)
         settings["lists"] = dict(zip(categories, reversed(authors)))
