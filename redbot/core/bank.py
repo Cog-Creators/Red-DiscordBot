@@ -1085,3 +1085,4 @@ def cost(amount: int):
             return coro_or_command
 
     return deco
+
