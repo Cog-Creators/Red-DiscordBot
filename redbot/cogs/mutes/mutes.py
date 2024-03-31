@@ -1296,7 +1296,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         This is to handle the various issues that can return for each user/channel
         """
         message = _(
-            "Some users could not be properly muted. Would you like to see who, where, and why?"
+            "Some users could not be properly muted or unmuted. Would you like to see who, where, and why?"
         )
 
         can_react = can_user_react_in(ctx.me, ctx.channel)
