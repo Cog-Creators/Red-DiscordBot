@@ -341,9 +341,7 @@ class Economy(commands.Cog):
                         pos=humanize_number(pos) if pos else pos,
                     )
                 )
-                payload = bank.PaydayClaimInformation(
-                    author, ctx.channel, credit_amount
-                )
+                payload = bank.PaydayClaimInformation(author, ctx.channel, credit_amount)
                 self.bot.dispatch("red_economy_payday_claim", payload)
 
             else:
@@ -407,9 +405,7 @@ class Economy(commands.Cog):
                         pos=humanize_number(pos) if pos else pos,
                     )
                 )
-                payload = bank.PaydayClaimInformation(
-                    author, ctx.channel, credit_amount
-                )
+                payload = bank.PaydayClaimInformation(author, ctx.channel, credit_amount)
                 self.bot.dispatch("red_economy_payday_claim", payload)
 
             else:
