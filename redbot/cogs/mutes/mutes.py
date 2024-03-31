@@ -1147,14 +1147,20 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         until = None
         if duration:
             until = datetime.now(timezone.utc) + duration
-            time = _(" for {duration}").format(duration=humanize_timedelta(timedelta=duration))
+            length = humanize_timedelta(timedelta=duration)
+            time = _(" for {length} until {duration}").format(
+                length=length, duration=discord.utils.format_dt(until)
+            )
+
         else:
             default_duration = await self.config.guild(ctx.guild).default_time()
             if default_duration:
                 until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                time = _(" for {duration}").format(
-                    duration=humanize_timedelta(timedelta=timedelta(seconds=default_duration))
+                length = humanize_timedelta(seconds=default_duration)
+                time = _(" for {length} until {duration}").format(
+                    length=length, duration=discord.utils.format_dt(until)
                 )
+
         success_list = []
         issues_list = []
         for member in users:
@@ -1223,13 +1229,19 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             until = None
             if duration:
                 until = datetime.now(timezone.utc) + duration
-                time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
+                length = humanize_timedelta(timedelta=duration)
+                time = _(" for {length} until {duration}").format(
+                    length=length, duration=discord.utils.format_dt(until)
+                )
 
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
                     until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
+                    length = humanize_timedelta(seconds=default_duration)
+                    time = _(" for {length} until {duration}").format(
+                        length=length, duration=discord.utils.format_dt(until)
+                    )
 
             author = ctx.message.author
             guild = ctx.guild
