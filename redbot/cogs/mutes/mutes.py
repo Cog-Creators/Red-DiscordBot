@@ -87,7 +87,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self.bot = bot
         self.config = Config.get_conf(self, 49615220001, force_registration=True)
         default_guild = {
-            "sent_instructions": False,
             "mute_role": None,
             "notification_channel": None,
             "muted_users": {},
@@ -902,9 +901,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.guild(ctx.guild).mute_role.set(None)
             if ctx.guild.id in self.mute_role_cache:
                 del self.mute_role_cache[ctx.guild.id]
-            await self.config.guild(ctx.guild).sent_instructions.set(False)
-            # reset this to warn users next time they may have accidentally
-            # removed the mute role
             await ctx.send(_("Discord Timeouts will be used for mutes instead."))
         else:
             if role >= ctx.author.top_role:
