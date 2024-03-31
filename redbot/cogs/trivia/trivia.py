@@ -342,6 +342,7 @@ class Trivia(commands.Cog):
                 authors.append(trivia_dict.pop("AUTHOR", None))
                 continue
             return
+        trivia_dict.pop("$schema", None)
         config = trivia_dict.pop("CONFIG", None)
         if not trivia_dict:
             await ctx.send(
