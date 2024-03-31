@@ -30,8 +30,8 @@ T_ = i18n.Translator("Mutes", __file__)
 _ = lambda s: s
 
 MUTE_UNMUTE_ISSUES = {
-    "already_muted": _("That user is already muted in this channel."),
-    "already_unmuted": _("That user is not muted in this channel."),
+    "already_muted": _("That user is already muted in {location}."),
+    "already_unmuted": _("That user is not muted in {location}."),
     "hierarchy_problem": _(
         "I cannot let you do that. You are not higher than the user in the role hierarchy."
     ),
@@ -50,7 +50,7 @@ MUTE_UNMUTE_ISSUES = {
         "lower than myself in the role hierarchy."
     ),
     "permissions_issue_channel": _(
-        "Failed to mute or unmute user. I need the Manage Permissions permission."
+        "Failed to mute or unmute user. I need the Manage Permissions permission in {location}."
     ),
     "left_guild": _("The user has left the server while applying an overwrite."),
     "unknown_channel": _("The channel I tried to mute or unmute the user in isn't found."),
@@ -1768,7 +1768,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 reasons.append(_("I lack the timeout members permission."))
 
         if not reasons and not ret.success:
-            ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
+            ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"]).format(location=_("this server"))
         elif reasons:
             ret.reason = "\n".join(reasons)
 
@@ -1824,7 +1824,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         # We want to continue if this is a new mute or a mute upgrade,
         # otherwise we should return with failure.
         if current_mute is not None and not is_mute_upgrade:
-            ret.reason = _(MUTE_UNMUTE_ISSUES["already_muted"])
+            ret.reason = _(MUTE_UNMUTE_ISSUES["already_muted"]).format(location=channel.mention)
             return ret
         new_overs: Dict[str, Optional[bool]] = {"speak": False}
         if not voice_mute:
@@ -1844,7 +1844,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         ret.old_overs = old_overs
         overwrites.update(**new_overs)
         if not channel.permissions_for(guild.me).manage_permissions:
-            ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"])
+            ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]).format(
+                location=channel.mention
+            )
             return ret
 
         self._channel_mutes[channel.id][user.id] = {
@@ -1880,7 +1882,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 return ret
 
         except discord.Forbidden:
-            ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"])
+            ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]).format(
+                location=channel.mention
+            )
             return ret
 
         if move_channel:
@@ -1944,7 +1948,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if channel.id in self._channel_mutes and user.id in self._channel_mutes[channel.id]:
             current_mute = self._channel_mutes[channel.id].pop(user.id)
         else:
-            ret.reason = f"{channel.mention} " + _(MUTE_UNMUTE_ISSUES["already_unmuted"])
+            ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"]).format(location=channel.mention)
             return ret
 
         if not current_mute["voice_mute"] and voice_mute:
@@ -1954,7 +1958,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return ret
 
         if not channel.permissions_for(guild.me).manage_permissions:
-            ret.reason = f"{channel.mention} " + _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"])
+            ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"]).format(
+                location=channel.mention
+            )
             return ret
 
         try:
@@ -1983,7 +1989,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 # catch all discord errors because the result will be the same
                 # we successfully muted by this point but can't move the user
                 ret.success = True
-                ret.reason = f"{channel.mention} " + _(MUTE_UNMUTE_ISSUES["voice_mute_permission"])
+                ret.reason = _(MUTE_UNMUTE_ISSUES["voice_mute_permission"])
                 return ret
         ret.success = True
         return ret
