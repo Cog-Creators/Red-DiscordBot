@@ -439,7 +439,9 @@ class Trivia(commands.Cog):
         embed.add_field(name=_("Question count"), value=len(data))
         embed.add_field(
             name=_("Custom"),
-            value=category in [p.resolve().stem for p in cog_data_path(self).glob("*.yaml")],
+            value=_format_setting_value(
+                any(category == p.resolve().stem for p in cog_data_path(self).glob("*.yaml"))
+            ),
         )
         embed.add_field(
             name=_("Description"),
