@@ -1201,7 +1201,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @commands.command(usage="<users...> [time_and_reason]")
     @commands.guild_only()
     @commands.mod_or_permissions(manage_roles=True, moderate_members=True)
-    @commands.mod_or_permissions(manage_roles=True)
     async def mute(
         self,
         ctx: commands.Context,
