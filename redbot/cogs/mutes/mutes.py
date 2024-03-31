@@ -1464,10 +1464,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 self._channel_mute_events[guild.id] = asyncio.Event()
             for user in users:
                 response = await self.unmute_user(guild, author, user, audit_reason)
-                if response.reason:
-                    # This is incase we couldn't move the user from voice channels
-                    issue_list.append(response)
+
                 if response.success:
+                    if response.reason:
+                        # This is incase we couldn't move the user from voice channels
+                        issue_list.append(response)
                     success_list.append(user)
                     await modlog.create_case(
                         self.bot,
