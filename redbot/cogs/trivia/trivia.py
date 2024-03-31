@@ -9,7 +9,6 @@ import schema
 import io
 import yaml
 import discord
-from operator import itemgetter
 
 from redbot.core import Config, commands, bank
 from redbot.core.bot import Red
