@@ -1285,7 +1285,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         error_msg = _("{member} could not be (un)muted for the following reasons:\n").format(
             member=issue.user
         )
-        error_msg += reason_msg
+        if reason_msg:
+            error_msg += reason_msg
         return error_msg
 
     async def handle_issues(
