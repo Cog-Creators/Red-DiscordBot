@@ -1494,7 +1494,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if issue_list:
             await self.handle_issues(ctx, issue_list)
 
-
     @commands.command(usage="<users...> [reason]", hidden=True)
     @commands.guild_only()
     @commands.mod_or_permissions(manage_roles=True)
