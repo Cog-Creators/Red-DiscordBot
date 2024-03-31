@@ -57,6 +57,7 @@ macOS 13 (Ventura)                 x86-64, aarch64           ~2025-10
 macOS 14 (Sonoma)                  x86-64, aarch64           ~2026-10
 Alma Linux 8                       x86-64, aarch64           2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-almalinux-be-supported>`__)
 Alma Linux 9                       x86-64, aarch64           2032-05-31
+Amazon Linux 2023                  x86-64, aarch64           2028-03-15 (`end-of-life <https://docs.aws.amazon.com/linux/al2023/release-notes/support-info-by-support-statement.html#support-info-by-support-statement-eol>`__)
 Arch Linux                         x86-64                    forever (support is only provided for an up-to-date system)
 CentOS 7                           x86-64, aarch64           2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
 CentOS Stream 8                    x86-64, aarch64           2024-05-31 (`end of Maintenance Updates <https://wiki.centos.org/About/Product>`__)
