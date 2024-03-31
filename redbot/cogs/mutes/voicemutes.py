@@ -6,13 +6,12 @@ import discord
 from redbot.core import commands, i18n, modlog
 from redbot.core.utils.chat_formatting import (
     humanize_timedelta,
+    humanize_relativedelta,
     humanize_list,
     pagify,
     format_perms_list,
 )
 from redbot.core.utils.mod import get_audit_reason
-
-from .converters import MuteTime
 
 _ = i18n.Translator("Mutes", __file__)
 
@@ -70,7 +69,7 @@ class VoiceMutes(MixinMeta):
         ctx: commands.Context,
         users: commands.Greedy[discord.Member],
         *,
-        time_and_reason: MuteTime = {},
+        time_and_reason: commands.converter.RelativedeltaReasonConverter = (None, None),
     ):
         """Mute a user in their current voice channel.
 
@@ -99,15 +98,13 @@ class VoiceMutes(MixinMeta):
                 if not can_move:
                     issue_list.append((user, perm_reason))
                     continue
-                duration = time_and_reason.get("duration", None)
-                reason = time_and_reason.get("reason", None)
+                reason = time_and_reason[0]
+                duration = time_and_reason[1]
                 time = ""
                 until = None
                 if duration:
                     until = datetime.now(timezone.utc) + duration
-                    time = _(" for {duration}").format(
-                        duration=humanize_timedelta(timedelta=duration)
-                    )
+                    time = _(" for {duration}").format(duration=humanize_relativedelta(duration))
                 else:
                     default_duration = await self.config.guild(ctx.guild).default_time()
                     if default_duration:
