@@ -9,15 +9,16 @@ RPC Server
 
 .. py:method:: Red.on_shutdown()
 
-    Dispatched when the bot begins it's shutdown procedures.
+    Dispatched when the bot begins its shutdown procedures.
 
 Economy
 ^^^^^^^
 
-.. py:method:: red_economy_payday_claim(member: discord.Member, channel: discord.TextChannel | discord.Thread | discord.ForumChannel, amount: int)
+.. py:method:: red_economy_payday_claim(payload: redbot.core.bank.PaydayClaimInformation)
 
     Dispatched when a user claims their daily payday.
 
-    :param member: The member who claimed their payday.
-    :param channel: The channel the payday was claimed in.
-    :param amount: The amount of credits claimed.
+    :type payload: redbot.core.bank.PaydayClaimInformation
+    :param payload.member: The member who is claiming their payday. (:class:`discord.Member`)
+    :param payload.channel: The channel where the payday claim is made. (:class:`discord.TextChannel`, :class:`discord.Thread`, :class:`discord.ForumChannel`)
+    :param payload.amount: The amount of currency claimed in the payday. (:class:`int`)

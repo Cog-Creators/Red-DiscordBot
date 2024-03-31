@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Union, List, Optional, TYPE_CHECKING, Literal
+from typing import Union, List, Optional, TYPE_CHECKING, Literal, NamedTuple
 from functools import wraps
 
 import discord
@@ -1086,3 +1086,8 @@ def cost(amount: int):
 
     return deco
 
+
+class PaydayClaimInformation(NamedTuple):
+    member: discord.Member
+    channel: Union[discord.TextChannel, discord.Thread, discord.ForumChannel]
+    amount: int
