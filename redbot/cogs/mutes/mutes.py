@@ -1278,13 +1278,23 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if issue_list:
             await self.handle_issues(ctx, issue_list)
 
-    def parse_issues(self, issue: Union[MuteResponse, ChannelMuteResponse]) -> str:
-        reason_msg = issue.reason + "\n" if issue.reason else None
-        error_msg = _("{member} could not be (un)muted for the following reasons:\n").format(
-            member=issue.user
-        )
-        if reason_msg:
-            error_msg += reason_msg
+    def parse_issues(self, issues: List[Union[MuteResponse, ChannelMuteResponse]]) -> str:
+        users = set(issue.user for issue in issues)
+        error_msg = ""
+
+        for user in users:
+            error_msg += _("{member} could not be (un)muted for the following reasons:\n").format(
+                member=f"`{user}`"
+            )
+            # I would like to replace this with a user mention but send_interactive
+            # does not support supressing mentions at this time. So in order to keep
+            # this formatting consistent the username is excaped in a code block.
+            for issue in issues:
+                if issue.user.id != user.id:
+                    continue
+                if issue.reason:
+                    error_msg += f"- {issue.reason}\n"
+
         return error_msg
 
     async def handle_issues(
@@ -1327,7 +1337,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             if can_react:
                 with contextlib.suppress(discord.Forbidden):
                     await query.clear_reactions()
-            issue = "\n".join(self.parse_issues(issue) for issue in issue_list)
+            issue = self.parse_issues(issue_list)
             resp = pagify(issue)
             await ctx.send_interactive(resp)
 
@@ -1934,7 +1944,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if channel.id in self._channel_mutes and user.id in self._channel_mutes[channel.id]:
             current_mute = self._channel_mutes[channel.id].pop(user.id)
         else:
-            ret.reason = _(MUTE_UNMUTE_ISSUES["already_unmuted"])
+            ret.reason = f"{channel.mention} " + _(MUTE_UNMUTE_ISSUES["already_unmuted"])
             return ret
 
         if not current_mute["voice_mute"] and voice_mute:
@@ -1944,7 +1954,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return ret
 
         if not channel.permissions_for(guild.me).manage_permissions:
-            ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"])
+            ret.reason = f"{channel.mention} " + _(MUTE_UNMUTE_ISSUES["permissions_issue_channel"])
             return ret
 
         try:
@@ -1973,7 +1983,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 # catch all discord errors because the result will be the same
                 # we successfully muted by this point but can't move the user
                 ret.success = True
-                ret.reason = _(MUTE_UNMUTE_ISSUES["voice_mute_permission"])
+                ret.reason = f"{channel.mention} " + _(MUTE_UNMUTE_ISSUES["voice_mute_permission"])
                 return ret
         ret.success = True
         return ret
