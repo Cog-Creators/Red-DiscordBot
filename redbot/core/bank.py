@@ -1091,3 +1091,4 @@ class PaydayClaimInformation(NamedTuple):
     member: discord.Member
     channel: Union[discord.TextChannel, discord.Thread, discord.ForumChannel]
     amount: int
+    
