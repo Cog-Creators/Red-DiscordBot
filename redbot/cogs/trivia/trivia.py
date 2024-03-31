@@ -440,7 +440,7 @@ class Trivia(commands.Cog):
         embed.add_field(
             name=_("Custom"),
             value=_format_setting_value(
-                any(category == p.resolve().stem for p in cog_data_path(self).glob("*.yaml"))
+                "", any(category == p.resolve().stem for p in cog_data_path(self).glob("*.yaml"))
             ),
         )
         embed.add_field(
