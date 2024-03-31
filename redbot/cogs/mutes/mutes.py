@@ -1515,8 +1515,6 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return await ctx.send(_("You cannot unmute me."))
         if ctx.author in users:
             return await ctx.send(_("You cannot unmute yourself."))
-        if not await self._check_for_mute_role(ctx):
-            return
         async with ctx.typing():
             guild = ctx.guild
             author = ctx.author
