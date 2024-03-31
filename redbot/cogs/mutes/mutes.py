@@ -1616,6 +1616,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     del self._server_mutes[guild.id][user.id]
                 ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_role"])
                 return ret
+            if user.voice:
+                try:
+                    await user.move_to(user.voice.channel)
+                except discord.HTTPException:
+                    # catch all discord errors because the result will be the same
+                    # we successfully muted by this point but can't move the user
+                    ret.reason = _(MUTE_UNMUTE_ISSUES["voice_mute_permission"])
             ret.success = True
             return ret
         else:
