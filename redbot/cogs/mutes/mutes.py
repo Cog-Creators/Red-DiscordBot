@@ -1630,7 +1630,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     await user.edit(timed_out_until=until, reason=reason)
                     ret.success = True
                 except Exception:
-                    pass
+                    ret.reason = _(MUTE_UNMUTE_ISSUES["permissions_issue_guild"])
             else:
                 ret.reason = _("I lack the moderate members permission.")
             return ret
