@@ -1288,7 +1288,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
             # I would like to replace this with a user mention but send_interactive
             # does not support supressing mentions at this time. So in order to keep
-            # this formatting consistent the username is excaped in a code block.
+            # this formatting consistent the username is escaped in a code block.
             for issue in issues:
                 if issue.user.id != user.id:
                     continue
