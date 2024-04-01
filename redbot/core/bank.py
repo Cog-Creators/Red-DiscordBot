@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Union, List, Optional, TYPE_CHECKING, Literal, NamedTuple
 from functools import wraps
+import json
 
 import discord
 
@@ -1093,3 +1094,15 @@ class PaydayClaimInformation(NamedTuple):
     amount: int
     old_balance: int
     new_balance: int
+    
+    def to_dict(self) -> dict:
+        return {
+            "member": self.member.id,
+            "channel": self.channel.id,
+            "amount": self.amount,
+            "old_balance": self.old_balance,
+            "new_balance": self.new_balance,
+        }
+    
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict())
