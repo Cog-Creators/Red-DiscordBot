@@ -298,6 +298,7 @@ class Economy(commands.Cog):
 
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
+        old_balance = await bank.get_balance(author)
         if await bank.is_global():  # Role payouts will not be used
             # Gets the latest time the user used the command successfully and adds the global payday time
             next_payday = (
@@ -306,9 +307,9 @@ class Economy(commands.Cog):
             if cur_time >= next_payday:
                 credit_amount = await self.config.PAYDAY_CREDITS()
                 try:
-                    await bank.deposit_credits(author, credit_amount)
+                    new_balance = await bank.deposit_credits(author, credit_amount)
                 except errors.BalanceTooHigh as exc:
-                    await bank.set_balance(author, exc.max_balance)
+                    new_balance = await bank.set_balance(author, exc.max_balance)
                     await ctx.send(
                         _(
                             "You've reached the maximum amount of {currency}! "
@@ -319,7 +320,11 @@ class Economy(commands.Cog):
                         )
                     )
                     payload = bank.PaydayClaimInformation(
-                        author, ctx.channel, exc.max_balance - credit_amount
+                        author,
+                        ctx.channel,
+                        exc.max_balance - credit_amount,
+                        old_balance,
+                        new_balance,
                     )
                     self.bot.dispatch("red_economy_payday_claim", payload)
                     return
@@ -341,7 +346,9 @@ class Economy(commands.Cog):
                         pos=humanize_number(pos) if pos else pos,
                     )
                 )
-                payload = bank.PaydayClaimInformation(author, ctx.channel, credit_amount)
+                payload = bank.PaydayClaimInformation(
+                    author, ctx.channel, credit_amount, old_balance, new_balance
+                )
                 self.bot.dispatch("red_economy_payday_claim", payload)
 
             else:
@@ -368,9 +375,9 @@ class Economy(commands.Cog):
                     if role_credits > credit_amount:
                         credit_amount = role_credits
                 try:
-                    await bank.deposit_credits(author, credit_amount)
+                    new_balance = await bank.deposit_credits(author, credit_amount)
                 except errors.BalanceTooHigh as exc:
-                    await bank.set_balance(author, exc.max_balance)
+                    new_balance = await bank.set_balance(author, exc.max_balance)
                     await ctx.send(
                         _(
                             "You've reached the maximum amount of {currency}! "
@@ -381,7 +388,11 @@ class Economy(commands.Cog):
                         )
                     )
                     payload = bank.PaydayClaimInformation(
-                        author, ctx.channel, exc.max_balance - credit_amount
+                        author,
+                        ctx.channel,
+                        exc.max_balance - credit_amount,
+                        old_balance,
+                        new_balance,
                     )
                     self.bot.dispatch("red_economy_payday_claim", payload)
                     return
@@ -405,7 +416,9 @@ class Economy(commands.Cog):
                         pos=humanize_number(pos) if pos else pos,
                     )
                 )
-                payload = bank.PaydayClaimInformation(author, ctx.channel, credit_amount)
+                payload = bank.PaydayClaimInformation(
+                    author, ctx.channel, credit_amount, old_balance, new_balance
+                )
                 self.bot.dispatch("red_economy_payday_claim", payload)
 
             else:
