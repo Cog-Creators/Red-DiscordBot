@@ -16,7 +16,7 @@ Economy
 
 .. py:method:: red_economy_payday_claim(payload: redbot.core.bank.PaydayClaimInformation)
 
-    Dispatched when a user claims their daily payday.
+    Dispatched when a user successfully claims a payday.
 
     :type payload: redbot.core.bank.PaydayClaimInformation
     :param payload.member: The member who is claiming their payday. (:class:`discord.Member`)
