@@ -1173,7 +1173,7 @@ embedset channel
 
 .. code-block:: none
 
-    [p]embedset channel [enabled]
+    [p]embedset channel <channel> [enabled]
 
 **Description**
 
@@ -1187,10 +1187,12 @@ If enabled is left blank, the setting will be unset and the guild default will b
 To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Examples:**
-    - ``[p]embedset channel False`` - Disables embeds in this channel.
-    - ``[p]embedset channel`` - Resets value to use guild default.
+    - ``[p]embedset channel #text-channel False`` - Disables embeds in the #text-channel.
+    - ``[p]embedset channel #forum-channel disable`` - Disables embeds in the #forum-channel.
+    - ``[p]embedset channel #text-channel`` - Resets value to use guild default in the #text-channel.
 
 **Arguments:**
+    - ``<channel>`` - The text, voice, stage, or forum channel to set embed setting for.
     - ``[enabled]`` - Whether to use embeds in this channel. Leave blank to reset to default.
 
 .. _core-command-embedset-command:
@@ -1473,9 +1475,6 @@ helpset maxpages
 
 Set the maximum number of help pages sent in a server channel.
 
-.. Note:: This setting does not apply to menu help.
-
-
 If a help message contains more pages than this value, the help message will
 be sent to the command author via DM. This is to help reduce spam in server
 text channels.
@@ -1681,8 +1680,11 @@ Set the tagline to be used.
 The maximum tagline length is 2048 characters.
 This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
 
+You can use ``[p]`` in your tagline, which will be replaced by the bot's prefix.
+
 **Examples:**
     - ``[p]helpset tagline Thanks for using the bot!``
+    - ``[p]helpset tagline Use [p]invite to add me to your server.``
     - ``[p]helpset tagline`` - Resets the tagline to the default.
 
 **Arguments:**
@@ -3674,7 +3676,7 @@ set serverprefix
 
 .. code-block:: none
 
-    [p]set serverprefix [prefixes...]
+    [p]set serverprefix [server] [prefixes...]
 
 .. tip:: Alias: ``set serverprefixes``
 
@@ -3693,8 +3695,10 @@ Sets Red's server prefix(es).
     - ``[p]set serverprefix "! "`` - Quotes are needed to use spaces in prefixes.
     - ``[p]set serverprefix "@Red "`` - This uses a mention as the prefix.
     - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
+    - ``[p]set serverprefix "Red - Discord Bot" ?`` - Sets the prefix for a specific server. Quotes are needed to use spaces in the server name.
 
 **Arguments:**
+    - ``[server]`` - The server to set the prefix for. Defaults to current server.
     - ``[prefixes...]`` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
 
 .. _core-command-set-showsettings:
@@ -3707,11 +3711,16 @@ set showsettings
 
 .. code-block:: none
 
-    [p]set showsettings 
+    [p]set showsettings [server]
 
 **Description**
 
 Show the current settings for Red.
+
+Accepts optional server parameter to allow prefix recovery.
+
+**Arguments:**
+    - ``[server]`` - The server to show the settings for. Defaults to current server, or no server in a DM context.
 
 .. _core-command-set-status:
 
@@ -3759,6 +3768,35 @@ Maximum length for a competing status is 128 characters.
 
 **Arguments:**
     - ``[competing]`` - The text to follow ``Competing in``. Leave blank to clear the current activity status.
+
+.. _core-command-set-status-custom:
+
+"""""""""""""""""
+set status custom
+"""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status custom [text]
+
+**Description**
+
+Sets Red's custom status.
+
+This will appear as ``<text>``.
+
+Maximum length for a custom status is 128 characters.
+
+**Examples:**
+    - ``[p]set status custom`` - Clears the activity status.
+    - ``[p]set status custom Running cogs...``
+
+**Arguments:**
+    - ``[text]`` - The custom status text. Leave blank to clear the current activity status.
 
 .. _core-command-set-status-dnd:
 
@@ -4044,6 +4082,159 @@ This is the recommended method for shutting down the bot.
 
 **Arguments:**
     - ``[silently]`` - Whether to skip sending the shutdown message. Defaults to False.
+
+.. _core-command-slash:
+
+^^^^^
+slash
+^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash 
+
+**Description**
+
+Base command for managing what application commands are able to be used on Red.
+
+.. _core-command-slash-disable:
+
+"""""""""""""
+slash disable
+"""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash disable <command_name> [command_type]
+    
+**Description**
+
+Marks an application command as being disabled, preventing it from being added to the bot.
+See commands available to disable with ``[p]slash list``. This command does NOT sync the
+enabled commands with Discord, that must be done manually with ``[p]slash sync`` for
+commands to appear in users' clients.
+
+**Arguments:**
+    - ``<command_name>`` - The command name to disable. Only the top level name of a group command should be used.
+    - ``[command_type]`` - What type of application command to disable. Must be one of ``slash``, ``message``, or ``user``. Defaults to ``slash``.
+
+.. _core-command-slash-disablecog:
+
+""""""""""""""""
+slash disablecog
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash disablecog <cog_name>
+    
+**Description**
+
+Marks all application commands in a cog as being disabled, preventing them from being
+added to the bot. See a list of cogs with application commands with ``[p]slash list``.
+This command does NOT sync the enabled commands with Discord, that must be done manually
+with ``[p]slash sync`` for commands to appear in users' clients.
+
+**Arguments:**
+    - ``<cog_name>`` - The cog to disable commands from. This argument is case sensitive.
+
+.. _core-command-slash-enable:
+
+""""""""""""
+slash enable
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash enable <command_name> [command_type]
+    
+**Description**
+
+Marks an application command as being enabled, allowing it to be added to the bot.
+See commands available to enable with ``[p]slash list``. This command does NOT sync the
+enabled commands with Discord, that must be done manually with ``[p]slash sync`` for
+commands to appear in users' clients.
+
+**Arguments:**
+    - ``<command_name>`` - The command name to enable. Only the top level name of a group command should be used.
+    - ``[command_type]`` - What type of application command to enable. Must be one of ``slash``, ``message``, or ``user``. Defaults to ``slash``.
+
+.. _core-command-slash-enablecog:
+
+"""""""""""""""
+slash enablecog
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash enablecog <cog_name>
+    
+**Description**
+
+Marks all application commands in a cog as being enabled, allowing them to be
+added to the bot. See a list of cogs with application commands with ``[p]slash list``.
+This command does NOT sync the enabled commands with Discord, that must be done manually
+with ``[p]slash sync`` for commands to appear in users' clients.
+
+**Arguments:**
+    - ``<cog_name>`` - The cog to enable commands from. This argument is case sensitive.
+
+.. _core-command-slash-list:
+
+""""""""""
+slash list
+""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash list
+    
+**Description**
+
+List the slash commands the bot can see, and whether or not they are enabled.
+
+This command shows the state that will be changed to when ``[p]slash sync`` is run.
+Commands from the same cog are grouped, with the cog name as the header.
+
+The prefix denotes the state of the command:
+- Commands starting with ``- `` have not yet been enabled.
+- Commands starting with ``+ `` have been manually enabled.
+- Commands starting with ``++`` have been enabled by the cog author, and cannot be disabled.
+
+.. _core-command-slash-sync:
+
+""""""""""
+slash sync
+""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash sync [guild]
+    
+**Description**
+
+Syncs the slash settings to discord.
+Settings from ``[p]slash list`` will be synced with discord, changing what commands appear for users.
+This should be run sparingly, make all necessary changes before running this command.
+        
+**Arguments:**
+    - ``[guild]`` - If provided, syncs commands for that guild. Otherwise, syncs global commands.
 
 .. _core-command-traceback:
 

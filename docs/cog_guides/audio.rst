@@ -116,18 +116,18 @@ How can I use this playlist link with playlist commands in audio?**
     :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another process is using the 
     port, so you need to figure out what is using port 2333 and terminate/disconnect it yourself.
     
-**Q: My terminal is saying that I "must install Java 11 for Lavalink to run". How can I fix this?**
+**Q: My terminal is saying that I "must install Java 17 or 11 for Lavalink to run". How can I fix this?**
 
     You are getting this error because you have a different version of Java installed, or you don't have
-    Java installed at all. As the error states, Java 11 is required, and can be installed from
-    `here <https://adoptium.net/temurin/releases/?version=11>`__.
+    Java installed at all. As the error states, Java 17 or 11 is required, and can be installed from
+    `here <https://adoptium.net/temurin/releases/?version=17>`__.
     
-    If you have Java 11 installed, and are still getting this error, you will have to manually tell Audio where your Java install is located.
-    Use ``[p]llset java <path_to_java_11_executable>``, to make Audio launch Lavalink with a
+    If you have Java 17 or 11 installed, and are still getting this error, you will have to manually tell Audio where your Java install is located.
+    Use ``[p]llset java <path_to_java_17_or_11_executable>``, to make Audio launch Lavalink with a
     specific Java binary. To do this, you will need to locate your ``java.exe``/``java`` file
-    in your **Java 11 install**.
+    in your **Java 17 or 11 install**.
     
-    Alternatively, update your PATH settings so that Java 11 is the one used by ``java``. However,
+    Alternatively, update your PATH settings so that Java 17 or 11 is the one used by ``java``. However,
     you should confirm that nothing other than Red is running on the machine that requires Java.
 
 .. _queue_commands:
@@ -544,11 +544,11 @@ following commands one by one.
     sudo apt install curl nano -y
 
 If you have no preference in which Java version you install on your target system, Red 
-uses OpenJDK 11 in the managed Lavalink configuration. It can be installed by running:
+uses OpenJDK 17 in the managed Lavalink configuration. It can be installed by running:
 
 .. code-block:: sh
 
-    sudo apt install openjdk-11-jre-headless -y
+    sudo apt install openjdk-17-jre-headless -y
 
 Otherwise, Lavalink works well with most versions of Java 11, 13, 15, 16, 17, and 18. Azul 
 Zulu builds are suggested, see `here <https://github.com/freyacodes/Lavalink/#requirements>`__ for more information.
@@ -3651,7 +3651,7 @@ This command shouldn't need to be used most of the time,
 and is only useful if the host machine has conflicting Java versions.
 
 If changing this make sure that the Java executable you set is supported by Audio.
-The current supported version is Java 11.
+The current supported versions are Java 17 and 11.
 
 **Arguments**
 
@@ -3741,6 +3741,8 @@ llset port
 
 Set the Lavalink node port. This command sets the connection port which
 Audio will use to connect to an unmanaged Lavalink node.
+
+Set port to ``-1`` to disable the port and connect to the specified host via ports ``80``/``443``.
 
 **Arguments**
 

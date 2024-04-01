@@ -17,7 +17,7 @@ import sys
 from argparse import Namespace
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Awaitable, Callable, NoReturn, Union
+from typing import Any, Awaitable, Callable, NoReturn, Optional, Union
 
 import discord
 import rich
@@ -25,9 +25,9 @@ import rich
 import redbot.logging
 from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
+from redbot.core._cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core import data_manager, drivers
+from redbot.core import data_manager, _drivers
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
@@ -62,9 +62,9 @@ def list_instances():
         sys.exit(ExitCodes.SHUTDOWN)
 
 
-async def debug_info(*args: Any) -> None:
+async def debug_info(red: Optional[Red] = None, *args: Any) -> None:
     """Shows debug information useful for debugging."""
-    print(await DebugInfo().get_text())
+    print(await DebugInfo(red).get_cli_text())
 
 
 async def edit_instance(red, cli_flags):
@@ -268,7 +268,7 @@ def _copy_data(data):
 def early_exit_runner(
     cli_flags: Namespace,
     func: Union[Callable[[], Awaitable[Any]], Callable[[Red, Namespace], Awaitable[Any]]],
-) -> None:
+) -> NoReturn:
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
@@ -277,21 +277,24 @@ def early_exit_runner(
     try:
         if not cli_flags.instance_name:
             loop.run_until_complete(func())
+            sys.exit(ExitCodes.SHUTDOWN)
             return
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
         red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
-        driver_cls = drivers.get_driver_class()
+        driver_cls = _drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
         loop.run_until_complete(func(red, cli_flags))
         loop.run_until_complete(driver_cls.teardown())
     except (KeyboardInterrupt, EOFError):
         print("Aborted!")
     finally:
-        loop.run_until_complete(asyncio.sleep(1))
+        # note: sleep is unnecessary since we're not making any network connections
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
+
+    sys.exit(ExitCodes.SHUTDOWN)
 
 
 async def run_bot(red: Red, cli_flags: Namespace) -> None:
@@ -307,7 +310,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     need additional handling in this function.
     """
 
-    driver_cls = drivers.get_driver_class()
+    driver_cls = _drivers.get_driver_class()
 
     await driver_cls.initialize(**data_manager.storage_details())
 
@@ -420,7 +423,7 @@ def handle_early_exit_flags(cli_flags: Namespace):
 
 async def shutdown_handler(red, signal_type=None, exit_code=None):
     if signal_type:
-        log.info("%s received. Quitting...", signal_type)
+        log.info("%s received. Quitting...", signal_type.name)
         # Do not collapse the below line into other logic
         # We need to renter this function
         # after it interrupts the event loop.
@@ -525,7 +528,12 @@ def main():
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
         # We need to do something with prior to having the loop close
-        log.info("Shutting down with exit code: %s", exc.code)
+        exit_code = int(exc.code)
+        try:
+            exit_code_name = ExitCodes(exit_code).name
+        except ValueError:
+            exit_code_name = "UNKNOWN"
+        log.info("Shutting down with exit code: %s (%s)", exit_code, exit_code_name)
         if red is not None:
             loop.run_until_complete(shutdown_handler(red, None, exc.code))
     except Exception as exc:  # Non standard case.

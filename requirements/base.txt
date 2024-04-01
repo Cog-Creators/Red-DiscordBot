@@ -1,6 +1,4 @@
-aiodns==3.0.0
-    # via -r base.in
-aiohttp==3.8.3
+aiohttp==3.9.3
     # via
     #   -r base.in
     #   aiohttp-json-rpc
@@ -10,91 +8,85 @@ aiohttp-json-rpc==0.13.3
     # via -r base.in
 aiosignal==1.3.1
     # via aiohttp
-apsw==3.40.0.0
+apsw==3.45.2.0
     # via -r base.in
-async-timeout==4.0.2
+attrs==23.2.0
     # via aiohttp
-attrs==22.2.0
-    # via aiohttp
-babel==2.11.0
+babel==2.14.0
     # via -r base.in
-brotli==1.0.9
+brotli==1.1.0
     # via -r base.in
-cffi==1.15.1
-    # via pycares
-charset-normalizer==2.1.1
-    # via aiohttp
-click==8.1.3
+click==8.1.7
     # via -r base.in
-commonmark==0.9.1
-    # via rich
 contextlib2==21.6.0
     # via schema
-discord-py==2.1.0
+discord-py==2.3.2
     # via
     #   -r base.in
     #   red-lavalink
-frozenlist==1.3.3
+frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-idna==3.4
+idna==3.6
     # via yarl
-importlib-metadata==5.2.0
-    # via markdown
-markdown==3.4.1
+markdown==3.6
     # via -r base.in
-multidict==6.0.4
+markdown-it-py==3.0.0
+    # via rich
+mdurl==0.1.2
+    # via markdown-it-py
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-orjson==3.8.3
+orjson==3.10.0
     # via -r base.in
-packaging==22.0
+packaging==24.0
     # via -r base.in
-platformdirs==2.6.0
+platformdirs==4.2.0
     # via -r base.in
-psutil==5.9.4
+psutil==5.9.8
     # via -r base.in
-pycares==4.3.0
-    # via aiodns
-pycparser==2.21
-    # via cffi
-pygments==2.13.0
+pygments==2.17.2
     # via rich
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via -r base.in
-pytz==2022.7
-    # via babel
-pyyaml==6.0
+pyyaml==6.0.1
     # via -r base.in
-rapidfuzz==2.13.7
+rapidfuzz==3.7.0
     # via -r base.in
 red-commons==1.0.0
     # via
     #   -r base.in
     #   red-lavalink
-red-lavalink==0.11.0rc1
+red-lavalink==0.11.0
     # via -r base.in
-rich==12.6.0
+rich==13.7.1
     # via -r base.in
 schema==0.7.5
     # via -r base.in
 six==1.16.0
     # via python-dateutil
-typing-extensions==4.4.0
+typing-extensions==4.10.0
     # via
     #   -r base.in
     #   rich
-yarl==1.8.2
+yarl==1.9.4
     # via
     #   -r base.in
     #   aiohttp
-zipp==3.11.0
-    # via importlib-metadata
+async-timeout==4.0.3; python_version != "3.11"
+    # via aiohttp
 colorama==0.4.6; sys_platform == "win32"
     # via click
-distro==1.8.0; sys_platform == "linux" and sys_platform == "linux"
+distro==1.9.0; sys_platform == "linux" and sys_platform == "linux"
     # via -r base.in
-uvloop==0.17.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
+importlib-metadata==7.1.0; python_version != "3.10" and python_version != "3.11"
+    # via markdown
+pytz==2024.1; python_version == "3.8"
+    # via babel
+uvloop==0.19.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
     # via -r base.in
+zipp==3.18.1; python_version != "3.10" and python_version != "3.11"
+    # via importlib-metadata

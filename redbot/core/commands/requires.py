@@ -73,6 +73,7 @@ _T = TypeVar("_T")
 GlobalPermissionModel = Union[
     discord.User,
     discord.VoiceChannel,
+    discord.StageChannel,
     discord.TextChannel,
     discord.ForumChannel,
     discord.CategoryChannel,
@@ -82,6 +83,7 @@ GlobalPermissionModel = Union[
 GuildPermissionModel = Union[
     discord.Member,
     discord.VoiceChannel,
+    discord.StageChannel,
     discord.TextChannel,
     discord.ForumChannel,
     discord.CategoryChannel,
@@ -355,6 +357,7 @@ class Requires:
                 if user_perms is None:
                     func.__requires_user_perms__ = None
                 else:
+                    _validate_perms_dict(user_perms)
                     if getattr(func, "__requires_user_perms__", None) is None:
                         func.__requires_user_perms__ = discord.Permissions.none()
                     func.__requires_user_perms__.update(**user_perms)

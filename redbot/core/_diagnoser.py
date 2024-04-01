@@ -38,7 +38,9 @@ class IssueDiagnoserBase:
         self,
         bot: Red,
         original_ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
         author: discord.Member,
         command: commands.Command,
     ) -> None:
@@ -483,9 +485,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         return await self._check_requires(_("Permissions verification"), self.ctx.command)
 
     async def _check_requires_cog(self) -> CheckResult:
-        label = _("Permissions verification for {cog} cog").format(
-            cog=inline(self.ctx.cog.qualified_name)
-        )
+        label = _("Cog permissions verification")
         if self.ctx.cog is None:
             return CheckResult(True, label)
         return await self._check_requires(label, self.ctx.cog)
@@ -937,7 +937,7 @@ class IssueDiagnoser(RootDiagnosersMixin, IssueDiagnoserBase):
                 if subresult.success
                 else _("Failed") + " \N{NO ENTRY}\N{VARIATION SELECTOR-16}"
             )
-            lines.append(f"{prefix}{idx}. {subresult.label}: {status}")
+            lines.append(f"\u200b{prefix}{idx}. {subresult.label}: {status}")
             lines.extend(
                 self._get_message_from_check_result(subresult, prefix=f"  {prefix}{idx}.")
             )
