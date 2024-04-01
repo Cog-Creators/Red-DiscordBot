@@ -1127,13 +1127,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         """Timeout users.
 
         `<users...>` is a space separated list of usernames, ID's, or mentions.
-        `[time_and_reason]` is the time to mute for and reason. Time is
+        `[time_and_reason]` is the time to timeout for and reason. Time is
         any valid time length such as `30 minutes` or `2 days`. If nothing
-        is provided the mute will use the set default time or indefinite if not set.
+        is provided the timeout will use the set default time or give an error if not set.
 
         Examples:
-        `[p]mute @member1 @member2 spam 5 hours`
-        `[p]mute @member1 3 days`
+        `[p]timeout @member1 @member2 spam 5 hours`
+        `[p]timeout @member1 3 days`
 
         """
         if not users:
