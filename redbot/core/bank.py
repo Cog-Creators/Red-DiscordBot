@@ -1094,7 +1094,7 @@ class PaydayClaimInformation(NamedTuple):
     amount: int
     old_balance: int
     new_balance: int
-    
+
     def to_dict(self) -> dict:
         return {
             "member": self.member.id,
@@ -1103,6 +1103,6 @@ class PaydayClaimInformation(NamedTuple):
             "old_balance": self.old_balance,
             "new_balance": self.new_balance,
         }
-    
+
     def to_json(self) -> str:
         return json.dumps(self.to_dict())
