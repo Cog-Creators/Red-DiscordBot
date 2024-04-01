@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-03-23 23:21+0000\n"
+"POT-Creation-Date: 2024-03-27 04:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -15,12 +15,12 @@ msgstr ""
 "X-Crowdin-File-ID: 4\n"
 "Language: ru_RU\n"
 
-#: redbot/core/_cog_manager.py:317
+#: redbot/core/_cog_manager.py:320
 #, docstring
 msgid "Commands to interface with Red's cog manager."
 msgstr "Команды для интерфейса с менеджером плагинов Red."
 
-#: redbot/core/_cog_manager.py:326
+#: redbot/core/_cog_manager.py:329
 #, docstring
 msgid "\n"
 "        Lists current cog paths in order of priority.\n"
@@ -29,13 +29,13 @@ msgstr "\n"
 "        Список текущих путей cog'ов в порядке приоритета.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:334
+#: redbot/core/_cog_manager.py:337
 msgid "Install Path: {install_path}\n"
 "Core Path: {core_path}\n\n"
 msgstr "Путь установки: {install_path}\n"
 "Основной путь: {core_path}\n\n"
 
-#: redbot/core/_cog_manager.py:348
+#: redbot/core/_cog_manager.py:351
 #, docstring
 msgid "\n"
 "        Add a path to the list of available cog paths.\n"
@@ -44,15 +44,37 @@ msgstr "\n"
 "        Добавить путь к списку путей доступных cog'ов.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:352
+#: redbot/core/_cog_manager.py:355
 msgid "That path does not exist or does not point to a valid directory."
 msgstr "Этот путь не существует или не указывает на допустимый каталог."
 
-#: redbot/core/_cog_manager.py:360
+#: redbot/core/_cog_manager.py:364
+msgid "A cog path cannot be part of bot's data path ({bot_data_path})."
+msgstr ""
+
+#: redbot/core/_cog_manager.py:374
+msgid "A cog path cannot be part of bot's core path ({core_path})."
+msgstr ""
+
+#: redbot/core/_cog_manager.py:416
+msgid "The provided path appears to be a cog package, are you sure that this is the path that you want to add as a **cog path**?\n\n"
+"For example, in the following case, you should be adding the {path} as a **cog path**:\n"
+msgstr ""
+
+#: redbot/core/_cog_manager.py:423
+msgid "\n"
+"Please consult the Cog Manager UI documentation, if you're unsure: "
+msgstr ""
+
+#: redbot/core/_cog_manager.py:429
+msgid "Okay, the path will not be added."
+msgstr ""
+
+#: redbot/core/_cog_manager.py:438
 msgid "Path successfully added."
 msgstr "Путь успешно добавлен."
 
-#: redbot/core/_cog_manager.py:365
+#: redbot/core/_cog_manager.py:443
 #, docstring
 msgid "\n"
 "        Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.\n"
@@ -61,15 +83,15 @@ msgstr "\n"
 "        Удаляет путь из доступных путей cog'ов, учитывая `path_number` от `[p]paths`.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:386
+#: redbot/core/_cog_manager.py:464
 msgid "The following paths were removed: {paths}"
 msgstr "Следующие пути были удалены: {paths}"
 
-#: redbot/core/_cog_manager.py:392
+#: redbot/core/_cog_manager.py:470
 msgid "The following path numbers did not exist: {path_numbers}"
 msgstr "Следующие номера путей не существуют: {path_numbers}"
 
-#: redbot/core/_cog_manager.py:403
+#: redbot/core/_cog_manager.py:481
 #, docstring
 msgid "\n"
 "        Reorders paths internally to allow discovery of different cogs.\n"
@@ -78,19 +100,19 @@ msgstr "\n"
 "        Внутреннее изменение порядка путей, позволяющие обнаруживать различные cog'и.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:414
+#: redbot/core/_cog_manager.py:492
 msgid "Invalid 'from' index."
 msgstr "Недопустимый индекс 'от'."
 
-#: redbot/core/_cog_manager.py:420
+#: redbot/core/_cog_manager.py:498
 msgid "Invalid 'to' index."
 msgstr "Недопустимый индекс 'в'."
 
-#: redbot/core/_cog_manager.py:424
+#: redbot/core/_cog_manager.py:502
 msgid "Paths reordered."
 msgstr "Пути переупорядочены."
 
-#: redbot/core/_cog_manager.py:429
+#: redbot/core/_cog_manager.py:507
 #, docstring
 msgid "\n"
 "        Returns the current install path or sets it if one is provided.\n\n"
@@ -105,15 +127,15 @@ msgstr "\n"
 "        Установленные cog'и не будут перемещены в процессе.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:443
+#: redbot/core/_cog_manager.py:521
 msgid "That path does not exist."
 msgstr "Этого пути не существует."
 
-#: redbot/core/_cog_manager.py:448
+#: redbot/core/_cog_manager.py:526
 msgid "The bot will install new cogs to the `{}` directory."
 msgstr "Бот будет устанавливать новые плагины в директорию `{}`."
 
-#: redbot/core/_cog_manager.py:454
+#: redbot/core/_cog_manager.py:532
 #, docstring
 msgid "\n"
 "        Lists all loaded and available cogs.\n"
@@ -122,11 +144,11 @@ msgstr "\n"
 "        Список всех загруженных и доступных cog'ов.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:467 redbot/core/_cog_manager.py:482
+#: redbot/core/_cog_manager.py:545 redbot/core/_cog_manager.py:560
 msgid "**{} loaded:**\n"
 msgstr "**{} загружен:**\n"
 
-#: redbot/core/_cog_manager.py:468 redbot/core/_cog_manager.py:484
+#: redbot/core/_cog_manager.py:546 redbot/core/_cog_manager.py:562
 msgid "**{} unloaded:**\n"
 msgstr "**{} выгружен:**\n"
 
