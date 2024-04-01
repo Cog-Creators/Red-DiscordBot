@@ -1176,7 +1176,7 @@ class BankPruneInformation(NamedTuple):
     pruned_users: Dict[str, Dict[str, Union[int, str]]]
 
     @property
-    def scope(self) -> str:
+    def scope(self) -> Literal["global", "guild", "user"]:
         if self.guild is None and self.user_id is None:
             return "global"
         elif self.guild is not None and self.user_id is None:
