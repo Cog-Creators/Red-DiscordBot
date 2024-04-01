@@ -4,7 +4,7 @@ Redbot 3.5.8 (2024-04-01)
 =========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :TODO:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`
 
 Read before updating
 --------------------
