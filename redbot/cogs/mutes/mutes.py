@@ -19,6 +19,7 @@ from redbot.core.utils.chat_formatting import (
 )
 from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
+from redbot.core.utils.views import SimpleMenu
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from .converters import MuteTime
@@ -1102,8 +1103,13 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                         msg += "\n"
 
         if msg:
+            msgs = []
             for page in pagify(msg):
-                await ctx.maybe_send_embed(page)
+                if await ctx.embed_requested():
+                    msgs.append(discord.Embed(description=page, colour=await ctx.embed_colour()))
+                else:
+                    msgs.append(page)
+            await SimpleMenu(msgs).start(ctx)
             return
         await ctx.maybe_send_embed(_("There are no mutes on this server right now."))
 
