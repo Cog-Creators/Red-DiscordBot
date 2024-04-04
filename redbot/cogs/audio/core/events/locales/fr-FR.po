@@ -21,119 +21,119 @@ msgstr "Lecture automatique démarrée."
 
 #: redbot/cogs/audio/core/events/dpy.py:34
 msgid "Create Instant Invite"
-msgstr ""
+msgstr "Créer une invitation"
 
 #: redbot/cogs/audio/core/events/dpy.py:35
 msgid "Kick Members"
-msgstr ""
+msgstr "Expulser des membres"
 
 #: redbot/cogs/audio/core/events/dpy.py:36
 msgid "Ban Members"
-msgstr ""
+msgstr "Bannir des membres"
 
 #: redbot/cogs/audio/core/events/dpy.py:37
 msgid "Administrator"
-msgstr ""
+msgstr "Administrateur"
 
 #: redbot/cogs/audio/core/events/dpy.py:38
 msgid "Manage Channels"
-msgstr ""
+msgstr "Gérer les salons"
 
 #: redbot/cogs/audio/core/events/dpy.py:39
 msgid "Manage Server"
-msgstr ""
+msgstr "Gérer le serveur"
 
 #: redbot/cogs/audio/core/events/dpy.py:40
 msgid "Add Reactions"
-msgstr ""
+msgstr "Ajouter des réactions"
 
 #: redbot/cogs/audio/core/events/dpy.py:41
 msgid "View Audit Log"
-msgstr ""
+msgstr "Voir les logs du serveur"
 
 #: redbot/cogs/audio/core/events/dpy.py:42
 msgid "Priority Speaker"
-msgstr ""
+msgstr "Voix prioritaire"
 
 #: redbot/cogs/audio/core/events/dpy.py:43
 msgid "Go Live"
-msgstr ""
+msgstr "Passer en direct"
 
 #: redbot/cogs/audio/core/events/dpy.py:44
 msgid "Read Text Channels & See Voice Channels"
-msgstr ""
+msgstr "Voir les salons"
 
 #: redbot/cogs/audio/core/events/dpy.py:45
 msgid "Send Messages"
-msgstr ""
+msgstr "Envoyer des messages"
 
 #: redbot/cogs/audio/core/events/dpy.py:46
 msgid "Send TTS Messages"
-msgstr ""
+msgstr "Envoyer des messages TTS"
 
 #: redbot/cogs/audio/core/events/dpy.py:47
 msgid "Manage Messages"
-msgstr ""
+msgstr "Gérer les Messages"
 
 #: redbot/cogs/audio/core/events/dpy.py:48
 msgid "Embed Links"
-msgstr ""
+msgstr "Liens intégrés (embed)"
 
 #: redbot/cogs/audio/core/events/dpy.py:49
 msgid "Attach Files"
-msgstr ""
+msgstr "Joindre des fichiers"
 
 #: redbot/cogs/audio/core/events/dpy.py:50
 msgid "Read Message History"
-msgstr ""
+msgstr "Voir l'historique des messages"
 
 #: redbot/cogs/audio/core/events/dpy.py:51
 msgid "Mention @everyone, @here, and All Roles"
-msgstr ""
+msgstr "Mentionnez @everyone, @here et tous les rôles"
 
 #: redbot/cogs/audio/core/events/dpy.py:52
 msgid "Use External Emojis"
-msgstr ""
+msgstr "Utiliser des émojis externes"
 
 #: redbot/cogs/audio/core/events/dpy.py:53
 msgid "View Server Insights"
-msgstr ""
+msgstr "Voir les analyses du serveur"
 
 #: redbot/cogs/audio/core/events/dpy.py:54
 msgid "Connect"
-msgstr ""
+msgstr "Se connecter"
 
 #: redbot/cogs/audio/core/events/dpy.py:55
 msgid "Speak"
-msgstr ""
+msgstr "Parler"
 
 #: redbot/cogs/audio/core/events/dpy.py:56
 msgid "Mute Members"
-msgstr ""
+msgstr "Rendre muet les membres"
 
 #: redbot/cogs/audio/core/events/dpy.py:57
 msgid "Deafen Members"
-msgstr ""
+msgstr "Mettre en sourdine les membres"
 
 #: redbot/cogs/audio/core/events/dpy.py:58
 msgid "Move Members"
-msgstr ""
+msgstr "Déplacer les membres"
 
 #: redbot/cogs/audio/core/events/dpy.py:59
 msgid "Use Voice Activity"
-msgstr ""
+msgstr "Utiliser la Détection de la voix"
 
 #: redbot/cogs/audio/core/events/dpy.py:60
 msgid "Change Nickname"
-msgstr ""
+msgstr "Modifier le Surnom"
 
 #: redbot/cogs/audio/core/events/dpy.py:61
 msgid "Manage Nicknames"
-msgstr ""
+msgstr "Gérer les Pseudos"
 
 #: redbot/cogs/audio/core/events/dpy.py:62
 msgid "Manage Roles"
-msgstr ""
+msgstr "Gérer les rôles"
 
 #: redbot/cogs/audio/core/events/dpy.py:63
 msgid "Manage Webhooks"
@@ -233,15 +233,15 @@ msgstr "Cette commande spécifie à quelle interface réseau et à quelle adress
 
 #: redbot/cogs/audio/core/events/dpy.py:116
 msgid "This command changes the authentication password required to connect to this managed node.The default value is 'youshallnotpass'."
-msgstr ""
+msgstr "Cette commande modifie le mot de passe requis pour se connecter à ce nœud géré. La valeur par défaut est 'youshallnotpass'."
 
 #: redbot/cogs/audio/core/events/dpy.py:120
 msgid "This command changes the connection port used to connect to this managed node, only change this if the default port '2333' is causing conflicts with existing applications."
-msgstr ""
+msgstr "Cette commande modifie le port de connexion utilisé pour se connecter à ce nœud géré. À changer seulement si le port par défaut '2333' provoque des bugs avec des applications existantes."
 
 #: redbot/cogs/audio/core/events/dpy.py:124
 msgid "This command toggles the support of direct url streams like Icecast or Shoutcast streams. An example is <http://ice1.somafm.com/gsclassic-128-mp3>; disabling this will make the bot unable to play any direct url steam content."
-msgstr ""
+msgstr "Cette commande active le support des URL directes comme les flux Icecast ou Shoutcast. Par exemple :<http://ice1.somafm.com/gsclassic-128-mp3>. Le désactiver rendra le bot incapable de jouer le contenu d'une URL directe."
 
 #: redbot/cogs/audio/core/events/dpy.py:134
 msgid "This command toggles the support of local track audio playback. An example is `/mnt/data/my_super_funky_track.mp3`; disabling this will make the bot unable to play any local track content."
@@ -335,7 +335,7 @@ msgstr "Environnement invalide"
 
 #: redbot/cogs/audio/core/events/dpy.py:367
 msgid "Connection to Lavalink node has been lost."
-msgstr ""
+msgstr "La connexion avec Lavalink a été perdue."
 
 #: redbot/cogs/audio/core/events/dpy.py:375
 msgid "No Player Available"
@@ -353,7 +353,7 @@ msgstr "Impossible d'obtenir la piste"
 #: redbot/cogs/audio/core/events/dpy.py:385
 #: redbot/cogs/audio/core/events/lavalink.py:184
 msgid "I'm unable to get a track from the Lavalink node at the moment, try again in a few minutes."
-msgstr ""
+msgstr "Je ne parviens actuellement pas à avoir une musique depuis Lavalink. Réessayez dans quelques minutes."
 
 #: redbot/cogs/audio/core/events/dpy.py:396
 msgid "There was an issue communicating with Discord."
