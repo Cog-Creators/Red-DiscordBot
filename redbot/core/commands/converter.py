@@ -66,7 +66,7 @@ TIME_RE = re.compile(
           | (?P<weeks>\d+)\s?(weeks?|w)
           | (?P<days>\d+)\s?(days?|d)
           | (?P<hours>\d+)\s?(hours?|hrs|hr?)
-          | (?P<minutes>\d+)\s?(minutes?|mins?|m(?!o))  # prevent matching "months"
+          | (?P<minutes>\d+)\s?(minutes?|mins?|m)
           | (?P<seconds>\d+)\s?(seconds?|secs?|s)
         ))+\b
     """,
