@@ -14,7 +14,7 @@ from redbot.core.commands.converter import TIME_RE
 _ = i18n.Translator("Mutes", __file__)
 log = logging.getLogger("red.cogs.mutes")
 
-TIME_SPLIT = re.compile(r"t(?:ime\s?)?=")
+TIME_SPLIT = re.compile(r"t(?:ime\s?)?=\s*")
 
 
 def _edgematch(pattern: re.Pattern[str], argument: str) -> Optional[re.Match[str]]:
