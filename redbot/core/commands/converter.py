@@ -19,7 +19,6 @@ from typing import (
     List,
     Dict,
     Type,
-    TypedDict,
     TypeVar,
     Union as UserInputOptional,
 )
