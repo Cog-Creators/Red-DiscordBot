@@ -539,10 +539,11 @@ def humanize_timedelta(
         A timedelta object
     seconds: Optional[SupportsInt]
         A number of seconds
-    negative_unit: Optional[str]
-        What to use in instances of negative timedeltas.
-        This is mainly used if you want to use "-" instead of the
-        word "negative"
+    negative_format: Optional[str]
+        How to format negative timedeltas, using %-formatting rules.
+        Defaults to "negative %s"
+    maximum_units: Optional[int]
+        The maximum amount of units to output in the final string.
 
     Returns
     -------
