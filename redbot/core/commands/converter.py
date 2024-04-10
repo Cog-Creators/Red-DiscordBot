@@ -61,13 +61,13 @@ USER_MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 TIME_RE = re.compile(
     r"""
         (\s?(  # match deliminators here to make word border below unambiguous
-            (?P<years>\d+)\s?(years?|y)
-          | (?P<months>\d+)\s?(months?|mo)
-          | (?P<weeks>\d+)\s?(weeks?|w)
-          | (?P<days>\d+)\s?(days?|d)
-          | (?P<hours>\d+)\s?(hours?|hrs|hr?)
-          | (?P<minutes>\d+)\s?(minutes?|mins?|m)
-          | (?P<seconds>\d+)\s?(seconds?|secs?|s)
+            (?P<years>[\+-]?\d+)\s?(years?|y)
+          | (?P<months>[\+-]?\d+)\s?(months?|mo)
+          | (?P<weeks>[\+-]?\d+)\s?(weeks?|w)
+          | (?P<days>[\+-]?\d+)\s?(days?|d)
+          | (?P<hours>[\+-]?\d+)\s?(hours?|hrs|hr?)
+          | (?P<minutes>[\+-]?\d+)\s?(minutes?|mins?|m)
+          | (?P<seconds>[\+-]?\d+)\s?(seconds?|secs?|s)
         ))+\b
     """,
     flags=re.IGNORECASE | re.VERBOSE,
@@ -94,7 +94,7 @@ def parse_timedelta(
     argument: str,
     *,
     maximum: Optional[timedelta] = None,
-    minimum: Optional[timedelta] = None,
+    minimum: Optional[timedelta] = timedelta(seconds=0),
     allowed_units: Optional[List[str]] = None,
 ) -> Optional[timedelta]:
     """
@@ -111,6 +111,7 @@ def parse_timedelta(
         If provided, any parsed value higher than this will raise an exception
     minimum : Optional[datetime.timedelta]
         If provided, any parsed value lower than this will raise an exception
+        Defaults to 0 seconds, pass None explicitly to allow negative values
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
