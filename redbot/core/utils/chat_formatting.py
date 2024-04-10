@@ -543,7 +543,7 @@ def humanize_timedelta(
         How to format negative timedeltas, using %-formatting rules.
         Defaults to "negative %s"
     maximum_units: Optional[int]
-        The maximum amount of units to output in the final string.
+        The maximum number of different units to output in the final string.
 
     Returns
     -------
@@ -553,13 +553,32 @@ def humanize_timedelta(
     Raises
     ------
     ValueError
-        The function was called with neither a number of seconds nor a timedelta object
+        The function was called with neither a number of seconds nor a timedelta object,
+        or with a maximum_units less than 1.
+
+    Examples
+    --------
+    .. testsetup::
+
+        from datetime import timedelta
+        from redbot.core.utils.chat_formatting import humanize_timedelta
+
+    .. doctest::
+
+        >>> humanize_timedelta(seconds=314)
+        '5 minutes and 14 seconds'
+        >>> humanize_timedelta(timedelta=timedelta(minutes=3.14), maximum_units=1)
+        '3 minutes'
+        >>> humanize_timedelta(timedelta=timedelta(days=-3.14), negative_format="%s ago", maximum_units=3)
+        '3 days, 3 hours, and 21 minutes ago'
     """
 
     try:
         obj = seconds if seconds is not None else timedelta.total_seconds()
     except AttributeError:
         raise ValueError("You must provide either a timedelta or a number of seconds")
+    if maximum_units is not None and maximum_units < 1:
+        raise ValueError("maximum_units must be >= 1")
 
     periods = [
         (_("year"), _("years"), 60 * 60 * 24 * 365),
@@ -579,6 +598,7 @@ def humanize_timedelta(
     else:
         negative_format = "%s"
     strings = []
+    maximum_units = maximum_units or len(periods)
     for period_name, plural_period_name, period_seconds in periods:
         if seconds >= period_seconds:
             period_value, seconds = divmod(seconds, period_seconds)
@@ -586,8 +606,10 @@ def humanize_timedelta(
                 continue
             unit = plural_period_name if period_value > 1 else period_name
             strings.append(f"{period_value} {unit}")
+            if len(strings) == maximum_units:
+                break
 
-    return negative_format % humanize_list(strings[:maximum_units])
+    return negative_format % humanize_list(strings)
 
 
 def humanize_number(val: Union[int, float], override_locale=None) -> str:
