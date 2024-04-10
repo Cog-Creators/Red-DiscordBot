@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-01 22:55+0000\n"
+"POT-Creation-Date: 2023-09-06 18:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,8 @@ msgid "Various commands relating to streaming platforms.\n\n"
 "    You can check if a Twitch, YouTube or Picarto stream is\n"
 "    currently live.\n"
 "    "
-msgstr ""
+msgstr "Diversos comandos relacionados com plataformas de streaming.\n\n"
+"Podes verificar se uma transmissão no Twitch, YouTube ou Picarto está atualmente em direto.    "
 
 #: redbot/cogs/streams/streams.py:123
 msgid "You need a client secret key if you want to use the Twitch API on this cog.\n"
@@ -359,25 +360,25 @@ msgstr ""
 msgid "This stream was scheduled for {min} minutes ago"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:445
+#: redbot/cogs/streams/streamtypes.py:447
 msgid "Untitled broadcast"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:447
+#: redbot/cogs/streams/streamtypes.py:449
 msgid " - Rerun"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:450
+#: redbot/cogs/streams/streamtypes.py:452
 #: redbot/cogs/streams/streamtypes.py:498
 msgid "Followers"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:451
+#: redbot/cogs/streams/streamtypes.py:453
 #: redbot/cogs/streams/streamtypes.py:499
 msgid "Total views"
 msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:456
+#: redbot/cogs/streams/streamtypes.py:458
 msgid "Playing: "
 msgstr ""
 

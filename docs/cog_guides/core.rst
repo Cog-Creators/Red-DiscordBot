@@ -1475,9 +1475,6 @@ helpset maxpages
 
 Set the maximum number of help pages sent in a server channel.
 
-.. Note:: This setting does not apply to menu help.
-
-
 If a help message contains more pages than this value, the help message will
 be sent to the command author via DM. This is to help reduce spam in server
 text channels.
@@ -1683,8 +1680,11 @@ Set the tagline to be used.
 The maximum tagline length is 2048 characters.
 This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
 
+You can use ``[p]`` in your tagline, which will be replaced by the bot's prefix.
+
 **Examples:**
     - ``[p]helpset tagline Thanks for using the bot!``
+    - ``[p]helpset tagline Use [p]invite to add me to your server.``
     - ``[p]helpset tagline`` - Resets the tagline to the default.
 
 **Arguments:**
@@ -3768,6 +3768,35 @@ Maximum length for a competing status is 128 characters.
 
 **Arguments:**
     - ``[competing]`` - The text to follow ``Competing in``. Leave blank to clear the current activity status.
+
+.. _core-command-set-status-custom:
+
+"""""""""""""""""
+set status custom
+"""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status custom [text]
+
+**Description**
+
+Sets Red's custom status.
+
+This will appear as ``<text>``.
+
+Maximum length for a custom status is 128 characters.
+
+**Examples:**
+    - ``[p]set status custom`` - Clears the activity status.
+    - ``[p]set status custom Running cogs...``
+
+**Arguments:**
+    - ``[text]`` - The custom status text. Leave blank to clear the current activity status.
 
 .. _core-command-set-status-dnd:
 
