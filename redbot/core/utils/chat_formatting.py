@@ -566,11 +566,11 @@ def humanize_timedelta(
     .. doctest::
 
         >>> humanize_timedelta(seconds=314)
-        '5 minutes and 14 seconds'
+        '5 minutes, 14 seconds'
         >>> humanize_timedelta(timedelta=timedelta(minutes=3.14), maximum_units=1)
         '3 minutes'
         >>> humanize_timedelta(timedelta=timedelta(days=-3.14), negative_format="%s ago", maximum_units=3)
-        '3 days, 3 hours, and 21 minutes ago'
+        '3 days, 3 hours, 21 minutes ago'
     """
 
     try:
@@ -609,7 +609,7 @@ def humanize_timedelta(
             if len(strings) == maximum_units:
                 break
 
-    return negative_format % humanize_list(strings)
+    return negative_format % humanize_list(strings, style="unit")
 
 
 def humanize_number(val: Union[int, float], override_locale=None) -> str:
