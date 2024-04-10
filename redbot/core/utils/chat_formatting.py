@@ -522,7 +522,8 @@ def humanize_timedelta(
     *,
     timedelta: Optional[datetime.timedelta] = None,
     seconds: Optional[SupportsInt] = None,
-    negative_unit: Optional[str] = None,
+    negative_format: Optional[str] = None,
+    maximum_units: Optional[int] = None,
 ) -> str:
     """
     Get a locale aware human timedelta representation.
@@ -559,7 +560,6 @@ def humanize_timedelta(
     except AttributeError:
         raise ValueError("You must provide either a timedelta or a number of seconds")
 
-    seconds = int(obj)
     periods = [
         (_("year"), _("years"), 60 * 60 * 24 * 365),
         (_("month"), _("months"), 60 * 60 * 24 * 30),
@@ -568,12 +568,15 @@ def humanize_timedelta(
         (_("minute"), _("minutes"), 60),
         (_("second"), _("seconds"), 1),
     ]
-    negative = ""
+    seconds = int(obj)
     if seconds < 0:
-        seconds = -1 * seconds
-        negative = _("negative ")
-        if negative_unit is not None:
-            negative = negative_unit
+        seconds = -seconds
+        if negative_format and "%s" not in negative_format:
+            negative_format = negative_format + " %s"
+        else:
+            negative_format = negative_format or (_("negative") + " %s")
+    else:
+        negative_format = "%s"
     strings = []
     for period_name, plural_period_name, period_seconds in periods:
         if seconds >= period_seconds:
@@ -583,7 +586,7 @@ def humanize_timedelta(
             unit = plural_period_name if period_value > 1 else period_name
             strings.append(f"{period_value} {unit}")
 
-    return negative + ", ".join(strings)
+    return negative_format % humanize_list(strings[:maximum_units])
 
 
 def humanize_number(val: Union[int, float], override_locale=None) -> str:
