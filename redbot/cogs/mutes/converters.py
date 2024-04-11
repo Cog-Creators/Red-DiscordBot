@@ -56,11 +56,13 @@ class _MuteTimeConverter(Converter):
                         _("`{unit}` is not a valid unit of time for this command").format(unit=k)
                     )
             try:
-                result["duration"] = timedelta(**time_data)
+                result["duration"] = duration = timedelta(**time_data)
             except OverflowError:
                 raise commands.BadArgument(
                     _("The time provided is too long; use a more reasonable time.")
                 )
+            if duration <= timedelta(seconds=0):
+                raise commands.BadArgument(_("The time provided must not be in the past."))
             if time_split:
                 start, end = time_split.span()
                 end += match.end()
