@@ -27,7 +27,7 @@ lots of different software projects.
 * ``locales/`` directory, where ``.po`` files are stored.
 
 So, if your are the author of a Cog, or you are adding translations for the first
-time to python code, you would probably generate ``.pot`` file to make your code 
+time to python code, you would probably generate ``.pot`` files to make your code 
 easily translatable. See below for instructions.
 
 If you are trying to translate part of Red, or a Cog, you would write a ``.po`` 
@@ -46,7 +46,7 @@ For Cog authors
 
 For authors of Cogs, it's very easy to make your bot translatable using the
 Translator class provided - code samples can be found below. In summary, the 
-steps are;
+steps are:
 
 * Import the i18n Translator class and cog_i18n decorator.
 * Decorate your class with @cog_i18n
