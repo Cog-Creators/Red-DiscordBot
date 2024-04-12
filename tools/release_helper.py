@@ -753,7 +753,15 @@ def run_prepare_release_workflow(release_type: ReleaseType, version: str) -> Non
                 break
             time.sleep(5)
 
-        subprocess.check_call(("gh", "run", "watch", str(run_id)))
+        try:
+            subprocess.check_call(("gh", "run", "watch", "--exit-status", str(run_id)))
+        except subprocess.CalledProcessError:
+            set_release_stage(ReleaseStage.CHANGELOG_REVIEWED)
+            raise click.ClickException(
+                "Github Actions workflow failed, run this command again"
+                " once you're ready to try running the 'Prepare Release' workflow again."
+            )
+
         rich.print("The automated pull requests have been created.\n")
         set_release_stage(ReleaseStage.PREPARE_RELEASE_RAN)
     rich.print(Markdown("# Step 6: Merge the automatically created PRs"))

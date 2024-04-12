@@ -256,7 +256,7 @@ class Red(
         Set's Red's help formatter.
 
         .. warning::
-            This method is provisional.
+            This method is `provisional <developer-guarantees-exclusions>`.
 
 
         The formatter must implement all methods in
@@ -297,7 +297,7 @@ class Red(
         Resets Red's help formatter.
 
         .. warning::
-            This method is provisional.
+            This method is `provisional <developer-guarantees-exclusions>`.
 
 
         This exists for use in ``cog_unload`` for cogs which replace the formatter
@@ -2331,7 +2331,7 @@ class Red(
         *,
         user: Optional[discord.User] = None,
         box_lang: Optional[str] = None,
-        timeout: int = 15,
+        timeout: int = 60,
         join_character: str = "",
     ) -> List[discord.Message]:
         """

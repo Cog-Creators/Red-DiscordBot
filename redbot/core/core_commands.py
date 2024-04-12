@@ -2889,11 +2889,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 _(
                     "Failed. Remember that you can edit my avatar "
                     "up to two times a hour. The URL or attachment "
-                    "must be a valid image in either JPG or PNG format."
+                    "must be a valid image in either JPG, PNG, or GIF format."
                 )
             )
         except ValueError:
-            await ctx.send(_("JPG / PNG format only."))
+            await ctx.send(_("JPG / PNG / GIF format only."))
         else:
             await ctx.send(_("Done."))
 

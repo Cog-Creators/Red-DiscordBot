@@ -63,7 +63,7 @@ msgstr "Tento uživatel je offline."
 
 #: redbot/cogs/streams/streams.py:255 redbot/cogs/streams/streams.py:491
 msgid "That user doesn't seem to exist."
-msgstr ""
+msgstr "Zdá se, že tento uživatel neexistuje."
 
 #: redbot/cogs/streams/streams.py:258 redbot/cogs/streams/streams.py:459
 msgid "The Twitch token is either invalid or has not been set. See {command}."
@@ -83,7 +83,7 @@ msgstr "Při pokusu o spojení s API streamovací službou nastala chyba."
 
 #: redbot/cogs/streams/streams.py:301 redbot/cogs/streams/streams.py:810
 msgid "Watch the stream"
-msgstr ""
+msgstr "Sledovat stream"
 
 #: redbot/cogs/streams/streams.py:310
 #, docstring
@@ -349,15 +349,15 @@ msgstr ""
 
 #: redbot/cogs/streams/streams.py:934
 msgid "{display_name} is live!"
-msgstr ""
+msgstr "{display_name}, právě vysílá!"
 
 #: redbot/cogs/streams/streamtypes.py:226
 msgid "This stream will start in {time}"
-msgstr ""
+msgstr "Tento stream bude spuštěn v {time}"
 
 #: redbot/cogs/streams/streamtypes.py:232
 msgid "This stream was scheduled for {min} minutes ago"
-msgstr ""
+msgstr "Tento stream byl naplánován na {min} minut"
 
 #: redbot/cogs/streams/streamtypes.py:447
 msgid "Untitled broadcast"
