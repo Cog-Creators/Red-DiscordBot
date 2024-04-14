@@ -57,19 +57,21 @@ USER_MENTION_REGEX = re.compile(r"<@!?([0-9]{15,21})>$")
 
 # Taken with permission from
 # https://github.com/mikeshardmind/SinbadCogs/blob/816f3bc2ba860243f75112904b82009a8a9e1f99/scheduler/time_utils.py#L9-L19
-TIME_RE_STRING = r"\s?".join(
-    [
-        r"((?P<years>\d+?)\s?(years?|y))?",
-        r"((?P<months>\d+?)\s?(months?|mo))?",
-        r"((?P<weeks>\d+?)\s?(weeks?|w))?",
-        r"((?P<days>\d+?)\s?(days?|d))?",
-        r"((?P<hours>\d+?)\s?(hours?|hrs|hr?))?",
-        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))?",  # prevent matching "months"
-        r"((?P<seconds>\d+?)\s?(seconds?|secs?|s))?",
-    ]
+# with modifications
+TIME_RE = re.compile(
+    r"""
+        (\s?(  # match deliminators here to make word border below unambiguous
+            (?P<years>[\+-]?\d+)\s?(years?|y)
+          | (?P<months>[\+-]?\d+)\s?(months?|mo)
+          | (?P<weeks>[\+-]?\d+)\s?(weeks?|w)
+          | (?P<days>[\+-]?\d+)\s?(days?|d)
+          | (?P<hours>[\+-]?\d+)\s?(hours?|hrs|hr?)
+          | (?P<minutes>[\+-]?\d+)\s?(minutes?|mins?|m)
+          | (?P<seconds>[\+-]?\d+)\s?(seconds?|secs?|s)
+        ))+\b
+    """,
+    flags=re.IGNORECASE | re.VERBOSE,
 )
-
-TIME_RE = re.compile(TIME_RE_STRING, re.I)
 
 
 def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional[Dict[str, int]]:
@@ -92,13 +94,13 @@ def parse_timedelta(
     argument: str,
     *,
     maximum: Optional[timedelta] = None,
-    minimum: Optional[timedelta] = None,
+    minimum: Optional[timedelta] = timedelta(seconds=0),
     allowed_units: Optional[List[str]] = None,
 ) -> Optional[timedelta]:
     """
     This converts a user provided string into a timedelta
 
-    The units should be in order from largest to smallest.
+    If a unit is specified multiple times, only the last is considered.
     This works with or without whitespace.
 
     Parameters
@@ -109,6 +111,7 @@ def parse_timedelta(
         If provided, any parsed value higher than this will raise an exception
     minimum : Optional[datetime.timedelta]
         If provided, any parsed value lower than this will raise an exception
+        Defaults to 0 seconds, pass None explicitly to allow negative values
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
@@ -162,7 +165,7 @@ def parse_relativedelta(
     """
     This converts a user provided string into a datetime with offset from NOW
 
-    The units should be in order from largest to smallest.
+    If a unit is specified multiple times, only the last is considered.
     This works with or without whitespace.
 
     Parameters
