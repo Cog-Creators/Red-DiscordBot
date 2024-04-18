@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from typing import Optional, TypedDict
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 from typing_extensions import Annotated
 
 from discord.ext.commands.converter import Converter
@@ -57,6 +57,8 @@ class _MuteTimeConverter(Converter):
                     )
             try:
                 result["duration"] = duration = timedelta(**time_data)
+                datetime.now(timezone.utc) + duration
+                # Catch if using the timedelta with the current date will also result in an Overflow error
             except OverflowError:
                 raise commands.BadArgument(
                     _("The time provided is too long; use a more reasonable time.")
