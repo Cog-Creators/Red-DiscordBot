@@ -99,23 +99,25 @@ class VoiceMutes(MixinMeta):
                 if not can_move:
                     issue_list.append((user, perm_reason))
                     continue
-                duration = time_and_reason.get("duration", None)
+                until = time_and_reason.get("until", None)
                 reason = time_and_reason.get("reason", None)
                 time = ""
-                until = None
-                if duration:
-                    until = datetime.now(timezone.utc) + duration
-                    time = _(" for {duration}").format(
-                        duration=humanize_timedelta(timedelta=duration)
+                duration = None
+                if until:
+                    duration = time_and_reason.get("duration")
+                    length = humanize_timedelta(timedelta=duration)
+                    time = _(" for {length} until {duration}").format(
+                        length=length, duration=discord.utils.format_dt(until)
                     )
+
                 else:
                     default_duration = await self.config.guild(ctx.guild).default_time()
                     if default_duration:
-                        until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                        time = _(" for {duration}").format(
-                            duration=humanize_timedelta(
-                                timedelta=timedelta(seconds=default_duration)
-                            )
+                        duration = timedelta(seconds=default_duration)
+                        until = ctx.message.created_at + duration
+                        length = humanize_timedelta(seconds=default_duration)
+                        time = _(" for {length} until {duration}").format(
+                            length=length, duration=discord.utils.format_dt(until)
                         )
                 guild = ctx.guild
                 author = ctx.author

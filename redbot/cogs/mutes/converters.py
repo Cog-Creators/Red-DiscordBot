@@ -29,6 +29,7 @@ def _edgematch(pattern: re.Pattern[str], argument: str) -> Optional[re.Match[str
 class _MuteTime(TypedDict, total=False):
     duration: timedelta
     reason: str
+    until: datetime
 
 
 class _MuteTimeConverter(Converter):
@@ -57,7 +58,7 @@ class _MuteTimeConverter(Converter):
                     )
             try:
                 result["duration"] = duration = timedelta(**time_data)
-                datetime.now(timezone.utc) + duration
+                result["until"] = ctx.message.created_at + duration
                 # Catch if using the timedelta with the current date will also result in an Overflow error
             except OverflowError:
                 raise commands.BadArgument(
