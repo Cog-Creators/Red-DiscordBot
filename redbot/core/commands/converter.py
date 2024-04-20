@@ -334,6 +334,7 @@ else:
             If provided, any parsed value higher than this will raise an exception
         minimum : Optional[datetime.timedelta]
             If provided, any parsed value lower than this will raise an exception
+            Defaults to 0 seconds, pass None explicitly to allow negative values
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
             in specific units. The units you can choose to provide are the same as the
@@ -344,7 +345,7 @@ else:
             apply.
         """
 
-        def __init__(self, *, minimum=None, maximum=None, allowed_units=None, default_unit=None):
+        def __init__(self, *, minimum=timedelta(seconds=0), maximum=None, allowed_units=None, default_unit=None):
             self.allowed_units = allowed_units
             self.default_unit = default_unit
             self.minimum = minimum
@@ -383,7 +384,7 @@ else:
         *,
         default_unit: Optional[str] = None,
         maximum: Optional[timedelta] = None,
-        minimum: Optional[timedelta] = None,
+        minimum: Optional[timedelta] = timedelta(seconds=0),
         allowed_units: Optional[List[str]] = None,
     ) -> Type[timedelta]:
         """
@@ -398,6 +399,7 @@ else:
             If provided, any parsed value higher than this will raise an exception
         minimum : Optional[datetime.timedelta]
             If provided, any parsed value lower than this will raise an exception
+            Defaults to 0 seconds, pass None explicitly to allow negative values
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
             in specific units. The units you can choose to provide are the same as the
