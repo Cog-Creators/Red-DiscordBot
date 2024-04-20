@@ -1012,7 +1012,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 # prevent setting a default time now that might eventually cause an overflow
                 # later as the date goes up. 1000 years gives us approximately 8000 more years
                 # of wiggle room.
-                return await ctx.send(_("The time provided is too long; use a more reasonable time."))
+                return await ctx.send(
+                    _("The time provided is too long; use a more reasonable time.")
+                )
             await self.config.guild(ctx.guild).default_time.set(duration.total_seconds())
             await ctx.send(
                 _("Default mute time set to {time}.").format(
