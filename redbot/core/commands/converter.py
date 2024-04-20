@@ -111,7 +111,7 @@ def parse_timedelta(
         If provided, any parsed value higher than this will raise an exception
     minimum : Optional[datetime.timedelta]
         If provided, any parsed value lower than this will raise an exception
-        Defaults to 0 seconds, pass None explicitly to allow negative values
+        Defaults to 0 seconds, pass `datetime.timedelta.min` explicitly to allow negative values
     allowed_units : Optional[List[str]]
         If provided, you can constrain a user to expressing the amount of time
         in specific units. The units you can chose to provide are the same as the
@@ -135,6 +135,10 @@ def parse_timedelta(
         "minutes",
         "seconds",
     ]
+    if minimum is None:
+        minimum = timedelta(seconds=0)
+    if maximum is None:
+        maximum = timedelta.max
     params = _parse_and_match(argument, allowed_units)
     if params:
         try:
@@ -143,13 +147,13 @@ def parse_timedelta(
             raise BadArgument(
                 _("The time set is way too high, consider setting something reasonable.")
             )
-        if maximum and maximum < delta:
+        if maximum < delta:
             raise BadArgument(
                 _(
                     "This amount of time is too large for this command. (Maximum: {maximum})"
                 ).format(maximum=humanize_timedelta(timedelta=maximum))
             )
-        if minimum and delta < minimum:
+        if delta < minimum:
             raise BadArgument(
                 _(
                     "This amount of time is too small for this command. (Minimum: {minimum})"
@@ -334,7 +338,7 @@ else:
             If provided, any parsed value higher than this will raise an exception
         minimum : Optional[datetime.timedelta]
             If provided, any parsed value lower than this will raise an exception
-            Defaults to 0 seconds, pass None explicitly to allow negative values
+            Defaults to 0 seconds, pass `datetime.timedelta.min` explicitly to allow negative values
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
             in specific units. The units you can choose to provide are the same as the
@@ -406,7 +410,7 @@ else:
             If provided, any parsed value higher than this will raise an exception
         minimum : Optional[datetime.timedelta]
             If provided, any parsed value lower than this will raise an exception
-            Defaults to 0 seconds, pass None explicitly to allow negative values
+            Defaults to 0 seconds, pass `datetime.timedelta.min` explicitly to allow negative values
         allowed_units : Optional[List[str]]
             If provided, you can constrain a user to expressing the amount of time
             in specific units. The units you can choose to provide are the same as the
