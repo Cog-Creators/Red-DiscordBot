@@ -151,13 +151,21 @@ def parse_timedelta(
             raise BadArgument(
                 _(
                     "This amount of time is too large for this command. (Maximum: {maximum})"
-                ).format(maximum=humanize_timedelta(timedelta=maximum))
+                ).format(
+                    maximum=humanize_timedelta(
+                        seconds=math.ceil(maximum.total_seconds()) or _("0 seconds")
+                    )
+                )
             )
         if delta < minimum:
             raise BadArgument(
                 _(
                     "This amount of time is too small for this command. (Minimum: {minimum})"
-                ).format(minimum=humanize_timedelta(timedelta=minimum))
+                ).format(
+                    minimum=humanize_timedelta(
+                        seconds=math.ceil(minimum.total_seconds()) or _("0 seconds")
+                    )
+                )
             )
         return delta
     return None
