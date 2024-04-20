@@ -373,7 +373,7 @@ if TYPE_CHECKING:
         *,
         default_unit: Optional[str] = None,
         maximum: Optional[timedelta] = None,
-        minimum: Optional[timedelta] = None,
+        minimum: Optional[timedelta] = timedelta(seconds=0),
         allowed_units: Optional[List[str]] = None,
     ) -> Type[timedelta]:
         ...
