@@ -153,7 +153,7 @@ def parse_timedelta(
                     "This amount of time is too large for this command. (Maximum: {maximum})"
                 ).format(
                     maximum=humanize_timedelta(
-                        seconds=math.ceil(maximum.total_seconds()) or _("0 seconds")
+                        seconds=math.floor(maximum.total_seconds()) or _("0 seconds")
                     )
                 )
             )
