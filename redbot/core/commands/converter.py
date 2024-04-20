@@ -345,7 +345,14 @@ else:
             apply.
         """
 
-        def __init__(self, *, minimum=timedelta(seconds=0), maximum=None, allowed_units=None, default_unit=None):
+        def __init__(
+            self,
+            *,
+            minimum=timedelta(seconds=0),
+            maximum=None,
+            allowed_units=None,
+            default_unit=None,
+        ):
             self.allowed_units = allowed_units
             self.default_unit = default_unit
             self.minimum = minimum
