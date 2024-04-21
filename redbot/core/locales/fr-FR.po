@@ -50,25 +50,26 @@ msgstr "Ce chemin n'existe pas ou ne pointe pas vers un répertoire valide."
 
 #: redbot/core/_cog_manager.py:364
 msgid "A cog path cannot be part of bot's data path ({bot_data_path})."
-msgstr ""
+msgstr "Un chemin de cog ne peut pas faire partie du chemin de données du bot ({bot_data_path})."
 
 #: redbot/core/_cog_manager.py:374
 msgid "A cog path cannot be part of bot's core path ({core_path})."
-msgstr ""
+msgstr "Un chemin de cog ne peut pas faire partie du chemin de base du bot ({core_path})."
 
 #: redbot/core/_cog_manager.py:416
 msgid "The provided path appears to be a cog package, are you sure that this is the path that you want to add as a **cog path**?\n\n"
 "For example, in the following case, you should be adding the {path} as a **cog path**:\n"
-msgstr ""
+msgstr "Le chemin fourni semble être un paquet cog, êtes-vous sûr que c'est le chemin que vous voulez ajouter en tant que **chemin de cog**?\n\n"
+"Par exemple, dans le cas suivant, vous devriez ajouter la {path} en tant que **chemin de cog** :\n"
 
 #: redbot/core/_cog_manager.py:423
 msgid "\n"
 "Please consult the Cog Manager UI documentation, if you're unsure: "
-msgstr ""
+msgstr "Veuillez consulter la documentation de l'interface utilisateur de Cog Manager, en cas de doute :"
 
 #: redbot/core/_cog_manager.py:429
 msgid "Okay, the path will not be added."
-msgstr ""
+msgstr "Ok, le chemin ne sera pas ajouté."
 
 #: redbot/core/_cog_manager.py:438
 msgid "Path successfully added."
@@ -357,7 +358,7 @@ msgstr "Vérification des permissions"
 
 #: redbot/core/_diagnoser.py:488
 msgid "Cog permissions verification"
-msgstr ""
+msgstr "Vérification des permissions"
 
 #: redbot/core/_diagnoser.py:503
 msgid "The cog of the given command is disabled in this guild."
@@ -634,7 +635,8 @@ msgstr "\n\n"
 msgid "\n\n"
 "To update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:{command_1}\n"
 "Once you've started up your bot again, we recommend that you update any installed 3rd-party cogs with this command in Discord:{command_2}"
-msgstr ""
+msgstr "Pour mettre à jour votre bot, arrêtez d'abord votre bot puis ouvrez une fenêtre de{console} (Pas en tant qu'administrateur) et exécutez ce qui suit :{command_1}\n"
+"Une fois que vous avez redémarré votre bot, nous vous recommandons de mettre à jour tous les cogs tiers installés avec cette commande dans Discord :{command_2}"
 
 #: redbot/core/_events.py:128
 msgid "Command Prompt"
@@ -650,51 +652,51 @@ msgstr "`{user_input}` n'est pas une valeur valide pour `{command}`"
 
 #: redbot/core/_events.py:251 redbot/core/_events.py:304
 msgid "Argument `{parameter_name}` must be a positive integer."
-msgstr ""
+msgstr "L'argument {parameter_name} doit être un entier positif."
 
 #: redbot/core/_events.py:253 redbot/core/_events.py:306
 msgid "Argument `{parameter_name}` must be an integer no more than {maximum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` ne doit pas être un entier supérieur à {maximum}."
 
 #: redbot/core/_events.py:257 redbot/core/_events.py:310
 msgid "Argument `{parameter_name}` must be an integer no less than {minimum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être un entier au moins de {minimum}."
 
 #: redbot/core/_events.py:261 redbot/core/_events.py:314
 msgid "Argument `{parameter_name}` must be an integer between {minimum} and {maximum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être un entier entre {minimum} et {maximum}."
 
 #: redbot/core/_events.py:266 redbot/core/_events.py:319
 msgid "Argument `{parameter_name}` must be a positive number."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être un nombre positif."
 
 #: redbot/core/_events.py:268 redbot/core/_events.py:321
 msgid "Argument `{parameter_name}` must be a number no more than {maximum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` ne doit pas être un nombre supérieur à {maximum}."
 
 #: redbot/core/_events.py:272
 msgid "Argument `{parameter_name}` must be a number no less than {maximum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être un nombre au moins de {maximum}."
 
 #: redbot/core/_events.py:276 redbot/core/_events.py:329
 msgid "Argument `{parameter_name}` must be a number between {minimum} and {maximum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être un nombre compris entre {minimum} et {maximum}."
 
 #: redbot/core/_events.py:281 redbot/core/_events.py:334
 msgid "Argument `{parameter_name}` must be a string with a length of no more than {maximum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être une chaîne de caractères d'une longueur maximale de {maximum}."
 
 #: redbot/core/_events.py:285 redbot/core/_events.py:338
 msgid "Argument `{parameter_name}` must be a string with a length of no less than {minimum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être une chaîne de caractères d'une longueur maximale de {minimum}."
 
 #: redbot/core/_events.py:289 redbot/core/_events.py:342
 msgid "Argument `{parameter_name}` must be a string with a length of between {minimum} and {maximum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être une chaîne de caractères d'une longueur comprise entre {minimum} et {maximum}."
 
 #: redbot/core/_events.py:325
 msgid "Argument `{parameter_name}` must be a number no less than {minimum}."
-msgstr ""
+msgstr "L'argument `{parameter_name}` doit être un nombre au moins de {minimum}."
 
 #: redbot/core/_events.py:355
 msgid "\"{argument}\" is not an integer."
@@ -734,7 +736,7 @@ msgstr "Cette commande n'est disponible que dans les channels NSFW."
 
 #: redbot/core/_events.py:434 redbot/core/tree.py:326
 msgid "This command is on cooldown. Try again {relative_time}."
-msgstr ""
+msgstr "Cette commande est en cours de rechargement. Réessayez {relative_time}."
 
 #: redbot/core/_events.py:441
 msgid "Too many people using this command. It can only be used {number} times concurrently."
@@ -770,11 +772,11 @@ msgstr "Vous avez besoin d’au moins {cost} {currency} pour utiliser cette comm
 
 #: redbot/core/bot.py:2378
 msgid "There is still one message remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
-msgstr ""
+msgstr "Il reste encore un message. Tapez {command_1} pour continuer ou {command_2} pour télécharger tout le contenu en tant que fichier."
 
 #: redbot/core/bot.py:2383
 msgid "There are still {count} messages remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
-msgstr ""
+msgstr "Il y a encore des messages {count} restants. Tapez {command_1} pour continuer ou {command_2} pour télécharger tout le contenu en tant que fichier."
 
 #: redbot/core/core_commands.py:197
 msgid "Alias {alias_name} is already an existing command or alias in one of the loaded cogs."
@@ -938,7 +940,11 @@ msgid "\n"
 "        **Example:**\n"
 "        - `[p]mydata whatdata`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Découvrez quel type de données [botname] stocke et pourquoi.\n\n"
+"        **Exemple:**\n"
+"            - `[p]mydata whatdata`\n"
+"        "
 
 #: redbot/core/core_commands.py:586
 msgid "This bot stores some data about users as necessary to function. This is mostly the ID your user is assigned by Discord, linked to a handful of things depending on what you interact with in the bot. There are a few commands which store it to keep track of who created something. (such as playlists) For full details about this as well as more in depth details of what is stored and why, see {link}.\n\n"
@@ -953,7 +959,11 @@ msgid "View the End User Data statements of each 3rd-party module.\n\n"
 "        **Example:**\n"
 "        - `[p]mydata 3rdparty`\n"
 "        "
-msgstr ""
+msgstr "Afficher les déclarations de données de l'utilisateur final de chaque module tiers.\n\n"
+"        Ceci enverra une pièce jointe avec les déclarations de données de l'utilisateur final de tous les modules tiers chargés.\n\n"
+"        **Exemple :**\n"
+"            - `[p]mydata 3rdparty`\n"
+"        "
 
 #: redbot/core/core_commands.py:616
 msgid "I need to be able to attach files (try in DMs?)."
@@ -997,7 +1007,14 @@ msgid "\n"
 "        **Example:**\n"
 "        - `[p]mydata forgetme`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Forcez [botname] à oublier ce qu'il sait sur vous.\n\n"
+"        Cela peut ne pas supprimer toutes les données vous concernant, les données nécessaires à l'opération,\n"
+"        comme les temps de recharge des commandes seront conservées jusqu'à ce qu'elles ne soient plus nécessaires.\n\n"
+"        D'autres interactions avec [botname] peuvent à nouveau lui fournir des infos à votre sujet.\n\n\n"
+"        **Exemple :**\n"
+"            - `[p]mydata forgetme`\n"
+"        "
 
 #: redbot/core/core_commands.py:710
 msgid "This command ({command}) does not support non-interactive usage."
@@ -1073,7 +1090,12 @@ msgid "\n"
 "        **Example:**\n"
 "        - `[p]mydata ownermanagement allowuserdeletions`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Configurez le bot pour permettre aux utilisateurs de demander la suppression de données.\n\n"
+"        Cette option est activée par défaut.\n"
+"        Opposé à `[p]mydata ownermanagement disallowuserdeletions`\n\n"
+"        **Exemple:**\n"
+"            - `[p]mydata ownermanagement allowuserdeletions`        "
 
 #: redbot/core/core_commands.py:821
 msgid "User can delete their own data. This will not include operational data such as blocked users."
@@ -1087,7 +1109,13 @@ msgid "\n"
 "        **Example:**\n"
 "        - `[p]mydata ownermanagement disallowuserdeletions`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"     Configurez le bot pour qu'il ne permette pas aux utilisateurs de demander la suppression de données.\n\n"
+"        Opposé à `[p]mydata ownermanagement allowuserdeletions`\n\n"
+"        **Exemple:**\n"
+"            - `[p]mydata ownermanagement disallowuserdeletions`\n"
+"               \n"
+"        "
 
 #: redbot/core/core_commands.py:838
 msgid "User can not delete their own data."
@@ -1105,7 +1133,16 @@ msgid "\n"
 "        - `0`: What users can delete is left entirely up to each cog.\n"
 "        - `1`: Cogs should delete anything the cog doesn't need about the user.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Définit comment les suppressions d'utilisateurs sont traitées.\n\n"
+"        **Exemple:**\n"
+"            - `[p]mydata ownermanagement setuserdeletionlevel 1`\n\n"
+"        **Arguments:**\n"
+"            - `<level>` - Le niveau de rigueur pour la suppression des utilisateurs. Voir le guide des niveaux ci-dessous.\n\n"
+"        Niveau :\n"
+"            - `0` : Ce que les utilisateurs peuvent supprimer est laissé entièrement à la discrétion de chaque cog.\n"
+"            - `1` : Les joueurs doivent supprimer tout ce dont ils n'ont pas besoin concernant l'utilisateur.\n"
+"        "
 
 #: redbot/core/core_commands.py:859
 msgid "Cogs will be instructed to remove all non operational data upon a user request."
@@ -1126,7 +1163,15 @@ msgid "\n"
 "        **Arguments:**\n"
 "        - `<user_id>` - The id of the user whose data would be deleted.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Traite une demande de suppression de Discord.\n\n"
+"        Cela fera que le bot se débarrasse ou désassociera toutes les données de l'ID utilisateur spécifié.\n"
+"        Vous ne devriez pas utiliser ceci à moins que Discord ne l'ait spécifiquement demandé à l'égard d'un utilisateur supprimé.\n"
+"        Ceci supprimera l'utilisateur de diverses mesures anti-abus.\n"
+"        Si vous traitez une requête manuelle d'un utilisateur, vous pouvez vouloir `[p]mydata ownermanagement deleteforuser` à la place.\n\n"
+"        **Arguments:**\n"
+"            - `<user_id>` - L'id de l'utilisateur dont les données seront supprimées.\n"
+"        "
 
 #: redbot/core/core_commands.py:892
 msgid "This will cause the bot to get rid of or disassociate all data from the specified user ID. You should not use this unless Discord has specifically requested this with regard to a deleted user. This will remove the user from various anti-abuse measures. If you are processing a manual request from a user, you may want `{prefix}{command_name}` instead.\n\n"
@@ -1171,7 +1216,13 @@ msgid "Delete data [botname] has about a user for a user.\n\n"
 "        **Arguments:**\n"
 "        - `<user_id>` - The id of the user whose data would be deleted.\n"
 "        "
-msgstr ""
+msgstr "Supprimer les données de [botname] concernant un utilisateur pour un utilisateur.\n\n"
+"        Cela fera que le bot se débarrasse ou désassociera beaucoup de données non opérationnelles de l'utilisateur spécifié.\n"
+"        Les utilisateurs ont accès à une commande différente pour cela sauf s'ils ne peuvent pas interagir avec le bot du tout.\n"
+"        C'est une opération généralement sûre, mais vous ne devriez pas l'utiliser à moins de traiter une requête de cet utilisateur car cela peut affecter son utilisation du bot.\n\n"
+"        **Arguments :**\n"
+"            - `<user_id>` - L'id de l'utilisateur dont les données seraient supprimées.\n"
+"        "
 
 #: redbot/core/core_commands.py:968
 msgid "This will cause the bot to get rid of or disassociate a lot of non-operational data from the specified user. Users have access to different command for this unless they can't interact with the bot at all. This is a mostly safe operation, but you should not use it unless processing a request from this user as it may impact their usage of the bot. \n\n"
@@ -1215,7 +1266,12 @@ msgid "Delete data [botname] has about a user.\n\n"
 "        **Arguments:**\n"
 "        - `<user_id>` - The id of the user whose data would be deleted.\n"
 "        "
-msgstr ""
+msgstr "Supprimer les données de [botname] concernant un utilisateur.\n\n"
+"        Cela fera que le bot se débarrasse ou désassociera beaucoup de données à propos de l'utilisateur spécifié.\n"
+"        Cela peut inclure plus que de simples données de l'utilisateur final, y compris des enregistrements anti-abus.\n\n"
+"        **Arguments:**\n"
+"            - `<user_id>` - L'id de l'utilisateur dont les données seraient supprimées.\n"
+"        "
 
 #: redbot/core/core_commands.py:1053
 msgid "This will cause the bot to get rid of or disassociate a lot of data about the specified user. This may include more than just end user data, including anti abuse records.\n\n"
@@ -1241,7 +1297,22 @@ msgid "\n"
 "          2. Global command override - `[p]embedset command global`\n"
 "          3. Global setting - `[p]embedset global`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Commandes pour activer ou éteindre les intégrations\n"
+"        Cette option détermine s'il faut ou non utiliser incorporations comme réponse à une commande (pour les commandes qui le supportent).\n"
+"        La valeur par défaut est d'utiliser des incorporations.\n\n"
+"        Les paramètres d'intégration sont vérifiés jusqu'au premier Vrai / Faux dans cet ordre :\n"
+"            - Dans le contexte de guilde :\n"
+"                1. Remplacement de canal - `[p]embedset channel`\n"
+"                2. Remplacement de la commande du serveur - `[p]embedset command server`\n"
+"                3. Remplacement du serveur - `[p]embedset server`\n"
+"                4. Remplacement de commande globale - `[p]embedset command global`\n"
+"                5. Paramètre global -`[p]embedset global`\n\n"
+"            - Dans le contexte de DM :\n"
+"                1. Remplacement de l'utilisateur - `[p]embedset user`\n"
+"                2. Remplacement de commande globale - `[p]embedset command global`\n"
+"                3. Paramètre global - `[p]embedset global`\n"
+"        "
 
 #: redbot/core/core_commands.py:1139
 #, docstring
@@ -1255,7 +1326,16 @@ msgid "\n"
 "        **Arguments:**\n"
 "        - `[command]` - Checks this command for command specific embed settings.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Affiche les paramètres d'intégration actuels.\n\n"
+"        Fournissez un nom de commande pour vérifier les paramètres d'incorporation spécifiques à la commande.\n\n"
+"        **Exemples:**\n"
+"            - `[p]embedset showsettings` - Affiche les paramètres intégrés.\n"
+"            - `[p]embedset showsettings info` - Affiche également les paramètres d'intégration pour la commande 'info'.\n"
+"            - `[p]embedset showsettings \"ignore list\"` - La vérification des sous-commandes nécessite des guillemets.\n\n"
+"        **Arguments:**\n"
+"            - `[command]` - Vérifie cette commande pour les paramètres d'incorporation spécifiques à la commande.\n"
+"        "
 
 #: redbot/core/core_commands.py:1155
 msgid "Embed settings:\n\n"
@@ -1295,7 +1375,14 @@ msgid "\n"
 "        **Example:**\n"
 "        - `[p]embedset global`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Activer/désactiver le paramètre d'intégration global.\n\n"
+"        Ceci est utilisé comme valeur si l'utilisateur ou le serveur n'a pas défini de préférence.\n"
+"        La valeur par défaut est d'utiliser des incorporations.\n"
+"        Pour voir l'ordre d'évaluation complet des paramètres intégrés, exécutez `[p]aide embedset`.\n\n"
+"        **Exemple :**\n"
+"            - `[p]embedset global`\n"
+"        "
 
 #: redbot/core/core_commands.py:1202
 msgid "Embeds are now disabled by default."
@@ -1319,7 +1406,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "        - `[enabled]` - Whether to use embeds on this server. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Définissez le paramètre d'intégration du serveur.\n"
+"        S'il est défini, il est utilisé à la place de la valeur par défaut globale pour déterminer s'il faut ou non utiliser des incorporations.\n"
+"        Ceci est utilisé pour toutes les commandes effectuées dans un serveur.\n\n"
+"        Si le champ est laissé vide, le paramètre sera annulé et la valeur globale par défaut sera utilisée à la place.\n\n"
+"        Pour voir l'ordre d'évaluation complet des paramètres intégrés, exécutez `[p]help embedset`.\n\n"
+"        **Exemples:**\n"
+"            - `[p]embedset server False` - Désactive les intégrations sur ce serveur.\n"
+"            - `[p]embedset server` - Réinitialise la valeur par défaut pour utiliser la valeur globale.\n\n"
+"        **Arguments:**\n"
+"            - `[enabled]` - Indique s'il faut utiliser des intégrations sur ce serveur. Laissez vide pour réinitialiser par défaut.\n"
+"        "
 
 #: redbot/core/core_commands.py:1230 redbot/core/core_commands.py:1308
 #: redbot/core/core_commands.py:1402 redbot/core/core_commands.py:1433
@@ -1349,7 +1447,19 @@ msgid "\n"
 "        **Arguments:**\n"
 "        - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Définit le paramètre d'intégration d'une commande.\n\n"
+"        Si vous êtes le propriétaire du bot, cela tentera de modifier le paramètre d'inclusion de la commande globalement par défaut.\n"
+"        Sinon, cela essaiera de modifier les paramètres d'intégration sur le serveur actuel.\n\n"
+"        Si cette option est laissée vide, l'option sera annulé.\n\n"
+"        Pour voir l'ordre d'évaluation complet des paramètres d'intégration, exécutez `[p]help embedset`.\n\n"
+"        **Exemples:**\n"
+"            - `[p]embedset command info` - Efface les paramètres spécifiques de la commande pour 'info'.\n"
+"            - `[p]embedset info False` - Désactive les intégrations pour 'info'.\n"
+"            - `[p]commande embedset \"ignore list\" True` - Des guillemets sont nécessaires pour les sous-commandes.\n\n"
+"        **Arguments:**\n"
+"            - `[enabled]` - Indique s'il faut utiliser des incorporations pour cette commande. Laissez vide pour réinitialiser par défaut.\n"
+"        "
 
 #: redbot/core/core_commands.py:1274
 msgid "The passed command requires Embed Links permission and therefore cannot be set to not use embeds."
@@ -1369,7 +1479,18 @@ msgid "\n"
 "        **Arguments:**\n"
 "        - `[enabled]` - Whether to use embeds for this command. Leave blank to reset to default.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Définit le paramètre d'intégration d'une commande globalement.\n\n"
+"        Si vous êtes le propriétaire du bot, cela tentera de modifier le paramètre d'inclusion de la commande globalement par défaut.\n"
+"        Sinon, cela tentera de modifier les paramètres des intégration sur le serveur actuel.\n\n"
+"        Si cette option est laissée vide, le paramètre sera annulé.\n\n"
+"        Pour voir l'ordre d'évaluation complet des paramètres d'intégration, exécutez `[p]help embedset`.\n\n"
+"        **Exemples:**\n"
+"            - `[p]embedset command info` - Efface les paramètres spécifiques de la commande pour 'info'.\n"
+"            - `[p]embedset info False` - Désactive les intégration pour 'info'.\n"
+"            - `[p]commande embedset \"ignore list\" True` - Des guillemets sont nécessaires pour les sous-commandes.\n\n"
+"        **Arguments:**\n"
+"            - `[enabled]` - Indiqué s'il faut utiliser des incorporations pour cette commande. Laissez vide pour réinitialiser par défaut."
 
 #: redbot/core/core_commands.py:1314 redbot/core/core_commands.py:1359
 msgid "Embeds are now enabled for {command_name} command."
@@ -1790,7 +1911,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:1996 redbot/core/core_commands.py:2055
 msgid "Command type must be one of `slash`, `message`, or `user`."
-msgstr ""
+msgstr "Le type de commande doit être un des types `slash`, `message`, ou `user`."
 
 #: redbot/core/core_commands.py:2003
 msgid "That application command is already enabled."
@@ -1821,15 +1942,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2061
 msgid "That application command has been set as required for the cog to function by the author, and cannot be disabled. The cog must be unloaded to remove the command."
-msgstr ""
+msgstr "Cette commande d'application a été définie comme nécessaire pour que le cog fonctionne par l'auteur, et ne peut pas être désactivée. Le cog doit être déchargé pour supprimer la commande."
 
 #: redbot/core/core_commands.py:2073
 msgid "That application command is already disabled or does not exist."
-msgstr ""
+msgstr "Cette commande d'application est déjà désactivée ou n'existe pas."
 
 #: redbot/core/core_commands.py:2079
 msgid "Disabled {command_type} application command `{command_name}`"
-msgstr ""
+msgstr "Commande d'application {command_type} désactivée `{command_name}`"
 
 #: redbot/core/core_commands.py:2087
 #, docstring
@@ -1851,16 +1972,17 @@ msgstr "Activer toutes les commandes d'application de ce cog activerait un total
 
 #: redbot/core/core_commands.py:2141
 msgid "Enabling all application commands from that cog would enable a total of {count} commands, exceeding the {cap} command limit for message commands. Disable some commands first."
-msgstr ""
+msgstr "Activer toutes les commandes d'application de ce cog activerait un total de commandes {count} , dépassant la limite de commande {cap} pour les commandes de message. Désactiver certaines commandes d'abord."
 
 #: redbot/core/core_commands.py:2150
 msgid "Enabling all application commands from that cog would enable a total of {count} commands, exceeding the {cap} command limit for user commands. Disable some commands first."
-msgstr ""
+msgstr "Activer toutes les commandes d'application de ce cog activerait un total de commandes {count} , dépassant la limite de commande {cap} pour les commandes utilisateur. Désactiver certaines commandes d'abord."
 
 #: redbot/core/core_commands.py:2176
 msgid "Enabled {count} commands from `{cog_name}`:\n"
 "{names}"
-msgstr ""
+msgstr "Commandes {count} activées depuis `{cog_name}`:\n"
+"{names}"
 
 #: redbot/core/core_commands.py:2183
 #, docstring
@@ -1874,7 +1996,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2204
 msgid "Couldn't find any enabled commands from the `{cog_name}` cog. Use `{prefix}slash list` to see all cogs with application commands."
-msgstr ""
+msgstr "Impossible de trouver des commandes activées depuis le cog `{cog_name}`. Utilisez `{prefix}list` pour voir tous les cogs avec les commandes d'application."
 
 #: redbot/core/core_commands.py:2212
 msgid "Disabled {count} commands from `{cog_name}`:\n"
@@ -1910,7 +2032,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:2360
 msgid "I need the `applications.commands` scope in this server to be able to do that. You can tell the bot to add that scope to invite links using `{prefix}inviteset commandscope`, and can then run `{prefix}invite` to get an invite that will give the bot the scope. You do not need to kick the bot to enable the scope, just use that invite to re-auth the bot with the scope enabled."
-msgstr ""
+msgstr "J'ai besoin de la portée `applications.commands` dans ce serveur pour pouvoir le faire. Vous pouvez dire au bot d'ajouter cette portée pour inviter des liens en utilisant la commande `{prefix}inviteset commandscope`, et peut alors exécuter ` l'invitation{prefix}` pour obtenir une invitation qui donnera au bot le champ d'application. Vous n'avez pas besoin d'expulser le bot pour activer la portée, il suffit d'utiliser cette invitation pour ré-authentifier le bot avec la portée activée."
 
 #: redbot/core/core_commands.py:2371
 msgid "Synced {count} commands."
@@ -1918,7 +2040,7 @@ msgstr "Commandes {count} synchronisées."
 
 #: redbot/core/core_commands.py:2379
 msgid "You seem to be attempting to sync after recently syncing. Discord does not like it when bots sync more often than necessary, so this command has a cooldown. You should enable/disable all commands you want to change first, and run this command one time only after all changes have been made. "
-msgstr ""
+msgstr "Vous semblez essayer de vous synchroniser après une synchronisation récente. Discord n'aime pas que les robots se synchronisent plus souvent que nécessaire, cette commande a donc un temps de recharge. Vous devez activer / désactiver toutes les commandes que vous souhaitez modifier en premier, et exécuter cette commande une seule fois après que toutes les modifications ont été apportées."
 
 #: redbot/core/core_commands.py:2390
 #, docstring
@@ -2216,7 +2338,7 @@ msgstr "\n"
 
 #: redbot/core/core_commands.py:2768
 msgid "Current settings:\n"
-msgstr ""
+msgstr "Paramètres actuels :\n"
 
 #: redbot/core/core_commands.py:2773
 msgid "That action is not registered."
@@ -2224,16 +2346,16 @@ msgstr "Cette action n’est pas enregistrée."
 
 #: redbot/core/core_commands.py:2778
 msgid "Case creation for {action_name} actions is now {enabled}."
-msgstr ""
+msgstr "La création de cas pour les actions {action_name} est maintenant {enabled}."
 
 #: redbot/core/core_commands.py:2786
 #, docstring
 msgid "Reset all modlog cases in this server."
-msgstr ""
+msgstr "Réinitialiser tous les arguments de modlog dans ce serveur."
 
 #: redbot/core/core_commands.py:2789
 msgid "Are you sure you would like to reset all modlog cases in this server?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir réinitialiser tous les cas de modlog de ce serveur ?"
 
 #: redbot/core/core_commands.py:2796
 msgid "You took too long to respond."
@@ -2304,11 +2426,11 @@ msgstr "Quelque chose s'est mal passé au moment de récupérer l'image."
 
 #: redbot/core/core_commands.py:2889
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL or attachment must be a valid image in either JPG, PNG, or GIF format."
-msgstr ""
+msgstr "Échec. N'oubliez pas que vous pouvez modifier mon avatar jusqu'à deux fois par heure. L'URL ou la pièce jointe doit être une image valide au format JPG, PNG, ou GIF."
 
 #: redbot/core/core_commands.py:2896
 msgid "JPG / PNG / GIF format only."
-msgstr ""
+msgstr "Format JPG/PNG / GIF uniquement."
 
 #: redbot/core/core_commands.py:2898 redbot/core/core_commands.py:2967
 #: redbot/core/core_commands.py:2991 redbot/core/core_commands.py:3073
@@ -2445,7 +2567,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3102
 msgid "Status set to `Playing {game.name}`."
-msgstr ""
+msgstr "Statut défini à `Joue à {game.name}`."
 
 #: redbot/core/core_commands.py:3104
 msgid "Game cleared."
@@ -2466,7 +2588,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3134
 msgid "Status set to `Listening to {listening}`."
-msgstr ""
+msgstr "Statut défini à `Écoute {listening}`."
 
 #: redbot/core/core_commands.py:3137
 msgid "Listening cleared."
@@ -2508,7 +2630,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3198
 msgid "Status set to `Competing in {competing}`."
-msgstr ""
+msgstr "Statut défini à `Participant à : {competing}`."
 
 #: redbot/core/core_commands.py:3201
 msgid "Competing cleared."
@@ -2529,7 +2651,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3230
 msgid "Custom status set to `{text}`."
-msgstr ""
+msgstr "Statut personnalisé défini à `{text}`."
 
 #: redbot/core/core_commands.py:3232
 msgid "Custom status cleared."
@@ -2547,7 +2669,7 @@ msgstr "Passer le statut de [botname] à connecté."
 #: redbot/core/core_commands.py:3250
 #, docstring
 msgid "Set [botname]'s status to do not disturb."
-msgstr ""
+msgstr "Définissez le statut de [botname] sur ne pas déranger."
 
 #: redbot/core/core_commands.py:3257
 #, docstring
@@ -2562,7 +2684,7 @@ msgstr "Passer le statut de [botname] à invisible."
 #: redbot/core/core_commands.py:3274
 #, docstring
 msgid "Set server's admin and mod roles for [botname]."
-msgstr ""
+msgstr "Définir les rôles d'administrateur et de mod du serveur pour [botname]."
 
 #: redbot/core/core_commands.py:3280
 #, docstring
@@ -2762,11 +2884,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3528
 msgid "Global regional formatting will now be based on bot's locale."
-msgstr ""
+msgstr "Le formatage régional global sera désormais basé sur les paramètres régionaux du bot."
 
 #: redbot/core/core_commands.py:3545
 msgid "Global regional formatting will now be based on `{language_code}` locale."
-msgstr ""
+msgstr "Le formatage régional global sera désormais basé sur les paramètres régionaux `{language_code}`"
 
 #: redbot/core/core_commands.py:3554
 #, docstring
@@ -2813,11 +2935,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3631
 msgid "Click the button below to set your keys."
-msgstr ""
+msgstr "Cliquez sur le bouton ci-dessous pour définir vos clés."
 
 #: redbot/core/core_commands.py:3633
 msgid "This API keys setup message has expired."
-msgstr ""
+msgstr "Ce message de configuration des clés API a expiré."
 
 #: redbot/core/core_commands.py:3638
 msgid "`{service}` API tokens have been set."
@@ -2876,7 +2998,10 @@ msgid "\n"
 "        Commands for configuring owner notifications.\n\n"
 "        Owner notifications include usage of `[p]contact` and available Red updates.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Commandes pour configurer les notifications du propriétaire.\n\n"
+"        Les notifications du propriétaire incluent l'utilisation de `[p]contact` et les mises à jour disponibles du rouge.\n"
+"        "
 
 #: redbot/core/core_commands.py:3709
 #, docstring
@@ -2936,7 +3061,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:3809
 msgid "There are no extra channels being sent to."
-msgstr ""
+msgstr "Il n'y a pas de canaux supplémentaires envoyés."
 
 #: redbot/core/core_commands.py:3820
 msgid "Unknown channel with id: {id}"
@@ -3103,12 +3228,13 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4053 redbot/core/core_commands.py:4130
 msgid "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
-msgstr ""
+msgstr "Les préfixes ne peuvent pas commencer par '/', car cela entre en conflit avec les commandes slash de Discord."
 
 #: redbot/core/core_commands.py:4058
 msgid "Warning: A prefix is below the recommended length (1 character).\n"
 "Do you want to continue?"
-msgstr ""
+msgstr "Attention : Un préfixe est en dessous de la longueur recommandée (1 caractère).\n"
+"Voulez-vous continuer ?"
 
 #: redbot/core/core_commands.py:4072 redbot/core/core_commands.py:4090
 msgid "Cancelled."
@@ -3117,7 +3243,8 @@ msgstr "Annulé."
 #: redbot/core/core_commands.py:4076
 msgid "Warning: A prefix is above the recommended length (25 characters).\n"
 "Do you want to continue?"
-msgstr ""
+msgstr "Attention : Un préfixe est au-dessus de la longueur recommandée (25 caractères).\n"
+"Voulez-vous continuer ?"
 
 #: redbot/core/core_commands.py:4094
 msgid "Prefix set."
@@ -3152,11 +3279,11 @@ msgstr "Les préfixes du serveur ont été réinitialisées."
 
 #: redbot/core/core_commands.py:4134
 msgid "You cannot have a prefix shorter than 1 character."
-msgstr ""
+msgstr "Vous ne pouvez pas avoir un préfixe inférieur à 1 caractère."
 
 #: redbot/core/core_commands.py:4137
 msgid "You cannot have a prefix longer than 25 characters."
-msgstr ""
+msgstr "Vous ne pouvez pas avoir un préfixe de plus de 25 caractères."
 
 #: redbot/core/core_commands.py:4142
 msgid "Server prefix set."
@@ -3183,11 +3310,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4168
 msgid "I will use buttons on basic menus."
-msgstr ""
+msgstr "J'utiliserai des boutons sur les menus de base."
 
 #: redbot/core/core_commands.py:4170
 msgid "I will not use buttons on basic menus."
-msgstr ""
+msgstr "Je n'utiliserai pas de boutons sur les menus de base."
 
 #: redbot/core/core_commands.py:4175
 #, docstring
@@ -3205,15 +3332,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4190
 msgid "The message must be less than 1000 characters."
-msgstr ""
+msgstr "Le message doit contenir moins de 1000 caractères."
 
 #: redbot/core/core_commands.py:4194
 msgid "Successfully updated the error message."
-msgstr ""
+msgstr "Message d'erreur mis à jour avec succès."
 
 #: redbot/core/core_commands.py:4197
 msgid "Successfully reset the error message back to the default one."
-msgstr ""
+msgstr "Le message d'erreur a été réinitialisé avec succès."
 
 #: redbot/core/core_commands.py:4204
 #, docstring
@@ -3221,7 +3348,10 @@ msgid "\n"
 "        Commands to manage settings for the help command.\n\n"
 "        All help settings are applied globally.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Commandes pour gérer les paramètres de la commande d'aide.\n\n"
+"        Tous les paramètres d'aide sont appliqués globalement.\n"
+"        "
 
 #: redbot/core/core_commands.py:4213
 #, docstring
@@ -3248,7 +3378,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4246
 msgid "The help formatter has been reset. This will not prevent cogs from modifying help, you may need to remove a cog if this has been an issue."
-msgstr ""
+msgstr "Le formateur d'aide a été réinitialisé. Cela n'empêchera pas les cogs de modifier l'aide, vous devrez peut-être supprimer un cog si cela a été un problème."
 
 #: redbot/core/core_commands.py:4255
 #, docstring
@@ -3262,7 +3392,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4265
 msgid "The help settings have been reset to their defaults. This may not have an impact when using 3rd party help formatters."
-msgstr ""
+msgstr "Les paramètres d'aide ont été réinitialisés à leurs valeurs par défaut. Cela peut ne pas avoir d'impact lorsque vous utilisez des formateurs d'aide tiers."
 
 #: redbot/core/core_commands.py:4277
 #, docstring
@@ -3290,7 +3420,7 @@ msgstr "L'aide n'utilisera que le menu sélectionné."
 
 #: redbot/core/core_commands.py:4300
 msgid "Help will use button menus and add a select menu."
-msgstr ""
+msgstr "L'aide utilisera les menus des boutons et ajoutera un menu de sélection."
 
 #: redbot/core/core_commands.py:4303
 msgid "Help will use button menus."
@@ -3346,7 +3476,7 @@ msgstr "Le menu d'aide n'affichera pas les alias de commandes."
 
 #: redbot/core/core_commands.py:4358
 msgid "Help will no longer show command aliases."
-msgstr ""
+msgstr "L'aide n'affichera plus les alias de commandes."
 
 #: redbot/core/core_commands.py:4362
 #, docstring
@@ -3412,11 +3542,11 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4433
 msgid "Help will verify the existence of help topics."
-msgstr ""
+msgstr "L'aide vérifiera l'existence des rubriques d'aide."
 
 #: redbot/core/core_commands.py:4436
 msgid "Help will only verify the existence of help topics via fuzzy help (if enabled)."
-msgstr ""
+msgstr "L'aide vérifiera uniquement l'existence des rubriques d'aide via l'aide floue (si elle est activée)."
 
 #: redbot/core/core_commands.py:4444
 #, docstring
@@ -3510,15 +3640,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4541
 msgid "You must give a value of at least 15 seconds!"
-msgstr ""
+msgstr "Vous devez donner une valeur d'au moins 15 secondes !"
 
 #: redbot/core/core_commands.py:4544
 msgid "The timeout cannot be greater than 5 minutes!"
-msgstr ""
+msgstr "Le délai d'attente ne peut pas être supérieur à 5 minutes !"
 
 #: redbot/core/core_commands.py:4548
 msgid "Done. The reaction timeout has been set to {} seconds."
-msgstr ""
+msgstr "Terminé. Le délai de réaction a été défini à {} secondes."
 
 #: redbot/core/core_commands.py:4552
 #, docstring
@@ -3659,15 +3789,15 @@ msgstr ""
 
 #: redbot/core/core_commands.py:4775
 msgid "A text channel, voice channel, stage channel, or thread needs to be passed when using this command in DMs."
-msgstr ""
+msgstr "Un salon textuel, un salon vocal, un canal de stage ou un fil de discussion doit être passé lorsque vous utilisez cette commande en DMs."
 
 #: redbot/core/core_commands.py:4792
 msgid "The given user is not a member of the diagnosed server."
-msgstr ""
+msgstr "L'utilisateur donné n'est pas membre du serveur diagnostiqué."
 
 #: redbot/core/core_commands.py:4799
 msgid "Don't try to fool me, the given member can't access the {channel} channel!"
-msgstr ""
+msgstr "N'essayez pas de me tromper, le membre donné ne peut pas accéder au canal {channel}!"
 
 #: redbot/core/core_commands.py:4810
 #, docstring
@@ -4085,7 +4215,7 @@ msgstr ""
 
 #: redbot/core/core_commands.py:5284
 msgid "You can't disable this cog as you would lock yourself out."
-msgstr ""
+msgstr "Vous ne pouvez pas désactiver ce cog car vous vous verrouillez vous-même."
 
 #: redbot/core/core_commands.py:5286
 msgid "{cogname} has been disabled in this guild."
@@ -4113,7 +4243,7 @@ msgstr "{cogname} a été activé dans ce serveur."
 
 #: redbot/core/core_commands.py:5312
 msgid "Cog \"{arg}\" not found."
-msgstr ""
+msgstr "Cog \"{arg}\" introuvable."
 
 #: redbot/core/core_commands.py:5315
 msgid "{cogname} was not disabled (nothing to do)."
@@ -4506,7 +4636,9 @@ msgstr "Aucun"
 msgid "Currently ignored categories: {categories}\n"
 "Channels: {channels}\n"
 "Threads (excluding archived):{threads}"
-msgstr ""
+msgstr "Catégories actuellement ignorées : {categories}\n"
+"Canaux : {channels}\n"
+"Threads (exclusion archivée) :{threads}"
 
 #: redbot/core/core_commands.py:5894
 #, docstring
@@ -4613,12 +4745,12 @@ msgstr "Fermeture en cours."
 
 #: redbot/core/dev_commands.py:595
 msgid "Unexpected error: "
-msgstr ""
+msgstr "Erreur inattendue :"
 
 #: redbot/core/dev_commands.py:599
 #, docstring
 msgid "Pauses/resumes the REPL running in the current channel."
-msgstr ""
+msgstr "Interrompt/reprend l'exécution de REPL dans le canal en cours."
 
 #: redbot/core/dev_commands.py:601
 msgid "There is no currently running REPL session in this channel."
@@ -4655,7 +4787,8 @@ msgstr ""
 #, docstring
 msgid "Give bot owners the ability to bypass cooldowns.\n\n"
 "        Does not persist through restarts."
-msgstr ""
+msgstr "Donne aux propriétaires de bot la possibilité de contourner les temps de redémarrage.\n\n"
+"        Ne persiste pas au redémarrage."
 
 #: redbot/core/dev_commands.py:662
 msgid "Bot owners will now bypass all commands with cooldowns."
@@ -4688,27 +4821,27 @@ msgstr "Utilisateur supprimé."
 
 #: redbot/core/modlog.py:476
 msgid "Deleted or archived thread ({thread_id}) in {channel_name}"
-msgstr ""
+msgstr "Thread supprimé ou archivé ({thread_id}) dans {channel_name}"
 
 #: redbot/core/modlog.py:480
 msgid "Thread {thread_id} in {channel_id} (deleted)"
-msgstr ""
+msgstr "Thread {thread_id} dans {channel_id} (supprimé)"
 
 #: redbot/core/modlog.py:484
 msgid "{channel_id} (deleted)"
-msgstr ""
+msgstr "{channel_id} (supprimé)"
 
 #: redbot/core/modlog.py:489
 msgid "Thread {thread_name} in {channel_name}"
-msgstr ""
+msgstr "Fil {thread_name} en {channel_name}"
 
 #: redbot/core/modlog.py:493
 msgid "Thread {thread_name} in {channel_id} (deleted)"
-msgstr ""
+msgstr "Thread {thread_name} dans {channel_id} (supprimé)"
 
 #: redbot/core/modlog.py:499 redbot/core/modlog.py:527
 msgid "Reason:"
-msgstr ""
+msgstr "Raison :"
 
 #: redbot/core/modlog.py:513
 msgid "Moderator"

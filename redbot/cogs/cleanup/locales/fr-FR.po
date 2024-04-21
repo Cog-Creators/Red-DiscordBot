@@ -32,7 +32,7 @@ msgstr "Ce cog contient des commandes utilisées pour \"nettoyer\" (supprimer) d
 
 #: redbot/cogs/cleanup/cleanup.py:58
 msgid "Try a smaller number instead."
-msgstr ""
+msgstr "Essayez un nombre plus petit à la place."
 
 #: redbot/cogs/cleanup/cleanup.py:61
 msgid "Are you sure you want to delete {number} messages?"
