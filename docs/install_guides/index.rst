@@ -35,4 +35,5 @@ we recommend **Ubuntu 22.04 LTS**.
    rocky-linux-9
    ubuntu-2004
    ubuntu-2204
+   ubuntu-2404
    ubuntu-non-lts
