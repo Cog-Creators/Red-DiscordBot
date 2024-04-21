@@ -51,7 +51,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Unable To Play Tracks"),
                     description=_(
-                        "That URL is not allowed. \n\n The bot owner can remove this restriction by using ``{prefix}audioset restrict``"
+                        "That URL is not allowed. \n\n The bot owner can remove this restriction by using ``{prefix}audioset restrict``."
                     ).format(prefix=ctx.clean_prefix),
                 )
         elif not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
