@@ -530,8 +530,10 @@ def humanize_timedelta(
 
     This works with either a timedelta object or a number of seconds.
 
-    Fractional values will be omitted, and values less than 1 second
-    an empty string.
+    Fractional values will be omitted.
+
+    Values that are less than 1 second but greater than -1 second
+    will be an empty string.
 
     Parameters
     ----------
