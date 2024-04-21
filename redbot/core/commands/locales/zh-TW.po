@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-03-21 22:16+0000\n"
+"POT-Creation-Date: 2024-04-20 22:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -15,47 +15,51 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: zh_TW\n"
 
-#: redbot/core/commands/converter.py:85
+#: redbot/core/commands/converter.py:87
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr "`{unit}`不是此命令的有效時間單位"
 
-#: redbot/core/commands/converter.py:141 redbot/core/commands/converter.py:203
+#: redbot/core/commands/converter.py:148 redbot/core/commands/converter.py:216
 msgid "The time set is way too high, consider setting something reasonable."
 msgstr "時間超出允許範圍，請輸入一個合理的時間。"
 
-#: redbot/core/commands/converter.py:145
+#: redbot/core/commands/converter.py:152
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr "對於該命令來說，此時間量太大。 (最大值: {maximum})"
 
-#: redbot/core/commands/converter.py:151
+#: redbot/core/commands/converter.py:156 redbot/core/commands/converter.py:165
+msgid "0 seconds"
+msgstr ""
+
+#: redbot/core/commands/converter.py:161
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr "對於該命令來說，此時間量太小。 (最小值: {minimum})"
 
-#: redbot/core/commands/converter.py:232
+#: redbot/core/commands/converter.py:245
 msgid "'{input}' doesn't look like a valid user ID."
 msgstr "'{input}' 看起來不是有效的使用者ID。"
 
-#: redbot/core/commands/converter.py:255
+#: redbot/core/commands/converter.py:268
 msgid "`{arg}` is not a number."
 msgstr "`{arg}` 不是一個數字。"
 
-#: redbot/core/commands/converter.py:257
+#: redbot/core/commands/converter.py:270
 msgid "`{arg}` is not a finite number."
 msgstr "`{arg}` 不是有限數。"
 
-#: redbot/core/commands/converter.py:280
+#: redbot/core/commands/converter.py:293
 msgid "Missing a key or value."
 msgstr "缺少key或數值。"
 
-#: redbot/core/commands/converter.py:286
+#: redbot/core/commands/converter.py:299
 msgid "Unexpected key `{key}`."
 msgstr "意外的關鍵“{key}”。"
 
-#: redbot/core/commands/converter.py:511
+#: redbot/core/commands/converter.py:533
 msgid "Command \"{arg}\" not found."
 msgstr "指令\"{arg}\"不存在。"
 
-#: redbot/core/commands/converter.py:521
+#: redbot/core/commands/converter.py:543
 msgid "Cog \"{arg}\" not found."
 msgstr "模組 \"{arg}\" 不存在。"
 

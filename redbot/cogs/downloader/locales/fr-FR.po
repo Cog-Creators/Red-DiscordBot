@@ -168,11 +168,11 @@ msgstr "Il n'y a aucun repo installé."
 
 #: redbot/cogs/downloader/downloader.py:647
 msgid "# Installed Repos\n"
-msgstr ""
+msgstr "# Cogs installés \n"
 
 #: redbot/cogs/downloader/downloader.py:649
 msgid "# Installed Repo\n"
-msgstr ""
+msgstr "# Cogs installés \n"
 
 #: redbot/cogs/downloader/downloader.py:658
 #, docstring
@@ -663,27 +663,32 @@ msgstr ""
 #: redbot/cogs/downloader/downloader.py:1356
 msgid "# Installed Cogs\n"
 "{text}"
-msgstr ""
+msgstr "# Cog installé :\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1358
 msgid "# Installed Cog\n"
 "{text}"
-msgstr ""
+msgstr "# Cog installé :\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1369
 msgid "> Available Cogs\n"
 "No cogs are available."
-msgstr ""
+msgstr "> Cogs disponibles :\n"
+"Aucun cog n'est disponible."
 
 #: redbot/cogs/downloader/downloader.py:1371
 msgid "> Available Cogs\n"
 "{text}"
-msgstr ""
+msgstr "> Cog disponible :\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1373
 msgid "> Available Cog\n"
 "{text}"
-msgstr ""
+msgstr "> Cogs disponibles :\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1380
 #, docstring
@@ -707,11 +712,16 @@ msgid "Information on {cog_name}:\n"
 "{end_user_data_statement}\n\n"
 "Made by: {author}\n"
 "Requirements: {requirements}"
-msgstr ""
+msgstr "Informations sur {cog_name}:\n"
+"{description}\n\n"
+"Déclaration de données utilisateur final :\n"
+"{end_user_data_statement}\n\n"
+"Réalisée par : {author}\n"
+"Exigences : {requirements}"
 
 #: redbot/cogs/downloader/downloader.py:1411
 msgid "Author of the cog didn't provide end user data statement."
-msgstr ""
+msgstr "L'auteur du cog n'a pas fourni de déclaration de données utilisateur finale."
 
 #: redbot/cogs/downloader/downloader.py:1480
 msgid "\n"
@@ -746,7 +756,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1494
 msgid "\n"
 "Cog with this name is already installed from a different repo: "
-msgstr ""
+msgstr "\n"
+"Un cog avec ce nom est déjà installés à partir d'un autre repo. "
 
 #: redbot/cogs/downloader/downloader.py:1511
 msgid " (Minimum: {min_version})"
@@ -769,7 +780,7 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1539
 msgid "\n"
 "This cog requires higher python version than you have: "
-msgstr ""
+msgstr "Ce cog nécessite une version de Python supérieure à celle que vous avez : "
 
 #: redbot/cogs/downloader/downloader.py:1543
 msgid "\n"
@@ -790,27 +801,28 @@ msgstr "Mise à jour du cog effectuée avec succès"
 #: redbot/cogs/downloader/downloader.py:1634
 msgid "\n"
 "End user data statements of these cogs have changed: "
-msgstr ""
+msgstr "Les déclarations de données de l'utilisateur final de ces cogs ont changé :"
 
 #: redbot/cogs/downloader/downloader.py:1636
 msgid "\n"
 "You can use {command} to see the updated statements.\n"
-msgstr ""
+msgstr "Vous pouvez utiliser {command} pour voir les instructions mises à jour."
 
 #: redbot/cogs/downloader/downloader.py:1642
 msgid "\n"
 "End user data statement of this cog has changed:"
-msgstr ""
+msgstr "\n"
+"La déclaration de données utilisateur de ce cog a été modifiée :"
 
 #: redbot/cogs/downloader/downloader.py:1644
 msgid "\n"
 "You can use {command} to see the updated statement.\n"
-msgstr ""
+msgstr "Vous pouvez utiliser {command} pour voir les instructions mises à jour."
 
 #: redbot/cogs/downloader/downloader.py:1651
 msgid "\n"
 "You may need to resync your slash commands with `{prefix}slash sync`."
-msgstr ""
+msgstr "Vous devrez peut-être resynchroniser vos commandes slash avec `{prefix}slash sync`."
 
 #: redbot/cogs/downloader/downloader.py:1657
 msgid "\n"
@@ -895,11 +907,11 @@ msgstr "Commande :"
 
 #: redbot/cogs/downloader/downloader.py:1811
 msgid "Cog package name:"
-msgstr ""
+msgstr "Nom du package Cog:"
 
 #: redbot/cogs/downloader/downloader.py:1812
 msgid "Cog name:"
-msgstr ""
+msgstr "Nom du Cog:"
 
 #: redbot/cogs/downloader/downloader.py:1813
 msgid "Made by:"
@@ -924,7 +936,12 @@ msgid "Command:          {command}\n"
 "Made by:          {author}\n"
 "Repo name:        {repo_name}\n"
 "Repo URL:         {repo_url}\n"
-msgstr ""
+msgstr "Commande :          {command}\n"
+"Nom du paquet Cog : {cog_pkg}\n"
+"Nom du Cog :         {cog}\n"
+"Fait par :          {author}\n"
+"Nom du dépôt :        {repo_name}\n"
+"URL du dépôt :         {repo_url}\n"
 
 #: redbot/cogs/downloader/downloader.py:1839
 msgid "Repo branch: {branch_name}\n"
