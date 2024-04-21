@@ -34,7 +34,7 @@ Changes
 
 - **Core - Commands Package** - Functions and converters for parsing text into `datetime.timedelta` or `dateutil.relativedelta.relativedelta` in the `redbot.core.commands.converter` package now support negative values when ``minimum`` parameter is set accordingly (:issue:`6349`)
 - **Core - Utils Package** - The `redbot.core.utils.chat_formatting.humanize_timedelta()` function now allows specifying the maximum number of different units that will be present in the final string with the ``maximum_units`` parameter (:issue:`6350`)
-- **Core - Utils Package** - The `redbot.core.utils.chat_formatting.humanize_timedelta()` function now supports formatting negative `datetime.timedelta`s. New ``negative_format`` parameter was added to allow specifying a different way of formatting negative `datetime.timedelta`s (:issue:`6350`)
+- **Core - Utils Package** - The `redbot.core.utils.chat_formatting.humanize_timedelta()` function now supports formatting negative `datetime.timedelta` instances. New ``negative_format`` parameter was added to allow specifying a different way of formatting negative `datetime.timedelta` instances (:issue:`6350`)
 
 Documentation changes
 ---------------------
