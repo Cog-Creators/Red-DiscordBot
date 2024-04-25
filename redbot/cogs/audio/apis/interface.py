@@ -921,7 +921,7 @@ class AudioAPIInterface:
                 )
         return results, called_api
 
-    async def autoplay(self, player: lavalink.Player, playlist_api: PlaylistWrapper):
+    async def autoplay(self, ctx: commands.Context, player: lavalink.Player, playlist_api: PlaylistWrapper):
         """Enqueue a random track."""
         autoplaylist = await self.config.guild(player.guild).autoplaylist()
         current_cache_level = CacheLevel(await self.config.cache_level())
@@ -937,7 +937,7 @@ class AudioAPIInterface:
                     self.bot,
                     playlist_api,
                     player.guild,
-                    player.guild.me,
+                    ctx.author.id
                 )
                 tracks = playlist.tracks_obj
             except Exception as exc:
