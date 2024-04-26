@@ -6,7 +6,7 @@ Installing Red
 The list below shows the installation guides available based on the operating system being used.
 
 If you want to host Red on a VPS and are unsure what operating system you should choose,
-we recommend **Ubuntu 22.04 LTS**.
+we recommend **Ubuntu 24.04 LTS**.
 
 .. toctree::
    :maxdepth: 1
