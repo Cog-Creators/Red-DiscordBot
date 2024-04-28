@@ -419,7 +419,7 @@ class Economy(commands.Cog):
                     )
                 )
                 payload = bank.PaydayClaimInformation(
-                    author, ctx.channel, credit_amount, old_balance, new_balance
+                    author, ctx.channel, ctx.message, credit_amount, old_balance, new_balance
                 )
                 self.bot.dispatch("red_economy_payday_claim", payload)
 
