@@ -1112,6 +1112,7 @@ def cost(amount: int):
 class PaydayClaimInformation(NamedTuple):
     member: discord.Member
     channel: Union[discord.TextChannel, discord.Thread, discord.ForumChannel]
+    message: discord.Message
     amount: int
     old_balance: int
     new_balance: int
@@ -1120,6 +1121,7 @@ class PaydayClaimInformation(NamedTuple):
         return {
             "member": self.member.id,
             "channel": self.channel.id,
+            "message": self.message.id,
             "amount": self.amount,
             "old_balance": self.old_balance,
             "new_balance": self.new_balance,
