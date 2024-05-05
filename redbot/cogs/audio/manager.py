@@ -295,11 +295,14 @@ class LavalinkVersion:
 
 class ServerManager:
     JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 11, red=3)
+    YT_PLUGIN_VERSION: Final[str] = "1.1.0"
+
     LAVALINK_DOWNLOAD_URL: Final[str] = (
         "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
         f"{JAR_VERSION}/"
         "Lavalink.jar"
     )
+    YT_PLUGIN_REPOSITORY: Final[str] = "https://maven.lavalink.dev/releases"
 
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
@@ -422,7 +425,20 @@ class ServerManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
-        with open(self.lavalink_app_yml, "w") as f:
+        ll_config = data["lavalink"]
+        sources = ll_config["server"]["sources"]
+        plugins = ll_config.setdefault("plugins", [])
+
+        enable_yt_plugin = sources["youtube"]
+        if enable_yt_plugin:
+            sources["youtube"] = False
+            yt_plugin = {
+                "dependency": f"dev.lavalink.youtube:youtube-plugin:{self.YT_PLUGIN_VERSION}",
+                "repository": self.YT_PLUGIN_REPOSITORY,
+            }
+            plugins.append(yt_plugin)
+
+        with open(self.lavalink_app_yml, "w", encoding="utf-8") as f:
             yaml.safe_dump(data, f)
 
     async def _get_jar_args(self) -> Tuple[List[str], Optional[str]]:
