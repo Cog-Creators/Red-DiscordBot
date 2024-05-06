@@ -342,11 +342,13 @@ class RedTree(CommandTree):
         if interaction.guild:
             if not (await self.client.ignored_channel_or_guild(interaction)):
                 if interaction.type is discord.InteractionType.autocomplete:
-                    await interaction.response.autocomplete([
-                        discord.app_commands.Choice(
-                            name=_("This channel or server is ignored."), value="None"
-                        )
-                    ])
+                    await interaction.response.autocomplete(
+                        [
+                            discord.app_commands.Choice(
+                                name=_("This channel or server is ignored."), value="None"
+                            )
+                        ]
+                    )
                     return False
                 await interaction.response.send_message(
                     "This channel or server is ignored.", ephemeral=True
