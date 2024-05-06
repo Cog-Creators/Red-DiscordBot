@@ -360,7 +360,10 @@ class RedTree(CommandTree):
                 await interaction.response.autocomplete(
                     [
                         discord.app_commands.Choice(
-                            name=_("This channel or server is ignored."), value="None"
+                            name=_(
+                                "You are not permitted to use commands because of an allowlist or blocklist."
+                            ),
+                            value="None",
                         )
                     ]
                 )
