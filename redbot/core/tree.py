@@ -356,6 +356,15 @@ class RedTree(CommandTree):
                 return False
 
         if not (await self.client.allowed_by_whitelist_blacklist(interaction.user)):
+            if interaction.type is discord.InteractionType.autocomplete:
+                await interaction.response.autocomplete(
+                    [
+                        discord.app_commands.Choice(
+                            name=_("This channel or server is ignored."), value="None"
+                        )
+                    ]
+                )
+                return False
             await interaction.response.send_message(
                 "You are not permitted to use commands because of an allowlist or blocklist.",
                 ephemeral=True,
