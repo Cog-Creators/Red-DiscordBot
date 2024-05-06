@@ -1,5 +1,51 @@
 .. Red changelogs
 
+Redbot 3.5.9 (2024-04-21)
+=========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`giplgwm`, :ghuser:`Jackenmen`, :ghuser:`Kuro-Rui`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.5.9 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.11%2Bred.3>`__.
+
+End-user changelog
+------------------
+
+Fixes
+*****
+
+- **Core** - Fixed inaccuracies in error messages shown when the user passes a time duration outside accepted range (:issue:`6357`)
+- **Core** - Commands that ask the user to "Type ``more`` to continue" when they return long output will now typically wait for 60 seconds rather than just 15 (:issue:`6346`, :issue:`6352`)
+- |cool| **Cogs - Audio** - Resolved recent issues where the player would be stuck at 0:00 on some tracks (:issue:`6358`)
+- **Cogs - Mutes** - The Mutes cog will no longer erroneously accept very large values (i.e. hundreds of years) for mute durations (:issue:`6353`)
+- **Cogs - Mutes** - To avoid ambiguity, the Mutes cog will now parse the time only when it's placed at the beginning, the end, or directly after ``t=``/``time=`` prefix in the mute command arguments (:issue:`6274`, :issue:`6349`)
+- **Cogs - Streams** - The schedule announcements for YT streams will now use relative Discord timestamps (:issue:`6257`, :issue:`6264`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- **Core - Commands Package** - Functions and converters for parsing text into `datetime.timedelta` or `dateutil.relativedelta.relativedelta` in the `redbot.core.commands.converter` package now support negative values when ``minimum`` parameter is set accordingly (:issue:`6349`)
+- **Core - Utils Package** - The `redbot.core.utils.chat_formatting.humanize_timedelta()` function now allows specifying the maximum number of different units that will be present in the final string with the ``maximum_units`` parameter (:issue:`6350`)
+- **Core - Utils Package** - The `redbot.core.utils.chat_formatting.humanize_timedelta()` function now supports formatting negative `datetime.timedelta` instances. New ``negative_format`` parameter was added to allow specifying a different way of formatting negative `datetime.timedelta` instances (:issue:`6350`)
+
+Documentation changes
+---------------------
+
+Fixes
+*****
+
+- Updated links to the Lavalink repository (:issue:`6356`)
+
+----
+
 Redbot 3.5.8 (2024-04-01)
 =========================
 

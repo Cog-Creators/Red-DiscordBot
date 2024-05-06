@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-03-21 22:16+0000\n"
+"POT-Creation-Date: 2024-04-20 22:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -15,47 +15,51 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: pl_PL\n"
 
-#: redbot/core/commands/converter.py:85
+#: redbot/core/commands/converter.py:87
 msgid "`{unit}` is not a valid unit of time for this command"
 msgstr "`{unit}` nie jest poprawną jednostką czasu dla tej komendy"
 
-#: redbot/core/commands/converter.py:141 redbot/core/commands/converter.py:203
+#: redbot/core/commands/converter.py:148 redbot/core/commands/converter.py:216
 msgid "The time set is way too high, consider setting something reasonable."
 msgstr "Ustawiony czas jest o wiele za wysoki, rozważ ustawienie czegoś rozsądnego."
 
-#: redbot/core/commands/converter.py:145
+#: redbot/core/commands/converter.py:152
 msgid "This amount of time is too large for this command. (Maximum: {maximum})"
 msgstr "Ta ilość czasu jest za duża dla tej komendy. (Maximum: {maximum})"
 
-#: redbot/core/commands/converter.py:151
+#: redbot/core/commands/converter.py:156 redbot/core/commands/converter.py:165
+msgid "0 seconds"
+msgstr ""
+
+#: redbot/core/commands/converter.py:161
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
 msgstr "Ta ilość czasu jest za mała dla tej komendy. (Minimum: {minimum})"
 
-#: redbot/core/commands/converter.py:232
+#: redbot/core/commands/converter.py:245
 msgid "'{input}' doesn't look like a valid user ID."
 msgstr ""
 
-#: redbot/core/commands/converter.py:255
+#: redbot/core/commands/converter.py:268
 msgid "`{arg}` is not a number."
 msgstr ""
 
-#: redbot/core/commands/converter.py:257
+#: redbot/core/commands/converter.py:270
 msgid "`{arg}` is not a finite number."
 msgstr ""
 
-#: redbot/core/commands/converter.py:280
+#: redbot/core/commands/converter.py:293
 msgid "Missing a key or value."
 msgstr ""
 
-#: redbot/core/commands/converter.py:286
+#: redbot/core/commands/converter.py:299
 msgid "Unexpected key `{key}`."
 msgstr ""
 
-#: redbot/core/commands/converter.py:511
+#: redbot/core/commands/converter.py:533
 msgid "Command \"{arg}\" not found."
 msgstr ""
 
-#: redbot/core/commands/converter.py:521
+#: redbot/core/commands/converter.py:543
 msgid "Cog \"{arg}\" not found."
 msgstr ""
 

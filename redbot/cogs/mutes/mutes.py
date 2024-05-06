@@ -1005,13 +1005,20 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             await self.config.guild(ctx.guild).default_time.clear()
             await ctx.send(_("Default mute time removed."))
         else:
-            data = time.get("duration", {})
-            if not data:
+            duration = time.get("duration", None)
+            if not duration:
                 return await ctx.send(_("Please provide a valid time format."))
-            await self.config.guild(ctx.guild).default_time.set(data.total_seconds())
+            if duration >= timedelta(days=365000):
+                # prevent setting a default time now that might eventually cause an overflow
+                # later as the date goes up. 1000 years gives us approximately 8000 more years
+                # of wiggle room.
+                return await ctx.send(
+                    _("The time provided is too long; use a more reasonable time.")
+                )
+            await self.config.guild(ctx.guild).default_time.set(duration.total_seconds())
             await ctx.send(
                 _("Default mute time set to {time}.").format(
-                    time=humanize_timedelta(timedelta=data)
+                    time=humanize_timedelta(timedelta=duration)
                 )
             )
 
@@ -1142,15 +1149,15 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             return await ctx.send(_("You cannot mute me."))
         if ctx.author in users:
             return await ctx.send(_("You cannot mute yourself."))
-        duration = time_and_reason.get("duration", None)
-        if duration and duration > timedelta(days=28):
-            await ctx.send(_(MUTE_UNMUTE_ISSUES["mute_is_too_long"]))
-            return
+        until = time_and_reason.get("until", None)
         reason = time_and_reason.get("reason", None)
         time = ""
-        until = None
-        if duration:
-            until = datetime.now(timezone.utc) + duration
+        duration = None
+        if until:
+            duration = time_and_reason.get("duration")
+            if duration and duration > timedelta(days=28):
+                await ctx.send(_(MUTE_UNMUTE_ISSUES["mute_is_too_long"]))
+                return
             length = humanize_timedelta(timedelta=duration)
             time = _(" for {length} until {duration}").format(
                 length=length, duration=discord.utils.format_dt(until)
@@ -1159,7 +1166,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         else:
             default_duration = await self.config.guild(ctx.guild).default_time()
             if default_duration:
-                until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
+                duration = timedelta(seconds=default_duration)
+                until = ctx.message.created_at + duration
                 length = humanize_timedelta(seconds=default_duration)
                 time = _(" for {length} until {duration}").format(
                     length=length, duration=discord.utils.format_dt(until)
@@ -1227,12 +1235,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not await self._check_for_mute_role(ctx):
             return
         async with ctx.typing():
-            duration = time_and_reason.get("duration", None)
+            until = time_and_reason.get("until", None)
             reason = time_and_reason.get("reason", None)
             time = ""
-            until = None
-            if duration:
-                until = datetime.now(timezone.utc) + duration
+            duration = None
+            if until:
+                duration = time_and_reason.get("duration")
                 length = humanize_timedelta(timedelta=duration)
                 time = _(" for {length} until {duration}").format(
                     length=length, duration=discord.utils.format_dt(until)
@@ -1241,7 +1249,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
-                    until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
+                    duration = timedelta(seconds=default_duration)
+                    until = ctx.message.created_at + duration
                     length = humanize_timedelta(seconds=default_duration)
                     time = _(" for {length} until {duration}").format(
                         length=length, duration=discord.utils.format_dt(until)
@@ -1377,18 +1386,26 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if ctx.author in users:
             return await ctx.send(_("You cannot mute yourself."))
         async with ctx.typing():
-            duration = time_and_reason.get("duration", None)
+            until = time_and_reason.get("until", None)
             reason = time_and_reason.get("reason", None)
             time = ""
-            until = None
-            if duration:
-                until = datetime.now(timezone.utc) + duration
-                time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
+            duration = None
+            if until:
+                duration = time_and_reason.get("duration")
+                length = humanize_timedelta(timedelta=duration)
+                time = _(" for {length} until {duration}").format(
+                    length=length, duration=discord.utils.format_dt(until)
+                )
+
             else:
                 default_duration = await self.config.guild(ctx.guild).default_time()
                 if default_duration:
-                    until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
-                    time = _(" until {duration}").format(duration=discord.utils.format_dt(until))
+                    duration = timedelta(seconds=default_duration)
+                    until = ctx.message.created_at + duration
+                    length = humanize_timedelta(seconds=default_duration)
+                    time = _(" for {length} until {duration}").format(
+                        length=length, duration=discord.utils.format_dt(until)
+                    )
             author = ctx.message.author
             channel = ctx.message.channel
             if isinstance(channel, discord.Thread):

@@ -66,6 +66,7 @@ Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-07 (`End of l
 Debian 12 Bookworm                 x86-64, aarch64, armv7l   ~2026-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Fedora Linux 38                    x86-64, aarch64           2024-05-14 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 39                    x86-64, aarch64           2024-11-12 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
+Fedora Linux 40                    x86-64, aarch64           2025-05-13 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 openSUSE Leap 15.5                 x86-64, aarch64           2024-12-31 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
 openSUSE Tumbleweed                x86-64, aarch64           forever (support is only provided for an up-to-date system)
 Oracle Linux 8                     x86-64, aarch64           2029-07-31 (`End of Premier Support <https://www.oracle.com/us/support/library/elsp-lifetime-069338.pdf>`__)
@@ -80,9 +81,10 @@ RHEL 9.0                           x86-64, aarch64           2024-05-31 (`End of
 RHEL 9.2                           x86-64, aarch64           2025-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
 Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
 Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
-Ubuntu 20.04 LTS                   x86-64, aarch64           2025-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
-Ubuntu 22.04 LTS                   x86-64, aarch64           2027-04-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 20.04 LTS                   x86-64, aarch64           2025-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 22.04 LTS                   x86-64, aarch64           2027-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 23.10                       x86-64, aarch64           2024-07-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 24.04 LTS                   x86-64, aarch64           2029-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
 
 .. _developer-guarantees:
