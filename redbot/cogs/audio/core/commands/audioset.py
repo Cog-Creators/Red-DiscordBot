@@ -1158,11 +1158,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             plugins = self.managed_node_controller.plugins
             msg += f"\n---{_('Lavalink Plugin Versions')}---"
             plugin_name_max_len = 0
-            for plugin_name, _ in plugins.items():
+            for plugin_name, __ in plugins.items():
                 plugin_name_max_len = max(plugin_name_max_len, len(plugin_name))
             for plugin_name, plugin_version in plugins.items():
-                key = f"{plugin_name}:".ljust(plugin_name_max_len + 1)
-                msg += f"{key} [{plugin_version}]"
+                key = f"{plugin_name}:".ljust(plugin_name_max_len + 5)
+                msg += f"\n{key} [{plugin_version}]"
 
         await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
 

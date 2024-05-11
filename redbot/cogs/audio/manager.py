@@ -545,7 +545,7 @@ class ServerManager:
                 self._pipe_task = asyncio.create_task(self._pipe_output())
                 break
             if match := _LL_PLUGIN_LOG.search(line):
-                self.plugins[match["name"]] = match["version"]
+                self.plugins[match["name"].decode()] = match["version"].decode()
             elif _FAILED_TO_START.search(line):
                 raise ManagedLavalinkStartFailure(
                     f"Lavalink failed to start: {line.decode().strip()}"
