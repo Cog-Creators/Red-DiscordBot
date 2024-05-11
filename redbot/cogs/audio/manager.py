@@ -49,7 +49,11 @@ if TYPE_CHECKING:
 _ = Translator("Audio", pathlib.Path(__file__))
 log = getLogger("red.Audio.manager")
 
-_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
+_LL_READY_LOG: Final[bytes] = b"Lavalink is ready to accept connections."
+_LL_PLUGIN_LOG: Final[Pattern[bytes]] = re.compile(
+    rb"Found plugin '(?P<name>.+)' version (?P<version>\S+)$", re.MULTILINE
+)
+_FAILED_TO_START: Final[Pattern[bytes]] = re.compile(rb"Web server failed to start\. (.*)")
 
 # Version regexes
 #
@@ -326,6 +330,7 @@ class ServerManager:
         self.cog = cog
         self._args = []
         self._pipe_task = None
+        self.plugins: dict[str, str] = {}
 
     @property
     def lavalink_download_dir(self) -> pathlib.Path:
@@ -534,12 +539,14 @@ class ServerManager:
         log.info("Waiting for Managed Lavalink node to be ready")
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
-            if b"Lavalink is ready to accept connections." in line:
+            if _LL_READY_LOG in line:
                 self.ready.set()
                 log.info("Managed Lavalink node is ready to receive requests.")
                 self._pipe_task = asyncio.create_task(self._pipe_output())
                 break
-            if _FAILED_TO_START.search(line):
+            if match := _LL_PLUGIN_LOG.search(line):
+                self.plugins[match["name"]] = match["version"]
+            elif _FAILED_TO_START.search(line):
                 raise ManagedLavalinkStartFailure(
                     f"Lavalink failed to start: {line.decode().strip()}"
                 )
