@@ -32,9 +32,9 @@ class Warnings(commands.Cog):
     default_guild = {
         "actions": [],
         "reasons": {},
-        "allow_custom_reasons": False,
+        "allow_custom_reasons": True,
         "toggle_dm": True,
-        "show_mod": False,
+        "show_mod": True,
         "warn_channel": None,
         "toggle_channel": False,
     }
