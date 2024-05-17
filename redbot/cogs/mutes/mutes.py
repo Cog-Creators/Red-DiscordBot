@@ -93,12 +93,12 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         self.bot = bot
         self.config = Config.get_conf(self, 49615220001, force_registration=True)
         default_guild = {
-            "mute_role": None,
+            "mute_role": 1239701668694720513, #muted
             "notification_channel": None,
             "muted_users": {},
             "default_time": 0,
-            "dm": False,
-            "show_mod": False,
+            "dm": True,
+            "show_mod": True,
         }
         self.config.register_global(schema_version=0)
         self.config.register_guild(**default_guild)
