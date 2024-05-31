@@ -30,6 +30,10 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(embed_links=True)
     async def command_disconnect(self, ctx: commands.Context):
         """Disconnect from the voice channel."""
+        
+        # Check if the user is in a voice channel.
+        if ctx.author.voice is None:
+            return await self.send_embed_msg(ctx, title=_("You are not in a voice channel!"))
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         else:
@@ -53,6 +57,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Disconnect"),
+                    description=_("You need the DJ role to disconnect."),
+                )
+            if dj_enabled and not can_skip:
+                return await self.send_embed_msg(
+                    ctx,
+                    title=_("Unable to Disconnect"),
                     description=_("You need the DJ role to disconnect."),
                 )
             if dj_enabled and not can_skip:
