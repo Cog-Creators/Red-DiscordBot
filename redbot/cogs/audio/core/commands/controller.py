@@ -30,7 +30,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.bot_has_permissions(embed_links=True)
     async def command_disconnect(self, ctx: commands.Context):
         """Disconnect from the voice channel."""
-        
+
         # Check if the user is in a voice channel.
         if ctx.author.voice is None:
             return await self.send_embed_msg(ctx, title=_("You are not in a voice channel!"))
