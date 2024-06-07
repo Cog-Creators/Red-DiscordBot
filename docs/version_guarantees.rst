@@ -59,7 +59,6 @@ Alma Linux 8                       x86-64, aarch64           2029-05-31 (`How lo
 Alma Linux 9                       x86-64, aarch64           2032-05-31
 Amazon Linux 2023                  x86-64, aarch64           2028-03-15 (`end-of-life <https://docs.aws.amazon.com/linux/al2023/release-notes/support-info-by-support-statement.html#support-info-by-support-statement-eol>`__)
 Arch Linux                         x86-64                    forever (support is only provided for an up-to-date system)
-CentOS 7                           x86-64, aarch64           2024-06-30 (`end of Maintenance Updates <https://wiki.centos.org/>`__)
 CentOS Stream 9                    x86-64, aarch64           2027-05-31 (`expected EOL <https://centos.org/stream9/#timeline>`__)
 Debian 11 Bullseye                 x86-64, aarch64, armv7l   ~2024-07 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Debian 12 Bookworm                 x86-64, aarch64, armv7l   ~2026-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
