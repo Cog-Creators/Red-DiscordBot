@@ -231,6 +231,7 @@
   - redbot/core/_global_checks.py
   - redbot/core/_settings_caches.py
   - redbot/core/_sharedlibdeprecation.py
+  - readbot/core/_json.py
   - redbot/core/utils/_internal_utils.py
   # Tests
   - redbot/pytest/__init__.py
