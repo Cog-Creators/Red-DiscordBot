@@ -8,7 +8,7 @@ except (ModuleNotFoundError, ImportError):
     HAS_ORJSON = False
 else:
     HAS_ORJSON = True
-    
+
 
 if HAS_ORJSON:
     JSONEncodeError = orjson.JSONEncodeError  # type: ignore
@@ -46,14 +46,14 @@ def dump(
     fp.write(
         dumps(obj, default=default, orjson_option=orjson_option, **kwargs)
     )
-    
+
 
 def loads(obj: Any, **json_kwargs: Any) -> Any:
     if HAS_ORJSON:
         return orjson.loads(obj)  # type: ignore
     else:
         return json.loads(obj, **json_kwargs)
-    
+
 
 def load(fp: TextIO, **kwargs: Any) -> Any:
     return loads(fp.read(), **kwargs)
