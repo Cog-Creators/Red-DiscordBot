@@ -9,6 +9,16 @@ else:
     HAS_ORJSON = True
 
 
+__all__ = (
+    "JSONEncodeError",
+    "JSONDecodeError",
+    "dumps",
+    "dump",
+    "loads",
+    "load"
+)
+
+
 if HAS_ORJSON:
     JSONEncodeError = orjson.JSONEncodeError  # type: ignore
     JSONDecodeError = orjson.JSONDecodeError  # type: ignore
