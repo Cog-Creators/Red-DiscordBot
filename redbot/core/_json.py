@@ -43,9 +43,7 @@ def dump(
     orjson_option: Optional[int] = None,
     **kwargs: Any,
 ) -> None:
-    fp.write(
-        dumps(obj, default=default, orjson_option=orjson_option, **kwargs)
-    )
+    fp.write(dumps(obj, default=default, orjson_option=orjson_option, **kwargs))
 
 
 def loads(obj: Any, **json_kwargs: Any) -> Any:
