@@ -23,7 +23,7 @@ def dumps(
     *,
     default: Optional[Callable[[Any], Any]] = None,
     orjson_option: Optional[int] = None,
-    **json_kwargs: Any
+    **json_kwargs: Any,
 ) -> str:
     if HAS_ORJSON:
         return orjson.dumps(  # type: ignore
@@ -41,7 +41,7 @@ def dump(
     *,
     default: Optional[Callable[[Any], Any]] = None,
     orjson_option: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> None:
     fp.write(
         dumps(obj, default=default, orjson_option=orjson_option, **kwargs)
