@@ -3,8 +3,6 @@ from typing import Any, Callable, Optional, TextIO
 
 try:
     import orjson
-
-    HAS_ORJSON = True
 except (ModuleNotFoundError, ImportError):
     HAS_ORJSON = False
 else:
