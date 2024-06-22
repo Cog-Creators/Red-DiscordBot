@@ -81,8 +81,6 @@ _data_deletion_lock = asyncio.Lock()
 _cache_is_global = None
 _cache = {"bank_name": None, "currency": None, "default_balance": None, "max_balance": None}
 
-global coverage
-coverage = {500: 0, 501: 0, 502: 0, 503: 0, 504: 0, 505: 0, 506: 0, 507: 0, 508: 0, 509: 0}
 
 async def _init():
     global _config
@@ -323,42 +321,29 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
         If the amount is not an `int`.
 
     """
-    global coverage
-
-
-    if not isinstance(amount, int): #ID: 500
-        coverage[500] += 1
+    if not isinstance(amount, int):
         raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
-    if amount < 0: #ID: 501
-        coverage[501] += 1
+    if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     guild = getattr(member, "guild", None)
     max_bal = await get_max_balance(guild)
-    if amount > max_bal: #ID: 502
-        coverage[502] += 1
+    if amount > max_bal:
         currency = await get_currency_name(guild)
         raise errors.BalanceTooHigh(
             user=member.display_name, max_balance=max_bal, currency_name=currency
-        ) 
-    if await is_global(): #ID: 503
-        coverage[503] += 1
+        )
+    if await is_global():
         group = _config.user(member)
-    else: #ID: 504
-        coverage[504] += 1
+    else:
         group = _config.member(member)
     await group.balance.set(amount)
 
-    if await group.created_at() == 0: #ID: 505
-        coverage[505] += 1
+    if await group.created_at() == 0:
         time = _encoded_current_time()
         await group.created_at.set(time)
 
-    if await group.name() == "": #ID: 506
-        coverage[506] += 1
+    if await group.name() == "":
         await group.name.set(member.display_name)
-
-    with open("blup.txt", "w") as file:
-        file.write(str(coverage))
 
     return amount
 
@@ -391,11 +376,9 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
         If the withdrawal amount is not an `int`.
 
     """
-    if not isinstance(amount, int): # 507
-        coverage[507] += 1
+    if not isinstance(amount, int):
         raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
-    if _invalid_amount(amount): # 508
-        coverage[508] += 1
+    if _invalid_amount(amount):
         raise ValueError(
             "Invalid withdrawal amount {} < 0".format(
                 humanize_number(amount, override_locale="en_US")
@@ -403,19 +386,13 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
         )
 
     bal = await get_balance(member)
-    if amount > bal: # 509
-        coverage[509] += 1
-        with open("blup.txt", "w") as file:
-            file.write(str(coverage))
+    if amount > bal:
         raise ValueError(
             "Insufficient funds {} > {}".format(
                 humanize_number(amount, override_locale="en_US"),
                 humanize_number(bal, override_locale="en_US"),
             )
         )
-
-    with open("blup.txt", "w") as file:
-        file.write(str(coverage))
 
     return await set_balance(member, bal - amount)
 
