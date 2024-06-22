@@ -74,3 +74,15 @@ async def test_nonint_transaction_amount(bank, member_factory):
         await bank.withdraw_credits(mbr1, 1.0)
     with pytest.raises(TypeError):
         await bank.transfer_credits(mbr1, mbr2, 1.0)
+
+async def test_bank_set(bank, member_factory):
+    mbr = member_factory.get()
+    with pytest.raises(ValueError):
+        await bank.set_balance(mbr, -1)
+
+    with pytest.raises(TypeError):
+        await bank.set_balance(mbr, "1")
+
+    with pytest.raises(errors.BalanceTooHigh):
+        await bank.set_balance(mbr,  2 ** 63)
+
