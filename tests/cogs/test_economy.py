@@ -1,5 +1,6 @@
 import pytest
 from redbot.pytest.economy import *
+from redbot.core import errors
 
 
 async def test_bank_register(bank, ctx):
@@ -32,7 +33,6 @@ async def test_bank_set(bank, member_factory):
     acc = await bank.get_account(mbr)
     assert acc.balance == 250
 
-
 async def test_bank_can_spend(bank, member_factory):
     mbr = member_factory.get()
     canspend = await bank.can_spend(mbr, 50)
@@ -41,6 +41,7 @@ async def test_bank_can_spend(bank, member_factory):
     acc = await bank.get_account(mbr)
     canspendnow = await bank.can_spend(mbr, 100)
     assert canspendnow
+    print("yeeeeeeeeeeeeet123")
 
 
 async def test_set_bank_name(bank, guild_factory):
@@ -73,3 +74,25 @@ async def test_nonint_transaction_amount(bank, member_factory):
         await bank.withdraw_credits(mbr1, 1.0)
     with pytest.raises(TypeError):
         await bank.transfer_credits(mbr1, mbr2, 1.0)
+
+async def test_bank_set(bank, member_factory):
+    mbr = member_factory.get()
+    with pytest.raises(ValueError):
+        await bank.set_balance(mbr, -1)
+
+    with pytest.raises(TypeError):
+        await bank.set_balance(mbr, "1")
+
+    with pytest.raises(errors.BalanceTooHigh):
+        await bank.set_balance(mbr,  2 ** 63)
+
+async def test_bank_withdraw(bank, member_factory):
+    mbr = member_factory.get()
+    with pytest.raises(TypeError):
+        await bank.withdraw_credits(mbr, 1.0)
+    with pytest.raises(ValueError):
+        await bank.withdraw_credits(mbr, -1)
+    await bank.set_balance(mbr, 100)
+    with pytest.raises(ValueError):
+        await bank.withdraw_credits(mbr, 101)
+    
