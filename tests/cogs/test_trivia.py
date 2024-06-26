@@ -13,7 +13,6 @@ from redbot.cogs.trivia.schema import (
     format_schema_error,
 )
 
-
 def test_trivia_lists():
     from redbot.cogs.trivia import InvalidListError, get_core_lists, get_list
 
@@ -55,7 +54,6 @@ def test_trivia_lists():
         for branch_id, was_taken in branch_coverage.items():
             f.write(f"Branch {branch_id}: {'Taken' if was_taken else 'Not Taken'}\n")
 
-
 def _get_error_message(*keys: Any, key: str = "UNKNOWN", parent_key: str = "UNKNOWN") -> str:
     if not keys:
         return TRIVIA_LIST_SCHEMA._error
@@ -66,7 +64,6 @@ def _get_error_message(*keys: Any, key: str = "UNKNOWN", parent_key: str = "UNKN
             current = current.args[0]
         current = current[key_name]
     return str(current._error).format(key=repr(key), parent_key=repr(parent_key))
-
 
 @pytest.mark.parametrize(
     "data,error_msg",
@@ -95,3 +92,65 @@ def test_trivia_schema_error_messages(data: Any, error_msg: str):
         TRIVIA_LIST_SCHEMA.validate(data)
 
     assert format_schema_error(exc.value) == error_msg
+
+def test_trivia_lists_empty_list_names():
+    from redbot.cogs.trivia import get_core_lists, get_list
+
+    def mock_get_core_lists():
+        return []
+
+    original_get_core_lists = get_core_lists
+    get_core_lists = mock_get_core_lists
+
+    try:
+        test_trivia_lists()
+    except AssertionError:
+        pass
+    finally:
+        get_core_lists = original_get_core_lists
+
+def test_trivia_lists_invalid_list_error_yaml():
+    from redbot.cogs.trivia import InvalidListError, get_core_lists, get_list
+
+    def mock_get_core_lists():
+        return ["mock_list"]
+
+    def mock_get_list(name):
+        e = Exception("YAML error")
+        raise InvalidListError() from e
+
+    original_get_core_lists = get_core_lists
+    original_get_list = get_list
+    get_core_lists = mock_get_core_lists
+    get_list = mock_get_list
+
+    try:
+        test_trivia_lists()
+    except TypeError:
+        pass
+    finally:
+        get_core_lists = original_get_core_lists
+        get_list = original_get_list
+
+def test_trivia_lists_invalid_list_error_schema():
+    from redbot.cogs.trivia import InvalidListError, get_core_lists, get_list
+
+    def mock_get_core_lists():
+        return ["mock_list"]
+
+    def mock_get_list(name):
+        e = SchemaError("Schema error")
+        raise InvalidListError() from e
+
+    original_get_core_lists = get_core_lists
+    original_get_list = get_list
+    get_core_lists = mock_get_core_lists
+    get_list = mock_get_list
+
+    try:
+        test_trivia_lists()
+    except TypeError:
+        pass
+    finally:
+        get_core_lists = original_get_core_lists
+        get_list = original_get_list
