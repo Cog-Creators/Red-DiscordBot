@@ -85,6 +85,10 @@ async def test_bank_set(bank, member_factory):
 
     with pytest.raises(errors.BalanceTooHigh):
         await bank.set_balance(mbr,  2 ** 63)
+    
+    await bank.set_global(True)
+    bank.set_balance(mbr, 100)
+    assert await bank.get_balance(mbr) == 100
 
 async def test_bank_withdraw(bank, member_factory):
     mbr = member_factory.get()
