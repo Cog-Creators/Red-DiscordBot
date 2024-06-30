@@ -267,11 +267,13 @@ def parse_cli_flags(args):
     )
     parser.add_argument(
         "--team-members-are-owners",
+        "--team-developers-are-owners",
         action="store_true",
         dest="use_team_features",
         default=False,
         help=(
-            "Treat application team members as owners. "
+            "Treat application team members as owners, if their team role is Owner, "
+            "Admin, or Developer. "
             "This is off by default. Owners can load and run arbitrary code. "
             "Do not enable if you would not trust all of your team members with "
             "all of the data on the host machine."
