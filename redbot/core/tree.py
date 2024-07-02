@@ -334,6 +334,20 @@ class RedTree(CommandTree):
         else:
             log.exception(type(error).__name__, exc_info=error)
 
+    async def _send_interaction_check_failure(
+        self, interaction: discord.Interaction, message: str
+    ):
+        """Handles responding to interaction check failures.
+        Mainly used for when an interaction is an autocomplete and
+        providing the message in the autocomplete response.
+        """
+        if interaction.type is discord.InteractionType.autocomplete:
+            await interaction.response.autocomplete(
+                [discord.app_commands.Choice(name=message[:80], value="None")]
+            )
+            return
+        await interaction.response.send_message(message, ephemeral=True)
+
     async def interaction_check(self, interaction: discord.Interaction):
         """Global checks for app commands."""
         if interaction.user.bot:
@@ -341,15 +355,15 @@ class RedTree(CommandTree):
 
         if interaction.guild:
             if not (await self.client.ignored_channel_or_guild(interaction)):
-                await interaction.response.send_message(
-                    "This channel or server is ignored.", ephemeral=True
+                await self._send_interaction_check_failure(
+                    interaction, _("This channel or server is ignored.")
                 )
                 return False
 
         if not (await self.client.allowed_by_whitelist_blacklist(interaction.user)):
-            await interaction.response.send_message(
-                "You are not permitted to use commands because of an allowlist or blocklist.",
-                ephemeral=True,
+            await self._send_interaction_check_failure(
+                interaction,
+                _("You are not permitted to use commands because of an allowlist or blocklist."),
             )
             return False
 
