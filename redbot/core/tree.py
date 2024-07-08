@@ -17,6 +17,7 @@ from .app_commands import (
     Group,
     NoPrivateMessage,
     TransformerError,
+    UserFeedbackCheckFailure,
 )
 from .i18n import Translator
 from .utils.chat_formatting import humanize_list, inline
@@ -331,6 +332,9 @@ class RedTree(CommandTree):
             await self._send_from_interaction(
                 interaction, _("You are not permitted to use this command.")
             )
+        elif isinstance(error, UserFeedbackCheckFailure):
+            if error.message:
+                await self._send_from_interaction(interaction, error.message)
         else:
             log.exception(type(error).__name__, exc_info=error)
 
