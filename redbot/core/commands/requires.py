@@ -803,7 +803,7 @@ def can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(allow_thread_owner)
+    return _can_manage_channel_deco(None, allow_thread_owner)
 
 
 def is_owner():
