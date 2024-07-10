@@ -2910,6 +2910,68 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.bot.user.edit(avatar=None)
         await ctx.send(_("Avatar removed."))
 
+    @_set_bot.group(name="banner", invoke_without_command=True)
+    @commands.is_owner()
+    async def _set_bot_banner(self, ctx: commands.Context, url: str = None):
+        """Sets [botname]'s banner
+
+        Supports either an attachment or an image URL.
+
+        **Examples:**
+        - `[p]set bot banner` - With an image attachment, this will set the banner.
+        - `[p]set bot banner` - Without an attachment, this will show the command help.
+        - `[p]set bot banner https://links.flaree.xyz/k95` - Sets the banner to the provided url.
+
+        **Arguments:**
+        - `[url]` - An image url to be used as an banner. Leave blank when uploading an attachment.
+        """
+        if len(ctx.message.attachments) > 0:  # Attachments take priority
+            data = await ctx.message.attachments[0].read()
+        elif url is not None:
+            if url.startswith("<") and url.endswith(">"):
+                url = url[1:-1]
+
+            async with aiohttp.ClientSession() as session:
+                try:
+                    async with session.get(url) as r:
+                        data = await r.read()
+                except aiohttp.InvalidURL:
+                    return await ctx.send(_("That URL is invalid."))
+                except aiohttp.ClientError:
+                    return await ctx.send(_("Something went wrong while trying to get the image."))
+        else:
+            await ctx.send_help()
+            return
+
+        try:
+            async with ctx.typing():
+                await ctx.bot.user.edit(banner=data)
+        except discord.HTTPException:
+            await ctx.send(
+                _(
+                    "Failed. Remember that you can edit my banner "
+                    "up to two times a hour. The URL or attachment "
+                    "must be a valid image in either JPG, PNG, or GIF format."
+                )
+            )
+        except ValueError:
+            await ctx.send(_("JPG / PNG / GIF format only."))
+        else:
+            await ctx.send(_("Done."))
+
+    @_set_bot_banner.command(name="remove", aliases=["clear"])
+    @commands.is_owner()
+    async def _set_bot_banner_remove(self, ctx: commands.Context):
+        """
+        Removes [botname]'s banner.
+
+        **Example:**
+        - `[p]set bot banner remove`
+        """
+        async with ctx.typing():
+            await ctx.bot.user.edit(banner=None)
+        await ctx.send(_("Banner removed."))
+
     @_set_bot.command(name="username", aliases=["name"])
     @commands.is_owner()
     async def _set_bot_username(self, ctx: commands.Context, *, username: str):
