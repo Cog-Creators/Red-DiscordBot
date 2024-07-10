@@ -17,8 +17,6 @@ we recommend **Ubuntu 24.04 LTS**.
    alma-linux-9
    amazon-linux-2023
    arch
-   centos-7
-   centos-stream-8
    centos-stream-9
    debian-11
    debian-12
