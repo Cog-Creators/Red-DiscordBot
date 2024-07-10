@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/mutes/converters.py:57
 msgid "`{unit}` is not a valid unit of time for this command"
-msgstr ""
+msgstr "`{unit}`はこのコマンドの有効な時間単位ではありません"
 
 #: redbot/cogs/mutes/converters.py:65 redbot/cogs/mutes/mutes.py:1016
 msgid "The time provided is too long; use a more reasonable time."
