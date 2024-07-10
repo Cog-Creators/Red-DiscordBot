@@ -2918,7 +2918,7 @@ Supports either an attachment or an image URL.
 **Examples:**
     - ``[p]set bot banner`` - With an image attachment, this will set the banner.
     - ``[p]set bot banner`` - Without an attachment, this will show the command help.
-    - ``[p]set bot banner https://imgur.com/pY1WUFX.png`` - Sets the banner to the provided url.
+    - ``[p]set bot banner https://opengraph.githubassets.com`` - Sets the banner to the provided url.
 
 **Arguments:**
     - ``[url]`` - An image url to be used as an banner. Leave blank when uploading an attachment.
