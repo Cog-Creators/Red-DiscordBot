@@ -20,8 +20,9 @@ Read before updating
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
-    We've updated our `default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.10/Red-DiscordBot-3.5.10-default-lavalink-application.yml>`__ and you should update your instance's ``application.yml`` accordingly.
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we switched from using the built-in YT source to YT source plugin.
+    `Download Red 3.5.10's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.10/Red-DiscordBot-3.5.10-default-lavalink-application.yml>`__
 
 End-user changelog
 ------------------
@@ -41,7 +42,7 @@ Additions
 Changes
 *******
 
-- **Core** - Red's ``--team-developers-are-owners`` flag now only considers Team Owner, Admins, and Developers as bot owners (:issue:`6401`)
+- **Core** - Red's ``--team-members-are-owners`` flag now only considers Team Owner, Admins, and Developers as bot owners (:issue:`6401`)
 - **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6402`)
 - **Cogs - Audio** - Updated the cog to configure managed Lavalink node to use YT source plugin instead of the built-in, no longer supported, implementation (:issue:`6373`)
 - **Cogs - Filter** - The cog now checks poll contents and attachment alt text for filtered words (:issue:`6401`)
