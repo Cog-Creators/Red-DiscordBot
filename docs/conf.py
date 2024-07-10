@@ -250,7 +250,10 @@ intersphinx_mapping = {
 extlinks = {
     "dpy_docs": (f"{dpy_docs_url}%s", None),
     "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#%s"),
-    "ghuser": ("https://github.com/%s", "@%s"),
+    # below URL redirects to user page, if they don't have GH Sponsors set up,
+    # while allowing us to direct readers directly at a sponsorship opportunity,
+    # if they do
+    "ghuser": ("https://github.com/sponsors/%s", "@%s"),
 }
 
 # Doctest
