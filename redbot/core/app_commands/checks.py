@@ -348,7 +348,10 @@ def bot_can_manage_channel(*, allow_thread_owner: bool = False):
         if isinstance(interaction.channel, discord.Thread):
             if not (
                 perms.manage_threads
-                or (allow_thread_owner and interaction.channel.owner_id == interaction.client.user.id)
+                or (
+                    allow_thread_owner
+                    and interaction.channel.owner_id == interaction.client.user.id
+                )
             ):
                 # This is a slight lie - thread owner *might* also be allowed
                 # but we just say that bot is missing the Manage Threads permission.
