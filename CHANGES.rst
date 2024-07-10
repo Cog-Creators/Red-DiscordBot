@@ -4,7 +4,7 @@ Redbot 3.5.10 (2024-07-10)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`SeaswimmerTheFsh`, :ghuser:`TrustyJAID`
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`SeaswimmerTheFsh`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
 
 Read before updating
 --------------------
@@ -51,6 +51,7 @@ Fixes
 *****
 
 - **Core** - Fixed command autocompletion not showing any proper result (error message) when bot's global checks (channel/server ignores, allowlist/blocklist) do not pass (:issue:`6374`, :issue:`6375`)
+- **Cogs - Audio** - Fixed one of the recent YT playback issues (:issue:`6373`)
 
 Developer changes
 -----------------
@@ -66,7 +67,7 @@ Documentation changes
 Additions
 *********
 
-- Added Ubuntu 22.04 install guide (:issue:`6364`)
+- Added Ubuntu 24.04 install guide (:issue:`6364`)
 
 Changes
 *******
