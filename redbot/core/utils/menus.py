@@ -80,7 +80,7 @@ async def menu(
 
         The ``user`` parameter is considered `provisional <developer-guarantees-exclusions>`.
         If no issues arise, we plan on including it under developer guarantees
-        in the first release made after 2024-05-18.
+        in the first release made after 2024-05-24.
 
     .. warning::
 
@@ -168,7 +168,7 @@ async def menu(
 
             This parameter is `provisional <developer-guarantees-exclusions>`.
             If no issues arise, we plan on including it under developer guarantees
-            in the first release made after 2024-05-18.
+            in the first release made after 2024-05-24.
 
     Raises
     ------
@@ -287,7 +287,7 @@ async def menu(
 
         if len(done) == 0:
             raise asyncio.TimeoutError()
-        react, user = done.pop().result()
+        react, __ = done.pop().result()
     except asyncio.TimeoutError:
         if not ctx.me:
             return

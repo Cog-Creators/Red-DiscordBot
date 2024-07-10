@@ -15,7 +15,7 @@ from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter, can_user_react_in
-from redbot.core.utils.chat_formatting import box, pagify, bold
+from redbot.core.utils.chat_formatting import box, pagify, bold, inline, italics, humanize_number
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
@@ -35,6 +35,38 @@ class InvalidListError(Exception):
     """A Trivia list file is in invalid format."""
 
     pass
+
+
+def _format_setting_value(key: str, value: Union[float, bool]) -> str:
+    # handle bools
+    if value is True:
+        return _("Yes")
+    if value is False:
+        return _("No")
+    # handle numbers
+    value = humanize_number(value)
+    if key in ("delay", "timeout"):
+        return _("{seconds} seconds").format(seconds=value)
+    return str(value)
+
+
+def format_settings(settings: Dict[str, Union[float, bool]]) -> str:
+    setting_names = {
+        "bot_plays": _("Bot gains points"),
+        "delay": _("Answer time limit"),
+        "timeout": _("Lack of response timeout"),
+        "max_score": _("Points to win"),
+        "reveal_answer": _("Answers are revealed on timeout"),
+        "payout_multiplier": _("Payout multiplier"),
+        "allow_override": _("Lists are allowed to override settings"),
+        "use_spoilers": _("Answers use spoilers"),
+    }
+
+    return "\n".join(
+        f"{setting_name}: {_format_setting_value(key, settings[key])}"
+        for key, setting_name in setting_names.items()
+        if key in settings
+    )
 
 
 @cog_i18n(_)
@@ -84,22 +116,8 @@ class Trivia(commands.Cog):
     @triviaset.command(name="showsettings")
     async def triviaset_showsettings(self, ctx: commands.Context):
         """Show the current trivia settings."""
-        settings = self.config.guild(ctx.guild)
-        settings_dict = await settings.all()
-        msg = box(
-            _(
-                "Current settings\n"
-                "Bot gains points: {bot_plays}\n"
-                "Answer time limit: {delay} seconds\n"
-                "Lack of response timeout: {timeout} seconds\n"
-                "Points to win: {max_score}\n"
-                "Reveal answer on timeout: {reveal_answer}\n"
-                "Payout multiplier: {payout_multiplier}\n"
-                "Allow lists to override settings: {allow_override}\n"
-                "Use Spoilers in answers: {use_spoilers}"
-            ).format(**settings_dict),
-            lang="py",
-        )
+        settings = await self.config.guild(ctx.guild).all()
+        msg = box(_("Current settings:\n\n") + format_settings(settings))
         await ctx.send(msg)
 
     @triviaset.command(name="maxscore")
@@ -340,15 +358,17 @@ class Trivia(commands.Cog):
             else:
                 trivia_dict.update(dict_)
                 authors.append(trivia_dict.pop("AUTHOR", None))
+                trivia_dict.pop("DESCRIPTION", None)
                 continue
             return
+        trivia_dict.pop("$schema", None)
+        config = trivia_dict.pop("CONFIG", None)
         if not trivia_dict:
             await ctx.send(
                 _("The trivia list was parsed successfully, however it appears to be empty!")
             )
             return
         settings = await self.config.guild(ctx.guild).all()
-        config = trivia_dict.pop("CONFIG", None)
         if config and settings["allow_override"]:
             settings.update(config)
         settings["lists"] = dict(zip(categories, reversed(authors)))
@@ -386,6 +406,59 @@ class Trivia(commands.Cog):
                 await ctx.author.send(msg)
             else:
                 await ctx.send(msg)
+
+    @trivia.command(name="info")
+    async def trivia_info(self, ctx: commands.Context, category: str.lower):
+        """Get information about a trivia category."""
+        try:
+            data = self.get_trivia_list(category)
+        except FileNotFoundError:
+            return await ctx.send(
+                _(
+                    "Category {name} does not exist."
+                    " See {command} for the list of available trivia categories."
+                ).format(name=inline(category), command=inline(f"{ctx.clean_prefix}trivia list"))
+            )
+        except InvalidListError:
+            return await ctx.send(
+                _(
+                    "There was an error parsing the trivia list for the {name} category."
+                    " It may be formatted incorrectly."
+                ).format(name=inline(category))
+            )
+
+        config_overrides = data.pop("CONFIG", None)
+
+        embed = discord.Embed(
+            title=_('"{category}" Category Details').format(category=category),
+            color=await ctx.embed_colour(),
+        )
+        embed.add_field(
+            name=_("Authors"), value=data.pop("AUTHOR", "").strip() or italics(_("Not provided."))
+        )
+        embed.add_field(name=_("Question count"), value=len(data))
+        embed.add_field(
+            name=_("Custom"),
+            value=_format_setting_value(
+                "", any(category == p.resolve().stem for p in cog_data_path(self).glob("*.yaml"))
+            ),
+        )
+        embed.add_field(
+            name=_("Description"),
+            value=(
+                data.pop("DESCRIPTION", "").strip()
+                or italics(_("No description provided for this category."))
+            ),
+            inline=False,
+        )
+
+        if config_overrides:
+            embed.add_field(
+                name=_("Config"),
+                value=box(format_settings(config_overrides)),
+                inline=False,
+            )
+        await ctx.send(embed=embed)
 
     @trivia.group(
         name="leaderboard", aliases=["lboard"], autohelp=False, invoke_without_command=True

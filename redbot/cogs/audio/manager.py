@@ -106,7 +106,28 @@ LAVALINK_BUILD_LINE: Final[Pattern] = re.compile(rb"^Build:\s+(?P<build>\d+)$", 
 LAVALINK_VERSION_LINE_PRE35: Final[Pattern] = re.compile(
     rb"^Version:\s+(?P<version>\S+)$", re.MULTILINE | re.VERBOSE
 )
-# used for LL 3.5-rc4 and newer
+# used for LL versions >=3.5-rc4 but below 3.6.
+# Since this only applies to historical version, this regex is based only on
+# version numbers that actually existed, not ones that technically could.
+LAVALINK_VERSION_LINE_PRE36: Final[Pattern] = re.compile(
+    rb"""
+    ^
+    Version:\s+
+    (?P<version>
+        (?P<major>3)\.(?P<minor>[0-5])
+        # Before LL 3.6, when patch version == 0, it was stripped from the version string
+        (?:\.(?P<patch>[1-9]\d*))?
+        # Before LL 3.6, the dot in rc.N was optional
+        (?:-rc\.?(?P<rc>0|[1-9]\d*))?
+        # additional build metadata, can be used by our downstream Lavalink
+        # if we need to alter an upstream release
+        (?:\+red\.(?P<red>[1-9]\d*))?
+    )
+    $
+    """,
+    re.MULTILINE | re.VERBOSE,
+)
+# used for LL 3.6 and newer
 # This regex is limited to the realistic usage in the LL version number,
 # not everything that could be a part of it according to the spec.
 # We can easily release an update to this regex in the future if it ever becomes necessary.
@@ -115,11 +136,8 @@ LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
     ^
     Version:\s+
     (?P<version>
-        (?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)
-        # Before LL 3.6, when patch version == 0, it was stripped from the version string
-        (?:\.(?P<patch>0|[1-9]\d*))?
-        # Before LL 3.6, the dot in rc.N was optional
-        (?:-rc\.?(?P<rc>0|[1-9]\d*))?
+        (?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)
+        (?:-rc\.(?P<rc>0|[1-9]\d*))?
         # additional build metadata, can be used by our downstream Lavalink
         # if we need to alter an upstream release
         (?:\+red\.(?P<red>[1-9]\d*))?
@@ -142,10 +160,16 @@ class LavalinkOldVersion:
     def from_version_output(cls, output: bytes) -> Self:
         build_match = LAVALINK_BUILD_LINE.search(output)
         if build_match is None:
-            raise ValueError("Could not find Build line in the given `--version` output.")
+            raise ValueError(
+                "Could not find 'Build' line in the given `--version` output,"
+                " or invalid build number given."
+            )
         version_match = LAVALINK_VERSION_LINE_PRE35.search(output)
         if version_match is None:
-            raise ValueError("Could not find Version line in the given `--version` output.")
+            raise ValueError(
+                "Could not find 'Version' line in the given `--version` output,"
+                " or invalid version number given."
+            )
         return cls(
             raw_version=version_match["version"].decode(),
             build_number=int(build_match["build"]),
@@ -206,16 +230,22 @@ class LavalinkVersion:
     def __str__(self) -> None:
         version = f"{self.major}.{self.minor}.{self.patch}"
         if self.rc is not None:
-            version += f"-rc{self.rc}"
+            version += f"-rc.{self.rc}"
         if self.red:
-            version += f"_red{self.red}"
+            version += f"+red.{self.red}"
         return version
 
     @classmethod
     def from_version_output(cls, output: bytes) -> Self:
         match = LAVALINK_VERSION_LINE.search(output)
         if match is None:
-            raise ValueError("Could not find Version line in the given `--version` output.")
+            # >=3.5-rc4, <3.6
+            match = LAVALINK_VERSION_LINE_PRE36.search(output)
+        if match is None:
+            raise ValueError(
+                "Could not find 'Version' line in the given `--version` output,"
+                " or invalid version number given."
+            )
         return LavalinkVersion(
             major=int(match["major"]),
             minor=int(match["minor"]),
@@ -264,7 +294,7 @@ class LavalinkVersion:
 
 
 class ServerManager:
-    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 11)
+    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 11, red=3)
     LAVALINK_DOWNLOAD_URL: Final[str] = (
         "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
         f"{JAR_VERSION}/"
@@ -583,29 +613,34 @@ class ServerManager:
         stdout = (await _proc.communicate())[0]
         if (branch := LAVALINK_BRANCH_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'Branch' line in the `--version` output,"
+                " or invalid branch name given."
+            )
         if (java := LAVALINK_JAVA_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'JVM' line in the `--version` output,"
+                " or invalid version number given."
+            )
         if (lavaplayer := LAVALINK_LAVAPLAYER_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'Lavaplayer' line in the `--version` output,"
+                " or invalid version number given."
+            )
         if (buildtime := LAVALINK_BUILD_TIME_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'Build time' line in the `--version` output,"
+                " or invalid build time given."
+            )
 
-        if (build := LAVALINK_BUILD_LINE.search(stdout)) is not None:
-            try:
-                self._lavalink_version = LavalinkOldVersion.from_version_output(stdout)
-            except ValueError:
-                # Output is unexpected, suspect corrupted jarfile
-                return False
-        else:
-            try:
-                self._lavalink_version = LavalinkVersion.from_version_output(stdout)
-            except ValueError:
-                # Output is unexpected, suspect corrupted jarfile
-                return False
+        self._lavalink_version = (
+            LavalinkOldVersion.from_version_output(stdout)
+            if LAVALINK_BUILD_LINE.search(stdout) is not None
+            else LavalinkVersion.from_version_output(stdout)
+        )
         date = buildtime["build_time"].decode()
         date = date.replace(".", "/")
         self._lavalink_branch = branch["branch"].decode()
@@ -616,7 +651,24 @@ class ServerManager:
         return self._up_to_date
 
     async def maybe_download_jar(self):
-        if not (self.lavalink_jar_file.exists() and await self._is_up_to_date()):
+        if not self.lavalink_jar_file.exists():
+            log.info("Triggering first-time download of Lavalink...")
+            await self._download_jar()
+            return
+
+        try:
+            up_to_date = await self._is_up_to_date()
+        except ValueError as exc:
+            log.warning("Failed to get Lavalink version: %s\nTriggering update...", exc)
+            await self._download_jar()
+            return
+
+        if not up_to_date:
+            log.info(
+                "Lavalink version outdated, triggering update from %s to %s...",
+                self._lavalink_version,
+                self.JAR_VERSION,
+            )
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: Optional[float] = None):

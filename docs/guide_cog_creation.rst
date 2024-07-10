@@ -55,7 +55,7 @@ the purposes of this example, we'll call this :code:`mycog`).
 In this folder, create three files: :code:`__init__.py`,
 :code:`mycog.py`, and :code:`info.json`. Open the folder in
 a text editor or IDE (examples include `Sublime Text 3 <https://www.sublimetext.com/>`_,
-`Visual Studio Code <https://code.visualstudio.com/>`_, `Atom <https://atom.io/>`_, and
+`Visual Studio Code <https://code.visualstudio.com/>`_, and
 `PyCharm <http://www.jetbrains.com/pycharm/>`_).
 
 .. attention:: 
@@ -147,7 +147,7 @@ have successfully created a cog!
         ------ __init__.py
         ------ coolcog.py
     
-    You would then use :code:`[p]addpath D:\red-cogs` to add the path
+    You would then use :code:`[p]addpath D:\\red-cogs` to add the path
     and then you can use :code:`[p]load mycog` or :code:`[p]load coolcog`
     to load them
     
