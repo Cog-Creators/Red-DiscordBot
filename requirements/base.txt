@@ -20,7 +20,7 @@ click==8.1.7
     # via -r base.in
 contextlib2==21.6.0
     # via schema
-discord-py==2.3.2
+discord-py==2.4.0
     # via
     #   -r base.in
     #   red-lavalink
