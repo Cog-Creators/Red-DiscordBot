@@ -328,13 +328,13 @@ class RedTree(CommandTree):
                 relative_time=relative_time
             )
             await self._send_from_interaction(interaction, msg, delete_after=error.retry_after)
+        elif isinstance(error, UserFeedbackCheckFailure):
+            if error.message:
+                await self._send_from_interaction(interaction, error.message)
         elif isinstance(error, CheckFailure):
             await self._send_from_interaction(
                 interaction, _("You are not permitted to use this command.")
             )
-        elif isinstance(error, UserFeedbackCheckFailure):
-            if error.message:
-                await self._send_from_interaction(interaction, error.message)
         else:
             log.exception(type(error).__name__, exc_info=error)
 
