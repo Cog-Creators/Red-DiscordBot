@@ -119,7 +119,6 @@ __all__ = (
     "autocomplete",
     "check",
     "CheckFailure",
-    "UserFeedbackCheckFailure",
     "Choice",
     "choices",
     "command",
@@ -135,4 +134,5 @@ __all__ = (
     "rename",
     "user_install",
     "checks",
+    "UserFeedbackCheckFailure",
 )
