@@ -47,6 +47,9 @@ extend functionalities used throughout the bot, as outlined below.
 
 .. autoclass:: redbot.core.commands.DMContext
 
+.. autoclass:: redbot.core.commands.UserFeedbackCheckFailure
+    :members:
+
 .. automodule:: redbot.core.commands.requires
     :members: PrivilegeLevel, PermState, Requires
 

@@ -69,6 +69,9 @@ from discord.app_commands import (
 )
 
 from . import checks as checks
+from .errors import (
+    UserFeedbackCheckFailure as UserFeedbackCheckFailure,
+)
 
 __all__ = (
     "AllChannels",
@@ -131,4 +134,5 @@ __all__ = (
     "rename",
     "user_install",
     "checks",
+    "UserFeedbackCheckFailure",
 )
