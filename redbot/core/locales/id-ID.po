@@ -18,52 +18,59 @@ msgstr ""
 #: redbot/core/_cog_manager.py:320
 #, docstring
 msgid "Commands to interface with Red's cog manager."
-msgstr ""
+msgstr "Perintah untuk berinteraksi dengan pengelola cog Red."
 
 #: redbot/core/_cog_manager.py:329
 #, docstring
 msgid "\n"
 "        Lists current cog paths in order of priority.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Menyusun jalur cog saat ini berdasarkan prioritas.\n"
+"        "
 
 #: redbot/core/_cog_manager.py:337
 msgid "Install Path: {install_path}\n"
 "Core Path: {core_path}\n\n"
-msgstr ""
+msgstr "Jalur Instalasi: {install_path}\n"
+"Jalur Inti: {core_path}\n\n"
 
 #: redbot/core/_cog_manager.py:351
 #, docstring
 msgid "\n"
 "        Add a path to the list of available cog paths.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Menambahkan jalur ke daftar jalur cog yang tersedia.\n"
+"        "
 
 #: redbot/core/_cog_manager.py:355
 msgid "That path does not exist or does not point to a valid directory."
-msgstr "Jalan itu tidak ada atau tidak mengarah ke direktori yang benar."
+msgstr "Jalur itu tidak ada atau tidak mengarah ke direktori yang benar."
 
 #: redbot/core/_cog_manager.py:364
 msgid "A cog path cannot be part of bot's data path ({bot_data_path})."
-msgstr ""
+msgstr "Jalur cog tidak dapat menjadi bagian dari jalur data bot ({bot_data_path})."
 
 #: redbot/core/_cog_manager.py:374
 msgid "A cog path cannot be part of bot's core path ({core_path})."
-msgstr ""
+msgstr "Jalur cog tidak dapat menjadi bagian dari jalur inti bot ({core_path})."
 
 #: redbot/core/_cog_manager.py:416
 msgid "The provided path appears to be a cog package, are you sure that this is the path that you want to add as a **cog path**?\n\n"
 "For example, in the following case, you should be adding the {path} as a **cog path**:\n"
-msgstr ""
+msgstr "Jalur yang diberikan terlihat sebagai paket cog, apakah Anda yakin bahwa ini adalah jalur yang ingin Anda tambahkan sebagai **jalur cog**?\n\n"
+"Sebagai contoh, dalam kasus berikut, Anda seharusnya menambahkan {path} sebagai **jalur cog**:\n"
 
 #: redbot/core/_cog_manager.py:423
 msgid "\n"
 "Please consult the Cog Manager UI documentation, if you're unsure: "
-msgstr ""
+msgstr "\n"
+"Silakan konsultasikan dokumentasi UI Cog Manager, jika Anda tidak yakin: "
 
 #: redbot/core/_cog_manager.py:429
 msgid "Okay, the path will not be added."
-msgstr ""
+msgstr "Baiklah, jalur tersebut tidak akan ditambahkan."
 
 #: redbot/core/_cog_manager.py:438
 msgid "Path successfully added."
@@ -74,30 +81,34 @@ msgstr "Jalur berhasil ditambahkan."
 msgid "\n"
 "        Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Menghapus satu atau lebih jalur dari jalur cog yang tersedia sesuai dengan `path_numbers` dari `[p]paths`.\n"
+"        "
 
 #: redbot/core/_cog_manager.py:464
 msgid "The following paths were removed: {paths}"
-msgstr ""
+msgstr "Jalur-jalur berikut telah dihapus: {paths}"
 
 #: redbot/core/_cog_manager.py:470
 msgid "The following path numbers did not exist: {path_numbers}"
-msgstr ""
+msgstr "Nomor-nomor jalur berikut tidak ada: {path_numbers}"
 
 #: redbot/core/_cog_manager.py:481
 #, docstring
 msgid "\n"
 "        Reorders paths internally to allow discovery of different cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Mengatur ulang jalur secara internal untuk memungkinkan penemuan cog yang berbeda.\n"
+"        "
 
 #: redbot/core/_cog_manager.py:492
 msgid "Invalid 'from' index."
-msgstr "Tidak valid 'dari' indeks."
+msgstr "Indeks 'dari' tidak valid."
 
 #: redbot/core/_cog_manager.py:498
 msgid "Invalid 'to' index."
-msgstr "Tidak valid 'ke' indeks."
+msgstr "Indeks 'ke' tidak valid."
 
 #: redbot/core/_cog_manager.py:502
 msgid "Paths reordered."
@@ -111,510 +122,500 @@ msgid "\n"
 "        directory and it must already exist.\n\n"
 "        No installed cogs will be transferred in the process.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Mengembalikan jalur instalasi saat ini atau mengaturnya jika ada yang disediakan.\n\n"
+"        Jalur yang diberikan harus absolut atau relatif terhadap direktori bot\n"
+"        dan harus sudah ada.\n\n"
+"        Tidak ada cog yang diinstal akan dipindahkan dalam proses ini.\n"
+"        "
 
 #: redbot/core/_cog_manager.py:521
 msgid "That path does not exist."
-msgstr "Jalan itu tidak ada."
+msgstr "Jalur itu tidak ada."
 
 #: redbot/core/_cog_manager.py:526
 msgid "The bot will install new cogs to the `{}` directory."
-msgstr "Bot akan menginstal roda gigi baru ke direktori `{}`."
+msgstr "Bot akan menginstal cog baru ke direktori `{}`."
 
 #: redbot/core/_cog_manager.py:532
 #, docstring
 msgid "\n"
 "        Lists all loaded and available cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Menyusun daftar semua cog yang dimuat dan tersedia.\n"
+"        "
 
 #: redbot/core/_cog_manager.py:545 redbot/core/_cog_manager.py:560
 msgid "**{} loaded:**\n"
-msgstr ""
+msgstr "**{} dimuat:**\n"
 
 #: redbot/core/_cog_manager.py:546 redbot/core/_cog_manager.py:562
 msgid "**{} unloaded:**\n"
-msgstr ""
+msgstr "**{} tidak dimuat:**\n"
 
 #: redbot/core/_diagnoser.py:104
 msgid "To fix this issue, you need to do one of these:"
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda perlu melakukan salah satu dari hal berikut:"
 
 #: redbot/core/_diagnoser.py:112
 msgid "Check if the command caller is not a bot"
-msgstr ""
+msgstr "Periksa apakah pemanggil perintah bukan bot"
 
 #: redbot/core/_diagnoser.py:118
 msgid "The user is a bot which prevents them from running any command."
-msgstr ""
+msgstr "Pengguna adalah bot yang mencegah mereka menjalankan perintah apa pun."
 
 #: redbot/core/_diagnoser.py:119
 msgid "This cannot be fixed - bots should not be listening to other bots."
-msgstr ""
+msgstr "Ini tidak dapat diperbaiki - bot seharusnya tidak mendengarkan bot lain."
 
 #: redbot/core/_diagnoser.py:123
 msgid "Check if the bot can send messages in the given channel"
-msgstr ""
+msgstr "Periksa apakah bot dapat mengirimkan pesan di saluran yang diberikan"
 
 #: redbot/core/_diagnoser.py:130
 msgid "Bot is timed out in the given channel."
-msgstr ""
+msgstr "Bot mengalami time-out di saluran yang diberikan."
 
 #: redbot/core/_diagnoser.py:131
 msgid "To fix this issue, remove timeout from the bot."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, hapus time-out dari bot."
 
 #: redbot/core/_diagnoser.py:137
 msgid "Bot doesn't have permission to send messages in the given channel."
-msgstr ""
+msgstr "Bot tidak memiliki izin untuk mengirimkan pesan di saluran yang diberikan."
 
 #: redbot/core/_diagnoser.py:138
 msgid "To fix this issue, ensure that the permissions setup allows the bot to send messages per Discord's role hierarchy:\n"
 "https://support.discord.com/hc/en-us/articles/206141927"
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, pastikan pengaturan izin memungkinkan bot untuk mengirim pesan sesuai hierarki peran Discord:\n"
+"https://support.discord.com/hc/en-us/articles/206141927"
 
 #: redbot/core/_diagnoser.py:150
 msgid "Check if the channel and the server aren't set to be ignored"
-msgstr ""
+msgstr "Periksa apakah saluran dan server tidak diatur untuk diabaikan"
 
 #: redbot/core/_diagnoser.py:156
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {thread} thread, its parent channel, and the server aren't a part of that list."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, periksa daftar yang dikembalikan oleh perintah {command} dan pastikan bahwa thread {thread}, saluran induknya, dan server tidak menjadi bagian dari daftar tersebut."
 
 #: redbot/core/_diagnoser.py:165
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {channel} channel and the server aren't a part of that list."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, periksa daftar yang dikembalikan oleh perintah {command} dan pastikan bahwa saluran {channel} dan server tidak menjadi bagian dari daftar tersebut."
 
 #: redbot/core/_diagnoser.py:175
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {thread} thread, its parent channel, the channel category it belongs to ({channel_category}), and the server aren't a part of that list."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, periksa daftar yang dikembalikan oleh perintah {command} dan pastikan bahwa thread {thread}, saluran induknya, kategori saluran tempat ia berada ({channel_category}), dan server tidak menjadi bagian dari daftar tersebut."
 
 #: redbot/core/_diagnoser.py:186
 msgid "To fix this issue, check the list returned by the {command} command and ensure that the {channel} channel, the channel category it belongs to ({channel_category}), and the server aren't a part of that list."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, periksa daftar yang dikembalikan oleh perintah {command} dan pastikan bahwa saluran {channel}, kategori saluran tempat ia berada ({channel_category}), dan server tidak menjadi bagian dari daftar tersebut."
 
 #: redbot/core/_diagnoser.py:200
 msgid "The bot is set to ignore commands in the given channel or this server."
-msgstr ""
+msgstr "Bot diatur untuk mengabaikan perintah di saluran atau server yang diberikan."
 
 #: redbot/core/_diagnoser.py:210
 msgid "Global allowlist prevents the user from running this command."
-msgstr ""
+msgstr "Daftar putih global mencegah pengguna menjalankan perintah ini."
 
 #: redbot/core/_diagnoser.py:211
 msgid "To fix this issue, you can either add the user to the allowlist, or clear the allowlist.\n"
 "If you want to keep the allowlist, you can run {command_1} which will add {user} to the allowlist.\n"
 "If you instead want to clear the allowlist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menambahkan pengguna ke daftar putih, atau menghapus daftar putih.\n"
+"Jika Anda ingin mempertahankan daftar putih, Anda dapat menjalankan {command_1} yang akan menambahkan {user} ke daftar putih.\n"
+"Jika Anda ingin menghapus daftar putih dan membiarkan semua pengguna menjalankan perintah dengan bebas, Anda dapat menjalankan {command_2} untuk melakukannya."
 
 #: redbot/core/_diagnoser.py:227
 msgid "Global blocklist prevents the user from running this command."
-msgstr ""
+msgstr "Daftar hitam global mencegah pengguna menjalankan perintah ini."
 
 #: redbot/core/_diagnoser.py:228
 msgid "To fix this issue, you can either remove the user from the blocklist, or clear the blocklist.\n"
 "If you want to keep the blocklist, you can run {command_1} which will remove {user} from the blocklist.\n"
 "If you instead want to clear the blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menghapus pengguna dari daftar hitam, atau menghapus daftar hitam.\n"
+"Jika Anda ingin mempertahankan daftar hitam, Anda dapat menjalankan {command_1} yang akan menghapus {user} dari daftar hitam.\n"
+"Jika Anda ingin menghapus daftar hitam dan membiarkan semua pengguna menjalankan perintah dengan bebas, Anda dapat menjalankan {command_2} untuk melakukannya."
 
 #: redbot/core/_diagnoser.py:250
 msgid "Local allowlist prevents the user from running this command."
-msgstr ""
+msgstr "Daftar putih lokal mencegah pengguna menjalankan perintah ini."
 
 #: redbot/core/_diagnoser.py:251
 msgid "To fix this issue, you can either add the user or one of their roles to the local allowlist, or clear the local allowlist.\n"
 "If you want to keep the local allowlist, you can run {command_1} which will add {user} to the local allowlist.\n"
 "If you instead want to clear the local allowlist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menambahkan pengguna atau salah satu peran mereka ke daftar putih lokal, atau menghapus daftar putih lokal.\n"
+"Jika Anda ingin mempertahankan daftar putih lokal, Anda dapat menjalankan {command_1} yang akan menambahkan {user} ke daftar putih lokal.\n"
+"Jika Anda ingin menghapus daftar putih lokal dan membiarkan semua pengguna menjalankan perintah dengan bebas, Anda dapat menjalankan {command_2} untuk melakukannya."
 
 #: redbot/core/_diagnoser.py:265
 msgid "Local blocklist prevents the user from running this command."
-msgstr ""
+msgstr "Daftar hitam lokal mencegah pengguna menjalankan perintah ini."
 
 #: redbot/core/_diagnoser.py:280
 msgid "To fix this issue, you can either remove the user's roles from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove the user's roles ({roles}) from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menghapus peran pengguna dari daftar hitam lokal, atau menghapus daftar hitam lokal.\n"
+"Jika Anda ingin mempertahankan daftar hitam lokal, Anda dapat menjalankan {command_1} yang akan menghapus peran pengguna ({roles}) dari daftar hitam lokal.\n"
+"Jika Anda ingin menghapus daftar hitam lokal dan membiarkan semua pengguna menjalankan perintah dengan bebas, Anda dapat menjalankan {command_2} untuk melakukannya."
 
 #: redbot/core/_diagnoser.py:305
 msgid "To fix this issue, you can either remove the user and their roles from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove {user} and their roles ({roles}) from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menghapus pengguna dan peran mereka dari daftar hitam lokal, atau menghapus daftar hitam lokal.\n"
+"Jika Anda ingin mempertahankan daftar hitam lokal, Anda dapat menjalankan {command_1} yang akan menghapus {user} dan peran mereka ({roles}) dari daftar hitam lokal.\n"
+"Jika Anda ingin menghapus daftar hitam lokal dan membiarkan semua pengguna menjalankan perintah dengan bebas, Anda dapat menjalankan {command_2} untuk melakukannya."
 
 #: redbot/core/_diagnoser.py:327
 msgid "To fix this issue, you can either remove the user from the local blocklist, or clear the local blocklist.\n"
 "If you want to keep the local blocklist, you can run {command_1} which will remove {user} from the local blocklist.\n"
 "If you instead want to clear the local blocklist and let all users run commands freely, you can run {command_2} to do that."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menghapus pengguna dari daftar hitam lokal, atau menghapus daftar hitam lokal.\n"
+"Jika Anda ingin mempertahankan daftar hitam lokal, Anda dapat menjalankan {command_1} yang akan menghapus {user} dari daftar hitam lokal.\n"
+"Jika Anda ingin menghapus daftar hitam lokal dan membiarkan semua pengguna menjalankan perintah dengan bebas, Anda dapat menjalankan {command_2} untuk melakukannya."
 
 #: redbot/core/_diagnoser.py:342
 msgid "Allowlist and blocklist checks"
-msgstr ""
+msgstr "Periksa daftar putih dan hitam"
 
+list and blocklist checks"
+msgstr "Periksa daftar putih dan hitam"
 #: redbot/core/_diagnoser.py:374
 msgid "Global, cog and command checks"
 msgstr ""
 
 #: redbot/core/_diagnoser.py:381
 msgid "The given command is disabled in this guild."
-msgstr ""
+msgstr "Perintah yang diberikan dinonaktifkan di guild ini."
 
 #: redbot/core/_diagnoser.py:383 redbot/core/_diagnoser.py:858
 msgid "One of the parents of the given command is disabled globally."
-msgstr ""
+msgstr "Salah satu parent dari perintah yang diberikan dinonaktifkan secara global."
 
 #: redbot/core/_diagnoser.py:389
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command in this guild."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menjalankan {command} yang akan mengaktifkan perintah {affected_command} di guild ini."
 
 #: redbot/core/_diagnoser.py:410
 msgid "Other issues related to the checks"
-msgstr ""
+msgstr "Masalah lain terkait dengan pemeriksaan"
 
 #: redbot/core/_diagnoser.py:411
 msgid "There's an issue related to the checks for {command} but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Ada masalah terkait dengan pemeriksaan untuk {command} tetapi kami tidak dapat menentukan penyebabnya dengan pasti."
 
 #: redbot/core/_diagnoser.py:415
-msgid "To fix this issue, a manual review of the global, cog and command checks is required."
-msgstr ""
+msgid "To fix this issue, a manual review of the global, cog, and command checks is required."
+msgstr "Untuk memperbaiki masalah ini, diperlukan tinjauan manual terhadap pemeriksaan global, cog, dan perintah."
 
 #: redbot/core/_diagnoser.py:423
 msgid "Global checks"
-msgstr ""
+msgstr "Pemeriksaan global"
 
 #: redbot/core/_diagnoser.py:433
 msgid "One of the global checks for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "Salah satu pemeriksaan global untuk perintah {command} gagal dengan pesan:\n"
+"{message}"
 
 #: redbot/core/_diagnoser.py:437
 msgid "One of the global checks for the command {command} failed without a message."
-msgstr ""
+msgstr "Salah satu pemeriksaan global untuk perintah {command} gagal tanpa pesan."
 
 #: redbot/core/_diagnoser.py:441
 msgid "Cog check"
-msgstr ""
+msgstr "Pemeriksaan Cog"
 
 #: redbot/core/_diagnoser.py:458
 msgid "The cog check for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "Pemeriksaan cog untuk perintah {command} gagal dengan pesan:\n"
+"{message}"
 
 #: redbot/core/_diagnoser.py:459
 msgid "The cog check for the command {command} failed without a message."
-msgstr ""
+msgstr "Pemeriksaan cog untuk perintah {command} gagal tanpa pesan."
 
 #: redbot/core/_diagnoser.py:463
 msgid "Command checks"
-msgstr ""
+msgstr "Pemeriksaan perintah"
 
 #: redbot/core/_diagnoser.py:477
 msgid "One of the command checks for the command {command} failed with a message:\n"
 "{message}"
-msgstr ""
+msgstr "Salah satu pemeriksaan perintah untuk perintah {command} gagal dengan pesan:\n"
+"{message}"
 
 #: redbot/core/_diagnoser.py:481
 msgid "One of the command checks for the command {command} failed without a message."
-msgstr ""
+msgstr "Salah satu pemeriksaan perintah untuk perintah {command} gagal tanpa pesan."
 
 #: redbot/core/_diagnoser.py:485
 msgid "Permissions verification"
-msgstr ""
+msgstr "Verifikasi izin"
 
 #: redbot/core/_diagnoser.py:488
 msgid "Cog permissions verification"
-msgstr ""
+msgstr "Verifikasi izin Cog"
 
 #: redbot/core/_diagnoser.py:503
 msgid "The cog of the given command is disabled in this guild."
-msgstr ""
+msgstr "Cog dari perintah yang diberikan dinonaktifkan di guild ini."
 
 #: redbot/core/_diagnoser.py:504
 msgid "To fix this issue, you can run {command} which will enable the {affected_cog} cog in this guild."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menjalankan {command} yang akan mengaktifkan Cog {affected_cog} di guild ini."
 
 #: redbot/core/_diagnoser.py:518
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {cog} cog."
-msgstr ""
+msgstr "Bot kekurangan beberapa izin saluran ({permissions}) yang diperlukan oleh Cog {cog}."
 
 #: redbot/core/_diagnoser.py:526
 msgid "Bot is missing some of the channel permissions ({permissions}) required by the {command} command."
-msgstr ""
+msgstr "Bot kekurangan beberapa izin saluran ({permissions}) yang diperlukan oleh perintah {command}."
 
 #: redbot/core/_diagnoser.py:538
 msgid "To fix this issue, grant the required permissions to the bot through role settings or channel overrides."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, berikan izin yang diperlukan kepada bot melalui pengaturan peran atau penggantian saluran."
 
 #: redbot/core/_diagnoser.py:557 redbot/core/_diagnoser.py:653
 msgid "Other issues related to the permissions."
-msgstr ""
+msgstr "Masalah lain terkait dengan izin."
 
 #: redbot/core/_diagnoser.py:558
 msgid "Fatal error: There's an issue related to the permissions for the {cog} cog but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Kesalahan fatal: Ada masalah terkait dengan izin untuk Cog {cog} tetapi kami tidak dapat menentukan penyebabnya dengan pasti."
 
 #: redbot/core/_diagnoser.py:563
 msgid "Fatal error: There's an issue related to the permissions for the {command} command but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Kesalahan fatal: Ada masalah terkait dengan izin untuk perintah {command} tetapi kami tidak dapat menentukan penyebabnya dengan pasti."
 
 #: redbot/core/_diagnoser.py:567
 msgid "This is an unexpected error, please report it on Red's issue tracker."
-msgstr ""
+msgstr "Ini adalah kesalahan yang tidak terduga, harap laporkan pada pelacak masalah Red."
 
 #: redbot/core/_diagnoser.py:574
 msgid "Ensure that the command is not bot owner only"
-msgstr ""
+msgstr "Pastikan bahwa perintah tersebut bukan hanya untuk pemilik bot"
 
 #: redbot/core/_diagnoser.py:582
 msgid "The command is bot owner only and the given user is not a bot owner."
-msgstr ""
+msgstr "Perintah ini hanya untuk pemilik bot dan pengguna yang diberikan bukan pemilik bot."
 
 #: redbot/core/_diagnoser.py:583
 msgid "This cannot be fixed - regular users cannot run bot owner only commands."
-msgstr ""
+msgstr "Ini tidak dapat diperbaiki - pengguna biasa tidak dapat menjalankan perintah hanya untuk pemilik bot."
 
 #: redbot/core/_diagnoser.py:589
 msgid "Permission hooks"
-msgstr ""
+msgstr "Kaitan Izin"
 
 #: redbot/core/_diagnoser.py:599
 msgid "Fatal error: the result of permission hooks is inconsistent."
-msgstr ""
+msgstr "Kesalahan fatal: hasil dari kaitan izin tidak konsisten."
 
 #: redbot/core/_diagnoser.py:600 redbot/core/_diagnoser.py:606
 #: redbot/core/_diagnoser.py:844
 msgid "To fix this issue, a manual review of the installed cogs is required."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, diperlukan tinjauan manual terhadap cogs yang terpasang."
 
 #: redbot/core/_diagnoser.py:605
 msgid "The access has been denied by one of the bot's permissions hooks."
-msgstr ""
+msgstr "Akses ditolak oleh salah satu kaitan izin bot."
 
 #: redbot/core/_diagnoser.py:615
 msgid "User's discord permissions, privilege level and rules from Permissions cog"
-msgstr ""
+msgstr "Izin discord pengguna, tingkat hak istimewa, dan aturan dari Permissions cog"
 
 #: redbot/core/_diagnoser.py:630
 msgid "The access has been denied due to the rules set for the {cog} cog with Permissions cog."
-msgstr ""
+msgstr "Akses ditolak karena aturan yang ditetapkan untuk cog {cog} dengan Permissions cog."
 
 #: redbot/core/_diagnoser.py:635
 msgid "The access has been denied due to the rules set for the {command} command with Permissions cog."
-msgstr ""
+msgstr "Akses ditolak karena aturan yang ditetapkan untuk perintah {command} dengan Permissions cog."
 
 #: redbot/core/_diagnoser.py:639
 msgid "To fix the issue, a manual review of the rules is required."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, diperlukan tinjauan manual terhadap aturan."
 
 #: redbot/core/_diagnoser.py:654
 msgid "There's an issue related to the permissions of {cog} cog but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Ada masalah terkait dengan izin untuk cog {cog} tetapi kami tidak dapat menentukan penyebabnya dengan pasti."
 
 #: redbot/core/_diagnoser.py:659
 msgid "There's an issue related to the permissions of {command} command but we're not able to determine the exact cause."
-msgstr ""
+msgstr "Ada masalah terkait dengan izin untuk perintah {command} tetapi kami tidak dapat menentukan penyebabnya dengan pasti."
 
 #: redbot/core/_diagnoser.py:663
 msgid "To fix this issue, a manual review of the command is required."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, diperlukan tinjauan manual terhadap perintah."
 
 #: redbot/core/_diagnoser.py:670
 msgid "Permission checks"
-msgstr ""
+msgstr "Pemeriksaan izin"
 
 #: redbot/core/_diagnoser.py:674
 msgid "The access has been denied by one of the permissions checks of {cog} cog."
-msgstr ""
+msgstr "Akses ditolak oleh salah satu pemeriksaan izin dari cog {cog}."
 
 #: redbot/core/_diagnoser.py:678
 msgid "The access has been denied by one of the permission checks of {command} command."
-msgstr ""
+msgstr "Akses ditolak oleh salah satu pemeriksaan izin dari perintah {command}."
 
 #: redbot/core/_diagnoser.py:686
 msgid "To fix this issue, a manual review of the permission checks is required."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, diperlukan tinjauan manual terhadap pemeriksaan izin."
 
 #: redbot/core/_diagnoser.py:692
 msgid "User's discord permissions and privilege level"
-msgstr ""
+msgstr "Izin discord pengguna dan tingkat hak istimewa"
 
 #: redbot/core/_diagnoser.py:701
 msgid "grant the required permissions to the user through role settings or channel overrides"
-msgstr ""
+msgstr "berikan izin yang diperlukan kepada pengguna melalui pengaturan peran atau penggantian saluran"
 
 #: redbot/core/_diagnoser.py:707
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {cog} cog."
-msgstr ""
+msgstr "Pengguna kekurangan beberapa izin saluran ({permissions}) yang diperlukan oleh cog {cog}."
 
 #: redbot/core/_diagnoser.py:712
 msgid "The user is missing some of the channel permissions ({permissions}) required by the {command} command."
-msgstr ""
+msgstr "Pengguna kekurangan beberapa izin saluran ({permissions}) yang diperlukan oleh perintah {command}."
 
 #: redbot/core/_diagnoser.py:721
 msgid "the guild owner"
-msgstr ""
+msgstr "pemilik guild"
 
 #: redbot/core/_diagnoser.py:724
 msgid "the mod role"
-msgstr ""
+msgstr "peran mod"
 
 #: redbot/core/_diagnoser.py:726
 msgid "the admin role"
-msgstr ""
+msgstr "peran admin"
 
 #: redbot/core/_diagnoser.py:729
 msgid "assign appropriate role to the user"
-msgstr ""
+msgstr "berikan peran yang sesuai kepada pengguna"
 
 #: redbot/core/_diagnoser.py:731
 msgid "The user is missing the privilege level ({privilege_level}) required by the {cog} cog."
-msgstr ""
+msgstr "Pengguna kekurangan tingkat hak istimewa ({privilege_level}) yang diperlukan oleh cog {cog}."
 
 #: redbot/core/_diagnoser.py:738
 msgid "The user is missing the privilege level ({privilege_level}) required by the {command} command."
-msgstr ""
+msgstr "Pengguna kekurangan tingkat hak istimewa ({privilege_level}) yang diperlukan oleh perintah {command}."
 
 #: redbot/core/_diagnoser.py:751
 msgid "add appropriate rule in the Permissions cog"
-msgstr ""
+msgstr "tambahkan aturan yang sesuai dalam Permissions cog"
 
 #: redbot/core/_diagnoser.py:754
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {cog} cog."
-msgstr ""
+msgstr "Pengguna tidak memiliki izin saluran ({permissions}) maupun tingkat hak istimewa ({privilege_level}) yang diperlukan oleh cog {cog}."
 
 #: redbot/core/_diagnoser.py:763
 msgid "The user has neither the channel permissions ({permissions}) nor the privilege level ({privilege_level}) required by the {command} command."
-msgstr ""
+msgstr "Pengguna tidak memiliki izin saluran ({permissions}) maupun tingkat hak istimewa ({privilege_level}) yang diperlukan oleh perintah {command}."
 
 #: redbot/core/_diagnoser.py:781
 msgid "Checks and permissions verification for the command {command}"
-msgstr ""
+msgstr "Verifikasi pemeriksaan dan izin untuk perintah {command}"
 
 #: redbot/core/_diagnoser.py:804 redbot/core/_diagnoser.py:917
 msgid "Other command checks"
-msgstr ""
+msgstr "Pemeriksaan perintah lainnya"
 
 #: redbot/core/_diagnoser.py:805 redbot/core/_diagnoser.py:918
 msgid "The given command is failing one of the required checks."
-msgstr ""
+msgstr "Perintah yang diberikan gagal dalam salah satu pemeriksaan yang diperlukan."
 
 #: redbot/core/_diagnoser.py:806 redbot/core/_diagnoser.py:919
 msgid "To fix this issue, a manual review of the command's checks is required."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, diperlukan tinjauan manual terhadap pemeriksaan perintah."
 
 #: redbot/core/_diagnoser.py:817
 msgid "Global 'call once' checks"
-msgstr ""
+msgstr "Pemeriksaan global 'call once'"
 
 #: redbot/core/_diagnoser.py:839
 msgid "Other global 'call once' checks"
-msgstr ""
+msgstr "Pemeriksaan global 'call once' lainnya"
 
 #: redbot/core/_diagnoser.py:840
 msgid "One of the global 'call once' checks implemented by a 3rd-party cog prevents this command from being ran."
-msgstr ""
+msgstr "Salah satu pemeriksaan global 'call once' yang diterapkan oleh cog pihak ketiga mencegah perintah ini dijalankan."
 
 #: redbot/core/_diagnoser.py:849
 msgid "Check if the command is disabled"
-msgstr ""
+msgstr "Periksa apakah perintah dinonaktifkan"
 
 #: redbot/core/_diagnoser.py:859 redbot/core/_diagnoser.py:873
 msgid "To fix this issue, you can run {command} which will enable the {affected_command} command globally."
-msgstr ""
+msgstr "Untuk memperbaiki masalah ini, Anda dapat menjalankan {command} yang akan mengaktifkan perintah {affected_command} secara global."
 
 #: redbot/core/_diagnoser.py:872
 msgid "The given command is disabled globally."
-msgstr ""
+msgstr "Perintah yang diberikan dinonaktifkan secara global."
 
 #: redbot/core/_diagnoser.py:885
 msgid "Checks and permissions verification"
-msgstr ""
+msgstr "Verifikasi pemeriksaan dan izin"
 
 #: redbot/core/_diagnoser.py:936
 msgid "Passed"
-msgstr ""
+msgstr "Berhasil"
 
 #: redbot/core/_diagnoser.py:938
 msgid "Failed"
-msgstr ""
+msgstr "Gagal"
 
 #: redbot/core/_diagnoser.py:967
 msgid "All checks passed and no issues were detected. Make sure that the given parameters correspond to the channel, user, and command name that have been problematic.\n\n"
 "If you still can't find the issue, it is likely that one of the 3rd-party cogs you're using adds a global or cog local before invoke hook that prevents the command from getting invoked as this can't be diagnosed with this tool."
-msgstr ""
+msgstr "Semua pemeriksaan berhasil dan tidak ada masalah yang terdeteksi. Pastikan bahwa parameter yang diberikan sesuai dengan saluran, pengguna, dan nama perintah yang bermasalah.\n\n"
+"Jika Anda masih tidak dapat menemukan masalahnya, kemungkinan salah satu cog pihak ketiga yang Anda gunakan menambahkan kaitan global atau lokal sebelum kaitan invoke yang mencegah perintah dijalankan karena hal ini tidak dapat didiagnosis dengan alat ini."
 
 #: redbot/core/_diagnoser.py:978
 msgid "The bot has been able to identify the issue."
-msgstr ""
+msgstr "Bot berhasil mengidentifikasi masalah."
 
 #: redbot/core/_diagnoser.py:981
 msgid "Detected issue: "
-msgstr ""
+msgstr "Masalah terdeteksi: "
 
 #: redbot/core/_diagnoser.py:983
 msgid "Solution: "
-msgstr ""
+msgstr "Solusi: "
 
 #: redbot/core/_diagnoser.py:985
 msgid "\n"
 "Here's a detailed report in case you need it:"
-msgstr ""
+msgstr "\n"
+"Berikut adalah laporan terperinci jika Anda memerlukannya:"
 
 #: redbot/core/_diagnoser.py:986
 msgid "Channel: "
-msgstr ""
+msgstr "Saluran: "
 
 #: redbot/core/_diagnoser.py:987
 msgid "Command caller: "
-msgstr ""
+msgstr "Pemanggil perintah: "
 
 #: redbot/core/_diagnoser.py:988
 msgid "Command: "
-msgstr ""
+msgstr "Perintah: "
 
 #: redbot/core/_diagnoser.py:989
 msgid "Tests that have been ran:"
-msgstr ""
-
-#: redbot/core/_events.py:56
-msgid "Your Red instance is out of date! {} is the current version, however you are using {}!"
-msgstr ""
-
-#: redbot/core/_events.py:65
-msgid "\n\n"
-"While the following command should work in most scenarios as it is based on your current OS, environment, and Python version, **we highly recommend you to read the update docs at <{docs}> and make sure there is nothing else that needs to be done during the update.**"
-msgstr ""
-
-#: redbot/core/_events.py:74
-msgid "\n\n"
-"You have Python `{py_version}` and this update requires `{req_py}`; you cannot simply run the update command.\n\n"
-"You will need to follow the update instructions in our docs above, if you still need help updating after following the docs go to our #support channel in <https://discord.gg/red>"
-msgstr ""
-
-#: redbot/core/_events.py:120
-msgid "\n\n"
-"To update your bot, first shutdown your bot then open a window of {console} (Not as admin) and run the following:{command_1}\n"
-"Once you've started up your bot again, we recommend that you update any installed 3rd-party cogs with this command in Discord:{command_2}"
-msgstr ""
-
-#: redbot/core/_events.py:128
-msgid "Command Prompt"
-msgstr ""
-
-#: redbot/core/_events.py:128
-msgid "Terminal"
-msgstr ""
-
-#: redbot/core/_events.py:240
-msgid "`{user_input}` is not a valid value for `{command}`"
-msgstr ""
-
-#: redbot/core/_events.py:251 redbot/core/_events.py:304
-msgid "Argument `{parameter_name}` must be a positive integer."
-msgstr ""
+msgstr "Uji coba yang telah dijalankan:"
 
 #: redbot/core/_events.py:253 redbot/core/_events.py:306
 msgid "Argument `{parameter_name}` must be an integer no more than {maximum}."
