@@ -1,5 +1,93 @@
 .. Red changelogs
 
+Redbot 3.5.10 (2024-07-10)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`SeaswimmerTheFsh`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+#. This release fixes a security issue in one of the APIs we provide for 3rd-party cog creators. See `Security changelog below <important-3510-1>` for more information.
+#. Following operating systems are no longer supported as they have already reached their end of life:
+
+    - CentOS 7
+    - CentOS Stream 8
+    - Fedora 38
+    - versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 8 older than 8.8
+    - versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 9 older than 9.2
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we switched from using the built-in YT source to YT source plugin.
+    `Download Red 3.5.10's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.10/Red-DiscordBot-3.5.10-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+.. _important-3510-1:
+
+Security
+********
+
+- **Core** - Fixed incorrect authorization in one of the utilities provided to 3rd-party cog creators (`commands.can_manage_channel()`) resulting in anyone being authorized to run a command using it, if the command has no other permission controls. None of the core commands or core cogs are affected. The maintainers of the project are not aware of any public 3rd-party cog utilizing this API at the time of writing this changelog. `Full security advisory can be found on our GitHub <https://github.com/Cog-Creators/Red-DiscordBot/security/advisories/GHSA-5jq8-q6rj-9gq4>`__.
+
+Additions
+*********
+
+- **Core - Bot Commands** - Added ``[p]set bot banner`` command for setting the bot's banner (:issue:`6321`, :issue:`6401`)
+
+Changes
+*******
+
+- **Core** - Red's ``--team-members-are-owners`` flag now only considers Team Owner, Admins, and Developers as bot owners (:issue:`6401`)
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6402`)
+- **Cogs - Audio** - Updated the cog to configure managed Lavalink node to use YT source plugin instead of the built-in, no longer supported, implementation (:issue:`6373`)
+- **Cogs - Filter** - The cog now checks poll contents and attachment alt text for filtered words (:issue:`6401`)
+
+Fixes
+*****
+
+- **Core** - Fixed command autocompletion not showing any proper result (error message) when bot's global checks (channel/server ignores, allowlist/blocklist) do not pass (:issue:`6374`, :issue:`6375`)
+- **Cogs - Audio** - Fixed one of the recent YT playback issues (:issue:`6373`)
+
+Developer changes
+-----------------
+
+Changes
+*******
+
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.4.0 (:issue:`6401`)
+
+Documentation changes
+---------------------
+
+Additions
+*********
+
+- Added Ubuntu 24.04 install guide (:issue:`6364`)
+
+Changes
+*******
+
+- Bumped Python version used by Arch Linux, RHEL 8, and RHEL 9 install guides to 3.11 (:issue:`6386`)
+- Removed a mention of the Atom editor from the list of the recommended editor now that it's discontinued (:issue:`6388`)
+
+Removals
+********
+
+- Removed all mentions of pyenv now that the last OS using it (CentOS 7) is no longer supported (:issue:`6386`)
+
+Fixes
+*****
+
+- Fixed Java instructions in macOS install guide (:issue:`6368`)
+- Fixed list of required ``info.json`` keys from the `guide_cog_creators` document (:issue:`6382`)
+
+----
+
 Redbot 3.5.9 (2024-04-21)
 =========================
 

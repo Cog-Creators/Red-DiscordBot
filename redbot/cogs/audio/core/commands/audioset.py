@@ -1150,6 +1150,20 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if is_owner:
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
 
+        if (
+            is_owner
+            and not global_data["use_external_lavalink"]
+            and self.managed_node_controller.plugins
+        ):
+            plugins = self.managed_node_controller.plugins
+            msg += f"\n---{_('Lavalink Plugin Versions')}---"
+            plugin_name_max_len = 0
+            for plugin_name, __ in plugins.items():
+                plugin_name_max_len = max(plugin_name_max_len, len(plugin_name))
+            for plugin_name, plugin_version in plugins.items():
+                key = f"{plugin_name}:".ljust(plugin_name_max_len + 5)
+                msg += f"\n{key} [{plugin_version}]"
+
         await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
 
     @command_audioset.command(name="logs")
