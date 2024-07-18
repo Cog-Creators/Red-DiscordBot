@@ -329,7 +329,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                     del muted_users[str(data["member"])]
             del self._server_mutes[guild.id][data["member"]]
             return
-        result = await self.unmute_user(guild, author, member, _("Automatic unmute"))
+        result = await self.unmute_user(guild, None, member, _("Automatic unmute"))
         async with self.config.guild(guild).muted_users() as muted_users:
             if str(member.id) in muted_users:
                 del muted_users[str(member.id)]
@@ -1750,7 +1750,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def unmute_user(
         self,
         guild: discord.Guild,
-        author: discord.Member,
+        author: Union[discord.Member, None],
         user: discord.Member,
         reason: Optional[str] = None,
     ) -> MuteResponse:
@@ -1760,7 +1760,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         ret: MuteResponse = MuteResponse(success=False, reason=None, user=user)
 
         mute_role_id = await self.config.guild(guild).mute_role()
-        if not await self.is_allowed_by_hierarchy(guild, author, user):
+        if author is not None and not await self.is_allowed_by_hierarchy(guild, author, user):
             ret.reason = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
             return ret
 
