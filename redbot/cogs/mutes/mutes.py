@@ -1750,7 +1750,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def unmute_user(
         self,
         guild: discord.Guild,
-        author: Union[discord.Member, None],
+        author: Optional[discord.Member],
         user: discord.Member,
         reason: Optional[str] = None,
     ) -> MuteResponse:
