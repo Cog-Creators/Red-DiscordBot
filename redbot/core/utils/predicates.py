@@ -317,7 +317,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def valid_role(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
+        ] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response refers to a role in the current guild.
@@ -330,7 +332,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         ----------
         ctx : Optional[Context]
             Same as ``ctx`` in :meth:`same_context`.
-        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.Thread`]]
+        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `discord.Thread`]]
             Same as ``channel`` in :meth:`same_context`.
         user : Optional[discord.abc.User]
             Same as ``user`` in :meth:`same_context`.
@@ -361,7 +363,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def valid_member(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
+        ] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response refers to a member in the current guild.
@@ -374,7 +378,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         ----------
         ctx : Optional[Context]
             Same as ``ctx`` in :meth:`same_context`.
-        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.Thread`]]
+        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `discord.Thread`]]
             Same as ``channel`` in :meth:`same_context`.
         user : Optional[discord.abc.User]
             Same as ``user`` in :meth:`same_context`.
@@ -409,7 +413,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def valid_text_channel(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
+        ] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response refers to a text channel in the current guild.
@@ -422,7 +428,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         ----------
         ctx : Optional[Context]
             Same as ``ctx`` in :meth:`same_context`.
-        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.Thread`]]
+        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `discord.Thread`]]
             Same as ``channel`` in :meth:`same_context`.
         user : Optional[discord.abc.User]
             Same as ``user`` in :meth:`same_context`.
@@ -457,7 +463,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def has_role(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]] = None,
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
+        ] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response refers to a role which the author has.
@@ -471,7 +479,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         ----------
         ctx : Optional[Context]
             Same as ``ctx`` in :meth:`same_context`.
-        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.Thread`]]
+        channel : Optional[Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `discord.Thread`]]
             Same as ``channel`` in :meth:`same_context`.
         user : Optional[discord.abc.User]
             Same as ``user`` in :meth:`same_context`.
@@ -833,7 +841,9 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     @staticmethod
     def _get_guild(
         ctx: Optional[commands.Context],
-        channel: Optional[Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]],
+        channel: Optional[
+            Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread]
+        ],
         user: Optional[discord.Member],
     ) -> discord.Guild:
         if ctx is not None:

@@ -255,7 +255,7 @@ class Red(
         Set's Red's help formatter.
 
         .. warning::
-            This method is provisional.
+            This method is `provisional <developer-guarantees-exclusions>`.
 
 
         The formatter must implement all methods in
@@ -296,7 +296,7 @@ class Red(
         Resets Red's help formatter.
 
         .. warning::
-            This method is provisional.
+            This method is `provisional <developer-guarantees-exclusions>`.
 
 
         This exists for use in ``cog_unload`` for cogs which replace the formatter
@@ -837,7 +837,10 @@ class Red(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
+            assert isinstance(
+                channel,
+                (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread),
+            )
             if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
@@ -1254,7 +1257,11 @@ class Red(
     def _setup_owners(self) -> None:
         if self.application.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in self.application.team.members)
+                self.owner_ids.update(
+                    m.id
+                    for m in self.application.team.members
+                    if m.role in (discord.TeamMemberRole.admin, discord.TeamMemberRole.developer)
+                )
         elif self._owner_id_overwrite is None:
             self.owner_ids.add(self.application.owner.id)
 
@@ -1291,6 +1298,7 @@ class Red(
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             commands.Context,
             discord.User,
             discord.Member,
@@ -1305,7 +1313,7 @@ class Red(
 
         Arguments
         ---------
-        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
+        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
             The target messageable object to check embed settings for.
 
         Keyword Arguments
@@ -1352,7 +1360,10 @@ class Red(
                 "You cannot pass a GroupChannel, DMChannel, or PartialMessageable to this method."
             )
 
-        if isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+        if isinstance(
+            channel,
+            (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread),
+        ):
             channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
 
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
@@ -1787,6 +1798,8 @@ class Red(
         Checks if the user, message, context, or role should be considered immune from automated
         moderation actions.
 
+        Bot users are considered immune.
+
         This will return ``False`` in direct messages.
 
         Parameters
@@ -1805,22 +1818,22 @@ class Red(
             return False
 
         if isinstance(to_check, discord.Role):
-            ids_to_check = [to_check.id]
+            ids_to_check = {to_check.id}
         else:
             author = getattr(to_check, "author", to_check)
+            if author.bot:
+                return True
+            ids_to_check = set()
             try:
-                ids_to_check = [r.id for r in author.roles]
+                ids_to_check = {r.id for r in author.roles}
             except AttributeError:
-                # webhook messages are a user not member,
-                # cheaper than isinstance
-                if author.bot and author.discriminator == "0000":
-                    return True  # webhooks require significant permissions to enable.
-            else:
-                ids_to_check.append(author.id)
+                # cheaper than isinstance(author, discord.User)
+                pass
+            ids_to_check.add(author.id)
 
         immune_ids = await self._config.guild(guild).autoimmune_ids()
 
-        return any(i in immune_ids for i in ids_to_check)
+        return not ids_to_check.isdisjoint(immune_ids)
 
     @staticmethod
     async def send_filtered(
@@ -2075,7 +2088,9 @@ class Red(
 
     async def get_owner_notification_destinations(
         self,
-    ) -> List[Union[discord.TextChannel, discord.VoiceChannel, discord.User]]:
+    ) -> List[
+        Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.User]
+    ]:
         """
         Gets the users and channels to send to
         """
@@ -2313,7 +2328,7 @@ class Red(
         *,
         user: Optional[discord.User] = None,
         box_lang: Optional[str] = None,
-        timeout: int = 15,
+        timeout: int = 60,
         join_character: str = "",
     ) -> List[discord.Message]:
         """

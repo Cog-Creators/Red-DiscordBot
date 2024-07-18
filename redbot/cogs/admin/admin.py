@@ -272,7 +272,9 @@ class Admin(commands.Cog):
             `[p]editrole colour Test #ff9900`
         """
         author = ctx.author
-        reason = "{}({}) changed the colour of role '{}'".format(author.name, author.id, role.name)
+        reason = _("{author} ({author.id}) changed the colour of role '{role.name}'").format(
+            author=author, role=role
+        )
 
         if not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(ROLE_USER_HIERARCHY_ISSUE).format(role=role))
@@ -303,9 +305,9 @@ class Admin(commands.Cog):
         """
         author = ctx.message.author
         old_name = role.name
-        reason = "{}({}) changed the name of role '{}' to '{}'".format(
-            author.name, author.id, old_name, name
-        )
+        reason = _(
+            "{author} ({author.id}) changed the name of role '{old_name}' to '{name}'"
+        ).format(author=author, old_name=old_name, name=name)
 
         if not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(ROLE_USER_HIERARCHY_ISSUE).format(role=role))
@@ -357,7 +359,10 @@ class Admin(commands.Cog):
 
     @announceset.command(name="channel")
     async def announceset_channel(
-        self, ctx, *, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        ctx,
+        *,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ):
         """Change the channel where the bot will send announcements."""
         await self.config.guild(ctx.guild).announce_channel.set(channel.id)

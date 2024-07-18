@@ -59,7 +59,7 @@ class Tunnel(metaclass=TunnelMeta):
     ----------
     sender: `discord.Member`
         The person who opened the tunnel
-    origin: `discord.TextChannel`, `discord.VoiceChannel`, or `discord.Thread`
+    origin: `discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, or `discord.Thread`
         The channel in which it was opened
     recipient: `discord.User`
         The user on the other end of the tunnel
@@ -69,7 +69,9 @@ class Tunnel(metaclass=TunnelMeta):
         self,
         *,
         sender: discord.Member,
-        origin: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread],
+        origin: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
         recipient: discord.User,
     ):
         self.sender = sender
@@ -160,7 +162,7 @@ class Tunnel(metaclass=TunnelMeta):
 
         """
         files = []
-        max_size = 8 * 1000 * 1000
+        max_size = 26214400
         if m.attachments and sum(a.size for a in m.attachments) <= max_size:
             for a in m.attachments:
                 if images_only and a.height is None:

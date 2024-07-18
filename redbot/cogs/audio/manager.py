@@ -10,6 +10,7 @@ import shlex
 import shutil
 import tempfile
 from typing import ClassVar, Final, List, Optional, Pattern, Tuple, Union, TYPE_CHECKING
+from typing_extensions import Self
 
 import aiohttp
 import lavalink
@@ -47,11 +48,12 @@ if TYPE_CHECKING:
 
 _ = Translator("Audio", pathlib.Path(__file__))
 log = getLogger("red.Audio.manager")
-LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
-LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
-_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
+_LL_READY_LOG: Final[bytes] = b"Lavalink is ready to accept connections."
+_LL_PLUGIN_LOG: Final[Pattern[bytes]] = re.compile(
+    rb"Found plugin '(?P<name>.+)' version (?P<version>\S+)$", re.MULTILINE
+)
+_FAILED_TO_START: Final[Pattern[bytes]] = re.compile(rb"Web server failed to start\. (.*)")
 
 # Version regexes
 #
@@ -108,18 +110,41 @@ LAVALINK_BUILD_LINE: Final[Pattern] = re.compile(rb"^Build:\s+(?P<build>\d+)$", 
 LAVALINK_VERSION_LINE_PRE35: Final[Pattern] = re.compile(
     rb"^Version:\s+(?P<version>\S+)$", re.MULTILINE | re.VERBOSE
 )
-# used for LL 3.5-rc4 and newer
+# used for LL versions >=3.5-rc4 but below 3.6.
+# Since this only applies to historical version, this regex is based only on
+# version numbers that actually existed, not ones that technically could.
+LAVALINK_VERSION_LINE_PRE36: Final[Pattern] = re.compile(
+    rb"""
+    ^
+    Version:\s+
+    (?P<version>
+        (?P<major>3)\.(?P<minor>[0-5])
+        # Before LL 3.6, when patch version == 0, it was stripped from the version string
+        (?:\.(?P<patch>[1-9]\d*))?
+        # Before LL 3.6, the dot in rc.N was optional
+        (?:-rc\.?(?P<rc>0|[1-9]\d*))?
+        # additional build metadata, can be used by our downstream Lavalink
+        # if we need to alter an upstream release
+        (?:\+red\.(?P<red>[1-9]\d*))?
+    )
+    $
+    """,
+    re.MULTILINE | re.VERBOSE,
+)
+# used for LL 3.6 and newer
+# This regex is limited to the realistic usage in the LL version number,
+# not everything that could be a part of it according to the spec.
+# We can easily release an update to this regex in the future if it ever becomes necessary.
 LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
     rb"""
     ^
     Version:\s+
     (?P<version>
-        (?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)
-        # Before LL 3.6, when patch version == 0, it was stripped from the version string
-        (?:\.(?P<patch>0|[1-9]\d*))?
-        (?:-rc(?P<rc>0|[1-9]\d*))?
-        # only used by our downstream Lavalink if we need to make a release before upstream
-        (?:_red(?P<red>[1-9]\d*))?
+        (?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)
+        (?:-rc\.(?P<rc>0|[1-9]\d*))?
+        # additional build metadata, can be used by our downstream Lavalink
+        # if we need to alter an upstream release
+        (?:\+red\.(?P<red>[1-9]\d*))?
     )
     $
     """,
@@ -134,6 +159,25 @@ class LavalinkOldVersion:
 
     def __str__(self) -> None:
         return f"{self.raw_version}_{self.build_number}"
+
+    @classmethod
+    def from_version_output(cls, output: bytes) -> Self:
+        build_match = LAVALINK_BUILD_LINE.search(output)
+        if build_match is None:
+            raise ValueError(
+                "Could not find 'Build' line in the given `--version` output,"
+                " or invalid build number given."
+            )
+        version_match = LAVALINK_VERSION_LINE_PRE35.search(output)
+        if version_match is None:
+            raise ValueError(
+                "Could not find 'Version' line in the given `--version` output,"
+                " or invalid version number given."
+            )
+        return cls(
+            raw_version=version_match["version"].decode(),
+            build_number=int(build_match["build"]),
+        )
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, LavalinkOldVersion):
@@ -190,10 +234,29 @@ class LavalinkVersion:
     def __str__(self) -> None:
         version = f"{self.major}.{self.minor}.{self.patch}"
         if self.rc is not None:
-            version += f"-rc{self.rc}"
+            version += f"-rc.{self.rc}"
         if self.red:
-            version += f"_red{self.red}"
+            version += f"+red.{self.red}"
         return version
+
+    @classmethod
+    def from_version_output(cls, output: bytes) -> Self:
+        match = LAVALINK_VERSION_LINE.search(output)
+        if match is None:
+            # >=3.5-rc4, <3.6
+            match = LAVALINK_VERSION_LINE_PRE36.search(output)
+        if match is None:
+            raise ValueError(
+                "Could not find 'Version' line in the given `--version` output,"
+                " or invalid version number given."
+            )
+        return LavalinkVersion(
+            major=int(match["major"]),
+            minor=int(match["minor"]),
+            patch=int(match["patch"] or 0),
+            rc=int(match["rc"]) if match["rc"] is not None else None,
+            red=int(match["red"] or 0),
+        )
 
     def _get_comparison_tuple(self) -> Tuple[int, int, int, bool, int, int]:
         return self.major, self.minor, self.patch, self.rc is None, self.rc or 0, self.red
@@ -235,12 +298,15 @@ class LavalinkVersion:
 
 
 class ServerManager:
-    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 5)
+    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 11, red=3)
+    YT_PLUGIN_VERSION: Final[str] = "1.4.0"
+
     LAVALINK_DOWNLOAD_URL: Final[str] = (
         "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
         f"{JAR_VERSION}/"
         "Lavalink.jar"
     )
+    YT_PLUGIN_REPOSITORY: Final[str] = "https://maven.lavalink.dev/releases"
 
     _java_available: ClassVar[Optional[bool]] = None
     _java_version: ClassVar[Optional[Tuple[int, int]]] = None
@@ -264,6 +330,19 @@ class ServerManager:
         self.cog = cog
         self._args = []
         self._pipe_task = None
+        self.plugins: dict[str, str] = {}
+
+    @property
+    def lavalink_download_dir(self) -> pathlib.Path:
+        return data_manager.cog_data_path(raw_name="Audio")
+
+    @property
+    def lavalink_jar_file(self) -> pathlib.Path:
+        return self.lavalink_download_dir / "Lavalink.jar"
+
+    @property
+    def lavalink_app_yml(self) -> pathlib.Path:
+        return self.lavalink_download_dir / "application.yml"
 
     @property
     def path(self) -> Optional[str]:
@@ -330,7 +409,7 @@ class ServerManager:
             self._proc = (
                 await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
                     *args,
-                    cwd=str(LAVALINK_DOWNLOAD_DIR),
+                    cwd=str(self.lavalink_download_dir),
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.STDOUT,
                 )
@@ -351,7 +430,20 @@ class ServerManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
-        with open(LAVALINK_APP_YML, "w") as f:
+        ll_config = data["lavalink"]
+        sources = ll_config["server"]["sources"]
+        plugins = ll_config.setdefault("plugins", [])
+
+        enable_yt_plugin = sources["youtube"]
+        if enable_yt_plugin:
+            sources["youtube"] = False
+            yt_plugin = {
+                "dependency": f"dev.lavalink.youtube:youtube-plugin:{self.YT_PLUGIN_VERSION}",
+                "repository": self.YT_PLUGIN_REPOSITORY,
+            }
+            plugins.append(yt_plugin)
+
+        with open(self.lavalink_app_yml, "w", encoding="utf-8") as f:
             yaml.safe_dump(data, f)
 
     async def _get_jar_args(self) -> Tuple[List[str], Optional[str]]:
@@ -365,20 +457,19 @@ class ServerManager:
             raise UnsupportedJavaException(
                 await replace_p_with_prefix(
                     self.cog.bot,
-                    f"The managed Lavalink node requires Java 11 to run{extras};\n"
-                    "Either install version 11 and restart the bot or connect to an external Lavalink node "
+                    f"The managed Lavalink node requires Java 17 or 11 to run{extras};\n"
+                    "Either install version 17 (or 11) and restart the bot or connect to an external Lavalink node "
                     "(https://docs.discord.red/en/stable/install_guides/index.html)\n"
-                    "If you already have Java 11 installed then then you will need to specify the executable path, "
-                    "use '[p]llset java' to set the correct Java 11 executable.",
+                    "If you already have Java 17 or 11 installed then then you will need to specify the executable path, "
+                    "use '[p]llset java' to set the correct Java 17 or 11 executable.",
                 )  # TODO: Replace with Audio docs when they are out
             )
         java_xms, java_xmx = list((await self._config.java.all()).values())
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
-        command_args = [
-            self._java_exc,
-            "-Djdk.tls.client.protocols=TLSv1.2",
-            f"-Xms{java_xms}",
-        ]
+        command_args = [self._java_exc]
+        if self._java_version[0] < 12:
+            command_args.append("-Djdk.tls.client.protocols=TLSv1.2")
+        command_args.append(f"-Xms{java_xms}")
         meta = 0, None
         invalid = None
         if match and (
@@ -393,7 +484,7 @@ class ServerManager:
                 "please fix this by setting the correct value with '[p]llset heapsize'.",
             )
 
-        command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
+        command_args.extend(["-jar", str(self.lavalink_jar_file)])
         self._args = command_args
         return command_args, invalid
 
@@ -408,7 +499,7 @@ class ServerManager:
             self._java_version = None
         else:
             self._java_version = await self._get_java_version()
-            self._java_available = (11, 0) <= self._java_version < (12, 0)
+            self._java_available = self._java_version[0] in (11, 17)
             self._java_exc = java_exec
         return self._java_available, self._java_version
 
@@ -448,12 +539,14 @@ class ServerManager:
         log.info("Waiting for Managed Lavalink node to be ready")
         for i in itertools.cycle(range(50)):
             line = await self._proc.stdout.readline()
-            if b"Lavalink is ready to accept connections." in line:
+            if _LL_READY_LOG in line:
                 self.ready.set()
                 log.info("Managed Lavalink node is ready to receive requests.")
                 self._pipe_task = asyncio.create_task(self._pipe_output())
                 break
-            if _FAILED_TO_START.search(line):
+            if match := _LL_PLUGIN_LOG.search(line):
+                self.plugins[match["name"].decode()] = match["version"].decode()
+            elif _FAILED_TO_START.search(line):
                 raise ManagedLavalinkStartFailure(
                     f"Lavalink failed to start: {line.decode().strip()}"
                 )
@@ -523,7 +616,7 @@ class ServerManager:
                     finally:
                         file.close()
 
-                shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
+                shutil.move(path, str(self.lavalink_jar_file), copy_function=shutil.copyfile)
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         await self._is_up_to_date()
@@ -536,43 +629,41 @@ class ServerManager:
         args.append("--version")
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
             *args,
-            cwd=str(LAVALINK_DOWNLOAD_DIR),
+            cwd=str(self.lavalink_download_dir),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )
         stdout = (await _proc.communicate())[0]
         if (branch := LAVALINK_BRANCH_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'Branch' line in the `--version` output,"
+                " or invalid branch name given."
+            )
         if (java := LAVALINK_JAVA_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'JVM' line in the `--version` output,"
+                " or invalid version number given."
+            )
         if (lavaplayer := LAVALINK_LAVAPLAYER_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'Lavaplayer' line in the `--version` output,"
+                " or invalid version number given."
+            )
         if (buildtime := LAVALINK_BUILD_TIME_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
-            return False
+            raise ValueError(
+                "Could not find 'Build time' line in the `--version` output,"
+                " or invalid build time given."
+            )
 
-        if (build := LAVALINK_BUILD_LINE.search(stdout)) is not None:
-            if (version := LAVALINK_VERSION_LINE_PRE35.search(stdout)) is None:
-                # Output is unexpected, suspect corrupted jarfile
-                return False
-            self._lavalink_version = LavalinkOldVersion(
-                raw_version=version["version"].decode(),
-                build_number=int(build["build"]),
-            )
-        elif (version := LAVALINK_VERSION_LINE.search(stdout)) is not None:
-            self._lavalink_version = LavalinkVersion(
-                major=int(version["major"]),
-                minor=int(version["minor"]),
-                patch=int(version["patch"] or 0),
-                rc=int(version["rc"]) if version["rc"] is not None else None,
-                red=int(version["red"] or 0),
-            )
-        else:
-            # Output is unexpected, suspect corrupted jarfile
-            return False
+        self._lavalink_version = (
+            LavalinkOldVersion.from_version_output(stdout)
+            if LAVALINK_BUILD_LINE.search(stdout) is not None
+            else LavalinkVersion.from_version_output(stdout)
+        )
         date = buildtime["build_time"].decode()
         date = date.replace(".", "/")
         self._lavalink_branch = branch["branch"].decode()
@@ -583,7 +674,24 @@ class ServerManager:
         return self._up_to_date
 
     async def maybe_download_jar(self):
-        if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
+        if not self.lavalink_jar_file.exists():
+            log.info("Triggering first-time download of Lavalink...")
+            await self._download_jar()
+            return
+
+        try:
+            up_to_date = await self._is_up_to_date()
+        except ValueError as exc:
+            log.warning("Failed to get Lavalink version: %s\nTriggering update...", exc)
+            await self._download_jar()
+            return
+
+        if not up_to_date:
+            log.info(
+                "Lavalink version outdated, triggering update from %s to %s...",
+                self._lavalink_version,
+                self.JAR_VERSION,
+            )
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: Optional[float] = None):

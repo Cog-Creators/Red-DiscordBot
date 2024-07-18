@@ -159,7 +159,7 @@ class Warnings(commands.Cog):
     async def warnchannel(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel] = None,
     ):
         """Set the channel where warnings should be sent to.
 

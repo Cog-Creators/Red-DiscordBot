@@ -35,7 +35,11 @@ from redbot.core import commands
 
 if TYPE_CHECKING:
     GuildMessageable = Union[
-        commands.GuildContext, discord.TextChannel, discord.VoiceChannel, discord.Thread
+        commands.GuildContext,
+        discord.TextChannel,
+        discord.VoiceChannel,
+        discord.StageChannel,
+        discord.Thread,
     ]
     DMMessageable = Union[commands.DMContext, discord.Member, discord.User, discord.DMChannel]
 
@@ -57,6 +61,7 @@ log = logging.getLogger("red.core.utils")
 
 _T = TypeVar("_T")
 _S = TypeVar("_S")
+
 
 # Benchmarked to be the fastest method.
 def deduplicate_iterables(*iterables):
@@ -535,6 +540,27 @@ def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
     This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
     This will log the reason if ``None`` is returned.
 
+    Example
+    -------
+
+    You can use this function in cog package's top-level ``__init__.py``
+    to conveniently reuse end user data statement from ``info.json`` file
+    placed in the same directory:
+
+    .. code-block:: python
+
+        from redbot.core.utils import get_end_user_data_statement
+
+        __red_end_user_data_statement__ = get_end_user_data_statement(__file__)
+
+
+        async def setup(bot):
+            ...
+
+    To help detect issues with the ``info.json`` file while still allowing the cog to load,
+    this function logs an error if ``info.json`` file doesn't exist, can't be parsed,
+    or doesn't have an ``end_user_data_statement`` key.
+
     Parameters
     ----------
     file: Union[pathlib.Path, str]
@@ -545,14 +571,6 @@ def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
     Optional[str]
         The end user data statement found in the info.json
         or ``None`` if there was an issue finding one.
-
-    Examples
-    --------
-    >>> # In cog's `__init__.py`
-    >>> from redbot.core.utils import get_end_user_data_statement
-    >>> __red_end_user_data_statement__  = get_end_user_data_statement(__file__)
-    >>> async def setup(bot):
-    ...     ...
     """
     try:
         file = Path(file).parent.absolute()
@@ -580,6 +598,27 @@ def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
 def get_end_user_data_statement_or_raise(file: Union[Path, str]) -> str:
     """
     This function attempts to get the ``end_user_data_statement`` key from cog's ``info.json``.
+
+    Example
+    -------
+
+    You can use this function in cog package's top-level ``__init__.py``
+    to conveniently reuse end user data statement from ``info.json`` file
+    placed in the same directory:
+
+    .. code-block:: python
+
+        from redbot.core.utils import get_end_user_data_statement_or_raise
+
+        __red_end_user_data_statement__ = get_end_user_data_statement_or_raise(__file__)
+
+
+        async def setup(bot):
+            ...
+
+    In order to ensure that you won't end up with no end user data statement,
+    this function raises if ``info.json`` file doesn't exist, can't be parsed,
+    or doesn't have an ``end_user_data_statement`` key.
 
     Parameters
     ----------

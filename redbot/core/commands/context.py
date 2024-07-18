@@ -151,7 +151,7 @@ class Context(DPYContext):
         self,
         messages: Iterable[str],
         box_lang: Optional[str] = None,
-        timeout: int = 15,
+        timeout: int = 60,
         join_character: str = "",
     ) -> List[discord.Message]:
         """
@@ -315,7 +315,11 @@ if TYPE_CHECKING or os.getenv("BUILDING_DOCS", False):
             ...
 
         @property
-        def channel(self) -> Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]:
+        def channel(
+            self,
+        ) -> Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ]:
             ...
 
         @property

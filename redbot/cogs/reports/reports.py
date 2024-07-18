@@ -107,7 +107,9 @@ class Reports(commands.Cog):
     @commands.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
     async def reportset_output(
-        self, ctx: commands.Context, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        ctx: commands.Context,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ):
         """Set the channel where reports will be sent."""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
@@ -126,7 +128,7 @@ class Reports(commands.Cog):
             await ctx.send(_("Reporting is now disabled."))
 
     async def internal_filter(self, m: discord.Member, mod=False, perms=None):
-        if perms and m.guild_permissions >= perms:
+        if perms is not None and m.guild_permissions >= perms:
             return True
         if mod and await self.bot.is_mod(m):
             return True
