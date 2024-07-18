@@ -519,15 +519,21 @@ def format_perms_list(perms: discord.Permissions) -> str:
 
 
 def humanize_timedelta(
-    *, timedelta: Optional[datetime.timedelta] = None, seconds: Optional[SupportsInt] = None
+    *,
+    timedelta: Optional[datetime.timedelta] = None,
+    seconds: Optional[SupportsInt] = None,
+    negative_format: Optional[str] = None,
+    maximum_units: Optional[int] = None,
 ) -> str:
     """
     Get a locale aware human timedelta representation.
 
     This works with either a timedelta object or a number of seconds.
 
-    Fractional values will be omitted, and values less than 1 second
-    an empty string.
+    Fractional values will be omitted.
+
+    Values that are less than 1 second but greater than -1 second
+    will be an empty string.
 
     Parameters
     ----------
@@ -535,6 +541,11 @@ def humanize_timedelta(
         A timedelta object
     seconds: Optional[SupportsInt]
         A number of seconds
+    negative_format: Optional[str]
+        How to format negative timedeltas, using %-formatting rules.
+        Defaults to "negative %s"
+    maximum_units: Optional[int]
+        The maximum number of different units to output in the final string.
 
     Returns
     -------
@@ -544,15 +555,33 @@ def humanize_timedelta(
     Raises
     ------
     ValueError
-        The function was called with neither a number of seconds nor a timedelta object
+        The function was called with neither a number of seconds nor a timedelta object,
+        or with a maximum_units less than 1.
+
+    Examples
+    --------
+    .. testsetup::
+
+        from datetime import timedelta
+        from redbot.core.utils.chat_formatting import humanize_timedelta
+
+    .. doctest::
+
+        >>> humanize_timedelta(seconds=314)
+        '5 minutes, 14 seconds'
+        >>> humanize_timedelta(timedelta=timedelta(minutes=3.14), maximum_units=1)
+        '3 minutes'
+        >>> humanize_timedelta(timedelta=timedelta(days=-3.14), negative_format="%s ago", maximum_units=3)
+        '3 days, 3 hours, 21 minutes ago'
     """
 
     try:
         obj = seconds if seconds is not None else timedelta.total_seconds()
     except AttributeError:
         raise ValueError("You must provide either a timedelta or a number of seconds")
+    if maximum_units is not None and maximum_units < 1:
+        raise ValueError("maximum_units must be >= 1")
 
-    seconds = int(obj)
     periods = [
         (_("year"), _("years"), 60 * 60 * 24 * 365),
         (_("month"), _("months"), 60 * 60 * 24 * 30),
@@ -561,8 +590,17 @@ def humanize_timedelta(
         (_("minute"), _("minutes"), 60),
         (_("second"), _("seconds"), 1),
     ]
-
+    seconds = int(obj)
+    if seconds < 0:
+        seconds = -seconds
+        if negative_format and "%s" not in negative_format:
+            negative_format = negative_format + " %s"
+        else:
+            negative_format = negative_format or (_("negative") + " %s")
+    else:
+        negative_format = "%s"
     strings = []
+    maximum_units = maximum_units or len(periods)
     for period_name, plural_period_name, period_seconds in periods:
         if seconds >= period_seconds:
             period_value, seconds = divmod(seconds, period_seconds)
@@ -570,8 +608,10 @@ def humanize_timedelta(
                 continue
             unit = plural_period_name if period_value > 1 else period_name
             strings.append(f"{period_value} {unit}")
+            if len(strings) == maximum_units:
+                break
 
-    return ", ".join(strings)
+    return negative_format % humanize_list(strings, style="unit")
 
 
 def humanize_number(val: Union[int, float], override_locale=None) -> str:

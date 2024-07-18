@@ -6,7 +6,7 @@ Installing Red
 The list below shows the installation guides available based on the operating system being used.
 
 If you want to host Red on a VPS and are unsure what operating system you should choose,
-we recommend **Ubuntu 22.04 LTS**.
+we recommend **Ubuntu 24.04 LTS**.
 
 .. toctree::
    :maxdepth: 1
@@ -17,8 +17,6 @@ we recommend **Ubuntu 22.04 LTS**.
    alma-linux-9
    amazon-linux-2023
    arch
-   centos-7
-   centos-stream-8
    centos-stream-9
    debian-11
    debian-12
@@ -35,4 +33,5 @@ we recommend **Ubuntu 22.04 LTS**.
    rocky-linux-9
    ubuntu-2004
    ubuntu-2204
+   ubuntu-2404
    ubuntu-non-lts

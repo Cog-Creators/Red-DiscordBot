@@ -1,4 +1,4 @@
-aiohttp==3.9.3
+aiohttp==3.9.5
     # via
     #   -r base.in
     #   aiohttp-json-rpc
@@ -8,19 +8,17 @@ aiohttp-json-rpc==0.13.3
     # via -r base.in
 aiosignal==1.3.1
     # via aiohttp
-apsw==3.45.2.0
+apsw==3.46.0.1
     # via -r base.in
 attrs==23.2.0
     # via aiohttp
-babel==2.14.0
+babel==2.15.0
     # via -r base.in
 brotli==1.1.0
     # via -r base.in
 click==8.1.7
     # via -r base.in
-contextlib2==21.6.0
-    # via schema
-discord-py==2.3.2
+discord-py==2.4.0
     # via
     #   -r base.in
     #   red-lavalink
@@ -28,7 +26,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-idna==3.6
+idna==3.7
     # via yarl
 markdown==3.6
     # via -r base.in
@@ -40,21 +38,21 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
-orjson==3.10.0
+orjson==3.10.6
     # via -r base.in
-packaging==24.0
+packaging==24.1
     # via -r base.in
-platformdirs==4.2.0
+platformdirs==4.2.2
     # via -r base.in
-psutil==5.9.8
+psutil==6.0.0
     # via -r base.in
-pygments==2.17.2
+pygments==2.18.0
     # via rich
 python-dateutil==2.9.0.post0
     # via -r base.in
 pyyaml==6.0.1
     # via -r base.in
-rapidfuzz==3.7.0
+rapidfuzz==3.9.4
     # via -r base.in
 red-commons==1.0.0
     # via
@@ -64,11 +62,11 @@ red-lavalink==0.11.0
     # via -r base.in
 rich==13.7.1
     # via -r base.in
-schema==0.7.5
+schema==0.7.7
     # via -r base.in
 six==1.16.0
     # via python-dateutil
-typing-extensions==4.10.0
+typing-extensions==4.12.2
     # via
     #   -r base.in
     #   rich
@@ -82,11 +80,11 @@ colorama==0.4.6; sys_platform == "win32"
     # via click
 distro==1.9.0; sys_platform == "linux" and sys_platform == "linux"
     # via -r base.in
-importlib-metadata==7.1.0; python_version != "3.10" and python_version != "3.11"
+importlib-metadata==8.0.0; python_version != "3.10" and python_version != "3.11"
     # via markdown
 pytz==2024.1; python_version == "3.8"
     # via babel
 uvloop==0.19.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
     # via -r base.in
-zipp==3.18.1; python_version != "3.10" and python_version != "3.11"
+zipp==3.19.2; python_version != "3.10" and python_version != "3.11"
     # via importlib-metadata

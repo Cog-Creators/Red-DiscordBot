@@ -761,7 +761,7 @@ def bot_can_react() -> Callable[[_T], _T]:
 
 
 def _can_manage_channel_deco(
-    privilege_level: Optional[PrivilegeLevel] = None, allow_thread_owner: bool = False
+    *, privilege_level: Optional[PrivilegeLevel] = None, allow_thread_owner: bool = False
 ) -> Callable[[_T], _T]:
     async def predicate(ctx: "Context") -> bool:
         if utils.can_user_manage_channel(
@@ -803,7 +803,7 @@ def can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(allow_thread_owner)
+    return _can_manage_channel_deco(allow_thread_owner=allow_thread_owner)
 
 
 def is_owner():
@@ -837,7 +837,9 @@ def guildowner_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Cal
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(PrivilegeLevel.GUILD_OWNER, allow_thread_owner)
+    return _can_manage_channel_deco(
+        privilege_level=PrivilegeLevel.GUILD_OWNER, allow_thread_owner=allow_thread_owner
+    )
 
 
 def guildowner():
@@ -871,7 +873,9 @@ def admin_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(PrivilegeLevel.ADMIN, allow_thread_owner)
+    return _can_manage_channel_deco(
+        privilege_level=PrivilegeLevel.ADMIN, allow_thread_owner=allow_thread_owner
+    )
 
 
 def admin():
@@ -905,7 +909,9 @@ def mod_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(PrivilegeLevel.MOD, allow_thread_owner)
+    return _can_manage_channel_deco(
+        privilege_level=PrivilegeLevel.MOD, allow_thread_owner=allow_thread_owner
+    )
 
 
 def mod():
