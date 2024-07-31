@@ -83,6 +83,24 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__logging__level__lavalink": "INFO",
     "yaml__logging__logback__rollingpolicy__max_history": 15,
     "yaml__logging__logback__rollingpolicy__max_size": "10MB",
+    # plugin configuration - note that the plugin may be disabled by the manager
+    "yaml__plugins__youtube__enabled": True,
+    "yaml__plugins__youtube__allowSearch": True,
+    "yaml__plugins__youtube__allowDirectVideoIds": True,
+    "yaml__plugins__youtube__allowDirectPlaylistIds": True,
+    "yaml__plugins__youtube__clients": [
+        "MUSIC",
+        "WEB",
+        "ANDROID_TESTSUITE",
+        "TVHTML5EMBEDDED",
+        "ANDROID_LITE",
+        "MEDIA_CONNECT",
+        "IOS",
+    ],
+    "yaml__plugins__youtube__WEB__playback": True,
+    "yaml__plugins__youtube__TVHTML5EMBEDDED__playlistLoading": False,
+    "yaml__plugins__youtube__TVHTML5EMBEDDED__videoLoading": False,
+    "yaml__plugins__youtube__TVHTML5EMBEDDED__searching": False,
 }
 
 DEFAULT_LAVALINK_SETTINGS = {
