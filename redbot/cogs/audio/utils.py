@@ -8,7 +8,7 @@ import time
 
 from enum import Enum, unique
 from pathlib import Path
-from typing import MutableMapping, Tuple, Union
+from typing import Any, MutableMapping, Tuple, Union
 
 import discord
 import psutil
@@ -128,17 +128,16 @@ def convert_function(key: str) -> str:
 
 
 def change_dict_naming_convention(data) -> dict:
-    new = {}
-    for k, v in data.items():
-        new_v = v
-        if isinstance(v, dict):
-            new_v = change_dict_naming_convention(v)
-        elif isinstance(v, list):
-            new_v = list()
-            for x in v:
-                new_v.append(change_dict_naming_convention(x))
-        new[convert_function(k)] = new_v
-    return new
+    ret: Any = data
+    if isinstance(data, dict):
+        ret = {}
+        for key, value in data.items():
+            ret[convert_function(key)] = change_dict_naming_convention(value)
+    elif isinstance(data, list):
+        ret = []
+        for value in data:
+            ret.append(change_dict_naming_convention(value))
+    return ret
 
 
 class CacheLevel:
