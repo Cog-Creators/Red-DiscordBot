@@ -1257,7 +1257,11 @@ class Red(
     def _setup_owners(self) -> None:
         if self.application.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in self.application.team.members)
+                self.owner_ids.update(
+                    m.id
+                    for m in self.application.team.members
+                    if m.role in (discord.TeamMemberRole.admin, discord.TeamMemberRole.developer)
+                )
         elif self._owner_id_overwrite is None:
             self.owner_ids.add(self.application.owner.id)
 
