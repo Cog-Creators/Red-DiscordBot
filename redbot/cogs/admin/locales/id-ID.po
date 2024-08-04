@@ -127,7 +127,7 @@ msgstr "\n"
 
 #: redbot/cogs/admin/admin.py:275
 msgid "{author} ({author.id}) changed the colour of role '{role.name}'"
-msgstr ""
+msgstr "{author} ({author.id}) telah mengubah warna role '{role.name}'"
 
 #: redbot/cogs/admin/admin.py:294 redbot/cogs/admin/admin.py:327
 msgid "Done."
@@ -150,7 +150,7 @@ msgstr "\n"
 
 #: redbot/cogs/admin/admin.py:308
 msgid "{author} ({author.id}) changed the name of role '{old_name}' to '{name}'"
-msgstr ""
+msgstr "{author} ({author.id}) telah mengubah nama role '{old_name}' menjadi '{name}'"
 
 #: redbot/cogs/admin/admin.py:332
 #, docstring
@@ -362,5 +362,5 @@ msgstr "Role \"{role_name}\" bukan selfrole yang tepat."
 
 #: redbot/cogs/admin/converters.py:36
 msgid "This selfrole has more than one case insensitive match. Please ask a moderator to resolve the ambiguity, or use the role ID to reference the role."
-msgstr ""
+msgstr "Selfrole ini memiliki lebih dari satu kecocokan yang tidak membedakan huruf besar dan kecil. Mohon tanyakan kepada moderator untuk menyelesaikan ambiguitas ini, atau gunakan ID role untuk merujuk role tersebut."
 
