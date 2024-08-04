@@ -1,5 +1,56 @@
 .. Red changelogs
 
+Redbot 3.5.11 (2024-08-04)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`anopem`, :ghuser:`Flame442`, :ghuser:`japandotorg`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin and added new plugin configuration.
+    `Download Red 3.5.11's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.11/Red-DiscordBot-3.5.11-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core** - Menus sent in ephemeral messages will now be deleted the same way menus in normal messages do (:issue:`6304`)
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6417`)
+
+Fixes
+*****
+
+- **Core - RPC** - RPC is now forcefully shut down after 2 minutes, if it cannot shutdown gracefully (:issue:`6391`, :issue:`6412`)
+- |cool| **Cogs - Audio** - Fixed some of the recent YT playback issues (:issue:`6414`, :issue:`6415`)
+- **Cogs - Mutes** - Fixed the cog failing to unmute a user, if they were muted by someone who no longer has permissions to mute that user (:issue:`6376`, :issue:`6411`)
+- **Cogs - Streams** - Fixed the viewer count for Twitch streams (:issue:`6413`)
+
+Developer changelog
+-------------------
+
+Additions
+*********
+
+- **Core - App Commands Package** - Added `app_commands.UserFeedbackCheckFailure` exception allowing the cog creators to return non-default error message when the check fails (:issue:`6397`)
+
+Documentation changes
+---------------------
+
+Changes
+*******
+
+- Updated instructions for installing the development version of Red in `guide_cog_creation` (:issue:`6408`)
+- Updated the contents of the ``red.plist`` file in the `autostart_mac` document to use no resource limitations, same as regular applications (:issue:`6416`)
+
+----
+
 Redbot 3.5.10 (2024-07-10)
 ==========================
 
@@ -53,8 +104,8 @@ Fixes
 - **Core** - Fixed command autocompletion not showing any proper result (error message) when bot's global checks (channel/server ignores, allowlist/blocklist) do not pass (:issue:`6374`, :issue:`6375`)
 - **Cogs - Audio** - Fixed one of the recent YT playback issues (:issue:`6373`)
 
-Developer changes
------------------
+Developer changelog
+-------------------
 
 Changes
 *******
