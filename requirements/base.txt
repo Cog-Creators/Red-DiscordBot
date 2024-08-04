@@ -10,7 +10,7 @@ aiosignal==1.3.1
     # via aiohttp
 apsw==3.46.0.1
     # via -r base.in
-attrs==23.2.0
+attrs==24.1.0
     # via aiohttp
 babel==2.15.0
     # via -r base.in
@@ -52,7 +52,7 @@ python-dateutil==2.9.0.post0
     # via -r base.in
 pyyaml==6.0.1
     # via -r base.in
-rapidfuzz==3.9.4
+rapidfuzz==3.9.5
     # via -r base.in
 red-commons==1.0.0
     # via
@@ -80,7 +80,7 @@ colorama==0.4.6; sys_platform == "win32"
     # via click
 distro==1.9.0; sys_platform == "linux" and sys_platform == "linux"
     # via -r base.in
-importlib-metadata==8.0.0; python_version != "3.10" and python_version != "3.11"
+importlib-metadata==8.2.0; python_version != "3.10" and python_version != "3.11"
     # via markdown
 pytz==2024.1; python_version == "3.8"
     # via babel

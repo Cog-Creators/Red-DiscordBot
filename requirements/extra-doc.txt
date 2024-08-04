@@ -11,7 +11,7 @@ docutils==0.20.1
     #   sphinx-rtd-theme
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==8.0.0
+importlib-metadata==8.2.0
     # via
     #   -c base.txt
     #   sphinx
