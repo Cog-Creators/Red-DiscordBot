@@ -993,7 +993,7 @@ msgstr "Caminho das faixas locais: [{localpath}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1159
 msgid "Lavalink Plugin Versions"
-msgstr ""
+msgstr "Versões do Plugin Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1174
 #, docstring
@@ -1129,11 +1129,11 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1445
 msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\n"
-msgstr ""
+msgstr "A idade do cache não pode ser inferior a 7 dias. Se deseja desativá-lo, execute {prefix}audioset cache.\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1450
 msgid "I've set the cache age to {age} days"
-msgstr ""
+msgstr "Eu defini a idade do cache para {age} dias"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1457
 #, docstring
@@ -1149,12 +1149,12 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/audioset.py:1477
 #, docstring
 msgid "Restarts the lavalink connection."
-msgstr ""
+msgstr "Reinicia a conexão lavalink."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1485
 #: redbot/cogs/audio/core/commands/llset.py:731
 msgid "Failed To Shutdown Lavalink Node"
-msgstr ""
+msgstr "Falha ao desligar Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1486
 #: redbot/cogs/audio/core/commands/llset.py:187
@@ -1164,16 +1164,16 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/audioset.py:1493
 msgid "Restarting Lavalink"
-msgstr ""
+msgstr "Reiniciando Lavalink"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1494
 msgid "It can take a couple of minutes for Lavalink to fully start up."
-msgstr ""
+msgstr "Pode levar alguns minutos para Lavalink iniciar completamente."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1501
 #, docstring
 msgid "Set the maximum volume allowed in this server."
-msgstr ""
+msgstr "Define o volume máximo permitido neste servidor."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1505
 msgid "Error"
@@ -1181,7 +1181,7 @@ msgstr "Erro"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1506
 msgid "Music without sound isn't music at all. Try setting the volume higher then 0%."
-msgstr ""
+msgstr "Música sem som não é música de forma nenhuma. Tente definir o volume para algo superior a 0%."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1514
 #: redbot/cogs/audio/core/commands/audioset.py:1522
@@ -1190,16 +1190,16 @@ msgstr "Definições alteradas"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1515
 msgid "The maximum volume has been limited to 150%, be easy on your ears."
-msgstr ""
+msgstr "O volume máximo foi limitado a 150%, tenha cuidado com os seus ouvidos."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1523
 msgid "The maximum volume has been limited to {max_volume}%."
-msgstr ""
+msgstr "O volume máximo foi limitado a {max_volume}%."
 
 #: redbot/cogs/audio/core/commands/controller.py:32
 #, docstring
 msgid "Disconnect from the voice channel."
-msgstr ""
+msgstr "Desconectar do canal de voz."
 
 #: redbot/cogs/audio/core/commands/controller.py:34
 #: redbot/cogs/audio/core/commands/controller.py:89
@@ -1230,14 +1230,14 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:49
 #: redbot/cogs/audio/core/commands/controller.py:55
 msgid "Unable To Disconnect"
-msgstr ""
+msgstr "Não foi possível desconectar"
 
 #: redbot/cogs/audio/core/commands/controller.py:50
 #: redbot/cogs/audio/core/commands/controller.py:264
 #: redbot/cogs/audio/core/commands/controller.py:332
 #: redbot/cogs/audio/core/commands/controller.py:586
 msgid "There are other people listening - vote to skip instead."
-msgstr ""
+msgstr "Há outras pessoas a ouvir - vote para saltar em vez disso."
 
 #: redbot/cogs/audio/core/commands/controller.py:56
 #: redbot/cogs/audio/core/commands/controller.py:62
@@ -1246,7 +1246,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:61
 msgid "Unable to Disconnect"
-msgstr ""
+msgstr "Não foi possível desconectar"
 
 #: redbot/cogs/audio/core/commands/controller.py:65
 msgid "Disconnecting..."
@@ -1255,7 +1255,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:87
 #, docstring
 msgid "Now playing."
-msgstr ""
+msgstr "A reproduzir."
 
 #: redbot/cogs/audio/core/commands/controller.py:111
 #: redbot/cogs/audio/core/commands/queue.py:81
@@ -1660,20 +1660,20 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/controller.py:819
 #: redbot/cogs/audio/core/commands/controller.py:892
 msgid "Song number must be greater than 1 and within the queue limit."
-msgstr ""
+msgstr "Número da música deve ser maior que 1 e dentro do limite da fila."
 
 #: redbot/cogs/audio/core/commands/controller.py:833
 #: redbot/cogs/audio/core/commands/controller.py:857
 msgid "Removed track from queue"
-msgstr ""
+msgstr "Remove a faixa da fila"
 
 #: redbot/cogs/audio/core/commands/controller.py:834
 msgid "Removed {track} from the queue."
-msgstr ""
+msgstr "{track} foi removido da fila."
 
 #: redbot/cogs/audio/core/commands/controller.py:852
 msgid "Removed 0 tracks, nothing matches the URL provided."
-msgstr ""
+msgstr "Removido 0 faixas, nada corresponde à URL fornecida."
 
 #: redbot/cogs/audio/core/commands/controller.py:858
 msgid "Removed {removed_tracks} tracks from queue which matched the URL provided."
@@ -1701,7 +1701,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/controller.py:902
 msgid "Moved track to the top of the queue."
-msgstr ""
+msgstr "A faixa foi movida para o topo da fila."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:31
 #, docstring
@@ -1716,7 +1716,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/equalizer.py:73
 #, docstring
 msgid "Delete a saved eq preset."
-msgstr ""
+msgstr "Apagar uma predefinição de eq salva."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:82
 #: redbot/cogs/audio/core/commands/equalizer.py:89
@@ -1813,7 +1813,7 @@ msgstr "Tente o comando novamente com um nome mais curto."
 
 #: redbot/cogs/audio/core/commands/equalizer.py:275
 msgid "Preset name already exists, do you want to replace it?"
-msgstr ""
+msgstr "O nome da predefinição já existe, deseja substituí-lo?"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:283
 msgid "Not saving preset."
@@ -1831,7 +1831,12 @@ msgid "Set an eq band with a band number or name and value.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Definir uma banda de eq com um número ou valor de banda.\n\n"
+"        As posições da banda são 1-15 e valores têm um intervalo de -0. 5 a 1,0.\n"
+"        Nomes da banda são 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k e 16k Hz.\n"
+"        Definir um valor de banda para -0.25 anula-a enquanto +0,25 é o dobro.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:326
 msgid "Unable To Set Preset"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-07-10 18:37+0000\n"
+"POT-Creation-Date: 2024-07-12 17:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -690,23 +690,23 @@ msgstr ""
 msgid "\"{argument}\" is not a number."
 msgstr ""
 
-#: redbot/core/_events.py:385 redbot/core/tree.py:292
+#: redbot/core/_events.py:385 redbot/core/tree.py:293
 msgid "Error in command '{command}'. Check your console or logs for details."
 msgstr ""
 
-#: redbot/core/_events.py:388 redbot/core/tree.py:295
+#: redbot/core/_events.py:388 redbot/core/tree.py:296
 msgid "Error in command '{command}'."
 msgstr ""
 
-#: redbot/core/_events.py:406 redbot/core/tree.py:309
+#: redbot/core/_events.py:406 redbot/core/tree.py:310
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/_events.py:410 redbot/core/tree.py:313
+#: redbot/core/_events.py:410 redbot/core/tree.py:314
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/_events.py:418 redbot/core/tree.py:320
+#: redbot/core/_events.py:418 redbot/core/tree.py:321
 msgid "That command is not available in DMs."
 msgstr ""
 
@@ -718,7 +718,7 @@ msgstr ""
 msgid "That command is only available in NSFW channels."
 msgstr ""
 
-#: redbot/core/_events.py:434 redbot/core/tree.py:326
+#: redbot/core/_events.py:434 redbot/core/tree.py:327
 msgid "This command is on cooldown. Try again {relative_time}."
 msgstr ""
 
@@ -4700,19 +4700,19 @@ msgstr ""
 msgid "Last modified at:"
 msgstr ""
 
-#: redbot/core/tree.py:271
+#: redbot/core/tree.py:272
 msgid "Command not found."
 msgstr ""
 
-#: redbot/core/tree.py:332
+#: redbot/core/tree.py:336
 msgid "You are not permitted to use this command."
 msgstr ""
 
-#: redbot/core/tree.py:359
+#: redbot/core/tree.py:363
 msgid "This channel or server is ignored."
 msgstr ""
 
-#: redbot/core/tree.py:366
+#: redbot/core/tree.py:370
 msgid "You are not permitted to use commands because of an allowlist or blocklist."
 msgstr ""
 
