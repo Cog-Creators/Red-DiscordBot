@@ -8,7 +8,7 @@ import time
 
 from enum import Enum, unique
 from pathlib import Path
-from typing import MutableMapping, Tuple, Union
+from typing import Any, MutableMapping, Tuple, Union
 
 import discord
 import psutil
@@ -83,6 +83,24 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__logging__level__lavalink": "INFO",
     "yaml__logging__logback__rollingpolicy__max_history": 15,
     "yaml__logging__logback__rollingpolicy__max_size": "10MB",
+    # plugin configuration - note that the plugin may be disabled by the manager
+    "yaml__plugins__youtube__enabled": True,
+    "yaml__plugins__youtube__allowSearch": True,
+    "yaml__plugins__youtube__allowDirectVideoIds": True,
+    "yaml__plugins__youtube__allowDirectPlaylistIds": True,
+    "yaml__plugins__youtube__clients": [
+        "MUSIC",
+        "WEB",
+        "ANDROID_TESTSUITE",
+        "TVHTML5EMBEDDED",
+        "ANDROID_LITE",
+        "MEDIA_CONNECT",
+        "IOS",
+    ],
+    "yaml__plugins__youtube__WEB__playback": True,
+    "yaml__plugins__youtube__TVHTML5EMBEDDED__playlistLoading": False,
+    "yaml__plugins__youtube__TVHTML5EMBEDDED__videoLoading": False,
+    "yaml__plugins__youtube__TVHTML5EMBEDDED__searching": False,
 }
 
 DEFAULT_LAVALINK_SETTINGS = {
@@ -110,17 +128,16 @@ def convert_function(key: str) -> str:
 
 
 def change_dict_naming_convention(data) -> dict:
-    new = {}
-    for k, v in data.items():
-        new_v = v
-        if isinstance(v, dict):
-            new_v = change_dict_naming_convention(v)
-        elif isinstance(v, list):
-            new_v = list()
-            for x in v:
-                new_v.append(change_dict_naming_convention(x))
-        new[convert_function(k)] = new_v
-    return new
+    ret: Any = data
+    if isinstance(data, dict):
+        ret = {}
+        for key, value in data.items():
+            ret[convert_function(key)] = change_dict_naming_convention(value)
+    elif isinstance(data, list):
+        ret = []
+        for value in data:
+            ret.append(change_dict_naming_convention(value))
+    return ret
 
 
 class CacheLevel:
