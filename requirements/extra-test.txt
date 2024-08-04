@@ -1,4 +1,4 @@
-astroid==3.2.2
+astroid==3.2.4
     # via pylint
 dill==0.3.8
     # via pylint
@@ -10,7 +10,7 @@ mccabe==0.7.0
     # via pylint
 pluggy==1.5.0
     # via pytest
-pylint==3.2.5
+pylint==3.2.6
     # via -r extra-test.in
 pytest==7.4.4
     # via
@@ -23,7 +23,7 @@ pytest-mock==3.14.0
     # via -r extra-test.in
 tomlkit==0.13.0
     # via pylint
-exceptiongroup==1.2.1; python_version != "3.11"
+exceptiongroup==1.2.2; python_version != "3.11"
     # via pytest
 tomli==2.0.1; python_version != "3.11"
     # via
