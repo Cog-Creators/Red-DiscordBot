@@ -33,7 +33,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
 
         player = lavalink.get_player(ctx.guild.id)
 
-        # Check if the voice channel is empty.
+        # Check if the voice channel is empty except for the bot.
         if ctx.guild.me.voice and len(ctx.guild.me.voice.channel.members) == 1:
             await self.send_embed_msg(ctx, title=_("Disconnecting..."))
             self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
@@ -46,18 +46,16 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
             await player.disconnect()
-            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
-                []
-            )
+            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set([])
             self._ll_guild_updates.discard(ctx.guild.id)
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
-            return await self.send_embed_msg(
-                ctx, title=_("Disconnected because the channel was empty.")
-            )
+            return await self.send_embed_msg(ctx, title=_("Disconnected because the channel was empty."))
 
-        # Check if the user is in a voice channel.
-        if ctx.author.voice is None:
+
+        # Check if the user is in a voice channel or if the voice channel is empty except for the bot.
+        if ctx.author.voice is None and not (ctx.guild.me.voice and len(ctx.guild.me.voice.channel.members) == 1):
             return await self.send_embed_msg(ctx, title=_("You are not in a voice channel!"))
+
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
         else:
@@ -99,11 +97,10 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
             await player.stop()
             await player.disconnect()
-            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
-                []
-            )
+            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set([])
             self._ll_guild_updates.discard(ctx.guild.id)
             await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
+
 
     @commands.command(name="now")
     @commands.guild_only()
