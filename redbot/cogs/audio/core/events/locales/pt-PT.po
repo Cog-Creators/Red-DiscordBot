@@ -57,7 +57,7 @@ msgstr "Voz prioritária"
 
 #: redbot/cogs/audio/core/events/dpy.py:43
 msgid "Video"
-msgstr ""
+msgstr "Vídeo"
 
 #: redbot/cogs/audio/core/events/dpy.py:44
 msgid "Read Text Channels & See Voice Channels"
@@ -69,7 +69,7 @@ msgstr "Enviar mensagens"
 
 #: redbot/cogs/audio/core/events/dpy.py:46
 msgid "Send Text-to-speech Messages"
-msgstr ""
+msgstr "Envia mensagens de conversão de texto em voz"
 
 #: redbot/cogs/audio/core/events/dpy.py:47
 msgid "Manage Messages"
@@ -177,15 +177,15 @@ msgstr "Enviar Mensagens em Tópicos"
 
 #: redbot/cogs/audio/core/events/dpy.py:73
 msgid "Use Activities"
-msgstr ""
+msgstr "Usar Atividades"
 
 #: redbot/cogs/audio/core/events/dpy.py:74
 msgid "Time out members"
-msgstr ""
+msgstr "Castigar membros"
 
 #: redbot/cogs/audio/core/events/dpy.py:75
 msgid "View Creator Monetization Analytics"
-msgstr ""
+msgstr "Visualizar a Análise da Monetização do Criador"
 
 #: redbot/cogs/audio/core/events/dpy.py:76
 msgid "Use Soundboard"
@@ -197,7 +197,7 @@ msgstr "Criar expressões"
 
 #: redbot/cogs/audio/core/events/dpy.py:78
 msgid "Create Events"
-msgstr ""
+msgstr "Criar Eventos"
 
 #: redbot/cogs/audio/core/events/dpy.py:79
 msgid "Use External Sounds"
@@ -209,11 +209,11 @@ msgstr "Enviar Mensagens de Voz"
 
 #: redbot/cogs/audio/core/events/dpy.py:81
 msgid "Create Polls"
-msgstr ""
+msgstr "Criar Votações"
 
 #: redbot/cogs/audio/core/events/dpy.py:82
 msgid "Use External Apps"
-msgstr ""
+msgstr "Usar Aplicações Externas"
 
 #: redbot/cogs/audio/core/events/dpy.py:86
 msgid "This command will change the executable path of Java, this is useful if you have multiple installations of Java and the default one is causing issues. Please don't change this unless you are certain that the Java version you are specifying is supported by Red. The default and supported versions are currently Java 17 and 11."

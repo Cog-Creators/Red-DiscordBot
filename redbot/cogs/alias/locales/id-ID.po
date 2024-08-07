@@ -24,7 +24,13 @@ msgid "Create aliases for commands.\n\n"
 "    When run, aliases will accept any additional arguments\n"
 "    and append them to the stored alias.\n"
 "    "
-msgstr ""
+msgstr "Buat alias untuk perintah.\n\n"
+"    Alias adalah nama alternatif/jalan pintas untuk perintah. Mereka\n"
+"    dapat berfungsi sebagai lambda (menyimpan argumen untuk digunakan berulang kali)\n"
+"    atau sebagai jalan pintas untuk mengatakan \"x y z\".\n\n"
+"    Saat dijalankan, alias akan menerima argumen tambahan apa pun\n"
+"    dan menambahkannya ke alias yang disimpan.\n"
+"    "
 
 #: redbot/cogs/alias/alias.py:190
 msgid "Aliases:\n"
@@ -95,28 +101,28 @@ msgstr "Alias global baru dengan pemicu `{name}` telah dibuat."
 #: redbot/cogs/alias/alias.py:332
 #, docstring
 msgid "Edit an existing alias in this server."
-msgstr ""
+msgstr "Edit sebuah alias yang ada di server ini."
 
 #: redbot/cogs/alias/alias.py:337 redbot/cogs/alias/alias.py:372
 msgid "The alias with the name {name} does not exist."
-msgstr ""
+msgstr "Alias dengan nama {name} tidak ada."
 
 #: redbot/cogs/alias/alias.py:343 redbot/cogs/alias/alias.py:378
 msgid "You attempted to edit an alias to a command that doesn't exist."
-msgstr ""
+msgstr "Anda mencoba mengedit alias ke perintah yang tidak ada."
 
 #: redbot/cogs/alias/alias.py:352 redbot/cogs/alias/alias.py:385
 msgid "The alias with the trigger `{name}` has been edited successfully."
-msgstr ""
+msgstr "Alias dengan pemicu `{name}` telah berhasil diedit."
 
 #: redbot/cogs/alias/alias.py:359 redbot/cogs/alias/alias.py:392
 msgid "Alias with the name `{name}` was not found."
-msgstr ""
+msgstr "Alias dengan nama `{name}` tidak ditemukan."
 
 #: redbot/cogs/alias/alias.py:367
 #, docstring
 msgid "Edit an existing global alias."
-msgstr ""
+msgstr "Edit sebuah alias global yang ada."
 
 #: redbot/cogs/alias/alias.py:399
 #, docstring
