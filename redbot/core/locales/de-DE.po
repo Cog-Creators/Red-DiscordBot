@@ -50,25 +50,27 @@ msgstr "Dieser Pfad existiert nicht oder zeigt nicht auf ein gültiges Verzeichn
 
 #: redbot/core/_cog_manager.py:364
 msgid "A cog path cannot be part of bot's data path ({bot_data_path})."
-msgstr ""
+msgstr "Ein Cog Pfad kann nicht Teil des Bots Datenpfad sein ({bot_data_path})."
 
 #: redbot/core/_cog_manager.py:374
 msgid "A cog path cannot be part of bot's core path ({core_path})."
-msgstr ""
+msgstr "Ein Cog Pfad kann nicht Teil des Bots Kernpfades sein ({core_path})."
 
 #: redbot/core/_cog_manager.py:416
 msgid "The provided path appears to be a cog package, are you sure that this is the path that you want to add as a **cog path**?\n\n"
 "For example, in the following case, you should be adding the {path} as a **cog path**:\n"
-msgstr ""
+msgstr "Der angegebene Pfad scheint ein Cog-packet zu sein bist du sicher, dass dies der Pfad ist, den du als **Cog-Pfad** hinzufügen möchtest?\n\n"
+"Zum Beispiel solltest du im folgenden Fall den {path} als **Cog-Pfad** hinzufügen:\n"
 
 #: redbot/core/_cog_manager.py:423
 msgid "\n"
 "Please consult the Cog Manager UI documentation, if you're unsure: "
-msgstr ""
+msgstr "\n"
+"Bitte konsultieren Sie die UI-Dokumentation des Cog Managers, falls Sie nicht sicher sind: "
 
 #: redbot/core/_cog_manager.py:429
 msgid "Okay, the path will not be added."
-msgstr ""
+msgstr "Okay, der Pfad wird nicht hinzugefügt."
 
 #: redbot/core/_cog_manager.py:438
 msgid "Path successfully added."

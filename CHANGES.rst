@@ -1,5 +1,31 @@
 .. Red changelogs
 
+Redbot 3.5.12 (2024-08-08)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Jackenmen`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.12's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.12/Red-DiscordBot-3.5.12-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Fixes
+*****
+
+- **Cogs - Audio** - Fixed the ``[p]llset secured`` command failing to send the response message (:issue:`6423`)
+- **Cogs - Audio** - Fixed some age-restricted YT tracks not playing (:issue:`6424`)
+
+----
+
 Redbot 3.5.11 (2024-08-04)
 ==========================
 
