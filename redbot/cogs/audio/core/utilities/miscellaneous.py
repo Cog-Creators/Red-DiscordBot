@@ -105,8 +105,9 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
         ],
     ) -> bool:
-        perms = channel.permissions_for(channel.guild.me)
-        return all((can_user_send_messages_in(channel.guild.me, channel), perms.embed_links))
+        if channel is not None:
+            perms = channel.permissions_for(channel.guild.me)
+            return all((can_user_send_messages_in(channel.guild.me, channel), perms.embed_links))
 
     async def maybe_run_pending_db_tasks(self, ctx: commands.Context) -> None:
         if self.api_interface is not None:
