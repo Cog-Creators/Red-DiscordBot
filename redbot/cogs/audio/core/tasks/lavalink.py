@@ -6,7 +6,7 @@ from red_commons.logging import getLogger
 
 from redbot.core import data_manager
 from redbot.core.i18n import Translator
-from ...manager.server_manager import ServerManager
+from ...manager import ServerManager
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 

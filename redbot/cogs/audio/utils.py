@@ -18,7 +18,7 @@ from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
-from .manager.ll_server_config import DEFAULT_LAVALINK_YAML, change_dict_naming_convention
+from .managed_node.ll_server_config import DEFAULT_LAVALINK_YAML, change_dict_naming_convention
 
 log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))

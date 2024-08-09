@@ -3,18 +3,24 @@ from __future__ import annotations
 import re
 from typing import Final, Optional, Pattern, Tuple
 
+__all__ = (
+    "LAVALINK_BUILD_LINE",
+    "LavalinkOldVersion",
+    "LavalinkVersion",
+)
+
 
 # present until Lavalink 3.5-rc4
 LAVALINK_BUILD_LINE: Final[Pattern] = re.compile(rb"^Build:\s+(?P<build>\d+)$", re.MULTILINE)
 # we don't actually care about what the version format before 3.5-rc4 is exactly
 # as the comparison is based entirely on the build number
-LAVALINK_VERSION_LINE_PRE35: Final[Pattern] = re.compile(
+_LAVALINK_VERSION_LINE_PRE35: Final[Pattern] = re.compile(
     rb"^Version:\s+(?P<version>\S+)$", re.MULTILINE | re.VERBOSE
 )
 # used for LL versions >=3.5-rc4 but below 3.6.
 # Since this only applies to historical version, this regex is based only on
 # version numbers that actually existed, not ones that technically could.
-LAVALINK_VERSION_LINE_PRE36: Final[Pattern] = re.compile(
+_LAVALINK_VERSION_LINE_PRE36: Final[Pattern] = re.compile(
     rb"""
     ^
     Version:\s+
@@ -36,7 +42,7 @@ LAVALINK_VERSION_LINE_PRE36: Final[Pattern] = re.compile(
 # This regex is limited to the realistic usage in the LL version number,
 # not everything that could be a part of it according to the spec.
 # We can easily release an update to this regex in the future if it ever becomes necessary.
-LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
+_LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(
     rb"""
     ^
     Version:\s+
@@ -69,7 +75,7 @@ class LavalinkOldVersion:
                 "Could not find 'Build' line in the given `--version` output,"
                 " or invalid build number given."
             )
-        version_match = LAVALINK_VERSION_LINE_PRE35.search(output)
+        version_match = _LAVALINK_VERSION_LINE_PRE35.search(output)
         if version_match is None:
             raise ValueError(
                 "Could not find 'Version' line in the given `--version` output,"
@@ -142,10 +148,10 @@ class LavalinkVersion:
 
     @classmethod
     def from_version_output(cls, output: bytes) -> LavalinkVersion:
-        match = LAVALINK_VERSION_LINE.search(output)
+        match = _LAVALINK_VERSION_LINE.search(output)
         if match is None:
             # >=3.5-rc4, <3.6
-            match = LAVALINK_VERSION_LINE_PRE36.search(output)
+            match = _LAVALINK_VERSION_LINE_PRE36.search(output)
         if match is None:
             raise ValueError(
                 "Could not find 'Version' line in the given `--version` output,"

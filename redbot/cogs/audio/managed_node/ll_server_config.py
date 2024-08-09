@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Final
 
-from . import managed_node_versions
+from . import version_pins
 
 __all__ = (
     "DEFAULT_LAVALINK_YAML",
@@ -93,9 +93,7 @@ def generate_server_config(config_data: Dict[str, Any]) -> Dict[str, Any]:
     if enable_yt_plugin:
         sources["youtube"] = False
         yt_plugin = {
-            "dependency": (
-                f"dev.lavalink.youtube:youtube-plugin:{managed_node_versions.YT_PLUGIN_VERSION}"
-            ),
+            "dependency": f"dev.lavalink.youtube:youtube-plugin:{version_pins.YT_PLUGIN_VERSION}",
             "repository": YT_PLUGIN_REPOSITORY,
         }
         plugins.append(yt_plugin)

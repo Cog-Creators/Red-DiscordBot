@@ -22,10 +22,8 @@ from red_commons.logging import getLogger
 from redbot.core import data_manager, Config
 from redbot.core.i18n import Translator
 
-from . import managed_node_versions
-from .ll_server_config import generate_server_config
-from .ll_version import LAVALINK_BUILD_LINE, LavalinkVersion, LavalinkOldVersion
-from ..errors import (
+from . import managed_node
+from .errors import (
     LavalinkDownloadFailed,
     InvalidArchitectureException,
     ManagedLavalinkAlreadyRunningException,
@@ -38,11 +36,12 @@ from ..errors import (
     NoProcessFound,
     NodeUnhealthy,
 )
-from ..utils import (
+from .managed_node.ll_version import LAVALINK_BUILD_LINE, LavalinkVersion, LavalinkOldVersion
+from .utils import (
     get_max_allocation_size,
     replace_p_with_prefix,
 )
-from ....core.utils import AsyncIter
+from ...core.utils import AsyncIter
 
 if TYPE_CHECKING:
     from . import Audio
@@ -110,7 +109,7 @@ LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(
 class ServerManager:
     LAVALINK_DOWNLOAD_URL: Final[str] = (
         "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
-        f"{managed_node_versions.JAR_VERSION}/"
+        f"{managed_node.JAR_VERSION}/"
         "Lavalink.jar"
     )
 
@@ -235,7 +234,7 @@ class ServerManager:
             raise
 
     async def process_settings(self):
-        data = generate_server_config(await self._config.yaml.all())
+        data = managed_node.generate_server_config(await self._config.yaml.all())
 
         with open(self.lavalink_app_yml, "w", encoding="utf-8") as f:
             yaml.safe_dump(data, f)
@@ -378,7 +377,7 @@ class ServerManager:
                     # A 404 means our LAVALINK_DOWNLOAD_URL is invalid, so likely the jar version
                     # hasn't been published yet
                     raise LavalinkDownloadFailed(
-                        f"Lavalink jar version {managed_node_versions.JAR_VERSION}"
+                        f"Lavalink jar version {managed_node.JAR_VERSION}"
                         " hasn't been published yet",
                         response=response,
                         should_retry=False,
@@ -465,7 +464,7 @@ class ServerManager:
         self._jvm = java["jvm"].decode()
         self._lavaplayer = lavaplayer["lavaplayer"].decode()
         self._buildtime = date
-        self._up_to_date = self._lavalink_version >= managed_node_versions.JAR_VERSION
+        self._up_to_date = self._lavalink_version >= managed_node.JAR_VERSION
         return self._up_to_date
 
     async def maybe_download_jar(self):
@@ -485,7 +484,7 @@ class ServerManager:
             log.info(
                 "Lavalink version outdated, triggering update from %s to %s...",
                 self._lavalink_version,
-                managed_node_versions.JAR_VERSION,
+                managed_node.JAR_VERSION,
             )
             await self._download_jar()
 
