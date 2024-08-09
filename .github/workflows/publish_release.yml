@@ -96,6 +96,12 @@ jobs:
           name: build-output
           path: dist/
 
+      - name: Upload dists to GitHub Release
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"
+        run: |
+          gh release upload "$GITHUB_REF_NAME" dist/*
+
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
