@@ -6,6 +6,7 @@ from . import managed_node_versions
 
 __all__ = (
     "DEFAULT_LAVALINK_YAML",
+    "get_default_server_config",
     "generate_server_config",
     "change_dict_naming_convention",
 )
@@ -60,6 +61,26 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__plugins__youtube__TVHTML5EMBEDDED__videoLoading": False,
     "yaml__plugins__youtube__TVHTML5EMBEDDED__searching": False,
 }
+
+
+def _unflatten_config_defaults(config_defaults: Dict[str, Any]) -> Dict[str, Any]:
+    ret: Dict[str, Any] = {}
+
+    # based on Config._get_defaults_dict()
+    for flat_key, value in config_defaults.items():
+        keys = flat_key.split("__")
+        partial = ret
+        for idx, key in enumerate(keys, start=1):
+            if idx == len(keys):
+                partial[key] = value
+            else:
+                partial = partial.setdefault(key, {})
+
+    return ret
+
+
+def get_default_server_config() -> Dict[str, Any]:
+    return generate_server_config(_unflatten_config_defaults(DEFAULT_LAVALINK_YAML)["yaml"])
 
 
 def generate_server_config(config_data: Dict[str, Any]) -> Dict[str, Any]:
