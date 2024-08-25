@@ -298,8 +298,8 @@ class LavalinkVersion:
 
 
 class ServerManager:
-    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 11, red=3)
-    YT_PLUGIN_VERSION: Final[str] = "1.5.2"
+    JAR_VERSION: Final[str] = LavalinkVersion(3, 7, 12, red=1)
+    YT_PLUGIN_VERSION: Final[str] = "1.7.2"
 
     LAVALINK_DOWNLOAD_URL: Final[str] = (
         "https://github.com/Cog-Creators/Lavalink-Jars/releases/download/"
