@@ -3,7 +3,7 @@ from typing import Optional
 
 import pytest
 
-from redbot.cogs.audio.manager import LavalinkOldVersion, LavalinkVersion
+from redbot.cogs.audio.managed_node.ll_version import LavalinkOldVersion, LavalinkVersion
 
 
 ORDERED_VERSIONS = [
