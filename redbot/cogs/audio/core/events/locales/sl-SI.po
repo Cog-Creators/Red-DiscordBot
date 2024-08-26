@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-07-10 18:37+0000\n"
+"POT-Creation-Date: 2024-08-26 17:53+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-File-ID: 670\n"
 "Language: sl_SI\n"
 
-#: redbot/cogs/audio/core/events/cog.py:216
+#: redbot/cogs/audio/core/events/cog.py:218
 msgid "Auto Play started."
 msgstr "Samodejno predvajanje se je začelo."
 
