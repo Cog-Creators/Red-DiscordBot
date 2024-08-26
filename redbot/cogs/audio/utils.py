@@ -18,6 +18,8 @@ from redbot.core import commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator
 
+from .managed_node.ll_server_config import DEFAULT_LAVALINK_YAML, change_dict_naming_convention
+
 log = getLogger("red.cogs.Audio.task.callback")
 _ = Translator("Audio", Path(__file__))
 
@@ -54,55 +56,6 @@ def get_jar_ram_defaults() -> Tuple[str, str]:
 
 MIN_JAVA_RAM, MAX_JAVA_RAM = get_jar_ram_defaults()
 
-DEFAULT_LAVALINK_YAML = {
-    # The nesting structure of this dict is very important, it's a 1:1 mirror of application.yaml in JSON
-    "yaml__server__address": "localhost",
-    "yaml__server__port": 2333,
-    "yaml__lavalink__server__password": "youshallnotpass",
-    "yaml__lavalink__server__sources__http": True,
-    "yaml__lavalink__server__sources__bandcamp": True,
-    "yaml__lavalink__server__sources__local": True,
-    "yaml__lavalink__server__sources__soundcloud": True,
-    "yaml__lavalink__server__sources__youtube": True,
-    "yaml__lavalink__server__sources__twitch": True,
-    "yaml__lavalink__server__sources__vimeo": True,
-    "yaml__lavalink__server__bufferDurationMs": 400,
-    "yaml__lavalink__server__frameBufferDurationMs": 1000,
-    # 100 pages - 100 entries per page = 10,000 tracks which is the Audio Limit for a single playlist.
-    "yaml__lavalink__server__youtubePlaylistLoadLimit": 100,
-    "yaml__lavalink__server__playerUpdateInterval": 1,
-    "yaml__lavalink__server__youtubeSearchEnabled": True,
-    "yaml__lavalink__server__soundcloudSearchEnabled": True,
-    "yaml__lavalink__server__gc_warnings": True,
-    "yaml__metrics__prometheus__enabled": False,
-    "yaml__metrics__prometheus__endpoint": "/metrics",
-    "yaml__sentry__dsn": "",
-    "yaml__sentry__environment": "",
-    "yaml__logging__file__path": "./logs/",
-    "yaml__logging__level__root": "INFO",
-    "yaml__logging__level__lavalink": "INFO",
-    "yaml__logging__logback__rollingpolicy__max_history": 15,
-    "yaml__logging__logback__rollingpolicy__max_size": "10MB",
-    # plugin configuration - note that the plugin may be disabled by the manager
-    "yaml__plugins__youtube__enabled": True,
-    "yaml__plugins__youtube__allowSearch": True,
-    "yaml__plugins__youtube__allowDirectVideoIds": True,
-    "yaml__plugins__youtube__allowDirectPlaylistIds": True,
-    "yaml__plugins__youtube__clients": [
-        "MUSIC",
-        "WEB",
-        "ANDROID_TESTSUITE",
-        "TVHTML5EMBEDDED",
-        "ANDROID_LITE",
-        "MEDIA_CONNECT",
-        "IOS",
-    ],
-    "yaml__plugins__youtube__WEB__playback": True,
-    "yaml__plugins__youtube__TVHTML5EMBEDDED__playlistLoading": False,
-    "yaml__plugins__youtube__TVHTML5EMBEDDED__videoLoading": False,
-    "yaml__plugins__youtube__TVHTML5EMBEDDED__searching": False,
-}
-
 DEFAULT_LAVALINK_SETTINGS = {
     "host": DEFAULT_LAVALINK_YAML["yaml__server__address"],
     "rest_port": DEFAULT_LAVALINK_YAML["yaml__server__port"],
@@ -120,24 +73,6 @@ def sizeof_fmt(num: Union[float, int]) -> str:
             return f"{num:3.1f}{unit}"
         num /= 1024.0
     return f"{num:.1f}Y"
-
-
-# This assumes all keys with `_` should be converted from `part1_part2` to `part1-part2`
-def convert_function(key: str) -> str:
-    return key.replace("_", "-")
-
-
-def change_dict_naming_convention(data) -> dict:
-    ret: Any = data
-    if isinstance(data, dict):
-        ret = {}
-        for key, value in data.items():
-            ret[convert_function(key)] = change_dict_naming_convention(value)
-    elif isinstance(data, list):
-        ret = []
-        for value in data:
-            ret.append(change_dict_naming_convention(value))
-    return ret
 
 
 class CacheLevel:
