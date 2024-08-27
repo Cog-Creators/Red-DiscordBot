@@ -21,7 +21,7 @@ pytest-asyncio==0.21.2
     # via -r extra-test.in
 pytest-mock==3.14.0
     # via -r extra-test.in
-tomlkit==0.13.0
+tomlkit==0.13.2
     # via pylint
 exceptiongroup==1.2.2; python_version != "3.11"
     # via pytest

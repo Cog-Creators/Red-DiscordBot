@@ -1,5 +1,38 @@
 .. Red changelogs
 
+Redbot 3.5.13 (2024-08-27)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Guyonsteroids`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.13's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.13/Red-DiscordBot-3.5.13-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6436`)
+
+Fixes
+*****
+
+- **Cogs - Audio** - Updated Audio to support planned changes to Discord API scheduled for November (:issue:`6435`)
+- **Cogs - Audio** - Fixed YT live stream detection (:issue:`6435`)
+- **Cogs - Audio** - Fixed Red erroneously trying to send a message to a notification channel when one is not set (:issue:`6429`)
+- **Cogs - Trivia - Lists** - Fixed spelling of Steven Spielberg's first name in the ``entertainment`` trivia list (:issue:`6434`)
+
+----
+
 Redbot 3.5.12 (2024-08-08)
 ==========================
 

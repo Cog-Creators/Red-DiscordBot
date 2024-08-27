@@ -116,6 +116,7 @@ jobs:
     name: Release to PyPI
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       id-token: write
     steps:
       - name: Download packaged distributions
@@ -134,7 +135,7 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ github.token }}"
         run: |
-          gh release upload "$GITHUB_REF_NAME" dist/*
+          gh release upload "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY"
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
