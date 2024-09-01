@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-07-10 14:13+0000\n"
+"POT-Creation-Date: 2024-08-07 20:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -345,25 +345,25 @@ msgstr "\n"
 #: redbot/cogs/audio/core/commands/llset.py:258
 #: redbot/cogs/audio/core/commands/llset.py:282
 #: redbot/cogs/audio/core/commands/llset.py:295
-#: redbot/cogs/audio/core/commands/llset.py:388
-#: redbot/cogs/audio/core/commands/llset.py:412
-#: redbot/cogs/audio/core/commands/llset.py:443
-#: redbot/cogs/audio/core/commands/llset.py:472
-#: redbot/cogs/audio/core/commands/llset.py:481
-#: redbot/cogs/audio/core/commands/llset.py:499
-#: redbot/cogs/audio/core/commands/llset.py:508
-#: redbot/cogs/audio/core/commands/llset.py:526
-#: redbot/cogs/audio/core/commands/llset.py:535
-#: redbot/cogs/audio/core/commands/llset.py:553
-#: redbot/cogs/audio/core/commands/llset.py:562
-#: redbot/cogs/audio/core/commands/llset.py:580
-#: redbot/cogs/audio/core/commands/llset.py:589
-#: redbot/cogs/audio/core/commands/llset.py:607
-#: redbot/cogs/audio/core/commands/llset.py:616
-#: redbot/cogs/audio/core/commands/llset.py:634
-#: redbot/cogs/audio/core/commands/llset.py:643
-#: redbot/cogs/audio/core/commands/llset.py:670
-#: redbot/cogs/audio/core/commands/llset.py:701
+#: redbot/cogs/audio/core/commands/llset.py:391
+#: redbot/cogs/audio/core/commands/llset.py:415
+#: redbot/cogs/audio/core/commands/llset.py:446
+#: redbot/cogs/audio/core/commands/llset.py:475
+#: redbot/cogs/audio/core/commands/llset.py:484
+#: redbot/cogs/audio/core/commands/llset.py:502
+#: redbot/cogs/audio/core/commands/llset.py:511
+#: redbot/cogs/audio/core/commands/llset.py:529
+#: redbot/cogs/audio/core/commands/llset.py:538
+#: redbot/cogs/audio/core/commands/llset.py:556
+#: redbot/cogs/audio/core/commands/llset.py:565
+#: redbot/cogs/audio/core/commands/llset.py:583
+#: redbot/cogs/audio/core/commands/llset.py:592
+#: redbot/cogs/audio/core/commands/llset.py:610
+#: redbot/cogs/audio/core/commands/llset.py:619
+#: redbot/cogs/audio/core/commands/llset.py:637
+#: redbot/cogs/audio/core/commands/llset.py:646
+#: redbot/cogs/audio/core/commands/llset.py:673
+#: redbot/cogs/audio/core/commands/llset.py:704
 msgid "Setting Changed"
 msgstr "已變更設定"
 
@@ -1181,13 +1181,13 @@ msgid "Restarts the lavalink connection."
 msgstr "重啟Lavalink連接。"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1485
-#: redbot/cogs/audio/core/commands/llset.py:731
+#: redbot/cogs/audio/core/commands/llset.py:734
 msgid "Failed To Shutdown Lavalink Node"
 msgstr "關閉 Lavalink 節點失敗!"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1486
 #: redbot/cogs/audio/core/commands/llset.py:187
-#: redbot/cogs/audio/core/commands/llset.py:732
+#: redbot/cogs/audio/core/commands/llset.py:735
 msgid "Please reload Audio (`{prefix}reload audio`)."
 msgstr "請重新加載Audio (`{prefix}reload audio`)。"
 
@@ -1966,8 +1966,8 @@ msgid "Heap-size must be at least 64M, however it is recommended to have it set 
 msgstr "記憶體大小必須至少為 64M，但建議至少設置為 1G。"
 
 #: redbot/cogs/audio/core/commands/llset.py:126
-msgid "Heap-size must be less than your system RAM, You currently have {ram_in_bytes} of RAM available."
-msgstr "記憶體大小必須小於您的系統 RAM，您當前有 {ram_in_bytes} 可用 。"
+msgid "Heap-size must be less than your system RAM. You currently have {ram_in_bytes} of RAM available."
+msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:133
 msgid "Heap-size must be less than {limit} due to your system limitations."
@@ -2032,15 +2032,15 @@ msgid "Set the Lavalink node port.\n\n"
 msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:252
-#: redbot/cogs/audio/core/commands/llset.py:436
-#: redbot/cogs/audio/core/commands/llset.py:664
-#: redbot/cogs/audio/core/commands/llset.py:695
+#: redbot/cogs/audio/core/commands/llset.py:439
+#: redbot/cogs/audio/core/commands/llset.py:667
+#: redbot/cogs/audio/core/commands/llset.py:698
 msgid "Setting Not Changed"
 msgstr "設置未更變"
 
 #: redbot/cogs/audio/core/commands/llset.py:253
-msgid "A port must be between 0 and 65535 "
-msgstr "端口必須介於 0 和 65535 之間 "
+msgid "A port must be between 0 and 65535."
+msgstr ""
 
 #: redbot/cogs/audio/core/commands/llset.py:259
 msgid "Unmanaged Lavalink node port set to {port}. Run `{p}{cmd}` for it to take effect."
@@ -2062,70 +2062,69 @@ msgstr "非託管 Lavalink 節點現在將使用安全的 {secured_protocol} 協
 "運行 `{p}{cmd}` 使其生效。"
 
 #: redbot/cogs/audio/core/commands/llset.py:296
-msgid "Unmanaged Lavalink node will no longer connect using the secured {secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
+msgid "Unmanaged Lavalink node will no longer connect using the secured {secured_protocol} protocol and will use {unsecured_protocol} instead.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr "非託管 Lavalink 節點將不再使用安全的 {secured_protocol} 協議連接，而是使用 {unsecured_protocol} 代替。\n\n"
-"運行 `{p}{cmd}` 使其生效。"
+msgstr ""
 
-#: redbot/cogs/audio/core/commands/llset.py:307
+#: redbot/cogs/audio/core/commands/llset.py:310
 #, docstring
 msgid "Display Lavalink connection settings."
 msgstr "顯示 Lavalink 連接設置。"
 
-#: redbot/cogs/audio/core/commands/llset.py:311
+#: redbot/cogs/audio/core/commands/llset.py:314
 msgid "Connection Settings"
 msgstr "連接設置"
 
-#: redbot/cogs/audio/core/commands/llset.py:312
-#: redbot/cogs/audio/core/commands/llset.py:321
+#: redbot/cogs/audio/core/commands/llset.py:315
+#: redbot/cogs/audio/core/commands/llset.py:324
 msgid "Host:             [{host}]\n"
 msgstr "主機：[{host}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:313
-#: redbot/cogs/audio/core/commands/llset.py:324
+#: redbot/cogs/audio/core/commands/llset.py:316
+#: redbot/cogs/audio/core/commands/llset.py:327
 msgid "Port:             [{port}]\n"
 msgstr "端口： [{port}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:314
+#: redbot/cogs/audio/core/commands/llset.py:317
 msgid "Default HTTP/HTTPS port"
 msgstr "默認 HTTP/HTTPS port"
 
-#: redbot/cogs/audio/core/commands/llset.py:316
-#: redbot/cogs/audio/core/commands/llset.py:325
+#: redbot/cogs/audio/core/commands/llset.py:319
+#: redbot/cogs/audio/core/commands/llset.py:328
 msgid "Password:         [{password}]\n"
 msgstr "密碼：[{password}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:317
+#: redbot/cogs/audio/core/commands/llset.py:320
 msgid "Secured:          [{state}]\n"
 msgstr "安全：[{state}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:320
+#: redbot/cogs/audio/core/commands/llset.py:323
 msgid "Lavalink Node Settings"
 msgstr "Lavalink 節點設定"
 
-#: redbot/cogs/audio/core/commands/llset.py:328
+#: redbot/cogs/audio/core/commands/llset.py:331
 msgid "Initial Heapsize: [{xms}]\n"
 msgstr "初始記憶體大小：[{xms}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:329
+#: redbot/cogs/audio/core/commands/llset.py:332
 msgid "Max Heapsize:     [{xmx}]\n"
 msgstr "最大記憶體大小：[{xmx}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:330
+#: redbot/cogs/audio/core/commands/llset.py:333
 msgid "Java exec:        [{java_exc_path}]\n"
 msgstr "Java 執行程序：[{java_exc_path}]\n"
 
-#: redbot/cogs/audio/core/commands/llset.py:338
-#: redbot/cogs/audio/core/commands/llset.py:360
+#: redbot/cogs/audio/core/commands/llset.py:341
+#: redbot/cogs/audio/core/commands/llset.py:363
 msgid "I need to be able to DM you to send you this info."
 msgstr "我需要能夠通過 DM 向您發送此信息。"
 
-#: redbot/cogs/audio/core/commands/llset.py:343
+#: redbot/cogs/audio/core/commands/llset.py:346
 #, docstring
 msgid "Uploads a copy of the application.yml file used by the managed Lavalink node."
 msgstr "上傳託管 Lavalink 節點使用的 application.yml 文件的副本。"
 
-#: redbot/cogs/audio/core/commands/llset.py:367
+#: redbot/cogs/audio/core/commands/llset.py:370
 #, docstring
 msgid "Configure the managed Lavalink node runtime options.\n\n"
 "        All settings under this group will likely cause Audio to malfunction if changed from their defaults, only change settings here if you have been advised to by support.\n"
@@ -2134,12 +2133,12 @@ msgstr "配置託管 Lavalink 節點運行時選項。\n\n"
 "        如果隨意更改此類別下的所有設置，可能會導致Audio出現故障，只有在官方人員建議您更改此處的設置時更改。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:374
+#: redbot/cogs/audio/core/commands/llset.py:377
 #, docstring
 msgid "Configure the managed node authorization and connection settings."
 msgstr "配置受管理節點授權和連接設置。"
 
-#: redbot/cogs/audio/core/commands/llset.py:380
+#: redbot/cogs/audio/core/commands/llset.py:383
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node's binding IP address.\n\n"
 "        This value by default is `localhost` which will restrict the server to only localhost apps by default, changing this will likely break the managed Lavalink node if you don't know what you are doing.\n"
@@ -2148,13 +2147,13 @@ msgstr "`Dangerous command` 設置託管 Lavalink 節點的綁定 IP 地址。\n
 "        默認情況下此數值是 localhost ，默認情況下會將服務器限制為僅本地主機應用程序，如果您不知道如何設置，隨意更改此值可能會破壞原託管的 Lavalink 節點。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:389
+#: redbot/cogs/audio/core/commands/llset.py:392
 msgid "Managed node will now accept connection on {host}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點現在將接受 {host} 上的連接。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:404
+#: redbot/cogs/audio/core/commands/llset.py:407
 #, docstring
 msgid "Set the managed Lavalink node's connection password.\n\n"
 "        This is the password required for Audio to connect to the managed Lavalink node.\n"
@@ -2165,13 +2164,13 @@ msgstr "設置託管 Lavalink 節點的連接密碼。\n\n"
 "        默認數值為“youshallnotpass”。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:413
+#: redbot/cogs/audio/core/commands/llset.py:416
 msgid "Managed node will now accept {password} as the authorization token.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點現在將接受 {password} 作為授權令牌。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:427
+#: redbot/cogs/audio/core/commands/llset.py:430
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node's connection port.\n\n"
 "        This port is the port the managed Lavalink node binds to, you should only change this if there is a conflict with the default port because you already have an application using port 2333 on this device.\n\n"
@@ -2182,17 +2181,17 @@ msgstr "`Dangerous command` 設置託管 Lavalink 節點的連接端口。\n\n"
 "        默認數值為“2333”。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:437
+#: redbot/cogs/audio/core/commands/llset.py:440
 msgid "The port must be between 1024 and 49151."
 msgstr "端口必須介於 1024 和 49151 之間。"
 
-#: redbot/cogs/audio/core/commands/llset.py:444
+#: redbot/cogs/audio/core/commands/llset.py:447
 msgid "Managed node will now accept connections on {port}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點現在將接受 {port} 上的連接。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:456
+#: redbot/cogs/audio/core/commands/llset.py:459
 #, docstring
 msgid "`Dangerous command` Toggle audio sources on/off.\n\n"
 "        By default, all sources are enabled, you should only use commands here to disable a specific source if you have been advised to, disabling sources without background knowledge can cause Audio to break.\n"
@@ -2201,7 +2200,7 @@ msgstr "`Dangerous command` 打開/關閉音頻來源。\n\n"
 "         默認情況下，所有源都已啟用，您應該只在被開發人員建議的情況下使用此處的命令來禁用特定源，在沒有相關知識的情況下禁用源可能會導致Audio中斷損壞。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:463
+#: redbot/cogs/audio/core/commands/llset.py:466
 #, docstring
 msgid "Toggle HTTP direct URL usage on or off.\n\n"
 "        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).\n"
@@ -2210,19 +2209,19 @@ msgstr "打開或關閉 HTTP 直接 URL 使用。\n\n"
 "        此用於允許從直接 HTTP 直播播放(這不影響其他源的直接 URL 播放)。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:473
+#: redbot/cogs/audio/core/commands/llset.py:476
 msgid "Managed node will allow playback from direct URLs.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將允許直接從 URL 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:482
+#: redbot/cogs/audio/core/commands/llset.py:485
 msgid "Managed node will not play from direct URLs anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將不再直接從 URL 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:490
+#: redbot/cogs/audio/core/commands/llset.py:493
 #, docstring
 msgid "Toggle Bandcamp source on or off.\n\n"
 "        This toggle controls the playback of all Bandcamp related content.\n"
@@ -2231,19 +2230,19 @@ msgstr "打開或關閉 Bandcamp 來源。\n\n"
 "        此切換控制開關所有 Bandcamp 相關來源內容的播放。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:500
+#: redbot/cogs/audio/core/commands/llset.py:503
 msgid "Managed node will allow playback from Bandcamp.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將允許從 Bandcamp 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:509
+#: redbot/cogs/audio/core/commands/llset.py:512
 msgid "Managed node will not play from Bandcamp anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將不再從 Bandcamp 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:517
+#: redbot/cogs/audio/core/commands/llset.py:520
 #, docstring
 msgid "Toggle local file usage on or off.\n\n"
 "        This toggle controls the playback of all local track content, usually found inside the `localtracks` folder.\n"
@@ -2252,19 +2251,19 @@ msgstr "啟用或關閉本地文件使用。\n\n"
 "        此切換控制所有本地軌道內容的播放，通常位於“localtracks”文件夾中。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:527
+#: redbot/cogs/audio/core/commands/llset.py:530
 msgid "Managed node will allow playback from local files.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將允許從本地文件播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:536
+#: redbot/cogs/audio/core/commands/llset.py:539
 msgid "Managed node will not play from local files anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將不再從本地文件播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:544
+#: redbot/cogs/audio/core/commands/llset.py:547
 #, docstring
 msgid "Toggle Soundcloud source on or off.\n\n"
 "        This toggle controls the playback of all SoundCloud related content.\n"
@@ -2273,19 +2272,19 @@ msgstr "啟用或關閉 Soundcloud 來源。\n\n"
 "        此切換控制所有 SoundCloud 相關內容的播放。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:554
+#: redbot/cogs/audio/core/commands/llset.py:557
 msgid "Managed node will allow playback from Soundcloud.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將允許從 Soundcloud 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:563
+#: redbot/cogs/audio/core/commands/llset.py:566
 msgid "Managed node will not play from Soundcloud anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將不再從 Soundcloud 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:571
+#: redbot/cogs/audio/core/commands/llset.py:574
 #, docstring
 msgid "`Dangerous command` Toggle YouTube source on or off (this includes Spotify).\n\n"
 "        This toggle controls the playback of all YouTube and Spotify related content.\n"
@@ -2294,19 +2293,19 @@ msgstr "`Dangerous command` 打開或關閉 YouTube 來源(包括 Spotify)。\n\
 "        此切換控制所有 YouTube 和 Spotify 相關內容的播放。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:581
+#: redbot/cogs/audio/core/commands/llset.py:584
 msgid "Managed node will allow playback from YouTube.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將允許從 YouTube 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:590
+#: redbot/cogs/audio/core/commands/llset.py:593
 msgid "Managed node will not play from YouTube anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將不再從 YouTube 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:598
+#: redbot/cogs/audio/core/commands/llset.py:601
 #, docstring
 msgid "Toggle Twitch source on or off.\n\n"
 "        This toggle controls the playback of all Twitch related content.\n"
@@ -2315,19 +2314,19 @@ msgstr "打開或關閉 Twitch 來源。\n\n"
 "        此切換控制所有 Twitch 相關內容的播放。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:608
+#: redbot/cogs/audio/core/commands/llset.py:611
 msgid "Managed node will allow playback from Twitch.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將允許從 Twitch 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:617
+#: redbot/cogs/audio/core/commands/llset.py:620
 msgid "Managed node will not play from Twitch anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將不再從 Twitch 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:625
+#: redbot/cogs/audio/core/commands/llset.py:628
 #, docstring
 msgid "Toggle Vimeo source on or off.\n\n"
 "        This toggle controls the playback of all Vimeo related content.\n"
@@ -2336,19 +2335,19 @@ msgstr "打開或關閉 Vimeo 來源。\n\n"
 "        此切換控制所有 Vimeo 相關內容的播放。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:635
+#: redbot/cogs/audio/core/commands/llset.py:638
 msgid "Managed node will allow playback from Vimeo.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將允許從 Vimeo 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:644
+#: redbot/cogs/audio/core/commands/llset.py:647
 msgid "Managed node will not play from Vimeo anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "託管節點將不再從 Vimeo 播放。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:657
+#: redbot/cogs/audio/core/commands/llset.py:660
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node framebuffer size.\n\n"
 "        Only change this if you have been directly advised to, changing it can cause significant playback issues.\n"
@@ -2357,18 +2356,18 @@ msgstr "`Dangerous command` 設置託管 Lavalink 節點幀緩衝區大小。\n\
 "        僅在我們直接建議您更改此設置時更改它，隨意更改它可能會導致嚴重的播放問題。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:665
+#: redbot/cogs/audio/core/commands/llset.py:668
 msgid "The lowest value the framebuffer can be set to is 100ms."
 msgstr "幀緩衝區可以設置的最低值為 100 毫秒。"
 
-#: redbot/cogs/audio/core/commands/llset.py:671
-#: redbot/cogs/audio/core/commands/llset.py:702
+#: redbot/cogs/audio/core/commands/llset.py:674
+#: redbot/cogs/audio/core/commands/llset.py:705
 msgid "Managed node's bufferDurationMs set to {milliseconds}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
 msgstr "受管節點的 bufferDurationMs 設置為 {milliseconds}。\n\n"
 "運行 `{p}{cmd}` 使其生效。"
 
-#: redbot/cogs/audio/core/commands/llset.py:688
+#: redbot/cogs/audio/core/commands/llset.py:691
 #, docstring
 msgid "`Dangerous command`  Set the managed Lavalink node JDA-NAS buffer size.\n\n"
 "        Only change this if you have been directly advised to, changing it can cause significant playback issues.\n"
@@ -2377,11 +2376,11 @@ msgstr "`Dangerous command` 設置託管 Lavalink 節點 JDA-NAS 緩衝區大小
 "        僅在我們直接建議您更改此設置時更改它，隨意更改它可能會導致嚴重的播放問題。\n"
 "        "
 
-#: redbot/cogs/audio/core/commands/llset.py:696
+#: redbot/cogs/audio/core/commands/llset.py:699
 msgid "The lowest value the buffer may be is 100ms."
 msgstr "幀緩衝區可以設置的最低值為 100 毫秒。"
 
-#: redbot/cogs/audio/core/commands/llset.py:714
+#: redbot/cogs/audio/core/commands/llset.py:717
 #, docstring
 msgid "Reset all `llset` changes back to their default values."
 msgstr "將所有 `llset` 更改重置為默認值。"
