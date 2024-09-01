@@ -68,7 +68,7 @@ def header(text: str, size: Literal["small", "medium", "large"]) -> str:
     ----------
     text : str
         The text for the header.
-    url : Literal['small', 'medium', 'large']
+    size : Literal['small', 'medium', 'large']
         The size of the header ('small', 'medium' or 'large')
 
     Returns
