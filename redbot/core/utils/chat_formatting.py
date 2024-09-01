@@ -28,6 +28,7 @@ __all__ = (
     "spoiler",
     "pagify",
     "strikethrough",
+    "subtext",
     "underline",
     "quote",
     "escape",
@@ -85,6 +86,23 @@ def header(text: str, size: Literal["small", "medium", "large"]) -> str:
     else:
         raise ValueError(f"Invalid size '{size}'")
     return "#" * multiplier + " " + text
+
+
+def subtext(text: str) -> str:
+    """Formats subtext from the given text.
+
+    Parameters
+    ----------
+    text : str
+        The text to format as subtext.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
+    return "-# " + text
 
 
 def error(text: str) -> str:
