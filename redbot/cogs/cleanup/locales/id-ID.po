@@ -23,11 +23,16 @@ msgid "This cog contains commands used for \"cleaning up\" (deleting) messages.\
 "    Messages older than two weeks cannot be mass deleted.\n"
 "    This is a limitation of the API.\n"
 "    "
-msgstr ""
+msgstr "Cog ini berisi perintah untuk \"membersihkan\" (menghapus) pesan.\n\n"
+"    Ini dirancang sebagai alat bagi moderator dan menawarkan banyak kasus penggunaan yang nyaman. \n"
+"    Semua perintah cleanup hanya berlaku untuk channel tempat perintah dijalankan.\n\n"
+"    Pesan yang lebih lama dari 2 minggu tidak dapat dihapus secara massal.\n"
+"    Ini adalah batasan dari API.\n"
+"    "
 
 #: redbot/cogs/cleanup/cleanup.py:58
 msgid "Try a smaller number instead."
-msgstr ""
+msgstr "Cobalah angka yang lebih kecil."
 
 #: redbot/cogs/cleanup/cleanup.py:61
 msgid "Are you sure you want to delete {number} messages?"
@@ -48,7 +53,7 @@ msgstr "{num} pesan telah dihapus."
 #: redbot/cogs/cleanup/cleanup.py:187
 #, docstring
 msgid "Base command for deleting messages."
-msgstr ""
+msgstr "Perintah dasar untuk menghapus pesan."
 
 #: redbot/cogs/cleanup/cleanup.py:197
 #, docstring
@@ -60,7 +65,14 @@ msgid "Delete the last X messages matching the specified text in the current cha
 "        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
 "        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
 "        "
-msgstr ""
+msgstr "Hapus X pesan terakhir yang cocok dengan teks yang spesifik di saluran saat ini.\n\n"
+"        Contoh:\n"
+"        - `[p]cleanup text \"test\" 5`\n\n"
+"        Pastikan untuk menggunakan tanda kutip dua.\n\n"
+"        **Argumen:**\n\n"
+"        - `<number>` Jumlah maksimal pesan yang akan dibersihkan. Harus berupa bilangan bulat positif.\n"
+"        - `<delete_pinned>` Apakah akan menghapus pesan yang disematkan atau tidak. Default-nya adalah False\n"
+"        "
 
 #: redbot/cogs/cleanup/cleanup.py:257
 #, docstring
@@ -73,7 +85,15 @@ msgid "Delete the last X messages from a specified user in the current channel.\
 "        - `<number>` The max number of messages to cleanup. Must be a positive integer.\n"
 "        - `<delete_pinned>` Whether to delete pinned messages or not. Defaults to False\n"
 "        "
-msgstr ""
+msgstr "Hapus X pesan terakhir dari sebuah user di channel ini.\n\n"
+"        Contoh:\n"
+"        - `[p]cleanup user @Twentysix 2`\n"
+"        - `[p]cleanup user Red 6`\n\n"
+"        **Argumen:**\n\n"
+"        - `<user>` User yang akan dihapus pesannya.\n"
+"        - `<number>` Jumlah maksimal pesan yang akan dibersihkan. Harus berupa bilangan bulat positif.\n"
+"        - `<delete_pinned>` Apakah akan menghapus pesan yang disematkan atau tidak. Default-nya adalah False\n"
+"        "
 
 #: redbot/cogs/cleanup/cleanup.py:327
 #, docstring
