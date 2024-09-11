@@ -608,7 +608,11 @@ class Downloader(commands.Cog):
         else:
             await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
             if repo.install_msg:
-                await ctx.send(repo.install_msg.replace("[p]", ctx.clean_prefix))
+                await ctx.send(
+                    repo.install_msg.replace("[p]", ctx.clean_prefix).replace(
+                        "[botname]", ctx.me.display_name
+                    )
+                )
 
     @repo.command(name="delete", aliases=["remove", "del"], require_var_positional=True)
     async def _repo_del(self, ctx: commands.Context, *repos: Repo) -> None:
