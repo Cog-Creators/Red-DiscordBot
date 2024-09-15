@@ -648,14 +648,18 @@ class Downloader(commands.Cog):
             joined = _("There are no repos installed.")
         else:
             if len(repos) > 1:
-                joined = _("# Installed Repos\n")
+                joined = _("## Installed Repos\n")
             else:
-                joined = _("# Installed Repo\n")
+                joined = _("## Installed Repo\n")
             for repo in sorted_repos:
-                joined += "+ {}: {}\n".format(repo.name, repo.short or "")
+                joined += "- **{}:** {}\n  - {}\n".format(
+                    repo.name,
+                    repo.short or "",
+                    "<{}>".format(repo.url),
+                )
 
         for page in pagify(joined, ["\n"], shorten_by=16):
-            await ctx.send(box(page.lstrip(" "), lang="markdown"))
+            await ctx.send(page)
 
     @repo.command(name="info")
     async def _repo_info(self, ctx: commands.Context, repo: Repo) -> None:
