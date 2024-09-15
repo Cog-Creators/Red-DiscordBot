@@ -640,12 +640,24 @@ class Downloader(commands.Cog):
         )
 
     @repo.command(name="list")
-    async def _repo_list(self, ctx: commands.Context) -> None:
-        """List all installed repos."""
+    async def _repo_list(self, ctx: commands.Context, links: bool = False) -> None:
+        """
+        List all installed repos.
+
+        `links`: Shows links instead of descriptions when set to `True`.
+        Default to False.
+        """
         repos = self._repo_manager.repos
         sorted_repos = sorted(repos, key=lambda r: str.lower(r.name))
         if len(repos) == 0:
-            joined = _("There are no repos installed.")
+            await ctx.send(box(_("There are no repos installed."), lang="markdown"))
+            return
+        if links:
+            joined = _("Installed Repos:\n")
+            for repo in sorted_repos:
+                joined += "+ {}: <{}>\n".format(repo.name, repo.clean_url)
+            for page in pagify(joined, ["\n"], shorten_by=16):
+                await ctx.send(page.lstrip(" "))
         else:
             if len(repos) > 1:
                 joined = _("# Installed Repos\n")
@@ -654,8 +666,8 @@ class Downloader(commands.Cog):
             for repo in sorted_repos:
                 joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
-        for page in pagify(joined, ["\n"], shorten_by=16):
-            await ctx.send(box(page.lstrip(" "), lang="markdown"))
+            for page in pagify(joined, ["\n"], shorten_by=16):
+                await ctx.send(box(page.lstrip(" "), lang="markdown"))
 
     @repo.command(name="info")
     async def _repo_info(self, ctx: commands.Context, repo: Repo) -> None:
