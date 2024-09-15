@@ -324,8 +324,11 @@ def set_release_stage(stage: ReleaseStage) -> None:
 @click.group(invoke_without_command=True)
 @click.option("--continue", "abort", flag_value=False, default=None)
 @click.option("--abort", "abort", flag_value=True, default=None)
-def cli(*, abort: Optional[bool] = None):
+@click.pass_context
+def cli(ctx: click.Context, *, abort: Optional[bool] = None):
     """Red's release helper, guiding you through the whole process!"""
+    if ctx.invoked_subcommand is not None:
+        return
     stage = get_release_stage()
     if abort is True:
         if stage is not ReleaseStage.WELCOME:
@@ -397,7 +400,7 @@ def cli(*, abort: Optional[bool] = None):
     rich.print(Markdown("# Step 8+: Follow the release process documentation"))
     rich.print(
         "You can continue following the release process documentation from step 8:\n"
-        "https://red-devguide.readthedocs.io/core-devs/release-process/"
+        "https://red-devguide.readthedocs.io/core-devs/release-process/#write-announcement"
     )
     wipe_git_config_values()
 
