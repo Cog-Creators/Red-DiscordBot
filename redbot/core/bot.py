@@ -1791,6 +1791,52 @@ class Red(
             "user": curr_user_commands,
         }
 
+    async def get_app_command_id(
+        self,
+        command_name: str,
+        command_type: discord.AppCommandType = discord.AppCommandType.chat_input,
+    ) -> Optional[int]:
+        """
+        Get the cached ID for a particular app command.
+
+        Pulls from Reds internal cache of app command IDs, which is updated when this instance runs ``[p]slash sync`` or ``bot.tree.sync()``.
+        Does not keep track of guild specific app commands.
+        Returns ``None`` if the command does not exist or if Red does not know the ID for that app command.
+        """
+        if command_type is discord.AppCommandType.chat_input:
+            cfg = self._config.enabled_slash_commands()
+        elif command_type is discord.AppCommandType.message:
+            cfg = self._config.enabled_message_commands()
+        elif command_type is discord.AppCommandType.user:
+            cfg = self._config.enabled_user_commands()
+        else:
+            raise TypeError("command type must be one of chat_input, message, user")
+
+        curr_commands = await cfg
+        return curr_commands.get(command_name, None)
+
+    async def get_app_command_mention(
+        self,
+        command_name: str,
+        command_type: discord.AppCommandType = discord.AppCommandType.chat_input,
+    ) -> Optional[str]:
+        """
+        Get the string that allows you to mention a particular app command.
+
+        Pulls from Reds internal cache of app command IDs, which is updated when this instance runs ``[p]slash sync`` or ``bot.tree.sync()``.
+        Does not keep track of guild specific app commands.
+        Returns ``None`` if the command does not exist or if Red does not know the ID for that app command.
+        """
+        # Empty string names will break later code and can't exist as commands, exit early
+        if not command_name:
+            raise ValueError("command name must be a non-empty string")
+        # Account for mentioning subcommands by fetching from the cache based on the base command
+        base_command = command_name.split(" ")[0]
+        command_id = await self.get_app_command_id(base_command, command_type)
+        if command_id is None:
+            return None
+        return f"</{command_name}:{command_id}>"
+
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
     ) -> bool:
