@@ -656,6 +656,7 @@ class Config(metaclass=ConfigMeta):
         "custom_groups",
         "_lock_cache",
         "__weakref__",
+        "__dict__",
     )
 
     def __init__(
