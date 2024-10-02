@@ -17,8 +17,9 @@ def test_config_register_global_badvalues(config):
 
 
 def test_config_register_reserved_keys(config):
-    for attr in vars(config):
-        with pytest.raises((RuntimeError, ValueError)):
+    config.register_global(**{"group": {"value": True}, "value": True})
+    for attr in [*dir(config), *dir(config.group), *dir(config.value)]:
+        with pytest.raises(RuntimeError):
             config.register_global(**{attr: True})
 
 
