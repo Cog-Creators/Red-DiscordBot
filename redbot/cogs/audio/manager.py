@@ -125,13 +125,21 @@ class ServerManager:
     _buildtime: ClassVar[Optional[str]] = None
     _java_exc: ClassVar[str] = "java"
 
-    def __init__(self, config: Config, cog: "Audio", timeout: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        config: Config,
+        cog: "Audio",
+        timeout: Optional[int] = None,
+        download_timeout: Optional[int] = None,
+    ) -> None:
         self.ready: asyncio.Event = asyncio.Event()
+        self.downloaded: asyncio.Event = asyncio.Event()
         self._config = config
         self._proc: Optional[asyncio.subprocess.Process] = None  # pylint:disable=no-member
         self._shutdown: bool = False
         self.start_monitor_task = None
         self.timeout = timeout
+        self.download_timeout = download_timeout
         self.cog = cog
         self._args = []
         self._pipe_task = None
@@ -414,6 +422,7 @@ class ServerManager:
 
         log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         await self._is_up_to_date()
+        self.downloaded.set()
 
     async def _is_up_to_date(self):
         if self._up_to_date is True:
@@ -470,6 +479,7 @@ class ServerManager:
     async def maybe_download_jar(self):
         if not self.lavalink_jar_file.exists():
             log.info("Triggering first-time download of Lavalink...")
+            self.downloaded.clear()
             await self._download_jar()
             return
 
@@ -477,6 +487,7 @@ class ServerManager:
             up_to_date = await self._is_up_to_date()
         except ValueError as exc:
             log.warning("Failed to get Lavalink version: %s\nTriggering update...", exc)
+            self.downloaded.clear()
             await self._download_jar()
             return
 
@@ -486,9 +497,16 @@ class ServerManager:
                 self._lavalink_version,
                 managed_node.JAR_VERSION,
             )
+            self.downloaded.clear()
             await self._download_jar()
+        else:
+            self.downloaded.set()
 
-    async def wait_until_ready(self, timeout: Optional[float] = None):
+    async def wait_until_ready(
+        self, timeout: Optional[float] = None, download_timeout: Optional[float] = None
+    ):
+        download_timeout = download_timeout or self.download_timeout
+        await asyncio.wait_for(self.downloaded.wait(), timeout=download_timeout)
         await asyncio.wait_for(self.ready.wait(), timeout=timeout or self.timeout)
 
     async def start_monitor(self, java_path: str):
