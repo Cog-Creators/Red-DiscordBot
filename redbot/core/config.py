@@ -800,7 +800,7 @@ class Config(metaclass=ConfigMeta):
         for i, k in enumerate(splitted, start=1):
             if not k.isidentifier():
                 raise RuntimeError("'{}' is an invalid config key.".format(k))
-            if k in [*vars(Config), *vars(Group), *vars(Value)]:
+            if k in [*dir(Config), *dir(Group), *dir(Value)]:
                 raise RuntimeError("'{}' is a reserved config key.".format(k))
             if i == len(splitted):
                 partial[k] = value
