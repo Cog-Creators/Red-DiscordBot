@@ -1173,7 +1173,7 @@ embedset channel
 
 .. code-block:: none
 
-    [p]embedset channel [enabled]
+    [p]embedset channel <channel> [enabled]
 
 **Description**
 
@@ -1187,10 +1187,12 @@ If enabled is left blank, the setting will be unset and the guild default will b
 To see full evaluation order of embed settings, run ``[p]help embedset``.
 
 **Examples:**
-    - ``[p]embedset channel False`` - Disables embeds in this channel.
-    - ``[p]embedset channel`` - Resets value to use guild default.
+    - ``[p]embedset channel #text-channel False`` - Disables embeds in the #text-channel.
+    - ``[p]embedset channel #forum-channel disable`` - Disables embeds in the #forum-channel.
+    - ``[p]embedset channel #text-channel`` - Resets value to use guild default in the #text-channel.
 
 **Arguments:**
+    - ``<channel>`` - The text, voice, stage, or forum channel to set embed setting for.
     - ``[enabled]`` - Whether to use embeds in this channel. Leave blank to reset to default.
 
 .. _core-command-embedset-command:
@@ -1473,9 +1475,6 @@ helpset maxpages
 
 Set the maximum number of help pages sent in a server channel.
 
-.. Note:: This setting does not apply to menu help.
-
-
 If a help message contains more pages than this value, the help message will
 be sent to the command author via DM. This is to help reduce spam in server
 text channels.
@@ -1681,8 +1680,11 @@ Set the tagline to be used.
 The maximum tagline length is 2048 characters.
 This setting only applies to embedded help. If no tagline is specified, the default will be used instead.
 
+You can use ``[p]`` in your tagline, which will be replaced by the bot's prefix.
+
 **Examples:**
     - ``[p]helpset tagline Thanks for using the bot!``
+    - ``[p]helpset tagline Use [p]invite to add me to your server.``
     - ``[p]helpset tagline`` - Resets the tagline to the default.
 
 **Arguments:**
@@ -2865,7 +2867,7 @@ Supports either an attachment or an image URL.
 **Examples:**
     - ``[p]set bot avatar`` - With an image attachment, this will set the avatar.
     - ``[p]set bot avatar`` - Without an attachment, this will show the command help.
-    - ``[p]set bot avatar https://links.flaree.xyz/k95`` - Sets the avatar to the provided url.
+    - ``[p]set bot avatar https://avatars.githubusercontent.com/u/23690422`` - Sets the avatar to the provided url.
 
 **Arguments:**
     - ``[url]`` - An image url to be used as an avatar. Leave blank when uploading an attachment.
@@ -2892,6 +2894,57 @@ Removes Red's avatar.
 
 **Example:**
     - ``[p]set bot avatar remove``
+
+.. _core-command-set-bot-banner:
+
+""""""""""""""
+set bot banner
+""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot banner [url]
+
+**Description**
+
+Sets Red's banner
+
+Supports either an attachment or an image URL.
+
+**Examples:**
+    - ``[p]set bot banner`` - With an image attachment, this will set the banner.
+    - ``[p]set bot banner`` - Without an attachment, this will show the command help.
+    - ``[p]set bot banner https://opengraph.githubassets.com`` - Sets the banner to the provided url.
+
+**Arguments:**
+    - ``[url]`` - An image url to be used as an banner. Leave blank when uploading an attachment.
+
+.. _core-command-set-bot-banner-remove:
+
+"""""""""""""""""""""
+set bot banner remove
+"""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot banner remove
+
+.. tip:: Alias: ``set bot banner clear``
+
+**Description**
+
+Removes Red's banner.
+
+**Example:**
+    - ``[p]set bot banner remove``
 
 .. _core-command-set-bot-custominfo:
 
@@ -3674,7 +3727,7 @@ set serverprefix
 
 .. code-block:: none
 
-    [p]set serverprefix [prefixes...]
+    [p]set serverprefix [server] [prefixes...]
 
 .. tip:: Alias: ``set serverprefixes``
 
@@ -3693,8 +3746,10 @@ Sets Red's server prefix(es).
     - ``[p]set serverprefix "! "`` - Quotes are needed to use spaces in prefixes.
     - ``[p]set serverprefix "@Red "`` - This uses a mention as the prefix.
     - ``[p]set serverprefix ! ? .`` - Sets multiple prefixes.
+    - ``[p]set serverprefix "Red - Discord Bot" ?`` - Sets the prefix for a specific server. Quotes are needed to use spaces in the server name.
 
 **Arguments:**
+    - ``[server]`` - The server to set the prefix for. Defaults to current server.
     - ``[prefixes...]`` - The prefixes the bot will respond to on this server. Leave blank to clear server prefixes.
 
 .. _core-command-set-showsettings:
@@ -3707,11 +3762,16 @@ set showsettings
 
 .. code-block:: none
 
-    [p]set showsettings 
+    [p]set showsettings [server]
 
 **Description**
 
 Show the current settings for Red.
+
+Accepts optional server parameter to allow prefix recovery.
+
+**Arguments:**
+    - ``[server]`` - The server to show the settings for. Defaults to current server, or no server in a DM context.
 
 .. _core-command-set-status:
 
@@ -3759,6 +3819,35 @@ Maximum length for a competing status is 128 characters.
 
 **Arguments:**
     - ``[competing]`` - The text to follow ``Competing in``. Leave blank to clear the current activity status.
+
+.. _core-command-set-status-custom:
+
+"""""""""""""""""
+set status custom
+"""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set status custom [text]
+
+**Description**
+
+Sets Red's custom status.
+
+This will appear as ``<text>``.
+
+Maximum length for a custom status is 128 characters.
+
+**Examples:**
+    - ``[p]set status custom`` - Clears the activity status.
+    - ``[p]set status custom Running cogs...``
+
+**Arguments:**
+    - ``[text]`` - The custom status text. Leave blank to clear the current activity status.
 
 .. _core-command-set-status-dnd:
 
@@ -4168,7 +4257,14 @@ slash list
 **Description**
 
 List the slash commands the bot can see, and whether or not they are enabled.
+
 This command shows the state that will be changed to when ``[p]slash sync`` is run.
+Commands from the same cog are grouped, with the cog name as the header.
+
+The prefix denotes the state of the command:
+- Commands starting with ``- `` have not yet been enabled.
+- Commands starting with ``+ `` have been manually enabled.
+- Commands starting with ``++`` have been enabled by the cog author, and cannot be disabled.
 
 .. _core-command-slash-sync:
 

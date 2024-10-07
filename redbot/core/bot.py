@@ -37,30 +37,30 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, commands, errors, drivers, modlog, bank
-from .cli import ExitCodes
-from .cog_manager import CogManager, CogManagerUI
+from . import Config, i18n, app_commands, commands, errors, _drivers, modlog, bank
+from ._cli import ExitCodes
+from ._cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
 from .data_manager import cog_data_path
 from .dev_commands import Dev
-from .events import init_events
-from .global_checks import init_global_checks
-from .settings_caches import (
+from ._events import init_events
+from ._global_checks import init_global_checks
+from ._settings_caches import (
     PrefixManager,
     IgnoreManager,
     WhitelistBlacklistManager,
     DisabledCogCache,
     I18nManager,
 )
-from .rpc import RPCMixin
+from .utils.predicates import MessagePredicate
+from ._rpc import RPCMixin
 from .tree import RedTree
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
+from .utils.chat_formatting import box, text_to_file
 from .utils._internal_utils import send_to_owners_with_prefix_replaced
 
 if TYPE_CHECKING:
     from discord.ext.commands.hybrid import CommandCallback, ContextT, P
-
-    from redbot.core import app_commands
 
 
 _T = TypeVar("_T")
@@ -80,6 +80,8 @@ DataDeletionResults = namedtuple("DataDeletionResults", "failed_modules failed_c
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
 UserOrRole = Union[int, discord.Role, discord.Member, discord.User]
+
+_ = i18n.Translator("Core", __file__)
 
 
 def _is_submodule(parent, child):
@@ -253,7 +255,7 @@ class Red(
         Set's Red's help formatter.
 
         .. warning::
-            This method is provisional.
+            This method is `provisional <developer-guarantees-exclusions>`.
 
 
         The formatter must implement all methods in
@@ -294,7 +296,7 @@ class Red(
         Resets Red's help formatter.
 
         .. warning::
-            This method is provisional.
+            This method is `provisional <developer-guarantees-exclusions>`.
 
 
         This exists for use in ``cog_unload`` for cogs which replace the formatter
@@ -835,7 +837,10 @@ class Red(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread))
+            assert isinstance(
+                channel,
+                (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread),
+            )
             if not can_user_send_messages_in(guild.me, channel):
                 return False
             if not (await self.ignored_channel_or_guild(message)):
@@ -847,7 +852,7 @@ class Red(
         return True
 
     async def ignored_channel_or_guild(
-        self, ctx: Union[commands.Context, discord.Message]
+        self, ctx: Union[commands.Context, discord.Message, discord.Interaction]
     ) -> bool:
         """
         This checks if the bot is meant to be ignoring commands in a channel or guild,
@@ -857,7 +862,8 @@ class Red(
         ----------
         ctx :
             Context object of the command which needs to be checked prior to invoking
-            or a Message object which might be intended for use as a command.
+            or a Message object which might be intended for use as a command
+            or an Interaction object which might be intended for use with a command.
 
         Returns
         -------
@@ -867,20 +873,30 @@ class Red(
         Raises
         ------
         TypeError
-            ``ctx.channel`` is of `discord.PartialMessageable` type.
+            ``ctx.channel`` is a `discord.PartialMessageable` with a ``type`` other
+            than ``discord.ChannelType.private``
         """
+        if isinstance(ctx, discord.Interaction):
+            author = ctx.user
+        else:
+            author = ctx.author
+
+        is_private = isinstance(ctx.channel, discord.abc.PrivateChannel)
         if isinstance(ctx.channel, discord.PartialMessageable):
-            raise TypeError("Can't check permissions for PartialMessageable.")
-        perms = ctx.channel.permissions_for(ctx.author)
+            if ctx.channel.type is not discord.ChannelType.private:
+                raise TypeError("Can't check permissions for non-private PartialMessageable.")
+            is_private = True
+        perms = ctx.channel.permissions_for(author)
         surpass_ignore = (
-            isinstance(ctx.channel, discord.abc.PrivateChannel)
+            is_private
             or perms.manage_guild
-            or await self.is_owner(ctx.author)
-            or await self.is_admin(ctx.author)
+            or await self.is_owner(author)
+            or await self.is_admin(author)
         )
         # guild-wide checks
         if surpass_ignore:
             return True
+
         guild_ignored = await self._ignored_cache.get_ignored_guild(ctx.guild)
         if guild_ignored:
             return False
@@ -1241,7 +1257,11 @@ class Red(
     def _setup_owners(self) -> None:
         if self.application.team:
             if self._use_team_features:
-                self.owner_ids.update(m.id for m in self.application.team.members)
+                self.owner_ids.update(
+                    m.id
+                    for m in self.application.team.members
+                    if m.role in (discord.TeamMemberRole.admin, discord.TeamMemberRole.developer)
+                )
         elif self._owner_id_overwrite is None:
             self.owner_ids.add(self.application.owner.id)
 
@@ -1278,6 +1298,7 @@ class Red(
         channel: Union[
             discord.TextChannel,
             discord.VoiceChannel,
+            discord.StageChannel,
             commands.Context,
             discord.User,
             discord.Member,
@@ -1292,7 +1313,7 @@ class Red(
 
         Arguments
         ---------
-        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
+        channel : Union[`discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, `commands.Context`, `discord.User`, `discord.Member`, `discord.Thread`]
             The target messageable object to check embed settings for.
 
         Keyword Arguments
@@ -1339,7 +1360,10 @@ class Red(
                 "You cannot pass a GroupChannel, DMChannel, or PartialMessageable to this method."
             )
 
-        if isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+        if isinstance(
+            channel,
+            (discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread),
+        ):
             channel_id = channel.parent_id if isinstance(channel, discord.Thread) else channel.id
 
             if check_permissions and not channel.permissions_for(channel.guild.me).embed_links:
@@ -1693,6 +1717,7 @@ class Red(
                 self.remove_permissions_hook(hook)
 
         await super().remove_cog(cogname, guild=guild, guilds=guilds)
+        self.dispatch("cog_remove", cog)
 
         cog.requires.reset()
 
@@ -1773,6 +1798,8 @@ class Red(
         Checks if the user, message, context, or role should be considered immune from automated
         moderation actions.
 
+        Bot users are considered immune.
+
         This will return ``False`` in direct messages.
 
         Parameters
@@ -1791,22 +1818,22 @@ class Red(
             return False
 
         if isinstance(to_check, discord.Role):
-            ids_to_check = [to_check.id]
+            ids_to_check = {to_check.id}
         else:
             author = getattr(to_check, "author", to_check)
+            if author.bot:
+                return True
+            ids_to_check = set()
             try:
-                ids_to_check = [r.id for r in author.roles]
+                ids_to_check = {r.id for r in author.roles}
             except AttributeError:
-                # webhook messages are a user not member,
-                # cheaper than isinstance
-                if author.bot and author.discriminator == "0000":
-                    return True  # webhooks require significant permissions to enable.
-            else:
-                ids_to_check.append(author.id)
+                # cheaper than isinstance(author, discord.User)
+                pass
+            ids_to_check.add(author.id)
 
         immune_ids = await self._config.guild(guild).autoimmune_ids()
 
-        return any(i in immune_ids for i in ids_to_check)
+        return not ids_to_check.isdisjoint(immune_ids)
 
     @staticmethod
     async def send_filtered(
@@ -1915,6 +1942,8 @@ class Red(
                 self.dispatch("command_add", subcommand)
                 if permissions_not_loaded:
                     subcommand.requires.ready_event.set()
+        if isinstance(command, (commands.HybridCommand, commands.HybridGroup)):
+            command.app_command.extras = command.extras
 
     def remove_command(self, name: str, /) -> Optional[commands.Command]:
         command = super().remove_command(name)
@@ -2059,7 +2088,9 @@ class Red(
 
     async def get_owner_notification_destinations(
         self,
-    ) -> List[Union[discord.TextChannel, discord.VoiceChannel, discord.User]]:
+    ) -> List[
+        Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.User]
+    ]:
         """
         Gets the users and channels to send to
         """
@@ -2145,7 +2176,7 @@ class Red(
     async def close(self):
         """Logs out of Discord and closes all connections."""
         await super().close()
-        await drivers.get_driver_class().teardown()
+        await _drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
                 await self.rpc.close()
@@ -2289,3 +2320,102 @@ class Red(
             failed_cogs=failures["cog"],
             unhandled=failures["unhandled"],
         )
+
+    async def send_interactive(
+        self,
+        channel: discord.abc.Messageable,
+        messages: Iterable[str],
+        *,
+        user: Optional[discord.User] = None,
+        box_lang: Optional[str] = None,
+        timeout: int = 60,
+        join_character: str = "",
+    ) -> List[discord.Message]:
+        """
+        Send multiple messages interactively.
+
+        The user will be prompted for whether or not they would like to view
+        the next message, one at a time. They will also be notified of how
+        many messages are remaining on each prompt.
+
+        Parameters
+        ----------
+        channel : discord.abc.Messageable
+            The channel to send the messages to.
+        messages : `iterable` of `str`
+            The messages to send.
+        user : discord.User
+            The user that can respond to the prompt.
+            When this is ``None``, any user can respond.
+        box_lang : Optional[str]
+            If specified, each message will be contained within a code block of
+            this language.
+        timeout : int
+            How long the user has to respond to the prompt before it times out.
+            After timing out, the bot deletes its prompt message.
+        join_character : str
+            The character used to join all the messages when the file output
+            is selected.
+
+        Returns
+        -------
+        List[discord.Message]
+            A list of sent messages.
+        """
+        messages = tuple(messages)
+        ret = []
+        # using dpy_commands.Context to keep the Messageable contract in full
+        if isinstance(channel, dpy_commands.Context):
+            # this is only necessary to ensure that `channel.delete_messages()` works
+            # when `ctx.channel` has that method
+            channel = channel.channel
+
+        for idx, page in enumerate(messages, 1):
+            if box_lang is None:
+                msg = await channel.send(page)
+            else:
+                msg = await channel.send(box(page, lang=box_lang))
+            ret.append(msg)
+            n_remaining = len(messages) - idx
+            if n_remaining > 0:
+                if n_remaining == 1:
+                    prompt_text = _(
+                        "There is still one message remaining. Type {command_1} to continue"
+                        " or {command_2} to upload all contents as a file."
+                    )
+                else:
+                    prompt_text = _(
+                        "There are still {count} messages remaining. Type {command_1} to continue"
+                        " or {command_2} to upload all contents as a file."
+                    )
+                query = await channel.send(
+                    prompt_text.format(count=n_remaining, command_1="`more`", command_2="`file`")
+                )
+                pred = MessagePredicate.lower_contained_in(
+                    ("more", "file"), channel=channel, user=user
+                )
+                try:
+                    resp = await self.wait_for(
+                        "message",
+                        check=pred,
+                        timeout=timeout,
+                    )
+                except asyncio.TimeoutError:
+                    with contextlib.suppress(discord.HTTPException):
+                        await query.delete()
+                    break
+                else:
+                    try:
+                        await channel.delete_messages((query, resp))
+                    except (discord.HTTPException, AttributeError):
+                        # In case the bot can't delete other users' messages,
+                        # or is not a bot account
+                        # or channel is a DM
+                        with contextlib.suppress(discord.HTTPException):
+                            await query.delete()
+                    if pred.result == 1:
+                        ret.append(
+                            await channel.send(file=text_to_file(join_character.join(messages)))
+                        )
+                        break
+        return ret

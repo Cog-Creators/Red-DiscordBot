@@ -27,7 +27,7 @@ from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelt
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
 TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/helix/streams/"
-TWITCH_FOLLOWS_ENDPOINT = TWITCH_ID_ENDPOINT + "/follows"
+TWITCH_FOLLOWS_ENDPOINT = TWITCH_BASE_URL + "/helix/channels/followers"
 TWITCH_GAMES_ENDPOINT = TWITCH_BASE_URL + "/helix/games"
 
 YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3"
@@ -55,7 +55,6 @@ def get_video_ids_from_feed(feed):
 
 
 class Stream:
-
     token_name: ClassVar[Optional[str]] = None
     platform_name: ClassVar[Optional[str]] = None
 
@@ -107,7 +106,6 @@ class Stream:
 
 
 class YoutubeStream(Stream):
-
     token_name = "youtube"
     platform_name = "YouTube"
 
@@ -224,17 +222,16 @@ class YoutubeStream(Stream):
         if vid_data["liveStreamingDetails"].get("scheduledStartTime", None) is not None:
             if "actualStartTime" not in vid_data["liveStreamingDetails"]:
                 start_time = parse_time(vid_data["liveStreamingDetails"]["scheduledStartTime"])
+                start_time_unix = time.mktime(start_time.timetuple())
                 start_in = start_time - datetime.now(timezone.utc)
                 if start_in.total_seconds() > 0:
-                    embed.description = _("This stream will start in {time}").format(
-                        time=humanize_timedelta(
-                            timedelta=timedelta(minutes=start_in.total_seconds() // 60)
-                        )  # getting rid of seconds
+                    embed.description = _("This stream will start <t:{time}:R>").format(
+                        time=int(start_time_unix)
                     )
                 else:
-                    embed.description = _(
-                        "This stream was scheduled for {min} minutes ago"
-                    ).format(min=round((start_in.total_seconds() * -1) // 60))
+                    embed.description = _("This stream was scheduled for <t:{time}:R>").format(
+                        time=int(start_time_unix)
+                    )
                 embed.timestamp = start_time
                 is_schedule = True
             else:
@@ -307,7 +304,6 @@ class YoutubeStream(Stream):
 
 
 class TwitchStream(Stream):
-
     token_name = "twitch"
     platform_name = "Twitch"
 
@@ -399,7 +395,6 @@ class TwitchStream(Stream):
             if user_profile_data is not None:
                 final_data["login"] = user_profile_data["login"]
                 final_data["profile_image_url"] = user_profile_data["profile_image_url"]
-                final_data["view_count"] = user_profile_data["view_count"]
 
             stream_data = stream_data["data"][0]
             final_data["user_name"] = self.display_name = stream_data["user_name"]
@@ -407,8 +402,11 @@ class TwitchStream(Stream):
             final_data["thumbnail_url"] = stream_data["thumbnail_url"]
             final_data["title"] = stream_data["title"]
             final_data["type"] = stream_data["type"]
+            final_data["view_count"] = stream_data["viewer_count"]
 
-            __, follows_data = await self.get_data(TWITCH_FOLLOWS_ENDPOINT, {"to_id": self.id})
+            __, follows_data = await self.get_data(
+                TWITCH_FOLLOWS_ENDPOINT, {"broadcaster_id": self.id}
+            )
             if follows_data:
                 final_data["followers"] = follows_data["total"]
 
@@ -466,7 +464,6 @@ class TwitchStream(Stream):
 
 
 class PicartoStream(Stream):
-
     token_name = None  # This streaming services don't currently require an API key
     platform_name = "Picarto"
 
@@ -493,9 +490,7 @@ class PicartoStream(Stream):
             raise APIError(r.status, data)
 
     def make_embed(self, data):
-        avatar = rnd(
-            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg".format(data["name"].lower())
-        )
+        avatar = rnd(data["avatar"])
         url = "https://picarto.tv/" + data["name"]
         thumbnail = data["thumbnails"]["web"]
         embed = discord.Embed(title=data["title"], url=url, color=0x4C90F3)

@@ -1,5 +1,4 @@
-aiodns
-aiohttp
+aiohttp<3.10
 aiohttp-json-rpc
 apsw
 babel
@@ -15,7 +14,7 @@ python-dateutil
 PyYAML
 rapidfuzz
 Red-Commons
-Red-Lavalink>=0.11.0rc1
+Red-Lavalink
 rich
 schema
 typing_extensions
