@@ -23,6 +23,8 @@ from .utils.chat_formatting import box, pagify, humanize_list, inline
 
 __all__ = ("CogManager", "CogManagerUI")
 
+_TEMP_PATHS: List[Path] = []
+
 
 class NoSuchCog(ImportError):
     """Thrown when a cog is missing.
@@ -86,7 +88,7 @@ class CogManager:
             A list of user-defined paths.
 
         """
-        return list(map(Path, deduplicate_iterables(await self.config.paths())))
+        return list(map(Path, deduplicate_iterables(_TEMP_PATHS, await self.config.paths())))
 
     async def set_install_path(self, path: Path) -> Path:
         """Set the install path for 3rd party cogs.
@@ -133,7 +135,7 @@ class CogManager:
         """
         return Path(path)
 
-    async def add_path(self, path: Union[Path, str]) -> None:
+    async def add_path(self, path: Union[Path, str], *, persist: bool = True) -> None:
         """Add a cog path to current list.
 
         This will ignore duplicates.
@@ -142,6 +144,8 @@ class CogManager:
         ----------
         path : `pathlib.Path` or `str`
             Path to add.
+        persist : `bool`
+            Whether or not the path should be persisted through restarts.
 
         Raises
         ------
@@ -163,10 +167,14 @@ class CogManager:
         if path == self.CORE_PATH:
             raise ValueError("Cannot add the core path as an additional path.")
 
-        current_paths = await self.user_defined_paths()
-        if path not in current_paths:
-            current_paths.append(path)
-            await self.set_paths(current_paths)
+        if persist:
+            current_paths = await self.user_defined_paths()
+            if path not in current_paths:
+                current_paths.append(path)
+                await self.set_paths(current_paths)
+        else:
+            if path not in _TEMP_PATHS:
+                _TEMP_PATHS.append(path)
 
     async def remove_path(self, path: Union[Path, str]) -> None:
         """Remove a path from the current paths list.
