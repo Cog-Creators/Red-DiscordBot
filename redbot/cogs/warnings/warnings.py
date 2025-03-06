@@ -3,7 +3,7 @@ import contextlib
 from datetime import timezone
 from collections import namedtuple
 from copy import copy
-from typing import Union, Optional, Literal
+from typing import Union, Literal
 
 import discord
 
@@ -13,11 +13,12 @@ from redbot.cogs.warnings.helpers import (
     get_command_for_dropping_points,
     warning_points_remove_check,
 )
-from redbot.core import Config, checks, commands, modlog
+from redbot.core import Config, commands, modlog
 from redbot.core.bot import Red
-from redbot.core.commands import UserInputOptional
+from redbot.core.commands import UserInputOptional, RawUserIdConverter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
+from redbot.core.utils.views import ConfirmView
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu
 
@@ -110,7 +111,7 @@ class Warnings(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def warningset(self, ctx: commands.Context):
         """Manage settings for Warnings."""
         pass
@@ -159,7 +160,7 @@ class Warnings(commands.Cog):
     async def warnchannel(
         self,
         ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.VoiceChannel] = None,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel] = None,
     ):
         """Set the channel where warnings should be sent to.
 
@@ -195,7 +196,7 @@ class Warnings(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
         """Manage automated actions for Warnings.
 
@@ -261,7 +262,7 @@ class Warnings(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @commands.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):
         """Manage warning reasons.
 
@@ -305,7 +306,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def reasonlist(self, ctx: commands.Context):
         """List all configured reasons for Warnings."""
         guild = ctx.guild
@@ -334,7 +335,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def actionlist(self, ctx: commands.Context):
         """List all configured automated actions for Warnings."""
         guild = ctx.guild
@@ -369,11 +370,11 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def warn(
         self,
         ctx: commands.Context,
-        member: discord.Member,
+        user: Union[discord.Member, RawUserIdConverter],
         points: UserInputOptional[int] = 1,
         *,
         reason: str,
@@ -386,6 +387,49 @@ class Warnings(commands.Cog):
         or a custom reason if ``[p]warningset allowcustomreasons`` is set.
         """
         guild = ctx.guild
+        member = None
+        if isinstance(user, discord.Member):
+            member = user
+        elif isinstance(user, int):
+            if not ctx.channel.permissions_for(ctx.guild.me).ban_members:
+                await ctx.send(_("User `{user}` is not in the server.").format(user=user))
+                return
+            user_obj = self.bot.get_user(user) or discord.Object(id=user)
+
+            confirm = ConfirmView(ctx.author, timeout=30)
+            confirm.message = await ctx.send(
+                _(
+                    "User `{user}` is not in the server. Would you like to ban them instead?"
+                ).format(user=user),
+                view=confirm,
+            )
+            await confirm.wait()
+            if confirm.result:
+                try:
+                    await ctx.guild.ban(user_obj, reason=reason)
+                    await modlog.create_case(
+                        self.bot,
+                        guild,
+                        ctx.message.created_at,
+                        "hackban",
+                        user,
+                        ctx.author,
+                        reason,
+                        until=None,
+                        channel=None,
+                    )
+                except discord.HTTPException as error:
+                    await ctx.send(
+                        _("An error occurred while trying to ban the user. Error: {error}").format(
+                            error=error
+                        )
+                    )
+            else:
+                confirm.message = await ctx.send(_("No action taken."))
+
+            await ctx.tick()
+            return
+
         if member == ctx.author:
             return await ctx.send(_("You cannot warn yourself."))
         if member.bot:
@@ -525,7 +569,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin()
+    @commands.admin()
     async def warnings(self, ctx: commands.Context, member: Union[discord.Member, int]):
         """List the warnings for the specified user."""
 
@@ -601,7 +645,7 @@ class Warnings(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
+    @commands.admin_or_permissions(ban_members=True)
     async def unwarn(
         self,
         ctx: commands.Context,

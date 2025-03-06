@@ -197,7 +197,13 @@ class MixinMeta(ABC):
         self,
         config: Config,
         ctx_or_channel: Optional[
-            Union[Context, discord.TextChannel, discord.VoiceChannel, discord.Thread]
+            Union[
+                Context,
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.Thread,
+            ]
         ],
         query: str,
         query_obj: Query,
@@ -253,7 +259,10 @@ class MixinMeta(ABC):
 
     @abstractmethod
     def _has_notify_perms(
-        self, channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+        self,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
     ) -> bool:
         raise NotImplementedError()
 

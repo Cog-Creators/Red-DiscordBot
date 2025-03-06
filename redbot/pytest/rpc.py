@@ -1,5 +1,5 @@
 import pytest
-from redbot.core.rpc import RPC, RPCMixin
+from redbot.core._rpc import RPC, RPCMixin
 
 from unittest.mock import MagicMock
 

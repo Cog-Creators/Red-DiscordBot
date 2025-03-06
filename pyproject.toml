@@ -33,6 +33,7 @@ dynamic = ["version", "requires-python", "dependencies", "optional-dependencies"
 "Donate on Patreon" = "https://www.patreon.com/Red_Devs"
 "Issue Tracker" = "https://github.com/Cog-Creators/Red-DiscordBot/issues"
 "Source Code" = "https://github.com/Cog-Creators/Red-DiscordBot"
+"Changelog" = "https://docs.discord.red/en/stable/changelog.html"
 
 [project.scripts]
 redbot = "redbot.__main__:main"
@@ -43,7 +44,7 @@ red-discordbot = "redbot.pytest"
 
 [tool.black]
 line-length = 99
-required-version = '22'
+required-version = '23'
 target-version = ['py38']
 include = '\.py$'
 force-exclude = '''

@@ -31,7 +31,7 @@ In terms of scope, global rules will be checked first, then server rules.
 For each of those, the first rule pertaining to one of the following models will be used:
 
 1. User
-2. Voice channel a user is connected to
+2. Voice/stage channel a user is connected to
 3. The channel command was issued in (parent channel in case of invocations in threads)
 4. Channel category
 5. Roles, highest to lowest
