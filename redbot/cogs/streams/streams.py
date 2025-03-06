@@ -21,6 +21,10 @@ from .errors import (
     StreamsError,
     YoutubeQuotaExceeded,
 )
+from .ui import (
+    TwitchGameSelector,
+    TwitchGameSelectorView,
+)
 from . import streamtypes as _streamtypes
 
 import re
@@ -33,6 +37,7 @@ from collections import defaultdict
 from typing import Optional, List, Tuple, Union, Dict
 
 MAX_RETRY_COUNT = 10
+IGDB_URL = "https://api.igdb.com/v4/games"
 
 _ = Translator("Streams", __file__)
 log = logging.getLogger("red.core.cogs.Streams")
@@ -343,7 +348,9 @@ class Streams(commands.Cog):
     async def twitch_addgame(self, ctx: commands.Context, channel_name: str, *, game_name: str):
         """Add a game to send alerts for the specified channel.
 
-        Game name must be exactly the name that appears on the game's Twitch page"""
+        Game name must be exactly the name that appears on the game's Twitch page, 
+        otherwise the game name provided will be searched for on IGDB and a menu will 
+        be presented to select a game from."""
         stream = self.get_stream(TwitchStream, channel_name)
         if not stream:
             return await ctx.send(
@@ -356,34 +363,43 @@ class Streams(commands.Cog):
         except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
             return await ctx.send(_("Connection error occurred when fetching Twitch stream"))
         if not game_data:
-            return await ctx.send(
-                _(
-                    "Could not find the game requested. Make sure the game name matches how it appears on Twitch."
+            header = {"Client-ID": str(stream._client_id), "Authorization": f"Bearer {stream._bearer}"}
+            data = f'search "{game_name}"; fields name; limit 25;'
+            async with aiohttp.ClientSession() as session:
+                async with session.post(IGDB_URL, headers=header, data=data) as resp:
+                    search_data = await resp.json()
+            options = [discord.SelectOption(label=game["name"]) for game in search_data]
+            selector = TwitchGameSelector(options)
+            selector_view = TwitchGameSelectorView(selector, timeout=60)
+            await ctx.send("Please choose a game to send alerts for streams from this channel:", view=selector_view)
+            await selector_view.wait()
+            game_name = selector_view.children[0].values[0]
+            try:
+                status, game_data = await stream.get_data(
+                    _streamtypes.TWITCH_GAMES_ENDPOINT, game_name
                 )
+            except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
+                return await ctx.send(_("Connection error occurred when fetching Twitch stream"))
+        game = game_data["data"][0]
+        if game["id"] in stream.games:
+            chan_list = stream.games[game["id"]]
+        else:
+            chan_list = []
+        if ctx.channel.id in chan_list:
+            return await ctx.send(
+                _("Already notifying in this channel when the stream is live with this game!")
             )
         else:
-            game = game_data["data"][0]
-            if game["id"] in stream.games:
-                chan_list = stream.games[game["id"]]
-            else:
-                chan_list = []
-            if ctx.channel.id in chan_list:
-                return await ctx.send(
-                    _("Already notifying in this channel when the stream is live with this game!")
-                )
-            else:
-                self.streams.remove(stream)
-                chan_list.append(ctx.channel.id)
-                stream.games[game["id"]] = chan_list
-                self.streams.append(stream)
-                await self.save_streams()
-                await ctx.tick()
+            self.streams.remove(stream)
+            chan_list.append(ctx.channel.id)
+            stream.games[game["id"]] = chan_list
+            self.streams.append(stream)
+            await self.save_streams()
+            await ctx.tick()
 
     @_twitch.command(name="removegame")
-    async def twitch_removegame(self, ctx: commands.Context, channel_name: str, *, game_name: str):
-        """Remove a game to send alerts for the specified channel.
-
-        Game name must be exactly the name that appears on the game's Twitch page"""
+    async def twitch_removegame(self, ctx: commands.Context, channel_name: str, game_name: str):
+        """Remove a game to send alerts for the specified channel from a list of games."""
         stream = self.get_stream(TwitchStream, channel_name)
         if not stream:
             return await ctx.send(
@@ -395,12 +411,25 @@ class Streams(commands.Cog):
             )
         except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
             return await ctx.send(_("Connection error occurred when fetching Twitch stream"))
+        # TODO: Swap away from IGDB to Twitch to get game data
         if not game_data:
-            return await ctx.send(
-                _(
-                    "Could not find the game requested. Make sure the game name matches how it appears on Twitch."
+            header = {"Client-ID": str(stream._client_id), "Authorization": f"Bearer {stream._bearer}"}
+            data = f'search "{game_name}"; fields name; limit 25;'
+            async with aiohttp.ClientSession() as session:
+                async with session.post(IGDB_URL, headers=header, data=data) as resp:
+                    search_data = await resp.json()
+            options = [discord.SelectOption(label=game["name"]) for game in search_data]
+            selector = TwitchGameSelector(options)
+            selector_view = TwitchGameSelectorView(selector, timeout=60)
+            await ctx.send("Please choose a game to remove alerts for streams from this channel:", view=selector_view)
+            await selector_view.wait()
+            game_name = selector_view.children[0].values[0]
+            try:
+                status, game_data = await stream.get_data(
+                    _streamtypes.TWITCH_GAMES_ENDPOINT, game_name
                 )
-            )
+            except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
+                return await ctx.send(_("Connection error occurred when fetching Twitch stream"))
         else:
             game = game_data["data"][0]
             if game["id"] in stream.games:
