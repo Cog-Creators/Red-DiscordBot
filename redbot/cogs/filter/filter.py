@@ -2,7 +2,7 @@ import asyncio
 import discord
 import re
 from datetime import timezone
-from typing import Union, Set, Literal, Optional
+from typing import Union, Set, Literal, Optional, Iterable, Dict, Any
 
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
@@ -515,6 +515,22 @@ class Filter(commands.Cog):
                 texts.append(answer.text or "")
         for attachment in message.attachments:
             texts.append(attachment.description or "")
+
+        if (
+            message.reference is not None
+            and message.reference.type is discord.MessageReferenceType.forward
+        ):
+            # unlike user messages, forwards can include things that bots can send
+            # since you can forward a bot's message
+            for snapshot in message.message_snapshots:
+                texts.append(snapshot.content)
+                for attachment in snapshot.attachments:
+                    texts.append(attachment.description or "")
+                for embed in snapshot.embeds:
+                    texts.extend(_extract_string_values(embed.to_dict().values()))
+                for component in snapshot.components:
+                    texts.extend(_extract_string_values_from_component(component))
+
         hits = await self.filter_hits(message.channel, *texts)
 
         if hits:
@@ -624,3 +640,26 @@ class Filter(commands.Cog):
             except discord.HTTPException:
                 pass
             return
+
+
+def _extract_string_values_from_component(
+    component: Union[discord.ActionRow, discord.Button, discord.SelectMenu],
+) -> Iterable[str]:
+    if isinstance(component, discord.ActionRow):
+        for child in component.children:
+            yield from _extract_string_values_from_component(child)
+    elif isinstance(component, discord.Button):
+        yield component.url
+        yield component.label
+    elif isinstance(component, discord.SelectMenu):
+        yield component.placeholder
+
+
+def _extract_string_values(data: Iterable[Any]) -> Iterable[str]:
+    for value in data:
+        if isinstance(value, str):
+            yield value
+        elif isinstance(value, list):
+            yield from _extract_string_values(value)
+        elif isinstance(value, dict):
+            yield from _extract_string_values(value.values())

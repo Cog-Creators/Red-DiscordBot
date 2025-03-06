@@ -18,7 +18,7 @@ brotli==1.1.0
     # via -r base.in
 click==8.1.8
     # via -r base.in
-discord-py==2.4.0
+discord-py==2.5.1
     # via
     #   -r base.in
     #   red-lavalink
@@ -46,7 +46,7 @@ platformdirs==4.3.6
     # via -r base.in
 propcache==0.2.0
     # via yarl
-psutil==6.1.1
+psutil==7.0.0
     # via -r base.in
 pygments==2.19.1
     # via rich
@@ -77,17 +77,19 @@ yarl==1.15.2
     # via
     #   -r base.in
     #   aiohttp
+zstandard==0.23.0
+    # via -r base.in
 async-timeout==4.0.3; python_version != "3.11"
     # via aiohttp
 colorama==0.4.6; sys_platform == "win32"
     # via click
 distro==1.9.0; sys_platform == "linux" and sys_platform == "linux"
     # via -r base.in
-importlib-metadata==8.5.0; python_version != "3.11" and python_version != "3.10"
+importlib-metadata==8.5.0; python_version != "3.10" and python_version != "3.11"
     # via markdown
 pytz==2025.1; python_version == "3.8"
     # via babel
 uvloop==0.21.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
     # via -r base.in
-zipp==3.20.2; python_version != "3.11" and python_version != "3.10"
+zipp==3.20.2; python_version != "3.10" and python_version != "3.11"
     # via importlib-metadata
