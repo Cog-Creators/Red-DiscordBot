@@ -37,7 +37,7 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, app_commands, commands, errors, _drivers, modlog, bank
+from . import Config, _i18n, i18n, app_commands, commands, errors, _drivers, modlog, bank
 from ._cli import ExitCodes
 from ._cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
@@ -115,7 +115,7 @@ class Red(
             owner=None,
             whitelist=[],
             blacklist=[],
-            locale="en-US",
+            locale=_i18n.FRESH_INSTALL_LOCALE,
             regional_format=None,
             embeds=True,
             color=15158332,
@@ -1145,9 +1145,28 @@ class Red(
             self.owner_ids.add(self._owner_id_overwrite)
 
         i18n_locale = await self._config.locale()
-        i18n.set_locale(i18n_locale)
+        try:
+            _i18n.set_global_locale(i18n_locale)
+        except (ValueError, TypeError):
+            log.warning(
+                "The bot's global locale was set to an invalid value (%r)"
+                " and will be reset to default (%s).",
+                i18n_locale,
+                _i18n.FRESH_INSTALL_LOCALE,
+            )
+            i18n_locale = _i18n.FRESH_INSTALL_LOCALE
+            await self._config.locale.clear()
         i18n_regional_format = await self._config.regional_format()
-        i18n.set_regional_format(i18n_regional_format)
+        try:
+            _i18n.set_global_regional_format(i18n_regional_format)
+        except (ValueError, TypeError):
+            log.warning(
+                "The bot's global regional format was set to an invalid value (%r)"
+                " and will be reset to default (which is to inherit global locale, i.e. %s).",
+                i18n_regional_format,
+                i18n_locale,
+            )
+            await self._config.regional_format.clear()
 
     async def _pre_connect(self) -> None:
         """
