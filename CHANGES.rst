@@ -4,7 +4,7 @@ Redbot 3.5.17 (2025-03-08)
 ==========================
 
 | Thanks to all these amazing people that contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`
 
 Read before updating
 --------------------
@@ -29,7 +29,7 @@ Fixes
 *****
 
 - |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6530`)
-- **Cogs - Streams** - Fixed upcoming stream alert showing incorrect time when Red is hosted on a system using non-UTC timezone (:issue:`6526`, :issue:`6530`)
+- **Cogs - Streams** - Fixed upcoming stream alert showing incorrect time when Red is hosted on a system using non-UTC timezone (:issue:`6526`, :issue:`6527`)
 
 Developer changelog
 -------------------
