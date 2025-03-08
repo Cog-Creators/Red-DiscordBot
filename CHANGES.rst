@@ -23,13 +23,13 @@ Changes
 
 - **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6529`, :issue:`6531`)
 - **Cogs - Cleanup** - The ``[p]cleanup duplicates`` command now considers more information about the message when determining if it's a duplicate. Notably, messages with polls are ignored and equivalent messages replying to different messages are now not considered duplicates (:issue:`6529`)
-- **Cogs - Filter** - The cog now checks the forwarded messages for filtered words (:issue:`6529`)
+- **Cogs - Filter** - The cog now checks forwarded messages for filtered words (:issue:`6529`)
 
 Fixes
 *****
 
 - |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6530`)
-- **Cogs - Streams** - Fixed upcoming stream alert showing incorrect time when Red is hosted on a system using non-UTC timezone (:issue:`6526`, :issue:`6527`)
+- **Cogs - Streams** - Fixed upcoming stream alert showing an incorrect time when Red is hosted on a system using a non-UTC timezone (:issue:`6526`, :issue:`6527`)
 
 Developer changelog
 -------------------
