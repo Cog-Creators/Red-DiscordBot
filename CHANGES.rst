@@ -22,6 +22,8 @@ Changes
 *******
 
 - **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6529`, :issue:`6531`)
+- **Cogs - Cleanup** - The ``[p]cleanup duplicates`` command now considers more information about the message when determining if it's a duplicate. Notably, messages with polls are ignored and equivalent messages replying to different messages are now not considered duplicates (:issue:`6529`)
+- **Cogs - Filter** - The cog now checks the forwarded messages for filtered words (:issue:`6529`)
 
 Fixes
 *****
