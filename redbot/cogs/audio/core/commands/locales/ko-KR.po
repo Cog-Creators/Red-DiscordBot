@@ -898,7 +898,7 @@ msgstr "날"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1107
 msgid "User Settings"
-msgstr ""
+msgstr "사용자 설정"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1109
 msgid "Spotify search:   [{country_code}]\n"
