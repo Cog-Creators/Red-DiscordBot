@@ -26,7 +26,7 @@ Changes
 Fixes
 *****
 
-- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6530`)
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6542`)
 
 ----
 
