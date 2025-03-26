@@ -1,5 +1,35 @@
 .. Red changelogs
 
+Redbot 3.5.18 (2025-03-26)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.18's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.18/Red-DiscordBot-3.5.18-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6543`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6530`)
+
+----
+
 Redbot 3.5.17 (2025-03-08)
 ==========================
 
