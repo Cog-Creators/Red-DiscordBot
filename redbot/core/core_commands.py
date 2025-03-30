@@ -2257,6 +2257,67 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         for page in pagify(output):
             await ctx.send(page)
 
+    @slash.command(name="disableall")
+    async def slash_disableall(self, ctx: commands.Context):
+        """Marks all application commands as being disabled, preventing them from being added to the bot.
+        This will not disable commands that are force-enabled by the cog creator.
+
+        See a list of cogs with application commands with `[p]slash list`.
+
+        This command does NOT sync the enabled commands with Discord, that must be done manually with `[p]slash sync` for commands to appear in users' clients.
+        """
+        removed = []
+        removed_cogs = int()
+        forced_commands = int()
+        for name, com in self.bot.tree._global_commands.items():
+            if not com.extras.get("red_force_enable"):
+                await self.bot.disable_app_command(name, discord.AppCommandType.chat_input)
+                removed.append(name)
+                removed_cogs += 1
+            else:
+                forced_commands += 1
+        for key, com in self.bot.tree._context_menus.items():
+            if not com.extras.get("red_force_enable"):
+                name, guild_id, com_type = key
+                await self.bot.disable_app_command(name, discord.AppCommandType(com_type))
+                removed.append(name)
+                removed_cogs += 1
+            else:
+                forced_commands += 1
+
+        if not removed:
+            output = _(
+                "Couldn't find any enabled commands. Use `{prefix}slash list` to see all cogs with application commands."
+            ).format(
+                prefix=ctx.clean_prefix,
+            )
+            if forced_commands:
+                output += "\n"
+                output += _(
+                    "There are {count} force-enabled commands that can't be disabled. They can be disabled only by unloading their cog.".format(
+                        count=forced_commands
+                    )
+                )
+            await ctx.send(output)
+            return
+
+        await self.bot.tree.red_check_enabled()
+        formatted_names = humanize_list([inline(name) for name in removed])
+        output = _("Disabled {count} commands:\n{names}").format(
+            count=len(removed),
+            names=formatted_names,
+        )
+        if forced_commands:
+            output += "\n\n"
+            output += _(
+                "There are {count} force-enabled commands that were not disabled. To disable them, unload their cog.\nUse `{prefix}slash list` to see all cogs with application commands."
+            ).format(
+                count=forced_commands,
+                prefix=ctx.clean_prefix,
+            )
+        for page in pagify(output):
+            await ctx.send(page)
+
     @slash.command(name="list")
     async def slash_list(self, ctx: commands.Context):
         """List the slash commands the bot can see, and whether or not they are enabled.
