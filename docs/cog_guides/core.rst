@@ -4197,6 +4197,26 @@ with ``[p]slash sync`` for commands to appear in users' clients.
 **Arguments:**
     - ``<cog_names>`` - The cogs to disable commands from. This argument is case sensitive.
 
+.. _core-command-slash-disableall:
+
+""""""""""""""""
+slash disableall
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]slash disableall
+    
+**Description**
+
+Marks all application commands as being disabled, preventing them from being added to the bot.
+This will not disable commands that are force-enabled by the cog creator.
+See a list of cogs with application commands with ``[p]slash list``.
+This command does NOT sync the enabled commands with Discord, that must be done manually
+with ``[p]slash sync`` for commands to appear in users' clients.
+
 .. _core-command-slash-enable:
 
 """"""""""""
