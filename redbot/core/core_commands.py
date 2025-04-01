@@ -3119,7 +3119,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
 
-    @_set_bot.command(name="custominfo")
+    @_set_bot.command(name="infoimage")
     @commands.is_owner()
     async def _set_bot_infoimage(self, ctx: commands.Context, *, url: str = None):
         """Customizes the image sent in the `[p]info` embed.
