@@ -155,7 +155,7 @@ Here is an example of the :code:`async with` syntax:
             blah.append(new_blah)
         await ctx.send("The new blah value has been added!")
 
-There is also an :py:meth:`Group.all` method. This will return all the stored data associated
+There is also a :py:meth:`Group.all` method. This will return all the stored data associated
 with a specific config group as a :py:class:`dict`. By negating the need to excessively call config,
 this method can be particularly useful when multiple values are to be retrieved from the same group.
 
