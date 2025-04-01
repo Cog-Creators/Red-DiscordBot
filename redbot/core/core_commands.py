@@ -3090,10 +3090,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set_bot.command(name="custominfo")
+    @_set_bot.group(name="custominfo", invoke_without_command=True)
     @commands.is_owner()
-    async def _set_bot_custominfo(self, ctx: commands.Context, *, text: str = None):
-        """Customizes a section of `[p]info`.
+    async def _set_bot_custominfo(self, ctx: commands.Context):
+        """Customizes sections of `[p]info`."""
+
+    @_set_bot_custominfo.command(name="text")
+    async def _set_bot_custominfo_text(self, ctx: commands.Context, *, text: str = None):
+        """Customizes a section of optional text in `[p]info`.
 
         The maximum amount of allowed characters is 1024.
         Supports markdown, links and "mentions".
@@ -3119,9 +3123,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
 
-    @_set_bot.command(name="infoimage")
-    @commands.is_owner()
-    async def _set_bot_infoimage(self, ctx: commands.Context, *, url: str = None):
+    @_set_bot_custominfo.command(name="image")
+    async def _set_bot_custominfo_image(self, ctx: commands.Context, *, url: str = None):
         """Customizes an optional image sent inside the `[p]info` embed.
 
         You may provide an image URL or send an attachment.
