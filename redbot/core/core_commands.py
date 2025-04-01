@@ -3090,7 +3090,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set_bot.group(name="custominfo", invoke_without_command=True)
+    @_set_bot.group(name="custominfo")
     @commands.is_owner()
     async def _set_bot_custominfo(self, ctx: commands.Context):
         """Customizes sections of `[p]info`."""
