@@ -464,6 +464,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             embed.set_footer(
                 text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
             )
+            image = await self.bot._config.info_image()
+            embed.set_image(url=image)
             await ctx.send(embed=embed)
         else:
             python_version = "{}.{}.{}".format(*sys.version_info[:3])
@@ -3116,6 +3118,37 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.invoke(self.info)
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
+
+    @_set_bot.command(name="custominfo")
+    @commands.is_owner()
+    async def _set_bot_infoimage(self, ctx: commands.Context, *, url: str = None):
+        """Customizes the image sent in the `[p]info` embed.
+
+        You may provide an image URL or send an attachment.
+        Sending neither will remove the image from the embed.
+
+        Images are not sent if embeds are disabled.
+
+        **Examples:**
+        - `[p]set bot infoimage https://imgur.com/pY1WUFX.png`
+        - `[p]set bot infoimage <image attachment>`
+        - `[p]set bot infoimage` - Removes custom info text.
+
+        **Arguments:**
+        - `[url]` - The URL of the image.
+        """
+        if (attachments := ctx.message.attachments):
+            if not attachments[0].content_type.startswith("image"):
+                await ctx.send(_("Attachments must be an image or GIF file."))
+                return
+            url = attachments[0].url
+        elif not url:
+            await ctx.bot._config.info_image.clear()
+            await ctx.send(_("The custom image has been cleared."))
+            return
+        await ctx.bot._config.info_image.set(url)
+        await ctx.send(_("The custom image has been set."))
+        await ctx.invoke(self.info)
 
     # -- End Bot Metadata Commands -- ###
     # -- Bot Status Commands -- ###
