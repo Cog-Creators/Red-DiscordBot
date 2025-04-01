@@ -3122,7 +3122,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @_set_bot.command(name="infoimage")
     @commands.is_owner()
     async def _set_bot_infoimage(self, ctx: commands.Context, *, url: str = None):
-        """Customizes the image sent in the `[p]info` embed.
+        """Customizes an optional image sent inside the `[p]info` embed.
 
         You may provide an image URL or send an attachment.
         Sending neither will remove the image from the embed.
@@ -3132,7 +3132,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Examples:**
         - `[p]set bot infoimage https://imgur.com/pY1WUFX.png`
         - `[p]set bot infoimage <image attachment>`
-        - `[p]set bot infoimage` - Removes custom info text.
+        - `[p]set bot infoimage` - Removes custom image.
 
         **Arguments:**
         - `[url]` - The URL of the image.
