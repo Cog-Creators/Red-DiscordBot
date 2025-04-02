@@ -2962,7 +2962,7 @@ set bot custominfo
 
 **Description**
 
-Customizes sections of `[p]info`.
+Customizes sections of ``[p]info``.
 
 .. _core-command-set-bot-custominfo-text:
 
@@ -3007,7 +3007,7 @@ set bot custominfo image
 
 **Description**
 
-Customizes an optional image sent inside the `[p]info` embed.
+Customizes an optional image sent inside the ``[p]info`` embed.
 
 You may provide an image URL or send an attachment.
 Sending neither will remove the image from the embed.
@@ -3015,12 +3015,12 @@ Sending neither will remove the image from the embed.
 Images are not sent if embeds are disabled.
 
 **Examples:**
-    - `[p]set bot custominfo image https://imgur.com/pY1WUFX.png`
-    - `[p]set bot custominfo image <image attachment>`
-    - `[p]set bot custominfo image` - Removes custom image.
+    - ``[p]set bot custominfo image https://imgur.com/pY1WUFX.png``
+    - ``[p]set bot custominfo image <image attachment>``
+    - ``[p]set bot custominfo image`` - Removes custom image.
 
 **Arguments:**
-    - `[url]` - The URL of the image.
+    - ``[url]`` - The URL of the image.
 
 .. _core-command-set-bot-description:
 
