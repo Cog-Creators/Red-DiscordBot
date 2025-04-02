@@ -3140,7 +3140,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
         - `[url]` - The URL of the image.
         """
-        if (attachments := ctx.message.attachments):
+        if attachments := ctx.message.attachments:
             if not attachments[0].content_type.startswith("image"):
                 await ctx.send(_("Attachment must be an image or GIF file."))
                 return
