@@ -3105,9 +3105,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Link example: `[My link](https://example.com)`
 
         **Examples:**
-        - `[p]set bot custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
-        - `[p]set bot custominfo Join my [support server](discord.gg/discord)!`
-        - `[p]set bot custominfo` - Removes custom info text.
+        - `[p]set bot custominfo text >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
+        - `[p]set bot custominfo text Join my [support server](discord.gg/discord)!`
+        - `[p]set bot custominfo text` - Removes custom info text.
 
         **Arguments:**
         - `[text]` - The custom info text.
@@ -3133,9 +3133,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Images are not sent if embeds are disabled.
 
         **Examples:**
-        - `[p]set bot infoimage https://imgur.com/pY1WUFX.png`
-        - `[p]set bot infoimage <image attachment>`
-        - `[p]set bot infoimage` - Removes custom image.
+        - `[p]set bot custominfo image https://imgur.com/pY1WUFX.png`
+        - `[p]set bot custominfo image <image attachment>`
+        - `[p]set bot custominfo image` - Removes custom image.
 
         **Arguments:**
         - `[url]` - The URL of the image.

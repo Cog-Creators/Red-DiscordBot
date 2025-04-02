@@ -2958,11 +2958,27 @@ set bot custominfo
 
 .. code-block:: none
 
-    [p]set bot custominfo [text]
+    [p]set bot custominfo 
 
 **Description**
 
-Customizes a section of ``[p]info``.
+Customizes sections of `[p]info`.
+
+.. _core-command-set-bot-custominfo-text:
+
+"""""""""""""""""""""""
+set bot custominfo text
+"""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot custominfo text [text]
+
+**Description**
+
+Customizes a section of optional text in `[p]info`.
 
 The maximum amount of allowed characters is 1024.
 Supports markdown, links and "mentions".
@@ -2970,12 +2986,41 @@ Supports markdown, links and "mentions".
 Link example: ``[My link](https://example.com)``
 
 **Examples:**
-    - ``[p]set bot custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.``
-    - ``[p]set bot custominfo Join my [support server](discord.gg/discord)!``
-    - ``[p]set bot custominfo`` - Removes custom info text.
+    - ``[p]set bot custominfo text >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.``
+    - ``[p]set bot custominfo text Join my [support server](discord.gg/discord)!``
+    - ``[p]set bot custominfo text`` - Removes custom info text.
 
 **Arguments:**
     - ``[text]`` - The custom info text.
+
+.. _core-command-set-bot-custominfo-image:
+
+""""""""""""""""""""""""
+set bot custominfo image
+""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]set bot custominfo text [text]
+
+**Description**
+
+Customizes an optional image sent inside the `[p]info` embed.
+
+You may provide an image URL or send an attachment.
+Sending neither will remove the image from the embed.
+
+Images are not sent if embeds are disabled.
+
+**Examples:**
+    - `[p]set bot custominfo image https://imgur.com/pY1WUFX.png`
+    - `[p]set bot custominfo image <image attachment>`
+    - `[p]set bot custominfo image` - Removes custom image.
+
+**Arguments:**
+    - `[url]` - The URL of the image.
 
 .. _core-command-set-bot-description:
 
