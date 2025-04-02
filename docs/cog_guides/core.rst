@@ -2978,7 +2978,7 @@ set bot custominfo text
 
 **Description**
 
-Customizes a section of optional text in `[p]info`.
+Customizes a section of optional text in ``[p]info``.
 
 The maximum amount of allowed characters is 1024.
 Supports markdown, links and "mentions".
