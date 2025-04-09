@@ -547,25 +547,24 @@ class KickStream(Stream):
                         return resp.status, {}
 
                     data = await resp.json(encoding="utf-8")
-                    return resp.status, data["data"][0]
+                    return resp.status, data["data"][0] if data["data"] else []
             except (aiohttp.ClientConnectionError, asyncio.TimeoutError) as exc:
                 log.warning("Connection error occurred when fetching Kick stream", exc_info=exc)
                 return None, {}
 
     async def is_online(self):
-        user_profile_data = None
-        if self.id is None:
-            user_profile_data = await self._fetch_user_profile()
-
         channel_code, channel_data = await self.get_data(
-            KICK_CHANNELS_ENDPOINT, {"broadcaster_user_id": self.id}
+            KICK_CHANNELS_ENDPOINT, {"slug": self.name}
         )
+        if not channel_data["data"]:
+            raise StreamNotFound()
+
         if channel_code == 200:
             if channel_data["stream"]["is_live"] is False:
                 raise OfflineStream()
 
-            if user_profile_data is None:
-                user_profile_data = await self._fetch_user_profile()
+            self.id = channel_data["broadcaster_user_id"]
+            user_profile_data = await self._fetch_user_profile()
 
             final_data = dict.fromkeys(
                 ("game_name", "followers", "name", "slug", "profile_picture", "view_count")
@@ -578,6 +577,7 @@ class KickStream(Stream):
             stream_data = channel_data["stream"]
             final_data["game_name"] = channel_data["category"]["name"]
             final_data["title"] = channel_data["stream_title"]
+            final_data["thumbnail_url"] = stream_data["thumbnail_url"]
             final_data["view_count"] = stream_data["viewer_count"]
             final_data["slug"] = channel_data["slug"]
 
@@ -590,13 +590,10 @@ class KickStream(Stream):
             raise APIError(channel_code, stream_data)
 
     async def _fetch_user_profile(self):
-        # TODO: The API is missing ability to fetch user profile by name for now
         code, data = await self.get_data(KICK_USERS_ENDPOINT, {"user_id": self.id})
         if code == 200:
             if not data["data"]:
                 raise StreamNotFound()
-            if self.id is None:
-                self.id = data["data"][0]["user_id"]
             return data["data"][0]
         elif code == 400:
             raise StreamNotFound()
@@ -616,7 +613,7 @@ class KickStream(Stream):
         embed.add_field(name=_("Total views"), value=humanize_number(data["view_count"]))
         embed.set_thumbnail(url=logo)
         if data["thumbnail_url"]:
-            embed.set_image(url=rnd(data["thumbnail_url"].format(width=320, height=180)))
+            embed.set_image(url=rnd(data["thumbnail_url"]))
         if data["game_name"]:
             embed.set_footer(text=_("Playing: ") + data["game_name"])
         return embed
