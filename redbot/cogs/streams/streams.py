@@ -330,6 +330,7 @@ class Streams(commands.Cog):
     @commands.command()
     async def kickstream(self, ctx: commands.Context, channel_name: str):
         """Check if a Kick channel is live."""
+        await self.maybe_renew_kick_token()
         token = self.kick_bearer_cache.get("access_token")
         stream = _streamtypes.KickStream(_bot=self.bot, name=channel_name, token=token)
         await self.check_online(ctx, stream)
@@ -1156,6 +1157,8 @@ class Streams(commands.Cog):
                 if _class.__name__ == "TwitchStream":
                     raw_stream["token"] = token.get("client_id")
                     raw_stream["bearer"] = self.ttv_bearer_cache.get("access_token", None)
+                elif _class.__name__ == "KickStream":
+                    raw_stream["token"] = self.kick_bearer_cache.get("access_token", None)
                 else:
                     if _class.__name__ == "YoutubeStream":
                         raw_stream["config"] = self.config

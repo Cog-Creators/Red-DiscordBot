@@ -537,7 +537,7 @@ class KickStream(Stream):
 
     async def get_data(self, url: str, params: dict = {}) -> Tuple[Optional[int], dict]:
         if self._token is None:
-            raise Exception("Kick API key is not set.")
+            raise InvalidKickCredentials()
 
         headers = {"Authorization": f"Bearer {self._token}"}
         async with aiohttp.ClientSession() as session:
@@ -556,7 +556,7 @@ class KickStream(Stream):
         channel_code, channel_data = await self.get_data(
             KICK_CHANNELS_ENDPOINT, {"slug": self.name}
         )
-        if not channel_data["data"]:
+        if not channel_data:
             raise StreamNotFound()
 
         if channel_code == 200:
@@ -577,11 +577,11 @@ class KickStream(Stream):
             stream_data = channel_data["stream"]
             final_data["game_name"] = channel_data["category"]["name"]
             final_data["title"] = channel_data["stream_title"]
-            final_data["thumbnail_url"] = stream_data["thumbnail_url"]
+            final_data["thumbnail_url"] = stream_data["thumbnail"]
             final_data["view_count"] = stream_data["viewer_count"]
             final_data["slug"] = channel_data["slug"]
 
-            return self.make_embed(final_data), final_data["type"] == "rerun"
+            return self.make_embed(final_data)
         elif channel_code == 401:
             raise InvalidKickCredentials()
         elif channel_code == 400:
@@ -590,11 +590,11 @@ class KickStream(Stream):
             raise APIError(channel_code, stream_data)
 
     async def _fetch_user_profile(self):
-        code, data = await self.get_data(KICK_USERS_ENDPOINT, {"user_id": self.id})
+        code, data = await self.get_data(KICK_USERS_ENDPOINT, {"id": self.id})
         if code == 200:
-            if not data["data"]:
+            if not data:
                 raise StreamNotFound()
-            return data["data"][0]
+            return data
         elif code == 400:
             raise StreamNotFound()
         elif code == 401:
@@ -608,7 +608,7 @@ class KickStream(Stream):
             data["profile_picture"] or "https://www.google.com/s2/favicons?domain=kick.com&sz=256"
         )
         status = data["title"] or _("Untitled broadcast")
-        embed = discord.Embed(title=status, url=url, color=0x6441A4)
+        embed = discord.Embed(title=status, url=url, color=0x00E701)
         embed.set_author(name=data["user_name"])
         embed.add_field(name=_("Total views"), value=humanize_number(data["view_count"]))
         embed.set_thumbnail(url=logo)
