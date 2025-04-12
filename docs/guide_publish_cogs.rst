@@ -78,6 +78,11 @@ Keys specific to the cog info.json (case sensitive)
   passed to pip on cog install. ``SHARED_LIBRARIES`` do NOT go in this
   list.
 
+- ``env_requirements`` (string) - Additional requirements for the environment that the cog must fulfill,
+  expressed as a `Python package environment marker expression <https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers>`__.
+  This can be used to declare required system (e.g. disallow Windows), architecture (e.g. disallow 32-bit armhf),
+  or Python version (if ``min_python_version`` field is not sufficient).
+
 - ``tags`` (list of strings) - A list of strings that are related to the
   functionality of the cog. Used to aid in searching.
 

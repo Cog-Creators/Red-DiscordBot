@@ -9,6 +9,7 @@ from typing import Tuple, Union, Iterable, Collection, Optional, Dict, Set, List
 from collections import defaultdict
 
 import discord
+from packaging import markers
 from redbot.core import commands, Config, version_info as red_version_info
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
@@ -1520,6 +1521,7 @@ class Downloader(commands.Cog):
         correct_cogs: List[Installable] = []
         outdated_python_version: List[str] = []
         outdated_bot_version: List[str] = []
+        incorrect_env: List[str] = []
         for cog in cogs:
             if cog.min_python_version > sys.version_info:
                 outdated_python_version.append(
@@ -1546,6 +1548,12 @@ class Downloader(commands.Cog):
                     + ")"
                 )
                 continue
+            if cog.env_requirements is not None and not cog.env_requirements.evaluate():
+                incorrect_env.append(
+                    inline(cog.name)
+                    + _(" (expression: {expr})").format(expr=inline(str(cog.env_requirements)))
+                )
+                continue
             correct_cogs.append(cog)
         message = ""
         if outdated_python_version:
@@ -1566,6 +1574,17 @@ class Downloader(commands.Cog):
                     "have ({current_version}): "
                 )
             ).format(current_version=red_version_info) + humanize_list(outdated_bot_version)
+        if incorrect_env:
+            message += (
+                _(
+                    "\nThese cogs declare requirements that are not fulfilled by"
+                    " your environment: "
+                )
+                if len(outdated_bot_version) > 1
+                else _(
+                    "\nThis cog declares requirements that are not fulfilled by your environment: "
+                )
+            ) + humanize_list(incorrect_env)
 
         return tuple(correct_cogs), message
 

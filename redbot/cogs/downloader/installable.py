@@ -6,6 +6,8 @@ from enum import IntEnum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
+from packaging import markers
+
 from .log import log
 from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
 from .json_mixins import RepoJSONMixin
@@ -60,6 +62,9 @@ class Installable(RepoJSONMixin):
         required for this installation.
     requirements : `tuple` of `str`
         Required libraries for this installation.
+    env_requirements : `markers.Marker`
+        A `marker expression <https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers>`__
+        that needs to be fulfilled by the environment that this Installable is installed into.
     tags : `tuple` of `str`
         List of tags to assist in searching.
     type : `int`
@@ -95,6 +100,7 @@ class Installable(RepoJSONMixin):
         self.disabled: bool
         self.required_cogs: Dict[str, str]  # Cog name -> repo URL
         self.requirements: Tuple[str, ...]
+        self.env_requirements: Union[markers.Marker, None]
         self.tags: Tuple[str, ...]
         self.type: InstallableType
 

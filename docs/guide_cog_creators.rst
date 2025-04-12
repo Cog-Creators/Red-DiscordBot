@@ -51,6 +51,8 @@ Any Cog Creator that does not follow these requirements will have their repo rem
   - ``requirements`` (if applicable)
   - ``description``
   - ``min_python_version`` (if applicable)
+  - ``min_red_version`` (if applicable)
+  - ``env_requirements`` (if applicable)
 
   See `info-json-format` for more information on how to set up ``info.json`` files.
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union, cast
 
+from packaging import markers
+
 from redbot import VersionInfo, version_info as red_version_info
 
 from . import installable
@@ -201,6 +203,35 @@ def ensure_installable_type(
     return installable.InstallableType.UNKNOWN
 
 
+def ensure_marker_expr(
+    info_file: Path, key_name: str, value: Union[Any, UseDefault]
+) -> Union[markers.Marker, None]:
+    default = None
+    if value is USE_DEFAULT:
+        return default
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        log.warning(
+            "Invalid type of '%s' key (expected str, got %s)"
+            " in JSON information file at path: %s",
+            key_name,
+            type(value).__name__,
+            info_file,
+        )
+        return default
+    try:
+        return markers.Marker(value)
+    except markers.InvalidMarker:
+        log.warning(
+            "Invalid value of '%s' key (given value isn't a valid marker expression)"
+            " in JSON information file at path: %s",
+            key_name,
+            info_file,
+        )
+        return None
+
+
 EnsureCallable = Callable[[Path, str, Union[Any, UseDefault]], Any]
 SchemaType = Dict[str, EnsureCallable]
 
@@ -221,6 +252,7 @@ INSTALLABLE_SCHEMA: SchemaType = {
     "tags": ensure_tuple_of_str,
     "type": ensure_installable_type,
     "end_user_data_statement": ensure_str,
+    "env_requirements": ensure_marker_expr,
 }
 
 

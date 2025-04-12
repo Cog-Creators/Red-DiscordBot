@@ -66,6 +66,13 @@
         "type": "string"
       }
     },
+    "env_requirements": {
+      "type": "string",
+      "description": "Additional requirements for the environment that the cog must fulfill, expressed as a Python package environment marker.",
+      "items": {
+        "type": "string"
+      }
+    },
     "tags": {
       "type": "array",
       "description": "A list of strings that are related to the functionality of the cog. Used to aid in searching.",
