@@ -1,5 +1,76 @@
 .. Red changelogs
 
+Redbot 3.5.18 (2025-03-26)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.18's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.18/Red-DiscordBot-3.5.18-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6543`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6542`)
+
+----
+
+Redbot 3.5.17 (2025-03-08)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.17's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.17/Red-DiscordBot-3.5.17-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6529`, :issue:`6531`)
+- **Cogs - Cleanup** - The ``[p]cleanup duplicates`` command now considers more information about the message when determining if it's a duplicate. Notably, messages with polls are ignored and equivalent messages replying to different messages are now not considered duplicates (:issue:`6529`)
+- **Cogs - Filter** - The cog now checks forwarded messages for filtered words (:issue:`6529`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6530`)
+- **Cogs - Streams** - Fixed upcoming stream alert showing an incorrect time when Red is hosted on a system using a non-UTC timezone (:issue:`6526`, :issue:`6527`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.5.2 (:issue:`6529`, :issue:`6531`)
+
+----
+
 Redbot 3.5.16 (2025-02-06)
 ==========================
 
@@ -52,6 +123,9 @@ Fixes
 
 Developer changelog
 -------------------
+
+Changes
+*******
 
 - **Core - i18n** - Added `redbot.core.i18n.set_contextual_locale()` and `redbot.core.i18n.set_contextual_regional_format()` functions (:issue:`6022`)
 

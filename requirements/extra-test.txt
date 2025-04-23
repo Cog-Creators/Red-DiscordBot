@@ -2,7 +2,7 @@ astroid==3.2.4
     # via pylint
 dill==0.3.9
     # via pylint
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via pytest
 isort==5.13.2
     # via pylint
