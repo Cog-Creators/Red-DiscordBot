@@ -40,7 +40,7 @@ multidict==6.1.0
     #   yarl
 orjson==3.10.15
     # via -r base.in
-packaging==24.2
+packaging==25.0
     # via -r base.in
 platformdirs==4.3.6
     # via -r base.in
@@ -62,13 +62,13 @@ red-commons==1.0.0
     #   red-lavalink
 red-lavalink==0.11.0
     # via -r base.in
-rich==13.9.4
+rich==14.0.0
     # via -r base.in
 schema==0.7.7
     # via -r base.in
 six==1.17.0
     # via python-dateutil
-typing-extensions==4.13.0
+typing-extensions==4.13.2
     # via
     #   -r base.in
     #   multidict
