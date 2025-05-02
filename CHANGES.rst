@@ -1,5 +1,46 @@
 .. Red changelogs
 
+Redbot 3.5.19 (2025-04-27)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.19's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.19/Red-DiscordBot-3.5.19-default-lavalink-application.yml>`__
+
+#. Fedora 40 is no longer supported as it will soon reach its end of life. Fedora install instructions have been updated with support for Fedora 42.
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6558`)
+- **Core - OS Support** - Fedora 40 is no longer supported as it will soon reach its end of life (:issue:`6558`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6557`)
+
+Documentation changes
+---------------------
+
+Changes
+*******
+
+- Updated Fedora install instructions to work with Fedora 42 (:issue:`6558`)
+
+----
+
 Redbot 3.5.18 (2025-03-26)
 ==========================
 

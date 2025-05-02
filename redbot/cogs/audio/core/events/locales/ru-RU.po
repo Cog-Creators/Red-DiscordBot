@@ -217,7 +217,7 @@ msgstr "Использовать внешние приложения"
 
 #: redbot/cogs/audio/core/events/dpy.py:87
 msgid "This command will change the executable path of Java, this is useful if you have multiple installations of Java and the default one is causing issues. Please don't change this unless you are certain that the Java version you are specifying is supported by Red. The supported versions are currently Java {supported_java_versions}."
-msgstr ""
+msgstr "Эта команда изменит путь к исполняемому файлу Java. Это полезно, если у вас несколько установок Java, и стандартная вызывает проблемы. Пожалуйста, не изменяйте этот параметр, если вы не уверены, что указанная вами версия Java поддерживается Red. В настоящее время поддерживаются версии Java {supported_java_versions}."
 
 #: redbot/cogs/audio/core/events/dpy.py:93
 msgid "This command will change the maximum RAM allocation for the managed Lavalink node, usually you will never have to change this, before considering changing it please consult our support team."
