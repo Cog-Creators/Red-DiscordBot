@@ -136,7 +136,11 @@ def generate_server_config(config_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 # This assumes all keys with `_` should be converted from `part1_part2` to `part1-part2`
+# unless it's all uppercase which we assume to be a special enum value
+# (e.g. ANDROID_VR will not be converted)
 def _convert_function(key: str) -> str:
+    if key.isupper():
+        return key
     return key.replace("_", "-")
 
 
