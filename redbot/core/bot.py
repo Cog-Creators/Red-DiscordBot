@@ -2477,7 +2477,9 @@ class Red(
                 msg = await channel.send(box(page, lang=box_lang))
             ret.append(msg)
             n_remaining = len(messages) - idx
-            files_perm = not channel.guild or channel.permissions_for(channel.guild.me).attach_files
+            files_perm = (
+                not channel.guild or channel.permissions_for(channel.guild.me).attach_files
+            )
             options = ("more", "file") if files_perm else ("more",)
             if n_remaining > 0:
                 if n_remaining == 1:
