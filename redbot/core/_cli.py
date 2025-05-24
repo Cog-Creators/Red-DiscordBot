@@ -301,18 +301,20 @@ def parse_cli_flags(args):
         "This flag can be used multiple times to specify multiple intents.",
     )
     parser.add_argument(
-        "--force-rich-logging",
+        "--rich-logging",
+        "--force-rich-logging",  # potentially up for removal in Red 3.6
         action="store_true",
         dest="rich_logging",
         default=None,
-        help="Forcefully enables the Rich logging handlers. This is normally enabled for supported active terminals.",
+        help="Enable the Rich logging handlers.",
     )
     parser.add_argument(
-        "--force-disable-rich-logging",
+        "--no-rich-logging",
+        "--force-disable-rich-logging",  # potentially up for removal in Red 3.6
         action="store_false",
         dest="rich_logging",
         default=None,
-        help="Forcefully disables the Rich logging handlers.",
+        help="Disable the Rich logging handlers. This is currently the default behavior.",
     )
     parser.add_argument(
         "--rich-traceback-extra-lines",

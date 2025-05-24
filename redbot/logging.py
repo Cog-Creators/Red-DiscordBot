@@ -307,13 +307,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     # this highlighter which dims most of the path and therefore makes it unreadable on Mac.
     PathHighlighter.highlights = []
 
-    enable_rich_logging = False
-
-    if isatty(0) and cli_flags.rich_logging is None:
-        # Check if the bot thinks it has a active terminal.
-        enable_rich_logging = True
-    elif cli_flags.rich_logging is True:
-        enable_rich_logging = True
+    enable_rich_logging = cli_flags.rich_logging
 
     file_formatter = logging.Formatter(
         "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
