@@ -319,7 +319,7 @@ def parse_cli_flags(args):
         "--rich-tracebacks",
         action="store_true",
         default=False,
-        help="Format the tracebacks using Rich."
+        help="Format the Python exception tracebacks using Rich (with syntax highlighting)."
         " *May* be useful to increase traceback readability during development.",
     )
     parser.add_argument(
