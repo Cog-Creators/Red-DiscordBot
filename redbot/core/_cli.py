@@ -301,20 +301,31 @@ def parse_cli_flags(args):
         "This flag can be used multiple times to specify multiple intents.",
     )
     parser.add_argument(
-        "--rich-logging",
-        "--force-rich-logging",  # potentially up for removal in Red 3.6
+        "--force-rich-logging",
         action="store_true",
         dest="rich_logging",
         default=None,
-        help="Enable the Rich logging handlers.",
+        help="Forcefully enables the Rich logging handlers. This is normally enabled for supported active terminals.",
     )
     parser.add_argument(
-        "--no-rich-logging",
-        "--force-disable-rich-logging",  # potentially up for removal in Red 3.6
+        "--force-disable-rich-logging",
         action="store_false",
         dest="rich_logging",
         default=None,
-        help="Disable the Rich logging handlers. This is currently the default behavior.",
+        help="Forcefully disables the Rich logging handlers.",
+    )
+    # DEP-WARN: use argparse.BooleanOptionalAction when we drop support for Python 3.8
+    parser.add_argument(
+        "--rich-tracebacks",
+        action="store_true",
+        default=False,
+        help="Format the tracebacks using Rich."
+        " *May* be useful to increase traceback readability during development.",
+    )
+    parser.add_argument(
+        "--no-rich-tracebacks",
+        action="store_false",
+        dest="rich_tracebacks",
     )
     parser.add_argument(
         "--rich-traceback-extra-lines",
