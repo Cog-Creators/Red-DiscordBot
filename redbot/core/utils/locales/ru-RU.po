@@ -65,7 +65,7 @@ msgstr "секунд"
 
 #: redbot/core/utils/chat_formatting.py:667
 msgid "negative"
-msgstr ""
+msgstr "отрицательный"
 
 #: redbot/core/utils/views.py:34
 msgid "Select a Page"
