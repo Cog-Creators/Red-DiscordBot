@@ -49,13 +49,27 @@ DEFAULT_LAVALINK_YAML = {
     "yaml__plugins__youtube__allowDirectPlaylistIds": True,
     "yaml__plugins__youtube__clients": [
         "MUSIC",
-        "WEB",
         "WEBEMBEDDED",
-        "MWEB",
+        "ANDROID_VR",
+        "ANDROID_MUSIC",
         "TVHTML5EMBEDDED",
         "TV",
         "IOS",
+        "WEB",
+        "MWEB",
     ],
+    "yaml__plugins__youtube__ANDROID_MUSIC__playback": True,
+    "yaml__plugins__youtube__ANDROID_MUSIC__playlistLoading": False,
+    "yaml__plugins__youtube__ANDROID_MUSIC__searching": True,
+    "yaml__plugins__youtube__ANDROID_MUSIC__videoLoading": False,
+    "yaml__plugins__youtube__ANDROID_VR__playback": False,
+    "yaml__plugins__youtube__ANDROID_VR__playlistLoading": True,
+    "yaml__plugins__youtube__ANDROID_VR__searching": True,
+    "yaml__plugins__youtube__ANDROID_VR__videoLoading": False,
+    "yaml__plugins__youtube__IOS__playback": True,
+    "yaml__plugins__youtube__IOS__playlistLoading": True,
+    "yaml__plugins__youtube__IOS__searching": True,
+    "yaml__plugins__youtube__IOS__videoLoading": False,
     "yaml__plugins__youtube__MUSIC__playback": False,
     "yaml__plugins__youtube__MUSIC__playlistLoading": False,
     "yaml__plugins__youtube__MUSIC__searching": True,
@@ -122,7 +136,11 @@ def generate_server_config(config_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 # This assumes all keys with `_` should be converted from `part1_part2` to `part1-part2`
+# unless it's all uppercase which we assume to be a special enum value
+# (e.g. ANDROID_VR will not be converted)
 def _convert_function(key: str) -> str:
+    if key.isupper():
+        return key
     return key.replace("_", "-")
 
 
