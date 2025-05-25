@@ -1922,7 +1922,12 @@ msgid "Change your Java executable path.\n\n"
 "        The current supported versions are Java {supported_java_versions}.\n\n"
 "        Enter nothing or \"java\" to reset it back to default.\n"
 "        "
-msgstr ""
+msgstr "Измение пути к исполняемому файлу Java.\n\n"
+"        В большинстве случаев эту команду использовать не нужно, она полезна только в том случае, если на хост-машине имеются конфликтующие версии Java.\n\n"
+"        При ее изменении убедитесь, что установленный вами исполняемый файл Java поддерживается Audio.\n"
+"        Текущие поддерживаемые версии — Java {supported_java_versions}.\n\n"
+"        Введите \"java\" или оставьте пустым, чтобы вернуть значение по умолчанию.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:73
 msgid "Java Executable Reset"
@@ -2508,7 +2513,8 @@ msgstr "Воспроизведение указанного трека или п
 #: redbot/cogs/audio/core/commands/player.py:53
 msgid "That URL is not allowed.\n\n"
 "The bot owner can remove this restriction by using ``{prefix}audioset restrict``."
-msgstr ""
+msgstr "Этот URL адрес не допускается.\n\n"
+"Владелец бота может снять это ограничение, используя ``{prefix}audioset restrict``."
 
 #: redbot/cogs/audio/core/commands/player.py:59
 #: redbot/cogs/audio/core/commands/player.py:167
