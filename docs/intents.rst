@@ -89,7 +89,7 @@ experience errors due to Red expecting information provided by the intent to be 
 Discord currently considers 3 intents to be
 `privileged <https://support-dev.discord.com/hc/en-us/articles/6205754771351-How-do-I-get-Privileged-Intents-for-my-bot>`_,
 and requires large bots to additionally apply for access to these intents. **If you have a small
-bot, you can simply follow :ref:`these instructions <enabling-privileged-intents>` to enable them.**
+bot**, you can simply follow :ref:`these instructions <enabling-privileged-intents>` to enable them.
 
 A breakdown of how privileged intents are used in Red is provided below.
 
@@ -98,7 +98,7 @@ configuration and all built in functionality. App commands (also known as slash 
 are limited to a total of 100 top level commands, which is difficult to manage on
 a modular bot. The approach we have taken to address this issue is to allow 3rd party
 cogs to provide slash commands, but require bot owners to pick which slash commands
-they actually want to use with the :ref:`[p]slash <core-command-slash>` command.
+they actually want to use with the ``[p]slash`` command.
 Under this system, bot management commands that are not exposed to users are still
 expected to be provided as text commands, which requires the bot to be able to access
 message content. There are no current plans to provide slash versions of core commands.
