@@ -19,7 +19,10 @@ from .app_commands import (
     TransformerError,
     UserFeedbackCheckFailure,
 )
-from .i18n import Translator
+from redbot.core.i18n import (
+    Translator,
+    set_contextual_locales_from_guild,
+)
 from .utils.chat_formatting import humanize_list, inline
 
 import logging
@@ -395,3 +398,9 @@ class RedTree(CommandTree):
 
         for key in remove:
             del self._disabled_global_commands[key]
+
+    # DEP-WARN
+    async def _call(self, interaction: discord.Interaction, *args, **kwargs) -> None:
+        """Configure the contextual locale based on the interaction guild prior to invoking."""
+        await set_contextual_locales_from_guild(interaction.client, interaction.guild)
+        await super()._call(interaction, *args, **kwargs)
