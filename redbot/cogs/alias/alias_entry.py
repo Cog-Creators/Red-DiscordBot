@@ -55,11 +55,15 @@ class AliasEntry:
         known_content_length = len(prefix) + len(self.name)
         extra = message.content[known_content_length:]
         view = StringView(extra)
+        view.skip_ws()
         extra = []
         while not view.eof:
-            view.skip_ws()
             prev = view.index
-            word = view.get_quoted_word()
+            try:
+                word = view.get_quoted_word()
+            except discord.ext.commands.errors.UnexpectedQuoteError:
+                view.skip_ws()
+                continue
             if len(word) < view.index - prev:
                 word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
             extra.append(word.strip(" "))
