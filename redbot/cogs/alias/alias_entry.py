@@ -55,9 +55,9 @@ class AliasEntry:
         known_content_length = len(prefix) + len(self.name)
         extra = message.content[known_content_length:]
         view = StringView(extra)
-        view.skip_ws()
         extra = []
         while not view.eof:
+            view.skip_ws()
             prev = view.index
             word = view.get_quoted_word()
             if len(word) < view.index - prev:
