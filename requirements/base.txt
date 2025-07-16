@@ -14,8 +14,6 @@ attrs==25.3.0
     # via aiohttp
 babel==2.17.0
     # via -r base.in
-brotli==1.1.0
-    # via -r base.in
 click==8.1.8
     # via -r base.in
 discord-py==2.5.2
@@ -38,8 +36,6 @@ multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
-orjson==3.10.15
-    # via -r base.in
 packaging==25.0
     # via -r base.in
 platformdirs==4.3.6
@@ -77,8 +73,6 @@ yarl==1.15.2
     # via
     #   -r base.in
     #   aiohttp
-zstandard==0.23.0
-    # via -r base.in
 async-timeout==4.0.3; python_version != "3.11"
     # via aiohttp
 colorama==0.4.6; sys_platform == "win32"
