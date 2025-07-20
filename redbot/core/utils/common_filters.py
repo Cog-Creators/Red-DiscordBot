@@ -17,7 +17,7 @@ __all__ = [
 URL_RE = re.compile(r"(https?|s?ftp)://(\S+)", re.I)
 
 INVITE_URL_RE = re.compile(
-    r"(discord\.(?:gg|io|me|li)|discord(?:app)?\.com\/invite)[\/\\](\S+)", re.I
+    r"(?<!promos\.)(discord\.(?:gg|io|me|li)|discord(?:app)?\.com\/invite)[\/\\](\S+)", re.I
 )
 
 MASS_MENTION_RE = re.compile(r"(@)(?=everyone|here)")  # This only matches the @ for sanitizing
