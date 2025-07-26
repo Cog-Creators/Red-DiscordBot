@@ -54,8 +54,10 @@ def sanitize_output(ctx: commands.Context, to_sanitize: str) -> str:
     """Hides the bot's token from a string."""
     token = ctx.bot.http.token
     if token:
-        return re.sub(re.escape(token), "[EXPUNGED]", to_sanitize, re.I)
-    return to_sanitize
+        to_sanitize = re.sub(re.escape(token), "[EXPUNGED]", to_sanitize, flags=re.IGNORECASE)
+    
+    # Validate encoding and let exceptions propagate
+    return to_sanitize.encode('utf-8', 'strict').decode('utf-8')
 
 
 def async_compile(source: str, filename: str, mode: Literal["eval", "exec"]) -> CodeType:
@@ -164,9 +166,16 @@ class DevOutput:
         return sanitize_output(self.ctx, "".join(output))
 
     async def send(self, *, tick: bool = True) -> None:
-        await self.ctx.send_interactive(get_pages(str(self)), box_lang="py")
-        if tick and not self.formatted_exc:
-            await self.ctx.tick()
+        try:
+            output_str = str(self)
+            await self.ctx.send_interactive(get_pages(output_str), box_lang="py")
+            if tick and not self.formatted_exc:
+                await self.ctx.tick()
+        except UnicodeEncodeError as exc:
+            self.set_exception(exc)
+            # Now that we've set the exception, str(self) will include the traceback
+            output_with_traceback = str(self)
+            await self.ctx.send_interactive(get_pages(output_with_traceback), box_lang="py")
 
     def set_exception(self, exc: Exception, *, skip_frames: int = 1) -> None:
         self.formatted_exc = self.format_exception(exc, skip_frames=skip_frames)
