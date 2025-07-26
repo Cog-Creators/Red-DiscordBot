@@ -55,9 +55,9 @@ def sanitize_output(ctx: commands.Context, to_sanitize: str) -> str:
     token = ctx.bot.http.token
     if token:
         to_sanitize = re.sub(re.escape(token), "[EXPUNGED]", to_sanitize, flags=re.IGNORECASE)
-    
+
     # Validate encoding and let exceptions propagate
-    return to_sanitize.encode('utf-8', 'strict').decode('utf-8')
+    return to_sanitize.encode("utf-8", "strict").decode("utf-8")
 
 
 def async_compile(source: str, filename: str, mode: Literal["eval", "exec"]) -> CodeType:
