@@ -83,7 +83,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
     async def update_voice_channel_presence(
         self, channel: discord.VoiceChannel, track: Optional[str]
     ) -> None:
-            await channel.edit(status=track)
+        await channel.edit(status=track)
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
         dj_enabled = self._dj_status_cache.setdefault(
