@@ -103,7 +103,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def update_voice_channel_presence(
-        self, channel: discord.VoiceChannel, track: lavalink.Track, playing_servers: int
+        self, channel: discord.VoiceChannel, track: lavalink.Track
     ) -> None:
         raise NotImplementedError()
 

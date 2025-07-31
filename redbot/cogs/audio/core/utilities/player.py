@@ -81,11 +81,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
 
     async def update_voice_channel_presence(
-        self, channel: discord.VoiceChannel, track: Optional[str], playing_servers: int
+        self, channel: discord.VoiceChannel, track: Optional[str]
     ) -> None:
-        if playing_servers == 0:
-            await channel.edit(status=None)
-        else:
             await channel.edit(status=track)
 
     async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:

@@ -1037,7 +1037,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "Shuffle bumped:   [{bumpped_shuffle}]\n"
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n"
-            "Songs as voice channel status:  [{vc_status}]\n"
+            "Song as vc status:[{vc_status}]\n"
             "Spotify search:   [{countrycode}]\n"
         ).format(
             max_volume=maxvolume,
