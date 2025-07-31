@@ -124,6 +124,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             current_track, self.local_folder_current_path
         )
         status = await self.config.status()
+        vc_status = await self.config.vc_status()
         prev_song: lavalink.Track = player.fetch("prev_song")
         await self.maybe_reset_error_counter(player)
 
@@ -226,6 +227,20 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 log.debug("Track ended for %s, updating bot status", guild_id)
                 player_check = await self.get_active_player_count()
                 await self.update_bot_presence(*player_check)
+
+        if event_type == lavalink.LavalinkEvents.TRACK_START and vc_status:
+            log.debug("Track started for %s, updating voice channel status", guild_id)
+            voice_channel = current_channel
+            player_check = await self.get_active_player_count()
+            await self.update_voice_channel_presence(voice_channel, *player_check)
+
+        if event_type == lavalink.LavalinkEvents.TRACK_END and vc_status:
+            await asyncio.sleep(1)
+            if not player.is_playing:
+                log.debug("Track ended for %s, updating voice bot status", guild_id)
+                voice_channel = current_channel
+                player_check = await self.get_active_player_count()
+                await self.update_voice_channel_presence(voice_channel, *player_check)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
