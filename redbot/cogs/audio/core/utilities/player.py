@@ -65,6 +65,23 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             playing_servers = 0
         return get_single_title, playing_servers
 
+    async def get_current_track_title(self) -> str:
+        try:
+            current = next(
+                (
+                    player.current
+                    for player in lavalink.active_players()
+                    if player.current is not None
+                ),
+                None,
+            )
+            get_single_title = await self.get_track_description_unformatted(
+                current, self.local_folder_current_path
+            )
+        except (IndexError, NodeNotFound, PlayerNotFound):
+            get_single_title = None
+        return get_single_title
+
     async def update_bot_presence(self, track: Optional[str], playing_servers: int) -> None:
         if playing_servers == 0:
             await self.bot.change_presence(activity=None)

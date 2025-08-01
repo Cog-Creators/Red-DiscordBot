@@ -231,16 +231,16 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         if event_type == lavalink.LavalinkEvents.TRACK_START and vc_status:
             log.debug("Track started for %s, updating voice channel status", guild_id)
             voice_channel = current_channel
-            player_check = await self.get_active_player_count()
-            await self.update_voice_channel_presence(voice_channel, player_check[0])
+            track_title = await self.get_current_track_title()
+            await self.update_voice_channel_presence(voice_channel, track_title)
 
         if event_type == lavalink.LavalinkEvents.TRACK_END and vc_status:
             await asyncio.sleep(1)
             if not player.is_playing:
                 log.debug("Track ended for %s, updating voice channel status", guild_id)
                 voice_channel = current_channel
-                player_check = await self.get_active_player_count()
-                await self.update_voice_channel_presence(voice_channel, player_check[0])
+                track_title = await self.get_current_track_title()
+                await self.update_voice_channel_presence(voice_channel, track_title)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             if not autoplay:
@@ -267,8 +267,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             if vc_status:
                 log.debug("Queue ended for %s, updating voice channel status", guild_id)
                 voice_channel = current_channel
-                player_check = await self.get_active_player_count()
-                await self.update_voice_channel_presence(voice_channel, player_check[0])
+                track_title = await self.get_current_track_title()
+                await self.update_voice_channel_presence(voice_channel, track_title)
         if event_type in [
             lavalink.LavalinkEvents.TRACK_EXCEPTION,
             lavalink.LavalinkEvents.TRACK_STUCK,
