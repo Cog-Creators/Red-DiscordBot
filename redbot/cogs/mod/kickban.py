@@ -672,34 +672,33 @@ class KickBanMixin(MixinMeta):
 
             extra_embed = await self.config.guild(guild).ban_show_extra()
 
-            with contextlib.suppress(discord.HTTPException):
-                em = discord.Embed(
-                    title=bold(_("You have been temporarily banned from {guild} until {date}.").format(
-                        guild=guild,
-                        date=discord.utils.format_dt(unban_time))),
-                    color=await self.bot.get_embed_color(member),
-                )
+            em = discord.Embed(
+                title=bold(_("You have been temporarily banned from {guild} until {date}.").format(
+                    guild=guild,
+                    date=discord.utils.format_dt(unban_time))),
+                color=await self.bot.get_embed_color(member),
+            )
+            em.add_field(
+                name=_("**Reason**"),
+                value=reason if reason is not None else _("No reason was given."),
+                inline=False,
+            )
+            if invite:
                 em.add_field(
-                    name=_("**Reason**"),
-                    value=reason if reason is not None else _("No reason was given."),
+                    name=bold("Here is an invite for when your ban expires"),
+                    value=invite,
                     inline=False,
                 )
-                if invite:
-                    em.add_field(
-                        name=bold("Here is an invite for when your ban expires"),
-                        value=invite,
-                        inline=False,
-                    )
-                if extra_embed:
-                    extra_embed_title = await self.config.guild(guild).ban_extra_embed_title()
-                    extra_embed_contents = await self.config.guild(guild).ban_extra_embed_contents()
+            if extra_embed:
+                extra_embed_title = await self.config.guild(guild).ban_extra_embed_title()
+                extra_embed_contents = await self.config.guild(guild).ban_extra_embed_contents()
 
-                    em.add_field(
-                        name=bold(extra_embed_title),
-                        value=extra_embed_contents,
-                        inline=False,
-                    )
-                await member.send(embed=em)
+                em.add_field(
+                    name=bold(extra_embed_title),
+                    value=extra_embed_contents,
+                    inline=False,
+                )
+            await member.send(embed=em)
 
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
