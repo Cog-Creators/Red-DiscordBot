@@ -143,6 +143,8 @@ class KickBanMixin(MixinMeta):
 
             toggle = await self.config.guild(guild).dm_on_kickban()
             if toggle:
+                extra_embed = await self.config.guild(guild).ban_show_extra()
+
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
                         title=bold(_("You have been banned from {guild}.").format(guild=guild)),
@@ -153,6 +155,15 @@ class KickBanMixin(MixinMeta):
                         value=reason if reason is not None else _("No reason was given."),
                         inline=False,
                     )
+                    if extra_embed:
+                        extra_embed_title = await self.config.guild(guild).ban_extra_embed_title()
+                        extra_embed_contents = await self.config.guild(guild).ban_extra_embed_contents()
+
+                        em.add_field(
+                            name=bold(extra_embed_title),
+                            value=extra_embed_contents,
+                            inline=False,
+                        )
                     await user.send(embed=em)
 
             ban_type = "ban"
@@ -658,16 +669,37 @@ class KickBanMixin(MixinMeta):
 
         with contextlib.suppress(discord.HTTPException):
             # We don't want blocked DMs preventing us from banning
-            msg = _("You have been temporarily banned from {server_name} until {date}.").format(
-                server_name=guild.name, date=discord.utils.format_dt(unban_time)
-            )
-            if guild_data["dm_on_kickban"] and reason:
-                msg += _("\n\n**Reason:** {reason}").format(reason=reason)
-            if invite:
-                msg += _("\n\nHere is an invite for when your ban expires: {invite_link}").format(
-                    invite_link=invite
+
+            extra_embed = await self.config.guild(guild).ban_show_extra()
+
+            with contextlib.suppress(discord.HTTPException):
+                em = discord.Embed(
+                    title=bold(_("You have been temporarily banned from {guild} until {date}.").format(
+                        guild=guild,
+                        date=discord.utils.format_dt(unban_time))),
+                    color=await self.bot.get_embed_color(member),
                 )
-            await member.send(msg)
+                em.add_field(
+                    name=_("**Reason**"),
+                    value=reason if reason is not None else _("No reason was given."),
+                    inline=False,
+                )
+                if invite:
+                    em.add_field(
+                        name=bold("Here is an invite for when your ban expires"),
+                        value=invite,
+                        inline=False,
+                    )
+                if extra_embed:
+                    extra_embed_title = await self.config.guild(guild).ban_extra_embed_title()
+                    extra_embed_contents = await self.config.guild(guild).ban_extra_embed_contents()
+
+                    em.add_field(
+                        name=bold(extra_embed_title),
+                        value=extra_embed_contents,
+                        inline=False,
+                    )
+                await member.send(embed=em)
 
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
