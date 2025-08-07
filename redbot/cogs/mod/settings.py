@@ -402,13 +402,15 @@ class ModSettings(MixinMeta):
             return
         await self.config.guild(guild).ban_show_extra.set(enabled)
         if enabled:
-            await ctx.send(_("An extra field will be shown when banning. "
-                             f"Configure it with `{ctx.clean_prefix}modset dm banextrafieldtitle` "
-                             f"and `{ctx.clean_prefix}modset dm banextrafieldcontents`"))
-        else:
             await ctx.send(
-                _("An extra field will be no longer be shown when banning.")
+                _(
+                    "An extra field will be shown when banning. "
+                    f"Configure it with `{ctx.clean_prefix}modset dm banextrafieldtitle` "
+                    f"and `{ctx.clean_prefix}modset dm banextrafieldcontents`"
+                )
             )
+        else:
+            await ctx.send(_("An extra field will be no longer be shown when banning."))
 
     @dm.command(name="banextrafieldtitle")
     async def dm_banextrafieldtitle(self, ctx: commands.Context, *, title: str) -> None:
@@ -422,7 +424,6 @@ class ModSettings(MixinMeta):
             await self.config.guild(guild).ban_extra_embed_title.clear()
             await ctx.send("Cleared embed title")
         else:
-
             await self.config.guild(guild).ban_extra_embed_title.set(title)
             await ctx.send(_("Embed Title has been set to `{title}`").format(title=title))
 
@@ -439,7 +440,9 @@ class ModSettings(MixinMeta):
             await ctx.send("Cleared embed contents")
         else:
             await self.config.guild(guild).ban_extra_embed_contents.set(contents)
-            await ctx.send(_("Embed Contents has been set to `{contents}`").format(contents=contents))
+            await ctx.send(
+                _("Embed Contents has been set to `{contents}`").format(contents=contents)
+            )
 
     @modset.command()
     @commands.guild_only()

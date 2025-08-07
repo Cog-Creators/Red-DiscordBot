@@ -157,7 +157,9 @@ class KickBanMixin(MixinMeta):
                     )
                     if extra_embed:
                         extra_embed_title = await self.config.guild(guild).ban_extra_embed_title()
-                        extra_embed_contents = await self.config.guild(guild).ban_extra_embed_contents()
+                        extra_embed_contents = await self.config.guild(
+                            guild
+                        ).ban_extra_embed_contents()
 
                         em.add_field(
                             name=bold(extra_embed_title),
@@ -673,9 +675,11 @@ class KickBanMixin(MixinMeta):
             extra_embed = await self.config.guild(guild).ban_show_extra()
 
             em = discord.Embed(
-                title=bold(_("You have been temporarily banned from {guild} until {date}.").format(
-                    guild=guild,
-                    date=discord.utils.format_dt(unban_time))),
+                title=bold(
+                    _("You have been temporarily banned from {guild} until {date}.").format(
+                        guild=guild, date=discord.utils.format_dt(unban_time)
+                    )
+                ),
                 color=await self.bot.get_embed_color(member),
             )
             em.add_field(
