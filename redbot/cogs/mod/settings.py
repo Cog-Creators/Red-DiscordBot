@@ -391,7 +391,7 @@ class ModSettings(MixinMeta):
     @dm.command(name="banshowextrafield")
     async def dm_banshowextrafield(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle whether to show an extra field when banning. This is useful to add information such as a ban appeal link.
+        Toggle whether to show an extra customizable field when banning. This is useful to add information such as a ban appeal link.
         """
         guild = ctx.guild
         if enabled is None:
@@ -417,7 +417,7 @@ class ModSettings(MixinMeta):
         """
         Set the title for the optional extra embed on ban
 
-        Set to "Clear" to remove.
+        Set to "clear" to remove.
         """
         guild = ctx.guild
         if title == "clear":
@@ -432,7 +432,7 @@ class ModSettings(MixinMeta):
         """
         Set the contents for the optional extra embed on ban
 
-        Set to "Clear" to remove.
+        Set to "clear" to remove.
         """
         guild = ctx.guild
         if contents == "clear":

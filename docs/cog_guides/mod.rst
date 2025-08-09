@@ -253,7 +253,23 @@ modset dm
 
 .. code-block:: none
 
-    [p]modset dm [enabled]
+    [p]modset dm
+
+**Description**
+
+Settings for messaging the user on moderation action.
+
+.. _mod-command-modset-dm-sendmessage:
+
+"""""""""
+modset dm sendmessage
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm sendmessage [enabled]
 
 **Description**
 
@@ -265,6 +281,71 @@ and reason as to why they were kicked/banned.
 **Arguments**
 
 * ``[enabled]``: Whether a message should be sent to a user when they are kicked/banned. |bool-input|
+
+.. _mod-command-modset-banshowextrafield:
+
+"""""""""
+modset dm banshowextrafield
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banshowextrafield [enabled]
+
+**Description**
+
+
+Toggle whether to show an extra customizable field when banning. This is useful to add information such as a ban appeal link.
+
+**Arguments**
+
+* ``[enabled]``: If an extra customizable embed field should appear when banning. |bool-input|
+
+.. _mod-command-modset-banextrafieldtitle:
+
+"""""""""
+modset dm banextrafieldtitle
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banextrafieldtitle [title]
+
+**Description**
+
+Set the title for the optional extra embed on ban
+
+Set to "clear" to remove.
+
+**Arguments**
+
+* ``[title]``: The title of the embed field. Can by any string of text.
+
+.. _mod-command-modset-banextrafieldcontents:
+
+"""""""""
+modset dm banextrafieldcontents
+"""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banextrafieldcontents [contents]
+
+**Description**
+
+Set the contents for the optional extra embed on ban
+
+Set to "clear" to remove.
+
+**Arguments**
+
+* ``[contents]``: The contents of the embed field. Can by any string of text.
 
 .. _mod-command-modset-requirereason:
 
