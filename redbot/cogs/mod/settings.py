@@ -426,10 +426,8 @@ class ModSettings(MixinMeta):
         # All the bold function used in the embeds does is add those star characters and some other convenience stuffs.
         # Such as escaping formatting.
         if len(title) > 252:
-            await ctx.send(str(len(title)))
             await ctx.send(_("Embed title cannot be over 252 characters long."))
         else:
-            await ctx.send(str(len(title)))
             await self.config.guild(guild).ban_extra_embed_title.set(title)
             await ctx.send(_("Embed Title has been set to `{title}`").format(title=title))
 
