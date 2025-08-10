@@ -698,7 +698,7 @@ class KickBanMixin(MixinMeta):
                 extra_embed_contents = await self.config.guild(guild).ban_extra_embed_contents()
 
                 em.add_field(
-                    name=bold(extra_embed_title),
+                    name=bold(extra_embed_title, escape_formatting=False),
                     value=extra_embed_contents,
                     inline=False,
                 )

@@ -406,10 +406,8 @@ class ModSettings(MixinMeta):
         if enabled:
             await ctx.send(
                 _(
-                    "An extra field will be shown when banning. Configure it with `{prefix}modset dm banextrafieldtitle` and `{prefix}modset dm banextrafieldcontents`".format(
-                        prefix=ctx.prefix
-                    )
-                )
+                    "An extra field will be shown when banning. Configure it with `{prefix}modset dm banextrafieldtitle` and `{prefix}modset dm banextrafieldcontents`"
+                ).format(prefix=ctx.prefix)
             )
         else:
             await ctx.send(_("An extra field will be no longer be shown when banning."))
