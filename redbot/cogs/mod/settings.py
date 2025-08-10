@@ -406,7 +406,9 @@ class ModSettings(MixinMeta):
         if enabled:
             await ctx.send(
                 _(
-                    "An extra field will be shown when banning. Configure it with `{prefix}modset dm banextrafieldtitle` and `{prefix}modset dm banextrafieldcontents`".format(prefix=ctx.prefix)
+                    "An extra field will be shown when banning. Configure it with `{prefix}modset dm banextrafieldtitle` and `{prefix}modset dm banextrafieldcontents`".format(
+                        prefix=ctx.prefix
+                    )
                 )
             )
         else:
@@ -443,7 +445,9 @@ class ModSettings(MixinMeta):
             await ctx.send(_("Embed contents cannot be over 1024 characters long."))
         else:
             await self.config.guild(guild).ban_extra_embed_contents.set(contents)
-            await ctx.send(_("Embed Contents has been set to `{contents}`").format(contents=contents))
+            await ctx.send(
+                _("Embed Contents has been set to `{contents}`").format(contents=contents)
+            )
 
     @modset.command()
     @commands.guild_only()
