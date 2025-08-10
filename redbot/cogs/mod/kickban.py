@@ -162,7 +162,7 @@ class KickBanMixin(MixinMeta):
                         ).ban_extra_embed_contents()
 
                         em.add_field(
-                            name=bold(extra_embed_title, False),
+                            name=bold(extra_embed_title, escape_formatting=False),
                             value=extra_embed_contents,
                             inline=False,
                         )

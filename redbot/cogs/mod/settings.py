@@ -417,7 +417,7 @@ class ModSettings(MixinMeta):
     @dm.command(name="banextrafieldtitle")
     async def dm_banextrafieldtitle(self, ctx: commands.Context, *, title: str) -> None:
         """
-        Set the title for the optional extra embed on ban
+        Set the title for the optional extra embed on ban.
 
         Cannot be over 252 characters long.
         """
