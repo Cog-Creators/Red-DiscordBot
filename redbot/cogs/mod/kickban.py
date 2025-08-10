@@ -201,7 +201,7 @@ class KickBanMixin(MixinMeta):
         else:
             user_handle = str(user) if isinstance(user, discord.abc.User) else "Unknown"
             try:
-                # await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
+                await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
                     "%s (%s) %sned %s (%s), deleting %s days worth of messages.",
                     author,
