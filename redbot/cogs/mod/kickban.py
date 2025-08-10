@@ -162,7 +162,7 @@ class KickBanMixin(MixinMeta):
                         ).ban_extra_embed_contents()
 
                         em.add_field(
-                            name=bold(extra_embed_title),
+                            name=bold(extra_embed_title, False),
                             value=extra_embed_contents,
                             inline=False,
                         )
@@ -201,7 +201,7 @@ class KickBanMixin(MixinMeta):
         else:
             user_handle = str(user) if isinstance(user, discord.abc.User) else "Unknown"
             try:
-                await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
+                # await guild.ban(user, reason=audit_reason, delete_message_seconds=days * 86400)
                 log.info(
                     "%s (%s) %sned %s (%s), deleting %s days worth of messages.",
                     author,
@@ -689,7 +689,7 @@ class KickBanMixin(MixinMeta):
             )
             if invite:
                 em.add_field(
-                    name=bold("Here is an invite for when your ban expires"),
+                    name=bold(_("Here is an invite for when your ban expires")),
                     value=invite,
                     inline=False,
                 )

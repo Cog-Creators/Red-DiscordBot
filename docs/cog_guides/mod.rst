@@ -257,13 +257,13 @@ modset dm
 
 **Description**
 
-Settings for messaging the user on moderation action.
+Settings for messaging the user when being kicked or banned.
 
 .. _mod-command-modset-dm-sendmessage:
 
-"""""""""
+"""""""""""""""""""""
 modset dm sendmessage
-"""""""""
+"""""""""""""""""""""
 
 **Syntax**
 
@@ -284,9 +284,9 @@ and reason as to why they were kicked/banned.
 
 .. _mod-command-modset-banshowextrafield:
 
-"""""""""
+"""""""""""""""""""""""""""
 modset dm banshowextrafield
-"""""""""
+"""""""""""""""""""""""""""
 
 **Syntax**
 
@@ -296,8 +296,9 @@ modset dm banshowextrafield
 
 **Description**
 
+Toggle whether to show an extra customizable field when banning.
 
-Toggle whether to show an extra customizable field when banning. This is useful to add information such as a ban appeal link.
+This can be used to add additional information for the banned user, such as a ban appeal link.
 
 **Arguments**
 
@@ -305,9 +306,9 @@ Toggle whether to show an extra customizable field when banning. This is useful 
 
 .. _mod-command-modset-banextrafieldtitle:
 
-"""""""""
+""""""""""""""""""""""""""""
 modset dm banextrafieldtitle
-"""""""""
+""""""""""""""""""""""""""""
 
 **Syntax**
 
@@ -319,17 +320,17 @@ modset dm banextrafieldtitle
 
 Set the title for the optional extra embed on ban
 
-Set to "clear" to remove.
+Cannot be over 252 characters long.
 
 **Arguments**
 
-* ``[title]``: The title of the embed field. Can by any string of text.
+* ``[title]``: The title of the embed field. Can by any string of text under 252 charcters long.
 
 .. _mod-command-modset-banextrafieldcontents:
 
-"""""""""
+"""""""""""""""""""""""""""""""
 modset dm banextrafieldcontents
-"""""""""
+"""""""""""""""""""""""""""""""
 
 **Syntax**
 
@@ -341,11 +342,11 @@ modset dm banextrafieldcontents
 
 Set the contents for the optional extra embed on ban
 
-Set to "clear" to remove.
+Cannot be over 1024 characters long.
 
 **Arguments**
 
-* ``[contents]``: The contents of the embed field. Can by any string of text.
+* ``[contents]``: The contents of the embed field. Can by any string of text under 1024 charcters long.
 
 .. _mod-command-modset-requirereason:
 

@@ -363,7 +363,7 @@ class ModSettings(MixinMeta):
     @commands.guild_only()
     async def dm(self, ctx: commands.Context):
         """
-        Settings for messaging the user on moderation action.
+        Settings for messaging the user when being kicked or banned.
         """
 
     @dm.command(name="sendmessage")
@@ -391,7 +391,9 @@ class ModSettings(MixinMeta):
     @dm.command(name="banshowextrafield")
     async def dm_banshowextrafield(self, ctx: commands.Context, enabled: bool = None):
         """
-        Toggle whether to show an extra customizable field when banning. This is useful to add information such as a ban appeal link.
+        Toggle whether to show an extra customizable field when banning.
+
+        This can be used to add additional information for the banned user, such as a ban appeal link.
         """
         guild = ctx.guild
         if enabled is None:
@@ -404,9 +406,7 @@ class ModSettings(MixinMeta):
         if enabled:
             await ctx.send(
                 _(
-                    "An extra field will be shown when banning. "
-                    f"Configure it with `{ctx.clean_prefix}modset dm banextrafieldtitle` "
-                    f"and `{ctx.clean_prefix}modset dm banextrafieldcontents`"
+                    "An extra field will be shown when banning. Configure it with `{prefix}modset dm banextrafieldtitle` and `{prefix}modset dm banextrafieldcontents`".format(prefix=ctx.prefix)
                 )
             )
         else:
@@ -417,13 +417,17 @@ class ModSettings(MixinMeta):
         """
         Set the title for the optional extra embed on ban
 
-        Set to "clear" to remove.
+        Cannot be over 252 characters long.
         """
         guild = ctx.guild
-        if title == "clear":
-            await self.config.guild(guild).ban_extra_embed_title.clear()
-            await ctx.send("Cleared embed title")
+        # Bolding the text is 4 characters (**bolded**)
+        # All the bold function used in the embeds does is add those star characters and some other convenience stuffs.
+        # Such as escaping formatting.
+        if len(title) > 252:
+            await ctx.send(str(len(title)))
+            await ctx.send(_("Embed title cannot be over 252 characters long."))
         else:
+            await ctx.send(str(len(title)))
             await self.config.guild(guild).ban_extra_embed_title.set(title)
             await ctx.send(_("Embed Title has been set to `{title}`").format(title=title))
 
@@ -432,17 +436,14 @@ class ModSettings(MixinMeta):
         """
         Set the contents for the optional extra embed on ban
 
-        Set to "clear" to remove.
+        Cannot be over 1024 characters long.
         """
         guild = ctx.guild
-        if contents == "clear":
-            await self.config.guild(guild).ban_extra_embed_contents.clear()
-            await ctx.send("Cleared embed contents")
+        if len(contents) > 1024:
+            await ctx.send(_("Embed contents cannot be over 1024 characters long."))
         else:
             await self.config.guild(guild).ban_extra_embed_contents.set(contents)
-            await ctx.send(
-                _("Embed Contents has been set to `{contents}`").format(contents=contents)
-            )
+            await ctx.send(_("Embed Contents has been set to `{contents}`").format(contents=contents))
 
     @modset.command()
     @commands.guild_only()
