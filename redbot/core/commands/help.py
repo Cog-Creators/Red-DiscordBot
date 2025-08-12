@@ -752,6 +752,12 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends an error, fuzzy help, or stays quiet based on settings
         """
+        blacklist: set[int] = await self.bot.get_blacklist().union(
+            await self.bot.get_blacklist(ctx.guild)
+        )
+        if ctx.author.id in blacklist:
+            return
+        
         fuzzy_commands = await fuzzy_command_search(
             ctx,
             help_for,
