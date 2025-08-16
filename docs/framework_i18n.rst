@@ -21,7 +21,7 @@ Basic Usage
 
     # This decorator must be used for cog and command docstrings to be translated!
     @cog_i18n(_)
-    class ExampleCog:
+    class ExampleCog(commands.Cog):
         """Cog description"""
 
         @commands.command()
@@ -78,9 +78,12 @@ You can install ``redgettext`` by running :code:`pip install redgettext` in your
 environment.
 
 Once you have ``redgettext`` installed, you will now need to run
+
 :code:`python -m redgettext -c [path_to_cog_folder]`
+
 This will generate a ``messages.pot`` file in ``path_to_cog_folder/locales``. This file will
 contain all strings to be translated, including docstrings.
+
 (For advanced usage check :code:`python -m redgettext -h`)
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -106,4 +109,4 @@ API Reference
 
 .. automodule:: redbot.core.i18n
     :members:
-    :special-members: __call__
+    :special-members: __call__, __init__
