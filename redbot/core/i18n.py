@@ -256,20 +256,21 @@ def _get_locale_path(cog_folder: Path, extension: str) -> Path:
 
 
 class Translator(Callable[[str], str]):
-    """Function to get translated strings at runtime."""
+    """
+    Function to get translated strings at runtime.
+
+    Parameters
+    ----------
+    name : str
+        Your cog name.
+    file_location : `str` or `pathlib.Path`
+        This should always be ``__file__`` otherwise your localizations
+        will not load.
+    """
 
     def __init__(self, name: str, file_location: Union[str, Path, os.PathLike]):
         """
         Initializes an internationalization object.
-
-        Parameters
-        ----------
-        name : str
-            Your cog name.
-        file_location : `str` or `pathlib.Path`
-            This should always be ``__file__`` otherwise your localizations
-            will not load.
-
         """
         self.cog_folder = Path(file_location).resolve().parent
         self.cog_name = name
