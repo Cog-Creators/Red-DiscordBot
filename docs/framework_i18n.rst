@@ -23,6 +23,8 @@ Basic Usage
     @cog_i18n(_)
     class ExampleCog(commands.Cog):
         """Cog description"""
+        def __init__(self, bot):
+            self.bot = bot
 
         @commands.command()
         async def mycom(self, ctx):
@@ -39,7 +41,7 @@ Basic Usage
         @commands.Cog.listener()
         async def on_message(self, message):
             # In non-command locations, you must manually call this method for guild locale settings to apply
-            set_contextual_locales_from_guild(message.guild)
+            await set_contextual_locales_from_guild(self.bot, message.guild)
             if message.author.bot:
                 return
             await message.channel.send(_("This is a non command with translation support!"))
