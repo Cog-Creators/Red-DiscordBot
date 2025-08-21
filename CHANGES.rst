@@ -1,5 +1,207 @@
 .. Red changelogs
 
+Redbot 3.5.20 (2025-05-03)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.20's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.20/Red-DiscordBot-3.5.20-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6568`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6566`, :issue:`6567`)
+
+----
+
+Redbot 3.5.19 (2025-04-27)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.19's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.19/Red-DiscordBot-3.5.19-default-lavalink-application.yml>`__
+
+#. Fedora 40 is no longer supported as it will soon reach its end of life. Fedora install instructions have been updated with support for Fedora 42.
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6558`)
+- **Core - OS Support** - Fedora 40 is no longer supported as it will soon reach its end of life (:issue:`6558`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6557`)
+
+Documentation changes
+---------------------
+
+Changes
+*******
+
+- Updated Fedora install instructions to work with Fedora 42 (:issue:`6558`)
+
+----
+
+Redbot 3.5.18 (2025-03-26)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.18's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.18/Red-DiscordBot-3.5.18-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6543`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6542`)
+
+----
+
+Redbot 3.5.17 (2025-03-08)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.17's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.17/Red-DiscordBot-3.5.17-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6529`, :issue:`6531`)
+- **Cogs - Cleanup** - The ``[p]cleanup duplicates`` command now considers more information about the message when determining if it's a duplicate. Notably, messages with polls are ignored and equivalent messages replying to different messages are now not considered duplicates (:issue:`6529`)
+- **Cogs - Filter** - The cog now checks forwarded messages for filtered words (:issue:`6529`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6530`)
+- **Cogs - Streams** - Fixed upcoming stream alert showing an incorrect time when Red is hosted on a system using a non-UTC timezone (:issue:`6526`, :issue:`6527`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.5.2 (:issue:`6529`, :issue:`6531`)
+
+----
+
+Redbot 3.5.16 (2025-02-06)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`Flame442`, :ghuser:`Jackenmen`
+
+This is a hotfix release changing our implementation to prevent crash at startup
+when invalid value of global locale/regional format configuration is encountered.
+We have seen a few reports of this occurring and we believe that this was caused by
+some 3rd-party cog(s) passing invalid values to Red <3.5 i18n APIs as those versions
+did not validate the input in some scenarios. During startup, Red will now simply
+log a warning, if it encounters incorrect global locale/regional format configuration
+and reset it to a known valid value.
+
+----
+
+Redbot 3.5.15 (2025-02-03)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. openSUSE Leap 15.5 is no longer supported as it has already reached its end of life.
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.15's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.15/Red-DiscordBot-3.5.15-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6512`)
+- **Core - OS Support** - openSUSE Leap 15.5 is no longer supported as it has already reached its end of life (:issue:`6512`)
+- **Cogs - Audio** - The ``[p]audioset logs`` command can now be used in DMs (:issue:`6499`)
+- **Cogs - Trivia - Lists** - Added subnet masks in CIDR notations as answers to subnet-related questions in the ``computers`` trivia (:issue:`6495`)
+
+Fixes
+*****
+
+- **Core - Bot Commands** - The ``[p]set api`` command no longer errors with long service names (:issue:`6478`, :issue:`6502`)
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6509`, :issue:`6511`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- **Core - i18n** - Added `redbot.core.i18n.set_contextual_locale()` and `redbot.core.i18n.set_contextual_regional_format()` functions (:issue:`6022`)
+
+----
+
 Redbot 3.5.14 (2024-12-25)
 ==========================
 

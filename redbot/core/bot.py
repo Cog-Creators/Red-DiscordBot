@@ -116,7 +116,7 @@ class Red(
             owner=None,
             whitelist=[],
             blacklist=[],
-            locale="en-US",
+            locale=_i18n.FRESH_INSTALL_LOCALE,
             regional_format=None,
             embeds=True,
             color=15158332,
@@ -1146,9 +1146,28 @@ class Red(
             self.owner_ids.add(self._owner_id_overwrite)
 
         i18n_locale = await self._config.locale()
-        _i18n.set_global_locale(i18n_locale)
+        try:
+            _i18n.set_global_locale(i18n_locale)
+        except (ValueError, TypeError):
+            log.warning(
+                "The bot's global locale was set to an invalid value (%r)"
+                " and will be reset to default (%s).",
+                i18n_locale,
+                _i18n.FRESH_INSTALL_LOCALE,
+            )
+            i18n_locale = _i18n.FRESH_INSTALL_LOCALE
+            await self._config.locale.clear()
         i18n_regional_format = await self._config.regional_format()
-        _i18n.set_global_regional_format(i18n_regional_format)
+        try:
+            _i18n.set_global_regional_format(i18n_regional_format)
+        except (ValueError, TypeError):
+            log.warning(
+                "The bot's global regional format was set to an invalid value (%r)"
+                " and will be reset to default (which is to inherit global locale, i.e. %s).",
+                i18n_regional_format,
+                i18n_locale,
+            )
+            await self._config.regional_format.clear()
 
     async def _pre_connect(self) -> None:
         """
@@ -2465,23 +2484,34 @@ class Red(
                 msg = await channel.send(box(page, lang=box_lang))
             ret.append(msg)
             n_remaining = len(messages) - idx
+            files_perm = (
+                not channel.guild or channel.permissions_for(channel.guild.me).attach_files
+            )
+            options = ("more", "file") if files_perm else ("more",)
             if n_remaining > 0:
                 if n_remaining == 1:
-                    prompt_text = _(
-                        "There is still one message remaining. Type {command_1} to continue"
-                        " or {command_2} to upload all contents as a file."
-                    )
+                    if files_perm:
+                        prompt_text = _(
+                            "There is still one message remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
+                        )
+                    else:
+                        prompt_text = _(
+                            "There is still one message remaining. Type {command_1} to continue."
+                        )
                 else:
-                    prompt_text = _(
-                        "There are still {count} messages remaining. Type {command_1} to continue"
-                        " or {command_2} to upload all contents as a file."
-                    )
+                    if files_perm:
+                        prompt_text = _(
+                            "There are still {count} messages remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
+                        )
+                    else:
+                        prompt_text = _(
+                            "There are still {count} messages remaining. Type {command_1} to continue."
+                        )
+
                 query = await channel.send(
                     prompt_text.format(count=n_remaining, command_1="`more`", command_2="`file`")
                 )
-                pred = MessagePredicate.lower_contained_in(
-                    ("more", "file"), channel=channel, user=user
-                )
+                pred = MessagePredicate.lower_contained_in(options, channel=channel, user=user)
                 try:
                     resp = await self.wait_for(
                         "message",

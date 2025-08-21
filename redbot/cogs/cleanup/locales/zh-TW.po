@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-01-04 00:13+0000\n"
+"POT-Creation-Date: 2025-03-04 22:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -210,12 +210,12 @@ msgstr "從最近 X 條消息中刪除頻道中重複的消息，並只保留為
 "        - `<number>` 要檢查重複項的訊息數。 必須是正整數。\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:749
+#: redbot/cogs/cleanup/cleanup.py:757
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr "管理cleanup 指令的設定。"
 
-#: redbot/cogs/cleanup/cleanup.py:755
+#: redbot/cogs/cleanup/cleanup.py:763
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -226,11 +226,11 @@ msgstr "切換清理通知設置。\n\n"
 "        此訊息將在 5 秒後自動刪除。\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:763
+#: redbot/cogs/cleanup/cleanup.py:771
 msgid "I will no longer notify of message deletions."
 msgstr "我將不再通知訊息已被刪除。"
 
-#: redbot/cogs/cleanup/cleanup.py:766
+#: redbot/cogs/cleanup/cleanup.py:774
 msgid "I will now notify of message deletions."
 msgstr "我現在將會通知訊息已被刪除。"
 

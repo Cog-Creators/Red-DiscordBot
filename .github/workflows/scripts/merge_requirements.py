@@ -137,25 +137,27 @@ for name in names:
             python_version_marker = (
                 # Requirement present on less Python versions than not.
                 " or ".join(
-                    f"python_version == '{python_version}'" for python_version in python_versions
+                    f"python_version == '{python_version}'"
+                    for python_version in sorted(python_versions)
                 )
                 if len(python_versions) < len(all_python_versions - python_versions)
                 # Requirement present on more Python versions than not
                 # This may generate an empty string when Python version is irrelevant.
                 else " and ".join(
                     f"python_version != '{python_version}'"
-                    for python_version in all_python_versions - python_versions
+                    for python_version in sorted(all_python_versions - python_versions)
                 )
             )
 
             platform_marker = (
                 # Requirement present on less platforms than not.
-                " or ".join(f"sys_platform == '{platform}'" for platform in platforms)
+                " or ".join(f"sys_platform == '{platform}'" for platform in sorted(platforms))
                 if len(platforms) < len(all_platforms - platforms)
                 # Requirement present on more platforms than not
                 # This may generate an empty string when platform is irrelevant.
                 else " and ".join(
-                    f"sys_platform != '{platform}'" for platform in all_platforms - platforms
+                    f"sys_platform != '{platform}'"
+                    for platform in sorted(all_platforms - platforms)
                 )
             )
 
@@ -169,12 +171,12 @@ for name in names:
                 # Requirement present on less envs than not.
                 " or ".join(
                     f"(sys_platform == '{platform}' and python_version == '{python_version}')"
-                    for platform, python_version in iter_envs(envs)
+                    for platform, python_version in iter_envs(sorted(envs))
                 )
                 if len(envs) < len(all_envs - envs.keys())
                 else " and ".join(
                     f"(sys_platform != '{platform}' and python_version != '{python_version}')"
-                    for platform, python_version in iter_envs(all_envs - envs.keys())
+                    for platform, python_version in iter_envs(sorted(all_envs - envs.keys()))
                 )
             )
 

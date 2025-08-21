@@ -309,9 +309,9 @@ class ModInfo(MixinMeta):
         usernames, display_names, nicks = await self.get_names(member)
         parts = []
         for header, names in (
-            (_("Past 20 usernames:"), usernames),
-            (_("Past 20 global display names:"), display_names),
-            (_("Past 20 server nicknames:"), nicks),
+            (_("Past 20 usernames: "), usernames),
+            (_("Past 20 global display names: "), display_names),
+            (_("Past 20 server nicknames: "), nicks),
         ):
             if names:
                 parts.append(bold(header) + ", ".join(names))
