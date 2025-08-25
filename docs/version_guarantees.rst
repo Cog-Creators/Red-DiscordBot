@@ -55,12 +55,12 @@ Windows 11                         x86-64                    `Retirement Date <h
 macOS 13 (Ventura)                 x86-64, aarch64           ~2025-10
 macOS 14 (Sonoma)                  x86-64, aarch64           ~2026-10
 macOS 15 (Sequoia)                 x86-64, aarch64           ~2027-10
-Alma Linux 8                       x86-64, aarch64           2029-05-31 (`How long will CloudLinux support AlmaLinux? <https://wiki.almalinux.org/FAQ.html#how-long-will-almalinux-be-supported>`__)
-Alma Linux 9                       x86-64, aarch64           2032-05-31
+Alma Linux 8                       x86-64, aarch64           2029-05-31 (`security support <https://wiki.almalinux.org/release-notes/>`__)
+Alma Linux 9                       x86-64, aarch64           2032-05-31 (`security support <https://wiki.almalinux.org/release-notes/>`__)
 Amazon Linux 2023                  x86-64, aarch64           2028-03-15 (`end-of-life <https://docs.aws.amazon.com/linux/al2023/release-notes/support-info-by-support-statement.html#support-info-by-support-statement-eol>`__)
 Arch Linux                         x86-64                    forever (support is only provided for an up-to-date system)
 CentOS Stream 9                    x86-64, aarch64           2027-05-31 (`expected EOL <https://centos.org/stream9/#timeline>`__)
-Debian 12 Bookworm                 x86-64, aarch64, armv7l   ~2026-09 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
+Debian 12 Bookworm                 x86-64, aarch64, armv7l   2026-06-10 (`End of life <https://wiki.debian.org/DebianReleases#Production_Releases>`__)
 Fedora Linux 41                    x86-64, aarch64           2025-11-19 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 Fedora Linux 42                    x86-64, aarch64           2026-05-13 (`End of Life <https://docs.fedoraproject.org/en-US/releases/lifecycle/#_maintenance_schedule>`__)
 openSUSE Leap 15.6                 x86-64, aarch64           2025-12-31 (`end of maintenance life cycle <https://en.opensuse.org/Lifetime#openSUSE_Leap>`__)
@@ -70,14 +70,12 @@ Oracle Linux 9                     x86-64, aarch64           2032-06-31 (`End of
 Raspberry Pi OS (Legacy) 11        armv7l                    ~2025-10 (approximate date of release of Raspberry Pi OS 13)
 Raspberry Pi OS 12                 aarch64, armv7l           ~2025-10 (approximate date of release of Raspberry Pi OS 13)
 RHEL 8 (latest)                    x86-64, aarch64           2029-05-31 (`End of Maintenance Support <https://access.redhat.com/support/policy/updates/errata#Life_Cycle_Dates>`__)
-RHEL 8.8                           x86-64, aarch64           2025-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
 RHEL 8.10                          x86-64, aarch64           2029-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
 RHEL 9 (latest)                    x86-64, aarch64           2032-05-31 (`End of Maintenance Support <https://access.redhat.com/support/policy/updates/errata#Life_Cycle_Dates>`__)
-RHEL 9.2                           x86-64, aarch64           2025-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
 RHEL 9.4                           x86-64, aarch64           2026-04-30 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
-Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
-Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`end-of-life <https://rockylinux.org/download/>`__)
-Ubuntu 20.04 LTS                   x86-64, aarch64           2025-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+RHEL 9.6                           x86-64, aarch64           2027-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
+Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`(i) Planned EOL <https://rockylinux.org/download>`__)
+Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`(i) Planned EOL <https://rockylinux.org/download>`__)
 Ubuntu 22.04 LTS                   x86-64, aarch64           2027-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 24.04 LTS                   x86-64, aarch64           2029-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
