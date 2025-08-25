@@ -393,19 +393,23 @@ class SetApiModal(discord.ui.Modal):
 
         super().__init__(title=self.title)
 
-        self.service_input = discord.ui.TextInput(
-            label=_("Service"),
-            required=True,
-            placeholder=_placeholder_service,
-            default=self.default_service,
+        self.service_input = discord.ui.Label(
+            text=_("Service"),
+            component=discord.ui.TextInput(
+                required=True,
+                placeholder=_placeholder_service,
+                default=self.default_service,
+            ),
         )
 
-        self.token_input = discord.ui.TextInput(
-            label=self.keys_label,
-            style=discord.TextStyle.long,
-            required=True,
-            placeholder=_placeholder_token,
-            default=self.default_keys_fmt,
+        self.token_input = discord.ui.Label(
+            text=self.keys_label,
+            component=discord.ui.TextInput(
+                style=discord.TextStyle.long,
+                required=True,
+                placeholder=_placeholder_token,
+                default=self.default_keys_fmt,
+            ),
         )
 
         if self.default_service is None:
