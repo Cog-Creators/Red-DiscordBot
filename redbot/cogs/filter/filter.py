@@ -655,22 +655,28 @@ _ChildComponent = Union[
 
 
 def _extract_string_values_from_component(component: _ChildComponent) -> Iterable[str]:
+    for value in _extract_values_from_component(component):
+        if value:
+            yield value
+
+
+def _extract_values_from_component(component: _ChildComponent) -> Iterable[Optional[str]]:
     if isinstance(component, discord.Button):
         yield component.url
         yield component.label
     elif isinstance(component, discord.FileComponent):
-        yield component.media.placeholder or ""
+        yield component.media.placeholder
     elif isinstance(component, discord.MediaGalleryComponent):
         for item in component.items:
-            yield item.description or ""
-            yield item.media.placeholder or ""
+            yield item.description
+            yield item.media.placeholder
     elif isinstance(component, discord.SelectMenu):
         yield component.placeholder
     elif isinstance(component, discord.TextDisplay):
         yield component.content
     elif isinstance(component, discord.ThumbnailComponent):
-        yield component.description or ""
-        yield component.media.placeholder or ""
+        yield component.description
+        yield component.media.placeholder
     # LabelComponent and TextInput are modal-only components
 
 
