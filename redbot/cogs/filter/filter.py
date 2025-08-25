@@ -664,19 +664,16 @@ def _extract_values_from_component(component: _ChildComponent) -> Iterable[Optio
     if isinstance(component, discord.Button):
         yield component.url
         yield component.label
-    elif isinstance(component, discord.FileComponent):
-        yield component.media.placeholder
     elif isinstance(component, discord.MediaGalleryComponent):
         for item in component.items:
             yield item.description
-            yield item.media.placeholder
     elif isinstance(component, discord.SelectMenu):
         yield component.placeholder
     elif isinstance(component, discord.TextDisplay):
         yield component.content
     elif isinstance(component, discord.ThumbnailComponent):
         yield component.description
-        yield component.media.placeholder
+    # FileComponent does not have any user-provided text fields
     # LabelComponent and TextInput are modal-only components
 
 
