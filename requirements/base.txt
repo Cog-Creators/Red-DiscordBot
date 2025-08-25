@@ -48,7 +48,7 @@ propcache==0.2.0
     # via yarl
 psutil==7.0.0
     # via -r base.in
-pygments==2.19.1
+pygments==2.19.2
     # via rich
 python-dateutil==2.9.0.post0
     # via -r base.in
@@ -62,7 +62,7 @@ red-commons==1.0.0
     #   red-lavalink
 red-lavalink==0.11.0
     # via -r base.in
-rich==14.0.0
+rich==14.1.0
     # via -r base.in
 schema==0.7.7
     # via -r base.in
@@ -72,7 +72,6 @@ typing-extensions==4.13.2
     # via
     #   -r base.in
     #   multidict
-    #   rich
 yarl==1.15.2
     # via
     #   -r base.in
