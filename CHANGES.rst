@@ -36,6 +36,7 @@ Additions
 Changes
 *******
 
+- **Core** - The application (slash) commands will now use the server's configured language rather than the bot's global language, same as regular text commands (:issue:`6272`, :issue:`6579`)
 - **Core** - The option to request a ``file`` will no longer be provided in interactively sent messages when the bot does not actually have the permission to send files in the current channel (:issue:`6540`, :issue:`6552`)
 - **Core - Command-line Interfaces** - Red's error logging will now use standard traceback formatting by default as the Rich tracebacks (previously default) proved to be impractical when providing support to users and affected performance (:issue:`6576`)
 
