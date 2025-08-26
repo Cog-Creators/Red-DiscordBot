@@ -393,7 +393,7 @@ msgid "Set a playlist to auto-play songs from.\n\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay playlist MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]audioset autoplay playlist PersonalPlaylist --scope User --author Draper`\n"
 "        "
-msgstr ""
+msgstr "Playlist für die Automatische Wiedergabe einstellen.\\n\\n        **Verwendung**:\\n        ​ ​ ​ ​`[p]audioset autoplay name_ODER_id_der_playlist  [args]`\\n\\n        **Argumente**:\\n        ​ ​ ​ ​ Optionale Argumente:\\n        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\\n        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\\n        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Nur der Botbesitzer kann dieses Argument verwenden**\\n\\n        **Scope** hat einen der folgenden Werte:\\n            ​Global\\n        ​ ​ ​ ​ Guild\\n        ​ ​ ​ ​ User\\n\\n        **Author** hat einen der folgenden Werte:\\n        ​ ​ ​ ​ User ID\\n        ​ ​ ​ ​ User Mention\\n User Name#123\\n\\n        **Guild** hat einen der folgenden Werte:\\n        Guild ID\\n        Exact guild name\\n\\n        Beispiel:\\n        `[p]audioset autoplay MeineGuildPlaylist`\\n        `[p]audioset autoplay MeineGlobalePlaylist --scope Global`\\n        `[p]audioset autoplay MeinePersoenlichePlaylist --scope User --author Draper`\\n        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:497
 #: redbot/cogs/audio/core/commands/playlists.py:105
@@ -643,7 +643,7 @@ msgstr "Preis kann nicht kleiner als Null sein."
 
 #: redbot/cogs/audio/core/commands/audioset.py:769
 msgid "Price can't be greater than 2^63 - 1."
-msgstr ""
+msgstr "Preis darf nicht größer als 2^63 - 1 sein."
 
 #: redbot/cogs/audio/core/commands/audioset.py:774
 msgid "Jukebox mode disabled."
@@ -962,7 +962,14 @@ msgid "Lavalink version:       [{llversion}]\n"
 "Java Executable:        [{jv_exec}]\n"
 "Initial Heapsize:       [{xms}]\n"
 "Max Heapsize:           [{xmx}]\n"
-msgstr ""
+msgstr "Lavalink Version: [{llversion}]\n"
+"Lavalink Branch: [{llbranch}]\n"
+"Veröffentlichungs-Datum: [{build_time}]\n"
+"Lavaplayer Version: [{lavaplayer}]\n"
+"Java Version: [{jvm}]\n"
+"Java Executable: [{jv_exec}]\n"
+"Initial Heapsize: [{xms}]\n"
+"Max Heapsize: [{xmx}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1151
 msgid "Localtracks path:       [{localpath}]\n"
@@ -970,7 +977,7 @@ msgstr "Pfad der lokalen Titel:       [{localpath}]\n"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1159
 msgid "Lavalink Plugin Versions"
-msgstr ""
+msgstr "Lavalink Plugin-Versionen"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1173
 #, docstring
@@ -1462,7 +1469,10 @@ msgid "Toggle bumped track shuffle.\n\n"
 "        Set this to disabled if you wish to avoid bumped songs being shuffled. This takes priority\n"
 "        over `[p]shuffle`.\n"
 "        "
-msgstr ""
+msgstr "Schalten Sie den vorgezogenen Track Shuffle um.\n\n"
+"        Aktivieren Sie diese Option, wenn Sie verhindern möchten, dass vorgezogene Lieder gemischt werden. Dies benötigt Priorität\n"
+"        über `[p]shuffle`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/controller.py:465
 msgid "Shuffle bumped tracks: {true_or_false}."
@@ -1708,7 +1718,12 @@ msgid "Equalizer management.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Equalizer Management.\n\n"
+"        Bandpositionen sind 1-15 und Werte haben einen Bereich von -0.25 zu 1.0.\n"
+"        Bandnamen sind 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1.6k, 2.5k, 4k,\n"
+"        6.3k, 10k und 16k Hz.\n"
+"        Setzt einen Bandwert auf -0.25 nullifiziert es, während +0.25 doppelt ist.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/equalizer.py:73
 #, docstring
@@ -1867,7 +1882,12 @@ msgid "`Dangerous commands` Manage Lavalink node configuration settings.\n\n"
 "        i.e. been told by someone in the Red-Discord Bot support server to do so.\n"
 "        All the commands in here have the potential to break the Audio cog.\n"
 "        "
-msgstr ""
+msgstr "`Gefährliche Befehle` Verwalten Sie die Einstellungen der Lavalink-Knoten.\n\n"
+"        Dieser Befehlsblock enthält alle Befehle um einen nicht verwalteten (vom Benutzer verwalteten) Lavalink-Knoten zu konfigurieren.\n\n"
+"        Sie sollten hier keinen Befehl angeben, es sei denn, Sie haben einen gültigen Grund, um\n"
+"        z. wurde von jemandem auf dem Red-Discord Bot Support-Server gesagt, dies zu tun.\n"
+"        Alle hier enthaltenen Befehle haben das Potenzial, den Audio-Cog zu brechen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:60
 #, docstring
@@ -1877,7 +1897,12 @@ msgid "Change your Java executable path.\n\n"
 "        The current supported versions are Java {supported_java_versions}.\n\n"
 "        Enter nothing or \"java\" to reset it back to default.\n"
 "        "
-msgstr ""
+msgstr "Ändern Sie Ihren Java-ausführbaren Pfad.\n\n"
+"        Dieser Befehl sollte nicht meist verwendet werden müssen und ist nur dann nützlich, wenn die Rechnerversion in Konflikt stehende Java-Versionen hat.\n\n"
+"        Wenn dies geändert wird, stellen Sie sicher, dass die von Ihnen eingestellte Java-Programmdatei von Audio unterstützt wird.\n"
+"        Die aktuellen unterstützten Versionen sind Java {supported_java_versions}.\n\n"
+"        Geben Sie nichts oder \"java\" ein, um es auf Standard zurückzusetzen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:73
 msgid "Java Executable Reset"
@@ -1906,40 +1931,47 @@ msgid "Set the managed Lavalink node maximum heap-size.\n\n"
 "        This value only represents the maximum amount of RAM allowed to be used at any given point, and does not mean that the managed Lavalink node will always use this amount of RAM.\n\n"
 "        To reset this value to the default, run the command without any input.\n"
 "        "
-msgstr ""
+msgstr "Legen Sie die maximale Heap-Größe des Knoten Lavalink fest.\n\n"
+"        Standardmäßig dieser Wert ist 50% des verfügbaren Arbeitsspeichers in der Hostmaschine, die von [1-1024][M|G] repräsentiert wird (256M, 256G zum Beispiel)\n\n"
+"        Dieser Wert stellt nur die maximal zulässige Arbeitsspeicherung dar, die an einem bestimmten Punkt verwendet werden darf und bedeutet nicht, dass der verwaltete Lavalink-Knoten immer diese Menge an RAM verwenden wird.\n\n"
+"        Um diesen Wert auf die Standardeinstellung zurückzusetzen, führen Sie den Befehl ohne Eingabe aus.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:119
 msgid "Heap-size must be a valid measure of size, e.g. 256M, 256G"
-msgstr ""
+msgstr "Heap-Größe muss ein gültiges Maß für die Größe sein, z.B. 256M, 256G"
 
 #: redbot/cogs/audio/core/commands/llset.py:126
 msgid "Heap-size must be at least 64M, however it is recommended to have it set to at least 1G."
-msgstr ""
+msgstr "Heap-Größe muss mindestens 64M sein, es wird jedoch empfohlen, mindestens 1G einzustellen."
 
 #: redbot/cogs/audio/core/commands/llset.py:137
 msgid "Heap-size must be less than your system RAM. You currently have {ram_in_bytes} of RAM available."
-msgstr ""
+msgstr "Heap-Größe muss kleiner sein als Ihr System-RAM. Sie haben derzeit {ram_in_bytes} RAM zur Verfügung."
 
 #: redbot/cogs/audio/core/commands/llset.py:144
 msgid "Heap-size must be less than {limit} due to your system limitations."
-msgstr ""
+msgstr "Die Heap-Größe muss aufgrund Ihrer Systembeschränkungen kleiner als {limit} sein."
 
 #: redbot/cogs/audio/core/commands/llset.py:158
 msgid "Managed node's heap-size set to {bytes}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Heap-Größe des verwalteten Knotens auf {bytes} gesetzt.\n\n"
+"{p}{cmd}` ausführen, damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:168
 #, docstring
 msgid "Toggle using external (unmanaged) Lavalink nodes - requires an existing Lavalink node for Audio to work, if enabled.\n\n"
 "        This command disables the managed Lavalink server. If you do not have another Lavalink node set up, you will be unable to use Audio while this is enabled.\n"
 "        "
-msgstr ""
+msgstr "Externe (unverwaltete) Lavalink-Knoten umschalten - erfordert einen vorhandenen Lavalink-Knoten, damit Audio funktioniert, wenn aktiviert.\n\n"
+"        Dieser Befehl deaktiviert den verwalteten Lavalink-Server. Wenn Sie kein anderes Lavalink-Knoten eingerichtet haben, können Sie Audio nicht verwenden, solange dies aktiviert ist.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:178
 #: redbot/cogs/audio/core/commands/llset.py:187
 msgid "Unmanaged Lavalink server: {true_or_false}."
-msgstr ""
+msgstr "Nicht verwalteter Lavalink-Server: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/llset.py:197
 msgid "Failed To Shutdown Lavalink"
@@ -1950,22 +1982,26 @@ msgstr "Fehler beim Herunterfahren von Lavalink"
 msgid "Set the Lavalink node host.\n\n"
 "        This command sets the connection host which Audio will use to connect to an unmanaged Lavalink node.\n"
 "        "
-msgstr ""
+msgstr "Legen Sie den Knoten Lavalink fest.\n\n"
+"        Dieser Befehl legt den Verbindungs-Host fest, den Audio verwenden wird, um sich mit einem nicht verwalteten Lavalink-Knoten zu verbinden.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:216
 msgid "Unmanaged Lavalink node host set to {host}. Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Unverwalteter Knoten Lavalink Host auf {host} gesetzt. Führe `{p}{cmd}` aus, damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:229
 #, docstring
 msgid "Set the Lavalink node password.\n\n"
 "        This command sets the connection password which Audio will use to connect to an unmanaged Lavalink node.\n"
 "        "
-msgstr ""
+msgstr "Legen Sie das Lavalink Knotenpasswort fest.\n\n"
+"        Dieser Befehl legt das Verbindungspasswort fest, mit dem Audio sich mit einem nicht verwalteten Lavalink Knoten verbinden wird.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:238
 msgid "Unmanaged Lavalink node password set to {password}. Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Unverwaltetes Lavalink-Knoten-Passwort auf {password} gesetzt. Führe `{p}{cmd}` aus, damit es wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:253
 #, docstring
@@ -1973,7 +2009,10 @@ msgid "Set the Lavalink node port.\n\n"
 "        This command sets the connection port which Audio will use to connect to an unmanaged Lavalink node.\n"
 "        Set port to -1 to disable the port and connect to the specified host via ports 80/443\n"
 "        "
-msgstr ""
+msgstr "Legen Sie den Knoten Lavalink Port fest.\n\n"
+"        Dieser Befehl legt den Verbindungsport fest, den Audio verwenden wird, um sich mit einem nicht verwalteten Lavalink-Knoten zu verbinden.\n"
+"        Port auf -1 setzen, um den Port zu deaktivieren und mit dem angegebenen Host über die Ports 80/443\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:263
 #: redbot/cogs/audio/core/commands/llset.py:450
@@ -1984,28 +2023,32 @@ msgstr "Einstellung nicht geändert"
 
 #: redbot/cogs/audio/core/commands/llset.py:264
 msgid "A port must be between 0 and 65535."
-msgstr ""
+msgstr "Ein Port muss zwischen 0 und 65535 liegen."
 
 #: redbot/cogs/audio/core/commands/llset.py:270
 msgid "Unmanaged Lavalink node port set to {port}. Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Nicht verwalteter Lavalink Knotenport auf {port} gesetzt. Führe `{p}{cmd}` aus, damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:283
 #, docstring
 msgid "Set the Lavalink node connection to secured.\n\n"
 "        This toggle sets the connection type to secured or unsecured when connecting to an unmanaged Lavalink node.\n"
 "        "
-msgstr ""
+msgstr "Legen Sie die Verbindung zum Knoten Lavalink auf gesichert.\n\n"
+"        Dieser Schalter setzt den Verbindungstyp auf gesicherte oder ungesicherte Verbindungen, wenn er sich mit einem nicht verwalteten Lavalink-Knoten verbindet.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:294
 msgid "Unmanaged Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Nicht verwalteter Lavalink-Knoten wird sich jetzt mit dem gesicherten {secured_protocol} Protokoll verbinden.\n\n"
+"Führe `{p}{cmd}` aus, damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:307
 msgid "Unmanaged Lavalink node will no longer connect using the secured {secured_protocol} protocol and will use {unsecured_protocol} instead.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Nicht verwalteter Lavalink-Knoten wird sich nicht mehr mit dem gesicherten {secured_protocol} Protokoll verbinden und stattdessen {unsecured_protocol} verwenden.\n\n"
+"Führe `{p}{cmd}` aus, damit es wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:321
 #, docstring
@@ -2028,7 +2071,7 @@ msgstr "Port:             [{port}]\n"
 
 #: redbot/cogs/audio/core/commands/llset.py:328
 msgid "Default HTTP/HTTPS port"
-msgstr ""
+msgstr "Standard-HTTP/HTTPS-Port"
 
 #: redbot/cogs/audio/core/commands/llset.py:330
 #: redbot/cogs/audio/core/commands/llset.py:339
@@ -2063,31 +2106,36 @@ msgstr "Ich muss in der Lage sein dir Privatnachrichten schreiben zu können um 
 #: redbot/cogs/audio/core/commands/llset.py:357
 #, docstring
 msgid "Uploads a copy of the application.yml file used by the managed Lavalink node."
-msgstr ""
+msgstr "Lädt eine Kopie der Datei application.yml, die vom Knoten Lavalink verwendet wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:381
 #, docstring
 msgid "Configure the managed Lavalink node runtime options.\n\n"
 "        All settings under this group will likely cause Audio to malfunction if changed from their defaults, only change settings here if you have been advised to by support.\n"
 "        "
-msgstr ""
+msgstr "Konfigurieren Sie die verwalteten Lavalink Knoten Laufzeit-Optionen.\n\n"
+"        Alle Einstellungen in dieser Gruppe werden wahrscheinlich zu Fehlfunktionen bei Audio führen, wenn sie von ihren Standardeinstellungen geändert werden, Ändern Sie die Einstellungen hier nur, wenn Sie von Unterstützung empfohlen wurden.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:388
 #, docstring
 msgid "Configure the managed node authorization and connection settings."
-msgstr ""
+msgstr "Verwaltete Knoten Autorisierung und Verbindungseinstellungen konfigurieren."
 
 #: redbot/cogs/audio/core/commands/llset.py:394
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node's binding IP address.\n\n"
 "        This value by default is `localhost` which will restrict the server to only localhost apps by default, changing this will likely break the managed Lavalink node if you don't know what you are doing.\n"
 "        "
-msgstr ""
+msgstr "`Gefährlicher Befehl` Legen Sie die bindende IP-Adresse des Knoten Lavalink fest.\n\n"
+"        Dieser Wert ist standardmäßig `localhost`, der den Server standardmäßig auf nur localhost Apps beschränkt, diese Änderung wird wahrscheinlich den gemanagten Lavalink-Knoten zerstören, wenn Sie nicht wissen, was Sie tun.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:403
 msgid "Managed node will now accept connection on {host}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Der verwaltete Knoten akzeptiert jetzt eine Verbindung auf {host}.\n\n"
+"Starten Sie `{p}{cmd}` damit sie wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:418
 #, docstring
@@ -2095,12 +2143,16 @@ msgid "Set the managed Lavalink node's connection password.\n\n"
 "        This is the password required for Audio to connect to the managed Lavalink node.\n"
 "        The value by default is `youshallnotpass`.\n"
 "        "
-msgstr ""
+msgstr "Legen Sie das Passwort für die Verbindung des Knoten Lavalink fest.\n\n"
+"        Dies ist das Passwort, das für Audio benötigt wird, um sich mit dem verwalteten Lavalink-Knoten zu verbinden.\n"
+"        Der Wert ist standardmäßig `youshallnotpass`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:427
 msgid "Managed node will now accept {password} as the authorization token.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Verwalteter Knoten wird jetzt {password} als Autorisierungs-Token akzeptieren.\n\n"
+"Führe `{p}{cmd}` aus, damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:441
 #, docstring
@@ -2108,7 +2160,10 @@ msgid "`Dangerous command` Set the managed Lavalink node's connection port.\n\n"
 "        This port is the port the managed Lavalink node binds to, you should only change this if there is a conflict with the default port because you already have an application using port 2333 on this device.\n\n"
 "        The value by default is `2333`.\n"
 "        "
-msgstr ""
+msgstr "`Gefährlicher Befehl` Setze den gemanagten Lavalink Knoten Verbindungs-Port.\n\n"
+"        Dieser Port ist der Port, an den sich der Knoten Lavalink bindet sollten Sie dies nur ändern, wenn es einen Konflikt mit dem Standardport gibt, da Sie bereits eine Anwendung mit Port 2333 auf diesem Gerät haben.\n\n"
+"        Standardmäßig ist der Wert `2333`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:451
 msgid "The port must be between 1024 and 49151."
@@ -2117,55 +2172,68 @@ msgstr "Der Port muss zwischen 1025 und 65535 liegen."
 #: redbot/cogs/audio/core/commands/llset.py:458
 msgid "Managed node will now accept connections on {port}.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Managed node akzeptiert jetzt Verbindungen auf {port}.\n\n"
+"Run `{p}{cmd}` damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:470
 #, docstring
 msgid "`Dangerous command` Toggle audio sources on/off.\n\n"
 "        By default, all sources are enabled, you should only use commands here to disable a specific source if you have been advised to, disabling sources without background knowledge can cause Audio to break.\n"
 "        "
-msgstr ""
+msgstr "`Gefährlicher Befehl` Schalte Audioquellen ein/aus.\n\n"
+"        Standardmäßig sind alle Quellen aktiviert, sollten Sie hier nur Befehle verwenden, um eine bestimmte Quelle zu deaktivieren, wenn Ihnen empfohlen wurde Das Deaktivieren von Quellen ohne Hintergrundwissen kann Audio beschädigen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:477
 #, docstring
 msgid "Toggle HTTP direct URL usage on or off.\n\n"
 "        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).\n"
 "        "
-msgstr ""
+msgstr "Umschalten der HTTP-Direkt-URL-Nutzung ein oder aus.\n\n"
+"        Diese Quelle wird verwendet, um die Wiedergabe von direkten HTTP-Streams zu erlauben (dies wirkt sich nicht auf die direkte URL-Wiedergabe für die anderen Quellen aus).\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:487
 msgid "Managed node will allow playback from direct URLs.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Der verwaltete Knoten wird die Wiedergabe von direkten URLs erlauben.\n\n"
+"Führe `{p}{cmd}` aus, damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:496
 msgid "Managed node will not play from direct URLs anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Verwalteter Knoten wird nicht mehr von direkten URLs abspielen.\n\n"
+"Führe `{p}{cmd}` aus, damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:504
 #, docstring
 msgid "Toggle Bandcamp source on or off.\n\n"
 "        This toggle controls the playback of all Bandcamp related content.\n"
 "        "
-msgstr ""
+msgstr "Bandcamp-Quelle ein- oder ausschalten.\n\n"
+"        Dieser Schalter steuert die Wiedergabe aller Bandcamp-bezogenen Inhalte.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:514
 msgid "Managed node will allow playback from Bandcamp.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Der verwaltete Knoten wird die Wiedergabe von Bandcamp erlauben.\n\n"
+"Run `{p}{cmd}` damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:523
 msgid "Managed node will not play from Bandcamp anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Verwaltete node wird nicht mehr vom Bandcamp abspielen.\n\n"
+"Run `{p}{cmd}` damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:531
 #, docstring
 msgid "Toggle local file usage on or off.\n\n"
 "        This toggle controls the playback of all local track content, usually found inside the `localtracks` folder.\n"
 "        "
-msgstr ""
+msgstr "Umschalten der lokalen Verwendung von Dateien ein oder aus.\n\n"
+"        Dieser Schalter steuert die Wiedergabe aller lokalen Spurinhalte in der Regel im Ordner `localtracks`.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:541
 msgid "Managed node will allow playback from local files.\n\n"
@@ -2184,7 +2252,9 @@ msgstr "Der verwaltete Knoten wird nicht mehr aus lokalen Dateien wiedergeben.\n
 msgid "Toggle Soundcloud source on or off.\n\n"
 "        This toggle controls the playback of all SoundCloud related content.\n"
 "        "
-msgstr ""
+msgstr "Schaltet die Soundcloud Quelle ein oder aus.\n\n"
+"        Dieser Schalter steuert die Wiedergabe aller SoundCloud-bezogenen Inhalte.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:568
 msgid "Managed node will allow playback from Soundcloud.\n\n"
@@ -2224,41 +2294,51 @@ msgstr "Der verwaltete Knoten wird nicht mehr von YouTube wiedergeben.\n\n"
 msgid "Toggle Twitch source on or off.\n\n"
 "        This toggle controls the playback of all Twitch related content.\n"
 "        "
-msgstr ""
+msgstr "Twitch-Quelle ein- oder ausschalten.\n\n"
+"        Dieser Schalter steuert die Wiedergabe aller Twitch-bezogenen Inhalte.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:622
 msgid "Managed node will allow playback from Twitch.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Verwalteter Knoten erlaubt die Wiedergabe von Twitch.\n\n"
+"Ausführe `{p}{cmd}` damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:631
 msgid "Managed node will not play from Twitch anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Verwalteter Knoten wird nicht mehr von Twitch abspielen.\n\n"
+"Ausführe `{p}{cmd}` damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:639
 #, docstring
 msgid "Toggle Vimeo source on or off.\n\n"
 "        This toggle controls the playback of all Vimeo related content.\n"
 "        "
-msgstr ""
+msgstr "Schaltet die Vimeo-Quelle ein oder aus.\n\n"
+"        Dieser Schalter steuert die Wiedergabe aller Vimeo-bezogenen Inhalte.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:649
 msgid "Managed node will allow playback from Vimeo.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Verwalteter Knoten wird die Wiedergabe von Vimeo erlauben.\n\n"
+"Ausführe `{p}{cmd}` damit sie wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:658
 msgid "Managed node will not play from Vimeo anymore.\n\n"
 "Run `{p}{cmd}` for it to take effect."
-msgstr ""
+msgstr "Verwalteter Knoten wird nicht mehr von Vimeo abspielen.\n\n"
+"Ausführe `{p}{cmd}` damit er wirksam wird."
 
 #: redbot/cogs/audio/core/commands/llset.py:671
 #, docstring
 msgid "`Dangerous command` Set the managed Lavalink node framebuffer size.\n\n"
 "        Only change this if you have been directly advised to, changing it can cause significant playback issues.\n"
 "        "
-msgstr ""
+msgstr "`Gefährlicher Befehl` Legen Sie die verwaltete Größe des Lavalink Knoten Framebuffers fest.\n\n"
+"        Ändern Sie dies nur, wenn Sie direkt beraten wurden Änderungen können zu erheblichen Wiedergabeproblemen führen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:679
 msgid "The lowest value the framebuffer can be set to is 100ms."
@@ -2276,7 +2356,9 @@ msgstr "PufferDurationMs des verwalteten Knotens auf {milliseconds} gesetzt.\n\n
 msgid "`Dangerous command`  Set the managed Lavalink node JDA-NAS buffer size.\n\n"
 "        Only change this if you have been directly advised to, changing it can cause significant playback issues.\n"
 "        "
-msgstr ""
+msgstr "`Gefährlicher Befehl` Legen Sie die verwaltete Lavalink Knoten JDA-NAS Puffergröße fest.\n\n"
+"        Ändern Sie dies nur, wenn Sie direkt beraten wurden Änderungen können zu erheblichen Wiedergabeproblemen führen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/llset.py:710
 msgid "The lowest value the buffer may be is 100ms."
@@ -2301,7 +2383,13 @@ msgid "Play all songs in a localtracks folder.\n\n"
 "        ​ ​ `[p]local folder folder_name`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Queues all of the tracks inside the folder_name folder.\n"
 "        "
-msgstr ""
+msgstr "Spiele alle Lieder im Localtracks Ordner.\n\n"
+"        **Nutzungsweise**:\n"
+"        ​ ​ ​ ​ `[p]local folder`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Öffnet ein Menü zur Asuwahl einer Datei für die Warteschlange.\n\n"
+"        ​ ​ `[p]local folder Ordner_name`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Füge alle Lieder der Ordner_name zur Warteschlange dazu.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:51
 msgid "Folder Not Found"
@@ -2323,7 +2411,16 @@ msgid "Play a local track.\n\n"
 "        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Use a direct link relative to the localtracks folder.\n"
 "        "
-msgstr ""
+msgstr "Spiele ein lokales Lied.\n\n"
+"        Um ein lokales Lied zuspielen musst du entweder das Menü verwenden oder den direkten Datei Weg mit dem play Befehl\n"
+"        Um einen kompletten Ordner zuverwenden verwenden sie bitte `[p]help local folder` für weitere Informationen\n\n"
+"        **Nutzungsweise**:\n"
+"        ​ ​ ​ ​ `[p]local play`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Öffnet ein Menü zur Song Auswahl.\n\n"
+"        ​ ​ ​ ​ `[p]play localtracks\\album_folder\\song_name.mp3`\n"
+"        ​ ​ ​ ​ `[p]play album_folder\\song_name.mp3`\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Nutze den direkten Link zu relevanten Lokalentracks Ordner.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/localtracks.py:80
 #: redbot/cogs/audio/core/commands/localtracks.py:136
@@ -2403,7 +2500,8 @@ msgstr "Spielt den angegebenen Titel ab oder sucht nach einem ähnlichen Titel.\
 #: redbot/cogs/audio/core/commands/player.py:53
 msgid "That URL is not allowed.\n\n"
 "The bot owner can remove this restriction by using ``{prefix}audioset restrict``."
-msgstr ""
+msgstr "Diese URL ist nicht zulässig.\n\n"
+"Der Bot-Eigentümer kann diese Einschränkung durch Verwendung von ``{prefix}audioset restrict`` entfernen."
 
 #: redbot/cogs/audio/core/commands/player.py:59
 #: redbot/cogs/audio/core/commands/player.py:167
@@ -2596,7 +2694,10 @@ msgid "Pick a track with a search.\n\n"
 "        Use `[p]search list <search term>` to queue all tracks found on YouTube. Use `[p]search sc\n"
 "        <search term>` to search on SoundCloud instead of YouTube.\n"
 "        "
-msgstr ""
+msgstr "Wähle einen Track mit einer Suchanfrage.\n\n"
+"        Verwende `[p]Suchliste <search term>` um alle auf YouTube gefundenen Tracks in Warteschlange zu halten. Verwende `[p]Suche sc\n"
+"        <search term>` um auf SoundCloud statt YouTube zu suchen.\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/player.py:682
 msgid "Connection to Lavalink has failed"
@@ -2660,7 +2761,19 @@ msgid "Playlist configuration options.\n\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.\n"
 "        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and the playlist creator.\n"
 "        "
-msgstr ""
+msgstr "Playist Konfigurations Optionen.\n\n"
+"        Umfangs Information:\n"
+"        ​ ​ ​ ​ **Global**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Sichtbar für jeden Nutzer der mit dem Bot interagiert.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Kann nur vom Bot Besitzer bearbeitet werden.\n"
+"        ​ ​ ​ ​ **Server**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Sichtbar für Server-Mitglieder.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Bearbeitbar vom Bot Besitzer, Server Besitzer, Server Administratoren, Server Moderatoren, Mitgliedern mit der DJ Rolle & dem Playlist Ersteller.\n"
+"        ​ ​ ​ ​ **Nutzer**:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Sichtbar zu allen Bot Nutzer wen -author verwendet.\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ Bearbeitbar über dem Bot Besitzer & Playlist Ersteller.\n"
+"        \n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:70
 #, docstring
@@ -2689,7 +2802,31 @@ msgid "Add a track URL, playlist link, or quick search to a playlist.\n\n"
 "        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\n"
 "        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper#6666`\n"
 "        "
-msgstr ""
+msgstr "Füge einen Lieder URL, Playlist Link oder eine schnell suche zu der Playliste.\n\n"
+"        Die Lieder werden an das Ende der Playliste angefügt.\n\n"
+"        **Nutzungsweise**:\n"
+"        ​ ​ ​ ​ `[p]playlist append playlist_name_OR_id track_name_OR_url [args]`\n\n"
+"        **Argumente**:\n"
+"        ​ ​ ​ ​ Die folgenden sind optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Nur der Bot Besiter kann diesen Argument verwenden**\n\n"
+"        **Scope** kann folgendes sein:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** kann folgendes sein:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Erwähnung\n"
+"        ​ ​ ​ ​ User Name\n\n"
+"        **Guild** kann folgendes sein.:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Anwendungsbeispiele:\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGuildPlaylist Hello by Adele`\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist append MyGlobalPlaylist Hello by Adele --scope Global --Author Draper`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:124
 #: redbot/cogs/audio/core/commands/playlists.py:305
@@ -2789,7 +2926,33 @@ msgid "Copy a playlist from one scope to another.\n\n"
 "        ​ ​ ​ ​ `[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User`\n"
 "        ​ ​ ​ ​ `[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot`\n"
 "        "
-msgstr ""
+msgstr "Kopiere eine Playlist von einem Scope zum anderen.\n\n"
+"        **Nutzungsweise**:\n"
+"        ​ ​ ​ ​ `[p]playlist copy playlist_name_OR_id [args]`\n\n"
+"        **Argumente**:\n"
+"        ​ ​ ​ ​ Die folgenden sind optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --from-scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --from-author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --from-guild [guild] **Kann nur der Bot Besitzer verwenden**\n\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --to-scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --to-author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --to-guild [guild] **Kann nur der Bot Besitzer verwenden**\n\n"
+"        **Scope** kann einer der folgenden beinhalten:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** kann einer der folgenden beinhalten:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** kann einer der folgenden beinhalten:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"         Anwendungsbeispiel:\n"
+"        ​ ​ ​ ​ `[p]playlist copy MyGuildPlaylist --from-scope Guild --to-scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist copy MyGlobalPlaylist --from-scope Global --to-author Draper#6666 --to-scope User`\n"
+"        ​ ​ ​ ​ `[p]playlist copy MyPersonalPlaylist --from-scope user --to-author Draper#6666 --to-scope Guild --to-guild Red - Discord Bot`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:306
 #: redbot/cogs/audio/core/commands/playlists.py:488
@@ -2841,7 +3004,30 @@ msgid "Create an empty playlist.\n\n"
 "        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`\n"
 "        "
-msgstr ""
+msgstr "Erstelle eine leere Playliste.\n\n"
+"        **Nutzungsweise**:\n"
+"        ​ ​ ​ ​ `[p]playlist create playlist_name [args]`\n\n"
+"        **Argumente**:\n"
+"        ​ ​ ​ ​ Die folgenden sind optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Nur der Bot Besitzer kann dies verwenden**\n\n"
+"        **Scope** ist einer der folgenden:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** ist einer der folgenden:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** cist einer der folgenden:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Beispielnutzung:\n"
+"        ​ ​ ​ ​ `[p]playlist create MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist create MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist create MyPersonalPlaylist --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:412
 #: redbot/cogs/audio/core/commands/playlists.py:1117
@@ -2893,7 +3079,30 @@ msgid "Delete a saved playlist.\n\n"
 "        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`\n"
 "        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`\n"
 "        "
-msgstr ""
+msgstr "Lösche eine gespeicherte Playlist.\n\n"
+"        **Nutzungsweise**:\n"
+"        ​ ​ ​ ​ `[p]playlist delete playlist_name_OR_id [args]`\n\n"
+"        **Argumente**:\n"
+"        ​ ​ ​ ​ Die folgenden sind optional:\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --scope <scope>\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --author [user]\n"
+"        ​ ​ ​ ​ ​ ​ ​ ​ --guild [guild] **Kann nur vom Bot Besitzer verwendet werden**\n\n"
+"        **Scope** ist einer der folgenden:\n"
+"        ​ ​ ​ ​ Global\n"
+"        ​ ​ ​ ​ Guild\n"
+"        ​ ​ ​ ​ User\n\n"
+"        **Author** ist einer der folgenden:\n"
+"        ​ ​ ​ ​ User ID\n"
+"        ​ ​ ​ ​ User Mention\n"
+"        ​ ​ ​ ​ User Name#123\n\n"
+"        **Guild** ist einer der folgenden:\n"
+"        ​ ​ ​ ​ Guild ID\n"
+"        ​ ​ ​ ​ Exact guild name\n\n"
+"        Beispielnutzung:\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyGuildPlaylist`\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyGlobalPlaylist --scope Global`\n"
+"        ​ ​ ​ ​ `[p]playlist delete MyPersonalPlaylist --scope User`\n"
+"        "
 
 #: redbot/cogs/audio/core/commands/playlists.py:508
 msgid "Playlist Deleted"

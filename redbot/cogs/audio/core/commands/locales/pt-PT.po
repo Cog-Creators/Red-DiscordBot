@@ -1063,7 +1063,11 @@ msgid "1. Go to Spotify developers and log in with your Spotify account.\n"
 "5. Accept the terms and conditions.\n"
 "6. Copy your client ID and your client secret into:\n"
 "`{prefix}set api spotify client_id <your_client_id_here> client_secret <your_client_secret_here>`"
-msgstr ""
+msgstr "1. Aceda a Spotify programadores e inicia sessão com a sua conta Spotify.\n"
+"(https://developer.spotify.com/dashboard/applications)\n"
+"2. Clica em \"Criar uma aplicação\".\n"
+"3. Preencha o formulário com os seus dados.\n"
+"4. Quando questionado se é uma integração comercial, selecione \"Não\"."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1308
 #: redbot/cogs/audio/core/commands/audioset.py:1330

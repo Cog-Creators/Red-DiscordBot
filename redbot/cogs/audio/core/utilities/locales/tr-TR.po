@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2025-04-27 00:09+0000\n"
+"POT-Creation-Date: 2025-08-01 03:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -277,7 +277,7 @@ msgstr "Playlist sıraya alındı."
 
 #: redbot/cogs/audio/core/utilities/player.py:494
 msgid "Album Enqueued"
-msgstr ""
+msgstr "Albüm sıraya alındı"
 
 #: redbot/cogs/audio/core/utilities/player.py:502
 msgid "Added {num} tracks to the queue.{maxlength_msg}"
