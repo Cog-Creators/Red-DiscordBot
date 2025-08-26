@@ -78,8 +78,8 @@ Documentation changes
 - Refreshed the `intents` document with descriptions of how the intents are used in Red, our stance on public bots, and replaced some of the historical details with more up-to-date information (:issue:`6578`)
 - Added more code examples to the `framework_i18n` document, including common pitfalls and an example of how to apply proper locale in non-command contexts (:issue:`6595`)
 - Expanded the tutorial about creating translation catalogs for 3rd-party cogs in the `framework_i18n` document (:issue:`6595`)
-- Added example of `Group.all()` method's usage in `framework_config` (:issue:`6550`)
-- Added a tip about the ``[botname]`` placeholder in `guide_publish_cogs` (:issue:`6539`)
+- Added example of `Group.all()` method's usage in the `framework_config` document (:issue:`6550`)
+- Added a tip about the ``[botname]`` placeholder in the `guide_publish_cogs` document (:issue:`6539`)
 
 ----
 
