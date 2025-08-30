@@ -13,6 +13,7 @@ from redbot.core.i18n import Translator, cog_i18n
 
 _ = Translator("Audio", __file__)
 
+
 @cog_i18n(_)
 class Commands(
     AudioSetCommands,
