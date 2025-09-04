@@ -1,5 +1,41 @@
 .. Red changelogs
 
+Redbot 3.5.22 (2025-09-05)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we updated YT client options to fix a few regressions introduced by changes in 3.5.21.
+    `Download Red 3.5.22's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.22/Red-DiscordBot-3.5.22-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Fixes
+*****
+
+- **Cogs - Audio** - Fixed a regression with YT video metadata loading introduced by Red 3.5.21 (:issue:`6611`)
+- **Cogs - Audio** - Fixed a problem with command help texts not being translated in the Audio cog (:issue:`6608`, :issue:`6609`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Bumped ``discord.py`` to version 2.6.3 (:issue:`6612`)
+- **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to match invite links using ``\\`` instead of ``/`` (:issue:`6586`)
+- **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to ignore ``promos.discord.gg`` links (:issue:`6586`)
+
+----
+
 Redbot 3.5.21 (2025-08-26)
 ==========================
 
@@ -12,7 +48,7 @@ Read before updating
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
-    More specifically, we bumped the version of YT source plugin.
+    More specifically, we bumped the version of YT source plugin and updated its client options.
     `Download Red 3.5.21's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.21/Red-DiscordBot-3.5.21-default-lavalink-application.yml>`__
 
 #. Following operating systems are no longer supported as they have already reached their end of life:
