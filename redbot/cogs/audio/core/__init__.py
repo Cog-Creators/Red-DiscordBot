@@ -32,8 +32,6 @@ class Audio(
     Cog,
     metaclass=CompositeMetaClass,
 ):
-    """Play audio through voice channels."""
-
     llset_captcha_intervals = [
         (datetime.timedelta(days=1), 1),
     ]

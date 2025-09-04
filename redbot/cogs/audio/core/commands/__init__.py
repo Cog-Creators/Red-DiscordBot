@@ -27,4 +27,4 @@ class Commands(
     QueueCommands,
     metaclass=CompositeMetaClass,
 ):
-    """Class joining all command subclasses"""
+    """Play audio through voice channels."""
