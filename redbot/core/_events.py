@@ -388,10 +388,7 @@ def init_events(bot, cli_flags):
                     message = inline(_("Error in command '{command}'."))
             await ctx.send(message.replace("{command}", ctx.command.qualified_name))
         elif isinstance(error, commands.CommandNotFound):
-            blacklist: set[int] = (await bot.get_blacklist()).union(
-                await bot.get_blacklist(ctx.guild)
-            )
-            if ctx.author.id in blacklist:
+            if not bot.message_eligible_as_command(ctx.message):
                 return
 
             help_settings = await HelpSettings.from_context(ctx)
