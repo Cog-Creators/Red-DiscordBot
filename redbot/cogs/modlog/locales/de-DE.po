@@ -18,7 +18,7 @@ msgstr ""
 #: redbot/cogs/modlog/modlog.py:19
 #, docstring
 msgid "Browse and manage modlog cases. To manage modlog settings, use `[p]modlogset`."
-msgstr ""
+msgstr "Durchsuchen und verwalten von Moderations Aufzeichnungs-Fällen. Um Moderations Aufzeichnungs Einstellungen zu verwalten, verwende `[p]modlogset`."
 
 #: redbot/cogs/modlog/modlog.py:32
 #, docstring

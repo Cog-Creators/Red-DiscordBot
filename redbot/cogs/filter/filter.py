@@ -528,7 +528,7 @@ class Filter(commands.Cog):
                     texts.append(attachment.description or "")
                 for embed in snapshot.embeds:
                     texts.extend(_extract_string_values(embed.to_dict().values()))
-                for component in snapshot.components:
+                for component in _walk_all_components(snapshot.components):
                     texts.extend(_extract_string_values_from_component(component))
 
         hits = await self.filter_hits(message.channel, *texts)
@@ -642,17 +642,52 @@ class Filter(commands.Cog):
             return
 
 
-def _extract_string_values_from_component(
-    component: Union[discord.ActionRow, discord.Button, discord.SelectMenu],
-) -> Iterable[str]:
-    if isinstance(component, discord.ActionRow):
-        for child in component.children:
-            yield from _extract_string_values_from_component(child)
-    elif isinstance(component, discord.Button):
+_ChildComponent = Union[
+    discord.Button,
+    discord.FileComponent,
+    discord.LabelComponent,
+    discord.MediaGalleryComponent,
+    discord.SelectMenu,
+    discord.TextDisplay,
+    discord.TextInput,
+    discord.ThumbnailComponent,
+]
+
+
+def _extract_string_values_from_component(component: _ChildComponent) -> Iterable[str]:
+    for value in _extract_values_from_component(component):
+        if value:
+            yield value
+
+
+def _extract_values_from_component(component: _ChildComponent) -> Iterable[Optional[str]]:
+    if isinstance(component, discord.Button):
         yield component.url
         yield component.label
+    elif isinstance(component, discord.MediaGalleryComponent):
+        for item in component.items:
+            yield item.description
     elif isinstance(component, discord.SelectMenu):
         yield component.placeholder
+    elif isinstance(component, discord.TextDisplay):
+        yield component.content
+    elif isinstance(component, discord.ThumbnailComponent):
+        yield component.description
+    # FileComponent does not have any user-provided text fields
+    # LabelComponent and TextInput are modal-only components
+
+
+def _walk_all_components(components: Iterable[discord.Component]) -> Iterable[_ChildComponent]:
+    for item in components:
+        if isinstance(item, discord.ActionRow):
+            yield from item.children
+        elif isinstance(item, discord.Container):
+            yield from _walk_all_components(item.children)
+        elif isinstance(item, discord.SectionComponent):
+            yield from item.children
+            yield item.accessory
+        else:
+            yield item
 
 
 def _extract_string_values(data: Iterable[Any]) -> Iterable[str]:

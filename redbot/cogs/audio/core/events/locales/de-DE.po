@@ -57,7 +57,7 @@ msgstr "Priorisierter Sprecher"
 
 #: redbot/cogs/audio/core/events/dpy.py:44
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: redbot/cogs/audio/core/events/dpy.py:45
 msgid "Read Text Channels & See Voice Channels"
@@ -69,7 +69,7 @@ msgstr "Nachrichten senden"
 
 #: redbot/cogs/audio/core/events/dpy.py:47
 msgid "Send Text-to-speech Messages"
-msgstr ""
+msgstr "Text-zu-Sprache-Nachrichten senden"
 
 #: redbot/cogs/audio/core/events/dpy.py:48
 msgid "Manage Messages"
@@ -177,15 +177,15 @@ msgstr "Nachrichten in Threads senden"
 
 #: redbot/cogs/audio/core/events/dpy.py:74
 msgid "Use Activities"
-msgstr ""
+msgstr "Aktivitäten nutzen"
 
 #: redbot/cogs/audio/core/events/dpy.py:75
 msgid "Time out members"
-msgstr ""
+msgstr "Mitglieder timeouten"
 
 #: redbot/cogs/audio/core/events/dpy.py:76
 msgid "View Creator Monetization Analytics"
-msgstr ""
+msgstr "Creator-Monetizationsanalyse ansehen"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Use Soundboard"
@@ -197,7 +197,7 @@ msgstr "Ausdrücke erstellen"
 
 #: redbot/cogs/audio/core/events/dpy.py:79
 msgid "Create Events"
-msgstr ""
+msgstr "Ereignisse erstellen"
 
 #: redbot/cogs/audio/core/events/dpy.py:80
 msgid "Use External Sounds"
@@ -209,15 +209,15 @@ msgstr "Sprachnachrichten senden"
 
 #: redbot/cogs/audio/core/events/dpy.py:82
 msgid "Create Polls"
-msgstr ""
+msgstr "Umfragen erstellen"
 
 #: redbot/cogs/audio/core/events/dpy.py:83
 msgid "Use External Apps"
-msgstr ""
+msgstr "Externe Applikationen verwenden"
 
 #: redbot/cogs/audio/core/events/dpy.py:87
 msgid "This command will change the executable path of Java, this is useful if you have multiple installations of Java and the default one is causing issues. Please don't change this unless you are certain that the Java version you are specifying is supported by Red. The supported versions are currently Java {supported_java_versions}."
-msgstr ""
+msgstr "Dieser Befehl ändert den ausführbaren Pfad von Java, Dies ist nützlich, wenn Sie mehrere Installationen von Java haben und die Standardinstallation Probleme verursacht. Bitte ändern Sie dies nicht, außer Sie sind sicher, dass die von Ihnen angegebene Java-Version von Red unterstützt wird. Die Unterstützten Versionen sind derzeit {supported_java_versions}."
 
 #: redbot/cogs/audio/core/events/dpy.py:93
 msgid "This command will change the maximum RAM allocation for the managed Lavalink node, usually you will never have to change this, before considering changing it please consult our support team."

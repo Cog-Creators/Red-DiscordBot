@@ -65,31 +65,31 @@ msgstr "másodperc"
 
 #: redbot/core/utils/chat_formatting.py:667
 msgid "negative"
-msgstr ""
+msgstr "negatív"
 
 #: redbot/core/utils/views.py:34
 msgid "Select a Page"
-msgstr ""
+msgstr "Válasz oldalt"
 
 #: redbot/core/utils/views.py:183
 msgid "Page {num}"
-msgstr ""
+msgstr "Oldal {num}"
 
 #: redbot/core/utils/views.py:338 redbot/core/utils/views.py:698
 msgid "You are not authorized to interact with this."
-msgstr ""
+msgstr "Ön nem jogosult arra, hogy ezzel kapcsolatba lépjen."
 
 #: redbot/core/utils/views.py:380
 msgid "Set API Keys"
-msgstr ""
+msgstr "API kulcsok beállítása"
 
 #: redbot/core/utils/views.py:381
 msgid "Keys and tokens"
-msgstr ""
+msgstr "Kulcsok és tokenek"
 
 #: redbot/core/utils/views.py:388
 msgid "Keys and tokens for {service}"
-msgstr ""
+msgstr "Kulcsok és tokenek {service} re/ra"
 
 #: redbot/core/utils/views.py:397
 msgid "Service"
@@ -97,7 +97,7 @@ msgstr "Szolgáltatás"
 
 #: redbot/core/utils/views.py:434
 msgid "This modal is for bot owners only. Whoops!"
-msgstr ""
+msgstr "Ez a modal csak a botok tulajdonosainak szól. Whoops!"
 
 #: redbot/core/utils/views.py:447
 msgid "{error_message}\n"
@@ -107,9 +107,9 @@ msgstr "{error_message}\n"
 
 #: redbot/core/utils/views.py:454 redbot/core/utils/views.py:461
 msgid "`{service}` API tokens have been set."
-msgstr ""
+msgstr "`{service}` API token beállítva."
 
 #: redbot/core/utils/views.py:497
 msgid "This button is for bot owners only, oh well."
-msgstr ""
+msgstr "Ez a gomb a bot tulajdonosnak van csak, ó hát."
 
