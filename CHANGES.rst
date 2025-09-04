@@ -31,7 +31,7 @@ Changes
 *******
 
 - **Core - Dependencies** - Bumped ``discord.py`` to version 2.6.3 (:issue:`6612`, :issue:`6614`)
-- **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to match invite links using ``\\`` instead of ``/`` (:issue:`6586`)
+- **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to also match invite links using ``\\`` instead of just ``/`` (:issue:`6586`)
 - **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to ignore ``promos.discord.gg`` links (:issue:`6586`)
 
 ----
