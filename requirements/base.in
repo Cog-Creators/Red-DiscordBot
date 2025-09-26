@@ -2,11 +2,9 @@ aiohttp<3.10
 aiohttp-json-rpc
 apsw
 babel
-Brotli
 click
 discord.py
 markdown
-orjson
 packaging
 platformdirs
 psutil
@@ -19,6 +17,10 @@ rich
 schema
 typing_extensions
 yarl
-zstandard
 distro; sys_platform == "linux"
 uvloop; sys_platform != "win32" and platform_python_implementation == "CPython"
+
+# Used by discord.py[speedup]. See Pull request #6587 for more info.
+Brotli
+orjson
+zstandard
