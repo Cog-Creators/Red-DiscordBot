@@ -142,6 +142,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
+        text += (
+            (" | " if text else "")
+            + _("Repeat Current")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if player.repeat_current else "\N{CROSS MARK}")
+        )
 
         message = await self.send_embed_msg(ctx, embed=embed, footer=text)
 
@@ -783,6 +789,46 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.send_embed_msg(ctx, embed=embed)
         if self._player_check(ctx):
             await self.set_player_settings(ctx)
+
+    @commands.command(name="repeatcurrent")
+    @commands.guild_only()
+    @commands.bot_has_permissions(embed_links=True)
+    async def command_repeat_current(self, ctx: commands.Context):
+        """Toggle repeat current."""
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        if dj_enabled and not can_skip and not await self._has_dj_role(ctx, ctx.author):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Toggle Repeat Current"),
+                description=_("You need the DJ role to toggle repeat current."),
+            )
+        if not self._player_check(ctx):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Toggle Repeat Current"),
+                description=_("Nothing playing."),
+            )
+
+        await self.set_player_settings(ctx)
+        player = lavalink.get_player(ctx.guild.id)
+        if (not ctx.author.voice or ctx.author.voice.channel != player.channel) and not can_skip:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Toggle Repeat Current"),
+                description=_("You must be in the voice channel to toggle repeat current."),
+            )
+        player.store("notify_channel", ctx.channel.id)
+
+        msg = _("Repeat current track: {true_or_false}.").format(
+            true_or_false=_("Enabled") if not player.repeat_current else _("Disabled")
+        )
+        player.repeat_current = not player.repeat_current
+
+        embed = discord.Embed(title=_("Setting Changed"), description=msg)
+        await self.send_embed_msg(ctx, embed=embed)
 
     @commands.command(name="remove")
     @commands.guild_only()
