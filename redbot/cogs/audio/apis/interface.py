@@ -624,7 +624,9 @@ class AudioAPIInterface:
                 if enqueue:
                     if len(player.queue) >= 10000:
                         continue
-                    if guild_data["maxlength"] > 0 and not self.cog.is_track_length_allowed(single_track, guild_data["maxlength"]):
+                    if guild_data["maxlength"] > 0 and not self.cog.is_track_length_allowed(
+                        single_track, guild_data["maxlength"]
+                    ):
                         continue
 
                     enqueued_tracks += 1
