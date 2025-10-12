@@ -442,7 +442,7 @@ class SetApiModal(discord.ui.Modal):
             converter = get_dict_converter(*self.default_keys, delims=[";", ",", " "])
         else:
             converter = get_dict_converter(delims=[";", ",", " "])
-        tokens = " ".join(self.token_input.value.split("\n")).rstrip()
+        tokens = " ".join(self.token_input.component.value.split("\n")).rstrip()
 
         try:
             tokens = await converter().convert(None, tokens)
@@ -459,7 +459,7 @@ class SetApiModal(discord.ui.Modal):
                 ephemeral=True,
             )
         else:
-            service = self.service_input.value.lower()
+            service = self.service_input.component.value.lower()
             await interaction.client.set_shared_api_tokens(service, **tokens)
             return await interaction.response.send_message(
                 _("`{service}` API tokens have been set.").format(service=service),
