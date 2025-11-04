@@ -124,11 +124,19 @@ def test_cog_module():
             
             # Create __init__.py with setup function that imports from the main module
             init_file = cog_package_dir / "__init__.py"
+            
+            # Generate RPC handler registration calls for setup function
+            rpc_registrations_setup = []
+            for handler_name in handlers.keys():
+                rpc_registrations_setup.append(f"    bot.register_rpc_handler(cog.{handler_name})")
+            
             init_content = textwrap.dedent(f"""
 from .{cog_name} import {cog_name.title()}
 
 async def setup(bot):
-    await bot.add_cog({cog_name.title()}(bot))
+    cog = {cog_name.title()}(bot)
+    await bot.add_cog(cog)
+{chr(10).join(rpc_registrations_setup)}
 """).strip()
             init_file.write_text(init_content, encoding="utf-8")
             
@@ -155,7 +163,6 @@ from redbot.core import commands
 class {cog_name.title()}(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-{chr(10).join(rpc_registrations)}
 {''.join(handler_methods)}
 """).strip()
             
@@ -403,8 +410,9 @@ async def test_rpc_reload_flow_via_rpc_interface(red, core_logic, test_cog_modul
         
         request = MockRequest([cog_name])
         
-        # Reload using the actual rpc_reload method
-        await core_logic.rpc_reload(request)
+        # Reload using the actual rpc_reload method via RPC interface
+        reload_handler = red.rpc._rpc.methods["CORELOGIC__RELOAD"].method
+        await reload_handler([cog_name])
         
         # Verify cog is still loaded
         assert cog_name in red.extensions
@@ -448,25 +456,22 @@ async def test_rpc_reload_via_http_endpoint_smoke_test(red, core_logic, test_cog
     # Add temp directory to cog paths
     await red._cog_mgr.add_path(Path(str(tmpdir)))
     
-    # Initialize RPC system
-    await red.rpc._pre_login()
-    
     # Start RPC server on ephemeral port (0 = random available port)
     from aiohttp import web
     app = web.Application()
-    app.router.add_post('/jsonrpc', red.rpc._rpc)
-    
+    app.router.add_post('/jsonrpc', red.rpc._rpc.handle_request)
+
     runner = web.AppRunner(app)
     await runner.setup()
-    
+
     # Use ephemeral port for testing
     site = web.TCPSite(runner, 'localhost', 0)
     await site.start()
-    
+
     # Get the actual port assigned
     server_port = site._server.sockets[0].getsockname()[1]
     server_url = f"http://localhost:{server_port}/jsonrpc"
-    
+
     try:
         # Load the cog initially
         await core_logic._load([cog_name])
@@ -497,7 +502,7 @@ async def test_rpc_reload_via_http_endpoint_smoke_test(red, core_logic, test_cog
             # Test 2: Call rpc_reload via HTTP RPC
             reload_payload = {
                 "jsonrpc": "2.0", 
-                "method": "CORE__RPC_RELOAD",
+                "method": "CORELOGIC__RELOAD",
                 "params": [cog_name],
                 "id": 2
             }
