@@ -117,7 +117,23 @@ def test_cog_module():
         def create_module(self, cog_name, handlers, tmpdir):
             """Create a temporary cog module with specified handlers."""
             self.temp_dir = Path(str(tmpdir))
-            self.module_path = self.temp_dir / f"{cog_name}.py"
+            
+            # Create cog package directory
+            cog_package_dir = self.temp_dir / cog_name
+            cog_package_dir.mkdir(exist_ok=True)
+            
+            # Create __init__.py with setup function that imports from the main module
+            init_file = cog_package_dir / "__init__.py"
+            init_content = textwrap.dedent(f"""
+from .{cog_name} import {cog_name.title()}
+
+async def setup(bot):
+    await bot.add_cog({cog_name.title()}(bot))
+""").strip()
+            init_file.write_text(init_content, encoding="utf-8")
+            
+            # Create main cog module file
+            self.module_path = cog_package_dir / f"{cog_name}.py"
             
             # Generate handler methods
             handler_methods = []
@@ -141,9 +157,6 @@ class {cog_name.title()}(commands.Cog):
         self.bot = bot
 {chr(10).join(rpc_registrations)}
 {''.join(handler_methods)}
-
-def setup(bot):
-    bot.add_cog({cog_name.title()}(bot))
 """).strip()
             
             self.module_path.write_text(cog_code, encoding="utf-8")
