@@ -12,6 +12,7 @@ import functools
 from collections import namedtuple, OrderedDict
 from datetime import datetime
 from importlib.machinery import ModuleSpec
+import importlib.util
 from pathlib import Path
 from typing import (
     Optional,
@@ -1705,8 +1706,20 @@ class Red(
         if name in self.extensions:
             raise errors.PackageAlreadyLoaded(spec)
 
-        lib = spec.loader.load_module()
+        # Check if module already exists in sys.modules (after refresh by _cleanup_and_refresh_modules)
+        if spec.name in sys.modules:
+            # Use the refreshed module from sys.modules
+            lib = sys.modules[spec.name]
+        else:
+            # First-time load: use modern import approach
+            lib = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = lib
+            spec.loader.exec_module(lib)
+        
         if not hasattr(lib, "setup"):
+            # Remove module from sys.modules to prevent pollution
+            if lib.__name__ in sys.modules:
+                del sys.modules[lib.__name__]
             del lib
             raise discord.ClientException(f"extension {name} does not have a setup function")
 
