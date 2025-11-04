@@ -1,6 +1,9 @@
 import pytest
 import tempfile
 import textwrap
+import asyncio
+import json
+import aiohttp
 from pathlib import Path
 
 from redbot.pytest.rpc import *
@@ -113,7 +116,7 @@ def test_cog_module():
             
         def create_module(self, cog_name, handlers, tmpdir):
             """Create a temporary cog module with specified handlers."""
-            self.temp_dir = Path(tmpdir)
+            self.temp_dir = Path(str(tmpdir))
             self.module_path = self.temp_dir / f"{cog_name}.py"
             
             # Generate handler methods
@@ -124,6 +127,11 @@ def test_cog_module():
         return "{return_value}"
 """)
             
+            # Generate RPC handler registration calls
+            rpc_registrations = []
+            for handler_name in handlers.keys():
+                rpc_registrations.append(f"        self.bot.register_rpc_handler(self.{handler_name})")
+            
             # Generate cog class code
             cog_code = textwrap.dedent(f"""
 from redbot.core import commands
@@ -131,6 +139,7 @@ from redbot.core import commands
 class {cog_name.title()}(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+{chr(10).join(rpc_registrations)}
 {''.join(handler_methods)}
 
 def setup(bot):
@@ -169,19 +178,22 @@ async def test_rpc_handler_updates_on_reload(red, core_logic, test_cog_module, t
     test_cog_module.create_module(cog_name, handlers, tmpdir)
     
     # Add temp directory to cog paths
-    await red._cog_mgr.add_path(Path(tmpdir))
+    await red._cog_mgr.add_path(Path(str(tmpdir)))
     
     try:
         # Load the cog via RPC
         await core_logic._load([cog_name])
         
         # Verify cog is loaded
-        assert f"{cog_name}.{cog_name}" in red.extensions
+        assert cog_name in red.extensions
         
         # Call RPC handler and verify initial behavior
         handler_name = f"{cog_name.upper()}__TEST_HANDLER"
         assert handler_name in red.rpc._rpc.methods
-        result = await red.rpc._rpc.methods[handler_name]()
+        
+        # Capture the original handler reference before reload
+        original_handler = red.rpc._rpc.methods[handler_name].method
+        result = await original_handler()
         assert result == "version_1"
         
         # Modify the module file to return different value
@@ -191,17 +203,24 @@ async def test_rpc_handler_updates_on_reload(red, core_logic, test_cog_module, t
         await core_logic._reload([cog_name])
         
         # Verify cog is still loaded
-        assert f"{cog_name}.{cog_name}" in red.extensions
+        assert cog_name in red.extensions
+        
+        # Capture the new handler reference after reload
+        new_handler = red.rpc._rpc.methods[handler_name].method
+        
+        # Verify the handler reference itself updated (not just the return value)
+        assert original_handler is not new_handler, "Handler reference should update after reload"
+        assert id(original_handler) != id(new_handler), "Handler object identity should differ after reload"
         
         # Call RPC handler and verify it now executes new code
-        result = await red.rpc._rpc.methods[handler_name]()
+        result = await new_handler()
         assert result == "version_2", "RPC handler should execute new code after reload"
         
     finally:
         # Clean up
-        if f"{cog_name}.{cog_name}" in red.extensions:
+        if cog_name in red.extensions:
             await core_logic._unload([cog_name])
-        await red._cog_mgr.remove_path(Path(tmpdir))
+        await red._cog_mgr.remove_path(Path(str(tmpdir)).resolve())
 
 
 @pytest.mark.asyncio
@@ -213,13 +232,16 @@ async def test_rpc_reload_flow_matches_unload_load(red, core_logic, test_cog_mod
     test_cog_module.create_module(cog_name, handlers, tmpdir)
     
     # Add temp directory to cog paths
-    await red._cog_mgr.add_path(Path(tmpdir))
+    await red._cog_mgr.add_path(Path(str(tmpdir)))
     
     try:
         # Load the cog and verify initial behavior
         await core_logic._load([cog_name])
         handler_name = f"{cog_name.upper()}__FLOW_HANDLER"
-        result = await red.rpc._rpc.methods[handler_name]()
+        
+        # Capture original handler reference
+        original_handler = red.rpc._rpc.methods[handler_name].method
+        result = await original_handler()
         assert result == "initial"
         
         # Modify the module file
@@ -227,12 +249,17 @@ async def test_rpc_reload_flow_matches_unload_load(red, core_logic, test_cog_mod
         
         # Test _reload() behavior
         await core_logic._reload([cog_name])
-        result = await red.rpc._rpc.methods[handler_name]()
+        
+        # Capture new handler reference and verify it updated
+        new_handler = red.rpc._rpc.methods[handler_name].method
+        assert original_handler is not new_handler, "Handler reference should update after _reload"
+        
+        result = await new_handler()
         assert result == "after_reload"
         
         # Unload the cog
         await core_logic._unload([cog_name])
-        assert f"{cog_name}.{cog_name}" not in red.extensions
+        assert cog_name not in red.extensions
         assert handler_name not in red.rpc._rpc.methods
         
         # Modify the module file again
@@ -240,14 +267,19 @@ async def test_rpc_reload_flow_matches_unload_load(red, core_logic, test_cog_mod
         
         # Load again and verify it loads the latest version
         await core_logic._load([cog_name])
-        result = await red.rpc._rpc.methods[handler_name]()
+        
+        # Capture final handler reference and verify it's different from reload handler
+        final_handler = red.rpc._rpc.methods[handler_name].method
+        assert new_handler is not final_handler, "Handler reference should update after manual load"
+        
+        result = await final_handler()
         assert result == "after_manual_load"
         
     finally:
         # Clean up
-        if f"{cog_name}.{cog_name}" in red.extensions:
+        if cog_name in red.extensions:
             await core_logic._unload([cog_name])
-        await red._cog_mgr.remove_path(Path(tmpdir))
+        await red._cog_mgr.remove_path(Path(str(tmpdir)).resolve())
 
 
 @pytest.mark.asyncio
@@ -263,7 +295,7 @@ async def test_multiple_rpc_handlers_update_on_reload(red, core_logic, test_cog_
     test_cog_module.create_module(cog_name, handlers, tmpdir)
     
     # Add temp directory to cog paths
-    await red._cog_mgr.add_path(Path(tmpdir))
+    await red._cog_mgr.add_path(Path(str(tmpdir)))
     
     try:
         # Load the cog
@@ -277,9 +309,12 @@ async def test_multiple_rpc_handlers_update_on_reload(red, core_logic, test_cog_
         for handler_name in handler_names:
             assert handler_name in red.rpc._rpc.methods
             
-        result_one = await red.rpc._rpc.methods[handler_names[0]]()
-        result_two = await red.rpc._rpc.methods[handler_names[1]]()
-        result_three = await red.rpc._rpc.methods[handler_names[2]]()
+        # Capture original handler references before reload
+        original_handlers = [red.rpc._rpc.methods[name].method for name in handler_names]
+        
+        result_one = await original_handlers[0]()
+        result_two = await original_handlers[1]()
+        result_three = await original_handlers[2]()
         
         assert result_one == "one_v1"
         assert result_two == "two_v1"
@@ -296,10 +331,18 @@ async def test_multiple_rpc_handlers_update_on_reload(red, core_logic, test_cog_
         # Reload the cog
         await core_logic._reload([cog_name])
         
+        # Capture new handler references after reload
+        new_handlers = [red.rpc._rpc.methods[name].method for name in handler_names]
+        
+        # Verify all handler references updated (not just return values)
+        for i, (original, new) in enumerate(zip(original_handlers, new_handlers)):
+            assert original is not new, f"Handler {i+1} reference should update after reload"
+            assert id(original) != id(new), f"Handler {i+1} object identity should differ after reload"
+        
         # Verify all handlers now execute new code
-        result_one = await red.rpc._rpc.methods[handler_names[0]]()
-        result_two = await red.rpc._rpc.methods[handler_names[1]]()
-        result_three = await red.rpc._rpc.methods[handler_names[2]]()
+        result_one = await new_handlers[0]()
+        result_two = await new_handlers[1]()
+        result_three = await new_handlers[2]()
         
         assert result_one == "one_v2", "First handler should execute new code"
         assert result_two == "two_v2", "Second handler should execute new code"
@@ -307,6 +350,200 @@ async def test_multiple_rpc_handlers_update_on_reload(red, core_logic, test_cog_
         
     finally:
         # Clean up
-        if f"{cog_name}.{cog_name}" in red.extensions:
+        if cog_name in red.extensions:
             await core_logic._unload([cog_name])
-        red._cog_mgr.remove_path(Path(tmpdir))
+        await red._cog_mgr.remove_path(Path(str(tmpdir)).resolve())
+
+
+@pytest.mark.asyncio
+async def test_rpc_reload_flow_via_rpc_interface(red, core_logic, test_cog_module, tmpdir):
+    """Test RPC reload using the actual rpc_reload() method instead of _reload()."""
+    # Create test cog module
+    cog_name = "rpctest"
+    handlers = {"rpc_handler": "rpc_v1"}
+    test_cog_module.create_module(cog_name, handlers, tmpdir)
+    
+    # Add temp directory to cog paths
+    await red._cog_mgr.add_path(Path(str(tmpdir)))
+    
+    try:
+        # Load the cog initially
+        await core_logic._load([cog_name])
+        
+        # Verify cog is loaded and handler works
+        assert cog_name in red.extensions
+        handler_name = f"{cog_name.upper()}__RPC_HANDLER"
+        assert handler_name in red.rpc._rpc.methods
+        
+        # Capture original handler reference before reload
+        original_handler = red.rpc._rpc.methods[handler_name].method
+        result = await original_handler()
+        assert result == "rpc_v1"
+        
+        # Modify the module file to return different value
+        test_cog_module.update_handlers({"rpc_handler": "rpc_v2"})
+        
+        # Create a minimal request-like object with params
+        class MockRequest:
+            def __init__(self, params):
+                self.params = params
+        
+        request = MockRequest([cog_name])
+        
+        # Reload using the actual rpc_reload method
+        await core_logic.rpc_reload(request)
+        
+        # Verify cog is still loaded
+        assert cog_name in red.extensions
+        
+        # Verify RPC handler name remains present
+        assert handler_name in red.rpc._rpc.methods
+        
+        # Capture new handler reference after rpc_reload
+        new_handler = red.rpc._rpc.methods[handler_name].method
+        
+        # Verify the handler reference itself updated via rpc_reload
+        assert original_handler is not new_handler, "Handler reference should update after rpc_reload"
+        assert id(original_handler) != id(new_handler), "Handler object identity should differ after rpc_reload"
+        
+        # Verify invoking the handler now returns updated value
+        result = await new_handler()
+        assert result == "rpc_v2", "RPC handler should execute new code after rpc_reload"
+        
+    finally:
+        # Clean up
+        if cog_name in red.extensions:
+            await core_logic._unload([cog_name])
+        await red._cog_mgr.remove_path(Path(str(tmpdir)).resolve())
+
+
+@pytest.mark.asyncio
+@pytest.mark.skip_ci  # Skip in CI if network tests are restricted
+async def test_rpc_reload_via_http_endpoint_smoke_test(red, core_logic, test_cog_module, tmpdir):
+    """Smoke test that validates RPC reload through actual HTTP endpoint to mirror real usage."""
+    import os
+    
+    # Skip test if running in CI environment or if explicitly disabled
+    if os.environ.get("CI") or os.environ.get("SKIP_NETWORK_TESTS"):
+        pytest.skip("Skipping network test in CI or when SKIP_NETWORK_TESTS is set")
+    
+    # Create test cog module
+    cog_name = "httptest"
+    handlers = {"http_handler": "http_v1"}
+    test_cog_module.create_module(cog_name, handlers, tmpdir)
+    
+    # Add temp directory to cog paths
+    await red._cog_mgr.add_path(Path(str(tmpdir)))
+    
+    # Initialize RPC system
+    await red.rpc._pre_login()
+    
+    # Start RPC server on ephemeral port (0 = random available port)
+    from aiohttp import web
+    app = web.Application()
+    app.router.add_post('/jsonrpc', red.rpc._rpc)
+    
+    runner = web.AppRunner(app)
+    await runner.setup()
+    
+    # Use ephemeral port for testing
+    site = web.TCPSite(runner, 'localhost', 0)
+    await site.start()
+    
+    # Get the actual port assigned
+    server_port = site._server.sockets[0].getsockname()[1]
+    server_url = f"http://localhost:{server_port}/jsonrpc"
+    
+    try:
+        # Load the cog initially
+        await core_logic._load([cog_name])
+        
+        # Verify cog is loaded
+        assert cog_name in red.extensions
+        handler_name = f"{cog_name.upper()}__HTTP_HANDLER"
+        assert handler_name in red.rpc._rpc.methods
+        
+        async with aiohttp.ClientSession() as session:
+            # Test 1: Call the handler via HTTP RPC to verify initial behavior
+            payload = {
+                "jsonrpc": "2.0",
+                "method": handler_name,
+                "params": [],
+                "id": 1
+            }
+            
+            async with session.post(server_url, json=payload) as resp:
+                assert resp.status == 200
+                result = await resp.json()
+                assert result["result"] == "http_v1"
+                assert "error" not in result
+            
+            # Modify the module file to return different value
+            test_cog_module.update_handlers({"http_handler": "http_v2"})
+            
+            # Test 2: Call rpc_reload via HTTP RPC
+            reload_payload = {
+                "jsonrpc": "2.0", 
+                "method": "CORE__RPC_RELOAD",
+                "params": [cog_name],
+                "id": 2
+            }
+            
+            async with session.post(server_url, json=reload_payload) as resp:
+                assert resp.status == 200
+                result = await resp.json()
+                assert "error" not in result, f"RPC reload failed: {result.get('error', 'Unknown error')}"
+            
+            # Verify cog is still loaded after reload
+            assert cog_name in red.extensions
+            assert handler_name in red.rpc._rpc.methods
+            
+            # Test 3: Call the handler again via HTTP RPC to verify new behavior
+            updated_payload = {
+                "jsonrpc": "2.0",
+                "method": handler_name,
+                "params": [],
+                "id": 3
+            }
+            
+            async with session.post(server_url, json=updated_payload) as resp:
+                assert resp.status == 200
+                result = await resp.json()
+                assert result["result"] == "http_v2", "Handler should execute new code after HTTP RPC reload"
+                assert "error" not in result
+            
+            # Test 4: Verify we can call the handler multiple times with consistent results
+            for i in range(3):
+                consistency_payload = {
+                    "jsonrpc": "2.0",
+                    "method": handler_name,
+                    "params": [],
+                    "id": 10 + i
+                }
+                
+                async with session.post(server_url, json=consistency_payload) as resp:
+                    assert resp.status == 200
+                    result = await resp.json()
+                    assert result["result"] == "http_v2", f"Handler should be consistent on call {i+1}"
+            
+            # Test 5: Verify error handling for non-existent methods
+            error_payload = {
+                "jsonrpc": "2.0",
+                "method": "NONEXISTENT__METHOD",
+                "params": [],
+                "id": 4
+            }
+            
+            async with session.post(server_url, json=error_payload) as resp:
+                assert resp.status == 200
+                result = await resp.json()
+                assert "error" in result, "Should return error for non-existent method"
+    
+    finally:
+        # Clean up server
+        await runner.cleanup()
+        
+        # Clean up cog and paths
+        if cog_name in red.extensions:
+            await core_logic._unload([cog_name])
+        await red._cog_mgr.remove_path(Path(str(tmpdir)).resolve())
