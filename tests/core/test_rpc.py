@@ -493,9 +493,6 @@ async def test_rpc_reload_via_websocket_endpoint_smoke_test(red, core_logic, tes
         
         # Capture original handler reference before reload
         original_handler = red.rpc._rpc.methods[handler_name].method
-        original_cog = red.get_cog(cog_name.title())
-        print(f"DEBUG: Original cog: {id(original_cog)} - {original_cog}")
-        print(f"DEBUG: Original handler: {id(original_handler)} from cog method: {id(original_cog.http_handler)}")
 
         async with aiohttp.ClientSession() as session:
             # Test 1: Call the handler via WebSocket RPC to verify initial behavior
@@ -539,11 +536,6 @@ async def test_rpc_reload_via_websocket_endpoint_smoke_test(red, core_logic, tes
             
             # Capture new handler reference after reload
             new_handler = red.rpc._rpc.methods[handler_name].method
-            new_cog = red.get_cog(cog_name.title())
-            print(f"DEBUG: New cog: {id(new_cog)} - {new_cog}")
-            print(f"DEBUG: New handler: {id(new_handler)} from cog method: {id(new_cog.http_handler)}")
-            print(f"DEBUG: Cog references equal: {original_cog is new_cog}")
-            print(f"DEBUG: Handler references equal: {original_handler is new_handler}")
             
             # Test 3: Call the handler again via WebSocket RPC to verify new behavior
             async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:

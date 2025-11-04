@@ -387,30 +387,21 @@ class CoreLogic:
 
         result = await self._load(pkg_names)
         
-        print(f"DEBUG: Load result: {result}")
-        print(f"DEBUG: RPC handlers: {self.bot.rpc_handlers}")
-        
         # Verify that RPC handlers were properly re-registered for reloaded packages
         for pkg_name in pkg_names:
-            print(f"DEBUG: Checking package: {pkg_name}")
             if pkg_name in result.get("loaded_packages", []):
-                print(f"DEBUG: Checking RPC handlers for reloaded package: {pkg_name}")
                 # Force refresh of RPC method references in case they weren't updated
                 for cog_name, methods in list(self.bot.rpc_handlers.items()):
-                    print(f"DEBUG: Checking cog: {cog_name} with methods: {methods}")
                     updated_methods = []
                     for method in methods:
                         if hasattr(method, '__self__') and hasattr(method.__self__, '__module__'):
                             method_module = method.__self__.__module__
-                            print(f"DEBUG: Method {method} from module {method_module}")
                             if method_module == pkg_name or method_module.startswith(f"{pkg_name}."):
-                                print(f"DEBUG: Found RPC method to update: {method} from {method_module}")
                                 # Get the fresh method reference from the reloaded cog
                                 cog = method.__self__
                                 method_name = method.__name__
                                 if hasattr(cog, method_name):
                                     fresh_method = getattr(cog, method_name)
-                                    print(f"DEBUG: Updating RPC handler: {id(method)} -> {id(fresh_method)}")
                                     # Re-register with fresh method reference
                                     self.bot.rpc.remove_method(method)
                                     self.bot.rpc.add_method(fresh_method)
@@ -423,8 +414,6 @@ class CoreLogic:
                             updated_methods.append(method)
                     
                     self.bot.rpc_handlers[cog_name] = updated_methods
-            else:
-                print(f"DEBUG: Package {pkg_name} not in loaded_packages: {result.get('loaded_packages', [])}")
 
         return result
 
