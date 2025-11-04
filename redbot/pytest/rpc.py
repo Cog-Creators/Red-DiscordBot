@@ -55,6 +55,8 @@ def existing_multi_func(rpc, cog):
 
 
 @pytest.fixture()
-def core_logic(red):
+async def core_logic(red):
     """Create a CoreLogic instance for testing RPC handlers."""
+    # Ensure RPC system is initialized before creating CoreLogic
+    await red.rpc._pre_login()
     return CoreLogic(red)
