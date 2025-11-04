@@ -1715,7 +1715,7 @@ class Red(
             lib = importlib.util.module_from_spec(spec)
             sys.modules[spec.name] = lib
             spec.loader.exec_module(lib)
-        
+
         if not hasattr(lib, "setup"):
             # Remove module from sys.modules to prevent pollution
             if lib.__name__ in sys.modules:
