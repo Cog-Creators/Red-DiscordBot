@@ -440,8 +440,8 @@ async def test_rpc_reload_flow_via_rpc_interface(red, core_logic, test_cog_modul
 
 @pytest.mark.asyncio
 @pytest.mark.skip_ci  # Skip in CI if network tests are restricted
-async def test_rpc_reload_via_http_endpoint_smoke_test(red, core_logic, test_cog_module, tmpdir):
-    """Smoke test that validates RPC reload through actual HTTP endpoint to mirror real usage."""
+async def test_rpc_reload_via_websocket_endpoint_smoke_test(red, core_logic, test_cog_module, tmpdir):
+    """Smoke test that validates RPC reload through actual WebSocket endpoint to mirror real usage."""
     import os
     
     # Skip test if running in CI environment or if explicitly disabled
@@ -459,7 +459,7 @@ async def test_rpc_reload_via_http_endpoint_smoke_test(red, core_logic, test_cog
     # Start RPC server on ephemeral port (0 = random available port)
     from aiohttp import web
     app = web.Application()
-    app.router.add_post('/jsonrpc', red.rpc._rpc.handle_request)
+    app.router.add_route('*', '/jsonrpc', red.rpc._rpc.handle_request)
 
     runner = web.AppRunner(app)
     await runner.setup()
@@ -482,79 +482,84 @@ async def test_rpc_reload_via_http_endpoint_smoke_test(red, core_logic, test_cog
         assert handler_name in red.rpc._rpc.methods
         
         async with aiohttp.ClientSession() as session:
-            # Test 1: Call the handler via HTTP RPC to verify initial behavior
-            payload = {
-                "jsonrpc": "2.0",
-                "method": handler_name,
-                "params": [],
-                "id": 1
-            }
-            
-            async with session.post(server_url, json=payload) as resp:
-                assert resp.status == 200
-                result = await resp.json()
+            # Test 1: Call the handler via WebSocket RPC to verify initial behavior
+            async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:
+                # Send JSON-RPC request
+                await ws.send_json({
+                    "jsonrpc": "2.0",
+                    "method": handler_name,
+                    "params": [],
+                    "id": 1
+                })
+                
+                # Receive response
+                result = await ws.receive_json()
                 assert result["result"] == "http_v1"
                 assert "error" not in result
             
             # Modify the module file to return different value
             test_cog_module.update_handlers({"http_handler": "http_v2"})
             
-            # Test 2: Call rpc_reload via HTTP RPC
-            reload_payload = {
-                "jsonrpc": "2.0", 
-                "method": "CORELOGIC__RELOAD",
-                "params": [cog_name],
-                "id": 2
-            }
-            
-            async with session.post(server_url, json=reload_payload) as resp:
-                assert resp.status == 200
-                result = await resp.json()
+            # Test 2: Call rpc_reload via WebSocket RPC
+            async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:
+                # Send reload request
+                await ws.send_json({
+                    "jsonrpc": "2.0", 
+                    "method": "CORELOGIC__RELOAD",
+                    "params": [cog_name],
+                    "id": 2
+                })
+                
+                # Receive response
+                result = await ws.receive_json()
                 assert "error" not in result, f"RPC reload failed: {result.get('error', 'Unknown error')}"
             
             # Verify cog is still loaded after reload
             assert cog_name in red.extensions
             assert handler_name in red.rpc._rpc.methods
             
-            # Test 3: Call the handler again via HTTP RPC to verify new behavior
-            updated_payload = {
-                "jsonrpc": "2.0",
-                "method": handler_name,
-                "params": [],
-                "id": 3
-            }
-            
-            async with session.post(server_url, json=updated_payload) as resp:
-                assert resp.status == 200
-                result = await resp.json()
-                assert result["result"] == "http_v2", "Handler should execute new code after HTTP RPC reload"
-                assert "error" not in result
-            
-            # Test 4: Verify we can call the handler multiple times with consistent results
-            for i in range(3):
-                consistency_payload = {
+            # Test 3: Call the handler again via WebSocket RPC to verify new behavior
+            async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:
+                # Send request for updated handler
+                await ws.send_json({
                     "jsonrpc": "2.0",
                     "method": handler_name,
                     "params": [],
-                    "id": 10 + i
-                }
+                    "id": 3
+                })
                 
-                async with session.post(server_url, json=consistency_payload) as resp:
-                    assert resp.status == 200
-                    result = await resp.json()
+                # Receive response
+                result = await ws.receive_json()
+                assert result["result"] == "http_v2", "Handler should execute new code after WebSocket RPC reload"
+                assert "error" not in result
+            
+            # Test 4: Verify we can call the handler multiple times with consistent results
+            async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:
+                for i in range(3):
+                    # Send consistency test request
+                    await ws.send_json({
+                        "jsonrpc": "2.0",
+                        "method": handler_name,
+                        "params": [],
+                        "id": 10 + i
+                    })
+                    
+                    # Receive response
+                    result = await ws.receive_json()
                     assert result["result"] == "http_v2", f"Handler should be consistent on call {i+1}"
             
             # Test 5: Verify error handling for non-existent methods
-            error_payload = {
-                "jsonrpc": "2.0",
-                "method": "NONEXISTENT__METHOD",
-                "params": [],
-                "id": 4
-            }
-            
-            async with session.post(server_url, json=error_payload) as resp:
-                assert resp.status == 200
-                result = await resp.json()
+            async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:
+                # Send request for non-existent method
+                await ws.send_json({
+                    "jsonrpc": "2.0",
+                    "method": "NONEXISTENT__METHOD",
+                    "params": [],
+                    "id": 4
+                })
+                
+                # Receive response
+                result = await ws.receive_json()
                 assert "error" in result, "Should return error for non-existent method"
     
     finally:
