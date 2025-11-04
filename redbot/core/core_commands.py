@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import datetime
 import importlib
+import importlib.util
 import itertools
 import keyword
 import logging
@@ -185,7 +186,6 @@ class CoreLogic:
 
         async for spec, name in AsyncIter(pkg_specs, steps=10):
             try:
-                self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
@@ -251,7 +251,27 @@ class CoreLogic:
             except KeyError:
                 pass
             else:
-                importlib._bootstrap._exec(lib.__spec__, lib)
+                # Create a new spec from the file to get updated source code
+                if hasattr(lib.__spec__, 'origin') and lib.__spec__.origin:
+                    try:
+                        # Create fresh spec and reload source
+                        new_spec = importlib.util.spec_from_file_location(
+                            lib.__spec__.name, lib.__spec__.origin
+                        )
+                        if new_spec and new_spec.loader:
+                            # Update the module's spec to the fresh one
+                            lib.__spec__ = new_spec
+                            # Execute with the fresh spec to load updated source
+                            new_spec.loader.exec_module(lib)
+                        else:
+                            # Fallback to original method if spec creation fails
+                            importlib._bootstrap._exec(lib.__spec__, lib)
+                    except Exception:
+                        # Fallback to original method if anything fails
+                        importlib._bootstrap._exec(lib.__spec__, lib)
+                else:
+                    # Fallback to original method for non-file modules
+                    importlib._bootstrap._exec(lib.__spec__, lib)
 
         # noinspection PyTypeChecker
         modules = itertools.accumulate(splitted, "{}.{}".format)
@@ -264,7 +284,7 @@ class CoreLogic:
             if name == module_name or name.startswith(f"{module_name}.")
         }
         for child_name, lib in children.items():
-            importlib._bootstrap._exec(lib.__spec__, lib)
+            maybe_reload(child_name)
 
     async def _unload(self, pkg_names: Iterable[str]) -> Dict[str, List[str]]:
         """
@@ -290,7 +310,35 @@ class CoreLogic:
 
         for name in pkg_names:
             if name in bot.extensions:
+                # Find the extension module and clear its .pyc cache before unloading
+                if name in sys.modules:
+                    module = sys.modules[name]
+                    if hasattr(module, '__file__') and module.__file__:
+                        # Clear .pyc cache by removing __pycache__ directory
+                        import os
+                        import shutil
+                        pycache_dir = os.path.join(os.path.dirname(module.__file__), '__pycache__')
+                        if os.path.exists(pycache_dir):
+                            try:
+                                shutil.rmtree(pycache_dir)
+                            except (OSError, IOError):
+                                # Ignore errors removing cache directory
+                                pass
+                
                 await bot.unload_extension(name)
+                
+                # Manually remove related modules from sys.modules to force fresh reload
+                modules_to_remove = []
+                for module_name in sys.modules:
+                    if module_name == name or module_name.startswith(f"{name}."):
+                        modules_to_remove.append(module_name)
+                
+                for module_name in modules_to_remove:
+                    del sys.modules[module_name]
+                
+                # Clear import caches to ensure fresh loading
+                importlib.invalidate_caches()
+                
                 await bot.remove_loaded_package(name)
                 unloaded_packages.append(name)
             else:
@@ -5767,6 +5815,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         if spec is None:
             raise LookupError("No such cog found.")
 
+        print(f"DEBUG: RPC loading cog {cog_name}, spec name: {spec.name}")
         self._cleanup_and_refresh_modules(spec.name)
 
         await self.bot.load_extension(spec)
