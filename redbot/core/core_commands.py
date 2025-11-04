@@ -362,9 +362,71 @@ class CoreLogic:
         dict
             Dictionary with keys as returned by `CoreLogic._load()`
         """
+        # Handle case where pkg_names might be a single string instead of a sequence
+        if isinstance(pkg_names, str):
+            pkg_names = [pkg_names]
+        
+        # Store RPC handler names before unload to ensure they're re-registered
+        rpc_handlers_to_restore = {}
+        
+        for pkg_name in pkg_names:
+            if pkg_name in self.bot.extensions:
+                # Find all RPC handlers for this package
+                pkg_rpc_handlers = []
+                for cog_name, methods in self.bot.rpc_handlers.items():
+                    for method in methods:
+                        # Check if this method belongs to the package being reloaded
+                        if hasattr(method, '__self__') and hasattr(method.__self__, '__module__'):
+                            method_module = method.__self__.__module__
+                            if method_module == pkg_name or method_module.startswith(f"{pkg_name}."):
+                                pkg_rpc_handlers.append(method)
+                
+                rpc_handlers_to_restore[pkg_name] = pkg_rpc_handlers
+
         await self._unload(pkg_names)
 
-        return await self._load(pkg_names)
+        result = await self._load(pkg_names)
+        
+        print(f"DEBUG: Load result: {result}")
+        print(f"DEBUG: RPC handlers: {self.bot.rpc_handlers}")
+        
+        # Verify that RPC handlers were properly re-registered for reloaded packages
+        for pkg_name in pkg_names:
+            print(f"DEBUG: Checking package: {pkg_name}")
+            if pkg_name in result.get("loaded_packages", []):
+                print(f"DEBUG: Checking RPC handlers for reloaded package: {pkg_name}")
+                # Force refresh of RPC method references in case they weren't updated
+                for cog_name, methods in list(self.bot.rpc_handlers.items()):
+                    print(f"DEBUG: Checking cog: {cog_name} with methods: {methods}")
+                    updated_methods = []
+                    for method in methods:
+                        if hasattr(method, '__self__') and hasattr(method.__self__, '__module__'):
+                            method_module = method.__self__.__module__
+                            print(f"DEBUG: Method {method} from module {method_module}")
+                            if method_module == pkg_name or method_module.startswith(f"{pkg_name}."):
+                                print(f"DEBUG: Found RPC method to update: {method} from {method_module}")
+                                # Get the fresh method reference from the reloaded cog
+                                cog = method.__self__
+                                method_name = method.__name__
+                                if hasattr(cog, method_name):
+                                    fresh_method = getattr(cog, method_name)
+                                    print(f"DEBUG: Updating RPC handler: {id(method)} -> {id(fresh_method)}")
+                                    # Re-register with fresh method reference
+                                    self.bot.rpc.remove_method(method)
+                                    self.bot.rpc.add_method(fresh_method)
+                                    updated_methods.append(fresh_method)
+                                else:
+                                    updated_methods.append(method)
+                            else:
+                                updated_methods.append(method)
+                        else:
+                            updated_methods.append(method)
+                    
+                    self.bot.rpc_handlers[cog_name] = updated_methods
+            else:
+                print(f"DEBUG: Package {pkg_name} not in loaded_packages: {result.get('loaded_packages', [])}")
+
+        return result
 
     async def _name(self, name: Optional[str] = None) -> str:
         """

@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 import tempfile
 import textwrap
 import asyncio
@@ -8,6 +9,15 @@ from pathlib import Path
 
 from redbot.pytest.rpc import *
 from redbot.core._rpc import get_name
+from redbot.core.core_commands import CoreLogic
+
+
+@pytest_asyncio.fixture(scope="function")
+async def core_logic(red):
+    """Create a CoreLogic instance for testing RPC handlers."""
+    # Ensure RPC system is initialized before creating CoreLogic
+    await red.rpc._pre_login()
+    return CoreLogic(red)
 
 
 def test_get_name(cog):
@@ -481,6 +491,12 @@ async def test_rpc_reload_via_websocket_endpoint_smoke_test(red, core_logic, tes
         handler_name = f"{cog_name.upper()}__HTTP_HANDLER"
         assert handler_name in red.rpc._rpc.methods
         
+        # Capture original handler reference before reload
+        original_handler = red.rpc._rpc.methods[handler_name].method
+        original_cog = red.get_cog(cog_name.title())
+        print(f"DEBUG: Original cog: {id(original_cog)} - {original_cog}")
+        print(f"DEBUG: Original handler: {id(original_handler)} from cog method: {id(original_cog.http_handler)}")
+
         async with aiohttp.ClientSession() as session:
             # Test 1: Call the handler via WebSocket RPC to verify initial behavior
             async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:
@@ -514,9 +530,20 @@ async def test_rpc_reload_via_websocket_endpoint_smoke_test(red, core_logic, tes
                 result = await ws.receive_json()
                 assert "error" not in result, f"RPC reload failed: {result.get('error', 'Unknown error')}"
             
+            # Wait a moment for any async reload operations to complete
+            await asyncio.sleep(0.1)
+            
             # Verify cog is still loaded after reload
             assert cog_name in red.extensions
             assert handler_name in red.rpc._rpc.methods
+            
+            # Capture new handler reference after reload
+            new_handler = red.rpc._rpc.methods[handler_name].method
+            new_cog = red.get_cog(cog_name.title())
+            print(f"DEBUG: New cog: {id(new_cog)} - {new_cog}")
+            print(f"DEBUG: New handler: {id(new_handler)} from cog method: {id(new_cog.http_handler)}")
+            print(f"DEBUG: Cog references equal: {original_cog is new_cog}")
+            print(f"DEBUG: Handler references equal: {original_handler is new_handler}")
             
             # Test 3: Call the handler again via WebSocket RPC to verify new behavior
             async with session.ws_connect(f"ws://localhost:{server_port}/jsonrpc") as ws:
