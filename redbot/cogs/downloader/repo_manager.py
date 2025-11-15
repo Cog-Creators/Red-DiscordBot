@@ -1070,7 +1070,7 @@ class RepoManager:
             New Repo object representing the cloned repository.
 
         """
-        name = name.lower() # convert the repo name to lower case 
+        name = name.lower()  # convert the repo name to lower case
         if self.does_repo_exist(name):
             raise errors.ExistingGitRepo(
                 "That repo name you provided already exists. Please choose another."
@@ -1103,7 +1103,7 @@ class RepoManager:
             Repo object for the repository, if it exists.
 
         """
-        name = name.lower() 
+        name = name.lower()
         return self._repos.get(name, None)
 
     @property
@@ -1116,7 +1116,7 @@ class RepoManager:
         Returns
         -------
         `tuple` of `str`
-            Repo names. 
+            Repo names.
         """
         # noinspection PyTypeChecker
         return tuple(self._repos.keys())
