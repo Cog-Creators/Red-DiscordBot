@@ -59,6 +59,7 @@ async def test_update_repo_case_insensitive(tmp_path):
     assert old == "oldhash"
     assert new == "newhash"
 
+
 @pytest.mark.asyncio
 async def test_repo_existing_git_repo(tmp_path):
     # Create a Repo instance
@@ -67,7 +68,7 @@ async def test_repo_existing_git_repo(tmp_path):
         url="https://example.com/repo.git",
         branch=None,
         commit="",
-        folder_path=tmp_path
+        folder_path=tmp_path,
     )
 
     # Case 1: .git folder does not exist
