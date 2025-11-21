@@ -340,11 +340,8 @@ class Downloader(commands.Cog):
                 except ValueError:
                     # module wasn't modified - we just need to update its commit
                     module.commit = repo.commit
-                    if (
-                        module.type == InstallableType.COG
-                        and self._requirements_changed(
-                            module.installed_requirements, module.requirements
-                        )
+                    if module.type == InstallableType.COG and self._requirements_changed(
+                        module.installed_requirements, module.requirements
                     ):
                         cogs_requiring_reqs.add(module)
                     else:
@@ -441,7 +438,9 @@ class Downloader(commands.Cog):
         return (tuple(all_installed), tuple(all_failed))
 
     @staticmethod
-    def _requirements_changed(old_requirements: Iterable[str], new_requirements: Iterable[str]) -> bool:
+    def _requirements_changed(
+        old_requirements: Iterable[str], new_requirements: Iterable[str]
+    ) -> bool:
         return sorted(old_requirements) != sorted(new_requirements)
 
     async def _install_requirements(self, cogs: Iterable[Installable]) -> Tuple[str, ...]:
@@ -1334,7 +1333,9 @@ class Downloader(commands.Cog):
                 cogs_update_set = set(cogs_to_update)
                 req_reinstall_set = set(req_reinstalls)
                 cogs_to_update = tuple(cog for cog in combined_filtered if cog in cogs_update_set)
-                req_reinstalls = tuple(cog for cog in combined_filtered if cog in req_reinstall_set)
+                req_reinstalls = tuple(
+                    cog for cog in combined_filtered if cog in req_reinstall_set
+                )
 
                 updates_available = bool(cogs_to_update or libs_to_update or req_reinstalls)
 
