@@ -212,6 +212,7 @@
   - redbot/core/_cli.py
   - redbot/core/_debuginfo.py
   - redbot/setup.py
+  - tests/core/test_dry_run.py
 "Category: Core - Help":
   - redbot/core/commands/help.py
 "Category: Core - i18n":
