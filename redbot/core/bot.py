@@ -2282,7 +2282,7 @@ class Red(
                 # The client never finished starting up, so the queue was never created.
                 pass
             else:
-                raise e  # Reraise the exception if it's not the one you expect
+                raise e
 
         await _drivers.get_driver_class().teardown()
         try:
