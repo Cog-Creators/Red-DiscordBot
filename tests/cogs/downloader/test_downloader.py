@@ -1,14 +1,19 @@
 import asyncio
+import json
 import pathlib
 from collections import namedtuple
-from typing import Any, NamedTuple
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Any, NamedTuple
+from unittest.mock import AsyncMock
 
 import pytest
 from pytest_mock import MockFixture
 
 from redbot.pytest.downloader import *
 
+from redbot.cogs.downloader.downloader import Downloader
+from redbot.cogs.downloader.installable import InstalledModule
 from redbot.cogs.downloader.repo_manager import Installable
 from redbot.cogs.downloader.repo_manager import Candidate, ProcessFormatter, RepoManager, Repo
 from redbot.cogs.downloader.errors import (
@@ -364,6 +369,81 @@ async def test_remove_repo(monkeypatch, repo_manager):
     assert repo_manager.get_repo("squid") is not None
     await repo_manager.delete_repo("squid")
     assert repo_manager.get_repo("squid") is None
+
+
+async def test_requirements_reinstalled_when_info_changes(tmp_path):
+    repo_name = "dbackrepo"
+    cog_name = "dbackmodule"
+    cog_path = tmp_path / repo_name / cog_name
+    cog_path.mkdir(parents=True, exist_ok=True)
+    info = INFO_JSON.copy()
+    info["requirements"] = ["d-back==0.0.18"]
+    (cog_path / "info.json").write_text(json.dumps(info), "utf-8")
+
+    class DummyRepo:
+        def __init__(self):
+            self.available_libraries = ()
+            self.commit = "new"
+            self.name = repo_name
+
+        async def get_last_module_occurrence(self, module_name):
+            return None
+
+        async def is_ancestor(self, old_commit, new_commit):
+            return True
+
+        async def get_modified_modules(self, old_hash, new_hash):
+            return ()
+
+    dummy_repo = DummyRepo()
+    installed = InstalledModule(
+        location=cog_path,
+        repo=dummy_repo,
+        commit="old",
+        json_repo_name=repo_name,
+        requirements=("d-back==0.0.17",),
+    )
+    assert installed.requirements == ("d-back==0.0.18",)
+    assert installed.installed_requirements == ("d-back==0.0.17",)
+
+    downloader = Downloader.__new__(Downloader)
+    save_mock = AsyncMock()
+    downloader.installed_libraries = AsyncMock(return_value=())
+    downloader._save_to_installed = save_mock
+    cogs_to_update, libs_to_update, req_reinstalls = await downloader._available_updates(
+        {installed}
+    )
+
+    assert not cogs_to_update
+    assert not libs_to_update
+    assert req_reinstalls == (installed,)
+    save_mock.assert_awaited_once()
+    assert save_mock.await_args.args[0] == []
+
+    ctx = SimpleNamespace(clean_prefix="[p]", prefix="[p]")
+    downloader._install_requirements = AsyncMock(return_value=())
+    downloader._install_cogs = AsyncMock(return_value=((), ()))
+    downloader._reinstall_libraries = AsyncMock(return_value=((), ()))
+    downloader.bot = SimpleNamespace(list_enabled_app_commands=AsyncMock(return_value={}))
+
+    updated_names, message = await downloader._update_cogs_and_libs(
+        ctx,
+        cogs_to_update=(),
+        libs_to_update=(),
+        requirement_reinstalls=req_reinstalls,
+        current_cog_versions=(installed,),
+    )
+
+    downloader._install_requirements.assert_awaited_once()
+    install_args = downloader._install_requirements.await_args.args[0]
+    assert installed in install_args
+    assert downloader._install_cogs.await_args.args[0] == ()
+    assert downloader._reinstall_libraries.await_args.args[0] == ()
+    assert save_mock.await_count == 2
+    assert save_mock.await_args_list[1].args[0] == req_reinstalls
+    assert not updated_names
+    assert "Reinstalled requirements for cog" in message
+    assert installed.installed_requirements == installed.requirements
 
 
 async def test_existing_repo(mocker, repo_manager):
