@@ -2277,8 +2277,13 @@ class Red(
         """Logs out of Discord and closes all connections."""
         try:
             await super().close()
-        except AttributeError:
-            pass
+        except AttributeError as e:
+            if "'Red' object has no attribute '_AutoShardedClient__queue'" in str(e):
+                # The client never finished starting up, so the queue was never created.
+                pass
+            else:
+                raise e  # Reraise the exception if it's not the one you expect
+
         await _drivers.get_driver_class().teardown()
         try:
             if self.rpc_enabled:
