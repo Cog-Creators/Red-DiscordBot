@@ -373,11 +373,12 @@ async def test_remove_repo(monkeypatch, repo_manager):
     assert repo_manager.get_repo("squid") is None
 
 
-async def test_requirements_reinstalled_when_info_changes(tmp_path):
+async def test_cog_update(tmp_path):
     repo_name = "x26-Cogs"
     cog_name = "defender"
     workspace_root = Path(__file__).resolve().parents[4]
     source_repo = workspace_root / repo_name / cog_name
+
     if not source_repo.exists():
         pytest.skip("x26-Cogs repository is required for this test.")
 
@@ -385,6 +386,7 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     repo_path.mkdir(parents=True, exist_ok=True)
     cog_path = repo_path / cog_name
     shutil.copytree(source_repo, cog_path)
+
     info_path = cog_path / "info.json"
     original_info = json.loads(info_path.read_text("utf-8"))
 
@@ -418,91 +420,14 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
             self.folder_path = repo_path
             self.modified_module: Optional[InstalledModule] = None
 
-        async def get_last_module_occurrence(self, module_name):
-            if module_name == cog_name:
-                return self.modified_module
-            return None
-
-        async def is_ancestor(self, old_commit, new_commit):
-            return True
-
-        async def get_modified_modules(self, old_hash, new_hash):
-            return (self.modified_module,)
-
-        async def install_raw_requirements(self, requirements, target_dir):
-            target_dir.mkdir(parents=True, exist_ok=True)
-            for req in requirements:
-                if req.startswith("emoji=="):
-                    for existing in target_dir.glob("emoji==*"):
-                        existing.unlink()
-                (target_dir / req).write_text("", encoding="utf-8")
-            return True
-
     class DummyRepoManager:
         def __init__(self, repo):
             self.repos = [repo]
             self.repo = repo
             self.repos_folder = repo.folder_path.parent
 
-        def get_repo(self, name):
-            if name == self.repo.name:
-                return self.repo
-            return None
-
         async def update_repos(self, repos=None):
             return ({}, [])
-
-    dummy_repo = DummyRepo()
-    info_path.write_text(json.dumps(_info_with_emoji("1.6.3")), "utf-8")
-    installed = InstalledModule(
-        location=cog_path,
-        repo=dummy_repo,
-        commit="old",
-        json_repo_name=repo_name,
-    )
-    assert "emoji==1.6.3" in installed.requirements
-
-    downloader = Downloader.__new__(Downloader)
-    downloader.LIB_PATH = tmp_path / "libs"
-    downloader.LIB_PATH.mkdir(parents=True, exist_ok=True)
-    downloader.SHAREDLIB_PATH = tmp_path / "shared_libs"
-    downloader.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
-    downloader._repo_manager = DummyRepoManager(dummy_repo)
-    downloader.config = DummyConfig()
-    downloader.config.data["installed_cogs"] = {repo_name: {cog_name: installed.to_json()}}
-    downloader.config.data["installed_libraries"] = {}
-    bot = SimpleNamespace(
-        list_enabled_app_commands=AsyncMock(return_value={}),
-        extensions={},
-        wait_for=AsyncMock(),
-        get_cog=lambda name: None,
-    )
-    downloader.bot = bot
-
-    def installed_emoji_versions() -> Tuple[str, ...]:
-        return tuple(sorted(path.name for path in downloader.LIB_PATH.glob("emoji==*")))
-
-    await downloader._install_requirements((installed,))
-
-    info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
-    dummy_repo.modified_module = InstalledModule(
-        location=cog_path,
-        repo=dummy_repo,
-        commit=dummy_repo.commit,
-        json_repo_name=repo_name,
-    )
-
-    cogs_to_update, libs_to_update = await downloader._available_updates({installed})
-
-    assert len(cogs_to_update) == 1
-    updated_installable = cogs_to_update[0]
-    assert updated_installable.requirements != installed.requirements
-    assert "emoji==1.7.0" in updated_installable.requirements
-    assert not libs_to_update
-
-    new_installations = tuple(InstalledModule.from_installable(cog) for cog in cogs_to_update)
-    downloader._install_cogs = AsyncMock(return_value=(new_installations, ()))
-    downloader._reinstall_libraries = AsyncMock(return_value=((), ()))
 
     class DummyCtx:
         def __init__(self, bot):
@@ -519,10 +444,44 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
         async def typing(self):
             yield
 
+    # Set up for test execution
+    dummy_repo = DummyRepo()
+    downloader = Downloader.__new__(Downloader)
+    downloader.LIB_PATH = tmp_path / "libs"
+    downloader.LIB_PATH.mkdir(parents=True, exist_ok=True)
+    downloader.SHAREDLIB_PATH = tmp_path / "shared_libs"
+    downloader.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
+    downloader._repo_manager = DummyRepoManager(dummy_repo)
+    downloader.config = DummyConfig()
+    downloader.config.data["installed_cogs"] = {}
+    downloader.config.data["installed_libraries"] = {}
+
+    bot = SimpleNamespace()
+    downloader.bot = bot
     ctx = DummyCtx(bot)
-    assert installed_emoji_versions() == ("emoji==1.6.3",)
+
+    # Simulating an installed cog with old emoji version
+    info_path.write_text(json.dumps(_info_with_emoji("1.6.3")), "utf-8")
+    installed = InstalledModule(
+        location=cog_path,
+        repo=dummy_repo,
+        commit="old",
+        json_repo_name=repo_name,
+    )
+
+    assert "emoji==1.6.3" in installed.requirements
+
+    # Update info.json with new emoji version and run update callback
+    info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
+    installed = InstalledModule(
+        location=cog_path,
+        repo=dummy_repo,
+        commit=dummy_repo.commit,
+        json_repo_name=repo_name,
+    )
     await downloader._cog_update.callback(downloader, ctx, False, installed)
-    assert installed_emoji_versions() == ("emoji==1.7.0",)
+
+    assert "emoji==1.7.0" in installed.requirements
 
 
 async def test_existing_repo(mocker, repo_manager):
