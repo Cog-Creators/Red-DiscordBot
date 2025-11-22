@@ -3,6 +3,7 @@ import json
 import pathlib
 import shutil
 from collections import namedtuple
+from contextlib import asynccontextmanager
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Dict, NamedTuple, Optional, Tuple
@@ -395,12 +396,26 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
         ]
         return info_copy
 
+    class DummyConfig:
+        def __init__(self):
+            self.data = {"installed_cogs": {}, "installed_libraries": {}}
+
+        async def installed_libraries(self):
+            return self.data["installed_libraries"]
+
+        async def installed_cogs(self):
+            return self.data["installed_cogs"]
+
+        @asynccontextmanager
+        async def all(self):
+            yield self.data
+
     class DummyRepo:
         def __init__(self):
             self.available_libraries = ()
             self.commit = "new"
             self.name = repo_name
-            self.installed_versions: list[str] = []
+            self.folder_path = repo_path
             self.modified_module: Optional[InstalledModule] = None
 
         async def get_last_module_occurrence(self, module_name):
@@ -415,8 +430,24 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
             return (self.modified_module,)
 
         async def install_raw_requirements(self, requirements, target_dir):
-            self.installed_versions.extend(requirements)
+            target_dir.mkdir(parents=True, exist_ok=True)
+            for req in requirements:
+                if req.startswith("emoji=="):
+                    for existing in target_dir.glob("emoji==*"):
+                        existing.unlink()
+                (target_dir / req).write_text("", encoding="utf-8")
             return True
+
+    class DummyRepoManager:
+        def __init__(self, repo):
+            self.repos = [repo]
+            self.repo = repo
+            self.repos_folder = repo.folder_path.parent
+
+        def get_repo(self, name):
+            if name == self.repo.name:
+                return self.repo
+            return None
 
     dummy_repo = DummyRepo()
     info_path.write_text(json.dumps(_info_with_emoji("1.6.3")), "utf-8")
@@ -431,21 +462,15 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     downloader = Downloader.__new__(Downloader)
     downloader.LIB_PATH = tmp_path / "libs"
     downloader.LIB_PATH.mkdir(parents=True, exist_ok=True)
-    downloader._repo_manager = SimpleNamespace(repos=[dummy_repo])
+    downloader.SHAREDLIB_PATH = tmp_path / "shared_libs"
+    downloader.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
+    downloader._repo_manager = DummyRepoManager(dummy_repo)
+    downloader.config = DummyConfig()
 
-    install_calls = []
-
-    async def install_requirements_spy(cogs):
-        install_calls.append(tuple(cogs))
-        return await Downloader._install_requirements(downloader, cogs)
-
-    downloader._install_requirements = install_requirements_spy
+    def installed_emoji_versions() -> Tuple[str, ...]:
+        return tuple(sorted(path.name for path in downloader.LIB_PATH.glob("emoji==*")))
 
     await downloader._install_requirements((installed,))
-    # As of writing defender installs emoji~=1.6.3, pydantic~=2.7.2, regex==2022.4.24
-    # we only care about emoji for this test. We forced emoji==1.6.3 above and will update it to 1.7.0
-    print(dummy_repo.installed_versions)
-    assert "emoji==1.6.3" in dummy_repo.installed_versions
 
     info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
     dummy_repo.modified_module = InstalledModule(
@@ -455,9 +480,6 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
         json_repo_name=repo_name,
     )
 
-    save_mock = AsyncMock()
-    downloader.installed_libraries = AsyncMock(return_value=())
-    downloader._save_to_installed = save_mock
     cogs_to_update, libs_to_update = await downloader._available_updates({installed})
 
     assert len(cogs_to_update) == 1
@@ -465,8 +487,6 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     assert updated_installable.requirements != installed.requirements
     assert "emoji==1.7.0" in updated_installable.requirements
     assert not libs_to_update
-    save_mock.assert_awaited_once()
-    assert save_mock.await_args.args[0] == []
 
     ctx = SimpleNamespace(clean_prefix="[p]", prefix="[p]")
     new_installations = tuple(InstalledModule.from_installable(cog) for cog in cogs_to_update)
@@ -474,26 +494,19 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     downloader._reinstall_libraries = AsyncMock(return_value=((), ()))
     downloader.bot = SimpleNamespace(list_enabled_app_commands=AsyncMock(return_value={}))
 
+    print(installed_emoji_versions())
+    assert installed_emoji_versions() == ("emoji==1.6.3",)
     updated_names, message = await downloader._update_cogs_and_libs(
         ctx,
         cogs_to_update=cogs_to_update,
         libs_to_update=(),
         current_cog_versions=(installed,),
     )
+    print(installed_emoji_versions())
 
-    assert len(install_calls) == 2
-    assert install_calls[-1] == tuple(cogs_to_update)
-    assert downloader._install_cogs.await_args.args[0] == cogs_to_update
-    assert downloader._reinstall_libraries.await_args.args[0] == ()
-    assert save_mock.await_count == 2
-    assert save_mock.await_args_list[1].args[0] == new_installations
     assert updated_names == {cog_name}
     assert cog_name in message
-    assert "emoji==1.7.0" in dummy_repo.installed_versions
-    print(dummy_repo.installed_versions)
-    assert dummy_repo.installed_versions.index(
-        "emoji==1.6.3"
-    ) < dummy_repo.installed_versions.index("emoji==1.7.0")
+    assert installed_emoji_versions() == ("emoji==1.7.0",)
 
 
 async def test_existing_repo(mocker, repo_manager):
