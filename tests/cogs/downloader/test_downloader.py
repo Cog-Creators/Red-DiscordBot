@@ -420,6 +420,15 @@ async def test_cog_update(tmp_path):
             self.folder_path = repo_path
             self.modified_module: Optional[InstalledModule] = None
 
+        async def install_raw_requirements(self, requirements, target_dir):
+            target_dir.mkdir(parents=True, exist_ok=True)
+            for req in requirements:
+                if req.startswith("emoji=="):
+                    for existing in target_dir.glob("emoji==*"):
+                        existing.unlink()
+                (target_dir / req).write_text("", encoding="utf-8")
+            return True
+
     class DummyRepoManager:
         def __init__(self, repo):
             self.repos = [repo]
@@ -456,8 +465,16 @@ async def test_cog_update(tmp_path):
     downloader.config.data["installed_cogs"] = {}
     downloader.config.data["installed_libraries"] = {}
 
-    bot = SimpleNamespace()
+    bot = SimpleNamespace(
+        list_enabled_app_commands=AsyncMock(return_value={}),
+        extensions={},
+        wait_for=AsyncMock(),
+        get_cog=lambda name: None,
+    )
     downloader.bot = bot
+
+    def installed_emoji_versions() -> Tuple[str, ...]:
+        return tuple(sorted(path.name for path in downloader.LIB_PATH.glob("emoji==*")))
     ctx = DummyCtx(bot)
 
     # Simulating an installed cog with old emoji version
@@ -470,18 +487,32 @@ async def test_cog_update(tmp_path):
     )
 
     assert "emoji==1.6.3" in installed.requirements
+    info_path.write_text(json.dumps(_info_with_emoji("1.6.3")), "utf-8")
+    await downloader._install_requirements((installed,))
+    assert installed_emoji_versions() == ("emoji==1.6.3",)
 
-    # Update info.json with new emoji version and run update callback
-    info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
-    installed = InstalledModule(
+    downloader._get_cogs_to_check = AsyncMock(return_value=({installed}, []))
+    updated_installable = InstalledModule(
         location=cog_path,
         repo=dummy_repo,
         commit=dummy_repo.commit,
         json_repo_name=repo_name,
     )
-    await downloader._cog_update.callback(downloader, ctx, False, installed)
+    downloader._available_updates = AsyncMock(return_value=((updated_installable,), ()))
+    downloader._install_cogs = AsyncMock(return_value=(installed_after_update, ()))
+    downloader._reinstall_libraries = AsyncMock(return_value=((), ()))
+    downloader._save_to_installed = AsyncMock()
+    installed_after_update = (InstalledModule.from_installable(updated_installable),)
 
-    assert "emoji==1.7.0" in installed.requirements
+    # Update info.json with new emoji version and run update callback
+    info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
+    await Downloader._cog_update(downloader, ctx, False, installed)
+
+    updated_modules_arg = downloader._install_cogs.await_args.args[0]
+    assert updated_modules_arg
+    assert installed_after_update[0].requirements == tuple(updated_modules_arg[0].requirements)
+    assert "emoji==1.7.0" in updated_modules_arg[0].requirements
+    assert installed_emoji_versions() == ("emoji==1.7.0",)
 
 
 async def test_existing_repo(mocker, repo_manager):
