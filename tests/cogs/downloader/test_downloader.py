@@ -447,9 +447,7 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     assert save_mock.await_args.args[0] == []
 
     ctx = SimpleNamespace(clean_prefix="[p]", prefix="[p]")
-    new_installations = tuple(
-        InstalledModule.from_installable(cog) for cog in cogs_to_update
-    )
+    new_installations = tuple(InstalledModule.from_installable(cog) for cog in cogs_to_update)
     downloader._install_requirements = AsyncMock(return_value=())
     downloader._install_cogs = AsyncMock(return_value=(new_installations, ()))
     downloader._reinstall_libraries = AsyncMock(return_value=((), ()))
