@@ -449,6 +449,9 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
                 return self.repo
             return None
 
+        async def update_repos(self, repos=None):
+            return ({}, [])
+
     dummy_repo = DummyRepo()
     info_path.write_text(json.dumps(_info_with_emoji("1.6.3")), "utf-8")
     installed = InstalledModule(
@@ -466,6 +469,15 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     downloader.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
     downloader._repo_manager = DummyRepoManager(dummy_repo)
     downloader.config = DummyConfig()
+    downloader.config.data["installed_cogs"] = {repo_name: {cog_name: installed.to_json()}}
+    downloader.config.data["installed_libraries"] = {}
+    bot = SimpleNamespace(
+        list_enabled_app_commands=AsyncMock(return_value={}),
+        extensions={},
+        wait_for=AsyncMock(),
+        get_cog=lambda name: None,
+    )
+    downloader.bot = bot
 
     def installed_emoji_versions() -> Tuple[str, ...]:
         return tuple(sorted(path.name for path in downloader.LIB_PATH.glob("emoji==*")))
@@ -488,24 +500,28 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     assert "emoji==1.7.0" in updated_installable.requirements
     assert not libs_to_update
 
-    ctx = SimpleNamespace(clean_prefix="[p]", prefix="[p]")
     new_installations = tuple(InstalledModule.from_installable(cog) for cog in cogs_to_update)
     downloader._install_cogs = AsyncMock(return_value=(new_installations, ()))
     downloader._reinstall_libraries = AsyncMock(return_value=((), ()))
-    downloader.bot = SimpleNamespace(list_enabled_app_commands=AsyncMock(return_value={}))
 
-    print(installed_emoji_versions())
+    class DummyCtx:
+        def __init__(self, bot):
+            self.bot = bot
+            self.clean_prefix = "[p]"
+            self.prefix = "[p]"
+            self.assume_yes = True
+            self.sent_messages = []
+
+        async def send(self, message):
+            self.sent_messages.append(message)
+
+        @asynccontextmanager
+        async def typing(self):
+            yield
+
+    ctx = DummyCtx(bot)
     assert installed_emoji_versions() == ("emoji==1.6.3",)
-    updated_names, message = await downloader._update_cogs_and_libs(
-        ctx,
-        cogs_to_update=cogs_to_update,
-        libs_to_update=(),
-        current_cog_versions=(installed,),
-    )
-    print(installed_emoji_versions())
-
-    assert updated_names == {cog_name}
-    assert cog_name in message
+    await downloader._cog_update.callback(downloader, ctx, False, installed)
     assert installed_emoji_versions() == ("emoji==1.7.0",)
 
 
