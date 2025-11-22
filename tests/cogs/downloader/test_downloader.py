@@ -5,7 +5,7 @@ import shutil
 from collections import namedtuple
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, Dict, NamedTuple, Tuple
+from typing import Any, Dict, NamedTuple, Optional, Tuple
 from unittest.mock import AsyncMock
 
 import pytest
@@ -395,28 +395,13 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
         ]
         return info_copy
 
-    info_path.write_text(json.dumps(_info_with_emoji("1.6.3")), "utf-8")
-    installed = InstalledModule(
-        location=cog_path,
-        repo=None,
-        commit="old",
-        json_repo_name=repo_name,
-    )
-    assert "emoji==1.6.3" in installed.requirements
-
-    info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
-
     class DummyRepo:
         def __init__(self):
             self.available_libraries = ()
             self.commit = "new"
             self.name = repo_name
-            self.modified_module = InstalledModule(
-                location=cog_path,
-                repo=self,
-                commit=self.commit,
-                json_repo_name=repo_name,
-            )
+            self.installed_versions: list[str] = []
+            self.modified_module: Optional[InstalledModule] = None
 
         async def get_last_module_occurrence(self, module_name):
             if module_name == cog_name:
@@ -429,10 +414,44 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
         async def get_modified_modules(self, old_hash, new_hash):
             return (self.modified_module,)
 
+        async def install_raw_requirements(self, requirements, target_dir):
+            self.installed_versions.extend(requirements)
+            return True
+
     dummy_repo = DummyRepo()
-    installed.repo = dummy_repo
+    info_path.write_text(json.dumps(_info_with_emoji("1.6.3")), "utf-8")
+    installed = InstalledModule(
+        location=cog_path,
+        repo=dummy_repo,
+        commit="old",
+        json_repo_name=repo_name,
+    )
+    assert "emoji==1.6.3" in installed.requirements
 
     downloader = Downloader.__new__(Downloader)
+    downloader.LIB_PATH = tmp_path / "libs"
+    downloader.LIB_PATH.mkdir(parents=True, exist_ok=True)
+    downloader._repo_manager = SimpleNamespace(repos=[dummy_repo])
+
+    install_calls = []
+
+    async def install_requirements_spy(cogs):
+        install_calls.append(tuple(cogs))
+        return await Downloader._install_requirements(downloader, cogs)
+
+    downloader._install_requirements = install_requirements_spy
+
+    await downloader._install_requirements((installed,))
+    assert dummy_repo.installed_versions == ["emoji==1.6.3"]
+
+    info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
+    dummy_repo.modified_module = InstalledModule(
+        location=cog_path,
+        repo=dummy_repo,
+        commit=dummy_repo.commit,
+        json_repo_name=repo_name,
+    )
+
     save_mock = AsyncMock()
     downloader.installed_libraries = AsyncMock(return_value=())
     downloader._save_to_installed = save_mock
@@ -448,7 +467,6 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
 
     ctx = SimpleNamespace(clean_prefix="[p]", prefix="[p]")
     new_installations = tuple(InstalledModule.from_installable(cog) for cog in cogs_to_update)
-    downloader._install_requirements = AsyncMock(return_value=())
     downloader._install_cogs = AsyncMock(return_value=(new_installations, ()))
     downloader._reinstall_libraries = AsyncMock(return_value=((), ()))
     downloader.bot = SimpleNamespace(list_enabled_app_commands=AsyncMock(return_value={}))
@@ -460,14 +478,15 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
         current_cog_versions=(installed,),
     )
 
-    downloader._install_requirements.assert_awaited_once()
-    assert downloader._install_requirements.await_args.args[0] == cogs_to_update
+    assert len(install_calls) == 2
+    assert install_calls[-1] == tuple(cogs_to_update)
     assert downloader._install_cogs.await_args.args[0] == cogs_to_update
     assert downloader._reinstall_libraries.await_args.args[0] == ()
     assert save_mock.await_count == 2
     assert save_mock.await_args_list[1].args[0] == new_installations
     assert updated_names == {cog_name}
     assert cog_name in message
+    assert dummy_repo.installed_versions == ["emoji==1.6.3", "emoji==1.7.0"]
 
 
 async def test_existing_repo(mocker, repo_manager):
