@@ -442,7 +442,10 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     downloader._install_requirements = install_requirements_spy
 
     await downloader._install_requirements((installed,))
-    assert dummy_repo.installed_versions == ["emoji==1.6.3"]
+    # As of writing defender installs emoji~=1.6.3, pydantic~=2.7.2, regex==2022.4.24
+    # we only care about emoji for this test. We forced emoji==1.6.3 above and will update it to 1.7.0
+    print(dummy_repo.installed_versions)
+    assert "emoji==1.6.3" in dummy_repo.installed_versions
 
     info_path.write_text(json.dumps(_info_with_emoji("1.7.0")), "utf-8")
     dummy_repo.modified_module = InstalledModule(
@@ -486,7 +489,11 @@ async def test_requirements_reinstalled_when_info_changes(tmp_path):
     assert save_mock.await_args_list[1].args[0] == new_installations
     assert updated_names == {cog_name}
     assert cog_name in message
-    assert dummy_repo.installed_versions == ["emoji==1.6.3", "emoji==1.7.0"]
+    assert "emoji==1.7.0" in dummy_repo.installed_versions
+    print(dummy_repo.installed_versions)
+    assert dummy_repo.installed_versions.index(
+        "emoji==1.6.3"
+    ) < dummy_repo.installed_versions.index("emoji==1.7.0")
 
 
 async def test_existing_repo(mocker, repo_manager):
