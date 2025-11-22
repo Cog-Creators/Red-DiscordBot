@@ -4,7 +4,7 @@ import functools
 import shutil
 from enum import IntEnum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
 from .log import log
 from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
@@ -161,44 +161,30 @@ class InstalledModule(Installable):
         commit: str = "",
         pinned: bool = False,
         json_repo_name: str = "",
-        requirements: Optional[Iterable[str]] = None,
     ):
         super().__init__(location=location, repo=repo, commit=commit)
         self.pinned: bool = pinned if self.type == InstallableType.COG else False
         # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
         self._json_repo_name = json_repo_name
-        stored_requirements: Iterable[str]
-        if requirements is None:
-            stored_requirements = self.requirements
-        else:
-            stored_requirements = requirements
-        self.installed_requirements: Tuple[str, ...] = tuple(stored_requirements)
 
-    def to_json(self) -> Dict[str, Union[str, bool, List[str]]]:
-        module_json: Dict[str, Union[str, bool, List[str]]] = {
+    def to_json(self) -> Dict[str, Union[str, bool]]:
+        module_json: Dict[str, Union[str, bool]] = {
             "repo_name": self.repo_name,
             "module_name": self.name,
             "commit": self.commit,
         }
-        module_json["requirements"] = list(self.installed_requirements)
         if self.type == InstallableType.COG:
             module_json["pinned"] = self.pinned
         return module_json
 
     @classmethod
     def from_json(
-        cls, data: Dict[str, Union[str, bool, Iterable[str]]], repo_mgr: RepoManager
+        cls, data: Dict[str, Union[str, bool]], repo_mgr: RepoManager
     ) -> InstalledModule:
         repo_name = cast(str, data["repo_name"])
         cog_name = cast(str, data["module_name"])
         commit = cast(str, data.get("commit", ""))
         pinned = cast(bool, data.get("pinned", False))
-        raw_requirements = cast(Optional[Iterable[str]], data.get("requirements"))
-        stored_requirements: Optional[Tuple[str, ...]]
-        if raw_requirements is None:
-            stored_requirements = None
-        else:
-            stored_requirements = tuple(raw_requirements)
 
         # TypedDict, where are you :/
         repo = repo_mgr.get_repo(repo_name)
@@ -210,20 +196,11 @@ class InstalledModule(Installable):
         location = repo_folder / cog_name
 
         return cls(
-            location=location,
-            repo=repo,
-            commit=commit,
-            pinned=pinned,
-            json_repo_name=repo_name,
-            requirements=stored_requirements,
+            location=location, repo=repo, commit=commit, pinned=pinned, json_repo_name=repo_name
         )
 
     @classmethod
     def from_installable(cls, module: Installable, *, pinned: bool = False) -> InstalledModule:
         return cls(
-            location=module._location,
-            repo=module.repo,
-            commit=module.commit,
-            pinned=pinned,
-            requirements=module.requirements,
+            location=module._location, repo=module.repo, commit=module.commit, pinned=pinned
         )

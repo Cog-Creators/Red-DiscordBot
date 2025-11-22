@@ -265,7 +265,7 @@ class Downloader(commands.Cog):
 
     async def _available_updates(
         self, cogs: Iterable[InstalledModule]
-    ) -> Tuple[Tuple[Installable, ...], Tuple[Installable, ...], Tuple[InstalledModule, ...]]:
+    ) -> Tuple[Tuple[Installable, ...], Tuple[Installable, ...]]:
         """
         Get cogs and libraries which can be updated.
 
@@ -277,7 +277,7 @@ class Downloader(commands.Cog):
         Returns
         -------
         tuple
-            3-tuple of cogs, libraries, and cogs requiring requirement reinstalls.
+            2-tuple of cogs and libraries which can be updated.
 
         """
         repos = {cog.repo for cog in cogs if cog.repo is not None}
@@ -286,7 +286,6 @@ class Downloader(commands.Cog):
         modules: Set[InstalledModule] = set()
         cogs_to_update: Set[Installable] = set()
         libraries_to_update: Set[Installable] = set()
-        cogs_requiring_reqs: Set[InstalledModule] = set()
         # split libraries and cogs into 2 categories:
         # 1. `cogs_to_update`, `libraries_to_update` - module needs update, skip diffs
         # 2. `modules` - module MAY need update, check diffs
@@ -340,12 +339,7 @@ class Downloader(commands.Cog):
                 except ValueError:
                     # module wasn't modified - we just need to update its commit
                     module.commit = repo.commit
-                    if module.type == InstallableType.COG and self._requirements_changed(
-                        module.installed_requirements, module.requirements
-                    ):
-                        cogs_requiring_reqs.add(module)
-                    else:
-                        update_commits.append(module)
+                    update_commits.append(module)
                 else:
                     modified_module = modified[index]
                     if modified_module.type == InstallableType.COG:
@@ -356,7 +350,7 @@ class Downloader(commands.Cog):
 
         await self._save_to_installed(update_commits)
 
-        return (tuple(cogs_to_update), tuple(libraries_to_update), tuple(cogs_requiring_reqs))
+        return (tuple(cogs_to_update), tuple(libraries_to_update))
 
     async def _install_cogs(
         self, cogs: Iterable[Installable]
@@ -436,12 +430,6 @@ class Downloader(commands.Cog):
 
         # noinspection PyTypeChecker
         return (tuple(all_installed), tuple(all_failed))
-
-    @staticmethod
-    def _requirements_changed(
-        old_requirements: Iterable[str], new_requirements: Iterable[str]
-    ) -> bool:
-        return sorted(old_requirements) != sorted(new_requirements)
 
     async def _install_requirements(self, cogs: Iterable[Installable]) -> Tuple[str, ...]:
         """
@@ -1137,15 +1125,8 @@ class Downloader(commands.Cog):
 
         async with ctx.typing():
             cogs_to_check, failed = await self._get_cogs_to_check()
-            cogs_to_update, libs_to_update, req_reinstalls = await self._available_updates(
-                cogs_to_check
-            )
-            combined_cogs = cogs_to_update + req_reinstalls
-            combined_filtered, filter_message = self._filter_incorrect_cogs(combined_cogs)
-            cogs_update_set = set(cogs_to_update)
-            req_reinstall_set = set(req_reinstalls)
-            cogs_to_update = tuple(cog for cog in combined_filtered if cog in cogs_update_set)
-            req_reinstalls = tuple(cog for cog in combined_filtered if cog in req_reinstall_set)
+            cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
+            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
 
             message = ""
             if cogs_to_update:
@@ -1155,13 +1136,6 @@ class Downloader(commands.Cog):
                     if len(cognames) > 1
                     else _("This cog can be updated: ")
                 ) + humanize_list(tuple(map(inline, cognames)))
-            if req_reinstalls:
-                reqnames = [cog.name for cog in req_reinstalls]
-                message += (
-                    _("\nThese cogs require their requirements to be reinstalled: ")
-                    if len(reqnames) > 1
-                    else _("\nThis cog requires its requirements to be reinstalled: ")
-                ) + humanize_list(tuple(map(inline, reqnames)))
             if libs_to_update:
                 libnames = [cog.name for cog in libs_to_update]
                 message += (
@@ -1169,7 +1143,7 @@ class Downloader(commands.Cog):
                     if len(libnames) > 1
                     else _("\nThis shared library can be updated: ")
                 ) + humanize_list(tuple(map(inline, libnames)))
-            if not (cogs_to_update or libs_to_update or req_reinstalls) and filter_message:
+            if not (cogs_to_update or libs_to_update) and filter_message:
                 message += _("No cogs can be updated.")
             message += filter_message
 
@@ -1264,7 +1238,7 @@ class Downloader(commands.Cog):
         cogs: Optional[List[InstalledModule]] = None,
     ) -> None:
         failed_repos = set()
-        updates_available = False
+        updates_available = set()
 
         async with ctx.typing():
             # this is enough to be sure that `rev` is not None (based on calls to this method)
@@ -1312,7 +1286,7 @@ class Downloader(commands.Cog):
 
             message = ""
             if not cogs_to_check:
-                cogs_to_update = libs_to_update = req_reinstalls = ()
+                cogs_to_update = libs_to_update = ()
                 message += _("There were no cogs to check.")
                 if pinned_cogs:
                     cognames = [cog.name for cog in pinned_cogs]
@@ -1322,30 +1296,14 @@ class Downloader(commands.Cog):
                         else _("\nThis cog is pinned and therefore wasn't checked: ")
                     ) + humanize_list(tuple(map(inline, cognames)))
             else:
-                (
-                    cogs_to_update,
-                    libs_to_update,
-                    req_reinstalls,
-                ) = await self._available_updates(cogs_to_check)
+                cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
 
-                combined_cogs = cogs_to_update + req_reinstalls
-                combined_filtered, filter_message = self._filter_incorrect_cogs(combined_cogs)
-                cogs_update_set = set(cogs_to_update)
-                req_reinstall_set = set(req_reinstalls)
-                cogs_to_update = tuple(cog for cog in combined_filtered if cog in cogs_update_set)
-                req_reinstalls = tuple(
-                    cog for cog in combined_filtered if cog in req_reinstall_set
-                )
-
-                updates_available = bool(cogs_to_update or libs_to_update or req_reinstalls)
+                updates_available = cogs_to_update or libs_to_update
+                cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
 
                 if updates_available:
                     updated_cognames, message = await self._update_cogs_and_libs(
-                        ctx,
-                        cogs_to_update,
-                        libs_to_update,
-                        requirement_reinstalls=req_reinstalls,
-                        current_cog_versions=cogs_to_check,
+                        ctx, cogs_to_update, libs_to_update, current_cog_versions=cogs_to_check
                     )
                 else:
                     if repos:
@@ -1380,7 +1338,7 @@ class Downloader(commands.Cog):
 
         repos_with_libs = {
             inline(module.repo.name)
-            for module in cogs_to_update + libs_to_update + req_reinstalls
+            for module in cogs_to_update + libs_to_update
             if module.repo.available_libraries
         }
         if repos_with_libs:
@@ -1657,15 +1615,10 @@ class Downloader(commands.Cog):
         ctx: commands.Context,
         cogs_to_update: Iterable[Installable],
         libs_to_update: Iterable[Installable],
-        *,
-        requirement_reinstalls: Iterable[InstalledModule] = (),
         current_cog_versions: Iterable[InstalledModule],
     ) -> Tuple[Set[str], str]:
         current_cog_versions_map = {cog.name: cog for cog in current_cog_versions}
-        requirement_reinstalls = tuple(requirement_reinstalls)
-        requirement_targets: Set[Installable] = set(cogs_to_update)
-        requirement_targets.update(requirement_reinstalls)
-        failed_reqs = await self._install_requirements(requirement_targets)
+        failed_reqs = await self._install_requirements(cogs_to_update)
         if failed_reqs:
             return (
                 set(),
@@ -1678,13 +1631,7 @@ class Downloader(commands.Cog):
             )
         installed_cogs, failed_cogs = await self._install_cogs(cogs_to_update)
         installed_libs, failed_libs = await self._reinstall_libraries(libs_to_update)
-        modules_to_save: Tuple[InstalledModule, ...] = installed_cogs + installed_libs
-        if requirement_reinstalls:
-            for cog in requirement_reinstalls:
-                cog.installed_requirements = cog.requirements
-            modules_to_save += requirement_reinstalls
-        if modules_to_save:
-            await self._save_to_installed(modules_to_save)
+        await self._save_to_installed(installed_cogs + installed_libs)
         message = _("Cog update completed successfully.")
 
         updated_cognames: Set[str] = set()
@@ -1727,14 +1674,7 @@ class Downloader(commands.Cog):
                 if len(failed_cogs) > 1
                 else _("\nFailed to update cog: ")
             ) + humanize_list(tuple(map(inline, cognames)))
-        if requirement_reinstalls:
-            req_names = [inline(cog.name) for cog in requirement_reinstalls]
-            message += (
-                _("\nReinstalled requirements for cogs: ")
-                if len(requirement_reinstalls) > 1
-                else _("\nReinstalled requirements for cog: ")
-            ) + humanize_list(req_names)
-        if not cogs_to_update and not requirement_reinstalls:
+        if not cogs_to_update:
             message = _("No cogs were updated.")
         if installed_libs:
             message += (
