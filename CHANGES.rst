@@ -1,5 +1,196 @@
 .. Red changelogs
 
+Redbot 3.5.22 (2025-09-05)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we updated YT client options to fix a few regressions introduced by changes in 3.5.21.
+    `Download Red 3.5.22's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.22/Red-DiscordBot-3.5.22-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Fixes
+*****
+
+- **Cogs - Audio** - Fixed a regression with YT video metadata loading introduced by Red 3.5.21 (:issue:`6611`)
+- **Cogs - Audio** - Fixed a problem with command help texts not being translated in the Audio cog (:issue:`6608`, :issue:`6609`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Bumped ``discord.py`` to version 2.6.3 (:issue:`6612`, :issue:`6614`)
+- **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to also match invite links using ``\\`` instead of just ``/`` (:issue:`6586`)
+- **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to ignore ``promos.discord.gg`` links (:issue:`6586`)
+
+----
+
+Redbot 3.5.21 (2025-08-26)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`egypt1848`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`, :ghuser:`VasilisThePikachu`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin and updated its client options.
+    `Download Red 3.5.21's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.21/Red-DiscordBot-3.5.21-default-lavalink-application.yml>`__
+
+#. Following operating systems are no longer supported as they have already reached their end of life:
+
+    - Ubuntu 20.04 LTS
+    - versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 8 older than 8.10
+    - versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 9 older than 9.4
+
+End-user changelog
+------------------
+
+Additions
+*********
+
+- |cool| **Cogs - Mod** - The DM message (``[p]modset dm``) sent by cog's ban commands can now include customizable extra field (:issue:`6593`)
+
+    This feature can, for example, be useful for providing the banned user with information about the ban appeal process.
+
+    To configure it, look at the subcommands listed in the help text of the ``[p]modset dm`` command.
+
+Changes
+*******
+
+- **Core** - The application (slash) commands will now use the server's configured language rather than the bot's global language, same as regular text commands (:issue:`6272`, :issue:`6579`)
+- **Core** - The option to request a ``file`` will no longer be provided in interactively sent messages when the bot does not actually have the permission to send files in the current channel (:issue:`6540`, :issue:`6552`)
+- **Core - Command-line Interfaces** - Red's error logging will now use standard traceback formatting by default as the Rich tracebacks (previously default) proved to be impractical when providing support to users and affected performance (:issue:`6576`)
+
+    - If you want to continue using Rich tracebacks, you can pass the new ``--rich-tracebacks`` flag when starting Red.
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6599`)
+
+Removals
+********
+
+- **Core - OS Support** - Ubuntu 20.04 LTS is no longer supported as it has already reached its end of life (:issue:`6598`)
+- **Core - OS Support** - Versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 8 older than 8.10 are no longer supported as they have already reached their end of life (:issue:`6598`)
+- **Core - OS Support** - Versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 9 older than 9.4 are no longer supported as they have already reached their end of life (:issue:`6598`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Alias** - Fixed some of the issues with handling of quoted command arguments when using command aliases (:issue:`6582`)
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6602`)
+- **Cogs - Audio** - Fixed YT client configuration (:issue:`6601`)
+- **Cogs - Mod** - Fixed formatting of the ``[p]names`` command (:issue:`6538`)
+- **Cogs - Reports** - Fixed the ``[p]report`` command not working properly when invoked from a DM context (:issue:`6573`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.6.2 (:issue:`6597`)
+
+Fixes
+*****
+
+- **Cogs - Dev** - Fixed issues with ``[p]eval/repl/debug`` commands erroring when string representation of the code's result is not valid UTF-8 (:issue:`6485`, :issue:`6592`)
+
+
+Documentation changes
+---------------------
+
+- Refreshed the `intents` document with descriptions of how the intents are used in Red, our stance on public bots, and replaced some of the historical details with more up-to-date information (:issue:`6578`)
+- Added more code examples to the `framework_i18n` document, including common pitfalls and an example of how to apply proper locale in non-command contexts (:issue:`6595`)
+- Expanded the tutorial about creating translation catalogs for 3rd-party cogs in the `framework_i18n` document (:issue:`6595`)
+- Added example of `Group.all()` method's usage to the tutorial in the `framework_config` document (:issue:`6295`, :issue:`6550`)
+- Added a tip about the ``[botname]`` placeholder in the `guide_publish_cogs` document (:issue:`6539`)
+
+----
+
+Redbot 3.5.20 (2025-05-03)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.20's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.20/Red-DiscordBot-3.5.20-default-lavalink-application.yml>`__
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6568`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6566`, :issue:`6567`)
+
+----
+
+Redbot 3.5.19 (2025-04-27)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+    More specifically, we bumped the version of YT source plugin.
+    `Download Red 3.5.19's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.19/Red-DiscordBot-3.5.19-default-lavalink-application.yml>`__
+
+#. Fedora 40 is no longer supported as it will soon reach its end of life. Fedora install instructions have been updated with support for Fedora 42.
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6558`)
+- **Core - OS Support** - Fedora 40 is no longer supported as it will soon reach its end of life (:issue:`6558`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6557`)
+
+Documentation changes
+---------------------
+
+Changes
+*******
+
+- Updated Fedora install instructions to work with Fedora 42 (:issue:`6558`)
+
+----
+
 Redbot 3.5.18 (2025-03-26)
 ==========================
 

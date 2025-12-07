@@ -57,7 +57,7 @@ msgstr "Öncelikli Hoparlör"
 
 #: redbot/cogs/audio/core/events/dpy.py:44
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: redbot/cogs/audio/core/events/dpy.py:45
 msgid "Read Text Channels & See Voice Channels"
@@ -69,7 +69,7 @@ msgstr "Mesaj Gönder"
 
 #: redbot/cogs/audio/core/events/dpy.py:47
 msgid "Send Text-to-speech Messages"
-msgstr ""
+msgstr "Metinden Sese Mesajlar Gönder"
 
 #: redbot/cogs/audio/core/events/dpy.py:48
 msgid "Manage Messages"
@@ -177,15 +177,15 @@ msgstr "Alt Başlıklarda Mesaj Gönder"
 
 #: redbot/cogs/audio/core/events/dpy.py:74
 msgid "Use Activities"
-msgstr ""
+msgstr "Kullanım Etkinlikleri"
 
 #: redbot/cogs/audio/core/events/dpy.py:75
 msgid "Time out members"
-msgstr ""
+msgstr "Zaman aşımı üyeleri"
 
 #: redbot/cogs/audio/core/events/dpy.py:76
 msgid "View Creator Monetization Analytics"
-msgstr ""
+msgstr "İçerik Üretici Para Kazanma Analizlerini Görüntüle"
 
 #: redbot/cogs/audio/core/events/dpy.py:77
 msgid "Use Soundboard"
@@ -197,7 +197,7 @@ msgstr "İfade Oluştur"
 
 #: redbot/cogs/audio/core/events/dpy.py:79
 msgid "Create Events"
-msgstr ""
+msgstr "Etkinlikler Oluşturun"
 
 #: redbot/cogs/audio/core/events/dpy.py:80
 msgid "Use External Sounds"
@@ -269,7 +269,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/events/dpy.py:149
 msgid "This command toggles the support of YouTube playback (Spotify depends on YouTube). Disabling this will make the bot unable to play any YouTube content: this includes Spotify."
-msgstr ""
+msgstr "."
 
 #: redbot/cogs/audio/core/events/dpy.py:154
 msgid "This command toggles the support of Twitch playback. An example of this is <https://twitch.tv/monstercat>; disabling this will make the bot unable to play any Twitch content."

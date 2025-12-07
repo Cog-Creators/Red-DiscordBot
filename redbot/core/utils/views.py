@@ -393,19 +393,23 @@ class SetApiModal(discord.ui.Modal):
 
         super().__init__(title=self.title)
 
-        self.service_input = discord.ui.TextInput(
-            label=_("Service"),
-            required=True,
-            placeholder=_placeholder_service,
-            default=self.default_service,
+        self.service_input = discord.ui.Label(
+            text=_("Service"),
+            component=discord.ui.TextInput(
+                required=True,
+                placeholder=_placeholder_service,
+                default=self.default_service,
+            ),
         )
 
-        self.token_input = discord.ui.TextInput(
-            label=self.keys_label,
-            style=discord.TextStyle.long,
-            required=True,
-            placeholder=_placeholder_token,
-            default=self.default_keys_fmt,
+        self.token_input = discord.ui.Label(
+            text=self.keys_label,
+            component=discord.ui.TextInput(
+                style=discord.TextStyle.long,
+                required=True,
+                placeholder=_placeholder_token,
+                default=self.default_keys_fmt,
+            ),
         )
 
         if self.default_service is None:
@@ -438,7 +442,7 @@ class SetApiModal(discord.ui.Modal):
             converter = get_dict_converter(*self.default_keys, delims=[";", ",", " "])
         else:
             converter = get_dict_converter(delims=[";", ",", " "])
-        tokens = " ".join(self.token_input.value.split("\n")).rstrip()
+        tokens = " ".join(self.token_input.component.value.split("\n")).rstrip()
 
         try:
             tokens = await converter().convert(None, tokens)
@@ -455,7 +459,7 @@ class SetApiModal(discord.ui.Modal):
                 ephemeral=True,
             )
         else:
-            service = self.service_input.value.lower()
+            service = self.service_input.component.value.lower()
             await interaction.client.set_shared_api_tokens(service, **tokens)
             return await interaction.response.send_message(
                 _("`{service}` API tokens have been set.").format(service=service),

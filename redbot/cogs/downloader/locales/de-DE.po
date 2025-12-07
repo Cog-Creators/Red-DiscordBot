@@ -19,7 +19,9 @@ msgstr ""
 msgid "You're about to add a 3rd party repository. The creator of Red and its community have no responsibility for any potential damage that the content of 3rd party repositories might cause.\n\n"
 "By typing '{confirmation_message}' you declare that you have read and fully understand the above message. This message won't be shown again until the next reboot.\n\n"
 "You have **30** seconds to reply to this message."
-msgstr ""
+msgstr "Sie sind dabei ein Drittpartei-Repository hinzuzufügen. Der Schöpfer von Red und seiner Community ist nicht verantwortlich für mögliche Schäden, die der Inhalt von Repositories Dritter verursachen könnte.\n\n"
+"Mit '{confirmation_message}' geben Sie an, dass Sie die obige Nachricht gelesen und vollständig verstanden haben. Diese Nachricht wird erst beim nächsten Neustart angezeigt.\n\n"
+"Sie haben **30** Sekunden, um auf diese Nachricht zu antworten."
 
 #: redbot/cogs/downloader/checks.py:38
 msgid "Your response has timed out, please try again."
@@ -52,7 +54,13 @@ msgid "Install community cogs made by Cog Creators.\n\n"
 "    using the `[p]repo` command before you can install one or more\n"
 "    cogs from the creator.\n"
 "    "
-msgstr ""
+msgstr "Installiere Community Cogs von Cog Creators.\n\n"
+"    Community Cogs sind 3t Anbieter Cogs & nicht in der Standrad Installation enthalten.\n\n"
+"   Community Cogs gibt es in Repositories. Repos sind eine Gruppe von Cogs,\n"
+" die Sie installieren können. Sie müssen immer das Repository des Erstellers\n"
+" mit dem Befehl `[p]repo` hinzufügen, bevor Sie ein oder mehrere\n"
+" Cogs des Erstellers installieren können.\n"
+"    "
 
 #: redbot/cogs/downloader/downloader.py:490
 #, docstring
@@ -65,7 +73,15 @@ msgid "\n"
 "        **Arguments**\n\n"
 "        - `<deps...>` The package or packages you wish to install.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Installieren Sie eine Gruppe von Abhängigkeiten mit pip.\n\n"
+"        Beispiele:\n"
+"        - `[p]pipinstall bs4`\n"
+"        - `[p]pipinstall py-cpuinfo psutil`\n\n"
+"        Unrichtige Verwendung dieses Befehls kann deinen Bot zerstören, seien Sie vorsichtig.\n\n"
+"        **Argumente**\n\n"
+"        - `<deps...>` Das Paket oder die Pakete, die du installieren möchtest.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:508
 msgid "Libraries installed."
@@ -73,7 +89,7 @@ msgstr "Bibliotheken installiert."
 
 #: redbot/cogs/downloader/downloader.py:508
 msgid "Library installed."
-msgstr ""
+msgstr "Bibliothek installiert."
 
 #: redbot/cogs/downloader/downloader.py:511
 msgid "Some libraries failed to install. Please check your logs for a complete list."
@@ -81,12 +97,12 @@ msgstr "Manche Bibliotheken konnten nicht installiert werden. Bitte durchsuche d
 
 #: redbot/cogs/downloader/downloader.py:516
 msgid "The library failed to install. Please check your logs for a complete list."
-msgstr ""
+msgstr "Die Bibliothek konnte nicht installiert werden. Bitte überprüfen Sie Ihre Logs auf eine vollständige Liste."
 
 #: redbot/cogs/downloader/downloader.py:524
 #, docstring
 msgid "Base command for repository management."
-msgstr ""
+msgstr "Basis-Befehl für die Repository-Verwaltung."
 
 #: redbot/cogs/downloader/downloader.py:531
 #, docstring
@@ -101,31 +117,41 @@ msgid "Add a new repo.\n\n"
 "        - `<repo_url>` URL to the cog branch. Usually GitHub or GitLab.\n"
 "        - `[branch]` Optional branch to install cogs from.\n"
 "        "
-msgstr ""
+msgstr "Neues Repo.\n\n"
+"        Beispiele:\n"
+"        - `[p]repo add 26-Cogs https://github. om/Twentysix26/x26-Cogs`\n"
+"        - `[p]repo add Laggrons-Dumb-Cogs https://github. om/retke/Laggrons-Dumb-Cogs v3`\n\n"
+"        Repo-Namen dürfen nur Zeichen enthalten A-z, Zahlen, Unterstriche, Bindestriche und Punkte (aber sie können nicht mit einem Punkt beginnen oder enden).\n\n"
+"        Der Zweig wird der Standardzweig sein, wenn er nicht angegeben ist.\n\n"
+"        **Argumente**\n\n"
+"        - `<name>` Der Name, der dem Repo gegeben wurde.\n"
+"        - `<repo_url>` URL für den Zahnarztverzweig. Normalerweise GitHub oder GitLab.\n"
+"        - `[branch]` Optionaler Zweig zum Installieren von Cogs.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:551
 msgid "Repo names cannot start or end with a dot."
-msgstr ""
+msgstr "Repo-Namen können nicht mit einem Punkt beginnen oder enden."
 
 #: redbot/cogs/downloader/downloader.py:555
 msgid "Repo names can only contain characters A-z, numbers, underscores, hyphens, and dots."
-msgstr ""
+msgstr "Repo-Namen dürfen nur Zeichen wie A-z, Zahlen, Unterstriche, Bindestriche und Punkte enthalten."
 
 #: redbot/cogs/downloader/downloader.py:567
 msgid "The repo name you provided is already in use. Please choose another name."
-msgstr ""
+msgstr "Der von Ihnen angegebene Repo-Name wird bereits verwendet. Bitte wählen Sie einen anderen Namen."
 
 #: redbot/cogs/downloader/downloader.py:571
 msgid "Failed to authenticate or repository does not exist. See logs for more information."
-msgstr ""
+msgstr "Authentifizierung fehlgeschlagen oder Repository existiert nicht. Weitere Informationen finden Sie unter Protokolle."
 
 #: redbot/cogs/downloader/downloader.py:585
 msgid "Something went wrong during the cloning process. See logs for more information."
-msgstr ""
+msgstr "Während des Klonens ist etwas schief gelaufen. Weitere Informationen finden Sie unter Protokolle."
 
 #: redbot/cogs/downloader/downloader.py:603
 msgid "Something went wrong trying to add that repo. See logs for more information."
-msgstr ""
+msgstr "Beim Hinzufügen dieses Repos ist etwas schief gelaufen. Weitere Informationen finden Sie unter Protokolle."
 
 #: redbot/cogs/downloader/downloader.py:609
 msgid "Repo `{name}` successfully added."
@@ -141,11 +167,18 @@ msgid "\n"
 "        **Arguments**\n\n"
 "        - `<repos...>` The repo or repos to remove.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Repos und seine Dateien entfernen.\n\n"
+"        Beispiele:\n"
+"        - `[p]repo delete 26-Cogs`\n"
+"        - `[p]repo delete 26-Cogs Laggrons-Dumb-Cogs`\n\n"
+"        **Arguments**\n\n"
+"        - `<repos...>` The repo or repos to remove.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:635
 msgid "Successfully deleted repos: "
-msgstr ""
+msgstr "Repos erfolgreich gelöscht: "
 
 #: redbot/cogs/downloader/downloader.py:637
 msgid "Successfully deleted the repo: "
@@ -162,11 +195,11 @@ msgstr "Es sind keine repos installiert."
 
 #: redbot/cogs/downloader/downloader.py:651
 msgid "## Installed Repos\n"
-msgstr ""
+msgstr "## Installierte Repos\n"
 
 #: redbot/cogs/downloader/downloader.py:653
 msgid "## Installed Repo\n"
-msgstr ""
+msgstr "## Installierte repo: \n"
 
 #: redbot/cogs/downloader/downloader.py:670
 #, docstring
@@ -176,7 +209,12 @@ msgid "Show information about a repo.\n\n"
 "        **Arguments**\n\n"
 "        - `<repo>` The name of the repo to show info about.\n"
 "        "
-msgstr ""
+msgstr "Zeige Informationen über ein Repo.\n\n"
+"        Beispiel:\n"
+"        - `[p]repo info 26-Cogs`\n\n"
+"        **Arguments**\n\n"
+"        - `<repo>` Der Name des Repos, über den Informationen angezeigt werden sollen.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:679
 #: redbot/cogs/downloader/downloader.py:1429
@@ -190,7 +228,7 @@ msgstr "Repo URL: {repo_url}\n"
 
 #: redbot/cogs/downloader/downloader.py:683
 msgid "Branch: {branch_name}\n"
-msgstr ""
+msgstr "Zweig: {branch_name}\n"
 
 #: redbot/cogs/downloader/downloader.py:684
 msgid "Made by: {author}\n"
@@ -215,7 +253,15 @@ msgid "Update all repos, or ones of your choosing.\n\n"
 "        **Arguments**\n\n"
 "        - `[repos...]` The name or names of repos to update. If omitted, all repos are updated.\n"
 "        "
-msgstr ""
+msgstr "Aktualisieren Sie alle Repos, oder eines Ihrer Wahlen.\n\n"
+"        Dies wird *nicht* die von diesen Repos installierten Zahnräder aktualisieren.\n\n"
+"        Beispiele:\n"
+"        - `[p]repo update`\n"
+"        - `[p]repo update 26-Cogs`\n"
+"        - `[p]repo update 26-Cogs Laggrons-Dumb-Cogs`\n\n"
+"        **Arguments**\n\n"
+"        - `[repos...]` Der Name oder die Namen der zu aktualisierenden Repos. Wenn ausgelassen, werden alle Repos aktualisiert.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:716
 msgid "Repo update completed successfully."
@@ -243,7 +289,7 @@ msgstr "Dieses Repo ist bereits auf dem neuesten Stand."
 #: redbot/cogs/downloader/downloader.py:734
 #, docstring
 msgid "Base command for cog installation management commands."
-msgstr ""
+msgstr "Basisbefehl für die Verwaltung der Zahnradinstallation."
 
 #: redbot/cogs/downloader/downloader.py:739
 #, docstring
@@ -253,7 +299,12 @@ msgid "\n"
 "        Red might ask the owner to use this when it clears contents of the lib folder\n"
 "        because of change in minor version of Python.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Dieser Befehl sollte nicht verwendet werden, es sei denn, Rot bittet ihn ausdrücklich.\n\n"
+"        Dieser Befehl installiert die Zahnarztvoraussetzungen und die gemeinsam genutzten Bibliotheken für alle installierten Zahnräder.\n\n"
+"        Red könnte den Besitzer bitten, dies zu verwenden, wenn er den Inhalt des Bibliotheksordners\n"
+"        löscht, da sich die kleinere Version von Python geändert hat.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:769
 #: redbot/cogs/downloader/downloader.py:1626
@@ -263,7 +314,7 @@ msgstr "Fehler beim Installieren der Anforderungen: "
 #: redbot/cogs/downloader/downloader.py:771
 #: redbot/cogs/downloader/downloader.py:1628
 msgid "Failed to install the requirement: "
-msgstr ""
+msgstr "Installation der Anforderung fehlgeschlagen: "
 
 #: redbot/cogs/downloader/downloader.py:776
 #: redbot/cogs/downloader/downloader.py:1694
@@ -276,7 +327,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1696
 msgid "\n"
 "Failed to install shared library: "
-msgstr ""
+msgstr "\n"
+"Fehler beim Installieren der freigegebenen Bibliothek: "
 
 #: redbot/cogs/downloader/downloader.py:783
 msgid "Cog requirements and shared libraries for all installed cogs have been reinstalled but there were some errors:\n"
@@ -296,7 +348,14 @@ msgid "Install a cog from the given repo.\n\n"
 "        - `<repo>` The name of the repo to install cogs from.\n"
 "        - `<cogs...>` The cog or cogs to install.\n"
 "        "
-msgstr ""
+msgstr "Installieren Sie ein Rad aus dem angegebenen Repo.\n\n"
+"        Beispiele:\n"
+"        - `[p]cog install 26-Cogs defender`\n"
+"        - `[p]cog install Laggrons-Dumb-Cogs say roleinvite`\n\n"
+"        **Arguments**\n\n"
+"        - `<repo>` The name of the repo to install cogs from cogs.\n"
+"        - `<cogs...>` Der Cog oder Cogs zu installieren.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:818
 #, docstring
@@ -311,27 +370,39 @@ msgid "Install a cog from the specified revision of given repo.\n\n"
 "        - `<revision>` The revision to install from.\n"
 "        - `<cogs...>` The cog or cogs to install.\n"
 "        "
-msgstr ""
+msgstr "Installieren Sie ein Rad aus der angegebenen Revision des gegebenen Repo.\n\n"
+"        Revisionen sind \"commit-ids\", die auf den Punkt im Code verweisen, wenn eine bestimmte Änderung vorgenommen wurde.\n"
+"        Die neueste Revision kann in der URL-Leiste für jedes GitHub Repo gefunden werden, indem Sie [auf \"y\" auf dieser Repo](https://docs.github.com/en/free-pro-team@latest/github/managing-files-in-a-repository/getting-permanent-links-to-files#press-y-to-permalink-to-a-file-in-a-specific-commit).\n\n"
+"        Ältere Revisionen finden Sie in der URL-Leiste, indem Sie [den Commit-Verlauf eines beliebigen Repositories anzeigen](https://cdn.discordapp.com/attachments/133251234164375552/775760247787749406/unknown.png)\n\n"
+"        Beispiel:\n"
+"        - `[p]cog installversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`\n\n"
+"        **Arguments**\n\n"
+"        - `<repo>` Der Name des Repositores, von dem die Cogs installiert werden sollen.\n"
+"        - `<revision>` Die Revision von der installiert werden soll.\n"
+"        - `<cogs...>` Der zu installierende Cog oder Cogs.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:845
 #: redbot/cogs/downloader/downloader.py:1258
 msgid "Error: short sha1 `{rev}` is ambiguous. Possible candidates:\n"
-msgstr ""
+msgstr "Fehler: short sha1 `{rev}` ist zweideutig. Mögliche Kandidaten:\n"
 
 #: redbot/cogs/downloader/downloader.py:857
 #: redbot/cogs/downloader/downloader.py:1269
 msgid "Error: there is no revision `{rev}` in repo `{repo.name}`"
-msgstr ""
+msgstr "Fehler: Es gibt keine Revision `{rev}` in repo `{repo.name}`"
 
 #: redbot/cogs/downloader/downloader.py:872
 msgid "\n"
 "Failed to install requirements: "
-msgstr ""
+msgstr "\n"
+"Fehler beim Installieren der Anforderungen: "
 
 #: redbot/cogs/downloader/downloader.py:874
 msgid "\n"
 "Failed to install the requirement: "
-msgstr ""
+msgstr "\n"
+"Fehler bei der Installation der Anforderung: "
 
 #: redbot/cogs/downloader/downloader.py:895
 msgid "\n"
@@ -342,17 +413,20 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:897
 msgid "\n"
 "Failed to install shared library for `{repo.name}` repo: "
-msgstr ""
+msgstr "\n"
+"Fehler beim Installieren der Shared-Library für `{repo.name}` Repo: "
 
 #: redbot/cogs/downloader/downloader.py:906
 msgid "\n"
 "Failed to install cogs: "
-msgstr ""
+msgstr "\n"
+"Fehler beim Installieren von Cogs: "
 
 #: redbot/cogs/downloader/downloader.py:908
 msgid "\n"
 "Failed to install the cog: "
-msgstr ""
+msgstr "\n"
+"Fehler beim Installieren des Cogs: "
 
 #: redbot/cogs/downloader/downloader.py:917
 msgid "Successfully installed cogs: "
@@ -365,12 +439,14 @@ msgstr "Cog erfolgreich installiert: "
 #: redbot/cogs/downloader/downloader.py:923
 msgid "\n"
 "These cogs are now pinned and won't get updated automatically. To change this, use `{prefix}cog unpin <cog>`"
-msgstr ""
+msgstr "\n"
+"Diese Cogs werden jetzt angepinnt und werden nicht automatisch aktualisiert. Um dies zu ändern, verwende `{prefix}cog unpin <cog>`"
 
 #: redbot/cogs/downloader/downloader.py:930
 msgid "\n"
 "You can load them using {command_1}. To see end user data statements, you can use {command_2}."
-msgstr ""
+msgstr "\n"
+"Sie können sie mit {command_1} laden. Um die Endbenutzer-Anweisungen zu sehen, können Sie {command_2} verwenden."
 
 #: redbot/cogs/downloader/downloader.py:951
 #, docstring
@@ -383,7 +459,15 @@ msgid "Uninstall cogs.\n\n"
 "        **Arguments**\n\n"
 "        - `<cogs...>` The cog or cogs to uninstall.\n"
 "        "
-msgstr ""
+msgstr "Deinstallieren von Zahnen.\n\n"
+"        Sie dürfen nur Cogs deinstallieren, die zuvor\n"
+"        vom Downloader installiert wurden.\n\n"
+"        Beispiele:\n"
+"        - `[p]cog uninstall defender`\n"
+"        - `[p]cog uninstall sagen roleinvite`\n\n"
+"        **Arguments**\n\n"
+"        - `<cogs...>` Der Cog oder Cogs zum Deinstallieren.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:984
 msgid "Successfully uninstalled cogs: "
@@ -391,29 +475,35 @@ msgstr "Cogs erfolgreich deinstalliert: "
 
 #: redbot/cogs/downloader/downloader.py:986
 msgid "Successfully uninstalled the cog: "
-msgstr ""
+msgstr "Cog erfolgreich deinstalliert: "
 
 #: redbot/cogs/downloader/downloader.py:991
 msgid "\n"
 "Downloader has removed these cogs from the installed cogs list but it wasn't able to find their files: "
-msgstr ""
+msgstr "\n"
+"Downloader hat diese Cogs aus der Liste der installierten Cogs entfernt, konnte aber keine Dateien finden: "
 
 #: redbot/cogs/downloader/downloader.py:996
 msgid "\n"
 "They were most likely removed without using {command_1}.\n"
 "You may need to remove those files manually if the cogs are still usable. If so, ensure the cogs have been unloaded with {command_2}."
-msgstr ""
+msgstr "\n"
+"Sie wurden höchstwahrscheinlich ohne {command_1} entfernt.\n"
+"Möglicherweise müssen Sie diese Dateien manuell entfernen, wenn die Cogs noch benutzbar sind. Wenn ja, stellen Sie sicher, dass die Zahnräder mit {command_2} entladen wurden."
 
 #: redbot/cogs/downloader/downloader.py:1007
 msgid "\n"
 "Downloader has removed this cog from the installed cogs list but it wasn't able to find its files: "
-msgstr ""
+msgstr "\n"
+"Downloader hat diesen Cog von der Liste der installierten Cogs entfernt, aber er konnte seine Dateien nicht finden: "
 
 #: redbot/cogs/downloader/downloader.py:1012
 msgid "\n"
 "It was most likely removed without using {command_1}.\n"
 "You may need to remove those files manually if the cog is still usable. If so, ensure the cog has been unloaded with {command_2}."
-msgstr ""
+msgstr "\n"
+"Es wurde höchstwahrscheinlich ohne Verwendung von {command_1} entfernt.\n"
+"Möglicherweise müssen Sie diese Dateien manuell entfernen, wenn das Zahnrad noch nutzbar ist. Wenn ja, stellen Sie sicher, dass das Rad mit {command_2} entladen wurde."
 
 #: redbot/cogs/downloader/downloader.py:1025
 #, docstring
@@ -424,7 +514,13 @@ msgid "Pin cogs - this will lock cogs on their current version.\n\n"
 "        **Arguments**\n\n"
 "        - `<cogs...>` The cog or cogs to pin. Must already be installed.\n"
 "        "
-msgstr ""
+msgstr "Pin Cogs - dies sperrt die Cogs auf ihrer aktuellen Version.\n\n"
+"        Beispiele:\n"
+"        - `[p]cog pin defender`\n"
+"        - `[p]cog pin outdated_cog1 outdated_cog2`\n\n"
+"        **Arguments**\n\n"
+"        - `<cogs...>` The cog or cogs to pin. Muss bereits installiert sein.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1048
 msgid "Pinned cogs: "
@@ -454,7 +550,12 @@ msgid "Unpin cogs - this will remove the update lock from those cogs.\n\n"
 "        - `[p]cog unpin updated_cog1 updated_cog2`\n\n"
 "        **Arguments**\n\n"
 "        - `<cogs...>` The cog or cogs to unpin. Must already be installed and pinned."
-msgstr ""
+msgstr "Entfernen der Zahnräder - dies wird die Updatesperre von diesen Zahnrädern entfernen.\n\n"
+"        Beispiele:\n"
+"        - `[p]cog unpin defender`\n"
+"        - `[p]cog unpin updated_cog1 updated_cog2`\n\n"
+"        **Arguments**\n\n"
+"        - `<cogs...>` The cog or cogs to unpin. Muss bereits installiert und angepinnt werden."
 
 #: redbot/cogs/downloader/downloader.py:1082
 msgid "Unpinned cogs: "
@@ -483,7 +584,7 @@ msgstr "Listet derzeit gesperrte Cogs auf."
 
 #: redbot/cogs/downloader/downloader.py:1101
 msgid "unknown"
-msgstr ""
+msgstr "unbekannt"
 
 #: redbot/cogs/downloader/downloader.py:1104
 msgid "None."
@@ -508,7 +609,11 @@ msgid "\n"
 "        This command doesn't update cogs, it only checks for updates.\n"
 "        Use `[p]cog update` to update cogs.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Prüfen Sie auf verfügbare Aktualisierungen von Zahnrädern (inklusive angehefteter Zahn).\n\n"
+"        Dieser Befehl aktualisiert keine Cogs, sondern überprüft nur auf Updates.\n"
+"        Benutzen Sie `[p]cog update` um Cogs zu aktualisieren.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1135
 msgid "These cogs can be updated: "
@@ -516,7 +621,7 @@ msgstr "Diese Cogs können aktualisiert werden: "
 
 #: redbot/cogs/downloader/downloader.py:1137
 msgid "This cog can be updated: "
-msgstr ""
+msgstr "Diese Cogs können aktualisiert werden: "
 
 #: redbot/cogs/downloader/downloader.py:1142
 msgid "\n"
@@ -527,7 +632,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1144
 msgid "\n"
 "This shared library can be updated: "
-msgstr ""
+msgstr "\n"
+"Diese gemeinsamen Bibliotheken können aktualisiert werden: "
 
 #: redbot/cogs/downloader/downloader.py:1147
 msgid "No cogs can be updated."
@@ -535,7 +641,7 @@ msgstr "Keine Cogs können aktualisiert werden."
 
 #: redbot/cogs/downloader/downloader.py:1151
 msgid "All installed cogs are up to date."
-msgstr ""
+msgstr "Alle installierten Zahnräder sind auf dem neuesten Stand."
 
 #: redbot/cogs/downloader/downloader.py:1162
 #, docstring
@@ -549,7 +655,16 @@ msgid "Update all cogs, or ones of your choosing.\n\n"
 "        - `[reload]` Whether to reload cogs immediately after update or not.\n"
 "        - `[cogs...]` The cog or cogs to update. If omitted, all cogs are updated.\n"
 "        "
-msgstr ""
+msgstr "Aktualisieren Sie alle Zahnräder oder eines Ihrer Wahlen.\n\n"
+"        Beispiele:\n"
+"        - `[p]cog update`\n"
+"        - `[p]cog update True`\n"
+"        - `[p]cog update defender`\n"
+"        - `[p]cog update True defender`\n\n"
+"        **Arguments**\n\n"
+"        - `[reload]` Ob Cogs sofort nach dem Update neu geladen werden können oder nicht.\n"
+"        - `[cogs...]` Der Cog oder Cogs zu aktualisieren. Wenn ausgelassen, werden alle Cogs aktualisiert.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1183
 #, docstring
@@ -562,7 +677,15 @@ msgid "Update all cogs from repos of your choosing.\n\n"
 "        - `[reload]` Whether to reload cogs immediately after update or not.\n"
 "        - `<repos...>` The repo or repos to update all cogs from.\n"
 "        "
-msgstr ""
+msgstr "Aktualisieren Sie alle Räder aus Repos Ihrer Wahl.\n\n"
+"        Beispiele:\n"
+"        - `[p]cog updateallfromrepos 26-Cogs`\n"
+"        - `[p]cog updateallfromrepos True 26-Cogs`\n"
+"        - `[p]cog updateallfromrepos Laggrons-Dumb-Cogs 26-Cogs`\n\n"
+"        **Arguments**\n\n"
+"        - `[reload]` Ob Cogs sofort nach dem Update neu geladen werden können oder nicht.\n"
+"        - `<repos...>` Das Repo oder Repos um alle Cogs zu aktualisieren.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1208
 #, docstring
@@ -580,35 +703,50 @@ msgid "Update all cogs, or ones of your choosing to chosen revision of one repo.
 "        - `<revision>` The revision to update to.\n"
 "        - `[cogs...]` The cog or cogs to update.\n"
 "        "
-msgstr ""
+msgstr "Aktualisieren Sie alle Cogs, oder eines Ihrer Wahlen, um eine Revision einer Reppe zu wählen.\n\n"
+"        Beachte, dass Update nicht Downgrade bedeutet und daher muss `Revision`\n"
+"        neuer sein als die Version, die der Zahnarzt gerade installiert hat. Wenn Sie den Code\n"
+"        downgraden möchten, deinstallieren und erneut installieren.\n\n"
+"        Siehe `[p]cog installversion` für eine Erklärung von `revision`.\n\n"
+"        Beispiele:\n"
+"        - `[p]cog updatetoversion Broken-Repo e798cc268e199612b1316a3d1f193da0770c7016 cog_name`\n"
+"        - `[p]cog updatetoversion True Broken-Repo 6107c0770ad391f1d3a6131b216991e862cc897e cog_name`\n\n"
+"        **Arguments**\n\n"
+"        - `[reload]` Ob Cogs sofort nach dem Update neu geladen werden oder nicht.\n"
+"        - `<repo>` Das Repo oder Repos um alle Cogs zu aktualisieren.\n"
+"        - `<revision>` Die Revision auf die aktualisiert werden soll.\n"
+"        - `[cogs...]` Der Cog oder Cogs zu aktualisieren.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1290
 msgid "There were no cogs to check."
-msgstr ""
+msgstr "Es gab keine Cogs zu überprüfen."
 
 #: redbot/cogs/downloader/downloader.py:1294
 #: redbot/cogs/downloader/downloader.py:1330
 msgid "\n"
 "These cogs are pinned and therefore weren't checked: "
-msgstr ""
+msgstr "\n"
+"Diese Cogs sind angeheftet und wurden daher nicht überprüft: "
 
 #: redbot/cogs/downloader/downloader.py:1296
 #: redbot/cogs/downloader/downloader.py:1332
 msgid "\n"
 "This cog is pinned and therefore wasn't checked: "
-msgstr ""
+msgstr "\n"
+"Dieses Cog ist angepinnt und deshalb nicht überprüft: "
 
 #: redbot/cogs/downloader/downloader.py:1310
 msgid "Cogs from provided repos are already up to date."
-msgstr ""
+msgstr "Cogs aus den bereitgestellten Repos sind bereits auf dem neuesten Stand."
 
 #: redbot/cogs/downloader/downloader.py:1313
 msgid "Provided cogs are already up to date with this revision."
-msgstr ""
+msgstr "Angegebene Cogs sind mit dieser Revision bereits auf dem neuesten Stand."
 
 #: redbot/cogs/downloader/downloader.py:1317
 msgid "Cogs from provided repo are already up to date with this revision."
-msgstr ""
+msgstr "Cogs vom angegebenen Repo sind bereits auf dem neuesten Stand mit dieser Revision."
 
 #: redbot/cogs/downloader/downloader.py:1322
 msgid "Provided cogs are already up to date."
@@ -626,32 +764,42 @@ msgid "List all available cogs from a single repo.\n\n"
 "        **Arguments**\n\n"
 "        - `<repo>` The repo to list cogs from.\n"
 "        "
-msgstr ""
+msgstr "Alle verfügbaren Zahnräder aus einem einzigen Repo auflisten.\n\n"
+"        Beispiel:\n"
+"        - `[p]cog list 26-Cogs`\n\n"
+"        **Arguments**\n\n"
+"        - `<repo>` Das Repo um Cogs aufzulisten.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1372
 msgid "# Installed Cogs\n"
 "{text}"
-msgstr ""
+msgstr "# Installierte Cogs\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1374
 msgid "# Installed Cog\n"
 "{text}"
-msgstr ""
+msgstr "# Installiertes Cog\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1385
 msgid "> Available Cogs\n"
 "No cogs are available."
-msgstr ""
+msgstr "> Verfügbare Cogs\n"
+"Es sind keine Cogs verfügbar."
 
 #: redbot/cogs/downloader/downloader.py:1387
 msgid "> Available Cogs\n"
 "{text}"
-msgstr ""
+msgstr "> Verfügbare Cogs\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1389
 msgid "> Available Cog\n"
 "{text}"
-msgstr ""
+msgstr "> Verfügbarer Cog\n"
+"{text}"
 
 #: redbot/cogs/downloader/downloader.py:1396
 #, docstring
@@ -662,7 +810,13 @@ msgid "List information about a single cog.\n\n"
 "        - `<repo>` The repo to get cog info from.\n"
 "        - `<cog>` The cog to get info on.\n"
 "        "
-msgstr ""
+msgstr "Zeigt Informationen zu einem einzelnen Cog an.\n\n"
+"        Beispiel:\n"
+"        - `[p]cog info 26-Cogs defender`\n\n"
+"        **Arguments**\n\n"
+"        - `<repo>` Das Repository um Cog Informationen zu erhalten.\n"
+"        - `<cog>` Der Cog um Informationen zu erhalten.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1409
 msgid "There is no cog `{cog_name}` in the repo `{repo.name}`"
@@ -675,73 +829,88 @@ msgid "Information on {cog_name}:\n"
 "{end_user_data_statement}\n\n"
 "Made by: {author}\n"
 "Requirements: {requirements}"
-msgstr ""
+msgstr "{cog_name}:\n"
+"{description}\n\n"
+"Enddaten-Statement:\n"
+"{end_user_data_statement}\n\n"
+"Erstellt von: {author}\n"
+"Anforderungen: {requirements}"
 
 #: redbot/cogs/downloader/downloader.py:1427
 msgid "Author of the cog didn't provide end user data statement."
-msgstr ""
+msgstr "Der Autor des Cogs hat keine Enddatenanweisung zur Verfügung gestellt."
 
 #: redbot/cogs/downloader/downloader.py:1496
 msgid "\n"
 "Couldn't find these cogs in {repo.name}: "
-msgstr ""
+msgstr "\n"
+"Konnte diese Cogs nicht in {repo.name}finden: "
 
 #: redbot/cogs/downloader/downloader.py:1498
 msgid "\n"
 "Couldn't find this cog in {repo.name}: "
-msgstr ""
+msgstr "\n"
+"Konnte das Zahnrad nicht in {repo.name}finden: "
 
 #: redbot/cogs/downloader/downloader.py:1502
 msgid "\n"
 "These cogs were already installed: "
-msgstr ""
+msgstr "\n"
+"Diese Cogs wurden bereits installiert: "
 
 #: redbot/cogs/downloader/downloader.py:1504
 msgid "\n"
 "This cog was already installed: "
-msgstr ""
+msgstr "\n"
+"Dieses Zahnrad wurde bereits installiert: "
 
 #: redbot/cogs/downloader/downloader.py:1508
 msgid "\n"
 "Some cogs with these names are already installed from different repos: "
-msgstr ""
+msgstr "\n"
+"Einige Cogs mit diesen Namen sind bereits aus verschiedenen Quellen installiert: "
 
 #: redbot/cogs/downloader/downloader.py:1510
 msgid "\n"
 "Cog with this name is already installed from a different repo: "
-msgstr ""
+msgstr "\n"
+"Cog mit diesem Namen ist bereits aus einem anderen Repo installiert: "
 
 #: redbot/cogs/downloader/downloader.py:1527
 msgid " (Minimum: {min_version})"
-msgstr ""
+msgstr " (Minimum: {min_version})"
 
 #: redbot/cogs/downloader/downloader.py:1540
 msgid " (Minimum: {min_version}"
-msgstr ""
+msgstr " (Minimum: {min_version}"
 
 #: redbot/cogs/downloader/downloader.py:1544
 msgid ", at most: {max_version}"
-msgstr ""
+msgstr ", bestenfalls: {max_version}"
 
 #: redbot/cogs/downloader/downloader.py:1553
 msgid "\n"
 "These cogs require higher python version than you have: "
-msgstr ""
+msgstr "\n"
+"Diese Cogs benötigen eine höhere Python-Version als du: "
 
 #: redbot/cogs/downloader/downloader.py:1555
 msgid "\n"
 "This cog requires higher python version than you have: "
-msgstr ""
+msgstr "\n"
+"Dieses Cog erfordert eine höhere Python-Version als du hast: "
 
 #: redbot/cogs/downloader/downloader.py:1559
 msgid "\n"
 "These cogs require different Red version than you currently have ({current_version}): "
-msgstr ""
+msgstr "\n"
+"Diese Zahnräder benötigen eine andere Red Version als Sie zur Zeit haben ({current_version}): "
 
 #: redbot/cogs/downloader/downloader.py:1564
 msgid "\n"
 "This cog requires different Red version than you currently have ({current_version}): "
-msgstr ""
+msgstr "\n"
+"Dieses Fach benötigt eine andere Red Version als Sie zur Zeit haben ({current_version}): "
 
 #: redbot/cogs/downloader/downloader.py:1635
 msgid "Cog update completed successfully."
@@ -750,37 +919,44 @@ msgstr "Cog Update erfolgreich."
 #: redbot/cogs/downloader/downloader.py:1650
 msgid "\n"
 "End user data statements of these cogs have changed: "
-msgstr ""
+msgstr "\n"
+"Endbenutzer-Datenaussagen dieser Cogs haben sich geändert: "
 
 #: redbot/cogs/downloader/downloader.py:1652
 msgid "\n"
 "You can use {command} to see the updated statements.\n"
-msgstr ""
+msgstr "\n"
+"Sie können {command} verwenden, um die aktualisierten Anweisungen zu sehen.\n"
 
 #: redbot/cogs/downloader/downloader.py:1658
 msgid "\n"
 "End user data statement of this cog has changed:"
-msgstr ""
+msgstr "\n"
+"Endbenutzer-Anweisung dieses Zahnwagens hat sich geändert:"
 
 #: redbot/cogs/downloader/downloader.py:1660
 msgid "\n"
 "You can use {command} to see the updated statement.\n"
-msgstr ""
+msgstr "\n"
+"Sie können {command} verwenden, um die aktualisierte Anweisung zu sehen.\n"
 
 #: redbot/cogs/downloader/downloader.py:1667
 msgid "\n"
 "You may need to resync your slash commands with `{prefix}slash sync`."
-msgstr ""
+msgstr "\n"
+"Eventuell musst du deine Slash Befehle mit `{prefix}slash sync` synchronisieren."
 
 #: redbot/cogs/downloader/downloader.py:1673
 msgid "\n"
 "Failed to update cogs: "
-msgstr ""
+msgstr "\n"
+"Fehler beim Aktualisieren des Cog: "
 
 #: redbot/cogs/downloader/downloader.py:1675
 msgid "\n"
 "Failed to update cog: "
-msgstr ""
+msgstr "\n"
+"Fehler beim Aktualisieren des Cog: "
 
 #: redbot/cogs/downloader/downloader.py:1678
 msgid "No cogs were updated."
@@ -795,7 +971,8 @@ msgstr "\n"
 #: redbot/cogs/downloader/downloader.py:1686
 msgid "\n"
 "A shared library was updated, you should restart the bot to bring the changes into effect."
-msgstr ""
+msgstr "\n"
+"Eine Shared Library wurde aktualisiert, du solltest den Bot neu starten, um die Änderungen in Kraft zu setzen."
 
 #: redbot/cogs/downloader/downloader.py:1703
 msgid "None of the updated cogs were previously loaded. Update complete."
@@ -807,7 +984,7 @@ msgstr "Möchtest du die aktualisierten cogs neu laden?"
 
 #: redbot/cogs/downloader/downloader.py:1710
 msgid "Would you like to reload the updated cog?"
-msgstr ""
+msgstr "Möchten Sie das aktualisierte Cog neu laden?"
 
 #: redbot/cogs/downloader/downloader.py:1736
 msgid "OK then."
@@ -822,7 +999,13 @@ msgid "Find which cog a command comes from.\n\n"
 "        **Arguments**\n\n"
 "        - `<command_name>` The command to search for.\n"
 "        "
-msgstr ""
+msgstr "Finde heraus, von welchem Zahnrad ein Befehl kommt.\n\n"
+"        Dies funktioniert nur mit geladenen Zahnrädern.\n\n"
+"        Beispiel:\n"
+"        - `[p]findcog ping`\n\n"
+"        **Arguments**\n\n"
+"        - `<command_name>` Der Befehl nach dem gesucht werden soll.\n"
+"        "
 
 #: redbot/cogs/downloader/downloader.py:1780
 msgid "That command doesn't seem to exist."
@@ -840,11 +1023,11 @@ msgstr "Unbekannt"
 
 #: redbot/cogs/downloader/downloader.py:1816
 msgid "None - this cog wasn't installed via downloader"
-msgstr ""
+msgstr "Keines - dieses Cog wurde nicht über den Downloader installiert"
 
 #: redbot/cogs/downloader/downloader.py:1820
 msgid "This command is not provided by a cog."
-msgstr ""
+msgstr "Dieser Befehl wird nicht von einem Cog zur Verfügung gestellt."
 
 #: redbot/cogs/downloader/downloader.py:1826
 msgid "Command:"
@@ -852,11 +1035,11 @@ msgstr "Befehl:"
 
 #: redbot/cogs/downloader/downloader.py:1827
 msgid "Cog package name:"
-msgstr ""
+msgstr "Cog-Paketname:"
 
 #: redbot/cogs/downloader/downloader.py:1828
 msgid "Cog name:"
-msgstr ""
+msgstr "Cog-Name:"
 
 #: redbot/cogs/downloader/downloader.py:1829
 msgid "Made by:"
@@ -864,7 +1047,7 @@ msgstr "Erstellt von:"
 
 #: redbot/cogs/downloader/downloader.py:1830
 msgid "Repo name:"
-msgstr ""
+msgstr "Repository Name:"
 
 #: redbot/cogs/downloader/downloader.py:1831
 msgid "Repo URL:"
@@ -881,7 +1064,12 @@ msgid "Command:          {command}\n"
 "Made by:          {author}\n"
 "Repo name:        {repo_name}\n"
 "Repo URL:         {repo_url}\n"
-msgstr ""
+msgstr "Befehl:          {command}\n"
+"Cog-Paketname: {cog_pkg}\n"
+"Cog-Name:         {cog}\n"
+"Hergestellt von:          {author}\n"
+"Repo-Name:        {repo_name}\n"
+"Repo-URL:         {repo_url}\n"
 
 #: redbot/cogs/downloader/downloader.py:1855
 msgid "Repo branch: {branch_name}\n"
@@ -897,7 +1085,7 @@ msgstr "Aktualisierung des folgenden repo fehlgeschlagen:"
 
 #: redbot/cogs/downloader/downloader.py:1881
 msgid "The repository's branch might have been removed or the repository is no longer accessible at set url. See logs for more information."
-msgstr ""
+msgstr "Der Branch des Projektarchivs könnte entfernt worden sein, oder das Projektarchiv ist nicht mehr über die angegebene Url erreichbar. Weitere Informationen finden Sie unter Protokolle."
 
 #: redbot/cogs/downloader/repo_manager.py:183
 msgid "Repo by the name \"{repo_name}\" does not exist."

@@ -28,7 +28,8 @@ msgstr "Füge eine zufällige Antwort hinzu:"
 #: redbot/cogs/customcom/customcom.py:98
 msgid "The text response you're trying to create has more than 2000 characters.\n"
 "I cannot send messages that are longer than 2000 characters, please try again."
-msgstr ""
+msgstr "Die Text-Antwort, die Sie erstellen wollen, hat mehr als 2000 Zeichen.\n"
+"Ich kann keine Nachrichten senden, die länger als 2000 Zeichen sind. Bitte versuchen Sie es erneut."
 
 #: redbot/cogs/customcom/customcom.py:111
 msgid "Random responses must take the same arguments!"
@@ -36,7 +37,7 @@ msgstr "Zufällige Antworten müssen die gleichen Argumente aufweisen!"
 
 #: redbot/cogs/customcom/customcom.py:183
 msgid "Do you want to create a 'randomized' custom command?"
-msgstr ""
+msgstr "Möchten Sie einen 'randomisierten' benutzerdefinierten Befehl erstellen?"
 
 #: redbot/cogs/customcom/customcom.py:189
 #: redbot/cogs/customcom/customcom.py:200
@@ -54,12 +55,16 @@ msgid "This cog contains commands for creating and managing custom commands that
 "    Custom commands can be used by anyone by default, so be careful with pings.\n"
 "    Commands can only be lowercase, and will not respond to any uppercase letters.\n"
 "    "
-msgstr ""
+msgstr "Dieses Cog enthält Befehle zum Erstellen und Verwalten benutzerdefinierter Befehle, die Text anzeigen.\n\n"
+"    Diese sind nützlich, um Informationen zu speichern, die Mitglieder benötigen, wie FAQ-Antworten oder Einladungslinks.\n"
+"    Benutzerdefinierte Befehle können standardmäßig von jedem verwendet werden, also seien Sie vorsichtig mit Pings.\n"
+"    Befehle können nur Kleinbuchstaben sein und werden nicht auf Großbuchstaben antworten.\n"
+"    "
 
 #: redbot/cogs/customcom/customcom.py:266
 #, docstring
 msgid "Base command for Custom Commands management."
-msgstr ""
+msgstr "Basis-Befehl für benutzerdefinierte Befehlsverwaltung."
 
 #: redbot/cogs/customcom/customcom.py:271
 #, docstring
@@ -67,7 +72,10 @@ msgid "Get the raw response of a custom command, to get the proper markdown.\n\n
 "        This is helpful for copy and pasting.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The custom command to get the raw response of."
-msgstr ""
+msgstr "Erhalte die rohe Antwort eines benutzerdefinierten Befehls, um die richtige Markdown zu erhalten.\n\n"
+"        Dies ist hilfreich beim Kopieren und Einfügen.\n\n"
+"        **Argumente:**\n\n"
+"        - `<command>` Der benutzerdefinierte Befehl um die Rohantwort zu erhalten."
 
 #: redbot/cogs/customcom/customcom.py:296
 msgid "Response #{num}/{total}"
@@ -87,7 +95,12 @@ msgid "\n"
 "        **Arguments:**\n\n"
 "        - `<query>` The query to search for. Can be multiple words.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Durchsucht benutzerdefinierte Befehle, entsprechend der Abfrage.\n\n"
+"        Verwendet verschwommene Suche um Übereinstimmungen zu finden.\n\n"
+"        **Argumente:**\n\n"
+"        - `<query>` Die Suche, nach der gesucht werden soll. Kann mehrere Wörter sein.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:339
 msgid "No close matches were found."
@@ -121,7 +134,11 @@ msgid "Create a CC where it will randomly choose a response!\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The command executed to return the text. Cast to lowercase.\n"
 "        "
-msgstr ""
+msgstr "Erstelle einen CC wo er zufällig eine Antwort auswählt!\n\n"
+"        Hinweis: Dieser Befehl ist interaktiv.\n\n"
+"        **Argument:**\n\n"
+"        - `<command>` Der Befehl ausgeführt um den Text zurückzugeben. Auf Kleinbuchstaben übertragen\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:375
 #: redbot/cogs/customcom/customcom.py:416
@@ -152,7 +169,8 @@ msgstr "Dieser Befehl ist bereits vorhanden. Verwende `{command}` um ihn zu edit
 #: redbot/cogs/customcom/customcom.py:537
 msgid "The text response you're trying to create has more than 2000 characters.\n"
 "I cannot send messages that are longer than 2000 characters."
-msgstr ""
+msgstr "Die Text-Antwort, die du erstellen möchtest, hat mehr als 2000 Zeichen.\n"
+"Ich kann keine Nachrichten senden, die länger als 2000 Zeichen sind."
 
 #: redbot/cogs/customcom/customcom.py:404
 #, docstring
@@ -163,7 +181,13 @@ msgid "Add a simple custom command.\n\n"
 "        - `<command>` The command executed to return the text. Cast to lowercase.\n"
 "        - `<text>` The text to return when executing the command. See guide for enhanced usage.\n"
 "        "
-msgstr ""
+msgstr "Fügen Sie einen einfachen benutzerdefinierten Befehl hinzu.\n\n"
+"        Beispiel:\n"
+"        - `[p]customcom create simple DeinBefehl von Ihnen gewünschten Text\n\n"
+"        **Argument:**\n\n"
+"        - `<command>` Der Befehl ausgeführt um den Text zurückzugeben. Auf Kleinbuchstaben übertragen.\n"
+"        - `<text>` Der Text, der beim Ausführen des Befehls zurückgegeben wird. Siehe Anleitung für verbesserte Nutzung.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:445
 #, docstring
@@ -180,7 +204,19 @@ msgid "Set, edit, or view the cooldown for a custom command.\n\n"
 "        - `[cooldown]` The number of seconds to wait before allowing the command to be invoked again. If omitted, will instead return the current cooldown settings.\n"
 "        - `[per]` The group to apply the cooldown on. Defaults to per member. Valid choices are server / guild, user / member, and channel.\n"
 "        "
-msgstr ""
+msgstr "Setze die Abklingzeit für einen benutzerdefinierten Befehl oder bearbeite.\n\n"
+"        Du kannst Abklingzeiten pro Mitglied, Kanal oder Gilde festlegen. Mehrere\n"
+"        Cooldowns können gesetzt werden. Alle Cooldowns müssen abgekühlt werden, um den benutzerdefinierten Befehl\n"
+"        aufzurufen.\n\n"
+"        Beispiele:\n"
+"        - `[p]customcom cooldown pingrole`\n"
+"        - `[p]customcom cooldown yourcommand 30`\n"
+"        - `[p]cc cooldown mycommand 30 guild`\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` Der benutzerdefinierte Befehl um die Abklingzeit zu überprüfen oder zu setzen.\n"
+"        - `[cooldown]` Die Anzahl der Sekunden zu warten, bevor der Befehl erneut aufgerufen werden kann. Falls ausgelassen, werden stattdessen die aktuellen Abklingzeiten zurückgegeben.\n"
+"        - `[per]` Die Gruppe, um die Abklingzeit anzuwenden. Standard ist pro Mitglied. Gültige Optionen sind Server / Gilde, Benutzer / Mitglied und Kanal.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:466
 #: redbot/cogs/customcom/customcom.py:507
@@ -216,7 +252,12 @@ msgid "Delete a custom command.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command>` The custom command to delete.\n"
 "        "
-msgstr ""
+msgstr "Benutzerdefinierter Befehl löschen.\n\n"
+"        Beispiel:\n"
+"        - `[p]customcom delete yourcommand`\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` Der benutzerdefinierte Befehl zu löschen.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:505
 msgid "Custom command successfully deleted."
@@ -231,7 +272,13 @@ msgid "Edit a custom command.\n\n"
 "        - `<command>` The custom command to edit.\n"
 "        - `<text>` The new text to return when executing the command.\n"
 "        "
-msgstr ""
+msgstr "Bearbeite einen eigenen Befehl.\n\n"
+"        Beispiel:\n"
+"        - `[p]customcom edit yourcommand Text you want\n\n"
+"        **Arguments:**\n\n"
+"        - `<command>` Der benutzerdefinierte Befehl zum Bearbeiten.\n"
+"        - `<text>` Der neue Text, der beim Ausführen des Befehls zurückgegeben wird.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:524
 msgid "Custom command successfully edited."
@@ -266,7 +313,10 @@ msgid "Shows a custom command's responses and its settings.\n\n"
 "        **Arguments:**\n\n"
 "        - `<command_name>` The custom command to show.\n"
 "        "
-msgstr ""
+msgstr "Zeigt Antworten und Einstellungen eines benutzerdefinierten Befehls.\n\n"
+"        **Argumente:**\n\n"
+"        - `<command_name>` Der benutzerdefinierte Befehl wird angezeigt.\n"
+"        "
 
 #: redbot/cogs/customcom/customcom.py:595
 msgid "I could not not find that custom command."
@@ -274,7 +324,7 @@ msgstr "Ich konnte diesen benutzerdefinierten Befehl nicht finden."
 
 #: redbot/cogs/customcom/customcom.py:606
 msgid "Deleted User"
-msgstr ""
+msgstr "Gelöschte Benutzer"
 
 #: redbot/cogs/customcom/customcom.py:612
 msgid "Random"

@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-01-09 00:35+0000\n"
+"POT-Creation-Date: 2025-08-09 20:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: redgettext 3.4.2\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: sl\n"
@@ -180,11 +180,11 @@ msgstr "Seznam razpoložljivih globalnih vzdevkov na tem strežniku."
 msgid "There are no global aliases."
 msgstr "Globalnih vzdevkov ni."
 
-#: redbot/cogs/alias/alias_entry.py:196
+#: redbot/cogs/alias/alias_entry.py:200
 msgid "Arguments must be specified with a number."
 msgstr "Argumente je treba navesti s številko."
 
-#: redbot/cogs/alias/alias_entry.py:203
+#: redbot/cogs/alias/alias_entry.py:207
 msgid "Arguments must be sequential. Missing arguments: "
 msgstr "Argumenti morajo biti zaporedni. Manjkajoči argumenti: "
 

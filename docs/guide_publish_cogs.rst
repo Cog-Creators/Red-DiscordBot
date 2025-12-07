@@ -47,7 +47,7 @@ Keys common to both repo and cog info.json (case sensitive)
   is installed or a repo is added
   
   .. tip:: You can use the ``[p]`` key in your string to use the prefix
-      used for installing.
+      used for installing, and ``[botname]`` to show the bot's username.
 
 - ``short`` (string) - A short description of the cog or repo. For cogs, this info 
   is displayed when a user executes ``[p]cog list``
