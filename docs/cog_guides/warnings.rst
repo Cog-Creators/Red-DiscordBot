@@ -339,9 +339,9 @@ Set the channel where warnings should be sent to.
 
 .. _warnings-command-warningset-mywarnings_sendtodms:
 
-"""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""
 warningset mywarnings_sendtodms
-"""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""
 
 **Syntax**
 
