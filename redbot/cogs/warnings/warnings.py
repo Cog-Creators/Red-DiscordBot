@@ -38,6 +38,7 @@ class Warnings(commands.Cog):
         "show_mod": False,
         "warn_channel": None,
         "toggle_channel": False,
+        "mywarnings_in_dms": False,
     }
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
@@ -140,18 +141,21 @@ class Warnings(commands.Cog):
     @warningset.command()
     @commands.guild_only()
     async def showmoderator(self, ctx, true_or_false: bool):
-        """Decide whether the name of the moderator warning a user should be included in the DM to that user."""
+        """Decide whether the name of the moderator warning a user should be included in the DM to that user when being
+        warned or self requesting their warnings."""
         await self.config.guild(ctx.guild).show_mod.set(true_or_false)
         if true_or_false:
             await ctx.send(
                 _(
-                    "I will include the name of the moderator who issued the warning when sending a DM to a user."
+                    "I will include the name of the moderator who issued the warning when sending a DM to a user "
+                    "or when they self request their warnings."
                 )
             )
         else:
             await ctx.send(
                 _(
-                    "I will not include the name of the moderator who issued the warning when sending a DM to a user."
+                    "I will not include the name of the moderator who issued the warning when sending a DM to a user "
+                    "or when they self request their warnings."
                 )
             )
 
@@ -193,6 +197,16 @@ class Warnings(commands.Cog):
                 await ctx.send(_("Warnings will now be sent in the channel command was used in."))
         else:
             await ctx.send(_("Toggle channel has been disabled."))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def mywarnings_sendtodms(self, ctx, true_or_false: bool):
+        """Whether a member self requesting their warnings with [p]mywarnings should get them sent to DMs or in the current channel."""
+        await self.config.guild(ctx.guild).mywarnings_in_dms.set(true_or_false)
+        if true_or_false:
+            await ctx.send(_("I will send self requested user warnings to their DMs."))
+        else:
+            await ctx.send(_("I will send self requested user warnings to the current channel."))
 
     @commands.group()
     @commands.guild_only()
@@ -617,31 +631,48 @@ class Warnings(commands.Cog):
         user = ctx.author
 
         msg = ""
+        guild_settings = await self.config.guild(ctx.guild).all()
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
             if not user_warnings.keys():  # no warnings for the user
-                await ctx.send(_("You have no warnings!"))
+                if guild_settings["mywarnings_in_dms"]:
+                    await ctx.tick()
+                    await user.send(_("You have no warnings!"))
+                else:
+                    await ctx.send(_("You have no warnings!"))
             else:
                 for key in user_warnings.keys():
                     mod_id = user_warnings[key]["mod"]
                     if mod_id == 0xDE1:
                         mod = _("Deleted Moderator")
+                    elif not guild_settings["show_mod"]:
+                        mod = None
                     else:
                         bot = ctx.bot
                         mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
-                    msg += _(
-                        "{num_points} point warning {reason_name} issued by {user} for "
-                        "{description}\n"
-                    ).format(
+                    msg += _("{num_points} point warning {reason_name}").format(
                         num_points=user_warnings[key]["points"],
                         reason_name=key,
-                        user=mod,
-                        description=user_warnings[key]["description"],
                     )
-                await ctx.send_interactive(
-                    pagify(msg, shorten_by=58),
-                    box_lang=_("Warnings for {user}").format(user=user),
-                )
+                    if mod is not None:
+                        msg += _(" issued by {user}").format(user=mod)
+                    msg += _(" for {description} \n").format(
+                        description=user_warnings[key]["description"]
+                    )
+
+                if guild_settings["mywarnings_in_dms"]:
+                    await ctx.tick()
+                    await bot.send_interactive(
+                        channel=user.dm_channel,
+                        messages=pagify(msg, shorten_by=58),
+                        user=user,
+                        box_lang=_("Warnings for {user}").format(user=user),
+                    )
+                else:
+                    await ctx.send_interactive(
+                        pagify(msg, shorten_by=58),
+                        box_lang=_("Warnings for {user}").format(user=user),
+                    )
 
     @commands.command()
     @commands.guild_only()
