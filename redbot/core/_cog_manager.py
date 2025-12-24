@@ -144,8 +144,8 @@ class CogManager:
         ----------
         path : `pathlib.Path` or `str`
             Path to add.
-        persist : `bool`
-            Whether or not the path should be persisted through restarts.
+        persist : `bool`, optional
+            Whether or not the path should be persisted through restarts. Defaults to True.
 
         Raises
         ------
