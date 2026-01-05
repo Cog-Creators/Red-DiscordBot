@@ -88,7 +88,7 @@ class CogManager:
             A list of user-defined paths.
 
         """
-        return list(map(Path, deduplicate_iterables(_TEMP_PATHS, await self.config.paths())))
+        return list(map(Path, deduplicate_iterables(await self.config.paths())))
 
     async def set_install_path(self, path: Path) -> Path:
         """Set the install path for 3rd party cogs.
@@ -230,7 +230,9 @@ class CogManager:
                 name=name,
             )
 
-        real_paths = list(map(str, [await self.install_path()] + await self.user_defined_paths()))
+        real_paths = list(
+            map(str, [await self.install_path()] + _TEMP_PATHS + await self.user_defined_paths())
+        )
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -307,7 +309,7 @@ class CogManager:
 
     async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load."""
-        paths = list(map(str, await self.paths()))
+        paths = list(map(str, _TEMP_PATHS + await self.paths()))
 
         ret = []
         for finder, module_name, _ in pkgutil.iter_modules(paths):
@@ -348,15 +350,24 @@ class CogManagerUI(commands.Cog):
         core_path = cog_mgr.CORE_PATH
         cog_paths = await cog_mgr.user_defined_paths()
 
-        msg = _("Install Path: {install_path}\nCore Path: {core_path}\n\n").format(
-            install_path=install_path, core_path=core_path
+        temporary_paths = [str(path) for path in _TEMP_PATHS]
+
+        paths = []
+        for index, path in enumerate(cog_paths, start=1):
+            paths.append(f"{index}. {path}")
+
+        msg = _(
+            (
+                "Install Path: {install_path}\nCore Path: {core_path}\n\n"
+                "Temporary Paths:{temporary_paths}\n\nCog Paths:{cog_paths}"
+            )
+        ).format(
+            install_path=install_path,
+            core_path=core_path,
+            temporary_paths=("\n" + "\n".join(temporary_paths)) if temporary_paths else _(" None"),
+            cog_paths=("\n" + "\n".join(paths)) if paths else _(" None"),
         )
 
-        partial = []
-        for i, p in enumerate(cog_paths, start=1):
-            partial.append("{}. {}".format(i, p))
-
-        msg += "\n".join(partial)
         await ctx.send(box(msg))
 
     @commands.command()
