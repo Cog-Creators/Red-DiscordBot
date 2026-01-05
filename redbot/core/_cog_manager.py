@@ -57,13 +57,16 @@ class CogManager:
         -------
         List[pathlib.Path]
             A list of paths where cog packages can be found. The
-            install path is highest priority, followed by the
-            user-defined paths, and the core path has the lowest
-            priority.
+            install path is highest priority, followed by temporary
+            paths, then the user-defined paths, and the core path
+            has the lowest priority.
 
         """
         return deduplicate_iterables(
-            [await self.install_path()], await self.user_defined_paths(), [self.CORE_PATH]
+            [await self.install_path()],
+            _TEMP_PATHS,
+            await self.user_defined_paths(),
+            [self.CORE_PATH],
         )
 
     async def install_path(self) -> Path:
@@ -309,7 +312,7 @@ class CogManager:
 
     async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load."""
-        paths = list(map(str, _TEMP_PATHS + await self.paths()))
+        paths = list(map(str, await self.paths()))
 
         ret = []
         for finder, module_name, _ in pkgutil.iter_modules(paths):
