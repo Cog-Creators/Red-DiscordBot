@@ -434,7 +434,7 @@ def init_events(bot, cli_flags):
             msg = _("This command is on cooldown. Try again {relative_time}.").format(
                 relative_time=relative_time
             )
-            await ctx.send(msg, delete_after=error.retry_after)
+            await ctx.send(msg, delete_after=error.retry_after, ephemeral=True)
         elif isinstance(error, commands.MaxConcurrencyReached):
             if error.per is commands.BucketType.default:
                 if error.number > 1:
