@@ -358,10 +358,18 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
             previous_logs.append(path)
     # Delete all previous.log files
     for path in previous_logs:
-        path.unlink()
+        try:
+            path.unlink()
+        except (PermissionError, FileNotFoundError) as e:
+            log.debug(f"Could not delete {path}: {e}")
     # Rename latest.log files to previous.log
     for path, part in latest_logs:
-        path.replace(location / f"previous{part}.log")
+        try:
+            path.replace(location / f"previous{part}.log")
+        except PermissionError as e:
+            log.warning(f"Could not rename {path} to previous log (file in use): {e}")
+        except FileNotFoundError:
+            pass  # File doesn't exist, nothing to rename
 
     latest_fhandler = RotatingFileHandler(
         stem="latest",
