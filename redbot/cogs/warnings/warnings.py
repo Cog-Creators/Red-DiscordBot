@@ -661,13 +661,19 @@ class Warnings(commands.Cog):
                     )
 
                 if guild_settings["mywarnings_in_dms"]:
-                    await ctx.tick()
-                    await bot.send_interactive(
-                        channel=user.dm_channel,
-                        messages=pagify(msg, shorten_by=58),
-                        user=user,
-                        box_lang=_("Warnings for {user}").format(user=user),
-                    )
+                    if user.dm_channel is None:
+                        await user.create_dm()
+                    try:
+                        await ctx.bot.send_interactive(
+                            channel=user.dm_channel,
+                            messages=pagify(msg, shorten_by=58),
+                            user=user,
+                            box_lang=_("Warnings for {user}").format(user=user),
+                        )
+                        await ctx.tick()
+                    except discord.Forbidden:
+                        await ctx.send(_("I could not send you a DM. Do you have DMs disabled?"))
+
                 else:
                     await ctx.send_interactive(
                         pagify(msg, shorten_by=58),
