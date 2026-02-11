@@ -64,7 +64,7 @@ liking, making it completely customizable. This is a *self-hosted bot* – meani
 to host and maintain your own instance. You can turn Red into an admin bot, music bot, trivia bot,
 new best friend or all of these together!  
 
-Red is built for [Discord](https://discord.com/), a popular VOIP and instant messaging platform. Red is best suited for use in Discord guilds (also known as servers). Discord has documented API that encourages developers to explore their creativity and create programs, tools, and services to enhance their experience. Red communicates through this API to enable all the features you will use with Red.
+Red is built for [Discord](https://discord.com/), a popular VOIP and instant messaging platform. It's best suited for use in guilds (also known as servers), where it utilizes Discord's well-documented API to communicate and deliver its many features. Discord offers its API to encourage developers to explore their creativity by building programs, tools, and services that enhance the Discord experience.
 
 [Installation](#installation) is easy, and you do **NOT** need to know anything about coding! Aside
 from installing and updating, every part of the bot can be controlled from within Discord.
