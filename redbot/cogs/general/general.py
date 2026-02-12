@@ -446,7 +446,9 @@ class General(commands.Cog):
                 )
                 feature_pages = list(pagify(feature_list, delims=["\n"], page_length=1024))
                 for i, page in enumerate(feature_pages):
-                    field_name = _("Server features:") if i == 0 else _("Server features (continued):")
+                    field_name = (
+                        _("Server features:") if i == 0 else _("Server features (continued):")
+                    )
                     data.add_field(name=field_name, value=page, inline=False)
 
             if guild.premium_tier != 0:
