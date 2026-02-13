@@ -2,9 +2,9 @@
 Backing Up and Restoring Red
 ============
 
-Red can be backed up and restored to any device, regardless of operating system, as long as it is supported.
+Red can be backed up and restored to any device as long as it is supported operating system. See page: `version_guarantees`.
 
-However, backup steps must be done correctly to ensure that it can be restored without issue and minimal downtime.
+Backup steps must be done correctly to ensure that it can be restored without any issues occurring.
 
 #. Take note of the installed cogs and cog repositories with ``[p]cogs``, then ``[p]load downloader``, then ``[p]repo list`` (``[p]`` is considered as your bot's prefix).
 #. Stop the bot, ideally with ``[p]shutdown``.
