@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-01-04 00:13+0000\n"
+"POT-Creation-Date: 2025-03-04 22:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -196,12 +196,12 @@ msgstr "Verwijdert dubbele berichten in het kanaal van de laatste X berichten en
 "        - `<number>` Het aantal berichten dat gecontroleerd moet worden op duplicaten. Moet een positief geheel getal zijn,.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:749
+#: redbot/cogs/cleanup/cleanup.py:757
 #, docstring
 msgid "Manage the settings for the cleanup command."
 msgstr "Beheer de instellingen voor het opschonen commando."
 
-#: redbot/cogs/cleanup/cleanup.py:755
+#: redbot/cogs/cleanup/cleanup.py:763
 #, docstring
 msgid "Toggle clean up notification settings.\n\n"
 "        When enabled, a message will be sent per cleanup, showing how many messages were deleted.\n"
@@ -212,11 +212,11 @@ msgstr "Schakel opschonen notificatie instellingen aan/uit.\n\n"
 "        Dit bericht zal na 5 seconden worden verwijderd.\n"
 "        "
 
-#: redbot/cogs/cleanup/cleanup.py:763
+#: redbot/cogs/cleanup/cleanup.py:771
 msgid "I will no longer notify of message deletions."
 msgstr "Ik zal niet langer op de hoogte zijn van verwijderen van berichten."
 
-#: redbot/cogs/cleanup/cleanup.py:766
+#: redbot/cogs/cleanup/cleanup.py:774
 msgid "I will now notify of message deletions."
 msgstr "Ik zal nu op de hoogte zijn van het verwijderen van berichten."
 

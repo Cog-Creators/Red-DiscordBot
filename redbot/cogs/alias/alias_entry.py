@@ -59,7 +59,11 @@ class AliasEntry:
         extra = []
         while not view.eof:
             prev = view.index
-            word = view.get_quoted_word()
+            try:
+                word = view.get_quoted_word()
+            except discord.ext.commands.errors.UnexpectedQuoteError:
+                view.skip_ws()
+                continue
             if len(word) < view.index - prev:
                 word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
             extra.append(word.strip(" "))

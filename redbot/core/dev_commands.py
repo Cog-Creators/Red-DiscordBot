@@ -42,6 +42,18 @@ _ = Translator("Dev", __file__)
 # - or "```" and potentially also strip a single "\n" if it follows it immediately
 START_CODE_BLOCK_RE = re.compile(r"^((```[\w.+\-]+\n+(?!```))|(```\n*))")
 
+REMOVE_CONTROL_CHARS = [
+    "\u2066",
+    "\u2067",
+    "\u2068",
+    "\u202A",
+    "\u202B",
+    "\u202D",
+    "\u202E",
+    "\u2069",
+    "\u202C",
+]
+
 T = TypeVar("T")
 
 
@@ -75,6 +87,8 @@ async def maybe_await(coro: Union[T, Awaitable[T], Awaitable[Awaitable[T]]]) -> 
 
 def cleanup_code(content: str) -> str:
     """Automatically removes code blocks from the code."""
+    content = content.strip("".join(REMOVE_CONTROL_CHARS))
+
     # remove ```py\n```
     if content.startswith("```") and content.endswith("```"):
         return START_CODE_BLOCK_RE.sub("", content)[:-3].rstrip("\n")
@@ -158,9 +172,13 @@ class DevOutput:
             output.append(self.formatted_exc)
         elif self.always_include_result or self.result is not None:
             try:
-                output.append(str(self.result))
+                result = str(self.result)
+                # ensure that the result can be encoded (GH-6485)
+                result.encode("utf-8")
             except Exception as exc:
                 output.append(self.format_exception(exc))
+            else:
+                output.append(result)
         return sanitize_output(self.ctx, "".join(output))
 
     async def send(self, *, tick: bool = True) -> None:

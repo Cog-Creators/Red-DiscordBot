@@ -155,6 +155,22 @@ Here is an example of the :code:`async with` syntax:
             blah.append(new_blah)
         await ctx.send("The new blah value has been added!")
 
+There is also a :py:meth:`Group.all` method. This will return all the stored data associated
+with a specific config group as a :py:class:`dict`. By negating the need to excessively call config,
+this method can be particularly useful when multiple values are to be retrieved from the same group.
+
+Here is an example of :py:meth:`Group.all` usage:
+
+.. code-block:: python
+
+    @commands.command()
+    async def getall(self, ctx):
+        all_global_data = await self.config.all()
+        await ctx.send("Foobar is {foobar}, foo baz is {foo_baz}".format(
+            foobar=str(all_global_data["foobar"]),
+            foo_baz=str(all_global_data["foo"]["baz"])
+        ))
+
 
 .. important::
 
@@ -398,7 +414,7 @@ We're responsible pet owners here, so we've also got to have a way to feed our p
             # We could accomplish the same thing a slightly different way
             await self.config.user(ctx.author).pets.get_attr(pet_name).hunger.set(new_hunger)
 
-            await ctx.send("Your pet is now at {}/100 hunger!".format(new_hunger)
+            await ctx.send("Your pet is now at {}/100 hunger!".format(new_hunger))
 
 Of course, if we're less than responsible pet owners, there are consequences::
 
@@ -481,7 +497,7 @@ Config prioritizes being a safe data store without developers needing to
 know how end users have configured their bot. 
 
 This does come with some performance costs, so keep the following in mind when choosing to
-develop using config
+develop using config.
 
 * Config use in events should be kept minimal and should only occur
   after confirming the event needs to interact with config

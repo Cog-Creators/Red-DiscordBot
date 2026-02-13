@@ -6,7 +6,7 @@
 Installing the pre-requirements
 -------------------------------
 
-Red Hat Enterprise Linux (RHEL) 9.2-9.x and its derivatives have all required packages available in official repositories.
+Red Hat Enterprise Linux (RHEL) 9.4-9.x and its derivatives have all required packages available in official repositories.
 Install them with dnf:
 
 .. prompt:: bash

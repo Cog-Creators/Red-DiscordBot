@@ -18,7 +18,7 @@ msgstr ""
 #: redbot/cogs/modlog/modlog.py:19
 #, docstring
 msgid "Browse and manage modlog cases. To manage modlog settings, use `[p]modlogset`."
-msgstr ""
+msgstr "Просмотр и управление случаями журнала модерации. Для управления настройками журнала модерации, используйте `[p]modlogset`."
 
 #: redbot/cogs/modlog/modlog.py:32
 #, docstring
@@ -27,7 +27,7 @@ msgstr "Показать указанный случай."
 
 #: redbot/cogs/modlog/modlog.py:36
 msgid "That case does not exist for this server."
-msgstr ""
+msgstr "Этот случай не существует для данного сервера."
 
 #: redbot/cogs/modlog/modlog.py:45 redbot/cogs/modlog/modlog.py:82
 #: redbot/cogs/modlog/modlog.py:117

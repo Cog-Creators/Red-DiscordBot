@@ -282,19 +282,19 @@ msgstr "Warnen Sie das Mitglied für einen Spezifischen Grund.\n\n"
 
 #: redbot/cogs/warnings/warnings.py:395
 msgid "User `{user}` is not in the server."
-msgstr ""
+msgstr "Benutzer `{user}` ist nicht auf dem Server."
 
 #: redbot/cogs/warnings/warnings.py:401
 msgid "User `{user}` is not in the server. Would you like to ban them instead?"
-msgstr ""
+msgstr "Benutzer `{user}` ist nicht auf dem Server. Möchtest du ihn stattdessen bannen?"
 
 #: redbot/cogs/warnings/warnings.py:423
 msgid "An error occurred while trying to ban the user. Error: {error}"
-msgstr ""
+msgstr "Beim Versuch, den Benutzer zu bannen, ist ein Fehler aufgetreten. Fehler: {error}"
 
 #: redbot/cogs/warnings/warnings.py:428
 msgid "No action taken."
-msgstr ""
+msgstr "Keine Maßnahme ergriffen."
 
 #: redbot/cogs/warnings/warnings.py:434
 msgid "You cannot warn yourself."

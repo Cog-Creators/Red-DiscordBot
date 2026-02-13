@@ -2,7 +2,7 @@ import asyncio
 import discord
 import re
 from datetime import timezone
-from typing import Union, Set, Literal, Optional
+from typing import Union, Set, Literal, Optional, Iterable, Dict, Any
 
 from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
@@ -515,6 +515,22 @@ class Filter(commands.Cog):
                 texts.append(answer.text or "")
         for attachment in message.attachments:
             texts.append(attachment.description or "")
+
+        if (
+            message.reference is not None
+            and message.reference.type is discord.MessageReferenceType.forward
+        ):
+            # unlike user messages, forwards can include things that bots can send
+            # since you can forward a bot's message
+            for snapshot in message.message_snapshots:
+                texts.append(snapshot.content)
+                for attachment in snapshot.attachments:
+                    texts.append(attachment.description or "")
+                for embed in snapshot.embeds:
+                    texts.extend(_extract_string_values(embed.to_dict().values()))
+                for component in _walk_all_components(snapshot.components):
+                    texts.extend(_extract_string_values_from_component(component))
+
         hits = await self.filter_hits(message.channel, *texts)
 
         if hits:
@@ -624,3 +640,61 @@ class Filter(commands.Cog):
             except discord.HTTPException:
                 pass
             return
+
+
+_ChildComponent = Union[
+    discord.Button,
+    discord.FileComponent,
+    discord.LabelComponent,
+    discord.MediaGalleryComponent,
+    discord.SelectMenu,
+    discord.TextDisplay,
+    discord.TextInput,
+    discord.ThumbnailComponent,
+]
+
+
+def _extract_string_values_from_component(component: _ChildComponent) -> Iterable[str]:
+    for value in _extract_values_from_component(component):
+        if value:
+            yield value
+
+
+def _extract_values_from_component(component: _ChildComponent) -> Iterable[Optional[str]]:
+    if isinstance(component, discord.Button):
+        yield component.url
+        yield component.label
+    elif isinstance(component, discord.MediaGalleryComponent):
+        for item in component.items:
+            yield item.description
+    elif isinstance(component, discord.SelectMenu):
+        yield component.placeholder
+    elif isinstance(component, discord.TextDisplay):
+        yield component.content
+    elif isinstance(component, discord.ThumbnailComponent):
+        yield component.description
+    # FileComponent does not have any user-provided text fields
+    # LabelComponent and TextInput are modal-only components
+
+
+def _walk_all_components(components: Iterable[discord.Component]) -> Iterable[_ChildComponent]:
+    for item in components:
+        if isinstance(item, discord.ActionRow):
+            yield from item.children
+        elif isinstance(item, discord.Container):
+            yield from _walk_all_components(item.children)
+        elif isinstance(item, discord.SectionComponent):
+            yield from item.children
+            yield item.accessory
+        else:
+            yield item
+
+
+def _extract_string_values(data: Iterable[Any]) -> Iterable[str]:
+    for value in data:
+        if isinstance(value, str):
+            yield value
+        elif isinstance(value, list):
+            yield from _extract_string_values(value)
+        elif isinstance(value, dict):
+            yield from _extract_string_values(value.values())

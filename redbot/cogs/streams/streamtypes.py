@@ -221,7 +221,7 @@ class YoutubeStream(Stream):
         if vid_data["liveStreamingDetails"].get("scheduledStartTime", None) is not None:
             if "actualStartTime" not in vid_data["liveStreamingDetails"]:
                 start_time = parse_time(vid_data["liveStreamingDetails"]["scheduledStartTime"])
-                start_time_unix = time.mktime(start_time.timetuple())
+                start_time_unix = start_time.timestamp()
                 start_in = start_time - datetime.now(timezone.utc)
                 if start_in.total_seconds() > 0:
                     embed.description = _("This stream will start <t:{time}:R>").format(
