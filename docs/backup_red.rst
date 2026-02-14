@@ -11,7 +11,7 @@ Backup steps are to be done in order and carefully to avoid any issues.
 #. Activate your venv, and run ``redbot-setup backup <instancename>``, replacing ``<instancename>`` with the name of your instance.
 #. Copy your backup file to the new machine/location.
 #. Extract the file to a location of your choice (remember the full path and make sure that the user you are going to install/run Red under can access this path).
-#. :ref:`Install Red <install_guides/index>` as normal on the new machine/location.
+#. :ref:`Install Red <install-guides>` as normal on the new machine/location.
 #. Run ``redbot-setup`` in your venv to create a new instance, using the path you remembered above as your data path.
 #. Start your new instance.
 #. Re-add the cog repositories using the same names as before.
