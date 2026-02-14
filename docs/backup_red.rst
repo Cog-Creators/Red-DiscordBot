@@ -1,6 +1,6 @@
-============
+============================
 Backing Up and Restoring Red
-============
+============================
 
 Red can be backed up and restored to any device as long as it is supported operating system. See page: `version_guarantees`.
 
