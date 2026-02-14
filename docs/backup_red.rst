@@ -2,9 +2,9 @@
 Backing Up and Restoring Red
 ============================
 
-Red can be backed up and restored to any device as long as it is supported operating system. See page: `version_guarantees`.
+Red can be backed up and restored to any device as long as it is supported operating system. See page: :ref:`end-user-guarantees`.
 
-Backup steps must be done correctly to ensure that it can be restored without any issues occurring.
+Backup steps are to be done in order and carefully to avoid any issues.
 
 #. Take note of the installed cogs and cog repositories with ``[p]cogs``, then ``[p]load downloader``, then ``[p]repo list`` (``[p]`` is considered as your bot's prefix).
 #. Stop the bot, ideally with ``[p]shutdown``.
@@ -21,3 +21,13 @@ Backup steps must be done correctly to ensure that it can be restored without an
     .. note::
 
         The config (data) from cogs has been saved, but not the code itself.
+
+    .. tip::
+
+        You can fix permissions (if needed) on your directory using:
+
+        .. code-block:: bash
+
+            sudo chown -R <user>:<user> ~/.local
+
+        Replace ``<user>`` with your actual username.
