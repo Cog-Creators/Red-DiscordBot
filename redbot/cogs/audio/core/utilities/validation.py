@@ -61,7 +61,13 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
         self,
         config: Config,
         ctx_or_channel: Optional[
-            Union[Context, discord.TextChannel, discord.VoiceChannel, discord.Thread]
+            Union[
+                Context,
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.Thread,
+            ]
         ],
         query: str,
         query_obj: Query,

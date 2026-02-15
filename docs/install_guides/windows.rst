@@ -39,7 +39,7 @@ For Audio support, you should also run the following command before exiting:
 
 .. prompt:: powershell
 
-    choco upgrade temurin11 -y
+    choco upgrade temurin17 -y
 
 
 From here, exit the prompt then continue onto `creating-venv-windows`.
@@ -52,7 +52,7 @@ Manually installing dependencies
 
 .. attention:: There are additional configuration steps required which are
                not documented for installing dependencies manually.
-               These dependencies are only listed seperately here for
+               These dependencies are only listed separately here for
                reference purposes.
 
 * `MSVC Build tools <https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019>`_
@@ -66,7 +66,7 @@ Manually installing dependencies
 
 .. attention:: Please choose the option to "Git from the command line and also from 3rd-party software" in Git's setup.
 
-* `Java 11 <https://adoptium.net/temurin/releases/?version=11>`_ - needed for Audio
+* `Java 17 <https://adoptium.net/temurin/releases/?version=17>`_ - needed for Audio
 
 From here, continue onto `creating-venv-windows`.
 
