@@ -188,9 +188,10 @@ via the ``unattended-upgrades`` package. This ensures that you are automatically
 the latest security patches. Most stable LTS distributions work well with this package and increase
 system security without compromising stability.
 
-Even though you are receiving automatic updates, you should try and plan monthly 
-maintenance to restart the server to apply any kernel patches or updates not handled automatically. 
-Uptime based on time since last restart is not a bragging right, but a security blight.
+.. note::
+    Even though you are receiving automatic updates, you should try and plan to restart your host 
+    monthly, allowing any kernel patches from updates requiring a restart to fully apply. Uptime based 
+    on time since last restart is not a bragging right, but a security blight.
 
 For a more in-depth guide to securing your Linux host, see `DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers <https://www.digitalocean.com/community/tutorials/recommended-security-measures-to-protect-your-servers>`_.
 
