@@ -192,8 +192,7 @@ Even though you are receiving automatic updates, you should try and plan monthly
 maintenance to restart the server to apply any kernel patches. Uptime in regards to time since last restart 
 is not a bragging right, but a security blight.
 
-For a more in-depth guide to securing your Linux host, see 
-`DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers <https://www.digitalocean.com/community/tutorials/recommended-security-measures-to-protect-your-servers>`_.
+For a more in-depth guide to securing your Linux host, see `DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers <https://www.digitalocean.com/community/tutorials/recommended-security-measures-to-protect-your-servers>`_.
 
 .. _host-list-best-practices:
 
@@ -201,7 +200,7 @@ For a more in-depth guide to securing your Linux host, see
 Bot Best Practices
 ------------------
 
-:ref:`Public bots are not supported. <intents-public-bots>` Red was designed for server owners with a few servers. 
+:ref:`Public bots are not supported <intents-public-bots>`. Red was designed for server owners with a few servers. 
 Knowing this, you should be aware of what servers your bot is in, including their member count and what cogs you 
 make available to them. This allows you to choose the right amount of hardware to host your bot with.
 
