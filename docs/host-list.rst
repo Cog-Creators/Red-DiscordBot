@@ -157,6 +157,8 @@ Free Hosting
     the ability to terminate service at any time, for any reason, without warning or 
     consent from you. Make frequent data backups and always have a plan B host.
 
+.. _host-list-securing-host:
+
 ------------------
 Securing Your Host
 ------------------
@@ -190,14 +192,15 @@ maintenance to restart the server to apply any kernel patches. Uptime in regards
 is not a bragging right, but a security blight.
 
 For a more in-depth guide to securing your Linux host, see 
-`DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers
-    <https://www.digitalocean.com/community/tutorials/recommended-security-measures-to-protect-your-servers>`_.
+`DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers <https://www.digitalocean.com/community/tutorials/recommended-security-measures-to-protect-your-servers>`_.
+
+.. _host-list-best-practices:
 
 ------------------
 Bot Best Practices
 ------------------
 
-:ref:`Public bots are not supported. <public-bots>` Red was designed for server owners with a few servers. 
+:ref:`Public bots are not supported. <intents-public-bots>` Red was designed for server owners with a few servers. 
 Knowing this, you should be aware of what servers your bot is in, including their member count and what cogs you 
 make available to them. This allows you to choose the right amount of hardware to host your bot with.
 
