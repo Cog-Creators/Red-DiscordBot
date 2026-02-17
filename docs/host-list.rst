@@ -166,7 +166,7 @@ Securing Your Host
     and security, only a few basics with a plea to remain smart and diligent, securing
     your machine as much as possible from any and all threats.
 
-| Installing Red and running your own bot is fun. Waking up to a crashed bot, server host compromise, 
+Installing Red and running your own bot is fun. Waking up to a crashed bot, server host compromise, 
 etc. is not. Most VPSes are \"unmanaged\" and provide what is known as \"root access\". This means 
 you are responsible for the server itself including maintenance, security patches, etc.
 
@@ -183,31 +183,34 @@ is up to you and your security stance.
 Next, you should configure `Automatic updates <https://documentation.ubuntu.com/server/how-to/software/automatic-updates/>`__ 
 via the ``unattended-upgrades`` package. This ensures that you are automatically kept up to date with 
 the latest security patches. Most stable LTS distributions work well with this package and cause no 
-issues with system stability. Even though you are receiving automatic updates, you should try and plan monthly 
+issues with system stability. 
+
+Even though you are receiving automatic updates, you should try and plan monthly 
 maintenance to restart the server to apply any kernel patches. Uptime in regards to time since last restart 
 is not a bragging right, but a security blight.
 
-For a more in-depth guide on how to secure your Linux host, see `DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers
+For a more in-depth guide to securing your Linux host, see 
+`DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers
     <https://www.digitalocean.com/community/tutorials/recommended-security-measures-to-protect-your-servers>`_.
 
 ------------------
 Bot Best Practices
 ------------------
 
-:ref:`Public bots are not supported. <end-user-guarantees>` Red was designed for server owners with a few servers. 
+:ref:`Public bots are not supported. <public-bots>` Red was designed for server owners with a few servers. 
 Knowing this, you should be aware of what servers your bot is in, including their member count and what cogs you 
 make available to them. This allows you to choose the right amount of hardware to host your bot with.
 
-For example, if you plan to make the ``audio`` cog available to the servers your bot is in, you should ramp up 
+For example, if you plan to make the ``audio`` cog available to the servers your bot is in, you should increase 
 the amount of memory your host has to account for the increase in system requirements.
 
-If your application is a part of a Team, you must understand that giving bot ownership permissions to the team 
-is similar to giving all team members (Developer and above) access to your server host. 
-The owner can access any data that is present on the host system.
+If your bot/application is a part of a Team, you must understand that giving bot ownership permissions to the team 
+is similar to giving all team members (Developer role and above) semi-access to your server host. 
+Bot owners can access any data that is present on the host system.
 
 .. warning::
     Only the person who is hosting Red should be owner. This has serious security implications.
-    This also goes for passing owner and co-owner flags in the launch parameters.
+    This also goes for passing --owner and --co-owner flags in Red's launch parameters.
 
 Ultimately, as the owner, you are responsible for the security of your host and bot. You should know your way around
 them and be able to troubleshoot, maintain, and fix them if you are planning to host Red (especially for others).
