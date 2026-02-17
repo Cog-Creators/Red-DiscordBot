@@ -36,7 +36,7 @@ Hosting on a VPS or Dedicated Server
   recommended option. Dedicated servers also work but are overpowered and cost 
   ineffective unless one plans to run a very large bot or use their server for 
   more than just hosting Red. If you have already created an instance, Red can be moved to a different 
-  server for hosting using the :ref:`backup/restore process <backup-red>`.
+  server for hosting using the :ref:`backup/restore process <backup_red>`.
 
 .. warning::
     Please be aware that a Linux server is controlled through a command line.
