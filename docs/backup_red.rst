@@ -1,3 +1,5 @@
+.. _backup-red:
+
 ============================
 Backing Up and Restoring Red
 ============================
