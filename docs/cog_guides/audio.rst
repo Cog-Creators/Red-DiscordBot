@@ -180,6 +180,7 @@ Owner-Only Audioset Commands
   reduce 429 Forbidden errors from song services, and also caches Spotify song lookups. Most users will not need to touch this option.
 * ``[p]audioset cacheage`` - How long the entries in the cache last. By default, song metadata is cached for 365 days (1 year).
 * ``[p]audioset status`` - Show the now playing song in the bot's status, or show how many servers the bot is playing music on, if more than one.
+* ``[p]audioset voicestatus`` - Show the now playing song in the current voice channel status.
 * ``[p]audioset restrictions global`` - Manage the keyword blocklist/allowlist for the whole bot.
 
 .. _guild-audioset-commands:
@@ -1763,6 +1764,24 @@ audioset status
 **Description**
 
 Enable/disable tracks' titles as status.
+
+.. _audio-command-audioset-voicestatus:
+
+""""""""""""""""""""
+audioset voicestatus
+""""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]audioset voicestatus 
+
+**Description**
+
+Enable/disable tracks' titles as voice channel status.
 
 .. _audio-command-audioset-thumbnail:
 

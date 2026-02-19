@@ -988,6 +988,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         bumpped_shuffle = _("Enabled") if data["shuffle_bumped"] else _("Disabled")
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
+        voice_channel_status = _("Enabled") if global_data["vc_status"] else _("Disabled")
         persist_queue = _("Enabled") if data["persist_queue"] else _("Disabled")
 
         countrycode = data["country_code"]
@@ -1036,6 +1037,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "Shuffle bumped:   [{bumpped_shuffle}]\n"
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n"
+            "Song as vc status:[{vc_status}]\n"
             "Spotify search:   [{countrycode}]\n"
         ).format(
             max_volume=maxvolume,
@@ -1045,6 +1047,7 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             shuffle=song_shuffle,
             notify=song_notify,
             status=song_status,
+            vc_status=voice_channel_status,
             bumpped_shuffle=bumpped_shuffle,
         )
         if thumbnail:
@@ -1218,6 +1221,21 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             title=_("Setting Changed"),
             description=_("Song titles as status: {true_or_false}.").format(
                 true_or_false=_("Enabled") if not status else _("Disabled")
+            ),
+        )
+
+    @command_audioset.command(name="voicestatus")
+    @commands.is_owner()
+    @commands.guild_only()
+    async def command_audioset_voicestatus(self, ctx: commands.Context):
+        """Enable/disable tracks' titles as voice channel status."""
+        vc_status = await self.config.vc_status()
+        await self.config.vc_status.set(not vc_status)
+        await self.send_embed_msg(
+            ctx,
+            title=_("Setting Changed"),
+            description=_("Song titles as voice channel status: {true_or_false}.").format(
+                true_or_false=_("Enabled") if not vc_status else _("Disabled")
             ),
         )
 

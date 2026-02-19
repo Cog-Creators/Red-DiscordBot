@@ -102,7 +102,17 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    async def update_voice_channel_presence(
+        self, channel: discord.VoiceChannel, track: lavalink.Track
+    ) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     async def get_active_player_count(self) -> Tuple[str, int]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_current_track_title(self) -> str:
         raise NotImplementedError()
 
     @abstractmethod

@@ -97,6 +97,7 @@ class Audio(
             global_db_enabled=False,
             global_db_get_timeout=5,
             status=False,
+            vc_status=False,
             use_external_lavalink=False,
             restrict=True,
             localpath=str(cog_data_path(raw_name="Audio")),
