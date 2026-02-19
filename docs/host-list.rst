@@ -213,7 +213,8 @@ Bot owners can access any data that is present on the host system.
 
 .. warning::
     Only the person who is hosting Red should be owner. This has serious security implications.
-    This also goes for passing ``--owner`` and ``--co-owner`` flags in Red's launch parameters.
+    This means passing ``--team-owners-are-members``, ``--owner``, and ``--co-owner`` flags in Red's launch parameters
+    is a security risk by default. Only people you trust entirely should have this level of access.
 
 Ultimately, as the owner, you are responsible for the security of your host and bot. You should know your way around
 them and be able to troubleshoot, maintain, and fix them if you are planning to host Red (especially for others).
