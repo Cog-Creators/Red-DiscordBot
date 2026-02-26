@@ -234,7 +234,6 @@ class Red(
 
         if cli_flags.enable_debug_events:
             kwargs["enable_debug_events"] = True
-        # temp so checks passes
 
         self._uptime = None
         self._checked_time_accuracy = None
