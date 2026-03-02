@@ -1240,6 +1240,15 @@ class Red(
                 )
             )
 
+        if self._cli_flags.cog_path:
+            for path in self._cli_flags.cog_path:
+                path = Path(path)
+                try:
+                    await self._cog_mgr.add_path(path, persist=False)
+                    log.info("Added cog path: %s", path)
+                except Exception:
+                    log.exception("Failed to add cog path: %s", path)
+
         if packages:
             # Load permissions first, for security reasons
             try:
