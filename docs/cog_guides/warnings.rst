@@ -337,10 +337,10 @@ Set the channel where warnings should be sent to.
 
 * ``[channel]``: |channel-input| Leave empty to use the channel ``[p]warn`` command was called in.
 
-.. _warnings-command-warningset-mywarnings_sendtodms:
+.. _warnings-command-warningset-mywarnings-sendtodms:
 
 """""""""""""""""""""""""""""""
-warningset mywarnings_sendtodms
+warningset mywarnings sendtodms
 """""""""""""""""""""""""""""""
 
 **Syntax**
