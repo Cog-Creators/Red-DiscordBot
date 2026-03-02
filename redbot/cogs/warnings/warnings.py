@@ -164,9 +164,7 @@ class Warnings(commands.Cog):
     async def warnchannel(
         self,
         ctx: commands.Context,
-        channel: Union[
-            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
-        ] = None,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel] = None,
     ):
         """Set the channel where warnings should be sent to.
 
@@ -176,15 +174,11 @@ class Warnings(commands.Cog):
         if channel:
             await self.config.guild(guild).warn_channel.set(channel.id)
             await ctx.send(
-                _("The warn channel has been set to {channel}.").format(
-                    channel=channel.mention
-                )
+                _("The warn channel has been set to {channel}.").format(channel=channel.mention)
             )
         else:
             await self.config.guild(guild).warn_channel.set(channel)
-            await ctx.send(
-                _("Warnings will now be sent in the channel command was used in.")
-            )
+            await ctx.send(_("Warnings will now be sent in the channel command was used in."))
 
     @warningset.command()
     @commands.guild_only()
@@ -193,20 +187,14 @@ class Warnings(commands.Cog):
         Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.
         """
         await self.config.guild(ctx.guild).toggle_channel.set(true_or_false)
-        channel = self.bot.get_channel(
-            await self.config.guild(ctx.guild).warn_channel()
-        )
+        channel = self.bot.get_channel(await self.config.guild(ctx.guild).warn_channel())
         if true_or_false:
             if channel:
                 await ctx.send(
-                    _("Warnings will now be sent to {channel}.").format(
-                        channel=channel.mention
-                    )
+                    _("Warnings will now be sent to {channel}.").format(channel=channel.mention)
                 )
             else:
-                await ctx.send(
-                    _("Warnings will now be sent in the channel command was used in.")
-                )
+                await ctx.send(_("Warnings will now be sent in the channel command was used in."))
         else:
             await ctx.send(_("Toggle channel has been disabled."))
 
@@ -228,9 +216,7 @@ class Warnings(commands.Cog):
         if true_or_false:
             await ctx.send(_("I will send self requested user warnings to their DMs."))
         else:
-            await ctx.send(
-                _("I will send self requested user warnings to the current channel.")
-            )
+            await ctx.send(_("I will send self requested user warnings to the current channel."))
 
     @commands.group()
     @commands.guild_only()
@@ -296,9 +282,7 @@ class Warnings(commands.Cog):
                 registered_actions.remove(to_remove)
                 await ctx.tick()
             else:
-                await ctx.send(
-                    _("No action named {name} exists!").format(name=action_name)
-                )
+                await ctx.send(_("No action named {name} exists!").format(name=action_name))
 
     @commands.group()
     @commands.guild_only()
@@ -388,17 +372,13 @@ class Warnings(commands.Cog):
                         title=_("Action: {name}").format(name=r["action_name"]),
                         color=await ctx.embed_colour(),
                     )
-                    em.add_field(
-                        name=_("Points"), value="{}".format(r["points"]), inline=False
-                    )
+                    em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
                     em.add_field(
                         name=_("Exceed command"),
                         value=r["exceed_command"],
                         inline=False,
                     )
-                    em.add_field(
-                        name=_("Drop command"), value=r["drop_command"], inline=False
-                    )
+                    em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
                     msg_list.append(em)
                 else:
                     msg_list.append(
@@ -436,9 +416,7 @@ class Warnings(commands.Cog):
             member = user
         elif isinstance(user, int):
             if not ctx.channel.permissions_for(ctx.guild.me).ban_members:
-                await ctx.send(
-                    _("User `{user}` is not in the server.").format(user=user)
-                )
+                await ctx.send(_("User `{user}` is not in the server.").format(user=user))
                 return
             user_obj = self.bot.get_user(user) or discord.Object(id=user)
 
@@ -466,9 +444,9 @@ class Warnings(commands.Cog):
                     )
                 except discord.HTTPException as error:
                     await ctx.send(
-                        _(
-                            "An error occurred while trying to ban the user. Error: {error}"
-                        ).format(error=error)
+                        _("An error occurred while trying to ban the user. Error: {error}").format(
+                            error=error
+                        )
                     )
             else:
                 confirm.message = await ctx.send(_("No action taken."))
@@ -643,9 +621,9 @@ class Warnings(commands.Cog):
                     if mod_id == 0xDE1:
                         mod = _("Deleted Moderator")
                     else:
-                        mod = ctx.bot.get_user(mod_id) or _(
-                            "Unknown Moderator ({})"
-                        ).format(mod_id)
+                        mod = ctx.bot.get_user(mod_id) or _("Unknown Moderator ({})").format(
+                            mod_id
+                        )
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -686,9 +664,7 @@ class Warnings(commands.Cog):
                         mod = None
                     else:
                         bot = ctx.bot
-                        mod = bot.get_user(mod_id) or _(
-                            "Unknown Moderator ({})"
-                        ).format(mod_id)
+                        mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
                     msg += _("{num_points} point warning {reason_name}").format(
                         num_points=user_warnings[key]["points"],
                         reason_name=key,
@@ -711,9 +687,7 @@ class Warnings(commands.Cog):
                         )
                         await ctx.tick()
                     except discord.Forbidden:
-                        await ctx.send(
-                            _("I could not send you a DM. Do you have DMs disabled?")
-                        )
+                        await ctx.send(_("I could not send you a DM. Do you have DMs disabled?"))
 
                 else:
                     await ctx.send_interactive(
