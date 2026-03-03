@@ -1,6 +1,7 @@
 import argparse
 import logging
 import logging.handlers
+import os
 import pathlib
 import re
 import sys
@@ -286,7 +287,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     root_logger.setLevel(level)
     # DEBUG logging for discord.py is a bit too ridiculous :)
     dpy_logger = logging.getLogger("discord")
-    dpy_logger.setLevel(logging.INFO)
+    dpy_logger.setLevel(logging.DEBUG if os.getenv("RED_DPY_DEBUG") == "1" else logging.INFO)
 
     rich_console = rich.get_console()
     rich.reconfigure(tab_size=4)
