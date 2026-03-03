@@ -45,6 +45,13 @@ from .utils import (
 )
 from ...core.utils import AsyncIter
 
+try:
+    from red_yt_cipher_solver import SolverServerProcess
+except ModuleNotFoundError:
+    _HAS_CIPHER_SOLVER = False
+else:
+    _HAS_CIPHER_SOLVER = True
+
 if TYPE_CHECKING:
     from . import Audio
 
@@ -146,6 +153,8 @@ class ServerManager:
         self._args = []
         self._pipe_task = None
         self.plugins: dict[str, str] = {}
+        self.cipher_server: Optional[SolverServerProcess] = None
+        self.cipher_server_task: Optional[asyncio.Task] = None
 
     @property
     def lavalink_download_dir(self) -> pathlib.Path:
@@ -205,6 +214,17 @@ class ServerManager:
                 raise ManagedLavalinkPreviouslyShutdownException(
                     "Server manager has already been used - create another one"
                 )
+
+        if _HAS_CIPHER_SOLVER:
+            self.cipher_server = SolverServerProcess(
+                log_file=self.lavalink_download_dir / "logs" / "solver-server.log"
+            )
+            # TODO: monitor the task
+            self.cipher_server_task = asyncio.create_task(self.cipher_server.run())
+            if not await self.cipher_server.wait_for_startup():
+                log.warning("Failed to start the cipher server. Will continue without one.")
+                self.cipher_server = None
+
         await self.process_settings()
         await self.maybe_download_jar()
         args, msg = await self._get_jar_args()
@@ -245,6 +265,10 @@ class ServerManager:
 
     async def process_settings(self):
         data = managed_node.generate_server_config(await self._config.yaml.all())
+        if self.cipher_server is not None:
+            plugin_config = data.setdefault("plugins", {}).setdefault("youtube", {})
+            cipher_config = plugin_config.setdefault("remoteCipher", {})
+            cipher_config["url"] = self.cipher_server.base_url
 
         with open(self.lavalink_app_yml, "w", encoding="utf-8") as f:
             yaml.safe_dump(data, f)
@@ -378,6 +402,10 @@ class ServerManager:
         if self.start_monitor_task is not None:
             self.start_monitor_task.cancel()
         await self._partial_shutdown()
+        if self.cipher_server:
+            await self.cipher_server.close()
+            if self.cipher_server_task:
+                await self.cipher_server_task
 
     async def _partial_shutdown(self) -> None:
         self.ready.clear()
