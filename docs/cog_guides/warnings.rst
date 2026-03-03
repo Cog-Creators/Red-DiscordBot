@@ -291,7 +291,7 @@ warningset showmoderator
 
 **Description**
 
-Decide whether the name of the moderator warning a user should be included in the DM to that user.
+Decide whether the name of the moderator warning a user should be included in the DM to that user when being warned or self requesting their warnings.
 
 **Arguments**
 
@@ -336,6 +336,26 @@ Set the channel where warnings should be sent to.
 **Arguments**
 
 * ``[channel]``: |channel-input| Leave empty to use the channel ``[p]warn`` command was called in.
+
+.. _warnings-command-warningset-mywarnings-sendtodms:
+
+"""""""""""""""""""""""""""""""
+warningset mywarnings sendtodms
+"""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]warningset mywarnings_sendtodms <true_or_false>
+
+**Description**
+
+Whether a member self requesting their warnings with ``[p]mywarnings`` should get them sent to DMs or in the current channel.
+
+**Arguments**
+
+* ``<true_or_false>``: |bool-input|
 
 .. _warnings-command-warnreason:
 
