@@ -60,7 +60,7 @@ red-commons==1.0.0
     # via
     #   -r base.in
     #   red-lavalink
-red-lavalink==0.11.0
+red-lavalink==0.11.1
     # via -r base.in
 rich==14.1.0
     # via -r base.in
