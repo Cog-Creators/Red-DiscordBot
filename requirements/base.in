@@ -18,7 +18,8 @@ schema
 typing_extensions
 yarl
 distro; sys_platform == "linux"
-uvloop; sys_platform != "win32" and platform_python_implementation == "CPython"
+# https://github.com/MagicStack/uvloop/issues/702
+uvloop>=0.21.0,!=0.22.0,!=0.22.1; sys_platform != "win32" and platform_python_implementation == "CPython"
 
 # Used by discord.py[speedup]. See Pull request #6587 for more info.
 Brotli

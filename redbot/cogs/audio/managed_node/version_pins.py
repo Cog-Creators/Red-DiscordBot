@@ -11,8 +11,8 @@ __all__ = (
 )
 
 
-JAR_VERSION: Final[LavalinkVersion] = LavalinkVersion(3, 7, 12, red=1)
-YT_PLUGIN_VERSION: Final[str] = "1.13.5"
+JAR_VERSION: Final[LavalinkVersion] = LavalinkVersion(3, 7, 13, red=2)
+YT_PLUGIN_VERSION: Final[str] = "1.18.0"
 # keep this sorted from oldest to latest
 SUPPORTED_JAVA_VERSIONS: Final[Tuple[int, ...]] = (11, 17)
 LATEST_SUPPORTED_JAVA_VERSION: Final = SUPPORTED_JAVA_VERSIONS[-1]

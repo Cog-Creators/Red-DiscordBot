@@ -108,7 +108,6 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
     #. Start your bot with ``--no-cogs --load-cogs downloader`` flags, for example:
 
         .. prompt:: batch
-
             :prompts: (redenv) C:\\>
 
             redbot <your instance name> --no-cogs --load-cogs downloader

@@ -12,13 +12,13 @@ apsw==3.46.1.0
     # via -r base.in
 attrs==25.3.0
     # via aiohttp
-babel==2.17.0
+babel==2.18.0
     # via -r base.in
-brotli==1.1.0
+brotli==1.2.0
     # via -r base.in
 click==8.1.8
     # via -r base.in
-discord-py==2.6.3
+discord-py==2.7.1
     # via
     #   -r base.in
     #   red-lavalink
@@ -26,7 +26,7 @@ frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
-idna==3.10
+idna==3.11
     # via yarl
 markdown==3.7
     # via -r base.in
@@ -40,19 +40,19 @@ multidict==6.1.0
     #   yarl
 orjson==3.10.15
     # via -r base.in
-packaging==25.0
+packaging==26.0
     # via -r base.in
 platformdirs==4.3.6
     # via -r base.in
 propcache==0.2.0
     # via yarl
-psutil==7.0.0
+psutil==7.2.2
     # via -r base.in
 pygments==2.19.2
     # via rich
 python-dateutil==2.9.0.post0
     # via -r base.in
-pyyaml==6.0.2
+pyyaml==6.0.3
     # via -r base.in
 rapidfuzz==3.9.7
     # via -r base.in
@@ -60,11 +60,11 @@ red-commons==1.0.0
     # via
     #   -r base.in
     #   red-lavalink
-red-lavalink==0.11.0
+red-lavalink==0.11.1
     # via -r base.in
-rich==14.1.0
+rich==14.3.3
     # via -r base.in
-schema==0.7.7
+schema==0.7.8
     # via -r base.in
 six==1.17.0
     # via python-dateutil
@@ -86,7 +86,7 @@ distro==1.9.0; sys_platform == "linux" and sys_platform == "linux"
     # via -r base.in
 importlib-metadata==8.5.0; python_version != "3.10" and python_version != "3.11"
     # via markdown
-pytz==2025.2; python_version == "3.8"
+pytz==2026.1.post1; python_version == "3.8"
     # via babel
 uvloop==0.21.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
     # via -r base.in

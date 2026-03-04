@@ -32,12 +32,11 @@ First, we would like to make something clear:
 Hosting on a VPS or Dedicated Server
 ------------------------------------
 
-| You can host Red in a VPS running Linux or Windows. Using a Linux VPS is the
+| You can host Red on a VPS running Linux or Windows. Using a Linux VPS is the
   recommended option. Dedicated servers also work but are overpowered and cost 
   ineffective unless one plans to run a very large bot or use their server for 
   more than just hosting Red. If you have already created an instance, Red can be moved to a different 
-  server for hosting with a backup/restore process. More information and guidance
-  about this process is available in the `Red Support Server <https://discord.com/invite/red>`_.
+  server for hosting using the :doc:`backup/restore process </backup_red>`.
 
 .. warning::
     Please be aware that a Linux server is controlled through a command line.
