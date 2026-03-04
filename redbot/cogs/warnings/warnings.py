@@ -648,52 +648,54 @@ class Warnings(commands.Cog):
         msg = ""
         guild_settings = await self.config.guild(ctx.guild).all()
         member_settings = self.config.member(user)
-        async with member_settings.warnings() as user_warnings:
-            if not user_warnings.keys():  # no warnings for the user
-                if guild_settings["mywarnings_in_dms"]:
-                    await ctx.tick()
+        user_warnings = await member_settings.warnings()
+        if not user_warnings:  # no warnings for the user
+            if guild_settings["mywarnings_in_dms"]:
+                try:
                     await user.send(_("You have no warnings!"))
+                except discord.Forbidden:
+                    await ctx.send(_("I could not send you a DM. Do you have DMs disabled?"))
                 else:
-                    await ctx.send(_("You have no warnings!"))
+                    await ctx.tick()
             else:
-                for key in user_warnings.keys():
-                    mod_id = user_warnings[key]["mod"]
-                    if mod_id == 0xDE1:
-                        mod = _("Deleted Moderator")
-                    elif not guild_settings["show_mod"]:
-                        mod = None
-                    else:
-                        bot = ctx.bot
-                        mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
-                    msg += _("{num_points} point warning {reason_name}").format(
-                        num_points=user_warnings[key]["points"],
-                        reason_name=key,
-                    )
-                    if mod is not None:
-                        msg += _(" issued by {user}").format(user=mod)
-                    msg += _(" for {description} \n").format(
-                        description=user_warnings[key]["description"]
-                    )
+                await ctx.send(_("You have no warnings!"))
+            return
 
-                if guild_settings["mywarnings_in_dms"]:
-                    if user.dm_channel is None:
-                        await user.create_dm()
-                    try:
-                        await ctx.bot.send_interactive(
-                            channel=user.dm_channel,
-                            messages=pagify(msg, shorten_by=58),
-                            user=user,
-                            box_lang=_("Warnings for {user}").format(user=user),
-                        )
-                        await ctx.tick()
-                    except discord.Forbidden:
-                        await ctx.send(_("I could not send you a DM. Do you have DMs disabled?"))
+        for key in user_warnings:
+            mod_id = user_warnings[key]["mod"]
+            if mod_id == 0xDE1:
+                mod = _("Deleted Moderator")
+            elif not guild_settings["show_mod"]:
+                mod = None
+            else:
+                bot = ctx.bot
+                mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+            msg += _("{num_points} point warning {reason_name}").format(
+                num_points=user_warnings[key]["points"],
+                reason_name=key,
+            )
+            if mod is not None:
+                msg += _(" issued by {user}").format(user=mod)
+            msg += _(" for {description}\n").format(description=user_warnings[key]["description"])
 
-                else:
-                    await ctx.send_interactive(
-                        pagify(msg, shorten_by=58),
-                        box_lang=_("Warnings for {user}").format(user=user),
-                    )
+        if guild_settings["mywarnings_in_dms"]:
+            try:
+                await ctx.bot.send_interactive(
+                    channel=user,
+                    messages=pagify(msg, shorten_by=58),
+                    user=user,
+                    box_lang=_("Warnings for {user}").format(user=user),
+                )
+            except discord.Forbidden:
+                await ctx.send(_("I could not send you a DM. Do you have DMs disabled?"))
+            else:
+                await ctx.tick()
+
+        else:
+            await ctx.send_interactive(
+                pagify(msg, shorten_by=58),
+                box_lang=_("Warnings for {user}").format(user=user),
+            )
 
     @commands.command()
     @commands.guild_only()

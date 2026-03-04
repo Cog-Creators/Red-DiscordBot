@@ -347,7 +347,7 @@ warningset mywarnings sendtodms
 
 .. code-block:: none
 
-    [p]warningset mywarnings_sendtodms <true_or_false>
+    [p]warningset mywarnings sendtodms <true_or_false>
 
 **Description**
 
