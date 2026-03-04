@@ -1,5 +1,87 @@
 .. Red changelogs
 
+Redbot 3.5.23 (2026-03-04)
+==========================
+
+| Thanks to all these amazing people that contributed to this release:
+| :ghuser:`cswimr`, :ghuser:`EternalllZM`, :ghuser:`Evanroby`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`karlsbjorn`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`VasilisThePikachu`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    -   Red 3.5.23 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.13%2Bred.2>`__.
+    -   We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+
+        More specifically, we bumped the version of YT source plugin.
+        `Download Red 3.5.23's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.23/Red-DiscordBot-3.5.23-default-lavalink-application.yml>`__
+
+#. Following operating systems are no longer supported as they have already reached their end of life:
+
+    - macOS 13 (Ventura)
+    - Fedora 41
+    - Raspberry Pi OS (Legacy) 11
+
+#. We are planning to remove support for Red on systems using the **armv7l** architecture in **Red 3.6.0**.
+   The support for other architectures (**x86-64** and **aarch64**) will remain unchanged per our existing `end-user-guarantees`.
+
+   If you have any concerns regarding this, please reach out to us on `our discord server <https://discord.gg/red>`__.
+
+End-user changelog
+------------------
+
+Additions
+*********
+
+- **Core - Command-line Interfaces** - Added new ``--cog-path`` flag allowing to specify additional cog paths for the current bot invocation (:issue:`6506`, :issue:`6510`)
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6666`)
+- **Cogs - Audio** - The cog has been updated to support Discord's new end-to-end encryption protocol - `DAVE <https://discord.com/blog/bringing-dave-to-all-discord-platforms>`__ (:issue:`6665`)
+- **Cogs - Warnings** - Added a new ``[p]warningset mywarnings sendtodms`` setting that determines whether the output of ``[p]mywarnings`` should be sent in user's DMs or in the current channel (:issue:`6641`, :issue:`6673`) 
+
+Removals
+********
+
+- **Core - OS Support** - macOS 13 (Ventura), Fedora 41, and Raspberry Pi OS (Legacy) 11 are no longer supported as they have already reached their end of life (:issue:`6669`)
+
+Fixes
+*****
+
+- **Core** - Fixed the bot's commands not working when the bot was installed as a user app (:issue:`6501`, :issue:`6503`)
+- **Core** - Fixed the bot's fuzzy command help not ignoring users that are on the bot's blocklist (:issue:`6482`, :issue:`6594`)
+- **Core** - Fixed the bot process hanging for indefinite time when trying to shutdown from an unhandled exception (:issue:`5780`, :issue:`6659`)
+- **Core - Bot Commands** - Fixed the modal in the ``[p]set api`` command failing to submit (:issue:`6626`)
+- **Core - Bot Commands** - Fixed the ``[p]traceback`` command not being able to send long traceback in DMs (:issue:`6656`)
+- **Cogs - Audio** - Fixed a bunch of YT playback issues (:issue:`6665`)
+- **Cogs - General** - Fixed the ``[p]serverinfo 1`` command failing when the server's feature list is too long (:issue:`6636`, :issue:`6652`)
+- **Cogs - Streams** - The cog will now check that the bot has necessary permissions before sending stream alert messages (:issue:`4967`)
+- **Cogs - Warnings** - Fixed the bot revealing a moderator that warned the user in the output of ``[p]mywarnings`` command when the ``[p]warningset showmoderator`` setting is disabled (:issue:`6641`, :issue:`6673`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- **Core - Dependencies** - Bumped ``discord.py`` to version 2.7.1 (:issue:`6664`)
+
+Fixes
+*****
+
+- **Core - Bot Class** - Fixed a regression in the `Red.send_interactive()` method causing it to not work with `discord.Member` and `discord.User` objects (:issue:`6656`)
+
+Documentation changes
+---------------------
+
+- Added `backup_red` document (:issue:`3421`, :issue:`6654`)
+- Updated the `bot_application_guide` according to changes in Discord Developer Portal's interface (:issue:`6647`)
+
+----
+
 Redbot 3.5.22 (2025-09-05)
 ==========================
 
