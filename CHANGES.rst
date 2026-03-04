@@ -9,6 +9,11 @@ Redbot 3.5.23 (2026-03-04)
 Read before updating
 --------------------
 
+#. We are planning to remove support for Red on systems using the **armv7l** architecture in **Red 3.6.0**.
+   The support for other architectures (**x86-64** and **aarch64**) will remain unchanged per our existing `end-user-guarantees`.
+
+   If you have any concerns regarding this, please reach out to us on `our discord server <https://discord.gg/red>`__.
+
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     -   Red 3.5.23 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.13%2Bred.2>`__.
@@ -22,11 +27,6 @@ Read before updating
     - macOS 13 (Ventura)
     - Fedora 41
     - Raspberry Pi OS (Legacy) 11
-
-#. We are planning to remove support for Red on systems using the **armv7l** architecture in **Red 3.6.0**.
-   The support for other architectures (**x86-64** and **aarch64**) will remain unchanged per our existing `end-user-guarantees`.
-
-   If you have any concerns regarding this, please reach out to us on `our discord server <https://discord.gg/red>`__.
 
 End-user changelog
 ------------------
