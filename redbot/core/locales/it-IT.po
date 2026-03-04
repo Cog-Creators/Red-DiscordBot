@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2025-08-25 21:44+0000\n"
+"POT-Creation-Date: 2026-03-04 21:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -15,12 +15,12 @@ msgstr ""
 "X-Crowdin-File-ID: 4\n"
 "Language: it_IT\n"
 
-#: redbot/core/_cog_manager.py:326
+#: redbot/core/_cog_manager.py:339
 #, docstring
 msgid "Commands to interface with Red's cog manager."
 msgstr "Comandi utilizzati per interagire con il manager cog di Red."
 
-#: redbot/core/_cog_manager.py:335
+#: redbot/core/_cog_manager.py:348
 #, docstring
 msgid "\n"
 "        Lists current cog paths in order of priority.\n"
@@ -29,13 +29,11 @@ msgstr "\n"
 "        Mostra le paths dei cogs correnti in ordine di priorità.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:343
-msgid "Install Path: {install_path}\n"
-"Core Path: {core_path}\n\n"
-msgstr "Percorso Installazione: {install_path}\n"
-"Percorso Core: {core_path}\n\n"
+#: redbot/core/_cog_manager.py:370 redbot/core/_cog_manager.py:371
+msgid " None"
+msgstr " Nessuno"
 
-#: redbot/core/_cog_manager.py:357
+#: redbot/core/_cog_manager.py:379
 #, docstring
 msgid "\n"
 "        Add a path to the list of available cog paths.\n"
@@ -44,52 +42,52 @@ msgstr "\n"
 "Aggiunge un percorso alla lista dei percorsi disponibili per i cogs.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:361
+#: redbot/core/_cog_manager.py:383
 msgid "That path does not exist or does not point to a valid directory."
 msgstr "Il percorso indicato non esiste o non punta ad una cartella valida."
 
-#: redbot/core/_cog_manager.py:370
+#: redbot/core/_cog_manager.py:392
 msgid "A cog path cannot be part of bot's data path ({bot_data_path})."
 msgstr ""
 
-#: redbot/core/_cog_manager.py:380
+#: redbot/core/_cog_manager.py:402
 msgid "A cog path cannot be part of bot's core path ({core_path})."
 msgstr ""
 
-#: redbot/core/_cog_manager.py:422
+#: redbot/core/_cog_manager.py:444
 msgid "The provided path appears to be a cog package, are you sure that this is the path that you want to add as a **cog path**?\n\n"
 "For example, in the following case, you should be adding the {path} as a **cog path**:\n"
 msgstr ""
 
-#: redbot/core/_cog_manager.py:429
+#: redbot/core/_cog_manager.py:451
 msgid "\n"
 "Please consult the Cog Manager UI documentation, if you're unsure: "
 msgstr ""
 
-#: redbot/core/_cog_manager.py:435
+#: redbot/core/_cog_manager.py:457
 msgid "Okay, the path will not be added."
 msgstr ""
 
-#: redbot/core/_cog_manager.py:444
+#: redbot/core/_cog_manager.py:466
 msgid "Path successfully added."
 msgstr "Percorso aggiunto con successo."
 
-#: redbot/core/_cog_manager.py:449
+#: redbot/core/_cog_manager.py:471
 #, docstring
 msgid "\n"
 "        Removes one or more paths from the available cog paths given the `path_numbers` from `[p]paths`.\n"
 "        "
 msgstr ""
 
-#: redbot/core/_cog_manager.py:470
+#: redbot/core/_cog_manager.py:492
 msgid "The following paths were removed: {paths}"
 msgstr ""
 
-#: redbot/core/_cog_manager.py:476
+#: redbot/core/_cog_manager.py:498
 msgid "The following path numbers did not exist: {path_numbers}"
 msgstr ""
 
-#: redbot/core/_cog_manager.py:487
+#: redbot/core/_cog_manager.py:509
 #, docstring
 msgid "\n"
 "        Reorders paths internally to allow discovery of different cogs.\n"
@@ -98,19 +96,19 @@ msgstr "\n"
 "Riordina internamente i percorsi al fine di permettere la scoperta di cog differenti.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:498
+#: redbot/core/_cog_manager.py:520
 msgid "Invalid 'from' index."
 msgstr "Parametro 'from' non valido."
 
-#: redbot/core/_cog_manager.py:504
+#: redbot/core/_cog_manager.py:526
 msgid "Invalid 'to' index."
 msgstr "Parametro 'to' non valido."
 
-#: redbot/core/_cog_manager.py:508
+#: redbot/core/_cog_manager.py:530
 msgid "Paths reordered."
 msgstr "I percorsi sono stati riordinati."
 
-#: redbot/core/_cog_manager.py:513
+#: redbot/core/_cog_manager.py:535
 #, docstring
 msgid "\n"
 "        Returns the current install path or sets it if one is provided.\n\n"
@@ -120,15 +118,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/_cog_manager.py:527
+#: redbot/core/_cog_manager.py:549
 msgid "That path does not exist."
 msgstr "Questo percorso non esiste."
 
-#: redbot/core/_cog_manager.py:532
+#: redbot/core/_cog_manager.py:554
 msgid "The bot will install new cogs to the `{}` directory."
 msgstr "In futuro i cogs verranno installati nella directory '{}'."
 
-#: redbot/core/_cog_manager.py:538
+#: redbot/core/_cog_manager.py:560
 #, docstring
 msgid "\n"
 "        Lists all loaded and available cogs.\n"
@@ -137,11 +135,11 @@ msgstr "\n"
 "        Mostra i cogs caricati e disponibili.\n"
 "        "
 
-#: redbot/core/_cog_manager.py:551 redbot/core/_cog_manager.py:566
+#: redbot/core/_cog_manager.py:573 redbot/core/_cog_manager.py:588
 msgid "**{} loaded:**\n"
 msgstr "**{} caricati:**\n"
 
-#: redbot/core/_cog_manager.py:552 redbot/core/_cog_manager.py:568
+#: redbot/core/_cog_manager.py:574 redbot/core/_cog_manager.py:590
 msgid "**{} unloaded:**\n"
 msgstr "**{} non attivi:**\n"
 
@@ -690,51 +688,51 @@ msgstr ""
 msgid "Error in command '{command}'."
 msgstr ""
 
-#: redbot/core/_events.py:406 redbot/core/tree.py:313
+#: redbot/core/_events.py:409 redbot/core/tree.py:313
 msgid "I require the {permission} permission to execute that command."
 msgstr ""
 
-#: redbot/core/_events.py:410 redbot/core/tree.py:317
+#: redbot/core/_events.py:413 redbot/core/tree.py:317
 msgid "I require {permission_list} permissions to execute that command."
 msgstr ""
 
-#: redbot/core/_events.py:418 redbot/core/tree.py:324
+#: redbot/core/_events.py:421 redbot/core/tree.py:324
 msgid "That command is not available in DMs."
 msgstr ""
 
-#: redbot/core/_events.py:420
+#: redbot/core/_events.py:423
 msgid "That command is only available in DMs."
 msgstr ""
 
-#: redbot/core/_events.py:422
+#: redbot/core/_events.py:425
 msgid "That command is only available in NSFW channels."
 msgstr ""
 
-#: redbot/core/_events.py:434 redbot/core/tree.py:330
+#: redbot/core/_events.py:437 redbot/core/tree.py:330
 msgid "This command is on cooldown. Try again {relative_time}."
 msgstr ""
 
-#: redbot/core/_events.py:441
+#: redbot/core/_events.py:444
 msgid "Too many people using this command. It can only be used {number} times concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:446
+#: redbot/core/_events.py:449
 msgid "Too many people using this command. It can only be used once concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:452
+#: redbot/core/_events.py:455
 msgid "That command is still completing, it can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:457
+#: redbot/core/_events.py:460
 msgid "That command is still completing, it can only be used once per {type} concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:463
+#: redbot/core/_events.py:466
 msgid "Too many people using this command. It can only be used {number} times per {type} concurrently."
 msgstr ""
 
-#: redbot/core/_events.py:468
+#: redbot/core/_events.py:471
 msgid "Too many people using this command. It can only be used once per {type} concurrently."
 msgstr ""
 
@@ -746,19 +744,19 @@ msgstr "Impossibile pagare per questo comando in DM senza una banca globale."
 msgid "You need at least {cost} {currency} to use this command."
 msgstr "Necessiti di almeno {cost} {currency} per usare questo comando."
 
-#: redbot/core/bot.py:2487
+#: redbot/core/bot.py:2511
 msgid "There is still one message remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
 msgstr ""
 
-#: redbot/core/bot.py:2491
+#: redbot/core/bot.py:2515
 msgid "There is still one message remaining. Type {command_1} to continue."
 msgstr "C'è ancora un messaggio rimanente. Digita {command_1} per continuare."
 
-#: redbot/core/bot.py:2496
+#: redbot/core/bot.py:2520
 msgid "There are still {count} messages remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
 msgstr ""
 
-#: redbot/core/bot.py:2500
+#: redbot/core/bot.py:2524
 msgid "There are still {count} messages remaining. Type {command_1} to continue."
 msgstr ""
 
@@ -4362,11 +4360,19 @@ msgstr ""
 msgid "\n"
 "        Commands to add servers or channels to the ignore list.\n\n"
 "        The ignore list will prevent the bot from responding to commands in the configured locations.\n\n"
-"        Note: Owners and Admins override the ignore list.\n"
+"        Notes:\n"
+"        - Category ignores are ignored by user-installed commands\n"
+"        - Owners, Admins, and those with Manage Channel permissions override ignored channels.\n"
 "        "
-msgstr ""
+msgstr "Comandi \n"
+"        per aggiungere server o canali alla lista ignorati.\n\n"
+"        La lista ignora impedirà al bot di rispondere ai comandi nelle posizioni configurate.\n\n"
+"        Note:\n"
+"        - La categoria ignora viene ignorata dai comandi\n"
+"        installati dall'utente - Proprietari, Gli amministratori e quelli con i permessi Gestisci i canali sovrascrivono i canali ignorati.\n"
+"        "
 
-#: redbot/core/core_commands.py:5797
+#: redbot/core/core_commands.py:5799
 #, docstring
 msgid "\n"
 "        List the currently ignored servers and channels.\n\n"
@@ -4375,12 +4381,14 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5819
+#: redbot/core/core_commands.py:5821
 #, docstring
 msgid "\n"
 "        Ignore commands in the channel, thread, or category.\n\n"
 "        Defaults to the current thread or channel.\n\n"
-"        Note: Owners, Admins, and those with Manage Channel permissions override ignored channels.\n\n"
+"        Notes:\n"
+"        - Category ignores are ignored by user-installed commands\n"
+"        - Owners, Admins, and those with Manage Channel permissions override ignored channels.\n\n"
 "        **Examples:**\n"
 "        - `[p]ignore channel #general` - Ignores commands in the #general channel.\n"
 "        - `[p]ignore channel` - Ignores commands in the current channel.\n"
@@ -4389,17 +4397,30 @@ msgid "\n"
 "        **Arguments:**\n"
 "        - `<channel>` - The channel to ignore. This can also be a thread or category channel.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Ignora i comandi nel canale, nel thread o nella categoria.\n\n"
+"        Predefinito al thread o al canale corrente.\n\n"
+"        Note:\n"
+"        - La categoria ignora viene ignorata dai comandi\n"
+"        installati dall'utente - Proprietari, Gli amministratori e quelli con i permessi Gestisci i canali sovrascrivono i canali ignorati.\n\n"
+"        **Esempi:**\n"
+"        - `[p]ignora il canale #general` - Ignora i comandi nel #canale generale.\n"
+"        - `[p]ignore channel` - Ignora i comandi nel canale corrente.\n"
+"        - `[p]ignora il canale \"Canali Generali\"` - Usa citazioni per categorie con spazi.\n"
+"        - `[p]ignore channel 356236713347252226` - Accetta anche ID.\n\n"
+"        **Argomenti:**\n"
+"        - `<channel>` - Il canale da ignorare. Questo può anche essere un canale di discussione o categoria.\n"
+"        "
 
-#: redbot/core/core_commands.py:5837
+#: redbot/core/core_commands.py:5841
 msgid "Channel added to ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5839
+#: redbot/core/core_commands.py:5843
 msgid "Channel already in ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5844
+#: redbot/core/core_commands.py:5848
 #, docstring
 msgid "\n"
 "        Ignore commands in this server.\n\n"
@@ -4409,20 +4430,20 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5855
+#: redbot/core/core_commands.py:5859
 msgid "This server has been added to the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5857
+#: redbot/core/core_commands.py:5861
 msgid "This server is already being ignored."
 msgstr ""
 
-#: redbot/core/core_commands.py:5863
+#: redbot/core/core_commands.py:5867
 #, docstring
 msgid "Commands to remove servers or channels from the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5878
+#: redbot/core/core_commands.py:5882
 #, docstring
 msgid "\n"
 "        Remove a channel, thread, or category from the ignore list.\n\n"
@@ -4437,15 +4458,15 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5894
+#: redbot/core/core_commands.py:5898
 msgid "Channel removed from ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5896
+#: redbot/core/core_commands.py:5900
 msgid "That channel is not in the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5901
+#: redbot/core/core_commands.py:5905
 #, docstring
 msgid "\n"
 "        Remove this server from the ignore list.\n\n"
@@ -4454,30 +4475,30 @@ msgid "\n"
 "        "
 msgstr ""
 
-#: redbot/core/core_commands.py:5910
+#: redbot/core/core_commands.py:5914
 msgid "This server has been removed from the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5912
+#: redbot/core/core_commands.py:5916
 msgid "This server is not in the ignore list."
 msgstr ""
 
-#: redbot/core/core_commands.py:5926
+#: redbot/core/core_commands.py:5930
 msgid "This server is currently being ignored."
 msgstr ""
 
-#: redbot/core/core_commands.py:5943 redbot/core/core_commands.py:5945
-#: redbot/core/core_commands.py:5946
+#: redbot/core/core_commands.py:5947 redbot/core/core_commands.py:5949
+#: redbot/core/core_commands.py:5950
 msgid "None"
 msgstr "Nessuno"
 
-#: redbot/core/core_commands.py:5947
+#: redbot/core/core_commands.py:5951
 msgid "Currently ignored categories: {categories}\n"
 "Channels: {channels}\n"
 "Threads (excluding archived):{threads}"
 msgstr ""
 
-#: redbot/core/core_commands.py:5964
+#: redbot/core/core_commands.py:5968
 #, docstring
 msgid "\n"
 "        Get info about Red's licenses.\n"
