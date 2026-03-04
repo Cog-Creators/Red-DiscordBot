@@ -5789,7 +5789,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The ignore list will prevent the bot from responding to commands in the configured locations.
 
-        Note: Owners and Admins override the ignore list.
+        Notes:
+        - Category ignores are ignored by user-installed commands
+        - Owners, Admins, and those with Manage Channel permissions override ignored channels.
         """
 
     @ignore.command(name="list")
@@ -5821,7 +5823,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Defaults to the current thread or channel.
 
-        Note: Owners, Admins, and those with Manage Channel permissions override ignored channels.
+        Notes:
+        - Category ignores are ignored by user-installed commands
+        - Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
         **Examples:**
         - `[p]ignore channel #general` - Ignores commands in the #general channel.
