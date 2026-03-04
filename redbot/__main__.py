@@ -422,20 +422,13 @@ def handle_early_exit_flags(cli_flags: Namespace):
         sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
 
-async def shutdown_handler(red, signal_type=None, exit_code=None):
-    if signal_type:
-        log.info("%s received. Quitting...", signal_type.name)
-        # Do not collapse the below line into other logic
-        # We need to renter this function
-        # after it interrupts the event loop.
-        sys.exit(ExitCodes.SHUTDOWN)
-    elif exit_code is None:
-        log.info("Shutting down from unhandled exception")
-        red._shutdown_mode = ExitCodes.CRITICAL
+async def signal_shutdown_handler(red: Red, signal_type: signal.Signals) -> NoReturn:
+    log.info("%s received. Quitting...", signal_type.name)
+    sys.exit(ExitCodes.SHUTDOWN)
 
-    if exit_code is not None:
-        red._shutdown_mode = exit_code
 
+async def shutdown_handler(red: Red, exit_code: int) -> None:
+    red._shutdown_mode = exit_code
     try:
         if not red.is_closed():
             await red.close()
@@ -473,7 +466,8 @@ def red_exception_handler(red, red_task: asyncio.Future):
     except Exception as exc:
         log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
-        asyncio.create_task(shutdown_handler(red))
+        log.info("Shutting down from unhandled exception")
+        sys.exit(ExitCodes.CRITICAL)
 
 
 def main():
@@ -507,7 +501,7 @@ def main():
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
                 loop.add_signal_handler(
-                    s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
+                    s, lambda s=s: asyncio.create_task(signal_shutdown_handler(red, s))
                 )
 
         exc_handler = functools.partial(global_exception_handler, red)
@@ -524,7 +518,7 @@ def main():
         log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+            loop.run_until_complete(signal_shutdown_handler(red, signal.SIGINT))
     except SystemExit as exc:
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
@@ -536,11 +530,11 @@ def main():
             exit_code_name = "UNKNOWN"
         log.info("Shutting down with exit code: %s (%s)", exit_code, exit_code_name)
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, exc.code))
+            loop.run_until_complete(shutdown_handler(red, exc.code))
     except Exception as exc:  # Non standard case.
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
+            loop.run_until_complete(shutdown_handler(red, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correctly on windows, see below

@@ -273,6 +273,7 @@
   - docs/bot_application_guide.rst
   - docs/install_guides/**/*
   - docs/update_red.rst
+  - docs/backup_red.rst
 "Category: Docs - Other":
   - docs/host-list.rst
   - docs/index.rst
