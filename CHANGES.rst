@@ -55,7 +55,7 @@ Fixes
 - **Core** - Fixed the bot's fuzzy command help not ignoring users that are on the bot's blocklist (:issue:`6482`, :issue:`6594`)
 - **Core** - Fixed the bot process hanging for indefinite time when trying to shutdown from an unhandled exception (:issue:`5780`, :issue:`6659`)
 - **Core - Bot Commands** - Fixed the modal in the ``[p]set api`` command failing to submit (:issue:`6626`)
-- **Core - Bot Commands** - Fixed the ``[p]traceback`` command not being able to send long traceback in DMs (:issue:`6656`)
+- **Core - Bot Commands** - Fixed the ``[p]traceback`` command not being able to send long tracebacks in DMs (:issue:`6656`)
 - **Cogs - Audio** - Fixed a bunch of YT playback issues (:issue:`6665`)
 - **Cogs - General** - Fixed the ``[p]serverinfo 1`` command failing when the server's feature list is too long (:issue:`6636`, :issue:`6652`)
 - **Cogs - Streams** - The cog will now check that the bot has necessary permissions before sending stream alert messages (:issue:`4967`)
