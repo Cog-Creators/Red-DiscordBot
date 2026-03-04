@@ -40,7 +40,7 @@ Changes
 *******
 
 - **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6666`)
-- **Cogs - Audio** - The cog has been updated to support Discord's new end-to-end encryption protocol - `DAVE <https://discord.com/blog/bringing-dave-to-all-discord-platforms>`__ (:issue:`6665`)
+- |cool| **Cogs - Audio** - The cog has been updated to support Discord's new end-to-end encryption protocol - `DAVE <https://discord.com/blog/bringing-dave-to-all-discord-platforms>`__ (:issue:`6665`)
 - **Cogs - Warnings** - Added a new ``[p]warningset mywarnings sendtodms`` setting that determines whether the output of ``[p]mywarnings`` should be sent in user's DMs or in the current channel (:issue:`6641`, :issue:`6673`) 
 
 Removals
@@ -51,12 +51,12 @@ Removals
 Fixes
 *****
 
-- **Core** - Fixed the bot's commands not working when the bot was installed as a user app (:issue:`6501`, :issue:`6503`)
+- |cool| **Core** - Fixed the bot's commands not working when the bot was installed as a user app (:issue:`6501`, :issue:`6503`)
 - **Core** - Fixed the bot's fuzzy command help not ignoring users that are on the bot's blocklist (:issue:`6482`, :issue:`6594`)
 - **Core** - Fixed the bot process hanging for indefinite time when trying to shutdown from an unhandled exception (:issue:`5780`, :issue:`6659`)
 - **Core - Bot Commands** - Fixed the modal in the ``[p]set api`` command failing to submit (:issue:`6626`)
 - **Core - Bot Commands** - Fixed the ``[p]traceback`` command not being able to send long tracebacks in DMs (:issue:`6656`)
-- **Cogs - Audio** - Fixed a bunch of YT playback issues (:issue:`6665`)
+- |cool| **Cogs - Audio** - Fixed a bunch of YT playback issues (:issue:`6665`)
 - **Cogs - General** - Fixed the ``[p]serverinfo 1`` command failing when the server's feature list is too long (:issue:`6636`, :issue:`6652`)
 - **Cogs - Streams** - The cog will now check that the bot has necessary permissions before sending stream alert messages (:issue:`4967`)
 - **Cogs - Warnings** - Fixed the bot revealing a moderator that warned the user in the output of ``[p]mywarnings`` command when the ``[p]warningset showmoderator`` setting is disabled (:issue:`6641`, :issue:`6673`)
@@ -67,7 +67,7 @@ Developer changelog
 Changes
 *******
 
-- **Core - Dependencies** - Bumped ``discord.py`` to version 2.7.1 (:issue:`6664`)
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.7.1 (:issue:`6664`)
 
 Fixes
 *****
