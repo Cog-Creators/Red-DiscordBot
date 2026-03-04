@@ -819,6 +819,9 @@ class Red(
             Whether or not the message is eligible to be treated as a command.
         """
 
+        # NOTE: any changes to implementation here may need to be made
+        # in the `RedTree.interaction_check` as well
+
         channel = message.channel
         guild = message.guild
 
