@@ -176,14 +176,18 @@ def init_events(bot, cli_flags):
         if bot.intents.members:  # Lets avoid 0 Unique Users
             table_counts.add_row("Unique Users", str(users))
 
-        outdated_red_message = ""
-        rich_outdated_message = ""
-        pypi_version, py_version_req = await fetch_latest_red_version_info()
-        outdated = pypi_version and pypi_version > red_version_info
-        if outdated:
-            outdated_red_message, rich_outdated_message = get_outdated_red_messages(
-                pypi_version, py_version_req
+        fetch_version_task = asyncio.create_task(fetch_latest_red_version_info())
+        log.info("Fetching information about latest Red version...")
+        try:
+            await asyncio.wait_for(asyncio.shield(fetch_version_task), timeout=5)
+        except asyncio.TimeoutError:
+            log.info(
+                "Fetching version information is taking longer than expected,"
+                " will continue in the background..."
             )
+        except Exception:
+            # these will be logged later
+            pass
 
         rich_console = rich.get_console()
         rich_console.print(INTRO, style="red", markup=False, highlight=False)
@@ -209,12 +213,23 @@ def init_events(bot, cli_flags):
             rich_console.print(
                 f"Looking for a quick guide on setting up Red? Checkout {Text('https://start.discord.red', style='link https://start.discord.red}')}"
             )
-        if rich_outdated_message:
-            rich_console.print(rich_outdated_message)
 
         bot._red_ready.set()
-        if outdated_red_message:
-            await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
+
+        try:
+            pypi_version, py_version_req = await fetch_version_task
+        except (aiohttp.ClientError, asyncio.TimeoutError) as exc:
+            log.error("Failed to fetch latest version information from PyPI.", exc_info=exc)
+        except (KeyError, ValueError) as exc:
+            log.error("Failed to parse version metadata received from PyPI.", exc_info=exc)
+        else:
+            outdated = pypi_version and pypi_version > red_version_info
+            if outdated:
+                outdated_red_message, rich_outdated_message = get_outdated_red_messages(
+                    pypi_version, py_version_req
+                )
+                rich_console.print(rich_outdated_message)
+                await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
 
     @bot.event
     async def on_command_completion(ctx: commands.Context):

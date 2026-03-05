@@ -326,18 +326,29 @@ def expected_version(current: str, expected: str) -> bool:
     return Requirement(f"x{expected}").specifier.contains(current, prereleases=True)
 
 
-async def fetch_latest_red_version_info() -> Tuple[Optional[VersionInfo], Optional[str]]:
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
-                data = await r.json()
-    except (aiohttp.ClientError, asyncio.TimeoutError):
-        return None, None
-    else:
-        release = VersionInfo.from_str(data["info"]["version"])
-        required_python = data["info"]["requires_python"]
+async def fetch_latest_red_version_info() -> Tuple[VersionInfo, Optional[str]]:
+    """
+    Fetch information about latest Red release on PyPI.
 
-        return release, required_python
+    Raises
+    ------
+    aiohttp.ClientError
+        An error occurred during request to PyPI.
+    TimeoutError
+        The request to PyPI timed out.
+    ValueError
+        An invalid version string was returned in PyPI metadata.
+    KeyError
+        The PyPI metadata is missing some of the required information.
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
+            data = await r.json()
+
+    release = VersionInfo.from_str(data["info"]["version"])
+    required_python = data["info"]["requires_python"]
+
+    return release, required_python
 
 
 def deprecated_removed(
