@@ -181,10 +181,7 @@ def init_events(bot, cli_flags):
         try:
             await asyncio.wait_for(asyncio.shield(fetch_version_task), timeout=5)
         except asyncio.TimeoutError:
-            log.info(
-                "Fetching version information is taking longer than expected,"
-                " will continue in the background..."
-            )
+            log.info("Version information will continue to be fetched in the background...")
         except Exception:
             # these will be logged later
             pass
