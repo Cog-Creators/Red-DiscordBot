@@ -4,7 +4,7 @@ Redbot 3.5.24 (2026-03-05)
 ==========================
 
 | Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+| :ghuser:`aikaterna`, :ghuser:`EternalllZM`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
 
 Read before updating
 --------------------
