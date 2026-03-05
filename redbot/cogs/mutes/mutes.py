@@ -1242,7 +1242,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 ret.reason = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
                 issues_list.append(ret)
                 continue
-            if member.timed_out_until is None:
+            if not member.is_timed_out():
                 ret.reason = _("That user is not currently timed out.")
                 issues_list.append(ret)
                 continue
