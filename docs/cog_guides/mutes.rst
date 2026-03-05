@@ -368,6 +368,34 @@ Examples:
 * ``<users...>``: A space separated list of usernames, ID's, or mentions.
 * ``[time_and_reason]``: The time and reason. If no time is provided, the mute will use the default set time or give an error if this hasn't been configured.
 
+.. _mutes-command-untimeout:
+
+^^^^^^^^^
+untimeout
+^^^^^^^^^
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]untimeout <users...> [reason]
+
+**Description**
+
+Remove a timeout from users.
+
+Examples:
+
+* ``[p]untimeout @member1 @member2 appealed``
+* ``[p]untimeout @member1``
+
+**Arguments**
+
+* ``<users...>``: A space separated list of usernames, ID's, or mentions.
+* ``[reason]``: The reason for removing the timeout.
+
 .. _mutes-command-voicemute:
 
 ^^^^^^^^^
