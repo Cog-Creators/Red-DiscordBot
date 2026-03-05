@@ -86,7 +86,7 @@ Average Providers
 | `OVH <https://us.ovhcloud.com/vps/>`_ is a company focused on providing hosting
  and cloud services with locations in Europe, North America and Asia Pacific.
 
-| `Time4VPS <https://www.time4vps.eu/>`_ is a Lithuanian VPS provider mainly focused
+| `Time4VPS <https://www.time4vps.com/>`_ is a Lithuanian VPS provider mainly focused
  on lower cost.
 
 | `GalaxyGate <https://galaxygate.net/>`_ is a VPS and dedicated server provider
@@ -113,7 +113,7 @@ Average Providers
 | `LowEndBox <http://lowendbox.com/>`_ is a website where hosting providers are
  discussed and curated, often with lower costs and less known providers.
 
-| `AlphaVps <https://alphavps.com>`_ is a Bulgaria VPS and dedicated server provider 
+| `AlphaVps <https://alphavps.com>`_ is a Bulgarian VPS and dedicated server provider 
  with locations in Los Angeles, New York, England, Germany and Bulgaria.
 
 --------------------
