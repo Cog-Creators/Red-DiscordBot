@@ -1,5 +1,47 @@
 .. Red changelogs
 
+Redbot 3.5.24 (2026-03-05)
+==========================
+
+| Thanks to all these amazing people who contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. `The 3.5.23 changelog's <redbot-3-5-23-2026-03-04>` **"Read before updating"** section has been updated with further information about Red's Audio cog no longer supporting Java 11. If you use the Audio cog, please read that section again. Note that Red 3.5.24 supports Java 21 in addition to Java 17 as well.
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.5.24 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.13%2Bred.3>`__.
+
+    Note that Lavalink now requires Java 17 or newer.
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core - Command-line Interfaces** - Added new ``--no-debug/--no-verbose`` flag allowing to reset the verbosity level set by the ``-v/--verbose/--debug`` flags used earlier in the argument list (:issue:`6680`)
+- **Cogs - Audio** - The cog can now be used with Java 21 (:issue:`6681`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed issues with the cog not working on Linux aarch64 systems with a 16k page size kernel (as seen on Raspberry Pi OS ran on Raspberry Pi 5) (:issue:`6683`)
+- **Cogs - Audio** - The cog will now correctly error about Java 11 being unsupported instead of trying to redownload Lavalink.jar repeatedly a few times (:issue:`6681`)
+
+Documentation changes
+---------------------
+
+- Updated the Audio cog documentation, command help, and errors to reflect that Java 11 is no longer supported
+- Updated `the 3.5.23 changelog <redbot-3-5-23-2026-03-04>` to include information about Java 11 no longer being supported
+
+----
+
+.. _redbot-3-5-23-2026-03-04:
+
 Redbot 3.5.23 (2026-03-04)
 ==========================
 
@@ -9,6 +51,14 @@ Redbot 3.5.23 (2026-03-04)
 Read before updating
 --------------------
 
+#. Red's Audio cog now requires Java 17 to be present on the system. Java 11 is no longer supported.
+
+   All of the install guides for the systems that we currently support already provided instructions to install Java 17,
+   so if you installed Red somewhat recently, you should already be set.
+
+   If you see an error about using the wrong Java version, you can install the right Java version
+   by following the **"Installing the pre-requirements"** section of our install guide for your operating system.
+
 #. We are planning to remove support for Red on systems using the **armv7l** architecture in **Red 3.6.0**.
    The support for other architectures (**x86-64** and **aarch64**) will remain unchanged per our existing `end-user-guarantees`.
 
@@ -17,6 +67,9 @@ Read before updating
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     -   Red 3.5.23 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.13%2Bred.2>`__.
+
+        Note that Lavalink now requires Java 17 or newer.
+
     -   We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
 
         More specifically, we bumped the version of YT source plugin.
@@ -47,6 +100,7 @@ Removals
 ********
 
 - **Core - OS Support** - macOS 13 (Ventura), Fedora 41, and Raspberry Pi OS (Legacy) 11 are no longer supported as they have already reached their end of life (:issue:`6669`)
+- **Cogs - Audio** - The cog no longer supports Java 11 (:issue:`6665`)
 
 Fixes
 *****
