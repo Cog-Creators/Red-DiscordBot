@@ -1259,9 +1259,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             msg = _("{users} has had their timeout removed.")
             if len(success_list) > 1:
                 msg = _("{users} have had their timeouts removed.")
-            await ctx.send(
-                msg.format(users=humanize_list([f"`{u}`" for u in success_list]))
-            )
+            await ctx.send(msg.format(users=humanize_list([f"`{u}`" for u in success_list])))
         else:
             await ctx.send(_("None of the users provided could have their timeout removed."))
         if issues_list:
