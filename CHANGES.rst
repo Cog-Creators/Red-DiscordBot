@@ -23,6 +23,7 @@ End-user changelog
 Changes
 *******
 
+- **Core** - The bot will no longer wait for the update check to finish before finishing the bot startup (:issue:`6687`)
 - **Core - Command-line Interfaces** - Added new ``--no-debug/--no-verbose`` flag allowing to reset the verbosity level set by the ``-v/--verbose/--debug`` flags used earlier in the argument list (:issue:`6680`)
 - **Cogs - Audio** - The cog can now be used with Java 21 (:issue:`6681`)
 
