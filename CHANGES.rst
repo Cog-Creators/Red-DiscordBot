@@ -30,7 +30,7 @@ Changes
 Fixes
 *****
 
-- |cool| **Cogs - Audio** - Fixed issues with the cog not working on Linux aarch64 systems with a 16k page size kernel (as seen on Raspberry Pi OS ran on Raspberry Pi 5) (:issue:`6683`)
+- |cool| **Cogs - Audio** - Fixed issues with the cog not working on Linux aarch64 systems with a 16k page size kernel (as seen on Raspberry Pi OS ran on Raspberry Pi 5) (:issue:`6683`, :issue:`6688`)
 - **Cogs - Audio** - The cog will now correctly error about Java 11 being unsupported instead of trying to redownload Lavalink.jar repeatedly a few times (:issue:`6681`)
 
 Documentation changes
