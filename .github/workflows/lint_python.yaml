@@ -12,7 +12,7 @@ env:
 jobs:
   lint_python:
     name: Lint Python
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v4
         with:

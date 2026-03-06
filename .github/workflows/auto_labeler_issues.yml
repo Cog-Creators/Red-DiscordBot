@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   apply_triage_label_to_issues:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Apply Triage Label
         uses: actions/github-script@v6

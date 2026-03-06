@@ -56,7 +56,7 @@ jobs:
   merge_requirements:
     name: Merge requirements files.
     needs: generate_requirements
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Checkout the repository.
         uses: actions/checkout@v4

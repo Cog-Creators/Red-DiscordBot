@@ -14,7 +14,7 @@ permissions:
 jobs:
   crowdin_download_translations:
     needs: pr_stable_bump
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -68,7 +68,7 @@ jobs:
             console.log(script({github, context}));
 
   pr_stable_bump:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       milestone_number: ${{ steps.get_milestone_number.outputs.result }}
     steps:
