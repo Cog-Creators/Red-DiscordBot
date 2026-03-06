@@ -163,30 +163,28 @@ class CoreLogic:
 
         bot = self.bot
 
-        pkg_specs = []
-
-        for name in pkg_names:
-            if not name.isidentifier() or keyword.iskeyword(name):
+        async for name in AsyncIter(pkg_names, steps=10):
+            if not bot._cog_mgr.is_valid_module_name(name):
                 invalid_pkg_names.append(name)
                 continue
+
             try:
-                spec = await bot._cog_mgr.find_cog(name)
-                if spec:
-                    pkg_specs.append((spec, name))
-                else:
-                    notfound_packages.append(name)
+                module = bot._cog_mgr.load_cog_module(name)
+            except errors.NoSuchCog:
+                notfound_packages.append(name)
+                continue
             except Exception as e:
                 log.exception("Package import failed", exc_info=e)
 
-                exception_log = "Exception during import of package\n"
+                exception_log = "Exception during import of cog package\n"
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 bot._last_exception = exception_log
                 failed_packages.append(name)
+                continue
 
-        async for spec, name in AsyncIter(pkg_specs, steps=10):
             try:
-                self._cleanup_and_refresh_modules(spec.name)
-                await bot.load_extension(spec)
+                bot._cog_mgr.reload(module)
+                await bot.load_extension(module)
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
             except errors.CogLoadError as e:
@@ -239,32 +237,6 @@ class CoreLogic:
             "failed_with_reason_packages": failed_with_reason_packages,
             "repos_with_shared_libs": list(repos_with_shared_libs),
         }
-
-    @staticmethod
-    def _cleanup_and_refresh_modules(module_name: str) -> None:
-        """Internally reloads modules so that changes are detected."""
-        splitted = module_name.split(".")
-
-        def maybe_reload(new_name):
-            try:
-                lib = sys.modules[new_name]
-            except KeyError:
-                pass
-            else:
-                importlib._bootstrap._exec(lib.__spec__, lib)
-
-        # noinspection PyTypeChecker
-        modules = itertools.accumulate(splitted, "{}.{}".format)
-        for m in modules:
-            maybe_reload(m)
-
-        children = {
-            name: lib
-            for name, lib in sys.modules.items()
-            if name == module_name or name.startswith(f"{module_name}.")
-        }
-        for child_name, lib in children.items():
-            importlib._bootstrap._exec(lib.__spec__, lib)
 
     async def _unload(self, pkg_names: Iterable[str]) -> Dict[str, List[str]]:
         """
@@ -5767,13 +5739,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def rpc_load(self, request):
         cog_name = request.params[0]
 
-        spec = await self.bot._cog_mgr.find_cog(cog_name)
-        if spec is None:
+        try:
+            module = self.bot._cog_mgr.load_cog_module(cog_name)
+        except errors.NoSuchCog:
             raise LookupError("No such cog found.")
 
-        self._cleanup_and_refresh_modules(spec.name)
-
-        await self.bot.load_extension(spec)
+        module = self.bot.cog_mgr.reload(module)
+        await self.bot.load_extension(module)
 
     async def rpc_unload(self, request):
         cog_name = request.params[0]
