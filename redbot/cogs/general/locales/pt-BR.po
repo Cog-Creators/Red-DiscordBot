@@ -18,87 +18,87 @@ msgstr ""
 #: redbot/cogs/general/general.py:49
 #, docstring
 msgid "General commands."
-msgstr ""
+msgstr "Comandos gerais."
 
 #: redbot/cogs/general/general.py:54
 msgid "As I see it, yes"
-msgstr ""
+msgstr "Como eu vejo, sim"
 
 #: redbot/cogs/general/general.py:55
 msgid "It is certain"
-msgstr ""
+msgstr "Com certeza"
 
 #: redbot/cogs/general/general.py:56
 msgid "It is decidedly so"
-msgstr ""
+msgstr "É decididamente assim"
 
 #: redbot/cogs/general/general.py:57
 msgid "Most likely"
-msgstr ""
+msgstr "Muito provável"
 
 #: redbot/cogs/general/general.py:58
 msgid "Outlook good"
-msgstr ""
+msgstr "Perspectiva boa"
 
 #: redbot/cogs/general/general.py:59
 msgid "Signs point to yes"
-msgstr ""
+msgstr "Os sinais indicam que sim"
 
 #: redbot/cogs/general/general.py:60
 msgid "Without a doubt"
-msgstr ""
+msgstr "Sem dúvida"
 
 #: redbot/cogs/general/general.py:61
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: redbot/cogs/general/general.py:62
 msgid "Yes – definitely"
-msgstr ""
+msgstr "Sim – definitivamente"
 
 #: redbot/cogs/general/general.py:63
 msgid "You may rely on it"
-msgstr ""
+msgstr "Você pode contar com isso"
 
 #: redbot/cogs/general/general.py:64
 msgid "Reply hazy, try again"
-msgstr ""
+msgstr "Resposta confusa, tente novamente"
 
 #: redbot/cogs/general/general.py:65
 msgid "Ask again later"
-msgstr ""
+msgstr "Pergunte novamente mais tarde"
 
 #: redbot/cogs/general/general.py:66
 msgid "Better not tell you now"
-msgstr ""
+msgstr "Melhor não te contar agora"
 
 #: redbot/cogs/general/general.py:67
 msgid "Cannot predict now"
-msgstr ""
+msgstr "Não consigo prever agora"
 
 #: redbot/cogs/general/general.py:68
 msgid "Concentrate and ask again"
-msgstr ""
+msgstr "Concentre-se e pergunte de novo"
 
 #: redbot/cogs/general/general.py:69
 msgid "Don't count on it"
-msgstr ""
+msgstr "Não conte com isso"
 
 #: redbot/cogs/general/general.py:70
 msgid "My reply is no"
-msgstr ""
+msgstr "Minha resposta é não"
 
 #: redbot/cogs/general/general.py:71
 msgid "My sources say no"
-msgstr ""
+msgstr "Minhas fontes dizem que não"
 
 #: redbot/cogs/general/general.py:72
 msgid "Outlook not so good"
-msgstr ""
+msgstr "A previsão não é muito boa"
 
 #: redbot/cogs/general/general.py:73
 msgid "Very doubtful"
-msgstr ""
+msgstr "Muito duvidoso"
 
 #: redbot/cogs/general/general.py:88
 #, docstring
@@ -107,11 +107,15 @@ msgid "Choose between multiple options.\n\n"
 "        Options are separated by spaces.\n\n"
 "        To denote options which include whitespace, you should enclose the options in double quotes.\n"
 "        "
-msgstr ""
+msgstr "Escolha entre múltiplas opções.\n\n"
+"        Deve haver pelo menos 2 opções para escolher.\n"
+"        As opções são separadas por espaços.\n\n"
+"        Para denotar opções que incluem espaços em branco, você deve colocar as opções entre aspas duplas.\n"
+"        "
 
 #: redbot/cogs/general/general.py:97
 msgid "Not enough options to pick from."
-msgstr ""
+msgstr "Opções insuficientes para escolher."
 
 #: redbot/cogs/general/general.py:103
 #, docstring
@@ -119,39 +123,45 @@ msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
 "        `<number>` defaults to 100.\n"
 "        "
-msgstr ""
+msgstr "Role um número aleatório.\n\n"
+"        O resultado será entre 1 e `<number>`.\n\n"
+"        `<number>` o padrão é 100.\n"
+"        "
 
 #: redbot/cogs/general/general.py:118
 msgid "{author.mention} Maybe higher than 1? ;P"
-msgstr ""
+msgstr "{author.mention} Talvez maior que 1? ;P"
 
 #: redbot/cogs/general/general.py:121
 msgid "{author.mention} Max allowed number is {maxamount}."
-msgstr ""
+msgstr "{author.mention} O número máximo permitido é {maxamount}."
 
 #: redbot/cogs/general/general.py:128
 #, docstring
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
-msgstr ""
+msgstr "Jogue uma moeda... ou um usuário.\n\n"
+"        O padrão é uma moeda.\n"
+"        "
 
 #: redbot/cogs/general/general.py:136
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
-msgstr ""
+msgstr "Boa tentativa. Você pensa que isso é engraçado?\n"
+" Que tal *isso* em vez disso:\n\n"
 
 #: redbot/cogs/general/general.py:147
 msgid "*flips a coin and... "
-msgstr ""
+msgstr "*vira uma moeda e... "
 
 #: redbot/cogs/general/general.py:147
 msgid "HEADS!*"
-msgstr ""
+msgstr "CARA!*"
 
 #: redbot/cogs/general/general.py:147
 msgid "TAILS!*"
-msgstr ""
+msgstr "COROA!*"
 
 #: redbot/cogs/general/general.py:151
 #, docstring
