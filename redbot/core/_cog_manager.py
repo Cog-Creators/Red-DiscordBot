@@ -31,6 +31,7 @@ import pkgutil
 import sys
 import textwrap
 import importlib
+import itertools
 from pathlib import Path
 from types import ModuleType
 from typing import Union, List, Optional, Set
@@ -341,25 +342,31 @@ class CogManager:
 
     @staticmethod
     def reload(module: ModuleType) -> ModuleType:
-        """Do a deep reload of a module or package."""
+        """Internally reloads modules so that changes are detected."""
+        module_name = module.__name__
+        splitted = module_name.split(".")
+
+        def maybe_reload(new_name: str) -> None:
+            try:
+                lib = sys.modules[new_name]
+            except KeyError:
+                pass
+            else:
+                importlib.reload(lib)
+
+        modules = itertools.accumulate(splitted, "{}.{}".format)
+        for m in modules:
+            maybe_reload(m)
+
         children = {
-            name: lib for name, lib in sys.modules.items() if name.startswith(module.__name__)
+            name: lib
+            for name, lib in sys.modules.items()
+            if name == module_name or name.startswith(f"{module_name}.")
         }
-        ret = module
-        for _ in range(2):  # Do it twice to overwrite old relative imports
-            for child_name, lib in sorted(children.items(), key=lambda m: m[0], reverse=True):
-                try:
-                    importlib.reload(lib)
-                except ModuleNotFoundError as exc:
-                    if exc.name == lib.__name__:
-                        # If the structure of the package changed, we might try to reload a module
-                        # which no longer exists.
-                        pass
-                    else:
-                        raise
-                if lib.__name__ == module.__name__:
-                    ret = lib
-        return ret
+        for child_name, lib in children.items():
+            importlib.reload(lib)
+
+        return sys.modules[module.__name__]
 
     @classmethod
     def find_available_modules(cls) -> Set[str]:
