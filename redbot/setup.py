@@ -394,8 +394,8 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
     }
     storage_type = BackendType(instance_data["STORAGE_TYPE"])
     print("  Original storage backend:", storage_backends[storage_type])
+    storage_details = instance_data["STORAGE_DETAILS"]
     if storage_type is BackendType.POSTGRES:
-        storage_details = instance_data["STORAGE_DETAILS"]
         print("  Original storage details:")
         for key in ("host", "port", "database", "user"):
             print(f"    - DB {key}:", storage_details[key])
@@ -407,41 +407,65 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
     if click.confirm("\nWould you like to change anything?"):
         if not name_used and click.confirm("Do you want to use different instance name?"):
             instance_name = get_name("")
-            # TODO: gotta check if it's not taken
         if not data_path_not_empty and click.confirm("Do you want to use different data path?"):
-            data_path = Path(
-                get_data_dir(instance_name=instance_name, data_path=None, interactive=True)
-            )
+            while True:
+                data_path = Path(
+                    get_data_dir(instance_name=instance_name, data_path=None, interactive=True)
+                )
+                data_path_not_empty = (
+                    data_path.exists() and next(data_path.glob("*"), None) is not None
+                )
+                if not data_path_not_empty:
+                    break
+                print("Given path can't be used as it's not empty.")
         if not backend_unavailable and click.confirm(
-            "Do you want to use different storage backend?"
+            "Do you want to use different storage backend or change storage details?"
         ):
             storage_type = get_storage_type(None, interactive=True)
+            driver_cls = get_driver_class(storage_type)
+            storage_details = driver_cls.get_config_details()
     if name_used:
         print(
             "Original instance name can't be used as other instance is already using it."
             " You have to choose a different name."
         )
         instance_name = get_name("")
-        # TODO: gotta check if it's not taken
     if data_path_not_empty:
         print(
             "Original data path can't be used as it's not empty."
             " You have to choose a different path."
         )
-        data_path = Path(get_data_dir(instance_name=instance_name, data_path=None, interactive=True))
+        while True:
+            data_path = Path(
+                get_data_dir(instance_name=instance_name, data_path=None, interactive=True)
+            )
+            data_path_not_empty = (
+                data_path.exists() and next(data_path.glob("*"), None) is not None
+            )
+            if not data_path_not_empty:
+                break
+            print("Given path can't be used as it's not empty.")
     if backend_unavailable:
         print(
             "Original storage backend is no longer available in Red."
             " You have to choose a different backend."
         )
         storage_type = get_storage_type(None, interactive=True)
-        # TODO: gotta get the storage details
-
-    # TODO: handle more stuff from above here...
+        driver_cls = get_driver_class(storage_type)
+        storage_details = driver_cls.get_config_details()
 
     tar_members = [member for member in tar.getmembers() if member.name != "instance.json"]
     # tar.errorlevel == 0 so errors are printed to stderr
     tar.extractall(path=data_path, members=tar_members)
+
+    default_dirs = deepcopy(data_manager.basic_config_default)
+    default_dirs["DATA_PATH"] = data_path
+    # data in backup file is using json
+    default_dirs["STORAGE_TYPE"] = BackendType.JSON
+    default_dirs["STORAGE_DETAILS"] = {}
+    save_config(instance_name, default_dirs)
+
+    # TODO: handle storage backend migration here...
 
     # TODO: ask for repo manager stuff here...
 
