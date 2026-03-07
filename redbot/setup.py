@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import Any, Dict, IO, List, Optional, Set, Tuple, Union
 
 import click
-from tqdm import tqdm
 
 from redbot.cogs.downloader.repo_manager import RepoManager
 from redbot.core._cli import confirm
@@ -25,6 +24,7 @@ from redbot.core.utils._internal_utils import (
     safe_delete,
     create_backup as red_create_backup,
     cli_level_to_log_level,
+    detailed_progress,
 )
 from redbot.core import config, data_manager
 from redbot.core._config import migrate
@@ -466,8 +466,7 @@ class RestoreInfo:
     def all_tar_member_names(self) -> List[str]:
         return [tarinfo.name for tarinfo in self.all_tar_members]
 
-    @functools.cached_property
-    def tar_members_to_extract(self) -> List[tarfile.TarInfo]:
+    def get_tar_members_to_extract(self) -> List[tarfile.TarInfo]:
         ignored_members: Set[str] = {"backup.version", "instance.json"}
         if not self.restore_downloader:
             ignored_members |= {
@@ -550,11 +549,11 @@ class RestoreInfo:
         self.storage_details = driver_cls.get_config_details()
 
     def extractall(self) -> None:
-        progress_bar = tqdm(
-            self.tar_members_to_extract, desc="Extracting data", unit=" files", dynamic_ncols=True
-        )
-        # tar.errorlevel == 0 so errors are printed to stderr
-        self.tar.extractall(path=self.data_path, members=progress_bar)
+        to_extract = self.get_tar_members_to_extract()
+        with detailed_progress(unit="files") as progress:
+            progress_tracker = progress.track(to_extract, description="Extracting data")
+            # tar.errorlevel == 0 so errors are printed to stderr
+            self.tar.extractall(path=self.data_path, members=progress_tracker)
 
     def get_basic_config(self, use_json: bool = False) -> dict:
         default_dirs = deepcopy(data_manager.basic_config_default)

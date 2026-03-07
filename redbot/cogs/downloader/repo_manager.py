@@ -30,7 +30,7 @@ from typing import (
 
 import discord
 from redbot.core import data_manager, commands, Config
-from redbot.core.utils._internal_utils import safe_delete
+from redbot.core.utils._internal_utils import detailed_progress, safe_delete
 from redbot.core.i18n import Translator
 
 from . import errors
@@ -1267,28 +1267,27 @@ class RepoManager:
         with open(data_manager.cog_data_path(self) / "repos.json") as fp:
             raw_repos = json.load(fp)
 
-        from tqdm import tqdm
-
-        progress_bar = tqdm(raw_repos, desc="Downloading repos", unit="repo", dynamic_ncols=True)
-
-        for repo_data in progress_bar:
-            repo_url = repo_data["url"]
-            repo_name = repo_data["name"]
-            repo_branch = repo_data["branch"]
-            try:
-                await self.add_repo(repo_url, repo_name, repo_branch)
-            except errors.CloningError:
-                log.exception(
-                    "Something went wrong whilst cloning %s (to branch: %s)",
-                    repo_url,
-                    repo_branch,
-                )
-            except OSError:
-                log.exception(
-                    "Something went wrong trying to add repo %s under name %s",
-                    repo_url,
-                    repo_name,
-                )
+        with detailed_progress(unit="repos") as progress:
+            task_id = progress.add_task("Adding repos", total=len(raw_repos))
+            for idx, repo_data in enumerate(raw_repos):
+                repo_url = repo_data["url"]
+                repo_name = repo_data["name"]
+                repo_branch = repo_data["branch"]
+                progress.update(task_id, completed=idx, description=f"Adding {repo_name!r} repo")
+                try:
+                    await self.add_repo(repo_url, repo_name, repo_branch)
+                except errors.CloningError:
+                    log.exception(
+                        "Something went wrong whilst cloning %s (to branch: %s)",
+                        repo_url,
+                        repo_branch,
+                    )
+                except OSError:
+                    log.exception(
+                        "Something went wrong trying to add repo %s under name %s",
+                        repo_url,
+                        repo_name,
+                    )
 
         from .downloader import Downloader
 

@@ -36,10 +36,9 @@ import aiohttp
 import discord
 from packaging.requirements import Requirement
 import rapidfuzz
-from rich.progress import ProgressColumn
-from rich.progress_bar import ProgressBar
+import rich.progress
+from rich.text import Text
 from red_commons.logging import VERBOSE, TRACE
-from tqdm import tqdm
 
 from redbot import VersionInfo
 from redbot.core import data_manager
@@ -62,6 +61,8 @@ __all__ = (
     "fetch_latest_red_version_info",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
+    "RichSpeedColumn",
+    "detailed_progress",
     "cli_level_to_log_level",
 )
 
@@ -276,9 +277,10 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
             to_backup.append(f)
 
     with tarfile.open(str(backup_fpath), "w:gz") as tar:
-        progress_bar = tqdm(to_backup, desc="Compressing data", unit=" files", dynamic_ncols=True)
-        for f in progress_bar:
-            tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
+        with detailed_progress(unit="files") as progress:
+            progress_tracker = progress.track(to_backup, description="Compressing data")
+            for f in progress_tracker:
+                tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
 
         # add repos backup
         repos_data = json.dumps(repo_output, indent=4)
@@ -403,15 +405,41 @@ def deprecated_removed(
     )
 
 
-class RichIndefiniteBarColumn(ProgressColumn):
-    def render(self, task):
-        return ProgressBar(
+class RichIndefiniteBarColumn(rich.progress.ProgressColumn):
+    def render(self, task: rich.progress.Task) -> rich.progress.ProgressBar:
+        return rich.progress.ProgressBar(
             pulse=task.completed < task.total,
             animation_time=task.get_time(),
             width=40,
             total=task.total,
             completed=task.completed,
         )
+
+
+class RichSpeedColumn(rich.progress.ProgressColumn):
+    def __init__(self, *, unit: str) -> None:
+        self.unit = unit
+        super().__init__()
+
+    def render(self, task: rich.progress.Task) -> Text:
+        speed = task.finished_speed or task.speed
+        if speed is None:
+            return Text("?", style="progress.data.speed")
+        return Text(f"{int(speed)} {self.unit}/s", style="progress.data.speed")
+
+
+def detailed_progress(*, unit: str) -> rich.progress.Progress:
+    return rich.progress.Progress(
+        rich.progress.SpinnerColumn(),
+        rich.progress.TextColumn("[progress.description]{task.description}"),
+        rich.progress.BarColumn(bar_width=None),
+        RichSpeedColumn(unit=unit),
+        rich.progress.TaskProgressColumn(),
+        rich.progress.TextColumn("eta"),
+        rich.progress.TimeRemainingColumn(),
+        rich.progress.TextColumn("elapsed"),
+        rich.progress.TimeElapsedColumn(),
+    )
 
 
 def cli_level_to_log_level(level: int) -> int:
