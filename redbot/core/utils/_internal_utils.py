@@ -11,7 +11,9 @@ import shutil
 import tarfile
 import warnings
 from datetime import datetime
+from io import BytesIO
 from pathlib import Path
+from tarfile import TarInfo
 from typing import (
     AsyncIterable,
     AsyncIterator,
@@ -217,6 +219,9 @@ async def format_fuzzy_results(
 
 
 async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
+    # version of backup
+    BACKUP_VERSION = 2
+
     data_path = Path(data_manager.core_data_path().parent)
     if not data_path.exists():
         return None
@@ -227,14 +232,19 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
 
     to_backup = []
     # we need trailing separator to not exclude files and folders that only start with these names
-    # e.g. RepoManager\repos.json
     exclusions = [
         "__pycache__",
+        # Lavalink will be downloaded on Audio load
         "Lavalink.jar",
+        # cogs and repos installed through Downloader can be reinstalled using restore command
         os.path.join("Downloader", "lib", ""),
         os.path.join("CogManager", "cogs", ""),
         os.path.join("RepoManager", "repos", ""),
         os.path.join("Audio", "logs", ""),
+        # these files are created during backup so we exclude them from data path backup
+        os.path.join("RepoManager", "repos.json"),
+        "instance.json",
+        "backup.version",
     ]
 
     # Avoiding circular imports
@@ -245,12 +255,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     repo_output = []
     for repo in repo_mgr.repos:
         repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
-    repos_file = data_path / "cogs" / "RepoManager" / "repos.json"
-    with repos_file.open("w") as fs:
-        json.dump(repo_output, fs, indent=4)
-    instance_file = data_path / "instance.json"
-    with instance_file.open("w") as fs:
-        json.dump({data_manager.instance_name(): data_manager.basic_config}, fs, indent=4)
+
     for f in data_path.glob("**/*"):
         if not any(ex in str(f) for ex in exclusions) and f.is_file():
             to_backup.append(f)
@@ -258,6 +263,19 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     with tarfile.open(str(backup_fpath), "w:gz") as tar:
         for f in to_backup:
             tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
+
+        # add repos backup
+        repos_data = json.dumps(repo_output, indent=4)
+        tar.addfile(TarInfo("cogs/RepoManager/repos.json"), BytesIO(repos_data.encode("utf-8")))
+
+        # add instance's original data
+        instance_data = json.dumps(
+            {data_manager.instance_name(): data_manager.basic_config}, indent=4
+        )
+        tar.addfile(TarInfo("instance.json"), BytesIO(instance_data.encode("utf-8")))
+
+        # add info about backup version
+        tar.addfile(TarInfo("backup.version"), BytesIO(f"{BACKUP_VERSION}".encode("utf-8")))
     return backup_fpath
 
 
