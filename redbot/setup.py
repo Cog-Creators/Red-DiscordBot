@@ -15,6 +15,7 @@ from typing import Dict, Any, Optional, Tuple, Union
 
 import click
 
+from redbot.cogs.downloader.repo_manager import RepoManager
 from redbot.core._cli import confirm
 from redbot.core.utils._internal_utils import (
     safe_delete,
@@ -374,6 +375,7 @@ async def remove_instance_interaction() -> None:
 
 async def restore_backup(tar: tarfile.TarFile) -> None:
     # TODO: split this into smaller parts
+    # TODO: sys.exit() instead of return?
     try:
         fp = tar.extractfile("instance.json")
     except (KeyError, tarfile.StreamError):
@@ -384,6 +386,25 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
         return
     with fp:
         instance_name, instance_data = json.load(fp).popitem()
+    try:
+        fp = tar.extractfile("backup.version")
+    except (KeyError, tarfile.StreamError):
+        print(
+            "This backup was created using old version (v1) of backup system"
+            " and can't be restored using this command."
+        )
+        return
+    if fp is None:
+        print(
+            "This backup was created using old version (v1) of backup system"
+            " and can't be restored using this command."
+        )
+        return
+    with fp:
+        backup_version = int(fp.read())
+    if backup_version > 2:
+        print("This backup was created using newer version of Red. Update Red to restore it.")
+        return
 
     print("\nWhen the instance was backuped, it was using these settings:")
     print("  Original instance name:", instance_name)
@@ -458,7 +479,7 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
         storage_details = driver_cls.get_config_details()
 
     all_tar_members = tar.getmembers()
-    ignored_members: Tuple[str, ...] = ("instance.json",)
+    ignored_members: Tuple[str, ...] = ("backup.version", "instance.json")
     downloader_backup_files = (
         "cogs/RepoManager/repos.json",
         "cogs/RepoManager/settings.json",
@@ -467,7 +488,8 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
     restore_downloader = all(
         backup_file in all_tar_members for backup_file in downloader_backup_files
     ) and click.confirm(
-        "Do you want to restore 3rd-party repos and cogs installed through Downloader?",
+        "Do you want to restore 3rd-party repos"
+        " and cogs installed through Downloader (Git required)?",
         default=True,
     )
     if not restore_downloader:
@@ -491,13 +513,11 @@ async def restore_backup(tar: tarfile.TarFile) -> None:
         await do_migration(BackendType.JSON, storage_type, storage_details)
 
     if restore_downloader:
-        from redbot.cogs.downloader.repo_manager import RepoManager
-
         repo_mgr = RepoManager()
         # this line shouldn't be needed since there are no repos:
         # await repo_mgr.initialize()
         try:
-            repo_mgr._restore_from_backup()
+            await repo_mgr._restore_from_backup()
         except ...:
             ...
 
