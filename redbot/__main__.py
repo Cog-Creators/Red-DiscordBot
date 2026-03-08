@@ -317,7 +317,10 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     redbot.logging.init_logging(
         level=cli_flags.logging_level,
         location=data_manager.core_data_path() / "logs",
-        cli_flags=cli_flags,
+        rich_logging=cli_flags.rich_logging,
+        rich_tracebacks=cli_flags.rich_tracebacks,
+        rich_traceback_extra_lines=cli_flags.rich_traceback_extra_lines,
+        rich_traceback_show_locals=cli_flags.rich_traceback_show_locals,
     )
 
     log.debug("====Basic Config====")
