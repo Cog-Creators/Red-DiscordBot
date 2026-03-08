@@ -182,32 +182,10 @@ async def _edit_owner(red, owner, no_prompt):
 
 def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
     if new_name:
-        name = new_name
-        if name in _get_instance_names() and not confirm_overwrite:
-            name = old_name
-            print(
-                "An instance with this name already exists.\n"
-                "If you want to remove the existing instance and replace it with this one,"
-                " run this command with --overwrite-existing-instance flag."
-            )
+        name = get_name(new_name, confirm_overwrite=confirm_overwrite)
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
-        name = get_name("")
-        if name in _get_instance_names():
-            print(
-                "WARNING: An instance already exists with this name. "
-                "Continuing will overwrite the existing instance config."
-            )
-            if not confirm(
-                "Are you absolutely certain you want to continue with this instance name?",
-                default=False,
-            ):
-                print("Instance name will remain unchanged.")
-                name = old_name
-            else:
-                print("Instance name updated.")
-        else:
-            print("Instance name updated.")
-        print()
+        name = get_name(confirm_overwrite=confirm_overwrite)
+        print("Instance name updated.\n")
     else:
         name = old_name
     return name
