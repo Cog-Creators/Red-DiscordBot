@@ -46,6 +46,7 @@ extensions = [
     "sphinxcontrib_trio",
     "sphinx_markdown_builder",
     "sphinx-prompt",
+    "changelog_contributors",
     "deprecated_removed",
     "prompt_builder",
 ]

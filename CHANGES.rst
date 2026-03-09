@@ -6,8 +6,9 @@
 Redbot 3.5.24 (2026-03-06)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`EternalllZM`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna EternalllZM Flame442 Jackenmen Kowlin
 
 Read before updating
 --------------------
@@ -60,8 +61,9 @@ Documentation changes
 Redbot 3.5.23 (2026-03-04)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`cswimr`, :ghuser:`EternalllZM`, :ghuser:`Evanroby`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`karlsbjorn`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`VasilisThePikachu`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    cswimr EternalllZM Evanroby Flame442 Jackenmen Kowlin karlsbjorn palmtree5 PredaaA VasilisThePikachu yamikaitou
 
 Read before updating
 --------------------
@@ -166,8 +168,9 @@ Documentation changes
 Redbot 3.5.22 (2025-09-05)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    AAA3A-AAA3A aikaterna Flame442 Jackenmen Kowlin
 
 Read before updating
 --------------------
@@ -214,8 +217,9 @@ Changes
 Redbot 3.5.21 (2025-08-26)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`egypt1848`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`, :ghuser:`VasilisThePikachu`
+.. changelog-contributors::
+
+    egypt1848 Flame442 Jackenmen Kowlin Kreusada TrustyJAID VasilisThePikachu
 
 Read before updating
 --------------------
@@ -310,8 +314,9 @@ Documentation changes
 Redbot 3.5.20 (2025-05-03)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+.. changelog-contributors::
+
+    aikaterna Jackenmen Kreusada
 
 Read before updating
 --------------------
@@ -351,8 +356,9 @@ Fixes
 Redbot 3.5.19 (2025-04-27)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen
 
 Read before updating
 --------------------
@@ -404,8 +410,9 @@ Changes
 Redbot 3.5.18 (2025-03-26)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+.. changelog-contributors::
+
+    Jackenmen Kreusada
 
 Read before updating
 --------------------
@@ -445,8 +452,9 @@ Fixes
 Redbot 3.5.17 (2025-03-08)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen karlsbjorn Kowlin
 
 Read before updating
 --------------------
@@ -498,8 +506,9 @@ Changes
 Redbot 3.5.16 (2025-02-06)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    Flame442 Jackenmen
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -522,8 +531,9 @@ and reset it to a known valid value.
 Redbot 3.5.15 (2025-02-03)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen Kowlin
 
 Read before updating
 --------------------
@@ -578,8 +588,9 @@ Changes
 Redbot 3.5.14 (2024-12-25)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Ascensionn`, :ghuser:`cswimr`, :ghuser:`Chovin`, :ghuser:`cdaman3141`, :ghuser:`DJTOMATO`, :ghuser:`Flame442`, :ghuser:`japandotorg`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`, :ghuser:`kpopdev`, :ghuser:`kevin1015wang`, :ghuser:`Kreusada`, :ghuser:`mellow-org`, :ghuser:`palmtree5`, :ghuser:`sravan1946`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    aikaterna Ascensionn cswimr Chovin cdaman3141 DJTOMATO Flame442 japandotorg Jackenmen karlsbjorn Kowlin kpopdev kevin1015wang Kreusada mellow-org palmtree5 sravan1946 TrustyJAID
 
 Read before updating
 --------------------
@@ -671,8 +682,9 @@ Fixes
 Redbot 3.5.13 (2024-08-27)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Guyonsteroids`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna Guyonsteroids Jackenmen Kowlin
 
 Read before updating
 --------------------
@@ -715,8 +727,9 @@ Fixes
 Redbot 3.5.12 (2024-08-08)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    aikaterna Jackenmen
 
 Read before updating
 --------------------
@@ -752,8 +765,9 @@ Fixes
 Redbot 3.5.11 (2024-08-04)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`anopem`, :ghuser:`Flame442`, :ghuser:`japandotorg`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna anopem Flame442 japandotorg Jackenmen Kowlin palmtree5 yamikaitou
 
 Read before updating
 --------------------
@@ -815,8 +829,9 @@ Changes
 Redbot 3.5.10 (2024-07-10)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`SeaswimmerTheFsh`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen Kowlin SeaswimmerTheFsh TrustyJAID yamikaitou
 
 Read before updating
 --------------------
@@ -915,8 +930,9 @@ Fixes
 Redbot 3.5.9 (2024-04-21)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`giplgwm`, :ghuser:`Jackenmen`, :ghuser:`Kuro-Rui`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
+.. changelog-contributors::
+
+    aikaterna giplgwm Jackenmen Kuro-Rui Kowlin palmtree5 TrustyJAID Zephyrkul
 
 Read before updating
 --------------------
@@ -973,8 +989,9 @@ Fixes
 Redbot 3.5.8 (2024-04-01)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen Kreusada TrustyJAID
 
 Read before updating
 --------------------
@@ -1045,8 +1062,9 @@ Additions
 Redbot 3.5.7 (2024-03-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`karlsbjorn`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    aikaterna Flame442 karlsbjorn Jackenmen
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -1072,8 +1090,9 @@ Fixes
 Redbot 3.5.6 (2024-03-22)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`BlizzardTheWolf`, :ghuser:`DJTOMATO`, :ghuser:`Dav-Git`, :ghuser:`Flame442`, :ghuser:`goettner`, :ghuser:`Jackenmen`, :ghuser:`Jan200101`, :ghuser:`japandotorg`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`madebylydia`, :ghuser:`michael-is-qcde`, :ghuser:`scarecr0w12`, :ghuser:`yeetbruises`, :ghuser:`Zephyrkul`
+.. changelog-contributors::
+
+    aikaterna BlizzardTheWolf DJTOMATO Dav-Git Flame442 goettner Jackenmen Jan200101 japandotorg Kowlin Kreusada laggron42 madebylydia michael-is-qcde scarecr0w12 yeetbruises Zephyrkul
 
 Read before updating
 --------------------
@@ -1184,8 +1203,9 @@ Fixes
 Redbot 3.5.5 (2023-09-14)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`palmtree5`
+.. changelog-contributors::
+
+    Flame442 Jackenmen karlsbjorn Kreusada ltzmax palmtree5
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -1226,8 +1246,9 @@ Changes
 Redbot 3.5.4 (2023-08-12)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`laggron42`, :ghuser:`Leo40Git`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    aikaterna Jackenmen laggron42 Leo40Git PredaaA TrustyJAID
 
 Read before updating
 --------------------
@@ -1275,8 +1296,9 @@ Fixes
 Redbot 3.5.3 (2023-07-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Om1609`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
+.. changelog-contributors::
+
+    AAA3A-AAA3A aikaterna Drapersniper Flame442 flaree Jackenmen Kowlin Kreusada Om1609 PredaaA TrustyJAID Zephyrkul
 
 Read before updating
 --------------------
@@ -1365,8 +1387,9 @@ Changes
 Redbot 3.5.2 (2023-05-14)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`flaree`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`rramboer`, :ghuser:`synrg`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna flaree Flame442 Jackenmen karlsbjorn rramboer synrg TrustyJAID Vexed01
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -1433,8 +1456,9 @@ Fixes
 Redbot 3.5.1 (2023-05-04)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    Flame442 Jackenmen
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -1470,8 +1494,9 @@ Fixes
 Redbot 3.5.0 (2023-05-04)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`alexratman`, :ghuser:`AntonioNarra`, :ghuser:`Arman0334`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`Honkertonken`, :ghuser:`i-am-zaidali`, :ghuser:`Jackenmen`, :ghuser:`japandotorg`, :ghuser:`karlsbjorn`, :ghuser:`keqking`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Kuro-Rui`, :ghuser:`leetfin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yuansheng1549`
+.. changelog-contributors::
+
+    AAA3A-AAA3A aikaterna alexratman AntonioNarra Arman0334 Dav-Git Drapersniper Flame442 Honkertonken i-am-zaidali Jackenmen japandotorg karlsbjorn keqking Kowlin Kreusada Kuro-Rui leetfin npc203 palmtree5 PredaaA Predeactor TrustyJAID Vexed01 yuansheng1549
 
 Read before updating
 --------------------
@@ -1730,8 +1755,9 @@ Fixes
 Redbot 3.4.19 (2023-04-20)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Ankur391`, :ghuser:`BigPeep0doo`, :ghuser:`chasehult`, :ghuser:`Flame442`, :ghuser:`Honkertonken`, :ghuser:`Jackenmen`, :ghuser:`japandotorg`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leetfin`, :ghuser:`Lioness100`, :ghuser:`ltzmax`, :ghuser:`MHLoppy`, :ghuser:`OofChair`, :ghuser:`Ryan5453`, :ghuser:`SnappyDragon64`, :ghuser:`sravan1946`, :ghuser:`TheThomanski`, :ghuser:`TrustyJAID`, :ghuser:`vertyco`, :ghuser:`Vexed01`, :ghuser:`Visne`
+.. changelog-contributors::
+
+    aikaterna Ankur391 BigPeep0doo chasehult Flame442 Honkertonken Jackenmen japandotorg Kowlin Kreusada leetfin Lioness100 ltzmax MHLoppy OofChair Ryan5453 SnappyDragon64 sravan1946 TheThomanski TrustyJAID vertyco Vexed01 Visne
 
 Read before updating
 --------------------
@@ -1845,8 +1871,9 @@ Changes
 Redbot 3.4.18 (2022-08-15)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`RheingoldRiver`
+.. changelog-contributors::
+
+    aikaterna Flame442 jack1142 Kowlin RheingoldRiver
 
 Read before updating
 --------------------
@@ -1897,8 +1924,9 @@ Changes
 Redbot 3.4.17 (2022-06-07)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`matcha19`, :ghuser:`mina9999`, :ghuser:`ponte-vecchio`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`untir-l`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna Drapersniper Flame442 jack1142 Kowlin Kreusada ltzmax matcha19 mina9999 ponte-vecchio PredaaA TrustyJAID untir-l Vexed01
 
 Read before updating
 --------------------
@@ -2003,8 +2031,9 @@ Fixes
 Redbot 3.4.16 (2021-12-31)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`PredaaA`
+.. changelog-contributors::
+
+    jack1142 PredaaA
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -2048,8 +2077,9 @@ Changes
 Redbot 3.4.15 (2021-12-31)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Arman0334`, :ghuser:`Crossedfall`, :ghuser:`Dav-Git`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Jan200101`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`ltzmax`, :ghuser:`Parnassius`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`RasmusWL`, :ghuser:`sravan1946`, :ghuser:`Stonedestroyer`, :ghuser:`the-krak3n`, :ghuser:`Tobotimus`, :ghuser:`vertyco`, :ghuser:`Vexed01`, :ghuser:`WreckRox`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna aleclol Arman0334 Crossedfall Dav-Git fixator10 Flame442 jack1142 Jan200101 Just-Jojo Kowlin Kreusada laggron42 ltzmax Parnassius PredaaA Predeactor RasmusWL sravan1946 Stonedestroyer the-krak3n Tobotimus vertyco Vexed01 WreckRox yamikaitou
 
 Read before updating
 --------------------
@@ -2173,8 +2203,9 @@ Fixes
 Redbot 3.4.14 (2021-09-23)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`L33Tech`, :ghuser:`maxbooiii`, :ghuser:`RheingoldRiver`
+.. changelog-contributors::
+
+    aikaterna jack1142 Kowlin L33Tech maxbooiii RheingoldRiver
 
 Read before updating
 --------------------
@@ -2239,8 +2270,9 @@ Fixes
 Redbot 3.4.13 (2021-09-09)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Arman0334`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`fredster33`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`qenu`, :ghuser:`TheDataLeek`, :ghuser:`Twentysix26`, :ghuser:`TwinDragon`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna Arman0334 Flame442 flaree fredster33 Injabie3 jack1142 Just-Jojo Kowlin Kreusada leblancg maxbooiii npc203 palmtree5 phenom4n4n PredaaA qenu TheDataLeek Twentysix26 TwinDragon Vexed01
 
 Read before updating
 --------------------
@@ -2376,8 +2408,9 @@ Fixes
 Redbot 3.4.12 (2021-06-17)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`npc203`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`
+.. changelog-contributors::
+
+    aikaterna Flame442 jack1142 Just-Jojo Kowlin Kreusada npc203 PredaaA retke Stonedestroyer
 
 This is a hotfix release related to Red ceasing to use the Audio Global API service.
 
@@ -2430,8 +2463,9 @@ Changes
 Redbot 3.4.11 (2021-06-12)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Onii-Chan-Discord`
+.. changelog-contributors::
+
+    jack1142 Kowlin Onii-Chan-Discord
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -2465,8 +2499,9 @@ Fixes
 Redbot 3.4.10 (2021-05-28)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`benno1237`, :ghuser:`bobloy`, :ghuser:`BoyDownTown`, :ghuser:`Danstr5544`, :ghuser:`DeltaXWizard`, :ghuser:`Drapersniper`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Lifeismana`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`plofts`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna aleclol benno1237 bobloy BoyDownTown Danstr5544 DeltaXWizard Drapersniper Fabian-Evolved fixator10 Flame442 flaree jack1142 Kowlin Kreusada Lifeismana Obi-Wan3 OofChair palmtree5 plofts PredaaA Predeactor TrustyJAID Vexed01
 
 Read before updating
 --------------------
@@ -2622,8 +2657,9 @@ Thanks again to :ghuser:`Rapptz` for quick response on this issue.
 Redbot 3.4.8 (2021-04-06)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`6days9weeks`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kingslayer268`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`rijusougata13`, :ghuser:`TheDiscordHistorian`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    6days9weeks aikaterna Drapersniper fixator10 Flame442 flaree jack1142 kingslayer268 Kowlin Kreusada Obi-Wan3 OofChair palmtree5 phenom4n4n PredaaA Predeactor rijusougata13 TheDiscordHistorian Tobotimus TrustyJAID Twentysix26 Vexed01
 
 Read before updating
 --------------------
@@ -2758,8 +2794,9 @@ Fixes
 Redbot 3.4.7 (2021-02-26)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    elijabesu Flame442 flaree jack1142 Kowlin kreusada palmtree5 TrustyJAID
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -2803,8 +2840,9 @@ Additions
 Redbot 3.4.6 (2021-02-16)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Andeeeee`, :ghuser:`bobloy`, :ghuser:`BreezeQS`, :ghuser:`Danstr5544`, :ghuser:`Dav-Git`, :ghuser:`Elysweyr`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Strafee`, :ghuser:`TheWyn`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna aleclol Andeeeee bobloy BreezeQS Danstr5544 Dav-Git Elysweyr Fabian-Evolved fixator10 Flame442 Injabie3 jack1142 Kowlin kreusada leblancg maxbooiii NeuroAssassin phenom4n4n PredaaA Predeactor retke siu3334 Strafee TheWyn TrustyJAID Vexed01 yamikaitou
 
 Read before updating
 --------------------
@@ -2953,8 +2991,9 @@ Fixes
 Redbot 3.4.5 (2020-12-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
+.. changelog-contributors::
+
+    Injabie3 NeuroAssassin
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -2979,8 +3018,9 @@ Fixes
 Redbot 3.4.4 (2020-12-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreus7`, :ghuser:`NeuroAssassin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna bobloy Flame442 flaree jack1142 Kowlin kreus7 NeuroAssassin npc203 palmtree5 phenom4n4n Predeactor retke siu3334 Vexed01 yamikaitou
 
 Read before updating
 --------------------
@@ -3076,8 +3116,9 @@ Removals
 Redbot 3.4.3 (2020-11-16)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`KianBral`, :ghuser:`maxbooiii`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`
+.. changelog-contributors::
+
+    aikaterna bobloy Flame442 jack1142 KianBral maxbooiii phenom4n4n Predeactor retke
 
 Read before updating
 --------------------
@@ -3150,8 +3191,9 @@ Additions
 Redbot 3.4.2 (2020-10-28)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
+.. changelog-contributors::
+
+    aikaterna Drapersniper jack1142 Kowlin PredaaA Stonedestroyer
 
 Read before updating
 --------------------
@@ -3208,8 +3250,9 @@ Changes
 Redbot 3.4.1 (2020-10-27)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`absj30`, :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`chloecormier`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`Stonedestroyer`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    absj30 aikaterna bobloy chloecormier Dav-Git Drapersniper fixator10 Flame442 flaree Generaleoley hisztendahl jack1142 KaiGucci Kowlin maxbooiii MeatyChunks NeuroAssassin nfitzen palmtree5 phenom4n4n PredaaA Predeactor PythonTryHard SharkyTheKing Stonedestroyer thisisjvgrace TrustyJAID TurnrDev Vexed01 Vuks69 xBlynd zephyrkul
 
 Read before updating
 --------------------
@@ -3393,8 +3436,9 @@ Changes
 Redbot 3.4.0 (2020-08-17)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kablekompany`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    Dav-Git DevilXD douglas-cpp Drapersniper flaree jack1142 kablekompany Kowlin maxbooiii MeatyChunks mikeshardmind NeuroAssassin PredaaA Predeactor retke SharkyTheKing thisisjvgrace Tinonb TrustyJAID Twentysix26 Vexed01 zephyrkul
 
 Read before updating
 --------------------
@@ -3553,8 +3597,9 @@ Removals
 Redbot 3.3.12 (2020-08-18)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`douglas-cpp`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MeatyChunks`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    Dav-Git douglas-cpp flaree jack1142 Kowlin MeatyChunks PredaaA Predeactor thisisjvgrace Vexed01 zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3593,8 +3638,9 @@ Changes
 Redbot 3.3.11 (2020-08-10)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`Flame`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    douglas-cpp Drapersniper Flame jack1142 MeatyChunks Vexed01 yamikaitou
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3629,8 +3675,9 @@ Fixes
 Redbot 3.3.10 (2020-07-09)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna bobloy Dav-Git Drapersniper Flame442 flaree Injabie3 jack1142 mikeshardmind MiniJennJenn NeuroAssassin thisisjvgrace Vexed01
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3723,8 +3770,9 @@ Fixes
 Redbot 3.3.9 (2020-06-12)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna Dav-Git Drapersniper Flame442 mikeshardmind NeuroAssassin Predeactor Vexed01
 
 Read before updating
 --------------------
@@ -3821,8 +3869,9 @@ Changes
 Redbot 3.3.8 (2020-05-29)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
+.. changelog-contributors::
+
+    aikaterna Bakersbakebread DariusStClair Dav-Git Drapersniper Flame442 jack1142 mikeshardmind NeuroAssassin PredaaA Predeactor qaisjp Tobotimus
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3931,8 +3980,9 @@ This is a hotfix release fixing issue with generating messages for new cases in 
 Redbot 3.3.6 (2020-04-27)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna Drapersniper jack1142 Kowlin MiniJennJenn NeuroAssassin PredaaA TrustyJAID yamikaitou
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4019,8 +4069,9 @@ Changes
 Redbot 3.3.5 (2020-04-09)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    jack1142 Kowlin
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4048,8 +4099,9 @@ Fixes
 Redbot 3.3.4 (2020-04-05)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`kennnyshiwa`
+.. changelog-contributors::
+
+    jack1142 kennnyshiwa
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4101,8 +4153,9 @@ Changes
 Redbot 3.3.3 (2020-03-28)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AnonGuy`, :ghuser:`Dav-Git`, :ghuser:`FancyJesse`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    AnonGuy Dav-Git FancyJesse Ianardo-DiCaprio jack1142 kennnyshiwa Kowlin NeuroAssassin PredaaA Stonedestroyer TrustyJAID
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4202,8 +4255,9 @@ Fixes
 Redbot 3.3.2 (2020-02-28)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`chasehult`, :ghuser:`Dav-Git`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Hedlund01`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`trundler-dev`, :ghuser:`TrustyJAID`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    aikaterna chasehult Dav-Git DiscordLiz Drapersniper fixator10 Flame442 Hedlund01 jack1142 Kowlin mikeshardmind PredaaA Stonedestroyer trundler-dev TrustyJAID zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4309,8 +4363,9 @@ Changes
 Redbot 3.3.1 (2020-02-05)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`flyingmongoose`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`
+.. changelog-contributors::
+
+    aikaterna Flame442 flyingmongoose jack1142 Kowlin mikeshardmind palmtree5 PredaaA
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4370,8 +4425,9 @@ Changes
 Redbot 3.3.0 (2020-01-26)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`DevilXD`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`Stonedestroyer`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    DevilXD Drapersniper Flame442 Ianardo-DiCaprio jack1142 Kowlin mikeshardmind Stonedestroyer zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4455,8 +4511,9 @@ Fixes
 Redbot 3.2.3 (2020-01-17)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`Redjumpman`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    Dav-Git Drapersniper Flame442 flaree jack1142 Kowlin mikeshardmind Redjumpman Stonedestroyer TrustyJAID
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4571,8 +4628,9 @@ Fixes
 Redbot 3.2.1 (2020-01-10)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`mikeshardmind`, :ghuser:`palmtree5`
+.. changelog-contributors::
+
+    mikeshardmind palmtree5
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4601,8 +4659,9 @@ Fixes
 Redbot 3.2.0 (2020-01-09)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Aurorum`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`DJtheRedstoner`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`jerbob`, :ghuser:`jonasbohmann`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`RealFriesi`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`Vexed01`, :ghuser:`wereii`, :ghuser:`yamikaitou`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    aikaterna Aurorum Bakersbakebread DevilXD DiscordLiz DJtheRedstoner Drapersniper Flame442 flaree Ianardo-DiCaprio jack1142 jerbob jonasbohmann kennnyshiwa Kowlin mikeshardmind palmtree5 PredaaA RealFriesi retke Tobotimus Vexed01 wereii yamikaitou ZeLarpMaster zephyrkul
 
 Read before updating
 --------------------
@@ -5031,8 +5090,9 @@ This was caused by Discord API changes.
 Redbot 3.1.7 (2019-11-05)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`mikeshardmind`
+.. changelog-contributors::
+
+    aikaterna mikeshardmind
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -5106,8 +5166,9 @@ This is a hotfix release fixing issues with broken custom commands and modlog ca
 Redbot 3.1.3 (2019-07-14)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lizzyd710`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna Bakersbakebread DevilXD DiscordLiz Drapersniper Flame442 jack1142 kennnyshiwa Kowlin lizzyd710 MeatyChunks mikeshardmind NeuroAssassin PredaaA retke Tobotimus yamikaitou
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -5201,8 +5262,9 @@ Fixes
 Redbot 3.1.2 (2019-05-31)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`bren0xa`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    bren0xa DevilXD DiscordLiz fixator10 Flame442 jack1142 Kowlin mikeshardmind NeuroAssassin palmtree5 PredaaA retke Stonedestroyer Tobotimus yamikaitou zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -5298,8 +5360,9 @@ This is a hotfix release fixing issues related to fuzzy command search that were
 Redbot 3.1.0 (2019-05-15)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`EgonSpengler`, :ghuser:`entchen66`, :ghuser:`FixedThink`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lionirdeadman`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`NIXC`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Seputaes`, :ghuser:`Sitryk`, :ghuser:`tekulvw`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    aikaterna bobloy calebj DiscordLiz EgonSpengler entchen66 FixedThink Flame442 jack1142 kennnyshiwa Kowlin lionirdeadman mikeshardmind NeuroAssassin NIXC palmtree5 PredaaA retke Seputaes Sitryk tekulvw Tobotimus TrustyJAID Twentysix26 zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -5416,8 +5479,9 @@ Fixes
 Redbot 3.0.2 (2019-02-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Tobotimus`, :ghuser:`ZeLarpMaster`
+.. changelog-contributors::
+
+    Tobotimus ZeLarpMaster
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -5441,8 +5505,9 @@ Fixes
 Redbot 3.0.1 (2019-02-17)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Redjumpman`, :ghuser:`Tobotimus`, :ghuser:`Twentysix26`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    calebj DiscordLiz mikeshardmind PredaaA Redjumpman Tobotimus Twentysix26 ZeLarpMaster zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
