@@ -1,4 +1,4 @@
-alabaster==0.7.13
+alabaster==0.7.14
     # via sphinx
 certifi==2026.2.25
     # via requests
@@ -27,7 +27,7 @@ requests==2.32.4
     # via sphinx
 snowballstemmer==3.0.1
     # via sphinx
-sphinx==7.1.2
+sphinx==7.3.7
     # via
     #   -r extra-doc.in
     #   sphinx-prompt
@@ -52,7 +52,7 @@ sphinxcontrib-jsmath==1.0.1
     # via sphinx
 sphinxcontrib-qthelp==1.0.3
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.5
+sphinxcontrib-serializinghtml==1.1.9
     # via sphinx
 sphinxcontrib-trio==1.2.0
     # via -r extra-doc.in

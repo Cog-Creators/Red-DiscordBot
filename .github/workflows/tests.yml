@@ -18,7 +18,6 @@ jobs:
             - "3.8"
           tox_env:
             - style
-            - docs
           include:
             - tox_env: py38
               python_version: "3.8"
@@ -35,6 +34,7 @@ jobs:
             - tox_env: style
               friendly_name: Style
             - tox_env: docs
+              python_version: "3.9"
               friendly_name: Docs
         fail-fast: false
       name: Tox - ${{ matrix.friendly_name }}
