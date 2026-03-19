@@ -33,6 +33,5 @@ Using *multiple* virtual environments for each individual or select groups of in
 
 .. important::
 
-    Regardless of which option you choose, do not update the virtual environment while any
-    instances within that environment are running. This is especially true for Windows, as 
-    files are locked by the system while in use.
+    Regardless of which option you choose, do not update while any instances within that virtual 
+    environment are running. This is especially true for Windows, as files are locked by the system while in use.
