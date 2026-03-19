@@ -7,11 +7,10 @@ Creating a virtual environment is simple and helps prevent installation problems
 
 **What Are Virtual Environments For?**
 
-Virtual environments allow you to isolate Red's library dependencies, cog dependencies and python
-binaries from the rest of your system with no performance overhead.
-It also ensures Red and its dependencies are installed to a predictable location, which makes 
-uninstalling Red as simple as removing a single folder. Preventing any data loss 
-or breaking other things on your system.
+Virtual environments allow you to isolate Red's library dependencies, cog dependencies, and Python
+binaries from the rest of your system with no performance overhead, ensuring those dependencies 
+and Red are installed to a predictable location. This makes uninstalling Red as simple as removing 
+a single folder, preventing any data loss or breaking other things on your system.
 
 
 --------------------------------------------
@@ -35,5 +34,5 @@ Using *multiple* virtual environments for each individual or select groups of in
 .. important::
 
     Regardless of which option you choose, do not update the virtual environment while any
-    instances within that environment are running. This is especially true for Windows as 
+    instances within that environment are running. This is especially true for Windows, as 
     files are locked by the system while in use.
