@@ -10,7 +10,7 @@ Creating a virtual environment is simple and helps prevent installation problems
 Virtual environments allow you to isolate Red's library dependencies, cog dependencies and python
 binaries from the rest of your system with no performance overhead.
 It also ensures Red and its dependencies are installed to a predictable location, which makes 
-uninstalling Red as simple as removing a single folder. Preventing any loss of data 
+uninstalling Red as simple as removing a single folder. Preventing any data loss 
 or breaking other things on your system.
 
 
@@ -30,10 +30,10 @@ Using *multiple* virtual environments for each individual or select groups of in
 
 - Need to update Red within each virtual environment separately.
 - Can update Red without needing to update all instances.
-- Only need to shut down the instance being updated.
+- Only need to shut down the instance(s) being updated.
 
 .. important::
 
     Regardless of which option you choose, do not update the virtual environment while any
-    instance is running. This is especially true for Windows as files are locked by the 
-    system while in use.
+    instances within that environment are running. This is especially true for Windows as 
+    files are locked by the system while in use.
