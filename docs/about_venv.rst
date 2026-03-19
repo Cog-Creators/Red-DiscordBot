@@ -26,7 +26,7 @@ The advantages of using a *single* virtual environment for all of your instances
     - However, you must shut down all instances before updating.
 - It will save space on your hard drive.
 
-The advantages of using *multiple* virtual environments for all of your instances are:
+The advantages of using *multiple* virtual environments for each individual or select groups of instances are:
 
 - You can update each of your instances individually.
 - Only the instances in the venv need to be shut down prior to updating.
