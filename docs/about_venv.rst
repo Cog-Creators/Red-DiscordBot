@@ -20,16 +20,17 @@ Virtual Environments with Multiple Instances
 If you are running multiple instances of Red on the same machine, you have the option of either
 using the same virtual environment for all of them, or creating separate ones.
 
-The advantages of using a *single* virtual environment for all of your instances are:
+Using a *single* virtual environment for all of your instances means you:
 
-- When updating Red, you only need to update it once for all instances.
-    - However, you must shut down all instances before updating.
-- It will save space on your hard drive.
+- Only need to update Red once for all instances.
+- Must shut down all instances prior to updating.
+- Will save space on your hard drive.
 
-The advantages of using *multiple* virtual environments for each individual or select groups of instances are:
+Using *multiple* virtual environments for each individual or select groups of instances means you:
 
-- You can update each of your instances individually or as a select group.
-- Only the instances in the virtual environment being updated need to be shut down prior to updating.
+- Need to update Red within each virtual environment separately.
+- Can update Red without needing to update all instances.
+- Only need to shut down the instance being updated.
 
 .. important::
 
