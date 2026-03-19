@@ -24,12 +24,14 @@ Using a *single* virtual environment for all of your instances means you:
 - Only need to update Red once for all instances.
 - Must shut down all instances prior to updating.
 - Will save space on your hard drive.
+- Want all instances to share the same version/dependencies.
 
 Using *multiple* virtual environments for each individual or select groups of instances means you:
 
 - Need to update Red within each virtual environment separately.
 - Can update Red without needing to update all instances.
 - Only need to shut down the instance(s) being updated.
+- Want different Red/dependency versions on different instances.
 
 .. important::
 
