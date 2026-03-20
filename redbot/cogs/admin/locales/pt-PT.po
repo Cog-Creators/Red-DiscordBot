@@ -21,7 +21,7 @@ msgstr "Tentei fazer uma coisa que o Discord negou permissão para fazer. O coma
 
 #: redbot/cogs/admin/admin.py:25
 msgid "I can not give {role.name} to {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."
-msgstr "Eu não posso dar {role.name} a {member.display_name} porque esse cargo é igual ou maior a meu cargo na hierarquia do Discord."
+msgstr "Eu não posso dar {role.name} a {member.display_name} porque esse cargo é igual ou maior ao meu cargo na hierarquia do Discord."
 
 #: redbot/cogs/admin/admin.py:31
 msgid "I can not remove {role.name} from {member.display_name} because that role is higher than or equal to my highest role in the Discord hierarchy."

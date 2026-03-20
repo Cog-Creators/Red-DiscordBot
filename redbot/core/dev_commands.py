@@ -158,9 +158,13 @@ class DevOutput:
             output.append(self.formatted_exc)
         elif self.always_include_result or self.result is not None:
             try:
-                output.append(str(self.result))
+                result = str(self.result)
+                # ensure that the result can be encoded (GH-6485)
+                result.encode("utf-8")
             except Exception as exc:
                 output.append(self.format_exception(exc))
+            else:
+                output.append(result)
         return sanitize_output(self.ctx, "".join(output))
 
     async def send(self, *, tick: bool = True) -> None:

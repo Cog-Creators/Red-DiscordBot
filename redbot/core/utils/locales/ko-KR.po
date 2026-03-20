@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2025-02-01 23:37+0000\n"
+"POT-Creation-Date: 2025-09-04 19:12+0000\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -75,7 +75,7 @@ msgstr ""
 msgid "Page {num}"
 msgstr ""
 
-#: redbot/core/utils/views.py:338 redbot/core/utils/views.py:698
+#: redbot/core/utils/views.py:338 redbot/core/utils/views.py:702
 msgid "You are not authorized to interact with this."
 msgstr ""
 
@@ -95,20 +95,20 @@ msgstr ""
 msgid "Service"
 msgstr ""
 
-#: redbot/core/utils/views.py:434
+#: redbot/core/utils/views.py:438
 msgid "This modal is for bot owners only. Whoops!"
 msgstr ""
 
-#: redbot/core/utils/views.py:447
+#: redbot/core/utils/views.py:451
 msgid "{error_message}\n"
 "Please try again."
 msgstr ""
 
-#: redbot/core/utils/views.py:454 redbot/core/utils/views.py:461
+#: redbot/core/utils/views.py:458 redbot/core/utils/views.py:465
 msgid "`{service}` API tokens have been set."
 msgstr ""
 
-#: redbot/core/utils/views.py:497
+#: redbot/core/utils/views.py:501
 msgid "This button is for bot owners only, oh well."
 msgstr ""
 

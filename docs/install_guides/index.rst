@@ -24,13 +24,11 @@ we recommend **Ubuntu 24.04 LTS**.
    opensuse-tumbleweed
    oracle-linux-8
    oracle-linux-9
-   raspberry-pi-os-11
    raspberry-pi-os-12
    rhel-8
    rhel-9
    rocky-linux-8
    rocky-linux-9
-   ubuntu-2004
    ubuntu-2204
    ubuntu-2404
    ubuntu-non-lts

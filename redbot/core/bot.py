@@ -820,6 +820,9 @@ class Red(
             Whether or not the message is eligible to be treated as a command.
         """
 
+        # NOTE: any changes to implementation here may need to be made
+        # in the `RedTree.interaction_check` as well
+
         channel = message.channel
         guild = message.guild
 
@@ -912,7 +915,18 @@ class Red(
             return True
 
         if isinstance(ctx.channel, discord.Thread):
-            channel = ctx.channel.parent
+            if isinstance(ctx, discord.Interaction) and ctx.is_user_integration():
+                ctx: discord.Interaction
+                # This is a user installed interaction, and thus... We're doomed!
+                # We must mock an object because we don't have the channel cached,
+                # and we are unable to fetch a full channel from the interaction
+                # #BlameDiscord, See Red#6501 for more details.
+
+                # LIMITATIONS: Due the fact that we don't know the categories either as they aren't...
+                # communicated in the interaction, we can't check for category ignores.
+                channel = discord.Object(id=ctx.channel.parent_id)
+            else:
+                channel = ctx.channel.parent
             thread = ctx.channel
         else:
             channel = ctx.channel
@@ -1240,6 +1254,15 @@ class Red(
                     "To regenerate lib folder, load Downloader and use `[p]cog reinstallreqs`.",
                 )
             )
+
+        if self._cli_flags.cog_path:
+            for path in self._cli_flags.cog_path:
+                path = Path(path)
+                try:
+                    await self._cog_mgr.add_path(path, persist=False)
+                    log.info("Added cog path: %s", path)
+                except Exception:
+                    log.exception("Failed to add cog path: %s", path)
 
         if packages:
             # Load permissions first, for security reasons
@@ -2485,7 +2508,8 @@ class Red(
             ret.append(msg)
             n_remaining = len(messages) - idx
             files_perm = (
-                not channel.guild or channel.permissions_for(channel.guild.me).attach_files
+                isinstance(channel, discord.abc.User)
+                or channel.permissions_for(channel.guild.me).attach_files
             )
             options = ("more", "file") if files_perm else ("more",)
             if n_remaining > 0:

@@ -208,6 +208,8 @@ from discord.ext.commands import (
     HybridCommandError as HybridCommandError,
     SoundboardSoundConverter as SoundboardSoundConverter,
     SoundboardSoundNotFound as SoundboardSoundNotFound,
+    BadTimestampArgument as BadTimestampArgument,
+    Timestamp as Timestamp,
 )
 
 __all__ = (
