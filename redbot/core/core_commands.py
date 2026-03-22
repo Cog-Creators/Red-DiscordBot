@@ -4110,9 +4110,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         try:
             colour = await commands.ColourConverter().convert(ctx, colour)
         except commands.BadColourArgument:
-            return await ctx.send(
-                _('"{}" is not a valid colour.').format(colour)
-            )
+            return await ctx.send(_('"{}" is not a valid colour.').format(colour))
         ctx.bot._color = colour
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))

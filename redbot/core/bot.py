@@ -989,9 +989,7 @@ class Red(
         """
         await self._prefix_cache.set_prefixes(guild=guild, prefixes=prefixes)
 
-    async def get_embed_color(
-        self, location: discord.abc.Messageable
-    ) -> Optional[discord.Color]:
+    async def get_embed_color(self, location: discord.abc.Messageable) -> Optional[discord.Color]:
         """
         Get the embed color for a location. This takes into account all related settings.
 
