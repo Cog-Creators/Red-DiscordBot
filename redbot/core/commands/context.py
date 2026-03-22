@@ -195,8 +195,8 @@ class Context(DPYContext):
 
         Returns
         -------
-        discord.Colour:
-            The colour to be used
+        Optional[discord.Colour]:
+            The colour to be used, or ``None`` for theme colour.
         """
         return await self.bot.get_embed_color(self)
 

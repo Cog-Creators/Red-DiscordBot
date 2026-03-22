@@ -3944,7 +3944,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         global_data = await ctx.bot._config.all()
         locale = global_data["locale"]
         regional_format = global_data["regional_format"] or locale
-        colour = discord.Colour(global_data["color"])
+        raw_color = global_data["color"]
+        colour = _("Theme (auto)") if raw_color is None else discord.Colour(raw_color)
 
         prefix_string = " ".join(prefixes)
         settings = _(
@@ -4074,7 +4075,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
     @_set.command(name="colour", aliases=["color"])
     @commands.is_owner()
-    async def _set_colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
+    async def _set_colour(self, ctx: commands.Context, *, colour: str = None):
         """
         Sets a default colour to be used for the bot's embeds.
 
@@ -4082,20 +4083,36 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#discord.ext.commands.ColourConverter
 
+        Use ``none`` to let embeds use the user's theme colour instead of a fixed value.
+
         **Examples:**
         - `[p]set colour dark red`
         - `[p]set colour blurple`
         - `[p]set colour 0x5DADE2`
         - `[p]set color 0x#FDFEFE`
         - `[p]set color #7F8C8D`
+        - `[p]set color none`
 
         **Arguments:**
-        - `[colour]` - The colour to use for embeds. Leave blank to set to the default value (red).
+        - `[colour]` - The colour to use for embeds. Use ``none`` for theme colour.\
+          Leave blank to set to the default value (red).
         """
         if colour is None:
             ctx.bot._color = discord.Color.red()
             await ctx.bot._config.color.set(discord.Color.red().value)
             return await ctx.send(_("The color has been reset."))
+        if colour.lower() == "none":
+            ctx.bot._color = None
+            await ctx.bot._config.color.set(None)
+            return await ctx.send(
+                _("The color has been cleared. Embeds will use the user's theme color.")
+            )
+        try:
+            colour = await commands.ColourConverter().convert(ctx, colour)
+        except commands.BadColourArgument:
+            return await ctx.send(
+                _('"{}" is not a valid colour.').format(colour)
+            )
         ctx.bot._color = colour
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
