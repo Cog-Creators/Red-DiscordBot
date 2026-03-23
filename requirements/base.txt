@@ -62,6 +62,8 @@ red-commons==1.0.0
     #   red-lavalink
 red-lavalink==0.11.1
     # via -r base.in
+redbot-update==0.1.0a3
+    # via -r base.in
 rich==14.3.3
     # via -r base.in
 schema==0.7.8
