@@ -31,7 +31,10 @@ from typing import (
 
 import aiohttp
 import discord
+import yarl
 from packaging.requirements import Requirement
+from packaging.utils import parse_sdist_filename, parse_wheel_filename
+from packaging.version import Version
 import rapidfuzz
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
@@ -55,13 +58,21 @@ __all__ = (
     "send_to_owners_with_preprocessor",
     "send_to_owners_with_prefix_replaced",
     "expected_version",
-    "fetch_latest_red_version_info",
+    "fetch_latest_red_version",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
     "cli_level_to_log_level",
 )
 
 _T = TypeVar("_T")
+
+# I guess there's nothing in allowing people to use an alternative index.
+_SIMPLE_API_URL = os.getenv("RED_SIMPLE_API_URL") or "https://pypi.org/simple/"
+# This variable should only be used for debugging purposes (hence why it starts with `_`).
+# You can debug the behavior by e.g. creating a "Red-DiscordBot.json" file,
+# starting a server with `python -m http.server` and starting Red with the following env vars:
+# RED_SIMPLE_API_URL=http://localhost:8000 _RED_SIMPLE_API_ENDPOINT_PATH=Red-DiscordBot.json
+_SIMPLE_API_ENDPOINT_PATH = os.getenv("_RED_SIMPLE_API_ENDPOINT_PATH") or "Red-DiscordBot"
 
 
 def safe_delete(pth: Path):
@@ -326,7 +337,7 @@ def expected_version(current: str, expected: str) -> bool:
     return Requirement(f"x{expected}").specifier.contains(current, prereleases=True)
 
 
-async def fetch_latest_red_version_info() -> Tuple[VersionInfo, Optional[str]]:
+async def fetch_latest_red_version() -> Tuple[Version, Optional[str]]:
     """
     Fetch information about latest Red release on PyPI.
 
@@ -337,18 +348,54 @@ async def fetch_latest_red_version_info() -> Tuple[VersionInfo, Optional[str]]:
     TimeoutError
         The request to PyPI timed out.
     ValueError
-        An invalid version string was returned in PyPI metadata.
+        Some part of the response was considered invalid.
+        This includes issues such as incorrect response content type,
+        invalid version strings, inability to find files for a release,
+        and mismatching Requires-Python values.
     KeyError
         The PyPI metadata is missing some of the required information.
     """
+    expected_content_type = "application/vnd.pypi.simple.v1+json"
     async with aiohttp.ClientSession() as session:
-        async with session.get("https://pypi.org/pypi/Red-DiscordBot/json") as r:
-            data = await r.json()
+        async with session.get(
+            yarl.URL(_SIMPLE_API_URL) / _SIMPLE_API_ENDPOINT_PATH,
+            headers={"Accept": expected_content_type},
+        ) as resp:
+            data = await resp.json()
+            content_type = resp.headers["Content-Type"]
+            if not (
+                content_type.startswith(expected_content_type)
+                or (
+                    content_type == "application/json"
+                    and data["meta"]["api-version"].startswith("1.")
+                )
+            ):
+                raise ValueError("got unexpected response from Simple Repository API")
 
-    release = VersionInfo.from_str(data["info"]["version"])
-    required_python = data["info"]["requires_python"]
+    files = {}
+    for f in data["files"]:
+        if f.get("yanked"):
+            continue
+        filename = f["filename"]
+        if filename.endswith(".whl"):
+            _, version, _, _ = parse_wheel_filename(filename)
+        elif filename.endswith(".tar.gz"):
+            _, version = parse_sdist_filename(filename)
+        else:
+            continue
+        version_files = files.setdefault(version, {})
+        version_files[f["filename"]] = f
 
-    return release, required_python
+    if not files:
+        raise ValueError("could not find any files")
+
+    latest_version = max(files)
+    version_files = files[latest_version]
+    required_pythons = {f.get("requires-python") for f in version_files.values()}
+    if len(required_pythons) > 1:
+        raise ValueError("found multiple files with different Requires-Python values")
+
+    return latest_version, required_pythons.pop()
 
 
 def deprecated_removed(
