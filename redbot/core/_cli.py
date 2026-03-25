@@ -244,6 +244,14 @@ def parse_cli_flags(args):
         dest="logging_level",
         help="Increase the verbosity of the logs, each usage of this flag increases the verbosity level by 1.",
     )
+    parser.add_argument(
+        "--no-verbose",
+        "--no-debug",
+        action="store_const",
+        const=0,
+        dest="logging_level",
+        help="Set the verbosity level to 0.",
+    )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
         "--mentionable",

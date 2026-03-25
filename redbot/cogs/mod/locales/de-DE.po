@@ -1046,7 +1046,10 @@ msgid "\n"
 "        Set the contents for the optional extra embed on ban\n\n"
 "        Cannot be over 1024 characters long.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Setze den Inhalt für den optionalen Ban Embed\n\n"
+"        Kann nicht mehr als 1024 Zeichen haben.\n"
+"        "
 
 #: redbot/cogs/mod/settings.py:441
 msgid "Embed contents cannot be over 1024 characters long."

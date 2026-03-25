@@ -118,7 +118,7 @@ msgstr "\n"
 "        Bewerk een rolkleur.\n\n"
 "        Gebruik dubbele aanhalingstekens als de rol spaties bevat.\n"
 "        Kleur moet in hexadecimaal formaat zijn.\n"
-"        [Online kleur kiezer](http://www.w3schools. om/colors/colors_picker. sp)\n\n"
+"        [Online kleur kiezer](http://www.w3schools.com/colors/colors_picker. sp)\n\n"
 "        Voorbeelden:\n"
 "            `[p]editrole colour \"The Transistor\" #ff0000`\n"
 "            `[p]editrole colour Test #ff9900`\n"
@@ -126,7 +126,7 @@ msgstr "\n"
 
 #: redbot/cogs/admin/admin.py:275
 msgid "{author} ({author.id}) changed the colour of role '{role.name}'"
-msgstr ""
+msgstr "{author} ({author.id}) heeft de kleur van rol '{role.name} ' gewijzigd"
 
 #: redbot/cogs/admin/admin.py:294 redbot/cogs/admin/admin.py:327
 msgid "Done."
@@ -149,7 +149,7 @@ msgstr "\n"
 
 #: redbot/cogs/admin/admin.py:308
 msgid "{author} ({author.id}) changed the name of role '{old_name}' to '{name}'"
-msgstr ""
+msgstr "{author} ({author.id}) heeft de naam van rol '{old_name}' veranderd naar '{name}'"
 
 #: redbot/cogs/admin/admin.py:332
 #, docstring
@@ -181,7 +181,7 @@ msgstr "Verander hoe aankondigingen worden verzonden in deze gilde."
 #: redbot/cogs/admin/admin.py:367
 #, docstring
 msgid "Change the channel where the bot will send announcements."
-msgstr "Bewerk het kanaal waar deze bot aankondigingen maakt."
+msgstr "Bewerk het kanaal waar de bot aankondigingen maakt."
 
 #: redbot/cogs/admin/admin.py:370
 msgid "The announcement channel has been set to {channel.mention}"
@@ -361,5 +361,5 @@ msgstr "De rol \"{role_name}\" is geen geldige zelfrol."
 
 #: redbot/cogs/admin/converters.py:36
 msgid "This selfrole has more than one case insensitive match. Please ask a moderator to resolve the ambiguity, or use the role ID to reference the role."
-msgstr ""
+msgstr "Deze zelfrol heeft meer dan één hoofdlettergevoelig resultaat. Vraag een moderator om het dubbele resultaat op te lossen of gebruik de rol-ID om te verwijzen naar de rol."
 

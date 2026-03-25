@@ -1,9 +1,146 @@
 .. Red changelogs
 
+Redbot 3.5.24 (2026-03-06)
+==========================
+
+| Thanks to all these amazing people who contributed to this release:
+| :ghuser:`aikaterna`, :ghuser:`EternalllZM`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+
+Read before updating
+--------------------
+
+#. `The 3.5.23 changelog's <redbot-3-5-23-2026-03-04>` **"Read before updating"** section has been updated with further information about Red's Audio cog no longer supporting Java 11. If you use the Audio cog, please read that section again. Note that Red 3.5.24 supports Java 21 in addition to Java 17 as well.
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    Red 3.5.24 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.13%2Bred.3>`__.
+
+    Note that Lavalink now requires Java 17 or newer.
+
+End-user changelog
+------------------
+
+Changes
+*******
+
+- **Core** - The bot will no longer wait for the update check to finish before finishing the bot startup (:issue:`6687`)
+- **Core - Command-line Interfaces** - Added new ``--no-debug/--no-verbose`` flag allowing to reset the verbosity level set by the ``-v/--verbose/--debug`` flags used earlier in the argument list (:issue:`6680`)
+- **Cogs - Audio** - The cog can now be used with Java 21 (:issue:`6681`)
+
+Fixes
+*****
+
+- |cool| **Cogs - Audio** - Fixed issues with the cog not working on Linux aarch64 systems with a 16k page size kernel (as seen on Raspberry Pi OS ran on Raspberry Pi 5) (:issue:`6683`, :issue:`6688`)
+- **Cogs - Audio** - The cog will now correctly error about Java 11 being unsupported instead of trying to redownload Lavalink.jar repeatedly a few times (:issue:`6681`)
+
+Documentation changes
+---------------------
+
+- Updated the Audio cog documentation, command help, and errors to reflect that Java 11 is no longer supported
+- Updated `the 3.5.23 changelog <redbot-3-5-23-2026-03-04>` to include information about Java 11 no longer being supported
+
+----
+
+.. _redbot-3-5-23-2026-03-04:
+
+Redbot 3.5.23 (2026-03-04)
+==========================
+
+| Thanks to all these amazing people who contributed to this release:
+| :ghuser:`cswimr`, :ghuser:`EternalllZM`, :ghuser:`Evanroby`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`karlsbjorn`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`VasilisThePikachu`, :ghuser:`yamikaitou`
+
+Read before updating
+--------------------
+
+#. Red's Audio cog now requires Java 17 to be present on the system. Java 11 is no longer supported.
+
+   All of the install guides for the systems that we currently support already provided instructions to install Java 17,
+   so if you installed Red somewhat recently, you should already be set.
+
+   If you see an error about using the wrong Java version, you can install the right Java version
+   by following the **"Installing the pre-requirements"** section of our install guide for your operating system.
+
+#. We are planning to remove support for Red on systems using the **armv7l** architecture in **Red 3.6.0**.
+   The support for other architectures (**x86-64** and **aarch64**) will remain unchanged per our existing `end-user-guarantees`.
+
+   If you have any concerns regarding this, please reach out to us on `our discord server <https://discord.gg/red>`__.
+
+#. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
+
+    -   Red 3.5.23 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.13%2Bred.2>`__.
+
+        Note that Lavalink now requires Java 17 or newer.
+
+    -   We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
+
+        More specifically, we bumped the version of YT source plugin.
+        `Download Red 3.5.23's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.23/Red-DiscordBot-3.5.23-default-lavalink-application.yml>`__
+
+#. Following operating systems are no longer supported as they have already reached their end of life:
+
+    - macOS 13 (Ventura)
+    - Fedora 41
+    - Raspberry Pi OS (Legacy) 11
+
+End-user changelog
+------------------
+
+Additions
+*********
+
+- **Core - Command-line Interfaces** - Added new ``--cog-path`` flag allowing to specify additional cog paths for the current bot invocation (:issue:`6506`, :issue:`6510`)
+
+Changes
+*******
+
+- **Core - Dependencies** - Red's dependencies have been bumped (:issue:`6666`)
+- |cool| **Cogs - Audio** - The cog has been updated to support Discord's new end-to-end encryption protocol - `DAVE <https://discord.com/blog/bringing-dave-to-all-discord-platforms>`__ (:issue:`6665`)
+- **Cogs - Warnings** - Added a new ``[p]warningset mywarnings sendtodms`` setting that determines whether the output of ``[p]mywarnings`` should be sent in user's DMs or in the current channel (:issue:`6641`, :issue:`6673`) 
+
+Removals
+********
+
+- **Core - OS Support** - macOS 13 (Ventura), Fedora 41, and Raspberry Pi OS (Legacy) 11 are no longer supported as they have already reached their end of life (:issue:`6669`)
+- **Cogs - Audio** - The cog no longer supports Java 11 (:issue:`6665`)
+
+Fixes
+*****
+
+- |cool| **Core** - Fixed the bot's commands not working when the bot was installed as a user app (:issue:`6501`, :issue:`6503`)
+- **Core** - Fixed the bot's fuzzy command help not ignoring users that are on the bot's blocklist (:issue:`6482`, :issue:`6594`)
+- **Core** - Fixed the bot process hanging for indefinite time when trying to shutdown from an unhandled exception (:issue:`5780`, :issue:`6659`)
+- **Core - Bot Commands** - Fixed the modal in the ``[p]set api`` command failing to submit (:issue:`6626`)
+- **Core - Bot Commands** - Fixed the ``[p]traceback`` command not being able to send long tracebacks in DMs (:issue:`6656`)
+- |cool| **Cogs - Audio** - Fixed a bunch of YT playback issues (:issue:`6665`)
+- **Cogs - General** - Fixed the ``[p]serverinfo 1`` command failing when the server's feature list is too long (:issue:`6636`, :issue:`6652`)
+- **Cogs - Streams** - The cog will now check that the bot has necessary permissions before sending stream alert messages (:issue:`4967`)
+- **Cogs - Warnings** - Fixed the bot revealing a moderator that warned the user in the output of ``[p]mywarnings`` command when the ``[p]warningset showmoderator`` setting is disabled (:issue:`6641`, :issue:`6673`)
+
+Developer changelog
+-------------------
+
+Changes
+*******
+
+- |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.7.1 (:issue:`6664`)
+
+Fixes
+*****
+
+- **Core - Bot Class** - Fixed a regression in the `Red.send_interactive()` method causing it to not work with `discord.Member` and `discord.User` objects (:issue:`6656`)
+
+Documentation changes
+---------------------
+
+- Added `backup_red` document (:issue:`3421`, :issue:`6654`)
+- Updated the `bot_application_guide` according to changes in Discord Developer Portal's interface (:issue:`6647`)
+
+----
+
 Redbot 3.5.22 (2025-09-05)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
 
 Read before updating
@@ -39,7 +176,7 @@ Changes
 Redbot 3.5.21 (2025-08-26)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`egypt1848`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`, :ghuser:`VasilisThePikachu`
 
 Read before updating
@@ -123,7 +260,7 @@ Documentation changes
 Redbot 3.5.20 (2025-05-03)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`
 
 Read before updating
@@ -153,7 +290,7 @@ Fixes
 Redbot 3.5.19 (2025-04-27)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`
 
 Read before updating
@@ -194,7 +331,7 @@ Changes
 Redbot 3.5.18 (2025-03-26)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Jackenmen`, :ghuser:`Kreusada`
 
 Read before updating
@@ -224,7 +361,7 @@ Fixes
 Redbot 3.5.17 (2025-03-08)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`
 
 Read before updating
@@ -265,7 +402,7 @@ Changes
 Redbot 3.5.16 (2025-02-06)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Flame442`, :ghuser:`Jackenmen`
 
 This is a hotfix release changing our implementation to prevent crash at startup
@@ -281,7 +418,7 @@ and reset it to a known valid value.
 Redbot 3.5.15 (2025-02-03)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
 
 Read before updating
@@ -325,7 +462,7 @@ Changes
 Redbot 3.5.14 (2024-12-25)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Ascensionn`, :ghuser:`cswimr`, :ghuser:`Chovin`, :ghuser:`cdaman3141`, :ghuser:`DJTOMATO`, :ghuser:`Flame442`, :ghuser:`japandotorg`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`, :ghuser:`kpopdev`, :ghuser:`kevin1015wang`, :ghuser:`Kreusada`, :ghuser:`mellow-org`, :ghuser:`palmtree5`, :ghuser:`sravan1946`, :ghuser:`TrustyJAID`
 
 Read before updating
@@ -406,7 +543,7 @@ Fixes
 Redbot 3.5.13 (2024-08-27)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Guyonsteroids`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
 
 Read before updating
@@ -439,7 +576,7 @@ Fixes
 Redbot 3.5.12 (2024-08-08)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Jackenmen`
 
 Read before updating
@@ -465,7 +602,7 @@ Fixes
 Redbot 3.5.11 (2024-08-04)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`anopem`, :ghuser:`Flame442`, :ghuser:`japandotorg`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`yamikaitou`
 
 Read before updating
@@ -516,7 +653,7 @@ Changes
 Redbot 3.5.10 (2024-07-10)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`SeaswimmerTheFsh`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
 
 Read before updating
@@ -604,7 +741,7 @@ Fixes
 Redbot 3.5.9 (2024-04-21)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`giplgwm`, :ghuser:`Jackenmen`, :ghuser:`Kuro-Rui`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
 
 Read before updating
@@ -650,7 +787,7 @@ Fixes
 Redbot 3.5.8 (2024-04-01)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`
 
 Read before updating
@@ -710,7 +847,7 @@ Additions
 Redbot 3.5.7 (2024-03-24)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`karlsbjorn`, :ghuser:`Jackenmen`
 
 This is a hotfix release fixing a bug with Red's reaction-based menus introduced in the previous release.
@@ -729,7 +866,7 @@ Fixes
 Redbot 3.5.6 (2024-03-22)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`BlizzardTheWolf`, :ghuser:`DJTOMATO`, :ghuser:`Dav-Git`, :ghuser:`Flame442`, :ghuser:`goettner`, :ghuser:`Jackenmen`, :ghuser:`Jan200101`, :ghuser:`japandotorg`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`madebylydia`, :ghuser:`michael-is-qcde`, :ghuser:`scarecr0w12`, :ghuser:`yeetbruises`, :ghuser:`Zephyrkul`
 
 Read before updating
@@ -829,7 +966,7 @@ Fixes
 Redbot 3.5.5 (2023-09-14)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`palmtree5`
 
 End-user changelog
@@ -862,7 +999,7 @@ Changes
 Redbot 3.5.4 (2023-08-12)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`laggron42`, :ghuser:`Leo40Git`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`
 
 Read before updating
@@ -900,7 +1037,7 @@ Fixes
 Redbot 3.5.3 (2023-07-24)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Om1609`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
 
 Read before updating
@@ -979,7 +1116,7 @@ Changes
 Redbot 3.5.2 (2023-05-14)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`flaree`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`rramboer`, :ghuser:`synrg`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
 
 End-user changelog
@@ -1040,7 +1177,7 @@ Fixes
 Redbot 3.5.1 (2023-05-04)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Flame442`, :ghuser:`Jackenmen`
 
 This is a hotfix release fixing documentation issues and a bug with the update notification logic
@@ -1070,7 +1207,7 @@ Fixes
 Redbot 3.5.0 (2023-05-04)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`alexratman`, :ghuser:`AntonioNarra`, :ghuser:`Arman0334`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`Honkertonken`, :ghuser:`i-am-zaidali`, :ghuser:`Jackenmen`, :ghuser:`japandotorg`, :ghuser:`karlsbjorn`, :ghuser:`keqking`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Kuro-Rui`, :ghuser:`leetfin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yuansheng1549`
 
 Read before updating
@@ -1318,7 +1455,7 @@ Fixes
 Redbot 3.4.19 (2023-04-20)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Ankur391`, :ghuser:`BigPeep0doo`, :ghuser:`chasehult`, :ghuser:`Flame442`, :ghuser:`Honkertonken`, :ghuser:`Jackenmen`, :ghuser:`japandotorg`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leetfin`, :ghuser:`Lioness100`, :ghuser:`ltzmax`, :ghuser:`MHLoppy`, :ghuser:`OofChair`, :ghuser:`Ryan5453`, :ghuser:`SnappyDragon64`, :ghuser:`sravan1946`, :ghuser:`TheThomanski`, :ghuser:`TrustyJAID`, :ghuser:`vertyco`, :ghuser:`Vexed01`, :ghuser:`Visne`
 
 Read before updating
@@ -1423,7 +1560,7 @@ Changes
 Redbot 3.4.18 (2022-08-15)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`RheingoldRiver`
 
 Read before updating
@@ -1465,7 +1602,7 @@ Changes
 Redbot 3.4.17 (2022-06-07)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`matcha19`, :ghuser:`mina9999`, :ghuser:`ponte-vecchio`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`untir-l`, :ghuser:`Vexed01`
 
 Read before updating
@@ -1561,7 +1698,7 @@ Fixes
 Redbot 3.4.16 (2021-12-31)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`jack1142`, :ghuser:`PredaaA`
 
 This is a hotfix release fixing issues with invite URL API that caused
@@ -1598,7 +1735,7 @@ Changes
 Redbot 3.4.15 (2021-12-31)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Arman0334`, :ghuser:`Crossedfall`, :ghuser:`Dav-Git`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Jan200101`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`ltzmax`, :ghuser:`Parnassius`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`RasmusWL`, :ghuser:`sravan1946`, :ghuser:`Stonedestroyer`, :ghuser:`the-krak3n`, :ghuser:`Tobotimus`, :ghuser:`vertyco`, :ghuser:`Vexed01`, :ghuser:`WreckRox`, :ghuser:`yamikaitou`
 
 Read before updating
@@ -1713,7 +1850,7 @@ Fixes
 Redbot 3.4.14 (2021-09-23)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`L33Tech`, :ghuser:`maxbooiii`, :ghuser:`RheingoldRiver`
 
 Read before updating
@@ -1769,7 +1906,7 @@ Fixes
 Redbot 3.4.13 (2021-09-09)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Arman0334`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`fredster33`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`qenu`, :ghuser:`TheDataLeek`, :ghuser:`Twentysix26`, :ghuser:`TwinDragon`, :ghuser:`Vexed01`
 
 Read before updating
@@ -1896,7 +2033,7 @@ Fixes
 Redbot 3.4.12 (2021-06-17)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`npc203`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`
 
 This is a hotfix release related to Red ceasing to use the Audio Global API service.
@@ -1941,7 +2078,7 @@ Changes
 Redbot 3.4.11 (2021-06-12)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Onii-Chan-Discord`
 
 This is a hotfix release fixing a crash involving guild uploaded stickers.
@@ -1968,7 +2105,7 @@ Fixes
 Redbot 3.4.10 (2021-05-28)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`benno1237`, :ghuser:`bobloy`, :ghuser:`BoyDownTown`, :ghuser:`Danstr5544`, :ghuser:`DeltaXWizard`, :ghuser:`Drapersniper`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Lifeismana`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`plofts`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
 
 Read before updating
@@ -2107,7 +2244,7 @@ Thanks again to :ghuser:`Rapptz` for quick response on this issue.
 Redbot 3.4.8 (2021-04-06)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`6days9weeks`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kingslayer268`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`rijusougata13`, :ghuser:`TheDiscordHistorian`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
 
 Read before updating
@@ -2233,7 +2370,7 @@ Fixes
 Redbot 3.4.7 (2021-02-26)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
 
 End-user changelog
@@ -2270,7 +2407,7 @@ Additions
 Redbot 3.4.6 (2021-02-16)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Andeeeee`, :ghuser:`bobloy`, :ghuser:`BreezeQS`, :ghuser:`Danstr5544`, :ghuser:`Dav-Git`, :ghuser:`Elysweyr`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Strafee`, :ghuser:`TheWyn`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
 
 Read before updating
@@ -2410,7 +2547,7 @@ Fixes
 Redbot 3.4.5 (2020-12-24)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
 
 This is a hotfix release fixing an issue with Streams cog failing to load.
@@ -2428,7 +2565,7 @@ Fixes
 Redbot 3.4.4 (2020-12-24)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreus7`, :ghuser:`NeuroAssassin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
 
 Read before updating
@@ -2515,7 +2652,7 @@ Removals
 Redbot 3.4.3 (2020-11-16)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`KianBral`, :ghuser:`maxbooiii`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`
 
 Read before updating
@@ -2578,7 +2715,7 @@ Additions
 Redbot 3.4.2 (2020-10-28)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
 
 Read before updating
@@ -2625,7 +2762,7 @@ Changes
 Redbot 3.4.1 (2020-10-27)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`absj30`, :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`chloecormier`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`Stonedestroyer`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
 
 Read before updating
@@ -2799,7 +2936,7 @@ Changes
 Redbot 3.4.0 (2020-08-17)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kablekompany`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
 
 Read before updating
@@ -2949,7 +3086,7 @@ Removals
 Redbot 3.3.12 (2020-08-18)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Dav-Git`, :ghuser:`douglas-cpp`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MeatyChunks`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
 
 End-user changelog
@@ -2981,7 +3118,7 @@ Changes
 Redbot 3.3.11 (2020-08-10)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`Flame`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
 
 End-user changelog
@@ -3009,7 +3146,7 @@ Fixes
 Redbot 3.3.10 (2020-07-09)
 ==========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
 
 End-user changelog
@@ -3095,7 +3232,7 @@ Fixes
 Redbot 3.3.9 (2020-06-12)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
 
 Read before updating
@@ -3183,7 +3320,7 @@ Changes
 Redbot 3.3.8 (2020-05-29)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
 
 End-user changelog
@@ -3277,7 +3414,7 @@ This is a hotfix release fixing issue with generating messages for new cases in 
 Redbot 3.3.6 (2020-04-27)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
 
 End-user changelog
@@ -3357,7 +3494,7 @@ Changes
 Redbot 3.3.5 (2020-04-09)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`jack1142`, :ghuser:`Kowlin`
 
 End-user changelog
@@ -3378,7 +3515,7 @@ Fixes
 Redbot 3.3.4 (2020-04-05)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`jack1142`, :ghuser:`kennnyshiwa`
 
 End-user changelog
@@ -3423,7 +3560,7 @@ Changes
 Redbot 3.3.3 (2020-03-28)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`AnonGuy`, :ghuser:`Dav-Git`, :ghuser:`FancyJesse`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
 
 End-user changelog
@@ -3516,7 +3653,7 @@ Fixes
 Redbot 3.3.2 (2020-02-28)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`chasehult`, :ghuser:`Dav-Git`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Hedlund01`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`trundler-dev`, :ghuser:`TrustyJAID`, :ghuser:`zephyrkul`
 
 End-user changelog
@@ -3615,7 +3752,7 @@ Changes
 Redbot 3.3.1 (2020-02-05)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`flyingmongoose`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`
 
 End-user changelog
@@ -3668,7 +3805,7 @@ Changes
 Redbot 3.3.0 (2020-01-26)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`DevilXD`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`Stonedestroyer`, :ghuser:`zephyrkul`
 
 End-user changelog
@@ -3745,7 +3882,7 @@ Fixes
 Redbot 3.2.3 (2020-01-17)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`Redjumpman`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
 
 End-user changelog
@@ -3845,7 +3982,7 @@ Fixes
 Redbot 3.2.1 (2020-01-10)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`mikeshardmind`, :ghuser:`palmtree5`
 
 End-user changelog
@@ -3867,7 +4004,7 @@ Fixes
 Redbot 3.2.0 (2020-01-09)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Aurorum`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`DJtheRedstoner`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`jerbob`, :ghuser:`jonasbohmann`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`RealFriesi`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`Vexed01`, :ghuser:`wereii`, :ghuser:`yamikaitou`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
 
 Read before updating
@@ -4272,7 +4409,7 @@ This was caused by Discord API changes.
 Redbot 3.1.7 (2019-11-05)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`mikeshardmind`
 
 End-user changelog
@@ -4315,7 +4452,7 @@ This is a hotfix release fixing issues with broken custom commands and modlog ca
 Redbot 3.1.3 (2019-07-14)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lizzyd710`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`
 
 End-user changelog
@@ -4402,7 +4539,7 @@ Fixes
 Redbot 3.1.2 (2019-05-31)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`bren0xa`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`, :ghuser:`zephyrkul`
 
 End-user changelog
@@ -4483,7 +4620,7 @@ This is a hotfix release fixing issues related to fuzzy command search that were
 Redbot 3.1.0 (2019-05-15)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`EgonSpengler`, :ghuser:`entchen66`, :ghuser:`FixedThink`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lionirdeadman`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`NIXC`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Seputaes`, :ghuser:`Sitryk`, :ghuser:`tekulvw`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`zephyrkul`
 
 End-user changelog
@@ -4593,7 +4730,7 @@ Fixes
 Redbot 3.0.2 (2019-02-24)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`Tobotimus`, :ghuser:`ZeLarpMaster`
 
 End-user changelog
@@ -4610,7 +4747,7 @@ Fixes
 Redbot 3.0.1 (2019-02-17)
 =========================
 
-| Thanks to all these amazing people that contributed to this release:
+| Thanks to all these amazing people who contributed to this release:
 | :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Redjumpman`, :ghuser:`Tobotimus`, :ghuser:`Twentysix26`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
 
 End-user changelog
