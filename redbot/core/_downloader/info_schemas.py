@@ -3,7 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union, cast
 
-from redbot import VersionInfo, version_info as red_version_info
+from packaging.version import Version
+
+from redbot import __version__
 
 from . import installable
 from .log import log
@@ -67,10 +69,8 @@ def ensure_str(info_file: Path, key_name: str, value: Union[Any, UseDefault]) ->
     return value
 
 
-def ensure_red_version_info(
-    info_file: Path, key_name: str, value: Union[Any, UseDefault]
-) -> VersionInfo:
-    default = red_version_info
+def ensure_red_version(info_file: Path, key_name: str, value: Union[Any, UseDefault]) -> Version:
+    default = Version(__version__)
     if value is USE_DEFAULT:
         return default
     if not isinstance(value, str):
@@ -83,7 +83,7 @@ def ensure_red_version_info(
         )
         return default
     try:
-        version_info = VersionInfo.from_str(value)
+        version_info = Version(value)
     except ValueError:
         log.warning(
             "Invalid value of '%s' key (given value isn't a valid version string)"
@@ -211,8 +211,8 @@ REPO_SCHEMA: SchemaType = {
     "short": ensure_str,
 }
 INSTALLABLE_SCHEMA: SchemaType = {
-    "min_bot_version": ensure_red_version_info,
-    "max_bot_version": ensure_red_version_info,
+    "min_bot_version": ensure_red_version,
+    "max_bot_version": ensure_red_version,
     "min_python_version": ensure_python_version_info,
     "hidden": ensure_bool,
     "disabled": ensure_bool,

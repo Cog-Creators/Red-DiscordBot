@@ -33,7 +33,10 @@ from typing import (
 )
 
 import discord
-from redbot.core import commands, Config, version_info as red_version_info
+from packaging.version import Version
+
+from redbot import __version__
+from redbot.core import commands, Config
 from redbot.core._cog_manager import CogManager
 from redbot.core.data_manager import cog_data_path
 
@@ -576,6 +579,7 @@ async def install_cogs(
     result_installed_libs: Tuple[InstalledModule, ...] = ()
     result_failed_libs: Tuple[Installable, ...] = ()
 
+    red_version = Version(__version__)
     async with repo.checkout(commit, exit_to_rev=repo.branch):
         for cog_name in cog_names:
             cog: Optional[Installable] = discord.utils.get(repo.available_cogs, name=cog_name)
@@ -587,10 +591,10 @@ async def install_cogs(
                 name_already_used.append(cog)
             elif cog.min_python_version > sys.version_info:
                 incompatible_python_version.append(cog)
-            elif cog.min_bot_version > red_version_info or (
+            elif cog.min_bot_version > red_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
-                and cog.max_bot_version < red_version_info
+                and cog.max_bot_version < red_version
             ):
                 incompatible_bot_version.append(cog)
             else:
@@ -659,13 +663,14 @@ async def check_cog_updates(
     updatable_cogs: List[Installable] = []
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
+    red_version = Version(__version__)
     for cog in outdated_cogs:
         if cog.min_python_version > sys.version_info:
             incompatible_python_version.append(cog)
-        elif cog.min_bot_version > red_version_info or (
+        elif cog.min_bot_version > red_version or (
             # max version should be ignored when it's lower than min version
             cog.min_bot_version <= cog.max_bot_version
-            and cog.max_bot_version < red_version_info
+            and cog.max_bot_version < red_version
         ):
             incompatible_bot_version.append(cog)
         else:
@@ -733,13 +738,14 @@ async def _update_cogs(
     if cogs_to_check:
         outdated_cogs, outdated_libs = await _available_updates(cogs_to_check)
 
+        red_version = Version(__version__)
         for cog in outdated_cogs:
             if cog.min_python_version > sys.version_info:
                 incompatible_python_version.append(cog)
-            elif cog.min_bot_version > red_version_info or (
+            elif cog.min_bot_version > red_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
-                and cog.max_bot_version < red_version_info
+                and cog.max_bot_version < red_version
             ):
                 incompatible_bot_version.append(cog)
             else:
