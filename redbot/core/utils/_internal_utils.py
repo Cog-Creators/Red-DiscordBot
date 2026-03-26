@@ -32,7 +32,7 @@ from typing import (
 import aiohttp
 import discord
 import yarl
-from packaging.requirements import Requirement
+from packaging.specifiers import SpecifierSet
 from packaging.utils import parse_sdist_filename, parse_wheel_filename
 from packaging.version import Version
 import rapidfuzz
@@ -40,7 +40,6 @@ from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 from red_commons.logging import VERBOSE, TRACE
 
-from redbot import VersionInfo
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -57,7 +56,6 @@ __all__ = (
     "create_backup",
     "send_to_owners_with_preprocessor",
     "send_to_owners_with_prefix_replaced",
-    "expected_version",
     "fetch_latest_red_version",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
@@ -332,12 +330,7 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
 
 
-def expected_version(current: str, expected: str) -> bool:
-    # Requirement needs a regular requirement string, so "x" serves as requirement's name here
-    return Requirement(f"x{expected}").specifier.contains(current, prereleases=True)
-
-
-async def fetch_latest_red_version() -> Tuple[Version, Optional[str]]:
+async def fetch_latest_red_version() -> Tuple[Version, SpecifierSet]:
     """
     Fetch information about latest Red release on PyPI.
 
@@ -391,11 +384,11 @@ async def fetch_latest_red_version() -> Tuple[Version, Optional[str]]:
 
     latest_version = max(files)
     version_files = files[latest_version]
-    required_pythons = {f.get("requires-python") for f in version_files.values()}
+    required_pythons = {f.get("requires-python") or "" for f in version_files.values()}
     if len(required_pythons) > 1:
         raise ValueError("found multiple files with different Requires-Python values")
 
-    return latest_version, required_pythons.pop()
+    return latest_version, SpecifierSet(required_pythons.pop())
 
 
 def deprecated_removed(
