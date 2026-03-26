@@ -289,19 +289,6 @@ class VersionInfo:
         return version("Red-DiscordBot")
 
 
-def _update_event_loop_policy():
-    if _sys.implementation.name == "cpython":
-        # Let's not force this dependency, uvloop is much faster on cpython
-        try:
-            import uvloop
-        except ImportError:
-            pass
-        else:
-            import asyncio
-
-            asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-
 def _ensure_no_colorama():
     # a hacky way to ensure that nothing initialises colorama
     # if we're not running with legacy Windows command line mode
@@ -334,7 +321,6 @@ def _early_init():
     # This function replaces logger so we preferably (though not necessarily) want that to happen
     # before importing anything that calls `logging.getLogger()`, i.e. `asyncio`.
     _update_logger_class()
-    _update_event_loop_policy()
     _ensure_no_colorama()
 
 
