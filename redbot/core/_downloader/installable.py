@@ -49,7 +49,7 @@ class Installable(RepoJSONMixin):
     max_bot_version : `packaging.version.Version`
         The maximum bot version required for this Installable.
         Ignored if `min_bot_version` is newer than `max_bot_version`.
-    min_python_version : `tuple` of `int`
+    min_python_version : `packaging.version.Version`
         The minimum python version required for this cog.
     hidden : `bool`
         Whether or not this cog will be hidden from the user when they use
@@ -89,7 +89,7 @@ class Installable(RepoJSONMixin):
         self.end_user_data_statement: str
         self.min_bot_version: Version
         self.max_bot_version: Version
-        self.min_python_version: Tuple[int, int, int]
+        self.min_python_version: Version
         self.hidden: bool
         self.disabled: bool
         self.required_cogs: Dict[str, str]  # Cog name -> repo URL

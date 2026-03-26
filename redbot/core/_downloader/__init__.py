@@ -580,6 +580,7 @@ async def install_cogs(
     result_failed_libs: Tuple[Installable, ...] = ()
 
     red_version = Version(__version__)
+    python_version = Version(".".join(map(str, sys.version_info[:3])))
     async with repo.checkout(commit, exit_to_rev=repo.branch):
         for cog_name in cog_names:
             cog: Optional[Installable] = discord.utils.get(repo.available_cogs, name=cog_name)
@@ -589,7 +590,7 @@ async def install_cogs(
                 already_installed.append(cog)
             elif discord.utils.get(_installed_cogs, name=cog.name):
                 name_already_used.append(cog)
-            elif cog.min_python_version > sys.version_info:
+            elif cog.min_python_version > python_version:
                 incompatible_python_version.append(cog)
             elif cog.min_bot_version > red_version or (
                 # max version should be ignored when it's lower than min version
@@ -664,8 +665,9 @@ async def check_cog_updates(
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
     red_version = Version(__version__)
+    python_version = Version(".".join(map(str, sys.version_info[:3])))
     for cog in outdated_cogs:
-        if cog.min_python_version > sys.version_info:
+        if cog.min_python_version > python_version:
             incompatible_python_version.append(cog)
         elif cog.min_bot_version > red_version or (
             # max version should be ignored when it's lower than min version
@@ -739,8 +741,9 @@ async def _update_cogs(
         outdated_cogs, outdated_libs = await _available_updates(cogs_to_check)
 
         red_version = Version(__version__)
+        python_version = Version(".".join(map(str, sys.version_info[:3])))
         for cog in outdated_cogs:
-            if cog.min_python_version > sys.version_info:
+            if cog.min_python_version > python_version:
                 incompatible_python_version.append(cog)
             elif cog.min_bot_version > red_version or (
                 # max version should be ignored when it's lower than min version

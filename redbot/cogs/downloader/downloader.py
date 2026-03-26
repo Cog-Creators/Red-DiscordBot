@@ -941,9 +941,7 @@ class Downloader(commands.Cog):
             ) + humanize_list(
                 [
                     inline(cog.name)
-                    + _(" (Minimum: {min_version})").format(
-                        min_version=".".join([str(n) for n in cog.min_python_version])
-                    )
+                    + _(" (Minimum: {min_version})").format(min_version=cog.min_python_version)
                     for cog in update_check_result.incompatible_python_version
                 ]
             )

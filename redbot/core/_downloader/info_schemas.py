@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union
 
 from packaging.version import Version
 
@@ -95,10 +95,10 @@ def ensure_red_version(info_file: Path, key_name: str, value: Union[Any, UseDefa
     return version_info
 
 
-def ensure_python_version_info(
+def ensure_python_version(
     info_file: Path, key_name: str, value: Union[Any, UseDefault]
-) -> Tuple[int, int, int]:
-    default = (3, 5, 1)
+) -> Version:
+    default = Version("3.5.1")
     if value is USE_DEFAULT:
         return default
     if not isinstance(value, list):
@@ -130,7 +130,7 @@ def ensure_python_version_info(
                 info_file,
             )
             return default
-    return cast(Tuple[int, int, int], tuple(value))
+    return Version(".".join(map(str, value)))
 
 
 def ensure_bool(
@@ -213,7 +213,7 @@ REPO_SCHEMA: SchemaType = {
 INSTALLABLE_SCHEMA: SchemaType = {
     "min_bot_version": ensure_red_version,
     "max_bot_version": ensure_red_version,
-    "min_python_version": ensure_python_version_info,
+    "min_python_version": ensure_python_version,
     "hidden": ensure_bool,
     "disabled": ensure_bool,
     "required_cogs": ensure_required_cogs_mapping,
