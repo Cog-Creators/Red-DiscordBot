@@ -14,6 +14,8 @@ def test_process_info_file(installable):
             assert installable.type is InstallableType.COG
         elif k in ("min_bot_version", "max_bot_version"):
             assert getattr(installable, k) == Version(v)
+        elif k == "min_python_version":
+            assert installable.min_python_version == Version(".".join(map(str, v)))
         else:
             assert getattr(installable, k) == v
 
@@ -24,6 +26,8 @@ def test_process_lib_info_file(library_installable):
             assert library_installable.type is InstallableType.SHARED_LIBRARY
         elif k in ("min_bot_version", "max_bot_version"):
             assert getattr(library_installable, k) == Version(v)
+        elif k == "min_python_version":
+            assert library_installable.min_python_version == Version(".".join(map(str, v)))
         elif k == "hidden":
             # libraries are always hidden, even if False
             assert library_installable.hidden is True
