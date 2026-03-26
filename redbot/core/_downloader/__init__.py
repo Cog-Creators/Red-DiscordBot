@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import contextlib
 import dataclasses
+import functools
 import os
 import shutil
 import sys
@@ -34,6 +35,7 @@ from typing import (
 
 import discord
 from packaging.version import Version
+from typing_extensions import Self
 
 from redbot import __version__
 from redbot.core import commands, Config
@@ -554,8 +556,34 @@ async def reinstall_requirements() -> tuple[List[str], List[str]]:
     return failed_reqs, all_failed_libs
 
 
+# TODO: make kw_only
+@dataclasses.dataclass(frozen=True)
+class Environment:
+    """
+    Environment to check version bounds against.
+
+    Usually the metadata from current environment is used but this allows for alternative uses
+    such as checking, if the cog will work on a Red version you want to update to.
+    """
+
+    red_version: Version
+    python_version: Version
+
+    @classmethod
+    @functools.lru_cache(maxsize=None)
+    def current(cls) -> Self:
+        return cls(
+            red_version=Version(__version__),
+            python_version=Version(".".join(map(str, sys.version_info[:3]))),
+        )
+
+
 async def install_cogs(
-    repo: Repo, rev: Optional[str], cog_names: Iterable[str]
+    repo: Repo,
+    rev: Optional[str],
+    cog_names: Iterable[str],
+    *,
+    env: Environment = Environment.current(),
 ) -> CogInstallResult:
     commit = None
 
@@ -579,8 +607,6 @@ async def install_cogs(
     result_installed_libs: Tuple[InstalledModule, ...] = ()
     result_failed_libs: Tuple[Installable, ...] = ()
 
-    red_version = Version(__version__)
-    python_version = Version(".".join(map(str, sys.version_info[:3])))
     async with repo.checkout(commit, exit_to_rev=repo.branch):
         for cog_name in cog_names:
             cog: Optional[Installable] = discord.utils.get(repo.available_cogs, name=cog_name)
@@ -590,12 +616,12 @@ async def install_cogs(
                 already_installed.append(cog)
             elif discord.utils.get(_installed_cogs, name=cog.name):
                 name_already_used.append(cog)
-            elif cog.min_python_version > python_version:
+            elif cog.min_python_version > env.python_version:
                 incompatible_python_version.append(cog)
-            elif cog.min_bot_version > red_version or (
+            elif cog.min_bot_version > env.red_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
-                and cog.max_bot_version < red_version
+                and cog.max_bot_version < env.red_version
             ):
                 incompatible_bot_version.append(cog)
             else:
@@ -655,6 +681,7 @@ async def check_cog_updates(
     repos: Optional[Iterable[Repo]] = None,
     cogs: Optional[Iterable[InstalledModule]] = None,
     update_repos: bool = True,
+    env: Environment = Environment.current(),
 ) -> CogUpdateCheckResult:
     cogs_to_check, failed_repos = await _get_cogs_to_check(
         repos=repos, cogs=cogs, update_repos=update_repos
@@ -664,15 +691,13 @@ async def check_cog_updates(
     updatable_cogs: List[Installable] = []
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
-    red_version = Version(__version__)
-    python_version = Version(".".join(map(str, sys.version_info[:3])))
     for cog in outdated_cogs:
-        if cog.min_python_version > python_version:
+        if cog.min_python_version > env.python_version:
             incompatible_python_version.append(cog)
-        elif cog.min_bot_version > red_version or (
+        elif cog.min_bot_version > env.red_version or (
             # max version should be ignored when it's lower than min version
             cog.min_bot_version <= cog.max_bot_version
-            and cog.max_bot_version < red_version
+            and cog.max_bot_version < env.red_version
         ):
             incompatible_bot_version.append(cog)
         else:
@@ -690,19 +715,26 @@ async def check_cog_updates(
 
 # update given cogs or all cogs
 async def update_cogs(
-    *, cogs: Optional[List[InstalledModule]] = None, repos: Optional[List[Repo]] = None
+    *,
+    cogs: Optional[List[InstalledModule]] = None,
+    repos: Optional[List[Repo]] = None,
+    env: Environment = Environment.current(),
 ) -> CogUpdateResult:
     if cogs is not None and repos is not None:
         raise ValueError("You can specify cogs or repos argument, not both")
 
     cogs_to_check, failed_repos = await _get_cogs_to_check(repos=repos, cogs=cogs)
-    return await _update_cogs(cogs_to_check, failed_repos=failed_repos)
+    return await _update_cogs(cogs_to_check, failed_repos=failed_repos, env=env)
 
 
 # update given cogs or all cogs from the specified repo
 # using the specified revision (or latest if not specified)
 async def update_repo_cogs(
-    repo: Repo, cogs: Optional[List[InstalledModule]] = None, *, rev: Optional[str] = None
+    repo: Repo,
+    cogs: Optional[List[InstalledModule]] = None,
+    *,
+    rev: Optional[str] = None,
+    env: Environment = Environment.current(),
 ) -> CogUpdateResult:
     try:
         await repo.update()
@@ -716,11 +748,14 @@ async def update_repo_cogs(
         commit = await repo.get_full_sha1(rev)
     async with repo.checkout(commit, exit_to_rev=repo.branch):
         cogs_to_check, __ = await _get_cogs_to_check(repos=[repo], cogs=cogs, update_repos=False)
-        return await _update_cogs(cogs_to_check, failed_repos=())
+        return await _update_cogs(cogs_to_check, failed_repos=(), env=env)
 
 
 async def _update_cogs(
-    cogs_to_check: Set[InstalledModule], *, failed_repos: Sequence[Repo]
+    cogs_to_check: Set[InstalledModule],
+    *,
+    failed_repos: Sequence[Repo],
+    env: Environment = Environment.current(),
 ) -> CogUpdateResult:
     pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
     cogs_to_check -= pinned_cogs
@@ -740,15 +775,13 @@ async def _update_cogs(
     if cogs_to_check:
         outdated_cogs, outdated_libs = await _available_updates(cogs_to_check)
 
-        red_version = Version(__version__)
-        python_version = Version(".".join(map(str, sys.version_info[:3])))
         for cog in outdated_cogs:
-            if cog.min_python_version > python_version:
+            if cog.min_python_version > env.python_version:
                 incompatible_python_version.append(cog)
-            elif cog.min_bot_version > red_version or (
+            elif cog.min_bot_version > env.red_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
-                and cog.max_bot_version < red_version
+                and cog.max_bot_version < env.red_version
             ):
                 incompatible_bot_version.append(cog)
             else:

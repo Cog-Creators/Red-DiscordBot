@@ -5,8 +5,6 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union
 
 from packaging.version import Version
 
-from redbot import __version__
-
 from . import installable
 from .log import log
 
@@ -69,30 +67,34 @@ def ensure_str(info_file: Path, key_name: str, value: Union[Any, UseDefault]) ->
     return value
 
 
-def ensure_red_version(info_file: Path, key_name: str, value: Union[Any, UseDefault]) -> Version:
-    default = Version(__version__)
-    if value is USE_DEFAULT:
-        return default
-    if not isinstance(value, str):
-        log.warning(
-            "Invalid value of '%s' key (expected str, got %s)"
-            " in JSON information file at path: %s",
-            key_name,
-            type(value).__name__,
-            info_file,
-        )
-        return default
-    try:
-        version_info = Version(value)
-    except ValueError:
-        log.warning(
-            "Invalid value of '%s' key (given value isn't a valid version string)"
-            " in JSON information file at path: %s",
-            key_name,
-            info_file,
-        )
-        return default
-    return version_info
+def create_ensure_red_version(default: Version) -> EnsureCallable:
+    def ensure_red_version(
+        info_file: Path, key_name: str, value: Union[Any, UseDefault]
+    ) -> Version:
+        if value is USE_DEFAULT:
+            return default
+        if not isinstance(value, str):
+            log.warning(
+                "Invalid value of '%s' key (expected str, got %s)"
+                " in JSON information file at path: %s",
+                key_name,
+                type(value).__name__,
+                info_file,
+            )
+            return default
+        try:
+            version_info = Version(value)
+        except ValueError:
+            log.warning(
+                "Invalid value of '%s' key (given value isn't a valid version string)"
+                " in JSON information file at path: %s",
+                key_name,
+                info_file,
+            )
+            return default
+        return version_info
+
+    return ensure_red_version
 
 
 def ensure_python_version(
@@ -211,8 +213,12 @@ REPO_SCHEMA: SchemaType = {
     "short": ensure_str,
 }
 INSTALLABLE_SCHEMA: SchemaType = {
-    "min_bot_version": ensure_red_version,
-    "max_bot_version": ensure_red_version,
+    "min_bot_version": create_ensure_red_version(Version("0.0.dev0")),
+    # Using little-known version epoch feature to represent something that,
+    # for all practical purposes, will be considered higher than any version number
+    # that we may ever have.
+    # https://packaging.python.org/en/latest/specifications/version-specifiers/#version-epochs
+    "max_bot_version": create_ensure_red_version(Version("99999!99999.99999.post99999+hi.mom")),
     "min_python_version": ensure_python_version,
     "hidden": ensure_bool,
     "disabled": ensure_bool,
