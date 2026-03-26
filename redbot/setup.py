@@ -22,7 +22,7 @@ from redbot.core.utils._internal_utils import (
 )
 from redbot.core import config, data_manager
 from redbot.core._config import migrate
-from redbot.core._cli import ExitCodes
+from redbot.core._cli import ExitCodes, asyncio_run
 from redbot.core.data_manager import appdir, config_dir, config_file
 from redbot.core._drivers import (
     BackendType,
@@ -514,7 +514,7 @@ def delete(
     remove_datapath: Optional[bool],
 ) -> None:
     """Removes an instance."""
-    asyncio.run(
+    asyncio_run(
         remove_instance(
             instance, interactive, delete_data, _create_backup, drop_db, remove_datapath
         )
@@ -536,7 +536,7 @@ def convert(instance: str, backend: str) -> None:
     if current_backend == BackendType.MONGOV1:
         raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
     else:
-        new_storage_details = asyncio.run(do_migration(current_backend, target))
+        new_storage_details = asyncio_run(do_migration(current_backend, target))
 
     if new_storage_details is not None:
         default_dirs["STORAGE_TYPE"] = target.value
@@ -560,7 +560,7 @@ def convert(instance: str, backend: str) -> None:
 )
 def backup(instance: str, destination_folder: Path) -> None:
     """Backup instance's data."""
-    asyncio.run(create_backup(instance, destination_folder))
+    asyncio_run(create_backup(instance, destination_folder))
 
 
 def run_cli():
