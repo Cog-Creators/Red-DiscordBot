@@ -1,3 +1,5 @@
+import enum
+
 from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -55,10 +57,16 @@ class _MarkdownViewer(MarkdownViewer):
         tooltip.display = False
 
 
-class MarkdownViewerApp(App):
+class ChangelogReaderResult(enum.Enum):
+    QUIT = enum.auto()
+    CONTINUE = enum.auto()
+
+
+class ChangelogReaderApp(App[ChangelogReaderResult], inherit_bindings=False):
     ENABLE_COMMAND_PALETTE = False
     BINDINGS = [
-        Binding(key="q", action="quit", description="Quit the app"),
+        Binding(key="ctrl+c", action="quit", description="Exit redbot-update"),
+        Binding(key="q", action="continue", description="Finish reading the changelog"),
     ]
 
     def __init__(self, markdown_content: str) -> None:
@@ -72,3 +80,9 @@ class MarkdownViewerApp(App):
         markdown_viewer.code_indent_guides = False
         yield markdown_viewer
         yield Footer()
+
+    def action_quit(self) -> None:
+        self.exit(ChangelogReaderResult.QUIT)
+
+    def action_continue(self) -> None:
+        self.exit(ChangelogReaderResult.CONTINUE)

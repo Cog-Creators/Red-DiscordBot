@@ -67,7 +67,10 @@ class VersionChangelog:
         )
 
 
-def parse_changelogs(content: str) -> Dict[Version, VersionChangelog]:
+_Changelogs = Dict[Version, VersionChangelog]
+
+
+def parse_changelogs(content: str) -> _Changelogs:
     changelogs = {}
     for match in _CHANGELOG_PATTERN.finditer(content):
         changelog = VersionChangelog(Version(match["version"]), match["content"])
@@ -76,22 +79,21 @@ def parse_changelogs(content: str) -> Dict[Version, VersionChangelog]:
     return changelogs
 
 
-def render_markdown(changelogs: Dict[Version, VersionChangelog], current_version: Version) -> str:
-    to_show = [
-        changelog
-        for changelog_version, changelog in reversed(changelogs.items())
-        if changelog_version > current_version
-    ]
-    if not to_show:
+def render_markdown(changelogs: _Changelogs, *, minimal: bool = False) -> str:
+    if not changelogs:
         return ""
 
     parts = []
     contributors = sorted(
-        {contributor for changelog in to_show for contributor in changelog.contributors}
+        {
+            contributor
+            for changelog in changelogs.values()
+            for contributor in changelog.contributors
+        }
     )
     if contributors:
         contributor_thanks = (
-            "# Thank you! \N{HEAVY BLACK HEART}\N{VARIATION SELECTOR-16}\n"
+            "# Thanks to our contributors \N{HEAVY BLACK HEART}\N{VARIATION SELECTOR-16}\n"
             "**The releases below were made with help from the following people:**  \n"
         )
         contributor_thanks += ", ".join(
@@ -101,13 +103,13 @@ def render_markdown(changelogs: Dict[Version, VersionChangelog], current_version
         parts.append(contributor_thanks)
 
     parts.append("# Read before updating")
-    for changelog in to_show:
+    for changelog in reversed(changelogs.values()):
         if changelog.read_before_updating_section:
             parts.append(f"## {changelog.version}")
             parts.append(changelog.read_before_updating_section)
 
     parts.append("# User changelog")
-    for changelog in to_show:
+    for changelog in reversed(changelogs.values()):
         if changelog.user_changelog_section:
             parts.append(f"## {changelog.version}")
             parts.append(changelog.user_changelog_section)
@@ -115,7 +117,23 @@ def render_markdown(changelogs: Dict[Version, VersionChangelog], current_version
     return "\n".join(parts)
 
 
-async def fetch_changelogs() -> Dict[Version, VersionChangelog]:
+def get_changelogs_newer_than(changelogs: _Changelogs, version: Version) -> _Changelogs:
+    return {
+        changelog_version: changelog
+        for changelog_version, changelog in changelogs.items()
+        if changelog_version > version
+    }
+
+
+async def fetch_changelogs() -> _Changelogs:
+    """
+    Fetch the Markdown-formatted changelog from Red's docs site.
+
+    Returns
+    -------
+    Dict[Version, VersionChangelog]
+        A dict mapping versions to their changelogs. Sorted by version, newest first.
+    """
     async with aiohttp.ClientSession(raise_for_status=True) as session:
         async with session.get(yarl.URL(_RTD_CANONICAL_URL) / "_markdown/changelog.md") as resp:
             return parse_changelogs(await resp.text())
