@@ -37,7 +37,18 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, _i18n, i18n, app_commands, commands, errors, _drivers, modlog, bank
+from . import (
+    Config,
+    _i18n,
+    i18n,
+    app_commands,
+    commands,
+    errors,
+    _drivers,
+    modlog,
+    bank,
+    _downloader,
+)
 from ._cli import ExitCodes
 from ._cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
@@ -1200,12 +1211,11 @@ class Red(
 
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
-        LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
         if ver_info != last_system_info["python_version"]:
             await self._config.last_system_info.python_version.set(ver_info)
-            if any(LIB_PATH.iterdir()):
-                shutil.rmtree(str(LIB_PATH))
-                LIB_PATH.mkdir()
+            if any(_downloader.LIB_PATH.iterdir()):
+                shutil.rmtree(str(_downloader.LIB_PATH))
+                _downloader.LIB_PATH.mkdir()
                 asyncio.create_task(
                     send_to_owners_with_prefix_replaced(
                         self,

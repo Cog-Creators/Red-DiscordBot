@@ -49,6 +49,7 @@ from . import (
     i18n,
     bank,
     modlog,
+    _downloader,
 )
 from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter, can_user_send_messages_in
@@ -215,12 +216,8 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
-                # remove in Red 3.4
-                downloader = bot.get_cog("Downloader")
-                if downloader is None:
-                    continue
                 try:
-                    maybe_repo = await downloader._shared_lib_load_check(name)
+                    maybe_repo = await _downloader._shared_lib_load_check(name)
                 except Exception:
                     log.exception(
                         "Shared library check failed,"
