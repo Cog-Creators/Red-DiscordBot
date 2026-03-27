@@ -33,10 +33,10 @@ from .errors import BotMissingPermissions
 from redbot.core import utils
 
 if TYPE_CHECKING:
-    from .commands import Command
+    from .commands import Command, Group
     from .context import Context
 
-    _CommandOrCoro = TypeVar("_CommandOrCoro", Callable[..., Awaitable[Any]], Command)
+    _CommandOrCoro = TypeVar("_CommandOrCoro", Callable[..., Awaitable[Any]], Command, Group)
 
 __all__ = [
     "CheckPredicate",
