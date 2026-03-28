@@ -152,6 +152,7 @@ class Red(
             invoke_error_msg=None,
             extra_owner_destinations=[],
             owner_opt_out_list=[],
+            last_system_info__python_prefix=None,
             last_system_info__python_version=[3, 7],
             last_system_info__machine=None,
             last_system_info__system=None,
@@ -1208,6 +1209,28 @@ class Red(
         packages = OrderedDict()
 
         last_system_info = await self._config.last_system_info()
+
+        last_python_prefix = last_system_info["python_prefix"]
+        if last_python_prefix is None:
+            await self._config.last_system_info.python_prefix.set(sys.prefix)
+        elif last_python_prefix != sys.prefix:
+            await self._config.last_system_info.python_prefix.set(sys.prefix)
+            try:
+                same_install = os.path.samefile(last_python_prefix, sys.prefix)
+            except OSError:
+                same_install = False
+            if not same_install:
+                if sys.prefix != sys.base_prefix:
+                    install_info = "in the currently used virtual environment"
+                else:
+                    install_info = "with the currently used Python installation"
+                log.warning(
+                    "Red seems to have been started with a different Python installation"
+                    " and/or virtual environment. This is not, in itself, an issue but is often"
+                    " done unintentionally and may explain some, otherwise unexpected, behavior."
+                    " This message will not be shown again, if you start Red %s again.",
+                    install_info,
+                )
 
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
