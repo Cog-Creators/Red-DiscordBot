@@ -3,6 +3,8 @@
 #     - try to be consistent about requiring Installable vs cog name
 #       between cog install and other functionality
 #     - use immutable objects more
+#     - change Installable's equality to include its commit
+#       (note: we currently heavily rely on this *not* being the case)
 # - add asyncio.Lock appropriately for things that Downloader does
 # - avoid doing some of the work on RepoManager initialization to speedup bot startup
 
