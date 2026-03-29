@@ -50,6 +50,17 @@ class Downloader(commands.Cog):
         """Nothing to delete"""
         return
 
+    # This is a compatibility shim for people using Downloader internal pre-3.5.25.
+    # It will probably get removed in Red 3.6.
+    @property
+    def _repo_manager(self):
+        return _downloader._repo_manager
+
+    # This is a compatibility shim for people using Downloader internal pre-3.5.25.
+    # It will probably get removed in Red 3.6.
+    async def installed_cogs(self) -> Tuple[InstalledModule, ...]:
+        return await _downloader.installed_cogs()
+
     @staticmethod
     async def send_pagified(target: discord.abc.Messageable, content: str) -> None:
         for page in pagify(content):
