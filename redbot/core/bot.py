@@ -1,4 +1,5 @@
 from __future__ import annotations
+import argparse
 import asyncio
 import inspect
 import logging
@@ -80,6 +81,8 @@ CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
+_DEFAULT_DESCRIPTION = "Red V3"
+
 log = logging.getLogger("red")
 
 __all__ = ("Red",)
@@ -112,7 +115,9 @@ class Red(
 ):  # pylint: disable=no-member # barely spurious warning caused by shadowing
     """Our subclass of discord.ext.commands.AutoShardedBot"""
 
-    def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
+    def __init__(
+        self, *args: Any, cli_flags: argparse.Namespace, bot_dir: Path = Path.cwd(), **kwargs: Any
+    ) -> None:
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
@@ -143,7 +148,7 @@ class Red(
             help__tagline="",
             help__use_tick=False,
             help__react_timeout=30,
-            description="Red V3",
+            description=_DEFAULT_DESCRIPTION,
             invite_public=False,
             invite_perm=0,
             invite_commands_scope=False,
@@ -249,7 +254,13 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        super().__init__(*args, help_command=None, tree_cls=RedTree, **kwargs)
+        super().__init__(
+            *args,
+            description=kwargs.pop("description", _DEFAULT_DESCRIPTION),
+            help_command=None,
+            tree_cls=RedTree,
+            **kwargs,
+        )
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
