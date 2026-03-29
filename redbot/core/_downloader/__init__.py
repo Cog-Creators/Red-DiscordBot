@@ -712,10 +712,10 @@ async def _update_cogs(
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
 
-    installed_cogs: Tuple[InstalledModule, ...] = ()
+    updated_cogs: Tuple[InstalledModule, ...] = ()
     failed_cogs: Tuple[Installable, ...] = ()
     failed_reqs: Tuple[str, ...] = ()
-    installed_libs: Tuple[InstalledModule, ...] = ()
+    updated_libs: Tuple[InstalledModule, ...] = ()
     failed_libs: Tuple[Installable, ...] = ()
 
     if cogs_to_check:
