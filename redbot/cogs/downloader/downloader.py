@@ -72,7 +72,7 @@ class Downloader(commands.Cog):
         - `<deps...>` The package or packages you wish to install.
         """
         async with ctx.typing():
-            success = await _downloader.pip_install(deps)
+            success = await _downloader.pip_install(*deps)
 
         if success:
             await ctx.send(_("Libraries installed.") if len(deps) > 1 else _("Library installed."))
