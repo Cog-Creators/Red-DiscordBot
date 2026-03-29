@@ -1027,13 +1027,13 @@ class Downloader(commands.Cog):
             ) + humanize_list(tuple(map(inline, cognames)))
         if not update_result.outdated_cogs:
             message = _("No cogs were updated.")
-        if update_result.installed_libs:
+        if update_result.updated_libs:
             message += (
                 _(
                     "\nSome shared libraries were updated, you should restart the bot "
                     "to bring the changes into effect."
                 )
-                if len(update_result.installed_libs) > 1
+                if len(update_result.updated_libs) > 1
                 else _(
                     "\nA shared library was updated, you should restart the "
                     "bot to bring the changes into effect."
