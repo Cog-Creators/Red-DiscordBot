@@ -4120,9 +4120,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Example:**
         - `[p]set colour reset`
         """
-        default_color = discord.Color(15158332)
+        await ctx.bot._config.color.clear()
+        default_color = await ctx.bot._config.color()
         ctx.bot._color = default_color
-        await ctx.bot._config.color.set(default_color.value)
         await ctx.send(_("The embed colour has been reset to the default."))
 
     @_set.command(
