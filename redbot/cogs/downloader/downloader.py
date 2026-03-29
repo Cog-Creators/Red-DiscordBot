@@ -915,13 +915,13 @@ class Downloader(commands.Cog):
                 _("\nThese cogs were already installed: ")
                 if len(install_result.already_installed) > 1
                 else _("\nThis cog was already installed: ")
-            ) + humanize_list(install_result.already_installed)
+            ) + humanize_list([cog.name for cog in install_result.already_installed])
         if install_result.name_already_used:
             message += (
                 _("\nSome cogs with these names are already installed from different repos: ")
                 if len(install_result.name_already_used) > 1
                 else _("\nCog with this name is already installed from a different repo: ")
-            ) + humanize_list(install_result.name_already_used)
+            ) + humanize_list([cog.name for cog in install_result.name_already_used])
         # TODO: resolve typing issue
         add_to_message = self._format_incompatible_cogs(install_result)
         if add_to_message:
