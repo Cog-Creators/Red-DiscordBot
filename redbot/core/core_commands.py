@@ -4089,10 +4089,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `[p]set color 0x#FDFEFE`
         - `[p]set color #7F8C8D`
 
-        **Subcommands:**
-        - `[p]set colour theme` - Use Discord's default embed colour (no colour set).
-        - `[p]set colour reset` - Reset to Red's default colour.
-
         **Arguments:**
         - `<colour>` - The colour to use for embeds.
         """
