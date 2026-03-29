@@ -1,16 +1,20 @@
+from __future__ import annotations
+
 from redbot import _early_init
 
 # this needs to be called as early as possible
 _early_init()
 
 import asyncio
+import functools
 import json
 import logging
 import sys
 import re
+import tarfile
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Any, Optional, Union
+from typing import Any, Dict, IO, List, Optional, Set, Tuple, Union
 
 import click
 
@@ -19,8 +23,10 @@ from redbot.core.utils._internal_utils import (
     safe_delete,
     create_backup as red_create_backup,
     cli_level_to_log_level,
+    detailed_progress,
 )
-from redbot.core import config, data_manager
+from redbot.core import config, data_manager, _downloader
+from redbot.core._cog_manager import CogManager
 from redbot.core._config import migrate
 from redbot.core._cli import ExitCodes
 from redbot.core.data_manager import appdir, config_dir, config_file
@@ -266,12 +272,15 @@ def get_target_backend(backend: str) -> BackendType:
 
 
 async def do_migration(
-    current_backend: BackendType, target_backend: BackendType
+    current_backend: BackendType,
+    target_backend: BackendType,
+    new_storage_details: Optional[dict] = None,
 ) -> Dict[str, Any]:
     cur_driver_cls = get_driver_class_include_old(current_backend)
     new_driver_cls = get_driver_class(target_backend)
     cur_storage_details = data_manager.storage_details()
-    new_storage_details = new_driver_cls.get_config_details()
+    if new_storage_details is None:
+        new_storage_details = new_driver_cls.get_config_details()
 
     await cur_driver_cls.initialize(**cur_storage_details)
     await new_driver_cls.initialize(**new_storage_details)
@@ -366,6 +375,257 @@ async def remove_instance_interaction() -> None:
         return
 
     await remove_instance(selected, interactive=True)
+
+
+def open_file_from_tar(tar: tarfile.TarFile, arcname: str) -> Optional[IO[bytes]]:
+    try:
+        fp = tar.extractfile(arcname)
+    except (KeyError, tarfile.StreamError):
+        return None
+    return fp
+
+
+class RestoreInfo:
+    def __init__(
+        self,
+        tar: tarfile.TarFile,
+        backup_version: int,
+        name: str,
+        data_path: Path,
+        storage_type: BackendType,
+        storage_details: dict,
+    ):
+        self.tar = tar
+        self.backup_version = backup_version
+        self.name = name
+        self.data_path = data_path
+        self.storage_type = storage_type
+        self.storage_details = storage_details
+
+    @classmethod
+    def from_tar(cls, tar: tarfile.TarFile) -> RestoreInfo:
+        instance_name, raw_data = cls.get_instance_from_backup(tar)
+        backup_version = cls.get_backup_version(tar)
+
+        return cls(
+            tar=tar,
+            backup_version=backup_version,
+            name=instance_name,
+            data_path=Path(raw_data["DATA_PATH"]),
+            storage_type=BackendType(raw_data["STORAGE_TYPE"]),
+            storage_details=raw_data["STORAGE_DETAILS"],
+        )
+
+    @staticmethod
+    def get_instance_from_backup(tar: tarfile.TarFile) -> Tuple[str, dict]:
+        if (fp := open_file_from_tar(tar, "instance.json")) is None:
+            print("This isn't a valid backup file!")
+            sys.exit(1)
+        with fp:
+            return json.load(fp).popitem()
+
+    @staticmethod
+    def get_backup_version(tar: tarfile.TarFile) -> int:
+        if (fp := open_file_from_tar(tar, "backup.version")) is None:
+            # backup version 1 doesn't have the version file
+            return 1
+        with fp:
+            backup_version = int(fp.read())
+        if backup_version > 2:
+            print("This backup was created using newer version of Red. Update Red to restore it.")
+            sys.exit(1)
+        return backup_version
+
+    @property
+    def name_used(self) -> bool:
+        return self.name in instance_list
+
+    @property
+    def data_path_not_empty(self) -> bool:
+        return self.data_path.exists() and next(self.data_path.glob("*"), None) is not None
+
+    @property
+    def backend_unavailable(self) -> bool:
+        return self.storage_type in (BackendType.MONGOV1, BackendType.MONGO)
+
+    @functools.cached_property
+    def restore_downloader(self) -> bool:
+        return "cogs/RepoManager/repos.json" in self.all_tar_member_names and click.confirm(
+            "Do you want to restore 3rd-party repos and cogs installed through Downloader?",
+            default=True,
+        )
+
+    @functools.cached_property
+    def all_tar_members(self) -> List[tarfile.TarInfo]:
+        return self.tar.getmembers()
+
+    @functools.cached_property
+    def all_tar_member_names(self) -> List[str]:
+        return [tarinfo.name for tarinfo in self.all_tar_members]
+
+    def get_tar_members_to_extract(self) -> List[tarfile.TarInfo]:
+        ignored_members: Set[str] = {"backup.version", "instance.json"}
+        if not self.restore_downloader:
+            ignored_members |= {
+                "cogs/RepoManager/repos.json",
+                "cogs/RepoManager/settings.json",
+                "cogs/Downloader/settings.json",
+            }
+        return [member for member in self.all_tar_members if member.name not in ignored_members]
+
+    def print_instance_data(self) -> None:
+        print("\nWhen the instance was backuped, it was using these settings:")
+        print("  Original instance name:", self.name)
+        print("  Original data path:", self.data_path)
+        storage_backends = {
+            BackendType.JSON: "JSON",
+            BackendType.POSTGRES: "PostgreSQL",
+            BackendType.MONGOV1: "MongoDB (unavailable)",
+            BackendType.MONGO: "MongoDB (unavailable)",
+        }
+        print("  Original storage backend:", storage_backends[self.storage_type])
+        if self.storage_type is BackendType.POSTGRES:
+            print("  Original storage details:")
+            for key in ("host", "port", "database", "user"):
+                print(f"    - DB {key}:", self.storage_details[key])
+            print("    - DB password: ***")
+
+    def ask_for_changes(self) -> None:
+        self._ask_for_optional_changes()
+        self._ask_for_required_changes()
+
+    def _ask_for_optional_changes(self) -> None:
+        if click.confirm("\nWould you like to change anything?"):
+            if not self.name_used and click.confirm("Do you want to use different instance name?"):
+                self._ask_for_name()
+            if not self.data_path_not_empty and click.confirm(
+                "Do you want to use different data path?"
+            ):
+                self._ask_for_data_path()
+            if not self.backend_unavailable and click.confirm(
+                "Do you want to use different storage backend or change storage details?"
+            ):
+                self._ask_for_storage()
+
+    def _ask_for_required_changes(self) -> None:
+        if self.name_used:
+            print(
+                "WARNING: Original instance name is already used by a different instance."
+                " Continuing will overwrite the existing instance config."
+            )
+            if click.confirm("Do you want to use different instance name?", default=True):
+                self._ask_for_name()
+        if self.data_path_not_empty:
+            print(
+                "Original data path can't be used as it's not empty."
+                " You have to choose a different path."
+            )
+            self._ask_for_data_path()
+        if self.backend_unavailable:
+            print(
+                "Original storage backend is no longer available in Red."
+                " You have to choose a different backend."
+            )
+            self._ask_for_storage()
+
+    def _ask_for_name(self) -> None:
+        self.name = get_name("")
+
+    def _ask_for_data_path(self) -> None:
+        while True:
+            self.data_path = Path(
+                get_data_dir(instance_name=self.name, data_path=None, interactive=True)
+            )
+            if not self.data_path_not_empty:
+                return
+            print("Given path can't be used as it's not empty.")
+
+    def _ask_for_storage(self) -> None:
+        self.storage_type = get_storage_type(None, interactive=True)
+        driver_cls = get_driver_class(self.storage_type)
+        self.storage_details = driver_cls.get_config_details()
+
+    def extractall(self) -> None:
+        to_extract = self.get_tar_members_to_extract()
+        with detailed_progress(unit="files") as progress:
+            progress_tracker = progress.track(to_extract, description="Extracting data")
+            # tar.errorlevel == 0 so errors are printed to stderr
+            self.tar.extractall(path=self.data_path, members=progress_tracker)
+
+    def get_basic_config(self, use_json: bool = False) -> dict:
+        default_dirs = deepcopy(data_manager.basic_config_default)
+        default_dirs["DATA_PATH"] = str(self.data_path)
+        if use_json:
+            default_dirs["STORAGE_TYPE"] = BackendType.JSON.value
+            default_dirs["STORAGE_DETAILS"] = {}
+        else:
+            default_dirs["STORAGE_TYPE"] = self.storage_type.value
+            default_dirs["STORAGE_DETAILS"] = self.storage_details
+        return default_dirs
+
+    async def restore_data(self) -> None:
+        self.extractall()
+
+        # data in backup file is using json
+        save_config(self.name, self.get_basic_config(use_json=True))
+        data_manager.load_basic_configuration(self.name)
+
+        if self.storage_type is not BackendType.JSON:
+            await do_migration(BackendType.JSON, self.storage_type, self.storage_details)
+            save_config(self.name, self.get_basic_config())
+            data_manager.load_basic_configuration(self.name)
+
+        if self.restore_downloader:
+            driver_cls = get_driver_class(self.storage_type)
+            await driver_cls.initialize(**self.storage_details)
+            try:
+                await _downloader._init_without_bot(CogManager())
+                await _downloader._restore_from_backup()
+            finally:
+                await driver_cls.teardown()
+        elif self.backup_version == 1:
+            print(
+                "INFO: Downloader's data isn't included in the backup file"
+                " - this backup was created with Red 3.5.24 or older."
+            )
+        else:
+            print("WARNING: Downloader's data isn't included in the backup file.")
+
+    async def run(self) -> None:
+        self.print_instance_data()
+        self.ask_for_changes()
+        await self.restore_data()
+
+        print("Restore process has been completed.")
+
+
+async def restore_instance():
+    print("Hello! This command will guide you through restore process.\n")
+    backup_path_input = ""
+    while not backup_path_input:
+        print("Please enter the path to instance's backup:")
+        backup_path_input = input("> ")
+        backup_path = Path(backup_path_input)
+        try:
+            backup_path = backup_path.resolve()
+        except OSError:
+            print("This doesn't look like a valid path.")
+            backup_path_input = ""
+        else:
+            if not backup_path.is_file():
+                print("This path doesn't exist or it's not a file.")
+                backup_path_input = ""
+
+    try:
+        tar = tarfile.open(backup_path)
+    except tarfile.ReadError:
+        print(
+            "We couldn't open the given backup file. Make sure that you're passing correct file."
+        )
+        return
+    with tar:
+        restore_info = RestoreInfo.from_tar(tar)
+        await restore_info.run()
 
 
 @click.group(invoke_without_command=True)
@@ -561,6 +821,12 @@ def convert(instance: str, backend: str) -> None:
 def backup(instance: str, destination_folder: Path) -> None:
     """Backup instance's data."""
     asyncio.run(create_backup(instance, destination_folder))
+
+
+@cli.command()
+def restore() -> None:
+    """Restore instance."""
+    asyncio.run(restore_instance())
 
 
 def run_cli():
