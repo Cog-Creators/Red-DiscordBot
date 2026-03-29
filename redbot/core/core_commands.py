@@ -2105,11 +2105,15 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         successful_cogs = set()
         # Fetch a list of command names to enable
         for name, com in self.bot.tree._disabled_global_commands.items():
+            if com.extras.get("red_force_enable", False):
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     to_add_slash.append(name)
                     successful_cogs.add(cog_name)
         for key, com in self.bot.tree._disabled_context_menus.items():
+            if com.extras.get("red_force_enable", False):
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     name, guild_id, com_type = key
@@ -2216,12 +2220,16 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         removed = []
         removed_cogs = set()
         for name, com in self.bot.tree._global_commands.items():
+            if com.extras.get("red_force_enable", False):
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     await self.bot.disable_app_command(name, discord.AppCommandType.chat_input)
                     removed.append(name)
                     removed_cogs.add(cog_name)
         for key, com in self.bot.tree._context_menus.items():
+            if com.extras.get("red_force_enable", False):
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     name, guild_id, com_type = key
