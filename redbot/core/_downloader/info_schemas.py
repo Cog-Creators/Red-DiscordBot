@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Union
 
@@ -21,6 +22,7 @@ class UseDefault:
 
 # sentinel value
 USE_DEFAULT = UseDefault()
+RED_TAG_READY_PATTERN = re.compile(r"^red-(?:[3-9]|[1-9][0-9]+)\.(?:[1-9][0-9]*)-ready$")
 
 
 def ensure_tuple_of_str(
@@ -203,6 +205,48 @@ def ensure_installable_type(
     return installable.InstallableType.UNKNOWN
 
 
+def ensure_tags(info_file: Path, key_name: str, value: Union[Any, UseDefault]) -> Tuple[str, ...]:
+    default: Tuple[str, ...] = ()
+    if value is USE_DEFAULT:
+        return default
+    if not isinstance(value, list):
+        log.warning(
+            "Invalid value of '%s' key (expected list, got %s)"
+            " in JSON information file at path: %s",
+            key_name,
+            type(value).__name__,
+            info_file,
+        )
+        return default
+    valid_tags = []
+    for item in value:
+        if not isinstance(item, str):
+            log.warning(
+                "Invalid item in '%s' list (expected str, got %s)"
+                " in JSON information file at path: %s",
+                key_name,
+                type(item).__name__,
+                info_file,
+            )
+            return default
+        # `red-` tags are reserved for informational metadata we only support a subset of tags
+        if not item.startswith("red-"):
+            valid_tags.append(item)
+            continue
+        if RED_TAG_READY_PATTERN.match(item):
+            valid_tags.append(item)
+        else:
+            log.warning(
+                "Invalid value in '%s' list (tag starts with the reserved 'red-' prefix"
+                " but does not use the only supported reserved tag format: 'red-X.Y-ready')"
+                " in JSON information file at path: %s",
+                key_name,
+                info_file,
+            )
+
+    return tuple(value)
+
+
 EnsureCallable = Callable[[Path, str, Union[Any, UseDefault]], Any]
 SchemaType = Dict[str, EnsureCallable]
 
@@ -224,7 +268,7 @@ INSTALLABLE_SCHEMA: SchemaType = {
     "disabled": ensure_bool,
     "required_cogs": ensure_required_cogs_mapping,
     "requirements": ensure_tuple_of_str,
-    "tags": ensure_tuple_of_str,
+    "tags": ensure_tags,
     "type": ensure_installable_type,
     "end_user_data_statement": ensure_str,
 }
