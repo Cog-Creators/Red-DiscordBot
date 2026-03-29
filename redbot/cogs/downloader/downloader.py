@@ -774,7 +774,7 @@ class Downloader(commands.Cog):
             if not update_result.checked_cogs:
                 message += _("There were no cogs to check.")
             elif update_result.updates_available:
-                message = self._format_cog_update_result(update_result)
+                message = self._format_cog_update_result(ctx, update_result)
             else:
                 if repos:
                     message += _("Cogs from provided repos are already up to date.")
