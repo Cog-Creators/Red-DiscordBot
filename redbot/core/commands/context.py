@@ -189,14 +189,14 @@ class Context(DPYContext):
             join_character=join_character,
         )
 
-    async def embed_colour(self):
+    async def embed_colour(self) -> Optional[discord.Colour]:
         """
         Helper function to get the colour for an embed.
 
         Returns
         -------
-        discord.Colour:
-            The colour to be used
+        Optional[discord.Colour]:
+            The colour to be used, or ``None`` for theme colour.
         """
         return await self.bot.get_embed_color(self)
 
