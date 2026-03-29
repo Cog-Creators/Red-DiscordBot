@@ -18,7 +18,19 @@ import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Literal, Tuple, Union, Iterable, Optional, Dict, Set, List, cast, TYPE_CHECKING
+from typing import (
+    Dict,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+    cast,
+    TYPE_CHECKING,
+)
 
 import discord
 from redbot.core import commands, Config, version_info as red_version_info
@@ -697,11 +709,11 @@ async def update_repo_cogs(
         commit = await repo.get_full_sha1(rev)
     async with repo.checkout(commit, exit_to_rev=repo.branch):
         cogs_to_check, __ = await _get_cogs_to_check(repos=[repo], cogs=cogs, update_repos=False)
-        return await _update_cogs(cogs_to_check)
+        return await _update_cogs(cogs_to_check, failed_repos=())
 
 
 async def _update_cogs(
-    cogs_to_check: Set[InstalledModule], *, failed_repos: List[Repo]
+    cogs_to_check: Set[InstalledModule], *, failed_repos: Sequence[Repo]
 ) -> CogUpdateResult:
     pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
     cogs_to_check -= pinned_cogs
