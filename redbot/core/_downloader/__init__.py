@@ -757,12 +757,14 @@ async def _update_cogs(
     )
 
 
-async def pin_cogs(*cogs: InstalledModule) -> tuple[tuple[str, ...], tuple[str, ...]]:
+async def pin_cogs(
+    *cogs: InstalledModule,
+) -> tuple[tuple[InstalledModule, ...], tuple[InstalledModule, ...]]:
     already_pinned = []
     pinned = []
     for cog in set(cogs):
         if cog.pinned:
-            already_pinned.append(cog.name)
+            already_pinned.append(cog)
             continue
         cog.pinned = True
         pinned.append(cog)
@@ -772,12 +774,14 @@ async def pin_cogs(*cogs: InstalledModule) -> tuple[tuple[str, ...], tuple[str, 
     return tuple(pinned), tuple(already_pinned)
 
 
-async def unpin_cogs(*cogs: InstalledModule) -> tuple[tuple[str, ...], tuple[str, ...]]:
+async def unpin_cogs(
+    *cogs: InstalledModule,
+) -> tuple[tuple[InstalledModule, ...], tuple[InstalledModule, ...]]:
     not_pinned = []
     unpinned = []
     for cog in set(cogs):
         if not cog.pinned:
-            not_pinned.append(cog.name)
+            not_pinned.append(cog)
             continue
         cog.pinned = False
         unpinned.append(cog)
