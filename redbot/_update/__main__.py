@@ -2,24 +2,20 @@ import logging
 import os
 import sys
 from operator import itemgetter
-from typing import List, Literal, Tuple, Union
+from typing import List, Literal, Tuple
 
 import click
-import rich
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from python_discovery import PythonInfo, get_interpreter
-from rich.console import RenderableType
 from rich.panel import Panel
 from rich.prompt import Confirm, IntPrompt, Prompt
-from rich.table import Table
 from rich.text import Text
 
-from redbot import __version__
 from redbot.core._cli import asyncio_run
 from redbot.core.utils._internal_utils import cli_level_to_log_level, fetch_latest_red_version
 
-from . import changelog
+from . import changelog, common
 from .tui import ChangelogReaderApp, ChangelogReaderResult
 
 
@@ -42,14 +38,14 @@ def _get_system_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, V
 def _ask_for_interpreter(
     *, current_python_version: Version, requires_python: SpecifierSet
 ) -> Tuple[str, Version]:
-    console = rich.get_console()
+    console = common.get_console()
     with console.status("Searching for compatible Python interpreters on your system..."):
         interpreters = _get_system_interpreters(requires_python)
 
     if not interpreters:
         url = "https://docs.discord.red/en/latest/install_guides/"
         console.print(
-            "[red]:cross_mark-text:[/] Could not find a compatible Python interpreter!\n"
+            f"{common.ICON_ERROR} Could not find a compatible Python interpreter!\n"
             'Please follow the steps from the "Installing the pre-requirements" section'
             " of the install guide for your system:"
         )
@@ -113,50 +109,28 @@ def _ask_for_interpreter(
     return interpreter_exe, interpreter_version
 
 
-def prefix_column(prefix: RenderableType, *parts: Union[str, Text]) -> Table:
-    output = Table.grid(padding=(0, 2))
-    output.add_column()
-    output.add_column()
-    text = Text()
-    for renderable in parts:
-        if isinstance(renderable, str):
-            text.append_text(Text.from_markup(renderable))
-        else:
-            text.append_text(renderable)
-    output.add_row(prefix, text)
-    return output
-
-
-def print_with_prefix_column(prefix: RenderableType, *parts: Union[str, Text]) -> None:
-    console = rich.get_console()
-    console.print(prefix_column(prefix, *parts))
-
-
 async def main() -> None:
-    rich.reconfigure(highlight=False)
-    console = rich.get_console()
-    current_version = Version(os.getenv("_RED_UPDATE_PRETEND_VERSION") or __version__)
-    current_python_version = Version(".".join(map(str, sys.version_info[:3])))
+    console = common.get_console()
+    current_version = common.get_current_red_version()
+    current_python_version = common.get_current_python_version()
 
     with console.status("Checking latest version..."):
         latest = await fetch_latest_red_version()
 
     if current_version >= latest.version:
-        print_with_prefix_column(
-            "[green]:white_heavy_check_mark-text:[/]",
+        common.print_with_prefix_column(
+            common.ICON_SUCCESS,
             "You are already running the latest available version of Red.",
         )
         return
 
-    console.print(
-        prefix_column(
-            "[green]:white_heavy_check_mark-text:[/]",
-            Text("New version available: ").append(str(latest.version), style="bold"),
-        )
+    common.print_with_prefix_column(
+        common.ICON_SUCCESS,
+        Text("New version available: ").append(str(latest.version), style="bold"),
     )
     if current_python_version not in latest.requires_python:
-        print_with_prefix_column(
-            "[yellow]:warning-text:[/]",
+        common.print_with_prefix_column(
+            common.ICON_WARN,
             "The latest version of Red requires a different version (",
             Text(str(latest.requires_python), style="bold"),
             ") from the one that you are currently using (",
@@ -168,7 +142,7 @@ async def main() -> None:
     with console.status("Fetching changelogs..."):
         changelogs = await changelog.fetch_changelogs()
         changelogs = changelog.get_changelogs_newer_than(changelogs, current_version)
-    print_with_prefix_column("[green]:white_heavy_check_mark-text:[/]", "Changelogs fetched.")
+    common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")
 
     first_changelog_version = min(changelogs)
     last_changelog_version = max(changelogs)
@@ -183,9 +157,9 @@ async def main() -> None:
             f" [b]Red {first_changelog_version}[/]-[b]{last_changelog_version}[/]."
         )
     msg += (
-        "\n[bold][yellow]:warning-text:[/yellow]"
+        f"\n[bold]{common.ICON_WARN}"
         '  Make sure to read through the [green]"Read before updating"[/] section'
-        " before continuing. [yellow]:warning-text:[/yellow][/bold]\n"
+        f" before continuing. {common.ICON_WARN}[/bold]\n"
         "After the changelog is open and you're ready to continue, hit the [b]Q[/] key"
         " to close the changelog and continue the update process.\n\n"
         "Hit the [b]Enter[/] key to view the changelog."
@@ -199,8 +173,8 @@ async def main() -> None:
     if result is ChangelogReaderResult.QUIT:
         raise click.Abort()
 
-    print_with_prefix_column(
-        "[green]:white_heavy_check_mark-text:[/]",
+    common.print_with_prefix_column(
+        common.ICON_SUCCESS,
         "Changelog closed, continuing with the update process...",
     )
 
@@ -233,6 +207,7 @@ def cli(
     ctx: click.Context,
     debug: bool,
 ) -> None:
+    common.configure_rich()
     level = cli_level_to_log_level(debug)
     base_logger = logging.getLogger("red")
     base_logger.setLevel(level)
