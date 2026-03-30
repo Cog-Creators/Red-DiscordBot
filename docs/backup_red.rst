@@ -12,6 +12,10 @@ The system it's restored to can be different from the system that was backed up.
     Some 3rd-party cogs may not support all systems that Core Red supports and such cogs may therefore not work,
     if restored to an unsupported system. This does not affect cogs that do not impose additional restrictions.
 
+.. contents::
+    :local:
+    :depth: 2
+
 Creating backups
 ****************
 
