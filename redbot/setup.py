@@ -454,14 +454,20 @@ class RestoreInfo:
     def ensure_data_path(self) -> bool:
         if self._data_path_ensure_result is not None:
             return self._data_path_ensure_result
-        try:
-            # try making the dir since that's most reliant access check, if path does not exist
-            self.data_path.mkdir(parents=True, exist_ok=True)
-        except OSError:
-            self._data_path_ensure_result = False
+        if self.data_path.is_absolute():
+            try:
+                # try making the dir since that's most reliant access check, if path does not exist
+                self.data_path.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                self._data_path_ensure_result = False
+            else:
+                # if path exists, mkdir above is a no-op so we still have to check for write access
+                self._data_path_ensure_result = os.access(self.data_path, os.W_OK)
         else:
-            # if path exists, mkdir above is a no-op so we still have to check for write access
-            self._data_path_ensure_result = os.access(self.data_path, os.W_OK)
+            # if path is not absolute, it's not valid on the current OS, e.g.
+            # Path('D:\\data').is_absolute() is False on Linux/macOS
+            # Path('/some/path').is_absolute() is False on Windows
+            self._data_path_ensure_result = False
         return self._data_path_ensure_result
 
     @property
