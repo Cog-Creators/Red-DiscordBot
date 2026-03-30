@@ -35,9 +35,7 @@ def _get_system_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, V
     return sorted(interpreters.items(), key=itemgetter(1), reverse=True)
 
 
-def _ask_for_interpreter(
-    *, current_python_version: Version, requires_python: SpecifierSet
-) -> Tuple[str, Version]:
+def _search_for_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, Version]]:
     console = common.get_console()
     with console.status("Searching for compatible Python interpreters on your system..."):
         interpreters = _get_system_interpreters(requires_python)
@@ -52,6 +50,15 @@ def _ask_for_interpreter(
         console.print(Text(url, style=f"link {url}"))
         console.print("Once you finish installing the pre-requirements, run this command again.")
         raise SystemExit(1)
+
+    return interpreters
+
+
+def _ask_for_interpreter(
+    *, current_python_version: Version, requires_python: SpecifierSet
+) -> Tuple[str, Version]:
+    interpreters = _search_for_interpreters(requires_python)
+    console = common.get_console()
 
     def _render_interpreter(interpreter_exe: str, interpreter_version: Version) -> Text:
         return Text.assemble(
