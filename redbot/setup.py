@@ -441,8 +441,19 @@ class RestoreInfo:
         return self.name in instance_list
 
     @property
+    def data_path_not_accessible(self) -> bool:
+        try:
+            self.data_path.exists()
+        except OSError:
+            return True
+        return False
+
+    @property
     def data_path_not_empty(self) -> bool:
-        return self.data_path.exists() and next(self.data_path.glob("*"), None) is not None
+        try:
+            return self.data_path.exists() and next(self.data_path.glob("*"), None) is not None
+        except OSError:
+            return False
 
     @property
     def backend_unavailable(self) -> bool:
@@ -515,7 +526,13 @@ class RestoreInfo:
             )
             if click.confirm("Do you want to use different instance name?", default=True):
                 self._ask_for_name()
-        if self.data_path_not_empty:
+        if self.data_path_not_accessible:
+            print(
+                "Original data path can't be used as it cannot be accessed by the current user."
+                " You have to choose a different path."
+            )
+            self._ask_for_data_path()
+        elif self.data_path_not_empty:
             print(
                 "Original data path can't be used as it's not empty."
                 " You have to choose a different path."
@@ -536,9 +553,12 @@ class RestoreInfo:
             self.data_path = Path(
                 get_data_dir(instance_name=self.name, data_path=None, interactive=True)
             )
-            if not self.data_path_not_empty:
+            if self.data_path_not_accessible:
+                print("Given path can't be used as it cannot be accessed by the current user.")
+            elif self.data_path_not_empty:
+                print("Given path can't be used as it's not empty.")
+            else:
                 return
-            print("Given path can't be used as it's not empty.")
 
     def _ask_for_storage(self) -> None:
         self.storage_type = get_storage_type(None, interactive=True)
