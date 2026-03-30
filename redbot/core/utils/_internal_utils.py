@@ -37,6 +37,7 @@ import discord
 from packaging.requirements import Requirement
 import rapidfuzz
 import rich.progress
+from rich.console import Console
 from rich.text import Text
 from red_commons.logging import VERBOSE, TRACE
 
@@ -428,7 +429,7 @@ class RichSpeedColumn(rich.progress.ProgressColumn):
         return Text(f"{int(speed)} {self.unit}/s", style="progress.data.speed")
 
 
-def detailed_progress(*, unit: str) -> rich.progress.Progress:
+def detailed_progress(*, unit: str, console: Optional[Console] = None) -> rich.progress.Progress:
     return rich.progress.Progress(
         rich.progress.SpinnerColumn(),
         rich.progress.TextColumn("[progress.description]{task.description}"),
@@ -439,6 +440,7 @@ def detailed_progress(*, unit: str) -> rich.progress.Progress:
         rich.progress.TimeRemainingColumn(),
         rich.progress.TextColumn("elapsed"),
         rich.progress.TimeElapsedColumn(),
+        console=console,
     )
 
 
