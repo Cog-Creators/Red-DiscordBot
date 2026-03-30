@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 from operator import itemgetter
-from typing import Any, Final, List, Literal, Optional, Tuple
+from typing import Any, Final, List, Literal, Optional, Set, Tuple
 
 import click
 from packaging.specifiers import SpecifierSet
@@ -132,7 +132,7 @@ def _ask_for_interpreter(
     return interpreter_exe, interpreter_version
 
 
-async def main() -> None:
+async def main(instances: List[str], excluded_instances: Set[str], *, ignore_prefix: bool) -> None:
     console = common.get_console()
     current_version = common.get_current_red_version()
     current_python_version = common.get_current_python_version()
@@ -214,13 +214,105 @@ async def main() -> None:
             current_python_version=current_python_version, requires_python=latest.requires_python
         )
 
-    with console.status("Checking compatibility of installed cogs..."):
-        import asyncio
+    checked_instances = {}
+    failed_instances = []
+    for instance_name in instances:
+        if instance_name in excluded_instances:
+            continue
+        exit_code, stdout = await _call_check_cog_compatibility_cmd(
+            instance_name,
+            red_version=latest.version,
+            python_version=interpreter_version,
+            ignore_prefix=ignore_prefix,
+            internal=True,
+            stdout=asyncio.subprocess.PIPE,
+        )
+        if exit_code != _EXIT_INSTANCE_SITE_PREFIX_MISMATCH:
+            if exit_code:
+                failed_instances.append(instance_name)
+                print(stdout, end="")
+                Text.assemble(
+                    "\N{UPWARDS ARROW} " * 3, "Failure for ", (instance_name, "bold"), " instance"
+                )
+                console.rule(
+                    Text.assemble(
+                        "\N{UPWARDS ARROW} " * 3,
+                        "Failure for ",
+                        (instance_name, "bold"),
+                        " instance above",
+                        " \N{UPWARDS ARROW}" * 3,
+                    ),
+                    style="red",
+                )
+            else:
+                checked_instances[instance_name] = stdout
+        if stdout:
+            console.print()
+    console.print()
 
-        await asyncio.sleep(10)
+    if checked_instances:
+        for instance_name, stdout in checked_instances.items():
+            console.rule(Text(instance_name, style="bold"))
+            print(stdout, end="")
+        console.rule()
+
+    common.print_with_prefix_column(
+        common.ICON_INFO,
+        "Finished checking cog compatibility.",
+        (
+            "\nThe results for each of the checked instances are shown above."
+            if checked_instances
+            else ""
+        ),
+    )
+    if failed_instances:
+        common.print_with_prefix_column(
+            common.ICON_ERROR,
+            "Failure occurred while trying to check compatibility for following instances: ",
+            Text(", ").join(
+                Text(instance_name, style="bold") for instance_name in failed_instances
+            ),
+            "\nScroll above to find the errors.",
+        )
+    if not checked_instances:
+        common.print_with_prefix_column(
+            common.ICON_INFO,
+            "There were no",
+            (" other" if failed_instances else ""),
+            " instances to check cog compatibility for.",
+        )
+    console.print()
+
+    if breaking_update:
+        console.print(
+            "[b]Remember that this is a major release and it may have some breaking changes"
+            " that the bot or its cogs may be affected by.[/]"
+        )
+    if not Confirm.ask(f"Do you want to continue with the update to [b]Red {latest.version}[/]?"):
+        return
+    console.print()
+
+    # now onto actual update...
 
 
 @click.group(invoke_without_command=True)
+# command-specific options
+@click.option(
+    "--include-instance",
+    "included_instances",
+    multiple=True,
+    type=click.Choice(instance_list),
+    help="When specified, the cog compatibility will only be checked for instances specified with"
+    " the --include-instance option. Otherwise, all instances are checked.",
+)
+@click.option(
+    "--exclude-instance",
+    "excluded_instances",
+    multiple=True,
+    type=click.Choice(instance_list),
+    help="Exclude an instance from the list of instances to check cog compatibility for.",
+)
+# global options
 @click.option(
     "--debug",
     "--verbose",
@@ -242,6 +334,8 @@ async def main() -> None:
 @click.pass_context
 def cli(
     ctx: click.Context,
+    included_instances: Tuple[str, ...],
+    excluded_instances: Tuple[str, ...],
     debug: bool,
     ignore_prefix: bool,
 ) -> None:
@@ -255,7 +349,17 @@ def cli(
     ctx.obj["IGNORE_PREFIX"] = ignore_prefix
 
     if ctx.invoked_subcommand is None:
-        asyncio_run(main())
+        if included_instances:
+            # de-duplicate with order intact
+            instances = list(dict.fromkeys(included_instances))
+        else:
+            instances = instance_list
+        asyncio_run(main(instances, set(excluded_instances), ignore_prefix=ignore_prefix))
+    # these should not be available to subcommands
+    elif included_instances:
+        raise click.NoSuchOption("--include-instance", ctx=ctx)
+    elif excluded_instances:
+        raise click.NoSuchOption("--exclude-instance", ctx=ctx)
 
 
 class VersionParamType(click.ParamType):
@@ -361,12 +465,13 @@ async def _check_cog_compatibility_command_impl(
                 ignore_prefix=ignore_prefix,
             )
         except cog_compatibility_checker.InstanceSitePrefixMismatchError as exc:
-            common.print_with_prefix_column(
-                common.ICON_ERROR,
-                Text(exc.instance_name, style="bold"),
-                " instance could not be checked as it is a part of"
-                " a different Python installation and/or virtual environment.",
-            )
+            if not common.is_internal_cmd_call():
+                common.print_with_prefix_column(
+                    common.ICON_ERROR,
+                    Text(exc.instance_name, style="bold"),
+                    " instance could not be checked as it is a part of"
+                    " a different Python installation and/or virtual environment.",
+                )
             raise SystemExit(_EXIT_INSTANCE_SITE_PREFIX_MISMATCH)
         return
 
@@ -398,6 +503,7 @@ async def _call_check_cog_compatibility_cmd(
     red_version: Version,
     python_version: Version,
     ignore_prefix: bool = False,
+    internal: bool = False,
     stdout: Optional[int] = None,
 ) -> Tuple[int, Optional[str]]:
     args = [
@@ -413,6 +519,8 @@ async def _call_check_cog_compatibility_cmd(
     if ignore_prefix:
         args.append(_CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME)
     env = os.environ.copy()
+    if internal:
+        env[common.INTERNAL_CMD_CALL_ENV_VAR] = "1"
     if common.get_console().is_terminal:
         env["TTY_COMPATIBLE"] = "1"
     proc = await asyncio.create_subprocess_exec(sys.executable, *args, env=env, stdout=stdout)

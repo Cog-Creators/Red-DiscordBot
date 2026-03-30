@@ -22,6 +22,7 @@ ICON_INFO = "[blue]\N{CIRCLED INFORMATION SOURCE}[/]"
 ICON_WARN = "[yellow]:warning-text:[/]"
 ICON_ERROR = "[red]:heavy_multiplication_x-text:[/]"
 
+INTERNAL_CMD_CALL_ENV_VAR = "_RED_UPDATE_INTERNAL_CMD_CALL"
 _STDERR_CONSOLE: Optional[Console] = None
 
 
@@ -53,6 +54,10 @@ def print_with_prefix_column(
     if console is None:
         console = rich.get_console()
     console.print(prefix_column(prefix, *parts))
+
+
+def is_internal_cmd_call() -> bool:
+    return os.getenv(INTERNAL_CMD_CALL_ENV_VAR) == "1"
 
 
 def configure_rich() -> None:
