@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Union
+from typing import Optional, Union
 
 import rich
 from packaging.version import Version
@@ -21,6 +21,8 @@ ICON_SUCCESS = "[green]:heavy_check_mark-text:[/]"
 ICON_INFO = "[blue]\N{CIRCLED INFORMATION SOURCE}[/]"
 ICON_WARN = "[yellow]:warning-text:[/]"
 ICON_ERROR = "[red]:heavy_multiplication_x-text:[/]"
+
+_STDERR_CONSOLE: Optional[Console] = None
 
 
 def get_current_red_version() -> Version:
@@ -45,14 +47,22 @@ def prefix_column(prefix: RenderableType, *parts: Union[str, Text]) -> Table:
     return output
 
 
-def print_with_prefix_column(prefix: RenderableType, *parts: Union[str, Text]) -> None:
-    console = rich.get_console()
+def print_with_prefix_column(
+    prefix: RenderableType, *parts: Union[str, Text], console: Optional[Console] = None
+) -> None:
+    if console is None:
+        console = rich.get_console()
     console.print(prefix_column(prefix, *parts))
 
 
 def configure_rich() -> None:
     rich.reconfigure(highlight=False)
+    global _STDERR_CONSOLE
+    _STDERR_CONSOLE = Console(highlight=False, stderr=True)
 
 
-def get_console() -> Console:
-    return rich.get_console()
+def get_console(stderr: bool = False) -> Console:
+    global _STDERR_CONSOLE
+    if _STDERR_CONSOLE is None:
+        raise RuntimeError("_STDERR_CONSOLE is not set")
+    return _STDERR_CONSOLE if stderr else rich.get_console()

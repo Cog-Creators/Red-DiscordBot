@@ -8,6 +8,7 @@ import click
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from python_discovery import PythonInfo, get_interpreter
+from rich.logging import RichHandler
 from rich.panel import Panel
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.text import Text
@@ -224,12 +225,7 @@ def cli(
     level = cli_level_to_log_level(debug)
     base_logger = logging.getLogger("red")
     base_logger.setLevel(level)
-    formatter = logging.Formatter(
-        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
-    )
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setFormatter(formatter)
-    base_logger.addHandler(stdout_handler)
+    base_logger.addHandler(RichHandler(console=common.get_console(stderr=True), show_path=False))
 
     if ctx.invoked_subcommand is None:
         asyncio_run(main())
