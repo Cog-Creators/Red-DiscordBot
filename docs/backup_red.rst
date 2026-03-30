@@ -118,6 +118,11 @@ Linux & Mac
 To restore a backup, perform the following steps:
 
 #. `Install Red <install-guides>` on the new machine/location, skipping the ``redbot-setup`` step.
+#. Activate your venv.
+
+    .. prompt:: bash
+
+        source ~/redenv/bin/activate
 #. Restore your Red instance with the following command:
 
     .. prompt:: bash
