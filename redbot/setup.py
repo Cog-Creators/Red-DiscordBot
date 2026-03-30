@@ -9,6 +9,7 @@ import asyncio
 import functools
 import json
 import logging
+import os
 import sys
 import re
 import tarfile
@@ -398,9 +399,10 @@ class RestoreInfo:
         self.tar = tar
         self.backup_version = backup_version
         self.name = name
-        self.data_path = data_path
+        self._data_path = data_path
         self.storage_type = storage_type
         self.storage_details = storage_details
+        self._data_path_ensure_result: Optional[bool] = None
 
     @classmethod
     def from_tar(cls, tar: tarfile.TarFile) -> RestoreInfo:
@@ -437,23 +439,39 @@ class RestoreInfo:
         return backup_version
 
     @property
+    def data_path(self) -> Path:
+        return self._data_path
+
+    @data_path.setter
+    def data_path(self, value: Path) -> None:
+        self._data_path_ensure_result = None
+        self._data_path = value
+
+    @property
     def name_used(self) -> bool:
         return self.name in instance_list
 
-    @property
-    def data_path_not_accessible(self) -> bool:
+    def ensure_data_path(self) -> bool:
+        if self._data_path_ensure_result is not None:
+            return self._data_path_ensure_result
         try:
-            self.data_path.exists()
+            # try making the dir since that's most reliant access check, if path does not exist
+            self.data_path.mkdir(parents=True, exist_ok=True)
         except OSError:
-            return True
-        return False
+            self._data_path_ensure_result = False
+        else:
+            # if path exists, mkdir above is a no-op so we still have to check for write access
+            self._data_path_ensure_result = os.access(self.data_path, os.W_OK)
+        return self._data_path_ensure_result
 
     @property
     def data_path_not_empty(self) -> bool:
+        if not self.ensure_data_path():
+            return True
         try:
-            return self.data_path.exists() and next(self.data_path.glob("*"), None) is not None
+            return next(self.data_path.glob("*"), None) is not None
         except OSError:
-            return False
+            return True
 
     @property
     def backend_unavailable(self) -> bool:
@@ -526,9 +544,9 @@ class RestoreInfo:
             )
             if click.confirm("Do you want to use different instance name?", default=True):
                 self._ask_for_name()
-        if self.data_path_not_accessible:
+        if not self.ensure_data_path():
             print(
-                "Original data path can't be used as it cannot be accessed by the current user."
+                "Original data path can't be used as it cannot be written to by the current user."
                 " You have to choose a different path."
             )
             self._ask_for_data_path()
@@ -553,8 +571,8 @@ class RestoreInfo:
             self.data_path = Path(
                 get_data_dir(instance_name=self.name, data_path=None, interactive=True)
             )
-            if self.data_path_not_accessible:
-                print("Given path can't be used as it cannot be accessed by the current user.")
+            if not self.ensure_data_path():
+                print("Given path can't be used as it cannot be written to by the current user.")
             elif self.data_path_not_empty:
                 print("Given path can't be used as it's not empty.")
             else:
