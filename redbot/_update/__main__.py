@@ -1,8 +1,9 @@
+import asyncio
 import logging
 import os
 import sys
 from operator import itemgetter
-from typing import List, Literal, Tuple
+from typing import Any, Final, List, Literal, Optional, Tuple
 
 import click
 from packaging.specifiers import SpecifierSet
@@ -13,11 +14,25 @@ from rich.panel import Panel
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.text import Text
 
+from redbot.core import data_manager
 from redbot.core._cli import asyncio_run
 from redbot.core.utils._internal_utils import cli_level_to_log_level, fetch_latest_red_version
 
-from . import changelog, common
+from . import changelog, cog_compatibility_checker, common
 from .tui import ChangelogReaderApp, ChangelogReaderResult
+
+
+instance_data = data_manager.load_existing_config()
+if instance_data is None:
+    instance_list = []
+else:
+    instance_list = list(instance_data.keys())
+
+_EXIT_INSTANCE_SITE_PREFIX_MISMATCH: Final = 3
+_CHECK_COG_COMPATIBILITY_CMD_NAME: Final = "check-cog-compatibility"
+_RED_VERSION_CMD_ARG_NAME: Final = "--red-version"
+_PYTHON_VERSION_CMD_ARG_NAME: Final = "--python-version"
+_CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME: Final = "--check-other-python-installs"
 
 
 def _get_system_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, Version]]:
@@ -216,10 +231,19 @@ async def main() -> None:
         " level by 1."
     ),
 )
+@click.option(
+    "--check-other-venvs",
+    _CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME,
+    "ignore_prefix",
+    help="Check the compatibility of cogs for instances that are normally ran with"
+    " a different Python installation and/or virtual environment than the current one.",
+    is_flag=True,
+)
 @click.pass_context
 def cli(
     ctx: click.Context,
     debug: bool,
+    ignore_prefix: bool,
 ) -> None:
     common.configure_rich()
     level = cli_level_to_log_level(debug)
@@ -227,8 +251,176 @@ def cli(
     base_logger.setLevel(level)
     base_logger.addHandler(RichHandler(console=common.get_console(stderr=True), show_path=False))
 
+    ctx.ensure_object(dict)
+    ctx.obj["IGNORE_PREFIX"] = ignore_prefix
+
     if ctx.invoked_subcommand is None:
         asyncio_run(main())
+
+
+class VersionParamType(click.ParamType):
+    name = "version"
+
+    def convert(
+        self, value: Any, param: Optional[click.Parameter], ctx: Optional[click.Context]
+    ) -> Version:
+        if isinstance(value, Version):
+            if len(value.release) < 2:
+                self.fail(
+                    f"{value!r} needs to have at least 2 release components (major and minor).",
+                    param,
+                    ctx,
+                )
+            return value
+
+        try:
+            return self.convert(Version(value), param, ctx)
+        except ValueError:
+            self.fail(f"{value!r} is not a valid version number", param, ctx)
+
+
+@cli.command(_CHECK_COG_COMPATIBILITY_CMD_NAME)
+@click.argument(
+    "instances",
+    nargs=-1,
+    type=click.Choice(instance_list),
+    default=None,
+    metavar="[INSTANCE_NAME]",
+)
+@click.option(
+    _RED_VERSION_CMD_ARG_NAME,
+    type=VersionParamType(),
+    default=None,
+    help="The Red version to check cog compatibility for."
+    " If not provided, the information about latest available version will be fetched"
+    " and the command will check whether installed cogs support that version.\n"
+    "If this option is provided, --python-version also has to be provided.",
+)
+@click.option(
+    _PYTHON_VERSION_CMD_ARG_NAME,
+    type=VersionParamType(),
+    default=None,
+    help="The Python version to check cog compatibility for."
+    " If not provided, the command will either use the current interpreter's version or,"
+    " if that version is not compatible with the latest Red version, it will try to"
+    " find the latest available CPython interpreter on the system and will check whether"
+    " installed cogs support it.\n"
+    "If this option is provided, --red-version also has to be provided.",
+)
+@click.pass_context
+def check_cog_compatibility(
+    ctx: click.Context,
+    instances: Tuple[str, ...],
+    red_version: Optional[Version],
+    python_version: Optional[Version],
+) -> None:
+    """
+    Check if the installed cogs are compatible with the given version.
+    """
+    if (red_version, python_version).count(None) == 1:
+        raise click.BadParameter(
+            "Either both --red-version and --python-version options"
+            " have to be specified or neither.",
+            param_hint=[_RED_VERSION_CMD_ARG_NAME, _PYTHON_VERSION_CMD_ARG_NAME],
+        )
+
+    asyncio_run(
+        _check_cog_compatibility_command_impl(
+            red_version=red_version,
+            python_version=python_version,
+            instances=instances,
+            ignore_prefix=ctx.obj["IGNORE_PREFIX"],
+        )
+    )
+
+
+async def _check_cog_compatibility_command_impl(
+    *,
+    red_version: Optional[Version],
+    python_version: Optional[Version],
+    instances: Tuple[str, ...] = (),
+    ignore_prefix: bool = False,
+) -> None:
+    console = common.get_console()
+    if red_version is None or python_version is None:
+        with console.status("Checking latest version..."):
+            latest = await fetch_latest_red_version()
+            red_version = latest.version
+
+        python_version = Version(".".join(map(str, sys.version_info[:3])))
+        if python_version not in latest.requires_python:
+            interpreters = _search_for_interpreters(latest.requires_python)
+            _, python_version = interpreters[0]
+
+    if len(instances) == 1:
+        try:
+            await cog_compatibility_checker.check_instance(
+                instances[0],
+                latest_version=red_version,
+                interpreter_version=python_version,
+                ignore_prefix=ignore_prefix,
+            )
+        except cog_compatibility_checker.InstanceSitePrefixMismatchError as exc:
+            common.print_with_prefix_column(
+                common.ICON_ERROR,
+                Text(exc.instance_name, style="bold"),
+                " instance could not be checked as it is a part of"
+                " a different Python installation and/or virtual environment.",
+            )
+            raise SystemExit(_EXIT_INSTANCE_SITE_PREFIX_MISMATCH)
+        return
+
+    if not instances:
+        instances = tuple(instance_list)
+    checked_instances = []
+    for instance_name in instances:
+        exit_code, _ = await _call_check_cog_compatibility_cmd(
+            instance_name,
+            red_version=red_version,
+            python_version=python_version,
+            ignore_prefix=ignore_prefix,
+        )
+        if exit_code != _EXIT_INSTANCE_SITE_PREFIX_MISMATCH:
+            if exit_code:
+                raise SystemExit(exit_code)
+            checked_instances.append(instance_name)
+
+    if not checked_instances:
+        common.print_with_prefix_column(
+            common.ICON_ERROR, "There were no instances to check cog compatibility for."
+        )
+        raise SystemExit(1)
+
+
+async def _call_check_cog_compatibility_cmd(
+    instance_name: str,
+    *,
+    red_version: Version,
+    python_version: Version,
+    ignore_prefix: bool = False,
+    stdout: Optional[int] = None,
+) -> Tuple[int, Optional[str]]:
+    args = [
+        "-m",
+        "redbot._update",
+        _CHECK_COG_COMPATIBILITY_CMD_NAME,
+        instance_name,
+        _RED_VERSION_CMD_ARG_NAME,
+        str(red_version),
+        _PYTHON_VERSION_CMD_ARG_NAME,
+        str(python_version),
+    ]
+    if ignore_prefix:
+        args.append(_CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME)
+    env = os.environ.copy()
+    if common.get_console().is_terminal:
+        env["TTY_COMPATIBLE"] = "1"
+    proc = await asyncio.create_subprocess_exec(sys.executable, *args, env=env, stdout=stdout)
+    stdout_data, _ = await proc.communicate()
+    decoded_stdout = None
+    if stdout_data is not None:
+        decoded_stdout = stdout_data.decode()
+    return await proc.wait(), decoded_stdout
 
 
 if __name__ == "__main__":
