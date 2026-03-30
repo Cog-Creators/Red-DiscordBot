@@ -108,7 +108,12 @@ To restore a backup, perform the following steps:
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
-        redbot-setup restore
+        redbot-setup restore C:\path\to\backup\file.tar.gz
+
+    .. attention::
+
+        Replace ``C:\path\to\backup\file.tar.gz`` with the path to the backup file
+        that you want to restore from.
 
 #. The command will guide you through the restore process.
 
@@ -128,6 +133,11 @@ To restore a backup, perform the following steps:
     .. prompt:: bash
         :prompts: (redenv) $
 
-        redbot-setup restore
+        redbot-setup restore /path/to/backup/file.tar.gz
+
+    .. attention::
+
+        Replace ``/path/to/backup/file.tar.gz`` with the path to the backup file
+        that you want to restore from.
 
 #. The command will guide you through the restore process.

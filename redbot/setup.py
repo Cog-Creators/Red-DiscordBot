@@ -643,23 +643,7 @@ class RestoreInfo:
         print("Restore process has been completed.")
 
 
-async def restore_instance():
-    print("Hello! This command will guide you through restore process.\n")
-    backup_path_input = ""
-    while not backup_path_input:
-        print("Please enter the path to instance's backup:")
-        backup_path_input = input("> ")
-        backup_path = Path(backup_path_input)
-        try:
-            backup_path = backup_path.resolve()
-        except OSError:
-            print("This doesn't look like a valid path.")
-            backup_path_input = ""
-        else:
-            if not backup_path.is_file():
-                print("This path doesn't exist or it's not a file.")
-                backup_path_input = ""
-
+async def restore_instance(backup_path: Path) -> None:
     try:
         tar = tarfile.open(backup_path)
     except tarfile.ReadError:
@@ -667,6 +651,8 @@ async def restore_instance():
             "We couldn't open the given backup file. Make sure that you're passing correct file."
         )
         return
+
+    print("Hello! This command will guide you through restore process.")
     with tar:
         restore_info = RestoreInfo.from_tar(tar)
         await restore_info.run()
@@ -868,9 +854,14 @@ def backup(instance: str, destination_folder: Path) -> None:
 
 
 @cli.command()
-def restore() -> None:
+@click.argument(
+    "backup_file",
+    type=click.Path(file_okay=True, resolve_path=True, readable=True, path_type=Path),
+    metavar="<BACKUP_FILE>",
+)
+def restore(backup_file: Path) -> None:
     """Restore instance."""
-    asyncio.run(restore_instance())
+    asyncio.run(restore_instance(backup_file))
 
 
 def run_cli():
