@@ -135,6 +135,55 @@ async def main() -> None:
         common.ICON_SUCCESS,
         Text("New version available: ").append(str(latest.version), style="bold"),
     )
+
+    breaking_update = current_version.release[:2] != latest.version.release[:2]
+    with console.status("Fetching changelogs..."):
+        changelogs = await changelog.fetch_changelogs()
+        changelogs = changelog.get_changelogs_newer_than(changelogs, current_version)
+    common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")
+
+    first_changelog_version = min(changelogs)
+    last_changelog_version = max(changelogs)
+    parts = []
+    if first_changelog_version == last_changelog_version:
+        parts.append(
+            "You will now be presented with the changelog for"
+            f" [b]Red {first_changelog_version}[/]."
+        )
+    else:
+        parts.append(
+            "You will now be presented with the changelogs for"
+            f" [b]Red {first_changelog_version}[/]-[b]{last_changelog_version}[/]."
+        )
+    parts.append(
+        f"\n[bold]{common.ICON_WARN}"
+        '  Make sure to read through the [green]"Read before updating"[/] section'
+        f" before continuing. {common.ICON_WARN}[/bold]\n"
+    )
+    if breaking_update:
+        parts.append(
+            f"[bold]{common.ICON_WARN}"
+            "  Please note that this is a major release and it may have some changes that your bot"
+            " or its cogs are affected by.[/bold]\n"
+        )
+    parts.append(
+        "After the changelog is open and you're ready to continue, hit the [b]Q[/] key"
+        " to close the changelog and continue the update process.\n\n"
+        "Hit the [b]Enter[/] key to view the changelog."
+    )
+    console.input(Panel("".join(parts)), password=True)
+
+    viewer = ChangelogReaderApp(changelog.render_markdown(changelogs))
+    result = await viewer.run_async()
+    if result is None:
+        raise RuntimeError("Unexpected state")
+    if result is ChangelogReaderResult.QUIT:
+        raise click.Abort()
+
+    console.print("Changelog has been closed.\n")
+
+    interpreter_exe = sys.executable
+    interpreter_version = current_python_version
     if current_python_version not in latest.requires_python:
         common.print_with_prefix_column(
             common.ICON_WARN,
@@ -145,49 +194,6 @@ async def main() -> None:
             ")\nredbot-update will have to recreate the virtual environment"
             " with a compatible version of Python.",
         )
-
-    with console.status("Fetching changelogs..."):
-        changelogs = await changelog.fetch_changelogs()
-        changelogs = changelog.get_changelogs_newer_than(changelogs, current_version)
-    common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")
-
-    first_changelog_version = min(changelogs)
-    last_changelog_version = max(changelogs)
-    if first_changelog_version == last_changelog_version:
-        msg = (
-            "You will now be presented with the changelog for"
-            f" [b]Red {first_changelog_version}[/]."
-        )
-    else:
-        msg = (
-            "You will now be presented with the changelogs for"
-            f" [b]Red {first_changelog_version}[/]-[b]{last_changelog_version}[/]."
-        )
-    msg += (
-        f"\n[bold]{common.ICON_WARN}"
-        '  Make sure to read through the [green]"Read before updating"[/] section'
-        f" before continuing. {common.ICON_WARN}[/bold]\n"
-        "After the changelog is open and you're ready to continue, hit the [b]Q[/] key"
-        " to close the changelog and continue the update process.\n\n"
-        "Hit the [b]Enter[/] key to view the changelog."
-    )
-    console.input(Panel(msg), password=True)
-
-    viewer = ChangelogReaderApp(changelog.render_markdown(changelogs))
-    result = await viewer.run_async()
-    if result is None:
-        raise RuntimeError("Unexpected state")
-    if result is ChangelogReaderResult.QUIT:
-        raise click.Abort()
-
-    common.print_with_prefix_column(
-        common.ICON_SUCCESS,
-        "Changelog closed, continuing with the update process...",
-    )
-
-    interpreter_exe = sys.executable
-    interpreter_version = current_python_version
-    if current_python_version not in latest.requires_python:
         interpreter_exe, interpreter_version = _ask_for_interpreter(
             current_python_version=current_python_version, requires_python=latest.requires_python
         )
