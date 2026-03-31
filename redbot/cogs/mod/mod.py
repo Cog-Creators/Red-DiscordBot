@@ -11,11 +11,12 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import inline
+
 from .events import Events
 from .kickban import KickBanMixin
 from .names import ModInfo
-from .slowmode import Slowmode
 from .settings import ModSettings
+from .slowmode import Slowmode
 
 _ = T_ = Translator("Mod", __file__)
 
@@ -64,6 +65,12 @@ class Mod(
         "ban_show_extra": False,
         "ban_extra_embed_title": "Message from staff",
         "ban_extra_embed_contents": "Please set me",
+        "kick_show_extra": False,
+        "kick_extra_embed_title": "Message from staff",
+        "kick_extra_embed_contents": "Please set me",
+        "softban_show_extra": False,
+        "softban_extra_embed_title": "Message from staff",
+        "softban_extra_embed_contents": "Please set me",
     }
 
     default_channel_settings = {"ignored": False}
