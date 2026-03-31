@@ -15,7 +15,7 @@ import re
 import tarfile
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Dict, IO, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, IO, List, NoReturn, Optional, Set, Tuple, Union
 
 import click
 
@@ -64,10 +64,14 @@ def save_config(name, data, remove=False):
         json.dump(_config, fs, indent=4)
 
 
+def get_default_data_path(instance_name: str) -> Path:
+    return Path(appdir.user_data_dir) / "data" / instance_name
+
+
 def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: bool) -> str:
     if data_path is not None:
         return str(data_path.resolve())
-    data_path = Path(appdir.user_data_dir) / "data" / instance_name
+    data_path = get_default_data_path(instance_name)
     if not interactive:
         return str(data_path.resolve())
 
@@ -387,6 +391,13 @@ def open_file_from_tar(tar: tarfile.TarFile, arcname: str) -> Optional[IO[bytes]
 
 
 class RestoreInfo:
+    STORAGE_BACKENDS = {
+        BackendType.JSON: "JSON",
+        BackendType.POSTGRES: "PostgreSQL",
+        BackendType.MONGOV1: "MongoDB (unavailable)",
+        BackendType.MONGO: "MongoDB (unavailable)",
+    }
+
     def __init__(
         self,
         tar: tarfile.TarFile,
@@ -395,6 +406,7 @@ class RestoreInfo:
         data_path: Path,
         storage_type: BackendType,
         storage_details: dict,
+        restore_downloader: Optional[bool] = None,
     ):
         self.tar = tar
         self.backup_version = backup_version
@@ -402,10 +414,13 @@ class RestoreInfo:
         self._data_path = data_path
         self.storage_type = storage_type
         self.storage_details = storage_details
+        self._restore_downloader: Optional[bool] = restore_downloader
         self._data_path_ensure_result: Optional[bool] = None
 
     @classmethod
-    def from_tar(cls, tar: tarfile.TarFile) -> RestoreInfo:
+    def from_tar(
+        cls, tar: tarfile.TarFile, *, restore_downloader: Optional[bool] = None
+    ) -> RestoreInfo:
         instance_name, raw_data = cls.get_instance_from_backup(tar)
         backup_version = cls.get_backup_version(tar)
 
@@ -416,6 +431,7 @@ class RestoreInfo:
             data_path=Path(raw_data["DATA_PATH"]),
             storage_type=BackendType(raw_data["STORAGE_TYPE"]),
             storage_details=raw_data["STORAGE_DETAILS"],
+            restore_downloader=restore_downloader,
         )
 
     @staticmethod
@@ -489,6 +505,8 @@ class RestoreInfo:
 
     @functools.cached_property
     def restore_downloader(self) -> bool:
+        if self._restore_downloader is not None:
+            return self.can_restore_downloader
         return self.can_restore_downloader and click.confirm(
             "Do you want to restore 3rd-party repos and cogs installed through Downloader?",
             default=True,
@@ -516,22 +534,23 @@ class RestoreInfo:
         print("\nWhen the instance was backuped, it was using these settings:")
         print("  Original instance name:", self.name)
         print("  Original data path:", self.data_path)
-        storage_backends = {
-            BackendType.JSON: "JSON",
-            BackendType.POSTGRES: "PostgreSQL",
-            BackendType.MONGOV1: "MongoDB (unavailable)",
-            BackendType.MONGO: "MongoDB (unavailable)",
-        }
-        print("  Original storage backend:", storage_backends[self.storage_type])
+        print("  Original storage backend:", self.STORAGE_BACKENDS[self.storage_type])
+        self.print_storage_details()
+
+    def print_storage_details(self, *, original: bool = True) -> None:
         if self.storage_type is BackendType.POSTGRES:
-            print("  Original storage details:")
+            if original:
+                print("  Original storage details:")
+            else:
+                print("  Storage details:")
             for key in ("host", "port", "database", "user"):
                 print(f"    - DB {key}:", self.storage_details[key])
             print("    - DB password: ***")
 
-    def ask_for_changes(self) -> None:
-        self._ask_for_optional_changes()
-        self._ask_for_required_changes()
+    def ask_for_changes(self, *, interactive: bool) -> None:
+        if interactive:
+            self._ask_for_optional_changes()
+        self._ask_for_required_changes(interactive=interactive)
 
     def _ask_for_optional_changes(self) -> None:
         if click.confirm("\nWould you like to change anything?"):
@@ -546,28 +565,40 @@ class RestoreInfo:
             ):
                 self._ask_for_storage()
 
-    def _ask_for_required_changes(self) -> None:
+    @staticmethod
+    def _error_and_exit(message: str) -> NoReturn:
+        print(f"ERROR: {message}")
+        sys.exit(1)
+
+    @staticmethod
+    def _warning(message: str) -> None:
+        print(f"WARNING: {message}")
+
+    @staticmethod
+    def _info(message: str) -> None:
+        print(f"INFO: {message}")
+
+    def _ask_for_required_changes(self, interactive: bool) -> None:
+        p = self._warning if interactive else self._error_and_exit
         if self.name_used:
-            print(
-                "WARNING: Original instance name is already used by a different instance."
-                " Continuing will overwrite the existing instance config."
-            )
+            p("Original instance name is already used by a different instance.")
+            p("Continuing will overwrite the existing instance config.")
             if click.confirm("Do you want to use different instance name?", default=True):
                 self._ask_for_name()
         if not self.ensure_data_path():
-            print(
+            p(
                 "Original data path can't be used as it cannot be written to by the current user."
                 " You have to choose a different path."
             )
             self._ask_for_data_path()
         elif self.data_path_not_empty:
-            print(
+            p(
                 "Original data path can't be used as it's not empty."
                 " You have to choose a different path."
             )
             self._ask_for_data_path()
         if self.backend_unavailable:
-            print(
+            p(
                 "Original storage backend is no longer available in Red."
                 " You have to choose a different backend."
             )
@@ -632,22 +663,61 @@ class RestoreInfo:
             finally:
                 await driver_cls.teardown()
         elif self.backup_version == 1:
-            print(
-                "INFO: Downloader's data isn't included in the backup file"
+            self._info(
+                "Downloader's data isn't included in the backup file"
                 " - this backup was created with Red 3.5.24 or older."
             )
         elif not self.can_restore_downloader:
-            print("WARNING: Downloader's data isn't included in the backup file.")
+            self._warning("Downloader's data isn't included in the backup file.")
 
-    async def run(self) -> None:
+    async def run(
+        self,
+        *,
+        interactive: bool,
+        instance_name: str = "",
+        data_path: Optional[Path] = None,
+        backend: Optional[BackendType] = None,
+        use_sane_default_data_path: bool = False,
+    ) -> None:
+        storage_details = {}
+        if backend:
+            driver_cls = get_driver_class(backend)
+            storage_details = driver_cls.get_config_details()
+            print("\n---")
         self.print_instance_data()
-        self.ask_for_changes()
+
+        if use_sane_default_data_path:
+            data_path = get_default_data_path(instance_name or self.name)
+        if instance_name or data_path or backend:
+            print("\nThe following settings have been overridden with command options:")
+        if instance_name:
+            self.name = instance_name
+            print("  Instance name:", instance_name)
+        if data_path:
+            self.data_path = data_path
+            print("  Data path:", data_path)
+        if backend:
+            self.storage_type = backend
+            self.storage_details = storage_details
+            print("  Storage backend:", self.STORAGE_BACKENDS[backend])
+            self.print_storage_details(original=False)
+
+        self.ask_for_changes(interactive=interactive)
         await self.restore_data()
 
         print("Restore process has been completed.")
 
 
-async def restore_instance(backup_path: Path) -> None:
+async def restore_instance(
+    backup_path: Path,
+    *,
+    interactive: bool,
+    skip_downloader_restore: bool,
+    instance_name: str,
+    data_path: Optional[Path],
+    use_sane_default_data_path: bool = False,
+    backend: Optional[str],
+) -> None:
     try:
         tar = tarfile.open(backup_path)
     except tarfile.ReadError:
@@ -657,9 +727,22 @@ async def restore_instance(backup_path: Path) -> None:
         return
 
     print("Hello! This command will guide you through restore process.")
+    if interactive:
+        restore_downloader = False if skip_downloader_restore else None
+    else:
+        restore_downloader = not skip_downloader_restore
     with tar:
-        restore_info = RestoreInfo.from_tar(tar)
-        await restore_info.run()
+        restore_info = RestoreInfo.from_tar(
+            tar,
+            restore_downloader=restore_downloader,
+        )
+        await restore_info.run(
+            interactive=interactive,
+            instance_name=instance_name,
+            data_path=data_path,
+            use_sane_default_data_path=use_sane_default_data_path,
+            backend=get_target_backend(backend) if backend else None,
+        )
 
 
 @click.group(invoke_without_command=True)
@@ -863,9 +946,81 @@ def backup(instance: str, destination_folder: Path) -> None:
     type=click.Path(file_okay=True, resolve_path=True, readable=True, path_type=Path),
     metavar="<BACKUP_FILE>",
 )
-def restore(backup_file: Path) -> None:
+@click.option(
+    "--no-prompt",
+    "interactive",
+    is_flag=True,
+    default=True,
+    help="Don't ask for user input during the process. Most of the values",
+)
+@click.option(
+    "--no-restore-downloader",
+    "skip_downloader_restore",
+    is_flag=True,
+    default=False,
+    help="Skip restoring of 3rd-party repos and cogs installed through Downloader.",
+)
+@click.option(
+    "--instance-name",
+    type=str,
+    default="",
+    help=(
+        "Name of the new instance. By default, the name stored in the backup will be used"
+        " and, if the --no-prompt option was not specified, you will be able to change this"
+        " before restoring"
+    ),
+)
+@click.option(
+    "--data-path",
+    type=click.Path(exists=False, dir_okay=True, file_okay=False, writable=True, path_type=Path),
+    default=None,
+    help=(
+        "Data path of the new instance. If this option and --no-prompt are omitted,"
+        " you will be asked for this."
+    ),
+)
+@click.option(
+    "--use-sane-default-data-path",
+    is_flag=True,
+    default=False,
+    help=(
+        "Use the sane default data path derived from the instance name instead of using data path"
+        " from the backup or specifying --data-path option."
+    ),
+)
+@click.option(
+    "--backend",
+    type=click.Choice(["json", "postgres"]),
+    default=None,
+    help=(
+        "Choose a backend type for the new instance."
+        " By default, the backend of the backed up instance will be used"
+        " and, if the --no-prompt option was not specified, you will be able to change this"
+        " before restoring.\n"
+        "Note: Choosing PostgreSQL will prevent the setup from being completely non-interactive."
+    ),
+)
+def restore(
+    backup_file: Path,
+    interactive: bool,
+    skip_downloader_restore: bool,
+    instance_name: str,
+    data_path: Optional[Path],
+    use_sane_default_data_path: bool,
+    backend: Optional[str],
+) -> None:
     """Restore instance."""
-    asyncio.run(restore_instance(backup_file))
+    asyncio.run(
+        restore_instance(
+            backup_file,
+            interactive=interactive,
+            skip_downloader_restore=skip_downloader_restore,
+            instance_name=instance_name,
+            data_path=data_path,
+            use_sane_default_data_path=use_sane_default_data_path,
+            backend=backend,
+        )
+    )
 
 
 def run_cli():
