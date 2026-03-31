@@ -19,8 +19,6 @@ _ = Translator("Alias", __file__)
 log = logging.getLogger("red.cogs.alias")
 
 
-
-
 @cog_i18n(_)
 class Alias(commands.Cog):
     """Create aliases for commands.
