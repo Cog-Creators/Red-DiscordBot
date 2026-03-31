@@ -4122,7 +4122,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         await ctx.bot._config.color.clear()
         default_color = await ctx.bot._config.color()
-        ctx.bot._color = default_color
+        ctx.bot._color = discord.Colour(default_color) if default_color is not None else None
         await ctx.send(_("The embed colour has been reset to the default."))
 
     @_set.command(
