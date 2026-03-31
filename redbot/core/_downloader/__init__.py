@@ -701,7 +701,7 @@ async def update_repo_cogs(
     try:
         await repo.update()
     except errors.UpdateError:
-        return await _update_cogs(set(), failed_repos=[repo])
+        return await _update_cogs(set(), failed_repos=(repo.name,))
 
     # TODO: should this be set to `repo.branch` when `rev` is None?
     commit = None
