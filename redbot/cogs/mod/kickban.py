@@ -773,33 +773,40 @@ class KickBanMixin(MixinMeta):
         msg = None
         toggle = await self.config.guild(guild).dm_on_kickban()
         if toggle:
-            invite = await self.get_invite_for_reinvite(ctx)
             extra_embed = await self.config.guild(guild).softban_show_extra()
 
-            embed = None
+            invite = await self.get_invite_for_reinvite(ctx)
+            em = discord.Embed(
+                title=bold(_("You have been softbanned from {guild}.").format(guild=guild)),
+                color=await self.bot.get_embed_color(member),
+            )
+            em.add_field(
+                name=_("**Reason**"),
+                value=reason if reason is not None else _("No reason was given."),
+                inline=False,
+            )
+            if invite:
+                em.add_field(
+                    name=bold(_("You can now rejoin the server")),
+                    value=invite,
+                    inline=False,
+                )
             if extra_embed:
                 extra_embed_title = await self.config.guild(guild).softban_extra_embed_title()
                 extra_embed_contents = await self.config.guild(
                     guild
                 ).softban_extra_embed_contents()
 
-                embed = discord.Embed(
-                    title=extra_embed_title,
-                    description=extra_embed_contents,
-                    color=await self.bot.get_embed_color(member),
+                em.add_field(
+                    name=bold(extra_embed_title, escape_formatting=False),
+                    value=extra_embed_contents,
+                    inline=False,
                 )
 
             try:  # We don't want blocked DMs preventing us from banning
-                msg = await member.send(
-                    _(
-                        "You have been banned and "
-                        "then unbanned as a quick way to delete your messages.\n"
-                        "You can now join the server again. {invite_link}"
-                    ).format(invite_link=invite),
-                    embed=embed,
-                )
+                msg = await member.send(embed=em)
             except discord.HTTPException:
-                msg = None
+                pass
         try:
             await guild.ban(member, reason=audit_reason, delete_message_seconds=86400)
         except discord.errors.Forbidden:
