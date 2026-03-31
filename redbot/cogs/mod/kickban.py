@@ -779,7 +779,9 @@ class KickBanMixin(MixinMeta):
             embed = None
             if extra_embed:
                 extra_embed_title = await self.config.guild(guild).softban_extra_embed_title()
-                extra_embed_contents = await self.config.guild(guild).softban_extra_embed_contents()
+                extra_embed_contents = await self.config.guild(
+                    guild
+                ).softban_extra_embed_contents()
 
                 embed = discord.Embed(
                     title=extra_embed_title,
@@ -794,7 +796,7 @@ class KickBanMixin(MixinMeta):
                         "then unbanned as a quick way to delete your messages.\n"
                         "You can now join the server again. {invite_link}"
                     ).format(invite_link=invite),
-                    embed=embed
+                    embed=embed,
                 )
             except discord.HTTPException:
                 msg = None
