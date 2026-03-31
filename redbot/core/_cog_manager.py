@@ -344,7 +344,8 @@ class CogManager:
     def reload(module: ModuleType) -> ModuleType:
         """Internally reloads modules so that changes are detected."""
         module_name = module.__name__
-        splitted = module_name.split(".")
+        a, b, *splitted = module_name.split(".")
+        splitted[0] = f"{a}.{b}.{splitted[0]}"
 
         def maybe_reload(new_name: str) -> None:
             try:
