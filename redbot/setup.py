@@ -484,8 +484,12 @@ class RestoreInfo:
         return self.storage_type in (BackendType.MONGOV1, BackendType.MONGO)
 
     @functools.cached_property
+    def can_restore_downloader(self) -> bool:
+        return "cogs/RepoManager/repos.json" in self.all_tar_member_names
+
+    @functools.cached_property
     def restore_downloader(self) -> bool:
-        return "cogs/RepoManager/repos.json" in self.all_tar_member_names and click.confirm(
+        return self.can_restore_downloader and click.confirm(
             "Do you want to restore 3rd-party repos and cogs installed through Downloader?",
             default=True,
         )
@@ -632,7 +636,7 @@ class RestoreInfo:
                 "INFO: Downloader's data isn't included in the backup file"
                 " - this backup was created with Red 3.5.24 or older."
             )
-        else:
+        elif not self.can_restore_downloader:
             print("WARNING: Downloader's data isn't included in the backup file.")
 
     async def run(self) -> None:
