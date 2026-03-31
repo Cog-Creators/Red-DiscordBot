@@ -19,7 +19,7 @@ from redbot.core.commands import UserInputOptional, RawUserIdConverter
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.views import ConfirmView
-from redbot.core.utils.chat_formatting import warning, pagify
+from redbot.core.utils.chat_formatting import bold, warning, pagify
 from redbot.core.utils.menus import menu
 
 
@@ -39,6 +39,9 @@ class Warnings(commands.Cog):
         "warn_channel": None,
         "toggle_channel": False,
         "mywarnings_in_dms": False,
+        "warn_show_extra": False,
+        "warn_extra_embed_title": "Message from staff",
+        "warn_extra_embed_contents": "Please set me",
     }
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
@@ -217,6 +220,63 @@ class Warnings(commands.Cog):
             await ctx.send(_("I will send self requested user warnings to their DMs."))
         else:
             await ctx.send(_("I will send self requested user warnings to the current channel."))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def warnshowextrafield(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether to show an extra customizable field in the warning DM.
+
+        This can be used to add additional information for the warned user, such as a ban appeal link.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            setting = await self.config.guild(guild).warn_show_extra()
+            await ctx.send(
+                _("The extra embed field is currently set to: {setting}").format(setting=setting)
+            )
+            return
+        await self.config.guild(guild).warn_show_extra.set(enabled)
+        if enabled:
+            await ctx.send(
+                _(
+                    "An extra field will be shown in warning DMs. Configure it with `{prefix}warningset warnextrafieldtitle` and `{prefix}warningset warnextrafieldcontents`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await ctx.send(_("An extra field will no longer be shown in warning DMs."))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def warnextrafieldtitle(self, ctx: commands.Context, *, title: str) -> None:
+        """
+        Set the title for the optional extra embed on warn.
+
+        Cannot be over 252 characters long.
+        """
+        guild = ctx.guild
+        if len(title) > 252:
+            await ctx.send(_("Embed title cannot be over 252 characters long."))
+        else:
+            await self.config.guild(guild).warn_extra_embed_title.set(title)
+            await ctx.send(_("Embed Title has been set to `{title}`").format(title=title))
+
+    @warningset.command()
+    @commands.guild_only()
+    async def warnextrafieldcontents(self, ctx: commands.Context, *, contents: str) -> None:
+        """
+        Set the contents for the optional extra embed on warn.
+
+        Cannot be over 1024 characters long.
+        """
+        guild = ctx.guild
+        if len(contents) > 1024:
+            await ctx.send(_("Embed contents cannot be over 1024 characters long."))
+        else:
+            await self.config.guild(guild).warn_extra_embed_contents.set(contents)
+            await ctx.send(
+                _("Embed Contents has been set to `{contents}`").format(contents=contents)
+            )
 
     @commands.group()
     @commands.guild_only()
@@ -521,6 +581,12 @@ class Warnings(commands.Cog):
                 color=await ctx.embed_colour(),
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
+            if guild_settings["warn_show_extra"]:
+                em.add_field(
+                    name=bold(guild_settings["warn_extra_embed_title"], escape_formatting=False),
+                    value=guild_settings["warn_extra_embed_contents"],
+                    inline=False,
+                )
             try:
                 await member.send(
                     _("You have received a warning in {guild_name}.").format(
