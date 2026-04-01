@@ -900,7 +900,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 try:
                     use_ctx_send = is_interaction and not use_DMs and i == 0
                     if embed:
-                        msg = await (ctx.send(embed=page) if use_ctx_send else destination.send(embed=page))
+                        msg = await (
+                            ctx.send(embed=page) if use_ctx_send else destination.send(embed=page)
+                        )
                     else:
                         msg = await (ctx.send(page) if use_ctx_send else destination.send(page))
                 except discord.Forbidden:
