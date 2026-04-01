@@ -890,15 +890,11 @@ class RedHelpFormatter(HelpFormatterABC):
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
             delete_delay = help_settings.delete_delay
-            is_interaction = ctx.interaction is not None
-            if is_interaction and use_DMs:
-                if not ctx.interaction.response.is_done():
-                    await ctx.defer(ephemeral=True)
 
             messages: List[discord.Message] = []
             for i, page in enumerate(pages):
                 try:
-                    use_ctx_send = is_interaction and not use_DMs and i == 0
+                    use_ctx_send = ctx.interaction and not use_DMs and i == 0
                     if embed:
                         msg = await (
                             ctx.send(embed=page) if use_ctx_send else destination.send(embed=page)
@@ -914,7 +910,11 @@ class RedHelpFormatter(HelpFormatterABC):
                     )
                 else:
                     messages.append(msg)
-            if use_DMs and help_settings.use_tick:
+            if ctx.interaction and use_DMs:
+                await ctx.interaction.response.send_message(
+                    _("I have sent the help message to your DMs."), ephemeral=True
+                )
+            elif use_DMs and help_settings.use_tick:
                 await ctx.tick()
             # The if statement takes into account that 'destination' will be
             # the context channel in non-DM context.
