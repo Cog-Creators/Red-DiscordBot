@@ -7,20 +7,20 @@ from typing import Dict, List, Literal, Optional, Tuple, Union, cast
 
 import discord
 
+from redbot.core import Config, commands, i18n, modlog
 from redbot.core.bot import Red
-from redbot.core import commands, i18n, modlog, Config
 from redbot.core.utils import AsyncIter, bounded_gather, can_user_react_in
 from redbot.core.utils.chat_formatting import (
     bold,
-    humanize_timedelta,
     humanize_list,
+    humanize_timedelta,
     inline,
     pagify,
 )
-from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.menus import start_adding_reactions
-from redbot.core.utils.views import SimpleMenu
+from redbot.core.utils.mod import get_audit_reason
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from redbot.core.utils.views import SimpleMenu
 
 from .converters import MuteTime
 from .models import ChannelMuteResponse, MuteResponse
@@ -765,11 +765,19 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         guild = member.guild
         if await self.bot.cog_disabled_in_guild(self, guild):
             return
+        await i18n.set_contextual_locales_from_guild(self.bot, guild)
+        if guild.id not in self._server_mutes or member.id not in self._server_mutes[guild.id]:
+            if member.is_timed_out():
+                try:
+                    await member.timeout(None, reason=_("Cleanup: user was unmuted while not in server"))
+                except discord.Forbidden:
+                    pass
+                except discord.HTTPException:
+                    pass
         mute_role = await self.config.guild(guild).mute_role()
         if not mute_role:
             # timeouts already restore on rejoin
             return
-        await i18n.set_contextual_locales_from_guild(self.bot, guild)
         if guild.id in self._server_mutes:
             if member.id in self._server_mutes[guild.id]:
                 role = guild.get_role(mute_role)
@@ -1461,7 +1469,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     async def unmute(
         self,
         ctx: commands.Context,
-        users: commands.Greedy[discord.Member],
+        users: commands.Greedy[Union[discord.Member, discord.User]],
         *,
         reason: Optional[str] = None,
     ):
@@ -1489,6 +1497,37 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             else:
                 self._channel_mute_events[guild.id] = asyncio.Event()
             for user in users:
+                if not isinstance(user, discord.Member):
+                    removed = False
+                    if (
+                        guild.id in self._server_mutes
+                        and user.id in self._server_mutes[guild.id]
+                    ):
+                        del self._server_mutes[guild.id][user.id]
+                        removed = True
+                    if removed:
+                        success_list.append(user)
+                        await modlog.create_case(
+                            self.bot,
+                            guild,
+                            ctx.message.created_at,
+                            "sunmute",
+                            user,
+                            author,
+                            reason,
+                            until=None,
+                        )
+                    else:
+                        issue_list.append(
+                            MuteResponse(
+                                success=False,
+                                reason=_(MUTE_UNMUTE_ISSUES["already_unmuted"]).format(
+                                    location=_("this server")
+                                ),
+                                user=user,
+                            )
+                        )
+                    continue
                 response = await self.unmute_user(guild, author, user, audit_reason)
 
                 if response.success:
