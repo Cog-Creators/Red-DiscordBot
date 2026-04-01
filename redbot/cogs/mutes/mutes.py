@@ -769,7 +769,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if guild.id not in self._server_mutes or member.id not in self._server_mutes[guild.id]:
             if member.is_timed_out():
                 try:
-                    await member.timeout(None, reason=_("Cleanup: user was unmuted while not in server"))
+                    await member.timeout(
+                        None, reason=_("Cleanup: user was unmuted while not in server")
+                    )
                 except discord.Forbidden:
                     pass
                 except discord.HTTPException:
@@ -1499,10 +1501,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             for user in users:
                 if not isinstance(user, discord.Member):
                     removed = False
-                    if (
-                        guild.id in self._server_mutes
-                        and user.id in self._server_mutes[guild.id]
-                    ):
+                    if guild.id in self._server_mutes and user.id in self._server_mutes[guild.id]:
                         del self._server_mutes[guild.id][user.id]
                         removed = True
                     if removed:
