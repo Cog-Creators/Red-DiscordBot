@@ -890,14 +890,19 @@ class RedHelpFormatter(HelpFormatterABC):
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
             delete_delay = help_settings.delete_delay
+            is_interaction = ctx.interaction is not None
+            if is_interaction and use_DMs:
+                if not ctx.interaction.response.is_done():
+                    await ctx.defer(ephemeral=True)
 
             messages: List[discord.Message] = []
-            for page in pages:
+            for i, page in enumerate(pages):
                 try:
+                    use_ctx_send = is_interaction and not use_DMs and i == 0
                     if embed:
-                        msg = await destination.send(embed=page)
+                        msg = await (ctx.send(embed=page) if use_ctx_send else destination.send(embed=page))
                     else:
-                        msg = await destination.send(page)
+                        msg = await (ctx.send(page) if use_ctx_send else destination.send(page))
                 except discord.Forbidden:
                     return await ctx.send(
                         _(
