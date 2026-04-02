@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-from typing import Optional, Union
+from typing import Final, Optional, Union
 
 import rich
 from packaging.version import Version
@@ -27,6 +27,9 @@ ICON_ERROR = "[red]:heavy_multiplication_x-text:[/]"
 
 INTERNAL_CMD_CALL_ENV_VAR = "_RED_UPDATE_INTERNAL_CMD_CALL"
 _STDERR_CONSOLE: Optional[Console] = None
+
+RUNNER_DIR_ENV_VAR: Final = "REDBOT_UPDATE_RUNNER_DIR"
+RUNNER_WRAPPER_EXE_ENV_VAR: Final = "REDBOT_UPDATE_RUNNER_WRAPPER_EXE"
 
 
 def get_current_red_version() -> Version:
@@ -82,3 +85,14 @@ def configure_logging(logging_level: int) -> None:
     base_logger = logging.getLogger("red")
     base_logger.setLevel(level)
     base_logger.addHandler(RichHandler(console=get_console(stderr=True), show_path=False))
+
+
+def ensure_supported_env() -> None:
+    if sys.prefix == sys.base_prefix:
+        print("redbot-update cannot be used when Red is installed outside a virtual environment.")
+        raise SystemExit(1)
+    if not (
+        os.environ.get(RUNNER_DIR_ENV_VAR, "") and os.environ.get(RUNNER_WRAPPER_EXE_ENV_VAR, "")
+    ):
+        print("redbot-update was called incorrectly.")
+        raise SystemExit(1)

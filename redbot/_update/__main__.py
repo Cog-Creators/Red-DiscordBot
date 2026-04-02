@@ -27,7 +27,7 @@ if instance_data is None:
 else:
     instance_list = list(instance_data.keys())
 
-_EXIT_INSTANCE_SITE_PREFIX_MISMATCH: Final = 3
+_EXIT_INSTANCE_SITE_PREFIX_MISMATCH: Final = 4
 _CHECK_COG_COMPATIBILITY_CMD_NAME: Final = "check-cog-compatibility"
 _RED_VERSION_CMD_ARG_NAME: Final = "--red-version"
 _PYTHON_VERSION_CMD_ARG_NAME: Final = "--python-version"
@@ -339,6 +339,7 @@ def cli(
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
+    common.ensure_supported_env()
     common.configure_logging(logging_level)
 
     ctx.ensure_object(dict)
