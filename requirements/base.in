@@ -16,6 +16,7 @@ Red-Lavalink
 redbot-update
 rich
 schema
+textual
 typing_extensions
 yarl
 distro; sys_platform == "linux"

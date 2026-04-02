@@ -28,11 +28,17 @@ frozenlist==1.5.0
     #   aiosignal
 idna==3.11
     # via yarl
+linkify-it-py==2.0.3
+    # via markdown-it-py
 markdown==3.7
     # via -r base.in
 markdown-it-py==3.0.0
-    # via rich
+    # via
+    #   rich
+    #   textual
 mdurl==0.1.2
+    # via markdown-it-py
+mdit-py-plugins==0.4.2
     # via markdown-it-py
 multidict==6.1.0
     # via
@@ -43,13 +49,17 @@ orjson==3.10.15
 packaging==26.0
     # via -r base.in
 platformdirs==4.3.6
-    # via -r base.in
+    # via
+    #   -r base.in
+    #   textual
 propcache==0.2.0
     # via yarl
 psutil==7.2.2
     # via -r base.in
 pygments==2.19.2
-    # via rich
+    # via
+    #   rich
+    #   textual
 python-dateutil==2.9.0.post0
     # via -r base.in
 pyyaml==6.0.3
@@ -65,15 +75,22 @@ red-lavalink==0.11.1
 redbot-update==0.1.0a3
     # via -r base.in
 rich==14.3.3
-    # via -r base.in
+    # via
+    #   -r base.in
+    #   textual
 schema==0.7.8
     # via -r base.in
 six==1.17.0
     # via python-dateutil
+textual==6.2.1
+    # via -r base.in
 typing-extensions==4.13.2
     # via
     #   -r base.in
     #   multidict
+    #   textual
+uc-micro-py==1.0.3
+    # via linkify-it-py
 yarl==1.15.2
     # via
     #   -r base.in
