@@ -27,7 +27,7 @@ from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
 from redbot.core._cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core import data_manager, _drivers
+from redbot.core import data_manager, _drivers, _downloader
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
@@ -324,12 +324,13 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
+    await _downloader._init(red)
+
     # lib folder has to be in sys.path before trying to load any 3rd-party cog (GH-3061)
     # We might want to change handling of requirements in Downloader at later date
-    LIB_PATH = data_manager.cog_data_path(raw_name="Downloader") / "lib"
-    LIB_PATH.mkdir(parents=True, exist_ok=True)
-    if str(LIB_PATH) not in sys.path:
-        sys.path.append(str(LIB_PATH))
+    lib_path = str(_downloader.LIB_PATH)
+    if lib_path not in sys.path:
+        sys.path.append(lib_path)
 
         # "It's important to note that the global `working_set` object is initialized from
         # `sys.path` when `pkg_resources` is first imported, but is only updated if you do
@@ -339,7 +340,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         # Source: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#workingset-objects
         pkg_resources = sys.modules.get("pkg_resources")
         if pkg_resources is not None:
-            pkg_resources.working_set.add_entry(str(LIB_PATH))
+            pkg_resources.working_set.add_entry(lib_path)
     sys.meta_path.insert(0, SharedLibImportWarner())
 
     if cli_flags.token:
@@ -422,20 +423,13 @@ def handle_early_exit_flags(cli_flags: Namespace):
         sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
 
-async def shutdown_handler(red, signal_type=None, exit_code=None):
-    if signal_type:
-        log.info("%s received. Quitting...", signal_type.name)
-        # Do not collapse the below line into other logic
-        # We need to renter this function
-        # after it interrupts the event loop.
-        sys.exit(ExitCodes.SHUTDOWN)
-    elif exit_code is None:
-        log.info("Shutting down from unhandled exception")
-        red._shutdown_mode = ExitCodes.CRITICAL
+async def signal_shutdown_handler(red: Red, signal_type: signal.Signals) -> NoReturn:
+    log.info("%s received. Quitting...", signal_type.name)
+    sys.exit(ExitCodes.SHUTDOWN)
 
-    if exit_code is not None:
-        red._shutdown_mode = exit_code
 
+async def shutdown_handler(red: Red, exit_code: int) -> None:
+    red._shutdown_mode = exit_code
     try:
         if not red.is_closed():
             await red.close()
@@ -473,7 +467,8 @@ def red_exception_handler(red, red_task: asyncio.Future):
     except Exception as exc:
         log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
-        asyncio.create_task(shutdown_handler(red))
+        log.info("Shutting down from unhandled exception")
+        sys.exit(ExitCodes.CRITICAL)
 
 
 def main():
@@ -507,7 +502,7 @@ def main():
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
                 loop.add_signal_handler(
-                    s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
+                    s, lambda s=s: asyncio.create_task(signal_shutdown_handler(red, s))
                 )
 
         exc_handler = functools.partial(global_exception_handler, red)
@@ -524,7 +519,7 @@ def main():
         log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+            loop.run_until_complete(signal_shutdown_handler(red, signal.SIGINT))
     except SystemExit as exc:
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
@@ -536,11 +531,11 @@ def main():
             exit_code_name = "UNKNOWN"
         log.info("Shutting down with exit code: %s (%s)", exit_code, exit_code_name)
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, exc.code))
+            loop.run_until_complete(shutdown_handler(red, exc.code))
     except Exception as exc:  # Non standard case.
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
+            loop.run_until_complete(shutdown_handler(red, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correctly on windows, see below

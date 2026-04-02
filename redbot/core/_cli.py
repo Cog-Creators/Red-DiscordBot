@@ -220,6 +220,15 @@ def parse_cli_flags(args):
         help="Force unloading specified cogs.",
     )
     parser.add_argument(
+        "--cog-path",
+        type=str,
+        default=[],
+        nargs="+",
+        action="extend",
+        help="Add a specific path to the list of cog paths. "
+        "This can be used multiple times to add multiple paths.",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "
@@ -234,6 +243,14 @@ def parse_cli_flags(args):
         default=0,
         dest="logging_level",
         help="Increase the verbosity of the logs, each usage of this flag increases the verbosity level by 1.",
+    )
+    parser.add_argument(
+        "--no-verbose",
+        "--no-debug",
+        action="store_const",
+        const=0,
+        dest="logging_level",
+        help="Set the verbosity level to 0.",
     )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
@@ -313,6 +330,19 @@ def parse_cli_flags(args):
         dest="rich_logging",
         default=None,
         help="Forcefully disables the Rich logging handlers.",
+    )
+    # DEP-WARN: use argparse.BooleanOptionalAction when we drop support for Python 3.8
+    parser.add_argument(
+        "--rich-tracebacks",
+        action="store_true",
+        default=False,
+        help="Format the Python exception tracebacks using Rich (with syntax highlighting)."
+        " *May* be useful to increase traceback readability during development.",
+    )
+    parser.add_argument(
+        "--no-rich-tracebacks",
+        action="store_false",
+        dest="rich_tracebacks",
     )
     parser.add_argument(
         "--rich-traceback-extra-lines",

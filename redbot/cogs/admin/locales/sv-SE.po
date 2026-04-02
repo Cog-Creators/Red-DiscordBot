@@ -361,5 +361,5 @@ msgstr "Rollen \"{role_name}\" är inte en giltig självroll."
 
 #: redbot/cogs/admin/converters.py:36
 msgid "This selfrole has more than one case insensitive match. Please ask a moderator to resolve the ambiguity, or use the role ID to reference the role."
-msgstr ""
+msgstr ".."
 

@@ -1,8 +1,8 @@
 .. _install-raspberry-pi-os-12:
 
-=============================================
-Installing Red on Raspberry Pi OS 12 Bookworm
-=============================================
+======================================================
+Installing Red on Raspberry Pi OS (Legacy) 12 Bookworm
+======================================================
 
 .. include:: _includes/supported-arch-aarch64+armv7l.rst
 

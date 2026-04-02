@@ -1829,7 +1829,10 @@ Commands to add servers or channels to the ignore list.
 
 The ignore list will prevent the bot from responding to commands in the configured locations.
 
-.. Note:: Owners and Admins override the ignore list.
+.. Note::
+
+    - Category ignores are ignored by user-installed commands
+    - Owners and Admins override the ignore list.
 
 
 .. _core-command-ignore-channel:
@@ -1850,7 +1853,10 @@ Ignore commands in the channel, thread, or category.
 
 Defaults to the current thread or channel.
 
-.. Note:: Owners, Admins, and those with Manage Channel permissions override ignored channels.
+.. Note::
+
+    - Category ignores are ignored by user-installed commands
+    - Owners and Admins override the ignore list.
 
 
 **Examples:**
@@ -4185,7 +4191,7 @@ slash disablecog
 
 .. code-block:: none
 
-    [p]slash disablecog <cog_name>
+    [p]slash disablecog <cog_names...>
     
 **Description**
 
@@ -4195,7 +4201,7 @@ This command does NOT sync the enabled commands with Discord, that must be done 
 with ``[p]slash sync`` for commands to appear in users' clients.
 
 **Arguments:**
-    - ``<cog_name>`` - The cog to disable commands from. This argument is case sensitive.
+    - ``<cog_names>`` - The cogs to disable commands from. This argument is case sensitive.
 
 .. _core-command-slash-enable:
 
@@ -4230,7 +4236,7 @@ slash enablecog
 
 .. code-block:: none
 
-    [p]slash enablecog <cog_name>
+    [p]slash enablecog <cog_names...>
     
 **Description**
 
@@ -4240,7 +4246,7 @@ This command does NOT sync the enabled commands with Discord, that must be done 
 with ``[p]slash sync`` for commands to appear in users' clients.
 
 **Arguments:**
-    - ``<cog_name>`` - The cog to enable commands from. This argument is case sensitive.
+    - ``<cog_names>`` - The cogs to enable commands from. This argument is case sensitive.
 
 .. _core-command-slash-list:
 

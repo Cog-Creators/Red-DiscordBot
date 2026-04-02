@@ -169,21 +169,6 @@ class Repo(RepoJSONMixin):
         except ValueError:
             return self.url
 
-    @classmethod
-    async def convert(cls, ctx: commands.Context, argument: str) -> Repo:
-        downloader_cog = ctx.bot.get_cog("Downloader")
-        if downloader_cog is None:
-            raise commands.CommandError(_("No Downloader cog found."))
-
-        # noinspection PyProtectedMember
-        repo_manager = downloader_cog._repo_manager
-        poss_repo = repo_manager.get_repo(argument)
-        if poss_repo is None:
-            raise commands.BadArgument(
-                _('Repo by the name "{repo_name}" does not exist.').format(repo_name=argument)
-            )
-        return poss_repo
-
     def _existing_git_repo(self) -> Tuple[bool, Path]:
         git_path = self.folder_path / ".git"
         return git_path.exists(), git_path
@@ -1001,7 +986,7 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.COG and not m.disabled]
+            [m for m in self.available_modules if m.type is InstallableType.COG and not m.disabled]
         )
 
     @property
@@ -1011,7 +996,7 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.SHARED_LIBRARY]
+            [m for m in self.available_modules if m.type is InstallableType.SHARED_LIBRARY]
         )
 
     @classmethod
