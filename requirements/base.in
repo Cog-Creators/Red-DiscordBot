@@ -9,6 +9,7 @@ packaging
 platformdirs
 psutil
 python-dateutil
+python-discovery
 PyYAML
 rapidfuzz
 Red-Commons

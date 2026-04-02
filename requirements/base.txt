@@ -22,6 +22,8 @@ discord-py==2.7.1
     # via
     #   -r base.in
     #   red-lavalink
+filelock==3.16.1
+    # via python-discovery
 frozenlist==1.5.0
     # via
     #   aiohttp
@@ -61,6 +63,8 @@ pygments==2.19.2
     #   rich
     #   textual
 python-dateutil==2.9.0.post0
+    # via -r base.in
+python-discovery==1.2.1
     # via -r base.in
 pyyaml==6.0.3
     # via -r base.in
