@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 import sys
 from operator import itemgetter
@@ -16,7 +15,7 @@ from rich.text import Text
 
 from redbot.core import data_manager
 from redbot.core._cli import asyncio_run
-from redbot.core.utils._internal_utils import cli_level_to_log_level, fetch_latest_red_version
+from redbot.core.utils._internal_utils import fetch_latest_red_version
 
 from . import changelog, cog_compatibility_checker, common
 from .tui import ChangelogReaderApp, ChangelogReaderResult
@@ -317,6 +316,7 @@ async def main(instances: List[str], excluded_instances: Set[str], *, ignore_pre
     "--debug",
     "--verbose",
     "-v",
+    "logging_level",
     count=True,
     help=(
         "Increase the verbosity of the logs, each usage of this flag increases the verbosity"
@@ -336,14 +336,10 @@ def cli(
     ctx: click.Context,
     included_instances: Tuple[str, ...],
     excluded_instances: Tuple[str, ...],
-    debug: bool,
+    logging_level: int,
     ignore_prefix: bool,
 ) -> None:
-    common.configure_rich()
-    level = cli_level_to_log_level(debug)
-    base_logger = logging.getLogger("red")
-    base_logger.setLevel(level)
-    base_logger.addHandler(RichHandler(console=common.get_console(stderr=True), show_path=False))
+    common.configure_logging(logging_level)
 
     ctx.ensure_object(dict)
     ctx.obj["IGNORE_PREFIX"] = ignore_prefix

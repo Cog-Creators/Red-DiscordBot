@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 from typing import Optional, Union
@@ -5,10 +6,12 @@ from typing import Optional, Union
 import rich
 from packaging.version import Version
 from rich.console import Console, RenderableType
+from rich.logging import RichHandler
 from rich.table import Table
 from rich.text import Text
 
 from redbot import __version__
+from redbot.core._cli import cli_level_to_log_level
 
 
 # The cell width of text-style emojis that, by default, prefer emoji-style
@@ -71,3 +74,11 @@ def get_console(stderr: bool = False) -> Console:
     if _STDERR_CONSOLE is None:
         raise RuntimeError("_STDERR_CONSOLE is not set")
     return _STDERR_CONSOLE if stderr else rich.get_console()
+
+
+def configure_logging(logging_level: int) -> None:
+    configure_rich()
+    level = cli_level_to_log_level(logging_level)
+    base_logger = logging.getLogger("red")
+    base_logger.setLevel(level)
+    base_logger.addHandler(RichHandler(console=get_console(stderr=True), show_path=False))
