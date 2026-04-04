@@ -518,8 +518,20 @@ async def _call_check_cog_compatibility_cmd(
     env = os.environ.copy()
     if internal:
         env[common.INTERNAL_CMD_CALL_ENV_VAR] = "1"
-    if common.get_console().is_terminal:
+
+    # terminal woes
+    console = common.get_console()
+    if console.is_terminal:
         env["TTY_COMPATIBLE"] = "1"
+        # Rich only checks stdout for Windows console features:
+        # https://github.com/Textualize/rich/blob/fc41075a3206d2a5fd846c6f41c4d2becab814fa/rich/_windows.py#L46
+        env[common.INTERNAL_LEGACY_WINDOWS_ENV_VAR] = "1" if console.legacy_windows else "0"
+    else:
+        # Rich does not set legacy_windows correctly when is_terminal is False
+        # https://github.com/Textualize/rich/issues/3647
+        env[common.INTERNAL_LEGACY_WINDOWS_ENV_VAR] = "0"
+    env["PYTHONIOENCODING"] = sys.stdout.encoding
+
     proc = await asyncio.create_subprocess_exec(sys.executable, *args, env=env, stdout=stdout)
     stdout_data, _ = await proc.communicate()
     decoded_stdout = None

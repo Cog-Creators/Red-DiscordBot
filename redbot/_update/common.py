@@ -25,6 +25,7 @@ ICON_INFO = "[blue]\N{CIRCLED INFORMATION SOURCE}[/]"
 ICON_WARN = "[yellow]:warning-text:[/]"
 ICON_ERROR = "[red]:heavy_multiplication_x-text:[/]"
 
+INTERNAL_LEGACY_WINDOWS_ENV_VAR = "_RED_UPDATE_INTERNAL_LEGACY_WINDOWS"
 INTERNAL_CMD_CALL_ENV_VAR = "_RED_UPDATE_INTERNAL_CMD_CALL"
 _STDERR_CONSOLE: Optional[Console] = None
 
@@ -67,9 +68,11 @@ def is_internal_cmd_call() -> bool:
 
 
 def configure_rich() -> None:
-    rich.reconfigure(highlight=False)
+    value = os.getenv(INTERNAL_LEGACY_WINDOWS_ENV_VAR, "")
+    legacy_windows = int(value) if value else None
+    rich.reconfigure(highlight=False, legacy_windows=legacy_windows)
     global _STDERR_CONSOLE
-    _STDERR_CONSOLE = Console(highlight=False, stderr=True)
+    _STDERR_CONSOLE = Console(highlight=False, stderr=True, legacy_windows=legacy_windows)
 
 
 def get_console(stderr: bool = False) -> Console:
