@@ -97,6 +97,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if await self.bot.is_owner(member):
             return True
 
+        if await self.bot.is_admin(member):
+            return True
+
         if await self.bot.is_mod(member):
             return True
 
