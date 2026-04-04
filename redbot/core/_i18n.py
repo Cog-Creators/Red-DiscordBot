@@ -30,6 +30,10 @@ current_regional_format_default = None
 
 translators: List[Translator] = []
 
+_CROWDIN_LOCALE_OVERRIDES: dict[str, str] = {
+    "sr-SP": "sr-SP",
+}
+
 
 def _reload_locales() -> None:
     for translator in translators:
@@ -37,6 +41,8 @@ def _reload_locales() -> None:
 
 
 def _get_standardized_locale_name(language_code: str) -> str:
+    if language_code in _CROWDIN_LOCALE_OVERRIDES:
+        return _CROWDIN_LOCALE_OVERRIDES[language_code]
     try:
         locale = Locale.parse(language_code, sep="-")
     except (ValueError, UnknownLocaleError):
