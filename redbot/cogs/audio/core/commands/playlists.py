@@ -1485,6 +1485,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx.command.reset_cooldown(ctx)
                 return
             maxlength = await self.config.guild(ctx.guild).maxlength()
+            can_skip = await self._can_instaskip(ctx, ctx.author)
             author_obj = self.bot.get_user(ctx.author.id)
             track_len = 0
             try:
@@ -1510,7 +1511,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                             pass
                         if not local_path.exists() and not local_path.is_file():
                             continue
-                    if maxlength > 0 and not self.is_track_length_allowed(track, maxlength):
+                    if maxlength > 0 and not can_skip and not self.is_track_length_allowed(track, maxlength):
                         continue
                     track.extras.update(
                         {

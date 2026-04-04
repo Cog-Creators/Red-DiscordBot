@@ -111,6 +111,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
         guild_data = await self.config.guild(ctx.guild).all()
+        can_skip = await self._can_instaskip(ctx, ctx.author)
         if len(player.queue) >= 10000:
             return await self.send_embed_msg(
                 ctx, title=_("Unable To Play Tracks"), description=_("Queue size limit reached.")
@@ -167,7 +168,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
             )
-        elif guild_data["maxlength"] > 0:
+        elif guild_data["maxlength"] > 0 and not can_skip:
             if self.is_track_length_allowed(search_choice, guild_data["maxlength"]):
                 search_choice.extras.update(
                     {
