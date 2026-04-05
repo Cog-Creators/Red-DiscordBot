@@ -146,7 +146,7 @@ class Updater:
             return
         common.print_with_prefix_column(
             common.ICON_WARN,
-            "The latest version of Red requires a different version (",
+            "The latest version of Red requires a different Python version (",
             Text(str(self.latest.requires_python), style="bold"),
             ") from the one that you are currently using (",
             Text(str(self.current_python_version), style="bold"),
@@ -301,9 +301,14 @@ class Updater:
         )
         console = common.get_console()
         console.print("Backups will be created at:", Text(str(backup_dir), style="bold"))
-        with console.status("Making a backup of the venv directory..."):
+        venv_backup_dir = backup_dir / "redenv"
+        with console.status("Making a backup of the virtual environment directory..."):
             venv_dir = Path(sys.prefix)
-            shutil.copytree(venv_dir, backup_dir / "redenv", symlinks=True)
+            shutil.copytree(venv_dir, venv_backup_dir, symlinks=True)
+        console.print(
+            "Created a backup of the virtual environment directory at:",
+            Text(str(venv_backup_dir), style="bold"),
+        )
 
         failed = []
         for instance_name in self.to_backup:
