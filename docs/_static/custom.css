@@ -108,7 +108,6 @@
     .highlight .s, .highlight .s1, .highlight .s2,
     .highlight .sa, .highlight .sb, .highlight .sc { color: #e6db74; }
     .highlight .mi, .highlight .mf { color: #ae81ff; }
-    .highlight .c, .highlight .c1, .highlight .cm { color: #75715e; }
     .highlight .no { color: #d32626; }
     .highlight .p { color: #f8f8f2; }
     .highlight .bp { color: #f8f8f2; }
@@ -138,16 +137,46 @@
         background: #383838;
         color: #e8e8e8;
     }
-    .admonition.warning { border-left-color: #e5c07b; }
-    .admonition.note    { border-left-color: #61afef; }
-    .admonition.danger  { border-left-color: #e06c75; }
+    .admonition.note { border-left-color: #61afef; }
+    .admonition.warning,
+    .admonition.warning p {
+        background: #2d2200 !important;
+    }
+    .admonition.warning .admonition-title {
+        background: #5a3e00 !important;
+        color: #ffd966 !important;
+    }
+    .admonition.warning {
+        border-left: 4px solid #ffaa00 !important;
+    }
+    .admonition.attention,
+    .admonition.attention p,
+    .admonition.danger,
+    .admonition.danger p {
+        background: #2a0a0a !important;
+    }
+    .admonition.attention .admonition-title,
+    .admonition.danger .admonition-title {
+        background: #5a1a1a !important;
+        color: #ff6b6b !important;
+    }
+    .admonition.attention,
+    .admonition.danger {
+        border-left: 4px solid #e06c75 !important;
+    }
     .admonition.tip,
     .admonition.hint,
     .admonition.important,
     .admonition.tip p,
     .admonition.hint p,
     .admonition.important p {
-        color: #222;
+        background: #0f3830;
+    }
+    .admonition.tip .admonition-title,
+    .admonition.hint .admonition-title,
+    .admonition.important .admonition-title {
+        background: #134a40;
+        color: #a8cdc7;
     }
     .admonition.tip .highlight,
     .admonition.tip .highlight pre,
@@ -155,14 +184,13 @@
     .admonition.hint .highlight pre,
     .admonition.important .highlight,
     .admonition.important .highlight pre {
-        background: #1a1a1a !important;
-        border-color: #555 !important;
+        background: #0c2820 !important;
+        border-color: #1e4a42 !important;
     }
     .admonition.tip .highlight *,
     .admonition.hint .highlight *,
     .admonition.important .highlight * {
         background: transparent !important;
-        color: #f8f8f2 !important;
     }
 
     .rst-content dl:not(.docutils) dt {
