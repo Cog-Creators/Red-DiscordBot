@@ -43,9 +43,7 @@ class NowPlayingView(discord.ui.View):
         emoji="\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
         style=discord.ButtonStyle.grey,
     )
-    async def button_prev(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
+    async def button_prev(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.stop()
         with contextlib.suppress(discord.HTTPException):
@@ -56,9 +54,7 @@ class NowPlayingView(discord.ui.View):
         emoji="\N{BLACK SQUARE FOR STOP}\N{VARIATION SELECTOR-16}",
         style=discord.ButtonStyle.grey,
     )
-    async def button_stop(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
+    async def button_stop(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.stop()
         with contextlib.suppress(discord.HTTPException):
@@ -69,9 +65,7 @@ class NowPlayingView(discord.ui.View):
         emoji="\N{BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}",
         style=discord.ButtonStyle.grey,
     )
-    async def button_pause(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
+    async def button_pause(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.stop()
         with contextlib.suppress(discord.HTTPException):
@@ -82,9 +76,7 @@ class NowPlayingView(discord.ui.View):
         emoji="\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}\N{VARIATION SELECTOR-16}",
         style=discord.ButtonStyle.grey,
     )
-    async def button_next(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
+    async def button_next(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.stop()
         with contextlib.suppress(discord.HTTPException):
@@ -95,9 +87,7 @@ class NowPlayingView(discord.ui.View):
         emoji="\N{CROSS MARK}",
         style=discord.ButtonStyle.grey,
     )
-    async def button_close(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
+    async def button_close(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.stop()
         with contextlib.suppress(discord.HTTPException):
