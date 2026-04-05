@@ -19,6 +19,7 @@ from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+from ..utilities.menus.nowmenu import NowPlayingView
 
 log = getLogger("red.cogs.Audio.cog.Commands.player_controller")
 _ = Translator("Audio", Path(__file__))
@@ -82,7 +83,6 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="now")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.bot_can_react()
     async def command_now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
@@ -143,22 +143,29 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
 
-        message = await self.send_embed_msg(ctx, embed=embed, footer=text)
-
-        player.store("np_message", message)
-
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        if (
-            (dj_enabled or vote_enabled)
-            and not await self._can_instaskip(ctx, ctx.author)
-            and not await self.is_requester_alone(ctx)
-        ):
+        can_control = await self._can_instaskip(ctx, ctx.author) or await self.is_requester_alone(
+            ctx
+        )
+        has_queue = bool(player.queue) or autoplay
+        if await ctx.bot._config.use_buttons():
+            if (dj_enabled or vote_enabled) and not can_control:
+                message = await self.send_embed_msg(ctx, embed=embed, footer=text)
+            else:
+                view = NowPlayingView(ctx=ctx, cog=self, has_queue=has_queue)
+                message = await self.send_embed_msg(ctx, embed=embed, footer=text, view=view)
+                view.message = message
+            player.store("np_message", message)
             return
+        message = await self.send_embed_msg(ctx, embed=embed, footer=text)
+        player.store("np_message", message)
 
-        if not player.queue and not autoplay:
+        if (dj_enabled or vote_enabled) and not can_control:
+            return
+        if not has_queue:
             expected = (emoji["stop"], emoji["pause"], emoji["close"])
         task: Optional[asyncio.Task]
         if player.current:
