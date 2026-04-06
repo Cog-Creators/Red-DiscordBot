@@ -4,7 +4,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Iterable, NoReturn, Tuple, Union
+from typing import Any, ClassVar, Dict, Iterable, NoReturn, Optional, Tuple, Union
 
 from . import cmd, common
 
@@ -21,6 +21,7 @@ class RequestInput:
     request_type: ClassVar[RequestType]
     request_new_python_exe: str
     request_new_start_args: Tuple[str, ...]
+    request_set_env_vars: Dict[str, Optional[str]]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -43,6 +44,7 @@ class SpawnProcessRequestInput(RequestInput):
     request_type: ClassVar = RequestType.spawn_command
     command: str
     args: Tuple[str, ...]
+    env: Optional[Dict[str, str]]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -78,15 +80,21 @@ def get_request_output() -> Union[ExecRequestOutput, SpawnProcessRequestOutput]:
 def make_spawn_process_request(
     command: str,
     *args: str,
+    env: Optional[Dict[str, str]] = None,
     new_start_args: Iterable[str],
     new_python_exe: str = sys.executable,
+    set_env_vars: Optional[Dict[str, Optional[str]]] = None,
 ) -> NoReturn:
+    if set_env_vars is None:
+        set_env_vars = {}
     debug_args = (cmd.arg_names.DEBUG,) * common.get_log_cli_level()
     request = SpawnProcessRequestInput(
         request_new_python_exe=new_python_exe,
         request_new_start_args=("-m", "redbot._update.internal", *debug_args, *new_start_args),
+        request_set_env_vars=set_env_vars,
         command=command,
         args=args,
+        env=env,
     )
     make_request(request)
 
@@ -94,11 +102,15 @@ def make_spawn_process_request(
 def make_exec_request(
     new_python_exe: str,
     *new_start_args: str,
+    set_env_vars: Optional[Dict[str, Optional[str]]] = None,
 ) -> NoReturn:
+    if set_env_vars is None:
+        set_env_vars = {}
     debug_args = (cmd.arg_names.DEBUG,) * common.get_log_cli_level()
     request = ExecRequestInput(
         request_new_python_exe=new_python_exe,
         request_new_start_args=("-m", "redbot._update.internal", *debug_args, *new_start_args),
+        request_set_env_vars=set_env_vars,
     )
     make_request(request)
 
