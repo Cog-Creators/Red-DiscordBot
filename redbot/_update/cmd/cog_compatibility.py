@@ -162,9 +162,11 @@ async def call(
     internal: bool = False,
     stdout: Optional[int] = None,
 ) -> Tuple[int, Optional[str]]:
+    debug_args = (arg_names.DEBUG,) * common.get_log_cli_level()
     args = [
         "-m",
         "redbot._update",
+        *debug_args,
         CMD_NAME,
         instance_name,
         arg_names.RED_VERSION,

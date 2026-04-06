@@ -1,3 +1,6 @@
-from . import cog_compatibility
+from . import arg_names, cog_compatibility
 
-__all__ = ("cog_compatibility",)
+__all__ = (
+    "arg_names",
+    "cog_compatibility",
+)

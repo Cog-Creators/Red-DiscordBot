@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Iterable, NoReturn, Tuple, Union
 
-from . import common
+from . import cmd, common
 
 _RUNNER_DIR = Path(os.environ.get(common.RUNNER_DIR_ENV_VAR, ""))
 
@@ -81,9 +81,10 @@ def make_spawn_process_request(
     new_start_args: Iterable[str],
     new_python_exe: str = sys.executable,
 ) -> NoReturn:
+    debug_args = (cmd.arg_names.DEBUG,) * common.get_log_cli_level()
     request = SpawnProcessRequestInput(
         request_new_python_exe=new_python_exe,
-        request_new_start_args=("-m", "redbot._update.internal", *new_start_args),
+        request_new_start_args=("-m", "redbot._update.internal", *debug_args, *new_start_args),
         command=command,
         args=args,
     )
@@ -94,9 +95,10 @@ def make_exec_request(
     new_python_exe: str,
     *new_start_args: str,
 ) -> NoReturn:
+    debug_args = (cmd.arg_names.DEBUG,) * common.get_log_cli_level()
     request = ExecRequestInput(
         request_new_python_exe=new_python_exe,
-        request_new_start_args=("-m", "redbot._update.internal", *new_start_args),
+        request_new_start_args=("-m", "redbot._update.internal", *debug_args, *new_start_args),
     )
     make_request(request)
 

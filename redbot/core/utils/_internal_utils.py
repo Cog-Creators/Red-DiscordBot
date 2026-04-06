@@ -651,3 +651,15 @@ def cli_level_to_log_level(level: int) -> int:
     else:
         log_level = TRACE
     return log_level
+
+
+def log_level_to_cli_level(log_level: int) -> int:
+    if log_level == TRACE:
+        level = 3
+    elif log_level == VERBOSE:
+        level = 2
+    elif log_level == logging.DEBUG:
+        level = 1
+    else:
+        level = 0
+    return level

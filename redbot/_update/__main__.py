@@ -45,7 +45,7 @@ _CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME: Final = "--check-other-python-install
 )
 # global options
 @click.option(
-    "--debug",
+    cmd.arg_names.DEBUG,
     "--verbose",
     "-v",
     "logging_level",

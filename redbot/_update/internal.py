@@ -9,11 +9,11 @@ from rich.text import Text
 
 from redbot import __version__
 
-from . import common, runner
+from . import cmd, common, runner
 
 
 @click.group(invoke_without_command=True)
-@click.option("--debug", "logging_level")
+@click.option(cmd.arg_names.DEBUG, "logging_level", count=True)
 def cli(logging_level: int) -> None:
     common.ensure_supported_env()
     common.configure_logging(logging_level)

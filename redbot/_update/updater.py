@@ -315,8 +315,15 @@ class Updater:
             console.print(
                 "Making a backup of the", Text(instance_name, style="bold"), "instance..."
             )
+            debug_args = (cmd.arg_names.DEBUG,) * common.get_log_cli_level()
             proc = await asyncio.create_subprocess_exec(
-                sys.executable, "-m", "redbot.setup", "backup", instance_name, str(backup_dir)
+                sys.executable,
+                "-m",
+                "redbot.setup",
+                "backup",
+                *debug_args,
+                instance_name,
+                str(backup_dir),
             )
             if await proc.wait():
                 failed.append(instance_name)

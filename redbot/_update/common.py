@@ -14,7 +14,7 @@ from rich.table import Table
 from rich.text import Text
 
 from redbot import __version__
-from redbot.core._cli import cli_level_to_log_level
+from redbot.core.utils._internal_utils import cli_level_to_log_level, log_level_to_cli_level
 from redbot.core import data_manager
 
 _instance_data = data_manager.load_existing_config()
@@ -101,6 +101,14 @@ def configure_logging(logging_level: int) -> None:
     base_logger = logging.getLogger("red")
     base_logger.setLevel(level)
     base_logger.addHandler(RichHandler(console=get_console(stderr=True), show_path=False))
+
+
+def get_logging_level() -> int:
+    return logging.getLogger("red").level
+
+
+def get_log_cli_level() -> int:
+    return log_level_to_cli_level(logging.getLogger("red").level)
 
 
 def ensure_supported_env() -> None:
