@@ -9,6 +9,7 @@ from typing import List, NoReturn, Optional, Set
 import click
 from packaging.version import Version
 from python_discovery import PythonInfo
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.text import Text
@@ -27,6 +28,7 @@ class UpdaterOptions:
     backup_dir: Optional[Path]
     no_backup: bool
     no_major_updates: bool
+    no_full_changelog: bool
 
 
 class Updater:
@@ -126,6 +128,12 @@ class Updater:
             )
         common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")
 
+        if self.options.no_full_changelog:
+            self.console.print(Panel(Markdown(changelog.render_markdown(changelogs))))
+            if not Confirm.ask("Do you want to continue?"):
+                raise click.Abort()
+            return
+
         first_changelog_version = min(changelogs)
         last_changelog_version = max(changelogs)
         parts = []
@@ -157,7 +165,7 @@ class Updater:
         )
         self.console.input(Panel("".join(parts)), password=True)
 
-        viewer = ChangelogReaderApp(changelog.render_markdown(changelogs))
+        viewer = ChangelogReaderApp.from_changelogs(changelogs)
         result = await viewer.run_async()
         if result is None:
             raise RuntimeError("Unexpected state")

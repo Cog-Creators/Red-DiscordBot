@@ -63,6 +63,12 @@ def _help_minor_update_example() -> str:
     f" but {_help_minor_update_example()} isn't.",
     is_flag=True,
 )
+@click.option(
+    "--no-full-changelog",
+    help='Skip showing full changelog in a terminal user interface. The "Read before updating"'
+    " sections will still be printed.",
+    is_flag=True,
+)
 # global options
 @click.option(
     cmd.arg_names.DEBUG,
@@ -91,6 +97,7 @@ def cli(
     backup_dir: Optional[Path],
     no_backup: bool,
     no_major_updates: bool,
+    no_full_changelog: bool,
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
@@ -113,6 +120,7 @@ def cli(
             backup_dir=backup_dir,
             no_backup=no_backup,
             no_major_updates=no_major_updates,
+            no_full_changelog=no_full_changelog,
         )
         app = updater.Updater(options)
         asyncio_run(app.run())

@@ -67,10 +67,10 @@ class VersionChangelog:
         )
 
 
-_Changelogs = Dict[Version, VersionChangelog]
+Changelogs = Dict[Version, VersionChangelog]
 
 
-def parse_changelogs(content: str) -> _Changelogs:
+def parse_changelogs(content: str) -> Changelogs:
     changelogs = {}
     for match in _CHANGELOG_PATTERN.finditer(content):
         changelog = VersionChangelog(Version(match["version"]), match["content"])
@@ -79,11 +79,15 @@ def parse_changelogs(content: str) -> _Changelogs:
     return changelogs
 
 
-def render_markdown(changelogs: _Changelogs, *, minimal: bool = False) -> str:
+def render_markdown(changelogs: Changelogs, *, minimal: bool = False) -> str:
     if not changelogs:
         return ""
 
-    parts = []
+    parts = ["# Read before updating"]
+    for changelog in reversed(changelogs.values()):
+        parts.append(f"## {changelog.version}")
+        parts.append(changelog.read_before_updating_section)
+
     contributors = sorted(
         {
             contributor
@@ -93,33 +97,24 @@ def render_markdown(changelogs: _Changelogs, *, minimal: bool = False) -> str:
     )
     if contributors:
         contributor_thanks = (
-            "# Thanks to our contributors \N{HEAVY BLACK HEART}\N{VARIATION SELECTOR-16}\n"
-            "**The releases below were made with help from the following people:**  \n"
+            "  \n**The releases below were made with help from the following people:**  \n"
         )
         contributor_thanks += ", ".join(
             f"[@{contributor}](https://github.com/sponsors/{contributor})"
             for contributor in contributors
         )
+        contributor_thanks += "  \n**Thank you** \N{HEAVY BLACK HEART}\N{VARIATION SELECTOR-16}"
         parts.append(contributor_thanks)
 
-    parts.append("# Read before updating")
-    for changelog in reversed(changelogs.values()):
-        if changelog.read_before_updating_section:
-            parts.append(f"## {changelog.version}")
-            parts.append(changelog.read_before_updating_section)
-
-    parts.append("# User changelog")
-    for changelog in reversed(changelogs.values()):
-        if changelog.user_changelog_section:
-            parts.append(f"## {changelog.version}")
-            parts.append(changelog.user_changelog_section)
+    # show the header both at the top and the bottom
+    parts.append(parts[0])
 
     return "\n".join(parts)
 
 
 def get_changelogs_between(
-    changelogs: _Changelogs, newer_than: Version, not_newer_than: Version
-) -> _Changelogs:
+    changelogs: Changelogs, newer_than: Version, not_newer_than: Version
+) -> Changelogs:
     return {
         changelog_version: changelog
         for changelog_version, changelog in changelogs.items()
@@ -127,7 +122,7 @@ def get_changelogs_between(
     }
 
 
-async def fetch_changelogs() -> _Changelogs:
+async def fetch_changelogs() -> Changelogs:
     """
     Fetch the Markdown-formatted changelog from Red's docs site.
 
