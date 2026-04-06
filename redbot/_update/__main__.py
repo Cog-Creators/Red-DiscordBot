@@ -1,14 +1,16 @@
 import asyncio
 import os
+import shutil
 import sys
+import tempfile
 from operator import itemgetter
-from typing import Any, Final, List, Literal, Optional, Set, Tuple
+from pathlib import Path
+from typing import Any, Final, Iterable, List, Literal, NoReturn, Optional, Set, Tuple
 
 import click
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from python_discovery import PythonInfo, get_interpreter
-from rich.logging import RichHandler
 from rich.panel import Panel
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.text import Text
@@ -17,7 +19,7 @@ from redbot.core import data_manager
 from redbot.core._cli import asyncio_run
 from redbot.core.utils._internal_utils import fetch_latest_red_version
 
-from . import changelog, cog_compatibility_checker, common
+from . import changelog, cog_compatibility_checker, common, runner
 from .tui import ChangelogReaderApp, ChangelogReaderResult
 
 
@@ -34,7 +36,9 @@ _PYTHON_VERSION_CMD_ARG_NAME: Final = "--python-version"
 _CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME: Final = "--check-other-python-installs"
 
 
-def _get_system_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, Version]]:
+def _get_system_interpreters(
+    requires_python: SpecifierSet,
+) -> List[Tuple[str, Version, PythonInfo]]:
     interpreters = {}
 
     def _append_interpreter(info: PythonInfo) -> Literal[False]:
@@ -42,15 +46,19 @@ def _get_system_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, V
         if version in requires_python:
             # realpath call is needed because get_interpreter lists
             # /usr/bin and /bin as separate even though they're the same path
-            interpreters[os.path.realpath(info.executable)] = version
+            interpreters[os.path.realpath(info.executable)] = (version, info)
         return False
 
     get_interpreter("cpython", predicate=_append_interpreter)
 
-    return sorted(interpreters.items(), key=itemgetter(1), reverse=True)
+    ret = [(key, *value) for key, value in interpreters.items()]
+    ret.sort(key=itemgetter(1), reverse=True)
+    return ret
 
 
-def _search_for_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, Version]]:
+def _search_for_interpreters(
+    requires_python: SpecifierSet,
+) -> List[Tuple[str, Version, PythonInfo]]:
     console = common.get_console()
     with console.status("Searching for compatible Python interpreters on your system..."):
         interpreters = _get_system_interpreters(requires_python)
@@ -71,7 +79,7 @@ def _search_for_interpreters(requires_python: SpecifierSet) -> List[Tuple[str, V
 
 def _ask_for_interpreter(
     *, current_python_version: Version, requires_python: SpecifierSet
-) -> Tuple[str, Version]:
+) -> Tuple[str, Version, PythonInfo]:
     interpreters = _search_for_interpreters(requires_python)
     console = common.get_console()
 
@@ -85,7 +93,7 @@ def _ask_for_interpreter(
         )
 
     text = Text("Found the following compatible Python interpreters on your system:")
-    for idx, (interpreter_exe, interpreter_version) in enumerate(interpreters, 1):
+    for idx, (interpreter_exe, interpreter_version, python_info) in enumerate(interpreters, 1):
         text.append_text(Text(f"\n{idx}. ", style="markdown.item.number"))
         text.append_text(_render_interpreter(interpreter_exe, interpreter_version))
     console.print(Panel(text))
@@ -119,7 +127,7 @@ def _ask_for_interpreter(
                 continue
             interpreter_exe = info.executable
         else:
-            interpreter_exe, interpreter_version = interpreters[result - 1]
+            interpreter_exe, interpreter_version, info = interpreters[result - 1]
 
         console.print(
             "\n[b]You selected:[/]", _render_interpreter(interpreter_exe, interpreter_version)
@@ -128,10 +136,17 @@ def _ask_for_interpreter(
             console.print()
             break
 
-    return interpreter_exe, interpreter_version
+    return interpreter_exe, interpreter_version, info
 
 
-async def main(instances: List[str], excluded_instances: Set[str], *, ignore_prefix: bool) -> None:
+async def main(
+    *,
+    instances: List[str],
+    excluded_instances: Set[str],
+    ignore_prefix: bool,
+    backup_dir: Optional[Path],
+    no_backup: bool,
+) -> None:
     console = common.get_console()
     current_version = common.get_current_red_version()
     current_python_version = common.get_current_python_version()
@@ -197,7 +212,6 @@ async def main(instances: List[str], excluded_instances: Set[str], *, ignore_pre
 
     console.print("Changelog has been closed.\n")
 
-    interpreter_exe = sys.executable
     interpreter_version = current_python_version
     if current_python_version not in latest.requires_python:
         common.print_with_prefix_column(
@@ -209,9 +223,12 @@ async def main(instances: List[str], excluded_instances: Set[str], *, ignore_pre
             ")\nredbot-update will have to recreate the virtual environment"
             " with a compatible version of Python.",
         )
-        interpreter_exe, interpreter_version = _ask_for_interpreter(
+        interpreter_exe, interpreter_version, interpreter_info = _ask_for_interpreter(
             current_python_version=current_python_version, requires_python=latest.requires_python
         )
+    else:
+        interpreter_info = PythonInfo.current_system()
+        interpreter_exe = interpreter_info.system_executable
 
     checked_instances = {}
     failed_instances = []
@@ -282,6 +299,17 @@ async def main(instances: List[str], excluded_instances: Set[str], *, ignore_pre
         )
     console.print()
 
+    to_backup = [] if no_backup else [*checked_instances, *failed_instances]
+    if no_backup:
+        common.print_with_prefix_column(
+            common.ICON_INFO, "Will not make backups as --no-backup option was passed."
+        )
+    else:
+        common.print_with_prefix_column(
+            common.ICON_INFO,
+            "The following instances will be backed up before performing the update: ",
+            Text(", ").join(Text(instance_name, style="bold") for instance_name in to_backup),
+        )
     if breaking_update:
         console.print(
             "[b]Remember that this is a major release and it may have some breaking changes"
@@ -291,7 +319,85 @@ async def main(instances: List[str], excluded_instances: Set[str], *, ignore_pre
         return
     console.print()
 
-    # now onto actual update...
+    if no_backup:
+        console.print("Will not make backups as --no-backup option was passed.")
+    else:
+        await _make_backups(backup_dir, to_backup)
+
+    _update_with_fresh_venv(interpreter_exe, interpreter_info, latest.version)
+
+
+def _update_with_fresh_venv(
+    interpreter_exe: str, interpreter_info: PythonInfo, latest_version: Version
+) -> NoReturn:
+    console = common.get_console()
+    venv_dir = Path(sys.prefix)
+    backup_dir = venv_dir / common.OLD_VENV_BACKUP_DIR_NAME
+    try:
+        backup_dir.mkdir()
+    except FileExistsError:
+        console.print(
+            "Found that a partial backup of a virtual environment from a past failed update exists"
+            " at",
+            Text(str(backup_dir), style="bold"),
+            "\nThe update will not proceed to avoid overriding it. If you are certain that"
+            " you don't need to restore anything from it, remove it and try updating again.",
+        )
+        raise SystemExit(1)
+
+    old_executable = Path(sys.executable)
+    rel_executable = old_executable.relative_to(venv_dir)
+    new_executable = backup_dir / rel_executable
+    wrapper_exe = runner.get_wrapper_executable()
+
+    for path in venv_dir.iterdir():
+        if path == backup_dir or path == wrapper_exe:
+            continue
+        path.rename(backup_dir / path.name)
+
+    console.print()
+    runner.make_exec_request(
+        str(new_executable),
+        "reinstall",
+        # base executable for venv creation
+        interpreter_exe,
+        # venv dir
+        str(venv_dir),
+        # scripts path
+        interpreter_info.sysconfig_path("scripts", {"base": str(venv_dir)}),
+        # Red dependency specifier
+        common.get_red_dependency_specifier(latest_version),
+    )
+
+
+async def _make_backups(backup_dir: Optional[Path], instances: Iterable[str]) -> Path:
+    backup_dir = backup_dir or Path(tempfile.mkdtemp(prefix="redbot-update-backup-"))
+    console = common.get_console()
+    console.print("Backups will be created at:", Text(str(backup_dir), style="bold"))
+    with console.status("Making a backup of the venv directory..."):
+        venv_dir = Path(sys.prefix)
+        shutil.copytree(venv_dir, backup_dir / "redenv", symlinks=True)
+
+    failed = []
+    for instance_name in instances:
+        console.print("Making a backup of the", Text(instance_name, style="bold"), "instance...")
+        proc = await asyncio.create_subprocess_exec(
+            sys.executable, "-m", "redbot.setup", "backup", instance_name, str(backup_dir)
+        )
+        if await proc.wait():
+            failed.append(instance_name)
+
+    if failed:
+        common.print_with_prefix_column(
+            common.ICON_ERROR,
+            "The following instances failed during backup: ",
+            Text(", ").join(Text(instance_name, style="bold") for instance_name in failed),
+            "\nScroll above to find the errors.",
+        )
+        if not Confirm.ask("Do you want to continue with the update regardless?"):
+            raise SystemExit(1)
+
+    return backup_dir
 
 
 @click.group(invoke_without_command=True)
@@ -301,15 +407,29 @@ async def main(instances: List[str], excluded_instances: Set[str], *, ignore_pre
     "included_instances",
     multiple=True,
     type=click.Choice(instance_list),
-    help="When specified, the cog compatibility will only be checked for instances specified with"
-    " the --include-instance option. Otherwise, all instances are checked.",
+    help="The list of instances to backup and check cog compatibility for. If not specified,"
+    " all instances that use the current virtual environment will be backed up and checked.",
 )
 @click.option(
     "--exclude-instance",
     "excluded_instances",
     multiple=True,
     type=click.Choice(instance_list),
-    help="Exclude an instance from the list of instances to check cog compatibility for.",
+    help="Exclude an instance from the list of instances to backup"
+    " and check cog compatibility for.",
+)
+@click.option(
+    "--backup-dir",
+    default=None,
+    type=click.Path(
+        dir_okay=True, file_okay=False, resolve_path=True, writable=True, path_type=Path
+    ),
+    help="The directory to place the backups of the virtual environment and instances.",
+)
+@click.option(
+    "--no-backup",
+    help="Do not make backups of the virtual environment and instances before update.",
+    is_flag=True,
 )
 # global options
 @click.option(
@@ -336,6 +456,8 @@ def cli(
     ctx: click.Context,
     included_instances: Tuple[str, ...],
     excluded_instances: Tuple[str, ...],
+    backup_dir: Optional[Path],
+    no_backup: bool,
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
@@ -351,12 +473,24 @@ def cli(
             instances = list(dict.fromkeys(included_instances))
         else:
             instances = instance_list
-        asyncio_run(main(instances, set(excluded_instances), ignore_prefix=ignore_prefix))
+        asyncio_run(
+            main(
+                instances=instances,
+                excluded_instances=set(excluded_instances),
+                ignore_prefix=ignore_prefix,
+                backup_dir=backup_dir,
+                no_backup=no_backup,
+            )
+        )
     # these should not be available to subcommands
     elif included_instances:
         raise click.NoSuchOption("--include-instance", ctx=ctx)
     elif excluded_instances:
         raise click.NoSuchOption("--exclude-instance", ctx=ctx)
+    elif backup_dir is not None:
+        raise click.NoSuchOption("--backup-dir", ctx=ctx)
+    elif no_backup:
+        raise click.NoSuchOption("--no-backup", ctx=ctx)
 
 
 class VersionParamType(click.ParamType):

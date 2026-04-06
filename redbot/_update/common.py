@@ -32,6 +32,12 @@ _STDERR_CONSOLE: Optional[Console] = None
 RUNNER_DIR_ENV_VAR: Final = "REDBOT_UPDATE_RUNNER_DIR"
 RUNNER_WRAPPER_EXE_ENV_VAR: Final = "REDBOT_UPDATE_RUNNER_WRAPPER_EXE"
 
+OLD_VENV_BACKUP_DIR_NAME: Final = "redbot-update-old-venv-backup"
+
+
+def get_red_dependency_specifier(version: Version) -> str:
+    return os.getenv("_RED_UPDATE_PRETEND_SPECIFIER") or f"Red-DiscordBot=={version}"
+
 
 def get_current_red_version() -> Version:
     return Version(os.getenv("_RED_UPDATE_PRETEND_VERSION") or __version__)
