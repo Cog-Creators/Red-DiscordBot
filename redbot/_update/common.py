@@ -1,10 +1,13 @@
 import logging
 import os
 import sys
-from typing import Final, Optional, Union
+from operator import itemgetter
+from typing import Final, List, Literal, Optional, Tuple, Union
 
 import rich
+from packaging.specifiers import SpecifierSet
 from packaging.version import Version
+from python_discovery import PythonInfo, get_interpreter
 from rich.console import Console, RenderableType
 from rich.logging import RichHandler
 from rich.table import Table
@@ -12,6 +15,10 @@ from rich.text import Text
 
 from redbot import __version__
 from redbot.core._cli import cli_level_to_log_level
+from redbot.core import data_manager
+
+_instance_data = data_manager.load_existing_config()
+INSTANCE_LIST: Final = () if _instance_data is None else tuple(_instance_data.keys())
 
 
 # The cell width of text-style emojis that, by default, prefer emoji-style
@@ -105,3 +112,44 @@ def ensure_supported_env() -> None:
     ):
         print("redbot-update was called incorrectly.")
         raise SystemExit(1)
+
+
+def _get_system_interpreters(
+    requires_python: SpecifierSet,
+) -> List[Tuple[str, Version, PythonInfo]]:
+    interpreters = {}
+
+    def _append_interpreter(info: PythonInfo) -> Literal[False]:
+        version = Version(info.version_str)
+        if version in requires_python:
+            # realpath call is needed because get_interpreter lists
+            # /usr/bin and /bin as separate even though they're the same path
+            interpreters[os.path.realpath(info.executable)] = (version, info)
+        return False
+
+    get_interpreter("cpython", predicate=_append_interpreter)
+
+    ret = [(key, *value) for key, value in interpreters.items()]
+    ret.sort(key=itemgetter(1), reverse=True)
+    return ret
+
+
+def search_for_interpreters(
+    requires_python: SpecifierSet,
+) -> List[Tuple[str, Version, PythonInfo]]:
+    console = get_console()
+    with console.status("Searching for compatible Python interpreters on your system..."):
+        interpreters = _get_system_interpreters(requires_python)
+
+    if not interpreters:
+        url = "https://docs.discord.red/en/latest/install_guides/"
+        console.print(
+            f"{ICON_ERROR} Could not find a compatible Python interpreter!\n"
+            'Please follow the steps from the "Installing the pre-requirements" section'
+            " of the install guide for your system:"
+        )
+        console.print(Text(url, style=f"link {url}"))
+        console.print("Once you finish installing the pre-requirements, run this command again.")
+        raise SystemExit(1)
+
+    return interpreters
