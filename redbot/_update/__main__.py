@@ -12,6 +12,20 @@ from . import cmd, common, updater
 _CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME: Final = "--check-other-python-installs"
 
 
+def _help_major_update_example() -> str:
+    version = common.get_current_red_version().__replace__(dev=None, local=None)
+    release = (version.major, version.minor + 1) + (0,) * (len(version.release) - 2)
+    next_major_version = version.__replace__(release=release)
+    return f"updating from Red {version} to Red {next_major_version}"
+
+
+def _help_minor_update_example() -> str:
+    version = common.get_current_red_version().__replace__(dev=None, local=None)
+    release = (version.major, version.minor, version.micro + 1) + (0,) * (len(version.release) - 3)
+    next_minor_version = version.__replace__(release=release)
+    return f"updating from Red {version} to Red {next_minor_version}"
+
+
 @click.group(invoke_without_command=True)
 # command-specific options
 @click.option(
@@ -43,6 +57,12 @@ _CHECK_OTHER_PYTHON_INSTALLS_CMD_ARG_NAME: Final = "--check-other-python-install
     help="Do not make backups of the virtual environment and instances before update.",
     is_flag=True,
 )
+@click.option(
+    "--no-major-updates",
+    help=f"Skip major updates. For example: {_help_major_update_example()} is a major update"
+    f" but {_help_minor_update_example()} isn't.",
+    is_flag=True,
+)
 # global options
 @click.option(
     cmd.arg_names.DEBUG,
@@ -70,6 +90,7 @@ def cli(
     excluded_instances: Tuple[str, ...],
     backup_dir: Optional[Path],
     no_backup: bool,
+    no_major_updates: bool,
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
@@ -91,6 +112,7 @@ def cli(
             ignore_prefix=ignore_prefix,
             backup_dir=backup_dir,
             no_backup=no_backup,
+            no_major_updates=no_major_updates,
         )
         app = updater.Updater(options)
         asyncio_run(app.run())
@@ -103,6 +125,8 @@ def cli(
         raise click.NoSuchOption("--backup-dir", ctx=ctx)
     elif no_backup:
         raise click.NoSuchOption("--no-backup", ctx=ctx)
+    elif no_major_updates:
+        raise click.NoSuchOption("--no-major-updates", ctx=ctx)
 
 
 cli.add_command(cmd.cog_compatibility.check_cog_compatibility)

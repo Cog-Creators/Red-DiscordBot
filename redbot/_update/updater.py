@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.text import Text
 
-from redbot.core.utils._internal_utils import AvailableVersion, fetch_latest_red_version
+from redbot.core.utils._internal_utils import AvailableVersion, fetch_available_red_versions
 
 from . import changelog, cmd, common, runner
 from .tui import ChangelogReaderApp, ChangelogReaderResult
@@ -26,6 +26,7 @@ class UpdaterOptions:
     ignore_prefix: bool
     backup_dir: Optional[Path]
     no_backup: bool
+    no_major_updates: bool
 
 
 class Updater:
@@ -47,18 +48,40 @@ class Updater:
 
     async def run(self) -> None:
         with self.console.status("Checking latest version..."):
-            self.latest = await fetch_latest_red_version()
+            available_versions = await fetch_available_red_versions()
+            self.latest = latest_major = available_versions[0]
+            if self.options.no_major_updates:
+                for available_version in available_versions:
+                    if available_version.version.release[:2] == self.current_version.release[:2]:
+                        self.latest = available_version
+                        break
+                else:
+                    if self.current_version < latest_major.version:
+                        common.print_with_prefix_column(
+                            common.ICON_ERROR,
+                            "Could not find any version of Red that would not be a major update.",
+                        )
+                        raise SystemExit(1)
 
         if self.current_version >= self.latest.version:
-            common.print_with_prefix_column(
-                common.ICON_SUCCESS,
-                "You are already running the latest available version of Red.",
-            )
+            if self.current_version >= latest_major.version:
+                common.print_with_prefix_column(
+                    common.ICON_SUCCESS,
+                    "You are already running the latest available version of Red.",
+                )
+            else:
+                common.print_with_prefix_column(
+                    common.ICON_INFO,
+                    "There are no non-major updates available.\n",
+                    "There is a new major version available: ",
+                    Text(str(latest_major.version), style="bold"),
+                )
             return
 
         common.print_with_prefix_column(
             common.ICON_SUCCESS,
-            Text("New version available: ").append(str(self.latest.version), style="bold"),
+            "New version available: ",
+            Text(str(self.latest.version), style="bold"),
         )
 
         await self._show_changelog()
@@ -98,7 +121,9 @@ class Updater:
     async def _show_changelog(self) -> None:
         with self.console.status("Fetching changelogs..."):
             changelogs = await changelog.fetch_changelogs()
-            changelogs = changelog.get_changelogs_newer_than(changelogs, self.current_version)
+            changelogs = changelog.get_changelogs_between(
+                changelogs, self.current_version, self.latest.version
+            )
         common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")
 
         first_changelog_version = min(changelogs)

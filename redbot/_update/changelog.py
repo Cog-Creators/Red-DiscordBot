@@ -117,11 +117,13 @@ def render_markdown(changelogs: _Changelogs, *, minimal: bool = False) -> str:
     return "\n".join(parts)
 
 
-def get_changelogs_newer_than(changelogs: _Changelogs, version: Version) -> _Changelogs:
+def get_changelogs_between(
+    changelogs: _Changelogs, newer_than: Version, not_newer_than: Version
+) -> _Changelogs:
     return {
         changelog_version: changelog
         for changelog_version, changelog in changelogs.items()
-        if changelog_version > version
+        if newer_than < changelog_version <= not_newer_than
     }
 
 
