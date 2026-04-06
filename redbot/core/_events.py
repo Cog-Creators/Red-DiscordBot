@@ -215,16 +215,16 @@ def init_events(bot, cli_flags):
         bot._red_ready.set()
 
         try:
-            pypi_version, requires_python = await fetch_version_task
+            latest = await fetch_version_task
         except (aiohttp.ClientError, asyncio.TimeoutError) as exc:
             log.error("Failed to fetch latest version information from PyPI.", exc_info=exc)
         except (KeyError, ValueError) as exc:
             log.error("Failed to parse version metadata received from PyPI.", exc_info=exc)
         else:
-            outdated = pypi_version and pypi_version > Version(red_version)
+            outdated = latest.version > Version(red_version)
             if outdated:
                 outdated_red_message, rich_outdated_message = get_outdated_red_messages(
-                    pypi_version, requires_python
+                    latest.version, latest.requires_python
                 )
                 rich_console.print(rich_outdated_message)
                 await send_to_owners_with_prefix_replaced(bot, outdated_red_message)

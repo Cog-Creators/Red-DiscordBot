@@ -13,16 +13,19 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import (
+    Any,
     AsyncIterable,
     AsyncIterator,
     Awaitable,
     Callable,
+    Dict,
     Generator,
     Iterable,
     Iterator,
     List,
     Optional,
     Union,
+    TypedDict,
     TypeVar,
     TYPE_CHECKING,
     Tuple,
@@ -39,6 +42,7 @@ import rapidfuzz
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 from red_commons.logging import VERBOSE, TRACE
+from typing_extensions import NotRequired
 
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
@@ -56,6 +60,9 @@ __all__ = (
     "create_backup",
     "send_to_owners_with_preprocessor",
     "send_to_owners_with_prefix_replaced",
+    "ReleaseFile",
+    "AvailableVersion",
+    "fetch_available_red_versions",
     "fetch_latest_red_version",
     "deprecated_removed",
     "RichIndefiniteBarColumn",
@@ -330,9 +337,67 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
     await send_to_owners_with_preprocessor(bot, content, content_preprocessor=preprocessor)
 
 
-async def fetch_latest_red_version() -> Tuple[Version, SpecifierSet]:
+# gotta use functional TypedDict syntax due to hyphens in keys
+ReleaseFile = TypedDict(
+    "ReleaseFile",
+    {
+        "filename": str,
+        "url": str,
+        "hashes": Dict[str, str],
+        "requires-python": NotRequired[str],
+        "core-metadata": NotRequired[Union[bool, Dict[str, str]]],
+        "yanked": bool,
+        "size": int,
+        "upload-time": NotRequired[str],
+        "provenance": NotRequired[Optional[str]],
+    },
+)
+
+
+class AvailableVersion:
+    def __init__(self, version: Version, files: Dict[str, ReleaseFile]) -> None:
+        self.version = version
+        self.files = files
+        required_pythons = {f.get("requires-python") or "" for f in files.values()}
+        if len(required_pythons) > 1:
+            raise ValueError("found multiple files with different Requires-Python values")
+        self.requires_python = SpecifierSet(required_pythons.pop())
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return self.version == other.version
+        return NotImplemented
+
+    def __ne__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return self.version != other.version
+        return NotImplemented
+
+    def __lt__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return self.version < other.version
+        return NotImplemented
+
+    def __le__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return self.version <= other.version
+        return NotImplemented
+
+    def __gt__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return self.version > other.version
+        return NotImplemented
+
+    def __ge__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return self.version >= other.version
+        return NotImplemented
+
+
+async def fetch_available_red_versions() -> List[AvailableVersion]:
     """
-    Fetch information about latest Red release on PyPI.
+    Fetch information about Red releases available on PyPI,
+    sorted by version (latest first).
 
     Raises
     ------
@@ -365,7 +430,8 @@ async def fetch_latest_red_version() -> Tuple[Version, SpecifierSet]:
             ):
                 raise ValueError("got unexpected response from Simple Repository API")
 
-    files = {}
+    files: Dict[Version, Dict[str, ReleaseFile]] = {}
+    f: ReleaseFile
     for f in data["files"]:
         if f.get("yanked"):
             continue
@@ -382,13 +448,34 @@ async def fetch_latest_red_version() -> Tuple[Version, SpecifierSet]:
     if not files:
         raise ValueError("could not find any files")
 
-    latest_version = max(files)
-    version_files = files[latest_version]
-    required_pythons = {f.get("requires-python") or "" for f in version_files.values()}
-    if len(required_pythons) > 1:
-        raise ValueError("found multiple files with different Requires-Python values")
+    available_versions = [
+        AvailableVersion(version, version_files) for version, version_files in files.items()
+    ]
+    available_versions.sort(reverse=True)
 
-    return latest_version, SpecifierSet(required_pythons.pop())
+    return available_versions
+
+
+async def fetch_latest_red_version() -> AvailableVersion:
+    """
+    Fetch information about latest Red release on PyPI.
+
+    Raises
+    ------
+    aiohttp.ClientError
+        An error occurred during request to PyPI.
+    TimeoutError
+        The request to PyPI timed out.
+    ValueError
+        Some part of the response was considered invalid.
+        This includes issues such as incorrect response content type,
+        invalid version strings, inability to find files for a release,
+        and mismatching Requires-Python values.
+    KeyError
+        The PyPI metadata is missing some of the required information.
+    """
+    available_versions = await fetch_available_red_versions()
+    return available_versions[0]
 
 
 def deprecated_removed(

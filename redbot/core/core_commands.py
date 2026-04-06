@@ -426,10 +426,12 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         custom_info = await self.bot._config.custom_info()
 
         try:
-            pypi_version, __ = await fetch_latest_red_version()
+            latest = await fetch_latest_red_version()
         except (aiohttp.ClientError, TimeoutError) as exc:
             log.error("Failed to fetch latest version information from PyPI.", exc_info=exc)
             pypi_version = None
+        else:
+            pypi_version = latest.version
         outdated = pypi_version and pypi_version > Version(__version__)
 
         if embed_links:
