@@ -42,7 +42,7 @@ import rapidfuzz
 from rich.progress import ProgressColumn
 from rich.progress_bar import ProgressBar
 from red_commons.logging import VERBOSE, TRACE
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, Self
 
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
@@ -362,6 +362,20 @@ class AvailableVersion:
         if len(required_pythons) > 1:
             raise ValueError("found multiple files with different Requires-Python values")
         self.requires_python = SpecifierSet(required_pythons.pop())
+
+    @classmethod
+    def from_json_dict(self, data: Dict[str, Any]) -> Self:
+        ret = AvailableVersion(data["version"], data["files"])
+        if str(ret.requires_python) != data["requires_python"]:
+            raise ValueError("requires_python key in given data is inconsistent with files")
+        return ret
+
+    def to_json_dict(self) -> Dict[str, Any]:
+        return {
+            "version": str(self.version),
+            "requires_python": str(self.requires_python),
+            "files": self.files,
+        }
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, self.__class__):
