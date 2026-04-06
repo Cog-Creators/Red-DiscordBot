@@ -36,7 +36,7 @@ import aiohttp
 import discord
 import yarl
 from packaging.specifiers import SpecifierSet
-from packaging.utils import parse_sdist_filename, parse_wheel_filename
+from packaging.utils import parse_sdist_filename
 from packaging.version import Version
 import rapidfuzz
 from rich.progress import ProgressColumn
@@ -450,10 +450,12 @@ async def fetch_available_red_versions() -> List[AvailableVersion]:
         if f.get("yanked"):
             continue
         filename = f["filename"]
-        if filename.endswith(".whl"):
-            _, version, _, _ = parse_wheel_filename(filename)
-        elif filename.endswith(".tar.gz"):
+        if filename.endswith((".tar.gz", ".zip")):
             _, version = parse_sdist_filename(filename)
+        elif filename.endswith(".whl"):
+            # https://packaging.python.org/en/latest/specifications/binary-distribution-format/#file-name-convention
+            _, raw_version, _ = filename.split("-", 2)
+            version = Version(raw_version)
         else:
             continue
         version_files = files.setdefault(version, {})
