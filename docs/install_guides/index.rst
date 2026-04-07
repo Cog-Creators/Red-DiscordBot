@@ -18,20 +18,17 @@ we recommend **Ubuntu 24.04 LTS**.
    amazon-linux-2023
    arch
    centos-stream-9
-   debian-11
    debian-12
    fedora
    opensuse-leap-15
    opensuse-tumbleweed
    oracle-linux-8
    oracle-linux-9
-   raspberry-pi-os-11
    raspberry-pi-os-12
    rhel-8
    rhel-9
    rocky-linux-8
    rocky-linux-9
-   ubuntu-2004
    ubuntu-2204
    ubuntu-2404
    ubuntu-non-lts

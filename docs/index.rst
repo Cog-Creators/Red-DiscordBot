@@ -15,6 +15,7 @@ Welcome to Red - Discord Bot's documentation!
     install_guides/index
     bot_application_guide
     update_red
+    backup_red
     about_venv
     autostart_windows
     autostart_mac

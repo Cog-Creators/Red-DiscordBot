@@ -1,5 +1,7 @@
 import argparse
+import logging
 import logging.handlers
+import os
 import pathlib
 import re
 import sys
@@ -33,6 +35,7 @@ from rich.traceback import PathHighlighter, Traceback  # DEP-WARN
 
 
 MAX_OLD_LOGS = 8
+log = logging.getLogger("red.logging")
 
 
 class RotatingFileHandler(logging.handlers.RotatingFileHandler):
@@ -284,7 +287,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     root_logger.setLevel(level)
     # DEBUG logging for discord.py is a bit too ridiculous :)
     dpy_logger = logging.getLogger("discord")
-    dpy_logger.setLevel(logging.INFO)
+    dpy_logger.setLevel(logging.DEBUG if os.getenv("RED_DPY_DEBUG") == "1" else logging.INFO)
 
     rich_console = rich.get_console()
     rich.reconfigure(tab_size=4)
@@ -322,7 +325,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
         stdout_handler = RedRichHandler(
-            rich_tracebacks=True,
+            rich_tracebacks=cli_flags.rich_tracebacks,
             show_path=False,
             highlighter=NullHighlighter(),
             tracebacks_extra_lines=cli_flags.rich_traceback_extra_lines,
@@ -379,3 +382,9 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
     for fhandler in (latest_fhandler, all_fhandler):
         fhandler.setFormatter(file_formatter)
         root_logger.addHandler(fhandler)
+
+    if not enable_rich_logging and cli_flags.rich_tracebacks:
+        log.warning(
+            "Rich tracebacks were requested but they will not be enabled"
+            " as Rich logging is not active."
+        )

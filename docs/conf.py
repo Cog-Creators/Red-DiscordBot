@@ -46,6 +46,7 @@ extensions = [
     "sphinxcontrib_trio",
     "sphinx-prompt",
     "deprecated_removed",
+    "prompt_builder",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -139,6 +140,9 @@ html_context = {
     "github_user": "Cog-Creators",
     "github_repo": "Red-DiscordBot",
     "github_version": "V3/develop",
+    "version_slug": os.environ.get("READTHEDOCS_VERSION", ""),
+    "rtd_language": os.environ.get("READTHEDOCS_LANGUAGE", ""),
+    "READTHEDOCS": os.environ.get("READTHEDOCS", "") == "True",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

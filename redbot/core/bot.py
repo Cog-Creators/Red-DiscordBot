@@ -1,4 +1,5 @@
 from __future__ import annotations
+import argparse
 import asyncio
 import inspect
 import logging
@@ -37,7 +38,18 @@ import discord
 from discord.ext import commands as dpy_commands
 from discord.ext.commands import when_mentioned_or
 
-from . import Config, i18n, app_commands, commands, errors, _drivers, modlog, bank
+from . import (
+    Config,
+    _i18n,
+    i18n,
+    app_commands,
+    commands,
+    errors,
+    _drivers,
+    modlog,
+    bank,
+    _downloader,
+)
 from ._cli import ExitCodes
 from ._cog_manager import CogManager, CogManagerUI
 from .core_commands import Core
@@ -68,6 +80,8 @@ _T = TypeVar("_T")
 CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
+
+_DEFAULT_DESCRIPTION = "Red V3"
 
 log = logging.getLogger("red")
 
@@ -101,7 +115,9 @@ class Red(
 ):  # pylint: disable=no-member # barely spurious warning caused by shadowing
     """Our subclass of discord.ext.commands.AutoShardedBot"""
 
-    def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
+    def __init__(
+        self, *args: Any, cli_flags: argparse.Namespace, bot_dir: Path = Path.cwd(), **kwargs: Any
+    ) -> None:
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
@@ -115,7 +131,7 @@ class Red(
             owner=None,
             whitelist=[],
             blacklist=[],
-            locale="en-US",
+            locale=_i18n.FRESH_INSTALL_LOCALE,
             regional_format=None,
             embeds=True,
             color=15158332,
@@ -132,7 +148,7 @@ class Red(
             help__tagline="",
             help__use_tick=False,
             help__react_timeout=30,
-            description="Red V3",
+            description=_DEFAULT_DESCRIPTION,
             invite_public=False,
             invite_perm=0,
             invite_commands_scope=False,
@@ -141,6 +157,7 @@ class Red(
             invoke_error_msg=None,
             extra_owner_destinations=[],
             owner_opt_out_list=[],
+            last_system_info__python_prefix=None,
             last_system_info__python_version=[3, 7],
             last_system_info__machine=None,
             last_system_info__system=None,
@@ -238,7 +255,13 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        super().__init__(*args, help_command=None, tree_cls=RedTree, **kwargs)
+        super().__init__(
+            *args,
+            description=kwargs.pop("description", _DEFAULT_DESCRIPTION),
+            help_command=None,
+            tree_cls=RedTree,
+            **kwargs,
+        )
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
@@ -819,6 +842,9 @@ class Red(
             Whether or not the message is eligible to be treated as a command.
         """
 
+        # NOTE: any changes to implementation here may need to be made
+        # in the `RedTree.interaction_check` as well
+
         channel = message.channel
         guild = message.guild
 
@@ -886,7 +912,12 @@ class Red(
             if ctx.channel.type is not discord.ChannelType.private:
                 raise TypeError("Can't check permissions for non-private PartialMessageable.")
             is_private = True
-        perms = ctx.channel.permissions_for(author)
+        if isinstance(ctx, discord.Message):
+            perms = ctx.channel.permissions_for(author)
+        else:
+            # `permissions` attribute will use permissions from the interaction when possible,
+            # or `ctx.channel.permissions_for(author)` for non-interaction contexts.
+            perms = ctx.permissions
         surpass_ignore = (
             is_private
             or perms.manage_guild
@@ -906,7 +937,18 @@ class Red(
             return True
 
         if isinstance(ctx.channel, discord.Thread):
-            channel = ctx.channel.parent
+            if isinstance(ctx, discord.Interaction) and ctx.is_user_integration():
+                ctx: discord.Interaction
+                # This is a user installed interaction, and thus... We're doomed!
+                # We must mock an object because we don't have the channel cached,
+                # and we are unable to fetch a full channel from the interaction
+                # #BlameDiscord, See Red#6501 for more details.
+
+                # LIMITATIONS: Due the fact that we don't know the categories either as they aren't...
+                # communicated in the interaction, we can't check for category ignores.
+                channel = discord.Object(id=ctx.channel.parent_id)
+            else:
+                channel = ctx.channel.parent
             thread = ctx.channel
         else:
             channel = ctx.channel
@@ -1140,9 +1182,28 @@ class Red(
             self.owner_ids.add(self._owner_id_overwrite)
 
         i18n_locale = await self._config.locale()
-        i18n.set_locale(i18n_locale)
+        try:
+            _i18n.set_global_locale(i18n_locale)
+        except (ValueError, TypeError):
+            log.warning(
+                "The bot's global locale was set to an invalid value (%r)"
+                " and will be reset to default (%s).",
+                i18n_locale,
+                _i18n.FRESH_INSTALL_LOCALE,
+            )
+            i18n_locale = _i18n.FRESH_INSTALL_LOCALE
+            await self._config.locale.clear()
         i18n_regional_format = await self._config.regional_format()
-        i18n.set_regional_format(i18n_regional_format)
+        try:
+            _i18n.set_global_regional_format(i18n_regional_format)
+        except (ValueError, TypeError):
+            log.warning(
+                "The bot's global regional format was set to an invalid value (%r)"
+                " and will be reset to default (which is to inherit global locale, i.e. %s).",
+                i18n_regional_format,
+                i18n_locale,
+            )
+            await self._config.regional_format.clear()
 
     async def _pre_connect(self) -> None:
         """
@@ -1160,14 +1221,35 @@ class Red(
 
         last_system_info = await self._config.last_system_info()
 
+        last_python_prefix = last_system_info["python_prefix"]
+        if last_python_prefix is None:
+            await self._config.last_system_info.python_prefix.set(sys.prefix)
+        elif last_python_prefix != sys.prefix:
+            await self._config.last_system_info.python_prefix.set(sys.prefix)
+            try:
+                same_install = os.path.samefile(last_python_prefix, sys.prefix)
+            except OSError:
+                same_install = False
+            if not same_install:
+                if sys.prefix != sys.base_prefix:
+                    install_info = "in the currently used virtual environment"
+                else:
+                    install_info = "with the currently used Python installation"
+                log.warning(
+                    "Red seems to have been started with a different Python installation"
+                    " and/or virtual environment. This is not, in itself, an issue but is often"
+                    " done unintentionally and may explain some, otherwise unexpected, behavior."
+                    " This message will not be shown again, if you start Red %s again.",
+                    install_info,
+                )
+
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
-        LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
         if ver_info != last_system_info["python_version"]:
             await self._config.last_system_info.python_version.set(ver_info)
-            if any(LIB_PATH.iterdir()):
-                shutil.rmtree(str(LIB_PATH))
-                LIB_PATH.mkdir()
+            if any(_downloader.LIB_PATH.iterdir()):
+                shutil.rmtree(str(_downloader.LIB_PATH))
+                _downloader.LIB_PATH.mkdir()
                 asyncio.create_task(
                     send_to_owners_with_prefix_replaced(
                         self,
@@ -1215,6 +1297,15 @@ class Red(
                     "To regenerate lib folder, load Downloader and use `[p]cog reinstallreqs`.",
                 )
             )
+
+        if self._cli_flags.cog_path:
+            for path in self._cli_flags.cog_path:
+                path = Path(path)
+                try:
+                    await self._cog_mgr.add_path(path, persist=False)
+                    log.info("Added cog path: %s", path)
+                except Exception:
+                    log.exception("Failed to add cog path: %s", path)
 
         if packages:
             # Load permissions first, for security reasons
@@ -1790,6 +1881,82 @@ class Red(
             "message": curr_message_commands,
             "user": curr_user_commands,
         }
+
+    async def get_app_command_id(
+        self,
+        command_name: str,
+        command_type: discord.AppCommandType = discord.AppCommandType.chat_input,
+    ) -> Optional[int]:
+        """
+        Get the cached ID for a particular app command.
+
+        Pulls from Red's internal cache of app command IDs, which is updated
+        when the ``[p]slash sync`` command is ran on this instance
+        or `bot.tree.sync() <RedTree.sync()>` is called.
+        Does not keep track of guild-specific app commands.
+
+        Parameters
+        ----------
+        command_name : str
+            Name of the command to get the ID of.
+        command_type : `discord.AppCommandType`
+            Type of the command to get the ID of.
+
+        Returns
+        -------
+        Optional[int]
+            The cached of the specified app command or ``None``,
+            if the command does not exist or Red does not know the ID
+            for that app command.
+        """
+        if command_type is discord.AppCommandType.chat_input:
+            cfg = self._config.enabled_slash_commands()
+        elif command_type is discord.AppCommandType.message:
+            cfg = self._config.enabled_message_commands()
+        elif command_type is discord.AppCommandType.user:
+            cfg = self._config.enabled_user_commands()
+        else:
+            raise TypeError("command type must be one of chat_input, message, user")
+
+        curr_commands = await cfg
+        return curr_commands.get(command_name, None)
+
+    async def get_app_command_mention(
+        self,
+        command_name: str,
+        command_type: discord.AppCommandType = discord.AppCommandType.chat_input,
+    ) -> Optional[str]:
+        """
+        Get the string that allows you to mention a particular app command.
+
+        Pulls from Red's internal cache of app command IDs, which is updated
+        when the ``[p]slash sync`` command is ran on this instance
+        or `bot.tree.sync() <RedTree.sync()>` is called.
+        Does not keep track of guild-specific app commands.
+
+        Parameters
+        ----------
+        command_name : str
+            Name of the command to get the mention for.
+        command_type : `discord.AppCommandType`
+            Type of the command to get the mention for.
+
+        Returns
+        -------
+        Optional[str]
+            The string that allows you to mention the specified app command
+            or ``None``, if the command does not exist or Red does not know the ID
+            for that app command.
+        """
+        # Empty string names will break later code and can't exist as commands, exit early
+        if not command_name:
+            raise ValueError("command name must be a non-empty string")
+        # Account for mentioning subcommands by fetching from the cache based on the base command
+        base_command = command_name.split(" ")[0]
+        command_id = await self.get_app_command_id(base_command, command_type)
+        if command_id is None:
+            return None
+        return f"</{command_name}:{command_id}>"
 
     async def is_automod_immune(
         self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
@@ -2377,23 +2544,35 @@ class Red(
                 msg = await channel.send(box(page, lang=box_lang))
             ret.append(msg)
             n_remaining = len(messages) - idx
+            files_perm = (
+                isinstance(channel, discord.abc.User)
+                or channel.permissions_for(channel.guild.me).attach_files
+            )
+            options = ("more", "file") if files_perm else ("more",)
             if n_remaining > 0:
                 if n_remaining == 1:
-                    prompt_text = _(
-                        "There is still one message remaining. Type {command_1} to continue"
-                        " or {command_2} to upload all contents as a file."
-                    )
+                    if files_perm:
+                        prompt_text = _(
+                            "There is still one message remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
+                        )
+                    else:
+                        prompt_text = _(
+                            "There is still one message remaining. Type {command_1} to continue."
+                        )
                 else:
-                    prompt_text = _(
-                        "There are still {count} messages remaining. Type {command_1} to continue"
-                        " or {command_2} to upload all contents as a file."
-                    )
+                    if files_perm:
+                        prompt_text = _(
+                            "There are still {count} messages remaining. Type {command_1} to continue or {command_2} to upload all contents as a file."
+                        )
+                    else:
+                        prompt_text = _(
+                            "There are still {count} messages remaining. Type {command_1} to continue."
+                        )
+
                 query = await channel.send(
                     prompt_text.format(count=n_remaining, command_1="`more`", command_2="`file`")
                 )
-                pred = MessagePredicate.lower_contained_in(
-                    ("more", "file"), channel=channel, user=user
-                )
+                pred = MessagePredicate.lower_contained_in(options, channel=channel, user=user)
                 try:
                     resp = await self.wait_for(
                         "message",

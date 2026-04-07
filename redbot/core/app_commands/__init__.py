@@ -39,6 +39,7 @@ from discord.app_commands import (
     NoPrivateMessage as NoPrivateMessage,
     Parameter as Parameter,
     Range as Range,
+    Timestamp as Timestamp,
     Transform as Transform,
     Transformer as Transformer,
     TransformerError as TransformerError,

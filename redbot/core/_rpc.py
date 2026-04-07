@@ -93,7 +93,14 @@ class RPC:
             self._started, _discard, self._site = (
                 True,
                 await self._runner.setup(),
-                web.TCPSite(self._runner, host="127.0.0.1", port=port, shutdown_timeout=0),
+                web.TCPSite(
+                    self._runner,
+                    host="127.0.0.1",
+                    port=port,
+                    shutdown_timeout=120
+                    # Give the RPC server 2 minutes to finish up, else slap it!
+                    # Seems like a reasonable time. See Red#6391
+                ),
             )
         except Exception as exc:
             log.exception("RPC setup failure", exc_info=exc)

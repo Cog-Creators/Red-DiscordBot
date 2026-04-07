@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-04-04 07:32+0000\n"
+"POT-Creation-Date: 2026-02-15 23:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -384,17 +384,17 @@ msgstr "當 {stream.name} 直播時，我現在會在 {channel.mention} 頻道�
 msgid "I won't send notifications about {stream.name} in the {channel.mention} channel anymore"
 msgstr "我不會再在 {channel.mention} 頻道發送有關 {stream.name} 的通知"
 
-#: redbot/cogs/streams/streams.py:914
+#: redbot/cogs/streams/streams.py:920
 msgid "{mention}, {display_name} is live!"
 msgstr "{mention}，{display_name} 正在直播！"
 
-#: redbot/cogs/streams/streams.py:934
+#: redbot/cogs/streams/streams.py:940
 msgid "{display_name} is live!"
 msgstr "{display_name} 正在直播！"
 
 #: redbot/cogs/streams/streamtypes.py:227
 msgid "This stream will start <t:{time}:R>"
-msgstr ""
+msgstr "此直播將在 <t:{time}:R> 開始"
 
 #: redbot/cogs/streams/streamtypes.py:231
 msgid "This stream was scheduled for <t:{time}:R>"
