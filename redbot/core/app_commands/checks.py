@@ -15,10 +15,12 @@ from discord.app_commands.checks import (
     has_permissions,
 )
 
-import discord
-import enum
 from typing import Dict, Optional
+
+import discord
+
 from . import BotMissingPermissions, check
+from redbot.core.commands.requires import PrivilegeLevel, _validate_perms_dict
 
 __all__ = (
     "bot_has_permissions",
@@ -41,66 +43,6 @@ __all__ = (
     "bot_can_react",
     "bot_in_a_guild",
 )
-
-
-class PrivilegeLevel(enum.IntEnum):
-    """Enumeration for special privileges."""
-
-    # Maintainer Note: do NOT re-order these.
-    # Each privilege level also implies access to the ones before it.
-    # Inserting new privilege levels at a later point is fine if that is considered.
-
-    NONE = enum.auto()
-    """No special privilege level."""
-
-    MOD = enum.auto()
-    """User has the mod role."""
-
-    ADMIN = enum.auto()
-    """User has the admin role."""
-
-    GUILD_OWNER = enum.auto()
-    """User is the guild level."""
-
-    BOT_OWNER = enum.auto()
-    """User is a bot owner."""
-
-    @classmethod
-    async def from_interaction(cls, interaction: discord.Interaction) -> "PrivilegeLevel":
-        """Get a command author's PrivilegeLevel based on an interaction."""
-        if await interaction.client.is_owner(interaction.user):
-            return cls.BOT_OWNER
-        elif interaction.guild is None:
-            return cls.NONE
-        elif interaction.user == interaction.guild.owner:
-            return cls.GUILD_OWNER
-
-        # The following is simply an optimised way to check if the user has the
-        # admin or mod role.
-        guild_settings = interaction.client._config.guild(interaction.guild)
-
-        for snowflake in await guild_settings.admin_role():
-            if interaction.user.get_role(snowflake):
-                return cls.ADMIN
-        for snowflake in await guild_settings.mod_role():
-            if interaction.user.get_role(snowflake):
-                return cls.MOD
-
-        return cls.NONE
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}.{self.name}>"
-
-
-def _validate_perms_dict(perms: Dict[str, bool]) -> None:
-    invalid_keys = set(perms.keys()) - set(discord.Permissions.VALID_FLAGS)
-    if invalid_keys:
-        raise TypeError(f"Invalid perm name(s): {', '.join(invalid_keys)}")
-    for perm, value in perms.items():
-        if value is not True:
-            # We reject any permission not specified as 'True', since this is the only value which
-            # makes practical sense.
-            raise TypeError(f"Permission {perm} may only be specified as 'True', not {value}")
 
 
 def _permissions_deco(
