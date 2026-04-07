@@ -1,6 +1,8 @@
 import asyncio
+import json
 import os
 import sys
+import tempfile
 from typing import Any, Final, Optional, Tuple
 
 import click
@@ -8,6 +10,7 @@ from packaging.version import Version
 from rich.text import Text
 
 from redbot._update import cog_compatibility_checker, common
+from redbot._update.cog_compatibility_checker import CompatibilityResults
 from redbot.core._cli import asyncio_run
 from redbot.core.utils._internal_utils import fetch_latest_red_version
 
@@ -16,6 +19,7 @@ from . import arg_names
 
 EXIT_INSTANCE_SITE_PREFIX_MISMATCH: Final = 4
 CMD_NAME: Final = "check-cog-compatibility"
+_COMPATIBILITY_RESULTS_ENV_VAR = "_RED_UPDATE_COMPATIBILITY_RESULTS_FILE"
 
 
 class _VersionParamType(click.ParamType):
@@ -113,15 +117,16 @@ async def _check_cog_compatibility_command_impl(
             _, python_version, _ = interpreters[0]
 
     if len(instances) == 1:
+        results_file = os.getenv(_COMPATIBILITY_RESULTS_ENV_VAR, "")
         try:
-            await cog_compatibility_checker.check_instance(
+            results = await cog_compatibility_checker.check_instance(
                 instances[0],
                 latest_version=red_version,
                 interpreter_version=python_version,
                 ignore_prefix=ignore_prefix,
             )
         except cog_compatibility_checker.InstanceSitePrefixMismatchError as exc:
-            if not common.is_internal_cmd_call():
+            if not results_file:
                 common.print_with_prefix_column(
                     common.ICON_ERROR,
                     Text(exc.instance_name, style="bold"),
@@ -129,13 +134,16 @@ async def _check_cog_compatibility_command_impl(
                     " a different Python installation and/or virtual environment.",
                 )
             raise SystemExit(EXIT_INSTANCE_SITE_PREFIX_MISMATCH)
+        if results_file:
+            with open(results_file, "w", encoding="utf-8") as fp:
+                json.dump(results.to_json_dict(), fp)
         return
 
     if not instances:
         instances = tuple(common.INSTANCE_LIST)
     checked_instances = []
     for instance_name in instances:
-        exit_code, _ = await call(
+        exit_code, _, _ = await call(
             instance_name,
             red_version=red_version,
             python_version=python_version,
@@ -159,9 +167,9 @@ async def call(
     red_version: Version,
     python_version: Version,
     ignore_prefix: bool = False,
-    internal: bool = False,
+    return_results: bool = False,
     stdout: Optional[int] = None,
-) -> Tuple[int, Optional[str]]:
+) -> Tuple[int, Optional[str], Optional[CompatibilityResults]]:
     debug_args = (arg_names.DEBUG,) * common.get_log_cli_level()
     args = [
         "-m",
@@ -177,8 +185,6 @@ async def call(
     if ignore_prefix:
         args.append(arg_names.CHECK_OTHER_PYTHON_INSTALLS)
     env = os.environ.copy()
-    if internal:
-        env[common.INTERNAL_CMD_CALL_ENV_VAR] = "1"
 
     # terminal woes
     console = common.get_console()
@@ -193,9 +199,26 @@ async def call(
         env[common.INTERNAL_LEGACY_WINDOWS_ENV_VAR] = "0"
     env["PYTHONIOENCODING"] = sys.stdout.encoding
 
-    proc = await asyncio.create_subprocess_exec(sys.executable, *args, env=env, stdout=stdout)
-    stdout_data, _ = await proc.communicate()
-    decoded_stdout = None
-    if stdout_data is not None:
-        decoded_stdout = stdout_data.decode()
-    return await proc.wait(), decoded_stdout
+    results = None
+    results_file = None
+    if return_results:
+        results_file = tempfile.NamedTemporaryFile(delete=False)
+    try:
+        if results_file is not None:
+            results_file.close()
+            env[_COMPATIBILITY_RESULTS_ENV_VAR] = str(results_file.name)
+
+        proc = await asyncio.create_subprocess_exec(sys.executable, *args, env=env, stdout=stdout)
+        stdout_data, _ = await proc.communicate()
+        decoded_stdout = None
+        if stdout_data is not None:
+            decoded_stdout = stdout_data.decode()
+        exit_code = await proc.wait()
+        if not exit_code and results_file is not None:
+            with open(results_file.name, encoding="utf-8") as fp:
+                results = CompatibilityResults.from_json_dict(json.load(fp))
+    finally:
+        if results_file is not None:
+            os.remove(results_file.name)
+
+    return exit_code, decoded_stdout, results

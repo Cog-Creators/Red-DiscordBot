@@ -2,11 +2,13 @@ import dataclasses
 import functools
 import os
 import sys
-from typing import Iterable, Optional, Set
+from typing import Any, Dict, Iterable, Optional, Set
 
 import rich
 from packaging.version import Version
 from rich.text import Text
+from typing_extensions import Self
+
 from redbot.core import _downloader, _drivers, data_manager
 from redbot.core._cli import parse_cli_flags
 from redbot.core.bot import Red
@@ -27,15 +29,93 @@ class InstanceSitePrefixMismatchError(Exception):
         )
 
 
+@dataclasses.dataclass
+class CogCompatibilityInfo:
+    name: str
+    repo_name: str
+    min_bot_version: Version
+    max_bot_version: Version
+    min_python_version: Version
+    tags: Tuple[str, ...]
+
+    @classmethod
+    def from_installable(cls, installable: _downloader.Installable) -> Self:
+        return cls(
+            name=installable.name,
+            repo_name=installable.repo_name,
+            min_bot_version=installable.min_bot_version,
+            max_bot_version=installable.max_bot_version,
+            min_python_version=installable.min_python_version,
+            tags=installable.tags,
+        )
+
+    @classmethod
+    def from_json_dict(cls, data: Dict[str, Any]) -> Self:
+        return cls(
+            name=data["name"],
+            repo_name=data["repo_name"],
+            min_bot_version=Version(data["min_bot_version"]),
+            max_bot_version=Version(data["max_bot_version"]),
+            min_python_version=Version(data["min_python_version"]),
+            tags=tuple(data["tags"]),
+        )
+
+    def to_json_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "repo_name": self.repo_name,
+            "min_bot_version": str(self.min_bot_version),
+            "max_bot_version": str(self.max_bot_version),
+            "min_python_version": str(self.min_python_version),
+            "tags": self.tags,
+        }
+
+
+CogSupportDict = Dict[str, CogCompatibilityInfo]
+
+
 @dataclasses.dataclass(frozen=True)
 class CompatibilityResults:
     latest_version: Version
     interpreter_version: Version
 
-    explicitly_supported: Set[_downloader.Installable]
-    potentially_supported: Set[_downloader.Installable]
-    incompatible_python: Set[_downloader.Installable]
-    incompatible_red: Set[_downloader.Installable]
+    explicitly_supported: CogSupportDict = dataclasses.field(default_factory=dict)
+    potentially_supported: CogSupportDict = dataclasses.field(default_factory=dict)
+    incompatible_python: CogSupportDict = dataclasses.field(default_factory=dict)
+    incompatible_red: CogSupportDict = dataclasses.field(default_factory=dict)
+
+    @classmethod
+    def from_json_dict(cls, data: Dict[str, Any]) -> Self:
+        return cls(
+            latest_version=Version(data["latest_version"]),
+            interpreter_version=Version(data["interpreter_version"]),
+            explicitly_supported={
+                cog_name: CogCompatibilityInfo.from_json_dict(info_data)
+                for cog_name, info_data in data["explicitly_supported"].items()
+            },
+            potentially_supported={
+                cog_name: CogCompatibilityInfo.from_json_dict(info_data)
+                for cog_name, info_data in data["potentially_supported"].items()
+            },
+            incompatible_python={
+                cog_name: CogCompatibilityInfo.from_json_dict(info_data)
+                for cog_name, info_data in data["incompatible_python"].items()
+            },
+            incompatible_red={
+                cog_name: CogCompatibilityInfo.from_json_dict(info_data)
+                for cog_name, info_data in data["incompatible_red"].items()
+            },
+        )
+
+    def to_json_dict(self) -> Dict[str, Any]:
+        return {
+            "latest_version": str(self.latest_version),
+            "interpreter_version": str(self.interpreter_version),
+            "explicitly_supported": list(self.explicitly_supported),
+            "potentially_supported": list(self.potentially_supported),
+            "incompatible_python": list(self.incompatible_python),
+            "incompatible_red": list(self.incompatible_red),
+        }
 
     def print(self) -> None:
         major_version = Text(f"{self.latest_version.major}.{self.latest_version.minor}")
@@ -45,7 +125,7 @@ class CompatibilityResults:
                 "The following cogs are explicitly marked as supporting Red ",
                 major_version,
                 ":\n",
-                Text(", ").join(Text(cog.name, style="bold") for cog in self.explicitly_supported),
+                Text(", ").join(Text(cog, style="bold") for cog in self.explicitly_supported),
             )
         if self.potentially_supported:
             common.print_with_prefix_column(
@@ -53,9 +133,7 @@ class CompatibilityResults:
                 "The following cogs may support Red ",
                 major_version,
                 " but they haven't been explicitly marked as such:\n",
-                Text(", ").join(
-                    Text(cog.name, style="bold") for cog in self.potentially_supported
-                ),
+                Text(", ").join(Text(cog, style="bold") for cog in self.potentially_supported),
             )
         if self.incompatible_red:
             common.print_with_prefix_column(
@@ -63,7 +141,7 @@ class CompatibilityResults:
                 "The following cogs do not support Red ",
                 Text(str(self.latest_version)),
                 ":\n",
-                Text(", ").join(Text(cog.name, style="bold") for cog in self.incompatible_red),
+                Text(", ").join(Text(cog, style="bold") for cog in self.incompatible_red),
             )
         if self.incompatible_python:
             common.print_with_prefix_column(
@@ -71,7 +149,7 @@ class CompatibilityResults:
                 "The following cogs do not support Python ",
                 Text(str(self.interpreter_version)),
                 ":\n",
-                Text(", ").join(Text(cog.name, style="bold") for cog in self.incompatible_python),
+                Text(", ").join(Text(cog, style="bold") for cog in self.incompatible_python),
             )
         if not self.explicitly_supported and (
             self.potentially_supported or self.incompatible_red or self.incompatible_python
@@ -104,7 +182,7 @@ class CogCompatibilityChecker:
     def current_version(self) -> Version:
         return common.get_current_red_version()
 
-    async def check(self) -> None:
+    async def check(self) -> CompatibilityResults:
         instance_name = data_manager.instance_name()
         if not self.ignore_prefix:
             last_known_prefix = await self.bot._config.last_system_info.python_prefix()
@@ -166,6 +244,7 @@ class CogCompatibilityChecker:
 
         self._stdout_console.print()
         compatibility_results.print()
+        return compatibility_results
 
     async def _update_repos(self) -> None:
         with detailed_progress(unit="repos", console=self._console) as progress:
@@ -218,37 +297,44 @@ class CogCompatibilityChecker:
         # we don't check whether currently installed version of the cog supports that Red version.
         # This is intentional - we want to allow cog creators to mark something incompatible
         # after the fact.
-        incompatible_python = set(update_check_result.incompatible_python_version)
-        incompatible_red = set(update_check_result.incompatible_bot_version)
+        incompatible_python = {
+            cog.name: CogCompatibilityInfo.from_installable(cog)
+            for cog in update_check_result.incompatible_python_version
+        }
+        incompatible_red = {
+            cog.name: CogCompatibilityInfo.from_installable(cog)
+            for cog in update_check_result.incompatible_bot_version
+        }
 
-        explicitly_supported = set()
-        potentially_supported = set()
+        explicitly_supported = {}
+        potentially_supported = {}
 
         def _handle_cog(cog: _downloader.Installable) -> None:
+            info = CogCompatibilityInfo.from_installable(cog)
             if not breaking_update:
                 # If we're not performing an update from 3.x -> 3.y, we have no reason
                 # to check anything here.
-                explicitly_supported.add(cog)
+                explicitly_supported[cog.name] = info
             elif latest_version.release[:2] in (
                 cog.min_bot_version.release[:2],
                 cog.max_bot_version.release[:2],
             ):
                 # If cog creator explicitly set min/max_bot_version to 3.x.y,
                 # then 3.x is explicitly supported.
-                explicitly_supported.add(cog)
+                explicitly_supported[cog.name] = info
             elif f"red-{latest_version.major}-{latest_version.minor}-ready" in cog.tags:
                 # If cog creator explicitly added a "red-3.x-ready" tag,
                 # then 3.x is explicitly supported.
                 # This is similar to the meaning of "Programming Language :: Python :: 3.x"
                 # classifiers in Python packaging.
-                explicitly_supported.add(cog)
+                explicitly_supported[cog.name] = info
             else:
                 # If we don't have any explicit signals from the cog's metadata that
                 # Red 3.x is supported, the cog is only *potentially* supported by that version.
-                potentially_supported.add(cog)
+                potentially_supported[cog.name] = info
 
-        not_updatable -= incompatible_python
-        not_updatable -= incompatible_red
+        not_updatable.difference_update(update_check_result.incompatible_python_version)
+        not_updatable.difference_update(update_check_result.incompatible_bot_version)
 
         for cog in update_check_result.updatable_cogs:
             not_updatable.discard(cog)
@@ -274,7 +360,7 @@ async def check_instance(
     latest_version: Version,
     interpreter_version: Version,
     ignore_prefix: bool = False,
-) -> None:
+) -> CompatibilityResults:
     data_manager.load_basic_configuration(instance)
     red = Red(cli_flags=parse_cli_flags([instance]))
     driver_cls = _drivers.get_driver_class()
@@ -286,6 +372,6 @@ async def check_instance(
             interpreter_version=interpreter_version,
             ignore_prefix=ignore_prefix,
         )
-        await checker.check()
+        return await checker.check()
     finally:
         await driver_cls.teardown()

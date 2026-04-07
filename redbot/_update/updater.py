@@ -20,6 +20,7 @@ from typing_extensions import Self
 from redbot.core.utils._internal_utils import AvailableVersion, fetch_available_red_versions
 
 from . import changelog, cmd, common, runner
+from .cog_compatibility_checker import CompatibilityResults
 from .tui import ChangelogReaderApp, ChangelogReaderResult
 
 
@@ -56,14 +57,42 @@ class UpdaterOptions:
 
 
 @dataclasses.dataclass
-class InstanceResults:
-    checked: List[str] = dataclasses.field(default_factory=list)
+class UpdaterCompatibilitySummary:
+    checked: Dict[str, CompatibilityResults]
+    failed: List[str]
+    skipped: List[str]
+
+    @classmethod
+    def from_json_dict(cls, data: Dict[str, Any]) -> Self:
+        return cls(
+            checked={
+                instance_name: CompatibilityResults.from_json_dict(results_data)
+                for instance_name, results_data in data["checked"].items()
+            },
+            failed=data["failed"],
+            skipped=data["skipped"],
+        )
+
+    def to_json_dict(self) -> Dict[str, Any]:
+        return {
+            "checked": {
+                instance_name: results.to_json_dict()
+                for instance_name, results in self.checked.items()
+            },
+            "failed": self.failed,
+            "skipped": self.skipped,
+        }
+
+
+@dataclasses.dataclass
+class BackupResults:
+    checked: List[str]
+    failed: List[str]
     skipped: List[str] = dataclasses.field(default_factory=list)
-    failed: List[str] = dataclasses.field(default_factory=list)
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, List[str]]) -> Self:
-        return cls(checked=data["checked"], skipped=data["skipped"], failed=data["failed"])
+        return cls(checked=data["checked"], failed=data["failed"], skipped=data["skipped"])
 
     def to_json_dict(self) -> Dict[str, List[str]]:
         return dataclasses.asdict(self)
@@ -90,11 +119,11 @@ class UpdaterMetadata:
     interpreter_info: PythonInfo = dataclasses.field(default_factory=PythonInfo.current_system)
     interpreter_exe: str = ""
     # cog compatibility check results
-    cog_compatibility: Optional[InstanceResults] = None
+    cog_compatibility: Optional[UpdaterCompatibilitySummary] = None
     # backup info
     to_backup: List[str] = dataclasses.field(default_factory=list)
     backup_dir: Optional[Path] = None
-    backup_results: Optional[InstanceResults] = None
+    backup_results: Optional[BackupResults] = None
 
     def __post_init__(self) -> None:
         if not self.interpreter_exe:
@@ -120,10 +149,12 @@ class UpdaterMetadata:
             interpreter_version=Version(data["interpreter_version"]),
             interpreter_info=PythonInfo.from_dict(data["interpreter_info"]),
             interpreter_exe=data["interpreter_exe"],
-            cog_compatibility=InstanceResults.from_json_dict(data["cog_compatibility"]),
+            cog_compatibility=UpdaterCompatibilitySummary.from_json_dict(
+                data["cog_compatibility"]
+            ),
             to_backup=data["to_backup"],
             backup_dir=backup_dir and Path(backup_dir),
-            backup_results=InstanceResults.from_json_dict(data["backup_results"]),
+            backup_results=BackupResults.from_json_dict(data["backup_results"]),
         )
 
     def to_json_dict(self) -> Dict[str, Any]:
@@ -373,6 +404,7 @@ class Updater:
                 break
 
     async def _check_cog_compatiblity(self) -> None:
+        outputs = {}
         checked_instances = {}
         skipped_instances = []
         failed_instances = []
@@ -380,12 +412,12 @@ class Updater:
             if instance_name in self.options.excluded_instances:
                 skipped_instances.append(instance_name)
                 continue
-            exit_code, stdout = await cmd.cog_compatibility.call(
+            exit_code, stdout, results = await cmd.cog_compatibility.call(
                 instance_name,
                 red_version=self.latest.version,
                 python_version=self.metadata.interpreter_version,
                 ignore_prefix=self.options.ignore_prefix,
-                internal=True,
+                return_results=True,
                 stdout=asyncio.subprocess.PIPE,
             )
             if exit_code != cmd.cog_compatibility.EXIT_INSTANCE_SITE_PREFIX_MISMATCH:
@@ -409,7 +441,9 @@ class Updater:
                         style="red",
                     )
                 else:
-                    checked_instances[instance_name] = stdout
+                    assert results is not None
+                    outputs[instance_name] = stdout
+                    checked_instances[instance_name] = results
             else:
                 skipped_instances.append(instance_name)
             if stdout:
@@ -418,8 +452,8 @@ class Updater:
         if not self.options.no_backup:
             self.metadata.to_backup = [*checked_instances, *failed_instances]
 
-        if checked_instances:
-            for instance_name, stdout in checked_instances.items():
+        if outputs:
+            for instance_name, stdout in outputs.items():
                 self.console.rule(Text(instance_name, style="bold"))
                 print(stdout, end="")
             self.console.rule()
@@ -451,8 +485,8 @@ class Updater:
             )
         self.console.print()
 
-        self.metadata.cog_compatibility = InstanceResults(
-            checked=list(checked_instances), skipped=skipped_instances, failed=failed_instances
+        self.metadata.cog_compatibility = UpdaterCompatibilitySummary(
+            checked=checked_instances, failed=failed_instances, skipped=skipped_instances
         )
 
     async def _make_backups(self) -> None:
@@ -491,7 +525,7 @@ class Updater:
             else:
                 checked.append(instance_name)
 
-        self.metadata.backup_results = InstanceResults(checked=checked, failed=failed)
+        self.metadata.backup_results = BackupResults(checked=checked, failed=failed)
         if self.metadata.cog_compatibility:
             self.metadata.backup_results.skipped.extend(self.metadata.cog_compatibility.skipped)
 
