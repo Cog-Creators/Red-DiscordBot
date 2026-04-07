@@ -10,7 +10,7 @@ from packaging.version import Version
 from rich.text import Text
 
 from redbot._update import cog_compatibility_checker, common
-from redbot._update.cog_compatibility_checker import CompatibilityResults
+from redbot._update.cog_compatibility_checker import CompatibilitySummary
 from redbot.core._cli import asyncio_run
 from redbot.core.utils._internal_utils import fetch_latest_red_version
 
@@ -169,7 +169,7 @@ async def call(
     ignore_prefix: bool = False,
     return_results: bool = False,
     stdout: Optional[int] = None,
-) -> Tuple[int, Optional[str], Optional[CompatibilityResults]]:
+) -> Tuple[int, Optional[str], Optional[CompatibilitySummary]]:
     debug_args = (arg_names.DEBUG,) * common.get_log_cli_level()
     args = [
         "-m",
@@ -216,7 +216,7 @@ async def call(
         exit_code = await proc.wait()
         if not exit_code and results_file is not None:
             with open(results_file.name, encoding="utf-8") as fp:
-                results = CompatibilityResults.from_json_dict(json.load(fp))
+                results = CompatibilitySummary.from_json_dict(json.load(fp))
     finally:
         if results_file is not None:
             os.remove(results_file.name)

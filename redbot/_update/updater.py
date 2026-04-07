@@ -20,7 +20,7 @@ from typing_extensions import Self
 from redbot.core.utils._internal_utils import AvailableVersion, fetch_available_red_versions
 
 from . import changelog, cmd, common, runner
-from .cog_compatibility_checker import CompatibilityResults
+from .cog_compatibility_checker import CompatibilitySummary
 from .tui import ChangelogReaderApp, ChangelogReaderResult
 
 
@@ -58,7 +58,7 @@ class UpdaterOptions:
 
 @dataclasses.dataclass
 class UpdaterCompatibilitySummary:
-    checked: Dict[str, CompatibilityResults]
+    checked: Dict[str, CompatibilitySummary]
     failed: List[str]
     skipped: List[str]
 
@@ -66,7 +66,7 @@ class UpdaterCompatibilitySummary:
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
         return cls(
             checked={
-                instance_name: CompatibilityResults.from_json_dict(results_data)
+                instance_name: CompatibilitySummary.from_json_dict(results_data)
                 for instance_name, results_data in data["checked"].items()
             },
             failed=data["failed"],
