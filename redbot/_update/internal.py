@@ -10,6 +10,7 @@ from rich.text import Text
 from redbot import __version__
 
 from . import cmd, common, runner
+from .updater import get_updater_metadata
 
 
 @click.group(invoke_without_command=True)
@@ -25,6 +26,7 @@ def finish_update() -> None:
     Entrypoint for finishing up the update that runs with the new version of Red.
     """
     assert runner.get_request_output().request_type is runner.RequestType.exec
+    updater_metadata = get_updater_metadata()
 
     with common.get_console().status("Cleaning up..."):
         backup_dir = Path(sys.prefix) / common.OLD_VENV_BACKUP_DIR_NAME
@@ -37,6 +39,21 @@ def finish_update() -> None:
         Text(__version__, style="bold"),
         " has been finished!",
     )
+
+    if updater_metadata.backup_dir:
+        additional_text = ""
+        if not updater_metadata.options.backup_dir:
+            additional_text = (
+                "\nNote that this is a temporary directory and may eventually get auto-removed"
+                " by your system."
+            )
+        common.print_with_prefix_column(
+            common.ICON_INFO,
+            "If needed, you can find the backups of the virtual environment"
+            " and the instances at: ",
+            Text(str(updater_metadata.backup_dir), style="bold"),
+            additional_text,
+        )
 
 
 @cli.command()
