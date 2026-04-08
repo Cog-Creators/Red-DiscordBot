@@ -286,7 +286,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         "backup_version": BACKUP_VERSION,
     }
 
-    with tarfile.open(str(backup_fpath), "w:gz") as tar:
+    with tarfile.open(str(backup_fpath), "w:gz", dereference=True) as tar:
         with detailed_progress(unit="files") as progress:
             progress_tracker = progress.track(to_backup, description="Compressing data")
             for f in progress_tracker:
