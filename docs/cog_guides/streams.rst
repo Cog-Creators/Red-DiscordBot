@@ -64,7 +64,7 @@ streamset offlinemessage
 ^^^^^^^^^^^^^^^^^^^^
 .. code-block:: none
     
-    [p]streamset offlinemessage
+    [p]streamset offlinemessage <on_off>
 
 **Description**
 Toggle sending a message when a stream goes offline.
