@@ -721,12 +721,15 @@ async def update_cogs(
     *,
     cogs: Optional[List[InstalledModule]] = None,
     repos: Optional[List[Repo]] = None,
+    update_repos: bool = True,
     env: Environment = Environment.current(),
 ) -> CogUpdateResult:
     if cogs is not None and repos is not None:
         raise ValueError("You can specify cogs or repos argument, not both")
 
-    cogs_to_check, failed_repos = await _get_cogs_to_check(repos=repos, cogs=cogs)
+    cogs_to_check, failed_repos = await _get_cogs_to_check(
+        repos=repos, cogs=cogs, update_repos=update_repos
+    )
     return await _update_cogs(cogs_to_check, failed_repos=failed_repos, env=env)
 
 
@@ -737,12 +740,14 @@ async def update_repo_cogs(
     cogs: Optional[List[InstalledModule]] = None,
     *,
     rev: Optional[str] = None,
+    update_repo: bool = True,
     env: Environment = Environment.current(),
 ) -> CogUpdateResult:
-    try:
-        await repo.update()
-    except errors.UpdateError:
-        return await _update_cogs(set(), failed_repos=(repo.name,))
+    if update_repo:
+        try:
+            await repo.update()
+        except errors.UpdateError:
+            return await _update_cogs(set(), failed_repos=(repo.name,))
 
     # TODO: should this be set to `repo.branch` when `rev` is None?
     commit = None
