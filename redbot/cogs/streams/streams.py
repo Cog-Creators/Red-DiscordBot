@@ -714,7 +714,11 @@ class Streams(commands.Cog):
     @streamset.command()
     @commands.guild_only()
     async def offlinemessage(self, ctx: commands.Context, on_off: bool):
-        """Toggle sending a message when a stream goes offline."""
+        """Toggle sending a message when a stream goes offline.
+        
+        **Arguments:**
+        - ``<on_off>`` Whether to turn on or off.
+        """
         await self.config.guild(ctx.guild).offline_message.set(on_off)
         if on_off:
             await ctx.send(_("I will send a message when a stream goes offline."))
