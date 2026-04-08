@@ -44,6 +44,7 @@ from rich.progress_bar import ProgressBar
 from red_commons.logging import VERBOSE, TRACE
 from typing_extensions import NotRequired, Self
 
+from redbot import __version__
 from redbot.core import data_manager
 from redbot.core.utils.chat_formatting import box
 
@@ -408,10 +409,19 @@ class AvailableVersion:
         return NotImplemented
 
 
-async def fetch_available_red_versions() -> List[AvailableVersion]:
+async def fetch_available_red_versions(
+    *, include_prereleases: Optional[bool] = None
+) -> List[AvailableVersion]:
     """
     Fetch information about Red releases available on PyPI,
     sorted by version (latest first).
+
+    Parameters
+    ----------
+    include_prereleases : bool, optional
+        Whether the pre-releases should be included in the list.
+        If ``None`` (the default), the pre-releases will only be included,
+        if the currently running Red version is considered a pre-release.
 
     Raises
     ------
@@ -427,6 +437,8 @@ async def fetch_available_red_versions() -> List[AvailableVersion]:
     KeyError
         The PyPI metadata is missing some of the required information.
     """
+    if include_prereleases is None:
+        include_prereleases = Version(__version__).is_prerelease
     expected_content_type = "application/vnd.pypi.simple.v1+json"
     async with aiohttp.ClientSession() as session:
         async with session.get(
@@ -458,6 +470,8 @@ async def fetch_available_red_versions() -> List[AvailableVersion]:
             version = Version(raw_version)
         else:
             continue
+        if version.is_prerelease and not include_prereleases:
+            continue
         version_files = files.setdefault(version, {})
         version_files[f["filename"]] = f
 
@@ -472,9 +486,18 @@ async def fetch_available_red_versions() -> List[AvailableVersion]:
     return available_versions
 
 
-async def fetch_latest_red_version() -> AvailableVersion:
+async def fetch_latest_red_version(
+    *, include_prereleases: Optional[bool] = None
+) -> AvailableVersion:
     """
     Fetch information about latest Red release on PyPI.
+
+    Parameters
+    ----------
+    include_prereleases : bool, optional
+        Whether the pre-releases should be considered when finding the latest version.
+        If ``None`` (the default), the pre-releases will only be considered,
+        if the currently running Red version is considered a pre-release.
 
     Raises
     ------
@@ -490,7 +513,9 @@ async def fetch_latest_red_version() -> AvailableVersion:
     KeyError
         The PyPI metadata is missing some of the required information.
     """
-    available_versions = await fetch_available_red_versions()
+    available_versions = await fetch_available_red_versions(
+        include_prereleases=include_prereleases
+    )
     return available_versions[0]
 
 
