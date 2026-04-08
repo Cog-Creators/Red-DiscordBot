@@ -932,7 +932,7 @@ class Streams(commands.Cog):
                                 content = content.replace("{stream}", str(stream.name))
                                 content = content.replace("{duration}", duration)
                             else:
-                                content = _("{display_name} has gone offline.").format(
+                                content = _("{stream.display_name} has gone offline.").format(
                                     display_name=display_name,
                                 )
                             with contextlib.suppress(discord.Forbidden, discord.HTTPException):
