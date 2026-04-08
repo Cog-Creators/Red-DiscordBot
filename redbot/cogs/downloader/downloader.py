@@ -51,6 +51,17 @@ class Downloader(commands.Cog):
         """Nothing to delete"""
         return
 
+    # This is a compatibility shim for people using Downloader internal pre-3.5.25.
+    # It will probably get removed in Red 3.6.
+    @property
+    def _repo_manager(self):
+        return _downloader._repo_manager
+
+    # This is a compatibility shim for people using Downloader internal pre-3.5.25.
+    # It will probably get removed in Red 3.6.
+    async def installed_cogs(self) -> Tuple[InstalledModule, ...]:
+        return await _downloader.installed_cogs()
+
     @staticmethod
     async def send_pagified(target: discord.abc.Messageable, content: str) -> None:
         for page in pagify(content):
@@ -475,15 +486,20 @@ class Downloader(commands.Cog):
                     )
                     + message
                 )
-        # "---" added to separate cog install messages from Downloader's message
-        await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
-        for cog in install_result.installed_cogs:
-            if cog.install_msg:
-                await ctx.send(
-                    cog.install_msg.replace("[p]", ctx.clean_prefix).replace(
-                        "[botname]", ctx.me.display_name
-                    )
+
+        message += deprecation_notice
+        cogs_with_install_msg = [cog for cog in install_result.installed_cogs if cog.install_msg]
+        if cogs_with_install_msg:
+            # "---" added to separate cog install messages from Downloader's message
+            message += "\n---"
+        await self.send_pagified(ctx, message)
+
+        for cog in cogs_with_install_msg:
+            await ctx.send(
+                cog.install_msg.replace("[p]", ctx.clean_prefix).replace(
+                    "[botname]", ctx.me.display_name
                 )
+            )
 
     @cog.command(name="uninstall", require_var_positional=True)
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:

@@ -9,7 +9,7 @@ Bot
 Red
 ^^^
 
-.. autoclass:: Red
+.. autoclass:: Red()
     :members:
     :exclude-members: get_context, get_embed_color
 
