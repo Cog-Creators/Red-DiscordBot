@@ -245,18 +245,21 @@ class CompatibilityResults:
 
 @dataclasses.dataclass(frozen=True)
 class CompatibilitySummary:
+    instance_name: str
     before_update: CompatibilityResults
     after_update: CompatibilityResults
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
         return cls(
+            instance_name=data["instance_name"],
             before_update=CompatibilityResults.from_json_dict(data["before_update"]),
             after_update=CompatibilityResults.from_json_dict(data["after_update"]),
         )
 
     def to_json_dict(self) -> Dict[str, Any]:
         return {
+            "instance_name": self.instance_name,
             "before_update": self.before_update.to_json_dict(),
             "after_update": self.after_update.to_json_dict(),
         }
@@ -333,6 +336,7 @@ class CogCompatibilityChecker:
             self._console.print("Available cog updates checked.")
 
             summary = CompatibilitySummary(
+                instance_name=instance_name,
                 before_update=self._evaluate_before_update_compatibility(to_check),
                 after_update=self._evaluate_after_update_compatibility(
                     to_check, update_check_result
