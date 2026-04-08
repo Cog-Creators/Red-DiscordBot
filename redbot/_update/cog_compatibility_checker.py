@@ -1,9 +1,10 @@
 import dataclasses
 import enum
 import functools
+import itertools
 import os
 import sys
-from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
+from typing import Any, Dict, Iterable, Iterator, List, Mapping, Optional, Set, Tuple
 
 import rich
 from packaging.version import Version
@@ -140,7 +141,7 @@ CogSupportDict = Dict[str, CogCompatibilityInfo]
 
 
 @dataclasses.dataclass(frozen=True)
-class CompatibilityResults:
+class CompatibilityResults(Mapping[str, CogCompatibilityInfo]):
     latest_version: Version
     interpreter_version: Version
 
@@ -193,6 +194,48 @@ class CompatibilityResults:
                 for cog_name, info in self.incompatible_bot_version.items()
             },
         }
+
+    def __getitem__(self, key: str) -> CogCompatibilityInfo:
+        for data in (
+            self.explicitly_supported,
+            self.potentially_supported,
+            self.incompatible_python_version,
+            self.incompatible_bot_version,
+        ):
+            try:
+                return data[key]
+            except KeyError:
+                pass
+        raise KeyError(key)
+
+    def __iter__(self) -> Iterator[str]:
+        return itertools.chain(
+            self.explicitly_supported.keys(),
+            self.potentially_supported.keys(),
+            self.incompatible_python_version.keys(),
+            self.incompatible_bot_version.keys(),
+        )
+
+    def __len__(self) -> int:
+        count = 0
+        for data in (
+            self.explicitly_supported,
+            self.potentially_supported,
+            self.incompatible_python_version,
+            self.incompatible_bot_version,
+        ):
+            count += len(data)
+        return count
+
+    def __bool__(self) -> bool:
+        return any(
+            (
+                self.explicitly_supported,
+                self.potentially_supported,
+                self.incompatible_python_version,
+                self.incompatible_bot_version,
+            )
+        )
 
     def print(self) -> None:
         major_version = Text(f"{self.latest_version.major}.{self.latest_version.minor}")
