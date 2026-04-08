@@ -57,6 +57,18 @@ streamset
 
 Manage stream alert settings.
 
+.. _streams-command-streamset-offlinemessage:
+
+^^^^^^^^^^^^^^^^^^^^
+streamset offlinemessage
+^^^^^^^^^^^^^^^^^^^^
+.. code-block:: none
+    
+    [p]streamset offlinemessage
+
+**Description**
+Toggle sending a message when a stream goes offline.
+
 .. _streams-command-streamset-autodelete:
 
 ^^^^^^^^^^^^^^^^^^^^
@@ -179,6 +191,29 @@ streamset message
 **Description**
 
 Manage custom messages for stream alerts.
+
+.. _streams-command-streamset-message-offline:
+
+^^^^^^^^^^^^^^^^^^^^^^^^^
+streamset message offline
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+    
+    [p]streamset message offline <message>
+
+**Description**
+Set a custom message to send when a stream goes offline.
+
+**Arguments:**
+- `{stream}` This will show the channel name or username of the stream that went offline.
+- `{stream.display_name}` This will show the display name of the stream that went offline (on Twitch, this may be different from `{stream}`).
+- `{duration}` This will show how long the stream ran for.
+
+ **Example**:
+- [p]streamset message offline {stream.display_name} has gone offline after streaming for {duration}!
 
 .. _streams-command-streamset-message-mention:
 
