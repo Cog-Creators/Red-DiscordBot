@@ -715,7 +715,7 @@ class Streams(commands.Cog):
     @commands.guild_only()
     async def offlinemessage(self, ctx: commands.Context, on_off: bool):
         """Toggle sending a message when a stream goes offline.
-        
+
         **Arguments:**
         - ``<on_off>`` Whether to turn on or off.
         """

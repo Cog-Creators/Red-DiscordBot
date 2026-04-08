@@ -207,15 +207,18 @@ streamset message offline
     [p]streamset message offline <message>
 
 **Description**
+
 Set a custom message to send when a stream goes offline.
 
 **Arguments:**
+
 * ``{stream}``: This will show the channel name or username of the stream that went offline.
 * ``{stream.display_name}``: This will show the display name of the stream that went offline (on Twitch, this may be different from ``{stream}``).
 * ``{duration}``: This will show how long the stream ran for.
 
- **Example**:
-* [p]streamset message offline {stream.display_name} has gone offline after streaming for {duration}!
+**Example**:
+
+* [p]streamset message offline {stream.display_name} has gone offline after streaming for {duration}
 
 .. _streams-command-streamset-message-mention:
 
