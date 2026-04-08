@@ -146,8 +146,8 @@ class CompatibilityResults:
 
     explicitly_supported: CogSupportDict = dataclasses.field(default_factory=dict)
     potentially_supported: CogSupportDict = dataclasses.field(default_factory=dict)
-    incompatible_python: CogSupportDict = dataclasses.field(default_factory=dict)
-    incompatible_red: CogSupportDict = dataclasses.field(default_factory=dict)
+    incompatible_python_version: CogSupportDict = dataclasses.field(default_factory=dict)
+    incompatible_bot_version: CogSupportDict = dataclasses.field(default_factory=dict)
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
@@ -162,13 +162,13 @@ class CompatibilityResults:
                 cog_name: CogCompatibilityInfo.from_json_dict(info_data)
                 for cog_name, info_data in data["potentially_supported"].items()
             },
-            incompatible_python={
+            incompatible_python_version={
                 cog_name: CogCompatibilityInfo.from_json_dict(info_data)
-                for cog_name, info_data in data["incompatible_python"].items()
+                for cog_name, info_data in data["incompatible_python_version"].items()
             },
-            incompatible_red={
+            incompatible_bot_version={
                 cog_name: CogCompatibilityInfo.from_json_dict(info_data)
-                for cog_name, info_data in data["incompatible_red"].items()
+                for cog_name, info_data in data["incompatible_bot_version"].items()
             },
         )
 
@@ -184,12 +184,13 @@ class CompatibilityResults:
                 cog_name: info.to_json_dict()
                 for cog_name, info in self.potentially_supported.items()
             },
-            "incompatible_python": {
+            "incompatible_python_version": {
                 cog_name: info.to_json_dict()
-                for cog_name, info in self.incompatible_python.items()
+                for cog_name, info in self.incompatible_python_version.items()
             },
-            "incompatible_red": {
-                cog_name: info.to_json_dict() for cog_name, info in self.incompatible_red.items()
+            "incompatible_bot_version": {
+                cog_name: info.to_json_dict()
+                for cog_name, info in self.incompatible_bot_version.items()
             },
         }
 
@@ -211,24 +212,28 @@ class CompatibilityResults:
                 " but they haven't been explicitly marked as such:\n",
                 Text(", ").join(Text(cog, style="bold") for cog in self.potentially_supported),
             )
-        if self.incompatible_red:
+        if self.incompatible_bot_version:
             common.print_with_prefix_column(
                 common.ICON_ERROR,
                 "The following cogs do not support Red ",
                 Text(str(self.latest_version)),
                 ":\n",
-                Text(", ").join(Text(cog, style="bold") for cog in self.incompatible_red),
+                Text(", ").join(Text(cog, style="bold") for cog in self.incompatible_bot_version),
             )
-        if self.incompatible_python:
+        if self.incompatible_python_version:
             common.print_with_prefix_column(
                 common.ICON_ERROR,
                 "The following cogs do not support Python ",
                 Text(str(self.interpreter_version)),
                 ":\n",
-                Text(", ").join(Text(cog, style="bold") for cog in self.incompatible_python),
+                Text(", ").join(
+                    Text(cog, style="bold") for cog in self.incompatible_python_version
+                ),
             )
         if not self.explicitly_supported and (
-            self.potentially_supported or self.incompatible_red or self.incompatible_python
+            self.potentially_supported
+            or self.incompatible_bot_version
+            or self.incompatible_python_version
         ):
             common.print_with_prefix_column(
                 common.ICON_INFO,
@@ -401,14 +406,14 @@ class CogCompatibilityChecker:
             info = CogCompatibilityInfo.from_installable(cog)
             if cog.min_python_version > interpreter_version:
                 info.compatibility_status = CompatibilityStatus.UNSUPPORTED_PYTHON_VERSION
-                results.incompatible_python[cog.name] = info
+                results.incompatible_python_version[cog.name] = info
             elif cog.min_bot_version > latest_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
                 and cog.max_bot_version < latest_version
             ):
                 info.compatibility_status = CompatibilityStatus.UNSUPPORTED_BOT_VERSION
-                results.incompatible_red[cog.name] = info
+                results.incompatible_bot_version[cog.name] = info
             elif not breaking_update:
                 info.compatibility_status = CompatibilityStatus.EXPLICITLY_SUPPORTED_NON_BREAKING
                 results.explicitly_supported[cog.name] = info
