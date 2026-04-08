@@ -21,6 +21,7 @@ import click
 
 from redbot.core._cli import confirm
 from redbot.core.utils._internal_utils import (
+    BackupDetails,
     safe_delete,
     create_backup as red_create_backup,
     cli_level_to_log_level,
@@ -401,7 +402,7 @@ class RestoreInfo:
     def __init__(
         self,
         tar: tarfile.TarFile,
-        backup_version: int,
+        backup_details: BackupDetails,
         name: str,
         data_path: Path,
         storage_type: BackendType,
@@ -409,7 +410,8 @@ class RestoreInfo:
         restore_downloader: Optional[bool] = None,
     ):
         self.tar = tar
-        self.backup_version = backup_version
+        self.backup_details = backup_details
+        self.backup_version = backup_details["backup_version"]
         self.name = name
         self._data_path = data_path
         self.storage_type = storage_type
@@ -422,11 +424,11 @@ class RestoreInfo:
         cls, tar: tarfile.TarFile, *, restore_downloader: Optional[bool] = None
     ) -> RestoreInfo:
         instance_name, raw_data = cls.get_instance_from_backup(tar)
-        backup_version = cls.get_backup_version(tar)
+        backup_details = cls.get_backup_details(tar)
 
         return cls(
             tar=tar,
-            backup_version=backup_version,
+            backup_details=backup_details,
             name=instance_name,
             data_path=Path(raw_data["DATA_PATH"]),
             storage_type=BackendType(raw_data["STORAGE_TYPE"]),
@@ -443,16 +445,20 @@ class RestoreInfo:
             return json.load(fp).popitem()
 
     @staticmethod
-    def get_backup_version(tar: tarfile.TarFile) -> int:
-        if (fp := open_file_from_tar(tar, "backup.version")) is None:
-            # backup version 1 doesn't have the version file
-            return 1
+    def get_backup_details(tar: tarfile.TarFile) -> BackupDetails:
+        if (fp := open_file_from_tar(tar, "backup_details.json")) is None:
+            # backup version 1 doesn't have the details file
+            return {"backup_version": 1}
         with fp:
-            backup_version = int(fp.read())
+            backup_details = json.load(fp)
+        backup_version = backup_details.get("backup_version")
+        if not isinstance(backup_version, int):
+            print("This does not appear to be a valid backup.")
+            sys.exit(1)
         if backup_version > 2:
             print("This backup was created using newer version of Red. Update Red to restore it.")
             sys.exit(1)
-        return backup_version
+        return backup_details
 
     @property
     def data_path(self) -> Path:
@@ -521,7 +527,7 @@ class RestoreInfo:
         return [tarinfo.name for tarinfo in self.all_tar_members]
 
     def get_tar_members_to_extract(self) -> List[tarfile.TarInfo]:
-        ignored_members: Set[str] = {"backup.version", "instance.json"}
+        ignored_members: Set[str] = {"backup_details.json", "instance.json"}
         if not self.restore_downloader:
             ignored_members |= {
                 "cogs/RepoManager/repos.json",

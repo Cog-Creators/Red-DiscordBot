@@ -27,6 +27,7 @@ from typing import (
     Optional,
     Union,
     TypeVar,
+    TypedDict,
     TYPE_CHECKING,
     Tuple,
     cast,
@@ -235,6 +236,10 @@ def _tar_addfile_from_string(tar: tarfile.TarFile, name: str, string: str) -> No
     tar.addfile(tar_info, fp)
 
 
+class BackupDetails(TypedDict):
+    backup_version: int
+
+
 async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     # version of backup
     BACKUP_VERSION = 2
@@ -261,7 +266,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         # these files are created during backup so we exclude them from data path backup
         os.path.join("RepoManager", "repos.json"),
         "instance.json",
-        "backup.version",
+        "backup_details.json",
     ]
 
     # Avoiding circular imports
@@ -276,6 +281,10 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     for f in data_path.glob("**/*"):
         if not any(ex in str(f) for ex in exclusions) and f.is_file():
             to_backup.append(f)
+
+    backup_details: BackupDetails = {
+        "backup_version": BACKUP_VERSION,
+    }
 
     with tarfile.open(str(backup_fpath), "w:gz") as tar:
         with detailed_progress(unit="files") as progress:
@@ -294,7 +303,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         _tar_addfile_from_string(tar, "instance.json", instance_data)
 
         # add info about backup version
-        _tar_addfile_from_string(tar, "backup.version", str(BACKUP_VERSION))
+        _tar_addfile_from_string(tar, "backup_details.json", json.dumps(backup_details))
     return backup_fpath
 
 
