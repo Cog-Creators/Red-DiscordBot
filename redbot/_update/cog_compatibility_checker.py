@@ -1,4 +1,5 @@
 import dataclasses
+import enum
 import functools
 import os
 import sys
@@ -29,6 +30,67 @@ class InstanceSitePrefixMismatchError(Exception):
         )
 
 
+class SimpleCompatibilityStatus(common.OrderedEnum):
+    UNSUPPORTED = enum.auto()
+    POTENTIALLY_SUPPORTED = enum.auto()
+    EXPLICITLY_SUPPORTED = enum.auto()
+
+
+class CompatibilityStatus(enum.Enum):
+    # unsupported is <100, 200)
+    UNSUPPORTED_PYTHON_VERSION = 100
+    UNSUPPORTED_BOT_VERSION = 101
+    # potentially supported is <200, 300)
+    POTENTIALLY_SUPPORTED = 200
+    # explicitly supported is <300, 400)
+    EXPLICITLY_SUPPORTED_NON_BREAKING = 300
+    EXPLICITLY_SUPPORTED_MIN_BOT_VERSION = 301
+    EXPLICITLY_SUPPORTED_MAX_BOT_VERSION = 302
+    EXPLICITLY_SUPPORTED_READY_TAG = 303
+
+    @property
+    def simple_status(self) -> SimpleCompatibilityStatus:
+        if self.unsupported:
+            return SimpleCompatibilityStatus.UNSUPPORTED
+        if self.potentially_supported:
+            return SimpleCompatibilityStatus.POTENTIALLY_SUPPORTED
+        if self.explicitly_supported:
+            return SimpleCompatibilityStatus.EXPLICITLY_SUPPORTED
+        raise RuntimeError("unreachable")
+
+    @property
+    def unsupported(self) -> bool:
+        return 100 <= self.value < 200
+
+    @property
+    def potentially_supported(self) -> bool:
+        return 200 <= self.value < 300
+
+    @property
+    def explicitly_supported(self) -> bool:
+        return 300 <= self.value < 400
+
+    def __ge__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.simple_status >= other.simple_status
+        return NotImplemented
+
+    def __gt__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.simple_status > other.simple_status
+        return NotImplemented
+
+    def __le__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.simple_status <= other.simple_status
+        return NotImplemented
+
+    def __lt__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.simple_status < other.simple_status
+        return NotImplemented
+
+
 @dataclasses.dataclass
 class CogCompatibilityInfo:
     name: str
@@ -37,6 +99,7 @@ class CogCompatibilityInfo:
     max_bot_version: Version
     min_python_version: Version
     tags: Tuple[str, ...]
+    compatibility_status: CompatibilityStatus = CompatibilityStatus.POTENTIALLY_SUPPORTED
 
     @classmethod
     def from_installable(cls, installable: _downloader.Installable) -> Self:
@@ -58,6 +121,7 @@ class CogCompatibilityInfo:
             max_bot_version=Version(data["max_bot_version"]),
             min_python_version=Version(data["min_python_version"]),
             tags=tuple(data["tags"]),
+            compatibility_status=CompatibilityStatus(data["compatibility_status"]),
         )
 
     def to_json_dict(self) -> Dict[str, Any]:
@@ -68,6 +132,7 @@ class CogCompatibilityInfo:
             "max_bot_version": str(self.max_bot_version),
             "min_python_version": str(self.min_python_version),
             "tags": self.tags,
+            "compatibility_status": self.compatibility_status.value,
         }
 
 
@@ -335,31 +400,43 @@ class CogCompatibilityChecker:
         for cog in cogs:
             info = CogCompatibilityInfo.from_installable(cog)
             if cog.min_python_version > interpreter_version:
+                info.compatibility_status = CompatibilityStatus.UNSUPPORTED_PYTHON_VERSION
                 results.incompatible_python[cog.name] = info
             elif cog.min_bot_version > latest_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
                 and cog.max_bot_version < latest_version
             ):
+                info.compatibility_status = CompatibilityStatus.UNSUPPORTED_BOT_VERSION
                 results.incompatible_red[cog.name] = info
             elif not breaking_update:
+                info.compatibility_status = CompatibilityStatus.EXPLICITLY_SUPPORTED_NON_BREAKING
                 results.explicitly_supported[cog.name] = info
-            elif latest_version.release[:2] in (
-                cog.min_bot_version.release[:2],
-                cog.max_bot_version.release[:2],
-            ):
-                # If cog creator explicitly set min/max_bot_version to 3.x.y,
+            elif latest_version.release[:2] == cog.min_bot_version.release[:2]:
+                # If cog creator explicitly set min_bot_version to 3.x.y,
                 # then 3.x is explicitly supported.
+                info.compatibility_status = (
+                    CompatibilityStatus.EXPLICITLY_SUPPORTED_MIN_BOT_VERSION
+                )
+                results.explicitly_supported[cog.name] = info
+            elif latest_version.release[:2] == cog.max_bot_version.release[:2]:
+                # If cog creator explicitly set max_bot_version to 3.x.y,
+                # then 3.x is explicitly supported.
+                info.compatibility_status = (
+                    CompatibilityStatus.EXPLICITLY_SUPPORTED_MAX_BOT_VERSION
+                )
                 results.explicitly_supported[cog.name] = info
             elif f"red-{latest_version.major}-{latest_version.minor}-ready" in cog.tags:
                 # If cog creator explicitly added a "red-3.x-ready" tag,
                 # then 3.x is explicitly supported.
                 # This is similar to the meaning of "Programming Language :: Python :: 3.x"
                 # classifiers in Python packaging.
+                info.compatibility_status = CompatibilityStatus.EXPLICITLY_SUPPORTED_READY_TAG
                 results.explicitly_supported[cog.name] = info
             else:
                 # If we don't have any explicit signals from the cog's metadata that
                 # Red 3.x is supported, the cog is only *potentially* supported by that version.
+                info.compatibility_status = CompatibilityStatus.POTENTIALLY_SUPPORTED
                 results.potentially_supported[cog.name] = info
 
     def _evaluate_before_update_compatibility(

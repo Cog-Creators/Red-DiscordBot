@@ -1,8 +1,9 @@
+import enum
 import logging
 import os
 import sys
 from operator import itemgetter
-from typing import Final, List, Literal, Optional, Tuple, Union
+from typing import Any, Final, List, Literal, Optional, Tuple, Union
 
 import rich
 from packaging.specifiers import SpecifierSet
@@ -157,3 +158,25 @@ def search_for_interpreters(
         raise SystemExit(1)
 
     return interpreters
+
+
+class OrderedEnum(enum.Enum):
+    def __ge__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.value >= other.value
+        return NotImplemented
+
+    def __gt__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.value > other.value
+        return NotImplemented
+
+    def __le__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.value <= other.value
+        return NotImplemented
+
+    def __lt__(self, other: Any) -> bool:
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
