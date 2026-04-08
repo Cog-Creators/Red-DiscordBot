@@ -173,6 +173,10 @@ class UpdaterMetadata:
             "backup_results": self.backup_results and self.backup_results.to_json_dict(),
         }
 
+    @property
+    def breaking_update(self) -> bool:
+        return self.current_version.release[:2] != self.latest.version.release[:2]
+
 
 class Updater:
     metadata: UpdaterMetadata
@@ -188,10 +192,6 @@ class Updater:
     @property
     def current_version(self) -> Version:
         return self.metadata.current_version
-
-    @property
-    def breaking_update(self) -> bool:
-        return self.current_version.release[:2] != self.latest.version.release[:2]
 
     async def run(self) -> None:
         with self.console.status("Checking latest version..."):
@@ -250,7 +250,7 @@ class Updater:
                     Text(instance_name, style="bold") for instance_name in self.metadata.to_backup
                 ),
             )
-        if self.breaking_update:
+        if self.metadata.breaking_update:
             self.console.print(
                 "[b]Remember that this is a major release and it may have some breaking changes"
                 " that the bot or its cogs may be affected by.[/]"
@@ -300,7 +300,7 @@ class Updater:
             '  Make sure to read through the [green]"Read before updating"[/] section'
             f" before continuing. {common.ICON_WARN}[/bold]\n"
         )
-        if self.breaking_update:
+        if self.metadata.breaking_update:
             parts.append(
                 f"[bold]{common.ICON_WARN}"
                 "  Please note that this is a major release and it may have some changes that"
