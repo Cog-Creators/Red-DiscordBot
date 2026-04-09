@@ -377,7 +377,7 @@ class Updater:
                 if not response:
                     self.console.print("[prompt.invalid] No path was provided.")
                     continue
-                info = PythonInfo.from_exe(response, raise_on_error=True)
+                info = PythonInfo.from_exe(response)
                 interpreter_version = Version(info.version_str)
                 if (
                     info.implementation != "CPython"
