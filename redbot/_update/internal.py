@@ -208,7 +208,10 @@ async def _finish_update() -> None:
                 ),
             )
 
-    if Confirm.ask("Do you want to update all your cogs?", default=True):
+    update_cogs = updater_metadata.options.update_cogs
+    if update_cogs is None:
+        update_cogs = Confirm.ask("Do you want to update all your cogs?", default=True)
+    if update_cogs:
         await _handle_cog_updates(updater_metadata)
 
     with console.status("Cleaning up..."):

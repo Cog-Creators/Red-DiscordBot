@@ -97,6 +97,14 @@ class _PythonInfoParamType(click.ParamType):
     " for Red. This can either be a path to a Python executable or a name of a Python executable"
     " on the PATH.",
 )
+@click.option(
+    "--update-cogs/--no-update-cogs",
+    default=None,
+    help="When this option is used, it determines whether the cogs should be updated after Red"
+    " is updated. By default, you'll be asked, if you want to update.\n"
+    "In non-interactive mode, cogs will be updated unless this option is used to override"
+    " the default behavior.",
+)
 # global options
 @click.option(
     cmd.arg_names.DEBUG,
@@ -128,6 +136,7 @@ def cli(
     no_full_changelog: bool,
     no_cog_compatibility_check: bool,
     new_python_interpreter: Optional[PythonInfo],
+    update_cogs: Optional[bool],
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
@@ -153,6 +162,7 @@ def cli(
             no_full_changelog=no_full_changelog,
             no_cog_compatibility_check=no_cog_compatibility_check,
             new_python_interpreter=new_python_interpreter,
+            update_cogs=update_cogs,
         )
         app = updater.Updater(options)
         asyncio_run(app.run())
@@ -171,6 +181,10 @@ def cli(
         raise click.NoSuchOption("--no-cog-compatibility-check", ctx=ctx)
     elif new_python_interpreter:
         raise click.NoSuchOption("--new-python-interpreter", ctx=ctx)
+    elif update_cogs is True:
+        raise click.NoSuchOption("--update-cogs", ctx=ctx)
+    elif update_cogs is False:
+        raise click.NoSuchOption("--no-update-cogs", ctx=ctx)
 
 
 cli.add_command(cmd.cog_compatibility.check_cog_compatibility)

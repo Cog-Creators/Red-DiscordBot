@@ -37,6 +37,7 @@ class UpdaterOptions:
     no_full_changelog: bool
     no_cog_compatibility_check: bool
     new_python_interpreter: Optional[PythonInfo]
+    update_cogs: Optional[bool]
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
@@ -54,6 +55,7 @@ class UpdaterOptions:
                 data["new_python_interpreter"]
                 and PythonInfo.from_dict(data["new_python_interpreter"])
             ),
+            update_cogs=data["update_cogs"],
         )
 
     def to_json_dict(self) -> Dict[str, Any]:
