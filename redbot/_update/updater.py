@@ -36,6 +36,7 @@ class UpdaterOptions:
     no_major_updates: bool
     no_full_changelog: bool
     no_cog_compatibility_check: bool
+    new_python_interpreter: Optional[PythonInfo]
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
@@ -49,12 +50,19 @@ class UpdaterOptions:
             no_major_updates=data["no_major_updates"],
             no_full_changelog=data["no_full_changelog"],
             no_cog_compatibility_check=data["no_cog_compatibility_check"],
+            new_python_interpreter=(
+                data["new_python_interpreter"]
+                and PythonInfo.from_dict(data["new_python_interpreter"])
+            ),
         )
 
     def to_json_dict(self) -> Dict[str, Any]:
         data = dataclasses.asdict(self)
         data["excluded_instances"] = list(self.excluded_instances)
         data["backup_dir"] = self.backup_dir and str(self.backup_dir)
+        data["new_python_interpreter"] = (
+            self.new_python_interpreter and self.new_python_interpreter.to_dict()
+        )
         return data
 
 
@@ -100,6 +108,9 @@ class BackupResults:
         return dataclasses.asdict(self)
 
 
+_PYTHON_VERSION_PLACEHOLDER = Version("0.0.dev0")
+
+
 @dataclasses.dataclass
 class UpdaterMetadata:
     """Metadata about the update process."""
@@ -115,10 +126,8 @@ class UpdaterMetadata:
         default_factory=common.get_current_python_version
     )
     # details about the interpreter that will be used for the new venv
-    interpreter_version: Version = dataclasses.field(
-        default_factory=common.get_current_python_version
-    )
     interpreter_info: PythonInfo = dataclasses.field(default_factory=PythonInfo.current_system)
+    interpreter_version: Version = _PYTHON_VERSION_PLACEHOLDER
     interpreter_exe: str = ""
     # cog compatibility check results
     cog_compatibility: Optional[UpdaterCompatibilitySummary] = None
@@ -128,6 +137,10 @@ class UpdaterMetadata:
     backup_results: Optional[BackupResults] = None
 
     def __post_init__(self) -> None:
+        if self.interpreter_version is _PYTHON_VERSION_PLACEHOLDER:
+            self.interpreter_version = Version(
+                ".".join(map(str, self.interpreter_info.version_info[:3]))
+            )
         if not self.interpreter_exe:
             self.interpreter_exe = self.interpreter_info.system_executable
 
@@ -196,11 +209,15 @@ class Updater:
         return self.metadata.current_version
 
     async def run(self) -> None:
+        interpreter_info = self.options.new_python_interpreter or PythonInfo.current_system()
         with self.console.status("Checking latest version..."):
             available_versions = await fetch_available_red_versions()
             latest_major = available_versions[0]
             self.metadata = UpdaterMetadata(
-                self.options, latest=latest_major, latest_major=latest_major
+                self.options,
+                latest=latest_major,
+                latest_major=latest_major,
+                interpreter_info=interpreter_info,
             )
             if self.options.no_major_updates:
                 for available_version in available_versions:
@@ -330,14 +347,25 @@ class Updater:
         self.console.print("Changelog has been closed.\n")
 
     def _check_python_requires(self) -> None:
-        if self.metadata.current_python_version in self.latest.requires_python:
+        if self.metadata.interpreter_version in self.latest.requires_python:
             return
+        if self.options.new_python_interpreter:
+            common.print_with_prefix_column(
+                common.ICON_ERROR,
+                "The latest version of Red requires a different Python version (",
+                Text(str(self.latest.requires_python), style="bold"),
+                ") from the version of the interpreter passed to with the --new-python-interpreter"
+                " option (",
+                Text(str(self.metadata.interpreter_version), style="bold"),
+                ")",
+            )
+            raise SystemExit(1)
         common.print_with_prefix_column(
             common.ICON_WARN,
             "The latest version of Red requires a different Python version (",
             Text(str(self.latest.requires_python), style="bold"),
             ") from the one that you are currently using (",
-            Text(str(self.metadata.current_python_version), style="bold"),
+            Text(str(self.metadata.interpreter_version), style="bold"),
             ")\nredbot-update will have to recreate the virtual environment"
             " with a compatible version of Python.",
         )

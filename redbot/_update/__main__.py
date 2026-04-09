@@ -1,8 +1,9 @@
 import asyncio
 from pathlib import Path
-from typing import Final, Optional, Tuple
+from typing import Any, Final, Optional, Tuple
 
 import click
+from python_discovery import PythonInfo
 
 from redbot.core._cli import asyncio_run
 
@@ -24,6 +25,21 @@ def _help_minor_update_example() -> str:
     release = (version.major, version.minor, version.micro + 1) + (0,) * (len(version.release) - 3)
     next_minor_version = version.__replace__(release=release)
     return f"updating from Red {version} to Red {next_minor_version}"
+
+
+class _PythonInfoParamType(click.ParamType):
+    name = "Python interpreter"
+
+    def convert(
+        self, value: Any, param: Optional[click.Parameter], ctx: Optional[click.Context]
+    ) -> PythonInfo:
+        if isinstance(value, PythonInfo):
+            return value
+
+        try:
+            return PythonInfo.from_exe(value)
+        except RuntimeError:
+            self.fail(f"{value!r} is not a valid Python executable.", param, ctx)
 
 
 @click.group(invoke_without_command=True)
@@ -74,6 +90,13 @@ def _help_minor_update_example() -> str:
     help="Skip performing cog compatibility check before the update.",
     is_flag=True,
 )
+@click.option(
+    "--new-python-interpreter",
+    type=_PythonInfoParamType(),
+    help="The new Python interpreter that should be used when creating a virtual environment"
+    " for Red. This can either be a path to a Python executable or a name of a Python executable"
+    " on the PATH.",
+)
 # global options
 @click.option(
     cmd.arg_names.DEBUG,
@@ -104,6 +127,7 @@ def cli(
     no_major_updates: bool,
     no_full_changelog: bool,
     no_cog_compatibility_check: bool,
+    new_python_interpreter: Optional[PythonInfo],
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
@@ -128,6 +152,7 @@ def cli(
             no_major_updates=no_major_updates,
             no_full_changelog=no_full_changelog,
             no_cog_compatibility_check=no_cog_compatibility_check,
+            new_python_interpreter=new_python_interpreter,
         )
         app = updater.Updater(options)
         asyncio_run(app.run())
@@ -144,6 +169,8 @@ def cli(
         raise click.NoSuchOption("--no-major-updates", ctx=ctx)
     elif no_cog_compatibility_check:
         raise click.NoSuchOption("--no-cog-compatibility-check", ctx=ctx)
+    elif new_python_interpreter:
+        raise click.NoSuchOption("--new-python-interpreter", ctx=ctx)
 
 
 cli.add_command(cmd.cog_compatibility.check_cog_compatibility)
