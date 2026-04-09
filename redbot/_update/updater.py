@@ -38,6 +38,7 @@ class UpdaterOptions:
     no_cog_compatibility_check: bool
     new_python_interpreter: Optional[PythonInfo]
     update_cogs: Optional[bool]
+    force_reinstall: bool
     interactive: bool
 
     @classmethod
@@ -57,6 +58,7 @@ class UpdaterOptions:
                 and PythonInfo.from_dict(data["new_python_interpreter"])
             ),
             update_cogs=data["update_cogs"],
+            force_reinstall=data["force_reinstall"],
             interactive=data["interactive"],
         )
 
@@ -236,7 +238,8 @@ class Updater:
                         )
                         raise SystemExit(1)
 
-        if self.current_version >= self.latest.version:
+        new_version_available = self.current_version < self.latest.version
+        if not self.options.force_reinstall and not new_version_available:
             if self.current_version >= latest_major.version:
                 common.print_with_prefix_column(
                     common.ICON_SUCCESS,
@@ -251,11 +254,12 @@ class Updater:
                 )
             return
 
-        common.print_with_prefix_column(
-            common.ICON_SUCCESS,
-            "New version available: ",
-            Text(str(self.latest.version), style="bold"),
-        )
+        if new_version_available:
+            common.print_with_prefix_column(
+                common.ICON_SUCCESS,
+                "New version available: ",
+                Text(str(self.latest.version), style="bold"),
+            )
 
         await self._show_changelog()
         self._check_python_requires()
@@ -303,6 +307,9 @@ class Updater:
                 changelogs, self.current_version, self.latest.version
             )
         common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")
+
+        if not changelogs:
+            return
 
         if not self.options.interactive or self.options.no_full_changelog:
             self.console.print(Panel(Markdown(changelog.render_markdown(changelogs))))

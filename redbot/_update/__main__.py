@@ -106,6 +106,17 @@ class _PythonInfoParamType(click.ParamType):
     " the default behavior.",
 )
 @click.option(
+    # `pip install` having an option with the same name is coincidental,
+    # this does not call `pip install` with the `--force-reinstall` option.
+    # Not that there would be any point in doing so - we create a fresh virtual environment.
+    "--force-reinstall",
+    type=bool,
+    is_flag=True,
+    help="Force the update process to proceed even, if there is no new version detected."
+    " This will essentially reinstall latest Red version into a fresh virtual environment. You can"
+    " combine it with the --new-python-interpreter option to change Red's Python interpreter.",
+)
+@click.option(
     "--no-prompt",
     "interactive",
     type=bool,
@@ -149,6 +160,7 @@ def cli(
     no_cog_compatibility_check: bool,
     new_python_interpreter: Optional[PythonInfo],
     update_cogs: Optional[bool],
+    force_reinstall: bool,
     interactive: bool,
     logging_level: int,
     ignore_prefix: bool,
@@ -176,6 +188,7 @@ def cli(
             no_cog_compatibility_check=no_cog_compatibility_check,
             new_python_interpreter=new_python_interpreter,
             update_cogs=update_cogs,
+            force_reinstall=force_reinstall,
             interactive=interactive,
         )
         app = updater.Updater(options)
@@ -201,6 +214,8 @@ def cli(
         raise click.NoSuchOption("--no-update-cogs", ctx=ctx)
     elif not interactive:
         raise click.NoSuchOption("--no-prompt", ctx=ctx)
+    elif force_reinstall:
+        raise click.NoSuchOption("--force-reinstall", ctx=ctx)
 
 
 cli.add_command(cmd.cog_compatibility.check_cog_compatibility)
