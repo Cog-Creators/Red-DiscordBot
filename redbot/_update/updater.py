@@ -35,6 +35,7 @@ class UpdaterOptions:
     no_backup: bool
     no_major_updates: bool
     no_full_changelog: bool
+    no_cog_compatibility_check: bool
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
@@ -47,6 +48,7 @@ class UpdaterOptions:
             no_backup=data["no_backup"],
             no_major_updates=data["no_major_updates"],
             no_full_changelog=data["no_full_changelog"],
+            no_cog_compatibility_check=data["no_cog_compatibility_check"],
         )
 
     def to_json_dict(self) -> Dict[str, Any]:
@@ -236,7 +238,12 @@ class Updater:
 
         await self._show_changelog()
         self._check_python_requires()
-        await self._check_cog_compatiblity()
+        if self.options.no_cog_compatibility_check:
+            self.console.print(
+                "Will not make backups as --no-cog-compatibility-check option was passed."
+            )
+        else:
+            await self._check_cog_compatibility()
 
         if self.options.no_backup:
             common.print_with_prefix_column(
@@ -403,7 +410,7 @@ class Updater:
                 self.console.print()
                 break
 
-    async def _check_cog_compatiblity(self) -> None:
+    async def _check_cog_compatibility(self) -> None:
         outputs = {}
         checked_instances = {}
         skipped_instances = []

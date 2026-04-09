@@ -69,6 +69,11 @@ def _help_minor_update_example() -> str:
     " sections will still be printed.",
     is_flag=True,
 )
+@click.option(
+    "--no-cog-compatibility-check",
+    help="Skip performing cog compatibility check before the update.",
+    is_flag=True,
+)
 # global options
 @click.option(
     cmd.arg_names.DEBUG,
@@ -98,6 +103,7 @@ def cli(
     no_backup: bool,
     no_major_updates: bool,
     no_full_changelog: bool,
+    no_cog_compatibility_check: bool,
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
@@ -121,6 +127,7 @@ def cli(
             no_backup=no_backup,
             no_major_updates=no_major_updates,
             no_full_changelog=no_full_changelog,
+            no_cog_compatibility_check=no_cog_compatibility_check,
         )
         app = updater.Updater(options)
         asyncio_run(app.run())
@@ -135,6 +142,8 @@ def cli(
         raise click.NoSuchOption("--no-backup", ctx=ctx)
     elif no_major_updates:
         raise click.NoSuchOption("--no-major-updates", ctx=ctx)
+    elif no_cog_compatibility_check:
+        raise click.NoSuchOption("--no-cog-compatibility-check", ctx=ctx)
 
 
 cli.add_command(cmd.cog_compatibility.check_cog_compatibility)
