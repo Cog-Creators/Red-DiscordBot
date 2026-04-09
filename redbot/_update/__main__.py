@@ -105,6 +105,18 @@ class _PythonInfoParamType(click.ParamType):
     "In non-interactive mode, cogs will be updated unless this option is used to override"
     " the default behavior.",
 )
+@click.option(
+    "--no-prompt",
+    "interactive",
+    type=bool,
+    is_flag=True,
+    default=True,
+    help="Don't ask for user input during the process (non-interactive mode).\n"
+    "NOTE: If you want to use this to automate Red updates, consider specifying --no-major-update"
+    " to avoid performing major updates without making an explicit decision to.\n"
+    "When performing a major update where the current Python interpreter is no longer compatible,"
+    " the --new-python-interpreter option has to be specified or the command will fail.",
+)
 # global options
 @click.option(
     cmd.arg_names.DEBUG,
@@ -137,6 +149,7 @@ def cli(
     no_cog_compatibility_check: bool,
     new_python_interpreter: Optional[PythonInfo],
     update_cogs: Optional[bool],
+    interactive: bool,
     logging_level: int,
     ignore_prefix: bool,
 ) -> None:
@@ -163,6 +176,7 @@ def cli(
             no_cog_compatibility_check=no_cog_compatibility_check,
             new_python_interpreter=new_python_interpreter,
             update_cogs=update_cogs,
+            interactive=interactive,
         )
         app = updater.Updater(options)
         asyncio_run(app.run())
@@ -185,6 +199,8 @@ def cli(
         raise click.NoSuchOption("--update-cogs", ctx=ctx)
     elif update_cogs is False:
         raise click.NoSuchOption("--no-update-cogs", ctx=ctx)
+    elif not interactive:
+        raise click.NoSuchOption("--no-prompt", ctx=ctx)
 
 
 cli.add_command(cmd.cog_compatibility.check_cog_compatibility)

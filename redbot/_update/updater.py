@@ -38,6 +38,7 @@ class UpdaterOptions:
     no_cog_compatibility_check: bool
     new_python_interpreter: Optional[PythonInfo]
     update_cogs: Optional[bool]
+    interactive: bool
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
@@ -56,6 +57,7 @@ class UpdaterOptions:
                 and PythonInfo.from_dict(data["new_python_interpreter"])
             ),
             update_cogs=data["update_cogs"],
+            interactive=data["interactive"],
         )
 
     def to_json_dict(self) -> Dict[str, Any]:
@@ -281,7 +283,7 @@ class Updater:
                 "[b]Remember that this is a major release and it may have some breaking changes"
                 " that the bot or its cogs may be affected by.[/]"
             )
-        if not Confirm.ask(
+        if self.options.interactive and not Confirm.ask(
             f"Do you want to continue with the update to [b]Red {self.latest.version}[/]?"
         ):
             return
@@ -302,9 +304,9 @@ class Updater:
             )
         common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")
 
-        if self.options.no_full_changelog:
+        if not self.options.interactive or self.options.no_full_changelog:
             self.console.print(Panel(Markdown(changelog.render_markdown(changelogs))))
-            if not Confirm.ask("Do you want to continue?"):
+            if self.options.interactive and not Confirm.ask("Do you want to continue?"):
                 raise click.Abort()
             return
 
@@ -363,14 +365,21 @@ class Updater:
             )
             raise SystemExit(1)
         common.print_with_prefix_column(
-            common.ICON_WARN,
+            common.ICON_WARN if self.options.interactive else common.ICON_ERROR,
             "The latest version of Red requires a different Python version (",
             Text(str(self.latest.requires_python), style="bold"),
             ") from the one that you are currently using (",
             Text(str(self.metadata.interpreter_version), style="bold"),
-            ")\nredbot-update will have to recreate the virtual environment"
-            " with a compatible version of Python.",
+            ")",
+            (
+                "\nredbot-update will have to recreate the virtual environment"
+                " with a compatible version of Python."
+                if self.options.interactive
+                else ""
+            ),
         )
+        if not self.options.interactive:
+            raise SystemExit(1)
         interpreters = common.search_for_interpreters(self.latest.requires_python)
 
         def _render_interpreter(interpreter_exe: str, interpreter_version: Version) -> Text:
@@ -586,7 +595,13 @@ class Updater:
                 Text(", ").join(Text(instance_name, style="bold") for instance_name in failed),
                 "\nScroll above to find the errors.",
             )
-            if not Confirm.ask("Do you want to continue with the update regardless?"):
+            # If a backup fails, we cannot allow non-interactive update to continue.
+            # The user can choose to use options such as `--no-backup`, `--instance`,
+            # and `--exclude-instance` to not have the backup step try to backup something
+            # that it can't.
+            if not self.options.interactive or not Confirm.ask(
+                "Do you want to continue with the update regardless?"
+            ):
                 raise SystemExit(1)
 
     def _update_with_fresh_venv(self) -> NoReturn:

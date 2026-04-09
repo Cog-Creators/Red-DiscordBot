@@ -164,11 +164,12 @@ async def _finish_update() -> None:
     console = common.get_console()
     console.print()
 
-    msg = Text("It is highly recommended to update 3rd-party cogs after updating Red")
-    if updater_metadata.breaking_update:
-        msg.append(", especially after a major update")
-    msg.append(".")
-    console.print(msg)
+    if updater_metadata.options.interactive and not updater_metadata.options.update_cogs:
+        msg = Text("It is highly recommended to update 3rd-party cogs after updating Red")
+        if updater_metadata.breaking_update:
+            msg.append(", especially after a major update")
+        msg.append(".")
+        console.print(msg)
 
     cog_compatibility = updater_metadata.cog_compatibility
     if cog_compatibility is not None:
@@ -210,7 +211,10 @@ async def _finish_update() -> None:
 
     update_cogs = updater_metadata.options.update_cogs
     if update_cogs is None:
-        update_cogs = Confirm.ask("Do you want to update all your cogs?", default=True)
+        if updater_metadata.options.interactive:
+            update_cogs = Confirm.ask("Do you want to update all your cogs?", default=True)
+        else:
+            update_cogs = True
     if update_cogs:
         await _handle_cog_updates(updater_metadata)
 
