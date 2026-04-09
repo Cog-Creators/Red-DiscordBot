@@ -408,6 +408,7 @@ class Updater:
         checked_instances = {}
         skipped_instances = []
         failed_instances = []
+        unsupported_storage_instances = []
         for instance_name in self.options.instances:
             if instance_name in self.options.excluded_instances:
                 skipped_instances.append(instance_name)
@@ -420,32 +421,34 @@ class Updater:
                 return_results=True,
                 stdout=asyncio.subprocess.PIPE,
             )
-            if exit_code != cmd.cog_compatibility.EXIT_INSTANCE_SITE_PREFIX_MISMATCH:
-                if exit_code:
-                    failed_instances.append(instance_name)
-                    print(stdout, end="")
+            if exit_code == cmd.cog_compatibility.EXIT_INSTANCE_BACKEND_UNSUPPORTED:
+                skipped_instances.append(instance_name)
+                unsupported_storage_instances.append(instance_name)
+            elif exit_code == cmd.cog_compatibility.EXIT_INSTANCE_SITE_PREFIX_MISMATCH:
+                skipped_instances.append(instance_name)
+            elif exit_code:
+                failed_instances.append(instance_name)
+                print(stdout, end="")
+                Text.assemble(
+                    "\N{UPWARDS ARROW} " * 3,
+                    "Failure for ",
+                    (instance_name, "bold"),
+                    " instance",
+                )
+                self.console.rule(
                     Text.assemble(
                         "\N{UPWARDS ARROW} " * 3,
                         "Failure for ",
                         (instance_name, "bold"),
-                        " instance",
-                    )
-                    self.console.rule(
-                        Text.assemble(
-                            "\N{UPWARDS ARROW} " * 3,
-                            "Failure for ",
-                            (instance_name, "bold"),
-                            " instance above",
-                            " \N{UPWARDS ARROW}" * 3,
-                        ),
-                        style="red",
-                    )
-                else:
-                    assert results is not None
-                    outputs[instance_name] = stdout
-                    checked_instances[instance_name] = results
+                        " instance above",
+                        " \N{UPWARDS ARROW}" * 3,
+                    ),
+                    style="red",
+                )
             else:
-                skipped_instances.append(instance_name)
+                assert results is not None
+                outputs[instance_name] = stdout
+                checked_instances[instance_name] = results
             if stdout:
                 self.console.print()
         self.console.print()
@@ -476,11 +479,21 @@ class Updater:
                 ),
                 "\nScroll above to find the errors.",
             )
+        if unsupported_storage_instances:
+            common.print_with_prefix_column(
+                common.ICON_INFO,
+                "The following instances were skipped as they use a storage backend that is"
+                " not supported by the current Red installation (some requirements are missing): ",
+                Text(", ").join(
+                    Text(instance_name, style="bold")
+                    for instance_name in unsupported_storage_instances
+                ),
+            )
         if not checked_instances:
             common.print_with_prefix_column(
                 common.ICON_INFO,
                 "There were no",
-                (" other" if failed_instances else ""),
+                (" other" if failed_instances or unsupported_storage_instances else ""),
                 " instances to check cog compatibility for.",
             )
         self.console.print()

@@ -11,6 +11,7 @@ from rich.text import Text
 
 from redbot._update import cog_compatibility_checker, common
 from redbot._update.cog_compatibility_checker import CompatibilitySummary
+from redbot.core import _drivers
 from redbot.core._cli import asyncio_run
 from redbot.core.utils._internal_utils import fetch_latest_red_version
 
@@ -18,6 +19,7 @@ from . import arg_names
 
 
 EXIT_INSTANCE_SITE_PREFIX_MISMATCH: Final = 4
+EXIT_INSTANCE_BACKEND_UNSUPPORTED: Final = 5
 CMD_NAME: Final = "check-cog-compatibility"
 _COMPATIBILITY_RESULTS_ENV_VAR = "_RED_UPDATE_COMPATIBILITY_RESULTS_FILE"
 
@@ -125,6 +127,16 @@ async def _check_cog_compatibility_command_impl(
                 interpreter_version=python_version,
                 ignore_prefix=ignore_prefix,
             )
+        except _drivers.MissingExtraRequirements:
+            if not results_file:
+                common.print_with_prefix_column(
+                    common.ICON_ERROR,
+                    Text(instances[0], style="bold"),
+                    " instance could not be checked as it uses a storage backend"
+                    " that is not supported by the current Red installation"
+                    " (some requirements are missing).",
+                )
+            raise SystemExit(EXIT_INSTANCE_BACKEND_UNSUPPORTED)
         except cog_compatibility_checker.InstanceSitePrefixMismatchError as exc:
             if not results_file:
                 common.print_with_prefix_column(

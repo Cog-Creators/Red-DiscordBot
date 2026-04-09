@@ -23,7 +23,8 @@ from .updater import UpdaterMetadata, get_updater_metadata
 FINISH_UPDATE_CMD_NAME = "finish-update"
 _UPDATE_COGS_CMD_NAME = "update-cogs"
 _UPDATE_REPOS_OPTION_NAME = "--update-repos"
-_EXIT_INSTANCE_SITE_PREFIX_MISMATCH = 3
+_EXIT_INSTANCE_SITE_PREFIX_MISMATCH = 4
+_EXIT_INSTANCE_BACKEND_UNSUPPORTED = 5
 
 
 @click.group(invoke_without_command=True)
@@ -47,6 +48,8 @@ async def _update_cogs(instance: str, update_repos: bool) -> None:
     await driver_cls.initialize(**data_manager.storage_details())
     try:
         await _run_cog_update(red, update_repos=update_repos)
+    except _drivers.MissingExtraRequirements:
+        raise SystemExit(_EXIT_INSTANCE_BACKEND_UNSUPPORTED)
     finally:
         await driver_cls.teardown()
 
@@ -247,34 +250,35 @@ async def _handle_cog_updates(updater_metadata: UpdaterMetadata) -> None:
     )
     checked_instances = {}
     failed_instances = []
+    unsupported_storage_instances = []
     for instance_name in instances:
         if instance_name in updater_metadata.options.excluded_instances:
             continue
         exit_code, stdout = await _call_cog_update(
             instance_name, update_repos=cog_compatibility is None
         )
-        if exit_code != cmd.cog_compatibility.EXIT_INSTANCE_SITE_PREFIX_MISMATCH:
-            if exit_code:
-                failed_instances.append(instance_name)
-                print(stdout, end="")
+        if exit_code == _EXIT_INSTANCE_BACKEND_UNSUPPORTED:
+            unsupported_storage_instances.append(instance_name)
+        elif exit_code == _EXIT_INSTANCE_SITE_PREFIX_MISMATCH:
+            pass
+        elif exit_code:
+            failed_instances.append(instance_name)
+            print(stdout, end="")
+            Text.assemble(
+                "\N{UPWARDS ARROW} " * 3, "Failure for ", (instance_name, "bold"), " instance"
+            )
+            console.rule(
                 Text.assemble(
                     "\N{UPWARDS ARROW} " * 3,
                     "Failure for ",
                     (instance_name, "bold"),
-                    " instance",
-                )
-                console.rule(
-                    Text.assemble(
-                        "\N{UPWARDS ARROW} " * 3,
-                        "Failure for ",
-                        (instance_name, "bold"),
-                        " instance above",
-                        " \N{UPWARDS ARROW}" * 3,
-                    ),
-                    style="red",
-                )
-            else:
-                checked_instances[instance_name] = stdout
+                    " instance above",
+                    " \N{UPWARDS ARROW}" * 3,
+                ),
+                style="red",
+            )
+        else:
+            checked_instances[instance_name] = stdout
         if stdout:
             console.print()
 
@@ -298,11 +302,21 @@ async def _handle_cog_updates(updater_metadata: UpdaterMetadata) -> None:
             ),
             "\nScroll above to find the errors.",
         )
+    if unsupported_storage_instances:
+        common.print_with_prefix_column(
+            common.ICON_INFO,
+            "The following instances were skipped as they use a storage backend that is"
+            " not supported by the current Red installation (some requirements are missing): ",
+            Text(", ").join(
+                Text(instance_name, style="bold")
+                for instance_name in unsupported_storage_instances
+            ),
+        )
     if not checked_instances:
         common.print_with_prefix_column(
             common.ICON_INFO,
             "There were no",
-            (" other" if failed_instances else ""),
+            (" other" if failed_instances or unsupported_storage_instances else ""),
             " instances to update cogs for.",
         )
 
