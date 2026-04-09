@@ -135,6 +135,8 @@ class UpdaterMetadata:
     interpreter_info: PythonInfo = dataclasses.field(default_factory=PythonInfo.current_system)
     interpreter_version: Version = _PYTHON_VERSION_PLACEHOLDER
     interpreter_exe: str = ""
+    # changelogs for version in (current_version, latest> range
+    changelogs: changelog.Changelogs = dataclasses.field(default_factory=dict)
     # cog compatibility check results
     cog_compatibility: Optional[UpdaterCompatibilitySummary] = None
     # backup info
@@ -170,6 +172,10 @@ class UpdaterMetadata:
             interpreter_version=Version(data["interpreter_version"]),
             interpreter_info=PythonInfo.from_dict(data["interpreter_info"]),
             interpreter_exe=data["interpreter_exe"],
+            changelogs={
+                Version(raw_version): changelog.VersionChangelog.from_json_dict(raw_changelog)
+                for raw_version, raw_changelog in data["changelogs"].items()
+            },
             cog_compatibility=UpdaterCompatibilitySummary.from_json_dict(
                 data["cog_compatibility"]
             ),
@@ -188,6 +194,7 @@ class UpdaterMetadata:
             "interpreter_version": str(self.interpreter_version),
             "interpreter_info": self.interpreter_info.to_dict(),
             "interpreter_exe": self.interpreter_exe,
+            "changelogs": {str(v): c.to_json_dict() for v, c in self.changelogs.items()},
             "cog_compatibility": self.cog_compatibility and self.cog_compatibility.to_json_dict(),
             "to_backup": self.to_backup,
             "backup_dir": self.backup_dir and str(self.backup_dir),
@@ -303,7 +310,7 @@ class Updater:
     async def _show_changelog(self) -> None:
         with self.console.status("Fetching changelogs..."):
             changelogs = await changelog.fetch_changelogs()
-            changelogs = changelog.get_changelogs_between(
+            self.metadata.changelogs = changelogs = changelog.get_changelogs_between(
                 changelogs, self.current_version, self.latest.version
             )
         common.print_with_prefix_column(common.ICON_SUCCESS, "Changelogs fetched.")

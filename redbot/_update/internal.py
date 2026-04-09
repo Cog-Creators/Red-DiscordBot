@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Tuple
 
 import click
+from rich.markdown import Markdown
+from rich.panel import Panel
 from rich.prompt import Confirm
 from rich.text import Text
 
@@ -16,7 +18,7 @@ from redbot.core import _downloader, _drivers, data_manager
 from redbot.core._cli import asyncio_run, parse_cli_flags
 from redbot.core.bot import Red
 
-from . import cmd, common, runner
+from . import changelog, cmd, common, runner
 from .updater import UpdaterMetadata, get_updater_metadata
 
 
@@ -222,6 +224,10 @@ async def _finish_update() -> None:
         backup_dir = Path(sys.prefix) / common.OLD_VENV_BACKUP_DIR_NAME
         shutil.rmtree(backup_dir)
 
+    changelog_markdown = changelog.render_markdown(updater_metadata.changelogs)
+    if changelog_markdown:
+        console.print(Panel(Markdown(changelog_markdown)))
+
     console.print()
     common.print_with_prefix_column(
         common.ICON_SUCCESS,
@@ -229,6 +235,13 @@ async def _finish_update() -> None:
         Text(__version__, style="bold"),
         " has been finished!",
     )
+
+    if changelog_markdown:
+        common.print_with_prefix_column(
+            common.ICON_INFO,
+            'Remember to follow instructions from the "Read before updating" section,'
+            " if any were provided.",
+        )
 
     if updater_metadata.backup_dir:
         additional_text = ""

@@ -3,11 +3,12 @@ import datetime
 import functools
 import os
 import re
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import aiohttp
 import yarl
 from packaging.version import Version
+from typing_extensions import Self
 
 
 _CHANGELOG_PATTERN = re.compile(
@@ -40,6 +41,13 @@ class VersionChangelog:
         r"(?P<content>[\s\S]+?)"
         r"\n<!--+ +RED-CHANGELOG-USER-CHANGELOG-END +--+>"
     )
+
+    @classmethod
+    def from_json_dict(cls, data: Dict[str, Any]) -> Self:
+        return cls(version=Version(data["version"]), content=data["content"])
+
+    def to_json_dict(self) -> Dict[str, Any]:
+        return {"version": str(self.version), "content": self.content}
 
     @functools.cached_property
     def release_date(self) -> datetime.date:
