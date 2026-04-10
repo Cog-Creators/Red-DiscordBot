@@ -89,7 +89,18 @@ def print_with_prefix_column(
     console.print(prefix_column(prefix, *parts))
 
 
+def _apply_legacy_windows_workaround() -> None:
+    # Rich does not properly support printing to stderr, when stdout is redirected...
+    # This monkeypatch should be enough to workaround this for our purposes.
+    # https://github.com/Textualize/rich/issues/4071
+    if sys.platform == "win32" and not sys.stdout.isatty():
+        import rich._win32_console
+
+        rich._win32_console.STDOUT = -12
+
+
 def configure_rich() -> None:
+    _apply_legacy_windows_workaround()
     value = os.getenv(INTERNAL_LEGACY_WINDOWS_ENV_VAR, "")
     legacy_windows = int(value) if value else None
     rich.reconfigure(highlight=False, legacy_windows=legacy_windows)
