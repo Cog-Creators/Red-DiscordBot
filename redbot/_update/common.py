@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 from operator import itemgetter
-from typing import Any, Final, List, Literal, Optional, Tuple, Union
+from typing import Any, Final, Iterable, List, Literal, Optional, Tuple, Union
 
 import rich
 from packaging.specifiers import SpecifierSet
@@ -15,7 +15,11 @@ from rich.table import Table
 from rich.text import Text
 
 from redbot import __version__
-from redbot.core.utils._internal_utils import cli_level_to_log_level, log_level_to_cli_level
+from redbot.core.utils._internal_utils import (
+    cli_level_to_log_level,
+    get_installed_extras,
+    log_level_to_cli_level,
+)
 from redbot.core import data_manager
 
 _instance_data = data_manager.load_existing_config()
@@ -43,8 +47,16 @@ RUNNER_WRAPPER_EXE_ENV_VAR: Final = "REDBOT_UPDATE_RUNNER_WRAPPER_EXE"
 OLD_VENV_BACKUP_DIR_NAME: Final = "redbot-update-old-venv-backup"
 
 
-def get_red_dependency_specifier(version: Version) -> str:
-    return os.getenv("_RED_UPDATE_PRETEND_SPECIFIER") or f"Red-DiscordBot=={version}"
+def get_red_dependency_specifier(version: Version, extras: Iterable[str]) -> str:
+    specifier_template = (
+        os.getenv("_RED_UPDATE_PRETEND_SPECIFIER_TEMPLATE")
+        or "Red-DiscordBot {extras} {versionspec}"
+    )
+    joined_extras = ",".join(extras)
+    return specifier_template.format(
+        extras=f"[{joined_extras}]" if joined_extras else "",
+        versionspec=f"=={version}",
+    )
 
 
 def get_current_red_version() -> Version:

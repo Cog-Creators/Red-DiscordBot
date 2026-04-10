@@ -17,7 +17,11 @@ from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.text import Text
 from typing_extensions import Self
 
-from redbot.core.utils._internal_utils import AvailableVersion, fetch_available_red_versions
+from redbot.core.utils._internal_utils import (
+    AvailableVersion,
+    fetch_available_red_versions,
+    get_installed_extras,
+)
 
 from . import changelog, cmd, common, runner
 from .cog_compatibility_checker import CompatibilitySummary
@@ -305,7 +309,7 @@ class Updater:
         else:
             await self._make_backups()
 
-        self._update_with_fresh_venv()
+        await self._update_with_fresh_venv()
 
     async def _show_changelog(self) -> None:
         with self.console.status("Fetching changelogs..."):
@@ -618,7 +622,7 @@ class Updater:
             ):
                 raise SystemExit(1)
 
-    def _update_with_fresh_venv(self) -> NoReturn:
+    async def _update_with_fresh_venv(self) -> NoReturn:
         console = common.get_console()
         venv_dir = Path(sys.prefix)
         backup_dir = venv_dir / common.OLD_VENV_BACKUP_DIR_NAME
@@ -633,6 +637,14 @@ class Updater:
                 " you don't need to restore anything from it, remove it and try updating again.",
             )
             raise SystemExit(1)
+
+        try:
+            metadata = await self.latest.fetch_core_metadata()
+        except TypeError:
+            extras = get_installed_extras()
+        else:
+            known_extras = metadata.provides_extra or []
+            extras = [extra for extra in get_installed_extras() if extra in known_extras]
 
         old_executable = Path(sys.executable)
         rel_executable = old_executable.relative_to(venv_dir)
@@ -660,7 +672,7 @@ class Updater:
             # scripts path
             self.metadata.interpreter_info.sysconfig_path("scripts", {"base": str(venv_dir)}),
             # Red dependency specifier
-            common.get_red_dependency_specifier(self.latest.version),
+            common.get_red_dependency_specifier(self.latest.version, extras),
             set_env_vars={common.INTERNAL_UPDATER_METADATA_ENV_VAR: metadata_file.name},
         )
 
