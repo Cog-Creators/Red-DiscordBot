@@ -365,8 +365,8 @@ class AvailableVersion:
         self.requires_python = SpecifierSet(required_pythons.pop())
 
     @classmethod
-    def from_json_dict(self, data: Dict[str, Any]) -> Self:
-        ret = AvailableVersion(Version(data["version"]), data["files"])
+    def from_json_dict(cls, data: Dict[str, Any]) -> Self:
+        ret = cls(Version(data["version"]), data["files"])
         if str(ret.requires_python) != data["requires_python"]:
             raise ValueError("requires_python key in given data is inconsistent with files")
         return ret
