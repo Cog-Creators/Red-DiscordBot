@@ -638,23 +638,27 @@ class Updater:
             )
             raise SystemExit(1)
 
-        try:
-            metadata = await self.latest.fetch_core_metadata()
-        except TypeError:
-            extras = get_installed_extras()
-        else:
-            known_extras = metadata.provides_extra or []
-            extras = [extra for extra in get_installed_extras() if extra in known_extras]
+        with console.status("Determining extras to install..."):
+            try:
+                metadata = await self.latest.fetch_core_metadata()
+            except TypeError:
+                extras = get_installed_extras()
+            else:
+                known_extras = metadata.provides_extra or []
+                extras = [extra for extra in get_installed_extras() if extra in known_extras]
+        console.print("Extras to install have been determined.")
 
         old_executable = Path(sys.executable)
         rel_executable = old_executable.relative_to(venv_dir)
         new_executable = backup_dir / rel_executable
         wrapper_exe = runner.get_wrapper_executable()
 
-        for path in venv_dir.iterdir():
-            if path == backup_dir or path == wrapper_exe:
-                continue
-            path.rename(backup_dir / path.name)
+        with console.status("Moving old virtual environment..."):
+            for path in venv_dir.iterdir():
+                if path == backup_dir or path == wrapper_exe:
+                    continue
+                path.rename(backup_dir / path.name)
+        console.print("Old virtual environment moved.")
 
         with tempfile.NamedTemporaryFile(
             "w", encoding="utf-8", prefix="redbot-update-metadata-", suffix=".json", delete=False
