@@ -26,16 +26,10 @@ _instance_data = data_manager.load_existing_config()
 INSTANCE_LIST: Final = () if _instance_data is None else tuple(_instance_data.keys())
 
 
-# The cell width of text-style emojis that, by default, prefer emoji-style
-# is not well-defined in the Unicode spec and so it varies between different terminals
-# (e.g. kitty does things differently).
-# Therefore, I avoided using :white_heavy_check_mark-text: and :cross_mark-text:,
-# opting for less ideal :heavy_check_mark-text: and :heavy_multiplication_x-text:.
-# More details can be found at: https://github.com/jquast/wcwidth/issues/211
-ICON_SUCCESS = "[green]:heavy_check_mark-text:[/]"
-ICON_INFO = "[blue]\N{CIRCLED INFORMATION SOURCE}[/]"
-ICON_WARN = "[yellow]:warning-text:[/]"
-ICON_ERROR = "[red]:heavy_multiplication_x-text:[/]"
+ICON_SUCCESS = "[green]:white_heavy_check_mark-emoji:[/]"
+ICON_INFO = "[blue]:information-emoji:[/]"
+ICON_WARN = "[yellow]:warning-emoji:[/]"
+ICON_ERROR = "[red]:cross_mark-emoji:[/]"
 
 INTERNAL_LEGACY_WINDOWS_ENV_VAR = "_RED_UPDATE_INTERNAL_LEGACY_WINDOWS"
 INTERNAL_UPDATER_METADATA_ENV_VAR = "_RED_UPDATE_INTERNAL_UPDATER_METADATA"
