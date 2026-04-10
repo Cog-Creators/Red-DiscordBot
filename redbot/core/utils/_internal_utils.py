@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import collections.abc
 import contextlib
+import importlib.metadata
 import json
 import logging
 import os
@@ -40,6 +41,7 @@ import aiohttp
 import discord
 import yarl
 from packaging.metadata import Metadata
+from packaging.requirements import Requirement
 from packaging.specifiers import SpecifierSet
 from packaging.utils import parse_sdist_filename
 from packaging.version import Version
@@ -585,6 +587,43 @@ async def fetch_latest_red_version(
         include_prereleases=include_prereleases
     )
     return available_versions[0]
+
+
+def get_installed_extras() -> List[str]:
+    red_dist = importlib.metadata.distribution("Red-DiscordBot")
+    installed_extras = red_dist.metadata.get_all("Provides-Extra")
+    if installed_extras is None:
+        return []
+    installed_extras.remove("dev")
+    installed_extras.remove("all")
+    distributions: Dict[str, Optional[importlib.metadata.Distribution]] = {}
+    for req_str in red_dist.requires or []:
+        req = Requirement(req_str)
+        if req.marker is None or req.marker.evaluate():
+            continue
+        for extra in reversed(installed_extras):
+            if not req.marker.evaluate({"extra": extra}):
+                continue
+
+            # Check that the requirement is met.
+            # This is a bit simplified for our purposes and does not check
+            # whether the requirements of our requirements are met as well.
+            # This could potentially be an issue if we'll ever depend on
+            # a dependency's extra in our extra when we already depend on that
+            # in our base dependencies. However, considering that right now, all
+            # our dependencies are also fully pinned, this should not ever matter.
+            if req.name in distributions:
+                dist = distributions[req.name]
+            else:
+                try:
+                    dist = importlib.metadata.distribution(req.name)
+                except importlib.metadata.PackageNotFoundError:
+                    dist = None
+                distributions[req.name] = dist
+            if dist is None or not req.specifier.contains(dist.version, prereleases=True):
+                installed_extras.remove(extra)
+
+    return installed_extras
 
 
 def deprecated_removed(
