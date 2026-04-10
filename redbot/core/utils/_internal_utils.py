@@ -278,9 +278,18 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     for repo in repo_mgr.repos:
         repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
 
-    for f in data_path.glob("**/*"):
-        if not any(ex in str(f) for ex in exclusions) and f.is_file():
-            to_backup.append(f)
+    with rich.progress.Progress(
+        rich.progress.SpinnerColumn(),
+        rich.progress.TextColumn("[progress.description]{task.description}"),
+        RichIndefiniteBarColumn(),
+        rich.progress.TextColumn("{task.completed} files processed"),
+        rich.progress.TimeElapsedColumn(),
+    ) as progress:
+        for f in progress.track(
+            data_path.glob("**/*"), description="Preparing files for backup..."
+        ):
+            if not any(ex in str(f) for ex in exclusions) and f.is_file():
+                to_backup.append(f)
 
     backup_details: BackupDetails = {
         "backup_version": BACKUP_VERSION,
@@ -418,7 +427,7 @@ def deprecated_removed(
 class RichIndefiniteBarColumn(rich.progress.ProgressColumn):
     def render(self, task: rich.progress.Task) -> rich.progress.ProgressBar:
         return rich.progress.ProgressBar(
-            pulse=task.completed < task.total,
+            pulse=task.completed < task.total if task.total is not None else True,
             animation_time=task.get_time(),
             width=40,
             total=task.total,
