@@ -35,6 +35,7 @@ from typing import (
 import aiohttp
 import discord
 import yarl
+from packaging.metadata import Metadata
 from packaging.specifiers import SpecifierSet
 from packaging.utils import parse_sdist_filename
 from packaging.version import Version
@@ -377,6 +378,16 @@ class AvailableVersion:
             "requires_python": str(self.requires_python),
             "files": self.files,
         }
+
+    async def fetch_core_metadata(self) -> Metadata:
+        for release_file in self.files.values():
+            core_metadata_hashes = release_file.get("core-metadata", False)
+            if core_metadata_hashes is False:
+                continue
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f"{release_file['url']}.metadata") as resp:
+                    return Metadata.from_email(await resp.read(), validate=False)
+        raise TypeError("Could not find core metadata for any of the release files.")
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, self.__class__):
