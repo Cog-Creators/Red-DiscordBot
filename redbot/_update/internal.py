@@ -387,7 +387,10 @@ def reinstall(
 ) -> None:
     assert runner.get_request_output().request_type is runner.RequestType.exec
 
-    subprocess.check_call((base_executable, "-m", "venv", str(venv_dir)))
+    console = common.get_console()
+    with console.status("Creating a new virtual environment..."):
+        subprocess.check_call((base_executable, "-m", "venv", str(venv_dir)))
+    console.print("Created a new virtual environment.")
     executable = str(scripts_path / f"python{sysconfig.get_config_var('EXE')}")
 
     common.print_with_prefix_column(common.ICON_INFO, "Starting the install process...")
@@ -395,7 +398,6 @@ def reinstall(
         subprocess.check_call((executable, "-m", "pip", "install", "-U", "pip"))
         subprocess.check_call((executable, "-m", "pip", "install", dependency_specifier))
     except subprocess.CalledProcessError:
-        console = common.get_console()
         console.print()
         common.print_with_prefix_column(
             common.ICON_ERROR,
