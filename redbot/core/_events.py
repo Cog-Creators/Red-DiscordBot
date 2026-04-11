@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import platform
+import shlex
 import sys
 import logging
 import traceback
@@ -9,6 +10,7 @@ from typing import Tuple
 
 import aiohttp
 import discord
+import redbot_update
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from redbot.core import data_manager
@@ -26,7 +28,6 @@ from .utils._internal_utils import (
     fuzzy_command_search,
     format_fuzzy_results,
     fetch_latest_red_version,
-    get_installed_extras,
     send_to_owners_with_prefix_replaced,
 )
 from .utils.chat_formatting import inline, format_perms_list
@@ -52,7 +53,7 @@ ______         _           ______ _                       _  ______       _
 _ = Translator(__name__, __file__)
 
 
-def get_outdated_red_messages(pypi_version: str, requires_python: SpecifierSet) -> Tuple[str, str]:
+def get_outdated_red_messages(pypi_version: str) -> Tuple[str, str]:
     outdated_red_message = _(
         "Your Red instance is out of date! {} is the current version, however you are using {}!"
     ).format(pypi_version, red_version)
@@ -61,7 +62,6 @@ def get_outdated_red_messages(pypi_version: str, requires_python: SpecifierSet) 
         f"[red]!!![/red]Version [cyan]{pypi_version}[/] is available, "
         f"but you're using [cyan]{red_version}[/][red]!!![/red]"
     )
-    current_python = Version(platform.python_version())
     extra_update = _(
         "\n\nWhile the following command should work in most scenarios as it is "
         "based on your current OS, environment, and Python version, "
@@ -70,34 +70,15 @@ def get_outdated_red_messages(pypi_version: str, requires_python: SpecifierSet) 
         "needs to be done during the update.**"
     ).format(docs="https://docs.discord.red/en/stable/update_red.html")
 
-    if current_python not in requires_python:
-        extra_update += _(
-            "\n\nYou have Python `{py_version}` and this update "
-            "requires `{req_py}`; you cannot simply run the update command.\n\n"
-            "You will need to follow the update instructions in our docs above, "
-            "if you still need help updating after following the docs go to our "
-            "#support channel in <https://discord.gg/red>"
-        ).format(py_version=current_python, req_py=requires_python)
-        outdated_red_message += extra_update
-        return outdated_red_message, rich_outdated_message
-
-    installed_extras = get_installed_extras()
-    if installed_extras:
-        package_extras = f"[{','.join(installed_extras)}]"
-    else:
-        package_extras = ""
-
+    redbot_update_bin = redbot_update.find_redbot_update_bin()
+    is_windows = platform.system() == "Windows"
+    update_command = f'"{redbot_update_bin}"' if is_windows else shlex.quote(redbot_update_bin)
     extra_update += _(
         "\n\nTo update your bot, first shutdown your bot"
-        " then open a window of {console} (Not as admin) and run the following:"
-        "{command_1}\n"
-        "Once you've started up your bot again, we recommend that"
-        " you update any installed 3rd-party cogs with this command in Discord:"
-        "{command_2}"
+        " then open a window of {console} (Not as admin) and run the following: {command}"
     ).format(
-        console=_("Command Prompt") if platform.system() == "Windows" else _("Terminal"),
-        command_1=f'```"{sys.executable}" -m pip install -U "Red-DiscordBot{package_extras}"```',
-        command_2=f"```[p]cog update```",
+        console=_("Command Prompt") if is_windows else _("Terminal"),
+        command=f"```{update_command}```",
     )
     outdated_red_message += extra_update
     return outdated_red_message, rich_outdated_message
@@ -193,7 +174,7 @@ def init_events(bot, cli_flags):
             outdated = latest.version > Version(red_version)
             if outdated:
                 outdated_red_message, rich_outdated_message = get_outdated_red_messages(
-                    latest.version, latest.requires_python
+                    latest.version
                 )
                 rich_console.print(rich_outdated_message)
                 await send_to_owners_with_prefix_replaced(bot, outdated_red_message)
