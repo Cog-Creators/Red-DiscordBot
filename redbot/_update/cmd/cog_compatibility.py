@@ -3,7 +3,7 @@ import json
 import os
 import sys
 import tempfile
-from typing import Any, Final, Optional, Tuple
+from typing import Final, Optional, Tuple
 
 import click
 from packaging.version import Version
@@ -24,27 +24,6 @@ CMD_NAME: Final = "check-cog-compatibility"
 _COMPATIBILITY_RESULTS_ENV_VAR = "_RED_UPDATE_COMPATIBILITY_RESULTS_FILE"
 
 
-class _VersionParamType(click.ParamType):
-    name = "version"
-
-    def convert(
-        self, value: Any, param: Optional[click.Parameter], ctx: Optional[click.Context]
-    ) -> Version:
-        if isinstance(value, Version):
-            if len(value.release) < 2:
-                self.fail(
-                    f"{value!r} needs to have at least 2 release components (major and minor).",
-                    param,
-                    ctx,
-                )
-            return value
-
-        try:
-            return self.convert(Version(value), param, ctx)
-        except ValueError:
-            self.fail(f"{value!r} is not a valid version number", param, ctx)
-
-
 @click.command(CMD_NAME)
 @click.argument(
     "instances",
@@ -55,7 +34,7 @@ class _VersionParamType(click.ParamType):
 )
 @click.option(
     arg_names.RED_VERSION,
-    type=_VersionParamType(),
+    type=common.VersionParamType(),
     default=None,
     help="The Red version to check cog compatibility for."
     " If not provided, the information about latest available version will be fetched"
@@ -64,7 +43,7 @@ class _VersionParamType(click.ParamType):
 )
 @click.option(
     arg_names.PYTHON_VERSION,
-    type=_VersionParamType(),
+    type=common.VersionParamType(),
     default=None,
     help="The Python version to check cog compatibility for."
     " If not provided, the command will either use the current interpreter's version or,"

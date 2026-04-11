@@ -5,6 +5,7 @@ import sys
 from operator import itemgetter
 from typing import Any, Final, Iterable, List, Literal, Optional, Tuple, Union
 
+import click
 import rich
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
@@ -197,3 +198,24 @@ class OrderedEnum(enum.Enum):
         if self.__class__ is other.__class__:
             return self.value < other.value
         return NotImplemented
+
+
+class VersionParamType(click.ParamType):
+    name = "version"
+
+    def convert(
+        self, value: Any, param: Optional[click.Parameter], ctx: Optional[click.Context]
+    ) -> Version:
+        if isinstance(value, Version):
+            if len(value.release) < 2:
+                self.fail(
+                    f"{value!r} needs to have at least 2 release components (major and minor).",
+                    param,
+                    ctx,
+                )
+            return value
+
+        try:
+            return self.convert(Version(value), param, ctx)
+        except ValueError:
+            self.fail(f"{value!r} is not a valid version number", param, ctx)
