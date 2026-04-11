@@ -413,8 +413,8 @@ class CogCompatibilityChecker:
             updated_count = 0
             already_up_to_date_count = 0
             failed_count = 0
-            for idx, repo in enumerate(_downloader._repo_manager.repos):
-                progress.update(task_id, completed=idx, description=f"Updating {repo.name!r} repo")
+            for repo in _downloader._repo_manager.repos:
+                progress.update(task_id, description=f"Updating {repo.name!r} repo")
                 try:
                     old, new = await repo.update()
                 except _downloader.errors.UpdateError:
@@ -435,6 +435,7 @@ class CogCompatibilityChecker:
                         self._console.print(
                             "Repo", Text(repo.name, style="bold"), "is already up-to-date."
                         )
+                progress.advance(task_id)
 
         self._stdout_console.print(
             f"Successfully updated {updated_count} repos, failed to update {failed_count} repos.\n"
