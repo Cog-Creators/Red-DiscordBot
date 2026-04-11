@@ -876,12 +876,12 @@ async def _restore_from_backup() -> None:
         raw_repos = json.load(fp)
 
     with detailed_progress(unit="repos") as progress:
-        task_id = progress.add_task("Adding repos", total=len(raw_repos))
-        for idx, repo_data in enumerate(raw_repos):
+        task_id = progress.add_task("Adding repos")
+        for repo_data in progress.track(raw_repos, task_id=task_id):
             repo_url = repo_data["url"]
             repo_name = repo_data["name"]
             repo_branch = repo_data["branch"]
-            progress.update(task_id, completed=idx, description=f"Adding {repo_name!r} repo")
+            progress.update(task_id, description=f"Adding {repo_name!r} repo")
             try:
                 await _repo_manager.add_repo(repo_url, repo_name, repo_branch)
             except errors.ExistingGitRepo:
@@ -929,10 +929,10 @@ async def _restore_from_backup() -> None:
         )
 
     with detailed_progress(unit="cogs") as progress:
-        task_id = progress.add_task("Installing cogs", total=len(cogs_to_reinstall))
+        task_id = progress.add_task("Installing cogs")
         cog: Installable
-        for idx, cog in enumerate(cogs_to_reinstall):
-            progress.update(task_id, completed=idx, description=f"Installing {cog.name!r} cog")
+        for cog in progress.track(cogs_to_reinstall, task_id=task_id):
+            progress.update(task_id, description=f"Installing {cog.name!r} cog")
             if not cog.commit:
                 last_cog_occurrence = await cog.repo.get_last_module_occurrence(cog.name)
                 if last_cog_occurrence is not None and not last_cog_occurrence.disabled:
