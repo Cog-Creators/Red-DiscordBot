@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any, Final, Optional, Tuple
 
 import click
+from packaging.version import Version
 from python_discovery import PythonInfo
 
 from redbot.core._cli import asyncio_run
@@ -72,6 +73,13 @@ class _PythonInfoParamType(click.ParamType):
     "--no-backup",
     help="Do not make backups of the virtual environment and instances before update.",
     is_flag=True,
+)
+@click.option(
+    "--red-version",
+    "--version",
+    type=common.VersionParamType(),
+    default=None,
+    help="Version of Red to update to instead of the latest.",
 )
 @click.option(
     "--no-major-updates",
@@ -155,6 +163,7 @@ def cli(
     excluded_instances: Tuple[str, ...],
     backup_dir: Optional[Path],
     no_backup: bool,
+    red_version: Optional[Version],
     no_major_updates: bool,
     no_full_changelog: bool,
     no_cog_compatibility_check: bool,
@@ -183,6 +192,7 @@ def cli(
             ignore_prefix=ignore_prefix,
             backup_dir=backup_dir,
             no_backup=no_backup,
+            red_version=red_version,
             no_major_updates=no_major_updates,
             no_full_changelog=no_full_changelog,
             no_cog_compatibility_check=no_cog_compatibility_check,
@@ -202,6 +212,8 @@ def cli(
         raise click.NoSuchOption("--backup-dir", ctx=ctx)
     elif no_backup:
         raise click.NoSuchOption("--no-backup", ctx=ctx)
+    elif red_version:
+        raise click.NoSuchOption("--red-version", ctx=ctx)
     elif no_major_updates:
         raise click.NoSuchOption("--no-major-updates", ctx=ctx)
     elif no_cog_compatibility_check:

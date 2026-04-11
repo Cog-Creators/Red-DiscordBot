@@ -39,6 +39,7 @@ class UpdaterOptions:
     ignore_prefix: bool
     backup_dir: Optional[Path]
     no_backup: bool
+    red_version: Optional[Version]
     no_major_updates: bool
     no_full_changelog: bool
     no_cog_compatibility_check: bool
@@ -49,13 +50,15 @@ class UpdaterOptions:
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
-        backup_dir = data.get("backup_dir")
+        backup_dir = data["backup_dir"]
+        red_version = data["red_version"]
         return cls(
             instances=data["instances"],
             excluded_instances=set(data["excluded_instances"]),
             ignore_prefix=data["ignore_prefix"],
             backup_dir=backup_dir and Path(data["backup_dir"]),
             no_backup=data["no_backup"],
+            red_version=red_version and Version(red_version),
             no_major_updates=data["no_major_updates"],
             no_full_changelog=data["no_full_changelog"],
             no_cog_compatibility_check=data["no_cog_compatibility_check"],
@@ -72,6 +75,7 @@ class UpdaterOptions:
         data = dataclasses.asdict(self)
         data["excluded_instances"] = list(self.excluded_instances)
         data["backup_dir"] = self.backup_dir and str(self.backup_dir)
+        data["red_version"] = self.red_version and str(self.red_version)
         data["new_python_interpreter"] = (
             self.new_python_interpreter and self.new_python_interpreter.to_dict()
         )
@@ -228,32 +232,11 @@ class Updater:
         return self.metadata.current_version
 
     async def run(self) -> None:
-        interpreter_info = self.options.new_python_interpreter or PythonInfo.current_system()
-        with self.console.status("Checking latest version..."):
-            available_versions = await fetch_available_red_versions()
-            latest_major = available_versions[0]
-            self.metadata = UpdaterMetadata(
-                self.options,
-                latest=latest_major,
-                latest_major=latest_major,
-                interpreter_info=interpreter_info,
-            )
-            if self.options.no_major_updates:
-                for available_version in available_versions:
-                    if available_version.version.release[:2] == self.current_version.release[:2]:
-                        self.metadata.latest = available_version
-                        break
-                else:
-                    if self.current_version < latest_major.version:
-                        common.print_with_prefix_column(
-                            common.ICON_ERROR,
-                            "Could not find any version of Red that would not be a major update.",
-                        )
-                        raise SystemExit(1)
+        await self._prepare_metadata()
 
         new_version_available = self.current_version < self.latest.version
         if not self.options.force_reinstall and not new_version_available:
-            if self.current_version >= latest_major.version:
+            if self.current_version >= self.metadata.latest_major.version:
                 common.print_with_prefix_column(
                     common.ICON_SUCCESS,
                     "You are already running the latest available version of Red.",
@@ -263,7 +246,7 @@ class Updater:
                     common.ICON_INFO,
                     "There are no non-major updates available.\n",
                     "There is a new major version available: ",
-                    Text(str(latest_major.version), style="bold"),
+                    Text(str(self.metadata.latest_major.version), style="bold"),
                 )
             return
 
@@ -312,6 +295,57 @@ class Updater:
             await self._make_backups()
 
         await self._update_with_fresh_venv()
+
+    async def _prepare_metadata(self) -> None:
+        interpreter_info = self.options.new_python_interpreter or PythonInfo.current_system()
+        with self.console.status("Checking latest version..."):
+            available_versions = await fetch_available_red_versions()
+            latest_major = available_versions[0]
+
+        self.metadata = UpdaterMetadata(
+            self.options,
+            latest=latest_major,
+            latest_major=latest_major,
+            interpreter_info=interpreter_info,
+        )
+
+        if self.options.red_version:
+            if self.options.red_version <= self.current_version:
+                common.print_with_prefix_column(
+                    common.ICON_ERROR, "You can only update to a newer version of Red."
+                )
+                raise SystemExit(2)
+            if (
+                self.options.no_major_updates
+                and self.options.red_version.release[:2] != self.current_version.release[:2]
+            ):
+                common.print_with_prefix_column(
+                    common.ICON_ERROR,
+                    "Updating to the specified version would be a major update"
+                    " but --no-major-updates option was specified.",
+                )
+                raise SystemExit(2)
+            for available_version in available_versions:
+                if available_version.version == self.options.red_version:
+                    break
+            else:
+                common.print_with_prefix_column(
+                    common.ICON_ERROR, "The provided version does not seem to exist."
+                )
+                raise SystemExit(2)
+            self.metadata.latest = available_version
+        elif self.options.no_major_updates:
+            for available_version in available_versions:
+                if available_version.version.release[:2] == self.current_version.release[:2]:
+                    self.metadata.latest = available_version
+                    break
+            else:
+                if self.current_version < latest_major.version:
+                    common.print_with_prefix_column(
+                        common.ICON_ERROR,
+                        "Could not find any version of Red that would not be a major update.",
+                    )
+                    raise SystemExit(1)
 
     async def _show_changelog(self) -> None:
         with self.console.status("Fetching changelogs..."):
