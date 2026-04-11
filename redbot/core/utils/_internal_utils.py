@@ -461,7 +461,7 @@ async def fetch_available_red_versions(
             if not (
                 content_type.startswith(expected_content_type)
                 or (
-                    content_type == "application/json"
+                    content_type.startswith("application/json")
                     and data["meta"]["api-version"].startswith("1.")
                 )
             ):
