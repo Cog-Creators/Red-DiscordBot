@@ -165,7 +165,7 @@ def search_for_interpreters(
         interpreters = _get_system_interpreters(requires_python)
 
     if not interpreters:
-        url = "https://docs.discord.red/en/latest/install_guides/"
+        url = "https://docs.discord.red/en/stable/install_guides/"
         console.print(
             f"{ICON_ERROR} Could not find a compatible Python interpreter!\n"
             'Please follow the steps from the "Installing the pre-requirements" section'
