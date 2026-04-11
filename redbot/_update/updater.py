@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import sys
+import tarfile
 import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, NoReturn, Optional, Set
@@ -19,6 +20,7 @@ from typing_extensions import Self
 
 from redbot.core.utils._internal_utils import (
     AvailableVersion,
+    detailed_progress,
     fetch_available_red_versions,
     get_installed_extras,
 )
@@ -572,17 +574,31 @@ class Updater:
         )
         console = common.get_console()
         console.print("Backups will be created at:", Text(str(backup_dir), style="bold"))
-        venv_backup_dir = backup_dir / "redenv"
+        venv_archive = backup_dir / "venv.tar.gz"
         with console.status("Making a backup of the virtual environment directory..."):
             venv_dir = Path(sys.prefix)
-            shutil.copytree(venv_dir, venv_backup_dir, symlinks=True)
+            venv_files = []
+            for current_dir, _, filenames in os.walk(venv_dir):
+                target_dir = os.path.relpath(current_dir, venv_dir)
+                if target_dir == ".":
+                    target_dir = ""
+                for name in filenames:
+                    venv_files.append(
+                        (os.path.join(current_dir, name), os.path.join(target_dir, name))
+                    )
+            with tarfile.open(venv_archive, "w:gz", compresslevel=6) as tar:
+                with detailed_progress(unit="files") as progress:
+                    for src, arcname in progress.track(venv_files, description="Compressing..."):
+                        tar.add(src, arcname=arcname, recursive=False)
         console.print(
             "Created a backup of the virtual environment directory at:",
-            Text(str(venv_backup_dir), style="bold"),
+            Text(str(venv_archive), style="bold"),
         )
 
         checked = []
         failed = []
+        instance_backups_dir = backup_dir / "instance_backups"
+        instance_backups_dir.mkdir()
         for instance_name in self.metadata.to_backup:
             console.print(
                 "Making a backup of the", Text(instance_name, style="bold"), "instance..."
@@ -595,7 +611,7 @@ class Updater:
                 "backup",
                 *debug_args,
                 instance_name,
-                str(backup_dir),
+                str(instance_backups_dir),
             )
             if await proc.wait():
                 failed.append(instance_name)
