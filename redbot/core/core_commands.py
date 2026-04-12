@@ -184,7 +184,6 @@ class CoreLogic:
                 continue
 
             try:
-                bot._cog_mgr.reload(module)
                 await bot.load_extension(module)
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
@@ -5741,7 +5740,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         except errors.NoSuchCog:
             raise LookupError("No such cog found.")
 
-        module = self.bot.cog_mgr.reload(module)
         await self.bot.load_extension(module)
 
     async def rpc_unload(self, request):

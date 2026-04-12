@@ -340,35 +340,6 @@ class CogManager:
         # If we get here, we failed to find the module
         return None
 
-    @staticmethod
-    def reload(module: ModuleType) -> ModuleType:
-        """Internally reloads modules so that changes are detected."""
-        module_name = module.__name__
-        a, b, *splitted = module_name.split(".")
-        splitted[0] = f"{a}.{b}.{splitted[0]}"
-
-        def maybe_reload(new_name: str) -> None:
-            try:
-                lib = sys.modules[new_name]
-            except KeyError:
-                pass
-            else:
-                importlib.reload(lib)
-
-        modules = itertools.accumulate(splitted, "{}.{}".format)
-        for m in modules:
-            maybe_reload(m)
-
-        children = {
-            name: lib
-            for name, lib in sys.modules.items()
-            if name == module_name or name.startswith(f"{module_name}.")
-        }
-        for child_name, lib in children.items():
-            importlib.reload(lib)
-
-        return sys.modules[module.__name__]
-
     @classmethod
     def find_available_modules(cls) -> Set[str]:
         """Find the names of all available modules to load."""
