@@ -331,18 +331,12 @@ def parse_cli_flags(args):
         default=None,
         help="Forcefully disables the Rich logging handlers.",
     )
-    # DEP-WARN: use argparse.BooleanOptionalAction when we drop support for Python 3.8
     parser.add_argument(
         "--rich-tracebacks",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
         default=False,
         help="Format the Python exception tracebacks using Rich (with syntax highlighting)."
         " *May* be useful to increase traceback readability during development.",
-    )
-    parser.add_argument(
-        "--no-rich-tracebacks",
-        action="store_false",
-        dest="rich_tracebacks",
     )
     parser.add_argument(
         "--rich-traceback-extra-lines",
