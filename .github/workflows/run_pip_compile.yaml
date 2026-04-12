@@ -15,10 +15,10 @@ jobs:
           - macos-latest
     steps:
       - name: Checkout the repository.
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: |
             3.11
@@ -39,7 +39,7 @@ jobs:
           python .github/workflows/scripts/compile_requirements.py
 
       - name: Upload requirements files.
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.compile_requirements.outputs.sys_platform }}
           path: requirements/${{ steps.compile_requirements.outputs.sys_platform }}-*.txt
@@ -50,10 +50,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository.
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python 3.11.
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -62,17 +62,17 @@ jobs:
           python -m pip install -U "packaging>=22.0"
 
       - name: Download Windows requirements.
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: win32
           path: requirements
       - name: Download Linux requirements.
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux
           path: requirements
       - name: Download macOS requirements.
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: darwin
           path: requirements
@@ -82,7 +82,7 @@ jobs:
           python .github/workflows/scripts/merge_requirements.py
 
       - name: Upload merged requirements files.
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: merged
           path: |

@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout repository and install Python
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -57,10 +57,10 @@ jobs:
     name: Build package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -75,7 +75,7 @@ jobs:
         run: python -m twine check dist/*
 
       - name: Upload packaged distributions
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-output
           path: ./dist
@@ -84,10 +84,10 @@ jobs:
     name: Generate default application.yml
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -102,7 +102,7 @@ jobs:
           python .github/workflows/scripts/get_default_ll_server_config.py "release_assets/$APP_YML_FILE"
 
       - name: Upload default application.yml
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ll-default-server-config
           path: ./release_assets
@@ -120,13 +120,13 @@ jobs:
       id-token: write
     steps:
       - name: Download packaged distributions
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-output
           path: dist/
 
       - name: Download default application.yml
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ll-default-server-config
           path: release_assets/
@@ -158,7 +158,7 @@ jobs:
         run: |
           echo "BASE_BRANCH=${TAG_BASE_BRANCH#'refs/heads/'}" >> $GITHUB_ENV
 
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app-token
         with:
           app-id: ${{ secrets.RED_RELEASER_CLIENT_ID }}
@@ -185,7 +185,7 @@ jobs:
       # Get milestone number of the milestone for the old version
       - name: Get milestone number
         id: get_milestone_number
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         env:
           MILESTONE_TITLE: ${{ steps.bump_version_dev.outputs.old_version }}
         with:
@@ -197,7 +197,8 @@ jobs:
 
       - name: Create Pull Request
         id: cpr_bump_dev
-        uses: peter-evans/create-pull-request@v4
+        # TODO: Switch to `gh`
+        uses: peter-evans/create-pull-request@38e0b6e68b4c852a5500a94740f0e535e0d7ba54  # v4.2.4
         with:
           token: ${{ steps.app-token.outputs.token }}
           commit-message: Version bump to ${{ steps.bump_version_dev.outputs.new_version }}
