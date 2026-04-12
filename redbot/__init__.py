@@ -19,7 +19,7 @@ __all__ = (
     "VersionInfo",
 )
 
-MIN_PYTHON_VERSION = (3, 8, 1)
+MIN_PYTHON_VERSION = (3, 11, 0)
 if _sys.version_info < MIN_PYTHON_VERSION:
     print(
         f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you have "

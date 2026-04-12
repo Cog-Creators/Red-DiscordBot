@@ -55,7 +55,7 @@ function stylediff() {
 }
 
 function newenv() {
-    py -3.8 -m venv --clear .venv
+    py -3.11 -m venv --clear .venv
     & $PSScriptRoot\.venv\Scripts\python.exe -m pip install -U pip wheel
     syncenv
 }

@@ -13,7 +13,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.8'
+        python-version: '3.11'
     - name: Install dependencies
       run: |
         curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -

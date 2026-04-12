@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.8'
+          python-version: '3.11'
       - name: Install dependencies
         run: |
           curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
@@ -84,7 +84,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.8'
+          python-version: '3.11'
 
       # Create PR for stable version bump
       - name: Update Red version number from input
