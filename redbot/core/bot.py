@@ -1768,6 +1768,29 @@ class Red(
         else:
             self._BotBase__extensions[name] = module
 
+    async def _call_module_finalizers(self, lib: ModuleType, key: str) -> None:
+        # Implementation identical to the base class except as noted in the comment below
+        try:
+            func = getattr(lib, "teardown")
+        except AttributeError:
+            pass
+        else:
+            try:
+                await func(self)
+            except Exception:
+                pass
+        finally:
+            self._BotBase__extensions.pop(key, None)
+            name = lib.__name__
+            # This pops `lib`'s name (e.g. "redbot.cogs.general")
+            # rather than extension's `key` (e.g. "general") like the base class does.
+            # We specifically want to avoid touching anything outside
+            # the `redbot.cogs`/`redbot.ext_cogs` namespaces so we had to override this method.
+            sys.modules.pop(name, None)
+            for module in list(sys.modules.keys()):
+                if name == module.__name__ or module.__name__.startswith(f"{name}."):
+                    del sys.modules[module]
+
     async def remove_cog(
         self,
         cogname: str,
