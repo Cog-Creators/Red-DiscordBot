@@ -12,6 +12,8 @@ _update_event_loop_policy()
 @pytest.fixture(scope="session")
 def event_loop(request):
     """Create an instance of the default event loop for entire session."""
+    # DEP-WARN: switch to event loop factory when pytest-asyncio 1.4.0 releases:
+    # https://github.com/pytest-dev/pytest-asyncio/pull/1373
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     yield loop
