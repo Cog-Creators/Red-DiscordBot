@@ -10,6 +10,7 @@ import sys
 import contextlib
 import weakref
 import functools
+import re
 from collections import namedtuple, OrderedDict
 from datetime import datetime
 from importlib.machinery import ModuleSpec
@@ -32,7 +33,7 @@ from typing import (
     overload,
     TYPE_CHECKING,
 )
-from types import MappingProxyType
+from types import MappingProxyType, ModuleType
 
 import discord
 from discord.ext import commands as dpy_commands
@@ -1170,6 +1171,7 @@ class Red(
         await super()._pre_login()
 
         await self._maybe_update_config()
+        await self._cog_mgr.initialize()
         self.description = await self._config.description()
         self._color = discord.Colour(await self._config.color())
 
@@ -1318,16 +1320,14 @@ class Red(
             log.info("Loading packages...")
             for package in packages:
                 try:
-                    spec = await self._cog_mgr.find_cog(package)
-                    if spec is None:
-                        log.error(
-                            "Failed to load package %s (package was not found in any cog path)",
-                            package,
-                        )
-                        await self.remove_loaded_package(package)
-                        to_remove.append(package)
-                        continue
-                    await asyncio.wait_for(self.load_extension(spec), 30)
+                    await asyncio.wait_for(self.load_extension(package), 30)
+                except errors.NoSuchCog:
+                    log.error(
+                        "Failed to load package %s (package was not found in any cog path)",
+                        package,
+                    )
+                    await self.remove_loaded_package(package)
+                    to_remove.append(package)
                 except asyncio.TimeoutError:
                     log.exception("Failed to load package %s (timeout)", package)
                     to_remove.append(package)
@@ -1766,26 +1766,41 @@ class Red(
             while pkg_name in curr_pkgs:
                 curr_pkgs.remove(pkg_name)
 
-    async def load_extension(self, spec: ModuleSpec):
-        # NB: this completely bypasses `discord.ext.commands.Bot._load_from_module_spec`
-        name = spec.name.split(".")[-1]
-        if name in self.extensions:
-            raise errors.PackageAlreadyLoaded(spec)
+    # Pattern to match parent package name of cog module (redbot.cogs. or redbot.ext_cogs.)
+    _COG_PACKAGE_RE = re.compile(r"^redbot\.(?:ext_)?cogs\.(.+)")
 
-        lib = spec.loader.load_module()
-        if not hasattr(lib, "setup"):
-            del lib
-            raise discord.ClientException(f"extension {name} does not have a setup function")
+    async def load_extension(self, module: Union[str, ModuleType], /):
+        # This implementation completely bypasses `discord.ext.commands.Bot._load_from_module_spec`
+        # with our own cog manager implementation.
+
+        if isinstance(module, str):
+            module: ModuleType = self._cog_mgr.load_cog_module(module)
+
+        name_match = self._COG_PACKAGE_RE.match(module.__name__)
+        if name_match is None:
+            raise errors.NoSuchCog(
+                f"The passed cog module ({module.__name__}) is not part of"
+                " redbot.cogs or redbot.ext_cogs package.",
+                name=module.__name__,
+            )
+        name = name_match.group(1)
+        if name in self.extensions:
+            raise errors.PackageAlreadyLoaded(name)
 
         try:
-            await lib.setup(self)
+            setup = getattr(module, "setup")
+        except AttributeError:
+            raise commands.NoEntryPointError(name)
+
+        try:
+            await setup(self)
             await self.tree.red_check_enabled()
         except Exception as e:
-            await self._remove_module_references(lib.__name__)
-            await self._call_module_finalizers(lib, name)
+            await self._remove_module_references(module.__name__)
+            await self._call_module_finalizers(module, name)
             raise
         else:
-            self._BotBase__extensions[name] = lib
+            self._BotBase__extensions[name] = module
 
     async def remove_cog(
         self,
