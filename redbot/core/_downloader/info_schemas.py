@@ -196,8 +196,6 @@ def ensure_installable_type(
         return default  # NOTE: old behavior was to use InstallableType.UNKNOWN
     if value in ("", "COG"):
         return installable.InstallableType.COG
-    if value == "SHARED_LIBRARY":
-        return installable.InstallableType.SHARED_LIBRARY
     return installable.InstallableType.UNKNOWN
 
 

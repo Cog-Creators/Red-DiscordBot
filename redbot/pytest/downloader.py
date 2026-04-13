@@ -15,10 +15,8 @@ __all__ = [
     "repo",
     "bot_repo",
     "INFO_JSON",
-    "LIBRARY_INFO_JSON",
     "installable",
     "installed_cog",
-    "library_installable",
     "fake_run_noprint",
     "fake_current_commit",
     "_session_git_repo",
@@ -97,20 +95,6 @@ INFO_JSON = {
     "type": "COG",
 }
 
-LIBRARY_INFO_JSON = {
-    "author": ("seputaes",),
-    "min_bot_version": "3.0.0",
-    "max_bot_version": "3.0.2",
-    "description": "A long library description",
-    "hidden": False,  # libraries are always hidden, this tests it will be flipped
-    "install_msg": "A library install message",
-    "required_cogs": {},
-    "requirements": ("tabulate",),
-    "short": "A short library description",
-    "tags": ("libtag1", "libtag2"),
-    "type": "SHARED_LIBRARY",
-}
-
 
 @pytest.fixture
 def installable(tmpdir):
@@ -129,16 +113,6 @@ def installed_cog(tmpdir):
     info_path.write_text(json.dumps(INFO_JSON), "utf-8")
 
     cog_info = InstalledModule(Path(str(cog_path)))
-    return cog_info
-
-
-@pytest.fixture
-def library_installable(tmpdir):
-    lib_path = tmpdir.mkdir("test_repo").mkdir("test_lib")
-    info_path = lib_path.join("info.json")
-    info_path.write_text(json.dumps(LIBRARY_INFO_JSON), "utf-8")
-
-    cog_info = Installable(Path(str(lib_path)))
     return cog_info
 
 

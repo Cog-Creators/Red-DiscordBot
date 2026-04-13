@@ -76,10 +76,9 @@
     },
     "type": {
       "type": "string",
-      "description": "Optional, defaults to COG. Must be either COG or SHARED_LIBRARY. If SHARED_LIBRARY then hidden will be True.",
+      "description": "Optional, defaults to ``COG``. There are currently no other types.",
       "enum": [
-        "COG",
-        "SHARED_LIBRARY"
+        "COG"
       ]
     }
   },
