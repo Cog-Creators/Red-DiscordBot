@@ -107,17 +107,6 @@ class SimpleMenu(discord.ui.View):
         under the select menu in this instance.
         Defaults to False.
 
-    Attributes
-    ----------
-    select_menu: `discord.ui.Select`
-        A select menu with a list of pages. The usage of this attribute is discouraged
-        as it may store different instances throughout the menu's lifetime.
-
-        .. deprecated-removed:: 3.5.14 60
-            Any behaviour enabled by the usage of this attribute should no longer be depended on.
-            If you need this for something and cannot replace it with the other functionality,
-            create an issue on Red's issue tracker.
-
     Examples
     --------
         You can provide a list of strings::
@@ -186,7 +175,7 @@ class SimpleMenu(discord.ui.View):
         self.stop_button = _StopButton(
             discord.ButtonStyle.red, "\N{HEAVY MULTIPLICATION X}\N{VARIATION SELECTOR-16}"
         )
-        self.select_menu = self._get_select_menu()
+        self._select_menu = self._get_select_menu()
         self.add_item(self.stop_button)
         if self.source.is_paginating() and not self.use_select_only:
             self.add_item(self.first_button)
@@ -196,10 +185,10 @@ class SimpleMenu(discord.ui.View):
         if self.use_select_menu and self.source.is_paginating():
             if self.use_select_only:
                 self.remove_item(self.stop_button)
-                self.add_item(self.select_menu)
+                self.add_item(self._select_menu)
                 self.add_item(self.stop_button)
             else:
-                self.add_item(self.select_menu)
+                self.add_item(self._select_menu)
 
     @property
     def source(self):
@@ -281,10 +270,10 @@ class SimpleMenu(discord.ui.View):
                 if the context is from a slash command interaction.
         """
         if self.use_select_menu and self.source.is_paginating():
-            self.remove_item(self.select_menu)
+            self.remove_item(self._select_menu)
             # we added a default one in init so we want to remove it and add any changes here
-            self.select_menu = self._get_select_menu()
-            self.add_item(self.select_menu)
+            self._select_menu = self._get_select_menu()
+            self.add_item(self._select_menu)
         self._fallback_author_to_ctx = True
         if user is not None:
             self.author = user
@@ -302,10 +291,10 @@ class SimpleMenu(discord.ui.View):
                 The user that will be direct messaged by the bot.
         """
         if self.use_select_menu and self.source.is_paginating():
-            self.remove_item(self.select_menu)
+            self.remove_item(self._select_menu)
             # we added a default one in init so we want to remove it and add any changes here
-            self.select_menu = self._get_select_menu()
-            self.add_item(self.select_menu)
+            self._select_menu = self._get_select_menu()
+            self.add_item(self._select_menu)
         self.author = user
         kwargs = await self.get_page(self.current_page)
         self.message = await user.send(**kwargs)
@@ -318,9 +307,9 @@ class SimpleMenu(discord.ui.View):
             page = await self.source.get_page(self.current_page)
         value = await self.source.format_page(self, page)
         if self.use_select_menu and len(self.select_options) > 25 and self.source.is_paginating():
-            self.remove_item(self.select_menu)
-            self.select_menu = self._get_select_menu()
-            self.add_item(self.select_menu)
+            self.remove_item(self._select_menu)
+            self._select_menu = self._get_select_menu()
+            self.add_item(self._select_menu)
         ret: Dict[str, Optional[Any]] = {"view": self}
         if isinstance(value, dict):
             ret.update(value)
