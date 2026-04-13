@@ -19,7 +19,7 @@ Open that document in Notepad, and paste the following text in it:
     @ECHO OFF
     :RED
     CALL "%userprofile%\redenv\Scripts\activate.bat"
-    python -O -m redbot <your instance name>
+    python -P -O -m redbot <your instance name>
 
     IF %ERRORLEVEL% == 1 GOTO RESTART_RED
     IF %ERRORLEVEL% == 26 GOTO RESTART_RED
