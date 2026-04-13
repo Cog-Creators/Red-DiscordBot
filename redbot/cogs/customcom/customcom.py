@@ -1,7 +1,7 @@
 import asyncio
 import re
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Iterable, List, Mapping, Tuple, Dict, Set, Literal, Union
 from urllib.parse import quote_plus
 
@@ -118,7 +118,7 @@ class CommandObj:
     def get_now() -> str:
         # Get current time as a string, for 'created_at' and 'edited_at' fields
         # in the ccinfo dict
-        return "{:%d/%m/%Y %H:%M:%S}".format(datetime.utcnow())
+        return "{:%d/%m/%Y %H:%M:%S}".format(datetime.now(timezone.utc))
 
     async def get(self, message: discord.Message, command: str) -> Tuple[str, Dict]:
         if not command:
@@ -781,7 +781,7 @@ class CustomCommands(commands.Cog):
         return dict((p.name, p) for p in fin)
 
     def test_cooldowns(self, ctx, command, cooldowns):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         new_cooldowns = {}
         for per, rate in cooldowns.items():
             if per == "guild":

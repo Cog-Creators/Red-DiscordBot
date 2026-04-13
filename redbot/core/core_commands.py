@@ -383,8 +383,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
-        since = datetime.datetime(2016, 1, 2, 0, 0)
-        days_since = (datetime.datetime.utcnow() - since).days
+        since = datetime.datetime(2016, 1, 2, tzinfo=datetime.timezone.utc)
+        days_since = (datetime.datetime.now(datetime.timezone.utc) - since).days
 
         app_info = await self.bot.application_info()
         if app_info.team:
@@ -524,12 +524,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     @commands.command()
     async def uptime(self, ctx: commands.Context):
         """Shows [botname]'s uptime."""
-        delta = datetime.datetime.utcnow() - self.bot.uptime
-        uptime = self.bot.uptime.replace(tzinfo=datetime.timezone.utc)
+        delta = datetime.datetime.now(datetime.timezone.utc) - self.bot.uptime
         uptime_str = humanize_timedelta(timedelta=delta) or _("Less than one second.")
         await ctx.send(
             _("I have been up for: **{time_quantity}** (since {timestamp})").format(
-                time_quantity=uptime_str, timestamp=discord.utils.format_dt(uptime, "f")
+                time_quantity=uptime_str, timestamp=discord.utils.format_dt(self.bot.uptime, "f")
             )
         )
 

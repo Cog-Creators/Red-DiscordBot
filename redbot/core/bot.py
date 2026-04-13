@@ -529,7 +529,11 @@ class Red(
 
     @property
     def uptime(self) -> datetime:
-        """Allow access to the value, but we don't want cog creators setting it"""
+        """
+        The time when the bot connected to Discord at startup and became ready.
+
+        This is a aware `datetime.datetime` object in UTC timezone.
+        """
         return self._uptime
 
     @uptime.setter
