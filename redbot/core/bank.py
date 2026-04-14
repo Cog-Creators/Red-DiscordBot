@@ -245,7 +245,7 @@ def _decode_time(time: int) -> datetime:
         The datetime object from the timestamp.
 
     """
-    return datetime.utcfromtimestamp(time)
+    return datetime.fromtimestamp(time, timezone.utc)
 
 
 async def get_balance(member: discord.Member) -> int:
