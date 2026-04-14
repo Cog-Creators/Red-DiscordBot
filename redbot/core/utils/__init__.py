@@ -32,6 +32,7 @@ from discord.ext import commands as dpy_commands
 from discord.utils import maybe_coroutine
 
 from redbot.core import commands
+from redbot.core.utils._internal_utils import iscoroutinefunction
 
 if TYPE_CHECKING:
     GuildMessageable = Union[
@@ -90,11 +91,11 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=du
 
         # We assign the generator strategy based on the arguments' types
         if isinstance(iterable, AsyncIterable):
-            if asyncio.iscoroutinefunction(func):
+            if iscoroutinefunction(func):
                 self.__generator_instance = self.__async_generator_async_pred()
             else:
                 self.__generator_instance = self.__async_generator_sync_pred()
-        elif asyncio.iscoroutinefunction(func):
+        elif iscoroutinefunction(func):
             self.__generator_instance = self.__sync_generator_async_pred()
         else:
             raise TypeError("Must be either an async predicate, an async iterable, or both.")

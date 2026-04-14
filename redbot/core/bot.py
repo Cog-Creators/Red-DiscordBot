@@ -70,7 +70,7 @@ from ._rpc import RPCMixin
 from .tree import RedTree
 from .utils import can_user_send_messages_in, common_filters, AsyncIter
 from .utils.chat_formatting import box, text_to_file
-from .utils._internal_utils import send_to_owners_with_prefix_replaced
+from .utils._internal_utils import iscoroutinefunction, send_to_owners_with_prefix_replaced
 
 if TYPE_CHECKING:
     from discord.ext.commands.hybrid import CommandCallback, ContextT, P
@@ -511,7 +511,7 @@ class Red(
         TypeError
             The coroutine passed is not actually a coroutine.
         """
-        if not asyncio.iscoroutinefunction(coro):
+        if not iscoroutinefunction(coro):
             raise TypeError("The pre-invoke hook must be a coroutine.")
 
         self._red_before_invoke_objs.add(coro)

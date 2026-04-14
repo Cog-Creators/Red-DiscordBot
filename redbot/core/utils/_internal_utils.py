@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import collections.abc
 import contextlib
+import inspect
 import json
 import logging
 import os
@@ -11,6 +12,7 @@ import shutil
 import tarfile
 import warnings
 import datetime
+import sys
 from pathlib import Path
 from typing import (
     AsyncIterable,
@@ -59,6 +61,7 @@ __all__ = (
     "deprecated_removed",
     "RichIndefiniteBarColumn",
     "cli_level_to_log_level",
+    "iscoroutinefunction",
 )
 
 _T = TypeVar("_T")
@@ -388,3 +391,12 @@ def cli_level_to_log_level(level: int) -> int:
     else:
         log_level = TRACE
     return log_level
+
+
+# `inspect.iscoroutinefunction()` only became equivalent
+# to (now deprecated) `inspect.iscoroutinefunction()` in Python 3.12
+# https://github.com/python/cpython/issues/122858#issuecomment-2466239748
+if sys.version_info >= (3, 12):
+    iscoroutinefunction = inspect.iscoroutinefunction
+else:
+    iscoroutinefunction = asyncio.iscoroutinefunction
