@@ -348,10 +348,6 @@ _warnings.filterwarnings("default", category=DeprecationWarning)
 
 # TODO: Rearrange cli flags here and use the value instead of this monkeypatch
 if not any(_re.match("^-(-debug|d+|-verbose|v+)$", i) for i in _sys.argv):
-    # DEP-WARN
-    # Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
-    # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
-    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="importlib", lineno=219)
     # DEP-WARN - d.py currently uses audioop module, Danny is aware of the deprecation
     #
     # DeprecationWarning: 'audioop' is deprecated and slated for removal in Python 3.13
