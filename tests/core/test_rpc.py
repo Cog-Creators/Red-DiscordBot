@@ -79,7 +79,7 @@ def test_remove_multi_method(rpc, existing_multi_func):
 def test_rpcmixin_register(rpcmixin, cog):
     rpcmixin.register_rpc_handler(cog.cofunc)
 
-    assert rpcmixin.rpc.add_method.called_once_with(cog.cofunc)
+    rpcmixin.rpc.add_method.assert_called_once_with(cog.cofunc)
 
     name = get_name(cog.cofunc)
     cogname = name.split("__")[0]
@@ -91,7 +91,7 @@ def test_rpcmixin_unregister(rpcmixin, cog):
     rpcmixin.register_rpc_handler(cog.cofunc)
     rpcmixin.unregister_rpc_handler(cog.cofunc)
 
-    assert rpcmixin.rpc.remove_method.called_once_with(cog.cofunc)
+    rpcmixin.rpc.remove_method.assert_called_once_with(cog.cofunc)
 
     name = get_name(cog.cofunc)
     cogname = name.split("__")[0]
