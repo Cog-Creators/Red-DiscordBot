@@ -47,8 +47,8 @@ extras_require["all"] = extras_combined("postgres")
 
 
 python_requires = ">=3.11"
-if not os.getenv("TOX_RED", False) or sys.version_info < (3, 12):
-    python_requires += ",<3.12"
+if not os.getenv("TOX_RED", False) or sys.version_info < (3, 15):
+    python_requires += ",<3.15"
 
 # Metadata and options defined in pyproject.toml
 setup(

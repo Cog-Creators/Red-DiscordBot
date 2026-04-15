@@ -21,16 +21,25 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: |
+            3.14
+            3.13
+            3.12
             3.11
 
       - name: Install dependencies on Linux/macOS
         if: matrix.os != 'windows-latest'
         run: |
+          python3.14 -m pip install -U pip pip-tools
+          python3.13 -m pip install -U pip pip-tools
+          python3.12 -m pip install -U pip pip-tools
           python3.11 -m pip install -U pip pip-tools
 
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
         run: |
+          py -3.14 -m pip install -U pip pip-tools
+          py -3.13 -m pip install -U pip pip-tools
+          py -3.12 -m pip install -U pip pip-tools
           py -3.11 -m pip install -U pip pip-tools
 
       - name: Generate requirements files.
