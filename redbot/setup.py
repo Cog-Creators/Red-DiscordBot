@@ -738,6 +738,11 @@ async def restore_instance(
     else:
         restore_downloader = not skip_downloader_restore
     with tar:
+        # The filter functionality exists on Python 3.11.4+.
+        # We'll use the value consistent with the 3.11's default
+        # since there's no reason we shouldn't trust the archive
+        # that we generated ourselves.
+        tar.extraction_filter = getattr(tarfile, "fully_trusted_filter", None)
         restore_info = RestoreInfo.from_tar(
             tar,
             restore_downloader=restore_downloader,
