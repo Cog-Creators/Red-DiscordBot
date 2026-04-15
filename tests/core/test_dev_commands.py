@@ -418,7 +418,8 @@ async def test_successful_run_repl_exec(monkeypatch: pytest.MonkeyPatch) -> None
     await _run_dev_output(monkeypatch, source, result, repl=True)
 
 
-async def test_regression_format_exception_from_previous_snippet(
+# https://github.com/Cog-Creators/Red-DiscordBot/pull/6135
+async def test_regression_gh_6135_format_exception_from_previous_snippet(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     snippet_0 = textwrap.dedent(
@@ -430,16 +431,30 @@ async def test_regression_format_exception_from_previous_snippet(
     """
     )
     snippet_1 = "_()"
-    result = textwrap.dedent(
-        """\
-    Traceback (most recent call last):
-      File "<test run - snippet #1>", line 1, in func
-        _()
-      File "<test run - snippet #0>", line 2, in repro
-        raise Exception("this is an error!")
-    Exception: this is an error!
-    """
-    )
+    if sys.version_info >= (3, 13):
+        # Python 3.13 now points out the specific function call that raised the exception
+        result = textwrap.dedent(
+            """\
+        Traceback (most recent call last):
+          File "<test run - snippet #1>", line 1, in func
+            _()
+            ~^^
+          File "<test run - snippet #0>", line 2, in repro
+            raise Exception("this is an error!")
+        Exception: this is an error!
+        """
+        )
+    else:
+        result = textwrap.dedent(
+            """\
+        Traceback (most recent call last):
+          File "<test run - snippet #1>", line 1, in func
+            _()
+          File "<test run - snippet #0>", line 2, in repro
+            raise Exception("this is an error!")
+        Exception: this is an error!
+        """
+        )
     monkeypatch.setattr("redbot.core.dev_commands.sanitize_output", lambda ctx, s: s)
 
     source_cache = SourceCache()
