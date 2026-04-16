@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from redbot.pytest.downloader import *
+from .fixtures import *
 from redbot.core._downloader.installable import Installable, InstallableType
 from redbot.core import VersionInfo
 

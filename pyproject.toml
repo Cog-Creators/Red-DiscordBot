@@ -39,9 +39,6 @@ dynamic = ["version", "requires-python", "dependencies", "optional-dependencies"
 redbot = "redbot.__main__:main"
 redbot-setup = "redbot.setup:run_cli"
 
-[project.entry-points.pytest11]
-red-discordbot = "redbot.pytest"
-
 [tool.black]
 line-length = 99
 required-version = '23'

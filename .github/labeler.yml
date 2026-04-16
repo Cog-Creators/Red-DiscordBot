@@ -14,7 +14,6 @@
   # Docs
   - docs/cog_guides/alias.rst
   # Tests
-  - redbot/pytest/alias.py
   - tests/cogs/test_alias.py
   - docs/.resources/alias/**/*
 "Category: Cogs - Audio":
@@ -56,7 +55,6 @@
   # Docs
   - docs/cog_guides/economy.rst
   # Tests
-  - redbot/pytest/economy.py
   - tests/cogs/test_economy.py
 "Category: Cogs - Filter":
   # Source
@@ -79,7 +77,6 @@
   # Docs
   - docs/cog_guides/mod.rst
   # Tests
-  - redbot/pytest/mod.py
   - tests/cogs/test_mod.py
 "Category: Cogs - Modlog":
   # Source
@@ -98,7 +95,6 @@
   - docs/cog_guides/permissions.rst
   - docs/cog_permissions.rst
   # Tests
-  - redbot/pytest/permissions.py
   - tests/cogs/test_permissions.py
 "Category: Cogs - Reports":
   # Source
@@ -175,7 +171,6 @@
   - docs/framework_datamanager.rst
   - docs/framework_tree.rst
   # Tests
-  - redbot/pytest/data_manager.py
   - tests/core/test_cog_manager.py
   - tests/core/test_data_manager.py
   - tests/core/test_version.py
@@ -212,8 +207,6 @@
   # Source
   - redbot/core/_downloader/**/*
   # Tests
-  - redbot/pytest/downloader.py
-  - redbot/pytest/downloader_testrepo.*
   - tests/core/_downloader/**/*
 "Category: Core - Help":
   - redbot/core/commands/help.py
@@ -240,9 +233,6 @@
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/utils/_internal_utils.py
   # Tests
-  - redbot/pytest/__init__.py
-  - redbot/pytest/cog_manager.py
-  - redbot/pytest/core.py
   - tests/core/test_installation.py
 "Category: Core - RPC/ZMQ":
   # Source
@@ -250,7 +240,6 @@
   # Docs
   - docs/framework_rpc.rst
   # Tests
-  - redbot/pytest/rpc.py
   - tests/core/test_rpc.py
   - tests/rpc_test.html
 

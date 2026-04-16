@@ -4,7 +4,7 @@ import subprocess as sp
 import pytest
 
 from redbot.core._downloader.repo_manager import ProcessFormatter, Repo
-from redbot.pytest.downloader import (
+from .fixtures import (
     GIT_VERSION,
     cloned_git_repo,
     git_repo,
