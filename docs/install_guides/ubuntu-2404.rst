@@ -21,6 +21,6 @@ with apt:
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv3.13.rst
+.. include:: _includes/create-env-with-venv3.12.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst
