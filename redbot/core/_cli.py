@@ -372,9 +372,10 @@ def parse_cli_flags(args):
     return args
 
 
-def asyncio_run(main: Coroutine[Any, Any, _T]) -> _T:
-    if sys.version_info >= (3, 12):
-        return asyncio.run(main, loop_factory=new_event_loop)
+def asyncio_run(coro: Coroutine[Any, Any, _T]) -> _T:
+    if sys.version_info >= (3, 11):
+        with asyncio.Runner(loop_factory=new_event_loop) as runner:
+            return runner.run(coro)
 
     if sys.implementation.name == "cpython":
         # Let's not force this dependency, uvloop is much faster on cpython
@@ -385,7 +386,7 @@ def asyncio_run(main: Coroutine[Any, Any, _T]) -> _T:
         else:
             asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    return asyncio.run(main)
+    return asyncio.run(coro)
 
 
 def new_event_loop() -> asyncio.AbstractEventLoop:
