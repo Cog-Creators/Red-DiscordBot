@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,12 +7,13 @@ name = "Red-DiscordBot"
 description = "A highly customisable Discord bot"
 readme = "README.md"
 authors = [{ name = "Cog Creators" }]
+license = "GPL-3.0-only"
+license-files = ["LICENSE", "redbot/**/*.LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Natural Language :: English",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
@@ -38,6 +39,9 @@ dynamic = ["version", "requires-python", "dependencies", "optional-dependencies"
 [project.scripts]
 redbot = "redbot.__main__:main"
 redbot-setup = "redbot.setup:run_cli"
+
+[tool.setuptools.packages.find]
+include = ["redbot", "redbot.*"]
 
 [project.entry-points.pytest11]
 red-discordbot = "redbot.pytest"
