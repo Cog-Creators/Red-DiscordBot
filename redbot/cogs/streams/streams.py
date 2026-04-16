@@ -852,7 +852,7 @@ class Streams(commands.Cog):
             "guild": m.guild.id,
             "channel": m.channel.id,
             "message": m.id,
-            "start_time": discord.utils.utcnow().timestamp(),
+            "start_time": datetime.now().timestamp(),
         }
         if is_schedule:
             message_data["is_schedule"] = True
@@ -912,7 +912,7 @@ class Streams(commands.Cog):
 
                             start_time = msg_data.get("start_time")
                             if start_time is not None:
-                                elapsed = discord.utils.utcnow().timestamp() - start_time
+                                elapsed = datetime.now().timestamp() - start_time
                                 hours, remainder = divmod(int(elapsed), 3600)
                                 minutes = remainder // 60
                                 if hours:
