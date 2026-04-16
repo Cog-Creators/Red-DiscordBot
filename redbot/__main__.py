@@ -431,9 +431,28 @@ async def shutdown_handler(red: Red, exit_code: int) -> None:
             await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
-        pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
-        [task.cancel() for task in pending]
-        await asyncio.gather(*pending, return_exceptions=True)
+        current_task = asyncio.current_task()
+        pending = [t for t in asyncio.all_tasks() if t is not current_task]
+
+        for task in pending:
+            task.cancel()
+
+        if pending:
+            await asyncio.gather(*pending, return_exceptions=True)
+
+        loop = asyncio.get_running_loop()
+        for task in pending:
+            if task.cancelled():
+                continue
+            exc = task.exception()
+            if exc is not None:
+                loop.call_exception_handler(
+                    {
+                        "message": "Unhandled exception during Red shutdown",
+                        "exception": task.exception(),
+                        "task": task,
+                    }
+                )
 
 
 def global_exception_handler(red, loop, context):
@@ -534,15 +553,7 @@ def main():
             loop.run_until_complete(shutdown_handler(red, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
-        # Transports may still not be closed correctly on windows, see below
         loop.run_until_complete(loop.shutdown_asyncgens())
-        # *we* aren't cleaning up more here, but it prevents
-        # a runtime error at the event loop on windows
-        # with resources which require longer to clean up.
-        # With other event loops, a failure to cleanup prior to here
-        # results in a resource warning instead
-        log.info("Please wait, cleaning up a bit more")
-        loop.run_until_complete(asyncio.sleep(2))
         asyncio.set_event_loop(None)
         loop.stop()
         loop.close()
