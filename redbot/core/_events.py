@@ -151,7 +151,7 @@ def init_events(bot, cli_flags):
         if bot._uptime is not None:
             return
 
-        bot._uptime = datetime.utcnow()
+        bot._uptime = datetime.now(timezone.utc)
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))

@@ -36,6 +36,7 @@ Paste the following and replace the following:
             <key>ProgramArguments</key>
             <array>
                 <string>path</string>
+                <string>-P</string>
                 <string>-O</string>
                 <string>-m</string>
                 <string>redbot</string>

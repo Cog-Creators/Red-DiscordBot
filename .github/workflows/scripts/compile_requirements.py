@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 
-EXCLUDE_STEM_RE = re.compile(r".*-3\.(?!8-)(\d+)-extra-(doc|style)")
+EXCLUDE_STEM_RE = re.compile(r".*-3\.(?!11-)(\d+)-extra-(doc|style)")
 GITHUB_OUTPUT = os.environ["GITHUB_OUTPUT"]
 REQUIREMENTS_FOLDER = Path(__file__).parents[3].absolute() / "requirements"
 os.chdir(REQUIREMENTS_FOLDER)
@@ -19,7 +19,7 @@ def pip_compile(version: str, name: str) -> None:
 
     constraint_flags = [
         arg
-        for file in REQUIREMENTS_FOLDER.glob(f"{sys.platform}-3.8-*.txt")
+        for file in REQUIREMENTS_FOLDER.glob(f"{sys.platform}-3.11-*.txt")
         for arg in ("-c", file.name)
     ]
 
@@ -41,7 +41,7 @@ def pip_compile(version: str, name: str) -> None:
     )
 
 
-for minor in range(8, 11 + 1):
+for minor in range(11, 14 + 1):
     version = f"3.{minor}"
     pip_compile(version, "base")
     shutil.copyfile(f"{sys.platform}-{version}-base.txt", "base.txt")

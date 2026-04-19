@@ -44,7 +44,7 @@ Paste the following in the file, and replace all instances of :code:`username` w
     Wants=network-online.target
 
     [Service]
-    ExecStart=path -O -m redbot %I --no-prompt
+    ExecStart=path -P -O -m redbot %I --no-prompt
     User=username
     Group=username
     Type=idle

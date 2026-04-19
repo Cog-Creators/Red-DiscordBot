@@ -9,6 +9,7 @@ from aiohttp_json_rpc.rpc import JsonRpcMethod
 import logging
 
 from redbot.core._cli import ExitCodes
+from redbot.core.utils._internal_utils import iscoroutinefunction
 
 log = logging.getLogger("red.rpc")
 
@@ -29,7 +30,7 @@ class RedRpc(JsonRpc):
         self.add_methods(("", self.get_method_info))
 
     def _add_method(self, method, name="", prefix=""):
-        if not asyncio.iscoroutinefunction(method):
+        if not iscoroutinefunction(method):
             return
 
         name = name or get_name(method, prefix)
@@ -121,13 +122,13 @@ class RPC:
         if prefix is None:
             prefix = method.__self__.__class__.__name__.lower()
 
-        if not asyncio.iscoroutinefunction(method):
+        if not iscoroutinefunction(method):
             raise TypeError("RPC methods must be coroutines.")
 
         self._rpc.add_methods((prefix, method))
 
     def add_multi_method(self, *methods, prefix: str = None):
-        if not all(asyncio.iscoroutinefunction(m) for m in methods):
+        if not all(iscoroutinefunction(m) for m in methods):
             raise TypeError("RPC methods must be coroutines.")
 
         for method in methods:

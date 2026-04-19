@@ -187,20 +187,12 @@ async def _run_dev_output(
         assert not output.ctx.mock_calls
 
 
-EXPRESSION_TESTS = {
-    # invalid syntax
-    "12x\n": (
+@pytest.mark.parametrize(
+    "source,result",
+    (
+        # invalid syntax
         (
-            lambda v: v < (3, 10),
-            """\
-              File "<test run - snippet #0>", line 1
-                12x
-                  ^
-            SyntaxError: invalid syntax
-            """,
-        ),
-        (
-            lambda v: v >= (3, 10),
+            "12x\n",
             """\
               File "<test run - snippet #0>", line 1
                 12x
@@ -208,19 +200,8 @@ EXPRESSION_TESTS = {
             SyntaxError: invalid decimal literal
             """,
         ),
-    ),
-    "foo(x, z for z in range(10), t, w)": (
         (
-            lambda v: v < (3, 10),
-            """\
-              File "<test run - snippet #0>", line 1
-                foo(x, z for z in range(10), t, w)
-                       ^
-            SyntaxError: Generator expression must be parenthesized
-            """,
-        ),
-        (
-            lambda v: v >= (3, 10),
+            "foo(x, z for z in range(10), t, w)",
             """\
               File "<test run - snippet #0>", line 1
                 foo(x, z for z in range(10), t, w)
@@ -228,20 +209,9 @@ EXPRESSION_TESTS = {
             SyntaxError: Generator expression must be parenthesized
             """,
         ),
-    ),
-    # exception raised
-    "abs(1 / 0)": (
+        # exception raised
         (
-            lambda v: v < (3, 11),
-            """\
-            Traceback (most recent call last):
-              File "<test run - snippet #0>", line 1, in <module>
-                abs(1 / 0)
-            ZeroDivisionError: division by zero
-            """,
-        ),
-        (
-            lambda v: v >= (3, 11),
+            "abs(1 / 0)",
             """\
             Traceback (most recent call last):
               File "<test run - snippet #0>", line 1, in <module>
@@ -251,24 +221,22 @@ EXPRESSION_TESTS = {
             """,
         ),
     ),
-}
-STATEMENT_TESTS = {
-    # invalid syntax
-    """\
-    def x():
-        12x
-    """: (
+)
+async def test_format_exception_expressions(
+    monkeypatch: pytest.MonkeyPatch, source: str, result: str
+) -> None:
+    await _run_dev_output(monkeypatch, source, result, debug=True, repl=True)
+
+
+@pytest.mark.parametrize(
+    "source,result",
+    (
+        # invalid syntax
         (
-            lambda v: v < (3, 10),
             """\
-              File "<test run - snippet #0>", line 2
+            def x():
                 12x
-                  ^
-            SyntaxError: invalid syntax
             """,
-        ),
-        (
-            lambda v: v >= (3, 10),
             """\
               File "<test run - snippet #0>", line 2
                 12x
@@ -276,22 +244,11 @@ STATEMENT_TESTS = {
             SyntaxError: invalid decimal literal
             """,
         ),
-    ),
-    """\
-    def x():
-        foo(x, z for z in range(10), t, w)
-    """: (
         (
-            lambda v: v < (3, 10),
             """\
-              File "<test run - snippet #0>", line 2
+            def x():
                 foo(x, z for z in range(10), t, w)
-                       ^
-            SyntaxError: Generator expression must be parenthesized
             """,
-        ),
-        (
-            lambda v: v >= (3, 10),
             """\
               File "<test run - snippet #0>", line 2
                 foo(x, z for z in range(10), t, w)
@@ -299,27 +256,15 @@ STATEMENT_TESTS = {
             SyntaxError: Generator expression must be parenthesized
             """,
         ),
-    ),
-    # exception raised
-    """\
-    print(123)
-    try:
-        abs(1 / 0)
-    except ValueError:
-        pass
-    """: (
+        # exception raised
         (
-            lambda v: v < (3, 11),
             """\
-            123
-            Traceback (most recent call last):
-              File "<test run - snippet #0>", line 3, in <module>
+            print(123)
+            try:
                 abs(1 / 0)
-            ZeroDivisionError: division by zero
+            except ValueError:
+                pass
             """,
-        ),
-        (
-            lambda v: v >= (3, 11),
             """\
             123
             Traceback (most recent call last):
@@ -329,42 +274,17 @@ STATEMENT_TESTS = {
             ZeroDivisionError: division by zero
             """,
         ),
-    ),
-    # exception chaining
-    """\
-    try:
-        1 / 0
-    except ZeroDivisionError as exc:
-        try:
-            raise RuntimeError("direct cause") from exc
-        except RuntimeError:
-            raise ValueError("indirect cause")
-    """: (
+        # exception chaining
         (
-            lambda v: v < (3, 11),
             """\
-            Traceback (most recent call last):
-              File "<test run - snippet #0>", line 2, in <module>
+            try:
                 1 / 0
-            ZeroDivisionError: division by zero
-
-            The above exception was the direct cause of the following exception:
-
-            Traceback (most recent call last):
-              File "<test run - snippet #0>", line 5, in <module>
-                raise RuntimeError("direct cause") from exc
-            RuntimeError: direct cause
-
-            During handling of the above exception, another exception occurred:
-
-            Traceback (most recent call last):
-              File "<test run - snippet #0>", line 7, in <module>
-                raise ValueError("indirect cause")
-            ValueError: indirect cause
+            except ZeroDivisionError as exc:
+                try:
+                    raise RuntimeError("direct cause") from exc
+                except RuntimeError:
+                    raise ValueError("indirect cause")
             """,
-        ),
-        (
-            lambda v: v >= (3, 11),
             """\
             Traceback (most recent call last):
               File "<test run - snippet #0>", line 2, in <module>
@@ -387,28 +307,26 @@ STATEMENT_TESTS = {
             ValueError: indirect cause
             """,
         ),
-    ),
-    # exception groups
-    """\
-    def f(v):
-        try:
-            1 / 0
-        except ZeroDivisionError:
-            try:
-                raise ValueError(v)
-            except ValueError as e:
-                return e
-    try:
-        raise ExceptionGroup("one", [f(1)])
-    except ExceptionGroup as e:
-        eg = e
-    try:
-        raise ExceptionGroup("two", [f(2), eg])
-    except ExceptionGroup as e:
-        raise RuntimeError("wrapping") from e
-    """: (
+        # exception groups
         (
-            lambda v: v >= (3, 11),
+            """\
+            def f(v):
+                try:
+                    1 / 0
+                except ZeroDivisionError:
+                    try:
+                        raise ValueError(v)
+                    except ValueError as e:
+                        return e
+            try:
+                raise ExceptionGroup("one", [f(1)])
+            except ExceptionGroup as e:
+                eg = e
+            try:
+                raise ExceptionGroup("two", [f(2), eg])
+            except ExceptionGroup as e:
+                raise RuntimeError("wrapping") from e
+            """,
             """\
               + Exception Group Traceback (most recent call last):
               |   File "<test run - snippet #0>", line 14, in <module>
@@ -456,32 +374,6 @@ STATEMENT_TESTS = {
             """,
         ),
     ),
-}
-
-
-@pytest.mark.parametrize(
-    "source,result",
-    [
-        (source, result)
-        for source, results in EXPRESSION_TESTS.items()
-        for condition, result in results
-        if condition(sys.version_info)
-    ],
-)
-async def test_format_exception_expressions(
-    monkeypatch: pytest.MonkeyPatch, source: str, result: str
-) -> None:
-    await _run_dev_output(monkeypatch, source, result, debug=True, repl=True)
-
-
-@pytest.mark.parametrize(
-    "source,result",
-    [
-        (source, result)
-        for source, results in STATEMENT_TESTS.items()
-        for condition, result in results
-        if condition(sys.version_info)
-    ],
 )
 async def test_format_exception_statements(
     monkeypatch: pytest.MonkeyPatch, source: str, result: str
@@ -526,7 +418,8 @@ async def test_successful_run_repl_exec(monkeypatch: pytest.MonkeyPatch) -> None
     await _run_dev_output(monkeypatch, source, result, repl=True)
 
 
-async def test_regression_format_exception_from_previous_snippet(
+# https://github.com/Cog-Creators/Red-DiscordBot/pull/6135
+async def test_regression_gh_6135_format_exception_from_previous_snippet(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     snippet_0 = textwrap.dedent(
@@ -538,16 +431,30 @@ async def test_regression_format_exception_from_previous_snippet(
     """
     )
     snippet_1 = "_()"
-    result = textwrap.dedent(
-        """\
-    Traceback (most recent call last):
-      File "<test run - snippet #1>", line 1, in func
-        _()
-      File "<test run - snippet #0>", line 2, in repro
-        raise Exception("this is an error!")
-    Exception: this is an error!
-    """
-    )
+    if sys.version_info >= (3, 13):
+        # Python 3.13 now points out the specific function call that raised the exception
+        result = textwrap.dedent(
+            """\
+        Traceback (most recent call last):
+          File "<test run - snippet #1>", line 1, in func
+            _()
+            ~^^
+          File "<test run - snippet #0>", line 2, in repro
+            raise Exception("this is an error!")
+        Exception: this is an error!
+        """
+        )
+    else:
+        result = textwrap.dedent(
+            """\
+        Traceback (most recent call last):
+          File "<test run - snippet #1>", line 1, in func
+            _()
+          File "<test run - snippet #0>", line 2, in repro
+            raise Exception("this is an error!")
+        Exception: this is an error!
+        """
+        )
     monkeypatch.setattr("redbot.core.dev_commands.sanitize_output", lambda ctx, s: s)
 
     source_cache = SourceCache()

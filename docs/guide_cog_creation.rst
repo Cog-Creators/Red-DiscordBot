@@ -17,7 +17,7 @@ you in the process.
 Getting started
 ---------------
 
-To start off, be sure that you have installed Python 3.8.
+To start off, be sure that you have installed Python 3.11.
 Next, you need to decide if you want to develop against the Stable or Develop version of Red.
 Depending on what your goal is should help determine which version you need.
 
@@ -26,7 +26,7 @@ Depending on what your goal is should help determine which version you need.
     If your goal is to support both versions, make sure you build compatibility layers or use separate branches to keep compatibility until the next Red release
 
 Open a terminal or command prompt and type one of the following
-    Stable Version: :code:`python3.8 -m pip install -U Red-DiscordBot`
+    Stable Version: :code:`python3.11 -m pip install -U Red-DiscordBot`
 
 .. note::
 
@@ -43,7 +43,7 @@ Open a terminal or command prompt and type one of the following
       Red-DiscordBot @ https://github.com/Cog-Creators/Red-DiscordBot/tarball/V3/develop
 
 
-(Windows users may need to use :code:`py -3.8` or :code:`python` instead of :code:`python3.8`)
+(Windows users may need to use :code:`py -3.11` or :code:`python` instead of :code:`python3.11`)
 
 --------------------
 Setting up a package

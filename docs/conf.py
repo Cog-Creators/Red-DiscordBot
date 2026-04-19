@@ -279,7 +279,7 @@ class IgnoreCoroSubstitution(SphinxTransform):
     default_priority = 210
 
     def apply(self, **kwargs) -> None:
-        for ref in self.document.traverse(nodes.substitution_reference):
+        for ref in self.document.findall(nodes.substitution_reference):
             if ref["refname"] == "coro":
                 ref.replace_self(nodes.Text(""))
 

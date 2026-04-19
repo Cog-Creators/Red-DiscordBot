@@ -13,7 +13,7 @@ Install them with dnf:
 
     sudo dnf -y update
     sudo dnf -y group install development
-    sudo dnf -y install python3.11 python3.11-devel java-17-openjdk-headless nano git
+    sudo dnf -y install python3.12 python3.12-devel java-17-openjdk-headless nano git
 
 Set ``java`` executable to point to Java 17:
 
@@ -23,6 +23,6 @@ Set ``java`` executable to point to Java 17:
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv3.11.rst
+.. include:: _includes/create-env-with-venv3.12.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst

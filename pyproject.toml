@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,21 +7,22 @@ name = "Red-DiscordBot"
 description = "A highly customisable Discord bot"
 readme = "README.md"
 authors = [{ name = "Cog Creators" }]
+license = "GPL-3.0-only"
+license-files = ["LICENSE", "redbot/**/*.LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Natural Language :: English",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Communications :: Chat",
 ]
 dynamic = ["version", "requires-python", "dependencies", "optional-dependencies"]
@@ -39,13 +40,16 @@ dynamic = ["version", "requires-python", "dependencies", "optional-dependencies"
 redbot = "redbot.__main__:main"
 redbot-setup = "redbot.setup:run_cli"
 
+[tool.setuptools.packages.find]
+include = ["redbot", "redbot.*"]
+
 [project.entry-points.pytest11]
 red-discordbot = "redbot.pytest"
 
 [tool.black]
 line-length = 99
 required-version = '23'
-target-version = ['py38']
+target-version = ['py311']
 include = '\.py$'
 force-exclude = '''
 /(
@@ -55,3 +59,5 @@ force-exclude = '''
 
 [tool.pytest.ini_options]
 asyncio_mode = 'auto'
+asyncio_default_fixture_loop_scope = 'session'
+asyncio_default_test_loop_scope = 'session'

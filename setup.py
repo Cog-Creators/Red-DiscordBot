@@ -46,9 +46,9 @@ extras_require["dev"] = extras_combined()
 extras_require["all"] = extras_combined("postgres")
 
 
-python_requires = ">=3.8.1"
-if not os.getenv("TOX_RED", False) or sys.version_info < (3, 12):
-    python_requires += ",<3.12"
+python_requires = ">=3.11"
+if not os.getenv("TOX_RED", False) or sys.version_info < (3, 15):
+    python_requires += ",<3.15"
 
 # Metadata and options defined in pyproject.toml
 setup(
@@ -57,8 +57,4 @@ setup(
     # TODO: use [tool.setuptools.dynamic] table once this feature gets out of beta
     install_requires=install_requires,
     extras_require=extras_require,
-    # TODO: use [project] table once PEP 639 gets accepted
-    license_files=["LICENSE", "redbot/**/*.LICENSE"],
-    # TODO: use [tool.setuptools.packages] table once this feature gets out of beta
-    packages=find_namespace_packages(include=["redbot", "redbot.*"]),
 )

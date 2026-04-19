@@ -257,11 +257,7 @@ def _copy_data(data):
     if Path(data["DATA_PATH"]).exists():
         if any(os.scandir(data["DATA_PATH"])):
             return False
-        else:
-            # this is needed because copytree doesn't work when destination folder exists
-            # Python 3.8 has `dirs_exist_ok` option for that
-            os.rmdir(data["DATA_PATH"])
-    shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"])
+    shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"], dirs_exist_ok=True)
     return True
 
 

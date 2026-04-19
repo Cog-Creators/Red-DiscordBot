@@ -17,10 +17,10 @@ them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python3.11 python3.11-devel git java-17-amazon-corretto-headless @development nano
+    sudo dnf -y install python3.14 python3.14-devel git java-17-amazon-corretto-headless @development nano
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv3.11.rst
+.. include:: _includes/create-env-with-venv3.14.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst
