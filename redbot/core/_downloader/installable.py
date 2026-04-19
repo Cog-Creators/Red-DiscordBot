@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 import shutil
-from enum import IntEnum
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
@@ -16,8 +16,7 @@ if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo
 
 
-class InstallableType(IntEnum):
-    # using IntEnum, because hot-reload breaks its identity
+class InstallableType(Enum):
     UNKNOWN = 0
     COG = 1
     SHARED_LIBRARY = 2
@@ -139,7 +138,7 @@ class Installable(RepoJSONMixin):
         super()._read_info_file()
 
         update_mixin(self, INSTALLABLE_SCHEMA)
-        if self.type == InstallableType.SHARED_LIBRARY:
+        if self.type is InstallableType.SHARED_LIBRARY:
             self.hidden = True
 
 
@@ -163,7 +162,7 @@ class InstalledModule(Installable):
         json_repo_name: str = "",
     ):
         super().__init__(location=location, repo=repo, commit=commit)
-        self.pinned: bool = pinned if self.type == InstallableType.COG else False
+        self.pinned: bool = pinned if self.type is InstallableType.COG else False
         # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
         self._json_repo_name = json_repo_name
 
@@ -173,7 +172,7 @@ class InstalledModule(Installable):
             "module_name": self.name,
             "commit": self.commit,
         }
-        if self.type == InstallableType.COG:
+        if self.type is InstallableType.COG:
             module_json["pinned"] = self.pinned
         return module_json
 
