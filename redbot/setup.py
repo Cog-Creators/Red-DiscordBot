@@ -14,6 +14,7 @@ from typing import Dict, Any, Optional, Union
 
 import click
 
+import redbot.logging
 from redbot.core._cli import confirm
 from redbot.core.utils._internal_utils import (
     safe_delete,
@@ -60,9 +61,9 @@ def save_config(name, data, remove=False):
 def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: bool) -> str:
     if data_path is not None:
         return str(data_path.resolve())
-    data_path = Path(appdir.user_data_dir) / "data" / instance_name
+    default_data_path = Path(appdir.user_data_dir) / "data" / instance_name
     if not interactive:
-        return str(data_path.resolve())
+        return str(default_data_path.resolve())
 
     print(
         "We've attempted to figure out a sane default data location which is printed below."
@@ -70,37 +71,40 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
         " otherwise input your desired data location."
     )
     print()
-    print("Default: {}".format(data_path))
+    print(f"Default: {default_data_path}")
 
-    data_path_input = input("> ")
+    while True:
+        data_path_input = input("> ")
 
-    if data_path_input != "":
-        data_path = Path(data_path_input)
+        if data_path_input != "":
+            data_path = Path(data_path_input)
+        else:
+            data_path = default_data_path
 
-    try:
-        exists = data_path.exists()
-    except OSError:
-        print(
-            "We were unable to check your chosen directory."
-            " Provided path may contain an invalid character."
-        )
-        sys.exit(ExitCodes.INVALID_CLI_USAGE)
-
-    if not exists:
         try:
-            data_path.mkdir(parents=True, exist_ok=True)
+            exists = data_path.exists()
         except OSError:
             print(
-                "We were unable to create your chosen directory."
-                " You may need to create the directory and set proper permissions"
-                " for it manually before it can be used as the data directory."
+                "We were unable to check your chosen directory."
+                " Provided path may contain an invalid character."
             )
-            sys.exit(ExitCodes.INVALID_CLI_USAGE)
+            continue
 
-    print("You have chosen {} to be your data directory.".format(data_path))
-    if not click.confirm("Please confirm", default=True):
-        print("Please start the process over.")
-        sys.exit(ExitCodes.CRITICAL)
+        if not exists:
+            try:
+                data_path.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                print(
+                    "We were unable to create your chosen directory."
+                    " You may need to create the directory and set proper permissions"
+                    " for it manually before it can be used as the data directory."
+                )
+                sys.exit(ExitCodes.INVALID_CLI_USAGE)
+
+        print(f"You have chosen {str(data_path)!r} to be your data directory.")
+        if click.confirm("Please confirm", default=True):
+            break
+
     return str(data_path.resolve())
 
 
@@ -131,18 +135,20 @@ def get_storage_type(backend: Optional[str], *, interactive: bool):
     return storage_dict[storage]
 
 
-def get_name(name: str) -> str:
-    INSTANCE_NAME_RE = re.compile(
-        r"""
-        [a-z0-9]              # starts with letter or digit
-        (?:
-            (?!.*[_\.\-]{2})  # ensure no consecutive dots, hyphens, or underscores
-            [a-z0-9_\.\-]*    # match allowed characters
-            [a-z0-9]          # ensure string ends with letter or digit
-        )?                    # optional to allow strings of length 1
-        """,
-        re.VERBOSE | re.IGNORECASE,
-    )
+INSTANCE_NAME_RE = re.compile(
+    r"""
+    [a-z0-9]              # starts with letter or digit
+    (?:
+        (?!.*[_\.\-]{2})  # ensure no consecutive dots, hyphens, or underscores
+        [a-z0-9_\.\-]*    # match allowed characters
+        [a-z0-9]          # ensure string ends with letter or digit
+    )?                    # optional to allow strings of length 1
+    """,
+    re.VERBOSE | re.IGNORECASE,
+)
+
+
+def get_name(name: str = "", *, confirm_overwrite: bool = False) -> str:
     if name:
         if INSTANCE_NAME_RE.fullmatch(name) is None:
             print(
@@ -151,9 +157,17 @@ def get_name(name: str) -> str:
                 " and non-consecutive underscores (_) and periods (.)."
             )
             sys.exit(ExitCodes.INVALID_CLI_USAGE)
+        if name in instance_data and not confirm_overwrite:
+            print(
+                "An instance with this name already exists.\n"
+                "If you want to remove the existing instance and replace it with this one,"
+                " run this command with --overwrite-existing-instance flag."
+            )
+            sys.exit(ExitCodes.INVALID_CLI_USAGE)
         return name
 
-    while len(name) == 0:
+    name = ""
+    while not name:
         print(
             "Please enter a name for your instance,"
             " it will be used to run your bot from here on out.\n"
@@ -176,6 +190,16 @@ def get_name(name: str) -> str:
             default=False,
         ):
             name = ""
+        elif name in instance_data and not confirm_overwrite:
+            print(
+                "WARNING: An instance already exists with this name."
+                " Continuing will overwrite the existing instance config."
+            )
+            if not click.confirm(
+                "Are you absolutely certain you want to continue with this instance name?",
+                default=False,
+            ):
+                name = ""
 
         print()  # new line for aesthetics
     return name
@@ -205,7 +229,7 @@ def basic_setup(
             "Hello! Before we begin, we need to gather some initial information"
             " for the new instance."
         )
-    name = get_name(name)
+    name = get_name(name, confirm_overwrite=overwrite_existing_instance)
 
     default_data_dir = get_data_dir(
         instance_name=name, data_path=data_path, interactive=interactive
@@ -220,26 +244,6 @@ def basic_setup(
     driver_cls = get_driver_class(storage_type)
     default_dirs["STORAGE_DETAILS"] = driver_cls.get_config_details()
 
-    if name in instance_data:
-        if overwrite_existing_instance:
-            pass
-        elif interactive:
-            print(
-                "WARNING: An instance already exists with this name. "
-                "Continuing will overwrite the existing instance config."
-            )
-            if not click.confirm(
-                "Are you absolutely certain you want to continue?", default=False
-            ):
-                print("Not continuing")
-                sys.exit(ExitCodes.SHUTDOWN)
-        else:
-            print(
-                "An instance with this name already exists.\n"
-                "If you want to remove the existing instance and replace it with this one,"
-                " run this command with --overwrite-existing-instance flag."
-            )
-            sys.exit(ExitCodes.INVALID_CLI_USAGE)
     save_config(name, default_dirs)
 
     if interactive:
@@ -436,15 +440,9 @@ def cli(
     overwrite_existing_instance: bool,
 ) -> None:
     """Create a new instance."""
+
     level = cli_level_to_log_level(debug)
-    base_logger = logging.getLogger("red")
-    base_logger.setLevel(level)
-    formatter = logging.Formatter(
-        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
-    )
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setFormatter(formatter)
-    base_logger.addHandler(stdout_handler)
+    redbot.logging.init_logging(level)
 
     if ctx.invoked_subcommand is None:
         basic_setup(
