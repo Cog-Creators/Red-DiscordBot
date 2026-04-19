@@ -46,6 +46,7 @@ extensions = [
     "sphinxcontrib_trio",
     "sphinx-prompt",
     "deprecated_removed",
+    "prompt_builder",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

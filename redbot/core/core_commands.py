@@ -49,6 +49,7 @@ from . import (
     i18n,
     bank,
     modlog,
+    _downloader,
 )
 from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter, can_user_send_messages_in
@@ -215,12 +216,8 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
-                # remove in Red 3.4
-                downloader = bot.get_cog("Downloader")
-                if downloader is None:
-                    continue
                 try:
-                    maybe_repo = await downloader._shared_lib_load_check(name)
+                    maybe_repo = await _downloader._shared_lib_load_check(name)
                 except Exception:
                     log.exception(
                         "Shared library check failed,"
@@ -424,7 +421,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             owner = app_info.owner
         custom_info = await self.bot._config.custom_info()
 
-        pypi_version, py_version_req = await fetch_latest_red_version_info()
+        try:
+            pypi_version, __ = await fetch_latest_red_version_info()
+        except (aiohttp.ClientError, TimeoutError) as exc:
+            log.error("Failed to fetch latest version information from PyPI.", exc_info=exc)
+            pypi_version = None
         outdated = pypi_version and pypi_version > red_version_info
 
         if embed_links:
@@ -5789,7 +5790,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         The ignore list will prevent the bot from responding to commands in the configured locations.
 
-        Note: Owners and Admins override the ignore list.
+        Notes:
+        - Category ignores are ignored by user-installed commands
+        - Owners, Admins, and those with Manage Channel permissions override ignored channels.
         """
 
     @ignore.command(name="list")
@@ -5821,7 +5824,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         Defaults to the current thread or channel.
 
-        Note: Owners, Admins, and those with Manage Channel permissions override ignored channels.
+        Notes:
+        - Category ignores are ignored by user-installed commands
+        - Owners, Admins, and those with Manage Channel permissions override ignored channels.
 
         **Examples:**
         - `[p]ignore channel #general` - Ignores commands in the #general channel.

@@ -23,16 +23,16 @@ msgstr ""
 
 #: redbot/cogs/downloader/checks.py:38
 msgid "Your response has timed out, please try again."
-msgstr ""
+msgstr "Sua resposta expirou. Por favor, tente novamente."
 
 #: redbot/cogs/downloader/converters.py:14
 #: redbot/cogs/downloader/repo_manager.py:176
 msgid "No Downloader cog found."
-msgstr ""
+msgstr "Nenhum cog Downloader foi encontrado."
 
 #: redbot/cogs/downloader/converters.py:19
 msgid "Cog `{cog_name}` is not installed."
-msgstr ""
+msgstr "O Cog `{cog_name}` não está instalado."
 
 #: redbot/cogs/downloader/downloader.py:31
 msgid "\n"
@@ -67,24 +67,24 @@ msgstr ""
 
 #: redbot/cogs/downloader/downloader.py:508
 msgid "Libraries installed."
-msgstr ""
+msgstr "Bibliotecas instaladas."
 
 #: redbot/cogs/downloader/downloader.py:508
 msgid "Library installed."
-msgstr ""
+msgstr "Biblioteca instalada."
 
 #: redbot/cogs/downloader/downloader.py:511
 msgid "Some libraries failed to install. Please check your logs for a complete list."
-msgstr ""
+msgstr "Não foi possível instalar algumas bibliotecas. Verifique os seus logs para ter uma lista completa."
 
 #: redbot/cogs/downloader/downloader.py:516
 msgid "The library failed to install. Please check your logs for a complete list."
-msgstr ""
+msgstr "A biblioteca não foi instalada. Por favor, verifique os seus logs para ter uma lista completa."
 
 #: redbot/cogs/downloader/downloader.py:524
 #, docstring
 msgid "Base command for repository management."
-msgstr ""
+msgstr "Comando base para gerenciamento do repositório."
 
 #: redbot/cogs/downloader/downloader.py:531
 #, docstring

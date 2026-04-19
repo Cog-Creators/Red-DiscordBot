@@ -6,8 +6,8 @@ import shutil
 
 import pytest
 
-from redbot.cogs.downloader.repo_manager import RepoManager, Repo, ProcessFormatter
-from redbot.cogs.downloader.installable import Installable, InstalledModule
+from redbot.core._downloader.repo_manager import RepoManager, Repo, ProcessFormatter
+from redbot.core._downloader.installable import Installable, InstalledModule
 
 __all__ = [
     "GIT_VERSION",

@@ -171,7 +171,7 @@ msgstr ""
 
 #: redbot/cogs/trivia/trivia.py:44
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: redbot/cogs/trivia/trivia.py:46
 msgid "No"
