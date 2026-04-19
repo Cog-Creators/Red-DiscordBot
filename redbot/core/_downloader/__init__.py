@@ -20,6 +20,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import (
     Dict,
+    FrozenSet,
     Iterable,
     List,
     Literal,
@@ -486,7 +487,7 @@ async def _get_cogs_to_check(
     cogs: Optional[Iterable[InstalledModule]] = None,
     update_repos: bool = True,
 ) -> Tuple[Set[InstalledModule], List[str]]:
-    failed = []
+    failed: List[str] = []
     if not (cogs or repos):
         if update_repos:
             __, failed = await _repo_manager.update_repos()
@@ -528,7 +529,7 @@ async def pip_install(*deps: str) -> bool:
     return await repo.install_raw_requirements(deps, LIB_PATH)
 
 
-async def reinstall_requirements() -> tuple[List[str], List[str]]:
+async def reinstall_requirements() -> Tuple[Tuple[str, ...], Tuple[Installable, ...]]:
     _create_lib_folder(remove_first=True)
     _installed_cogs = await installed_cogs()
     cogs = []
@@ -548,7 +549,7 @@ async def reinstall_requirements() -> tuple[List[str], List[str]]:
         all_installed_libs += installed_libs
         all_failed_libs += failed_libs
 
-    return failed_reqs, all_failed_libs
+    return failed_reqs, tuple(all_failed_libs)
 
 
 async def install_cogs(
@@ -700,7 +701,7 @@ async def update_repo_cogs(
     try:
         await repo.update()
     except errors.UpdateError:
-        return await _update_cogs(set(), failed_repos=[repo])
+        return await _update_cogs(set(), failed_repos=(repo.name,))
 
     # TODO: should this be set to `repo.branch` when `rev` is None?
     commit = None
@@ -713,7 +714,7 @@ async def update_repo_cogs(
 
 
 async def _update_cogs(
-    cogs_to_check: Set[InstalledModule], *, failed_repos: Sequence[Repo]
+    cogs_to_check: Set[InstalledModule], *, failed_repos: Sequence[str]
 ) -> CogUpdateResult:
     pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
     cogs_to_check -= pinned_cogs
@@ -824,7 +825,7 @@ class CogUpdateCheckResult:
     outdated_cogs: Tuple[Installable, ...]
     outdated_libs: Tuple[Installable, ...]
     updatable_cogs: Tuple[Installable, ...]
-    failed_repos: Tuple[Repo, ...]
+    failed_repos: Tuple[str, ...]
     incompatible_python_version: Tuple[Installable, ...]
     incompatible_bot_version: Tuple[Installable, ...]
 
@@ -845,8 +846,8 @@ class CogUpdateCheckResult:
 @dataclasses.dataclass
 class CogUpdateResult(CogUpdateCheckResult):
     # checked_cogs contains old modules, before update
-    checked_cogs: Set[InstalledModule]
-    pinned_cogs: Set[InstalledModule]
+    checked_cogs: FrozenSet[InstalledModule]
+    pinned_cogs: FrozenSet[InstalledModule]
     updated_cogs: Tuple[InstalledModule, ...]
     updated_libs: Tuple[InstalledModule, ...]
     failed_cogs: Tuple[Installable, ...]

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import argparse
 import asyncio
 import inspect
 import logging
@@ -81,6 +82,8 @@ CUSTOM_GROUPS = "CUSTOM_GROUPS"
 COMMAND_SCOPE = "COMMAND"
 SHARED_API_TOKENS = "SHARED_API_TOKENS"
 
+_DEFAULT_DESCRIPTION = "Red V3"
+
 log = logging.getLogger("red")
 
 __all__ = ("Red",)
@@ -113,7 +116,9 @@ class Red(
 ):  # pylint: disable=no-member # barely spurious warning caused by shadowing
     """Our subclass of discord.ext.commands.AutoShardedBot"""
 
-    def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
+    def __init__(
+        self, *args: Any, cli_flags: argparse.Namespace, bot_dir: Path = Path.cwd(), **kwargs: Any
+    ) -> None:
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
         self._config = Config.get_core_conf(force_registration=False)
@@ -144,7 +149,7 @@ class Red(
             help__tagline="",
             help__use_tick=False,
             help__react_timeout=30,
-            description="Red V3",
+            description=_DEFAULT_DESCRIPTION,
             invite_public=False,
             invite_perm=0,
             invite_commands_scope=False,
@@ -153,6 +158,7 @@ class Red(
             invoke_error_msg=None,
             extra_owner_destinations=[],
             owner_opt_out_list=[],
+            last_system_info__python_prefix=None,
             last_system_info__python_version=[3, 7],
             last_system_info__machine=None,
             last_system_info__system=None,
@@ -250,7 +256,13 @@ class Red(
         self._main_dir = bot_dir
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
-        super().__init__(*args, help_command=None, tree_cls=RedTree, **kwargs)
+        super().__init__(
+            *args,
+            description=kwargs.pop("description", _DEFAULT_DESCRIPTION),
+            help_command=None,
+            tree_cls=RedTree,
+            **kwargs,
+        )
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
         self._help_formatter = commands.help.RedHelpFormatter()
@@ -1210,6 +1222,28 @@ class Red(
         packages = OrderedDict()
 
         last_system_info = await self._config.last_system_info()
+
+        last_python_prefix = last_system_info["python_prefix"]
+        if last_python_prefix is None:
+            await self._config.last_system_info.python_prefix.set(sys.prefix)
+        elif last_python_prefix != sys.prefix:
+            await self._config.last_system_info.python_prefix.set(sys.prefix)
+            try:
+                same_install = os.path.samefile(last_python_prefix, sys.prefix)
+            except OSError:
+                same_install = False
+            if not same_install:
+                if sys.prefix != sys.base_prefix:
+                    install_info = "in the currently used virtual environment"
+                else:
+                    install_info = "with the currently used Python installation"
+                log.warning(
+                    "Red seems to have been started with a different Python installation"
+                    " and/or virtual environment. This is not, in itself, an issue but is often"
+                    " done unintentionally and may explain some, otherwise unexpected, behavior."
+                    " This message will not be shown again, if you start Red %s again.",
+                    install_info,
+                )
 
         ver_info = list(sys.version_info[:2])
         python_version_changed = False
