@@ -50,10 +50,6 @@
   - redbot/cogs/downloader/*
   # Docs
   - docs/cog_guides/downloader.rst
-  # Tests
-  - redbot/pytest/downloader.py
-  - redbot/pytest/downloader_testrepo.*
-  - tests/cogs/downloader/**/*
 "Category: Cogs - Economy":
   # Source
   - redbot/cogs/economy/*
@@ -212,6 +208,13 @@
   - redbot/core/_cli.py
   - redbot/core/_debuginfo.py
   - redbot/setup.py
+"Category: Core - Downloader":
+  # Source
+  - redbot/core/_downloader/**/*
+  # Tests
+  - redbot/pytest/downloader.py
+  - redbot/pytest/downloader_testrepo.*
+  - tests/core/_downloader/**/*
 "Category: Core - Help":
   - redbot/core/commands/help.py
 "Category: Core - i18n":

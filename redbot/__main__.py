@@ -27,7 +27,7 @@ from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
 from redbot.core._cli import interactive_config, confirm, parse_cli_flags
 from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core import data_manager, _drivers
+from redbot.core import data_manager, _drivers, _downloader
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
@@ -259,7 +259,7 @@ def early_exit_runner(
             return
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
-        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+        red = Red(cli_flags=cli_flags)
         driver_cls = _drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
         loop.run_until_complete(func(red, cli_flags))
@@ -295,19 +295,23 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     redbot.logging.init_logging(
         level=cli_flags.logging_level,
         location=data_manager.core_data_path() / "logs",
-        cli_flags=cli_flags,
+        rich_logging=cli_flags.rich_logging,
+        rich_tracebacks=cli_flags.rich_tracebacks,
+        rich_traceback_extra_lines=cli_flags.rich_traceback_extra_lines,
+        rich_traceback_show_locals=cli_flags.rich_traceback_show_locals,
     )
 
     log.debug("====Basic Config====")
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
+    await _downloader._init(red)
+
     # lib folder has to be in sys.path before trying to load any 3rd-party cog (GH-3061)
     # We might want to change handling of requirements in Downloader at later date
-    LIB_PATH = data_manager.cog_data_path(raw_name="Downloader") / "lib"
-    LIB_PATH.mkdir(parents=True, exist_ok=True)
-    if str(LIB_PATH) not in sys.path:
-        sys.path.append(str(LIB_PATH))
+    lib_path = str(_downloader.LIB_PATH)
+    if lib_path not in sys.path:
+        sys.path.append(lib_path)
 
         # "It's important to note that the global `working_set` object is initialized from
         # `sys.path` when `pkg_resources` is first imported, but is only updated if you do
@@ -317,7 +321,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         # Source: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#workingset-objects
         pkg_resources = sys.modules.get("pkg_resources")
         if pkg_resources is not None:
-            pkg_resources.working_set.add_entry(str(LIB_PATH))
+            pkg_resources.working_set.add_entry(lib_path)
     sys.meta_path.insert(0, SharedLibImportWarner())
 
     if cli_flags.token:
@@ -471,7 +475,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+        red = Red(cli_flags=cli_flags)
 
         if os.name != "nt":
             # None of this works on windows.
