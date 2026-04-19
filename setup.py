@@ -46,7 +46,7 @@ extras_require["dev"] = extras_combined()
 extras_require["all"] = extras_combined("postgres")
 
 
-python_requires = ">=3.8.1"
+python_requires = ">=3.11"
 if not os.getenv("TOX_RED", False) or sys.version_info < (3, 12):
     python_requires += ",<3.12"
 

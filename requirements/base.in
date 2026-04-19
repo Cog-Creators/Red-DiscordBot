@@ -1,4 +1,4 @@
-aiohttp<3.10
+aiohttp
 aiohttp-json-rpc
 apsw
 babel

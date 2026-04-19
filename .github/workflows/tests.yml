@@ -15,20 +15,11 @@ jobs:
       strategy:
         matrix:
           python_version:
-            - "3.8"
+            - "3.11"
           tox_env:
             - style
             - docs
           include:
-            - tox_env: py38
-              python_version: "3.8"
-              friendly_name: Python 3.8 - Tests
-            - tox_env: py39
-              python_version: "3.9"
-              friendly_name: Python 3.9 - Tests
-            - tox_env: py310
-              python_version: "3.10"
-              friendly_name: Python 3.10 - Tests
             - tox_env: py311
               python_version: "3.11"
               friendly_name: Python 3.11 - Tests
@@ -39,11 +30,11 @@ jobs:
         fail-fast: false
       name: Tox - ${{ matrix.friendly_name }}
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v6
           with:
             ref: ${{ env.ref }}
         - name: Set up Python
-          uses: actions/setup-python@v4
+          uses: actions/setup-python@v6
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox
@@ -60,9 +51,6 @@ jobs:
       strategy:
         matrix:
           python_version:
-            - "3.8"
-            - "3.9"
-            - "3.10"
             - "3.11"
         fail-fast: false
       name: Tox - Postgres
@@ -76,11 +64,11 @@ jobs:
             POSTGRES_PASSWORD: postgres
             POSTGRES_USER: postgres
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v6
           with:
             ref: ${{ env.ref }}
         - name: Set up Python
-          uses: actions/setup-python@v4
+          uses: actions/setup-python@v6
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox
