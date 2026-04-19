@@ -282,7 +282,20 @@ class RedRichHandler(RichHandler):
             self.console.print(traceback)
 
 
-def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespace) -> None:
+_FILE_FORMATTER = logging.Formatter(
+    "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
+)
+
+
+def init_logging(
+    level: int,
+    *,
+    location: Optional[pathlib.Path] = None,
+    rich_logging: Optional[bool] = None,
+    rich_tracebacks: bool = False,
+    rich_traceback_extra_lines: int = 0,
+    rich_traceback_show_locals: bool = False,
+) -> None:
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
     # DEBUG logging for discord.py is a bit too ridiculous :)
@@ -312,24 +325,21 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
 
     enable_rich_logging = False
 
-    if isatty(0) and cli_flags.rich_logging is None:
+    if isatty(0) and rich_logging is None:
         # Check if the bot thinks it has a active terminal.
         enable_rich_logging = True
-    elif cli_flags.rich_logging is True:
+    elif rich_logging is True:
         enable_rich_logging = True
 
-    file_formatter = logging.Formatter(
-        "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
-    )
     if enable_rich_logging is True:
         rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
 
         stdout_handler = RedRichHandler(
-            rich_tracebacks=cli_flags.rich_tracebacks,
+            rich_tracebacks=rich_tracebacks,
             show_path=False,
             highlighter=NullHighlighter(),
-            tracebacks_extra_lines=cli_flags.rich_traceback_extra_lines,
-            tracebacks_show_locals=cli_flags.rich_traceback_show_locals,
+            tracebacks_extra_lines=rich_traceback_extra_lines,
+            tracebacks_show_locals=rich_traceback_show_locals,
             tracebacks_theme=(
                 PygmentsSyntaxTheme(FixedMonokaiStyle)
                 if rich_console.color_system == "truecolor"
@@ -339,11 +349,22 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         stdout_handler.setFormatter(rich_formatter)
     else:
         stdout_handler = logging.StreamHandler(sys.stdout)
-        stdout_handler.setFormatter(file_formatter)
+        stdout_handler.setFormatter(_FILE_FORMATTER)
 
     root_logger.addHandler(stdout_handler)
     logging.captureWarnings(True)
 
+    if location is not None:
+        init_file_logging(location)
+
+    if not enable_rich_logging and rich_tracebacks:
+        log.warning(
+            "Rich tracebacks were requested but they will not be enabled"
+            " as Rich logging is not active."
+        )
+
+
+def init_file_logging(location: pathlib.Path) -> None:
     if not location.exists():
         location.mkdir(parents=True, exist_ok=True)
     # Rotate latest logs to previous logs
@@ -379,12 +400,7 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         encoding="utf-8",
     )
 
+    root_logger = logging.getLogger()
     for fhandler in (latest_fhandler, all_fhandler):
-        fhandler.setFormatter(file_formatter)
+        fhandler.setFormatter(_FILE_FORMATTER)
         root_logger.addHandler(fhandler)
-
-    if not enable_rich_logging and cli_flags.rich_tracebacks:
-        log.warning(
-            "Rich tracebacks were requested but they will not be enabled"
-            " as Rich logging is not active."
-        )
