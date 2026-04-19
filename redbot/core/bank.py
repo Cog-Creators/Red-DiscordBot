@@ -9,6 +9,7 @@ from functools import wraps
 import discord
 
 from redbot.core.utils import AsyncIter
+from redbot.core.utils._internal_utils import iscoroutinefunction
 from redbot.core.utils.chat_formatting import humanize_number
 from . import Config, errors, commands
 from .i18n import Translator
@@ -244,7 +245,7 @@ def _decode_time(time: int) -> datetime:
         The datetime object from the timestamp.
 
     """
-    return datetime.utcfromtimestamp(time)
+    return datetime.fromtimestamp(time, timezone.utc)
 
 
 async def get_balance(member: discord.Member) -> int:
@@ -1042,7 +1043,7 @@ def cost(amount: int):
 
     def deco(coro_or_command):
         is_command = isinstance(coro_or_command, commands.Command)
-        if not is_command and not asyncio.iscoroutinefunction(coro_or_command):
+        if not is_command and not iscoroutinefunction(coro_or_command):
             raise TypeError("@bank.cost() can only be used on commands or `async def` functions")
 
         coro = coro_or_command.callback if is_command else coro_or_command

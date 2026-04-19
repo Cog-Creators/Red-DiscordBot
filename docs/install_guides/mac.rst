@@ -26,7 +26,7 @@ one-by-one:
 
 .. prompt:: bash
 
-    brew install python@3.11
+    brew install python@3.14
     brew install git
     brew install temurin@17
 
@@ -35,11 +35,11 @@ To fix this, you should run these commands:
 
 .. prompt:: bash
 
-    echo 'export PATH="$(brew --prefix)/opt/python@3.11/bin:$PATH"' >> "$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))"
-    export PATH="$(brew --prefix)/opt/python@3.11/bin:$PATH"
+    echo 'export PATH="$(brew --prefix)/opt/python@3.14/bin:$PATH"' >> "$([ -n "$ZSH_VERSION" ] && echo ~/.zprofile || ([ -f ~/.bash_profile ] && echo ~/.bash_profile || echo ~/.profile))"
+    export PATH="$(brew --prefix)/opt/python@3.14/bin:$PATH"
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv3.11.rst
+.. include:: _includes/create-env-with-venv3.14.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst

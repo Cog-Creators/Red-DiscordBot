@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Apply Type Label
-        uses: actions/labeler@v4
+        uses: actions/labeler@v4  # TODO: bump
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           sync-labels: true

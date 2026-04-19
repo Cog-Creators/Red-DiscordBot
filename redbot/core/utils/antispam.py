@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+import datetime
 from typing import Tuple, List
 from collections import namedtuple
 
@@ -89,13 +89,13 @@ class AntiSpam:
     # for manual stamping on successful command completion
 
     default_intervals = [
-        (timedelta(seconds=5), 3),
-        (timedelta(minutes=1), 5),
-        (timedelta(hours=1), 10),
-        (timedelta(days=1), 24),
+        (datetime.timedelta(seconds=5), 3),
+        (datetime.timedelta(minutes=1), 5),
+        (datetime.timedelta(hours=1), 10),
+        (datetime.timedelta(days=1), 24),
     ]
 
-    def __init__(self, intervals: List[Tuple[timedelta, int]]):
+    def __init__(self, intervals: List[Tuple[datetime.timedelta, int]]):
         self.__event_timestamps = []
         _itvs = intervals or self.default_intervals
         self.__intervals = [_AntiSpamInterval(*x) for x in _itvs]
@@ -103,7 +103,13 @@ class AntiSpam:
 
     def __interval_check(self, interval: _AntiSpamInterval):
         return (
-            len([t for t in self.__event_timestamps if (t + interval.period) > datetime.utcnow()])
+            len(
+                [
+                    t
+                    for t in self.__event_timestamps
+                    if (t + interval.period) > datetime.datetime.now()
+                ]
+            )
             >= interval.frequency
         )
 
@@ -123,7 +129,9 @@ class AntiSpam:
         The stamp will last until the corresponding interval duration
         has expired (set when this AntiSpam object was initiated).
         """
-        self.__event_timestamps.append(datetime.utcnow())
+        self.__event_timestamps.append(datetime.datetime.now())
         self.__event_timestamps = [
-            t for t in self.__event_timestamps if t + self.__discard_after > datetime.utcnow()
+            t
+            for t in self.__event_timestamps
+            if t + self.__discard_after > datetime.datetime.now()
         ]

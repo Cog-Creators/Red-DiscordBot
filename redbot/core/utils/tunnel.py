@@ -1,6 +1,6 @@
 import asyncio
 import discord
-from datetime import datetime
+import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
 import weakref
@@ -77,7 +77,7 @@ class Tunnel(metaclass=TunnelMeta):
         self.sender = sender
         self.origin = origin
         self.recipient = recipient
-        self.last_interaction = datetime.utcnow()
+        self.last_interaction = datetime.datetime.now(datetime.timezone.utc)
 
     async def react_close(self, *, uid: int, message: str = ""):
         send_to = self.recipient if uid == self.sender.id else self.origin
@@ -90,7 +90,9 @@ class Tunnel(metaclass=TunnelMeta):
 
     @property
     def minutes_since(self):
-        return int((self.last_interaction - datetime.utcnow()).seconds / 60)
+        return int(
+            (self.last_interaction - datetime.datetime.now(datetime.timezone.utc)).seconds / 60
+        )
 
     @staticmethod
     async def message_forwarder(
@@ -252,6 +254,6 @@ class Tunnel(metaclass=TunnelMeta):
 
         await message.add_reaction("\N{WHITE HEAVY CHECK MARK}")
         await message.add_reaction("\N{NEGATIVE SQUARED CROSS MARK}")
-        self.last_interaction = datetime.utcnow()
+        self.last_interaction = datetime.datetime.now(datetime.timezone.utc)
         await rets[-1].add_reaction("\N{NEGATIVE SQUARED CROSS MARK}")
         return [rets[-1].id, message.id]

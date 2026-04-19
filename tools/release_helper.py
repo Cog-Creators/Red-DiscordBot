@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3.11
 """Script helping with making releases.
 
 This script mostly aims to help with the changelog-related tasks but it does also guide you

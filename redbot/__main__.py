@@ -25,7 +25,7 @@ import rich
 import redbot.logging
 from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
-from redbot.core._cli import interactive_config, confirm, parse_cli_flags
+from redbot.core._cli import interactive_config, confirm, parse_cli_flags, new_event_loop
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, _drivers, _downloader
 from redbot.core._debuginfo import DebugInfo
@@ -257,11 +257,7 @@ def _copy_data(data):
     if Path(data["DATA_PATH"]).exists():
         if any(os.scandir(data["DATA_PATH"])):
             return False
-        else:
-            # this is needed because copytree doesn't work when destination folder exists
-            # Python 3.8 has `dirs_exist_ok` option for that
-            os.rmdir(data["DATA_PATH"])
-    shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"])
+    shutil.copytree(data_manager.basic_config["DATA_PATH"], data["DATA_PATH"], dirs_exist_ok=True)
     return True
 
 
@@ -272,7 +268,7 @@ def early_exit_runner(
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
-    loop = asyncio.new_event_loop()
+    loop = new_event_loop()
     asyncio.set_event_loop(loop)
     try:
         if not cli_flags.instance_name:
@@ -482,7 +478,7 @@ def main():
         early_exit_runner(cli_flags, edit_instance)
         return
     try:
-        loop = asyncio.new_event_loop()
+        loop = new_event_loop()
         asyncio.set_event_loop(loop)
 
         if cli_flags.no_instance:

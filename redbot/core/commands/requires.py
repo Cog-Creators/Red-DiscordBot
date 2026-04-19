@@ -31,6 +31,7 @@ from discord.ext.commands import check
 from .errors import BotMissingPermissions
 
 from redbot.core import utils
+from redbot.core.utils._internal_utils import iscoroutinefunction
 
 if TYPE_CHECKING:
     from .commands import Command
@@ -352,7 +353,7 @@ class Requires:
             user_perms = None
 
         def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
-            if inspect.iscoroutinefunction(func):
+            if iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
                 if user_perms is None:
                     func.__requires_user_perms__ = None
@@ -685,7 +686,7 @@ def bot_has_permissions(**perms: bool):
     """
 
     def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
-        if asyncio.iscoroutinefunction(func):
+        if iscoroutinefunction(func):
             if not hasattr(func, "__requires_bot_perms__"):
                 func.__requires_bot_perms__ = discord.Permissions.none()
             _validate_perms_dict(perms)

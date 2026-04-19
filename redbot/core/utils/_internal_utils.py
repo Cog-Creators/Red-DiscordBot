@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import collections.abc
 import contextlib
+import inspect
 import json
 import logging
 import os
@@ -10,7 +11,8 @@ import re
 import shutil
 import tarfile
 import warnings
-from datetime import datetime
+import datetime
+import sys
 from pathlib import Path
 from typing import (
     AsyncIterable,
@@ -59,6 +61,7 @@ __all__ = (
     "deprecated_removed",
     "RichIndefiniteBarColumn",
     "cli_level_to_log_level",
+    "iscoroutinefunction",
 )
 
 _T = TypeVar("_T")
@@ -222,7 +225,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         return None
 
     dest.mkdir(parents=True, exist_ok=True)
-    timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
+    timestr = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
     backup_fpath = dest / f"redv3_{data_manager.instance_name()}_{timestr}.tar.gz"
 
     to_backup = []
@@ -388,3 +391,12 @@ def cli_level_to_log_level(level: int) -> int:
     else:
         log_level = TRACE
     return log_level
+
+
+# `inspect.iscoroutinefunction()` only became equivalent
+# to (now deprecated) `inspect.iscoroutinefunction()` in Python 3.12
+# https://github.com/python/cpython/issues/122858#issuecomment-2466239748
+if sys.version_info >= (3, 12):
+    iscoroutinefunction = inspect.iscoroutinefunction
+else:
+    iscoroutinefunction = asyncio.iscoroutinefunction

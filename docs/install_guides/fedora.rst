@@ -17,12 +17,12 @@ them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python3.11 python3.11-devel git adoptium-temurin-java-repository @development-tools nano
+    sudo dnf -y install python3.14 python3.14-devel git adoptium-temurin-java-repository @development-tools nano
     sudo dnf config-manager setopt adoptium-temurin-java-repository.enabled=1
     sudo dnf -y install temurin-17-jre
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv3.11.rst
+.. include:: _includes/create-env-with-venv3.14.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst

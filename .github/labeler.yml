@@ -239,6 +239,7 @@
   - redbot/core/_settings_caches.py
   - redbot/core/_sharedlibdeprecation.py
   - redbot/core/utils/_internal_utils.py
+  - redbot/ext_cogs/__init__.py
   # Tests
   - redbot/pytest/__init__.py
   - redbot/pytest/cog_manager.py

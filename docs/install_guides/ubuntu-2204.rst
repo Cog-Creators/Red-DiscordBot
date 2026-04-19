@@ -12,16 +12,22 @@ Installing Red on Ubuntu 22.04 LTS
 Installing the pre-requirements
 -------------------------------
 
-Ubuntu 22.04 LTS has all required packages available in official repositories. Install them
-with apt:
+We recommend adding the ``deadsnakes`` ppa to install Python 3.14:
 
 .. prompt:: bash
 
     sudo apt update
-    sudo apt -y install python3.10 python3.10-dev python3.10-venv git openjdk-17-jre-headless build-essential nano
+    sudo apt -y install software-properties-common
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+
+Now install the pre-requirements with apt:
+
+.. prompt:: bash
+
+    sudo apt -y install python3.14 python3.14-dev python3.14-venv git openjdk-17-jre-headless build-essential nano
 
 .. Include common instructions:
 
-.. include:: _includes/create-env-with-venv3.10.rst
+.. include:: _includes/create-env-with-venv3.14.rst
 
 .. include:: _includes/install-and-setup-red-unix.rst
