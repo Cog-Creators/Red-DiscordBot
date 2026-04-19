@@ -82,13 +82,19 @@ async-timeout==4.0.3; python_version != "3.11"
     # via aiohttp
 colorama==0.4.6; sys_platform == "win32"
     # via click
+deno==2.7.2; python_version >= '3.10' and ((sys_platform == 'win32' and platform_machine == 'AMD64') or (sys_platform == 'linux' and (platform_machine == 'x86_64' or platform_machine == 'aarch64')) or (sys_platform == 'darwin' and (platform_machine == 'x86_64' or platform_machine == 'arm64')))
+    # via red-yt-cipher-solver
 distro==1.9.0; sys_platform == "linux" and sys_platform == "linux"
     # via -r base.in
 importlib-metadata==8.5.0; python_version != "3.10" and python_version != "3.11"
     # via markdown
 pytz==2026.1.post1; python_version == "3.8"
     # via babel
+red-yt-cipher-solver==0.3.0; python_version >= '3.10' and ((sys_platform == 'win32' and platform_machine == 'AMD64') or (sys_platform == 'linux' and (platform_machine == 'x86_64' or platform_machine == 'aarch64')) or (sys_platform == 'darwin' and (platform_machine == 'x86_64' or platform_machine == 'arm64')))
+    # via -r base.in
 uvloop==0.21.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
     # via -r base.in
+yt-dlp-ejs==0.5.0; python_version >= '3.10' and ((sys_platform == 'win32' and platform_machine == 'AMD64') or (sys_platform == 'linux' and (platform_machine == 'x86_64' or platform_machine == 'aarch64')) or (sys_platform == 'darwin' and (platform_machine == 'x86_64' or platform_machine == 'arm64')))
+    # via red-yt-cipher-solver
 zipp==3.20.2; python_version != "3.10" and python_version != "3.11"
     # via importlib-metadata
