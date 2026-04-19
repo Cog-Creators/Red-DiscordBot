@@ -34,7 +34,7 @@ sphinx==7.1.2
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
     #   sphinxcontrib-trio
-sphinx-prompt==1.7.0
+sphinx-prompt==1.8.0
     # via -r extra-doc.in
 sphinx-rtd-theme==3.1.0
     # via -r extra-doc.in

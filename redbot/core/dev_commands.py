@@ -349,7 +349,6 @@ class DevOutput:
                         exc.end_lineno -= line_offset
 
         top_traceback_exc = traceback.TracebackException(exc_type, exc, tb)
-        py311_or_above = sys.version_info >= (3, 11)
         queue = [  # actually a stack but 'stack' is easy to confuse with actual traceback stack
             top_traceback_exc,
         ]
@@ -357,10 +356,8 @@ class DevOutput:
         while queue:
             traceback_exc = queue.pop()
 
-            # handle exception groups; this uses getattr() to support `exceptiongroup` backport lib
-            exceptions: List[traceback.TracebackException] = (
-                getattr(traceback_exc, "exceptions", None) or []
-            )
+            # handle exception groups
+            exceptions = traceback_exc.exceptions or []
             # handle exception chaining
             if traceback_exc.__cause__ is not None:
                 exceptions.append(traceback_exc.__cause__)
@@ -389,23 +386,18 @@ class DevOutput:
                     continue
                 lineno -= line_offset
                 # support for enhanced error locations in tracebacks
-                if py311_or_above:
-                    end_lineno = frame_summary.end_lineno
-                    if end_lineno is not None:
-                        end_lineno -= line_offset
-                    frame_summary = traceback.FrameSummary(
-                        frame_summary.filename,
-                        lineno,
-                        frame_summary.name,
-                        line=line,
-                        end_lineno=end_lineno,
-                        colno=frame_summary.colno,
-                        end_colno=frame_summary.end_colno,
-                    )
-                else:
-                    frame_summary = traceback.FrameSummary(
-                        frame_summary.filename, lineno, frame_summary.name, line=line
-                    )
+                end_lineno = frame_summary.end_lineno
+                if end_lineno is not None:
+                    end_lineno -= line_offset
+                frame_summary = traceback.FrameSummary(
+                    frame_summary.filename,
+                    lineno,
+                    frame_summary.name,
+                    line=line,
+                    end_lineno=end_lineno,
+                    colno=frame_summary.colno,
+                    end_colno=frame_summary.end_colno,
+                )
                 stack_summary[idx] = frame_summary
 
         return "".join(top_traceback_exc.format())

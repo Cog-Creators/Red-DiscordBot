@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-PYTHON ?= python3.8
+PYTHON ?= python3.11
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 

@@ -385,9 +385,8 @@ class CogManagerUI(commands.Cog):
 
         path = path.resolve()
 
-        # Path.is_relative_to() is 3.9+
         bot_data_path = data_path()
-        if path == bot_data_path or bot_data_path in path.parents:
+        if path.is_relative_to(bot_data_path):
             await ctx.send(
                 _("A cog path cannot be part of bot's data path ({bot_data_path}).").format(
                     bot_data_path=inline(str(bot_data_path))
@@ -395,9 +394,8 @@ class CogManagerUI(commands.Cog):
             )
             return
 
-        # Path.is_relative_to() is 3.9+
         core_path = ctx.bot._cog_mgr.CORE_PATH
-        if path == core_path or core_path in path.parents:
+        if path.is_relative_to(core_path):
             await ctx.send(
                 _("A cog path cannot be part of bot's core path ({core_path}).").format(
                     core_path=inline(str(core_path))
