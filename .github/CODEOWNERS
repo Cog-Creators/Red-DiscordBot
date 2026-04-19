@@ -15,7 +15,6 @@
 /redbot/cogs/trivia/data/lists/whosthatpokemon*.yaml @aikaterna
 
 # Tests
-/redbot/pytest/downloader* @Jackenmen
 /tests/cogs/downloader/* @Jackenmen
 
 # Schemas

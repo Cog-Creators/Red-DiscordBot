@@ -2,8 +2,17 @@ from pathlib import Path
 
 import pytest
 
-from redbot.pytest.cog_manager import *
 from redbot.core import _cog_manager
+
+
+@pytest.fixture()
+def cog_mgr(red):
+    return red._cog_mgr
+
+
+@pytest.fixture()
+def default_dir(red):
+    return red._main_dir
 
 
 @pytest.mark.skip

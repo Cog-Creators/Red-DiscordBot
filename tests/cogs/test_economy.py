@@ -1,5 +1,17 @@
+from redbot.core import bank as bank_module
+
 import pytest
-from redbot.pytest.economy import *
+
+
+@pytest.fixture()
+async def bank(config, monkeypatch):
+    from redbot.core import Config
+
+    with monkeypatch.context() as m:
+        m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
+        # noinspection PyProtectedMember
+        await bank_module._init()
+        return bank_module
 
 
 async def test_bank_register(bank, ctx):

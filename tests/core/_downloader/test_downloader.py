@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from pytest_mock import MockFixture
 
-from redbot.pytest.downloader import *
+from .fixtures import *
 
 from redbot.core._downloader.repo_manager import Installable
 from redbot.core._downloader.repo_manager import Candidate, ProcessFormatter, RepoManager, Repo
