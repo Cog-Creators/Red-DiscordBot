@@ -111,7 +111,7 @@ def get_data_dir(*, instance_name: str, data_path: Optional[Path], interactive: 
                     " You may need to create the directory and set proper permissions"
                     " for it manually before it can be used as the data directory."
                 )
-                sys.exit(ExitCodes.INVALID_CLI_USAGE)
+                continue
 
         print(f"You have chosen {str(data_path)!r} to be your data directory.")
         if click.confirm("Please confirm", default=True):
