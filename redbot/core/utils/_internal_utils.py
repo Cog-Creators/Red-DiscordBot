@@ -236,7 +236,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     ]
 
     # Avoiding circular imports
-    from ...cogs.downloader.repo_manager import RepoManager
+    from redbot.core._downloader.repo_manager import RepoManager
 
     repo_mgr = RepoManager()
     await repo_mgr.initialize()
