@@ -5,17 +5,19 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple, Union
 
 import discord
+
 from redbot.core import commands, i18n, modlog
 from redbot.core.commands import RawUserIdConverter
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import (
-    pagify,
-    humanize_number,
     bold,
-    humanize_list,
     format_perms_list,
+    humanize_list,
+    humanize_number,
+    pagify,
 )
 from redbot.core.utils.mod import get_audit_reason
+
 from .abc import MixinMeta
 from .utils import is_allowed_by_hierarchy
 
@@ -345,6 +347,7 @@ class KickBanMixin(MixinMeta):
         audit_reason = get_audit_reason(author, reason, shorten=True)
         toggle = await self.config.guild(guild).dm_on_kickban()
         if toggle:
+            extra_embed = await self.config.guild(guild).kick_show_extra()
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
                     title=bold(_("You have been kicked from {guild}.").format(guild=guild)),
@@ -355,6 +358,16 @@ class KickBanMixin(MixinMeta):
                     value=reason if reason is not None else _("No reason was given."),
                     inline=False,
                 )
+                if extra_embed:
+                    extra_embed_title = await self.config.guild(guild).kick_extra_embed_title()
+                    extra_embed_contents = await self.config.guild(
+                        guild
+                    ).kick_extra_embed_contents()
+                    em.add_field(
+                        name=bold(extra_embed_title, escape_formatting=False),
+                        value=extra_embed_contents,
+                        inline=False,
+                    )
                 await member.send(embed=em)
         try:
             await guild.kick(member, reason=audit_reason)
@@ -757,18 +770,43 @@ class KickBanMixin(MixinMeta):
 
         audit_reason = get_audit_reason(author, reason, shorten=True)
 
-        invite = await self.get_invite_for_reinvite(ctx)
+        msg = None
+        toggle = await self.config.guild(guild).dm_on_kickban()
+        if toggle:
+            extra_embed = await self.config.guild(guild).softban_show_extra()
 
-        try:  # We don't want blocked DMs preventing us from banning
-            msg = await member.send(
-                _(
-                    "You have been banned and "
-                    "then unbanned as a quick way to delete your messages.\n"
-                    "You can now join the server again. {invite_link}"
-                ).format(invite_link=invite)
+            invite = await self.get_invite_for_reinvite(ctx)
+            em = discord.Embed(
+                title=bold(_("You have been softbanned from {guild}.").format(guild=guild)),
+                color=await self.bot.get_embed_color(member),
             )
-        except discord.HTTPException:
-            msg = None
+            em.add_field(
+                name=_("**Reason**"),
+                value=reason if reason is not None else _("No reason was given."),
+                inline=False,
+            )
+            if invite:
+                em.add_field(
+                    name=bold(_("You can now rejoin the server")),
+                    value=invite,
+                    inline=False,
+                )
+            if extra_embed:
+                extra_embed_title = await self.config.guild(guild).softban_extra_embed_title()
+                extra_embed_contents = await self.config.guild(
+                    guild
+                ).softban_extra_embed_contents()
+
+                em.add_field(
+                    name=bold(extra_embed_title, escape_formatting=False),
+                    value=extra_embed_contents,
+                    inline=False,
+                )
+
+            try:  # We don't want blocked DMs preventing us from banning
+                msg = await member.send(embed=em)
+            except discord.HTTPException:
+                pass
         try:
             await guild.ban(member, reason=audit_reason, delete_message_seconds=86400)
         except discord.errors.Forbidden:

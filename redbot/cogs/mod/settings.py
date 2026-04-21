@@ -51,6 +51,12 @@ class ModSettings(MixinMeta):
         ban_show_extra = data["ban_show_extra"]
         ban_extra_embed_title = data["ban_extra_embed_title"]
         ban_extra_embed_contents = data["ban_extra_embed_contents"]
+        kick_show_extra = data["kick_show_extra"]
+        kick_extra_embed_title = data["kick_extra_embed_title"]
+        kick_extra_embed_contents = data["kick_extra_embed_contents"]
+        softban_show_extra = data["softban_show_extra"]
+        softban_extra_embed_title = data["softban_extra_embed_title"]
+        softban_extra_embed_contents = data["softban_extra_embed_contents"]
         if not track_all_names and track_nicknames:
             yes_or_no = _("Overridden by another setting")
         else:
@@ -110,8 +116,32 @@ class ModSettings(MixinMeta):
         msg += _("Title of the optional extra field: {ban_embed_title}\n").format(
             ban_embed_title=ban_extra_embed_title if ban_extra_embed_title else _("None")
         )
-        msg += _("Contents of the optional extra field: {ban_embed_contents}").format(
+        msg += _("Contents of the optional extra field: {ban_embed_contents}\n").format(
             ban_embed_contents=ban_extra_embed_contents if ban_extra_embed_contents else _("None")
+        )
+        msg += _("Show optional information field in kick embed: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if kick_show_extra else _("No")
+        )
+        msg += _("Title of the optional kick extra field: {kick_embed_title}\n").format(
+            kick_embed_title=kick_extra_embed_title if kick_extra_embed_title else _("None")
+        )
+        msg += _("Contents of the optional kick extra field: {kick_embed_contents}\n").format(
+            kick_embed_contents=kick_extra_embed_contents
+            if kick_extra_embed_contents
+            else _("None")
+        )
+        msg += _("Show optional information field in softban embed: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if softban_show_extra else _("No")
+        )
+        msg += _("Title of the optional softban extra field: {softban_embed_title}\n").format(
+            softban_embed_title=softban_extra_embed_title
+            if softban_extra_embed_title
+            else _("None")
+        )
+        msg += _("Contents of the optional softban extra field: {softban_embed_contents}").format(
+            softban_embed_contents=softban_extra_embed_contents
+            if softban_extra_embed_contents
+            else _("None")
         )
         await ctx.send(box(msg))
 
@@ -441,6 +471,114 @@ class ModSettings(MixinMeta):
             await ctx.send(_("Embed contents cannot be over 1024 characters long."))
         else:
             await self.config.guild(guild).ban_extra_embed_contents.set(contents)
+            await ctx.send(
+                _("Embed Contents has been set to `{contents}`").format(contents=contents)
+            )
+
+    @dm.command(name="kickshowextrafield")
+    async def dm_kickshowextrafield(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether to show an extra customizable field when kicking.
+
+        This can be used to add additional information for the kicked user, such as a ban appeal link.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            setting = await self.config.guild(guild).kick_show_extra()
+            await ctx.send(
+                _("The extra embed field is currently set to: {setting}").format(setting=setting)
+            )
+            return
+        await self.config.guild(guild).kick_show_extra.set(enabled)
+        if enabled:
+            await ctx.send(
+                _(
+                    "An extra field will be shown when kicking. Configure it with `{prefix}modset dm kickextrafieldtitle` and `{prefix}modset dm kickextrafieldcontents`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await ctx.send(_("An extra field will no longer be shown when kicking."))
+
+    @dm.command(name="kickextrafieldtitle")
+    async def dm_kickextrafieldtitle(self, ctx: commands.Context, *, title: str) -> None:
+        """
+        Set the title for the optional extra embed on kick.
+
+        Cannot be over 252 characters long.
+        """
+        guild = ctx.guild
+        if len(title) > 252:
+            await ctx.send(_("Embed title cannot be over 252 characters long."))
+        else:
+            await self.config.guild(guild).kick_extra_embed_title.set(title)
+            await ctx.send(_("Embed Title has been set to `{title}`").format(title=title))
+
+    @dm.command(name="kickextrafieldcontents")
+    async def dm_kickextrafieldcontents(self, ctx: commands.Context, *, contents: str) -> None:
+        """
+        Set the contents for the optional extra embed on kick.
+
+        Cannot be over 1024 characters long.
+        """
+        guild = ctx.guild
+        if len(contents) > 1024:
+            await ctx.send(_("Embed contents cannot be over 1024 characters long."))
+        else:
+            await self.config.guild(guild).kick_extra_embed_contents.set(contents)
+            await ctx.send(
+                _("Embed Contents has been set to `{contents}`").format(contents=contents)
+            )
+
+    @dm.command(name="softbanshowextrafield")
+    async def dm_softbanshowextrafield(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether to show an extra customizable field when softbanning.
+
+        This can be used to add additional information for the softbanned user, such as a ban appeal link.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            setting = await self.config.guild(guild).softban_show_extra()
+            await ctx.send(
+                _("The extra embed field is currently set to: {setting}").format(setting=setting)
+            )
+            return
+        await self.config.guild(guild).softban_show_extra.set(enabled)
+        if enabled:
+            await ctx.send(
+                _(
+                    "An extra field will be shown when softbanning. Configure it with `{prefix}modset dm softbanextrafieldtitle` and `{prefix}modset dm softbanextrafieldcontents`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await ctx.send(_("An extra field will no longer be shown when softbanning."))
+
+    @dm.command(name="softbanextrafieldtitle")
+    async def dm_softbanextrafieldtitle(self, ctx: commands.Context, *, title: str) -> None:
+        """
+        Set the title for the optional extra embed on softban.
+
+        Cannot be over 252 characters long.
+        """
+        guild = ctx.guild
+        if len(title) > 252:
+            await ctx.send(_("Embed title cannot be over 252 characters long."))
+        else:
+            await self.config.guild(guild).softban_extra_embed_title.set(title)
+            await ctx.send(_("Embed Title has been set to `{title}`").format(title=title))
+
+    @dm.command(name="softbanextrafieldcontents")
+    async def dm_softbanextrafieldcontents(self, ctx: commands.Context, *, contents: str) -> None:
+        """
+        Set the contents for the optional extra embed on softban.
+
+        Cannot be over 1024 characters long.
+        """
+        guild = ctx.guild
+        if len(contents) > 1024:
+            await ctx.send(_("Embed contents cannot be over 1024 characters long."))
+        else:
+            await self.config.guild(guild).softban_extra_embed_contents.set(contents)
             await ctx.send(
                 _("Embed Contents has been set to `{contents}`").format(contents=contents)
             )
