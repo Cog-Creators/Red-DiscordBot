@@ -1135,7 +1135,7 @@ class Downloader(commands.Cog):
             return
 
         cog = command.cog
-        await self._show_cog_info(
+        await self._show_cog_package_info(
             ctx, cog.__module__, cog_name=cog.__class__.__name__, command_name=command_name
         )
 
