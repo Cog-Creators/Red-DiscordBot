@@ -1115,14 +1115,32 @@ class Downloader(commands.Cog):
         splitted = instance.__module__.split(".")
         return splitted[0]
 
-    @commands.command()
-    async def findcommand(self, ctx: commands.Context, command_name: str) -> None:
+    @commands.group(invoke_without_command=True)
+    async def findcog(self, ctx: commands.Context, command_name: str) -> None:
+        """Find which cog package a command comes from.
+
+        This will only work with loaded cogs.
+
+        Examples:
+        - `[p]findcog ping`
+        - `[p]findcog command ping`
+        - `[p]findcog cog Audio`
+        - `[p]findcog package audio`
+
+        **Arguments**
+
+        - `<command_name>` The command to search for.
+        """
+        await self.findcog_command(ctx, command_name)
+
+    @findcog.command(name="command")
+    async def findcog_command(self, ctx: commands.Context, command_name: str) -> None:
         """Find which cog package a command comes from.
 
         This will only work with loaded cogs.
 
         Example:
-        - `[p]findcommand ping`
+        - `[p]findcog command ping`
 
         **Arguments**
 
@@ -1139,14 +1157,14 @@ class Downloader(commands.Cog):
             ctx, cog.__module__, cog_name=cog.__class__.__name__, command_name=command_name
         )
 
-    @commands.command()
-    async def findcog(self, ctx: commands.Context, cog_name: str) -> None:
+    @findcog.command(name="cog")
+    async def findcog_cog(self, ctx: commands.Context, cog_name: str) -> None:
         """Find which cog package a cog comes from.
 
         This will only work with loaded cogs.
 
         Example:
-        - `[p]findcog Audio`
+        - `[p]findcog cog Audio`
 
         **Arguments**
 
@@ -1160,14 +1178,14 @@ class Downloader(commands.Cog):
 
         await self._show_cog_package_info(ctx, cog.__module__, cog_name=cog.__class__.__name__)
 
-    @commands.command()
-    async def findcogpackage(self, ctx: commands.Context, cog_pkg_name: str) -> None:
+    @findcog.command(name="package", aliases=["cogpackage"])
+    async def findcog_package(self, ctx: commands.Context, cog_pkg_name: str) -> None:
         """Show details about a cog package.
 
         This will only work with loaded cogs.
 
         Example:
-        - `[p]findcogpackage audio`
+        - `[p]findcog package audio`
 
         **Arguments**
 
