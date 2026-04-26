@@ -1136,7 +1136,7 @@ class Downloader(commands.Cog):
 
         cog = command.cog
         await self._show_cog_info(
-            cog.__module__, cog_name=cog.__class__.__name__, command_name=command_name
+            ctx, cog.__module__, cog_name=cog.__class__.__name__, command_name=command_name
         )
 
     @commands.command()
@@ -1158,7 +1158,7 @@ class Downloader(commands.Cog):
             await ctx.send(_("That cog doesn't seem to exist."))
             return
 
-        await self._show_cog_package_info(cog.__module__, cog_name=cog.__class__.__name__)
+        await self._show_cog_package_info(ctx, cog.__module__, cog_name=cog.__class__.__name__)
 
     @commands.command()
     async def findcogpackage(self, ctx: commands.Context, cog_pkg_name: str) -> None:
@@ -1179,10 +1179,10 @@ class Downloader(commands.Cog):
             await ctx.send(_("That cog package doesn't seem to exist."))
             return
 
-        await self._show_cog_package_info(module.__name__)
+        await self._show_cog_package_info(ctx, module.__name__)
 
     async def _show_cog_package_info(
-        self, module_name: Optional[str], *, cog_name: str = "", command_name: str = ""
+        self, ctx, module_name: Optional[str], *, cog_name: str = "", command_name: str = ""
     ) -> None:
         if not module_name:
             msg = _("This is not provided by a cog package.")
