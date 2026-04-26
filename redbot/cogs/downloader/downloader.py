@@ -1122,7 +1122,7 @@ class Downloader(commands.Cog):
         This will only work with loaded cogs.
 
         Example:
-        - `[p]findcog ping`
+        - `[p]findcommand ping`
 
         **Arguments**
 
@@ -1146,7 +1146,7 @@ class Downloader(commands.Cog):
         This will only work with loaded cogs.
 
         Example:
-        - `[p]findcogpackage Audio`
+        - `[p]findcog Audio`
 
         **Arguments**
 
