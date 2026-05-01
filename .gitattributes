@@ -1,11 +1,19 @@
-* text eol=lf
+# This is a good default: files that are auto-detected by git to be text are
+# converted to the platform-native line ending (LF on Unix, CRLF on Windows)
+# in the working tree and to LF in the repository.
+#
+* text=auto
 
-# binary file excludsions
-*.png binary
+# Use `eol=crlf` for files that should have the CRLF line ending both in the
+# working tree (even on Unix) and in the repository.
+#
+#*.bat text eol=crlf
 
-# include commit/tag information in `.git_archive_info.txt` when packing with git-archive
-.git_archive_info.txt export-subst
+# Use `eol=lf` for files that should have the LF line ending both in the
+# working tree (even on Windows) and in the repository.
+#
+#*.sh text eol=lf
 
-# hide diffs for .po files by default
-# https://docs.github.com/en/repositories/working-with-files/managing-files/customizing-how-changed-files-appear-on-github
-*.po linguist-generated
+# Use `binary` to make sure certain files are never auto-detected as text.
+#
+#*.png binary
