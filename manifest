@@ -10,4 +10,8 @@ email: 38366565+b3n-h4il@users.noreply.github.com
 #build-error-email: 38366565+b3n-h4il@users.noreply.github.com
 depends: * build2 >= 0.17.0
 depends: * bpkg >= 0.17.0
+
+depends: sol2 ^3.5.0
+
+
 #depends: libhello ^1.0.0

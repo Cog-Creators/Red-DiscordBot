@@ -1,6 +1,11 @@
 libs =
 #import libs += libhello%lib{hello}
 
+
+import libs += sol2%lib{sol2}
+
+
+
 exe{Aurora}: {hxx cxx}{**} $libs testscript
 
 cxx.poptions =+ "-I$out_root" "-I$src_root"
