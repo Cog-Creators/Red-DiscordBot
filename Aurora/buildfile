@@ -5,6 +5,10 @@ libs =
 import libs += sol2%lib{sol2}
 
 
+# File system included libs
+import libs += libdpp%lib{dpp}
+
+
 
 exe{Aurora}: {hxx cxx}{**} $libs testscript
 

@@ -13,5 +13,6 @@ depends: * bpkg >= 0.17.0
 
 depends: sol2 ^3.5.0
 
+requires: libdpp
 
 #depends: libhello ^1.0.0
