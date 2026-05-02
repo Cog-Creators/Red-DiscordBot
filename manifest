@@ -1,6 +1,6 @@
 : 1
 name: Aurora
-version: 0.1.0-a.1
+version: 0.1.0-a.1.z
 language: c++
 summary: Aurora C++ executable
 license: other: proprietary ; Not free/open source.
