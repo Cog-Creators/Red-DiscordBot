@@ -36,3 +36,7 @@
 # Compilation database.
 #
 compile_commands.json
+
+# Codium workspace
+#
+*.code-workspace
