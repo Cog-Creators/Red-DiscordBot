@@ -54,8 +54,6 @@ _cog_mgr: CogManager
 _repo_manager: RepoManager
 
 LIB_PATH: Path
-SHAREDLIB_PATH: Path
-_SHAREDLIB_INIT: Path
 
 
 async def _init(bot: Red) -> None:
@@ -73,13 +71,11 @@ async def _init_without_bot(cog_manager: CogManager) -> None:
 
     global _config
     _config = Config.get_conf(None, 998240343, cog_name="Downloader", force_registration=True)
-    _config.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
+    _config.register_global(schema_version=0, installed_cogs={})
     await _migrate_config()
 
-    global LIB_PATH, SHAREDLIB_PATH, _SHAREDLIB_INIT
+    global LIB_PATH
     LIB_PATH = cog_data_path(raw_name="Downloader") / "lib"
-    SHAREDLIB_PATH = LIB_PATH / "cog_shared"
-    _SHAREDLIB_INIT = SHAREDLIB_PATH / "__init__.py"
     _create_lib_folder()
 
     global _repo_manager
@@ -99,6 +95,11 @@ async def _migrate_config() -> None:
 
     if schema_version == 0:
         await _schema_0_to_1()
+        schema_version += 1
+        await _config.schema_version.set(schema_version)
+
+    if schema_version == 1:
+        await _schema_1_to_2()
         schema_version += 1
         await _config.schema_version.set(schema_version)
 
@@ -128,13 +129,20 @@ async def _schema_0_to_1():
     # but it only helps `[p]cog update` run faster so it's not an issue
 
 
+async def _schema_1_to_2():
+    """
+    This removes traces of shared libraries as they are no longer a feature.
+    """
+    await _config.clear_raw("installed_libraries")
+    shared_lib_path = LIB_PATH / "cog_shared"
+    if shared_lib_path.exists():
+        shutil.rmtree(shared_lib_path)
+
+
 def _create_lib_folder(*, remove_first: bool = False) -> None:
     if remove_first:
         shutil.rmtree(str(LIB_PATH))
-    SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
-    if not _SHAREDLIB_INIT.exists():
-        with _SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
-            pass
+    LIB_PATH.mkdir(parents=True, exist_ok=True)
 
 
 async def installed_cogs() -> Tuple[InstalledModule, ...]:
@@ -155,34 +163,16 @@ async def installed_cogs() -> Tuple[InstalledModule, ...]:
     )
 
 
-async def installed_libraries() -> Tuple[InstalledModule, ...]:
-    """Get info on installed shared libraries.
-
-    Returns
-    -------
-    `tuple` of `InstalledModule`
-        All installed shared libraries.
-
-    """
-    installed = await _config.installed_libraries()
-    # noinspection PyTypeChecker
-    return tuple(
-        InstalledModule.from_json(lib_json, _repo_manager)
-        for repo_json in installed.values()
-        for lib_json in repo_json.values()
-    )
-
-
 async def installed_modules() -> Tuple[InstalledModule, ...]:
-    """Get info on installed cogs and shared libraries.
+    """Get info on installed modules.
 
     Returns
     -------
     `tuple` of `InstalledModule`
-        All installed cogs and shared libraries.
+        All installed modules.
 
     """
-    return await installed_cogs() + await installed_libraries()
+    return await installed_cogs()
 
 
 async def _save_to_installed(modules: Iterable[InstalledModule]) -> None:
@@ -196,12 +186,9 @@ async def _save_to_installed(modules: Iterable[InstalledModule]) -> None:
     """
     async with _config.all() as global_data:
         installed_cogs = global_data["installed_cogs"]
-        installed_libraries = global_data["installed_libraries"]
         for module in modules:
             if module.type is InstallableType.COG:
                 installed = installed_cogs
-            elif module.type is InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
             else:
                 continue
             module_json = module.to_json()
@@ -221,23 +208,13 @@ async def _remove_from_installed(modules: Iterable[InstalledModule]) -> None:
     """
     async with _config.all() as global_data:
         installed_cogs = global_data["installed_cogs"]
-        installed_libraries = global_data["installed_libraries"]
         for module in modules:
             if module.type is InstallableType.COG:
                 installed = installed_cogs
-            elif module.type is InstallableType.SHARED_LIBRARY:
-                installed = installed_libraries
             else:
                 continue
             with contextlib.suppress(KeyError):
                 installed[module._json_repo_name].pop(module.name)
-
-
-async def _shared_lib_load_check(cog_name: str) -> Optional[Repo]:
-    _is_installed, cog = await is_installed(cog_name)
-    if _is_installed and cog.repo is not None and cog.repo.available_libraries:
-        return cog.repo
-    return None
 
 
 async def is_installed(
@@ -263,11 +240,9 @@ async def is_installed(
     return False, None
 
 
-async def _available_updates(
-    cogs: Iterable[InstalledModule],
-) -> Tuple[Tuple[Installable, ...], Tuple[Installable, ...]]:
+async def _available_updates(cogs: Iterable[InstalledModule]) -> Tuple[Installable, ...]:
     """
-    Get cogs and libraries which can be updated.
+    Get cogs which can be updated.
 
     Parameters
     ----------
@@ -277,26 +252,14 @@ async def _available_updates(
     Returns
     -------
     tuple
-        2-tuple of cogs and libraries which can be updated.
+        Cogs which can be updated.
 
     """
-    repos = {cog.repo for cog in cogs if cog.repo is not None}
-    _installed_libraries = await installed_libraries()
-
     modules: Set[InstalledModule] = set()
     cogs_to_update: Set[Installable] = set()
-    libraries_to_update: Set[Installable] = set()
-    # split libraries and cogs into 2 categories:
-    # 1. `cogs_to_update`, `libraries_to_update` - module needs update, skip diffs
+    # split cogs into 2 categories:
+    # 1. `cogs_to_update` - module needs update, skip diffs
     # 2. `modules` - module MAY need update, check diffs
-    for repo in repos:
-        for lib in repo.available_libraries:
-            try:
-                index = _installed_libraries.index(lib)
-            except ValueError:
-                libraries_to_update.add(lib)
-            else:
-                modules.add(_installed_libraries[index])
     for cog in cogs:
         if cog.repo is None:
             # cog had its repo removed, can't check for updates
@@ -322,8 +285,6 @@ async def _available_updates(
                 if last_module_occurrence is not None and not last_module_occurrence.disabled:
                     if last_module_occurrence.type is InstallableType.COG:
                         cogs_to_update.add(last_module_occurrence)
-                    elif last_module_occurrence.type is InstallableType.SHARED_LIBRARY:
-                        libraries_to_update.add(last_module_occurrence)
             else:
                 if should_add:
                     hashes[(module.repo, module.commit)].add(module)
@@ -343,12 +304,10 @@ async def _available_updates(
                 if modified_module.type is InstallableType.COG:
                     if not modified_module.disabled:
                         cogs_to_update.add(modified_module)
-                elif modified_module.type is InstallableType.SHARED_LIBRARY:
-                    libraries_to_update.add(modified_module)
 
     await _save_to_installed(update_commits)
 
-    return (tuple(cogs_to_update), tuple(libraries_to_update))
+    return tuple(cogs_to_update)
 
 
 async def _install_cogs(
@@ -389,47 +348,6 @@ async def _install_cogs(
 
     # noinspection PyTypeChecker
     return (tuple(installed), tuple(failed))
-
-
-async def _reinstall_libraries(
-    libraries: Iterable[Installable],
-) -> Tuple[Tuple[InstalledModule, ...], Tuple[Installable, ...]]:
-    """Installs a list of shared libraries, used when updating.
-
-    Parameters
-    ----------
-    libraries : `list` of `Installable`
-        Libraries to reinstall. ``repo`` property of those objects can't be `None`
-    Returns
-    -------
-    tuple
-        2-tuple of installed and failed libraries.
-    """
-    repos: Dict[str, Tuple[Repo, Dict[str, Set[Installable]]]] = {}
-    for lib in libraries:
-        try:
-            repo_by_commit = repos[lib.repo_name]
-        except KeyError:
-            lib.repo = cast(Repo, lib.repo)  # docstring specifies this already
-            repo_by_commit = repos[lib.repo_name] = (lib.repo, defaultdict(set))
-        libs_by_commit = repo_by_commit[1]
-        libs_by_commit[lib.commit].add(lib)
-
-    all_installed: List[InstalledModule] = []
-    all_failed: List[Installable] = []
-    for repo, libs_by_commit in repos.values():
-        exit_to_commit = repo.commit
-        for commit, libs in libs_by_commit.items():
-            await repo.checkout(commit)
-            installed, failed = await repo.install_libraries(
-                target_dir=SHAREDLIB_PATH, req_target_dir=LIB_PATH, libraries=libs
-            )
-            all_installed += installed
-            all_failed += failed
-        await repo.checkout(exit_to_commit)
-
-    # noinspection PyTypeChecker
-    return (tuple(all_installed), tuple(all_failed))
 
 
 async def _install_requirements(cogs: Iterable[Installable]) -> Tuple[str, ...]:
@@ -529,7 +447,7 @@ async def pip_install(*deps: str) -> bool:
     return await repo.install_raw_requirements(deps, LIB_PATH)
 
 
-async def reinstall_requirements() -> Tuple[Tuple[str, ...], Tuple[Installable, ...]]:
+async def reinstall_requirements() -> Tuple[str, ...]:
     _create_lib_folder(remove_first=True)
     _installed_cogs = await installed_cogs()
     cogs = []
@@ -540,16 +458,8 @@ async def reinstall_requirements() -> Tuple[Tuple[str, ...], Tuple[Installable, 
         repos.add(cog.repo)
         cogs.append(cog)
     failed_reqs = await _install_requirements(cogs)
-    all_installed_libs: List[InstalledModule] = []
-    all_failed_libs: List[Installable] = []
-    for repo in repos:
-        installed_libs, failed_libs = await repo.install_libraries(
-            target_dir=SHAREDLIB_PATH, req_target_dir=LIB_PATH
-        )
-        all_installed_libs += installed_libs
-        all_failed_libs += failed_libs
 
-    return failed_reqs, tuple(all_failed_libs)
+    return failed_reqs
 
 
 async def install_cogs(
@@ -574,8 +484,6 @@ async def install_cogs(
     result_installed_cogs: Tuple[InstalledModule, ...] = ()
     result_failed_cogs: Tuple[Installable, ...] = ()
     result_failed_reqs: Tuple[str, ...] = ()
-    result_installed_libs: Tuple[InstalledModule, ...] = ()
-    result_failed_libs: Tuple[Installable, ...] = ()
 
     async with repo.checkout(commit, exit_to_rev=repo.branch):
         for cog_name in cog_names:
@@ -603,19 +511,14 @@ async def install_cogs(
                 result_installed_cogs, result_failed_cogs = await _install_cogs(cogs)
 
     if cogs and not result_failed_reqs:
-        result_installed_libs, result_failed_libs = await repo.install_libraries(
-            target_dir=SHAREDLIB_PATH, req_target_dir=LIB_PATH
-        )
         if rev is not None:
             for cog in result_installed_cogs:
                 cog.pinned = True
-        await _save_to_installed(result_installed_cogs + result_installed_libs)
+        await _save_to_installed(result_installed_cogs)
 
     return CogInstallResult(
         installed_cogs=result_installed_cogs,
-        installed_libs=result_installed_libs,
         failed_cogs=result_failed_cogs,
-        failed_libs=result_failed_libs,
         failed_reqs=result_failed_reqs,
         unavailable_cogs=tuple(unavailable_cogs),
         already_installed=tuple(already_installed),
@@ -655,7 +558,7 @@ async def check_cog_updates(
     cogs_to_check, failed_repos = await _get_cogs_to_check(
         repos=repos, cogs=cogs, update_repos=update_repos
     )
-    outdated_cogs, outdated_libs = await _available_updates(cogs_to_check)
+    outdated_cogs = await _available_updates(cogs_to_check)
 
     updatable_cogs: List[Installable] = []
     incompatible_python_version: List[Installable] = []
@@ -674,7 +577,6 @@ async def check_cog_updates(
 
     return CogUpdateCheckResult(
         outdated_cogs=outdated_cogs,
-        outdated_libs=outdated_libs,
         updatable_cogs=tuple(updatable_cogs),
         failed_repos=tuple(failed_repos),
         incompatible_python_version=tuple(incompatible_python_version),
@@ -720,7 +622,6 @@ async def _update_cogs(
     cogs_to_check -= pinned_cogs
 
     outdated_cogs: Tuple[Installable, ...] = ()
-    outdated_libs: Tuple[Installable, ...] = ()
     updatable_cogs: List[Installable] = []
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
@@ -728,11 +629,9 @@ async def _update_cogs(
     updated_cogs: Tuple[InstalledModule, ...] = ()
     failed_cogs: Tuple[Installable, ...] = ()
     failed_reqs: Tuple[str, ...] = ()
-    updated_libs: Tuple[InstalledModule, ...] = ()
-    failed_libs: Tuple[Installable, ...] = ()
 
     if cogs_to_check:
-        outdated_cogs, outdated_libs = await _available_updates(cogs_to_check)
+        outdated_cogs = await _available_updates(cogs_to_check)
 
         for cog in outdated_cogs:
             if cog.min_python_version > sys.version_info:
@@ -746,23 +645,19 @@ async def _update_cogs(
             else:
                 updatable_cogs.append(cog)
 
-        if updatable_cogs or outdated_libs:
+        if updatable_cogs:
             failed_reqs = await _install_requirements(updatable_cogs)
             if not failed_reqs:
                 updated_cogs, failed_cogs = await _install_cogs(updatable_cogs)
-                updated_libs, failed_libs = await _reinstall_libraries(outdated_libs)
-                await _save_to_installed(updated_cogs + updated_libs)
+                await _save_to_installed(updated_cogs)
 
     return CogUpdateResult(
         checked_cogs=frozenset(cogs_to_check),
         pinned_cogs=frozenset(pinned_cogs),
         updated_cogs=updated_cogs,
-        updated_libs=updated_libs,
         failed_cogs=failed_cogs,
-        failed_libs=failed_libs,
         failed_reqs=failed_reqs,
         outdated_cogs=outdated_cogs,
-        outdated_libs=outdated_libs,
         updatable_cogs=tuple(updatable_cogs),
         failed_repos=tuple(failed_repos),
         incompatible_python_version=tuple(incompatible_python_version),
@@ -808,9 +703,7 @@ async def unpin_cogs(
 @dataclasses.dataclass
 class CogInstallResult:
     installed_cogs: Tuple[InstalledModule, ...]
-    installed_libs: Tuple[InstalledModule, ...]
     failed_cogs: Tuple[Installable, ...]
-    failed_libs: Tuple[Installable, ...]
     failed_reqs: Tuple[str, ...]
     unavailable_cogs: Tuple[str, ...]
     already_installed: Tuple[Installable, ...]
@@ -823,7 +716,6 @@ class CogInstallResult:
 @dataclasses.dataclass
 class CogUpdateCheckResult:
     outdated_cogs: Tuple[Installable, ...]
-    outdated_libs: Tuple[Installable, ...]
     updatable_cogs: Tuple[Installable, ...]
     failed_repos: Tuple[str, ...]
     incompatible_python_version: Tuple[Installable, ...]
@@ -831,11 +723,11 @@ class CogUpdateCheckResult:
 
     @property
     def updates_available(self) -> bool:
-        return bool(self.outdated_cogs or self.outdated_libs)
+        return bool(self.outdated_cogs)
 
     @property
     def updates_installable(self) -> bool:
-        return bool(self.updatable_cogs or self.outdated_libs)
+        return bool(self.updatable_cogs)
 
     @property
     def incompatible_cogs(self) -> Tuple[Installable, ...]:
@@ -849,14 +741,12 @@ class CogUpdateResult(CogUpdateCheckResult):
     checked_cogs: FrozenSet[InstalledModule]
     pinned_cogs: FrozenSet[InstalledModule]
     updated_cogs: Tuple[InstalledModule, ...]
-    updated_libs: Tuple[InstalledModule, ...]
     failed_cogs: Tuple[Installable, ...]
-    failed_libs: Tuple[Installable, ...]
     failed_reqs: Tuple[str, ...]
 
     @property
     def updated_modules(self) -> Tuple[InstalledModule, ...]:
-        return self.updated_cogs + self.updated_libs
+        return self.updated_cogs
 
 
 class CogUnavailableError(Exception):

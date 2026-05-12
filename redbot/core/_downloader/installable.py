@@ -17,16 +17,14 @@ if TYPE_CHECKING:
 
 
 class InstallableType(Enum):
-    UNKNOWN = 0
-    COG = 1
-    SHARED_LIBRARY = 2
+    UNKNOWN = "UNKNOWN"
+    COG = "COG"
 
 
 class Installable(RepoJSONMixin):
     """Base class for anything the Downloader cog can install.
 
-     - Modules
-     - Repo Libraries
+     - Cogs
      - Other stuff?
 
     The attributes of this class will mostly come from the installation's
@@ -113,7 +111,7 @@ class Installable(RepoJSONMixin):
 
     async def copy_to(self, target_dir: Path) -> bool:
         """
-        Copies this cog/shared_lib to the given directory. This
+        Copies this module to the given directory. This
         will overwrite any files in the target directory.
 
         :param pathlib.Path target_dir: The installation directory to install to.
@@ -138,8 +136,6 @@ class Installable(RepoJSONMixin):
         super()._read_info_file()
 
         update_mixin(self, INSTALLABLE_SCHEMA)
-        if self.type is InstallableType.SHARED_LIBRARY:
-            self.hidden = True
 
 
 class InstalledModule(Installable):

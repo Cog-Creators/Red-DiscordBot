@@ -334,24 +334,6 @@ async def test_add_repo(monkeypatch, repo_manager):
     assert squid.available_modules == ()
 
 
-async def test_lib_install_requirements(monkeypatch, library_installable, repo, tmpdir):
-    monkeypatch.setattr("redbot.core._downloader.repo_manager.Repo._run", fake_run_noprint)
-    monkeypatch.setattr(
-        "redbot.core._downloader.repo_manager.Repo.available_libraries", (library_installable,)
-    )
-
-    lib_path = Path(str(tmpdir)) / "cog_data_path" / "lib"
-    sharedlib_path = lib_path / "cog_shared"
-    sharedlib_path.mkdir(parents=True, exist_ok=True)
-
-    installed, failed = await repo.install_libraries(
-        target_dir=sharedlib_path, req_target_dir=lib_path
-    )
-
-    assert len(installed) == 1
-    assert len(failed) == 0
-
-
 async def test_remove_repo(monkeypatch, repo_manager):
     monkeypatch.setattr("redbot.core._downloader.repo_manager.Repo._run", fake_run_noprint)
     monkeypatch.setattr(

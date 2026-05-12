@@ -152,7 +152,6 @@ class CoreLogic:
               ``alreadyloaded_packages``: List of names of packages that are already loaded
               ``failed_with_reason_packages``: Dictionary of packages that failed to load with
               a specified reason with mapping of package names -> failure reason
-              ``repos_with_shared_libs``: List of repo names that use deprecated shared libraries
         """
         failed_packages = []
         loaded_packages = []
@@ -160,7 +159,6 @@ class CoreLogic:
         notfound_packages = []
         alreadyloaded_packages = []
         failed_with_reason_packages = {}
-        repos_with_shared_libs = set()
 
         bot = self.bot
 
@@ -216,16 +214,6 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
-                try:
-                    maybe_repo = await _downloader._shared_lib_load_check(name)
-                except Exception:
-                    log.exception(
-                        "Shared library check failed,"
-                        " if you're not using modified Downloader, report this issue."
-                    )
-                    maybe_repo = None
-                if maybe_repo is not None:
-                    repos_with_shared_libs.add(maybe_repo.name)
 
         return {
             "loaded_packages": loaded_packages,
@@ -234,7 +222,6 @@ class CoreLogic:
             "notfound_packages": notfound_packages,
             "alreadyloaded_packages": alreadyloaded_packages,
             "failed_with_reason_packages": failed_with_reason_packages,
-            "repos_with_shared_libs": list(repos_with_shared_libs),
         }
 
     @staticmethod
@@ -1784,21 +1771,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 ).format(reasons=reasons)
             output.append(formed)
 
-        if repos_with_shared_libs := outcomes["repos_with_shared_libs"]:
-            if len(repos_with_shared_libs) == 1:
-                formed = _(
-                    "**WARNING**: The following repo is using shared libs"
-                    " which are marked for removal in the future: {repo}.\n"
-                    "You should inform maintainer of the repo about this message."
-                ).format(repo=inline(repos_with_shared_libs.pop()))
-            else:
-                formed = _(
-                    "**WARNING**: The following repos are using shared libs"
-                    " which are marked for removal in the future: {repos}.\n"
-                    "You should inform maintainers of these repos about this message."
-                ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
-            output.append(formed)
-
         if output:
             total_message = "\n\n".join(output)
             for page in pagify(
@@ -1930,21 +1902,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 formed = _(
                     "These packages could not be reloaded for the following reasons:\n\n{reasons}"
                 ).format(reasons=reasons)
-            output.append(formed)
-
-        if repos_with_shared_libs := outcomes["repos_with_shared_libs"]:
-            if len(repos_with_shared_libs) == 1:
-                formed = _(
-                    "**WARNING**: The following repo is using shared libs"
-                    " which are marked for removal in the future: {repo}.\n"
-                    "You should inform maintainers of these repos about this message."
-                ).format(repo=inline(repos_with_shared_libs.pop()))
-            else:
-                formed = _(
-                    "**WARNING**: The following repos are using shared libs"
-                    " which are marked for removal in the future: {repos}.\n"
-                    "You should inform maintainers of these repos about this message."
-                ).format(repos=humanize_list([inline(repo) for repo in repos_with_shared_libs]))
             output.append(formed)
 
         if output:

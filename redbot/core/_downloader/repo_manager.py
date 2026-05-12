@@ -871,50 +871,6 @@ class Repo(RepoJSONMixin):
 
         return InstalledModule.from_installable(cog)
 
-    async def install_libraries(
-        self, target_dir: Path, req_target_dir: Path, libraries: Iterable[Installable] = ()
-    ) -> Tuple[Tuple[InstalledModule, ...], Tuple[Installable, ...]]:
-        """Install shared libraries to the target directory.
-
-        If :code:`libraries` is not specified, all shared libraries in the repo
-        will be installed.
-
-        Parameters
-        ----------
-        target_dir : pathlib.Path
-            Directory to install shared libraries to.
-        req_target_dir : pathlib.Path
-            Directory to install shared library requirements to.
-        libraries : `tuple` of `Installable`
-            A subset of available libraries.
-
-        Returns
-        -------
-        tuple
-            2-tuple of installed and failed libraries.
-
-        """
-
-        if libraries:
-            if not all([i in self.available_libraries for i in libraries]):
-                raise ValueError("Some given libraries are not available in this repo.")
-        else:
-            libraries = self.available_libraries
-
-        if libraries:
-            installed = []
-            failed = []
-            for lib in libraries:
-                if not (
-                    await self.install_requirements(cog=lib, target_dir=req_target_dir)
-                    and await lib.copy_to(target_dir=target_dir)
-                ):
-                    failed.append(lib)
-                else:
-                    installed.append(InstalledModule.from_installable(lib))
-            return (tuple(installed), tuple(failed))
-        return ((), ())
-
     async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:
         """Install a cog's requirements.
 
@@ -982,21 +938,11 @@ class Repo(RepoJSONMixin):
     def available_cogs(self) -> Tuple[Installable, ...]:
         """`tuple` of `installable` : All available cogs in this Repo.
 
-        This excludes hidden or shared packages.
+        This excludes disabled cogs.
         """
         # noinspection PyTypeChecker
         return tuple(
             [m for m in self.available_modules if m.type is InstallableType.COG and not m.disabled]
-        )
-
-    @property
-    def available_libraries(self) -> Tuple[Installable, ...]:
-        """`tuple` of `installable` : All available shared libraries in this
-        Repo.
-        """
-        # noinspection PyTypeChecker
-        return tuple(
-            [m for m in self.available_modules if m.type is InstallableType.SHARED_LIBRARY]
         )
 
     @classmethod

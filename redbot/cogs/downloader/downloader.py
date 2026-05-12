@@ -21,13 +21,6 @@ from .log import log
 _ = Translator("Downloader", __file__)
 
 
-DEPRECATION_NOTICE = _(
-    "\n**WARNING:** The following repos are using shared libraries"
-    " which are marked for removal in the future: {repo_list}.\n"
-    " You should inform maintainers of these repos about this message."
-)
-
-
 @cog_i18n(_)
 class Downloader(commands.Cog):
     """Install community cogs made by Cog Creators.
@@ -323,13 +316,13 @@ class Downloader(commands.Cog):
         """
         This command should not be used unless Red specifically asks for it.
 
-        This command will reinstall cog requirements and shared libraries for all installed cogs.
+        This command will reinstall cog requirements for all installed cogs.
 
         Red might ask the owner to use this when it clears contents of the lib folder
         because of change in minor version of Python.
         """
         async with ctx.typing():
-            failed_reqs, failed_libs = await _downloader.reinstall_requirements()
+            failed_reqs = await _downloader.reinstall_requirements()
 
         message = ""
         if failed_reqs:
@@ -338,29 +331,17 @@ class Downloader(commands.Cog):
                 if len(failed_reqs) > 1
                 else _("Failed to install the requirement: ")
             ) + humanize_list(tuple(map(inline, failed_reqs)))
-        if failed_libs:
-            libnames = [lib.name for lib in failed_libs]
-            message += (
-                _("\nFailed to install shared libraries: ")
-                if len(failed_libs) > 1
-                else _("\nFailed to install shared library: ")
-            ) + humanize_list(tuple(map(inline, libnames)))
         if message:
             await self.send_pagified(
                 ctx,
                 _(
-                    "Cog requirements and shared libraries for all installed cogs"
+                    "Cog requirements for all installed cogs"
                     " have been reinstalled but there were some errors:\n"
                 )
                 + message,
             )
         else:
-            await ctx.send(
-                _(
-                    "Cog requirements and shared libraries"
-                    " for all installed cogs have been reinstalled."
-                )
-            )
+            await ctx.send(_("Cog requirements for all installed cogs have been reinstalled."))
 
     @cog.command(name="install", usage="<repo> <cogs...>", require_var_positional=True)
     async def _cog_install(self, ctx: commands.Context, repo: Repo, *cog_names: str) -> None:
@@ -426,10 +407,6 @@ class Downloader(commands.Cog):
                 )
                 return
 
-            deprecation_notice = ""
-            if repo.available_libraries:
-                deprecation_notice = DEPRECATION_NOTICE.format(repo_list=inline(repo.name))
-
             message = self._format_invalid_cogs(repo, install_result)
             if install_result.failed_reqs:
                 message += (
@@ -437,17 +414,6 @@ class Downloader(commands.Cog):
                     if len(install_result.failed_reqs) > 1
                     else _("\nFailed to install the requirement: ")
                 ) + humanize_list(tuple(map(inline, install_result.failed_reqs)))
-            if install_result.failed_libs:
-                libnames = [inline(lib.name) for lib in install_result.failed_libs]
-                message = (
-                    (
-                        _("\nFailed to install shared libraries for `{repo.name}` repo: ")
-                        if len(libnames) > 1
-                        else _("\nFailed to install shared library for `{repo.name}` repo: ")
-                    ).format(repo=repo)
-                    + humanize_list(libnames)
-                    + message
-                )
             if install_result.failed_cogs:
                 cognames = [inline(cog.name) for cog in install_result.failed_cogs]
                 message = (
@@ -486,7 +452,6 @@ class Downloader(commands.Cog):
                     + message
                 )
 
-        message += deprecation_notice
         cogs_with_install_msg = [cog for cog in install_result.installed_cogs if cog.install_msg]
         if cogs_with_install_msg:
             # "---" added to separate cog install messages from Downloader's message
@@ -661,13 +626,6 @@ class Downloader(commands.Cog):
                     if len(cognames) > 1
                     else _("This cog can be updated: ")
                 ) + humanize_list(tuple(map(inline, cognames)))
-            if update_check_result.outdated_libs:
-                libnames = [cog.name for cog in update_check_result.outdated_libs]
-                message += (
-                    _("\nThese shared libraries can be updated: ")
-                    if len(libnames) > 1
-                    else _("\nThis shared library can be updated: ")
-                ) + humanize_list(tuple(map(inline, libnames)))
             if not update_check_result.updates_available and filter_message:
                 message += _("No cogs can be updated.")
             message += filter_message
@@ -819,14 +777,6 @@ class Downloader(commands.Cog):
 
         if update_result.failed_repos:
             message += "\n" + self.format_failed_repos(update_result.failed_repos)
-
-        repos_with_libs = {
-            inline(module.repo.name)
-            for module in update_result.updated_modules
-            if module.repo.available_libraries
-        }
-        if repos_with_libs:
-            message += DEPRECATION_NOTICE.format(repo_list=humanize_list(list(repos_with_libs)))
 
         await self.send_pagified(ctx, message)
 
@@ -1043,25 +993,6 @@ class Downloader(commands.Cog):
             ) + humanize_list(tuple(map(inline, cognames)))
         if not update_result.outdated_cogs:
             message = _("No cogs were updated.")
-        if update_result.updated_libs:
-            message += (
-                _(
-                    "\nSome shared libraries were updated, you should restart the bot "
-                    "to bring the changes into effect."
-                )
-                if len(update_result.updated_libs) > 1
-                else _(
-                    "\nA shared library was updated, you should restart the "
-                    "bot to bring the changes into effect."
-                )
-            )
-        if update_result.failed_libs:
-            libnames = [lib.name for lib in update_result.failed_libs]
-            message += (
-                _("\nFailed to install shared libraries: ")
-                if len(update_result.failed_libs) > 1
-                else _("\nFailed to install shared library: ")
-            ) + humanize_list(tuple(map(inline, libnames)))
         return message
 
     async def _ask_for_cog_reload(
