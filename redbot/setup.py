@@ -541,7 +541,7 @@ class RestoreInfo:
         return [member for member in self.all_tar_members if member.name not in ignored_members]
 
     def print_instance_data(self) -> None:
-        print("\nWhen the instance was backuped, it was using these settings:")
+        print("\nWhen the instance was backed up, it was using these settings:")
         print("  Original instance name:", self.name)
         print("  Original data path:", self.data_path)
         print("  Original storage backend:", self.STORAGE_BACKENDS[self.storage_type])
