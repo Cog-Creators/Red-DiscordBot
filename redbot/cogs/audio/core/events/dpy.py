@@ -79,8 +79,11 @@ HUMANIZED_PERM = {
     "create_events": _("Create Events"),
     "use_external_sounds": _("Use External Sounds"),
     "send_voice_messages": _("Send Voice Messages"),
+    "set_voice_channel_status": _("Set Voice Channel Status"),
     "send_polls": _("Create Polls"),
     "use_external_apps": _("Use External Apps"),
+    "pin_messages": _("Pin Messages"),
+    "bypass_slowmode": _("Bypass Slowmode"),
 }
 
 DANGEROUS_COMMANDS = {

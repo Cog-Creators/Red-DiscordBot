@@ -15,6 +15,7 @@ Welcome to Red - Discord Bot's documentation!
     install_guides/index
     bot_application_guide
     update_red
+    backup_red
     about_venv
     autostart_windows
     autostart_mac
@@ -61,7 +62,6 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Red Development Framework Reference:
 
-    guide_migration
     guide_cog_creation
     guide_slash_and_interactions
     guide_publish_cogs

@@ -32,12 +32,11 @@ First, we would like to make something clear:
 Hosting on a VPS or Dedicated Server
 ------------------------------------
 
-| You can host Red in a VPS running Linux or Windows. Using a Linux VPS is the
+| You can host Red on a VPS running Linux or Windows. Using a Linux VPS is the
   recommended option. Dedicated servers also work but are overpowered and cost 
   ineffective unless one plans to run a very large bot or use their server for 
   more than just hosting Red. If you have already created an instance, Red can be moved to a different 
-  server for hosting with a backup/restore process. More information and guidance
-  about this process is available in the `Red Support Server <https://discord.com/invite/red>`_.
+  server for hosting using the :doc:`backup/restore process </backup_red>`.
 
 .. warning::
     Please be aware that a Linux server is controlled through a command line.
@@ -87,7 +86,7 @@ Average Providers
 | `OVH <https://us.ovhcloud.com/vps/>`_ is a company focused on providing hosting
  and cloud services with locations in Europe, North America and Asia Pacific.
 
-| `Time4VPS <https://www.time4vps.eu/>`_ is a Lithuanian VPS provider mainly focused
+| `Time4VPS <https://www.time4vps.com/>`_ is a Lithuanian VPS provider mainly focused
  on lower cost.
 
 | `GalaxyGate <https://galaxygate.net/>`_ is a VPS and dedicated server provider
@@ -114,7 +113,7 @@ Average Providers
 | `LowEndBox <http://lowendbox.com/>`_ is a website where hosting providers are
  discussed and curated, often with lower costs and less known providers.
 
-| `AlphaVps <https://alphavps.com>`_ is a Bulgaria VPS and dedicated server provider 
+| `AlphaVps <https://alphavps.com>`_ is a Bulgarian VPS and dedicated server provider 
  with locations in Los Angeles, New York, England, Germany and Bulgaria.
 
 --------------------

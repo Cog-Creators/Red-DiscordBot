@@ -29,7 +29,7 @@ msgstr "Данное количество времени слишком длин
 
 #: redbot/core/commands/converter.py:159 redbot/core/commands/converter.py:168
 msgid "0 seconds"
-msgstr ""
+msgstr "0 секунд"
 
 #: redbot/core/commands/converter.py:164
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
@@ -125,7 +125,7 @@ msgstr "Напишите {command1} для большей информации �
 
 #: redbot/core/commands/help.py:358
 msgid "Syntax:\n"
-msgstr ""
+msgstr "Синтаксис:\n"
 
 #: redbot/core/commands/help.py:360
 msgid "Aliases"

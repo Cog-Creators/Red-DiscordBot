@@ -23,6 +23,8 @@ from .utils.chat_formatting import box, pagify, humanize_list, inline
 
 __all__ = ("CogManager", "CogManagerUI")
 
+_TEMP_PATHS: List[Path] = []
+
 
 class NoSuchCog(ImportError):
     """Thrown when a cog is missing.
@@ -55,13 +57,16 @@ class CogManager:
         -------
         List[pathlib.Path]
             A list of paths where cog packages can be found. The
-            install path is highest priority, followed by the
-            user-defined paths, and the core path has the lowest
-            priority.
+            install path is highest priority, followed by temporary
+            paths, then the user-defined paths, and the core path
+            has the lowest priority.
 
         """
         return deduplicate_iterables(
-            [await self.install_path()], await self.user_defined_paths(), [self.CORE_PATH]
+            [await self.install_path()],
+            _TEMP_PATHS,
+            await self.user_defined_paths(),
+            [self.CORE_PATH],
         )
 
     async def install_path(self) -> Path:
@@ -133,7 +138,7 @@ class CogManager:
         """
         return Path(path)
 
-    async def add_path(self, path: Union[Path, str]) -> None:
+    async def add_path(self, path: Union[Path, str], *, persist: bool = True) -> None:
         """Add a cog path to current list.
 
         This will ignore duplicates.
@@ -142,6 +147,8 @@ class CogManager:
         ----------
         path : `pathlib.Path` or `str`
             Path to add.
+        persist : `bool`, optional
+            Whether or not the path should be persisted through restarts. Defaults to True.
 
         Raises
         ------
@@ -163,10 +170,14 @@ class CogManager:
         if path == self.CORE_PATH:
             raise ValueError("Cannot add the core path as an additional path.")
 
-        current_paths = await self.user_defined_paths()
-        if path not in current_paths:
-            current_paths.append(path)
-            await self.set_paths(current_paths)
+        if persist:
+            current_paths = await self.user_defined_paths()
+            if path not in current_paths:
+                current_paths.append(path)
+                await self.set_paths(current_paths)
+        else:
+            if path not in _TEMP_PATHS:
+                _TEMP_PATHS.append(path)
 
     async def remove_path(self, path: Union[Path, str]) -> None:
         """Remove a path from the current paths list.
@@ -222,7 +233,9 @@ class CogManager:
                 name=name,
             )
 
-        real_paths = list(map(str, [await self.install_path()] + await self.user_defined_paths()))
+        real_paths = list(
+            map(str, [await self.install_path()] + _TEMP_PATHS + await self.user_defined_paths())
+        )
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -340,15 +353,24 @@ class CogManagerUI(commands.Cog):
         core_path = cog_mgr.CORE_PATH
         cog_paths = await cog_mgr.user_defined_paths()
 
-        msg = _("Install Path: {install_path}\nCore Path: {core_path}\n\n").format(
-            install_path=install_path, core_path=core_path
+        temporary_paths = [str(path) for path in _TEMP_PATHS]
+
+        paths = []
+        for index, path in enumerate(cog_paths, start=1):
+            paths.append(f"{index}. {path}")
+
+        msg = _(
+            (
+                "Install Path: {install_path}\nCore Path: {core_path}\n\n"
+                "Temporary Paths:{temporary_paths}\n\nCog Paths:{cog_paths}"
+            )
+        ).format(
+            install_path=install_path,
+            core_path=core_path,
+            temporary_paths=("\n" + "\n".join(temporary_paths)) if temporary_paths else _(" None"),
+            cog_paths=("\n" + "\n".join(paths)) if paths else _(" None"),
         )
 
-        partial = []
-        for i, p in enumerate(cog_paths, start=1):
-            partial.append("{}. {}".format(i, p))
-
-        msg += "\n".join(partial)
         await ctx.send(box(msg))
 
     @commands.command()

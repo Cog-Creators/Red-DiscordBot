@@ -48,6 +48,9 @@ class ModSettings(MixinMeta):
         dm_on_kickban = data["dm_on_kickban"]
         default_days = data["default_days"]
         default_tempban_duration = data["default_tempban_duration"]
+        ban_show_extra = data["ban_show_extra"]
+        ban_extra_embed_title = data["ban_extra_embed_title"]
+        ban_extra_embed_contents = data["ban_extra_embed_contents"]
         if not track_all_names and track_nicknames:
             yes_or_no = _("Overridden by another setting")
         else:
@@ -98,8 +101,17 @@ class ModSettings(MixinMeta):
             )
         else:
             msg += _("Default message history delete on ban: Don't delete any\n")
-        msg += _("Default tempban duration: {duration}").format(
+        msg += _("Default tempban duration: {duration}\n").format(
             duration=humanize_timedelta(seconds=default_tempban_duration)
+        )
+        msg += _("Show optional information field in embed: {yes_or_no}\n").format(
+            yes_or_no=_("Yes") if ban_show_extra else _("No")
+        )
+        msg += _("Title of the optional extra field: {ban_embed_title}\n").format(
+            ban_embed_title=ban_extra_embed_title if ban_extra_embed_title else _("None")
+        )
+        msg += _("Contents of the optional extra field: {ban_embed_contents}").format(
+            ban_embed_contents=ban_extra_embed_contents if ban_extra_embed_contents else _("None")
         )
         await ctx.send(box(msg))
 
@@ -347,9 +359,15 @@ class ModSettings(MixinMeta):
                 )
             )
 
-    @modset.command()
+    @modset.group()
     @commands.guild_only()
-    async def dm(self, ctx: commands.Context, enabled: bool = None):
+    async def dm(self, ctx: commands.Context):
+        """
+        Settings for messaging the user when being kicked or banned.
+        """
+
+    @dm.command(name="sendmessage")
+    async def dm_sendmessage(self, ctx: commands.Context, enabled: bool = None):
         """Toggle whether a message should be sent to a user when they are kicked/banned.
 
         If this option is enabled, the bot will attempt to DM the user with the guild name
@@ -368,6 +386,63 @@ class ModSettings(MixinMeta):
         else:
             await ctx.send(
                 _("Bot will no longer attempt to send a DM to user before kick and ban.")
+            )
+
+    @dm.command(name="banshowextrafield")
+    async def dm_banshowextrafield(self, ctx: commands.Context, enabled: bool = None):
+        """
+        Toggle whether to show an extra customizable field when banning.
+
+        This can be used to add additional information for the banned user, such as a ban appeal link.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            setting = await self.config.guild(guild).ban_show_extra()
+            await ctx.send(
+                _("The extra embed field is currently set to: {setting}").format(setting=setting)
+            )
+            return
+        await self.config.guild(guild).ban_show_extra.set(enabled)
+        if enabled:
+            await ctx.send(
+                _(
+                    "An extra field will be shown when banning. Configure it with `{prefix}modset dm banextrafieldtitle` and `{prefix}modset dm banextrafieldcontents`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await ctx.send(_("An extra field will be no longer be shown when banning."))
+
+    @dm.command(name="banextrafieldtitle")
+    async def dm_banextrafieldtitle(self, ctx: commands.Context, *, title: str) -> None:
+        """
+        Set the title for the optional extra embed on ban.
+
+        Cannot be over 252 characters long.
+        """
+        guild = ctx.guild
+        # Bolding the text is 4 characters (**bolded**)
+        # All the bold function used in the embeds does is add those star characters and some other convenience stuffs.
+        # Such as escaping formatting.
+        if len(title) > 252:
+            await ctx.send(_("Embed title cannot be over 252 characters long."))
+        else:
+            await self.config.guild(guild).ban_extra_embed_title.set(title)
+            await ctx.send(_("Embed Title has been set to `{title}`").format(title=title))
+
+    @dm.command(name="banextrafieldcontents")
+    async def dm_banextrafieldcontents(self, ctx: commands.Context, *, contents: str) -> None:
+        """
+        Set the contents for the optional extra embed on ban
+
+        Cannot be over 1024 characters long.
+        """
+        guild = ctx.guild
+        if len(contents) > 1024:
+            await ctx.send(_("Embed contents cannot be over 1024 characters long."))
+        else:
+            await self.config.guild(guild).ban_extra_embed_contents.set(contents)
+            await ctx.send(
+                _("Embed Contents has been set to `{contents}`").format(contents=contents)
             )
 
     @modset.command()

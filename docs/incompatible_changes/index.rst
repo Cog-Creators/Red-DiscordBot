@@ -10,3 +10,4 @@ Backward incompatible changes
 
    future
    3.5
+   v2_migration

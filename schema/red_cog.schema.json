@@ -71,7 +71,8 @@
       "description": "A list of strings that are related to the functionality of the cog. Used to aid in searching.",
       "uniqueItems": true,
       "items": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^(?:(?!red-).+|red-(?:[3-9]|[1-9][0-9]+)\\.(?:[1-9][0-9]*)-ready)$"
       }
     },
     "type": {

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-04-04 07:32+0000\n"
+"POT-Creation-Date: 2026-02-15 23:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -343,11 +343,11 @@ msgstr ""
 msgid "I won't send notifications about {stream.name} in the {channel.mention} channel anymore"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:914
+#: redbot/cogs/streams/streams.py:920
 msgid "{mention}, {display_name} is live!"
 msgstr ""
 
-#: redbot/cogs/streams/streams.py:934
+#: redbot/cogs/streams/streams.py:940
 msgid "{display_name} is live!"
 msgstr ""
 
