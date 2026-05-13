@@ -16,6 +16,7 @@ from redbot.core.utils.chat_formatting import (
     italics,
     humanize_number,
     humanize_timedelta,
+    pagify,
 )
 
 _ = T_ = Translator("General", __file__)
@@ -440,12 +441,15 @@ class General(commands.Cog):
                 if feature not in excluded_features
             ]
             if guild.features:
-                data.add_field(
-                    name=_("Server features:"),
-                    value="\n".join(
-                        f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in feature_names
-                    ),
+                feature_list = "\n".join(
+                    f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in feature_names
                 )
+                feature_pages = list(pagify(feature_list, delims=["\n"], page_length=1024))
+                for i, page in enumerate(feature_pages):
+                    field_name = (
+                        _("Server features:") if i == 0 else _("Server features (continued):")
+                    )
+                    data.add_field(name=field_name, value=page, inline=False)
 
             if guild.premium_tier != 0:
                 nitro_boost = _(

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-12-08 18:42+0000\n"
+"POT-Creation-Date: 2026-03-04 20:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -56,81 +56,108 @@ msgstr "Zadejte příkaz, který má být proveden, když uživatel **překroč�
 msgid "Warn misbehaving users and take automated actions."
 msgstr "Upozornit na chybné chování uživatelů a podniknout automatické akce."
 
-#: redbot/cogs/warnings/warnings.py:116
+#: redbot/cogs/warnings/warnings.py:117
 #, docstring
 msgid "Manage settings for Warnings."
 msgstr "Správa nastavení pro varování."
 
-#: redbot/cogs/warnings/warnings.py:122
+#: redbot/cogs/warnings/warnings.py:123
 #, docstring
 msgid "Enable or disable custom reasons for a warning."
 msgstr "Povolit nebo zakázat vlastní důvody pro varování."
 
-#: redbot/cogs/warnings/warnings.py:126
+#: redbot/cogs/warnings/warnings.py:127
 msgid "Custom reasons have been enabled."
 msgstr "Vlastní důvody byly povoleny."
 
-#: redbot/cogs/warnings/warnings.py:128
+#: redbot/cogs/warnings/warnings.py:129
 msgid "Custom reasons have been disabled."
 msgstr "Vlastní důvody byly zakázány."
 
-#: redbot/cogs/warnings/warnings.py:133
+#: redbot/cogs/warnings/warnings.py:134
 #, docstring
 msgid "Set whether warnings should be sent to users in DMs."
 msgstr "Nastav, zda mají být varování zasílána uživatelům v soukromé zprávě."
 
-#: redbot/cogs/warnings/warnings.py:136
+#: redbot/cogs/warnings/warnings.py:137
 msgid "I will now try to send warnings to users DMs."
 msgstr "Nyní se budu pokoušet posílat varování uživatelům do soukromé zprávy."
 
-#: redbot/cogs/warnings/warnings.py:138
+#: redbot/cogs/warnings/warnings.py:139
 msgid "Warnings will no longer be sent to users DMs."
 msgstr "Varování již nebudou posílána uživatelům do soukromé zprávy."
 
-#: redbot/cogs/warnings/warnings.py:143
+#: redbot/cogs/warnings/warnings.py:144
 #, docstring
-msgid "Decide whether the name of the moderator warning a user should be included in the DM to that user."
+msgid "Decide whether the name of the moderator warning a user should be included in the DM to that user when being\n"
+"        warned or self requesting their warnings."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:147
-msgid "I will include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+#: redbot/cogs/warnings/warnings.py:149
+msgid "I will include the name of the moderator who issued the warning when sending a DM to a user or when they self request their warnings."
+msgstr "Budu obsahovat jméno moderátora, který varování vydal, při odesílání DM uživateli nebo když sám požádá o svá varování."
 
-#: redbot/cogs/warnings/warnings.py:153
-msgid "I will not include the name of the moderator who issued the warning when sending a DM to a user."
-msgstr ""
+#: redbot/cogs/warnings/warnings.py:156
+msgid "I will not include the name of the moderator who issued the warning when sending a DM to a user or when they self request their warnings."
+msgstr "Nebudu obsahovat jméno moderátora, který vydal varování při odesílání DM uživateli nebo když sám požádá o svá varování."
 
-#: redbot/cogs/warnings/warnings.py:165
+#: redbot/cogs/warnings/warnings.py:169
 #, docstring
 msgid "Set the channel where warnings should be sent to.\n\n"
 "        Leave empty to use the channel `[p]warn` command was called in.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:173
+#: redbot/cogs/warnings/warnings.py:177
 msgid "The warn channel has been set to {channel}."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:177 redbot/cogs/warnings/warnings.py:193
+#: redbot/cogs/warnings/warnings.py:181 redbot/cogs/warnings/warnings.py:197
 msgid "Warnings will now be sent in the channel command was used in."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:182
+#: redbot/cogs/warnings/warnings.py:186
 #, docstring
 msgid "\n"
 "        Set if warnings should be sent to a channel set with `[p]warningset warnchannel`.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:190
+#: redbot/cogs/warnings/warnings.py:194
 msgid "Warnings will now be sent to {channel}."
 msgstr "Varování nyní budou odesílána do místnosti {channel}."
 
-#: redbot/cogs/warnings/warnings.py:195
+#: redbot/cogs/warnings/warnings.py:199
 msgid "Toggle channel has been disabled."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:201
+#: redbot/cogs/warnings/warnings.py:204
+#, docstring
+msgid "\n"
+"        Manage the settings for `[p]mywarnings`.\n"
+"        "
+msgstr "\n"
+"        Správa nastavení pro `[p]mywarnings`.\n"
+"        "
+
+#: redbot/cogs/warnings/warnings.py:212
+#, docstring
+msgid "\n"
+"        Whether a member self requesting their warnings with `[p]mywarnings` should get them sent to DMs or in the current channel.\n"
+"        "
+msgstr "\n"
+"        Zda si někdo sám vyžádá varování pomocí `[p]mywarnings` by je měl poslat do DMs nebo v aktuálním kanálu.\n"
+"        "
+
+#: redbot/cogs/warnings/warnings.py:217
+msgid "I will send self requested user warnings to their DMs."
+msgstr "Posílám do jejich DMů varování od sebe."
+
+#: redbot/cogs/warnings/warnings.py:219
+msgid "I will send self requested user warnings to the current channel."
+msgstr "Na aktuální kanál posílám vlastní upozornění uživatelů."
+
+#: redbot/cogs/warnings/warnings.py:225
 #, docstring
 msgid "Manage automated actions for Warnings.\n\n"
 "        Actions are essentially command macros. Any command can be run\n"
@@ -142,31 +169,31 @@ msgid "Manage automated actions for Warnings.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:215
+#: redbot/cogs/warnings/warnings.py:239
 #, docstring
 msgid "Create an automated action.\n\n"
 "        Duplicate action names are not allowed.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:236
+#: redbot/cogs/warnings/warnings.py:260
 msgid "Duplicate action name found!"
 msgstr "Nalezen duplicitní název akce!"
 
-#: redbot/cogs/warnings/warnings.py:243
+#: redbot/cogs/warnings/warnings.py:267
 msgid "Action {name} has been added."
 msgstr "Akce {name} byla přidána."
 
-#: redbot/cogs/warnings/warnings.py:248
+#: redbot/cogs/warnings/warnings.py:272
 #, docstring
 msgid "Delete the action with the specified name."
 msgstr "Odstranit akci se zadaným názvem."
 
-#: redbot/cogs/warnings/warnings.py:261
+#: redbot/cogs/warnings/warnings.py:285
 msgid "No action named {name} exists!"
 msgstr "Neexistuje žádná akce s názvem {name}!"
 
-#: redbot/cogs/warnings/warnings.py:267
+#: redbot/cogs/warnings/warnings.py:291
 #, docstring
 msgid "Manage warning reasons.\n\n"
 "        Reasons must be given a name, description and points value. The\n"
@@ -174,43 +201,43 @@ msgid "Manage warning reasons.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:279
+#: redbot/cogs/warnings/warnings.py:303
 #, docstring
 msgid "Create a warning reason."
 msgstr "Vytvořit důvod varování."
 
-#: redbot/cogs/warnings/warnings.py:283
+#: redbot/cogs/warnings/warnings.py:307
 msgid "*Custom* cannot be used as a reason name!"
 msgstr "*Vlastní* nelze použít jako název důvodu!"
 
-#: redbot/cogs/warnings/warnings.py:293
+#: redbot/cogs/warnings/warnings.py:317
 msgid "The new reason has been registered."
 msgstr "Nový důvod byl zaregistrován."
 
-#: redbot/cogs/warnings/warnings.py:298
+#: redbot/cogs/warnings/warnings.py:322
 #, docstring
 msgid "Delete a warning reason."
 msgstr "Odstranit důvod varování."
 
-#: redbot/cogs/warnings/warnings.py:305
+#: redbot/cogs/warnings/warnings.py:329
 msgid "That is not a registered reason name."
 msgstr "To není registrovaný název důvodu."
 
-#: redbot/cogs/warnings/warnings.py:311
+#: redbot/cogs/warnings/warnings.py:335
 #, docstring
 msgid "List all configured reasons for Warnings."
 msgstr "Seznam všech nastavených důvodů varování."
 
-#: redbot/cogs/warnings/warnings.py:319
+#: redbot/cogs/warnings/warnings.py:343
 msgid "Reason: {name}"
 msgstr "Důvod: {name}"
 
-#: redbot/cogs/warnings/warnings.py:323 redbot/cogs/warnings/warnings.py:351
-#: redbot/cogs/warnings/warnings.py:495 redbot/cogs/warnings/warnings.py:528
+#: redbot/cogs/warnings/warnings.py:347 redbot/cogs/warnings/warnings.py:375
+#: redbot/cogs/warnings/warnings.py:523 redbot/cogs/warnings/warnings.py:558
 msgid "Points"
 msgstr "Body"
 
-#: redbot/cogs/warnings/warnings.py:327
+#: redbot/cogs/warnings/warnings.py:351
 msgid "Name: {reason_name}\n"
 "Points: {points}\n"
 "Description: {description}"
@@ -218,28 +245,28 @@ msgstr "Jméno: {reason_name}\n"
 "Body: {points}\n"
 "Popis: {description}"
 
-#: redbot/cogs/warnings/warnings.py:334
+#: redbot/cogs/warnings/warnings.py:358
 msgid "There are no reasons configured!"
 msgstr "Nejsou nastaveny žádné důvody!"
 
-#: redbot/cogs/warnings/warnings.py:340
+#: redbot/cogs/warnings/warnings.py:364
 #, docstring
 msgid "List all configured automated actions for Warnings."
 msgstr "Seznam všech nastavených automatických akcí pro varování."
 
-#: redbot/cogs/warnings/warnings.py:348
+#: redbot/cogs/warnings/warnings.py:372
 msgid "Action: {name}"
 msgstr "Akce: {name}"
 
-#: redbot/cogs/warnings/warnings.py:353
+#: redbot/cogs/warnings/warnings.py:377
 msgid "Exceed command"
 msgstr "Překročení příkazu"
 
-#: redbot/cogs/warnings/warnings.py:357
+#: redbot/cogs/warnings/warnings.py:381
 msgid "Drop command"
 msgstr "Zahodit příkaz"
 
-#: redbot/cogs/warnings/warnings.py:361
+#: redbot/cogs/warnings/warnings.py:385
 msgid "Name: {action_name}\n"
 "Points: {points}\n"
 "Exceed command: {exceed_command}\n"
@@ -249,11 +276,11 @@ msgstr "Jméno: {action_name}\n"
 "Příkaz pro pokračování: {exceed_command}\n"
 "Vypínací příkaz: {drop_command}"
 
-#: redbot/cogs/warnings/warnings.py:369
+#: redbot/cogs/warnings/warnings.py:393
 msgid "There are no actions configured!"
 msgstr "Nejsou nakonfigurovány žádné akce!"
 
-#: redbot/cogs/warnings/warnings.py:382
+#: redbot/cogs/warnings/warnings.py:406
 #, docstring
 msgid "Warn the user for the specified reason.\n\n"
 "        `<points>` number of points the warning should be for. If no number is supplied\n"
@@ -263,126 +290,143 @@ msgid "Warn the user for the specified reason.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:395
+#: redbot/cogs/warnings/warnings.py:419
 msgid "User `{user}` is not in the server."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:401
+#: redbot/cogs/warnings/warnings.py:425
 msgid "User `{user}` is not in the server. Would you like to ban them instead?"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:423
+#: redbot/cogs/warnings/warnings.py:447
 msgid "An error occurred while trying to ban the user. Error: {error}"
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:428
+#: redbot/cogs/warnings/warnings.py:452
 msgid "No action taken."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:434
+#: redbot/cogs/warnings/warnings.py:458
 msgid "You cannot warn yourself."
 msgstr "Nemůžeš varovat sám sebe."
 
-#: redbot/cogs/warnings/warnings.py:436
+#: redbot/cogs/warnings/warnings.py:460
 msgid "You cannot warn other bots."
 msgstr "Nemůžeš varovat ostatní boty."
 
-#: redbot/cogs/warnings/warnings.py:438
+#: redbot/cogs/warnings/warnings.py:462
 msgid "You cannot warn the server owner."
 msgstr "Nemůžeš poslat varování vlastníkovi serveru."
 
-#: redbot/cogs/warnings/warnings.py:441
+#: redbot/cogs/warnings/warnings.py:465
 msgid "The person you're trying to warn is equal or higher than you in the discord hierarchy, you cannot warn them."
 msgstr ""
 
-#: redbot/cogs/warnings/warnings.py:451
+#: redbot/cogs/warnings/warnings.py:475
 msgid "That is not a registered reason!"
 msgstr "To není registrovaný důvod!"
 
-#: redbot/cogs/warnings/warnings.py:454
+#: redbot/cogs/warnings/warnings.py:478
 msgid "You cannot apply negative points."
 msgstr "Nemůžete použít záporné body."
 
-#: redbot/cogs/warnings/warnings.py:468
+#: redbot/cogs/warnings/warnings.py:494
 msgid "Do `{prefix}warningset allowcustomreasons true` to enable custom reasons."
 msgstr "Pro povolení vlastních důvodů povolte `{prefix}warningset allowcustomreasons true`."
 
-#: redbot/cogs/warnings/warnings.py:489 redbot/cogs/warnings/warnings.py:522
+#: redbot/cogs/warnings/warnings.py:515 redbot/cogs/warnings/warnings.py:550
 msgid "Warning from {user}"
 msgstr "Varování od {user}"
 
-#: redbot/cogs/warnings/warnings.py:491 redbot/cogs/warnings/warnings.py:524
+#: redbot/cogs/warnings/warnings.py:517 redbot/cogs/warnings/warnings.py:552
 msgid "Warning"
 msgstr "Varování"
 
-#: redbot/cogs/warnings/warnings.py:498
+#: redbot/cogs/warnings/warnings.py:526
 msgid "You have received a warning in {guild_name}."
 msgstr "Obdrželi jste varování v {guild_name}."
 
-#: redbot/cogs/warnings/warnings.py:508
+#: redbot/cogs/warnings/warnings.py:536
 msgid "A warning for {user} has been issued, but I wasn't able to send them a warn message."
 msgstr "Varování pro {user} bylo vydáno, ale nepodařilo se mi jemu poslat varovnou zprávu."
 
-#: redbot/cogs/warnings/warnings.py:534 redbot/cogs/warnings/warnings.py:543
+#: redbot/cogs/warnings/warnings.py:564 redbot/cogs/warnings/warnings.py:573
 msgid "{user} has been warned."
 msgstr "Uživatel {user} byl varován."
 
-#: redbot/cogs/warnings/warnings.py:548
+#: redbot/cogs/warnings/warnings.py:579
 msgid "{reason}\n\n"
 "Use `{prefix}unwarn {user} {message}` to remove this warning."
 msgstr "{reason}\n\n"
 "Použij `{prefix}pro odstranění tohoto varování {user} {message}`."
 
-#: redbot/cogs/warnings/warnings.py:551
+#: redbot/cogs/warnings/warnings.py:582
 msgid "{description}\n"
 "Points: {points}"
 msgstr "{description}\n"
 "Body: {points}"
 
-#: redbot/cogs/warnings/warnings.py:574
+#: redbot/cogs/warnings/warnings.py:605
 #, docstring
 msgid "List the warnings for the specified user."
 msgstr "Seznam varování pro daného uživatele."
 
-#: redbot/cogs/warnings/warnings.py:587
+#: redbot/cogs/warnings/warnings.py:617
 msgid "That user has no warnings!"
 msgstr "Tento uživatel nemá žádná varování!"
 
-#: redbot/cogs/warnings/warnings.py:592 redbot/cogs/warnings/warnings.py:628
+#: redbot/cogs/warnings/warnings.py:622 redbot/cogs/warnings/warnings.py:667
 msgid "Deleted Moderator"
 msgstr "Smazaný moderátor"
 
-#: redbot/cogs/warnings/warnings.py:595 redbot/cogs/warnings/warnings.py:631
+#: redbot/cogs/warnings/warnings.py:624 redbot/cogs/warnings/warnings.py:672
 msgid "Unknown Moderator ({})"
 msgstr "Neznámý moderátor ({})"
 
-#: redbot/cogs/warnings/warnings.py:596 redbot/cogs/warnings/warnings.py:632
+#: redbot/cogs/warnings/warnings.py:627
 msgid "{num_points} point warning {reason_name} issued by {user} for {description}\n"
 msgstr "Upozornění na {num_points} bodů za {reason_name}, vydané {user}, popis {description}\n"
 
-#: redbot/cogs/warnings/warnings.py:607 redbot/cogs/warnings/warnings.py:643
+#: redbot/cogs/warnings/warnings.py:638 redbot/cogs/warnings/warnings.py:687
+#: redbot/cogs/warnings/warnings.py:697
 msgid "Warnings for {user}"
 msgstr "Varování pro {user}"
 
-#: redbot/cogs/warnings/warnings.py:615
+#: redbot/cogs/warnings/warnings.py:646
 #, docstring
 msgid "List warnings for yourself."
 msgstr "Seznam varování pro sebe."
 
-#: redbot/cogs/warnings/warnings.py:623
+#: redbot/cogs/warnings/warnings.py:655 redbot/cogs/warnings/warnings.py:661
 msgid "You have no warnings!"
 msgstr "Nemáte žádné varování!"
 
-#: redbot/cogs/warnings/warnings.py:657
+#: redbot/cogs/warnings/warnings.py:657 redbot/cogs/warnings/warnings.py:690
+msgid "I could not send you a DM. Do you have DMs disabled?"
+msgstr "Nemohu vám poslat příkaz. Máte zakázané hovory?"
+
+#: redbot/cogs/warnings/warnings.py:673
+msgid "{num_points} point warning {reason_name}"
+msgstr "Varování {num_points} bodu {reason_name}"
+
+#: redbot/cogs/warnings/warnings.py:678
+msgid " issued by {user}"
+msgstr " vydané {user}"
+
+#: redbot/cogs/warnings/warnings.py:679
+msgid " for {description}\n"
+msgstr " pro {description}\n"
+
+#: redbot/cogs/warnings/warnings.py:711
 #, docstring
 msgid "Remove a warning from a user."
 msgstr "Odstraní varování od uživatele."
 
-#: redbot/cogs/warnings/warnings.py:670
+#: redbot/cogs/warnings/warnings.py:724
 msgid "You cannot remove warnings from yourself."
 msgstr "Nemůžete od sebe odstranit varování."
 
-#: redbot/cogs/warnings/warnings.py:677
+#: redbot/cogs/warnings/warnings.py:731
 msgid "That warning doesn't exist!"
 msgstr "Toto varování neexistuje!"
 

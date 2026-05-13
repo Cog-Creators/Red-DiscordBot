@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2025-01-26 22:03+0000\n"
+"POT-Creation-Date: 2025-09-04 23:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -14,6 +14,11 @@ msgstr ""
 "X-Crowdin-Language: nl\n"
 "X-Crowdin-File-ID: 676\n"
 "Language: nl_NL\n"
+
+#: redbot/cogs/audio/core/commands/__init__.py:30
+#, docstring
+msgid "Play audio through voice channels."
+msgstr "Speel audio af via spraakkanalen."
 
 #: redbot/cogs/audio/core/commands/audioset.py:36
 #, docstring
@@ -2569,7 +2574,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:615
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "Kon geen geldige track ophalen."
 
 #: redbot/cogs/audio/core/commands/player.py:621
 #: redbot/cogs/audio/core/commands/player.py:758
@@ -2577,7 +2582,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:895
 #: redbot/cogs/audio/core/commands/playlists.py:1898
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Kan track niet ophalen"
 
 #: redbot/cogs/audio/core/commands/player.py:622
 #: redbot/cogs/audio/core/commands/player.py:759

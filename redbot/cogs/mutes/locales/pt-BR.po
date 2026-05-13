@@ -532,7 +532,7 @@ msgstr ""
 
 #: redbot/cogs/mutes/mutes.py:1794
 msgid "this server"
-msgstr ""
+msgstr "este servidor"
 
 #: redbot/cogs/mutes/voicemutes.py:42
 msgid "That user is not in a voice channel."

@@ -2,7 +2,7 @@ import enum
 from typing import Optional, Type
 
 from .. import data_manager
-from .base import IdentifierData, BaseDriver, ConfigCategory
+from .base import IdentifierData, BaseDriver, ConfigCategory, MissingExtraRequirements
 from .json import JsonDriver
 from .postgres import PostgresDriver
 
@@ -12,6 +12,7 @@ __all__ = [
     "get_driver_class_include_old",
     "ConfigCategory",
     "IdentifierData",
+    "MissingExtraRequirements",
     "BaseDriver",
     "JsonDriver",
     "PostgresDriver",
