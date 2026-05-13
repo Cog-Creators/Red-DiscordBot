@@ -16,6 +16,7 @@ from redbot.core.utils.chat_formatting import (
     italics,
     humanize_number,
     humanize_timedelta,
+    pagify,
 )
 
 _ = T_ = Translator("General", __file__)
@@ -40,7 +41,7 @@ class RPSParser:
             self.choice = None
 
 
-MAX_ROLL: Final[int] = 2**64 - 1
+MAX_ROLL: Final[int] = 2**63 - 1
 
 
 @cog_i18n(_)
@@ -220,7 +221,9 @@ class General(commands.Cog):
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
         search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
-        await ctx.send("https://lmgtfy.app/?q={}&s=g".format(search_terms))
+        await ctx.send(
+            f"https://cog-creators.github.io/lmgtfy/search?q={search_terms}&btnK=Google+Search"
+        )
 
     @commands.command(hidden=True)
     @commands.guild_only()
@@ -355,7 +358,7 @@ class General(commands.Cog):
             joined_on = _(
                 "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
             ).format(
-                bot_name=ctx.bot.user.name,
+                bot_name=ctx.bot.user.display_name,
                 bot_join=guild.me.joined_at.strftime("%d %b %Y %H:%M:%S"),
                 since_join=humanize_number((ctx.message.created_at - guild.me.joined_at).days),
             )
@@ -438,12 +441,15 @@ class General(commands.Cog):
                 if feature not in excluded_features
             ]
             if guild.features:
-                data.add_field(
-                    name=_("Server features:"),
-                    value="\n".join(
-                        f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in feature_names
-                    ),
+                feature_list = "\n".join(
+                    f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in feature_names
                 )
+                feature_pages = list(pagify(feature_list, delims=["\n"], page_length=1024))
+                for i, page in enumerate(feature_pages):
+                    field_name = (
+                        _("Server features:") if i == 0 else _("Server features (continued):")
+                    )
+                    data.add_field(name=field_name, value=page, inline=False)
 
             if guild.premium_tier != 0:
                 nitro_boost = _(

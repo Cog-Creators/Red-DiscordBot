@@ -1,7 +1,7 @@
 import discord
 from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.bot import Red
-from redbot.core import checks, commands, Config
+from redbot.core import commands, Config
 from redbot.core.i18n import cog_i18n, Translator, set_contextual_locales_from_guild
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import escape, inline, pagify
@@ -305,7 +305,7 @@ class Streams(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def streamalert(self, ctx: commands.Context):
         """Manage automated stream alerts."""
         pass
@@ -316,7 +316,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Manage Twitch stream notifications."""
@@ -328,7 +328,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this or the given channel for a Twitch stream."""
@@ -345,7 +345,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name_or_id: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a YouTube stream."""
@@ -357,7 +357,7 @@ class Streams(commands.Cog):
         ctx: commands.Context,
         channel_name: str,
         discord_channel: Union[
-            discord.TextChannel, discord.VoiceChannel
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
         ] = commands.CurrentChannel,
     ):
         """Toggle alerts in this channel for a Picarto stream."""
@@ -418,10 +418,10 @@ class Streams(commands.Cog):
             return
 
         for channel_id, stream_platform in streams_list.items():
-            msg += f"** - #{ctx.guild.get_channel(channel_id)}**\n"
+            msg += f"- {ctx.guild.get_channel(channel_id).mention}\n"
             for platform, streams in stream_platform.items():
-                msg += f"\t** - {platform}**\n"
-                msg += f"\t\t{humanize_list(streams)}\n"
+                msg += f"  - **{platform}**\n"
+                msg += f"    {humanize_list(streams)}\n"
 
         for page in pagify(msg):
             await ctx.send(page)
@@ -494,13 +494,13 @@ class Streams(commands.Cog):
         await self.add_or_remove(ctx, stream, discord_channel)
 
     @commands.group()
-    @checks.mod_or_permissions(manage_channels=True)
+    @commands.mod_or_permissions(manage_channels=True)
     async def streamset(self, ctx: commands.Context):
         """Manage stream alert settings."""
         pass
 
     @streamset.command(name="timer")
-    @checks.is_owner()
+    @commands.is_owner()
     async def _streamset_refresh_timer(self, ctx: commands.Context, refresh_time: int):
         """Set stream check refresh time."""
         if refresh_time < 60:
@@ -512,7 +512,7 @@ class Streams(commands.Cog):
         )
 
     @streamset.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def twitchtoken(self, ctx: commands.Context):
         """Explain how to set the twitch token."""
         message = _(
@@ -538,7 +538,7 @@ class Streams(commands.Cog):
         await ctx.maybe_send_embed(message)
 
     @streamset.command()
-    @checks.is_owner()
+    @commands.is_owner()
     async def youtubekey(self, ctx: commands.Context):
         """Explain how to set the YouTube token."""
 
@@ -794,7 +794,7 @@ class Streams(commands.Cog):
     async def _send_stream_alert(
         self,
         stream,
-        channel: Union[discord.TextChannel, discord.VoiceChannel],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
         embed: discord.Embed,
         content: str = None,
         *,
@@ -820,6 +820,10 @@ class Streams(commands.Cog):
         if is_schedule:
             message_data["is_schedule"] = True
         stream.messages.append(message_data)
+
+    def _has_stream_alert_perms(self, channel: discord.TextChannel) -> bool:
+        perms = channel.permissions_for(channel.guild.me)
+        return all((perms.send_messages, perms.embed_links))
 
     async def check_streams(self):
         to_remove = []
@@ -888,6 +892,8 @@ class Streams(commands.Cog):
                         if guild_data["ignore_schedule"] and is_schedule:
                             continue
                         if is_schedule:
+                            if not self._has_stream_alert_perms(channel):
+                                continue
                             # skip messages and mentions
                             await self._send_stream_alert(stream, channel, embed, is_schedule=True)
                             await self.save_streams()
@@ -938,11 +944,13 @@ class Streams(commands.Cog):
                                         formatting=True,
                                     )
                                 )
-                        await self._send_stream_alert(stream, channel, embed, content)
-                        if edited_roles:
-                            for role in edited_roles:
-                                await role.edit(mentionable=False)
-                        await self.save_streams()
+
+                        if self._has_stream_alert_perms(channel):
+                            await self._send_stream_alert(stream, channel, embed, content)
+                            if edited_roles:
+                                for role in edited_roles:
+                                    await role.edit(mentionable=False)
+                            await self.save_streams()
             except Exception as e:
                 log.error("An error has occurred with Streams. Please report it.", exc_info=e)
 
@@ -954,7 +962,7 @@ class Streams(commands.Cog):
     async def _get_mention_str(
         self,
         guild: discord.Guild,
-        channel: Union[discord.TextChannel, discord.VoiceChannel],
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
         guild_data: dict,
     ) -> Tuple[str, List[discord.Role]]:
         """Returns a 2-tuple with the string containing the mentions, and a list of
@@ -982,7 +990,9 @@ class Streams(commands.Cog):
         return " ".join(mentions), edited_roles
 
     async def filter_streams(
-        self, streams: list, channel: Union[discord.TextChannel, discord.VoiceChannel]
+        self,
+        streams: list,
+        channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
     ) -> list:
         filtered = []
         for stream in streams:

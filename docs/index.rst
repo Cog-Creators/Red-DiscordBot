@@ -15,6 +15,7 @@ Welcome to Red - Discord Bot's documentation!
     install_guides/index
     bot_application_guide
     update_red
+    backup_red
     about_venv
     autostart_windows
     autostart_mac
@@ -62,6 +63,7 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Cog Creation Guides:
 
     guide_cog_creation
+    guide_slash_and_interactions
     guide_publish_cogs
     guide_cog_creators
     guide_migration
@@ -75,8 +77,8 @@ Welcome to Red - Discord Bot's documentation!
     framework_bank
     framework_bot
     framework_checks
-    framework_cogmanager
     framework_commands
+    framework_app_commands
     framework_config
     framework_datamanager
     framework_events
@@ -97,6 +99,7 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Others
 
     changelog
+    incompatible_changes/index
     host-list
 
 
