@@ -88,7 +88,7 @@ importlib-metadata==8.5.0; python_version != "3.10" and python_version != "3.11"
     # via markdown
 pytz==2026.1.post1; python_version == "3.8"
     # via babel
-uvloop==0.21.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
+uvloop==0.22.1; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
     # via -r base.in
 zipp==3.20.2; python_version != "3.10" and python_version != "3.11"
     # via importlib-metadata
