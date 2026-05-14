@@ -1,13 +1,19 @@
 .. Red changelogs
 
+.. RED-CHANGELOG-BEGIN: 3.5.24
+.. RED-CHANGELOG-RELEASE-DATE: 2026-03-06
+
 Redbot 3.5.24 (2026-03-06)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`EternalllZM`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna EternalllZM Flame442 Jackenmen Kowlin
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. `The 3.5.23 changelog's <redbot-3-5-23-2026-03-04>` **"Read before updating"** section has been updated with further information about Red's Audio cog no longer supporting Java 11. If you use the Audio cog, please read that section again. Note that Red 3.5.24 supports Java 21 in addition to Java 17 as well.
 
@@ -16,6 +22,9 @@ Read before updating
     Red 3.5.24 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.13%2Bred.3>`__.
 
     Note that Lavalink now requires Java 17 or newer.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -33,24 +42,33 @@ Fixes
 - |cool| **Cogs - Audio** - Fixed issues with the cog not working on Linux aarch64 systems with a 16k page size kernel (as seen on Raspberry Pi OS ran on Raspberry Pi 5) (:issue:`6683`, :issue:`6688`)
 - **Cogs - Audio** - The cog will now correctly error about Java 11 being unsupported instead of trying to redownload Lavalink.jar repeatedly a few times (:issue:`6681`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Documentation changes
 ---------------------
 
 - Updated the Audio cog documentation, command help, and errors to reflect that Java 11 is no longer supported
 - Updated `the 3.5.23 changelog <redbot-3-5-23-2026-03-04>` to include information about Java 11 no longer being supported
 
+.. RED-CHANGELOG-END
+
 ----
 
+.. RED-CHANGELOG-BEGIN: 3.5.23
+.. RED-CHANGELOG-RELEASE-DATE: 2026-03-04
 .. _redbot-3-5-23-2026-03-04:
 
 Redbot 3.5.23 (2026-03-04)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`cswimr`, :ghuser:`EternalllZM`, :ghuser:`Evanroby`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`karlsbjorn`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`VasilisThePikachu`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    cswimr EternalllZM Evanroby Flame442 Jackenmen Kowlin karlsbjorn palmtree5 PredaaA VasilisThePikachu yamikaitou
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Red's Audio cog now requires Java 17 to be present on the system. Java 11 is no longer supported.
 
@@ -81,6 +99,9 @@ Read before updating
     - macOS 13 (Ventura)
     - Fedora 41
     - Raspberry Pi OS (Legacy) 11
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -116,6 +137,8 @@ Fixes
 - **Cogs - Streams** - The cog will now check that the bot has necessary permissions before sending stream alert messages (:issue:`4967`)
 - **Cogs - Warnings** - Fixed the bot revealing a moderator that warned the user in the output of ``[p]mywarnings`` command when the ``[p]warningset showmoderator`` setting is disabled (:issue:`6641`, :issue:`6673`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -135,22 +158,33 @@ Documentation changes
 - Added `backup_red` document (:issue:`3421`, :issue:`6654`)
 - Updated the `bot_application_guide` according to changes in Discord Developer Portal's interface (:issue:`6647`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.22
+.. RED-CHANGELOG-RELEASE-DATE: 2025-09-05
 
 Redbot 3.5.22 (2025-09-05)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    AAA3A-AAA3A aikaterna Flame442 Jackenmen Kowlin
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we updated YT client options to fix a few regressions introduced by changes in 3.5.21.
     `Download Red 3.5.22's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.22/Red-DiscordBot-3.5.22-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -160,6 +194,8 @@ Fixes
 
 - **Cogs - Audio** - Fixed a regression with YT video metadata loading introduced by Red 3.5.21 (:issue:`6611`)
 - **Cogs - Audio** - Fixed a problem with command help texts not being translated in the Audio cog (:issue:`6608`, :issue:`6609`)
+
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -171,16 +207,24 @@ Changes
 - **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to also match invite links using ``\\`` instead of just ``/`` (:issue:`6586`)
 - **Core - Utils Package** - Updated ``INVITE_URL_RE`` common filter to ignore ``promos.discord.gg`` links (:issue:`6586`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.21
+.. RED-CHANGELOG-RELEASE-DATE: 2025-08-26
 
 Redbot 3.5.21 (2025-08-26)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`egypt1848`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`, :ghuser:`VasilisThePikachu`
+.. changelog-contributors::
+
+    egypt1848 Flame442 Jackenmen Kowlin Kreusada TrustyJAID VasilisThePikachu
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
@@ -193,6 +237,9 @@ Read before updating
     - Ubuntu 20.04 LTS
     - versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 8 older than 8.10
     - versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux 9 older than 9.4
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -232,6 +279,8 @@ Fixes
 - **Cogs - Mod** - Fixed formatting of the ``[p]names`` command (:issue:`6538`)
 - **Cogs - Reports** - Fixed the ``[p]report`` command not working properly when invoked from a DM context (:issue:`6573`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -255,22 +304,33 @@ Documentation changes
 - Added example of `Group.all()` method's usage to the tutorial in the `framework_config` document (:issue:`6295`, :issue:`6550`)
 - Added a tip about the ``[botname]`` placeholder in the `guide_publish_cogs` document (:issue:`6539`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.20
+.. RED-CHANGELOG-RELEASE-DATE: 2025-05-03
 
 Redbot 3.5.20 (2025-05-03)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+.. changelog-contributors::
+
+    aikaterna Jackenmen Kreusada
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin.
     `Download Red 3.5.20's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.20/Red-DiscordBot-3.5.20-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -285,16 +345,25 @@ Fixes
 
 - |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6566`, :issue:`6567`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.19
+.. RED-CHANGELOG-RELEASE-DATE: 2025-04-27
 
 Redbot 3.5.19 (2025-04-27)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
@@ -303,6 +372,9 @@ Read before updating
     `Download Red 3.5.19's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.19/Red-DiscordBot-3.5.19-default-lavalink-application.yml>`__
 
 #. Fedora 40 is no longer supported as it will soon reach its end of life. Fedora install instructions have been updated with support for Fedora 42.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -318,6 +390,8 @@ Fixes
 
 - |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6557`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Documentation changes
 ---------------------
 
@@ -326,22 +400,33 @@ Changes
 
 - Updated Fedora install instructions to work with Fedora 42 (:issue:`6558`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.18
+.. RED-CHANGELOG-RELEASE-DATE: 2025-03-26
 
 Redbot 3.5.18 (2025-03-26)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Jackenmen`, :ghuser:`Kreusada`
+.. changelog-contributors::
+
+    Jackenmen Kreusada
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin.
     `Download Red 3.5.18's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.18/Red-DiscordBot-3.5.18-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -356,22 +441,34 @@ Fixes
 
 - |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6542`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.17
+.. RED-CHANGELOG-RELEASE-DATE: 2025-03-08
 
 Redbot 3.5.17 (2025-03-08)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen karlsbjorn Kowlin
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin.
     `Download Red 3.5.17's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.17/Red-DiscordBot-3.5.17-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -389,6 +486,8 @@ Fixes
 - |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6530`)
 - **Cogs - Streams** - Fixed upcoming stream alert showing an incorrect time when Red is hosted on a system using a non-UTC timezone (:issue:`6526`, :issue:`6527`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -397,13 +496,21 @@ Changes
 
 - |cool| **Core - Dependencies** - Bumped ``discord.py`` to version 2.5.2 (:issue:`6529`, :issue:`6531`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.16
+.. RED-CHANGELOG-RELEASE-DATE: 2025-02-06
 
 Redbot 3.5.16 (2025-02-06)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    Flame442 Jackenmen
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 This is a hotfix release changing our implementation to prevent crash at startup
 when invalid value of global locale/regional format configuration is encountered.
@@ -413,16 +520,25 @@ did not validate the input in some scenarios. During startup, Red will now simpl
 log a warning, if it encounters incorrect global locale/regional format configuration
 and reset it to a known valid value.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.15
+.. RED-CHANGELOG-RELEASE-DATE: 2025-02-03
 
 Redbot 3.5.15 (2025-02-03)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen Kowlin
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. openSUSE Leap 15.5 is no longer supported as it has already reached its end of life.
 
@@ -431,6 +547,9 @@ Read before updating
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin.
     `Download Red 3.5.15's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.15/Red-DiscordBot-3.5.15-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -449,6 +568,8 @@ Fixes
 - **Core - Bot Commands** - The ``[p]set api`` command no longer errors with long service names (:issue:`6478`, :issue:`6502`)
 - |cool| **Cogs - Audio** - Fixed recent YT playback issues (:issue:`6509`, :issue:`6511`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -457,16 +578,24 @@ Changes
 
 - **Core - i18n** - Added `redbot.core.i18n.set_contextual_locale()` and `redbot.core.i18n.set_contextual_regional_format()` functions (:issue:`6022`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.14
+.. RED-CHANGELOG-RELEASE-DATE: 2024-12-25
 
 Redbot 3.5.14 (2024-12-25)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Ascensionn`, :ghuser:`cswimr`, :ghuser:`Chovin`, :ghuser:`cdaman3141`, :ghuser:`DJTOMATO`, :ghuser:`Flame442`, :ghuser:`japandotorg`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kowlin`, :ghuser:`kpopdev`, :ghuser:`kevin1015wang`, :ghuser:`Kreusada`, :ghuser:`mellow-org`, :ghuser:`palmtree5`, :ghuser:`sravan1946`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    aikaterna Ascensionn cswimr Chovin cdaman3141 DJTOMATO Flame442 japandotorg Jackenmen karlsbjorn Kowlin kpopdev kevin1015wang Kreusada mellow-org palmtree5 sravan1946 TrustyJAID
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Following operating systems are no longer supported as they have already reached their end of life:
 
@@ -479,6 +608,9 @@ Read before updating
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin.
     `Download Red 3.5.14's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.14/Red-DiscordBot-3.5.14-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -511,6 +643,8 @@ Fixes
 - |cool| **Cogs - Audio** - Fixed various issues with YT playback resulting in "Something broke when playing the track" error (:issue:`6488`, :issue:`6490`)
 - **Cogs - Trivia - Lists** - Fixed typos in Golden Glove questions in the ``worldcup`` trivia list (:issue:`6441`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -538,22 +672,33 @@ Fixes
 - **Core** - Fixed the cooldown bypass (enabled by ``[p]bypasscooldowns`` command) not being respected by the ``[p]slash sync`` command (:issue:`6465`)
 - **Core - Commands Package** - Updated `RawUserIdConverter` to reject IDs that are larger than a Discord ID (snowflake) can be (:issue:`6431`, :issue:`6486`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.13
+.. RED-CHANGELOG-RELEASE-DATE: 2024-08-27
 
 Redbot 3.5.13 (2024-08-27)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Guyonsteroids`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    aikaterna Guyonsteroids Jackenmen Kowlin
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin.
     `Download Red 3.5.13's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.13/Red-DiscordBot-3.5.13-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -571,22 +716,34 @@ Fixes
 - **Cogs - Audio** - Fixed Red erroneously trying to send a message to a notification channel when one is not set (:issue:`6429`)
 - **Cogs - Trivia - Lists** - Fixed spelling of Steven Spielberg's first name in the ``entertainment`` trivia list (:issue:`6434`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.12
+.. RED-CHANGELOG-RELEASE-DATE: 2024-08-08
 
 Redbot 3.5.12 (2024-08-08)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    aikaterna Jackenmen
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin.
     `Download Red 3.5.12's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.12/Red-DiscordBot-3.5.12-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -597,22 +754,34 @@ Fixes
 - **Cogs - Audio** - Fixed the ``[p]llset secured`` command failing to send the response message (:issue:`6423`)
 - **Cogs - Audio** - Fixed some age-restricted YT tracks not playing (:issue:`6424`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.11
+.. RED-CHANGELOG-RELEASE-DATE: 2024-08-04
 
 Redbot 3.5.11 (2024-08-04)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`anopem`, :ghuser:`Flame442`, :ghuser:`japandotorg`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna anopem Flame442 japandotorg Jackenmen Kowlin palmtree5 yamikaitou
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we bumped the version of YT source plugin and added new plugin configuration.
     `Download Red 3.5.11's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.11/Red-DiscordBot-3.5.11-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -631,6 +800,8 @@ Fixes
 - **Cogs - Mutes** - Fixed the cog failing to unmute a user, if they were muted by someone who no longer has permissions to mute that user (:issue:`6376`, :issue:`6411`)
 - **Cogs - Streams** - Fixed the viewer count for Twitch streams (:issue:`6413`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -648,16 +819,24 @@ Changes
 - Updated instructions for installing the development version of Red in `guide_cog_creation` (:issue:`6408`)
 - Updated the contents of the ``red.plist`` file in the `autostart_mac` document to use no resource limitations, same as regular applications (:issue:`6416`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.10
+.. RED-CHANGELOG-RELEASE-DATE: 2024-07-10
 
 Redbot 3.5.10 (2024-07-10)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`SeaswimmerTheFsh`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen Kowlin SeaswimmerTheFsh TrustyJAID yamikaitou
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. This release fixes a security issue in one of the APIs we provide for 3rd-party cog creators. See `Security changelog below <important-3510-1>` for more information.
 #. Following operating systems are no longer supported as they have already reached their end of life:
@@ -673,6 +852,9 @@ Read before updating
     We've updated our default application.yml file and you should update your instance's ``application.yml`` accordingly.
     More specifically, we switched from using the built-in YT source to YT source plugin.
     `Download Red 3.5.10's default application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/releases/download/3.5.10/Red-DiscordBot-3.5.10-default-lavalink-application.yml>`__
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -702,6 +884,8 @@ Fixes
 
 - **Core** - Fixed command autocompletion not showing any proper result (error message) when bot's global checks (channel/server ignores, allowlist/blocklist) do not pass (:issue:`6374`, :issue:`6375`)
 - **Cogs - Audio** - Fixed one of the recent YT playback issues (:issue:`6373`)
+
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -736,20 +920,31 @@ Fixes
 - Fixed Java instructions in macOS install guide (:issue:`6368`)
 - Fixed list of required ``info.json`` keys from the `guide_cog_creators` document (:issue:`6382`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.9
+.. RED-CHANGELOG-RELEASE-DATE: 2024-04-21
 
 Redbot 3.5.9 (2024-04-21)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`giplgwm`, :ghuser:`Jackenmen`, :ghuser:`Kuro-Rui`, :ghuser:`Kowlin`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
+.. changelog-contributors::
+
+    aikaterna giplgwm Jackenmen Kuro-Rui Kowlin palmtree5 TrustyJAID Zephyrkul
 
 Read before updating
 --------------------
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
+
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.5.9 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.11%2Bred.3>`__.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -763,6 +958,8 @@ Fixes
 - **Cogs - Mutes** - The Mutes cog will no longer erroneously accept very large values (i.e. hundreds of years) for mute durations (:issue:`6353`)
 - **Cogs - Mutes** - To avoid ambiguity, the Mutes cog will now parse the time only when it's placed at the beginning, the end, or directly after ``t=``/``time=`` prefix in the mute command arguments (:issue:`6274`, :issue:`6349`)
 - **Cogs - Streams** - The schedule announcements for YT streams will now use relative Discord timestamps (:issue:`6257`, :issue:`6264`)
+
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -782,16 +979,24 @@ Fixes
 
 - Updated links to the Lavalink repository (:issue:`6356`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.8
+.. RED-CHANGELOG-RELEASE-DATE: 2024-04-01
 
 Redbot 3.5.8 (2024-04-01)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`Kreusada`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    aikaterna Flame442 Jackenmen Kreusada TrustyJAID
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Server-wide mutes in the Mutes cog can no longer be performed using channel permissions (overrides). Instead, the cog will now use Discord's native server timeout functionality when a mute role is not set. Role mutes and channel-specific mutes are not affected.
 
@@ -802,6 +1007,9 @@ Read before updating
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.5.8 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.11%2Bred.2>`__.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -834,6 +1042,8 @@ Fixes
 - |cool| **Cogs - Audio** - Resolves recent issues where the wrong video was served for YT playback (:issue:`6337`, :issue:`6340`)
 - **Cogs - Audio** - Fixed Lavalink.jar downloading for RC and Red-specific versions (:issue:`6334`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Documentation changes
 ---------------------
 
@@ -842,13 +1052,21 @@ Additions
 
 - |cool| Added install instructions for Amazon Linux 2023 (:issue:`6331`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.7
+.. RED-CHANGELOG-RELEASE-DATE: 2024-03-24
 
 Redbot 3.5.7 (2024-03-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`karlsbjorn`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    aikaterna Flame442 karlsbjorn Jackenmen
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 This is a hotfix release fixing a bug with Red's reaction-based menus introduced in the previous release.
 
@@ -861,21 +1079,33 @@ Fixes
 - **Core** - Fixed an issue with Red's reaction-based menus *with custom controls* not working properly (:issue:`6324`)
 - **Core - Bot Commands** - Updated supported image formats in ``[p]set bot avatar``'s error messages to include GIFs (:issue:`6323`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.6
+.. RED-CHANGELOG-RELEASE-DATE: 2024-03-22
 
 Redbot 3.5.6 (2024-03-22)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`BlizzardTheWolf`, :ghuser:`DJTOMATO`, :ghuser:`Dav-Git`, :ghuser:`Flame442`, :ghuser:`goettner`, :ghuser:`Jackenmen`, :ghuser:`Jan200101`, :ghuser:`japandotorg`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`madebylydia`, :ghuser:`michael-is-qcde`, :ghuser:`scarecr0w12`, :ghuser:`yeetbruises`, :ghuser:`Zephyrkul`
+.. changelog-contributors::
+
+    aikaterna BlizzardTheWolf DJTOMATO Dav-Git Flame442 goettner Jackenmen Jan200101 japandotorg Kowlin Kreusada laggron42 madebylydia michael-is-qcde scarecr0w12 yeetbruises Zephyrkul
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. macOS 11 (Big Sur), Fedora 37, Ubuntu 22.10 (Kinetic Kudu), 23.04 (Lunar Lobster), openSUSE Leap 15.4, and Raspberry Pi OS (Legacy) 10 Buster are no longer supported as they have already reached their end of life.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.5.6 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.11>`__.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -915,6 +1145,8 @@ Fixes
 - **Cogs - Audio** - Fixed handling of file name suffixes in ``[p]playlist upload`` caused by changes in Discord API (:issue:`6279`, :issue:`6280`)
 - |cool| **Cogs - General** - Fixed issues with ``[p]lmgtfy`` command once and for all by deploying an equivalent service as part of Cog-Creators' infrastructure (:issue:`6255`, :issue:`6268`, :issue:`6269`)
 - **Cogs - Streams** - Fixed markdown formatting in the ``[p]streamalert list`` command to be compliant with newer Discord markdown renderer (:issue:`6292`)
+
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -961,13 +1193,21 @@ Fixes
 
 - Fixed the "Edit on GitHub" links in Red's online documentation (:issue:`6258`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.5
+.. RED-CHANGELOG-RELEASE-DATE: 2023-09-14
 
 Redbot 3.5.5 (2023-09-14)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`palmtree5`
+.. changelog-contributors::
+
+    Flame442 Jackenmen karlsbjorn Kreusada ltzmax palmtree5
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -986,6 +1226,8 @@ Fixes
 - **Cogs - Mod** - Fixed the formatting of the help description for the ``[p]ban``, ``[p]kick``, and ``[p]tempban`` commands (:issue:`6245`)
 - |cool| **Cogs - Streams** - Updated the implementation of Twitch streams to no longer use the "Get Users Follows" endpoint that was deprecated in February 2023 (:issue:`6246`, :issue:`6247`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Documentation changes
 ---------------------
 
@@ -994,20 +1236,31 @@ Changes
 
 - Updated Python version in ``pyenv`` instructions (:issue:`6241`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.4
+.. RED-CHANGELOG-RELEASE-DATE: 2023-08-12
 
 Redbot 3.5.4 (2023-08-12)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Jackenmen`, :ghuser:`laggron42`, :ghuser:`Leo40Git`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    aikaterna Jackenmen laggron42 Leo40Git PredaaA TrustyJAID
 
 Read before updating
 --------------------
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
+
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.5.4 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.8>`__.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1032,18 +1285,30 @@ Fixes
 - **Cogs - CustomCommands** - Fixed poor quality of ``[p]customcom search``'s results when case sensitive matching was involved (:issue:`6224`)
 - **Cogs - Streams** - Fixed Picarto channels showing without the channel avatar (:issue:`6230`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.3
+.. RED-CHANGELOG-RELEASE-DATE: 2023-07-24
 
 Redbot 3.5.3 (2023-07-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Jackenmen`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Om1609`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`Zephyrkul`
+.. changelog-contributors::
+
+    AAA3A-AAA3A aikaterna Drapersniper Flame442 flaree Jackenmen Kowlin Kreusada Om1609 PredaaA TrustyJAID Zephyrkul
 
 Read before updating
 --------------------
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
+
 #. Fedora 36, Ubuntu 18.04 LTS and versions of RHEL/Alma Linux/Oracle Linux/Rocky Linux older than 8.6 are no longer supported as they have already reached their end of life.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1081,6 +1346,8 @@ Fixes
 - **Cogs - Downloader** - Fixed ``CancelledError`` tracebacks showing up in logs when the bot is shut down quickly after the cog is loaded (:issue:`6203`)
 - **Cogs - Mutes** - Fixed ``CancelledError`` tracebacks showing up in logs when the bot is shut down quickly after the cog is loaded (:issue:`6203`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -1110,14 +1377,21 @@ Changes
 - |cool| Added install instructions for Debian 12 Bookworm (:issue:`6190`)
 - |cool| The install guides have been updated to install Java 17 when possible (:issue:`6190`)
 
+.. RED-CHANGELOG-END
 
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.2
+.. RED-CHANGELOG-RELEASE-DATE: 2023-05-14
 
 Redbot 3.5.2 (2023-05-14)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`flaree`, :ghuser:`Flame442`, :ghuser:`Jackenmen`, :ghuser:`karlsbjorn`, :ghuser:`rramboer`, :ghuser:`synrg`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna flaree Flame442 Jackenmen karlsbjorn rramboer synrg TrustyJAID Vexed01
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1145,6 +1419,7 @@ Fixes
 - **Cogs - Reports** - Fixed ``[p]report`` command not working in DMs (:issue:`6148`)
 - **Vendored Packages** - Fixed menus breaking in DMs (:issue:`6139`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -1171,14 +1446,21 @@ Fixes
 - Fixed command choices example in `Slash Commands and Interactions guide <guide_slash_and_interactions>` (:issue:`6154`)
 - Updated `the 3.5.0 changelog <redbot-3-5-0-2023-05-04>`, `incompatible-changes-3.5`, and `end-user-guarantees` documents to mention the new ``x86-64-v2`` instruction set requirement (:issue:`6141`, :issue:`6147`)
 
+.. RED-CHANGELOG-END
 
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.5.1
+.. RED-CHANGELOG-RELEASE-DATE: 2023-05-04
 
 Redbot 3.5.1 (2023-05-04)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Flame442`, :ghuser:`Jackenmen`
+.. changelog-contributors::
+
+    Flame442 Jackenmen
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 This is a hotfix release fixing documentation issues and a bug with the update notification logic
 that caused Red to crash.
@@ -1191,6 +1473,7 @@ Fixes
 
 - **Core** - Fixed a crash in the Red update notification logic (:issue:`6124`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Documentation changes
 ---------------------
@@ -1200,18 +1483,25 @@ Fixes
 
 - Fix the instructions for updating Red (:issue:`6123`)
 
+.. RED-CHANGELOG-END
+
 ----
 
+.. RED-CHANGELOG-BEGIN: 3.5.0
+.. RED-CHANGELOG-RELEASE-DATE: 2023-05-04
 .. _redbot-3-5-0-2023-05-04:
 
 Redbot 3.5.0 (2023-05-04)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AAA3A-AAA3A`, :ghuser:`aikaterna`, :ghuser:`alexratman`, :ghuser:`AntonioNarra`, :ghuser:`Arman0334`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`Honkertonken`, :ghuser:`i-am-zaidali`, :ghuser:`Jackenmen`, :ghuser:`japandotorg`, :ghuser:`karlsbjorn`, :ghuser:`keqking`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Kuro-Rui`, :ghuser:`leetfin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yuansheng1549`
+.. changelog-contributors::
+
+    AAA3A-AAA3A aikaterna alexratman AntonioNarra Arman0334 Dav-Git Drapersniper Flame442 Honkertonken i-am-zaidali Jackenmen japandotorg karlsbjorn keqking Kowlin Kreusada Kuro-Rui leetfin npc203 palmtree5 PredaaA Predeactor TrustyJAID Vexed01 yuansheng1549
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. ``[p]bankset`` is now a core command and as a consequence, the bank cog has been removed. This means that when you start the bot for the first time after the update, you'll see a "Failed to load package bank" message. That is perfectly normal and this message can be ignored.
 #. Red 3.5 comes with breaking changes for users. Look at `Backward incompatible changes in Red 3.5 document <incompatible-changes-3.5>` and `End-user changelog <important-350-1>` for full details.
@@ -1230,6 +1520,10 @@ Read before updating
 #. Red 3.5 comes with breaking changes for cog developers. Look at `Backward incompatible changes in Red 3.5 document <incompatible-changes-3.5>` and `Developer changelog <important-350-2>` for full details.
 #. Fedora 35 and Debian 10 (Buster) are no longer supported as they have already reached their end of life.
 #. On x86-64 systems, we now require that the CPU supports x86-64-v2 instruction set. This roughly translates to us dropping support for Intel CPUs that have been released before 2009 and AMD CPUs that have been released before 2012.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 .. _important-350-1:
 
@@ -1338,6 +1632,7 @@ Fixes
 - **Cogs - Trivia - Lists** - Fixed some inaccuracies in the ``geography`` list (:issue:`5743`)
 - **Cogs - Trivia - Lists** - Fixed some inaccuracies in the ``clashroyale`` list (:issue:`5771`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 .. _important-350-2:
 
 Developer changelog
@@ -1450,21 +1745,31 @@ Fixes
 - Removed some duplicated references (:issue:`5782`, :issue:`5778`)
 - Fixed an inaccurate typehint in the documentation for `Config.user()` (:issue:`5790`, :issue:`5791`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.19
+.. RED-CHANGELOG-RELEASE-DATE: 2023-04-20
 
 Redbot 3.4.19 (2023-04-20)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Ankur391`, :ghuser:`BigPeep0doo`, :ghuser:`chasehult`, :ghuser:`Flame442`, :ghuser:`Honkertonken`, :ghuser:`Jackenmen`, :ghuser:`japandotorg`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leetfin`, :ghuser:`Lioness100`, :ghuser:`ltzmax`, :ghuser:`MHLoppy`, :ghuser:`OofChair`, :ghuser:`Ryan5453`, :ghuser:`SnappyDragon64`, :ghuser:`sravan1946`, :ghuser:`TheThomanski`, :ghuser:`TrustyJAID`, :ghuser:`vertyco`, :ghuser:`Vexed01`, :ghuser:`Visne`
+.. changelog-contributors::
+
+    aikaterna Ankur391 BigPeep0doo chasehult Flame442 Honkertonken Jackenmen japandotorg Kowlin Kreusada leetfin Lioness100 ltzmax MHLoppy OofChair Ryan5453 SnappyDragon64 sravan1946 TheThomanski TrustyJAID vertyco Vexed01 Visne
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.19 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.7.5>`__.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1514,6 +1819,7 @@ Fixes
 - **Cogs - Mutes** - Fixed a bug where muting a member in one voice channel would unintentionally move them between other voice channels (:issue:`4993`, :issue:`5854`)
 - **Cogs - Trivia** - Fixed error handling for long file names in ``[p]triviaset custom upload`` (:issue:`5948`, :issue:`5950`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -1555,16 +1861,24 @@ Changes
 - Updated installation URLs for Homebrew and Chocolatey (:issue:`5776`)
 - Updated the auto-restart script for Linux to only restart when there's a critical error (crash) or the restart command is ran (:issue:`5069`, :issue:`5674`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.18
+.. RED-CHANGELOG-RELEASE-DATE: 2022-08-15
 
 Redbot 3.4.18 (2022-08-15)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`RheingoldRiver`
+.. changelog-contributors::
+
+    aikaterna Flame442 jack1142 Kowlin RheingoldRiver
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. openSUSE Leap 15.2 is no longer supported as it has already reached its end of life.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
@@ -1572,6 +1886,8 @@ Read before updating
     - Red 3.4.18 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1350>`__.
     - We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.18/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1587,6 +1903,7 @@ Fixes
 - |cool| **Cogs - Audio** - Addressed a cipher change that made it impossible to find tracks (:issue:`5822`)
 - **Cogs - Audio** - Fixed an issue with ``[p]llset external`` making the bot completely unresponsive when switching to an external Lavalink server (:issue:`5804`, :issue:`5828`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Documentation changes
 ---------------------
@@ -1597,22 +1914,32 @@ Changes
 - Updated the screenshot in `bot_application_guide` to include the message content intent (:issue:`5798`)
 - Unpinned Temurin version on Windows as a fixed version is now available (:issue:`5815`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.17
+.. RED-CHANGELOG-RELEASE-DATE: 2022-06-07
 
 Redbot 3.4.17 (2022-06-07)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`ltzmax`, :ghuser:`matcha19`, :ghuser:`mina9999`, :ghuser:`ponte-vecchio`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`untir-l`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna Drapersniper Flame442 jack1142 Kowlin Kreusada ltzmax matcha19 mina9999 ponte-vecchio PredaaA TrustyJAID untir-l Vexed01
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Fedora 34 is no longer supported as it has already reached its end of life.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.17 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1347>`__.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1657,6 +1984,7 @@ Fixes
 - **Cogs - Filter** - Fixed a potential memory leak in Filter cog (:issue:`5578`)
 - **Cogs - Trivia - Lists** - Fixed spelling error in the answer to one of the questions in ``computers`` trivia list (:issue:`5587`, :issue:`5588`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -1693,13 +2021,21 @@ Fixes
 - Pinned Temurin version on Windows until a fixed version becomes available (:issue:`5717`)
 - Fixed git installation instructions in CentOS 7 install guide (:issue:`5700`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.16
+.. RED-CHANGELOG-RELEASE-DATE: 2021-12-31
 
 Redbot 3.4.16 (2021-12-31)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`PredaaA`
+.. changelog-contributors::
+
+    jack1142 PredaaA
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 This is a hotfix release fixing issues with invite URL API that caused
 ``[p]invite`` command and ``CORE__INVITE_URL`` RPC method to not work.
@@ -1712,6 +2048,7 @@ Fixes
 
 - **Core - Bot Commands** - Fixed ``[p]invite`` command (:issue:`5517`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -1730,22 +2067,32 @@ Changes
 
 - Changed Arch install guide to temporarily use ``python39`` AUR package instead of ``python`` package as Red does not currently support Python 3.10 (:issue:`5518`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.15
+.. RED-CHANGELOG-RELEASE-DATE: 2021-12-31
 
 Redbot 3.4.15 (2021-12-31)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Arman0334`, :ghuser:`Crossedfall`, :ghuser:`Dav-Git`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Jan200101`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`laggron42`, :ghuser:`ltzmax`, :ghuser:`Parnassius`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`RasmusWL`, :ghuser:`sravan1946`, :ghuser:`Stonedestroyer`, :ghuser:`the-krak3n`, :ghuser:`Tobotimus`, :ghuser:`vertyco`, :ghuser:`Vexed01`, :ghuser:`WreckRox`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna aleclol Arman0334 Crossedfall Dav-Git fixator10 Flame442 jack1142 Jan200101 Just-Jojo Kowlin Kreusada laggron42 ltzmax Parnassius PredaaA Predeactor RasmusWL sravan1946 Stonedestroyer the-krak3n Tobotimus vertyco Vexed01 WreckRox yamikaitou
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Fedora 33 and CentOS 8 are no longer supported as they have already reached end of life.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.15 uses a new Lavalink jar that you MUST manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.4.0_1275>`__ to be able to continue using Audio.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1804,6 +2151,7 @@ Fixes
 - **Cogs - Mod** - Fixed a typo in one of ``[p]unban``'s error messages (:issue:`5470`)
 - **Cogs - Warnings** - Warning actions no longer error out when the action is set to use a command that *only* checks for user permissions, not caller's roles (:issue:`5477`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -1845,22 +2193,32 @@ Fixes
 
 - Removed inaccurate note from Unix install guides about install commands also being used for updating Red (:issue:`5439`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.14
+.. RED-CHANGELOG-RELEASE-DATE: 2021-09-23
 
 Redbot 3.4.14 (2021-09-23)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`L33Tech`, :ghuser:`maxbooiii`, :ghuser:`RheingoldRiver`
+.. changelog-contributors::
+
+    aikaterna jack1142 Kowlin L33Tech maxbooiii RheingoldRiver
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Versions of RHEL older than 8.4 (including 7) and versions of CentOS older than 8.4 (excluding 7) are no longer supported.
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.14 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1239>`__.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1881,6 +2239,7 @@ Fixes
 - |cool| **Cogs - Audio** - Fixed intermittent 403 Forbidden errors (:issue:`5329`)
 - **Cogs - Modlog** - Fixed formatting of **Last modified at** field in Modlog cases (:issue:`5317`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Documentation changes
 ---------------------
@@ -1901,16 +2260,24 @@ Fixes
 
 - Fixed Raspberry Pi OS install guide (:issue:`5314`, :issue:`5328`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.13
+.. RED-CHANGELOG-RELEASE-DATE: 2021-09-09
 
 Redbot 3.4.13 (2021-09-09)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Arman0334`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`fredster33`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`qenu`, :ghuser:`TheDataLeek`, :ghuser:`Twentysix26`, :ghuser:`TwinDragon`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna Arman0334 Flame442 flaree fredster33 Injabie3 jack1142 Just-Jojo Kowlin Kreusada leblancg maxbooiii npc203 palmtree5 phenom4n4n PredaaA qenu TheDataLeek Twentysix26 TwinDragon Vexed01
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. If you're hosting a public/big bot (>75 servers) or strive to scale your bot at that level, you should read :doc:`our stance on (privileged) intents and public bots <intents>`.
 #. Fedora 32 is no longer supported as it has already reached end of life.
@@ -1918,6 +2285,8 @@ Read before updating
 
     Red 3.4.13 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1238>`__.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -1981,6 +2350,7 @@ Fixes
 - **Cogs - Streams** - Fixed an issue with some YouTube streamers getting removed from stream alerts after a while (:issue:`5195`, :issue:`5223`)
 - |cool| **Cogs - Warnings** - 0 point warnings are, once again, allowed. (:issue:`5177`, :issue:`5178`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -2028,15 +2398,23 @@ Fixes
 - Fixed the examples of commands that are only available to people with the mod role (:issue:`5180`)
 - Fixed few other small issues with the documentation :) (:issue:`5048`, :issue:`5092`, :issue:`5149`, :issue:`5207`, :issue:`5209`, :issue:`5215`, :issue:`5219`, :issue:`5220`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.12
+.. RED-CHANGELOG-RELEASE-DATE: 2021-06-17
 
 Redbot 3.4.12 (2021-06-17)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Just-Jojo`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`npc203`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`
+.. changelog-contributors::
+
+    aikaterna Flame442 jack1142 Just-Jojo Kowlin Kreusada npc203 PredaaA retke Stonedestroyer
 
 This is a hotfix release related to Red ceasing to use the Audio Global API service.
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2065,6 +2443,8 @@ Fixes
 - **Cogs - Filter** - Fixed an edge case that caused the cog to sometimes check contents of DM messages (:issue:`5125`)
 - **Cogs - Warnings** - Prevented users from applying 0 or less points in custom warning reasons (:issue:`5119`, :issue:`5120`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+
 Developer changelog
 -------------------
 
@@ -2073,13 +2453,21 @@ Changes
 
 - **Cogs - Dev** - ``[p]debug`` command will now confirm the code finished running with a tick reaction (:issue:`5107`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.11
+.. RED-CHANGELOG-RELEASE-DATE: 2021-06-12
 
 Redbot 3.4.11 (2021-06-12)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Onii-Chan-Discord`
+.. changelog-contributors::
+
+    jack1142 Kowlin Onii-Chan-Discord
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 This is a hotfix release fixing a crash involving guild uploaded stickers.
 
@@ -2091,6 +2479,7 @@ Changes
 
 - **Core - Dependencies** - discord.py version has been bumped to 1.7.3 (:issue:`5129`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Documentation changes
 ---------------------
@@ -2100,16 +2489,24 @@ Fixes
 
 - Links to the CogBoard in Red's documentation have been updated to use the new domain (:issue:`5124`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.10
+.. RED-CHANGELOG-RELEASE-DATE: 2021-05-28
 
 Redbot 3.4.10 (2021-05-28)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`benno1237`, :ghuser:`bobloy`, :ghuser:`BoyDownTown`, :ghuser:`Danstr5544`, :ghuser:`DeltaXWizard`, :ghuser:`Drapersniper`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Lifeismana`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`plofts`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna aleclol benno1237 bobloy BoyDownTown Danstr5544 DeltaXWizard Drapersniper Fabian-Evolved fixator10 Flame442 flaree jack1142 Kowlin Kreusada Lifeismana Obi-Wan3 OofChair palmtree5 plofts PredaaA Predeactor TrustyJAID Vexed01
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. PM2 process manager is no longer supported as it is not a viable solution due to certain parts of its behavior.
 
@@ -2123,6 +2520,8 @@ Read before updating
     - Red 3.4.10 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1233>`__.
     - We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.10/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2182,6 +2581,7 @@ Fixes
 - **Cogs - Streams** - The cog no longer errors when trying to delete a cached message from a channel that no longer exists (:issue:`5032`, :issue:`5031`)
 - **Cogs - Warnings** - The warn action is now taken *after* sending the warn message to the member (:issue:`4713`, :issue:`5004`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -2228,10 +2628,17 @@ Removals
 
 - Removed PM2 guide (:issue:`4991`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.9
+.. RED-CHANGELOG-RELEASE-DATE: 2021-04-06
 
 Redbot 3.4.9 (2021-04-06)
 =========================
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 This is a hotfix release fixing an issue with command error handling.
 
@@ -2239,16 +2646,25 @@ discord.py version has been bumped to 1.7.1.
 
 Thanks again to :ghuser:`Rapptz` for quick response on this issue.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.8
+.. RED-CHANGELOG-RELEASE-DATE: 2021-04-06
 
 Redbot 3.4.8 (2021-04-06)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`6days9weeks`, :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kingslayer268`, :ghuser:`Kowlin`, :ghuser:`Kreusada`, :ghuser:`Obi-Wan3`, :ghuser:`OofChair`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`rijusougata13`, :ghuser:`TheDiscordHistorian`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    6days9weeks aikaterna Drapersniper fixator10 Flame442 flaree jack1142 kingslayer268 Kowlin Kreusada Obi-Wan3 OofChair palmtree5 phenom4n4n PredaaA Predeactor rijusougata13 TheDiscordHistorian Tobotimus TrustyJAID Twentysix26 Vexed01
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
@@ -2256,6 +2672,8 @@ Read before updating
 
 #. Fedora 31 and OpenSUSE Leap 15.1 are no longer supported as they have already reached end of life.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2315,6 +2733,7 @@ Fixes
 - **Cogs - Streams** - Fixed stream alerts being sent even after unloading Streams cog (:issue:`4940`)
 - **Cogs - Warnings** - Fixed output of ``[p]warnings`` command for members that are no longer in the server (:issue:`4900`, :issue:`4904`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -2365,13 +2784,21 @@ Fixes
 
 - Updated Mac install guide with new ``brew`` commands (:issue:`4865`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.7
+.. RED-CHANGELOG-RELEASE-DATE: 2021-02-26
 
 Redbot 3.4.7 (2021-02-26)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`elijabesu`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`palmtree5`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    elijabesu Flame442 flaree jack1142 Kowlin kreusada palmtree5 TrustyJAID
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2392,6 +2819,7 @@ Fixes
 - **Cogs - General** - Updated the ``[p]lmgtfy`` command to use the new domain (:issue:`4840`)
 - **Cogs - Mutes** - Fixed minor issues with error messages in Mutes cog (:issue:`4847`, :issue:`4850`, :issue:`4853`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Documentation changes
 ---------------------
@@ -2402,21 +2830,31 @@ Additions
 - |cool| Added `cog guide for General cog <cog_guides/general>` (:issue:`4797`)
 - |cool| Added `cog guide for Trivia cog <cog_guides/trivia>` (:issue:`4566`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.6
+.. RED-CHANGELOG-RELEASE-DATE: 2021-02-16
 
 Redbot 3.4.6 (2021-02-16)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`aleclol`, :ghuser:`Andeeeee`, :ghuser:`bobloy`, :ghuser:`BreezeQS`, :ghuser:`Danstr5544`, :ghuser:`Dav-Git`, :ghuser:`Elysweyr`, :ghuser:`Fabian-Evolved`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreusada`, :ghuser:`leblancg`, :ghuser:`maxbooiii`, :ghuser:`NeuroAssassin`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Strafee`, :ghuser:`TheWyn`, :ghuser:`TrustyJAID`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna aleclol Andeeeee bobloy BreezeQS Danstr5544 Dav-Git Elysweyr Fabian-Evolved fixator10 Flame442 Injabie3 jack1142 Kowlin kreusada leblancg maxbooiii NeuroAssassin phenom4n4n PredaaA Predeactor retke siu3334 Strafee TheWyn TrustyJAID Vexed01 yamikaitou
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.6 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.2.3_1199>`__.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2495,6 +2933,7 @@ Fixes
 - **Cogs - Streams** - Fixed incorrect timezone offsets for some YouTube stream schedules (:issue:`4693`, :issue:`4694`)
 - **Cogs - Streams** - Fixed meaningless errors happening when the YouTube API key becomes invalid or when the YouTube quota is exceeded (:issue:`4745`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -2542,13 +2981,21 @@ Fixes
 
 - Updated the pip command for Red with the postgres extra in Linux/macOS install guide to work on zsh shell (:issue:`4697`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.5
+.. RED-CHANGELOG-RELEASE-DATE: 2020-12-24
 
 Redbot 3.4.5 (2020-12-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Injabie3`, :ghuser:`NeuroAssassin`
+.. changelog-contributors::
+
+    Injabie3 NeuroAssassin
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 This is a hotfix release fixing an issue with Streams cog failing to load.
 
@@ -2560,16 +3007,25 @@ Fixes
 
 - **Cogs - Streams** - Fixed Streams failing to load and work properly (:issue:`4687`, :issue:`4688`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.4
+.. RED-CHANGELOG-RELEASE-DATE: 2020-12-24
 
 Redbot 3.4.4 (2020-12-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`kreus7`, :ghuser:`NeuroAssassin`, :ghuser:`npc203`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`siu3334`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna bobloy Flame442 flaree jack1142 Kowlin kreus7 NeuroAssassin npc203 palmtree5 phenom4n4n Predeactor retke siu3334 Vexed01 yamikaitou
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
@@ -2579,6 +3035,8 @@ Read before updating
 
     While you might still be able to run Red on it, we will no longer put any resources into supporting it. If you're using Ubuntu 16.04, we highly recommend that you upgrade to the latest LTS version of Ubuntu.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2615,6 +3073,7 @@ Fixes
 - **Cogs - Mod** - ``[p]ban`` command will no longer error out when the given reason is too long (:issue:`4187`, :issue:`4189`)
 - |cool| **Cogs - Streams** - Scheduled YouTube streams now work properly with the cog (:issue:`3691`, :issue:`4615`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -2647,20 +3106,31 @@ Removals
 
 - Removed install instructions for Ubuntu 16.04 (:issue:`4650`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.3
+.. RED-CHANGELOG-RELEASE-DATE: 2020-11-16
 
 Redbot 3.4.3 (2020-11-16)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`KianBral`, :ghuser:`maxbooiii`, :ghuser:`phenom4n4n`, :ghuser:`Predeactor`, :ghuser:`retke`
+.. changelog-contributors::
+
+    aikaterna bobloy Flame442 jack1142 KianBral maxbooiii phenom4n4n Predeactor retke
 
 Read before updating
 --------------------
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
+
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.3 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1132>`__.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2691,6 +3161,7 @@ Fixes
 - **Cogs - Modlog** - The ``[p]case`` and ``[p]casesfor`` commands no longer fail when the bot doesn't have Read Message History permission in the modlog channel (:issue:`4587`, :issue:`4588`)
 - **Cogs - Mutes** - Fixed automatic remuting on member join for indefinite mutes (:issue:`4568`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -2710,20 +3181,31 @@ Additions
 - |cool| Added `guide for Cog Manager UI <cogmanagerui>` (:issue:`4152`)
 - |cool| Added `cog guide for CustomCommands cog <customcommands>` (:issue:`4490`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.2
+.. RED-CHANGELOG-RELEASE-DATE: 2020-10-28
 
 Redbot 3.4.2 (2020-10-28)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`
+.. changelog-contributors::
+
+    aikaterna Drapersniper jack1142 Kowlin PredaaA Stonedestroyer
 
 Read before updating
 --------------------
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
+
 #. Information for Audio users that are using an external Lavalink instance (if you don't know what that is, you should skip this point):
 
     Red 3.4.2 uses a new Lavalink jar that you will need to manually update from `our GitHub <https://github.com/Cog-Creators/Lavalink-Jars/releases/tag/3.3.1.4_1128>`__.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2743,6 +3225,7 @@ Fixes
 - |cool| **Cogs - Audio** - Fixed random "Something broke when playing the track." errors for YouTube tracks (:issue:`4559`)
 - **Cogs - Mod** - Fixed ``[p]massban`` not working for banning members that are in the server (:issue:`4556`, :issue:`4555`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Documentation changes
 ---------------------
@@ -2757,16 +3240,24 @@ Changes
 
 - Removed multi-line commands from Linux install guides to avoid confusing readers (:issue:`4550`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.1
+.. RED-CHANGELOG-RELEASE-DATE: 2020-10-27
 
 Redbot 3.4.1 (2020-10-27)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`absj30`, :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`chloecormier`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Generaleoley`, :ghuser:`hisztendahl`, :ghuser:`jack1142`, :ghuser:`KaiGucci`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`NeuroAssassin`, :ghuser:`nfitzen`, :ghuser:`palmtree5`, :ghuser:`phenom4n4n`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`PythonTryHard`, :ghuser:`SharkyTheKing`, :ghuser:`Stonedestroyer`, :ghuser:`thisisjvgrace`, :ghuser:`TrustyJAID`, :ghuser:`TurnrDev`, :ghuser:`Vexed01`, :ghuser:`Vuks69`, :ghuser:`xBlynd`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    absj30 aikaterna bobloy chloecormier Dav-Git Drapersniper fixator10 Flame442 flaree Generaleoley hisztendahl jack1142 KaiGucci Kowlin maxbooiii MeatyChunks NeuroAssassin nfitzen palmtree5 phenom4n4n PredaaA Predeactor PythonTryHard SharkyTheKing Stonedestroyer thisisjvgrace TrustyJAID TurnrDev Vexed01 Vuks69 xBlynd zephyrkul
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. This release fixes a security issue in Mod cog. See `Security changelog below <important-341-2>` for more information.
 #. This Red update bumps discord.py to version 1.5.1, which explicitly requests Discord intents. Red requires all Privileged Intents to be enabled. More information can be found at :ref:`enabling-privileged-intents`.
@@ -2775,6 +3266,9 @@ Read before updating
 
    We've updated our `application.yml file <https://github.com/Cog-Creators/Red-DiscordBot/blob/3.4.1/redbot/cogs/audio/data/application.yml>`__ and you should update your instance's ``application.yml`` appropriately.
    Please ensure that the WS port in Audio's settings (``[p]llset wsport``) is set to the port from the ``application.yml``.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -2871,6 +3365,7 @@ Fixes
 - **Cogs - Trivia - Lists** - Fixed incorrect order of Machamp and Machoke questions (:issue:`4424`)
 - **Cogs - Warnings** - Fixed users being able to warn users above them in hierarchy (:issue:`4100`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -2931,22 +3426,33 @@ Changes
 - Replaced the link to the approved repository list on CogBoard and references to ``cogs.red`` with a link to new Red Index (:issue:`4439`)
 - Improved documentation about arguments in command syntax (:issue:`4058`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.4.0
+.. RED-CHANGELOG-RELEASE-DATE: 2020-08-17
 
 Redbot 3.4.0 (2020-08-17)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`DevilXD`, :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`kablekompany`, :ghuser:`Kowlin`, :ghuser:`maxbooiii`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`retke`, :ghuser:`SharkyTheKing`, :ghuser:`thisisjvgrace`, :ghuser:`Tinonb`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    Dav-Git DevilXD douglas-cpp Drapersniper flaree jack1142 kablekompany Kowlin maxbooiii MeatyChunks mikeshardmind NeuroAssassin PredaaA Predeactor retke SharkyTheKing thisisjvgrace Tinonb TrustyJAID Twentysix26 Vexed01 zephyrkul
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Red 3.4 comes with support for data deletion requests. Bot owners should read `red_core_data_statement` to ensure they know what information about their users is stored by the bot.
 #. Debian Stretch, Fedora 30 and lower, and OpenSUSE Leap 15.0 and lower are no longer supported as they have already reached end of life.
 #. There's been a change in behavior of ``[p]tempban``. Look at `Changes changelog for Mod cog <important-340-1>` for full details.
 #. There's been a change in behavior of announcements in Admin cog. Look at `Changes changelog for Admin cog <important-340-1>` for full details.
 #. Red 3.4 comes with breaking changes for cog developers. Look at `Developer changelog <important-340-3>` for full details.
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3003,7 +3509,7 @@ Fixes
 
 - Fixed timestamp storage in few places in Red (:issue:`4017`)
 
-
+.. RED-CHANGELOG-USER-CHANGELOG-END
 .. _important-340-3:
 
 Developer changelog
@@ -3081,13 +3587,21 @@ Removals
 
 - Removed install instructions for Debian Stretch (:issue:`4099`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.12
+.. RED-CHANGELOG-RELEASE-DATE: 2020-08-18
 
 Redbot 3.3.12 (2020-08-18)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`douglas-cpp`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MeatyChunks`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    Dav-Git douglas-cpp flaree jack1142 Kowlin MeatyChunks PredaaA Predeactor thisisjvgrace Vexed01 zephyrkul
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3113,13 +3627,22 @@ Changes
 - **Cogs - Mod** - Added typing to ``[p](un)mute guild`` to indicate that mute is being processed (:issue:`4066`, :issue:`4172`)
 - **Cogs - Streams** - Improve error messages for invalid channel names/IDs (:issue:`4147`, :issue:`4148`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.11
+.. RED-CHANGELOG-RELEASE-DATE: 2020-08-10
 
 Redbot 3.3.11 (2020-08-10)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`douglas-cpp`, :ghuser:`Drapersniper`, :ghuser:`Flame`, :ghuser:`jack1142`, :ghuser:`MeatyChunks`, :ghuser:`Vexed01`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    douglas-cpp Drapersniper Flame jack1142 MeatyChunks Vexed01 yamikaitou
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3141,13 +3664,22 @@ Fixes
 - **Cogs - Permissions** - ``[p]permissions removeserverrule`` and ``[p]permissions removeglobalrule`` no longer error when trying to remove a rule that doesn't exist (:issue:`4028`, :issue:`4036`)
 - **Cogs - Warnings** - ``[p]warn`` now sends an error message (instead of no feedback) when an unregistered reason is used by someone who doesn't have Administrator permission (:issue:`3839`, :issue:`3840`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.10
+.. RED-CHANGELOG-RELEASE-DATE: 2020-07-09
 
 Redbot 3.3.10 (2020-07-09)
 ==========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Injabie3`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`thisisjvgrace`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna bobloy Dav-Git Drapersniper Flame442 flaree Injabie3 jack1142 mikeshardmind MiniJennJenn NeuroAssassin thisisjvgrace Vexed01
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3201,6 +3733,7 @@ Fixes
 - **Cogs - Trivia - Lists** - Fixed URLs in ``whosthatpokemon`` (:issue:`3975`, :issue:`3023`)
 - **Cogs - Trivia - Lists** - Fixed trivia files ``leagueults`` and ``sports`` (:issue:`4026`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3227,20 +3760,30 @@ Fixes
 
 - **Core - Utils Package** - Fixed incorrect role mention regex in `MessagePredicate` (:issue:`4030`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.9
+.. RED-CHANGELOG-RELEASE-DATE: 2020-06-12
 
 Redbot 3.3.9 (2020-06-12)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`Predeactor`, :ghuser:`Vexed01`
+.. changelog-contributors::
+
+    aikaterna Dav-Git Drapersniper Flame442 mikeshardmind NeuroAssassin Predeactor Vexed01
 
 Read before updating
 --------------------
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
+
 #. Bot owners can no longer restrict access to some commands in Permissions cog using global permissions rules. Look at `Security changelog <important-339-2>` for full details.
 #. There's been a change in behavior of warning messages. Look at `Additions changelog <important-339-1>` for full details.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3297,6 +3840,7 @@ Fixes
 - **Cogs - Mod** - Preemptive fix for d.py 1.4 (:issue:`3891`)
 - **Cogs - Warnings** - Warn channel functionality has been fixed (:issue:`3781`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3315,13 +3859,21 @@ Changes
 
 - Added Oracle Cloud to free hosting section in :ref:`host-list` (:issue:`3916`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.8
+.. RED-CHANGELOG-RELEASE-DATE: 2020-05-29
 
 Redbot 3.3.8 (2020-05-29)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DariusStClair`, :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Predeactor`, :ghuser:`qaisjp`, :ghuser:`Tobotimus`
+.. changelog-contributors::
+
+    aikaterna Bakersbakebread DariusStClair Dav-Git Drapersniper Flame442 jack1142 mikeshardmind NeuroAssassin PredaaA Predeactor qaisjp Tobotimus
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3369,6 +3921,7 @@ Fixes
 - **Cogs - Permissions** - Commands for settings ACL using yaml files now properly works on PostgreSQL data backend (:issue:`3829`, :issue:`3796`)
 - **Cogs - Warnings** - Warnings cog no longer allows to warn bot users (:issue:`3855`, :issue:`3854`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3402,20 +3955,36 @@ Changes
 - Revised install instructions (:issue:`3847`)
 - Improved navigation in `document about updating Red <update_red>` (:issue:`3856`, :issue:`3849`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.7
+.. RED-CHANGELOG-RELEASE-DATE: 2020-04-28
 
 Redbot 3.3.7 (2020-04-28)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 This is a hotfix release fixing issue with generating messages for new cases in Modlog.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.6
+.. RED-CHANGELOG-RELEASE-DATE: 2020-04-27
 
 Redbot 3.3.6 (2020-04-27)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Drapersniper`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`MiniJennJenn`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`TrustyJAID`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna Drapersniper jack1142 Kowlin MiniJennJenn NeuroAssassin PredaaA TrustyJAID yamikaitou
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3454,6 +4023,7 @@ Fixes
 - **Cogs - Trivia** - Fixed the error in ``[p]trivia stop`` that happened when there was no ongoing trivia session in the channel (:issue:`3774`)
 - **Cogs - Trivia - Lists** - Corrected spelling of Compact Disc in ``games`` list (:issue:`3759`, :issue:`3758`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3489,13 +4059,21 @@ Changes
 - ``pyenv`` instructions will now update ``pyenv`` if it's already installed (:issue:`3740`)
 - Updated Python version in ``pyenv`` instructions (:issue:`3740`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.5
+.. RED-CHANGELOG-RELEASE-DATE: 2020-04-09
 
 Redbot 3.3.5 (2020-04-09)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`Kowlin`
+.. changelog-contributors::
+
+    jack1142 Kowlin
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3510,13 +4088,22 @@ Fixes
 
 - **Cogs - Alias** - Fixed regression in ``[p]alias add`` that caused it to reject commands containing arguments (:issue:`3734`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.4
+.. RED-CHANGELOG-RELEASE-DATE: 2020-04-05
 
 Redbot 3.3.4 (2020-04-05)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`jack1142`, :ghuser:`kennnyshiwa`
+.. changelog-contributors::
+
+    jack1142 kennnyshiwa
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3531,6 +4118,7 @@ Fixes
 
 - **Core - Bot Commands** - Fixed checks related to bank's global state that were used in commands in Bank, Economy and Trivia cogs (:issue:`3707`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3555,13 +4143,21 @@ Changes
 
 - Versions of pre-requirements are now included in Windows install guide (:issue:`3708`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.3
+.. RED-CHANGELOG-RELEASE-DATE: 2020-03-28
 
 Redbot 3.3.3 (2020-03-28)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`AnonGuy`, :ghuser:`Dav-Git`, :ghuser:`FancyJesse`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    AnonGuy Dav-Git FancyJesse Ianardo-DiCaprio jack1142 kennnyshiwa Kowlin NeuroAssassin PredaaA Stonedestroyer TrustyJAID
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3623,6 +4219,7 @@ Fixes
 - **Cogs - Trivia** - Trivia sessions no longer error on payout when winner's balance would exceed max balance (:issue:`3666`, :issue:`3584`)
 - **Cogs - Trivia** - Non-finite numbers can no longer be passed to ``[p]triviaset timelimit``, ``[p]triviaset stopafter`` and ``[p]triviaset payout`` (:issue:`3668`, :issue:`3583`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3648,13 +4245,21 @@ Fixes
 
 - Fixed install instructions for Mac (:issue:`3675`, :issue:`3436`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.2
+.. RED-CHANGELOG-RELEASE-DATE: 2020-02-28
 
 Redbot 3.3.2 (2020-02-28)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`chasehult`, :ghuser:`Dav-Git`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`Hedlund01`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Stonedestroyer`, :ghuser:`trundler-dev`, :ghuser:`TrustyJAID`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    aikaterna chasehult Dav-Git DiscordLiz Drapersniper fixator10 Flame442 Hedlund01 jack1142 Kowlin mikeshardmind PredaaA Stonedestroyer trundler-dev TrustyJAID zephyrkul
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3695,6 +4300,7 @@ Fixes
 - **Cogs - Trivia** - Added better handling for errors in trivia session (:issue:`3606`)
 - **Cogs - Trivia - Lists** - Removed empty answers in trivia lists (:issue:`3581`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3747,13 +4353,21 @@ Changes
 - Added separate headers for each event predicate class for better navigation (:issue:`3595`, :issue:`3164`)
 - Improved wording of explanation for ``required_cogs`` key in `guide_publish_cogs` (:issue:`3520`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.1
+.. RED-CHANGELOG-RELEASE-DATE: 2020-02-05
 
 Redbot 3.3.1 (2020-02-05)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Flame442`, :ghuser:`flyingmongoose`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`
+.. changelog-contributors::
+
+    aikaterna Flame442 flyingmongoose jack1142 Kowlin mikeshardmind palmtree5 PredaaA
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3776,6 +4390,7 @@ Fixes
 - **Core - Bot Commands** - ``[p]dm`` no longer allows owners to have the bot attempt to DM itself (:issue:`3477`, :issue:`3478`)
 - **Cogs - Mod** - Hackban now works properly without being provided a number of days (:issue:`3476`, :issue:`3475`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3800,13 +4415,21 @@ Changes
 - Added ``-e`` flag to ``journalctl`` command in systemd guide so that it takes the user to the end of logs automatically (:issue:`3483`)
 - Improved usage of apt update in docs (:issue:`3464`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.3.0
+.. RED-CHANGELOG-RELEASE-DATE: 2020-01-26
 
 Redbot 3.3.0 (2020-01-26)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`DevilXD`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`Stonedestroyer`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    DevilXD Drapersniper Flame442 Ianardo-DiCaprio jack1142 Kowlin mikeshardmind Stonedestroyer zephyrkul
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3840,6 +4463,7 @@ Fixes
 - **Cogs - General** - ``[p]roll`` command will no longer attempt to roll obscenely large amounts (:issue:`3284`, :issue:`3395`)
 - **Cogs - Permissions** - Now has stronger enforcement of prioritizing botwide settings
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3877,13 +4501,21 @@ Fixes
 
 - We've made some small fixes to inaccurate instructions about installing with pyenv (:issue:`3434`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.2.3
+.. RED-CHANGELOG-RELEASE-DATE: 2020-01-17
 
 Redbot 3.2.3 (2020-01-17)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Dav-Git`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`Redjumpman`, :ghuser:`Stonedestroyer`, :ghuser:`TrustyJAID`
+.. changelog-contributors::
+
+    Dav-Git Drapersniper Flame442 flaree jack1142 Kowlin mikeshardmind Redjumpman Stonedestroyer TrustyJAID
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3916,6 +4548,7 @@ Fixes
 - **Cogs - Audio** - Multiple user facing messages have been made more correct (:issue:`3347`, :issue:`3348`, :issue:`3374`)
 - **Cogs - Downloader** - Added pagination of output on cog update when it's too long for single message (:issue:`3385`, :issue:`3388`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -3955,10 +4588,17 @@ Fixes
 - Updated the documentation with the minimum supported git version (:issue:`3371`)
 - Fixed install instructions for Debian to also work with Debian Stretch (:issue:`3352`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.2.2
+.. RED-CHANGELOG-RELEASE-DATE: 2020-01-10
 
 Redbot 3.2.2 (2020-01-10)
 =========================
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3968,6 +4608,7 @@ Fixes
 
 - **Core - Bot Commands** - Fixed pagination issue in ``[p]help`` command (:issue:`3323`, :issue:`3324`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Documentation changes
 ---------------------
@@ -3977,13 +4618,21 @@ Fixes
 
 - Corrected venv docs to use the actually supported Python version (:issue:`3325`, :issue:`3324`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.2.1
+.. RED-CHANGELOG-RELEASE-DATE: 2020-01-10
 
 Redbot 3.2.1 (2020-01-10)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`mikeshardmind`, :ghuser:`palmtree5`
+.. changelog-contributors::
+
+    mikeshardmind palmtree5
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -3999,16 +4648,25 @@ Fixes
 - **Core - Command-line Interfaces** - Fixed Mongo conversion from being incorrectly blocked (:issue:`3316`, :issue:`3319`)
 - **Cogs - Admin** - Fixed announcer not creating a message for success feedback (:issue:`3320`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.2.0
+.. RED-CHANGELOG-RELEASE-DATE: 2020-01-09
 
 Redbot 3.2.0 (2020-01-09)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Aurorum`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`DJtheRedstoner`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`flaree`, :ghuser:`Ianardo-DiCaprio`, :ghuser:`jack1142`, :ghuser:`jerbob`, :ghuser:`jonasbohmann`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`RealFriesi`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`Vexed01`, :ghuser:`wereii`, :ghuser:`yamikaitou`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    aikaterna Aurorum Bakersbakebread DevilXD DiscordLiz DJtheRedstoner Drapersniper Flame442 flaree Ianardo-DiCaprio jack1142 jerbob jonasbohmann kennnyshiwa Kowlin mikeshardmind palmtree5 PredaaA RealFriesi retke Tobotimus Vexed01 wereii yamikaitou ZeLarpMaster zephyrkul
 
 Read before updating
 --------------------
+
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-BEGIN
 
 #. Red 3.2 dropped support for the MongoDB driver. When updating your instance from an older version, be sure to use instructions for **your current version** from the `document about updating Red <update_red>` to be able to still start your instance after the update.
 #. Red 3.2 requires Python 3.8.1 or newer. In order to be able to update, you'll first have to install appropriate versions of your dependencies so be sure to use instructions for **your current version** from the `document about updating Red <update_red>`.
@@ -4021,6 +4679,8 @@ Read before updating
 #. Red 3.2 comes with improvements which required breaking changes for 3rd party cogs. When you update to 3.2, your cogs may not be compatible if the author has not handled
    the changes yet. If you're a cog creator, you can look at `Developer changelog <important-320-1>` for full details.
 
+.. RED-CHANGELOG-READ-BEFORE-UPDATE-END
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -4248,7 +4908,7 @@ Fixes
 - **Cogs - Trivia - Lists** - Fixed a question in the Overwatch trivia list that accepted blank responses (:issue:`2996`)
 - **Cogs - Trivia - Lists** - Fixed questions and answers that were incorrect in the Clash Royale trivia list (:issue:`3236`)
 
-
+.. RED-CHANGELOG-USER-CHANGELOG-END
 .. _important-320-1:
 
 Developer changelog
@@ -4389,28 +5049,52 @@ Fixes
 - Updated the docs footer copyright to 2018-2019 (:issue:`3105`)
 - Updated copyright notices on License and RTD config to 2020 (:issue:`3259`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.9
+.. RED-CHANGELOG-RELEASE-DATE: 2020-01-08
 
 Redbot 3.1.9 (2020-01-08)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 This is a maintenance release patching a denial of service issue with Audio.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.8
+.. RED-CHANGELOG-RELEASE-DATE: 2019-11-19
 
 Redbot 3.1.8 (2019-11-19)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 This is a hotfix release updating discord.py to fix a full bot crash when emoji reaction is added/removed.
 This was caused by Discord API changes.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.7
+.. RED-CHANGELOG-RELEASE-DATE: 2019-11-05
 
 Redbot 3.1.7 (2019-11-05)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`mikeshardmind`
+.. changelog-contributors::
+
+    aikaterna mikeshardmind
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -4426,34 +5110,67 @@ Fixes
 - **Core - Dependencies** - Added partial mitigation for issues with running Red on Python 3.8 (`1c64abe <https://github.com/Cog-Creators/Red-DiscordBot/commit/1c648abea21c28cd3b912d1cb2fee6cf2960e352>`__)
 - **Cogs - Audio** - Fixed issues with SoundCloud playback (`989e16b <https://github.com/Cog-Creators/Red-DiscordBot/commit/989e16b20b814971e01a8657dedf4d9b45c23ed1>`__)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.6
+.. RED-CHANGELOG-RELEASE-DATE: 2019-10-18
 
 Redbot 3.1.6 (2019-10-18)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 This is a hotfix release updating discord.py for a critical issue related to voice connections.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.5
+.. RED-CHANGELOG-RELEASE-DATE: 2019-07-31
 
 Redbot 3.1.5 (2019-07-31)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 This is a maintenance release fixing issues with playback of YouTube tracks.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.4
+.. RED-CHANGELOG-RELEASE-DATE: 2019-07-16
 
 Redbot 3.1.4 (2019-07-16)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 This is a hotfix release fixing issues with broken custom commands and modlog cases.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.3
+.. RED-CHANGELOG-RELEASE-DATE: 2019-07-14
 
 Redbot 3.1.3 (2019-07-14)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`Bakersbakebread`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`Drapersniper`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lizzyd710`, :ghuser:`MeatyChunks`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`
+.. changelog-contributors::
+
+    aikaterna Bakersbakebread DevilXD DiscordLiz Drapersniper Flame442 jack1142 kennnyshiwa Kowlin lizzyd710 MeatyChunks mikeshardmind NeuroAssassin PredaaA retke Tobotimus yamikaitou
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -4501,6 +5218,7 @@ Fixes
 - **Cogs - Permissions** - Commands for adding/removing rules in ``[p]permissions`` command group now no longer ignore invalid arguments (:issue:`2851`, :issue:`2865`)
 - **Cogs - Trivia - Lists** - Fixed answers for Beethoven-related questions in ``entertainment`` trivia list (:issue:`2318`, :issue:`2823`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -4534,13 +5252,21 @@ Fixes
 - Fixed code examples in Bank, Config, and ModLog API documentation (:issue:`2775`, :issue:`2780`, :issue:`2860`)
 - Fixed the code example for the documentation of `Command.error` decorator and added a note with clarifications (:issue:`2760`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.2
+.. RED-CHANGELOG-RELEASE-DATE: 2019-05-31
 
 Redbot 3.1.2 (2019-05-31)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`bren0xa`, :ghuser:`DevilXD`, :ghuser:`DiscordLiz`, :ghuser:`fixator10`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`Kowlin`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Stonedestroyer`, :ghuser:`Tobotimus`, :ghuser:`yamikaitou`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    bren0xa DevilXD DiscordLiz fixator10 Flame442 jack1142 Kowlin mikeshardmind NeuroAssassin palmtree5 PredaaA retke Stonedestroyer Tobotimus yamikaitou zephyrkul
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -4591,6 +5317,7 @@ Fixes
 - **Cogs - Streams** - Fixed an issue with stream commands not properly dealing with stream reruns (:issue:`2679`)
 - **Cogs - Streams** - Fixed a regression that caused stream alerts for non-Twitch users to not work anymore (:issue:`2724`, :issue:`2699`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -4608,20 +5335,36 @@ Changes
 
 - **Core - Utils Package** - `menu()` now accepts `functools.partial` (:issue:`2718`, :issue:`2720`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.1
+.. RED-CHANGELOG-RELEASE-DATE: 2019-05-15
 
 Redbot 3.1.1 (2019-05-15)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 This is a hotfix release fixing issues related to fuzzy command search that were happening with the new help formatter.
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.1.0
+.. RED-CHANGELOG-RELEASE-DATE: 2019-05-15
 
 Redbot 3.1.0 (2019-05-15)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`aikaterna`, :ghuser:`bobloy`, :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`EgonSpengler`, :ghuser:`entchen66`, :ghuser:`FixedThink`, :ghuser:`Flame442`, :ghuser:`jack1142`, :ghuser:`kennnyshiwa`, :ghuser:`Kowlin`, :ghuser:`lionirdeadman`, :ghuser:`mikeshardmind`, :ghuser:`NeuroAssassin`, :ghuser:`NIXC`, :ghuser:`palmtree5`, :ghuser:`PredaaA`, :ghuser:`retke`, :ghuser:`Seputaes`, :ghuser:`Sitryk`, :ghuser:`tekulvw`, :ghuser:`Tobotimus`, :ghuser:`TrustyJAID`, :ghuser:`Twentysix26`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    aikaterna bobloy calebj DiscordLiz EgonSpengler entchen66 FixedThink Flame442 jack1142 kennnyshiwa Kowlin lionirdeadman mikeshardmind NeuroAssassin NIXC palmtree5 PredaaA retke Seputaes Sitryk tekulvw Tobotimus TrustyJAID Twentysix26 zephyrkul
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -4692,6 +5435,7 @@ Fixes
 - **Cogs - Mod** - Fixed ``[p]ban`` not allowing to omit ``days`` argument (:issue:`2602`)
 - **Cogs - Trivia - Lists** - Fixed dead image link for Sao Tome and Principe flag in ``worldflags`` trivia (:issue:`2540`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -4725,13 +5469,21 @@ Fixes
 - **Core - Utils Package** - Fixed spelling of the `Tunnel`'s method from ``files_from_attatch()`` to `files_from_attach() <Tunnel.files_from_attach()>`; old name was left for backwards compatibility (:issue:`2496`)
 - **Core - Utils Package** - Fixed behavior of ``Tunnel.react_close()`` - now when tunnel closes, the message will be sent to the other end (:issue:`2507`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.0.2
+.. RED-CHANGELOG-RELEASE-DATE: 2019-02-24
 
 Redbot 3.0.2 (2019-02-24)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`Tobotimus`, :ghuser:`ZeLarpMaster`
+.. changelog-contributors::
+
+    Tobotimus ZeLarpMaster
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -4742,13 +5494,22 @@ Fixes
 - **Cogs - Permissions** - Fixed rules loading for cogs (`431cdf1 <https://github.com/Cog-Creators/Red-DiscordBot/commit/431cdf1ad4247fbe40f940e39bac4c919b470937>`__)
 - **Cogs - Trivia - Lists** - Fixed a typo in ``cars`` trivia (:issue:`2475`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.0.1
+.. RED-CHANGELOG-RELEASE-DATE: 2019-02-17
 
 Redbot 3.0.1 (2019-02-17)
 =========================
 
-| Thanks to all these amazing people who contributed to this release:
-| :ghuser:`calebj`, :ghuser:`DiscordLiz`, :ghuser:`mikeshardmind`, :ghuser:`PredaaA`, :ghuser:`Redjumpman`, :ghuser:`Tobotimus`, :ghuser:`Twentysix26`, :ghuser:`ZeLarpMaster`, :ghuser:`zephyrkul`
+.. changelog-contributors::
+
+    calebj DiscordLiz mikeshardmind PredaaA Redjumpman Tobotimus Twentysix26 ZeLarpMaster zephyrkul
+
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
 End-user changelog
 ------------------
@@ -4775,6 +5536,7 @@ Fixes
 - **Cogs - Mod** - ``[p]userinfo`` now accounts for guild's lurkers (:issue:`2406`, :issue:`2426`)
 - **Cogs - Permissions** - Fixed rule precedence issues for default rules (:issue:`2313`, :issue:`2422`)
 
+.. RED-CHANGELOG-USER-CHANGELOG-END
 
 Developer changelog
 -------------------
@@ -4789,10 +5551,20 @@ Fixes
 
 - **Core - Utils Package** - ``MessagePredicate.lower_contained_in()`` now actually lowers the message content before trying to match (:issue:`2399`)
 
+.. RED-CHANGELOG-END
+
 ----
+
+.. RED-CHANGELOG-BEGIN: 3.0.0
+.. RED-CHANGELOG-RELEASE-DATE: 2019-01-28
 
 Redbot 3.0.0 (2019-01-28)
 =========================
 
+.. RED-CHANGELOG-USER-CHANGELOG-BEGIN
+
 First stable release of Red V3.
 Changelogs for this and previous versions can be found on `our GitHub releases page <https://github.com/Cog-Creators/Red-DiscordBot/releases?after=3.0.1>`__.
+
+.. RED-CHANGELOG-USER-CHANGELOG-END
+.. RED-CHANGELOG-END

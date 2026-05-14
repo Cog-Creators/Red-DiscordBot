@@ -965,12 +965,7 @@ def cli_contributors(version: str, *, show_not_merged: bool = False) -> None:
 
 
 def get_contributors(version: str, *, show_not_merged: bool = False) -> None:
-    print(
-        ", ".join(
-            f":ghuser:`{username}`"
-            for username in _get_contributors(version, show_not_merged=show_not_merged)
-        )
-    )
+    print(*_get_contributors(version, show_not_merged=show_not_merged))
 
 
 def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[str]:

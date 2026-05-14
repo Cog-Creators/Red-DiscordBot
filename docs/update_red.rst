@@ -25,13 +25,57 @@ Updating differs depending on the version you currently have. Next sections will
     :depth: 1
 
 
-Red 3.5.0 or newer
-******************
+Red 3.5.25 or newer
+*******************
 
 Windows
 -------
 
-If you have Red 3.5.0 or newer, you can upgrade by following these steps:
+If you have Red 3.5.25 or newer, you can upgrade by following these steps:
+
+#. Shut your bot down.
+#. Activate your venv with the following command:
+
+    .. prompt:: batch
+
+        "%userprofile%\redenv\Scripts\activate.bat"
+#. Update Red with this command:
+
+    .. prompt:: batch
+        :prompts: (redenv) C:\\>
+
+        redbot-update
+#. Start your bot.
+
+Linux & Mac
+-----------
+
+If you have Red 3.5.25 or newer, you can upgrade by following these steps:
+
+#. Shut your bot down.
+#. Activate your virtual environment.
+  
+    If you used ``venv`` for your virtual environment, use:
+
+    .. prompt:: bash
+
+        source ~/redenv/bin/activate
+
+#. Update Red with this command:
+
+    .. prompt:: bash
+        :prompts: (redenv) $
+
+        redbot-update
+#. Start your bot.
+
+Red 3.5.0-3.5.24
+****************
+
+Windows
+-------
+
+If you have a Red version between 3.5.0 and 3.5.24, you can upgrade by following these steps:
 
 #. Shut your bot down.
 #. Activate your venv with the following command:
@@ -55,7 +99,7 @@ If you have Red 3.5.0 or newer, you can upgrade by following these steps:
 Linux & Mac
 -----------
 
-If you have Red 3.5.0 or newer, you can upgrade by following these steps:
+If you have a Red version between 3.5.0 and 3.5.24, you can upgrade by following these steps:
 
 #. Shut your bot down.
 #. Activate your virtual environment.

@@ -34,6 +34,8 @@ sphinx==7.1.2
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
     #   sphinxcontrib-trio
+sphinx-markdown-builder==0.6.10
+    # via -r extra-doc.in
 sphinx-prompt==1.7.0
     # via -r extra-doc.in
 sphinx-rtd-theme==3.1.0
@@ -54,6 +56,8 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 sphinxcontrib-trio==1.2.0
     # via -r extra-doc.in
+tabulate==0.9.0
+    # via sphinx-markdown-builder
 urllib3==2.2.3
     # via requests
 zipp==3.20.2
