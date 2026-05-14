@@ -6,11 +6,11 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
+from packaging.version import Version
+
 from .log import log
 from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
 from .json_mixins import RepoJSONMixin
-
-from redbot.core import VersionInfo
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo
@@ -44,12 +44,12 @@ class Installable(RepoJSONMixin):
         Name(s) of the author(s).
     end_user_data_statement : `str`
         End user data statement of the module.
-    min_bot_version : `VersionInfo`
+    min_bot_version : `packaging.version.Version`
         The minimum bot version required for this Installable.
-    max_bot_version : `VersionInfo`
+    max_bot_version : `packaging.version.Version`
         The maximum bot version required for this Installable.
         Ignored if `min_bot_version` is newer than `max_bot_version`.
-    min_python_version : `tuple` of `int`
+    min_python_version : `packaging.version.Version`
         The minimum python version required for this cog.
     hidden : `bool`
         Whether or not this cog will be hidden from the user when they use
@@ -87,9 +87,9 @@ class Installable(RepoJSONMixin):
         self.commit = commit
 
         self.end_user_data_statement: str
-        self.min_bot_version: VersionInfo
-        self.max_bot_version: VersionInfo
-        self.min_python_version: Tuple[int, int, int]
+        self.min_bot_version: Version
+        self.max_bot_version: Version
+        self.min_python_version: Version
         self.hidden: bool
         self.disabled: bool
         self.required_cogs: Dict[str, str]  # Cog name -> repo URL

@@ -4,7 +4,8 @@ import re
 from typing import Tuple, Iterable, Collection, Optional, Set, List
 
 import discord
-from redbot.core import _downloader, commands, version_info as red_version_info
+from redbot import __version__
+from redbot.core import _downloader, commands
 from redbot.core._downloader import errors
 from redbot.core._downloader.installable import InstalledModule
 from redbot.core.bot import Red
@@ -956,9 +957,7 @@ class Downloader(commands.Cog):
             ) + humanize_list(
                 [
                     inline(cog.name)
-                    + _(" (Minimum: {min_version})").format(
-                        min_version=".".join([str(n) for n in cog.min_python_version])
-                    )
+                    + _(" (Minimum: {min_version})").format(min_version=cog.min_python_version)
                     for cog in update_check_result.incompatible_python_version
                 ]
             )
@@ -973,7 +972,7 @@ class Downloader(commands.Cog):
                     "\nThis cog requires different Red version than you currently "
                     "have ({current_version}): "
                 )
-            ).format(current_version=red_version_info) + humanize_list(
+            ).format(current_version=__version__) + humanize_list(
                 [
                     inline(cog.name)
                     + _(" (Minimum: {min_version}").format(min_version=cog.min_bot_version)

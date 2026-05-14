@@ -2546,6 +2546,7 @@ class Red(
             n_remaining = len(messages) - idx
             files_perm = (
                 isinstance(channel, discord.abc.User)
+                or channel.guild is None
                 or channel.permissions_for(channel.guild.me).attach_files
             )
             options = ("more", "file") if files_perm else ("more",)

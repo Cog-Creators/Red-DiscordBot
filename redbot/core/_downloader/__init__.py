@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import contextlib
 import dataclasses
+import functools
+import json
 import os
 import shutil
 import sys
@@ -34,9 +36,14 @@ from typing import (
 )
 
 import discord
-from redbot.core import commands, Config, version_info as red_version_info
+from packaging.version import Version
+from typing_extensions import Self
+
+from redbot import __version__
+from redbot.core import commands, Config
 from redbot.core._cog_manager import CogManager
 from redbot.core.data_manager import cog_data_path
+from redbot.core.utils._internal_utils import detailed_progress
 
 from . import errors
 from .log import log
@@ -552,8 +559,34 @@ async def reinstall_requirements() -> Tuple[Tuple[str, ...], Tuple[Installable, 
     return failed_reqs, tuple(all_failed_libs)
 
 
+# TODO: make kw_only
+@dataclasses.dataclass(frozen=True)
+class Environment:
+    """
+    Environment to check version bounds against.
+
+    Usually the metadata from current environment is used but this allows for alternative uses
+    such as checking, if the cog will work on a Red version you want to update to.
+    """
+
+    red_version: Version
+    python_version: Version
+
+    @classmethod
+    @functools.lru_cache(maxsize=None)
+    def current(cls) -> Self:
+        return cls(
+            red_version=Version(__version__),
+            python_version=Version(".".join(map(str, sys.version_info[:3]))),
+        )
+
+
 async def install_cogs(
-    repo: Repo, rev: Optional[str], cog_names: Iterable[str]
+    repo: Repo,
+    rev: Optional[str],
+    cog_names: Iterable[str],
+    *,
+    env: Environment = Environment.current(),
 ) -> CogInstallResult:
     commit = None
 
@@ -586,12 +619,12 @@ async def install_cogs(
                 already_installed.append(cog)
             elif discord.utils.get(_installed_cogs, name=cog.name):
                 name_already_used.append(cog)
-            elif cog.min_python_version > sys.version_info:
+            elif cog.min_python_version > env.python_version:
                 incompatible_python_version.append(cog)
-            elif cog.min_bot_version > red_version_info or (
+            elif cog.min_bot_version > env.red_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
-                and cog.max_bot_version < red_version_info
+                and cog.max_bot_version < env.red_version
             ):
                 incompatible_bot_version.append(cog)
             else:
@@ -651,6 +684,7 @@ async def check_cog_updates(
     repos: Optional[Iterable[Repo]] = None,
     cogs: Optional[Iterable[InstalledModule]] = None,
     update_repos: bool = True,
+    env: Environment = Environment.current(),
 ) -> CogUpdateCheckResult:
     cogs_to_check, failed_repos = await _get_cogs_to_check(
         repos=repos, cogs=cogs, update_repos=update_repos
@@ -661,12 +695,12 @@ async def check_cog_updates(
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
     for cog in outdated_cogs:
-        if cog.min_python_version > sys.version_info:
+        if cog.min_python_version > env.python_version:
             incompatible_python_version.append(cog)
-        elif cog.min_bot_version > red_version_info or (
+        elif cog.min_bot_version > env.red_version or (
             # max version should be ignored when it's lower than min version
             cog.min_bot_version <= cog.max_bot_version
-            and cog.max_bot_version < red_version_info
+            and cog.max_bot_version < env.red_version
         ):
             incompatible_bot_version.append(cog)
         else:
@@ -684,24 +718,36 @@ async def check_cog_updates(
 
 # update given cogs or all cogs
 async def update_cogs(
-    *, cogs: Optional[List[InstalledModule]] = None, repos: Optional[List[Repo]] = None
+    *,
+    cogs: Optional[List[InstalledModule]] = None,
+    repos: Optional[List[Repo]] = None,
+    update_repos: bool = True,
+    env: Environment = Environment.current(),
 ) -> CogUpdateResult:
     if cogs is not None and repos is not None:
         raise ValueError("You can specify cogs or repos argument, not both")
 
-    cogs_to_check, failed_repos = await _get_cogs_to_check(repos=repos, cogs=cogs)
-    return await _update_cogs(cogs_to_check, failed_repos=failed_repos)
+    cogs_to_check, failed_repos = await _get_cogs_to_check(
+        repos=repos, cogs=cogs, update_repos=update_repos
+    )
+    return await _update_cogs(cogs_to_check, failed_repos=failed_repos, env=env)
 
 
 # update given cogs or all cogs from the specified repo
 # using the specified revision (or latest if not specified)
 async def update_repo_cogs(
-    repo: Repo, cogs: Optional[List[InstalledModule]] = None, *, rev: Optional[str] = None
+    repo: Repo,
+    cogs: Optional[List[InstalledModule]] = None,
+    *,
+    rev: Optional[str] = None,
+    update_repo: bool = True,
+    env: Environment = Environment.current(),
 ) -> CogUpdateResult:
-    try:
-        await repo.update()
-    except errors.UpdateError:
-        return await _update_cogs(set(), failed_repos=(repo.name,))
+    if update_repo:
+        try:
+            await repo.update()
+        except errors.UpdateError:
+            return await _update_cogs(set(), failed_repos=(repo.name,))
 
     # TODO: should this be set to `repo.branch` when `rev` is None?
     commit = None
@@ -710,11 +756,14 @@ async def update_repo_cogs(
         commit = await repo.get_full_sha1(rev)
     async with repo.checkout(commit, exit_to_rev=repo.branch):
         cogs_to_check, __ = await _get_cogs_to_check(repos=[repo], cogs=cogs, update_repos=False)
-        return await _update_cogs(cogs_to_check, failed_repos=())
+        return await _update_cogs(cogs_to_check, failed_repos=(), env=env)
 
 
 async def _update_cogs(
-    cogs_to_check: Set[InstalledModule], *, failed_repos: Sequence[str]
+    cogs_to_check: Set[InstalledModule],
+    *,
+    failed_repos: Sequence[str],
+    env: Environment = Environment.current(),
 ) -> CogUpdateResult:
     pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
     cogs_to_check -= pinned_cogs
@@ -735,12 +784,12 @@ async def _update_cogs(
         outdated_cogs, outdated_libs = await _available_updates(cogs_to_check)
 
         for cog in outdated_cogs:
-            if cog.min_python_version > sys.version_info:
+            if cog.min_python_version > env.python_version:
                 incompatible_python_version.append(cog)
-            elif cog.min_bot_version > red_version_info or (
+            elif cog.min_bot_version > env.red_version or (
                 # max version should be ignored when it's lower than min version
                 cog.min_bot_version <= cog.max_bot_version
-                and cog.max_bot_version < red_version_info
+                and cog.max_bot_version < env.red_version
             ):
                 incompatible_bot_version.append(cog)
             else:
@@ -864,3 +913,157 @@ class CogUnavailableError(Exception):
         self.repo_name = repo_name
         self.cog_name = cog_name
         super().__init__(f"Couldn't find cog {cog_name!r} in {repo_name!r}")
+
+
+async def _restore_from_backup() -> None:
+    """Restore cogs using `repos.json` in cog's data path.
+
+    Used by `redbot-setup restore` cli command.
+    """
+    with _repo_manager.repos_folder.with_name("repos.json").open(encoding="utf-8") as fp:
+        raw_repos = json.load(fp)
+
+    with detailed_progress(unit="repos") as progress:
+        task_id = progress.add_task("Adding repos")
+        for repo_data in progress.track(raw_repos, task_id=task_id):
+            repo_url = repo_data["url"]
+            repo_name = repo_data["name"]
+            repo_branch = repo_data["branch"]
+            progress.update(task_id, description=f"Adding {repo_name!r} repo")
+            try:
+                await _repo_manager.add_repo(repo_url, repo_name, repo_branch)
+            except errors.ExistingGitRepo:
+                # this should not be possible
+                log.error(
+                    "Failed to add repo %r (url: %r branch: %r) as it seems that"
+                    " one with this name already exists.",
+                    repo_name,
+                    repo_url,
+                    repo_branch,
+                )
+            except errors.AuthenticationError:
+                log.error(
+                    "Failed to add repo %r (url: %r branch: %r) due to authentication failure."
+                    " This may also mean that repository no longer exists at that URL.",
+                    repo_name,
+                    repo_url,
+                    repo_branch,
+                )
+            except (errors.CloningError, OSError):
+                log.error(
+                    "Failed to add repo %r (url: %r branch: %r) due to a cloning error.",
+                    repo_name,
+                    repo_url,
+                    repo_branch,
+                )
+
+    _installed_cogs = await installed_cogs()
+    await _config.installed_cogs.clear()
+    await _config.installed_libraries.clear()
+
+    cogs_to_reinstall = []
+    cogs_without_repo: Dict[str, List[str]] = defaultdict(list)
+    for cog in _installed_cogs:
+        if cog.repo is None:
+            cogs_without_repo[cog._json_repo_name].append(cog.name)
+        else:
+            cogs_to_reinstall.append(cog)
+    for repo_name, cogs in cogs_without_repo.items():
+        log.error(
+            "The backup does not contain metadata about repo %r,"
+            " the following cogs cannot be reinstalled automatically: %s",
+            repo_name,
+            ", ".join(cogs),
+        )
+
+    with detailed_progress(unit="cogs") as progress:
+        task_id = progress.add_task("Installing cogs")
+        cog: Installable
+        for cog in progress.track(cogs_to_reinstall, task_id=task_id):
+            progress.update(task_id, description=f"Installing {cog.name!r} cog")
+            if not cog.commit:
+                last_cog_occurrence = await cog.repo.get_last_module_occurrence(cog.name)
+                if last_cog_occurrence is not None and not last_cog_occurrence.disabled:
+                    cog = last_cog_occurrence
+                    log.warning(
+                        "The commit that %r cog was installed from is unknown"
+                        " - will try to reinstall from latest commit where it's still available."
+                    )
+                else:
+                    log.error(
+                        "The commit that %r cog was installed from is unknown"
+                        " and it could not be found in the repo."
+                    )
+                    continue
+
+            try:
+                install_result = await install_cogs(cog.repo, cog.commit, [cog.name])
+            except errors.UnknownRevision:
+                log.error(
+                    "The commit that %r cog was installed from (%s)"
+                    " could not be found in the repo.",
+                    cog.name,
+                    cog.commit,
+                )
+                continue
+
+            # we know we've only tried to install one cog so we can be specific in error messages
+
+            # below 3 should technically never happen with valid config but just in case...
+            if install_result.unavailable_cogs:
+                log.error("Could not find %r cog in %r repo", cog.name, cog.repo.name)
+            if install_result.already_installed:
+                log.error(
+                    "Failed to reinstall %r cog from %r repo as it seems that"
+                    " this cog is already installed.",
+                    cog.name,
+                    cog.repo.name,
+                )
+            if install_result.name_already_used:
+                log.error(
+                    "Failed to reinstall %r cog from %r repo as it seems that"
+                    " a cog with the same name is already installed from a different repo.",
+                    cog.name,
+                    cog.repo.name,
+                )
+
+            if install_result.incompatible_python_version:
+                log.error(
+                    "Failed to reinstall %r cog from %r repo because the instance is"
+                    " being restored into Red running with a lower Python version."
+                    " The minimum Python version required by this cog is %s",
+                    cog.name,
+                    cog.repo.name,
+                    ".".join(map(str, cog.min_python_version)),
+                )
+            if install_result.incompatible_bot_version:
+                log.error(
+                    "Failed to reinstall %r cog from %r repo because the instance is"
+                    " being restored into a Red version that the cog does not support."
+                    " The minimum version required by this cog is %s%s.",
+                    cog.name,
+                    cog.repo.name,
+                    cog.min_bot_version,
+                    (
+                        ""
+                        if cog.min_bot_version > cog.max_bot_version
+                        else f"and maximum allowed is: {cog.max_bot_version}"
+                    ),
+                )
+
+            if install_result.failed_cogs:
+                log.info("Failed to reinstall %r cog", cog.name)
+            if install_result.failed_reqs:
+                log.error(
+                    "Failed to reinstall %r cog from %r repo"
+                    " because the following requirements could not be reinstalled: %s",
+                    cog.name,
+                    cog.repo.name,
+                    ", ".join(install_result.failed_reqs),
+                )
+            if install_result.failed_libs:
+                log.error(
+                    "Failed to reinstall shared libraries for %r cog from %r repo: %s",
+                    cog.repo.name,
+                    ", ".join([lib.name for lib in install_result.failed_libs]),
+                )

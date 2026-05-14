@@ -38,6 +38,7 @@ from typing import (
 
 import aiohttp
 import discord
+from packaging.version import Version
 from redbot.core.data_manager import storage_type
 
 from . import (
@@ -53,7 +54,7 @@ from . import (
 )
 from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter, can_user_send_messages_in
-from .utils._internal_utils import fetch_latest_red_version_info
+from .utils._internal_utils import fetch_latest_red_version
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -422,11 +423,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         custom_info = await self.bot._config.custom_info()
 
         try:
-            pypi_version, __ = await fetch_latest_red_version_info()
+            latest = await fetch_latest_red_version()
         except (aiohttp.ClientError, TimeoutError) as exc:
             log.error("Failed to fetch latest version information from PyPI.", exc_info=exc)
             pypi_version = None
-        outdated = pypi_version and pypi_version > red_version_info
+        else:
+            pypi_version = latest.version
+        outdated = pypi_version and pypi_version > Version(__version__)
 
         if embed_links:
             dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)

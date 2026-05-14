@@ -87,6 +87,7 @@ INFO_JSON = {
     "author": ("tekulvw",),
     "min_bot_version": "3.0.0",
     "max_bot_version": "3.0.2",
+    "min_python_version": [3, 7, 1],
     "description": "A long description",
     "hidden": False,
     "install_msg": "A post-installation message",
@@ -101,6 +102,7 @@ LIBRARY_INFO_JSON = {
     "author": ("seputaes",),
     "min_bot_version": "3.0.0",
     "max_bot_version": "3.0.2",
+    "min_python_version": [3, 7, 1],
     "description": "A long library description",
     "hidden": False,  # libraries are always hidden, this tests it will be flipped
     "install_msg": "A library install message",
