@@ -163,7 +163,7 @@ class Streams(commands.Cog):
         ).format(
             link="https://kick.com/settings/developer",
             command=inline(
-                "[p]set api twitch client_id {} client_secret {}".format(
+                "[p]set api kick client_id {} client_secret {}".format(
                     _("<your_client_id_here>"), _("<your_client_secret_here>")
                 )
             ),
