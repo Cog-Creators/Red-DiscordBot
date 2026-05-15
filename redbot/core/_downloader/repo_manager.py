@@ -1086,7 +1086,7 @@ class RepoManager:
         self.repos_folder.mkdir(parents=True, exist_ok=True)
         for repo in old_repos.values():
             new_name = name_mapping[repo.name]
-            repo.folder_path.rename(repo.folder_path.with_name(new_name))
+            repo.folder_path.rename(self.repos_folder / new_name)
             await self.config.repos.set_raw(new_name, value=repo.branch)
 
         return name_mapping
