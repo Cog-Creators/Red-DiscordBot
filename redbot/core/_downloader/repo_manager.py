@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import itertools
 import keyword
 import os
 import pkgutil
@@ -1017,16 +1018,92 @@ class RepoManager:
 
     def __init__(self) -> None:
         self._repos: Dict[str, Repo] = {}
-        self.config = Config.get_conf(self, identifier=170708480, force_registration=True)
+        self.config = Config.get_conf(self, identifier=17070841, force_registration=True)
         self.config.register_global(repos={})
+
+    # Below schema version are Downloader's - RepoManager doesn't have a separate schema version.
+    def _get_downloader_schema_2_config(self) -> Config:
+        old_config = Config.get_conf(self, identifier=170708480, force_registration=True)
+        old_config.register_global(repos={}, new_repo_names={})
+        return old_config
+
+    async def _downloader_schema_2_to_3_migrate(
+        self, extra_repo_names: Iterable[str]
+    ) -> Dict[str, str]:
+        old_config = self._get_downloader_schema_2_config()
+        old_repos_folder = self._data_folder / "repos"
+        old_repos = await self._load_repos(
+            set_repos=False, case_sensitive=True, repos_folder=old_repos_folder, config=old_config
+        )
+        # `extra_repo_names` contains repo names from Downloader's installed cogs
+        # as repos of some of those cogs may have been removed since.
+        repo_names = set(old_repos)
+        repo_names.update(extra_repo_names)
+
+        # 1. Group repo names by their lowercase form.
+        name_groups: Dict[str, List[str]] = {}
+        # Repo names used to not be restricted in any way (GH-2827).
+        # Since we're performing a repo migration now anyway, let's strip invalid chars out now.
+        invalid_char_pattern = re.compile(r"[^a-z0-9_\-\.]")
+        for old_name in repo_names:
+            base_new_name = old_name.lower().strip(".").rstrip(".")
+            base_new_name = invalid_char_pattern.sub("", base_new_name)
+            if not base_new_name:
+                base_new_name = "repo-with-invalid-name"
+
+            name_groups.setdefault(base_new_name, []).append(old_name)
+
+        # 2. Generate a mapping of old names to new names.
+        # `old_config.new_repo_names()` will contain repo names we already assigned
+        # *if* the process was stopped while migration was being performed.
+        name_mapping = await old_config.new_repo_names()
+        used_names = set(name_mapping)
+        for base_new_name, old_names in sorted(
+            name_groups.items(),
+            # Start with the longest names first to prefer keeping the existing "name-2" repo
+            # without rename, if a different "name" repo needs to have a suffix added.
+            # When length is the same, order by name to ensure consistent order.
+            key=lambda tup: (len(tup[0]), tup[0]),
+            reverse=True,
+        ):
+            new_name = base_new_name
+            counter = itertools.count()
+            # Order by name before iterating to ensure consistent order.
+            for old_name in sorted(old_names):
+                if old_name in name_mapping:
+                    continue
+                while new_name in used_names:
+                    idx = next(counter)
+                    new_name = f"{base_new_name}-{idx}"
+                used_names.add(new_name)
+                name_mapping[old_name] = new_name
+        # Store assigned names to allow rerunning migration in case the process is stopped,
+        # while it's running.
+        await old_config.new_repo_names.set(name_mapping)
+
+        # 3. Rename repo folders.
+        # Ensure the new repos folder exists before performing any renames
+        self.repos_folder.mkdir(parents=True, exist_ok=True)
+        for repo in old_repos.values():
+            new_name = name_mapping[repo.name]
+            repo.folder_path.rename(repo.folder_path.with_name(new_name))
+            await self.config.repos.set_raw(new_name, value=repo.branch)
+
+        return name_mapping
+
+    async def _downloader_schema_2_to_3_clear_old_config(self) -> None:
+        await self._get_downloader_schema_2_config().clear_all()
 
     async def initialize(self) -> None:
         await self._load_repos(set_repos=True)
 
     @property
+    def _data_folder(self) -> Path:
+        return data_manager.cog_data_path(self)
+
+    @property
     def repos_folder(self) -> Path:
-        data_folder = data_manager.cog_data_path(self)
-        return data_folder / "repos"
+        return self._data_folder / "repos.v2"
 
     def does_repo_exist(self, name: str) -> bool:
         return name.lower() in self._repos
@@ -1205,17 +1282,34 @@ class RepoManager:
 
         return ret, failed
 
-    async def _load_repos(self, set_repos: bool = False) -> Dict[str, Repo]:
+    async def _load_repos(
+        self,
+        *,
+        set_repos: bool = False,
+        case_sensitive: bool = False,
+        repos_folder: Optional[Path] = None,
+        config: Optional[Config] = None,
+    ) -> Dict[str, Repo]:
+        # NOTE: `case_sensitive`, `repos_folder`, and `config` kwargs
+        # are only used by a schema migration.
+
+        if repos_folder is None:
+            repos_folder = self.repos_folder
+        if config is None:
+            config = self.config
+
         ret = {}
-        self.repos_folder.mkdir(parents=True, exist_ok=True)
+        repos_folder.mkdir(parents=True, exist_ok=True)
         repo_branches = await config.repos()
-        for folder in self.repos_folder.iterdir():
+        for folder in repos_folder.iterdir():
             if not folder.is_dir():
                 continue
             try:
-                repo_name = folder.name.lower()
+                repo_name = folder.name if case_sensitive else folder.name.lower()
                 branch = repo_branches.get(repo_name, default="")
                 repo = await Repo.from_folder(folder, branch)
+                if case_sensitive:
+                    repo.name = folder.name
                 ret[repo.name] = repo
             except errors.NoRemoteURL:
                 log.warning("A remote URL does not exist for repo %s", folder.name)

@@ -58,7 +58,7 @@ def repo_manager(tmpdir_factory):
 
 @pytest.fixture
 def repo(tmp_path):
-    repo_folder = tmp_path / "repos" / "squid"
+    repo_folder = tmp_path / "repos.v2" / "squid"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
     return Repo(
