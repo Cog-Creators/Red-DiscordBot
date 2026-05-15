@@ -160,6 +160,19 @@ async def _schema_2_to_3():
     await repo_mgr._downloader_schema_2_to_3_clear_old_config()
 
 
+async def rename_repo(current_name: str, new_name: str) -> None:
+    current_name = current_name.lower()
+    new_name = new_name.lower()
+
+    await _repo_manager.rename_repo(current_name, new_name)
+    async with _config.installed_cogs() as installed:
+        installed[new_name] = {
+            cog_name: {**cog_info, "repo_name": new_name}
+            for cog_name, cog_info in installed.get(current_name, {}).items()
+        }
+        installed.pop(current_name, None)
+
+
 def _create_lib_folder(*, remove_first: bool = False) -> None:
     if remove_first:
         shutil.rmtree(str(LIB_PATH))

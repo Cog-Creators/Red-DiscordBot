@@ -1189,6 +1189,40 @@ class RepoManager:
             all_cogs += repo.available_cogs
         return tuple(all_cogs)
 
+    async def rename_repo(self, current_name: str, new_name: str) -> None:
+        """Rename a repository.
+
+        Parameters
+        ----------
+        current_name : str
+            The current name of the repository.
+        new_name : str
+            The new name of the repository.
+
+        Raises
+        ------
+        .MissingGitRepo
+            If the repo does not exist.
+
+        """
+        current_name = current_name.lower()
+        new_name = new_name.lower()
+        repo = self._repos.get(current_name)
+        if repo is None:
+            raise errors.MissingGitRepo(f"There is no repo with the name {current_name}")
+        if self.does_repo_exist(new_name):
+            raise errors.ExistingGitRepo("The provided new name is already taken by another repo.")
+
+        async with self.config.repos() as repos:
+            repo.folder_path.rename(repo.folder_path.with_name(new_name))
+            repo.name = new_name
+
+            repos.pop(current_name)
+            repos[new_name] = repo.branch
+
+        self._repos[new_name] = repo
+        del self._repos[current_name]
+
     async def delete_repo(self, name: str) -> None:
         """Delete a repository and its folders.
 
