@@ -1067,7 +1067,7 @@ class RepoManager:
             reverse=True,
         ):
             new_name = base_new_name
-            counter = itertools.count()
+            counter = itertools.count(2)
             # Order by name before iterating to ensure consistent order.
             for old_name in sorted(old_names):
                 if old_name in name_mapping:
