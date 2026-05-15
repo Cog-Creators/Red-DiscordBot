@@ -1001,7 +1001,7 @@ class Repo(RepoJSONMixin):
 
     @classmethod
     async def from_folder(cls, folder: Path, branch: str = "") -> Repo:
-        repo = cls(name=folder.name, url="", branch=branch, commit="", folder_path=folder)
+        repo = cls(name=folder.name.lower(), url="", branch=branch, commit="", folder_path=folder)
         repo.url = await repo.current_url()
         if branch == "":
             repo.branch = await repo.current_branch()
@@ -1029,13 +1029,7 @@ class RepoManager:
         return data_folder / "repos"
 
     def does_repo_exist(self, name: str) -> bool:
-        return name in self._repos
-
-    @staticmethod
-    def validate_and_normalize_repo_name(name: str) -> str:
-        if not name.isidentifier():
-            raise errors.InvalidRepoName("Not a valid Python variable name.")
-        return name.lower()
+        return name.lower() in self._repos
 
     async def add_repo(self, url: str, name: str, branch: Optional[str] = None) -> Repo:
         """Add and clone a git repository.
@@ -1055,6 +1049,7 @@ class RepoManager:
             New Repo object representing the cloned repository.
 
         """
+        name = name.lower()
         if self.does_repo_exist(name):
             raise errors.ExistingGitRepo(
                 "That repo name you provided already exists. Please choose another."
@@ -1087,7 +1082,7 @@ class RepoManager:
             Repo object for the repository, if it exists.
 
         """
-        return self._repos.get(name, None)
+        return self._repos.get(name.lower(), None)
 
     @property
     def repos(self) -> Tuple[Repo, ...]:
@@ -1131,6 +1126,7 @@ class RepoManager:
             If the repo does not exist.
 
         """
+        name = name.lower()
         repo = self.get_repo(name)
         if repo is None:
             raise errors.MissingGitRepo(f"There is no repo with the name {name}")
@@ -1157,7 +1153,7 @@ class RepoManager:
             A 2-`tuple` with Repo object and a 2-`tuple` of `str`
             containing old and new commit hashes.
         """
-        repo = self._repos[repo_name]
+        repo = self._repos[repo_name.lower()]
         old, new = await repo.update()
         return (repo, (old, new))
 
@@ -1212,14 +1208,15 @@ class RepoManager:
     async def _load_repos(self, set_repos: bool = False) -> Dict[str, Repo]:
         ret = {}
         self.repos_folder.mkdir(parents=True, exist_ok=True)
+        repo_branches = await config.repos()
         for folder in self.repos_folder.iterdir():
             if not folder.is_dir():
                 continue
             try:
-                branch = await self.config.repos.get_raw(folder.name, default="")
-                ret[folder.name] = await Repo.from_folder(folder, branch)
-                if branch == "":
-                    await self.config.repos.set_raw(folder.name, value=ret[folder.name].branch)
+                repo_name = folder.name.lower()
+                branch = repo_branches.get(repo_name, default="")
+                repo = await Repo.from_folder(folder, branch)
+                ret[repo.name] = repo
             except errors.NoRemoteURL:
                 log.warning("A remote URL does not exist for repo %s", folder.name)
             except errors.DownloaderException as err:
