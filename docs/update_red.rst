@@ -83,12 +83,13 @@ If you have a Red version between 3.5.0 and 3.5.24, you can upgrade by following
     .. prompt:: batch
 
         "%userprofile%\redenv\Scripts\activate.bat"
-#. Update Red with this command:
+#. Update Red with these commands:
 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
         python -m pip install -U "Red-DiscordBot==3.5.25"
+        redbot-update
 
     .. attention::
 
@@ -110,12 +111,13 @@ If you have a Red version between 3.5.0 and 3.5.24, you can upgrade by following
 
         source ~/redenv/bin/activate
 
-#. Update Red with this command:
+#. Update Red with these commands:
 
     .. prompt:: bash
         :prompts: (redenv) $
 
         python -m pip install -U 'Red-DiscordBot==3.5.25'
+        redbot-update
 
     .. attention::
 
@@ -137,29 +139,17 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
     .. prompt:: batch
 
         "%userprofile%\redenv\Scripts\activate.bat"
-#. Update Red with this command:
+#. Update Red with these commands:
 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
         python -m pip install -U "Red-DiscordBot==3.5.25"
+        redbot-update
 
     .. attention::
 
         If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
-#. If you're using **any** 3rd-party cogs:
-
-    #. Start your bot with ``--no-cogs --load-cogs downloader`` flags, for example:
-
-        .. prompt:: batch
-            :prompts: (redenv) C:\\>
-
-            redbot <your instance name> --no-cogs --load-cogs downloader
-
-    #. Wait for the bot to start.
-    #. Run the ``[p]cog update`` command on Discord.
-    #. Wait for the bot to stop typing and send a response. This step may take a while.
-    #. Shutdown the bot with the ``[p]shutdown`` command.
 #. Start your bot as you normally do.
 
 Linux & Mac
@@ -182,23 +172,12 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
         :prompts: (redenv) $
 
         python -m pip install -U 'Red-DiscordBot==3.5.25'
+        redbot-update
 
     .. attention::
 
         If you're using PostgreSQL data backend, replace ``Red-DiscordBot`` in the second command with ``Red-DiscordBot[postgres]``
-#. **If you're using any 3rd-party cogs:**
 
-    #. Start your bot with ``--no-cogs --load-cogs downloader`` flags, for example:
-
-        .. prompt:: bash
-            :prompts: (redenv) $
-
-            redbot <your instance name> --no-cogs --load-cogs downloader
-
-    #. Wait for the bot to start.
-    #. Run the ``[p]cog update`` command on Discord.
-    #. Wait for the bot to stop typing and send a response. This step may take a while.
-    #. Shutdown the bot with the ``[p]shutdown`` command.
 #. Start your bot as you normally do.
 
 Red 3.1.X
