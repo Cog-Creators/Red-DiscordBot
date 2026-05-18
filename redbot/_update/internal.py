@@ -97,6 +97,10 @@ async def _run_cog_update(bot: Red, *, update_repos: bool) -> None:
             )
             with console.status(status):
                 failed_reqs, failed_libs = await _downloader.reinstall_requirements()
+            stdout_console.print(
+                "Cog requirements and shared libraries for all installed cogs"
+                " have been reinstalled."
+            )
             if failed_reqs:
                 common.print_with_prefix_column(
                     common.ICON_ERROR,
