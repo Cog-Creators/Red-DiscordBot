@@ -5,8 +5,8 @@ import discord
 from discord.ext.commands import BadArgument
 from typing import TYPE_CHECKING, Any, List, Optional, Union, Dict
 from redbot.core.i18n import Translator
+from redbot.core.utils.chat_formatting import inline
 from redbot.vendored.discord.ext import menus
-from redbot.core.commands.converter import get_dict_converter
 
 if TYPE_CHECKING:
     from redbot.core.commands import Context
@@ -438,19 +438,19 @@ class SetApiModal(discord.ui.Modal):
                 _("This modal is for bot owners only. Whoops!"), ephemeral=True
             )
 
-        if self.default_keys is not None:
-            converter = get_dict_converter(*self.default_keys, delims=[";", ",", " "])
-        else:
-            converter = get_dict_converter(delims=[";", ",", " "])
-        tokens = " ".join(self.token_input.component.value.split("\n")).rstrip()
+        tokens: Dict[str, str] = {}
 
-        try:
-            tokens = await converter().convert(None, tokens)
-        except BadArgument as exc:
-            return await interaction.response.send_message(
-                _("{error_message}\nPlease try again.").format(error_message=str(exc)),
-                ephemeral=True,
-            )
+        for line in self.token_input.component.value.split("\n"):
+            key, __, value = line.strip().partition(" ")
+            tokens[key] = value
+
+        if self.default_keys:
+            for key in tokens:
+                if key not in self.default_keys:
+                    return await interaction.response.send_message(
+                        _("Unexpected key {key}.\nPlease try again.").format(key=inline(key)),
+                        ephemeral=True,
+                    )
 
         if self.default_service is not None:  # Check is there is a service set.
             await interaction.client.set_shared_api_tokens(self.default_service, **tokens)
