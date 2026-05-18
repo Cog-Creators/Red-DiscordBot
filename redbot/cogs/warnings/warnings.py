@@ -642,7 +642,7 @@ class Warnings(commands.Cog):
 
     @warnings.command(name="server", aliases=["guild"])
     @commands.guild_only()
-    @checks.admin()
+    @commands.admin()
     async def warnings_server(self, ctx: commands.Context):
         """List all members with warnings in this server."""
         settings = await self.config.all_members(guild=ctx.guild)
