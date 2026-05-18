@@ -51,14 +51,6 @@ class NoProcessFound(ManagedLavalinkNodeException):
     """Exception thrown when the managed node process is not found"""
 
 
-class IncorrectProcessFound(ManagedLavalinkNodeException):
-    """Exception thrown when the managed node process is incorrect"""
-
-
-class TooManyProcessFound(ManagedLavalinkNodeException):
-    """Exception thrown when zombie processes are suspected"""
-
-
 class LavalinkDownloadFailed(ManagedLavalinkNodeException, RuntimeError):
     """Downloading the Lavalink jar failed.
 

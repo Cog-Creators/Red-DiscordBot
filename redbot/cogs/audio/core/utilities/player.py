@@ -382,6 +382,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 index = query.track_index
                 if query.start_time:
                     seek = query.start_time
+            if query.is_url:
+                playlist_url = query.uri
             try:
                 result, called_api = await self.api_interface.fetch_track(ctx, player, query)
             except TrackEnqueueError:
@@ -435,7 +437,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # a list of Tracks where all should be enqueued
             # this is a Spotify playlist already made into a list of Tracks or a
             # url where Lavalink handles providing all Track objects to use, like a
-            # YouTube or Soundcloud playlist
+            # YouTube or SoundCloud playlist
             if len(player.queue) >= 10000:
                 return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
             track_len = 0
@@ -443,12 +445,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             async for track in AsyncIter(tracks):
                 if len(player.queue) >= 10000:
                     continue
-                query = Query.process_input(track, self.local_folder_current_path)
+                track_query = Query.process_input(track, self.local_folder_current_path)
                 if not await self.is_query_allowed(
                     self.config,
                     ctx,
-                    f"{track.title} {track.author} {track.uri} " f"{str(query)}",
-                    query_obj=query,
+                    f"{track.title} {track.author} {track.uri} " f"{str(track_query)}",
+                    query_obj=track_query,
                 ):
                     log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     continue
@@ -489,11 +491,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             playlist_name = escape(
                 playlist_data.name if playlist_data else _("No Title"), formatting=True
             )
+            title = _("Playlist Enqueued") if not query.is_album else _("Album Enqueued")
             embed = discord.Embed(
-                description=bold(f"[{playlist_name}]({playlist_url})")
+                description=bold(f"[{playlist_name}]({playlist_url})", False)
                 if playlist_url
                 else playlist_name,
-                title=_("Playlist Enqueued"),
+                title=title,
             )
             embed.set_footer(
                 text=_("Added {num} tracks to the queue.{maxlength_msg}").format(

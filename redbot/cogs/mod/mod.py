@@ -3,14 +3,12 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import List, Tuple, Literal
+from typing import Literal
 
-import discord
-from redbot.core.utils import AsyncIter
-
-from redbot.core import Config, modlog, commands
+from redbot.core import Config, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import AsyncIter
 from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replaced
 from redbot.core.utils.chat_formatting import inline
 from .events import Events
@@ -59,16 +57,20 @@ class Mod(
         "reinvite_on_unban": False,
         "current_tempbans": [],
         "dm_on_kickban": False,
+        "require_reason": False,
         "default_days": 0,
         "default_tempban_duration": 60 * 60 * 24,
         "track_nicknames": True,
+        "ban_show_extra": False,
+        "ban_extra_embed_title": "Message from staff",
+        "ban_extra_embed_contents": "Please set me",
     }
 
     default_channel_settings = {"ignored": False}
 
     default_member_settings = {"past_nicks": [], "perms_cache": {}, "banned_until": False}
 
-    default_user_settings = {"past_names": []}
+    default_user_settings = {"past_names": [], "past_display_names": []}
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -172,7 +174,7 @@ class Mod(
                         guild_data["mention_spam"]["ban"] = current_state
             await self.config.version.set("1.3.0")
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def moveignoredchannels(self, ctx: commands.Context) -> None:
         """Move ignored channels and servers to core"""
@@ -186,7 +188,7 @@ class Mod(
             await self.config.channel_from_id(channel_id).clear()
         await ctx.send(_("Ignored channels and guilds restored."))
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def movedeletedelay(self, ctx: commands.Context) -> None:
         """

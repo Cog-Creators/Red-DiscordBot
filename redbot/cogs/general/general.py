@@ -16,6 +16,7 @@ from redbot.core.utils.chat_formatting import (
     italics,
     humanize_number,
     humanize_timedelta,
+    pagify,
 )
 
 _ = T_ = Translator("General", __file__)
@@ -40,7 +41,7 @@ class RPSParser:
             self.choice = None
 
 
-MAX_ROLL: Final[int] = 2**64 - 1
+MAX_ROLL: Final[int] = 2**63 - 1
 
 
 @cog_i18n(_)
@@ -220,7 +221,9 @@ class General(commands.Cog):
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Create a lmgtfy link."""
         search_terms = escape(urllib.parse.quote_plus(search_terms), mass_mentions=True)
-        await ctx.send("https://lmgtfy.app/?q={}".format(search_terms))
+        await ctx.send(
+            f"https://cog-creators.github.io/lmgtfy/search?q={search_terms}&btnK=Google+Search"
+        )
 
     @commands.command(hidden=True)
     @commands.guild_only()
@@ -352,41 +355,10 @@ class General(commands.Cog):
                 "highest": _("4 - Highest"),
             }
 
-            features = {
-                "ANIMATED_ICON": _("Animated Icon"),
-                "ANIMATED_BANNER": _("Animated Banner"),
-                "BANNER": _("Banner"),
-                "COMMERCE": _("Commerce"),
-                "COMMUNITY": _("Community"),
-                "DISCOVERABLE": _("Discoverable"),
-                "FEATURABLE": _("Featurable"),
-                "INVITE_SPLASH": _("Splash Invite"),
-                "MEMBER_VERIFICATION_GATE_ENABLED": _("Membership Screening enabled"),
-                "MONETIZATION_ENABLED": _("Monetization Enabled"),
-                "MORE_STICKERS": _("More Stickers"),
-                "NEWS": _("News"),
-                "PARTNERED": _("Partnered"),
-                "PREVIEW_ENABLED": _("Preview Enabled"),
-                "PRIVATE_THREADS": _("Private Threads"),
-                "ROLE_ICON": _("Role Icon"),
-                "SEVEN_DAY_THREAD_ARCHIVE": _("Seven Day Thread Archive"),
-                "THREE_DAY_THREAD_ARCHIVE": _("Three Day Thread Archive"),
-                "TICKETED_EVENTS_ENABLED": _("Ticketed Events Enabled"),
-                "VERIFIED": _("Verified"),
-                "VANITY_URL": _("Vanity URL"),
-                "VIP_REGIONS": _("VIP Regions"),
-                "WELCOME_SCREEN_ENABLED": _("Welcome Screen Enabled"),
-            }
-            guild_features_list = [
-                f"\N{WHITE HEAVY CHECK MARK} {name}"
-                for feature, name in features.items()
-                if feature in guild.features
-            ]
-
             joined_on = _(
                 "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
             ).format(
-                bot_name=ctx.bot.user.name,
+                bot_name=ctx.bot.user.display_name,
                 bot_join=guild.me.joined_at.strftime("%d %b %Y %H:%M:%S"),
                 since_join=humanize_number((ctx.message.created_at - guild.me.joined_at).days),
             )
@@ -444,8 +416,41 @@ class General(commands.Cog):
                 ),
                 inline=False,
             )
-            if guild_features_list:
-                data.add_field(name=_("Server features:"), value="\n".join(guild_features_list))
+
+            excluded_features = {
+                # available to everyone since forum channels private beta
+                "THREE_DAY_THREAD_ARCHIVE",
+                "SEVEN_DAY_THREAD_ARCHIVE",
+                # rolled out to everyone already
+                "NEW_THREAD_PERMISSIONS",
+                "TEXT_IN_VOICE_ENABLED",
+                "THREADS_ENABLED",
+                # available to everyone sometime after forum channel release
+                "PRIVATE_THREADS",
+            }
+            custom_feature_names = {
+                "VANITY_URL": "Vanity URL",
+                "VIP_REGIONS": "VIP regions",
+            }
+            features = sorted(guild.features)
+            if "COMMUNITY" in features:
+                features.remove("NEWS")
+            feature_names = [
+                custom_feature_names.get(feature, " ".join(feature.split("_")).capitalize())
+                for feature in features
+                if feature not in excluded_features
+            ]
+            if guild.features:
+                feature_list = "\n".join(
+                    f"\N{WHITE HEAVY CHECK MARK} {feature}" for feature in feature_names
+                )
+                feature_pages = list(pagify(feature_list, delims=["\n"], page_length=1024))
+                for i, page in enumerate(feature_pages):
+                    field_name = (
+                        _("Server features:") if i == 0 else _("Server features (continued):")
+                    )
+                    data.add_field(name=field_name, value=page, inline=False)
+
             if guild.premium_tier != 0:
                 nitro_boost = _(
                     "Tier {boostlevel} with {nitroboosters} boosts\n"

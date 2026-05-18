@@ -657,7 +657,7 @@ class Menu(metaclass=_MenuMeta):
         Handles reporting of errors while updating the menu from events.
         The default behaviour is to log the exception.
 
-        This may be overriden by subclasses.
+        This may be overridden by subclasses.
 
         Parameters
         ----------
@@ -702,7 +702,7 @@ class Menu(metaclass=_MenuMeta):
         self.ctx = ctx
         self._author_id = ctx.author.id
         channel = channel or ctx.channel
-        me = channel.guild.me if hasattr(channel, 'guild') else ctx.bot.user
+        me = channel.guild.me if getattr(channel, 'guild', None) else ctx.bot.user
         permissions = channel.permissions_for(me)
         self.__me = discord.Object(id=me.id)
         self._verify_permissions(ctx, channel, permissions)

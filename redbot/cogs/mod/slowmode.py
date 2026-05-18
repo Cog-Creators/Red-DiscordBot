@@ -2,7 +2,7 @@ import discord
 import re
 from .abc import MixinMeta
 from datetime import timedelta
-from redbot.core import commands, i18n, checks
+from redbot.core import commands, i18n
 from redbot.core.utils.chat_formatting import humanize_timedelta
 
 _ = i18n.Translator("Mod", __file__)
@@ -30,9 +30,6 @@ class Slowmode(MixinMeta):
         Interval can be anything from 0 seconds to 6 hours.
         Use without parameters to disable.
         """
-        if not isinstance(ctx.channel, (discord.TextChannel, discord.Thread)):
-            await ctx.send(_("Slowmode can only be set in text channels and threads."))
-            return
         seconds = interval.total_seconds()
         await ctx.channel.edit(slowmode_delay=seconds)
         if seconds > 0:

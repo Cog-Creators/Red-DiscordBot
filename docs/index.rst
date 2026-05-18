@@ -15,9 +15,11 @@ Welcome to Red - Discord Bot's documentation!
     install_guides/index
     bot_application_guide
     update_red
+    backup_red
     about_venv
-    autostart_systemd
+    autostart_windows
     autostart_mac
+    autostart_systemd
 
 .. toctree::
     :maxdepth: 2
@@ -35,10 +37,12 @@ Welcome to Red - Discord Bot's documentation!
     intents
     cog_guides/admin
     cog_guides/alias
+    cog_guides/audio
     cog_guides/cleanup
     cog_guides/cog_manager_ui
     cog_guides/core
     cog_guides/customcommands
+    cog_guides/dev
     cog_guides/downloader
     cog_guides/economy
     cog_guides/filter
@@ -58,39 +62,32 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Red Development Framework Reference:
 
-    guide_migration
     guide_cog_creation
+    guide_slash_and_interactions
     guide_publish_cogs
     guide_cog_creators
     framework_apikeys
     framework_bank
     framework_bot
     framework_checks
-    framework_cogmanager
     framework_commands
+    framework_app_commands
     framework_config
     framework_datamanager
     framework_events
     framework_i18n
     framework_modlog
     framework_rpc
+    framework_tree
     framework_utils
     version_guarantees
 
 .. toctree::
     :maxdepth: 2
-    :caption: Changelogs:
-
-    changelog_3_4_0
-    changelog_3_3_0
-    release_notes_3_2_0
-    changelog_3_2_0
-    changelog_3_1_0
-
-.. toctree::
-    :maxdepth: 2
     :caption: Others
 
+    changelog
+    incompatible_changes/index
     host-list
 
 

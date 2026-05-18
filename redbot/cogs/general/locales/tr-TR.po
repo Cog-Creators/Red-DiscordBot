@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-26 09:24+0000\n"
+"POT-Creation-Date: 2026-03-04 21:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,92 +15,92 @@ msgstr ""
 "X-Crowdin-File-ID: 17\n"
 "Language: tr_TR\n"
 
-#: redbot/cogs/general/general.py:47
+#: redbot/cogs/general/general.py:49
 #, docstring
 msgid "General commands."
 msgstr "Genel komutlar."
 
-#: redbot/cogs/general/general.py:52
+#: redbot/cogs/general/general.py:54
 msgid "As I see it, yes"
 msgstr "Gördüğüm kadarıyla, evet"
 
-#: redbot/cogs/general/general.py:53
+#: redbot/cogs/general/general.py:55
 msgid "It is certain"
 msgstr "Kesinlikle"
 
-#: redbot/cogs/general/general.py:54
+#: redbot/cogs/general/general.py:56
 msgid "It is decidedly so"
 msgstr "Kesinlikle o yüzden"
 
-#: redbot/cogs/general/general.py:55
+#: redbot/cogs/general/general.py:57
 msgid "Most likely"
 msgstr "Büyük olasılıkla"
 
-#: redbot/cogs/general/general.py:56
+#: redbot/cogs/general/general.py:58
 msgid "Outlook good"
 msgstr "Güzel gözüküyor"
 
-#: redbot/cogs/general/general.py:57
+#: redbot/cogs/general/general.py:59
 msgid "Signs point to yes"
 msgstr "Evet olarak işaretler gösteriyor"
 
-#: redbot/cogs/general/general.py:58
+#: redbot/cogs/general/general.py:60
 msgid "Without a doubt"
 msgstr "Şüphesiz"
 
-#: redbot/cogs/general/general.py:59
+#: redbot/cogs/general/general.py:61
 msgid "Yes"
 msgstr "Evet"
 
-#: redbot/cogs/general/general.py:60
+#: redbot/cogs/general/general.py:62
 msgid "Yes – definitely"
 msgstr "Evet, kesinlikle"
 
-#: redbot/cogs/general/general.py:61
+#: redbot/cogs/general/general.py:63
 msgid "You may rely on it"
 msgstr "Ona bağlı"
 
-#: redbot/cogs/general/general.py:62
+#: redbot/cogs/general/general.py:64
 msgid "Reply hazy, try again"
 msgstr "Yanıt biraz meşgul gibi, sonra tekrar deneyin"
 
-#: redbot/cogs/general/general.py:63
+#: redbot/cogs/general/general.py:65
 msgid "Ask again later"
 msgstr "Sonra tekrar sorun"
 
-#: redbot/cogs/general/general.py:64
+#: redbot/cogs/general/general.py:66
 msgid "Better not tell you now"
 msgstr "Sana şimdi söylemesem daha iyi"
 
-#: redbot/cogs/general/general.py:65
+#: redbot/cogs/general/general.py:67
 msgid "Cannot predict now"
 msgstr "Şu anda tahmin edemem"
 
-#: redbot/cogs/general/general.py:66
+#: redbot/cogs/general/general.py:68
 msgid "Concentrate and ask again"
 msgstr "Odaklan ve yeniden sor"
 
-#: redbot/cogs/general/general.py:67
+#: redbot/cogs/general/general.py:69
 msgid "Don't count on it"
 msgstr "O kadar emin olma"
 
-#: redbot/cogs/general/general.py:68
+#: redbot/cogs/general/general.py:70
 msgid "My reply is no"
 msgstr "Cevabım hayır"
 
-#: redbot/cogs/general/general.py:69
+#: redbot/cogs/general/general.py:71
 msgid "My sources say no"
 msgstr "Kaynaklarım hayır diyor"
 
-#: redbot/cogs/general/general.py:70
+#: redbot/cogs/general/general.py:72
 msgid "Outlook not so good"
 msgstr "Çok da iyi görünmüyor"
 
-#: redbot/cogs/general/general.py:71
+#: redbot/cogs/general/general.py:73
 msgid "Very doubtful"
 msgstr "Oldukça süpheli"
 
-#: redbot/cogs/general/general.py:85
+#: redbot/cogs/general/general.py:88
 #, docstring
 msgid "Choose between multiple options.\n\n"
 "        There must be at least 2 options to pick from.\n"
@@ -113,11 +113,11 @@ msgstr "Çok sayıda seçenek arasından bir seçim yapar.\n\n"
 "        İçinde boşluk barındıran seçenekler girmek için, seçenekleri tırnak işaretleri içine almanız gerekir.\n"
 "        "
 
-#: redbot/cogs/general/general.py:94
+#: redbot/cogs/general/general.py:97
 msgid "Not enough options to pick from."
 msgstr "Seçim için yeterli seçenek yok."
 
-#: redbot/cogs/general/general.py:100
+#: redbot/cogs/general/general.py:103
 #, docstring
 msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
@@ -128,15 +128,15 @@ msgstr "Rastgele bir sayı seç.\n\n"
 "        `<number>` varsayılan olarak 100 dür\n"
 "        "
 
-#: redbot/cogs/general/general.py:115
+#: redbot/cogs/general/general.py:118
 msgid "{author.mention} Maybe higher than 1? ;P"
 msgstr "{author.mention} belki 1'den daha yüksek?; P"
 
-#: redbot/cogs/general/general.py:118
+#: redbot/cogs/general/general.py:121
 msgid "{author.mention} Max allowed number is {maxamount}."
 msgstr "{author.mention} İzin verilen en yüksek sayı {maxamount}."
 
-#: redbot/cogs/general/general.py:125
+#: redbot/cogs/general/general.py:128
 #, docstring
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
@@ -145,46 +145,46 @@ msgstr "Bir bozuk para... ya da bir kullanıcı çevirme\n\n"
 "        Varsayılan olarak bozuk para.\n"
 "        "
 
-#: redbot/cogs/general/general.py:133
+#: redbot/cogs/general/general.py:136
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
 msgstr "İyi denemeydi. Sence bu komik mi?\n"
 " Şuna ne dersin *bu* yerine:\n\n"
 
-#: redbot/cogs/general/general.py:144
+#: redbot/cogs/general/general.py:147
 msgid "*flips a coin and... "
 msgstr "* yazı tura çevirir ve... "
 
-#: redbot/cogs/general/general.py:144
+#: redbot/cogs/general/general.py:147
 msgid "HEADS!*"
 msgstr "KAFALARI! *"
 
-#: redbot/cogs/general/general.py:144
+#: redbot/cogs/general/general.py:147
 msgid "TAILS!*"
 msgstr "KUYRUKLARI! *"
 
-#: redbot/cogs/general/general.py:148
+#: redbot/cogs/general/general.py:151
 #, docstring
 msgid "Play Rock Paper Scissors."
 msgstr "Taş Kağıt Makas oyna."
 
-#: redbot/cogs/general/general.py:153
+#: redbot/cogs/general/general.py:156
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
 msgstr "Bu geçerli bir seçenek değil. {r}, {p}, ya da {s} deneyin."
 
-#: redbot/cogs/general/general.py:174
+#: redbot/cogs/general/general.py:177
 msgid "{choice} You win {author.mention}!"
 msgstr "{choice} {author.mention} kazandın!"
 
-#: redbot/cogs/general/general.py:180
+#: redbot/cogs/general/general.py:183
 msgid "{choice} You lose {author.mention}!"
 msgstr "{choice} {author.mention} kaybettin!"
 
-#: redbot/cogs/general/general.py:186
+#: redbot/cogs/general/general.py:189
 msgid "{choice} We're square {author.mention}!"
 msgstr "{choice} biz kare {author.mention}!"
 
-#: redbot/cogs/general/general.py:193
+#: redbot/cogs/general/general.py:196
 #, docstring
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
@@ -193,29 +193,29 @@ msgstr "8 topuna bir soru sor.\n\n"
 "        Soru, soru işareti ile bitmelidir.\n"
 "        "
 
-#: redbot/cogs/general/general.py:200
+#: redbot/cogs/general/general.py:203
 msgid "That doesn't look like a question."
 msgstr "Bu bir soru gibi gözükmüyor."
 
-#: redbot/cogs/general/general.py:204
+#: redbot/cogs/general/general.py:207
 #, docstring
 msgid "Start or stop the stopwatch."
 msgstr "Başlatma veya durdurma kronometre."
 
-#: redbot/cogs/general/general.py:208
+#: redbot/cogs/general/general.py:211
 msgid " Stopwatch started!"
 msgstr " Kronometre başladı!"
 
-#: redbot/cogs/general/general.py:213
+#: redbot/cogs/general/general.py:216
 msgid " Stopwatch stopped! Time: **{seconds}**"
 msgstr " Kronometre durdu! Saat: **{seconds} **"
 
-#: redbot/cogs/general/general.py:219
+#: redbot/cogs/general/general.py:222
 #, docstring
 msgid "Create a lmgtfy link."
 msgstr "Lmgtfy bağlantı oluşturun."
 
-#: redbot/cogs/general/general.py:226
+#: redbot/cogs/general/general.py:231
 #, docstring
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
@@ -224,7 +224,7 @@ msgstr "Çünkü sarılmayı herkes sever!\n\n"
 "        10 kuvvet düzeyine kadar.\n"
 "        "
 
-#: redbot/cogs/general/general.py:250
+#: redbot/cogs/general/general.py:255
 #, docstring
 msgid "\n"
 "        Show server information.\n\n"
@@ -237,281 +237,117 @@ msgstr "\n"
 "        Varsayılan olarak `False` ayarındadır.\n"
 "        "
 
-#: redbot/cogs/general/general.py:258
-msgid "Created on {date}. That's over {num} days ago!"
-msgstr "Bu sunucunun kurulma tarihi {date}. Yaklaşık {num} gün önce!"
+#: redbot/cogs/general/general.py:262
+msgid "Created on {date_and_time}. That's {relative_time}!"
+msgstr "{date_and_time} tarihinde oluşturuldu, bu {relative_time} demek!"
 
-#: redbot/cogs/general/general.py:270
-msgid "Region"
-msgstr "Bölge"
-
-#: redbot/cogs/general/general.py:271
+#: redbot/cogs/general/general.py:276
 msgid "Users online"
 msgstr "Çevrimiçi kişiler"
 
-#: redbot/cogs/general/general.py:272
+#: redbot/cogs/general/general.py:277
+msgid "Not available"
+msgstr "Mevcut değil"
+
+#: redbot/cogs/general/general.py:279
 msgid "Text Channels"
 msgstr "Mesaj Kanalları"
 
-#: redbot/cogs/general/general.py:273
+#: redbot/cogs/general/general.py:280
 msgid "Voice Channels"
 msgstr "Ses Kanalları"
 
-#: redbot/cogs/general/general.py:274
+#: redbot/cogs/general/general.py:281
 msgid "Roles"
 msgstr "Roller"
 
-#: redbot/cogs/general/general.py:275
+#: redbot/cogs/general/general.py:282
 msgid "Owner"
 msgstr "Sahibi"
 
-#: redbot/cogs/general/general.py:277
+#: redbot/cogs/general/general.py:284
 msgid "Server ID: "
 msgstr "Sunucu kimliği: "
 
-#: redbot/cogs/general/general.py:279
+#: redbot/cogs/general/general.py:286
 msgid "  •  Use {command} for more info on the server."
 msgstr "  •  Bu komutu kullanarak {command} sunucu hakkında daha fazla bilgi alabilirsiniz."
 
-#: redbot/cogs/general/general.py:305
+#: redbot/cogs/general/general.py:312
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
 msgstr "\n"
 "Parçacık IDsi: **{shard_id}/{shard_count}**"
 
-#: redbot/cogs/general/general.py:314
+#: redbot/cogs/general/general.py:321
 msgid "Humans: "
 msgstr "Üyeler: "
 
-#: redbot/cogs/general/general.py:315
+#: redbot/cogs/general/general.py:322
 msgid " • Bots: "
 msgstr " • Botlar: "
 
-#: redbot/cogs/general/general.py:327
+#: redbot/cogs/general/general.py:334
 msgid "Users online: **{online}/{total_users}**\n"
 msgstr "Çevrimiçi üyeler: **{online}/{total_users}**\n"
 
-#: redbot/cogs/general/general.py:344
-msgid "__VIP__ US East "
-msgstr "__VIP__ ABD Doğu "
-
-#: redbot/cogs/general/general.py:345
-msgid "__VIP__ US West "
-msgstr "__VIP__ ABD Batı "
-
-#: redbot/cogs/general/general.py:346
-msgid "__VIP__ Amsterdam "
-msgstr "__VIP__ Amsterdam "
-
-#: redbot/cogs/general/general.py:347
-msgid "EU West "
-msgstr "AB Batı "
-
-#: redbot/cogs/general/general.py:348
-msgid "EU Central "
-msgstr "AB Merkez "
-
-#: redbot/cogs/general/general.py:349
-msgid "Europe "
-msgstr "Avrupa "
-
-#: redbot/cogs/general/general.py:350
-msgid "London "
-msgstr "Londra "
-
 #: redbot/cogs/general/general.py:351
-msgid "Frankfurt "
-msgstr "Frankfurt "
-
-#: redbot/cogs/general/general.py:352
-msgid "Amsterdam "
-msgstr "Amsterdam "
-
-#: redbot/cogs/general/general.py:353
-msgid "US West "
-msgstr "ABD Batı "
-
-#: redbot/cogs/general/general.py:354
-msgid "US East "
-msgstr "ABD Doğu "
-
-#: redbot/cogs/general/general.py:355
-msgid "US South "
-msgstr "ABD Güney "
-
-#: redbot/cogs/general/general.py:356
-msgid "US Central "
-msgstr "ABD Merkez "
-
-#: redbot/cogs/general/general.py:357
-msgid "Singapore "
-msgstr "Singapur "
-
-#: redbot/cogs/general/general.py:358
-msgid "Sydney "
-msgstr "Sidney "
-
-#: redbot/cogs/general/general.py:359
-msgid "Brazil "
-msgstr "Brezilya "
-
-#: redbot/cogs/general/general.py:360
-msgid "Hong Kong "
-msgstr "Hong Kong "
-
-#: redbot/cogs/general/general.py:361
-msgid "Russia "
-msgstr "Rusya "
-
-#: redbot/cogs/general/general.py:362
-msgid "Japan "
-msgstr "Japonya "
-
-#: redbot/cogs/general/general.py:363
-msgid "South Africa "
-msgstr "Güney Afrika "
-
-#: redbot/cogs/general/general.py:364
-msgid "India "
-msgstr "Hindistan "
-
-#: redbot/cogs/general/general.py:365
-msgid "Dubai "
-msgstr "Dubai "
-
-#: redbot/cogs/general/general.py:366
-msgid "South Korea "
-msgstr "Güney Kore "
-
-#: redbot/cogs/general/general.py:369
 msgid "0 - None"
 msgstr "0 - Yok"
 
-#: redbot/cogs/general/general.py:370
+#: redbot/cogs/general/general.py:352
 msgid "1 - Low"
 msgstr "1 - Düşük"
 
-#: redbot/cogs/general/general.py:371
+#: redbot/cogs/general/general.py:353
 msgid "2 - Medium"
 msgstr "2 - Orta"
 
-#: redbot/cogs/general/general.py:372
+#: redbot/cogs/general/general.py:354
 msgid "3 - High"
 msgstr "3 - Yüksek"
 
-#: redbot/cogs/general/general.py:373
-msgid "4 - Extreme"
-msgstr "4 - Çok Yüksek"
+#: redbot/cogs/general/general.py:355
+msgid "4 - Highest"
+msgstr "4 - En yüksek"
 
-#: redbot/cogs/general/general.py:377
-msgid "Animated Icon"
-msgstr "Hareketli Simge"
-
-#: redbot/cogs/general/general.py:378
-msgid "Banner Image"
-msgstr "Sunucu Afişi"
-
-#: redbot/cogs/general/general.py:379
-msgid "Commerce"
-msgstr "Ticaret"
-
-#: redbot/cogs/general/general.py:380
-msgid "Community"
-msgstr "Topluluk"
-
-#: redbot/cogs/general/general.py:381
-msgid "Server Discovery"
-msgstr "Sunucu Keşfi"
-
-#: redbot/cogs/general/general.py:382
-msgid "Featurable"
-msgstr "Özelleştirilebilir"
-
-#: redbot/cogs/general/general.py:383
-msgid "Splash Invite"
-msgstr "Sunucu Davet Ekranı"
-
-#: redbot/cogs/general/general.py:384
-msgid "Member list disabled"
-msgstr "Üye listesi kapalı"
-
-#: redbot/cogs/general/general.py:385
-msgid "Membership Screening enabled"
-msgstr "Üye Seçimi etkin"
-
-#: redbot/cogs/general/general.py:386
-msgid "More Emojis"
-msgstr "Daha fazla emojiler"
-
-#: redbot/cogs/general/general.py:387
-msgid "News Channels"
-msgstr "Duyuru Kanalları"
-
-#: redbot/cogs/general/general.py:388
-msgid "Partnered"
-msgstr "Ortak"
-
-#: redbot/cogs/general/general.py:389
-msgid "Preview enabled"
-msgstr "Ön izleme etkin"
-
-#: redbot/cogs/general/general.py:390
-msgid "Public disabled"
-msgstr "Özel"
-
-#: redbot/cogs/general/general.py:391
-msgid "Vanity URL"
-msgstr "Özel URL"
-
-#: redbot/cogs/general/general.py:392
-msgid "Verified"
-msgstr "Doğrulanmış"
-
-#: redbot/cogs/general/general.py:393
-msgid "VIP Voice Servers"
-msgstr "VIP Ses Sunucuları"
-
-#: redbot/cogs/general/general.py:394
-msgid "Welcome Screen enabled"
-msgstr "Karşılama Ekranı etkin"
-
-#: redbot/cogs/general/general.py:402
+#: redbot/cogs/general/general.py:358
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr "{bot_name} bu sunucuya şu zamanda katıldı {bot_join}. Bu yaklaşık {since_join} gün önce!"
 
-#: redbot/cogs/general/general.py:424
+#: redbot/cogs/general/general.py:380
 msgid "Members:"
 msgstr "Üyeler:"
 
-#: redbot/cogs/general/general.py:426
+#: redbot/cogs/general/general.py:382
 msgid "Channels:"
 msgstr "Kanallar:"
 
-#: redbot/cogs/general/general.py:427
+#: redbot/cogs/general/general.py:383
 msgid "💬 Text: {text}\n"
-"🔊 Voice: {voice}"
+"🔊 Voice: {voice}\n"
+"🎙 Stage: {stage}"
 msgstr "💬 Yazı: {text}\n"
-"🔊 Sesli: {voice}"
+"🔊 Sesli: {voice}\n"
+"🎙 Sahne: {stage}"
 
-#: redbot/cogs/general/general.py:433
+#: redbot/cogs/general/general.py:394
 msgid "Utility:"
 msgstr "Sunucu bilgileri:"
 
-#: redbot/cogs/general/general.py:434
+#: redbot/cogs/general/general.py:395
 msgid "Owner: {owner}\n"
-"Voice region: {region}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
 msgstr "Sunucu Sahibi: {owner}\n"
-"Ses Sunucusu: {region}\n"
 "Doğrulama Seviyesi: {verif}\n"
 "Sunucu ID: {id}{shard_info}"
 
-#: redbot/cogs/general/general.py:446
+#: redbot/cogs/general/general.py:406
 msgid "Misc:"
 msgstr "Diğer:"
 
-#: redbot/cogs/general/general.py:447
+#: redbot/cogs/general/general.py:407
 msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
@@ -521,15 +357,19 @@ msgstr "AFK kanalı: {afk_chan}\n"
 "Özel emojiler: {emoji_count}\n"
 "Roller: {role_count}"
 
-#: redbot/cogs/general/general.py:452
+#: redbot/cogs/general/general.py:412
 msgid "Not set"
 msgstr "Ayarlı değil"
 
-#: redbot/cogs/general/general.py:460
+#: redbot/cogs/general/general.py:450
 msgid "Server features:"
 msgstr "Sunucu Özellikleri:"
 
-#: redbot/cogs/general/general.py:462
+#: redbot/cogs/general/general.py:450
+msgid "Server features (continued):"
+msgstr ""
+
+#: redbot/cogs/general/general.py:455
 msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
@@ -539,11 +379,11 @@ msgstr "{nitroboosters} boost ile boost seviyesi {boostlevel}\n"
 "Emoji sınırı: {emojis_limit}\n"
 "En yüksek ses kalitesi: {bitrate}"
 
-#: redbot/cogs/general/general.py:474
+#: redbot/cogs/general/general.py:467
 msgid "Nitro Boost:"
 msgstr "Nitro Boost:"
 
-#: redbot/cogs/general/general.py:483
+#: redbot/cogs/general/general.py:476
 #, docstring
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
@@ -552,29 +392,29 @@ msgstr "Urban sözlük arama.\n\n"
 "        Bu resmi olmayan Urban Sözlük API kullanır.\n"
 "        "
 
-#: redbot/cogs/general/general.py:501 redbot/cogs/general/general.py:570
+#: redbot/cogs/general/general.py:494 redbot/cogs/general/general.py:565
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr "Hiç bir Urban Sözlük bulunamadı ya da işlem gerçekleşirken bir hata oluştu."
 
-#: redbot/cogs/general/general.py:507
+#: redbot/cogs/general/general.py:500
 msgid "No Urban Dictionary entries were found."
 msgstr "Hiç bir Urban sözlük bulunamadı."
 
-#: redbot/cogs/general/general.py:513
+#: redbot/cogs/general/general.py:506
 msgid "{word} by {author}"
 msgstr "{word} {author}"
 
-#: redbot/cogs/general/general.py:521 redbot/cogs/general/general.py:552
+#: redbot/cogs/general/general.py:514 redbot/cogs/general/general.py:548
 msgid "{definition}\n\n"
 "**Example:** {example}"
 msgstr "{definition}\n\n"
 "**Örneğin:** {example}"
 
-#: redbot/cogs/general/general.py:527
+#: redbot/cogs/general/general.py:520
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr "aşağı {thumbs_down} / {thumbs_up}, Kentsel Sözlük tarafından desteklenmektedir."
 
-#: redbot/cogs/general/general.py:546
+#: redbot/cogs/general/general.py:538
 msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"
