@@ -77,6 +77,7 @@ Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`End of
 Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`End of Life <https://wiki.rockylinux.org/rocky/version/>`__)
 Ubuntu 22.04 LTS                   x86-64, aarch64           2027-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 24.04 LTS                   x86-64, aarch64           2029-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
+Ubuntu 26.04 LTS                   x86-64, aarch64           2031-05-31 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
 
 .. _developer-guarantees:
