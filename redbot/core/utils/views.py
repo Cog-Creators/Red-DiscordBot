@@ -444,6 +444,8 @@ class SetApiModal(discord.ui.Modal):
             key, __, value = line.strip().partition(" ")
             tokens[key] = value
 
+        to_remove = {key for key, value in tokens.items() if not value}
+
         if self.default_keys:
             for key in tokens:
                 if key not in self.default_keys:
@@ -454,6 +456,7 @@ class SetApiModal(discord.ui.Modal):
 
         if self.default_service is not None:  # Check is there is a service set.
             await interaction.client.set_shared_api_tokens(self.default_service, **tokens)
+            await interaction.client.remove_shared_api_tokens(self.default_service, *to_remove)
             return await interaction.response.send_message(
                 _("`{service}` API tokens have been set.").format(service=self.default_service),
                 ephemeral=True,
@@ -461,6 +464,7 @@ class SetApiModal(discord.ui.Modal):
         else:
             service = self.service_input.component.value.lower()
             await interaction.client.set_shared_api_tokens(service, **tokens)
+            await interaction.client.remove_shared_api_tokens(service, *to_remove)
             return await interaction.response.send_message(
                 _("`{service}` API tokens have been set.").format(service=service),
                 ephemeral=True,
