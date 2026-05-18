@@ -1,3 +1,4 @@
+from operator import is_
 import discord
 from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.bot import Red
@@ -7,6 +8,7 @@ from redbot.core.utils._internal_utils import send_to_owners_with_prefix_replace
 from redbot.core.utils.chat_formatting import escape, inline, pagify
 
 from .streamtypes import (
+    KickStream,
     PicartoStream,
     Stream,
     TwitchStream,
@@ -14,6 +16,7 @@ from .streamtypes import (
 )
 from .errors import (
     APIError,
+    InvalidKickCredentials,
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
     OfflineStream,
@@ -51,6 +54,7 @@ class Streams(commands.Cog):
         "tokens": {},
         "streams": [],
         "notified_owner_missing_twitch_secret": False,
+        "notified_owner_missing_kick_secret": False,
     }
 
     guild_defaults = {
@@ -70,6 +74,7 @@ class Streams(commands.Cog):
         super().__init__()
         self.config: Config = Config.get_conf(self, 26262626)
         self.ttv_bearer_cache: dict = {}
+        self.kick_bearer_cache: dict = {}
         self.config.register_global(**self.global_defaults)
         self.config.register_guild(**self.guild_defaults)
         self.config.register_role(**self.role_defaults)
@@ -105,6 +110,8 @@ class Streams(commands.Cog):
     async def on_red_api_tokens_update(self, service_name, api_tokens):
         if service_name == "twitch":
             await self.get_twitch_bearer_token(api_tokens)
+        elif service_name == "kick":
+            await self.get_kick_bearer_token(api_tokens)
 
     async def move_api_keys(self) -> None:
         """Move the API keys from cog stored config to core bot config if they exist."""
@@ -126,7 +133,7 @@ class Streams(commands.Cog):
             "1. Go to this page: {link}.\n"
             '2. Click "Manage" on your application.\n'
             '3. Click on "New secret".\n'
-            "5. Copy your client ID and your client secret into:\n"
+            "4. Copy your client ID and your client secret into:\n"
             "{command}"
             "\n\n"
             "Note: These tokens are sensitive and should only be used in a private channel "
@@ -141,6 +148,28 @@ class Streams(commands.Cog):
         )
         await send_to_owners_with_prefix_replaced(self.bot, message)
         await self.config.notified_owner_missing_twitch_secret.set(True)
+
+    async def _notify_owner_about_missing_kick_secret(self) -> None:
+        message = _(
+            "You need a client secret key if you want to use the Kick API on this cog.\n"
+            "Follow these steps:\n"
+            "1. Go to this page: {link}.\n"
+            '2. Click "Manage" on your application.\n'
+            "3. Copy your client ID and your client secret into:\n"
+            "{command}"
+            "\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel "
+            "or in DM with the bot."
+        ).format(
+            link="https://kick.com/settings/developer",
+            command=inline(
+                "[p]set api kick client_id {} client_secret {}".format(
+                    _("<your_client_id_here>"), _("<your_client_secret_here>")
+                )
+            ),
+        )
+        await send_to_owners_with_prefix_replaced(self.bot, message)
+        await self.config.notified_owner_missing_kick_secret.set(True)
 
     async def get_twitch_bearer_token(self, api_tokens: Optional[Dict] = None) -> None:
         tokens = (
@@ -198,9 +227,64 @@ class Streams(commands.Cog):
         self.ttv_bearer_cache["expires_at"] = datetime.now().timestamp() + data.get("expires_in")
 
     async def maybe_renew_twitch_bearer_token(self) -> None:
-        if self.ttv_bearer_cache:
-            if self.ttv_bearer_cache["expires_at"] - datetime.now().timestamp() <= 60:
-                await self.get_twitch_bearer_token()
+        if (
+            self.ttv_bearer_cache
+            and self.ttv_bearer_cache["expires_at"] - datetime.now().timestamp() <= 60
+        ):
+            await self.get_twitch_bearer_token()
+
+    async def get_kick_bearer_token(self, api_tokens: Optional[Dict] = None) -> None:
+        tokens = await self.bot.get_shared_api_tokens("kick") if api_tokens is None else api_tokens
+        if tokens.get("client_id"):
+            notified_owner_missing_kick_secret = (
+                await self.config.notified_owner_missing_kick_secret()
+            )
+            try:
+                tokens["client_secret"]
+                if notified_owner_missing_kick_secret is True:
+                    await self.config.notified_owner_missing_kick_secret.set(False)
+            except KeyError:
+                if notified_owner_missing_kick_secret is False:
+                    asyncio.create_task(self._notify_owner_about_missing_kick_secret())
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                "https://id.kick.com/oauth/token",
+                params={
+                    "client_id": tokens.get("client_id", ""),
+                    "client_secret": tokens.get("client_secret", ""),
+                    "grant_type": "client_credentials",
+                },
+            ) as req:
+                try:
+                    data = await req.json()
+                except aiohttp.ContentTypeError:
+                    data = {}
+
+                if req.status == 200:
+                    pass
+                elif req.status == 401 and data.get("error") == "invalid_client":
+                    log.error("Kick API request failed authentication: set Client ID is invalid.")
+                elif "error" in data:
+                    log.error(
+                        "Kick OAuth2 API request failed with status code %s and error message: %s",
+                        req.status,
+                        data["error"],
+                    )
+                else:
+                    log.error("Kick OAuth2 API request failed with status code %s", req.status)
+
+                if req.status != 200:
+                    return
+
+        self.kick_bearer_cache = data
+        self.kick_bearer_cache["expires_at"] = datetime.now().timestamp() + data.get("expires_in")
+
+    async def maybe_renew_kick_token(self) -> None:
+        if (
+            self.kick_bearer_cache
+            and self.kick_bearer_cache["expires_at"] - datetime.now().timestamp() <= 60
+        ):
+            await self.get_kick_bearer_token()
 
     @commands.guild_only()
     @commands.command()
@@ -242,10 +326,19 @@ class Streams(commands.Cog):
         stream = PicartoStream(_bot=self.bot, name=channel_name)
         await self.check_online(ctx, stream)
 
+    @commands.guild_only()
+    @commands.command()
+    async def kickstream(self, ctx: commands.Context, channel_name: str):
+        """Check if a Kick channel is live."""
+        await self.maybe_renew_kick_token()
+        token = self.kick_bearer_cache.get("access_token")
+        stream = _streamtypes.KickStream(_bot=self.bot, name=channel_name, token=token)
+        await self.check_online(ctx, stream)
+
     async def check_online(
         self,
         ctx: commands.Context,
-        stream: Union[PicartoStream, YoutubeStream, TwitchStream],
+        stream: Union[PicartoStream, YoutubeStream, TwitchStream, KickStream],
     ):
         try:
             info = await stream.is_online()
@@ -264,6 +357,12 @@ class Streams(commands.Cog):
                 _(
                     "The YouTube API key is either invalid or has not been set. See {command}."
                 ).format(command=inline(f"{ctx.clean_prefix}streamset youtubekey"))
+            )
+        except InvalidKickCredentials:
+            await ctx.send(
+                _("The Kick API key is either invalid or has not been set. See {command}.").format(
+                    command=inline(f"{ctx.clean_prefix}streamset kicktoken")
+                )
             )
         except YoutubeQuotaExceeded:
             await ctx.send(
@@ -363,6 +462,18 @@ class Streams(commands.Cog):
         """Toggle alerts in this channel for a Picarto stream."""
         await self.stream_alert(ctx, PicartoStream, channel_name, discord_channel)
 
+    @streamalert.command(name="kick")
+    async def kick_alert(
+        self,
+        ctx: commands.Context,
+        channel_name: str,
+        discord_channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel
+        ] = commands.CurrentChannel,
+    ):
+        """Toggle alerts in this channel for a Kick stream."""
+        await self.stream_alert(ctx, KickStream, channel_name, discord_channel)
+
     @streamalert.command(name="stop", usage="[disable_all=No]")
     async def streamalert_stop(self, ctx: commands.Context, _all: bool = False):
         """Disable all stream alerts in this channel or server.
@@ -435,6 +546,7 @@ class Streams(commands.Cog):
             token = await self.bot.get_shared_api_tokens(_class.token_name)
             is_yt = _class.__name__ == "YoutubeStream"
             is_twitch = _class.__name__ == "TwitchStream"
+            is_kick = _class.__name__ == "KickStream"
             if is_yt and not self.check_name_or_id(channel_name):
                 stream = _class(_bot=self.bot, id=channel_name, token=token, config=self.config)
             elif is_twitch:
@@ -445,6 +557,10 @@ class Streams(commands.Cog):
                     token=token.get("client_id"),
                     bearer=self.ttv_bearer_cache.get("access_token", None),
                 )
+            elif is_kick:
+                await self.maybe_renew_kick_token()
+                token = self.kick_bearer_cache.get("access_token")
+                stream = _class(_bot=self.bot, name=channel_name, token=token)
             else:
                 if is_yt:
                     stream = _class(
@@ -464,8 +580,7 @@ class Streams(commands.Cog):
             except InvalidYoutubeCredentials:
                 await ctx.send(
                     _(
-                        "The YouTube API key is either invalid or has not been set. See "
-                        "{command}."
+                        "The YouTube API key is either invalid or has not been set. See {command}."
                     ).format(command=inline(f"{ctx.clean_prefix}streamset youtubekey"))
                 )
                 return
@@ -476,6 +591,13 @@ class Streams(commands.Cog):
                         " Try again later or contact the owner if this continues."
                     )
                 )
+            except InvalidKickCredentials:
+                await ctx.send(
+                    _(
+                        "The Kick API key is either invalid or has not been set. See {command}."
+                    ).format(command=inline(f"{ctx.clean_prefix}streamset kicktoken"))
+                )
+                return
             except APIError as e:
                 log.error(
                     "Something went wrong whilst trying to contact the stream service's API.\n"
@@ -531,6 +653,30 @@ class Streams(commands.Cog):
             link="https://dev.twitch.tv/dashboard/apps",
             localhost=inline("http://localhost"),
             command="`{}set api twitch client_id {} client_secret {}`".format(
+                ctx.clean_prefix, _("<your_client_id_here>"), _("<your_client_secret_here>")
+            ),
+        )
+
+        await ctx.maybe_send_embed(message)
+
+    @streamset.command()
+    @commands.is_owner()
+    async def kicktoken(self, ctx: commands.Context):
+        """Explain how to set the Kick token."""
+        message = _(
+            "To get one, do the following:\n"
+            "1. Go to this page: {link}.\n"
+            "2. Click on *Create new*.\n"
+            "3. Fill the name and description, for *Redirection URL* add *http://localhost*.\n"
+            "4. Click on *Create Application*.\n"
+            "5. Copy your client ID and your client secret into:\n"
+            "{command}"
+            "\n\n"
+            "Note: These tokens are sensitive and should only be used in a private channel\n"
+            "or in DM with the bot.\n"
+        ).format(
+            link="https://kick.com/settings/developer",
+            command="`{}set api kick client_id {} client_secret {}`".format(
                 ctx.clean_prefix, _("<your_client_id_here>"), _("<your_client_secret_here>")
             ),
         )
@@ -830,14 +976,17 @@ class Streams(commands.Cog):
         for stream in self.streams:
             try:
                 try:
-                    is_rerun = False
-                    is_schedule = False
+                    is_rerun, is_schedule = False, False
                     if stream.__class__.__name__ == "TwitchStream":
                         await self.maybe_renew_twitch_bearer_token()
                         embed, is_rerun = await stream.is_online()
 
                     elif stream.__class__.__name__ == "YoutubeStream":
                         embed, is_schedule = await stream.is_online()
+
+                    elif stream.__class__.__name__ == "KickStream":
+                        await self.maybe_renew_kick_token()
+                        embed = await stream.is_online()
 
                     else:
                         embed = await stream.is_online()
@@ -1016,6 +1165,8 @@ class Streams(commands.Cog):
                 if _class.__name__ == "TwitchStream":
                     raw_stream["token"] = token.get("client_id")
                     raw_stream["bearer"] = self.ttv_bearer_cache.get("access_token", None)
+                elif _class.__name__ == "KickStream":
+                    raw_stream["token"] = self.kick_bearer_cache.get("access_token", None)
                 else:
                     if _class.__name__ == "YoutubeStream":
                         raw_stream["config"] = self.config

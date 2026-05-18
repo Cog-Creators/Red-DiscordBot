@@ -88,7 +88,7 @@ If you have a Red version between 3.5.0 and 3.5.24, you can upgrade by following
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
-        python -m pip install -U Red-DiscordBot
+        python -m pip install -U "Red-DiscordBot==3.5.25"
 
     .. attention::
 
@@ -115,7 +115,7 @@ If you have a Red version between 3.5.0 and 3.5.24, you can upgrade by following
     .. prompt:: bash
         :prompts: (redenv) $
 
-        python -m pip install -U Red-DiscordBot
+        python -m pip install -U 'Red-DiscordBot==3.5.25'
 
     .. attention::
 
@@ -142,7 +142,7 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
     .. prompt:: batch
         :prompts: (redenv) C:\\>
 
-        python -m pip install -U Red-DiscordBot
+        python -m pip install -U "Red-DiscordBot==3.5.25"
 
     .. attention::
 
@@ -181,7 +181,7 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
     .. prompt:: bash
         :prompts: (redenv) $
 
-        python -m pip install -U Red-DiscordBot
+        python -m pip install -U 'Red-DiscordBot==3.5.25'
 
     .. attention::
 
