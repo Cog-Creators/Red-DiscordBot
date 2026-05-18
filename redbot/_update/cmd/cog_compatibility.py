@@ -89,7 +89,9 @@ async def _check_cog_compatibility_command_impl(
     console = common.get_console()
     if red_version is None or python_version is None:
         with console.status("Checking latest version..."):
-            latest = await fetch_latest_red_version()
+            latest = await fetch_latest_red_version(
+                include_prereleases=common.get_current_red_version().is_prerelease
+            )
             red_version = latest.version
 
         python_version = Version(".".join(map(str, sys.version_info[:3])))

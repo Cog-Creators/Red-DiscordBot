@@ -299,7 +299,9 @@ class Updater:
     async def _prepare_metadata(self) -> None:
         interpreter_info = self.options.new_python_interpreter or PythonInfo.current_system()
         with self.console.status("Checking latest version..."):
-            available_versions = await fetch_available_red_versions()
+            available_versions = await fetch_available_red_versions(
+                include_prereleases=common.get_current_red_version().is_prerelease
+            )
             latest_major = available_versions[0]
 
         self.metadata = UpdaterMetadata(
