@@ -116,18 +116,18 @@ How can I use this playlist link with playlist commands in audio?**
     :ref:`setting up Audio for multiple bots<multibots>`. Otherwise, another process is using the 
     port, so you need to figure out what is using port 2333 and terminate/disconnect it yourself.
     
-**Q: My terminal is saying that I "must install Java 21 or 17 for Lavalink to run". How can I fix this?**
+**Q: My terminal is saying that I "must install Java 25, 21, or 17 for Lavalink to run". How can I fix this?**
 
     You are getting this error because you have a different version of Java installed, or you don't have
-    Java installed at all. As the error states, Java 21 or 17 is required, and can be installed from
-    `here <https://adoptium.net/temurin/releases/?version=21>`__.
+    Java installed at all. As the error states, Java 25, 21, or 17 is required, and can be installed from
+    `here <https://adoptium.net/temurin/releases/?version=25>`__.
     
-    If you have Java 21 or 17 installed, and are still getting this error, you will have to manually tell Audio where your Java install is located.
-    Use ``[p]llset java <path_to_java_21_or_17_executable>``, to make Audio launch Lavalink with a
+    If you have Java 25, 21, or 17 installed, and are still getting this error, you will have to manually tell Audio where your Java install is located.
+    Use ``[p]llset java <path_to_compatible_java_executable>``, to make Audio launch Lavalink with a
     specific Java binary. To do this, you will need to locate your ``java.exe``/``java`` file
-    in your **Java 21 or 17 install**.
+    in your **Java 25, 21, or 17 install**.
     
-    Alternatively, update your PATH settings so that Java 21 or 17 is the one used by ``java``. However,
+    Alternatively, update your PATH settings so that Java 25, 21, or 17 is the one used by ``java``. However,
     you should confirm that nothing other than Red is running on the machine that requires Java.
 
 .. _queue_commands:
@@ -3651,7 +3651,7 @@ This command shouldn't need to be used most of the time,
 and is only useful if the host machine has conflicting Java versions.
 
 If changing this make sure that the Java executable you set is supported by Audio.
-The current supported versions are Java 21 or 17.
+The current supported versions are Java 25, 21, and 17.
 
 **Arguments**
 

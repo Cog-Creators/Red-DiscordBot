@@ -17,7 +17,7 @@ them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python3.11 python3.11-devel git java-17-amazon-corretto-headless @development nano
+    sudo dnf -y install python3.11 python3.11-devel git java-25-amazon-corretto-headless @development nano
 
 .. Include common instructions:
 
