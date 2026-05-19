@@ -646,7 +646,7 @@ class Warnings(commands.Cog):
     async def warnings_server(self, ctx: commands.Context):
         """List all members with warnings in this server."""
         settings = await self.config.all_members(guild=ctx.guild)
-        body = ""
+        body_parts = []
         pages = []
         count_len = len(_("Count")) + 2
         points_len = len(_("Points")) + 2
@@ -658,7 +658,8 @@ class Warnings(commands.Cog):
             member_formatted = member_formatted = member.display_name if member else str(member_id)
             count = len(warnings["warnings"])
             points = warnings["total_points"]
-            body += f"  {count:<{count_len}}{points:<{points_len}}{member_formatted:2}\n"
+            body_parts.append(f"  {count:<{count_len}}{points:<{points_len}}{member_formatted:2}")
+        body = "\n".join(body_parts)
         header = "# {count:{count_len}}{point:{points_len}}{name:2}\n".format(
             count=_("Count"),
             count_len=count_len,
