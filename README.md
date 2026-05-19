@@ -27,7 +27,7 @@
 </p>
 <p align="center">
   <a href="https://github.com/Cog-Creators/Red-DiscordBot/actions">
-    <img src="https://img.shields.io/github/workflow/status/Cog-Creators/Red-Discordbot/Tests?label=tests" alt="GitHub Actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/Cog-Creators/Red-Discordbot/tests.yml?label=tests" alt="GitHub Actions">
   </a>
   <a href="http://docs.discord.red/en/stable/?badge=stable">
     <img src="https://readthedocs.org/projects/red-discordbot/badge/?version=stable" alt="Red on readthedocs.org">
@@ -63,6 +63,12 @@ Red is a fully modular bot – meaning all features and commands can be enabled/
 liking, making it completely customizable. This is a *self-hosted bot* – meaning you will need
 to host and maintain your own instance. You can turn Red into an admin bot, music bot, trivia bot,
 new best friend or all of these together!  
+
+Red is built for [Discord](https://discord.com/), a popular VOIP and instant messaging platform.
+It's best suited for use in guilds (also known as servers), where it utilizes Discord's
+well-documented API to communicate and deliver its many features. Discord offers its API to
+encourage developers to explore their creativity by building programs, tools, and services that
+enhance the Discord experience.
 
 [Installation](#installation) is easy, and you do **NOT** need to know anything about coding! Aside
 from installing and updating, every part of the bot can be controlled from within Discord.

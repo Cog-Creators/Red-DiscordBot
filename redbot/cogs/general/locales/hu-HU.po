@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2021-05-26 09:24+0000\n"
+"POT-Creation-Date: 2026-03-04 21:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: redgettext 3.3\n"
+"Generated-By: redgettext 3.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
@@ -15,92 +15,92 @@ msgstr ""
 "X-Crowdin-File-ID: 17\n"
 "Language: hu_HU\n"
 
-#: redbot/cogs/general/general.py:47
+#: redbot/cogs/general/general.py:49
 #, docstring
 msgid "General commands."
 msgstr "Általános parancsok."
 
-#: redbot/cogs/general/general.py:52
+#: redbot/cogs/general/general.py:54
 msgid "As I see it, yes"
 msgstr "Ahogy én látom, igen"
 
-#: redbot/cogs/general/general.py:53
+#: redbot/cogs/general/general.py:55
 msgid "It is certain"
 msgstr "Bizonyos"
 
-#: redbot/cogs/general/general.py:54
+#: redbot/cogs/general/general.py:56
 msgid "It is decidedly so"
 msgstr "Ez határozottan így van"
 
-#: redbot/cogs/general/general.py:55
+#: redbot/cogs/general/general.py:57
 msgid "Most likely"
 msgstr "Nagy valószínűséggel"
 
-#: redbot/cogs/general/general.py:56
+#: redbot/cogs/general/general.py:58
 msgid "Outlook good"
 msgstr "Jók a kilátások"
 
-#: redbot/cogs/general/general.py:57
+#: redbot/cogs/general/general.py:59
 msgid "Signs point to yes"
 msgstr "A jelek igenre utalnak"
 
-#: redbot/cogs/general/general.py:58
+#: redbot/cogs/general/general.py:60
 msgid "Without a doubt"
 msgstr "Kétség nélkül"
 
-#: redbot/cogs/general/general.py:59
+#: redbot/cogs/general/general.py:61
 msgid "Yes"
 msgstr "Igen"
 
-#: redbot/cogs/general/general.py:60
+#: redbot/cogs/general/general.py:62
 msgid "Yes – definitely"
 msgstr "Igen - egyértelműen"
 
-#: redbot/cogs/general/general.py:61
+#: redbot/cogs/general/general.py:63
 msgid "You may rely on it"
 msgstr "Akár támaszkodhatsz is rajta"
 
-#: redbot/cogs/general/general.py:62
+#: redbot/cogs/general/general.py:64
 msgid "Reply hazy, try again"
 msgstr "A válasz ködös, próbáld újra"
 
-#: redbot/cogs/general/general.py:63
+#: redbot/cogs/general/general.py:65
 msgid "Ask again later"
 msgstr "Kérdezz újra késöbb"
 
-#: redbot/cogs/general/general.py:64
+#: redbot/cogs/general/general.py:66
 msgid "Better not tell you now"
 msgstr "Jobb ha nem tudod meg"
 
-#: redbot/cogs/general/general.py:65
+#: redbot/cogs/general/general.py:67
 msgid "Cannot predict now"
 msgstr "Nem tudok jósolni most"
 
-#: redbot/cogs/general/general.py:66
+#: redbot/cogs/general/general.py:68
 msgid "Concentrate and ask again"
 msgstr "Koncentrálj és kérdezz újra"
 
-#: redbot/cogs/general/general.py:67
+#: redbot/cogs/general/general.py:69
 msgid "Don't count on it"
 msgstr "Ne számíts rá"
 
-#: redbot/cogs/general/general.py:68
+#: redbot/cogs/general/general.py:70
 msgid "My reply is no"
 msgstr "A válaszom nem"
 
-#: redbot/cogs/general/general.py:69
+#: redbot/cogs/general/general.py:71
 msgid "My sources say no"
 msgstr "Az forrásaim nemet mondanak"
 
-#: redbot/cogs/general/general.py:70
+#: redbot/cogs/general/general.py:72
 msgid "Outlook not so good"
 msgstr "A kilátások nem túl jók"
 
-#: redbot/cogs/general/general.py:71
+#: redbot/cogs/general/general.py:73
 msgid "Very doubtful"
 msgstr "Nagyon kétséges"
 
-#: redbot/cogs/general/general.py:85
+#: redbot/cogs/general/general.py:88
 #, docstring
 msgid "Choose between multiple options.\n\n"
 "        There must be at least 2 options to pick from.\n"
@@ -109,11 +109,11 @@ msgid "Choose between multiple options.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:94
+#: redbot/cogs/general/general.py:97
 msgid "Not enough options to pick from."
 msgstr "Nincs elég választható opció."
 
-#: redbot/cogs/general/general.py:100
+#: redbot/cogs/general/general.py:103
 #, docstring
 msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
@@ -121,97 +121,99 @@ msgid "Roll a random number.\n\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:115
-msgid "{author.mention} Maybe higher than 1? ;P"
-msgstr ""
-
 #: redbot/cogs/general/general.py:118
-msgid "{author.mention} Max allowed number is {maxamount}."
-msgstr ""
+msgid "{author.mention} Maybe higher than 1? ;P"
+msgstr "{author.mention} Talán magasabb mint 1? ;P"
 
-#: redbot/cogs/general/general.py:125
+#: redbot/cogs/general/general.py:121
+msgid "{author.mention} Max allowed number is {maxamount}."
+msgstr "{author.mention} A legmagasabb engedélyezett szám {maxamount}."
+
+#: redbot/cogs/general/general.py:128
 #, docstring
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:133
+#: redbot/cogs/general/general.py:136
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
 msgstr "Szép próbálkozás. Azt hiszed vicces vagy?\n"
 " Mit szólnál *ehhez* inkább:\n\n"
 
-#: redbot/cogs/general/general.py:144
+#: redbot/cogs/general/general.py:147
 msgid "*flips a coin and... "
 msgstr "*Feldob egy érmét és... "
 
-#: redbot/cogs/general/general.py:144
+#: redbot/cogs/general/general.py:147
 msgid "HEADS!*"
 msgstr "FEJ!*"
 
-#: redbot/cogs/general/general.py:144
+#: redbot/cogs/general/general.py:147
 msgid "TAILS!*"
 msgstr "ÍRÁS!*"
 
-#: redbot/cogs/general/general.py:148
+#: redbot/cogs/general/general.py:151
 #, docstring
 msgid "Play Rock Paper Scissors."
 msgstr "Kő Papír Olló játszása."
 
-#: redbot/cogs/general/general.py:153
+#: redbot/cogs/general/general.py:156
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
 msgstr "Érvénytelen opció. Próbáld: {r}, {p}, vagy {s}."
 
-#: redbot/cogs/general/general.py:174
+#: redbot/cogs/general/general.py:177
 msgid "{choice} You win {author.mention}!"
 msgstr "{choice} Nyertél {author.mention}!"
 
-#: redbot/cogs/general/general.py:180
+#: redbot/cogs/general/general.py:183
 msgid "{choice} You lose {author.mention}!"
 msgstr "{choice} Vesztettél {author.mention}!"
 
-#: redbot/cogs/general/general.py:186
+#: redbot/cogs/general/general.py:189
 msgid "{choice} We're square {author.mention}!"
 msgstr "{choice} Döntetlen {author.mention}!"
 
-#: redbot/cogs/general/general.py:193
+#: redbot/cogs/general/general.py:196
 #, docstring
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:200
+#: redbot/cogs/general/general.py:203
 msgid "That doesn't look like a question."
 msgstr "Ez nem úgy néz ki, mint egy kérdés."
 
-#: redbot/cogs/general/general.py:204
+#: redbot/cogs/general/general.py:207
 #, docstring
 msgid "Start or stop the stopwatch."
 msgstr "Stopper indítása vagy megállítása."
 
-#: redbot/cogs/general/general.py:208
+#: redbot/cogs/general/general.py:211
 msgid " Stopwatch started!"
 msgstr " Stopper elindítva!"
 
-#: redbot/cogs/general/general.py:213
+#: redbot/cogs/general/general.py:216
 msgid " Stopwatch stopped! Time: **{seconds}**"
 msgstr " Stopper megállítva! Idő: **{seconds}**"
 
-#: redbot/cogs/general/general.py:219
+#: redbot/cogs/general/general.py:222
 #, docstring
 msgid "Create a lmgtfy link."
 msgstr "LMGTFY link készítése."
 
-#: redbot/cogs/general/general.py:226
+#: redbot/cogs/general/general.py:231
 #, docstring
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
 "        "
-msgstr ""
+msgstr "Mert mindenki szereti az öleléseket!\n\n"
+"        Akár 10 intenzitási szint.\n"
+"        "
 
-#: redbot/cogs/general/general.py:250
+#: redbot/cogs/general/general.py:255
 #, docstring
 msgid "\n"
 "        Show server information.\n\n"
@@ -224,280 +226,113 @@ msgstr "\n"
 "        Alapértelmezetten False.\n"
 "        "
 
-#: redbot/cogs/general/general.py:258
-msgid "Created on {date}. That's over {num} days ago!"
-msgstr "Készült: {date}. Több mint {num} napja!"
+#: redbot/cogs/general/general.py:262
+msgid "Created on {date_and_time}. That's {relative_time}!"
+msgstr ""
 
-#: redbot/cogs/general/general.py:270
-msgid "Region"
-msgstr "Régió"
-
-#: redbot/cogs/general/general.py:271
+#: redbot/cogs/general/general.py:276
 msgid "Users online"
 msgstr "Online felhasználók"
 
-#: redbot/cogs/general/general.py:272
+#: redbot/cogs/general/general.py:277
+msgid "Not available"
+msgstr ""
+
+#: redbot/cogs/general/general.py:279
 msgid "Text Channels"
 msgstr "Szöveges csatornák"
 
-#: redbot/cogs/general/general.py:273
+#: redbot/cogs/general/general.py:280
 msgid "Voice Channels"
 msgstr "Hangcsatornák"
 
-#: redbot/cogs/general/general.py:274
+#: redbot/cogs/general/general.py:281
 msgid "Roles"
 msgstr "Rangok"
 
-#: redbot/cogs/general/general.py:275
+#: redbot/cogs/general/general.py:282
 msgid "Owner"
 msgstr "Tulajdonos"
 
-#: redbot/cogs/general/general.py:277
+#: redbot/cogs/general/general.py:284
 msgid "Server ID: "
 msgstr "Szerver ID: "
 
-#: redbot/cogs/general/general.py:279
+#: redbot/cogs/general/general.py:286
 msgid "  •  Use {command} for more info on the server."
 msgstr "  •  További információ a szerverről: {command}."
 
-#: redbot/cogs/general/general.py:305
+#: redbot/cogs/general/general.py:312
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
-msgstr ""
+msgstr "\n"
+"Shard ID: **{shard_id}/{shard_count}**"
 
-#: redbot/cogs/general/general.py:314
+#: redbot/cogs/general/general.py:321
 msgid "Humans: "
 msgstr "Emberek: "
 
-#: redbot/cogs/general/general.py:315
+#: redbot/cogs/general/general.py:322
 msgid " • Bots: "
 msgstr " • Botok: "
 
-#: redbot/cogs/general/general.py:327
+#: redbot/cogs/general/general.py:334
 msgid "Users online: **{online}/{total_users}**\n"
 msgstr "Online felhasználók: **{online}/{total_users}**\n"
 
-#: redbot/cogs/general/general.py:344
-msgid "__VIP__ US East "
-msgstr "__VIP__ Kelet-Amerika "
-
-#: redbot/cogs/general/general.py:345
-msgid "__VIP__ US West "
-msgstr "__VIP__ Nyugat-Amerika "
-
-#: redbot/cogs/general/general.py:346
-msgid "__VIP__ Amsterdam "
-msgstr "__VIP__ Amszterdam "
-
-#: redbot/cogs/general/general.py:347
-msgid "EU West "
-msgstr "Nyugat-Európa "
-
-#: redbot/cogs/general/general.py:348
-msgid "EU Central "
-msgstr "Közép-Európa "
-
-#: redbot/cogs/general/general.py:349
-msgid "Europe "
-msgstr "Európa "
-
-#: redbot/cogs/general/general.py:350
-msgid "London "
-msgstr "London "
-
 #: redbot/cogs/general/general.py:351
-msgid "Frankfurt "
-msgstr "Frankfurt "
-
-#: redbot/cogs/general/general.py:352
-msgid "Amsterdam "
-msgstr "Amsterdam "
-
-#: redbot/cogs/general/general.py:353
-msgid "US West "
-msgstr "Nyugat-Amerika "
-
-#: redbot/cogs/general/general.py:354
-msgid "US East "
-msgstr "Kelet-Amerika "
-
-#: redbot/cogs/general/general.py:355
-msgid "US South "
-msgstr "Dél-USA "
-
-#: redbot/cogs/general/general.py:356
-msgid "US Central "
-msgstr "Közép-USA "
-
-#: redbot/cogs/general/general.py:357
-msgid "Singapore "
-msgstr "Szingapúr "
-
-#: redbot/cogs/general/general.py:358
-msgid "Sydney "
-msgstr "Sydney "
-
-#: redbot/cogs/general/general.py:359
-msgid "Brazil "
-msgstr "Brazília "
-
-#: redbot/cogs/general/general.py:360
-msgid "Hong Kong "
-msgstr "Hong Kong "
-
-#: redbot/cogs/general/general.py:361
-msgid "Russia "
-msgstr "Oroszország "
-
-#: redbot/cogs/general/general.py:362
-msgid "Japan "
-msgstr "Japán "
-
-#: redbot/cogs/general/general.py:363
-msgid "South Africa "
-msgstr "Dél-Afrika "
-
-#: redbot/cogs/general/general.py:364
-msgid "India "
-msgstr "India "
-
-#: redbot/cogs/general/general.py:365
-msgid "Dubai "
-msgstr "Dubai "
-
-#: redbot/cogs/general/general.py:366
-msgid "South Korea "
-msgstr "Dél-Korea "
-
-#: redbot/cogs/general/general.py:369
 msgid "0 - None"
 msgstr "0 - Nincs"
 
-#: redbot/cogs/general/general.py:370
+#: redbot/cogs/general/general.py:352
 msgid "1 - Low"
 msgstr "1 - Alacsony"
 
-#: redbot/cogs/general/general.py:371
+#: redbot/cogs/general/general.py:353
 msgid "2 - Medium"
 msgstr "2 - Közepes"
 
-#: redbot/cogs/general/general.py:372
+#: redbot/cogs/general/general.py:354
 msgid "3 - High"
 msgstr "3 - Magas"
 
-#: redbot/cogs/general/general.py:373
-msgid "4 - Extreme"
-msgstr "4 - Extrém"
-
-#: redbot/cogs/general/general.py:377
-msgid "Animated Icon"
-msgstr "Animált Ikon"
-
-#: redbot/cogs/general/general.py:378
-msgid "Banner Image"
-msgstr "Banner kép"
-
-#: redbot/cogs/general/general.py:379
-msgid "Commerce"
+#: redbot/cogs/general/general.py:355
+msgid "4 - Highest"
 msgstr ""
 
-#: redbot/cogs/general/general.py:380
-msgid "Community"
-msgstr "Közösség"
-
-#: redbot/cogs/general/general.py:381
-msgid "Server Discovery"
-msgstr "Szerver Felfedezés"
-
-#: redbot/cogs/general/general.py:382
-msgid "Featurable"
-msgstr ""
-
-#: redbot/cogs/general/general.py:383
-msgid "Splash Invite"
-msgstr "Meghívó háttér"
-
-#: redbot/cogs/general/general.py:384
-msgid "Member list disabled"
-msgstr "Taglista letiltva"
-
-#: redbot/cogs/general/general.py:385
-msgid "Membership Screening enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:386
-msgid "More Emojis"
-msgstr "Több Emoji"
-
-#: redbot/cogs/general/general.py:387
-msgid "News Channels"
-msgstr "Hírcsatornák"
-
-#: redbot/cogs/general/general.py:388
-msgid "Partnered"
-msgstr "Partner"
-
-#: redbot/cogs/general/general.py:389
-msgid "Preview enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:390
-msgid "Public disabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:391
-msgid "Vanity URL"
-msgstr "Egyedi URL"
-
-#: redbot/cogs/general/general.py:392
-msgid "Verified"
-msgstr "Ellenőrzött"
-
-#: redbot/cogs/general/general.py:393
-msgid "VIP Voice Servers"
-msgstr "VIP Hang Szerverek"
-
-#: redbot/cogs/general/general.py:394
-msgid "Welcome Screen enabled"
-msgstr ""
-
-#: redbot/cogs/general/general.py:402
+#: redbot/cogs/general/general.py:358
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr ""
 
-#: redbot/cogs/general/general.py:424
+#: redbot/cogs/general/general.py:380
 msgid "Members:"
 msgstr "Tagok:"
 
-#: redbot/cogs/general/general.py:426
+#: redbot/cogs/general/general.py:382
 msgid "Channels:"
 msgstr "Csatornák:"
 
-#: redbot/cogs/general/general.py:427
+#: redbot/cogs/general/general.py:383
 msgid "💬 Text: {text}\n"
-"🔊 Voice: {voice}"
-msgstr "💬 Szöveg: {text}\n"
-"🔊 Hang: {voice}"
+"🔊 Voice: {voice}\n"
+"🎙 Stage: {stage}"
+msgstr ""
 
-#: redbot/cogs/general/general.py:433
+#: redbot/cogs/general/general.py:394
 msgid "Utility:"
 msgstr ""
 
-#: redbot/cogs/general/general.py:434
+#: redbot/cogs/general/general.py:395
 msgid "Owner: {owner}\n"
-"Voice region: {region}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
-msgstr "Tulajdonos: {owner}\n"
-"Hang régió: {region}\n"
-"Ellenőr. szint: {verif}\n"
-"Szerver ID: {id}{shard_info}"
+msgstr ""
 
-#: redbot/cogs/general/general.py:446
+#: redbot/cogs/general/general.py:406
 msgid "Misc:"
 msgstr "Egyéb:"
 
-#: redbot/cogs/general/general.py:447
+#: redbot/cogs/general/general.py:407
 msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
@@ -507,15 +342,19 @@ msgstr "AFK csatorna: {afk_chan}\n"
 "Egyedi emojik: {emoji_count}\n"
 "Rangok: {role_count}"
 
-#: redbot/cogs/general/general.py:452
+#: redbot/cogs/general/general.py:412
 msgid "Not set"
 msgstr "Nincs beállítva"
 
-#: redbot/cogs/general/general.py:460
+#: redbot/cogs/general/general.py:450
 msgid "Server features:"
 msgstr "Szerver tulajdonságok:"
 
-#: redbot/cogs/general/general.py:462
+#: redbot/cogs/general/general.py:450
+msgid "Server features (continued):"
+msgstr ""
+
+#: redbot/cogs/general/general.py:455
 msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
@@ -525,43 +364,46 @@ msgstr "{boostlevel}. szint {nitroboosters} gyorsítással\n"
 "Emoji határ: {emojis_limit}\n"
 "Maximum hangminőség: {bitrate}"
 
-#: redbot/cogs/general/general.py:474
+#: redbot/cogs/general/general.py:467
 msgid "Nitro Boost:"
 msgstr "Nitro Gyorsítás:"
 
-#: redbot/cogs/general/general.py:483
+#: redbot/cogs/general/general.py:476
 #, docstring
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
 "        "
 msgstr ""
 
-#: redbot/cogs/general/general.py:501 redbot/cogs/general/general.py:570
+#: redbot/cogs/general/general.py:494 redbot/cogs/general/general.py:565
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr ""
 
-#: redbot/cogs/general/general.py:507
+#: redbot/cogs/general/general.py:500
 msgid "No Urban Dictionary entries were found."
 msgstr ""
 
-#: redbot/cogs/general/general.py:513
+#: redbot/cogs/general/general.py:506
 msgid "{word} by {author}"
-msgstr ""
+msgstr "{word} {author} által"
 
-#: redbot/cogs/general/general.py:521 redbot/cogs/general/general.py:552
+#: redbot/cogs/general/general.py:514 redbot/cogs/general/general.py:548
 msgid "{definition}\n\n"
 "**Example:** {example}"
 msgstr "{definition}\n\n"
 "**Például:** {example}"
 
-#: redbot/cogs/general/general.py:527
+#: redbot/cogs/general/general.py:520
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "{thumbs_down} Le / {thumbs_up} Fel, Powered by Urban Dictionary."
 
-#: redbot/cogs/general/general.py:546
+#: redbot/cogs/general/general.py:538
 msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"
 "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
-msgstr ""
+msgstr "<{permalink}>\n"
+"{word} {author} által\n\n"
+"{description}\n\n"
+"{thumbs_down} Le / {thumbs_up} Fel, Powered by Urban Dictionary."
 

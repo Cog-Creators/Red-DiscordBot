@@ -7,6 +7,7 @@ import time
 
 from io import BytesIO
 from pathlib import Path
+from urllib.parse import urlparse
 from typing import cast
 
 import discord
@@ -52,7 +53,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
         ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner, guild owner, guild admins, guild mods, DJ role and playlist creator.
         ​ ​ ​ ​ **User**:
         ​ ​ ​ ​ ​ ​ ​ ​ Visible to all bot users, if --author is passed.
-        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and creator.
+        ​ ​ ​ ​ ​ ​ ​ ​ Editable by bot owner and the playlist creator.
         """
 
     @command_playlist.command(
@@ -1823,7 +1824,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 file_url = file_message.attachments[0].url
             except IndexError:
                 return await self.send_embed_msg(ctx, title=_("Upload cancelled."))
-            file_suffix = file_url.rsplit(".", 1)[1]
+            file_suffix = urlparse(file_url).path.rsplit(".", 1)[1]
             if file_suffix != "txt":
                 return await self.send_embed_msg(
                     ctx, title=_("Only Red playlist files can be uploaded.")
@@ -1848,7 +1849,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
             if len(track_list) > 10000:
                 return await self.send_embed_msg(ctx, title=_("This playlist is too large."))
             uploaded_playlist_name = uploaded_playlist.get(
-                "name", (file_url.split("/")[6]).split(".")[0]
+                "name", (urlparse(file_url).path.split("/")[-1]).rsplit(".", 1)[0]
             )
             try:
                 if self.api_interface is not None and (

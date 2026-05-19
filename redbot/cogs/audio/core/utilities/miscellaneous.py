@@ -100,7 +100,10 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return await ctx.send(embed=embed)
 
     def _has_notify_perms(
-        self, channel: Union[discord.TextChannel, discord.VoiceChannel, discord.Thread]
+        self,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
     ) -> bool:
         perms = channel.permissions_for(channel.guild.me)
         return all((can_user_send_messages_in(channel.guild.me, channel), perms.embed_links))

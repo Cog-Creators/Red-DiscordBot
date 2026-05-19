@@ -10,10 +10,11 @@ from red_commons.logging import getLogger
 from redbot.core import commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import box, inline
+from redbot.core.utils.chat_formatting import box, humanize_list, inline
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+from ...managed_node import version_pins
 from ...utils import (
     MAX_JAVA_RAM,
     DEFAULT_LAVALINK_YAML,
@@ -29,29 +30,39 @@ log = getLogger("red.cogs.Audio.cog.Commands.lavalink_setup")
 _ = Translator("Audio", Path(__file__))
 
 
+class LavalinkSetupJavaCommand(commands.Command):
+    def format_text_for_context(self, ctx: commands.Context, text: str) -> str:
+        text = super().format_text_for_context(ctx, text)
+        return text.format(
+            supported_java_versions=humanize_list(
+                list(map(str, version_pins.SUPPORTED_JAVA_VERSIONS))
+            ),
+        )
+
+
 class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
-    @commands.group(name="llsetup", aliases=["llset"])
+    @commands.group(name="llset")
     @commands.is_owner()
     @commands.bot_has_permissions(embed_links=True)
-    async def command_llsetup(self, ctx: commands.Context):
+    async def command_llset(self, ctx: commands.Context):
         """`Dangerous commands` Manage Lavalink node configuration settings.
 
-        This command block holds all commands to manage an external or managed Lavalink node.
+        This command block holds all commands to configure an unmanaged (user maintained) or managed (bot maintained) Lavalink node.
 
         You should not mess with any command in here unless you have a valid reason to,
         i.e. been told by someone in the Red-Discord Bot support server to do so.
         All the commands in here have the potential to break the Audio cog.
         """
 
-    @command_llsetup.command(name="java")
+    @command_llset.command(name="java", cls=LavalinkSetupJavaCommand)
     @has_managed_server()
-    async def command_llsetup_java(self, ctx: commands.Context, *, java_path: str = "java"):
+    async def command_llset_java(self, ctx: commands.Context, *, java_path: str = "java"):
         """Change your Java executable path.
 
         This command shouldn't need to be used most of the time, and is only useful if the host machine has conflicting Java versions.
 
-        If changing this make sure that the java you set is supported by Audio.
-        The current supported version is Java 11.
+        If changing this make sure that the Java executable you set is supported by Audio.
+        The current supported versions are Java {supported_java_versions}.
 
         Enter nothing or "java" to reset it back to default.
         """
@@ -90,9 +101,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
 
-    @command_llsetup.command(name="heapsize", aliases=["hs", "ram", "memory"])
+    @command_llset.command(name="heapsize", aliases=["hs", "ram", "memory"])
     @has_managed_server()
-    async def command_llsetup_heapsize(self, ctx: commands.Context, size: str = MAX_JAVA_RAM):
+    async def command_llset_heapsize(self, ctx: commands.Context, size: str = MAX_JAVA_RAM):
         """Set the managed Lavalink node maximum heap-size.
 
         By default, this value is 50% of available RAM in the host machine represented by [1-1024][M|G] (256M, 256G for example)
@@ -124,7 +135,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 if meta[1]:
                     await ctx.send(
                         _(
-                            "Heap-size must be less than your system RAM, "
+                            "Heap-size must be less than your system RAM. "
                             "You currently have {ram_in_bytes} of RAM available."
                         ).format(ram_in_bytes=inline(sizeof_fmt(meta[0])))
                     )
@@ -152,11 +163,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="external")
-    async def command_llsetup_external(self, ctx: commands.Context):
-        """Toggle using external Lavalink nodes - requires an existing external Lavalink node for Audio to work, if enabled.
+    @command_llset.command(name="unmanaged", aliases=["external"])
+    async def command_llset_unmanaged(self, ctx: commands.Context):
+        """Toggle using external (unmanaged) Lavalink nodes - requires an existing Lavalink node for Audio to work, if enabled.
 
-        This command disables the managed Lavalink server, if you do not have an external Lavalink node you will be unable to use Audio while this is enabled.
+        This command disables the managed Lavalink server. If you do not have another Lavalink node set up, you will be unable to use Audio while this is enabled.
         """
         external = await self.config.use_external_lavalink()
         await self.config.use_external_lavalink.set(not external)
@@ -164,7 +175,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             if external:
                 embed = discord.Embed(
                     title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
+                    description=_("Unmanaged Lavalink server: {true_or_false}.").format(
                         true_or_false=inline(_("Enabled") if not external else _("Disabled"))
                     ),
                 )
@@ -173,7 +184,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(
                     ctx,
                     title=_("Setting Changed"),
-                    description=_("External Lavalink server: {true_or_false}.").format(
+                    description=_("Unmanaged Lavalink server: {true_or_false}.").format(
                         true_or_false=inline(_("Enabled") if not external else _("Disabled"))
                     ),
                 )
@@ -189,35 +200,35 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                 )
 
-    @command_llsetup.command(name="host")
+    @command_llset.command(name="host")
     @has_unmanaged_server()
-    async def command_llsetup_host(
+    async def command_llset_host(
         self, ctx: commands.Context, host: str = DEFAULT_LAVALINK_SETTINGS["host"]
     ):
         """Set the Lavalink node host.
 
-        This command sets the connection host which Audio will use to connect to an external Lavalink node.
+        This command sets the connection host which Audio will use to connect to an unmanaged Lavalink node.
         """
         await self.config.host.set(host)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node host set to {host}. "
+                "Unmanaged Lavalink node host set to {host}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 host=inline(host), p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name
             ),
         )
 
-    @command_llsetup.command(name="password", aliases=["pass", "token"])
+    @command_llset.command(name="password", aliases=["pass", "token"])
     @has_unmanaged_server()
-    async def command_llsetup_password(
+    async def command_llset_password(
         self, ctx: commands.Context, *, password: str = DEFAULT_LAVALINK_SETTINGS["password"]
     ):
         """Set the Lavalink node password.
 
-        This command sets the connection password which Audio will use to connect to an external Lavalink node.
+        This command sets the connection password which Audio will use to connect to an unmanaged Lavalink node.
         """
 
         await self.config.password.set(str(password))
@@ -225,7 +236,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node password set to {password}. "
+                "Unmanaged Lavalink node password set to {password}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 password=inline(password),
@@ -234,27 +245,30 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="port")
+    @command_llset.command(name="port")
     @has_unmanaged_server()
-    async def command_llsetup_wsport(
+    async def command_llset_wsport(
         self, ctx: commands.Context, port: int = DEFAULT_LAVALINK_SETTINGS["ws_port"]
     ):
         """Set the Lavalink node port.
 
-        This command sets the connection port which Audio will use to connect to an external Lavalink node.
+        This command sets the connection port which Audio will use to connect to an unmanaged Lavalink node.
+        Set port to -1 to disable the port and connect to the specified host via ports 80/443
         """
-        if port < 0 or port > 65535:
+        if port < 0:
+            port = None
+        elif port > 65535:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Setting Not Changed"),
-                description=_("A port must be between 0 and 65535 "),
+                description=_("A port must be between 0 and 65535."),
             )
         await self.config.ws_port.set(port)
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
             description=_(
-                "External Lavalink node port set to {port}. "
+                "Unmanaged Lavalink node port set to {port}. "
                 "Run `{p}{cmd}` for it to take effect."
             ).format(
                 port=inline(str(port)),
@@ -263,12 +277,12 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="secured", aliases=["wss"])
+    @command_llset.command(name="secured", aliases=["wss"])
     @has_unmanaged_server()
-    async def command_llsetup_secured(self, ctx: commands.Context):
+    async def command_llset_secured(self, ctx: commands.Context):
         """Set the Lavalink node connection to secured.
 
-        This command sets the connection type to secured when connecting to an external Lavalink node.
+        This toggle sets the connection type to secured or unsecured when connecting to an unmanaged Lavalink node.
         """
         state = await self.config.secured_ws()
         await self.config.secured_ws.set(not state)
@@ -278,7 +292,7 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Changed"),
                 description=_(
-                    "Managed Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
+                    "Unmanaged Lavalink node will now connect using the secured {secured_protocol} protocol.\n\n"
                     "Run `{p}{cmd}` for it to take effect."
                 ).format(
                     p=ctx.prefix,
@@ -291,23 +305,28 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Setting Changed"),
                 description=_(
-                    "Managed Lavalink node will no longer connect using the secured "
-                    "{secured_protocol} protocol and wil use {unsecured_protocol} instead .\n\n"
+                    "Unmanaged Lavalink node will no longer connect using the secured "
+                    "{secured_protocol} protocol and will use {unsecured_protocol} instead.\n\n"
                     "Run `{p}{cmd}` for it to take effect."
-                ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
-                unsecured_protocol=inline("ws://"),
-                secured_protocol=inline("wss://"),
+                ).format(
+                    p=ctx.prefix,
+                    cmd=self.command_audioset_restart.qualified_name,
+                    unsecured_protocol=inline("ws://"),
+                    secured_protocol=inline("wss://"),
+                ),
             )
 
-    @command_llsetup.command(name="info", aliases=["settings"])
-    async def command_llsetup_info(self, ctx: commands.Context):
+    @command_llset.command(name="info", aliases=["settings"])
+    async def command_llset_info(self, ctx: commands.Context):
         """Display Lavalink connection settings."""
         configs = await self.config.all()
 
         if configs["use_external_lavalink"]:
             msg = "----" + _("Connection Settings") + "----        \n"
             msg += _("Host:             [{host}]\n").format(host=configs["host"])
-            msg += _("Port:             [{port}]\n").format(port=configs["ws_port"])
+            msg += _("Port:             [{port}]\n").format(
+                port=configs["ws_port"] or _("Default HTTP/HTTPS port")
+            )
             msg += _("Password:         [{password}]\n").format(password=configs["password"])
             msg += _("Secured:          [{state}]\n").format(state=configs["secured_ws"])
 
@@ -332,9 +351,9 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         except discord.HTTPException:
             await ctx.send(_("I need to be able to DM you to send you this info."))
 
-    @command_llsetup.command(name="yaml", aliases=["yml"])
+    @command_llset.command(name="yaml", aliases=["yml"])
     @has_managed_server()
-    async def command_llsetup_yaml(self, ctx: commands.Context):
+    async def command_llset_yaml(self, ctx: commands.Context):
         """Uploads a copy of the application.yml file used by the managed Lavalink node."""
         configs = change_dict_naming_convention(await self.config.yaml.all())
         data = yaml.safe_dump(configs)
@@ -356,20 +375,20 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         finally:
             temp_file.unlink()
 
-    @command_llsetup.group(name="config", aliases=["conf"])
+    @command_llset.group(name="config", aliases=["conf"])
     @has_managed_server()
-    async def command_llsetup_config(self, ctx: commands.Context):
+    async def command_llset_config(self, ctx: commands.Context):
         """Configure the managed Lavalink node runtime options.
 
         All settings under this group will likely cause Audio to malfunction if changed from their defaults, only change settings here if you have been advised to by support.
         """
 
-    @command_llsetup_config.group(name="server")
-    async def command_llsetup_config_server(self, ctx: commands.Context):
+    @command_llset_config.group(name="server")
+    async def command_llset_config_server(self, ctx: commands.Context):
         """Configure the managed node authorization and connection settings."""
 
-    @command_llsetup_config.command(name="bind", aliases=["host", "address"])
-    async def command_llsetup_config_host(
+    @command_llset_config.command(name="bind", aliases=["host", "address"])
+    async def command_llset_config_host(
         self, ctx: commands.Context, *, host: str = DEFAULT_LAVALINK_YAML["yaml__server__address"]
     ):
         """`Dangerous command` Set the managed Lavalink node's binding IP address.
@@ -389,8 +408,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup_config.command(name="token", aliases=["password", "pass"])
-    async def command_llsetup_config_token(
+    @command_llset_config.command(name="token", aliases=["password", "pass"])
+    async def command_llset_config_token(
         self,
         ctx: commands.Context,
         *,
@@ -415,8 +434,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup_config.command(name="port")
-    async def command_llsetup_config_port(
+    @command_llset_config.command(name="port")
+    async def command_llset_config_port(
         self, ctx: commands.Context, *, port: int = DEFAULT_LAVALINK_YAML["yaml__server__port"]
     ):
         """`Dangerous command` Set the managed Lavalink node's connection port.
@@ -446,18 +465,18 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup_config.group(name="source")
-    async def command_llsetup_config_source(self, ctx: commands.Context):
+    @command_llset_config.group(name="source")
+    async def command_llset_config_source(self, ctx: commands.Context):
         """`Dangerous command` Toggle audio sources on/off.
 
         By default, all sources are enabled, you should only use commands here to disable a specific source if you have been advised to, disabling sources without background knowledge can cause Audio to break.
         """
 
-    @command_llsetup_config_source.command(name="http")
-    async def command_llsetup_config_source_http(self, ctx: commands.Context):
+    @command_llset_config_source.command(name="http")
+    async def command_llset_config_source_http(self, ctx: commands.Context):
         """Toggle HTTP direct URL usage on or off.
 
-        This source is used to allow playback from direct http streams (This does not affect direct url playback for the other sources)
+        This source is used to allow playback from direct HTTP streams (this does not affect direct URL playback for the other sources).
         """
         state = await self.config.yaml.lavalink.server.sources.http()
         await self.config.yaml.lavalink.server.sources.http.set(not state)
@@ -480,8 +499,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
             )
 
-    @command_llsetup_config_source.command(name="bandcamp", aliases=["bc"])
-    async def command_llsetup_config_source_bandcamp(self, ctx: commands.Context):
+    @command_llset_config_source.command(name="bandcamp", aliases=["bc"])
+    async def command_llset_config_source_bandcamp(self, ctx: commands.Context):
         """Toggle Bandcamp source on or off.
 
         This toggle controls the playback of all Bandcamp related content.
@@ -507,8 +526,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
             )
 
-    @command_llsetup_config_source.command(name="local")
-    async def command_llsetup_config_source_local(self, ctx: commands.Context):
+    @command_llset_config_source.command(name="local")
+    async def command_llset_config_source_local(self, ctx: commands.Context):
         """Toggle local file usage on or off.
 
         This toggle controls the playback of all local track content, usually found inside the `localtracks` folder.
@@ -534,11 +553,11 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
             )
 
-    @command_llsetup_config_source.command(name="soundcloud", aliases=["sc"])
-    async def command_llsetup_config_source_soundcloud(self, ctx: commands.Context):
+    @command_llset_config_source.command(name="soundcloud", aliases=["sc"])
+    async def command_llset_config_source_soundcloud(self, ctx: commands.Context):
         """Toggle Soundcloud source on or off.
 
-        This toggle controls the playback of all Soundcloud related content.
+        This toggle controls the playback of all SoundCloud related content.
         """
         state = await self.config.yaml.lavalink.server.sources.soundcloud()
         await self.config.yaml.lavalink.server.sources.soundcloud.set(not state)
@@ -561,8 +580,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
             )
 
-    @command_llsetup_config_source.command(name="youtube", aliases=["yt"])
-    async def command_llsetup_config_source_youtube(self, ctx: commands.Context):
+    @command_llset_config_source.command(name="youtube", aliases=["yt"])
+    async def command_llset_config_source_youtube(self, ctx: commands.Context):
         """`Dangerous command` Toggle YouTube source on or off (this includes Spotify).
 
         This toggle controls the playback of all YouTube and Spotify related content.
@@ -588,8 +607,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
             )
 
-    @command_llsetup_config_source.command(name="twitch")
-    async def command_llsetup_config_source_twitch(self, ctx: commands.Context):
+    @command_llset_config_source.command(name="twitch")
+    async def command_llset_config_source_twitch(self, ctx: commands.Context):
         """Toggle Twitch source on or off.
 
         This toggle controls the playback of all Twitch related content.
@@ -615,8 +634,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
             )
 
-    @command_llsetup_config_source.command(name="vimeo")
-    async def command_llsetup_config_source_vimeo(self, ctx: commands.Context):
+    @command_llset_config_source.command(name="vimeo")
+    async def command_llset_config_source_vimeo(self, ctx: commands.Context):
         """Toggle Vimeo source on or off.
 
         This toggle controls the playback of all Vimeo related content.
@@ -642,8 +661,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ).format(p=ctx.prefix, cmd=self.command_audioset_restart.qualified_name),
             )
 
-    @command_llsetup_config_server.command(name="framebuffer", aliases=["fb", "frame"])
-    async def command_llsetup_config_server_framebuffer(
+    @command_llset_config_server.command(name="framebuffer", aliases=["fb", "frame"])
+    async def command_llset_config_server_framebuffer(
         self,
         ctx: commands.Context,
         *,
@@ -673,14 +692,14 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup_config_server.command(name="buffer", aliases=["b"])
-    async def command_llsetup_config_server_buffer(
+    @command_llset_config_server.command(name="buffer", aliases=["b"])
+    async def command_llset_config_server_buffer(
         self,
         ctx: commands.Context,
         *,
         milliseconds: int = DEFAULT_LAVALINK_YAML["yaml__lavalink__server__bufferDurationMs"],
     ):
-        """`Dangerous command`  Set the managed Lavalink node NAS buffer size.
+        """`Dangerous command`  Set the managed Lavalink node JDA-NAS buffer size.
 
         Only change this if you have been directly advised to, changing it can cause significant playback issues.
         """
@@ -704,8 +723,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             ),
         )
 
-    @command_llsetup.command(name="reset")
-    async def command_llsetup_reset(self, ctx: commands.Context):
+    @command_llset.command(name="reset")
+    async def command_llset_reset(self, ctx: commands.Context):
         """Reset all `llset` changes back to their default values."""
         async with ctx.typing():
             async with self.config.all() as global_data:
