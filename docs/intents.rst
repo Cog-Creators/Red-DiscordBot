@@ -8,39 +8,19 @@ About (privileged) intents and public bots
 ==========================================
 
 This page aims to explain Red's current intents requirements,
-our stance regarding "public bots" and the impact of some announced
-Discord changes coming in April 2022.
+our stance regarding "public bots", and the discord bot verification process.
 
 To clarify:
 
 - **Small bots** are bots under 100 servers. They currently do not need to undergo Discord's
   bot verification process
 - **Public bots** (or big bots) are bots that have reached 100 servers. They need to be
-  `verified <https://support.discord.com/hc/en-us/articles/360040720412-Bot-Verification-and-Data-Whitelisting>`_
+  `verified <https://support-dev.discord.com/hc/en-us/articles/23926564536471-How-Do-I-Get-My-App-Verified>`_
   by Discord to join more than 100 servers and gain privileged intents
 
 .. warning::
 
   It is **very** important that you fully read this page if you're the owner of a public bot or strive to scale your bot at that level.
-
-.. _intents-intents:
-
--------
-Intents
--------
-
-Red currently requires **all intents** to be active in order to function properly.
-
-The reason for this requirement is that there are some technical challenges that need
-to be overcome before we're able to adapt Red to function with only *some* intents:
-these challenges are mainly due to the modular / extensible nature of Red and the fact
-that Red has a long history (dating back to 2016!), making big changes naturally slower
-to happen. In comparison, intents have been introduced fairly recently. |br|
-This is not a problem if you have a small bot: you can simply go to the
-`Discord development portal <https://discord.com/developers/applications/me>`_
-and enable them. However, if you have a public bot Discord will want you to attain
-verified status: you should read :ref:`our stance regarding public bots <intents-public-bots>`
-and our guidelines for the :ref:`verification process <intents-bot-verification-process>`.
 
 .. _intents-public-bots:
 
@@ -54,8 +34,10 @@ Red was designed with one single goal in mind: a bot that you can host on your o
 and customize to your needs, making it really *your* bot. **The target audience of Red are server
 owners with a few servers**, often with specific needs that can be covered by the vast cog ecosystem
 that the community has built over the years. |br| Red was never built with big bots in mind,
-bots with thousands upon thousands of servers: these bots face unique challenges.
-Such Red instances *do exist*, it is not impossible to adapt Red and meet those criteria,
+bots with thousands upon thousands of servers: these bots face unique challenges. Large bots need
+to be extremely efficient to handle the large amount of requests they receive, and often need to
+distribute this work across multiple processes or machines to keep up.
+Such Red instances *do exist*, and it is not impossible to adapt Red and meet those criteria,
 but it requires work and bot owners with the technical knowledge to make it happen.
 It is **not** something that we support. |br|
 When your bot reaches the public bot scale and it is therefore required to be verified it
@@ -75,8 +57,8 @@ the verification process.
 
 Regardless of our stance, we do feel the need to give some pointers: many bot owners reach this point
 and become fairly lost, as they've simply been *users* so far.
-They have installed their bot, some cogs, personalized it, yadda yadda. Again, they have been users,
-not developers. Unless they also have an interest in development, they will likely not have a clue about
+They have installed their bot, some cogs, personalized it, but have not needed to write any code.
+Unless they also have an interest in development, they will likely not have a clue about
 what's going under the hood, much like you're not expected to be a mechanic to drive your car. And there's
 nothing wrong with that! Red has been designed to be as user friendly as possible. |br|
 The problem is this: Red is an outlier. Discord has built the bot verification process with the expectation
@@ -94,41 +76,44 @@ out your application:
   of people that in their naivety went with the bad answer and it seems that at this point merely mentioning Red
   is a guaranteed way to have your application rejected.
 
-.. _intents-slash-commands:
+.. _intents-intents:
 
----------------------------------
-Message intent and slash commands
----------------------------------
+-------
+Intents
+-------
 
-.. warning::
+Red expects **all intents** to be active. It is possible, but not recommended, to disable
+specific intents using the ``--disable-intent`` flag. If an intent is missing, you may
+experience errors due to Red expecting information provided by the intent to be present.
 
-  If you own a public bot it is extremely important that you read this section.
+Discord currently considers 3 intents to be
+`privileged <https://support-dev.discord.com/hc/en-us/articles/6205754771351-How-do-I-get-Privileged-Intents-for-my-bot>`_,
+and requires large bots to additionally apply for access to these intents. **If you have a small
+bot**, you can simply follow :ref:`these instructions <enabling-privileged-intents>` to enable them.
 
-Discord has announced that **starting April 2022** the content of users' messages
-`will be "locked" behind message intent <https://support-dev.discord.com/hc/en-us/articles/4404772028055>`_ |br|
-If you're the owner of a small bot, fear not, this is yet another box that you have to tick from the
-`Discord development portal <https://discord.com/developers/applications/me>`_. |br|
-But if you're the owner of a public bot, things might be a lot less pleasant.
+A breakdown of how privileged intents are used in Red is provided below.
 
-To recap, unless you have
-message intent, you will only receive message content for:
+The **Message Content** intent is required to use text based commands and inputs for
+configuration and all built in functionality. App commands (also known as slash commands)
+are limited to a total of 100 top level commands, which is difficult to manage on
+a modular bot. The approach we have taken to address this issue is to allow 3rd party
+cogs to provide slash commands, but require bot owners to pick which slash commands
+they actually want to use with the ``[p]slash`` command.
+Under this system, bot management commands that are not exposed to users are still
+expected to be provided as text commands, which requires the bot to be able to access
+message content. There are no current plans to provide slash versions of core commands.
 
-- Messages that your bot sends
-- Messages that your bot receives in DM
-- Messages in which your bot is mentioned
+.. note::
+  It is possible to work around this intent by using the ``--mentionable``
+  flag, and using the bot mention as a prefix to use text based commands.
 
-In case it's not clear by now, your bot needs message content to parse (see) the commands it receives. And if
-you don't attain message intent, your bot will not be able to... well, do anything. |br|
-The *bandaid fix* is for you to change your bot's prefix to a mention and a good portion of your commands will likely
-still work. You will however lose many functions, namely anything that relies on seeing message content to act. |br|
-The more *proper fix* is also not easy. You will need to justify your need for the message intent to Discord and
-they will only accept "compelling use cases".
-`It is not known what those even entail <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-what-usecases-will-be-valid>`_ at this point, but they have already stated that "parsing commands" is not a valid justification. |br|
-To make the matter worse, Discord is making `a huge push for all bot developers to implement slash commands <https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ>`_, which at the moment
-are rather lacking in features and cannot cover all the functionalities that standard commands offer. |br|
-Discord staff
-`stated that they will want your bot to have slash commands when you ask for message intent <https://gist.github.com/spiralw/091714718718379b6efcdbcaf807a024#q-if-we-are-granted-this-intent-will-bots-be-sanctioned-if-they-use-it-for-their-own-use-case-but-also-to-continue-to-run-normal-non-slash-commands-or-do-we-assume-that-if-you-are-granted-the-intent-you-are-trusted-with-it-and-are-allowed-to-use-it-for-additional-uses>`_. |br|
-Slash commands might very well turn out to be a big undertaking for the Red team to implement, even more now that our
-underlying library, `discord.py <https://github.com/Rapptz/discord.py>`_, has been discontinued. |br|
-The time window that Discord is giving us to adapt is very narrow: **Red will likely not be able to support slash
-commands for April 2022** and you should plan accordingly.
+The **Guild Members** intent is required to properly cache member information, including
+what users are in each server, what roles they have, what their name is, etc. It is also
+required to receive events corresponding to when members join or leave a server, and when
+they change their nickname or other server options. Almost all cogs expect to be able
+to reference the member cache in order to avoid making API requests, and are not set
+up to check if the intent is present before doing so.
+
+The **Guild Presences** intent is required to view the activities and status of
+users. Cogs which perform actions on users based on their activity or status will
+be unable to access this information if this intent is not enabled.

@@ -16,6 +16,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.menus import menu, start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
+from redbot.core.utils.views import SetApiView
 
 from ...audio_dataclasses import LocalPath
 from ...converters import ScopeParser
@@ -758,9 +759,17 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Set a price for queueing tracks for non-mods, 0 to disable."""
         if price < 0:
             return await self.send_embed_msg(
-                ctx, title=_("Invalid Price"), description=_("Price can't be less than zero.")
+                ctx,
+                title=_("Invalid Price"),
+                description=_("Price can't be less than zero."),
             )
-        if price == 0:
+        elif price > 2**63 - 1:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Invalid Price"),
+                description=_("Price can't be greater than 2^63 - 1."),
+            )
+        elif price == 0:
             jukebox = False
             await self.send_embed_msg(
                 ctx, title=_("Setting Changed"), description=_("Jukebox mode disabled.")
@@ -1142,11 +1151,24 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if is_owner:
             msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
 
+        if (
+            is_owner
+            and not global_data["use_external_lavalink"]
+            and self.managed_node_controller.plugins
+        ):
+            plugins = self.managed_node_controller.plugins
+            msg += f"\n---{_('Lavalink Plugin Versions')}---"
+            plugin_name_max_len = 0
+            for plugin_name, __ in plugins.items():
+                plugin_name_max_len = max(plugin_name_max_len, len(plugin_name))
+            for plugin_name, plugin_version in plugins.items():
+                key = f"{plugin_name}:".ljust(plugin_name_max_len + 5)
+                msg += f"\n{key} [{plugin_version}]"
+
         await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
 
     @command_audioset.command(name="logs")
     @commands.is_owner()
-    @commands.guild_only()
     @has_managed_server()
     async def command_audioset_logs(self, ctx: commands.Context):
         """Sends the managed Lavalink node logs to your DMs."""
@@ -1259,26 +1281,38 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             "6. Click on Create Credential at the top.\n"
             '7. At the top click the link for "API key".\n'
             "8. No application restrictions are needed. Click Create at the bottom.\n"
-            "9. You now have a key to add to `{prefix}set api youtube api_key <your_api_key_here>`"
-        ).format(prefix=ctx.prefix)
-        await ctx.maybe_send_embed(message)
+            "9. Click the button below this message and set your API key"
+            " with the data shown in Google Developers Console."
+        )
+        await ctx.send(
+            message,
+            view=SetApiView(default_service="youtube", default_keys={"api_key": ""}),
+        )
 
     @command_audioset.command(name="spotifyapi")
     @commands.is_owner()
     async def command_audioset_spotifyapi(self, ctx: commands.Context):
         """Instructions to set the Spotify API tokens."""
         message = _(
-            "1. Go to Spotify developers and log in with your Spotify account.\n"
-            "(https://developer.spotify.com/dashboard/applications)\n"
-            '2. Click "Create An App".\n'
-            "3. Fill out the form provided with your app name, etc.\n"
-            '4. When asked if you\'re developing commercial integration select "No".\n'
-            "5. Accept the terms and conditions.\n"
-            "6. Copy your client ID and your client secret into:\n"
-            "`{prefix}set api spotify client_id <your_client_id_here> "
-            "client_secret <your_client_secret_here>`"
-        ).format(prefix=ctx.prefix)
-        await ctx.maybe_send_embed(message)
+            "1. Go to Spotify for Developers and log in with your Spotify account."
+            " If this is your first time, you'll be asked to accept the terms and conditions.\n"
+            "(https://developer.spotify.com/dashboard)\n"
+            '2. Click "Create app".\n'
+            "3. Fill out the form provided with your app name and description."
+            " These can be anything you want. Website field can be left empty.\n"
+            "4. Add `https://localhost` to your Redirect URIs. This will not be used"
+            " but is required when filling out the form.\n"
+            '5. Select "Web API" when asked which API/SDKs you are planning to use.\n'
+            "6. Confirm that you agree to the terms and conditions and save the application.\n"
+            "7. Click the button below this message and set your client ID and your client secret"
+            " with the data shown in Spotify's dashboard."
+        )
+        await ctx.send(
+            message,
+            view=SetApiView(
+                default_service="spotify", default_keys={"client_id": "", "client_secret": ""}
+            ),
+        )
 
     @command_audioset.command(name="countrycode")
     @commands.guild_only()
